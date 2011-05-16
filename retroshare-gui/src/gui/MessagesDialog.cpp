@@ -264,6 +264,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
     MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Tags"));
     MessagesModel->setHeaderData(COLUMN_CONTENT,       Qt::Horizontal, tr("Content"));
+    
+    MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, tr("Click to sort by attachments"), Qt::ToolTipRole);
+	MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Click to sort by subject"), Qt::ToolTipRole);
+	MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, tr("Click to sort by read"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("Click to sort by from"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Click to sort by date"), Qt::ToolTipRole);
+	MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Click to sort by tags"), Qt::ToolTipRole);
 
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setDynamicSortFilter(true);
@@ -1115,8 +1122,10 @@ void MessagesDialog::insertMessages()
 
     if (msgbox == RS_MSG_INBOX) {
         MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("From"));
+        MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("Click to sort by from"), Qt::ToolTipRole);
     } else {
         MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("To"));
+		MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("Click to sort by to"), Qt::ToolTipRole);
     }
 
     if (bFill) {

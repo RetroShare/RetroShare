@@ -33,28 +33,28 @@
         <translation>sulje</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="61"/>
-        <location filename="../gui/AboutDialog.cpp" line="149"/>
+        <location filename="../gui/AboutDialog.cpp" line="62"/>
+        <location filename="../gui/AboutDialog.cpp" line="150"/>
         <source>About RetroShare %1</source>
         <translation>Tietoja RetroSharesta %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="85"/>
+        <location filename="../gui/AboutDialog.cpp" line="86"/>
         <source>Max score: %1</source>
         <translation>Max. pisteet: %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="129"/>
+        <location filename="../gui/AboutDialog.cpp" line="130"/>
         <source>Score: %1</source>
         <translation>Pisteet: %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="133"/>
+        <location filename="../gui/AboutDialog.cpp" line="134"/>
         <source>Level: %1</source>
         <translation>Taso: %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="153"/>
+        <location filename="../gui/AboutDialog.cpp" line="154"/>
         <source>Have fun ;-)</source>
         <translation>Pidä hauskaa ;-)</translation>
     </message>
@@ -934,32 +934,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="620"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="644"/>
         <source>Certificate files</source>
         <translation>Varmennetiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="646"/>
         <source>Use PGP certificates saved in files.</source>
         <translation>Käytä tiedostoihin tallennettuja PGP-varmenteita.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="624"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="648"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
         <translation>Sinun tulee generoida tiedosto, joka sisältää varmenteesi ja antaa se ystävällesi. Voit myös käyttää aiemmin generoitua tiedostoa.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="633"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="657"/>
         <source>Export my certificate...</source>
         <translation>Vie varmenteeni...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="651"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="675"/>
         <source>Browse</source>
         <translation>Selaa</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="670"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="694"/>
         <source>Select Certificate</source>
         <translation>Valitse varmenne</translation>
     </message>
@@ -968,62 +968,62 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Varmenteet (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="694"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="718"/>
         <source>Please choose a filename</source>
         <translation>Ole hyvä ja valitse tiedostonimi</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="687"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="703"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="707"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="713"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="711"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="727"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="731"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="737"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="642"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="666"/>
         <source>Import friend&apos;s certificate...</source>
         <translation>Tuo ystävän varmenne...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="645"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="669"/>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
         <translation>Vedä ja pudota ystäviesi varmenteita tähän ikkunaan tai määritä polku allaolevaan laatikkoon</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="671"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="696"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="695"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="720"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="688"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="712"/>
         <source>Sorry, create certificate failed</source>
         <translation>Varmenteen luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="704"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="728"/>
         <source>Certificate file successfully created</source>
         <translation>Varmennetiedosto luotiin</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="708"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="714"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="732"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="738"/>
         <source>Sorry, certificate file creation failed</source>
         <translation>Varmennetiedoston luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="796"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="821"/>
         <source>Certificate Load Failed:something is wrong with %1 </source>
         <translation>Varmenteen avaaminen epäonnistui: jotakin on vialla %1 </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="800"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="825"/>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
         <translation>Varmenteen avaaminen epäonnistui: ei voitu lukea tiedostosta %1 </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="805"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="830"/>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation>Varmenteen avaaminen epäonnistui: tiedostoa %1 ei löydy</translation>
     </message>
@@ -1109,56 +1109,70 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="223"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Toggle Message Read Status&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Vaihda viestin lukemistilaa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="264"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="229"/>
+        <source>Toggle Message Read Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="266"/>
         <source>New</source>
         <translation>Uusi</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="276"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="278"/>
         <source>Download</source>
         <translation>Lataa</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="292"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="294"/>
         <source>Play</source>
         <translation>Toista</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="357"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="376"/>
         <source>Remove Item</source>
         <translation>Poista kohde</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="383"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="316"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="402"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="319"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="331"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="431"/>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="350"/>
         <source>Unsubscribe From Channel</source>
         <translation>Lopeta kanavan tilaus</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="214"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="106"/>
+        <source>Channel Feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="218"/>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
         <translation>Varoitus! Sinulla on vähemmän kuin %1 tuntia ja %2 minuuttia ennen kuin tämä tiedosto tuhotaan. Harkitse sen tallentamista.</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="310"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="313"/>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>
@@ -1166,24 +1180,39 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanNewItem</name>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.ui" line="169"/>
+        <location filename="../gui/feeds/ChanNewItem.ui" line="175"/>
         <source>Remove Item</source>
         <translation>Poista kohde</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.ui" line="129"/>
+        <location filename="../gui/feeds/ChanNewItem.ui" line="135"/>
         <source>Subscribe to Channel</source>
         <translation>Tilaa kanava</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.ui" line="149"/>
+        <location filename="../gui/feeds/ChanNewItem.ui" line="155"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.ui" line="213"/>
+        <location filename="../gui/feeds/ChanNewItem.ui" line="219"/>
         <source>Channel Decscription</source>
         <translation>Kanavan kuvaus</translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanNewItem.cpp" line="104"/>
+        <source>Unknown Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanNewItem.cpp" line="111"/>
+        <source>New Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanNewItem.cpp" line="115"/>
+        <source>Updated Channel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1273,12 +1302,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChannelFeed</name>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="584"/>
+        <location filename="../gui/ChannelFeed.ui" line="626"/>
         <source>Create Channel</source>
         <translation>Luo kanava</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="417"/>
+        <location filename="../gui/ChannelFeed.ui" line="426"/>
         <source>Subscribe To Channel</source>
         <translation>Tilaa kanava</translation>
     </message>
@@ -1312,34 +1341,39 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Kanavat&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="148"/>
+        <location filename="../gui/ChannelFeed.ui" line="151"/>
         <source>Add</source>
         <translation>Lisää</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="221"/>
+        <location filename="../gui/ChannelFeed.ui" line="230"/>
         <source>Display</source>
         <translation type="unfinished">Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="369"/>
+        <location filename="../gui/ChannelFeed.ui" line="378"/>
         <source>Unsubcribe To Channel</source>
         <translation>Lopeta kanavan tilaus</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="392"/>
+        <location filename="../gui/ChannelFeed.ui" line="401"/>
         <source>Unsubscribe</source>
         <translation>Lopeta tilaus</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="440"/>
+        <location filename="../gui/ChannelFeed.ui" line="449"/>
         <source>Subscribe</source>
         <translation>Tilaa</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="496"/>
+        <location filename="../gui/ChannelFeed.ui" line="505"/>
         <source>Set all to read</source>
         <translation>Merkitse kaikki luetuiksi</translation>
+    </message>
+    <message>
+        <location filename="../gui/ChannelFeed.ui" line="538"/>
+        <source>Enable Auto-download</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Name</source>
@@ -1350,67 +1384,82 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Suosio</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="82"/>
+        <location filename="../gui/ChannelFeed.cpp" line="84"/>
         <source>Own Channels</source>
         <translation>Omat kanavat</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="83"/>
+        <location filename="../gui/ChannelFeed.cpp" line="85"/>
         <source>Subscribed Channels</source>
         <translation>Tilatut kanavat</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="84"/>
+        <location filename="../gui/ChannelFeed.cpp" line="86"/>
         <source>Popular Channels</source>
         <translation>Suositut kanavat</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="85"/>
+        <location filename="../gui/ChannelFeed.cpp" line="87"/>
         <source>Other Channels</source>
         <translation>Muut kanavat</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="159"/>
+        <location filename="../gui/ChannelFeed.cpp" line="162"/>
         <source>Share Channel</source>
         <translation>Jaa kanava</translation>
+    </message>
+    <message>
+        <location filename="../gui/ChannelFeed.cpp" line="190"/>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <location filename="../gui/ChannelFeed.cpp" line="647"/>
+        <source>Disable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ChannelFeed.cpp" line="649"/>
+        <source>Enable Auto-Download</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Popularity: %1</source>
         <translation type="obsolete">Suosio: %1</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="418"/>
+        <location filename="../gui/ChannelFeed.cpp" line="447"/>
         <source>No Channel Selected</source>
         <translation>Ei kanavaa valittuna</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="201"/>
-        <location filename="../gui/ChannelFeed.cpp" line="141"/>
+        <location filename="../gui/ChannelFeed.ui" line="207"/>
+        <location filename="../gui/ChannelFeed.cpp" line="144"/>
         <source>Post to Channel</source>
         <translation>Lähetä viesti kanavaan</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="144"/>
+        <location filename="../gui/ChannelFeed.cpp" line="147"/>
         <source>Subscribe to Channel</source>
         <translation>Tilaa kanava</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="147"/>
+        <location filename="../gui/ChannelFeed.cpp" line="150"/>
         <source>Unsubscribe to Channel</source>
         <translation>Lopeta kanavan tilaus</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="150"/>
+        <location filename="../gui/ChannelFeed.cpp" line="153"/>
         <source>Show Channel Details</source>
         <translation>Näytä kanavan yksityiskohdat</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="153"/>
+        <location filename="../gui/ChannelFeed.cpp" line="156"/>
         <source>Restore Publish Rights for Channel</source>
         <translation>Palauta kanavan julkaisuoikeudet</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="156"/>
+        <location filename="../gui/ChannelFeed.cpp" line="159"/>
         <source>Edit Channel Details</source>
         <translation>Muokkaa kanavan yksityiskohtia</translation>
     </message>
@@ -1627,17 +1676,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="362"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="440"/>
         <source>Standard style for group chat</source>
         <translation>Vakiotyyli ryhmäkeskustelulle</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="369"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="447"/>
         <source>Standard style for private chat</source>
         <translation>Vakiotyyli yksityiselle keskustelulle</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="376"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="454"/>
         <source>Standard style for history</source>
         <translation>Vakiotyyli historialle</translation>
     </message>
@@ -1645,67 +1694,67 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="849"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="874"/>
         <source>Make Friend</source>
         <translation>Tee ystäväksi</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="851"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="876"/>
         <source>Details about your friend : </source>
         <translation>Tietoja ystävästä:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="858"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="883"/>
         <source>Key validity:</source>
         <translation>Avaimen kelpoisuus:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="866"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="891"/>
         <source>Email:</source>
         <translation>Sähköposti:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="882"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="907"/>
         <source>Options</source>
         <translation>Valinnat</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="885"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="910"/>
         <source>Add friend to group:</source>
         <translation>Lisää ystävä ryhmään:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="895"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="920"/>
         <source>Authenticate friend (Sign GPG Key)</source>
         <translation>Varmenna ystävä (GPG-allekirjoitus)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="898"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="923"/>
         <source>Add as friend to connect with</source>
         <translation>Lisää ystäväksi, johon ottaa yhteys</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1011"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1037"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
         <translation>Ystäväsi näyttää olevan jo rekisteröitynyt. Hänen lisäämisensä saattaa ainoastaan määrittää IP-osoitteen.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="854"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="879"/>
         <source>Peer details</source>
         <translation>Vertaisen yksityiskohdat</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="862"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="887"/>
         <source>Name:</source>
         <translation>Nimi:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="870"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="895"/>
         <source>Loc:</source>
         <translation>Sijainti:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="874"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="899"/>
         <source>Signers</source>
         <translation>Allekirjoittajat</translation>
     </message>
@@ -1713,7 +1762,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="647"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="665"/>
         <source>Cancel</source>
         <translation>Peru</translation>
     </message>
@@ -1738,7 +1787,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Allekirjoita varmenne</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="634"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="652"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -1822,23 +1871,45 @@ p, li { white-space: pre-wrap; }
         <translation>Täysi</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="544"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="491"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="520"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="562"/>
         <source>Deny Friend</source>
         <translation>Torju ystävä</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="564"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="582"/>
         <source>Make Friend</source>
         <translation>Tee ystäväksi</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="603"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="621"/>
         <source>Certificate</source>
         <translation>Varmenne</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="491"/>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="511"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="500"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="529"/>
         <source>Sign GPG key</source>
         <translation>Allekirjoita GPG-avain</translation>
     </message>
@@ -1889,79 +1960,79 @@ p, li { white-space: pre-wrap; }
         <translation>Vertaisen avaimen on allekirjoittanut:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="631"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="649"/>
         <source>Apply and Close</source>
         <translation>Käytä ja sulje</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="128"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="329"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="134"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="335"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="129"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="330"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="135"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="336"/>
         <source>Error : cannot get peer details.</source>
         <translation>Virhe: vertaisen yksityiskohtia ei saatu.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="209"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="215"/>
         <source>Your key is signed by : </source>
         <translation>Avaimesi on allekirjoittanut:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="218"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="224"/>
         <source>Peer key is signed by : </source>
         <translation>Vertaisen avaimen on allekirjoittanut:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="245"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="251"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
         <translation>Luottamuksesi tähän vertaiseen on äärimmäinen, se on luultavasti oma avaimesi.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="254"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="260"/>
         <source>Your trust in this peer is full.</source>
         <translation>Luottamuksesi tähän vertaiseen on täysi.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="260"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="266"/>
         <source>Your trust in this peer is marginal.</source>
         <translation>Luottamuksesi tähän vertaiseen on rajallinen.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="266"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="272"/>
         <source>Your trust in this peer is none.</source>
         <translation>Luottamuksesi tähän vertaiseen on nolla.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="272"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="278"/>
         <source>Your trust in this peer is not set.</source>
         <translation>Luottamustasi tähän vertaiseen ei ole asetettu.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="294"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="300"/>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
         <translation>Vertainen on varmentanut minut ystäväkseen ja allekirjoittanut GPG-avaimeni</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="296"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="302"/>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
         <translation>Vertainen ei ole varmentanut minua ystäväkseen, eikä allekirjoittanut GPG-avaintani</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="408"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="414"/>
         <source>Signature Failure</source>
         <translation>Virhe allekirjoitettaessa</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="409"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="415"/>
         <source>Maybe password is wrong</source>
         <translation>Salasana saattaa olla väärä</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="440"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="446"/>
         <source>Copy Peer</source>
         <translation>Kopioi vertainen</translation>
     </message>
@@ -2632,33 +2703,49 @@ p, li { white-space: pre-wrap; }
         <translation>Vedä ja pudota tiedostoja hakutuloksista</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="300"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="162"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="168"/>
+        <source>Drop file error.</source>
+        <translation type="unfinished">Virhe pudotettaessa tiedostoa.</translation>
+    </message>
+    <message>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="162"/>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="168"/>
+        <source>File not found or file name not accepted.</source>
+        <translation type="unfinished">Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
+    </message>
+    <message>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="309"/>
         <source>Add Extra File</source>
         <translation>Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="327"/>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="529"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="336"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="538"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="328"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="337"/>
         <source>File already Added and Hashed</source>
         <translation>Tiedosto on jo lisätty ja tiivistetty (hash)</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="530"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="539"/>
         <source>Please add a Subject</source>
         <translation>Ole hyvä ja lisää aihe</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="571"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="580"/>
         <source>Load File</source>
         <translation>Avaa tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="571"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="580"/>
         <source>Pictures (*.png *.xpm *.jpg)</source>
         <translation>Kuvat (*.png *.xpm *.jpg)</translation>
     </message>
@@ -2751,7 +2838,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateForumMsg</name>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="330"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="342"/>
         <source>Close</source>
         <translation>Sulje</translation>
     </message>
@@ -2766,17 +2853,17 @@ p, li { white-space: pre-wrap; }
         <translation>Foorumi</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="114"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="117"/>
         <source>Attach File</source>
         <translation>Liitä tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="225"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="237"/>
         <source>Forum Post</source>
         <translation>Foorumikirjoitus</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="157"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="166"/>
         <source>Sign Message</source>
         <translation>Allekirjoita viesti</translation>
     </message>
@@ -2786,23 +2873,23 @@ p, li { white-space: pre-wrap; }
         <translation>Aihe</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="190"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="202"/>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="73"/>
         <source>Paste RetroShare Link</source>
         <translation>Liitä RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="248"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="260"/>
         <source>Attach files via drag and drop</source>
         <translation>Liitä tiedostoja vetämällä ja pudottamalla</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="254"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="266"/>
         <source>You can attach files via drag and drop here in this window</source>
         <translation>Voit liittää tiedostoja vetämällä ja pudottamalla niitä tähän ikkunaan</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="321"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="333"/>
         <source>Post Forum Msg</source>
         <translation>Lähetä viesti foorumiin</translation>
     </message>
@@ -2833,17 +2920,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="290"/>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="294"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="296"/>
         <source>Drop file error.</source>
         <translation>Virhe pudotettaessa tiedostoa.</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="290"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="296"/>
         <source>File not found or file name not accepted.</source>
         <translation>Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="294"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="290"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Hakemistoa ei voi pudottaa, ainoastaan tiedostot ovat hyväksyttyjä.</translation>
     </message>
@@ -3186,7 +3273,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="361"/>
-        <location filename="../gui/DetailsDialog.cpp" line="42"/>
+        <location filename="../gui/DetailsDialog.cpp" line="41"/>
         <source>Comments</source>
         <translation>Kommentit</translation>
     </message>
@@ -3212,22 +3299,22 @@ p, li { white-space: pre-wrap; }
         <translation>Peru</translation>
     </message>
     <message>
-        <location filename="../gui/DetailsDialog.cpp" line="41"/>
+        <location filename="../gui/DetailsDialog.cpp" line="40"/>
         <source>Rating</source>
         <translation>Arvostelu</translation>
     </message>
     <message>
-        <location filename="../gui/DetailsDialog.cpp" line="43"/>
+        <location filename="../gui/DetailsDialog.cpp" line="42"/>
         <source>File Name</source>
         <translation>Tiedoston nimi</translation>
     </message>
     <message>
-        <location filename="../gui/DetailsDialog.cpp" line="106"/>
+        <location filename="../gui/DetailsDialog.cpp" line="105"/>
         <source>Not Rated</source>
         <translation>Ei arvosteltu</translation>
     </message>
     <message>
-        <location filename="../gui/DetailsDialog.cpp" line="109"/>
+        <location filename="../gui/DetailsDialog.cpp" line="108"/>
         <source>No Comments</source>
         <translation>Ei kommentteja</translation>
     </message>
@@ -3255,17 +3342,17 @@ p, li { white-space: pre-wrap; }
         <translation>Sisääntulevien hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="560"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="563"/>
         <source>Partials Directory</source>
         <translation>Keskeneräisten hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="619"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="625"/>
         <source>Automatically share incoming directory (Recommended)</source>
         <translation>Jaa sisääntulevien hakemisto automaattisesti (suositeltavaa)</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="640"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="646"/>
         <source>Remember file hashes even if not shared. 
 This might be useful if you&apos;re sharing an 
 external HD, to avoid re-hashing files when 
@@ -3276,32 +3363,42 @@ kiintolevyltä, jolloin voit välttyä tekemästä tiivisteitä
 tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="646"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="652"/>
         <source>Remember hashed files for </source>
         <translation>Muista tiivistetyt (hashed) tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="656"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="662"/>
         <source> days</source>
         <translation>päivää</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="672"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="678"/>
         <source>Forget any hashed file that is not anymore shared.</source>
         <translation>Unohda kaikki tiivistetyt (hashed) tiedostot, jotka eivät ole enää jaossa.</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="675"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="681"/>
         <source>Clean Hash Cache</source>
         <translation>Tyhjennä tiivisteiden (hash) välimuisti</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="605"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="692"/>
+        <source>Auto-check shared directories every </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="702"/>
+        <source> minute(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="611"/>
         <source>Shared Directories</source>
         <translation>Jaetut hakemistot</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.ui" line="629"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="635"/>
         <source>Edit Share</source>
         <translation>Muokkaa jakoa</translation>
     </message>
@@ -3310,33 +3407,30 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
         <translation type="obsolete">Sisääntulevat tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="40"/>
         <source>Add a Share Directory</source>
-        <translation>Lisää jaettu hakemisto</translation>
+        <translation type="obsolete">Lisää jaettu hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="41"/>
         <source>Remove Shared Directory</source>
-        <translation>Poista jaettu hakemisto</translation>
+        <translation type="obsolete">Poista jaettu hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="44"/>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="45"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="540"/>
+        <location filename="../gui/settings/DirectoriesPage.ui" line="588"/>
         <source>Browse</source>
         <translation>Selaa</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="194"/>
         <source>Add Shared Directory</source>
-        <translation>Lisää jaettu hakemisto</translation>
+        <translation type="obsolete">Lisää jaettu hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="223"/>
+        <location filename="../gui/settings/DirectoriesPage.cpp" line="173"/>
         <source>Set Incoming Directory</source>
         <translation>Määritä sisääntulevien hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="252"/>
+        <location filename="../gui/settings/DirectoriesPage.cpp" line="189"/>
         <source>Set Partials Directory</source>
         <translation>Määritä keskeneräisten hakemisto</translation>
     </message>
@@ -3470,37 +3564,37 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1155"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1181"/>
         <source>Invite Friends by Email</source>
         <translation>Kutsu ystäviä sähköpostilla</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1157"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1183"/>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
         <translation>Kirjoita ystäviesi sähköpostiosoitteet (erottele osoitteet puolipisteellä)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1159"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1185"/>
         <source>Your friends&apos; email addresses:</source>
         <translation>Ystäviesi sähköpostiosoitteet:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1161"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1187"/>
         <source>Enter Friends Email addresses</source>
         <translation>Kirjoita ystäviesi sähköpostiosoitteet</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1164"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1190"/>
         <source>Subject:</source>
         <translation>Aihe:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1166"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1192"/>
         <source>Friend invites you to check out RetroShare</source>
         <translation>Ystäväsi kutsuu sinut kokeilemaan RetroSharea</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1180"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1206"/>
         <source>Friend uses RetroShare to communicate securely, and invites you to join him to share files together. &lt;br&gt;RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. &lt;br&gt;For more information, see our website http://retroshare.sourceforge.net/ or download the software here http://retroshare.sourceforge.net/downloads.html. &lt;br&gt;See you soon on RetroShare!</source>
         <translation>Ystäväsi käyttää RetroSharea kommunikoidakseen turvallisesti ja kutsuu sinut jakamaan kanssaan tiedostoja. &lt;br&gt;RetroShare on ilmainen ja sen käyttäminen on turvallista: se ei sisällä viruksia, vakoiluohjelmia, eikä mainoksia ja sen asennus voidaan poistaa vaivattomasti. &lt;br&gt;Lisätietoja saat verkkosivuiltamme http://retroshare.sourceforge.net tai voit ladata ohjelman täältä: http://retroshare.sourceforge.net/downloads.html &lt;br&gt;Pikaisiin näkemisiin RetroSharessa!</translation>
     </message>
@@ -3508,12 +3602,12 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="824"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="849"/>
         <source>Sorry, some error appeared</source>
         <translation>Valitettavasti on tapahtunut jokin virhe</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="825"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="850"/>
         <source>Here is the error message: </source>
         <translation>Tässä on virheen viesti:</translation>
     </message>
@@ -3867,59 +3961,97 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FlatStyle_RDM</name>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="664"/>
+        <source>Friends Directories</source>
+        <translation type="unfinished">Ystävien hakemistot</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="666"/>
+        <source>My Directories</source>
+        <translation type="unfinished">Omat hakemistot</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="668"/>
+        <source>Size</source>
+        <translation type="unfinished">Koko</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="670"/>
+        <source>Age</source>
+        <translation type="unfinished">Ikä</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="673"/>
+        <source>Friend</source>
+        <translation type="unfinished">Ystävä</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="675"/>
+        <source>Share Type</source>
+        <translation type="unfinished">Jakamisen tyyppi</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="677"/>
+        <source>Directory</source>
+        <translation type="unfinished">Hakemisto</translation>
+    </message>
+</context>
+<context>
     <name>FofPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="442"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="466"/>
         <source>Friends of friends</source>
         <translation>Ystävien ystävät</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="444"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="468"/>
         <source>Select now who you want to make friends with.</source>
         <translation>Valitse nyt, kenen kanssa haluat ystävystyä.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="446"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="470"/>
         <source>Show me: </source>
         <translation>Näytä minulle:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="448"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="472"/>
         <source>Any peer I&apos;ve not signed</source>
         <translation>Kaikki vertaiset, joita en ole allekirjoittanut</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="449"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="473"/>
         <source>Friends of my friends who already trust me</source>
         <translation>Ystävieni ystävät, jotka jo luottavat minuun</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="450"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="474"/>
         <source>Signed peers showing as denied</source>
         <translation>Allekirjoitetut vertaiset, jotka näkyvät torjuttuina</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="454"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="478"/>
         <source>Peer name</source>
         <translation>Vertaisen nimi</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="455"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="479"/>
         <source>Also signed by</source>
         <translation>Muita allekirjoittaneita</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="456"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="480"/>
         <source>Peer id</source>
         <translation>Vertaisen tunniste</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="458"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="482"/>
         <source>Make friend with these peers</source>
         <translation>Ystävysty näiden vertaisten kanssa</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="559"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="583"/>
         <source>*** None ***</source>
         <translation>***Ei mitään***</translation>
     </message>
@@ -4001,66 +4133,66 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="161"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="266"/>
         <source>Remove Item</source>
         <translation>Poista kohde</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="141"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="246"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="198"/>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="374"/>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="535"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="161"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="350"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="517"/>
         <source>Subject: </source>
         <translation>Aihe:</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="257"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="206"/>
         <source>Unsubscribe To Forum</source>
         <translation>Lopeta foorumin tilaus</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="293"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="226"/>
         <source>Reply</source>
         <translation>Vastaa</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="624"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="609"/>
         <source>Send</source>
         <translation type="unfinished">Lähetä</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="631"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="616"/>
         <source>Signed</source>
         <translation type="unfinished">Allekirjoitettu</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="89"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="93"/>
         <source>Forum Post</source>
         <translation type="unfinished">Foorumikirjoitus</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="114"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="118"/>
         <source>Unknown Forum Post</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="146"/>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="169"/>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="196"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="155"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="180"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="211"/>
         <source>Anonymous</source>
         <translation type="unfinished">Nimetön</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="180"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="191"/>
         <source>In Reply to</source>
         <translation>Vastauksena viestiin</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="354"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="359"/>
         <source>Please give a Text Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4073,22 +4205,22 @@ p, li { white-space: pre-wrap; }
         <translation>Lomake</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumNewItem.ui" line="203"/>
+        <location filename="../gui/feeds/ForumNewItem.ui" line="206"/>
         <source>Remove Item</source>
         <translation>Poista kohde</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumNewItem.ui" line="136"/>
+        <location filename="../gui/feeds/ForumNewItem.ui" line="139"/>
         <source>Subscribe to Forum</source>
         <translation>Tilaa foorumi</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumNewItem.ui" line="183"/>
+        <location filename="../gui/feeds/ForumNewItem.ui" line="186"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumNewItem.ui" line="237"/>
+        <location filename="../gui/feeds/ForumNewItem.ui" line="240"/>
         <source>Forum Description</source>
         <translation>Foorumin kuvaus</translation>
     </message>
@@ -4114,115 +4246,121 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="271"/>
+        <location filename="../gui/ForumsDialog.cpp" line="277"/>
         <source>Subscribe to Forum</source>
         <translation>Subscribe to Forum</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="274"/>
+        <location filename="../gui/ForumsDialog.cpp" line="280"/>
         <source>Unsubscribe to Forum</source>
         <translation>Lopeta foorumin tilaus</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="281"/>
+        <location filename="../gui/ForumsDialog.cpp" line="285"/>
         <source>New Forum</source>
         <translation>Uusi foorumi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="283"/>
+        <location filename="../gui/ForumsDialog.cpp" line="287"/>
         <source>Show Forum Details</source>
         <translation>Näytä foorumin yksityiskohdat</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="286"/>
+        <location filename="../gui/ForumsDialog.cpp" line="290"/>
         <source>Edit Forum Details</source>
         <translation>Muokkaa foorumin yksityiskohtia</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="290"/>
+        <location filename="../gui/ForumsDialog.cpp" line="293"/>
         <source>Restore Publish Rights for Forum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="311"/>
+        <location filename="../gui/ForumsDialog.cpp" line="299"/>
+        <location filename="../gui/ForumsDialog.cpp" line="392"/>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <location filename="../gui/ForumsDialog.cpp" line="317"/>
         <source>Reply</source>
         <translation>Vastaa</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="318"/>
+        <location filename="../gui/ForumsDialog.cpp" line="324"/>
         <source>Reply to Author</source>
         <translation>Vastaa kirjoittajalle</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="321"/>
+        <location filename="../gui/ForumsDialog.cpp" line="327"/>
         <source>Expand all</source>
         <translation>Laajenna kaikki</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="324"/>
+        <location filename="../gui/ForumsDialog.cpp" line="330"/>
         <source>Collapse all</source>
         <translation>Kutista kaikki</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="466"/>
+        <location filename="../gui/ForumsDialog.cpp" line="489"/>
         <source>AUTHD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="190"/>
+        <location filename="../gui/ForumsDialog.cpp" line="193"/>
         <source>Your Forums</source>
         <translation>Foorumisi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="191"/>
+        <location filename="../gui/ForumsDialog.cpp" line="194"/>
         <source>Subscribed Forums</source>
         <translation>Tilatut foorumit</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="192"/>
+        <location filename="../gui/ForumsDialog.cpp" line="195"/>
         <source>Popular Forums</source>
         <translation>Suositut foorumit</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="193"/>
+        <location filename="../gui/ForumsDialog.cpp" line="196"/>
         <source>Other Forums</source>
         <translation>Muut foorumit</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="327"/>
-        <location filename="../gui/ForumsDialog.cpp" line="330"/>
+        <location filename="../gui/ForumsDialog.cpp" line="333"/>
+        <location filename="../gui/ForumsDialog.cpp" line="336"/>
         <source>Mark as read</source>
         <translation>Merkitse luetuksi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="333"/>
-        <location filename="../gui/ForumsDialog.cpp" line="336"/>
+        <location filename="../gui/ForumsDialog.cpp" line="339"/>
+        <location filename="../gui/ForumsDialog.cpp" line="342"/>
         <source>Mark as unread</source>
         <translation>Merkitse lukemattomaksi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="330"/>
         <location filename="../gui/ForumsDialog.cpp" line="336"/>
+        <location filename="../gui/ForumsDialog.cpp" line="342"/>
         <source>with children</source>
         <translation>jälkeläisten kanssa</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="298"/>
+        <location filename="../gui/ForumsDialog.cpp" line="304"/>
         <source>Mark all as read</source>
         <translation>Merkitse kaikki luetuiksi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="301"/>
+        <location filename="../gui/ForumsDialog.cpp" line="307"/>
         <source>Mark all as unread</source>
         <translation>Merkitse kaikki lukemattomiksi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="418"/>
+        <location filename="../gui/ForumsDialog.cpp" line="441"/>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="422"/>
+        <location filename="../gui/ForumsDialog.cpp" line="445"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
@@ -4231,54 +4369,54 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Suosio:</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="794"/>
-        <location filename="../gui/ForumsDialog.cpp" line="901"/>
+        <location filename="../gui/ForumsDialog.cpp" line="817"/>
+        <location filename="../gui/ForumsDialog.cpp" line="924"/>
         <source>Anonymous</source>
         <translation>Nimetön</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="799"/>
-        <location filename="../gui/ForumsDialog.cpp" line="906"/>
+        <location filename="../gui/ForumsDialog.cpp" line="822"/>
+        <location filename="../gui/ForumsDialog.cpp" line="929"/>
         <source>signed</source>
         <translation>allekirjoitettu</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="804"/>
-        <location filename="../gui/ForumsDialog.cpp" line="911"/>
+        <location filename="../gui/ForumsDialog.cpp" line="827"/>
+        <location filename="../gui/ForumsDialog.cpp" line="934"/>
         <source>none</source>
         <translation>ei mitään</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="1419"/>
-        <location filename="../gui/ForumsDialog.cpp" line="1500"/>
+        <location filename="../gui/ForumsDialog.cpp" line="1490"/>
+        <location filename="../gui/ForumsDialog.cpp" line="1571"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="1419"/>
+        <location filename="../gui/ForumsDialog.cpp" line="1490"/>
         <source>No Forum Selected!</source>
         <translation>Ei valittua foorumia!</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="1500"/>
+        <location filename="../gui/ForumsDialog.cpp" line="1571"/>
         <source>You cant reply a Anonymous Author</source>
         <translation>Et voi vastata nimettömälle kirjoittajalle</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="862"/>
-        <location filename="../gui/ForumsDialog.ui" line="1126"/>
+        <location filename="../gui/ForumsDialog.ui" line="871"/>
+        <location filename="../gui/ForumsDialog.ui" line="1161"/>
         <source>Date</source>
         <translation>Päiväys</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="848"/>
-        <location filename="../gui/ForumsDialog.ui" line="1131"/>
+        <location filename="../gui/ForumsDialog.ui" line="857"/>
+        <location filename="../gui/ForumsDialog.ui" line="1166"/>
         <source>Title</source>
         <translation>Otsikko</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="314"/>
-        <location filename="../gui/ForumsDialog.cpp" line="1424"/>
+        <location filename="../gui/ForumsDialog.cpp" line="320"/>
+        <location filename="../gui/ForumsDialog.cpp" line="1495"/>
         <source>Start New Thread</source>
         <translation>Aloita uusi viestiketju</translation>
     </message>
@@ -4287,7 +4425,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Uusi viesti</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="623"/>
+        <location filename="../gui/ForumsDialog.ui" line="626"/>
         <source>Add</source>
         <translation>Lisää</translation>
     </message>
@@ -4296,7 +4434,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">RetroSharen foorumit</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="769"/>
+        <location filename="../gui/ForumsDialog.ui" line="778"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4309,33 +4447,33 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Foorumi:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="816"/>
+        <location filename="../gui/ForumsDialog.ui" line="825"/>
         <source>Last Post</source>
         <translation>Viimeisin viesti</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="821"/>
+        <location filename="../gui/ForumsDialog.ui" line="830"/>
         <source>Threaded View</source>
         <translation>Ketjunäkymä</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="826"/>
+        <location filename="../gui/ForumsDialog.ui" line="835"/>
         <source>Flat View</source>
         <translation>Tasanäkymä</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="867"/>
-        <location filename="../gui/ForumsDialog.ui" line="1136"/>
+        <location filename="../gui/ForumsDialog.ui" line="876"/>
+        <location filename="../gui/ForumsDialog.ui" line="1171"/>
         <source>Author</source>
         <translation>Kirjoittaja</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="872"/>
+        <location filename="../gui/ForumsDialog.ui" line="881"/>
         <source>Signed</source>
         <translation>Allekirjoitettu</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="888"/>
+        <location filename="../gui/ForumsDialog.ui" line="897"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4348,7 +4486,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Viestiketju:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1056"/>
+        <location filename="../gui/ForumsDialog.ui" line="1035"/>
+        <source>Download all files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ForumsDialog.ui" line="1088"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4361,22 +4504,22 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Hae foorumeista&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1084"/>
+        <location filename="../gui/ForumsDialog.ui" line="1119"/>
         <source>Reset</source>
         <translation>Palauta asetukset</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1141"/>
+        <location filename="../gui/ForumsDialog.ui" line="1176"/>
         <source>Content</source>
         <translation>Sisältö</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1229"/>
+        <location filename="../gui/ForumsDialog.ui" line="1267"/>
         <source>Create Forum</source>
         <translation>Luo foorumi</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1215"/>
+        <location filename="../gui/ForumsDialog.ui" line="1253"/>
         <source>Print</source>
         <translation>Tulosta</translation>
     </message>
@@ -4394,32 +4537,32 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Foorumit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="664"/>
+        <location filename="../gui/ForumsDialog.ui" line="670"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Aloita uusi viestiketju valitussa foorumissa</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="681"/>
+        <location filename="../gui/ForumsDialog.ui" line="690"/>
         <source>Display</source>
         <translation type="unfinished">Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="942"/>
+        <location filename="../gui/ForumsDialog.ui" line="948"/>
         <source>Previous Thread</source>
         <translation>Edellinen viestiketju</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="977"/>
+        <location filename="../gui/ForumsDialog.ui" line="986"/>
         <source>Next Thread</source>
         <translation>Seuraava viestiketju</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1155"/>
+        <location filename="../gui/ForumsDialog.ui" line="1193"/>
         <source>Reply Message</source>
         <translation>Vastaa viestiin</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="1220"/>
+        <location filename="../gui/ForumsDialog.ui" line="1258"/>
         <source>PrintPreview</source>
         <translation>Tulostuksen esikatselu</translation>
     </message>
@@ -4638,58 +4781,56 @@ p, li { white-space: pre-wrap; }
         <translation>Näyttää siltä, että sinulla ei ole yhtään profiilia (GPG-avaimia). Ole hyvä ja täytä oheinen lomake generoidaksesi profiilin tai käytä omavalintaista gnupg-avainten hallintaohjelmaa.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="616"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;pre style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;;&quot;&gt;Your profile is associated to a GPG key&lt;/span&gt;&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;pre style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;;&quot;&gt;Profiilisi on sidoksissa GPG-avaimeen&lt;/span&gt;&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="623"/>
+        <location filename="../gui/GenCertDialog.ui" line="619"/>
         <source>Generate a new Profile</source>
         <translation>Generoi uusi profiili</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="658"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;; font-size:8pt;&quot;&gt;Your profile is associated to a GPG key&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;; font-size:8pt;&quot;&gt;Profiilisi on sidoksissa GPG-avaimeen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="665"/>
+        <location filename="../gui/GenCertDialog.ui" line="654"/>
         <source>Use Profile</source>
         <translation>Käytä profiilia</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="675"/>
+        <location filename="../gui/GenCertDialog.ui" line="668"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="682"/>
+        <location filename="../gui/GenCertDialog.ui" line="675"/>
         <source>Enter here your nickname</source>
         <translation>Kirjoita nimimerkkisi</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="689"/>
+        <location filename="../gui/GenCertDialog.ui" line="682"/>
         <source>Email</source>
         <translation>Sähköposti</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="696"/>
+        <location filename="../gui/GenCertDialog.ui" line="689"/>
         <source>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by GPG, but to stay 
 anonymous, you can use a fake email.</source>
@@ -4698,27 +4839,32 @@ ystäville. GPG tarvitsee tämän tiedon, mutta pysyäksesi
 nimettömänä voit käyttää keksittyä osoitetta.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="705"/>
+        <location filename="../gui/GenCertDialog.ui" line="698"/>
         <source>This Password is for GPG</source>
         <translation>Tämä salasana on GPG:tä varten</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="708"/>
+        <location filename="../gui/GenCertDialog.ui" line="701"/>
         <source>Password</source>
         <translation>Salasana</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="715"/>
+        <location filename="../gui/GenCertDialog.ui" line="708"/>
         <source>Put a strong password here. This password protects your GPG key.</source>
         <translation>Laita tähän vahva salasana. Tämä salasana suojelee GPG-avaintasi.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="747"/>
+        <location filename="../gui/GenCertDialog.ui" line="721"/>
+        <source>Location</source>
+        <translation type="unfinished">Sijainti</translation>
+    </message>
+    <message>
+        <location filename="../gui/GenCertDialog.ui" line="740"/>
         <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same profile (gpg key).</source>
         <translation>Laita tähän sijainti, jolla on merkitys, esim.: koti, kannettava, jne. Tätä kenttää käytetään erottamaan toisistaan saman profiilin (GPG-avain) eri paikoissa sijaitsevat asennukset.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="883"/>
+        <location filename="../gui/GenCertDialog.ui" line="876"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4731,7 +4877,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Luo uusi profiili&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="894"/>
+        <location filename="../gui/GenCertDialog.ui" line="887"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4750,12 +4896,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Voit asentaa RetroSharen eri paikkoihin ja käyttää silti samaa profiilia (GPG-avain).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="799"/>
+        <location filename="../gui/GenCertDialog.ui" line="792"/>
         <source>Generate New Profile</source>
         <translation>Generoi uusi profiili</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="829"/>
+        <location filename="../gui/GenCertDialog.ui" line="616"/>
+        <location filename="../gui/GenCertDialog.ui" line="661"/>
+        <source>Your profile is associated to a GPG key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/GenCertDialog.ui" line="822"/>
         <source>Info</source>
         <translation>Tiedot</translation>
     </message>
@@ -4853,35 +5005,34 @@ Kirjoita GPG-salasanasi pyydettäessä allekirjoittaaksesi uuden avaimesi.</tran
         <translation>Varmenteet (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="331"/>
-        <location filename="../gui/GenCertDialog.cpp" line="337"/>
+        <location filename="../gui/GenCertDialog.cpp" line="332"/>
+        <location filename="../gui/GenCertDialog.cpp" line="338"/>
         <source>Multiple instances</source>
         <translation>Useita instansseja</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="332"/>
+        <location filename="../gui/GenCertDialog.cpp" line="333"/>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
         <translation>Toinen RetroShare, joka käyttää samaa profiilia on jo käynnissä järjestelmässäsi. Ole hyvä ja sulje se ensin</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="338"/>
+        <location filename="../gui/GenCertDialog.cpp" line="339"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
         <translation>Odottamaton virhe haettaessa yhden instanssin lukitusta</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="342"/>
+        <location filename="../gui/GenCertDialog.cpp" line="343"/>
         <source>Generate ID Failure</source>
         <translation>Virhe generoitaessa tunnistetta</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="343"/>
+        <location filename="../gui/GenCertDialog.cpp" line="344"/>
         <source>Failed to Load your new Certificate!</source>
         <translation>Uuden varmenteesi avaaminen epäonnistui!</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="728"/>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation type="obsolete">Sijainti:</translation>
     </message>
 </context>
 <context>
@@ -5002,17 +5153,22 @@ p, li { white-space: pre-wrap; }
         <translation>Automaattinen kirjautuminen</translation>
     </message>
     <message>
-        <location filename="../gui/settings/GeneralPage.ui" line="605"/>
+        <location filename="../gui/settings/GeneralPage.ui" line="589"/>
+        <source>Register retroshare:// as url protocol (Restart required)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/GeneralPage.ui" line="612"/>
         <source>Idle</source>
         <translation>Jouten</translation>
     </message>
     <message>
-        <location filename="../gui/settings/GeneralPage.ui" line="611"/>
+        <location filename="../gui/settings/GeneralPage.ui" line="618"/>
         <source>Idle Time</source>
         <translation>Joutenoloaika</translation>
     </message>
     <message>
-        <location filename="../gui/settings/GeneralPage.ui" line="618"/>
+        <location filename="../gui/settings/GeneralPage.ui" line="625"/>
         <source> seconds</source>
         <translation>sekuntia</translation>
     </message>
@@ -5096,17 +5252,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.ui" line="130"/>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="136"/>
         <source>Title</source>
         <translation type="unfinished">Otsikko</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.ui" line="135"/>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="141"/>
         <source>Description</source>
         <translation type="unfinished">Kuvaus</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.ui" line="155"/>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="164"/>
         <source>Reset</source>
         <translation type="unfinished">Palauta asetukset</translation>
     </message>
@@ -6413,55 +6569,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="215"/>
+        <location filename="../gui/MainWindow.cpp" line="221"/>
         <source>Network</source>
         <translation>Verkko</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="219"/>
+        <location filename="../gui/MainWindow.cpp" line="225"/>
         <source>Friends</source>
         <translation>Ystävät</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="227"/>
-        <location filename="../gui/MainWindow.cpp" line="514"/>
+        <location filename="../gui/MainWindow.cpp" line="233"/>
+        <location filename="../gui/MainWindow.cpp" line="516"/>
         <source>Transfers</source>
         <translation>Siirrot</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="235"/>
-        <location filename="../gui/MainWindow.cpp" line="446"/>
+        <location filename="../gui/MainWindow.cpp" line="241"/>
+        <location filename="../gui/MainWindow.cpp" line="448"/>
         <source>Messages</source>
         <translation>Viestit</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="238"/>
-        <location filename="../gui/MainWindow.cpp" line="480"/>
+        <location filename="../gui/MainWindow.cpp" line="244"/>
+        <location filename="../gui/MainWindow.cpp" line="482"/>
         <source>Channels</source>
         <translation>Kanavat</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="242"/>
+        <location filename="../gui/MainWindow.cpp" line="248"/>
         <source>Blogs</source>
         <translation>Blogit</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="362"/>
+        <location filename="../gui/MainWindow.cpp" line="364"/>
         <source>Low disk space warning</source>
         <translation>Varoitus: levytila vähissä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="363"/>
+        <location filename="../gui/MainWindow.cpp" line="365"/>
         <source>The disk space in your </source>
         <translation>Levytila </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="363"/>
+        <location filename="../gui/MainWindow.cpp" line="365"/>
         <source> directory is running low (current limit is </source>
         <translation> -hakemistossasi käy vähiin (tämänhetkinen raja on </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="363"/>
+        <location filename="../gui/MainWindow.cpp" line="365"/>
         <source>MB). 
 
  RetroShare will now safely suspend any disk access to this directory. 
@@ -6474,112 +6630,112 @@ p, li { white-space: pre-wrap; }
  Ole hyvä ja vapauta tilaa ja paina Ok.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="375"/>
+        <location filename="../gui/MainWindow.cpp" line="377"/>
         <source>Status</source>
         <translation>Tila</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="497"/>
+        <location filename="../gui/MainWindow.cpp" line="499"/>
         <source>Chat</source>
         <translation>Keskustelu</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="578"/>
-        <location filename="../gui/MainWindow.cpp" line="619"/>
-        <location filename="../gui/MainWindow.cpp" line="660"/>
-        <location filename="../gui/MainWindow.cpp" line="818"/>
+        <location filename="../gui/MainWindow.cpp" line="580"/>
+        <location filename="../gui/MainWindow.cpp" line="621"/>
+        <location filename="../gui/MainWindow.cpp" line="662"/>
+        <location filename="../gui/MainWindow.cpp" line="822"/>
         <source>You have %1 new messages</source>
         <translation>Sinulle on uusia viestejä %1 kpl</translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="591"/>
-        <location filename="../gui/MainWindow.cpp" line="632"/>
-        <location filename="../gui/MainWindow.cpp" line="673"/>
-        <location filename="../gui/MainWindow.cpp" line="831"/>
-        <source>%1 new messages</source>
-        <translation>%1 kappalettal uusia viestejä</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="593"/>
         <location filename="../gui/MainWindow.cpp" line="634"/>
         <location filename="../gui/MainWindow.cpp" line="675"/>
-        <location filename="../gui/MainWindow.cpp" line="833"/>
+        <location filename="../gui/MainWindow.cpp" line="835"/>
+        <source>%1 new messages</source>
+        <translation>%1 kappalettal uusia viestejä</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="595"/>
+        <location filename="../gui/MainWindow.cpp" line="636"/>
+        <location filename="../gui/MainWindow.cpp" line="677"/>
+        <location filename="../gui/MainWindow.cpp" line="837"/>
         <source>%1 new message</source>
         <translation>%1 uusi viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="697"/>
+        <location filename="../gui/MainWindow.cpp" line="699"/>
         <source>You have %1 completed downloads</source>
         <translation>Sinulla on %1 valmista latausta</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="699"/>
+        <location filename="../gui/MainWindow.cpp" line="701"/>
         <source>You have %1 completed download</source>
         <translation>Sinulla on %1 valmis lataus</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="710"/>
+        <location filename="../gui/MainWindow.cpp" line="712"/>
         <source>%1 completed downloads</source>
         <translation>%1 valmiita latauksia</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="712"/>
+        <location filename="../gui/MainWindow.cpp" line="714"/>
         <source>%1 completed download</source>
         <translation>%1 valmis lataus</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="795"/>
+        <location filename="../gui/MainWindow.cpp" line="797"/>
         <source>Down: %1 (kB/s)</source>
         <translation>Lataus: %1 (kB/s)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="795"/>
+        <location filename="../gui/MainWindow.cpp" line="797"/>
         <source>Up: %1 (kB/s)</source>
         <translation>Lähetys: %1 (kB/s)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="798"/>
+        <location filename="../gui/MainWindow.cpp" line="800"/>
         <source>%1 friend connected</source>
         <translation>%1 ystävä yhdistettynä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="800"/>
+        <location filename="../gui/MainWindow.cpp" line="802"/>
         <source>%1 friends connected</source>
         <translation>%1 ystävää yhdistettynä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1116"/>
+        <location filename="../gui/MainWindow.cpp" line="1097"/>
         <source>Internal Error</source>
         <translation>Sisäinen virhe</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1477"/>
+        <location filename="../gui/MainWindow.cpp" line="1458"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Tämä näyttäisi olevan vanha RetroShare-linkki. Käytä mielummin kopiointia.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1483"/>
+        <location filename="../gui/MainWindow.cpp" line="1464"/>
         <source>The file link is malformed.</source>
         <translation>Linkki on virheellinen.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="82"/>
-        <location filename="../gui/MainWindow.cpp" line="1073"/>
+        <location filename="../gui/MainWindow.ui" line="88"/>
+        <location filename="../gui/MainWindow.cpp" line="388"/>
         <source>Options</source>
         <translation>Valinnat</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1149"/>
+        <location filename="../gui/MainWindow.cpp" line="1130"/>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1149"/>
+        <location filename="../gui/MainWindow.cpp" line="1130"/>
         <source>Show</source>
         <translation>Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="397"/>
+        <location filename="../gui/MainWindow.cpp" line="399"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -6593,33 +6749,33 @@ p, li { white-space: pre-wrap; }
         <translation>Pääikkuna</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="61"/>
+        <location filename="../gui/MainWindow.ui" line="67"/>
         <source>Add Friend</source>
         <translation>Lisää ystävä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="64"/>
+        <location filename="../gui/MainWindow.ui" line="70"/>
         <source>Add a Friend Wizard</source>
         <translation>Ohjattu toiminto ystävän lisäämiseksi</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="73"/>
+        <location filename="../gui/MainWindow.ui" line="79"/>
         <source>Add Share</source>
         <translation>Lisää jako</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="126"/>
-        <location filename="../gui/MainWindow.ui" line="129"/>
+        <location filename="../gui/MainWindow.ui" line="132"/>
+        <location filename="../gui/MainWindow.ui" line="135"/>
         <source>Quick Start Wizard</source>
         <translation>Ohjattu nopea käynnistys</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="223"/>
+        <location filename="../gui/MainWindow.cpp" line="229"/>
         <source>Search</source>
         <translation>Etsi</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="231"/>
+        <location filename="../gui/MainWindow.cpp" line="237"/>
         <source>Files</source>
         <translation>Tiedostot</translation>
     </message>
@@ -6628,81 +6784,81 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Lisää jaettu hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="373"/>
+        <location filename="../gui/MainWindow.cpp" line="375"/>
         <source>Show/Hide</source>
         <translation>Piilota/Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="392"/>
+        <location filename="../gui/MainWindow.cpp" line="394"/>
         <source>&amp;Quit</source>
         <translation>Lo&amp;peta</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="580"/>
-        <location filename="../gui/MainWindow.cpp" line="621"/>
-        <location filename="../gui/MainWindow.cpp" line="662"/>
-        <location filename="../gui/MainWindow.cpp" line="820"/>
+        <location filename="../gui/MainWindow.cpp" line="582"/>
+        <location filename="../gui/MainWindow.cpp" line="623"/>
+        <location filename="../gui/MainWindow.cpp" line="664"/>
+        <location filename="../gui/MainWindow.cpp" line="824"/>
         <source>You have %1 new message</source>
         <translation>Sinulle on %1 uusi viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1076"/>
+        <location filename="../gui/MainWindow.cpp" line="383"/>
         <source>Bandwidth Graph</source>
         <translation>Siirtonopeuskuvaaja</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1079"/>
+        <location filename="../gui/MainWindow.cpp" line="381"/>
         <source>Open Messenger</source>
         <translation>Avaa pikaviestin</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="389"/>
+        <location filename="../gui/MainWindow.cpp" line="391"/>
         <source>Minimize</source>
         <translation>Pienennä</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="390"/>
+        <location filename="../gui/MainWindow.cpp" line="392"/>
         <source>Maximize</source>
         <translation>Suurenna</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="250"/>
+        <location filename="../gui/MainWindow.cpp" line="256"/>
         <source>Links Cloud</source>
         <translation>Linkkipilvi</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="174"/>
+        <location filename="../gui/MainWindow.cpp" line="180"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 turvallinen hajautettu kommunikaatioalusta</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="267"/>
+        <location filename="../gui/MainWindow.cpp" line="273"/>
         <source>Unfinished</source>
         <translation>Kesken</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1088"/>
+        <location filename="../gui/MainWindow.cpp" line="389"/>
         <source>Help</source>
         <translation>Ohje</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="103"/>
+        <location filename="../gui/MainWindow.ui" line="109"/>
         <source>About</source>
         <translation>Tietoja</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="246"/>
-        <location filename="../gui/MainWindow.cpp" line="463"/>
+        <location filename="../gui/MainWindow.cpp" line="252"/>
+        <location filename="../gui/MainWindow.cpp" line="465"/>
         <source>Forums</source>
         <translation>Foorumit</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1082"/>
+        <location filename="../gui/MainWindow.cpp" line="382"/>
         <source>Open Messages</source>
         <translation>Avaa viestit</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1085"/>
+        <location filename="../gui/MainWindow.cpp" line="386"/>
         <source>Applications</source>
         <translation>Ohjelmat</translation>
     </message>
@@ -6711,32 +6867,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Asetukset</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="256"/>
+        <location filename="../gui/MainWindow.cpp" line="262"/>
         <source>Plugins</source>
         <translation>Lisäosat</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1103"/>
+        <location filename="../gui/MainWindow.cpp" line="1084"/>
         <source>Really quit ? </source>
         <translation>Lopeta?</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="1101"/>
+        <location filename="../gui/MainWindow.cpp" line="1082"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Haluatko todella poistua RetroSharesta?</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="117"/>
+        <location filename="../gui/MainWindow.ui" line="123"/>
         <source>Quit</source>
         <translation>Lopeta</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="108"/>
+        <location filename="../gui/MainWindow.ui" line="114"/>
         <source>SMPlayer</source>
         <translation>SMPlayer</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="91"/>
+        <location filename="../gui/MainWindow.ui" line="97"/>
         <source>Messenger</source>
         <translation>Pikaviestin</translation>
     </message>
@@ -6745,7 +6901,7 @@ p, li { white-space: pre-wrap; }
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="798"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="791"/>
         <source>Compose</source>
         <translation>Kirjoita viesti</translation>
     </message>
@@ -6981,31 +7137,31 @@ p, li { white-space: pre-wrap; }
         <translation>Tasaa &amp;molemmat reunat</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="409"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="402"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
         <translation>Suosittelen hyvää ystävääni, voit luottaa häneen, kun luotat minuun. &lt;br&gt; Kopioi ystävälinkki ja liitä se ystävälistaan</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="428"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2012"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="421"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2026"/>
         <source>Save Message</source>
         <translation>Tallenna viesti</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="429"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="422"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Viestiä ei ole lähetetty.
 Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="407"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="400"/>
         <source>Friend Recommendation(s)</source>
         <translation>Ystäväsuositukset</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="461"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="477"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="454"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="470"/>
         <source>Paste RetroShare Link</source>
         <translation>Liitä RetroShare-linkki</translation>
     </message>
@@ -7014,222 +7170,222 @@ Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
         <translation type="obsolete">Ei otsikkoa</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1048"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1041"/>
         <source>Re:</source>
         <translation>Vs:</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1055"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1048"/>
         <source>Fwd:</source>
         <translation>Fwd:</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1130"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1249"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1123"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1242"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1130"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1123"/>
         <source>Do you want to send the message without a subject ?</source>
         <translation>Haluatko lähettää viestin ilman otsikkoa?</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1249"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1242"/>
         <source>Please insert at least one recipient.</source>
         <translation>Ole hyvä ja lisää ainakin yksi vastaanottaja.</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1327"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1320"/>
         <source>To</source>
         <translation>Vastaanottaja</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1328"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1321"/>
         <source>Cc</source>
         <translation>Kopio</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1329"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1322"/>
         <source>Bcc</source>
         <translation>Piilokopio</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1361"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1354"/>
         <source>Unknown</source>
         <translation>Tuntematon</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1376"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1369"/>
         <source>Unknown friend</source>
         <translation>Tuntematon ystävä</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1541"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1555"/>
         <source>&amp;File</source>
         <translation>&amp;Tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1546"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1560"/>
         <source>&amp;New</source>
         <translation>&amp;Uusi</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1551"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1565"/>
         <source>&amp;Open...</source>
         <translation>&amp;Avaa...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1558"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1572"/>
         <source>&amp;Save</source>
         <translation>&amp;Tallenna</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1564"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1578"/>
         <source>Save &amp;As File</source>
         <translation>Tallenna t&amp;iedostona</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1568"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1582"/>
         <source>Save &amp;As Draft</source>
         <translation>Tallenna &amp;luonnoksena</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1573"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1587"/>
         <source>&amp;Print...</source>
         <translation>Tu&amp;losta...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1582"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1596"/>
         <source>&amp;Export PDF...</source>
         <translation>&amp;Vie PDF...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1589"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1603"/>
         <source>&amp;Quit</source>
         <translation>Lo&amp;peta</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1597"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1611"/>
         <source>&amp;Edit</source>
         <translation>&amp;Muokkaa</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1601"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1615"/>
         <source>&amp;Undo</source>
         <translation>K&amp;umoa</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1604"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1618"/>
         <source>&amp;Redo</source>
         <translation>To&amp;ista</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1608"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1622"/>
         <source>Cu&amp;t</source>
         <translation>&amp;Leikkaa</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1611"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1625"/>
         <source>&amp;Copy</source>
         <translation>K&amp;opioi</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1614"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1628"/>
         <source>&amp;Paste</source>
         <translation>Lii&amp;tä</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1622"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1636"/>
         <source>&amp;View</source>
         <translation>&amp;Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1625"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1639"/>
         <source>&amp;Contacts Sidebar</source>
         <translation>&amp;Kontaktit sivupalkissa</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1631"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1645"/>
         <source>&amp;Insert</source>
         <translation>Lis&amp;ää</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1637"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1651"/>
         <source>&amp;Image</source>
         <translation>Ku&amp;va</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1642"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1656"/>
         <source>&amp;Horizontal Line</source>
         <translation>V&amp;aakaviiva</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1650"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1664"/>
         <source>&amp;Format</source>
         <translation>Muotoil&amp;e</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1908"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1922"/>
         <source>Open File...</source>
         <translation>Avaa tiedosto...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1908"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1931"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1922"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1945"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1931"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1945"/>
         <source>Save as...</source>
         <translation>Tallenna nimellä...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1952"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1966"/>
         <source>Print Document</source>
         <translation>Tulosta asiakirja</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1964"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1978"/>
         <source>Export PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2013"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2027"/>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
         <translation>Viestiä ei ole lähetetty.
 Haluatko tallentaa viestin?</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2038"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2052"/>
         <source>Choose Image</source>
         <translation>Valitse kuva</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2038"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2052"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation>Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2149"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2163"/>
         <source>Add Extra File</source>
         <translation>Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2423"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2429"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2437"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2443"/>
         <source>Drop file error.</source>
         <translation>Virhe pudotettaessa tiedostoa.</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2423"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2437"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Hakemistoa ei voi pudottaa, ainoastaan tiedostoja.</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="2429"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="2443"/>
         <source>File not found or file name not accepted.</source>
         <translation>Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
@@ -7328,41 +7484,41 @@ Haluatko tallentaa viestin?</translation>
 <context>
     <name>MessagesDialog</name>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="573"/>
-        <location filename="../gui/MessagesDialog.cpp" line="668"/>
+        <location filename="../gui/MessagesDialog.ui" line="576"/>
+        <location filename="../gui/MessagesDialog.cpp" line="691"/>
         <source>New Message</source>
         <translation>Uusi viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="592"/>
+        <location filename="../gui/MessagesDialog.cpp" line="615"/>
         <source>Reply to Message</source>
         <translation>Vastaa viestiin</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="644"/>
+        <location filename="../gui/MessagesDialog.cpp" line="667"/>
         <source>Remove Message</source>
         <translation>Poista viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="945"/>
-        <location filename="../gui/MessagesDialog.cpp" line="268"/>
+        <location filename="../gui/MessagesDialog.ui" line="969"/>
+        <location filename="../gui/MessagesDialog.cpp" line="264"/>
         <source>Date</source>
         <translation>Päiväys</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="940"/>
-        <location filename="../gui/MessagesDialog.cpp" line="267"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1101"/>
+        <location filename="../gui/MessagesDialog.ui" line="964"/>
+        <location filename="../gui/MessagesDialog.cpp" line="263"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1124"/>
         <source>From</source>
         <translation>Lähettäjä</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1768"/>
+        <location filename="../gui/MessagesDialog.ui" line="1742"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1334"/>
+        <location filename="../gui/MessagesDialog.ui" line="1361"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -7373,17 +7529,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Suositellut tiedostot&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="633"/>
+        <location filename="../gui/MessagesDialog.ui" line="639"/>
         <source>Reply</source>
         <translation>Vastaa</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="671"/>
+        <location filename="../gui/MessagesDialog.ui" line="680"/>
         <source>Reply all</source>
         <translation>Vastaa kaikille</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="709"/>
+        <location filename="../gui/MessagesDialog.ui" line="721"/>
         <source>Foward</source>
         <translation>Välitä</translation>
     </message>
@@ -7395,178 +7551,183 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">poista valittu viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="757"/>
+        <location filename="../gui/MessagesDialog.ui" line="772"/>
         <source>Delete</source>
         <translation>Tuhoa</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="579"/>
+        <location filename="../gui/MessagesDialog.ui" line="582"/>
         <source>Compose</source>
         <translation>Kirjoita viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="627"/>
+        <location filename="../gui/MessagesDialog.ui" line="633"/>
         <source>Reply to selected message</source>
         <translation>Vastaa valittuun viestiin</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="668"/>
+        <location filename="../gui/MessagesDialog.ui" line="677"/>
         <source>Reply all to selected message</source>
         <translation>Vastaa kaikkiin valittuihin viesteihin</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="706"/>
+        <location filename="../gui/MessagesDialog.ui" line="718"/>
         <source>Forward selected message</source>
         <translation>Välitä valittu viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="751"/>
+        <location filename="../gui/MessagesDialog.ui" line="766"/>
         <source>Remove selected message</source>
         <translation>Poista valittu viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="798"/>
+        <location filename="../gui/MessagesDialog.ui" line="816"/>
         <source>Print selected message</source>
         <translation>Tulosta valittu viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="833"/>
+        <location filename="../gui/MessagesDialog.ui" line="854"/>
         <source>Display</source>
         <translation>Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="899"/>
+        <location filename="../gui/MessagesDialog.ui" line="923"/>
         <source>Reset</source>
         <translation>Palauta asetukset</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="930"/>
+        <location filename="../gui/MessagesDialog.ui" line="954"/>
         <source>Attachments</source>
         <translation>Liitteet</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="950"/>
-        <location filename="../gui/MessagesDialog.cpp" line="270"/>
+        <location filename="../gui/MessagesDialog.ui" line="974"/>
+        <location filename="../gui/MessagesDialog.cpp" line="266"/>
         <source>Content</source>
         <translation>Sisältö</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="955"/>
-        <location filename="../gui/MessagesDialog.ui" line="963"/>
-        <location filename="../gui/MessagesDialog.cpp" line="269"/>
-        <location filename="../gui/MessagesDialog.cpp" line="449"/>
+        <location filename="../gui/MessagesDialog.ui" line="979"/>
+        <location filename="../gui/MessagesDialog.ui" line="990"/>
+        <location filename="../gui/MessagesDialog.cpp" line="265"/>
+        <location filename="../gui/MessagesDialog.cpp" line="472"/>
         <source>Tags</source>
         <translation>Merkkaukset</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="966"/>
+        <location filename="../gui/MessagesDialog.ui" line="993"/>
         <source>Tag</source>
         <translation>Merkkaus</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1107"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1057"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2041"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2051"/>
+        <location filename="../gui/MessagesDialog.ui" line="1134"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1080"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2068"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2078"/>
         <source>Inbox</source>
         <translation>Saapuneet</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1116"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1062"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2064"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2072"/>
+        <location filename="../gui/MessagesDialog.ui" line="1143"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1085"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2091"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2099"/>
         <source>Outbox</source>
         <translation>Lähtevät</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1125"/>
+        <location filename="../gui/MessagesDialog.ui" line="1152"/>
         <source>Draft</source>
         <translation>Luonnokset</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1134"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1072"/>
+        <location filename="../gui/MessagesDialog.ui" line="1161"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1095"/>
         <source>Sent</source>
         <translation>Lähetetyt</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1143"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1077"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2103"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2108"/>
+        <location filename="../gui/MessagesDialog.ui" line="1170"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1100"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2130"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2135"/>
         <source>Trash</source>
         <translation>Roskat</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1190"/>
+        <location filename="../gui/MessagesDialog.ui" line="1217"/>
         <source>Favorite Tags</source>
         <translation>Suosikkimerkkaukset</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1224"/>
+        <location filename="../gui/MessagesDialog.ui" line="1251"/>
         <source>Total Inbox:</source>
         <translation>Saapuneet yhteensä:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1257"/>
+        <location filename="../gui/MessagesDialog.ui" line="1284"/>
         <source>Folders</source>
         <translation>Hakemistot</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1654"/>
+        <location filename="../gui/MessagesDialog.ui" line="1402"/>
+        <source>Download all Recommended Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.ui" line="1582"/>
         <source>Cc:</source>
         <translation>Kopio:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1692"/>
+        <location filename="../gui/MessagesDialog.ui" line="1608"/>
         <source>Bcc:</source>
         <translation>Piilokopio:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1729"/>
+        <location filename="../gui/MessagesDialog.ui" line="1651"/>
         <source>Tags:</source>
         <translation>Merkkaukset:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1787"/>
-        <location filename="../gui/MessagesDialog.ui" line="1790"/>
+        <location filename="../gui/MessagesDialog.ui" line="1761"/>
+        <location filename="../gui/MessagesDialog.ui" line="1764"/>
         <source>Print...</source>
         <translation>Tulosta...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1795"/>
+        <location filename="../gui/MessagesDialog.ui" line="1769"/>
         <source>Print Preview</source>
         <translation>Tulostuksen esikatselu</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1800"/>
-        <location filename="../gui/MessagesDialog.ui" line="1803"/>
+        <location filename="../gui/MessagesDialog.ui" line="1774"/>
+        <location filename="../gui/MessagesDialog.ui" line="1777"/>
         <source>Buttons Icon Only</source>
         <translation>Painikkeet vain kuvakkeella</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1808"/>
+        <location filename="../gui/MessagesDialog.ui" line="1782"/>
         <source>Buttons Text Beside Icon</source>
         <translation>Painikkeet tekstillä kuvakkeen vieressä</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1811"/>
+        <location filename="../gui/MessagesDialog.ui" line="1785"/>
         <source>Buttons with Text</source>
         <translation>Painikkeet tekstillä</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1816"/>
+        <location filename="../gui/MessagesDialog.ui" line="1790"/>
         <source>Buttons Text Under Icon</source>
         <translation>Painikkeet tekstillä kuvakkeen alla</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1819"/>
+        <location filename="../gui/MessagesDialog.ui" line="1793"/>
         <source>Set Text Under Icon</source>
         <translation>Aseta teksti kuvakkeen alle</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1824"/>
+        <location filename="../gui/MessagesDialog.ui" line="1798"/>
         <source>Save As...</source>
         <translation>Tallenna nimellä...</translation>
     </message>
@@ -7595,12 +7756,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Lataa kaikki</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1828"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1855"/>
         <source>Print Document</source>
         <translation>Tulosta asiakirja</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1763"/>
+        <location filename="../gui/MessagesDialog.ui" line="1737"/>
         <source>File Name</source>
         <translation>Tiedoston nimi</translation>
     </message>
@@ -7609,156 +7770,191 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Lähteet</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="321"/>
+        <location filename="../gui/MessagesDialog.cpp" line="324"/>
         <source>Forward selected Message</source>
         <translation>Välitä valittu viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="642"/>
+        <location filename="../gui/MessagesDialog.cpp" line="665"/>
         <source>Remove Messages</source>
         <translation>Poista viestit</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="600"/>
+        <location filename="../gui/MessagesDialog.cpp" line="623"/>
         <source>Forward Message</source>
         <translation>Välitä viesti</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="460"/>
+        <location filename="../gui/MessagesDialog.cpp" line="268"/>
+        <source>Click to sort by attachments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="269"/>
+        <source>Click to sort by subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="270"/>
+        <source>Click to sort by read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="271"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1125"/>
+        <source>Click to sort by from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="272"/>
+        <source>Click to sort by date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="273"/>
+        <source>Click to sort by tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="483"/>
         <source>Remove All Tags</source>
         <translation>Poista kaikki merkkaukset</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="490"/>
+        <location filename="../gui/MessagesDialog.cpp" line="513"/>
         <source>New tag ...</source>
         <translation>Uusi merkkaus...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="608"/>
+        <location filename="../gui/MessagesDialog.cpp" line="631"/>
         <source>Edit...</source>
         <translation>Muokkaa...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="620"/>
+        <location filename="../gui/MessagesDialog.cpp" line="643"/>
         <source>Mark as read</source>
         <translation>Merkitse luetuksi</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="627"/>
+        <location filename="../gui/MessagesDialog.cpp" line="650"/>
         <source>Mark as unread</source>
         <translation>Merkitse lukemattomaksi</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="652"/>
+        <location filename="../gui/MessagesDialog.cpp" line="675"/>
         <source>Undelete</source>
         <translation>Kumoa tuhoaminen</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="689"/>
+        <location filename="../gui/MessagesDialog.cpp" line="712"/>
         <source>Download</source>
         <translation>Lataa</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="709"/>
+        <location filename="../gui/MessagesDialog.cpp" line="732"/>
         <source>Empty trash</source>
         <translation>Tyhjennä roskat</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="829"/>
+        <location filename="../gui/MessagesDialog.cpp" line="852"/>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="832"/>
+        <location filename="../gui/MessagesDialog.cpp" line="855"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1067"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2084"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2092"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1090"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2111"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2119"/>
         <source>Drafts</source>
         <translation>Luonnokset</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1103"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1127"/>
         <source>To</source>
         <translation>Vastaanottaja</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1724"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1128"/>
+        <source>Click to sort by to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="1751"/>
         <source>File</source>
         <translation type="unfinished">Tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1724"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1751"/>
         <source>Files</source>
         <translation type="unfinished">Tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1861"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1888"/>
         <source>Save as...</source>
         <translation>Tallenna nimellä...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1862"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1889"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="2012"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2016"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2020"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2024"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2028"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2039"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2043"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2047"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2051"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2055"/>
         <source>Total:</source>
         <translation>Yhteensä:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="322"/>
-        <location filename="../gui/MessagesDialog.cpp" line="596"/>
+        <location filename="../gui/MessagesDialog.cpp" line="325"/>
+        <location filename="../gui/MessagesDialog.cpp" line="619"/>
         <source>Reply to All</source>
         <translation>Vastaa kaikille</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="935"/>
-        <location filename="../gui/MessagesDialog.cpp" line="265"/>
+        <location filename="../gui/MessagesDialog.ui" line="959"/>
+        <location filename="../gui/MessagesDialog.cpp" line="261"/>
         <source>Subject</source>
         <translation>Aihe</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1458"/>
+        <location filename="../gui/MessagesDialog.ui" line="1470"/>
         <source>Subject:</source>
         <translation>Aihe:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1526"/>
+        <location filename="../gui/MessagesDialog.ui" line="1493"/>
         <source>From:</source>
         <translation>Lähettäjä:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1591"/>
+        <location filename="../gui/MessagesDialog.ui" line="1549"/>
         <source>To:</source>
         <translation>Vastaanottaja:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1389"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download all Recommended Files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Lataa kaikki suositellut tiedostot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1773"/>
+        <location filename="../gui/MessagesDialog.ui" line="1747"/>
         <source>Hash</source>
         <translation>Tiiviste (hash)</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="801"/>
+        <location filename="../gui/MessagesDialog.ui" line="819"/>
         <source>Print</source>
         <translation>Tulosta</translation>
     </message>
@@ -8361,8 +8557,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="111"/>
-        <location filename="../gui/NetworkDialog.ui" line="279"/>
-        <location filename="../gui/NetworkDialog.ui" line="499"/>
+        <location filename="../gui/NetworkDialog.ui" line="282"/>
+        <location filename="../gui/NetworkDialog.ui" line="505"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
@@ -8384,7 +8580,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="129"/>
-        <location filename="../gui/NetworkDialog.ui" line="514"/>
+        <location filename="../gui/NetworkDialog.ui" line="520"/>
         <source>Cert Id</source>
         <translation>Varmennetunniste</translation>
     </message>
@@ -8468,7 +8664,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="116"/>
-        <location filename="../gui/NetworkDialog.ui" line="504"/>
+        <location filename="../gui/NetworkDialog.ui" line="510"/>
         <source>Did I authenticated peer</source>
         <translation>Varmensinko vertaisen</translation>
     </message>
@@ -8491,12 +8687,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verkko&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="284"/>
+        <location filename="../gui/NetworkDialog.ui" line="287"/>
         <source>Peer ID</source>
         <translation>Vertaisen tunniste</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="299"/>
+        <location filename="../gui/NetworkDialog.ui" line="305"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -8509,23 +8705,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Näkymä&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="347"/>
+        <location filename="../gui/NetworkDialog.ui" line="353"/>
         <source>Network Status</source>
         <translation>Verkon tila</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="377"/>
+        <location filename="../gui/NetworkDialog.ui" line="383"/>
         <source>Local network</source>
         <translation>Paikallinen verkko</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="410"/>
+        <location filename="../gui/NetworkDialog.ui" line="416"/>
         <source>UPnP</source>
         <translation>UPnP</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="124"/>
-        <location filename="../gui/NetworkDialog.ui" line="509"/>
+        <location filename="../gui/NetworkDialog.ui" line="515"/>
         <source>Did peer authenticated me</source>
         <translation>Varmensiko vertainen minut</translation>
     </message>
@@ -8535,77 +8731,77 @@ p, li { white-space: pre-wrap; }
         <translation>Etsi verkosta</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="237"/>
+        <location filename="../gui/NetworkDialog.ui" line="240"/>
         <source>Clear Filter</source>
         <translation>Tyhjennä suodatin</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="292"/>
+        <location filename="../gui/NetworkDialog.ui" line="295"/>
         <source>Show keys that are not validated by the GPG web of trust</source>
         <translation>Näytä avaimet, jotka eivät ole GPG:n luottamuksen verkon varmentamia</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="443"/>
+        <location filename="../gui/NetworkDialog.ui" line="449"/>
         <source>External ip address finder</source>
         <translation>Ulkoisen IP-osoitteen paikallistaminen</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="526"/>
+        <location filename="../gui/NetworkDialog.ui" line="532"/>
         <source>Clear</source>
         <translation>Tyhjennä</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="531"/>
+        <location filename="../gui/NetworkDialog.ui" line="537"/>
         <source>Set Tabs Right</source>
         <translation>Aseta välilehdet oikealle</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="536"/>
+        <location filename="../gui/NetworkDialog.ui" line="542"/>
         <source>Set Tabs North</source>
         <translation>Aseta välilehdet pohjoiseen</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="541"/>
+        <location filename="../gui/NetworkDialog.ui" line="547"/>
         <source>Set Tabs South</source>
         <translation>Aseta välilehdet etelään</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="546"/>
+        <location filename="../gui/NetworkDialog.ui" line="552"/>
         <source>Set Tabs Left</source>
         <translation>Aseta välilehdet vasemmalle</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="551"/>
+        <location filename="../gui/NetworkDialog.ui" line="557"/>
         <source>Set Tabs Rounded</source>
         <translation>Aseta välilehdet pyöristetyiksi</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="556"/>
+        <location filename="../gui/NetworkDialog.ui" line="562"/>
         <source>Set Tabs Triangular</source>
         <translation>Aseta välilehdet kolmikulmaisiksi</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="565"/>
+        <location filename="../gui/NetworkDialog.ui" line="571"/>
         <source>Add Friend</source>
         <translation>Lisää ystävä</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="570"/>
+        <location filename="../gui/NetworkDialog.ui" line="576"/>
         <source>Copy My Key to Clipboard</source>
         <translation>Kopioi avaimeni leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="579"/>
+        <location filename="../gui/NetworkDialog.ui" line="585"/>
         <source>Export My Key</source>
         <translation>Vie avaimeni</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="584"/>
+        <location filename="../gui/NetworkDialog.ui" line="590"/>
         <source>Create New Profile</source>
         <translation>Luo uusi profiili</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="587"/>
+        <location filename="../gui/NetworkDialog.ui" line="593"/>
         <source>Create a new Profile</source>
         <translation>Luo uusi profiili</translation>
     </message>
@@ -8725,6 +8921,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NewsFeed.ui" line="135"/>
         <source>Remove All</source>
         <translation>Poista kaikki</translation>
+    </message>
+    <message>
+        <location filename="../gui/NewsFeed.ui" line="155"/>
+        <source>Options</source>
+        <translation type="unfinished">Valinnat</translation>
     </message>
 </context>
 <context>
@@ -8923,17 +9124,17 @@ p, li { white-space: pre-wrap; }
         <translation>Ole hyvä ja anna salasana avataksesi seuraavan GPG-avaimen lukituksen:</translation>
     </message>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="256"/>
+        <location filename="../gui/notifyqt.cpp" line="264"/>
         <source>Examining shared files...</source>
         <translation>Tarkastellaan jaettuja tiedostoja...</translation>
     </message>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="261"/>
+        <location filename="../gui/notifyqt.cpp" line="269"/>
         <source>Hashing file</source>
         <translation>Luodaan tiivistettä (hash) tiedostolle</translation>
     </message>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="264"/>
+        <location filename="../gui/notifyqt.cpp" line="272"/>
         <source>Saving file index...</source>
         <translation>Tallennetaan tiedostoluetteloa...</translation>
     </message>
@@ -9153,7 +9354,7 @@ p, li { white-space: pre-wrap; }
         <translation>Varmeneet (*.pqi)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="727"/>
+        <location filename="../gui/PeersDialog.ui" line="733"/>
         <source>Status</source>
         <translation>Tila</translation>
     </message>
@@ -9301,10 +9502,8 @@ p, li { white-space: pre-wrap; }
         <translation>Saatavilla</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="402"/>
-        <location filename="../gui/PeersDialog.cpp" line="1278"/>
         <source>RetroShare</source>
-        <translation>RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="153"/>
@@ -9328,33 +9527,38 @@ p, li { white-space: pre-wrap; }
         <translation>Uusi ryhmäkeskustelu</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1791"/>
+        <location filename="../gui/PeersDialog.cpp" line="1729"/>
+        <source>Do you really want to physically delete the history?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/PeersDialog.cpp" line="1793"/>
         <source>Load File</source>
         <translation type="unfinished">Avaa tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1791"/>
+        <location filename="../gui/PeersDialog.cpp" line="1793"/>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1858"/>
+        <location filename="../gui/PeersDialog.cpp" line="1860"/>
         <source>Add Extra File</source>
         <translation>Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1953"/>
-        <location filename="../gui/PeersDialog.cpp" line="1959"/>
+        <location filename="../gui/PeersDialog.cpp" line="1957"/>
+        <location filename="../gui/PeersDialog.cpp" line="1963"/>
         <source>Drop file error.</source>
         <translation>Virhe pudotettaessa tiedostoa.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1959"/>
+        <location filename="../gui/PeersDialog.cpp" line="1963"/>
         <source>File not found or file name not accepted.</source>
         <translation>Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1953"/>
+        <location filename="../gui/PeersDialog.cpp" line="1957"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Hakemistoa ei voi pudottaa, ainoastaan tiedostot ovat hyväksyttyjä.</translation>
     </message>
@@ -9370,27 +9574,27 @@ p, li { white-space: pre-wrap; }
         <translation>sijainti</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="2010"/>
+        <location filename="../gui/PeersDialog.cpp" line="2014"/>
         <source>Save as...</source>
         <translation>Tallenna nimellä...</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="2010"/>
+        <location filename="../gui/PeersDialog.cpp" line="2014"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1370"/>
+        <location filename="../gui/PeersDialog.ui" line="1393"/>
         <source>Send</source>
         <translation>Lähetä</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1168"/>
+        <location filename="../gui/PeersDialog.ui" line="1183"/>
         <source>Italic</source>
         <translation>Kursivoitu</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1130"/>
+        <location filename="../gui/PeersDialog.ui" line="1142"/>
         <source>Underline</source>
         <translation>Alleviivattu</translation>
     </message>
@@ -9408,155 +9612,160 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Ystävät&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="557"/>
+        <location filename="../gui/PeersDialog.ui" line="560"/>
         <source>Add</source>
         <translation>Lisää</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="611"/>
+        <location filename="../gui/PeersDialog.ui" line="617"/>
         <source>Display</source>
         <translation type="unfinished">Näytä</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="790"/>
+        <location filename="../gui/PeersDialog.ui" line="796"/>
         <source>Add or Change your Avatar</source>
         <translation>Lisää tai vaihda avatar</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="857"/>
+        <location filename="../gui/PeersDialog.ui" line="863"/>
         <source>Edit Personal message</source>
         <translation>Muokkaa henkilökohtaista viestiä</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="969"/>
+        <location filename="../gui/PeersDialog.ui" line="1005"/>
         <source>Messages entered here are sent to all collected friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1092"/>
+        <location filename="../gui/PeersDialog.ui" line="1101"/>
         <source>Bold</source>
         <translation>Lihavoitu</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1424"/>
-        <location filename="../gui/PeersDialog.ui" line="1427"/>
+        <location filename="../gui/PeersDialog.ui" line="1262"/>
+        <source>Text Color</source>
+        <translation type="unfinished">Tekstin väri</translation>
+    </message>
+    <message>
+        <location filename="../gui/PeersDialog.ui" line="1447"/>
+        <location filename="../gui/PeersDialog.ui" line="1450"/>
         <source>Create new Forum</source>
         <translation>Luo uusi foorumi</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1430"/>
+        <location filename="../gui/PeersDialog.ui" line="1453"/>
         <source>F</source>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1439"/>
-        <location filename="../gui/PeersDialog.ui" line="1442"/>
+        <location filename="../gui/PeersDialog.ui" line="1462"/>
+        <location filename="../gui/PeersDialog.ui" line="1465"/>
         <source>Create new Channel</source>
         <translation>Luo uusi kanava</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1445"/>
+        <location filename="../gui/PeersDialog.ui" line="1468"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1454"/>
+        <location filename="../gui/PeersDialog.ui" line="1477"/>
         <source>Add your Avatar Picture</source>
         <translation>Lisää avatarkuva</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1457"/>
+        <location filename="../gui/PeersDialog.ui" line="1480"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1466"/>
+        <location filename="../gui/PeersDialog.ui" line="1489"/>
         <source>Set your Personal Message</source>
         <translation>Aseta henkilökohtainen viesti</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1469"/>
+        <location filename="../gui/PeersDialog.ui" line="1492"/>
         <source>Edit your status Message</source>
         <translation>Muokkaa tilaviestiäsi</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1474"/>
+        <location filename="../gui/PeersDialog.ui" line="1497"/>
         <source>Browse Message History</source>
         <translation>Selaa viestihistoriaa</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1477"/>
+        <location filename="../gui/PeersDialog.ui" line="1500"/>
         <source>Browse History</source>
         <translation>Selaa historiaa</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1482"/>
-        <location filename="../gui/PeersDialog.ui" line="1485"/>
+        <location filename="../gui/PeersDialog.ui" line="1505"/>
+        <location filename="../gui/PeersDialog.ui" line="1508"/>
         <source>Save Chat History</source>
         <translation>Tallenna keskusteluhistoria</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1493"/>
+        <location filename="../gui/PeersDialog.ui" line="1516"/>
         <source>Hide Offline Friends</source>
         <translation>Piilota offline-ystävät</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1501"/>
+        <location filename="../gui/PeersDialog.ui" line="1524"/>
         <source>Hide Status Column</source>
         <translation>Piilota tilasarake</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1509"/>
-        <location filename="../gui/PeersDialog.ui" line="1512"/>
+        <location filename="../gui/PeersDialog.ui" line="1532"/>
+        <location filename="../gui/PeersDialog.ui" line="1535"/>
         <source>Sort by State</source>
         <translation type="unfinished">Järjestä tilan mukaan</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1520"/>
+        <location filename="../gui/PeersDialog.ui" line="1543"/>
         <source>Hide State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1529"/>
-        <location filename="../gui/PeersDialog.ui" line="1532"/>
+        <location filename="../gui/PeersDialog.ui" line="1552"/>
+        <location filename="../gui/PeersDialog.ui" line="1555"/>
         <source>Add a new Group</source>
         <translation>Lisää uusi ryhmä</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1541"/>
-        <location filename="../gui/PeersDialog.ui" line="1544"/>
+        <location filename="../gui/PeersDialog.ui" line="1564"/>
+        <location filename="../gui/PeersDialog.ui" line="1567"/>
         <source>Sort Descending Order</source>
         <translation type="unfinished">Laskeva järjestys</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1553"/>
-        <location filename="../gui/PeersDialog.ui" line="1556"/>
+        <location filename="../gui/PeersDialog.ui" line="1576"/>
+        <location filename="../gui/PeersDialog.ui" line="1579"/>
         <source>Sort Ascending Order</source>
         <translation type="unfinished">Nouseva järjestys</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1565"/>
+        <location filename="../gui/PeersDialog.ui" line="1588"/>
         <source>Delete Chat History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1568"/>
+        <location filename="../gui/PeersDialog.ui" line="1591"/>
         <source>Deletes all stored and displayed chat history</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1406"/>
+        <location filename="../gui/PeersDialog.ui" line="1429"/>
         <location filename="../gui/PeersDialog.cpp" line="442"/>
         <source>Add Friend</source>
         <translation>Lisää ystävä</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1415"/>
+        <location filename="../gui/PeersDialog.ui" line="1438"/>
         <source>Create new Profile</source>
         <translation>Luo uusi profiili</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1206"/>
+        <location filename="../gui/PeersDialog.ui" line="1224"/>
         <source>Font</source>
         <translation>Fontti</translation>
     </message>
@@ -9573,35 +9782,34 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Näkymä&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="722"/>
+        <location filename="../gui/PeersDialog.ui" line="728"/>
         <source>Friends</source>
         <translation>Ystävät</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="895"/>
+        <location filename="../gui/PeersDialog.ui" line="901"/>
         <source>Group Chat</source>
         <translation>Ryhmäkeskustelu</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1241"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;set Text Color&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Aseta tekstin väri&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1329"/>
+        <location filename="../gui/PeersDialog.ui" line="1352"/>
         <source>Attach File</source>
         <translation>Liitä tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1397"/>
+        <location filename="../gui/PeersDialog.ui" line="1420"/>
         <source>Clear Chat History</source>
         <translation>Tyhjennä keskusteluhistoria</translation>
     </message>
@@ -9928,147 +10136,156 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="401"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="404"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Ystäväsi ei ole kytkeytyneenä
 Haluatko sen sijaan lähettää hänelle viestin</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="401"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="404"/>
         <source>Friend not Online</source>
         <translation>Ystävä ei ole linjoilla</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="461"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="464"/>
         <source>is typing...</source>
         <translation>kirjoittaa...</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="745"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="748"/>
         <source>Hide Avatar</source>
         <translation>Piilota avatar</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1155"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1162"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation>Lähettämäsi viestit toimitetaan kunhan ystäväsi palaa jälleen linjoille</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="750"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="753"/>
         <source>Show Avatar</source>
         <translation>Näytä avatar</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="436"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="439"/>
         <source>Paste RetroShare Link</source>
         <translation>Liitä RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="909"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="841"/>
+        <source>Do you really want to physically delete the history?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="916"/>
         <source>Load Picture File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1119"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1126"/>
         <source>Save as...</source>
         <translation>Tallenna nimellä...</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1119"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1126"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1155"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1162"/>
         <source>apears to be Offline.</source>
         <translation>näyttää olevan poissa linjoilta.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1162"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1169"/>
         <source>is Idle and may not reply</source>
         <translation>on jouten, eikä välttämättä vastaa</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1174"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1181"/>
         <source>is Away and may not reply</source>
         <translation>on poissa, eikä välttämättä vastaa</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1181"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1188"/>
         <source>is Busy and may not reply</source>
         <translation>on kiireinen, eikä välttämättä vastaa</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="514"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="535"/>
         <source>Send</source>
         <translation>Lähetä</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="329"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="341"/>
         <source>Close</source>
         <translation>Sulje</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="567"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="833"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="594"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="875"/>
         <source>Bold</source>
         <translation>Lihavoitu</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="599"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="843"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="629"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="885"/>
         <source>Underline</source>
         <translation>Alleviivattu</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="631"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="838"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="664"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="880"/>
         <source>Italic</source>
         <translation>Kursivoitu</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="663"/>
         <source>Set Font</source>
-        <translation>Aseta fontti</translation>
+        <translation type="obsolete">Aseta fontti</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="695"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="734"/>
         <source>Text Color</source>
         <translation>Tekstin väri</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="857"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="899"/>
         <source>Clear Chat History</source>
         <translation type="unfinished">Tyhjennä keskusteluhistoria</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="883"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="925"/>
         <source>Browse Message History</source>
         <translation>Selaa viestihistoriaa</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="886"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="928"/>
         <source>Browse History</source>
         <translation>Selaa historiaa</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="895"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="937"/>
         <source>Delete Chat History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="898"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="940"/>
         <source>Deletes all stored and displayed chat history</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="449"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="467"/>
         <source>Attach a Picture</source>
         <translation>Liitä kuva</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="848"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="699"/>
+        <source>Font</source>
+        <translation type="unfinished">Fontti</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="890"/>
         <source>Strike</source>
         <translation>Yliviivaus</translation>
     </message>
@@ -10077,44 +10294,44 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
         <translation type="obsolete">Tyhjennä keskustelu</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="865"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="907"/>
         <source>Disable Emoticons</source>
         <translation>Kytke hymiöt pois</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="870"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="873"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="912"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="915"/>
         <source>Save Chat History</source>
         <translation>Tallenna keskusteluhistoria</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="878"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="920"/>
         <source>Clear offline messages</source>
         <translation>Tyhjennä offline-viestit</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="900"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="907"/>
         <source>Add Extra File</source>
         <translation>Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1058"/>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1064"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1065"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1071"/>
         <source>Drop file error.</source>
         <translation>Virhe pudotettaessa tiedostoa.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1064"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1071"/>
         <source>File not found or file name not accepted.</source>
         <translation>Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1058"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1065"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Hakemistoa ei voi pudottaa, ainoastaan tiedostot ovat hyväksyttyjä.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="478"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="499"/>
         <source>Add a File for your Friend</source>
         <translation>Lisää tiedosto ystävällesi</translation>
     </message>
@@ -10122,39 +10339,45 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
 <context>
     <name>PopupChatWindow</name>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="94"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="79"/>
         <source>Avatar</source>
         <translation>Avatar</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="97"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="82"/>
         <source>Set your Avatar Picture</source>
         <translation>Aseta avatarkuvasi</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="106"/>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="109"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="91"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="94"/>
         <source>Dock tab</source>
         <translation>Telakoi välilehti</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="118"/>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="121"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="103"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="106"/>
         <source>Undock tab</source>
         <translation>Irrota välilehti</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="260"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="115"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="118"/>
+        <source>Set Chat Window Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="266"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="267"/>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="273"/>
         <source>Load File</source>
         <translation type="unfinished">Avaa tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="267"/>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="273"/>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10650,116 +10873,186 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Koko</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="83"/>
-        <location filename="../main.cpp" line="195"/>
+        <location filename="../main.cpp" line="85"/>
+        <location filename="../main.cpp" line="211"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="89"/>
+        <location filename="../main.cpp" line="91"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Käynnistys epäonnistui. Väärä tai puuttuva GPG:n asennust.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="94"/>
-        <location filename="../main.cpp" line="195"/>
+        <location filename="../main.cpp" line="96"/>
+        <location filename="../main.cpp" line="211"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Odottamaton virhe. Ole hyvä ja raportoi &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="174"/>
-        <location filename="../main.cpp" line="180"/>
+        <location filename="../main.cpp" line="188"/>
+        <location filename="../main.cpp" line="195"/>
         <source>Multiple instances</source>
         <translation>Useita instansseja</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="175"/>
+        <location filename="../main.cpp" line="189"/>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
+ Lock file:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="196"/>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
+ Lock file:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation>Toinen RetroShare, joka käyttää samaa profiilia on jo käynnissä järjestelmässäsi. Ole hyvä ja sulje se ensin</translation>
+        <translation type="obsolete">Toinen RetroShare, joka käyttää samaa profiilia on jo käynnissä järjestelmässäsi. Ole hyvä ja sulje se ensin</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="181"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation>Odottamaton virhe haettaessa yhden instanssin lukitusta</translation>
+        <translation type="obsolete">Odottamaton virhe haettaessa yhden instanssin lukitusta</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="185"/>
+        <location filename="../main.cpp" line="201"/>
         <source>Login Failure</source>
         <translation>Kirjautuminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="186"/>
+        <location filename="../main.cpp" line="202"/>
         <source>Maybe password is wrong</source>
         <translation>Ehkä salasana on väärä</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="366"/>
+        <location filename="../gui/RetroShareLink.cpp" line="657"/>
         <source>File Request Confirmation</source>
         <translation>Tiedostopyynnön vahvistus</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="366"/>
+        <location filename="../gui/RetroShareLink.cpp" line="657"/>
         <source>The file has been added to your download list.</source>
         <translation>Tiedosto on lisätty latauslistaasi.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="884"/>
-        <location filename="../gui/RetroShareLink.cpp" line="374"/>
+        <location filename="../gui/MessagesDialog.cpp" line="907"/>
+        <location filename="../gui/RetroShareLink.cpp" line="665"/>
         <source>File Request canceled</source>
         <translation>Tiedostopyyntö peruttu</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="884"/>
+        <location filename="../gui/MessagesDialog.cpp" line="907"/>
         <source>The following has not been added to your download list, because you already have it:
     </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="374"/>
+        <location filename="../gui/RetroShareLink.cpp" line="665"/>
         <source>The file has not been added to your download list, because you already have it.</source>
         <translation>Tiedostoa ei lisätty latausluetteloosi, koska sinulla on se jo.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="397"/>
-        <location filename="../gui/RetroShareLink.cpp" line="406"/>
+        <location filename="../gui/RetroShareLink.cpp" line="688"/>
+        <location filename="../gui/RetroShareLink.cpp" line="697"/>
         <source>Friend Request Confirmation</source>
         <translation>Ystäväpyynnön vahvistus</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="397"/>
+        <location filename="../gui/RetroShareLink.cpp" line="688"/>
         <source>The friend is already in your list.</source>
         <translation>Ystävä on jo luettelossasi.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="406"/>
+        <location filename="../gui/RetroShareLink.cpp" line="697"/>
         <source>The friend has been added to your list.</source>
         <translation>Ystävä lisättiin luetteloosi.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="414"/>
-        <location filename="../gui/RetroShareLink.cpp" line="422"/>
+        <location filename="../gui/RetroShareLink.cpp" line="705"/>
+        <location filename="../gui/RetroShareLink.cpp" line="713"/>
         <source>Friend Request canceled</source>
         <translation>Ystäväpyyntö peruttu</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="414"/>
+        <location filename="../gui/RetroShareLink.cpp" line="705"/>
         <source>The friend could not be added to your list.</source>
         <translation>Ystävää ei voitu lisätä luetteloosi.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="422"/>
+        <location filename="../gui/RetroShareLink.cpp" line="713"/>
         <source>The friend could not be found.</source>
         <translation>Ystävää ei lödetty.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="433"/>
+        <location filename="../gui/RetroShareLink.cpp" line="729"/>
+        <location filename="../gui/RetroShareLink.cpp" line="740"/>
+        <source>Forum Request canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="729"/>
+        <source>The forum &quot;%1&quot; could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="740"/>
+        <source>The forum message in forum &quot;%1&quot; could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="766"/>
+        <location filename="../gui/RetroShareLink.cpp" line="777"/>
+        <source>Channel Request canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="766"/>
+        <source>The channel &quot;%1&quot; could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="777"/>
+        <source>The channel message in channel &quot;%1&quot; could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="828"/>
+        <location filename="../gui/RetroShareLink.cpp" line="835"/>
+        <source>Message Request canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="828"/>
+        <source>Cannot send a message to a not accepted receipient &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="835"/>
+        <source>The receipient of the message is unknown.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="848"/>
         <source>File Request Error</source>
         <translation>Virhe tiedostopyynnössä</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="433"/>
+        <location filename="../gui/RetroShareLink.cpp" line="848"/>
         <source>The file link is malformed.</source>
         <translation>Tiedoston linkki on virheellinen.</translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="869"/>
+        <source>%1 of %2 RetroShare links processed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RetroShareLink.cpp" line="870"/>
+        <source>Request Confirmation</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/elastic/node.cpp" line="320"/>
@@ -10775,6 +11068,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/elastic/node.cpp" line="324"/>
         <source>Peer details</source>
         <translation>Vertaisen yksityiskohdat</translation>
+    </message>
+    <message>
+        <location filename="../util/EventReceiver.cpp" line="120"/>
+        <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10837,15 +11135,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="264"/>
         <location filename="../gui/QuickStartWizard.ui" line="533"/>
-        <location filename="../gui/QuickStartWizard.ui" line="768"/>
+        <location filename="../gui/QuickStartWizard.ui" line="775"/>
         <source>Next &gt;</source>
         <translation>Seuraava &gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="274"/>
         <location filename="../gui/QuickStartWizard.ui" line="543"/>
-        <location filename="../gui/QuickStartWizard.ui" line="778"/>
-        <location filename="../gui/QuickStartWizard.ui" line="983"/>
+        <location filename="../gui/QuickStartWizard.ui" line="785"/>
+        <location filename="../gui/QuickStartWizard.ui" line="990"/>
         <source>Exit</source>
         <translation>Lopeta</translation>
     </message>
@@ -10855,7 +11153,7 @@ p, li { white-space: pre-wrap; }
         <translation>Varmistaakseen tehokkaan toimivuuden, RetroSharen tulee tietää hieman internetyhteydestäsi.</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="347"/>
+        <location filename="../gui/QuickStartWizard.ui" line="382"/>
         <source>Choose your upload speed limit: </source>
         <translation>Valitse lähetysnopeutesi yläraja:</translation>
     </message>
@@ -10866,7 +11164,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kt/s</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="382"/>
+        <location filename="../gui/QuickStartWizard.ui" line="347"/>
         <source>Choose your download speed limit: </source>
         <translation>Valitse latausnopeutesi yläraja:</translation>
     </message>
@@ -10922,8 +11220,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="526"/>
-        <location filename="../gui/QuickStartWizard.ui" line="761"/>
-        <location filename="../gui/QuickStartWizard.ui" line="966"/>
+        <location filename="../gui/QuickStartWizard.ui" line="768"/>
+        <location filename="../gui/QuickStartWizard.ui" line="973"/>
         <source>&lt; Back</source>
         <translation>&lt; Takaisin</translation>
     </message>
@@ -10972,7 +11270,12 @@ p, li { white-space: pre-wrap; }
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="831"/>
+        <location filename="../gui/QuickStartWizard.ui" line="727"/>
+        <source>Automatically share incoming directory (Recommended)</source>
+        <translation type="unfinished">Jaa sisääntulevien hakemisto automaattisesti (suositeltavaa)</translation>
+    </message>
+    <message>
+        <location filename="../gui/QuickStartWizard.ui" line="838"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10989,7 +11292,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Toivomme, että nautit RetroSharen käytöstä!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="847"/>
+        <location filename="../gui/QuickStartWizard.ui" line="854"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -11008,27 +11311,27 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="869"/>
+        <location filename="../gui/QuickStartWizard.ui" line="876"/>
         <source>Do not show a message when Closing RetroShare</source>
         <translation>Älä näytä viestiä RetroSharea suljettaessa</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="876"/>
+        <location filename="../gui/QuickStartWizard.ui" line="883"/>
         <source>Start Minimized</source>
         <translation>Käynnistä pienennettynä</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="883"/>
+        <location filename="../gui/QuickStartWizard.ui" line="890"/>
         <source>Start RetroShare when my System Starts.</source>
         <translation>Käynnistä RetroShare järjestelmän käynnistyessä.</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="908"/>
+        <location filename="../gui/QuickStartWizard.ui" line="915"/>
         <source>Start minimized on system start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="973"/>
+        <location filename="../gui/QuickStartWizard.ui" line="980"/>
         <source>Finish</source>
         <translation>Valmis</translation>
     </message>
@@ -11056,67 +11359,67 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSettingsWin</name>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="131"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="137"/>
         <source>General</source>
         <translation>Yleiset</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="135"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="141"/>
         <source>Directories</source>
         <translation>Hakemistot</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="139"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="145"/>
         <source>Server</source>
         <translation>Palvelin</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="143"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="149"/>
         <source>Transfer</source>
         <translation>Siirto</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="147"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="153"/>
         <source>Notify</source>
         <translation>Huomauta</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="151"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="157"/>
         <source>Security</source>
         <translation>Turvallisuus</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="155"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="161"/>
         <source>Message</source>
         <translation>Viesti</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="159"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="165"/>
         <source>Forum</source>
         <translation>Foorumi</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="163"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="169"/>
         <source>Chat</source>
         <translation>Keskustelu</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="167"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="173"/>
         <source>Appearance</source>
         <translation>Ulkoasu</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="176"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="182"/>
         <source>Sound</source>
         <translation>Ääni</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="181"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="187"/>
         <source>UnknownPage</source>
         <translation>Tuntematon sivu</translation>
     </message>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="221"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="227"/>
         <source>Error Saving Configuration on page </source>
         <translation>Virhe tallennettaessa asetuksia sivulle</translation>
     </message>
@@ -11146,80 +11449,87 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="565"/>
         <source>Friends Directories</source>
-        <translation>Ystävien hakemistot</translation>
+        <translation type="obsolete">Ystävien hakemistot</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="567"/>
         <source>My Directories</source>
-        <translation>Omat hakemistot</translation>
+        <translation type="obsolete">Omat hakemistot</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="569"/>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation type="obsolete">Koko</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="573"/>
         <source>Share Type</source>
-        <translation>Jakamisen tyyppi</translation>
+        <translation type="obsolete">Jakamisen tyyppi</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="575"/>
         <source>What&apos;s new</source>
-        <translation>Uusia</translation>
+        <translation type="obsolete">Uusia</translation>
     </message>
     <message>
         <source>Rank</source>
         <translation type="obsolete">Sijaluku</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="571"/>
         <source>Age</source>
-        <translation>Ikä</translation>
+        <translation type="obsolete">Ikä</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="425"/>
-        <location filename="../gui/RemoteDirModel.cpp" line="494"/>
         <source>FILE</source>
-        <translation>TIEDOSTO</translation>
+        <translation type="obsolete">TIEDOSTO</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="161"/>
         <source>Anonymous</source>
-        <translation>Nimetön</translation>
+        <translation type="obsolete">Nimetön</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="162"/>
         <source>Anonymous and browsable by friends</source>
-        <translation>Nimetön ja ystävien selattavissa</translation>
+        <translation type="obsolete">Nimetön ja ystävien selattavissa</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="163"/>
         <source>Only browsable by friends</source>
-        <translation>Vain ystävien selattavissa</translation>
+        <translation type="obsolete">Vain ystävien selattavissa</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="172"/>
         <source>NEW</source>
-        <translation>UUSI</translation>
+        <translation type="obsolete">UUSI</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="438"/>
         <source>Files</source>
-        <translation>Tiedostot</translation>
+        <translation type="obsolete">Tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="440"/>
         <source>File</source>
-        <translation>Tiedosto</translation>
+        <translation type="obsolete">Tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="446"/>
-        <location filename="../gui/RemoteDirModel.cpp" line="510"/>
         <source>DIR</source>
-        <translation>HAK</translation>
+        <translation type="obsolete">HAK</translation>
+    </message>
+</context>
+<context>
+    <name>RetroshareDirModel</name>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="205"/>
+        <source>Anonymous</source>
+        <translation type="unfinished">Nimetön</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="206"/>
+        <source>Anonymous and browsable by friends</source>
+        <translation type="unfinished">Nimetön ja ystävien selattavissa</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="207"/>
+        <source>Only browsable by friends</source>
+        <translation type="unfinished">Vain ystävien selattavissa</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="216"/>
+        <source>NEW</source>
+        <translation type="unfinished">UUSI</translation>
     </message>
 </context>
 <context>
@@ -11288,32 +11598,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsidPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1078"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1104"/>
         <source>RetroShare ID</source>
         <translation>RetroShare-tunniste</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1080"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1106"/>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
         <translation>Käytä RetroShare-tunnistetta verkossasi olevan ystävän lisäämiseen.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1089"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1115"/>
         <source>Add Friends RetroShare ID...</source>
         <translation>Lisää ystävän RetroShare-tunniste...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1092"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1118"/>
         <source>Paste Friends RetroShare ID in the box below </source>
         <translation>Liitä ystävän RetroShare-tunniste allaolevaan laatikkoon </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1095"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1121"/>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
         <translation>Kirjoita ystäväsi RetroShare-tunniste, esim. Peer@BDE8D16A46D938CF </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1139"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1165"/>
         <source>This Peer %1 is not available in your Network</source>
         <translation>Tämä vertainen %1 ei ole verkossasi</translation>
     </message>
@@ -11344,79 +11654,86 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1146"/>
+        <location filename="../gui/SearchDialog.ui" line="1161"/>
         <source>Sources</source>
         <translation>Lähteet</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="979"/>
+        <location filename="../gui/SearchDialog.ui" line="991"/>
         <source>Results</source>
         <translation>Tulokset</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1173"/>
+        <location filename="../gui/SearchDialog.ui" line="1188"/>
         <source>Close all Search Resullts</source>
         <translation>Sulje kaikki hakutulokset</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1218"/>
+        <location filename="../gui/SearchDialog.ui" line="1233"/>
         <source>Close All Search Results</source>
         <translation>Sulje kaikki hakutulokset</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1250"/>
+        <location filename="../gui/SearchDialog.ui" line="1265"/>
         <source>Download Selected</source>
         <translation>Lataa valitut</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1295"/>
-        <location filename="../gui/SearchDialog.cpp" line="238"/>
+        <location filename="../gui/SearchDialog.ui" line="1310"/>
+        <location filename="../gui/SearchDialog.cpp" line="287"/>
         <source>Download</source>
         <translation>Lataa</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="100"/>
+        <location filename="../gui/SearchDialog.cpp" line="104"/>
         <source>Enter a keyword here (at least 3 char long)</source>
         <translation>Anna hakusana (vähintään 3 merkkiä)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="241"/>
         <source>Copy retroshare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="244"/>
         <source>Send retroshare Link</source>
-        <translation>Lähetä RetroShare-linkki</translation>
+        <translation type="obsolete">Lähetä RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="247"/>
         <source>Broadcast on Channel</source>
-        <translation>Yleislähetä kanavalla</translation>
+        <translation type="obsolete">Yleislähetä kanavalla</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="250"/>
         <source>Recommend to Friends</source>
-        <translation>Suosittele kavereille</translation>
+        <translation type="obsolete">Suosittele kavereille</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="389"/>
+        <location filename="../gui/SearchDialog.cpp" line="289"/>
+        <location filename="../gui/SearchDialog.cpp" line="428"/>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.cpp" line="290"/>
+        <source>Send RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.cpp" line="425"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="392"/>
+        <location filename="../gui/SearchDialog.cpp" line="426"/>
         <source>Remove All</source>
         <translation>Poista kaikki</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="734"/>
-        <location filename="../gui/SearchDialog.cpp" line="800"/>
+        <location filename="../gui/SearchDialog.cpp" line="798"/>
+        <location filename="../gui/SearchDialog.cpp" line="866"/>
         <source>Folder</source>
         <translation>Kansio</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="1266"/>
+        <location filename="../gui/SearchDialog.cpp" line="1332"/>
         <source>New RetroShare Link(s)</source>
         <translation>Uusi RetroShare-linkki tai -linkit</translation>
     </message>
@@ -11462,34 +11779,34 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Asiakirjat</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="313"/>
+        <location filename="../gui/SearchDialog.cpp" line="348"/>
         <source>Download Notice</source>
         <translation>Lataushuomautus</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="313"/>
+        <location filename="../gui/SearchDialog.cpp" line="348"/>
         <source>Skipping Local Files</source>
         <translation>Paikallisten tiedostojen ohittaminen</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="369"/>
-        <location filename="../gui/SearchDialog.cpp" line="375"/>
+        <location filename="../gui/SearchDialog.cpp" line="406"/>
+        <location filename="../gui/SearchDialog.cpp" line="412"/>
         <source>Sorry</source>
         <translation>Anteeksi</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="369"/>
-        <location filename="../gui/SearchDialog.cpp" line="375"/>
+        <location filename="../gui/SearchDialog.cpp" line="406"/>
+        <location filename="../gui/SearchDialog.cpp" line="412"/>
         <source>This function is not yet implemented.</source>
         <translation>Tätä toimintoa ei ole vielä otettu käyttöön.</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1141"/>
+        <location filename="../gui/SearchDialog.ui" line="1156"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1151"/>
+        <location filename="../gui/SearchDialog.ui" line="1166"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
@@ -11524,79 +11841,79 @@ p, li { white-space: pre-wrap; }
         <translation>Hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1022"/>
+        <location filename="../gui/SearchDialog.ui" line="1034"/>
         <source>Filter Search Result</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1046"/>
+        <location filename="../gui/SearchDialog.ui" line="1061"/>
         <source>Clear Filter</source>
         <translation type="unfinished">Tyhjennä suodatin</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1097"/>
+        <location filename="../gui/SearchDialog.ui" line="1112"/>
         <source>File Name</source>
         <translation type="unfinished">Tiedoston nimi</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1102"/>
+        <location filename="../gui/SearchDialog.ui" line="1117"/>
         <source>File Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1337"/>
+        <location filename="../gui/SearchDialog.ui" line="1352"/>
         <source>Include files from your own file list in the search result</source>
         <translation>Sisällytä hakutuloksiin oman tiedostoluettelosi tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1340"/>
+        <location filename="../gui/SearchDialog.ui" line="1355"/>
         <source>Include own files</source>
         <translation>Sisällytä omat tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1347"/>
+        <location filename="../gui/SearchDialog.ui" line="1362"/>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
         <translation>Etsi ystäviesi &quot;selattavien&quot; tiedostojen joukosta</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1350"/>
+        <location filename="../gui/SearchDialog.ui" line="1365"/>
         <source>Search in friends lists</source>
         <translation>Etsi ystäväluettelosta</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1360"/>
+        <location filename="../gui/SearchDialog.ui" line="1375"/>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
         <translation>Usean hypyn haku verkossa etäisyydellä 6
 (näyttää aina saatavilla olevat tiedostot)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1364"/>
+        <location filename="../gui/SearchDialog.ui" line="1379"/>
         <source>F2F search</source>
         <translation>F2F-haku</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1374"/>
+        <location filename="../gui/SearchDialog.ui" line="1389"/>
         <source>Limit number of results to :</source>
         <translation>Rajoita tulosten lukumäärä:</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1136"/>
+        <location filename="../gui/SearchDialog.ui" line="1151"/>
         <source>Filename</source>
         <translation>Tiedostonimi</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="834"/>
+        <location filename="../gui/SearchDialog.ui" line="846"/>
         <source>Start Search</source>
         <translation>Aloita haku</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="857"/>
+        <location filename="../gui/SearchDialog.ui" line="869"/>
         <source>Search</source>
         <translation>Etsi</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="773"/>
+        <location filename="../gui/SearchDialog.ui" line="776"/>
         <source>Reset</source>
         <translation>Palauta asetukset</translation>
     </message>
@@ -11606,32 +11923,32 @@ p, li { white-space: pre-wrap; }
         <translation>Anna hakusana tähän</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="882"/>
+        <location filename="../gui/SearchDialog.ui" line="894"/>
         <source>Advanced Search</source>
         <translation>Tarkennettu haku</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="927"/>
+        <location filename="../gui/SearchDialog.ui" line="939"/>
         <source>Advanced</source>
         <translation>Tarkennettu</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1156"/>
+        <location filename="../gui/SearchDialog.ui" line="1171"/>
         <source>Age</source>
         <translation>Ikä</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1161"/>
+        <location filename="../gui/SearchDialog.ui" line="1176"/>
         <source>Hash</source>
         <translation>Tiiviste (hash)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="974"/>
+        <location filename="../gui/SearchDialog.ui" line="986"/>
         <source>KeyWords</source>
         <translation>Hakusanat</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="984"/>
+        <location filename="../gui/SearchDialog.ui" line="996"/>
         <source>Search Id</source>
         <translation>Hakutunniste</translation>
     </message>
@@ -12096,7 +12413,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="266"/>
-        <location filename="../gui/ShareManager.cpp" line="97"/>
+        <location filename="../gui/ShareManager.cpp" line="99"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
@@ -12105,24 +12422,40 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Lisää jaettu hakemisto</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="125"/>
+        <location filename="../gui/ShareManager.cpp" line="127"/>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation>Jos rastitat tämän, kyseinen jako on nimettömästi kaikkien saatavissa.</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="126"/>
+        <location filename="../gui/ShareManager.cpp" line="128"/>
         <source>If checked, the share is browsable by your friends.</source>
         <translation>Jos rastitat tämän, kyseinen jako on ystäviesi selattavissa.</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="273"/>
+        <location filename="../gui/ShareManager.cpp" line="275"/>
         <source>Warning!</source>
         <translation>Varoitus!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="273"/>
+        <location filename="../gui/ShareManager.cpp" line="275"/>
         <source>Do you really want to stop sharing this directory ?</source>
         <translation>Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareManager.cpp" line="350"/>
+        <location filename="../gui/ShareManager.cpp" line="355"/>
+        <source>Drop file error.</source>
+        <translation type="unfinished">Virhe pudotettaessa tiedostoa.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareManager.cpp" line="350"/>
+        <source>File can&apos;t be dropped, only directories are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareManager.cpp" line="355"/>
+        <source>Directory not found or directory name not accepted.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="17"/>
@@ -12205,7 +12538,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="302"/>
-        <location filename="../gui/ShareManager.cpp" line="94"/>
+        <location filename="../gui/ShareManager.cpp" line="96"/>
         <source>Edit</source>
         <translation>Muokkaa</translation>
     </message>
@@ -12213,8 +12546,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SharedFilesDialog</name>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="943"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="305"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="984"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="386"/>
         <source>Download</source>
         <translation>Lataa</translation>
     </message>
@@ -12229,119 +12562,119 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Tiedostot&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="269"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="350"/>
         <source>Checking...</source>
         <translation>Tarkistaa...</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="273"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="354"/>
         <source>Check files</source>
         <translation>Tarkista tiedostot</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="310"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="391"/>
         <source>Copy retroshare Link</source>
         <translation>Kopioi RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="313"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="394"/>
         <source>Send retroshare Link</source>
         <translation>Lähetä RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="211"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="218"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Kopioi RetroShare-linkkejä leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="213"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="220"/>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
         <translation>Kopioi RetroShare-linkkejä leikepöydälle (HTML)</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="215"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="222"/>
         <source>Send retroshare Links</source>
         <translation>Lähetä RetroShare-linkkejä</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="217"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="224"/>
         <source>Send retroshare Links (HTML)</source>
         <translation>Lähetä RetroShare-linkkejä (HTML)</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="220"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="227"/>
         <source>Send retroshare Links to Cloud</source>
         <translation>Lähetä RetroShare-linkkejä pilveen</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="222"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="229"/>
         <source>Add Links to Cloud</source>
         <translation>Lisää linkkejä pilveen</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="225"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="721"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="232"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="801"/>
         <source>Open File</source>
         <translation>Avaa tiedosto</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="227"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="234"/>
         <source>Open Folder</source>
         <translation>Avaa kansio</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="320"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="700"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="401"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="780"/>
         <source>Recommend in a message to</source>
         <translation>Suosittele viestissä vastaanottajalle</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="446"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="469"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="493"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="527"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="550"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="574"/>
         <source>RetroShare Link</source>
         <translation>RetroShare-linkki</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="573"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="574"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="597"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="598"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="654"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="655"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="678"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="679"/>
         <source>Recommendation(s)</source>
         <translation>Suositukset</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="730"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="810"/>
         <source>Set command for opening this file</source>
         <translation>Aseta komento tämän tiedoston avaamiseksi</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="790"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="870"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Omat jaetut tiedostot&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="804"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="884"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Ystävien tiedostot&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="819"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="899"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Tiedostot&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="596"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="599"/>
         <source>Splitted View</source>
         <translation>Jaettu näkymä</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="625"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="631"/>
         <source>Friends Folders</source>
         <translation>Ystävien kansiot</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="654"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="663"/>
         <source>My Folders</source>
         <translation>Omat kansioni</translation>
     </message>
@@ -12359,47 +12692,57 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Tiedostot&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="678"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="687"/>
         <source>All</source>
         <translation>Kaikki</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="687"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="696"/>
         <source>One day old</source>
         <translation>Päivän vanhat</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="696"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="705"/>
         <source>One Week old</source>
         <translation>Viikon vanhat</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="705"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="714"/>
         <source>One month old</source>
         <translation>Kuukauden vanhat</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="732"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="741"/>
         <source>Search files</source>
         <translation>Etsi tiedostoja</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="756"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="768"/>
         <source>Start Search</source>
         <translation>Aloita haku</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="787"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="802"/>
         <source>Reset</source>
         <translation>Palauta asetukset</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="940"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="830"/>
+        <source>Tree view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.ui" line="835"/>
+        <source>Flat view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.ui" line="981"/>
         <source>Download selected</source>
         <translation>Lataa valitut</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="967"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="1008"/>
         <source>check files</source>
         <translation>tarkista tiedostot</translation>
     </message>
@@ -12465,17 +12808,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="158"/>
+        <location filename="../main.cpp" line="171"/>
         <source>Load profile</source>
         <translation>Avaa profiili</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="199"/>
+        <location filename="../main.cpp" line="215"/>
         <source>Load configuration</source>
         <translation>Avaa asetukset</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="203"/>
+        <location filename="../main.cpp" line="219"/>
         <source>Create interface</source>
         <translation>Luo käyttöliittymä</translation>
     </message>
@@ -12559,28 +12902,26 @@ p, li { white-space: pre-wrap; }
         <translation>Nimi (GPG-tunniste) - sijainti:</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="161"/>
-        <location filename="../gui/StartDialog.cpp" line="167"/>
+        <location filename="../gui/StartDialog.cpp" line="162"/>
+        <location filename="../gui/StartDialog.cpp" line="169"/>
         <source>Multiple instances</source>
         <translation>Useita instansseja</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="162"/>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile</source>
-        <translation>Toinen RetroShare, joka käyttää samaa profiilia on jo käynnissä järjestelmässäsi. Ole hyvä ja sulje se ensin</translation>
+        <translation type="obsolete">Toinen RetroShare, joka käyttää samaa profiilia on jo käynnissä järjestelmässäsi. Ole hyvä ja sulje se ensin</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="168"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation>Odottamaton virhe haettaessa yhden instanssin lukitusta</translation>
+        <translation type="obsolete">Odottamaton virhe haettaessa yhden instanssin lukitusta</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="172"/>
+        <location filename="../gui/StartDialog.cpp" line="175"/>
         <source>Login Failure</source>
         <translation>Kirjautuminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="173"/>
+        <location filename="../gui/StartDialog.cpp" line="176"/>
         <source>Maybe password is wrong</source>
         <translation>Ehkä salasana on väärin</translation>
     </message>
@@ -12595,13 +12936,27 @@ p, li { white-space: pre-wrap; }
 Oletko varma, että haluat jatkaa?</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="214"/>
-        <location filename="../gui/StartDialog.cpp" line="216"/>
+        <location filename="../gui/StartDialog.cpp" line="163"/>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
+lock file:
+ </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="170"/>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
+lock file:
+ </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="217"/>
+        <location filename="../gui/StartDialog.cpp" line="219"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="214"/>
+        <location filename="../gui/StartDialog.cpp" line="217"/>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
@@ -12610,7 +12965,7 @@ This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="216"/>
+        <location filename="../gui/StartDialog.cpp" line="219"/>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP passwd will not be stored.
@@ -12978,7 +13333,7 @@ Tämän valinnan voi muuttaa asetuksista.</translation>
         <translation>Tilaviesti</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="86"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="89"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -12991,7 +13346,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Henkilökohtainen viesti&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="103"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="106"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -13004,14 +13359,72 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Kirjoita tilaviestisi&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="165"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="168"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="181"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="184"/>
         <source>Cancel</source>
         <translation>Peru</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.cpp" line="64"/>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
+    </message>
+</context>
+<context>
+    <name>StyleDialog</name>
+    <message>
+        <location filename="../gui/style/StyleDialog.ui" line="29"/>
+        <source>Define Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.ui" line="111"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Define Style&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.ui" line="145"/>
+        <location filename="../gui/style/StyleDialog.ui" line="161"/>
+        <source>Choose color</source>
+        <translation type="unfinished">Valitse väri</translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.ui" line="177"/>
+        <source>Color 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.ui" line="190"/>
+        <source>Color 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.ui" line="219"/>
+        <source>Style</source>
+        <translation type="unfinished">Tyyli</translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.cpp" line="51"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.cpp" line="52"/>
+        <source>Solid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/style/StyleDialog.cpp" line="53"/>
+        <source>Gradient</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13119,7 +13532,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TBoard</name>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="429"/>
+        <location filename="../gui/AboutDialog.cpp" line="430"/>
         <source>Pause</source>
         <translation>Tauko</translation>
     </message>
@@ -13165,17 +13578,17 @@ p, li { white-space: pre-wrap; }
         <translation>Allaoleva teksti on PGP-varmenteesi. Sinun täytyy antaa se ystävällesi </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="287"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="285"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
         <translation>Ole hyvä ja liitä ystäväsi PGP-varmenne allaolevaan laatikkoon</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="340"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="363"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
         <translation>Voit kopioida tämän tekstin ja lähettää sen ystävällesi sähköpostilla tai muulla tavoin</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="351"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="374"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -13185,47 +13598,52 @@ p, li { white-space: pre-wrap; }
         <translation>Tekstivarmenne</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="255"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="253"/>
         <source>Copy your Cert to Clipboard</source>
         <translation>Kopioi varmenne leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="264"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="262"/>
         <source>Save your Cert into a File</source>
         <translation>Tallenna varmenne tiedostoon</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="273"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="271"/>
         <source>Run Email program</source>
         <translation>Käynnistä sähköpostiohjelma</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="329"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="298"/>
+        <source>Clean certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="342"/>
         <source>RetroShare Invite</source>
         <translation>RetroSharekutsu</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="339"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="362"/>
         <source>Connect Friend Help</source>
         <translation>Ohje ystävän yhdistämisestä</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="352"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="375"/>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>Varmenteesi on kopioitu leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="382"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="405"/>
         <source>Save as...</source>
         <translation>Tallenna nimellä...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="383"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="406"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="428"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="452"/>
         <source>Certificate Load Failed</source>
         <translation>Varmenteen lataus epäonnistui</translation>
     </message>
@@ -13545,27 +13963,37 @@ p, li { white-space: pre-wrap; }
         <translation>Tarkistaa...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1067"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1071"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1191"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1197"/>
         <source>Details:</source>
         <translation>Yksityiskohdat:</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1434"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1387"/>
+        <source>File preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="1387"/>
+        <source>File %1 preview failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="1449"/>
         <source>Open Transfer</source>
         <translation>Avaa siirto</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1435"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1450"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>Tiedosto %1 ei ole valmis. Jos se on mediatiedosto, voit yrittää esikatsella sitä.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1065"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1069"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>Oletko varma, että haluat perua ja tuhota nämä tiedostot?</translation>
     </message>
@@ -13628,20 +14056,20 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="694"/>
         <location filename="../gui/TransfersDialog.cpp" line="838"/>
-        <location filename="../gui/TransfersDialog.cpp" line="971"/>
+        <location filename="../gui/TransfersDialog.cpp" line="973"/>
         <source>Failed</source>
         <translation>Epäonnistunut</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="698"/>
         <location filename="../gui/TransfersDialog.cpp" line="839"/>
-        <location filename="../gui/TransfersDialog.cpp" line="972"/>
+        <location filename="../gui/TransfersDialog.cpp" line="974"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="840"/>
-        <location filename="../gui/TransfersDialog.cpp" line="973"/>
+        <location filename="../gui/TransfersDialog.cpp" line="975"/>
         <source>Waiting</source>
         <translation>Odottaa</translation>
     </message>
@@ -13653,8 +14081,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="710"/>
         <location filename="../gui/TransfersDialog.cpp" line="842"/>
-        <location filename="../gui/TransfersDialog.cpp" line="975"/>
-        <location filename="../gui/TransfersDialog.cpp" line="976"/>
+        <location filename="../gui/TransfersDialog.cpp" line="977"/>
+        <location filename="../gui/TransfersDialog.cpp" line="978"/>
         <source>Complete</source>
         <translation>Valmis</translation>
     </message>
@@ -13669,9 +14097,69 @@ p, li { white-space: pre-wrap; }
         <translation>versio:</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="974"/>
+        <location filename="../gui/TransfersDialog.cpp" line="976"/>
         <source>Uploading</source>
         <translation>Lähettää</translation>
+    </message>
+</context>
+<context>
+    <name>TreeStyle_RDM</name>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="352"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="460"/>
+        <source>FILE</source>
+        <translation type="unfinished">TIEDOSTO</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="365"/>
+        <source>Files</source>
+        <translation type="unfinished">Tiedostot</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="367"/>
+        <source>File</source>
+        <translation type="unfinished">Tiedosto</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="373"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="476"/>
+        <source>DIR</source>
+        <translation type="unfinished">HAK</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="621"/>
+        <source>Friends Directories</source>
+        <translation type="unfinished">Ystävien hakemistot</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="623"/>
+        <source>My Directories</source>
+        <translation type="unfinished">Omat hakemistot</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="625"/>
+        <source>Size</source>
+        <translation type="unfinished">Koko</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="627"/>
+        <source>Age</source>
+        <translation type="unfinished">Ikä</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="630"/>
+        <source>Friend</source>
+        <translation type="unfinished">Ystävä</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="632"/>
+        <source>Share Type</source>
+        <translation type="unfinished">Jakamisen tyyppi</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="634"/>
+        <source>What&apos;s new</source>
+        <translation type="unfinished">Uusia</translation>
     </message>
 </context>
 <context>
@@ -13688,22 +14176,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TrustView.ui" line="57"/>
-        <location filename="../gui/TrustView.cpp" line="241"/>
+        <location filename="../gui/TrustView.cpp" line="243"/>
         <source>Showing: whole network</source>
         <translation>Näyttää: koko verkon</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="29"/>
+        <location filename="../gui/TrustView.cpp" line="31"/>
         <source>This table normaly auto-updates every 10 seconds.</source>
         <translation>Tämä taulukko päivittää itsensä normaalisti joka kymmenes sekunti.</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="167"/>
+        <location filename="../gui/TrustView.cpp" line="169"/>
         <source>Self</source>
         <translation>Itse</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="167"/>
+        <location filename="../gui/TrustView.cpp" line="169"/>
         <source>Trust</source>
         <translation>Luottamus</translation>
     </message>
@@ -13728,48 +14216,48 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete"> varmennettu </translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="198"/>
+        <location filename="../gui/TrustView.cpp" line="200"/>
         <source> is authenticated (one way) by </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="199"/>
+        <location filename="../gui/TrustView.cpp" line="201"/>
         <source>Half</source>
         <translation>Puolet</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="206"/>
+        <location filename="../gui/TrustView.cpp" line="208"/>
         <source> authenticated himself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="211"/>
+        <location filename="../gui/TrustView.cpp" line="213"/>
         <source> authenticated each other</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="212"/>
+        <location filename="../gui/TrustView.cpp" line="214"/>
         <source>Full</source>
         <translation>Täysi</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="218"/>
-        <location filename="../gui/TrustView.cpp" line="221"/>
+        <location filename="../gui/TrustView.cpp" line="220"/>
+        <location filename="../gui/TrustView.cpp" line="223"/>
         <source> peers, including him(her)self.</source>
         <translation>vertaiset, mukaanlukien hän itse.</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="218"/>
+        <location filename="../gui/TrustView.cpp" line="220"/>
         <source> is authenticated by </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="221"/>
+        <location filename="../gui/TrustView.cpp" line="223"/>
         <source> authenticated </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="257"/>
+        <location filename="../gui/TrustView.cpp" line="259"/>
         <source>Showing: peers connected to </source>
         <translation>Näyttää: vertaiset yhteydessä</translation>
     </message>
@@ -13777,14 +14265,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TurtleRouterDialog</name>
     <message>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="17"/>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="77"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="19"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="83"/>
         <source>Search requests</source>
         <translation>Hakupyynnöt</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="22"/>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="88"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="24"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="105"/>
         <source>Tunnel requests</source>
         <translation>Tunnelointipyynnöt</translation>
     </message>
