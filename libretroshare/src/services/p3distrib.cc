@@ -1382,7 +1382,7 @@ bool	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp, bool historical)
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadGroup()" << std::endl;
 	std::cerr << "groupId: " << gid << std::endl;
-	std::cerr << "PeerId: " << gid << std::endl;
+	std::cerr << "PeerId: " << pid << std::endl;
 	std::cerr << "Group:" << std::endl;
 	newGrp -> print(std::cerr, 10);
 	std::cerr << "----------------------" << std::endl;
