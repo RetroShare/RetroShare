@@ -51,7 +51,10 @@
 
 #define FAILED_CACHE_CONT "failedcachegrp" // cache id which have failed are stored under a node of this name/grpid
 #define HIST_CACHE_FNAME "grp_history.xml"
-#define ENABLE_CACHE_OPT
+
+/***
+ * #define ENABLE_CACHE_OPT	1
+ ***/
 
 /*****
  * #define DISTRIB_DEBUG 1
