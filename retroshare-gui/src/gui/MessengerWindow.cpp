@@ -46,7 +46,7 @@
 #include "notifyqt.h"
 #include "connect/ConnectFriendWizard.h"
 #endif // MINIMAL_RSGUI
-#include "PeersDialog.h"
+#include "FriendsDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
@@ -434,7 +434,7 @@ void  MessengerWindow::insertPeers()
 
     if (!rsPeers) {
         /* not ready yet! */
-        std::cerr << "PeersDialog::insertPeers() not ready yet : rsPeers unintialized."  << std::endl;
+        std::cerr << "FriendsDialog::insertPeers() not ready yet : rsPeers unintialized."  << std::endl;
         return;
     }
 
@@ -646,7 +646,7 @@ void  MessengerWindow::insertPeers()
             }
 
 #ifdef PEERS_DEBUG
-            std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
+            std::cerr << "FriendsDialog::insertPeers() inserting sslItem." << std::endl;
 #endif
             /* add sl child to the list. If item is already in the list, it won't be duplicated thanks to Qt */
             gpg_item->addChild(sslItem);
@@ -875,12 +875,12 @@ void MessengerWindow::exportfriend()
         QTreeWidgetItem *c = getCurrentPeer();
 
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::exportfriend()" << std::endl;
+        std::cerr << "FriendsDialog::exportfriend()" << std::endl;
 #endif
 	if (!c)
 	{
 #ifdef PEERS_DEBUG
-                std::cerr << "PeersDialog::exportfriend() None Selected -- sorry" << std::endl;
+                std::cerr << "FriendsDialog::exportfriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}
@@ -893,7 +893,7 @@ void MessengerWindow::exportfriend()
 	if (file != "")
 	{
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
+        	std::cerr << "FriendsDialog::exportfriend() Saving to: " << file << std::endl;
         	std::cerr << std::endl;
 #endif
 		if (rsPeers)
@@ -966,12 +966,12 @@ void MessengerWindow::removefriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::removefriend()" << std::endl;
+        std::cerr << "FriendsDialog::removefriend()" << std::endl;
 #endif
 	if (!c)
 	{
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::removefriend() Noone Selected -- sorry" << std::endl;
+        	std::cerr << "FriendsDialog::removefriend() Noone Selected -- sorry" << std::endl;
 #endif
 		return;
 	}
@@ -988,12 +988,12 @@ void MessengerWindow::connectfriend()
 {
     QTreeWidgetItem *c = getCurrentPeer();
 #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog::connectfriend()" << std::endl;
+    std::cerr << "FriendsDialog::connectfriend()" << std::endl;
 #endif
     if (!c)
     {
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
+        std::cerr << "FriendsDialog::connectfriend() Noone Selected -- sorry" << std::endl;
 #endif
         return;
     }

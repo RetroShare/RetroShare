@@ -10,7 +10,7 @@
 
 class QTimer;
 class NetworkDialog;
-class PeersDialog;
+class FriendsDialog;
 class SharedFilesDialog;
 class TransfersDialog;
 class ChatDialog;
@@ -134,7 +134,7 @@ class NotifyQt: public QObject, public NotifyBase
 
 		/* so we can update windows */
 		NetworkDialog *cDialog;
-//		PeersDialog       *pDialog;
+//		FriendsDialog       *fDialog;
 //		SharedFilesDialog *dDialog;
 //		TransfersDialog   *tDialog;
 //		ChatDialog        *hDialog;

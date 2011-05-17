@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006,2007 crypton
+ *  Copyright (C) 2006 - 2011 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@
 #include <gui/mainpagestack.h>
 
 #include "retroshare/rsinit.h"
-#include "PeersDialog.h"
+#include "FriendsDialog.h"
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsstatus.h>
@@ -115,7 +115,7 @@
 
 
 /** Constructor */
-PeersDialog::PeersDialog(QWidget *parent)
+FriendsDialog::FriendsDialog(QWidget *parent)
             : RsAutoUpdatePage(1500,parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -265,7 +265,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 #endif
 }
 
-PeersDialog::~PeersDialog ()
+FriendsDialog::~FriendsDialog ()
 {
     // save settings
     processSettings(false);
@@ -273,11 +273,11 @@ PeersDialog::~PeersDialog ()
     delete(m_compareRole);
 }
 
-void PeersDialog::processSettings(bool bLoad)
+void FriendsDialog::processSettings(bool bLoad)
 {
     QHeaderView *header = ui.peertreeWidget->header ();
 
-    Settings->beginGroup(QString("PeersDialog"));
+    Settings->beginGroup(QString("FriendsDialog"));
 
     if (bLoad) {
         // load settings
@@ -350,7 +350,7 @@ void PeersDialog::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-void PeersDialog::showEvent(QShowEvent *event)
+void FriendsDialog::showEvent(QShowEvent *event)
 {
     static bool first = true;
     if (first) {
@@ -363,12 +363,12 @@ void PeersDialog::showEvent(QShowEvent *event)
     RsAutoUpdatePage::showEvent(event);
 }
 
-void PeersDialog::pasteLink()
+void FriendsDialog::pasteLink()
 {
     ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
-void PeersDialog::contextMenu(QPoint point)
+void FriendsDialog::contextMenu(QPoint point)
 {
     QMenu *contextMnu = ui.lineEdit->createStandardContextMenu();
 
@@ -380,7 +380,7 @@ void PeersDialog::contextMenu(QPoint point)
     delete(contextMnu);
 }
 
-void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
+void FriendsDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 {
     QTreeWidgetItem *c = getCurrentPeer();
 
@@ -568,7 +568,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 }
 
 // replaced by shortcut
-//void PeersDialog::keyPressEvent(QKeyEvent *e)
+//void FriendsDialog::keyPressEvent(QKeyEvent *e)
 //{
 //	if(e->key() == Qt::Key_Delete)
 //	{
@@ -579,16 +579,16 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 //		MainPage::keyPressEvent(e) ;
 //}
 
-void PeersDialog::updateDisplay()
+void FriendsDialog::updateDisplay()
 {
     insertPeers() ;
 }
 
 /* get the list of peers from the RsIface.  */
-void  PeersDialog::insertPeers()
+void  FriendsDialog::insertPeers()
 {
     #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog::insertPeers() called." << std::endl;
+    std::cerr << "FriendsDialog::insertPeers() called." << std::endl;
     #endif
 
     std::list<std::string> gpgFriends;
@@ -599,7 +599,7 @@ void  PeersDialog::insertPeers()
 
     if (!rsPeers) {
         /* not ready yet! */
-        std::cerr << "PeersDialog::insertPeers() not ready yet : rsPeers unintialized."  << std::endl;
+        std::cerr << "FriendsDialog::insertPeers() not ready yet : rsPeers unintialized."  << std::endl;
         return;
     }
 
@@ -791,7 +791,7 @@ void  PeersDialog::insertPeers()
 
             //add the gpg friends
 #ifdef PEERS_DEBUG
-            std::cerr << "PeersDialog::insertPeers() inserting gpg_id : " << *it << std::endl;
+            std::cerr << "FriendsDialog::insertPeers() inserting gpg_id : " << *it << std::endl;
 #endif
 
             /* make a widget per friend */
@@ -897,7 +897,7 @@ void  PeersDialog::insertPeers()
                     sslItem = new RSTreeWidgetItem(m_compareRole, TYPE_SSL); //set type to 1 for custom popup menu
 
 #ifdef PEERS_DEBUG
-                    std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
+                    std::cerr << "FriendsDialog::insertPeers() inserting sslItem." << std::endl;
 #endif
 
                     /* Add ssl child to the list. Add here, because for setHidden the item must be added */
@@ -1149,17 +1149,17 @@ std::string getPeerRsCertId(QTreeWidgetItem *i)
 }
 
 /** Open a QFileDialog to browse for export a file. */
-void PeersDialog::exportfriend()
+void FriendsDialog::exportfriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
 
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::exportfriend()" << std::endl;
+        std::cerr << "FriendsDialog::exportfriend()" << std::endl;
 #endif
 	if (!c)
 	{
 #ifdef PEERS_DEBUG
-                std::cerr << "PeersDialog::exportfriend() None Selected -- sorry" << std::endl;
+                std::cerr << "FriendsDialog::exportfriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}
@@ -1169,7 +1169,7 @@ void PeersDialog::exportfriend()
 	if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save Certificate"), tr("Certificates (*.pqi)"), fileName))
 	{
 #ifdef PEERS_DEBUG
-                std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
+                std::cerr << "FriendsDialog::exportfriend() Saving to: " << file << std::endl;
 #endif
 		if (rsPeers)
 		{
@@ -1179,12 +1179,12 @@ void PeersDialog::exportfriend()
 
 }
 
-void PeersDialog::chatfriendproxy()
+void FriendsDialog::chatfriendproxy()
 {
     chatfriend(getCurrentPeer());
 }
 
-void PeersDialog::chatfriend(QTreeWidgetItem *pPeer)
+void FriendsDialog::chatfriend(QTreeWidgetItem *pPeer)
 {
     if (pPeer == NULL) {
         return;
@@ -1194,7 +1194,7 @@ void PeersDialog::chatfriend(QTreeWidgetItem *pPeer)
     PopupChatDialog::chatFriend(id);
 }
 
-void PeersDialog::msgfriend()
+void FriendsDialog::msgfriend()
 {
     QTreeWidgetItem *peer = getCurrentPeer();
 
@@ -1205,7 +1205,7 @@ void PeersDialog::msgfriend()
     MessageComposer::msgFriend(id, (peer->type() == TYPE_GROUP));
 }
 
-void PeersDialog::recommendfriend()
+void FriendsDialog::recommendfriend()
 {
     QTreeWidgetItem *peer = getCurrentPeer();
 
@@ -1217,12 +1217,12 @@ void PeersDialog::recommendfriend()
     MessageComposer::recommendFriend(ids);
 }
 
-void PeersDialog::pastePerson()
+void FriendsDialog::pastePerson()
 {
     RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
 }
 
-void PeersDialog::copyLink()
+void FriendsDialog::copyLink()
 {
     QTreeWidgetItem *c = getCurrentPeer();
 
@@ -1239,7 +1239,7 @@ void PeersDialog::copyLink()
     RSLinkClipboard::copyLinks(urls);
 }
 
-QTreeWidgetItem *PeersDialog::getCurrentPeer()
+QTreeWidgetItem *FriendsDialog::getCurrentPeer()
 {
 	/* get the current, and extract the Id */
 
@@ -1281,16 +1281,16 @@ QTreeWidgetItem *PeersDialog::getCurrentPeer()
  */
 
 
-void PeersDialog::removefriend()
+void FriendsDialog::removefriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::removefriend()" << std::endl;
+        std::cerr << "FriendsDialog::removefriend()" << std::endl;
 #endif
 	if (!c)
 	{
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::removefriend() None Selected -- sorry" << std::endl;
+        	std::cerr << "FriendsDialog::removefriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}
@@ -1307,16 +1307,16 @@ void PeersDialog::removefriend()
 	}
 }
 
-void PeersDialog::connectfriend()
+void FriendsDialog::connectfriend()
 {
     QTreeWidgetItem *c = getCurrentPeer();
 #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog::connectfriend()" << std::endl;
+    std::cerr << "FriendsDialog::connectfriend()" << std::endl;
 #endif
     if (!c)
     {
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
+        std::cerr << "FriendsDialog::connectfriend() Noone Selected -- sorry" << std::endl;
 #endif
         return;
     }
@@ -1341,12 +1341,12 @@ void PeersDialog::connectfriend()
 }
 
 /* GUI stuff -> don't do anything directly with Control */
-void PeersDialog::configurefriend()
+void FriendsDialog::configurefriend()
 {
     ConfCertDialog::showIt(getPeerRsCertId(getCurrentPeer()), ConfCertDialog::PageDetails);
 }
 
-void PeersDialog::addFriend()
+void FriendsDialog::addFriend()
 {
     std::string groupId;
 
@@ -1364,21 +1364,21 @@ void PeersDialog::addFriend()
     connwiz.exec ();
 }
 
-void PeersDialog::resetStatusBar() 
+void FriendsDialog::resetStatusBar() 
 {
         #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog: reseting status bar." << std::endl ;
+	std::cerr << "FriendsDialog: reseting status bar." << std::endl ;
         #endif
 
 	ui.statusStringLabel->setText(QString("")) ;
 }
 
-void PeersDialog::updateStatusTyping()
+void FriendsDialog::updateStatusTyping()
 {
     if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
     {
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog: sending group chat typing info." << std::endl ;
+        std::cerr << "FriendsDialog: sending group chat typing info." << std::endl ;
 #endif
 
 #ifdef ONLY_FOR_LINGUIST
@@ -1392,10 +1392,10 @@ void PeersDialog::updateStatusTyping()
 
 // Called by libretroshare through notifyQt to display the peer's status
 //
-void PeersDialog::updateStatusString(const QString& peer_id, const QString& status_string)
+void FriendsDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
 #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog: received group chat typing info. updating gui." << std::endl ;
+    std::cerr << "FriendsDialog: received group chat typing info. updating gui." << std::endl ;
 #endif
 
     QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
@@ -1404,10 +1404,10 @@ void PeersDialog::updateStatusString(const QString& peer_id, const QString& stat
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
-void PeersDialog::updatePeersAvatar(const QString& peer_id)
+void FriendsDialog::updatePeersAvatar(const QString& peer_id)
 {
 #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
+    std::cerr << "FriendsDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
 #endif
 
     PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(), 0);
@@ -1416,7 +1416,7 @@ void PeersDialog::updatePeersAvatar(const QString& peer_id)
     }
 }
 
-void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
+void FriendsDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
     if(is_private_chat)
     {
@@ -1435,14 +1435,14 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
     }
 }
 
-void PeersDialog::publicChatChanged(int type)
+void FriendsDialog::publicChatChanged(int type)
 {
     if (type == NOTIFY_TYPE_ADD) {
         insertChat();
     }
 }
 
-void PeersDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message)
+void FriendsDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message)
 {
     unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
 
@@ -1470,7 +1470,7 @@ void PeersDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTi
     ui.msgText->append(formatMsg);
 }
 
-void PeersDialog::insertChat()
+void FriendsDialog::insertChat()
 {
     std::list<ChatInfo> newchat;
     if (!rsMsgs->getPublicChatQueue(newchat))
@@ -1501,7 +1501,7 @@ void PeersDialog::insertChat()
         QString msg = QString::fromStdWString(it->msg);
 
 #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
+        std::cerr << "FriendsDialog::insertChat(): " << msg << std::endl;
 #endif
 
         bool incoming = false;
@@ -1527,7 +1527,7 @@ void PeersDialog::insertChat()
     }
 }
 
-bool PeersDialog::eventFilter(QObject *obj, QEvent *event)
+bool FriendsDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui.lineEdit) {
         if (event->type() == QEvent::KeyPress) {
@@ -1559,7 +1559,7 @@ bool PeersDialog::eventFilter(QObject *obj, QEvent *event)
     return RsAutoUpdatePage::eventFilter(obj, event);
 }
 
-void PeersDialog::sendMsg()
+void FriendsDialog::sendMsg()
 {
     QTextEdit *lineWidget = ui.lineEdit;
 
@@ -1572,7 +1572,7 @@ void PeersDialog::sendMsg()
 
 #ifdef PEERS_DEBUG
     std::string msg(ci.msg.begin(), ci.msg.end());
-    std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
+    std::cerr << "FriendsDialog::sendMsg(): " << msg << std::endl;
 #endif
 
     rsMsgs->sendPublicChat(message);
@@ -1587,7 +1587,7 @@ void PeersDialog::sendMsg()
     insertSendList();
 }
 
-void  PeersDialog::insertSendList()
+void  FriendsDialog::insertSendList()
 {
 #ifdef false
 	std::list<std::string> peers;
@@ -1658,7 +1658,7 @@ void  PeersDialog::insertSendList()
 /* to toggle the state */
 
 
-//void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
+//void FriendsDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 //{
 //        #ifdef PEERS_DEBUG
 //	std::cerr << "ToggleSendItem()" << std::endl;
@@ -1678,7 +1678,7 @@ void  PeersDialog::insertSendList()
 
 //============================================================================
 
-void PeersDialog::setColor()
+void FriendsDialog::setColor()
 {
     bool ok;
     QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
@@ -1689,14 +1689,14 @@ void PeersDialog::setColor()
     setFont();
 }
 
-void PeersDialog::colorChanged(const QColor &c)
+void FriendsDialog::colorChanged(const QColor &c)
 {
     QPixmap pxm(16,16);
     pxm.fill(mCurrentColor);
     ui.colorChatButton->setIcon(pxm);
 }
 
-void PeersDialog::getFont()
+void FriendsDialog::getFont()
 {
     bool ok;
     mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
@@ -1705,7 +1705,7 @@ void PeersDialog::getFont()
     }
 }
 
-void PeersDialog::fontChanged(const QFont &font)
+void FriendsDialog::fontChanged(const QFont &font)
 {
     mCurrentFont = font;
 
@@ -1716,7 +1716,7 @@ void PeersDialog::fontChanged(const QFont &font)
     setFont();
 }
 
-void PeersDialog::setFont()
+void FriendsDialog::setFont()
 {
     mCurrentFont.setBold(ui.textboldChatButton->isChecked());
     mCurrentFont.setUnderline(ui.textunderlineChatButton->isChecked());
@@ -1729,7 +1729,7 @@ void PeersDialog::setFont()
 }
 
 // Update Chat Info information
-void PeersDialog::setChatInfo(QString info, QColor color)
+void FriendsDialog::setChatInfo(QString info, QColor color)
 {
   static unsigned int nbLines = 0;
   ++nbLines;
@@ -1741,12 +1741,12 @@ void PeersDialog::setChatInfo(QString info, QColor color)
   ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
 }
 
-void PeersDialog::on_actionClear_Chat_History_triggered()
+void FriendsDialog::on_actionClear_Chat_History_triggered()
 {
     ui.msgText->clear();
 }
 
-void PeersDialog::on_actionDelete_Chat_History_triggered()
+void FriendsDialog::on_actionDelete_Chat_History_triggered()
 {
     if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
         on_actionClear_Chat_History_triggered();
@@ -1754,18 +1754,18 @@ void PeersDialog::on_actionDelete_Chat_History_triggered()
     }
 }
 
-void PeersDialog::smileyWidgetgroupchat()
+void FriendsDialog::smileyWidgetgroupchat()
 {
     Emoticons::showSmileyWidget(this, ui.emoticonBtn, SLOT(addSmileys()), true);
 }
 
-void PeersDialog::addSmileys()
+void FriendsDialog::addSmileys()
 {
     ui.lineEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 /* GUI stuff -> don't do anything directly with Control */
-void PeersDialog::viewprofile()
+void FriendsDialog::viewprofile()
 {
 	/* display Dialog */
 
@@ -1785,7 +1785,7 @@ void PeersDialog::viewprofile()
 	profileview -> show();
 }
 
-void PeersDialog::updateAvatar()
+void FriendsDialog::updateAvatar()
 {
 	unsigned char *data = NULL;
 	int size = 0 ;
@@ -1809,7 +1809,7 @@ void PeersDialog::updateAvatar()
 	delete[] data ;
 }
 
-void PeersDialog::getAvatar()
+void FriendsDialog::getAvatar()
 {
 	QString fileName;
 	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
@@ -1838,13 +1838,13 @@ void PeersDialog::getAvatar()
 	}
 }
 
-void PeersDialog::changeAvatarClicked() 
+void FriendsDialog::changeAvatarClicked() 
 {
 
 	updateAvatar();
 }
 
-void PeersDialog::on_actionCreate_New_Forum_activated()
+void FriendsDialog::on_actionCreate_New_Forum_activated()
 {
     MainWindow::activatePage (MainWindow::Forums);
 
@@ -1853,7 +1853,7 @@ void PeersDialog::on_actionCreate_New_Forum_activated()
     
 }
 
-void PeersDialog::on_actionCreate_New_Channel_activated()
+void FriendsDialog::on_actionCreate_New_Channel_activated()
 {
 #ifndef RS_RELEASE_VERSION
     MainWindow::activatePage (MainWindow::Channels);
@@ -1865,18 +1865,18 @@ void PeersDialog::on_actionCreate_New_Channel_activated()
 
 
 /** Loads own personal status */
-void PeersDialog::loadmypersonalstatus()
+void FriendsDialog::loadmypersonalstatus()
 {
     ui.mypersonalstatuslabel->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
-void PeersDialog::statusmessage()
+void FriendsDialog::statusmessage()
 {
     StatusMessage statusmsgdialog (this);
     statusmsgdialog.exec();
 }
 
-void PeersDialog::addExtraFile()
+void FriendsDialog::addExtraFile()
 {
     QString file;
     if (misc::getOpenFileName(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", file)) {
@@ -1884,7 +1884,7 @@ void PeersDialog::addExtraFile()
     }
 }
 
-void PeersDialog::addAttachment(std::string filePath) {
+void FriendsDialog::addAttachment(std::string filePath) {
 	    /* add a AttachFileItem to the attachment section */
             std::cerr << "PopupChatDialog::addExtraFile() hashing file." << std::endl;
 
@@ -1902,9 +1902,9 @@ void PeersDialog::addAttachment(std::string filePath) {
 	    }
 }
 
-void PeersDialog::fileHashingFinished(AttachFileItem* file)
+void FriendsDialog::fileHashingFinished(AttachFileItem* file)
 {
-    std::cerr << "PeersDialog::fileHashingFinished() started." << std::endl;
+    std::cerr << "FriendsDialog::fileHashingFinished() started." << std::endl;
 
     //check that the file is ok tos end
     if (file->getState() == AFI_STATE_ERROR) {
@@ -1928,7 +1928,7 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
     //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
     //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
 #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
+    std::cerr << "FriendsDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
 #endif
 
     /* convert to real html document */
@@ -1940,17 +1940,17 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
     setFont();
 }
 
-void PeersDialog::dropEvent(QDropEvent *event)
+void FriendsDialog::dropEvent(QDropEvent *event)
 {
     if (!(Qt::CopyAction & event->possibleActions()))
     {
-        std::cerr << "PeersDialog::dropEvent() Rejecting uncopyable DropAction" << std::endl;
+        std::cerr << "FriendsDialog::dropEvent() Rejecting uncopyable DropAction" << std::endl;
 
         /* can't do it */
         return;
     }
 
-    std::cerr << "PeersDialog::dropEvent() Formats" << std::endl;
+    std::cerr << "FriendsDialog::dropEvent() Formats" << std::endl;
     QStringList formats = event->mimeData()->formats();
     QStringList::iterator it;
     for(it = formats.begin(); it != formats.end(); it++)
@@ -1960,7 +1960,7 @@ void PeersDialog::dropEvent(QDropEvent *event)
 
     if (event->mimeData()->hasUrls())
     {
-        std::cerr << "PeersDialog::dropEvent() Urls:" << std::endl;
+        std::cerr << "FriendsDialog::dropEvent() Urls:" << std::endl;
 
         QList<QUrl> urls = event->mimeData()->urls();
         QList<QUrl>::iterator uit;
@@ -1975,13 +1975,13 @@ void PeersDialog::dropEvent(QDropEvent *event)
                 //Check that the file does exist and is not a directory
                 QDir dir(localpath);
                 if (dir.exists()) {
-                    std::cerr << "PeersDialog::dropEvent() directory not accepted."<< std::endl;
+                    std::cerr << "FriendsDialog::dropEvent() directory not accepted."<< std::endl;
                     QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
                     mb.exec();
                 } else if (QFile::exists(localpath)) {
-                    PeersDialog::addAttachment(localpath.toUtf8().constData());
+                    FriendsDialog::addAttachment(localpath.toUtf8().constData());
                 } else {
-                    std::cerr << "PeersDialog::dropEvent() file does not exists."<< std::endl;
+                    std::cerr << "FriendsDialog::dropEvent() file does not exists."<< std::endl;
                     QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
                     mb.exec();
                 }
@@ -1993,10 +1993,10 @@ void PeersDialog::dropEvent(QDropEvent *event)
     event->accept();
 }
 
-void PeersDialog::dragEnterEvent(QDragEnterEvent *event)
+void FriendsDialog::dragEnterEvent(QDragEnterEvent *event)
 {
 	/* print out mimeType */
-        std::cerr << "PeersDialog::dragEnterEvent() Formats" << std::endl;
+        std::cerr << "FriendsDialog::dragEnterEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
 	for(it = formats.begin(); it != formats.end(); it++)
@@ -2006,16 +2006,16 @@ void PeersDialog::dragEnterEvent(QDragEnterEvent *event)
 
 	if (event->mimeData()->hasUrls())
 	{
-                std::cerr << "PeersDialog::dragEnterEvent() Accepting Urls" << std::endl;
+                std::cerr << "FriendsDialog::dragEnterEvent() Accepting Urls" << std::endl;
 		event->acceptProposedAction();
 	}
 	else
 	{
-                std::cerr << "PeersDialog::dragEnterEvent() No Urls" << std::endl;
+                std::cerr << "FriendsDialog::dragEnterEvent() No Urls" << std::endl;
 	}
 }
 
-bool PeersDialog::fileSave()
+bool FriendsDialog::fileSave()
 {
     if (fileName.isEmpty())
         return fileSaveAs();
@@ -2030,7 +2030,7 @@ bool PeersDialog::fileSave()
     return true;
 }
 
-bool PeersDialog::fileSaveAs()
+bool FriendsDialog::fileSaveAs()
 {
     QString fn;
     if (misc::getSaveFileName(this, RshareSettings::LASTDIR_HISTORY, tr("Save as..."), tr("Text File (*.txt );;All Files (*)"), fn)) {
@@ -2041,7 +2041,7 @@ bool PeersDialog::fileSaveAs()
     return false;
 }
 
-void PeersDialog::setCurrentFileName(const QString &fileName)
+void FriendsDialog::setCurrentFileName(const QString &fileName)
 {
     this->fileName = fileName;
     ui.msgText->document()->setModified(false);
@@ -2050,7 +2050,7 @@ void PeersDialog::setCurrentFileName(const QString &fileName)
 }
 
 ////play sound when recv a message
-void PeersDialog::playsound(){
+void FriendsDialog::playsound(){
     Settings->beginGroup("Sound");
         Settings->beginGroup("SoundFilePath");
             QString OnlineSound = Settings->value("NewChatMessage","").toString();
@@ -2064,7 +2064,7 @@ void PeersDialog::playsound(){
             QSound::play(OnlineSound);
 }
 
-void PeersDialog::displayMenu()
+void FriendsDialog::displayMenu()
 {
     QMenu *displaymenu = new QMenu();
 
@@ -2078,7 +2078,7 @@ void PeersDialog::displayMenu()
     ui.displayButton->setMenu(displaymenu);
 }
 
-void PeersDialog::setStateColumn()
+void FriendsDialog::setStateColumn()
 {
     if (ui.action_Hide_Status_Column->isChecked()) {
         ui.peertreeWidget->setColumnHidden(COLUMN_STATE, true);
@@ -2106,34 +2106,34 @@ void PeersDialog::setStateColumn()
     }
 }
 
-void PeersDialog::sortPeersAscendingOrder()
+void FriendsDialog::sortPeersAscendingOrder()
 {
     ui.peertreeWidget->sortByColumn(ui.peertreeWidget->sortColumn(), Qt::AscendingOrder);
 }
 
-void PeersDialog::sortPeersDescendingOrder()
+void FriendsDialog::sortPeersDescendingOrder()
 {
     ui.peertreeWidget->sortByColumn(ui.peertreeWidget->sortColumn(), Qt::DescendingOrder);
 }
 
-void PeersDialog::peerSortIndicatorChanged(int column, Qt::SortOrder)
+void FriendsDialog::peerSortIndicatorChanged(int column, Qt::SortOrder)
 {
     ui.action_Sort_by_State->setChecked(column == COLUMN_STATE);
 }
 
-void PeersDialog::on_actionMessageHistory_triggered()
+void FriendsDialog::on_actionMessageHistory_triggered()
 {
     ImHistoryBrowser imBrowser("", historyKeeper, ui.lineEdit, this);
     imBrowser.exec();
 }
 
-void PeersDialog::on_actionAdd_Group_activated()
+void FriendsDialog::on_actionAdd_Group_activated()
 {
     CreateGroup createGrpDialog ("", this);
     createGrpDialog.exec();
 }
 
-void PeersDialog::addToGroup()
+void FriendsDialog::addToGroup()
 {
     QTreeWidgetItem *c = getCurrentPeer();
     if (c == NULL) {
@@ -2156,7 +2156,7 @@ void PeersDialog::addToGroup()
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
 }
 
-void PeersDialog::moveToGroup()
+void FriendsDialog::moveToGroup()
 {
     QTreeWidgetItem *c = getCurrentPeer();
     if (c == NULL) {
@@ -2182,7 +2182,7 @@ void PeersDialog::moveToGroup()
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
 }
 
-void PeersDialog::removeFromGroup()
+void FriendsDialog::removeFromGroup()
 {
     QTreeWidgetItem *c = getCurrentPeer();
     if (c == NULL) {
@@ -2205,7 +2205,7 @@ void PeersDialog::removeFromGroup()
     rsPeers->assignPeerToGroup(groupId, gpgId, false);
 }
 
-void PeersDialog::editGroup()
+void FriendsDialog::editGroup()
 {
     QTreeWidgetItem *c = getCurrentPeer();
     if (c == NULL) {
@@ -2227,7 +2227,7 @@ void PeersDialog::editGroup()
     editGrpDialog.exec();
 }
 
-void PeersDialog::removeGroup()
+void FriendsDialog::removeGroup()
 {
     QTreeWidgetItem *c = getCurrentPeer();
     if (c == NULL) {
@@ -2248,14 +2248,14 @@ void PeersDialog::removeGroup()
     rsPeers->removeGroup(groupId);
 }
 
-void PeersDialog::groupsChanged(int type)
+void FriendsDialog::groupsChanged(int type)
 {
     Q_UNUSED(type);
 
     groupsHasChanged = true;
 }
 
-void PeersDialog::newsFeedChanged(int count)
+void FriendsDialog::newsFeedChanged(int count)
 {
     if (count) {
         ui.peertabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
@@ -2268,7 +2268,7 @@ void PeersDialog::newsFeedChanged(int count)
     }
 }
 
-void PeersDialog::updateOwnStatus(const QString &peer_id, int status)
+void FriendsDialog::updateOwnStatus(const QString &peer_id, int status)
 {
     // add self nick + own status
     if (peer_id.toStdString() == rsPeers->getOwnId())

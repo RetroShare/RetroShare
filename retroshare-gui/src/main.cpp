@@ -25,7 +25,7 @@
 #include <rshare.h>
 #ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
-#include "gui/PeersDialog.h"
+#include "gui/FriendsDialog.h"
 #include "gui/SearchDialog.h"
 #include "gui/TransfersDialog.h"
 #include "gui/MessagesDialog.h"
@@ -272,9 +272,9 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      		,SLOT(insertPeers()                    )) ;
-	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->peersDialog      		,SLOT(publicChatChanged(int)           ));
-	QObject::connect(notify,SIGNAL(groupsChanged(int))                ,w->peersDialog      		,SLOT(groupsChanged(int)               ));
+	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->friendsDialog      		,SLOT(insertPeers()                    )) ;
+	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
+	QObject::connect(notify,SIGNAL(groupsChanged(int))                ,w->friendsDialog      		,SLOT(groupsChanged(int)               ));
 	QObject::connect(notify,SIGNAL(privateChatChanged(int, int))      ,w                   		,SLOT(privateChatChanged(int, int)     ));
 	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
@@ -284,16 +284,16 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(channelsChanged(int))              ,w                   		,SLOT(updateChannels(int)              ), Qt::QueuedConnection);
 	QObject::connect(notify,SIGNAL(downloadCompleteCountChanged(int)) ,w                   		,SLOT(updateTransfers(int)             ));
 
-	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
-	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->peersDialog,SLOT(updatePeersAvatar(const QString&)));
-	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->peersDialog,SLOT(updateAvatar()));
-	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->peersDialog,SLOT(loadmypersonalstatus()));
+	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
+	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->friendsDialog,SLOT(updatePeersAvatar(const QString&)));
+	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->friendsDialog,SLOT(updateAvatar()));
+	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
 
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->networkDialog,SLOT(setLogInfo(QString))) ;
 	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->networkDialog,SLOT(updateNewDiscoveryInfo()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
 
-	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
+	QObject::connect(w->friendsDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
 
 	w->installGroupChatNotifier();
 

@@ -208,7 +208,7 @@ HEADERS +=  rshare.h \
             gui/NetworkView.h \
             gui/TrustView.h \
             gui/MessengerWindow.h \
-            gui/PeersDialog.h \
+            gui/FriendsDialog.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
@@ -357,7 +357,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/NetworkView.ui \
             gui/TrustView.ui \
             gui/MessengerWindow.ui \
-            gui/PeersDialog.ui \
+            gui/FriendsDialog.ui \
             gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
@@ -441,7 +441,7 @@ SOURCES +=  main.cpp \
             gui/NetworkView.cpp \
             gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
-            gui/PeersDialog.cpp \
+            gui/FriendsDialog.cpp \
             gui/RemoteDirModel.cpp \
             gui/RsAutoUpdatePage.cpp \
             gui/RetroShareLink.cpp \

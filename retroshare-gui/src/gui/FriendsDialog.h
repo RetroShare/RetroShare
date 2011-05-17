@@ -1,7 +1,7 @@
 /****************************************************************
  *  RShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006 - 2011 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,8 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _PEERSDIALOG_H
-#define _PEERSDIALOG_H
+#ifndef _FRIENDSDIALOG_H
+#define _FRIENDSDIALOG_H
 
 #include "chat/ChatStyle.h"
 #include "RsAutoUpdatePage.h"
@@ -41,7 +41,7 @@
 #define BuildStateSortString(bEnabled,sName,nState) bEnabled ? (QString ("%1").arg(nState) + " " + sName) : sName
 
 #ifndef MINIMAL_RSGUI
-#include "ui_PeersDialog.h"
+#include "ui_FriendsDialog.h"
 
 class QFont;
 class QAction;
@@ -51,15 +51,15 @@ class ChatDialog;
 class AttachFileItem;
 class RSTreeWidgetItemCompareRole;
 
-class PeersDialog : public RsAutoUpdatePage 
+class FriendsDialog : public RsAutoUpdatePage 
 {
     Q_OBJECT
 
 public:
     /** Default Constructor */
-    PeersDialog(QWidget *parent = 0);
+    FriendsDialog(QWidget *parent = 0);
     /** Default Destructor */
-    ~PeersDialog ();
+    ~FriendsDialog ();
 
     //  void setChatDialog(ChatDialog *cd);
 
@@ -217,7 +217,7 @@ private:
     bool correctColumnStatusSize;
 
     /** Qt Designer generated object */
-    Ui::PeersDialog ui;
+    Ui::FriendsDialog ui;
 };
 
 #endif // MINIMAL_RSGUI

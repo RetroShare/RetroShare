@@ -27,7 +27,7 @@
 #include <gui/common/rwindow.h>
 
 class LogoBar;
-class PeersDialog;
+class FriendsDialog;
 class PopupChatDialog;
 class RSTreeWidgetItemCompareRole;
 

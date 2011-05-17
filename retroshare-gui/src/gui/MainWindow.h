@@ -38,7 +38,7 @@ class DiscStatus;
 class DHTStatus;
 class HashingStatus;
 class ForumsDialog;
-class PeersDialog;
+class FriendsDialog;
 class ChatDialog;
 class NetworkDialog;
 class SearchDialog;
@@ -71,7 +71,7 @@ public:
     enum Page {
         /* Fixed numbers for load and save the last page */
         Network            = 0,  /** Network page. */
-        Friends            = 1,  /** Peers page. */
+        Friends            = 1,  /** Friends page. */
         Search             = 2,  /** Search page. */
         Transfers          = 3,  /** Transfers page. */
         SharedDirectories  = 4,  /** Shared Directories page. */
@@ -108,7 +108,7 @@ public:
     */
 
     NetworkDialog     *networkDialog;
-    PeersDialog       *peersDialog;
+    FriendsDialog     *friendsDialog;
     SearchDialog      *searchDialog;
     TransfersDialog   *transfersDialog;
     ChatDialog        *chatDialog;

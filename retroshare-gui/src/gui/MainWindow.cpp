@@ -47,7 +47,7 @@
 #include "LinksDialog.h"
 #endif
 #include "ForumsDialog.h"
-#include "PeersDialog.h"
+#include "FriendsDialog.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
 #include "QuickStartWizard.h"
@@ -221,7 +221,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
 
-    ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
+    ui.stackPages->add(friendsDialog = new FriendsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
 
 
@@ -542,9 +542,9 @@ void MainWindow::createNotifyIcons()
     }
 
     if(Settings->getDisplayTrayGroupChat()) {
-        QObject::connect(_instance->peersDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)), Qt::QueuedConnection);
+        QObject::connect(_instance->friendsDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)), Qt::QueuedConnection);
     } else {
-        QObject::disconnect(_instance->peersDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)));
+        QObject::disconnect(_instance->friendsDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)));
     }
 }
 
@@ -899,7 +899,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
         Page = _instance->networkDialog;
         break;
     case Friends:
-        Page = _instance->peersDialog;
+        Page = _instance->friendsDialog;
         break;
     case Search:
         Page = _instance->searchDialog;
@@ -952,7 +952,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
    if (page == _instance->networkDialog) {
        return Network;
    }
-   if (page == _instance->peersDialog) {
+   if (page == _instance->friendsDialog) {
        return Friends;
    }
    if (page == _instance->searchDialog) {
@@ -998,7 +998,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
    case Network:
        return _instance->networkDialog;
    case Friends:
-       return _instance->peersDialog;
+       return _instance->friendsDialog;
    case Search:
        return _instance->searchDialog;
    case Transfers:
