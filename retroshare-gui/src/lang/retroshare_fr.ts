@@ -1083,7 +1083,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="229"/>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher le statut des Messages lus</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="266"/>
@@ -1108,7 +1108,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="431"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Copier le lien RetroShare</translation>
+        <translation>Copier le lien RetroShare</translation>
     </message>
     <message>
         <source>Connected</source>
@@ -1145,7 +1145,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanMsgItem.cpp" line="106"/>
         <source>Channel Feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Fil d&apos;actualité des Chaînes</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.cpp" line="218"/>
@@ -1176,17 +1176,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanNewItem.cpp" line="104"/>
         <source>Unknown Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Chaîne inconnue</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanNewItem.cpp" line="111"/>
         <source>New Channel</source>
-        <translation type="unfinished">Nouveau canal</translation>
+        <translation>Nouvelle Chaîne</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanNewItem.cpp" line="115"/>
         <source>Updated Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Chaîne mise à jour</translation>
     </message>
     <message>
         <source>name</source>
@@ -1389,7 +1389,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.ui" line="538"/>
         <source>Enable Auto-download</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le téléchargement automatique</translation>
     </message>
     <message>
         <source>Auto Download On</source>
@@ -1443,17 +1443,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="190"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Copier le lien RetroShare</translation>
+        <translation>Copier le lien RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="647"/>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactiver le téléchargement auto</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="649"/>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le téléchargement auto</translation>
     </message>
     <message>
         <source>Popularity: %1</source>
@@ -2009,7 +2009,7 @@ Disponible : %3</translation>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="276"/>
         <source>Addresses list</source>
-        <translation>Liste d&apos;adresses IP connues: </translation>
+        <translation>Liste d&apos;adresses IP connues : </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="327"/>
@@ -2040,7 +2040,13 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signer la clé d&apos;un ami est une marque de confiance envers lui, ceci aura un impacte sur votre réseau. De plus, les personnes dont vous avez signé les clé pourront voir des informations de vos autres amis auquels vous faites déjà confiance.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Une signature ne peut être annulée, donc soyez prudent.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="520"/>
@@ -2051,7 +2057,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signer la clé d&apos;un ami est une marque de confiance envers lui, ceci aura un impacte sur votre réseau. De plus, les personnes dont vous avez signé les clé pourront voir des informations de vos autres amis auquels vous faites déjà confiance.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Une signature ne peut être annulée, donc soyez prudent.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="562"/>
@@ -2866,17 +2878,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="162"/>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="168"/>
         <source>Drop file error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors du dépôt du fichier.</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="162"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished">On ne peut pas déposer un répertoire, seuls les fichiers sont acceptés.</translation>
+        <translation>On ne peut pas déposer un répertoire, seuls les fichiers sont acceptés.</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="168"/>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier n&apos;a pas été trouvé ou le nom de fichier n&apos;a pas été accepté.</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="309"/>
@@ -3543,12 +3555,12 @@ hachage des fichiers qui utilise les ressources du système.</translation>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="692"/>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"></translation>
+        <translation>Vérification automatique des répertoires partagés tous les </translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="702"/>
         <source> minute(s)</source>
-        <translation type="unfinished"></translation>
+        <translation> minute(s)</translation>
     </message>
     <message>
         <source>Incoming files</source>
@@ -4127,37 +4139,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="664"/>
         <source>Friends Directories</source>
-        <translation type="unfinished">Dossiers partagés de mes amis</translation>
+        <translation>Partages de mes amis</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="666"/>
         <source>My Directories</source>
-        <translation type="unfinished">Mes partages</translation>
+        <translation>Mes partages</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="668"/>
         <source>Size</source>
-        <translation type="unfinished">Taille</translation>
+        <translation>Taille</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="670"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>Ancienneté</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="673"/>
         <source>Friend</source>
-        <translation type="unfinished">Ami</translation>
+        <translation>Ami</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="675"/>
         <source>Share Type</source>
-        <translation type="unfinished">Méthode de partage</translation>
+        <translation>Méthode de partage</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="677"/>
         <source>Directory</source>
-        <translation type="unfinished">Répertoire</translation>
+        <translation>Répertoire</translation>
     </message>
 </context>
 <context>
@@ -4482,7 +4494,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="299"/>
         <location filename="../gui/ForumsDialog.cpp" line="392"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Copier le lien RetroShare</translation>
+        <translation>Copier le lien RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="304"/>
@@ -4792,7 +4804,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="1035"/>
         <source>Download all files</source>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger tous les fichiers</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="1088"/>
@@ -5099,7 +5111,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/GenCertDialog.ui" line="616"/>
         <location filename="../gui/GenCertDialog.ui" line="661"/>
         <source>Your profile is associated to a GPG key</source>
-        <translation type="unfinished"></translation>
+        <translation>Votre profil est associé à une clé PGP</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="654"/>
@@ -5138,7 +5150,7 @@ mais pour rester anonyme, vous pouvez utiliser un faux courrier électronique.</
     <message>
         <location filename="../gui/GenCertDialog.ui" line="721"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplacement</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -5442,7 +5454,7 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="589"/>
         <source>Register retroshare:// as url protocol (Restart required)</source>
-        <translation type="unfinished"></translation>
+        <translation>Installer le protocole d&apos;URL &quot;retroshare://&quot; (redémarrage requis)</translation>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="612"/>
@@ -7586,7 +7598,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1402"/>
         <source>Download all Recommended Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger tous les fichiers recommandés</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1582"/>
@@ -7713,33 +7725,33 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="268"/>
         <source>Click to sort by attachments</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier par fichiers attachés</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="269"/>
         <source>Click to sort by subject</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier par sujet</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="270"/>
         <source>Click to sort by read</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier par Messages lus</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="271"/>
         <location filename="../gui/MessagesDialog.cpp" line="1125"/>
         <source>Click to sort by from</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier par expéditeur</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="272"/>
         <source>Click to sort by date</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier par date de réception</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="273"/>
         <source>Click to sort by tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier par tags</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="483"/>
@@ -7784,7 +7796,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1128"/>
         <source>Click to sort by to</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer pour trier selon les critères</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1751"/>
@@ -9123,7 +9135,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NewsFeed.ui" line="155"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Options</translation>
     </message>
     <message>
         <location filename="../gui/NewsFeed.ui" line="63"/>
@@ -9914,7 +9926,7 @@ Voulez-vous lui envoyer un message à la place ?</translation>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1729"/>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"></translation>
+        <translation>Etes-vous certains de vouloir supprimer définitivement l&apos;historique des conversations ?</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1793"/>
@@ -10153,7 +10165,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="1262"/>
         <source>Text Color</source>
-        <translation type="unfinished">Couleur du texte</translation>
+        <translation>Couleur du texte</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1429"/>
@@ -10589,7 +10601,7 @@ Voulez-vous lui envoyer un Message à la place ?</translation>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="841"/>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"></translation>
+        <translation>Etes-vous certains de vouloir supprimer définitivement l&apos;historique des conversations ?</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="907"/>
@@ -10755,7 +10767,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="699"/>
         <source>Font</source>
-        <translation type="unfinished">Police</translation>
+        <translation>Police</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="734"/>
@@ -10863,7 +10875,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/chat/PopupChatWindow.ui" line="115"/>
         <location filename="../gui/chat/PopupChatWindow.ui" line="118"/>
         <source>Set Chat Window Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir la couleur de la fenêtre du Chat</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatWindow.cpp" line="266"/>
@@ -11480,14 +11492,16 @@ p, li { white-space: pre-wrap; }
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Une autre instance de RetroShare utilise actuellement le même profil. Veuillez fermer cette instance.
+ Fichier vérrouillé :</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="196"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
  Lock file:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur innattendue est survenue lorsque RetroShare a essayé d&apos;acquérir  le vérrou d&apos;instance unique
+ Fichier vérrouillé :</translation>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
@@ -11571,49 +11585,49 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/RetroShareLink.cpp" line="729"/>
         <location filename="../gui/RetroShareLink.cpp" line="740"/>
         <source>Forum Request canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>Demande de Forum annulée</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="729"/>
         <source>The forum &quot;%1&quot; could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le Forum &quot;%1&quot; n&apos;a pas pu être trouvé.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="740"/>
         <source>The forum message in forum &quot;%1&quot; could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le message du Forum &quot;%1&quot; n&apos;a pas pu être trouvé.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="766"/>
         <location filename="../gui/RetroShareLink.cpp" line="777"/>
         <source>Channel Request canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>Demande de Chaîne annulée</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="766"/>
         <source>The channel &quot;%1&quot; could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>La Chaîne &quot;%1&quot; n&apos;a pas pu être trouvée.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="777"/>
         <source>The channel message in channel &quot;%1&quot; could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le message de la Chaîne &quot;%1&quot; n&apos;a pas pu être trouvé.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="828"/>
         <location filename="../gui/RetroShareLink.cpp" line="835"/>
         <source>Message Request canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>Demande de Message annulé</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="828"/>
         <source>Cannot send a message to a not accepted receipient &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;envoyer un Message à un destinataire non accepté &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="835"/>
         <source>The receipient of the message is unknown.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le destinataire du message est inconnu.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="848"/>
@@ -11628,12 +11642,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="869"/>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les liens RetroShare %1 of %2 ont été transformés.</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="870"/>
         <source>Request Confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>Confirmation de demande</translation>
     </message>
     <message>
         <source>File Request</source>
@@ -11661,7 +11675,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../util/EventReceiver.cpp" line="120"/>
         <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation>Démarrer avec un lien RetroShare est uniquement supporté par Windows.</translation>
     </message>
 </context>
 <context>
@@ -11921,7 +11935,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="727"/>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished">Partager le dossier de réception (Recommandé)</translation>
+        <translation>Partager le dossier de réception (Recommandé)</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="838"/>
@@ -12175,22 +12189,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="205"/>
         <source>Anonymous</source>
-        <translation type="unfinished"></translation>
+        <translation>Anonyme</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="206"/>
         <source>Anonymous and browsable by friends</source>
-        <translation type="unfinished">Anonyme et visible par mes amis</translation>
+        <translation>Anonyme et visible par mes amis</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="207"/>
         <source>Only browsable by friends</source>
-        <translation type="unfinished">Visible seulement par mes amis</translation>
+        <translation>Visible seulement par mes amis</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="216"/>
         <source>NEW</source>
-        <translation type="unfinished">Nouveau</translation>
+        <translation>NOUVEAU</translation>
     </message>
 </context>
 <context>
@@ -12429,12 +12443,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/SearchDialog.cpp" line="289"/>
         <location filename="../gui/SearchDialog.cpp" line="428"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Copier le lien RetroShare</translation>
+        <translation>Copier le lien RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.cpp" line="290"/>
         <source>Send RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyer le lien RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.cpp" line="348"/>
@@ -13283,17 +13297,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ShareManager.cpp" line="350"/>
         <location filename="../gui/ShareManager.cpp" line="355"/>
         <source>Drop file error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors du dépôt du fichier.</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.cpp" line="350"/>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation type="unfinished"></translation>
+        <translation>On ne peut pas déposer un fichier, seuls les répertoires sont acceptés.</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.cpp" line="355"/>
         <source>Directory not found or directory name not accepted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le répertoire n&apos;a pas été trouvé ou le nom du répertoire n&apos;a pas été accepté.</translation>
     </message>
     <message>
         <source>Shared Directory Added!</source>
@@ -13655,12 +13669,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="830"/>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>Affichage en arborescence</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="835"/>
         <source>Flat view</source>
-        <translation type="unfinished"></translation>
+        <translation>Affichage à plat</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="981"/>
@@ -13928,14 +13942,18 @@ p, li { white-space: pre-wrap; }
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
 lock file:
  </source>
-        <translation type="unfinished"></translation>
+        <translation>Une autre instance de RetroShare utilise actuellement le même profil sur votre système. Veuillez dans un premier temps fermer ce profil ou utiliser un autre profil.
+Fichier vérrouillé :
+ </translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="170"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
 lock file:
  </source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur inattendue s&apos;est produite lorsque RetroShare a essayé d&apos;acquérir le verrou d&apos;instance unique
+Fichier vérrouillé :
+ </translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="217"/>
@@ -14377,7 +14395,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/StatusMessage.cpp" line="64"/>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">Coller le lien RetroShare</translation>
+        <translation>Coller le lien RetroShare</translation>
     </message>
 </context>
 <context>
@@ -14385,7 +14403,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="29"/>
         <source>Define Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir le styl</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="111"/>
@@ -14394,43 +14412,43 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Define Style&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir le style</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="145"/>
         <location filename="../gui/style/StyleDialog.ui" line="161"/>
         <source>Choose color</source>
-        <translation type="unfinished">Choix de la couleur</translation>
+        <translation>Choix de la couleur</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="177"/>
         <source>Color 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur 2</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="190"/>
         <source>Color 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur 1</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="219"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Style</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.cpp" line="51"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.cpp" line="52"/>
         <source>Solid</source>
-        <translation type="unfinished"></translation>
+        <translation>Uni</translation>
     </message>
     <message>
         <location filename="../gui/style/StyleDialog.cpp" line="53"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Dégradé</translation>
     </message>
 </context>
 <context>
@@ -14612,7 +14630,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="298"/>
         <source>Clean certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettoyer le certificat</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="342"/>
@@ -15223,12 +15241,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1387"/>
         <source>File preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Prévisualisation du fichier</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1387"/>
         <source>File %1 preview failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>La prévisualisation du fichier %1 a échoué.</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1449"/>
@@ -15252,58 +15270,58 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/RemoteDirModel.cpp" line="352"/>
         <location filename="../gui/RemoteDirModel.cpp" line="460"/>
         <source>FILE</source>
-        <translation type="unfinished">Fichier</translation>
+        <translation>FICHIER</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="365"/>
         <source>Files</source>
-        <translation type="unfinished">Fichiers</translation>
+        <translation>Fichiers</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="367"/>
         <source>File</source>
-        <translation type="unfinished">Fichier</translation>
+        <translation>Fichier</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="373"/>
         <location filename="../gui/RemoteDirModel.cpp" line="476"/>
         <source>DIR</source>
-        <translation type="unfinished">Répertoire</translation>
+        <translation>REP</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="621"/>
         <source>Friends Directories</source>
-        <translation type="unfinished">Dossiers partagés de mes amis</translation>
+        <translation>Répertoires partagés de mes amis</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="623"/>
         <source>My Directories</source>
-        <translation type="unfinished">Mes partages</translation>
+        <translation>Mes partages</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="625"/>
         <source>Size</source>
-        <translation type="unfinished">Taille</translation>
+        <translation>Taille</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="627"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>Ancienneté</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="630"/>
         <source>Friend</source>
-        <translation type="unfinished">Ami</translation>
+        <translation>Ami</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="632"/>
         <source>Share Type</source>
-        <translation type="unfinished">Méthode de partage</translation>
+        <translation>Méthode de partage</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="634"/>
         <source>What&apos;s new</source>
-        <translation type="unfinished">Quoi de neuf ?</translation>
+        <translation>Quoi de neuf ?</translation>
     </message>
 </context>
 <context>
