@@ -116,8 +116,32 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="rsid">
+           <widget class="QTextBrowser" name="rsid">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
             <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="openExternalLinks">
              <bool>true</bool>
             </property>
            </widget>
@@ -468,9 +492,9 @@
             </property>
             <layout class="QVBoxLayout" name="_11">
              <item>
-              <widget class="QListWidget" name="signers_listWidget">
-               <property name="contextMenuPolicy">
-                <enum>Qt::CustomContextMenu</enum>
+              <widget class="QTextBrowser" name="signers">
+               <property name="openExternalLinks">
+                <bool>true</bool>
                </property>
               </widget>
              </item>

@@ -36,6 +36,7 @@
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
+#include "gui/RetroShareLink.h"
 
 #ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
@@ -74,7 +75,6 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
-    connect(ui.signers_listWidget, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( listWidgetContextMenuPopup( QPoint ) ) );
 
 #ifndef MINIMAL_RSGUI
     MainWindow *w = MainWindow::getInstance();
@@ -138,7 +138,12 @@ void ConfCertDialog::load()
 
     ui.name->setText(QString::fromStdString(detail.name));
     ui.peerid->setText(QString::fromStdString(detail.id));
-    ui.rsid->setText(PeerDefs::rsid(detail));
+
+    RetroShareLink link;
+    link.createPerson(detail.id);
+
+    ui.rsid->setText(link.toHtml());
+    ui.rsid->setToolTip(link.title());
 
     if (!detail.isOnlyGPGdetail) {
 
@@ -302,13 +307,14 @@ void ConfCertDialog::load()
         }
     }
 
-    ui.signers_listWidget->clear() ;
+    QString text;
     for(std::list<std::string>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {
-        RsPeerDetails signerDetail;
-        if (rsPeers->getGPGDetails(*it, signerDetail)) {
-            ui.signers_listWidget->addItem(QString::fromStdString(signerDetail.name) + " (" + QString::fromStdString(signerDetail.id) +")");
+        link.createPerson(*it);
+        if (link.valid()) {
+            text += link.toHtml() + "<BR>";
         }
     }
+    ui.signers->setHtml(text);
 
     std::string invite = rsPeers->GetRetroshareInvite(detail.id) ; // this needs to be a SSL id
 
@@ -433,26 +439,4 @@ void ConfCertDialog::showHelpDialog(const QString &topic)
     if (!helpBrowser)
     helpBrowser = new HelpBrowser(this);
     helpBrowser->showWindow(topic);
-}
-
-void ConfCertDialog::listWidgetContextMenuPopup(const QPoint &pos)
-{
-    QListWidgetItem *CurrentItem = ui.signers_listWidget->currentItem();
-    if (!CurrentItem)
-        return; 
-
-    QMenu menu(this);
-    menu.addAction(tr("Copy Peer"), this, SLOT(copyToClipboard()));
-    menu.exec(QCursor::pos());
-}
-
-void ConfCertDialog::copyToClipboard( )
-{
-    QListWidgetItem *CurrentItem = ui.signers_listWidget->currentItem();
-    if (!CurrentItem)
-        return; 
-
-    QClipboard *cb = QApplication::clipboard();
-    QString text = CurrentItem->text();
-    cb->setText(text, QClipboard::Clipboard);
 }

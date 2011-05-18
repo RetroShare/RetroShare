@@ -36,6 +36,7 @@
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
+#include "gui/connect/ConfCertDialog.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -431,6 +432,7 @@ QString RetroShareLink::title() const
 	case TYPE_FILE:
 		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
 	case TYPE_PERSON:
+		return PeerDefs::rsidFromId(hash().toStdString());
 	case TYPE_FORUM:
 	case TYPE_CHANNEL:
 	case TYPE_SEARCH:
@@ -693,6 +695,7 @@ bool RetroShareLink::process(int flag)
 				}
 
 				if (rsPeers->setAcceptToConnectGPGCertificate(hash().toStdString(), true)) {
+					ConfCertDialog::loadAll();
 					if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
 						QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend has been added to your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 						mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -814,7 +817,7 @@ bool RetroShareLink::process(int flag)
 #endif
 			RsPeerDetails detail;
 			if (rsPeers->getPeerDetails(hash().toStdString(), detail)) {
-				if (detail.accept_connection || detail.id == rsPeers->getOwnId()) {
+				if (detail.accept_connection || detail.id == rsPeers->getOwnId() || detail.id == rsPeers->getGPGOwnId()) {
 					MessageComposer *msg = MessageComposer::newMsg();
 					msg->addRecipient(MessageComposer::TO, detail.id, false);
 					if (subject().isEmpty() == false) {

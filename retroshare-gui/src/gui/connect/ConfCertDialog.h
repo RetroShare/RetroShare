@@ -35,6 +35,7 @@ public:
     enum enumPage { PageDetails, PageTrust, PageCertificate };
 
     static void showIt(const std::string& id, enumPage page);
+    static void loadAll();
 
 signals:
     void configChanged();
@@ -47,12 +48,9 @@ private:
 
     static ConfCertDialog *instance(const std::string& peer_id);
 
-    static void loadAll();
     void load();
 
 private slots:
-    void listWidgetContextMenuPopup(const QPoint &pos);
-
     void applyDialog();
     void makeFriend();
     void denyFriend();
@@ -61,8 +59,6 @@ private slots:
     void showHelpDialog();
     /** Called when a child window requests the given help <b>topic</b>. */
     void showHelpDialog(const QString &topic);
-
-    void copyToClipboard();
 
 private:
     std::string mId;
