@@ -907,10 +907,19 @@ void SharedFilesDialog::indicatorChanged(int index)
 	model->changeAgeIndicator(correct_indicator[index]);
 	localModel->changeAgeIndicator(correct_indicator[index]);
 
-  ui.remoteDirTreeView->update(ui.remoteDirTreeView->rootIndex());
-  ui.localDirTreeView->update(ui.localDirTreeView->rootIndex()) ;
+	ui.remoteDirTreeView->update(ui.remoteDirTreeView->rootIndex());
+	ui.localDirTreeView->update(ui.localDirTreeView->rootIndex()) ;
+  
+	if (correct_indicator[index] != IND_ALWAYS)
+	{
+		ui.remoteDirTreeView->sortByColumn(2, Qt::AscendingOrder);
+	}
+	else
+	{
+		ui.remoteDirTreeView->sortByColumn(0, Qt::AscendingOrder);
+	}
 
-  updateDisplay() ;
+	updateDisplay() ;
 }
 
 void SharedFilesDialog::filterRegExpChanged()

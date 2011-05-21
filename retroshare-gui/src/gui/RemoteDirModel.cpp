@@ -325,6 +325,8 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return QString::fromUtf8(details.name.c_str());
 			case 1:
 				return QString() ;
+			case 2:
+				return misc::userFriendlyDuration(details.min_age);
 			default:
 				return QString() ;
 		}
@@ -433,6 +435,8 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& deta
 				return QString::fromUtf8(details.name.c_str());
 			case 1:
 				return QString();
+			case 2:
+				return details.min_age;
 			default:
 				return QString();
 		}
