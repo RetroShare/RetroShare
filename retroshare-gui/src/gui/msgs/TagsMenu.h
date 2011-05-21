@@ -24,6 +24,8 @@
 
 #include <QMenu>
 
+#include <stdint.h>
+
 class TagsMenu : public QMenu
 {
 	Q_OBJECT
