@@ -20,8 +20,6 @@
  ****************************************************************/
 
 #include <QMessageBox>
-#include <QPainter>
-#include <QPaintEvent>
 #include <QStandardItemModel>
 #include <QShortcut>
 #include <QTimer>
@@ -30,9 +28,12 @@
 #include <QPrintDialog>
 #include <QTextStream>
 #include <QTextCodec>
+#include <QKeyEvent>
+#include <QFileDialog>
 
 #include "MessagesDialog.h"
 #include "msgs/MessageComposer.h"
+#include "msgs/TagsMenu.h"
 #include "util/printpreview.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
@@ -45,6 +46,7 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsmsgs.h>
 
 #include <algorithm>
 
@@ -85,61 +87,6 @@
 #define ROW_SENTBOX       3
 #define ROW_TRASHBOX      4
 
-#define ACTION_TAGSINDEX_SIZE  3
-#define ACTION_TAGSINDEX_TYPE  "Type"
-#define ACTION_TAGSINDEX_ID    "ID"
-#define ACTION_TAGSINDEX_COLOR "Color"
-
-#define ACTION_TAGS_REMOVEALL 0
-#define ACTION_TAGS_TAG       1
-#define ACTION_TAGS_NEWTAG    2
-
-class MessagesMenu : public QMenu
-{
-public:
-    MessagesMenu(const QString &title, QWidget *parent) : QMenu (title, parent)
-    {
-    }
-
-protected:
-    virtual void paintEvent(QPaintEvent *e)
-    {
-        QMenu::paintEvent(e);
-
-        QPainter p(this);
-        QRegion emptyArea = QRegion(rect());
-
-        //draw the items with color
-        foreach (QAction *pAction, actions()) {
-            QRect adjustedActionRect = actionGeometry(pAction);
-            if (!e->rect().intersects(adjustedActionRect))
-               continue;
-
-            const QMap<QString, QVariant> &Values = pAction->data().toMap();
-            if (Values.size () != ACTION_TAGSINDEX_SIZE) {
-                continue;
-            }
-            if (Values [ACTION_TAGSINDEX_TYPE] != ACTION_TAGS_TAG) {
-                continue;
-            }
-
-            //set the clip region to be extra safe (and adjust for the scrollers)
-            QRegion adjustedActionReg(adjustedActionRect);
-            emptyArea -= adjustedActionReg;
-            p.setClipRegion(adjustedActionReg);
-
-            QStyleOptionMenuItem opt;
-            initStyleOption(&opt, pAction);
-
-            opt.palette.setColor(QPalette::ButtonText, QColor(Values [ACTION_TAGSINDEX_COLOR].toInt()));
-            // needed for Cleanlooks
-            opt.palette.setColor(QPalette::Text, QColor(Values [ACTION_TAGSINDEX_COLOR].toInt()));
-
-            opt.rect = adjustedActionRect;
-            style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
-        }
-    }
-};
 
 MessagesDialog::LockUpdate::LockUpdate (MessagesDialog *pDialog, bool bUpdate)
 {
@@ -366,6 +313,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.listWidget->setCurrentRow(ROW_INBOX);
 
     // create tag menu
+    TagsMenu *menu = new TagsMenu (tr("Tags"), this);
+    connect(menu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
+    connect(menu, SIGNAL(tagSet(int, bool)), this, SLOT(tagSet(int, bool)));
+    connect(menu, SIGNAL(tagRemoveAll()), this, SLOT(tagRemoveAll()));
+
+    ui.tagButton->setMenu(menu);
+
+    // fill tags
     fillTags();
 
     // create timer for navigation
@@ -464,95 +419,46 @@ bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
 
 void MessagesDialog::fillTags()
 {
-    MsgTagType Tags;
-    rsMsgs->getMessageTagTypes(Tags);
-    std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+	MsgTagType tags;
+	rsMsgs->getMessageTagTypes(tags);
+	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
 
-    // create tag menu
-    QMenu *pMenu = new MessagesMenu (tr("Tags"), this);
-    connect(pMenu, SIGNAL(triggered (QAction*)), this, SLOT(tagTriggered(QAction*)));
-    connect(pMenu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
+	// fill tags
+	m_bInChange = true;
 
-    bool bUser = false;
+	// save current selection
+	QListWidgetItem *item = ui.tagWidget->currentItem();
+	uint32_t nSelectecTagId = 0;
+	if (item) {
+		nSelectecTagId = item->data(Qt::UserRole).toInt();
+	}
 
-    QString text;
-    QAction *pAction;
-    QMap<QString, QVariant> Values;
+	QListWidgetItem *itemToSelect = NULL;
 
-    if (Tags.types.size()) {
-        pAction = new QAction(tr("Remove All Tags"), pMenu);
-        Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_REMOVEALL;
-        Values [ACTION_TAGSINDEX_ID] = 0;
-        Values [ACTION_TAGSINDEX_COLOR] = 0;
-        pAction->setData (Values);
-        pMenu->addAction(pAction);
+	QString text;
 
-        pMenu->addSeparator();
+	ui.tagWidget->clear();
+	for (tag = tags.types.begin(); tag != tags.types.end(); tag++) {
+		text = TagDefs::name(tag->first, tag->second.first);
 
-        for (Tag = Tags.types.begin(); Tag != Tags.types.end(); Tag++) {
-            text = TagDefs::name(Tag->first, Tag->second.first);
+		item = new QListWidgetItem (text, ui.tagWidget);
+		item->setForeground(QBrush(QColor(tag->second.second)));
+		item->setIcon(QIcon(":/images/foldermail.png"));
+		item->setData(Qt::UserRole, tag->first);
+		item->setData(Qt::UserRole + 1, text); // for updateMessageSummaryList
 
-            pAction = new QAction(text, pMenu);
-            Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_TAG;
-            Values [ACTION_TAGSINDEX_ID] = Tag->first;
-            Values [ACTION_TAGSINDEX_COLOR] = QRgb(Tag->second.second);
-            pAction->setData (Values);
-            pAction->setCheckable(true);
+		if (tag->first == nSelectecTagId) {
+			itemToSelect = item;
+		}
+	}
 
-            if (Tag->first >= RS_MSGTAGTYPE_USER && bUser == false) {
-                bUser = true;
-                pMenu->addSeparator();
-            }
+	if (itemToSelect) {
+		ui.tagWidget->setCurrentItem(itemToSelect);
+	}
 
-            pMenu->addAction(pAction);
-        }
+	m_bInChange = false;
 
-        pMenu->addSeparator();
-    }
-
-    pAction = new QAction(tr("New tag ..."), pMenu);
-    Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_NEWTAG;
-    Values [ACTION_TAGSINDEX_ID] = 0;
-    Values [ACTION_TAGSINDEX_COLOR] = 0;
-    pAction->setData (Values);
-    pMenu->addAction(pAction);
-
-    ui.tagButton->setMenu(pMenu);
-
-    // fill tags
-    m_bInChange = true;
-
-    // save current selection
-    QListWidgetItem *pItem = ui.tagWidget->currentItem();
-    uint32_t nSelectecTagId = 0;
-    if (pItem) {
-        nSelectecTagId = pItem->data(Qt::UserRole).toInt();
-    }
-
-    QListWidgetItem *pItemToSelect = NULL;
-
-    ui.tagWidget->clear();
-    for (Tag = Tags.types.begin(); Tag != Tags.types.end(); Tag++) {
-        text = TagDefs::name(Tag->first, Tag->second.first);
-
-        pItem = new QListWidgetItem (text, ui.tagWidget);
-        pItem->setForeground(QBrush(QColor(Tag->second.second)));
-        pItem->setIcon(QIcon(":/images/foldermail.png"));
-        pItem->setData(Qt::UserRole, Tag->first);
-        pItem->setData(Qt::UserRole + 1, text); // for updateMessageSummaryList
-
-        if (Tag->first == nSelectecTagId) {
-            pItemToSelect = pItem;
-        }
-    }
-
-    if (pItemToSelect) {
-        ui.tagWidget->setCurrentItem(pItemToSelect);
-    }
-
-    m_bInChange = false;
-
-    updateMessageSummaryList();
+	updateMessageSummaryList();
 }
 
 // replaced by shortcut
@@ -982,6 +888,8 @@ void MessagesDialog::messagesTagsChanged()
 
     fillTags();
     insertMessages();
+
+    showTagLabels();
 }
 
 static void InitIconAndFont(QStandardItem *pItem [COLUMN_COUNT])
@@ -1533,6 +1441,7 @@ void MessagesDialog::showTagLabels()
             Tag = Tags.types.find(*tagId);
             if (Tag != Tags.types.end()) {
                 QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
+                tagLabel->setMaximumHeight(16);
                 tagLabel->setStyleSheet(TagDefs::labelStyleSheet(Tag->second.second));
                 tagLabels.push_back(tagLabel);
                 ui.taglayout->addWidget(tagLabel);
@@ -2161,113 +2070,69 @@ void MessagesDialog::clearFilter()
 
 void MessagesDialog::tagAboutToShow()
 {
-    // activate actions from the first selected row
-    MsgTagInfo tagInfo;
+	TagsMenu *menu = dynamic_cast<TagsMenu*>(ui.tagButton->menu());
+	if (menu == NULL) {
+		return;
+	}
 
-    QList<int> Rows;
-    getSelectedMsgCount (&Rows, NULL, NULL);
+	// activate actions from the first selected row
+	MsgTagInfo tagInfo;
 
-    if (Rows.size()) {
-        QStandardItem* pItem = MessagesModel->item(Rows [0], COLUMN_DATA);
-        std::string msgId = pItem->data(ROLE_MSGID).toString().toStdString();
+	QList<int> rows;
+	getSelectedMsgCount (&rows, NULL, NULL);
 
-        rsMsgs->getMessageTag(msgId, tagInfo);
-    }
+	if (rows.size()) {
+		QStandardItem* item = MessagesModel->item(rows [0], COLUMN_DATA);
+		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
 
-    QMenu *pMenu = ui.tagButton->menu();
+		rsMsgs->getMessageTag(msgId, tagInfo);
+	}
 
-    foreach(QObject *pObject, pMenu->children()) {
-        QAction *pAction = qobject_cast<QAction*> (pObject);
-        if (pAction == NULL) {
-            continue;
-        }
-
-        const QMap<QString, QVariant> &Values = pAction->data().toMap();
-        if (Values.size () != ACTION_TAGSINDEX_SIZE) {
-            continue;
-        }
-        if (Values [ACTION_TAGSINDEX_TYPE] != ACTION_TAGS_TAG) {
-            continue;
-        }
-
-        std::list<uint32_t>::iterator tagId = std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), Values [ACTION_TAGSINDEX_ID]);
-        pAction->setChecked(tagId != tagInfo.tagIds.end());
-    }
+	menu->activateActions(tagInfo.tagIds);
 }
 
-void MessagesDialog::tagTriggered(QAction *pAction)
+void MessagesDialog::tagRemoveAll()
 {
-    if (pAction == NULL) {
-        return;
-    }
+	LockUpdate Lock (this, false);
 
-    const QMap<QString, QVariant> &Values = pAction->data().toMap();
-    if (Values.size () != ACTION_TAGSINDEX_SIZE) {
-        return;
-    }
+	QList<int> rows;
+	getSelectedMsgCount (&rows, NULL, NULL);
+	for (int row = 0; row < rows.size(); row++) {
+		QStandardItem* item = MessagesModel->item(rows [row], COLUMN_DATA);
+		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
 
-    LockUpdate Lock (this, false);
+		rsMsgs->setMessageTag(msgId, 0, false);
+		Lock.setUpdate(true);
+	}
 
-    bool bRemoveAll = false;
-    int nId = 0;
-    bool bSet = false;
+	showTagLabels();
 
-    if (Values [ACTION_TAGSINDEX_TYPE] == ACTION_TAGS_REMOVEALL) {
-        // remove all tags
-        bRemoveAll = true;
-    } else if (Values [ACTION_TAGSINDEX_TYPE] == ACTION_TAGS_NEWTAG) {
-        // new tag
-        MsgTagType Tags;
-        rsMsgs->getMessageTagTypes(Tags);
+	// LockUpdate -> insertMessages();
+}
 
-        NewTag TagDlg(Tags);
-        if (TagDlg.exec() == QDialog::Accepted && TagDlg.m_nId) {
-            std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag = Tags.types.find(TagDlg.m_nId);
-            if (Tag == Tags.types.end()) {
-                return;
-            }
-            if (rsMsgs->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second) == false) {
-                return;
-            }
-            fillTags();
-            nId = TagDlg.m_nId;
-            bSet = true;
-        } else {
-            return;
-        }
-    }  else if (Values [ACTION_TAGSINDEX_TYPE].toInt() == ACTION_TAGS_TAG) {
-        nId = Values [ACTION_TAGSINDEX_ID].toInt();
-        if (nId == 0) {
-            return;
-        }
-        bSet = pAction->isChecked();
-    } else {
-        return;
-    }
+void MessagesDialog::tagSet(int tagId, bool set)
+{
+	if (tagId == 0) {
+		return;
+	}
 
-    QList<int> Rows;
-    getSelectedMsgCount (&Rows, NULL, NULL);
-    for (int nRow = 0; nRow < Rows.size(); nRow++) {
-        QStandardItem* pItem = MessagesModel->item(Rows [nRow], COLUMN_DATA);
-        std::string msgId = pItem->data(ROLE_MSGID).toString().toStdString();
+	LockUpdate Lock (this, false);
 
-        if (bRemoveAll) {
-            // remove all
-            rsMsgs->setMessageTag(msgId, 0, false);
-            Lock.setUpdate(true);
+	QList<int> rows;
+	getSelectedMsgCount (&rows, NULL, NULL);
+	for (int row = 0; row < rows.size(); row++) {
+		QStandardItem* item = MessagesModel->item(rows [row], COLUMN_DATA);
+		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
 
-        } else {
-            // set or unset tag
-            MsgTagInfo tagInfo;
-            if (rsMsgs->setMessageTag(msgId, nId, bSet)) {
-                Lock.setUpdate(true);
-            }
-        }
-    }
+		if (rsMsgs->setMessageTag(msgId, tagId, set)) {
+			Lock.setUpdate(true);
+		}
+	}
 
-    showTagLabels();
 
-    // LockUpdate -> insertMessages();
+	showTagLabels();
+
+	// LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::emptyTrash()

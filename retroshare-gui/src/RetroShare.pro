@@ -269,6 +269,7 @@ HEADERS +=  rshare.h \
             gui/channels/ShareKey.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/MessageComposer.h \
+            gui/msgs/TagsMenu.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
@@ -499,6 +500,7 @@ SOURCES +=  main.cpp \
             gui/chat/ChatStyle.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/MessageComposer.cpp \
+            gui/msgs/TagsMenu.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \
             gui/common/html.cpp \

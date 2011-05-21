@@ -17,7 +17,7 @@
    <string>Compose</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset>
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
   <property name="styleSheet">
@@ -167,6 +167,9 @@ border-image: url(:/images/closepressed.png)
              <width>200</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
            </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::ExtendedSelection</enum>
@@ -394,7 +397,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -426,7 +429,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -464,7 +467,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -505,7 +508,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -611,7 +614,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -637,7 +640,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -670,7 +673,7 @@ border: 1px solid #CCCCCC;}</string>
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -708,7 +711,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -745,33 +748,6 @@ border: 1px solid #CCCCCC;}</string>
             <set>Qt::TextEditorInteraction</set>
            </property>
           </widget>
-         </item>
-         <item row="2" column="0" rowspan="2">
-          <layout class="QHBoxLayout" name="SubjectHLayout" stretch="0,0">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="sizeConstraint">
-            <enum>QLayout::SetNoConstraint</enum>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Subject:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="titleEdit"/>
-           </item>
-          </layout>
          </item>
          <item row="0" column="0">
           <widget class="QTableWidget" name="recipientWidget">
@@ -818,6 +794,72 @@ border: 1px solid #CCCCCC;}</string>
             <bool>false</bool>
            </attribute>
           </widget>
+         </item>
+         <item row="2" column="0" rowspan="2">
+          <layout class="QGridLayout" name="gridLayout_6">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetNoConstraint</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Subject:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="5">
+            <widget class="QLineEdit" name="titleEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Tags:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="tagButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Tags</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="2">
+            <layout class="QHBoxLayout" name="tagLayout"/>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -964,7 +1006,7 @@ border: 1px solid #CCCCCC;}</string>
   </widget>
   <action name="actionSend">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/send24.png</normaloff>:/images/send24.png</iconset>
    </property>
    <property name="text">
@@ -976,7 +1018,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionReply">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
    </property>
    <property name="text">
@@ -985,7 +1027,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionContactsView">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
    </property>
    <property name="text">
@@ -997,7 +1039,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSaveas">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/save24.png</normaloff>:/images/save24.png</iconset>
    </property>
    <property name="text">
@@ -1009,7 +1051,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionAttach">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
    </property>
    <property name="text">
@@ -1024,7 +1066,7 @@ border: 1px solid #CCCCCC;}</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/quote_24.png</normaloff>:/images/quote_24.png</iconset>
    </property>
    <property name="text">
@@ -1051,8 +1093,6 @@ border: 1px solid #CCCCCC;}</string>
   <tabstop>comboFont</tabstop>
   <tabstop>hashBox</tabstop>
  </tabstops>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

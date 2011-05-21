@@ -22,18 +22,10 @@
 #ifndef _MESSAGESDIALOG_H
 #define _MESSAGESDIALOG_H
 
-#include <list>
-#include <QFileDialog>
-#include <QModelIndex>
 #include <QSortFilterProxyModel>
 
-#include <QVariant>
-
-#include <retroshare/rsmsgs.h>
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
-
-#include "settings/NewTag.h"
 
 class MessagesDialog : public MainPage 
 {
@@ -105,8 +97,9 @@ private slots:
   void filterColumnChanged();
   
   void clearFilter();
-  void tagTriggered(QAction *pAction);
   void tagAboutToShow();
+  void tagSet(int tagId, bool set);
+  void tagRemoveAll();
 
 private:
   class LockUpdate

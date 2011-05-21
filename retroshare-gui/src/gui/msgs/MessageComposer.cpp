@@ -53,8 +53,12 @@
 #include "gui/common/Emoticons.h"
 #include "textformat.h"
 #include "util/misc.h"
+#include "TagsMenu.h"
+#include "gui/common/TagDefs.h"
+#include "gui/connect/ConfCertDialog.h"
 
-#define IMAGE_GROUP16            ":/images/user/group16.png"
+#define IMAGE_GROUP16    ":/images/user/group16.png"
+#define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
 
 #define COLUMN_CONTACT_NAME   0
 #define COLUMN_CONTACT_DATA   0
@@ -161,6 +165,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.msgText->document(), SIGNAL(redoAvailable(bool)), actionRedo, SLOT(setEnabled(bool)));
 
     connect(ui.msgFileList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuFileList(QPoint)));
+    connect(ui.msgSendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuMsgSendList(QPoint)));
 
     setWindowModified(ui.msgText->document()->isModified());
     actionSave->setEnabled(ui.msgText->document()->isModified());
@@ -182,11 +187,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
 
-    connect(ui.addToButton, SIGNAL(clicked(void)), this, SLOT(btnClickEvent()));
-    connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(btnClickEvent()));
-    connect(ui.addBccButton, SIGNAL(clicked(void)), this, SLOT(btnClickEvent()));
-    connect(ui.addRecommendButton, SIGNAL(clicked(void)), this, SLOT(recommendButtonClicked()));
-    connect(ui.msgSendList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(btnClickEvent()));
+    connect(ui.addToButton, SIGNAL(clicked(void)), this, SLOT(addTo()));
+    connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(addCc()));
+    connect(ui.addBccButton, SIGNAL(clicked(void)), this, SLOT(addBcc()));
+    connect(ui.addRecommendButton, SIGNAL(clicked(void)), this, SLOT(addRecommend()));
+    connect(ui.msgSendList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addTo()));
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
@@ -288,6 +293,14 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     /* set focus to subject */
     ui.titleEdit->setFocus();
+
+    // create tag menu
+    TagsMenu *menu = new TagsMenu (tr("Tags"), this);
+    connect(menu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
+    connect(menu, SIGNAL(tagSet(int, bool)), this, SLOT(tagSet(int, bool)));
+    connect(menu, SIGNAL(tagRemoveAll()), this, SLOT(tagRemoveAll()));
+
+    ui.tagButton->setMenu(menu);
 
     setAcceptDrops(true);
 
@@ -471,6 +484,29 @@ void MessageComposer::contextMenuFileList(QPoint)
     action->setDisabled(RSLinkClipboard::empty(RetroShareLink::TYPE_FILE));
 
     contextMnu.exec(QCursor::pos());
+}
+
+void MessageComposer::contextMenuMsgSendList(QPoint)
+{
+	QMenu contextMnu(this);
+
+    int selectedCount = ui.msgSendList->selectedItems().count();
+
+    QAction *action = contextMnu.addAction(QIcon(), tr("Add to \"To\""), this, SLOT(addTo()));
+    action->setEnabled(selectedCount);
+    action = contextMnu.addAction(QIcon(), tr("Add to \"CC\""), this, SLOT(addCc()));
+    action->setEnabled(selectedCount);
+    action = contextMnu.addAction(QIcon(), tr("Add to \"BCC\""), this, SLOT(addBcc()));
+    action->setEnabled(selectedCount);
+    action = contextMnu.addAction(QIcon(), tr("Add as Recommend"), this, SLOT(addRecommend()));
+    action->setEnabled(selectedCount);
+
+    contextMnu.addSeparator();
+
+    action = contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(friendDetails()));
+    action->setEnabled(selectedCount == 1);
+
+	contextMnu.exec(QCursor::pos());
 }
 
 void MessageComposer::pasteRecommended()
@@ -943,6 +979,12 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /*= ""*/)
             msgComposer->addRecipient(MessageComposer::BCC, *it, false) ;
         }
 
+        MsgTagInfo tagInfo;
+        rsMsgs->getMessageTag(msgId, tagInfo);
+        msgComposer->m_tagIds = tagInfo.tagIds;
+
+        msgComposer->showTagLabels();
+
         msgComposer->ui.msgText->document()->setModified(false);
     }
 
@@ -1261,6 +1303,25 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         }
     }
 
+    if (mi.msgId.empty() == false) {
+        MsgTagInfo tagInfo;
+        rsMsgs->getMessageTag(mi.msgId, tagInfo);
+
+        /* insert new tags */
+        std::list<uint32_t>::iterator tag;
+        for (tag = m_tagIds.begin(); tag != m_tagIds.end(); tag++) {
+            if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
+                rsMsgs->setMessageTag(mi.msgId, *tag, true);
+            } else {
+                tagInfo.tagIds.remove(*tag);
+            }
+        }
+
+        /* remove deleted tags */
+        for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); tag++) {
+            rsMsgs->setMessageTag(mi.msgId, *tag, false);
+        }
+    }
     ui.msgText->document()->setModified(false);
     return true;
 }
@@ -2302,19 +2363,8 @@ bool MessageComposer::FilterItem(QTreeWidgetItem *pItem, QString &sPattern)
     return (bVisible || nVisibleChildCount);
 }
 
-void MessageComposer::btnClickEvent()
+void MessageComposer::addContact(enumType type)
 {
-    enumType type;
-    if (QObject::sender() == ui.addToButton || QObject::sender() == ui.msgSendList) {
-        type = TO;
-    } else if (QObject::sender() == ui.addCcButton) {
-        type = CC;
-    } else if (QObject::sender() == ui.addBccButton) {
-        type = BCC;
-    } else {
-        return;
-    }
-
     QTreeWidgetItemIterator itemIterator(ui.msgSendList);
     QTreeWidgetItem *item;
     while ((item = *itemIterator) != NULL) {
@@ -2328,7 +2378,22 @@ void MessageComposer::btnClickEvent()
     }
 }
 
-void MessageComposer::recommendButtonClicked()
+void MessageComposer::addTo()
+{
+    addContact(TO);
+}
+
+void MessageComposer::addCc()
+{
+    addContact(CC);
+}
+
+void MessageComposer::addBcc()
+{
+    addContact(BCC);
+}
+
+void MessageComposer::addRecommend()
 {
     std::list<std::string> gpgIds;
 
@@ -2373,6 +2438,22 @@ void MessageComposer::recommendButtonClicked()
     QString text = BuildRecommendHtml(gpgIds);
     ui.msgText->textCursor().insertHtml(text);
     ui.msgText->setFocus(Qt::OtherFocusReason);
+}
+
+void MessageComposer::friendDetails()
+{
+    QList<QTreeWidgetItem*> selectedItems = ui.msgSendList->selectedItems();
+    if (selectedItems.count() != 1) {
+        return;
+    }
+
+    QTreeWidgetItem *item = selectedItems[0];
+    if (item->type() == TYPE_GROUP) {
+        return;
+    }
+
+    std::string id = item->data(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID).toString().toStdString();
+    ConfCertDialog::showIt(id, ConfCertDialog::PageDetails);
 }
 
 void MessageComposer::dragEnterEvent(QDragEnterEvent *event)
@@ -2449,4 +2530,79 @@ void MessageComposer::dropEvent(QDropEvent *event)
 
     event->setDropAction(Qt::CopyAction);
     event->accept();
+}
+
+void MessageComposer::tagAboutToShow()
+{
+	TagsMenu *menu = dynamic_cast<TagsMenu*>(ui.tagButton->menu());
+	if (menu == NULL) {
+		return;
+	}
+
+	menu->activateActions(m_tagIds);
+}
+
+void MessageComposer::tagRemoveAll()
+{
+	m_tagIds.clear();
+
+	showTagLabels();
+}
+
+void MessageComposer::tagSet(int tagId, bool set)
+{
+	if (tagId == 0) {
+		return;
+	}
+
+	std::list<uint32_t>::iterator tag = std::find(m_tagIds.begin(), m_tagIds.end(), tagId);
+	if (tag == m_tagIds.end()) {
+		if (set) {
+			m_tagIds.push_back(tagId);
+			/* Keep the list sorted */
+			m_tagIds.sort();
+        }
+	} else {
+		if (set == false) {
+			m_tagIds.remove(tagId);
+		}
+	}
+
+	showTagLabels();
+}
+
+void MessageComposer::clearTagLabels()
+{
+	/* clear all tags */
+	while (tagLabels.size()) {
+		delete tagLabels.front();
+		tagLabels.pop_front();
+	}
+	while (ui.tagLayout->count()) {
+		delete ui.tagLayout->takeAt(0);
+	}
+}
+
+void MessageComposer::showTagLabels()
+{
+	clearTagLabels();
+
+	if (m_tagIds.empty() == false) {
+		MsgTagType tags;
+		rsMsgs->getMessageTagTypes(tags);
+
+		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
+		for (std::list<uint32_t>::iterator tagId = m_tagIds.begin(); tagId != m_tagIds.end(); tagId++) {
+			tag = tags.types.find(*tagId);
+			if (tag != tags.types.end()) {
+				QLabel *tagLabel = new QLabel(TagDefs::name(tag->first, tag->second.first), this);
+				tagLabel->setMaximumHeight(16);
+				tagLabel->setStyleSheet(TagDefs::labelStyleSheet(tag->second.second));
+				tagLabels.push_back(tagLabel);
+				ui.tagLayout->addWidget(tagLabel);
+				ui.tagLayout->addSpacing(3);
+			}
+		}
+		ui.tagLayout->addStretch();
+	}
 }

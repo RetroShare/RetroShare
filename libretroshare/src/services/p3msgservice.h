@@ -105,6 +105,7 @@ int     checkOutgoingMessages();
 uint32_t getNewUniqueMsgId();
 int     sendMessage(RsMsgItem *item);
 int 	incomingMsgs();
+void    processMsg(RsMsgItem *mi);
 
 void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
@@ -136,7 +137,7 @@ void    initStandardTagTypes();
 	uint32_t mMsgUniqueId;
 
 	// used delete msgSrcIds after config save
-        std::map<uint32_t, RsMsgSrcId*> mSrcIds;
+	std::map<uint32_t, RsMsgSrcId*> mSrcIds;
 
 	// save the parent of the messages in draft for replied and forwarded
 	std::map<uint32_t, RsMsgParentId*> mParentId;

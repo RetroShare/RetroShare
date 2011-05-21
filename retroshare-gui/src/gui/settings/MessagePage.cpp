@@ -28,7 +28,6 @@
 
 #include <algorithm>
 
-#include "../MainWindow.h"
 #include "NewTag.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)

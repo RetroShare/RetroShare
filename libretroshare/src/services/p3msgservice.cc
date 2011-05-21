@@ -124,7 +124,55 @@ int	p3MsgService::status()
 	return 1;
 }
 
-int 	p3MsgService::incomingMsgs()
+void p3MsgService::processMsg(RsMsgItem *mi)
+{
+	mi -> recvTime = time(NULL);
+	mi -> msgId = getNewUniqueMsgId();
+
+	std::string mesg;
+
+	RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
+
+	if (mi -> PeerId() == mConnMgr->getOwnId())
+	{
+		/* from the loopback device */
+		mi -> msgFlags |= RS_MSG_FLAGS_OUTGOING;
+	}
+	else
+	{
+		mi -> msgFlags = RS_MSG_FLAGS_NEW;
+
+		/* from a peer */
+		MsgInfoSummary mis;
+		initRsMIS(mi, mis);
+
+		// msgNotifications.push_back(mis);
+		pqiNotify *notify = getPqiNotify();
+		if (notify)
+		{
+			std::string message , title;
+			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(),
+									title.assign(mi->subject.begin(), mi->subject.end()),
+									message.assign(mi->message.begin(),mi->message.end()));
+
+			std::ostringstream out;
+			out << mi->msgId;
+			notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out.str(), "", "");
+		}
+	}
+
+	imsg[mi->msgId] = mi;
+	RsMsgSrcId* msi = new RsMsgSrcId();
+	msi->msgId = mi->msgId;
+	msi->srcId = mi->PeerId();
+	mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
+	msgChanged.IndicateChanged();
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	/**** STACK UNLOCKED ***/
+}
+
+int p3MsgService::incomingMsgs()
 {
 	RsMsgItem *mi;
 	int i = 0;
@@ -134,50 +182,8 @@ int 	p3MsgService::incomingMsgs()
 	{
 		changed = true ;
 		++i;
-		mi -> recvTime = time(NULL);
-		mi -> msgId = getNewUniqueMsgId();
 
-		std::string mesg;
-
-		RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
-
-		if (mi -> PeerId() == mConnMgr->getOwnId())
-		{
-			/* from the loopback device */
-			mi -> msgFlags |= RS_MSG_FLAGS_OUTGOING;
-		}
-		else
-		{
-			mi -> msgFlags = RS_MSG_FLAGS_NEW;
-
-			/* from a peer */
-			MsgInfoSummary mis;
-			initRsMIS(mi, mis);
-			
-			// msgNotifications.push_back(mis);
-			pqiNotify *notify = getPqiNotify();
-			if (notify)
-			{
-                                std::string message , title;
-                                notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(),
-                                                title.assign(mi->subject.begin(), mi->subject.end()),
-                                                message.assign(mi->message.begin(),mi->message.end()));
-
-				std::ostringstream out;
-				out << mi->msgId;
-				notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out.str(), "", "");
-			}
-		}
-
-		imsg[mi->msgId] = mi;
-		RsMsgSrcId* msi = new RsMsgSrcId();
-		msi->msgId = mi->msgId;
-		msi->srcId = mi->PeerId();
-		mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
-		msgChanged.IndicateChanged();
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-		/**** STACK UNLOCKED ***/
+		processMsg(mi);
 	}
 	if(changed)
 		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
@@ -307,8 +313,8 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		itemList.push_back(mit->second) ;
 
-        for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
-                itemList.push_back(mit2->second);
+	for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
+		itemList.push_back(mit2->second);
 
 	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); mit3++)
 		itemList.push_back(mit3->second);
@@ -886,7 +892,14 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	RsMsgItem *msg = initMIRsMsg(info, mConnMgr->getOwnId());
 	if (msg)
 	{
-		sendMessage(msg);
+		/* use processMsg to get the new msgId */
+//		sendMessage(msg);
+		processMsg(msg);
+
+		// return new message id
+		std::ostringstream out;
+		out << msg->msgId;
+		info.msgId = out.str();
 	}
 
 	return true;

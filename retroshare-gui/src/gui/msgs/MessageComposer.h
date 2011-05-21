@@ -88,6 +88,7 @@ private slots:
     void contextMenu(QPoint);
     void pasteLink();
     void contextMenuFileList(QPoint);
+    void contextMenuMsgSendList(QPoint);
     void pasteRecommended();
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
@@ -135,16 +136,24 @@ private slots:
     void titleChanged();
 
     // Add to To/Cc/Bcc address fields
-    void btnClickEvent();
-    void recommendButtonClicked();
+    void addTo();
+    void addCc();
+    void addBcc();
+    void addRecommend();
     void editingRecipientFinished();
+    void friendDetails();
 
     void groupsChanged(int type);
     void peerStatusChanged(const QString& peer_id, int status);
 
+    void tagAboutToShow();
+    void tagSet(int tagId, bool set);
+    void tagRemoveAll();
+
 private:
     void processSettings(bool bLoad);
 
+    void addContact(enumType type);
     void setTextColor(const QColor& col) ;
     void setupFileActions();
     void setupEditActions();
@@ -172,6 +181,9 @@ private:
 
     bool getRecipientFromRow(int row, enumType &type, std::string &id, bool &group);
     void setRecipientToRow(int row, enumType type, std::string id, bool group);
+
+    void clearTagLabels();
+    void showTagLabels();
 
     QAction *actionSave,
     *actionAlignLeft,
@@ -201,6 +213,8 @@ private:
     std::string m_msgParentId; // parent message id
     std::string m_sDraftMsgId; // existing message id
     enumMessageType m_msgType;
+    std::list<uint32_t> m_tagIds;
+    QList<QLabel*> tagLabels;
 
     /* maps of files  */
     std::list<AttachFileItem *> mAttachments;
