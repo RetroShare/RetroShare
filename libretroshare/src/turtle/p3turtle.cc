@@ -2040,8 +2040,8 @@ static std::string printNumber(uint64_t num,bool hex=false)
 
 void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 								std::vector<std::vector<std::string> >& tunnels_info,
-								std::vector<std::vector<std::string> >& search_reqs_info,
-								std::vector<std::vector<std::string> >& tunnel_reqs_info) const
+								std::vector<TurtleRequestDisplayInfo >& search_reqs_info,
+								std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -2091,35 +2091,28 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
 	{
-		search_reqs_info.push_back(std::vector<std::string>()) ;
-		std::vector<std::string>& search_req(search_reqs_info.back()) ;
+		TurtleRequestDisplayInfo info ;
 
-		search_req.push_back(printNumber(it->first,true)) ;
+		info.request_id 		= it->first ;
+		info.source_peer_id 	= it->second.origin ;
+		info.age 				= now - it->second.time_stamp ;
+		info.depth 				= it->second.depth ;
 
-		RsPeerDetails sslDetails;
-		if(rsPeers->getPeerDetails(it->second.origin,sslDetails)) 
-			search_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
-		else
-			search_req.push_back(it->second.origin) ;
-
-		search_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
+		search_reqs_info.push_back(info) ;
 	}
 
 	tunnel_reqs_info.clear();
 
 	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
 	{
-		tunnel_reqs_info.push_back(std::vector<std::string>()) ;
-		std::vector<std::string>& tunnel_req(tunnel_reqs_info.back()) ;
+		TurtleRequestDisplayInfo info ;
 
-		tunnel_req.push_back(printNumber(it->first,true)) ;
-		RsPeerDetails sslDetails;
-		if(rsPeers->getPeerDetails(it->second.origin,sslDetails)) 
-			tunnel_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
-		else
-			tunnel_req.push_back(it->second.origin) ;
+		info.request_id 		= it->first ;
+		info.source_peer_id 	= it->second.origin ;
+		info.age 				= now - it->second.time_stamp ;
+		info.depth 				= it->second.depth ;
 
-		tunnel_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
+		tunnel_reqs_info.push_back(info) ;
 	}
 }
 

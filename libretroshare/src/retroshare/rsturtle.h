@@ -26,6 +26,8 @@
  *
  */
 
+#pragma once
+
 #include <inttypes.h>
 #include <string>
 #include <list>
@@ -39,13 +41,21 @@ extern RsTurtle   *rsTurtle ;
 typedef uint32_t TurtleRequestId ;
 
 // This is the structure used to send back results of the turtle search 
-// to the notifyBase class.
+// to the notifyBase class, or send info to the GUI.
 
 struct TurtleFileInfo
 {
 	std::string hash ;
 	std::string name ;
 	uint64_t size ;
+};
+
+struct TurtleRequestDisplayInfo
+{
+	uint32_t request_id ;			// Id of the request
+	std::string source_peer_id ;	// Peer that relayed the request
+	uint32_t age ;						// Age in seconds
+	uint32_t depth ;					// Depth of the request. Might be altered.
 };
 
 // Interface class for turtle hopping.
@@ -61,7 +71,7 @@ class RsTurtle
 	public:
 		enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
 
-		RsTurtle() { _sharing_strategy = SHARE_ENTIRE_NETWORK ;}
+		RsTurtle() {}
 		virtual ~RsTurtle() {}
 
 		// Lauches a search request through the pipes, and immediately returns
@@ -70,6 +80,11 @@ class RsTurtle
 		//
 		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
 		virtual TurtleRequestId turtleSearch(const LinearizedExpression& expr) = 0 ;
+
+		// Sets the file sharing strategy. It concerns all local files. It would
+		// be better to handle this for each file, of course.
+
+		void setFileSharingStrategy(FileSharingStrategy f) { _sharing_strategy = f ; }
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
@@ -84,18 +99,13 @@ class RsTurtle
 		//
 		virtual void stopMonitoringFileTunnels(const std::string& file_hash) = 0 ;
 
-		// Sets the file sharing strategy. It concerns all local files. It would
-		// be better to handle this for each file, of course.
-
-		void setFileSharingStrategy(FileSharingStrategy f) { _sharing_strategy = f ; }
-
 		// Get info from the turtle router. I use std strings to hide the internal structs.
 		virtual void getInfo(std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&,
-									std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&) const = 0;
+									std::vector<TurtleRequestDisplayInfo>&,std::vector<TurtleRequestDisplayInfo>&) const = 0;
 
 		// Convenience function.
 		virtual bool isTurtlePeer(const std::string& peer_id) const = 0 ;
-		
+
 	protected:
 		FileSharingStrategy _sharing_strategy ;
 };

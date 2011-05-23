@@ -244,8 +244,8 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		/// get info about tunnels
 		virtual void getInfo(std::vector<std::vector<std::string> >&,
 									std::vector<std::vector<std::string> >&,
-									std::vector<std::vector<std::string> >&,
-									std::vector<std::vector<std::string> >&) const ;
+									std::vector<TurtleRequestDisplayInfo >&,
+									std::vector<TurtleRequestDisplayInfo >&) const ;
 		
 #ifdef TO_REMOVE
 		/************* from pqiMonitor *******************/

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>865</width>
-    <height>553</height>
+    <height>525</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,17 +17,36 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QTreeWidget" name="_f2f_TW">
-     <property name="headerHidden">
-      <bool>true</bool>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <column>
-      <property name="text">
-       <string>F2F router information</string>
+     <widget class="QTreeWidget" name="_f2f_TW">
+      <property name="headerHidden">
+       <bool>true</bool>
       </property>
-     </column>
+      <column>
+       <property name="text">
+        <string>F2F router information</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QFrame" name="_tunnel_statistics_F">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

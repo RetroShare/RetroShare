@@ -75,8 +75,8 @@ void FileTransferInfoWidget::updateDisplay()
 
         //std::cout << "got details for file " << nfo.fname << std::endl ;
 
-	pixmap = QPixmap(size());
-	pixmap.fill(this, 0, 0);
+//	pixmap = QPixmap(size());
+//	pixmap.fill(this, 0, 0);
 	pixmap = QPixmap(maxWidth, maxHeight);
 	pixmap.fill(this, 0, 0);
 	setFixedHeight(maxHeight);
