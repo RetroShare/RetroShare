@@ -78,6 +78,7 @@ private slots:
 
   void markAsRead();
   void markAsUnread();
+  void markWithStar(bool checked);
 
   void emptyTrash();
 
@@ -122,12 +123,14 @@ private:
   void insertMsgTxtAndFiles(QModelIndex index = QModelIndex(), bool bSetToRead = true);
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
-  void setMsgAsReadUnread(const QList<int> &Rows, bool bRead);
+  void setMsgAsReadUnread(const QList<int> &Rows, bool read);
+  void setMsgStar(const QList<int> &Rows, bool mark);
 
   void setCurrentFileName(const QString &fileName);
 
-  int getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread);
+  int getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread, QList<int> *pRowsStar);
   bool isMessageRead(int nRow);
+  bool hasMessageStar(int nRow);
 
   /* internal handle splitter */
   void togglefileview_internal();

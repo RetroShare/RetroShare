@@ -100,12 +100,12 @@ bool p3Msgs::MessageDelete(const std::string &mid)
 	return mMsgSrv -> removeMsgId(mid);
 }
 
-bool p3Msgs::MessageRead(const std::string &mid, bool bUnreadByUser)
+bool p3Msgs::MessageRead(const std::string &mid, bool unreadByUser)
 {
 	//std::cerr << "p3Msgs::MessageRead() ";
 	//std::cerr << "mid: " << mid << std::endl;
 
-	return mMsgSrv -> markMsgIdRead(mid, bUnreadByUser);
+	return mMsgSrv -> markMsgIdRead(mid, unreadByUser);
 }
 
 bool p3Msgs::MessageReplied(const std::string &mid, bool replied)
@@ -121,6 +121,12 @@ bool p3Msgs::MessageForwarded(const std::string &mid, bool forwarded)
 bool 	p3Msgs::getMessageTagTypes(MsgTagType& tags)
 {
 	return mMsgSrv->getMessageTagTypes(tags);
+}
+
+bool p3Msgs::MessageStar(const std::string &mid, bool star)
+
+{
+	return mMsgSrv->setMsgFlag(mid, star ? RS_MSG_FLAGS_STAR : 0, RS_MSG_FLAGS_STAR);
 }
 
 bool  p3Msgs::setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color)

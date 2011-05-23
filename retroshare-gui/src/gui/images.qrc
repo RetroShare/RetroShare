@@ -370,6 +370,8 @@
         <file>images/show_toolbox_frame.png</file>
         <file>images/start.png</file>
         <file>images/stop.png</file>
+        <file>images/star-on-16.png</file>
+        <file>images/star-off-16.png</file>
         <file>images/StatsCumulative.png</file>
         <file>images/StatisticsDetail.png</file>
         <file>images/status_unknown.png</file>

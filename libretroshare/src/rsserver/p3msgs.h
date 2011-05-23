@@ -61,9 +61,10 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
 	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
 	  virtual bool MessageDelete(const std::string &mid);
-	  virtual bool MessageRead(const std::string &mid, bool bUnreadByUser);
+	  virtual bool MessageRead(const std::string &mid, bool unreadByUser);
 	  virtual bool MessageReplied(const std::string &mid, bool replied);
 	  virtual bool MessageForwarded(const std::string &mid, bool forwarded);
+	  virtual bool MessageStar(const std::string &mid, bool star);
 	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
 
 	  virtual bool getMessageTagTypes(MsgTagType& tags);

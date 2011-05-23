@@ -52,6 +52,7 @@
 #define RS_MSG_UNREAD_BY_USER  0x0040   /* Unread by user */
 #define RS_MSG_REPLIED         0x0080   /* Message is replied */
 #define RS_MSG_FORWARDED       0x0100   /* Message is forwarded */
+#define RS_MSG_STAR            0x0200   /* Message is marked with a star */
 
 #define RS_MSGTAGTYPE_IMPORTANT  1
 #define RS_MSGTAGTYPE_WORK       2
@@ -163,9 +164,10 @@ virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
 virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
 
 virtual bool MessageDelete(const std::string &mid)                 = 0;
-virtual bool MessageRead(const std::string &mid, bool bUnreadByUser) = 0;
+virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
 virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
 virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
+virtual bool MessageStar(const std::string &mid, bool mark) = 0;
 
 /* message tagging */
 

@@ -683,7 +683,7 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 	return changed;
 }
 
-bool    p3MsgService::markMsgIdRead(const std::string &mid, bool bUnreadByUser)
+bool    p3MsgService::markMsgIdRead(const std::string &mid, bool unreadByUser)
 {
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
@@ -703,7 +703,7 @@ bool    p3MsgService::markMsgIdRead(const std::string &mid, bool bUnreadByUser)
 			mi->msgFlags &= ~(RS_MSG_FLAGS_NEW);
 
 			/* set state from user */
-			if (bUnreadByUser) {
+			if (unreadByUser) {
 				mi->msgFlags |= RS_MSG_FLAGS_UNREAD_BY_USER;
 			} else {
 				mi->msgFlags &= ~RS_MSG_FLAGS_UNREAD_BY_USER;
@@ -1311,6 +1311,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_FORWARDED;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_STAR)
+	{
+		mi.msgflags |= RS_MSG_STAR;
+	}
 
 	mi.ts = msg->sendTime;
 	mi.srcId = msg->PeerId();
@@ -1405,6 +1409,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)
 	{
 		mis.msgflags |= RS_MSG_FORWARDED;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_STAR)
+	{
+		mis.msgflags |= RS_MSG_STAR;
 	}
 
 	mis.srcId = msg->PeerId();

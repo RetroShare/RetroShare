@@ -53,20 +53,23 @@
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
 #define IMAGE_MESSAGEREPLY	   ":/images/mail_reply.png"
-#define IMAGE_MESSAGEREPLYALL      ":/images/mail_replyall.png"
-#define IMAGE_MESSAGEFORWARD	   ":/images/mail_forward.png"
-#define IMAGE_MESSAGEREMOVE 	   ":/images/message-mail-imapdelete.png"
-#define IMAGE_DOWNLOAD    	   ":/images/start.png"
-#define IMAGE_DOWNLOADALL          ":/images/startall.png"
+#define IMAGE_MESSAGEREPLYALL  ":/images/mail_replyall.png"
+#define IMAGE_MESSAGEFORWARD   ":/images/mail_forward.png"
+#define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
+#define IMAGE_DOWNLOAD         ":/images/start.png"
+#define IMAGE_DOWNLOADALL      ":/images/startall.png"
+#define IMAGE_STAR_ON          ":/images/star-on-16.png"
+#define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
-#define COLUMN_COUNT         7
+#define COLUMN_COUNT         8
 #define COLUMN_ATTACHEMENTS  0
 #define COLUMN_SUBJECT       1
 #define COLUMN_UNREAD        2
 #define COLUMN_FROM          3
 #define COLUMN_DATE          4
-#define COLUMN_CONTENT       5
-#define COLUMN_TAGS          6
+#define COLUMN_STAR          5
+#define COLUMN_CONTENT       6
+#define COLUMN_TAGS          7
 
 #define COLUMN_DATA          0 // column for storing the userdata like msgid and srcid
 
@@ -211,13 +214,15 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
     MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Tags"));
     MessagesModel->setHeaderData(COLUMN_CONTENT,       Qt::Horizontal, tr("Content"));
-    
+    MessagesModel->setHeaderData(COLUMN_STAR,          Qt::Horizontal, QIcon(IMAGE_STAR_ON), Qt::DecorationRole);
+
     MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, tr("Click to sort by attachments"), Qt::ToolTipRole);
 	MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Click to sort by subject"), Qt::ToolTipRole);
 	MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, tr("Click to sort by read"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("Click to sort by from"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Click to sort by date"), Qt::ToolTipRole);
 	MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Click to sort by tags"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_STAR,          Qt::Horizontal, tr("Click to sort by star"), Qt::ToolTipRole);
 
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setDynamicSortFilter(true);
@@ -229,6 +234,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     RSItemDelegate *itemDelegate = new RSItemDelegate(this);
     itemDelegate->removeFocusRect(COLUMN_UNREAD);
+    itemDelegate->removeFocusRect(COLUMN_STAR);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.messagestreeView->setItemDelegate(itemDelegate);
 
@@ -257,6 +263,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_UNREAD,       16);
     msgwheader->resizeSection (COLUMN_FROM,         140);
     msgwheader->resizeSection (COLUMN_DATE,         140);
+    msgwheader->resizeSection (COLUMN_STAR,         16);
+
+    msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
+    msgwheader->resizeSection (COLUMN_STAR, 24);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * msglheader = ui.msgList->header () ;
@@ -307,6 +317,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
     msgwheader->setResizeMode (COLUMN_UNREAD, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
+    msgwheader->resizeSection (COLUMN_STAR, 24);
+    msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
 
     // fill folder list
     updateMessageSummaryList();
@@ -349,6 +361,8 @@ MessagesDialog::~MessagesDialog()
 
 void MessagesDialog::processSettings(bool bLoad)
 {
+    int messageTreeVersion = 1; // version number for the settings to solve problems when modifying the column count
+
     m_bProcessSettings = true;
 
     QHeaderView *msgwheader = ui.messagestreeView->header () ;
@@ -369,7 +383,9 @@ void MessagesDialog::processSettings(bool bLoad)
         ui.filterColumnComboBox->setCurrentIndex(nValue);
 
         // state of message tree
-        msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
+        if (Settings->value("MessageTreeVersion").toInt() == messageTreeVersion) {
+            msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
+        }
 
         // state of tag list
         bValue = Settings->value("tagList", true).toBool();
@@ -384,6 +400,7 @@ void MessagesDialog::processSettings(bool bLoad)
 
         // state of message tree
         Settings->setValue("MessageTree", msgwheader->saveState());
+        Settings->setValue("MessageTreeVersion", messageTreeVersion);
 
         // state of tag list
         Settings->setValue("tagList", ui.Tags_Button->isChecked());
@@ -473,10 +490,11 @@ void MessagesDialog::fillTags()
 //		MainPage::keyPressEvent(e) ;
 //}
 
-int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread)
+int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread, QList<int> *pRowsStar)
 {
     if (pRowsRead) pRowsRead->clear();
     if (pRowsUnread) pRowsUnread->clear();
+    if (pRowsStar) pRowsStar->clear();
 
     //To check if the selection has more than one row.
     QList<QModelIndex> selectedIndexList = ui.messagestreeView->selectionModel() -> selectedIndexes ();
@@ -488,7 +506,7 @@ int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRea
         {
             rowList.append(row);
 
-            if (pRows || pRowsRead || pRowsUnread) {
+            if (pRows || pRowsRead || pRowsUnread || pRowsStar) {
                 int mappedRow = proxyModel->mapToSource(*it).row();
 
                 if (pRows) pRows->append(mappedRow);
@@ -497,6 +515,12 @@ int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRea
                     if (pRowsUnread) pRowsUnread->append(mappedRow);
                 } else {
                     if (pRowsRead) pRowsRead->append(mappedRow);
+                }
+
+                if (pRowsStar) {
+                    if (MessagesModel->item(mappedRow, COLUMN_DATA)->data(ROLE_MSGFLAGS).toInt() & RS_MSG_STAR) {
+                        pRowsStar->append(mappedRow);
+                    }
                 }
             }
         }
@@ -507,58 +531,61 @@ int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRea
 
 bool MessagesDialog::isMessageRead(int nRow)
 {
-    QStandardItem *item;
-    item = MessagesModel->item(nRow,COLUMN_DATA);
+    QStandardItem *item = MessagesModel->item(nRow,COLUMN_DATA);
     return !item->data(ROLE_UNREAD).toBool();
+}
+
+bool MessagesDialog::hasMessageStar(int nRow)
+{
+    QStandardItem *item = MessagesModel->item(nRow,COLUMN_DATA);
+    return item->data(ROLE_MSGFLAGS).toInt() & RS_MSG_STAR;
 }
 
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
 
-    /** Defines the actions for the context menu */
-
-    QAction *replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), &contextMnu );
-    connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
-    contextMnu.addAction( replytomsgAct);
-
-    QAction *replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), &contextMnu );
-    connect( replyallmsgAct , SIGNAL( triggered() ), this, SLOT( replyallmessage() ) );
-    contextMnu.addAction( replyallmsgAct);
-
-    QAction *forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), &contextMnu );
-    connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
-    contextMnu.addAction( forwardmsgAct);
-
     QList<int> RowsRead;
     QList<int> RowsUnread;
-    int nCount = getSelectedMsgCount (NULL, &RowsRead, &RowsUnread);
+    QList<int> RowsStar;
+    int nCount = getSelectedMsgCount (NULL, &RowsRead, &RowsUnread, &RowsStar);
 
-    QAction *editAct = new QAction(tr( "Edit..." ), &contextMnu );
-    connect(editAct, SIGNAL(triggered()), this, SLOT(editmessage()));
-    contextMnu.addAction(editAct);
+    /** Defines the actions for the context menu */
 
-    if (nCount == 1) {
-        editAct->setEnabled(true);
-    } else {
-        editAct->setDisabled(true);
+    QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to Message"), this, SLOT(replytomessage()));
+    if (nCount != 1) {
+        action->setDisabled(true);
+    }
+    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREPLYALL), tr("Reply to All"), this, SLOT(replyallmessage()));
+    if (nCount != 1) {
+        action->setDisabled(true);
+    }
+    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEFORWARD), tr("Forward Message"), this, SLOT(forwardmessage()));
+    if (nCount != 1) {
+        action->setDisabled(true);
+    }
+
+    action = contextMnu.addAction(tr("Edit..."), this, SLOT(editmessage()));
+    if (nCount != 1) {
+        action->setDisabled(true);
     }
 
     contextMnu.addSeparator();
 
-    QAction *markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), &contextMnu);
-    connect(markAsRead , SIGNAL(triggered()), this, SLOT(markAsRead()));
-    contextMnu.addAction(markAsRead);
+    action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), this, SLOT(markAsRead()));
     if (RowsUnread.size() == 0) {
-        markAsRead->setDisabled(true);
+        action->setDisabled(true);
     }
 
-    QAction *markAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr( "Mark as unread" ), &contextMnu);
-    connect(markAsUnread , SIGNAL(triggered()), this, SLOT(markAsUnread()));
-    contextMnu.addAction(markAsUnread);
+    action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), this, SLOT(markAsUnread()));
     if (RowsRead.size() == 0) {
-        markAsUnread->setDisabled(true);
+        action->setDisabled(true);
     }
+
+    action = contextMnu.addAction(tr("Add Star"));
+    action->setCheckable(true);
+    action->setChecked(RowsStar.size());
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(markWithStar(bool)));
 
     contextMnu.addSeparator();
 
@@ -566,46 +593,25 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     contextMnu.addMenu(ui.tagButton->menu());
     contextMnu.addSeparator();
 
-    QAction *removemsgAct;
-    if (nCount > 1) {
-        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), &contextMnu );
-    } else {
-        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), &contextMnu );
+    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREMOVE), (nCount > 1) ? tr("Remove Messages") : tr("Remove Message"), this, SLOT(removemessage()));
+    if (nCount == 0) {
+        action->setDisabled(true);
     }
 
-    connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
-    contextMnu.addAction( removemsgAct);
-
-    int listrow = ui.listWidget -> currentRow();
+    int listrow = ui.listWidget->currentRow();
     if (listrow == ROW_TRASHBOX) {
-        QAction *undeleteAct = new QAction(tr( "Undelete" ), &contextMnu );
-        connect(undeleteAct, SIGNAL(triggered()), this, SLOT(undeletemessage()));
-        contextMnu.addAction(undeleteAct);
-
-        if (nCount) {
-            undeleteAct->setEnabled(true);
-        } else {
-            undeleteAct->setDisabled(true);
+        action = contextMnu.addAction(tr("Undelete"), this, SLOT(undeletemessage()));
+        if (nCount == 0) {
+            action->setDisabled(true);
         }
     }
 
-    contextMnu.addAction( ui.actionSave_as);
-    contextMnu.addAction( ui.actionPrintPreview);
-    contextMnu.addAction( ui.actionPrint);
+    contextMnu.addAction(ui.actionSave_as);
+    contextMnu.addAction(ui.actionPrintPreview);
+    contextMnu.addAction(ui.actionPrint);
     contextMnu.addSeparator();
 
-    QAction *newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), &contextMnu );
-    connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
-    contextMnu.addAction( newmsgAct);
-
-    if (nCount != 1) {
-        replytomsgAct->setDisabled(true);
-        replyallmsgAct->setDisabled(true);
-        forwardmsgAct->setDisabled(true);
-    }
-    if (nCount == 0) {
-        removemsgAct->setDisabled(true);
-    }
+    contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("New Message"), this, SLOT(newmessage()));
 
     contextMnu.exec(QCursor::pos());
 }
@@ -892,56 +898,64 @@ void MessagesDialog::messagesTagsChanged()
     showTagLabels();
 }
 
-static void InitIconAndFont(QStandardItem *pItem [COLUMN_COUNT])
+static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
 {
-    QString sText = pItem [COLUMN_SUBJECT]->text();
-    QString mid = pItem [COLUMN_DATA]->data(ROLE_MSGID).toString();
-    int nFlag = pItem [COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
+    int msgFlags = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
 
     // show the real "New" state
-    if (nFlag & RS_MSG_NEW) {
-        pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-state-new.png"));
+    if (msgFlags & RS_MSG_NEW) {
+        item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-state-new.png"));
     } else {
-        if (nFlag & RS_MSG_UNREAD_BY_USER) {
-            if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
-            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded.png"));
-            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-forw.png"));
+        if (msgFlags & RS_MSG_UNREAD_BY_USER) {
+            if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
+            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded.png"));
+            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-forw.png"));
             } else {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail.png"));
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail.png"));
             }
         } else {
-            if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-read.png"));
-            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
-            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-forw-read.png"));
+            if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-read.png"));
+            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
+            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-forw-read.png"));
             } else {
-                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-read.png"));
+                item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-read.png"));
             }
         }
     }
 
-    bool bNew = nFlag & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
+    if (msgFlags & RS_MSG_STAR) {
+        item[COLUMN_STAR]->setIcon(QIcon(IMAGE_STAR_ON));
+        item[COLUMN_STAR]->setText("1");
+    } else {
+        item[COLUMN_STAR]->setIcon(QIcon(IMAGE_STAR_OFF));
+        item[COLUMN_STAR]->setText("0");
+    }
+
+    bool isNew = msgFlags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
 
     // set icon
-    if (bNew) {
-        pItem[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-unread.png"));
+    if (isNew) {
+        item[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-unread.png"));
+        item[COLUMN_UNREAD]->setText("1");
     } else {
-        pItem[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-read.png"));
+        item[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-read.png"));
+        item[COLUMN_UNREAD]->setText("0");
     }
 
     // set font
     for (int i = 0; i < COLUMN_COUNT; i++) {
-        QFont qf = pItem[i]->font();
-        qf.setBold(bNew);
-        pItem[i]->setFont(qf);
+        QFont qf = item[i]->font();
+        qf.setBold(isNew);
+        item[i]->setFont(qf);
     }
 
-    pItem[COLUMN_DATA]->setData(bNew, ROLE_UNREAD);
+    item[COLUMN_DATA]->setData(isNew, ROLE_UNREAD);
 }
 
 void MessagesDialog::insertMessages()
@@ -1321,15 +1335,27 @@ void MessagesDialog::clicked(const QModelIndex &index )
         return;
     }
 
-    if (index.column() == COLUMN_UNREAD) {
-        int mappedRow = proxyModel->mapToSource(index).row();
+    switch (index.column()) {
+    case COLUMN_UNREAD:
+        {
+            int mappedRow = proxyModel->mapToSource(index).row();
 
-        QList<int> Rows;
-        Rows.append(mappedRow);
-        setMsgAsReadUnread(Rows, !isMessageRead(mappedRow));
-        insertMsgTxtAndFiles(index, false);
-        updateMessageSummaryList();
-        return;
+            QList<int> Rows;
+            Rows.append(mappedRow);
+            setMsgAsReadUnread(Rows, !isMessageRead(mappedRow));
+            insertMsgTxtAndFiles(index, false);
+            updateMessageSummaryList();
+            return;
+        }
+    case COLUMN_STAR:
+        {
+            int mappedRow = proxyModel->mapToSource(index).row();
+
+            QList<int> Rows;
+            Rows.append(mappedRow);
+            setMsgStar(Rows, !hasMessageStar(mappedRow));
+            return;
+        }
     }
 
     timer->stop();
@@ -1355,7 +1381,7 @@ void MessagesDialog::updateCurrentMessage()
     insertMsgTxtAndFiles(timerIndex);
 }
 
-void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
+void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool read)
 {
     LockUpdate Lock (this, false);
 
@@ -1368,17 +1394,17 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
 
         std::string mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString().toStdString();
 
-        if (rsMsgs->MessageRead(mid, !bRead)) {
-            int nFlag = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
-            nFlag &= ~RS_MSG_NEW;
+        if (rsMsgs->MessageRead(mid, !read)) {
+            int msgFlag = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
+            msgFlag &= ~RS_MSG_NEW;
 
-            if (bRead) {
-                nFlag &= ~RS_MSG_UNREAD_BY_USER;
+            if (read) {
+                msgFlag &= ~RS_MSG_UNREAD_BY_USER;
             } else {
-                nFlag |= RS_MSG_UNREAD_BY_USER;
+                msgFlag |= RS_MSG_UNREAD_BY_USER;
             }
 
-            item[COLUMN_DATA]->setData(nFlag, ROLE_MSGFLAGS);
+            item[COLUMN_DATA]->setData(msgFlag, ROLE_MSGFLAGS);
 
             InitIconAndFont(item);
         }
@@ -1390,7 +1416,7 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
 void MessagesDialog::markAsRead()
 {
     QList<int> RowsUnread;
-    getSelectedMsgCount (NULL, NULL, &RowsUnread);
+    getSelectedMsgCount (NULL, NULL, &RowsUnread, NULL);
 
     setMsgAsReadUnread (RowsUnread, true);
     updateMessageSummaryList();
@@ -1399,10 +1425,50 @@ void MessagesDialog::markAsRead()
 void MessagesDialog::markAsUnread()
 {
     QList<int> RowsRead;
-    getSelectedMsgCount (NULL, &RowsRead, NULL);
+    getSelectedMsgCount (NULL, &RowsRead, NULL, NULL);
 
     setMsgAsReadUnread (RowsRead, false);
     updateMessageSummaryList();
+}
+
+void MessagesDialog::markWithStar(bool checked)
+{
+    QList<int> Rows;
+    getSelectedMsgCount (&Rows, NULL, NULL, NULL);
+
+    setMsgStar(Rows, checked);
+ }
+
+void MessagesDialog::setMsgStar(const QList<int> &Rows, bool star)
+{
+    LockUpdate Lock (this, false);
+
+    for (int nRow = 0; nRow < Rows.size(); nRow++) {
+        QStandardItem* item[COLUMN_COUNT];
+        for(int nCol = 0; nCol < COLUMN_COUNT; nCol++)
+        {
+            item[nCol] = MessagesModel->item(Rows [nRow], nCol);
+        }
+
+        std::string mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString().toStdString();
+
+        if (rsMsgs->MessageStar(mid, star)) {
+            int msgFlag = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
+            msgFlag &= ~RS_MSG_STAR;
+
+            if (star) {
+                msgFlag |= RS_MSG_STAR;
+            } else {
+                msgFlag &= ~RS_MSG_STAR;
+            }
+
+            item[COLUMN_DATA]->setData(msgFlag, ROLE_MSGFLAGS);
+
+            InitIconAndFont(item);
+        }
+    }
+
+    // LockUpdate
 }
 
 void MessagesDialog::clearTagLabels()
@@ -1502,7 +1568,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     cid = item->data(ROLE_SRCID).toString().toStdString();
     mid = item->data(ROLE_MSGID).toString().toStdString();
 
-    int nCount = getSelectedMsgCount (NULL, NULL, NULL);
+    int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
     if (nCount == 1) {
         ui.actionSave_as->setEnabled(true);
         ui.actionPrintPreview->setEnabled(true);
@@ -1744,7 +1810,7 @@ void MessagesDialog::undeletemessage()
     LockUpdate Lock (this, true);
 
     QList<int> Rows;
-    getSelectedMsgCount (&Rows, NULL, NULL);
+    getSelectedMsgCount (&Rows, NULL, NULL, NULL);
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
         QString mid = MessagesModel->item (Rows [nRow], COLUMN_DATA)->data(ROLE_MSGID).toString();
         rsMsgs->MessageToTrash(mid.toStdString(), false);
@@ -2079,7 +2145,7 @@ void MessagesDialog::tagAboutToShow()
 	MsgTagInfo tagInfo;
 
 	QList<int> rows;
-	getSelectedMsgCount (&rows, NULL, NULL);
+	getSelectedMsgCount (&rows, NULL, NULL, NULL);
 
 	if (rows.size()) {
 		QStandardItem* item = MessagesModel->item(rows [0], COLUMN_DATA);
@@ -2096,7 +2162,7 @@ void MessagesDialog::tagRemoveAll()
 	LockUpdate Lock (this, false);
 
 	QList<int> rows;
-	getSelectedMsgCount (&rows, NULL, NULL);
+	getSelectedMsgCount (&rows, NULL, NULL, NULL);
 	for (int row = 0; row < rows.size(); row++) {
 		QStandardItem* item = MessagesModel->item(rows [row], COLUMN_DATA);
 		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
@@ -2119,7 +2185,7 @@ void MessagesDialog::tagSet(int tagId, bool set)
 	LockUpdate Lock (this, false);
 
 	QList<int> rows;
-	getSelectedMsgCount (&rows, NULL, NULL);
+	getSelectedMsgCount (&rows, NULL, NULL, NULL);
 	for (int row = 0; row < rows.size(); row++) {
 		QStandardItem* item = MessagesModel->item(rows [row], COLUMN_DATA);
 		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
