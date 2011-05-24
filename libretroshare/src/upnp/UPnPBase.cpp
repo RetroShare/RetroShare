@@ -28,6 +28,7 @@
 
 #include "UPnPBase.h"
 #include <stdio.h>
+#include <string.h>
 
 #include <algorithm>		// For transform()
 

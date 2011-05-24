@@ -29,6 +29,7 @@
 #include <sstream>
 #include <memory>
 #include <vector>
+#include <string.h>
 
 #include <upnp/upnp.h>
 #include <upnp/upnptools.h>

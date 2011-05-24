@@ -361,6 +361,7 @@ QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
 			return item;
 		}
 	}
+	return NULL ;
 }
 
 QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
