@@ -982,65 +982,73 @@ void MessagesDialog::insertMessages()
 
     /* check the mode we are in */
     unsigned int msgbox = 0;
-    bool bTrash = false;
-    bool bFill = true;
-    uint32_t nTagId = 0;
+    bool isTrash = false;
+    bool doFill = true;
+    uint32_t tagId = 0;
+    QString boxText;
+    QIcon boxIcon;
 
     switch (m_eListMode) {
     case LIST_NOTHING:
-        bFill = false;
+        doFill = false;
         break;
 
     case LIST_BOX:
         {
+            QListWidgetItem *item = ui.listWidget->currentItem();
+            if (item) {
+                boxIcon = item->icon();
+            }
+
             int listrow = ui.listWidget->currentRow();
 
             switch (listrow) {
             case ROW_INBOX:
                 msgbox = RS_MSG_INBOX;
-                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-inbox.png") );
-                ui.tabWidget->setTabText ( 0, tr ("Inbox") );
+                boxText = tr("Inbox");
                 break;
             case ROW_OUTBOX:
                 msgbox = RS_MSG_OUTBOX;
-                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-outbox.png") );
-                ui.tabWidget->setTabText ( 0, tr ("Outbox") );
+                boxText = tr("Outbox");
                 break;
             case ROW_DRAFTBOX:
                 msgbox = RS_MSG_DRAFTBOX;
-                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-draft.png") );
-                ui.tabWidget->setTabText ( 0, tr ("Drafts") );
+                boxText = tr("Drafts");
                 break;
             case ROW_SENTBOX:
                 msgbox = RS_MSG_SENTBOX;
-                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-sent.png") );
-                ui.tabWidget->setTabText ( 0, tr ("Sent") );
+                boxText = tr("Sent");
                 break;
             case ROW_TRASHBOX:
-                bTrash = true;
-                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-trash.png") );
-                ui.tabWidget->setTabText ( 0, tr ("Trash") );
+                isTrash = true;
+                boxText = tr("Trash");
                 break;
             default:
-                bFill = false;
+                doFill = false;
             }
         }
         break;
 
     case LIST_TAG:
         {
-            QListWidgetItem *pItem = ui.tagWidget->currentItem();
-            if (pItem) {
-                nTagId = pItem->data (Qt::UserRole).toInt();
+            QListWidgetItem *item = ui.tagWidget->currentItem();
+            if (item) {
+                tagId = item->data (Qt::UserRole).toInt();
+
+                boxText = item->text();
+                boxIcon = item->icon();
             } else {
-                bFill = false;
+                doFill = false;
             }
         }
         break;
 
     default:
-        bFill = false;
+        doFill = false;
     }
+
+    ui.tabWidget->setTabText (0, boxText);
+    ui.tabWidget->setTabIcon (0, boxIcon);
 
     if (msgbox == RS_MSG_INBOX) {
         MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("From"));
@@ -1050,7 +1058,7 @@ void MessagesDialog::insertMessages()
 		MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("Click to sort by to"), Qt::ToolTipRole);
     }
 
-    if (bFill) {
+    if (doFill) {
         MsgTagType Tags;
         rsMsgs->getMessageTagTypes(Tags);
 
@@ -1058,7 +1066,7 @@ void MessagesDialog::insertMessages()
         std::list<MsgInfoSummary> msgToShow;
         for(it = msgList.begin(); it != msgList.end(); it++) {
             if (m_eListMode == LIST_BOX) {
-                if (bTrash) {
+                if (isTrash) {
                     if ((it->msgflags & RS_MSG_TRASH) == 0) {
                         continue;
                     }
@@ -1073,7 +1081,7 @@ void MessagesDialog::insertMessages()
             } else if (m_eListMode == LIST_TAG) {
                 MsgTagInfo tagInfo;
                 rsMsgs->getMessageTag(it->msgId, tagInfo);
-                if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), nTagId) == tagInfo.tagIds.end()) {
+                if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), tagId) == tagInfo.tagIds.end()) {
                     continue;
                 }
             } else {
