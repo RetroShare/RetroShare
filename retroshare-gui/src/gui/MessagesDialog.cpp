@@ -62,12 +62,12 @@
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
 #define COLUMN_COUNT         8
-#define COLUMN_ATTACHEMENTS  0
-#define COLUMN_SUBJECT       1
-#define COLUMN_UNREAD        2
-#define COLUMN_FROM          3
-#define COLUMN_DATE          4
-#define COLUMN_STAR          5
+#define COLUMN_STAR          0
+#define COLUMN_ATTACHEMENTS  1
+#define COLUMN_SUBJECT       2
+#define COLUMN_UNREAD        3
+#define COLUMN_FROM          4
+#define COLUMN_DATE          5
 #define COLUMN_CONTENT       6
 #define COLUMN_TAGS          7
 
@@ -361,7 +361,7 @@ MessagesDialog::~MessagesDialog()
 
 void MessagesDialog::processSettings(bool bLoad)
 {
-    int messageTreeVersion = 1; // version number for the settings to solve problems when modifying the column count
+    int messageTreeVersion = 2; // version number for the settings to solve problems when modifying the column count
 
     m_bProcessSettings = true;
 

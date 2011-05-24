@@ -110,7 +110,7 @@
 #define TYPE_GROUP 2
 
 /******
- * #define PEERS_DEBUG 1
+ * #define FRIENDS_DEBUG 1
  *****/
 
 
@@ -587,9 +587,9 @@ void FriendsDialog::updateDisplay()
 /* get the list of peers from the RsIface.  */
 void  FriendsDialog::insertPeers()
 {
-    #ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
     std::cerr << "FriendsDialog::insertPeers() called." << std::endl;
-    #endif
+#endif
 
     std::list<std::string> gpgFriends;
     std::list<std::string>::iterator gpgIt;
@@ -790,8 +790,8 @@ void  FriendsDialog::insertPeers()
             fillGpgIds.push_back(gpgId);
 
             //add the gpg friends
-#ifdef PEERS_DEBUG
-            std::cerr << "FriendsDialog::insertPeers() inserting gpg_id : " << *it << std::endl;
+#ifdef FRIENDS_DEBUG
+            std::cerr << "FriendsDialog::insertPeers() inserting gpg_id : " << gpgId << std::endl;
 #endif
 
             /* make a widget per friend */
@@ -883,7 +883,7 @@ void  FriendsDialog::insertPeers()
 
                 RsPeerDetails sslDetail;
                 if (!rsPeers->getPeerDetails(sslId, sslDetail) || !rsPeers->isFriend(sslId)) {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
                     std::cerr << "Removing widget from the view : id : " << sslId << std::endl;
 #endif
                     //child has disappeared, remove it from the gpg_item
@@ -896,7 +896,7 @@ void  FriendsDialog::insertPeers()
                 if (newChild) {
                     sslItem = new RSTreeWidgetItem(m_compareRole, TYPE_SSL); //set type to 1 for custom popup menu
 
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
                     std::cerr << "FriendsDialog::insertPeers() inserting sslItem." << std::endl;
 #endif
 
@@ -1153,13 +1153,13 @@ void FriendsDialog::exportfriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
 
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
         std::cerr << "FriendsDialog::exportfriend()" << std::endl;
 #endif
 	if (!c)
 	{
-#ifdef PEERS_DEBUG
-                std::cerr << "FriendsDialog::exportfriend() None Selected -- sorry" << std::endl;
+#ifdef FRIENDS_DEBUG
+        std::cerr << "FriendsDialog::exportfriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}
@@ -1168,8 +1168,8 @@ void FriendsDialog::exportfriend()
 
 	if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save Certificate"), tr("Certificates (*.pqi)"), fileName))
 	{
-#ifdef PEERS_DEBUG
-                std::cerr << "FriendsDialog::exportfriend() Saving to: " << file << std::endl;
+#ifdef FRIENDS_DEBUG
+        std::cerr << "FriendsDialog::exportfriend() Saving to: " << fileName.toStdString() << std::endl;
 #endif
 		if (rsPeers)
 		{
@@ -1244,22 +1244,22 @@ QTreeWidgetItem *FriendsDialog::getCurrentPeer()
 	/* get the current, and extract the Id */
 
 	/* get a link to the table */
-        QTreeWidget *peerWidget = ui.peertreeWidget;
-        QTreeWidgetItem *item = peerWidget -> currentItem();
-        if (!item)
-        {
-#ifdef PEERS_DEBUG
+	QTreeWidget *peerWidget = ui.peertreeWidget;
+	QTreeWidgetItem *item = peerWidget -> currentItem();
+	if (!item)
+	{
+#ifdef FRIENDS_DEBUG
 		std::cerr << "Invalid Current Item" << std::endl;
 #endif
 		return NULL;
 	}
 
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
 	/* Display the columns of this item. */
 	std::ostringstream out;
-        out << "CurrentPeerItem: " << std::endl;
+	out << "CurrentPeerItem: " << std::endl;
 
-        for(int i = 1; i < COLUMN_COUNT; i++)
+	for(int i = 1; i < COLUMN_COUNT; i++)
 	{
 		QString txt = item -> text(i);
 		out << "\t" << i << ":" << txt.toStdString() << std::endl;
@@ -1283,26 +1283,25 @@ QTreeWidgetItem *FriendsDialog::getCurrentPeer()
 
 void FriendsDialog::removefriend()
 {
-        QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG
-        std::cerr << "FriendsDialog::removefriend()" << std::endl;
+	QTreeWidgetItem *c = getCurrentPeer();
+#ifdef FRIENDS_DEBUG
+	std::cerr << "FriendsDialog::removefriend()" << std::endl;
 #endif
 	if (!c)
 	{
-#ifdef PEERS_DEBUG
-        	std::cerr << "FriendsDialog::removefriend() None Selected -- sorry" << std::endl;
+#ifdef FRIENDS_DEBUG
+		std::cerr << "FriendsDialog::removefriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}
 
 	if (rsPeers)
 	{
-        if ((QMessageBox::question(this, "RetroShare",tr("Do you want to remove this Friend?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+		if ((QMessageBox::question(this, "RetroShare",tr("Do you want to remove this Friend?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
-      rsPeers->removeFriend(getPeerRsCertId(c));
-      emit friendsUpdated() ;
+			rsPeers->removeFriend(getPeerRsCertId(c));
+			emit friendsUpdated() ;
 		}
-		else
 		return;
 	}
 }
@@ -1310,12 +1309,12 @@ void FriendsDialog::removefriend()
 void FriendsDialog::connectfriend()
 {
     QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
     std::cerr << "FriendsDialog::connectfriend()" << std::endl;
 #endif
     if (!c)
     {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
         std::cerr << "FriendsDialog::connectfriend() Noone Selected -- sorry" << std::endl;
 #endif
         return;
@@ -1366,9 +1365,9 @@ void FriendsDialog::addFriend()
 
 void FriendsDialog::resetStatusBar() 
 {
-        #ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
 	std::cerr << "FriendsDialog: reseting status bar." << std::endl ;
-        #endif
+#endif
 
 	ui.statusStringLabel->setText(QString("")) ;
 }
@@ -1377,7 +1376,7 @@ void FriendsDialog::updateStatusTyping()
 {
     if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
     {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
         std::cerr << "FriendsDialog: sending group chat typing info." << std::endl ;
 #endif
 
@@ -1394,7 +1393,7 @@ void FriendsDialog::updateStatusTyping()
 //
 void FriendsDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
     std::cerr << "FriendsDialog: received group chat typing info. updating gui." << std::endl ;
 #endif
 
@@ -1406,7 +1405,7 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
 
 void FriendsDialog::updatePeersAvatar(const QString& peer_id)
 {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
     std::cerr << "FriendsDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
 #endif
 
@@ -1427,7 +1426,7 @@ void FriendsDialog::updatePeerStatusString(const QString& peer_id,const QString&
     }
     else
     {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
         std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
 #endif
 
@@ -1475,12 +1474,12 @@ void FriendsDialog::insertChat()
     std::list<ChatInfo> newchat;
     if (!rsMsgs->getPublicChatQueue(newchat))
     {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
         std::cerr << "no chat available." << std::endl ;
 #endif
         return;
     }
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
     std::cerr << "got new chat." << std::endl;
 #endif
     std::list<ChatInfo>::iterator it;
@@ -1500,8 +1499,8 @@ void FriendsDialog::insertChat()
         QString name = QString::fromStdString(rsPeers->getPeerName(it->rsid));
         QString msg = QString::fromStdWString(it->msg);
 
-#ifdef PEERS_DEBUG
-        std::cerr << "FriendsDialog::insertChat(): " << msg << std::endl;
+#ifdef FRIENDS_DEBUG
+        std::cerr << "FriendsDialog::insertChat(): " << msg.toStdString() << std::endl;
 #endif
 
         bool incoming = false;
@@ -1570,8 +1569,8 @@ void FriendsDialog::sendMsg()
 
     std::wstring message = lineWidget->toHtml().toStdWString();
 
-#ifdef PEERS_DEBUG
-    std::string msg(ci.msg.begin(), ci.msg.end());
+#ifdef FRIENDS_DEBUG
+    std::string msg(message.begin(), message.end());
     std::cerr << "FriendsDialog::sendMsg(): " << msg << std::endl;
 #endif
 
@@ -1660,9 +1659,9 @@ void  FriendsDialog::insertSendList()
 
 //void FriendsDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 //{
-//        #ifdef PEERS_DEBUG
+//#ifdef FRIENDS_DEBUG
 //	std::cerr << "ToggleSendItem()" << std::endl;
-//        #endif
+//#endif
 //
 //	/* extract id */
 //	std::string id = (item -> text(4)).toStdString();
@@ -1792,9 +1791,9 @@ void FriendsDialog::updateAvatar()
 
 	rsMsgs->getOwnAvatarData(data,size); 
 
-        #ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
 	std::cerr << "Image size = " << size << std::endl ;
-        #endif
+#endif
 
 	if(size == 0)
 	   std::cerr << "Got no image" << std::endl ;
@@ -1804,7 +1803,7 @@ void FriendsDialog::updateAvatar()
 	pix.loadFromData(data,size,"PNG") ;
 	ui.avatartoolButton->setIcon(pix); // writes image into ba in PNG format
 
-        PopupChatDialog::updateAllAvatars();
+	PopupChatDialog::updateAllAvatars();
 
 	delete[] data ;
 }
@@ -1817,9 +1816,9 @@ void FriendsDialog::getAvatar()
 		QPixmap picture;
 		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
-                #ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
-                #endif
+#endif
 
 		// send avatar down the pipe for other peers to get it.
 		QByteArray ba;
@@ -1827,9 +1826,9 @@ void FriendsDialog::getAvatar()
 		buffer.open(QIODevice::WriteOnly);
 		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 
-                #ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
 		std::cerr << "Image size = " << ba.size() << std::endl ;
-                #endif
+#endif
 
 		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
 
@@ -1908,7 +1907,7 @@ void FriendsDialog::fileHashingFinished(AttachFileItem* file)
 
     //check that the file is ok tos end
     if (file->getState() == AFI_STATE_ERROR) {
-#ifdef PEERS_DEBUG
+#ifdef FRIENDS_DEBUG
         std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed." << std::endl;
 #endif
         return;
@@ -1927,8 +1926,8 @@ void FriendsDialog::fileHashingFinished(AttachFileItem* file)
 
     //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
     //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
-#ifdef PEERS_DEBUG
-    std::cerr << "FriendsDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
+#ifdef FRIENDS_DEBUG
+    std::cerr << "FriendsDialog::fileHashingFinished mesgString : " << mesgString.toStdString() << std::endl;
 #endif
 
     /* convert to real html document */
