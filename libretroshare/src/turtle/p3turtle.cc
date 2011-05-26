@@ -102,6 +102,8 @@ p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 	_last_tunnel_management_time = 0 ;
 	_last_tunnel_campaign_time = 0 ;
 	_last_tunnel_speed_estimate_time = 0 ;
+
+	_traffic_info.reset() ;
 }
 
 int p3turtle::tick()
@@ -139,8 +141,15 @@ int p3turtle::tick()
 #endif
 		manageTunnels() ;
 
-		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-		_last_tunnel_management_time = now ;
+		{
+			RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+			_last_tunnel_management_time = now ;
+
+			// update traffic statistics
+
+			_traffic_info = _traffic_info*0.75 + _traffic_info_buffer*0.25 ;
+			_traffic_info_buffer.reset() ;
+		}
 	}
 
 	// Clean every 10 sec.
@@ -880,7 +889,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		if(item->shouldStampTunnel())
 			tunnel.time_stamp = time(NULL) ;
 
-		tunnel.transfered_bytes += item->serial_size() ;
+		tunnel.transfered_bytes += static_cast<RsTurtleItem*>(item)->serial_size() ;
 
 		// Let's figure out whether this packet is for us or not.
 
@@ -890,6 +899,8 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 			std::cerr << "  Forwarding generic item to peer " << tunnel.local_src << std::endl ;
 #endif
 			item->PeerId(tunnel.local_src) ;
+
+			_traffic_info_buffer.unknown_updn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
 
 			sendItem(item) ;
 			return ;
@@ -901,6 +912,8 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 			std::cerr << "  Forwarding generic item to peer " << tunnel.local_dst << std::endl ;
 #endif
 			item->PeerId(tunnel.local_dst) ;
+
+			_traffic_info_buffer.unknown_updn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
 
 			sendItem(item) ;
 			return ;
@@ -999,6 +1012,8 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		_traffic_info_buffer.data_dn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
 
 		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.find(item->tunnel_id)) ;
 
@@ -1251,7 +1266,7 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& , uint
 	item->chunk_size = chunksize ;
 	item->chunk_data = malloc(chunksize) ;
 
-	tunnel.transfered_bytes += item->serial_size();
+	tunnel.transfered_bytes += static_cast<RsTurtleItem*>(item)->serial_size();
 
 	if(item->chunk_data == NULL)
 	{
@@ -1265,6 +1280,8 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& , uint
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: sending file data (chunksize=" << item->chunk_size << ", offset=" << item->chunk_offset << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << tunnel.local_src << std::endl ;
 #endif
+	_traffic_info_buffer.data_up_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
+
 	sendItem(item) ;
 }
 
@@ -1524,6 +1541,8 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
+		_traffic_info_buffer.tr_dn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
+
 		std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
 		
 		if(it != _tunnel_requests_origins.end())
@@ -1606,6 +1625,8 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,false) ;
 			res_item->PeerId(item->PeerId()) ;
 
+			_traffic_info_buffer.tr_up_Bps += static_cast<RsTurtleItem*>(res_item)->serial_size() ;
+
 			sendItem(res_item) ;
 
 			// Note in the tunnels list that we have an ending tunnel here.
@@ -1659,6 +1680,11 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 				++(fwd_item->depth) ;		// increase tunnel depth
 				fwd_item->PeerId(*it) ;
+
+				{
+					RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+					_traffic_info_buffer.tr_up_Bps += static_cast<RsTurtleItem*>(fwd_item)->serial_size() ;
+				}
 
 				sendItem(fwd_item) ;
 			}
@@ -2036,6 +2062,12 @@ static std::string printNumber(uint64_t num,bool hex=false)
 		out << num ;
 		return out.str() ;
 	}
+}
+
+void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	info = _traffic_info ;
 }
 
 void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,

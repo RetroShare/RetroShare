@@ -22,8 +22,9 @@ class TRHistogram
 		virtual void draw(QPainter *painter,int& ox,int& oy,const QString& title) 
 		{
 			static const int MaxTime = 61 ;
-			static const int cellx = 6 ;
-			static const int celly = 10 ;
+			static const int MaxDepth = 8 ;
+			static const int cellx = 7 ;
+			static const int celly = 12 ;
 
 			int save_ox = ox ;
 			painter->setPen(QColor::fromRgb(0,0,0)) ;
@@ -35,15 +36,22 @@ class TRHistogram
 
 			ox += 10 ;
 			std::map<std::string,std::vector<int> > hits ;
+			std::map<std::string,std::vector<int> > depths ;
 			std::map<std::string,std::vector<int> >::iterator it ;
 
 			int max_hits = 1;
+			int max_depth = 1;
+
 			for(uint32_t i=0;i<_infos.size();++i)
 			{
 				std::vector<int>& h(hits[_infos[i].source_peer_id]) ;
+				std::vector<int>& g(depths[_infos[i].source_peer_id]) ;
 
 				if(h.size() <= _infos[i].age)
 					h.resize(MaxTime,0) ;
+
+				if(g.empty())
+					g.resize(MaxDepth,0) ;
 
 				if(_infos[i].age < h.size())
 				{
@@ -51,10 +59,28 @@ class TRHistogram
 					if(h[_infos[i].age] > max_hits)
 						max_hits = h[_infos[i].age] ;
 				}
+				if(_infos[i].depth < g.size())
+				{
+					g[_infos[i].depth]++ ;
+
+					if(g[_infos[i].depth] > max_depth)
+						max_depth = g[_infos[i].depth] ;
+				}
 			}
 
 			int p=0 ;
 
+			for(it=depths.begin();it!=depths.end();++it,++p)
+				for(int i=0;i<MaxDepth;++i)
+					painter->fillRect(ox+MaxTime*cellx+20+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_depth)) ;
+			
+			painter->setPen(QColor::fromRgb(0,0,0)) ;
+			painter->drawRect(ox+MaxTime*cellx+20,oy,MaxDepth*cellx,p*celly) ;
+
+			for(int i=0;i<MaxTime;i+=5)
+				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
+
+			p=0 ;
 			for(it=hits.begin();it!=hits.end();++it,++p)
 			{
 				int total = 0 ;
@@ -66,28 +92,31 @@ class TRHistogram
 				}
 
 				painter->setPen(QColor::fromRgb(0,0,0)) ;
-				painter->drawText(ox+(MaxTime+1)*cellx,oy+(p+1)*celly,TurtleRouterDialog::getPeerName(it->first)) ;
-				painter->drawText(ox+(MaxTime+1)*cellx+80,oy+(p+1)*celly,"("+QString::number(total)+")") ;
+				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx,oy+(p+1)*celly,TurtleRouterDialog::getPeerName(it->first)) ;
+				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+80,oy+(p+1)*celly,"("+QString::number(total)+")") ;
 			}
 
 			painter->drawRect(ox,oy,MaxTime*cellx,p*celly) ;
 
 			for(int i=0;i<MaxTime;i+=5)
 				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
+			for(int i=0;i<MaxDepth;i++)
+				painter->drawText(ox+MaxTime*cellx+20+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
 
 			oy += (p+1)*celly+4 ;
 
 			painter->drawText(ox,oy+celly,QObject::tr("(Age in seconds)"));
+			painter->drawText(ox+MaxTime*cellx+20,oy+celly,QObject::tr("(Depth)"));
 			oy += 3*celly ;
 
 			// now, draw a scale
 
 			for(int i=0;i<=10;++i)
 			{
-				painter->fillRect(ox+i*(cellx+40),oy,cellx,celly,colorScale(i/10.0f)) ;
+				painter->fillRect(ox+i*(cellx+20),oy,cellx,celly,colorScale(i/10.0f)) ;
 				painter->setPen(QColor::fromRgb(0,0,0)) ;
-				painter->drawRect(ox+i*(cellx+40),oy,cellx,celly) ;
-				painter->drawText(ox+i*(cellx+40)+cellx+4,oy+celly,QString::number((int)(max_hits*i/10.0))) ;
+				painter->drawRect(ox+i*(cellx+20),oy,cellx,celly) ;
+				painter->drawText(ox+i*(cellx+20)+cellx+4,oy+celly,QString::number((int)(max_hits*i/10.0))) ;
 			}
 
 			oy += celly*2 ;
@@ -295,8 +324,34 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	TRHistogram(search_reqs_info).draw(&painter,ox,oy,QObject::tr("Evolution of search requests:")) ;
 	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,QObject::tr("Evolution of tunnel requests:")) ;
 
+	// now give information about turtle traffic.
+	//
+	TurtleTrafficStatisticsInfo info ;
+	rsTurtle->getTrafficStatistics(info) ;
+
+	static const int cellx = 6 ;
+	static const int celly = 10+4 ;
+
+	painter.drawText(ox,oy+celly,tr("Turtle router traffic:")) ; oy += celly*2 ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Dn")+"\t: " + speedString(info.tr_dn_Bps) ) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
+
 	// update the pixmap
+	//
 	pixmap = tmppixmap;
+}
+
+QString TurtleRouterStatisticsWidget::speedString(float f)
+{
+	if(f < 1.0f) 
+		return QString("0 B/s") ;
+	if(f < 1024.0f)
+		return QString::number((int)f)+" B/s" ;
+
+	return QString::number(f/1024.0,'f',2) + " KB/s";
 }
 
 void TurtleRouterStatisticsWidget::paintEvent(QPaintEvent *event)
@@ -307,7 +362,7 @@ void TurtleRouterStatisticsWidget::paintEvent(QPaintEvent *event)
 void TurtleRouterStatisticsWidget::resizeEvent(QResizeEvent *event)
 {
     QRect TaskGraphRect = geometry();
-    maxWidth = TaskGraphRect.width();
+    maxWidth = 900;//TaskGraphRect.width();
     maxHeight = TaskGraphRect.height();
 
 	 QWidget::resizeEvent(event);

@@ -58,6 +58,18 @@ struct TurtleRequestDisplayInfo
 	uint32_t depth ;					// Depth of the request. Might be altered.
 };
 
+class TurtleTrafficStatisticsInfo
+{
+	public:
+		float unknown_updn_Bps ;	// unknown data transit bitrate (in Bytes per sec.)
+		float data_up_Bps ;			// upload (in Bytes per sec.)
+		float data_dn_Bps ;			// download (in Bytes per sec.)
+		float tr_up_Bps ;				// tunnel requests upload bitrate (in Bytes per sec.)
+		float tr_dn_Bps ;				// tunnel requests dnload bitrate (in Bytes per sec.)
+		float total_up_Bps ;			// turtle network management bitrate (in Bytes per sec.)
+		float total_dn_Bps ;			// turtle network management bitrate (in Bytes per sec.)
+};
+
 // Interface class for turtle hopping.
 //
 //   This class mainly interacts with the turtle router, that is responsible
@@ -100,8 +112,13 @@ class RsTurtle
 		virtual void stopMonitoringFileTunnels(const std::string& file_hash) = 0 ;
 
 		// Get info from the turtle router. I use std strings to hide the internal structs.
+		//
 		virtual void getInfo(std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&,
 									std::vector<TurtleRequestDisplayInfo>&,std::vector<TurtleRequestDisplayInfo>&) const = 0;
+
+		// Get info about turtle traffic. See TurtleTrafficStatisticsInfo members for details.
+		//
+		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const = 0;
 
 		// Convenience function.
 		virtual bool isTurtlePeer(const std::string& peer_id) const = 0 ;

@@ -46,6 +46,8 @@ class TurtleRouterStatisticsWidget:  public QWidget
 												const std::vector<TurtleRequestDisplayInfo >&) ;
 
 	private:
+		static QString speedString(float f) ;
+
 		QPixmap pixmap ;
 		int maxWidth,maxHeight ;
 };

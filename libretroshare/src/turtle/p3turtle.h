@@ -148,6 +148,7 @@
 #include "ft/ftsearch.h"
 #include "retroshare/rsturtle.h"
 #include "rsturtleitem.h"
+#include "turtlestatistics.h"
 
 //#define TUNNEL_STATISTICS
 
@@ -247,6 +248,8 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 									std::vector<TurtleRequestDisplayInfo >&,
 									std::vector<TurtleRequestDisplayInfo >&) const ;
 		
+		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const ;
+
 #ifdef TO_REMOVE
 		/************* from pqiMonitor *******************/
 		/// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
@@ -409,6 +412,11 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		/// altering tunnel request depths, and tunnel re-routing actions.
 		///
 		uint32_t _random_bias ;
+
+		// Used to collect statistics on turtle traffic.
+		//
+		TurtleTrafficStatisticsInfoOp _traffic_info ;			// used for recording speed
+		TurtleTrafficStatisticsInfoOp _traffic_info_buffer ;	// used as a buffer to collect bytes
 
 #ifdef P3TURTLE_DEBUG
 		// debug function
