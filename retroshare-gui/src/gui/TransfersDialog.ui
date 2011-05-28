@@ -656,9 +656,6 @@ p, li { white-space: pre-wrap; }
          <attribute name="headerStretchLastSection">
           <bool>false</bool>
          </attribute>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
-         </attribute>
         </widget>
        </item>
       </layout>
@@ -671,7 +668,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="icon">
@@ -823,30 +820,6 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Tunneling</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QScrollArea" name="tunnelInfoWidget">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>98</width>
-             <height>28</height>
-            </rect>
-           </property>
-          </widget>
-         </widget>
         </item>
        </layout>
       </widget>

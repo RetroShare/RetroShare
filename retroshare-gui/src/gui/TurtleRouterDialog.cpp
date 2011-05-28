@@ -16,7 +16,10 @@ class TRHistogram
 
 		QColor colorScale(float f)
 		{
-			return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
+			if(f == 0)
+				return QColor::fromHsv(0,0,128) ;
+			else
+				return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
 		}
 
 		virtual void draw(QPainter *painter,int& ox,int& oy,const QString& title) 
@@ -93,7 +96,7 @@ class TRHistogram
 
 				painter->setPen(QColor::fromRgb(0,0,0)) ;
 				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx,oy+(p+1)*celly,TurtleRouterDialog::getPeerName(it->first)) ;
-				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+80,oy+(p+1)*celly,"("+QString::number(total)+")") ;
+				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+(p+1)*celly,"("+QString::number(total)+")") ;
 			}
 
 			painter->drawRect(ox,oy,MaxTime*cellx,p*celly) ;
@@ -150,8 +153,13 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 
 	top_level_hashes.clear() ;
 
-	QVBoxLayout v(_tunnel_statistics_F) ;
-	v.addWidget( _tst_CW = new TurtleRouterStatisticsWidget() ) ; 
+	_tunnel_statistics_F->setWidget( _tst_CW = new TurtleRouterStatisticsWidget() ) ; 
+	_tunnel_statistics_F->setWidgetResizable(true);
+	_tunnel_statistics_F->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	_tunnel_statistics_F->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	_tunnel_statistics_F->viewport()->setBackgroundRole(QPalette::NoRole);
+	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
+	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
 }
 
 void TurtleRouterDialog::updateDisplay()
@@ -165,6 +173,7 @@ void TurtleRouterDialog::updateDisplay()
 
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->updateTunnelStatistics(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
+	_tst_CW->update();
 }
 
 QString TurtleRouterDialog::getPeerName(const std::string& peer_id)
@@ -303,7 +312,7 @@ TurtleRouterStatisticsWidget::TurtleRouterStatisticsWidget(QWidget *parent)
 	: QWidget(parent)
 {
 	maxWidth = 200 ;
-	maxHeight = 100 ;
+	maxHeight = 0 ;
 }
 
 void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std::vector<std::string> >& hashes_info, 
@@ -312,25 +321,38 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 																const std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info)
 
 {
+	static const int cellx = 6 ;
+	static const int celly = 10+4 ;
+
 	QPixmap tmppixmap(maxWidth, maxHeight);
 	tmppixmap.fill(this, 0, 0);
+	setFixedHeight(maxHeight);
 
 	QPainter painter(&tmppixmap);
 	painter.initFrom(this);
 
+	maxHeight = 500 ;
+
 	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
 	// draw...
 	int ox=5,oy=5 ;
-	TRHistogram(search_reqs_info).draw(&painter,ox,oy,QObject::tr("Evolution of search requests:")) ;
-	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,QObject::tr("Evolution of tunnel requests:")) ;
+
+	TRHistogram(search_reqs_info).draw(&painter,ox,oy,QObject::tr("Search requests repartition:")) ;
+
+	painter.setPen(QColor::fromRgb(70,70,70)) ;
+	painter.drawLine(0,oy,maxWidth,oy) ;
+	oy += celly ;
+
+	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,QObject::tr("Tunnel requests repartition:")) ;
 
 	// now give information about turtle traffic.
 	//
 	TurtleTrafficStatisticsInfo info ;
 	rsTurtle->getTrafficStatistics(info) ;
 
-	static const int cellx = 6 ;
-	static const int celly = 10+4 ;
+	painter.setPen(QColor::fromRgb(70,70,70)) ;
+	painter.drawLine(0,oy,maxWidth,oy) ;
+	oy += celly ;
 
 	painter.drawText(ox,oy+celly,tr("Turtle router traffic:")) ; oy += celly*2 ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
@@ -342,6 +364,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	// update the pixmap
 	//
 	pixmap = tmppixmap;
+	maxHeight = oy ;
 }
 
 QString TurtleRouterStatisticsWidget::speedString(float f)
@@ -362,10 +385,11 @@ void TurtleRouterStatisticsWidget::paintEvent(QPaintEvent *event)
 void TurtleRouterStatisticsWidget::resizeEvent(QResizeEvent *event)
 {
     QRect TaskGraphRect = geometry();
-    maxWidth = 900;//TaskGraphRect.width();
-    maxHeight = TaskGraphRect.height();
+    maxWidth = TaskGraphRect.width();
+    maxHeight = TaskGraphRect.height() ;
 
 	 QWidget::resizeEvent(event);
+	 update();
 }
 
 

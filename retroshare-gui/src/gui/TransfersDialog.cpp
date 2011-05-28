@@ -262,14 +262,16 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
-    TurtleRouterDialog *trdl = new TurtleRouterDialog();
-    ui.tunnelInfoWidget->setWidget(trdl);
-    ui.tunnelInfoWidget->setWidgetResizable(true);
-    ui.tunnelInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui.tunnelInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui.tunnelInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
-    ui.tunnelInfoWidget->setFrameStyle(QFrame::NoFrame);
-    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
+	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Tunneling")) ;
+
+//    TurtleRouterDialog *trdl = new TurtleRouterDialog();
+//    ui.tunnelInfoWidget->setWidget(trdl);
+//    ui.tunnelInfoWidget->setWidgetResizable(true);
+//    ui.tunnelInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    ui.tunnelInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//    ui.tunnelInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
+//    ui.tunnelInfoWidget->setFrameStyle(QFrame::NoFrame);
+//    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
