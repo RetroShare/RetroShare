@@ -17,7 +17,7 @@ class TRHistogram
 		QColor colorScale(float f)
 		{
 			if(f == 0)
-				return QColor::fromHsv(0,0,128) ;
+				return QColor::fromHsv(0,0,192) ;
 			else
 				return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
 		}
