@@ -84,7 +84,8 @@ static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	=  60 ;		/// maximum life time of 
 static const time_t EMPTY_TUNNELS_DIGGING_TIME 	=  50 ;		/// look into tunnels regularly every 50 sec.
 static const time_t TUNNEL_SPEED_ESTIMATE_LAPSE	=   5 ;		/// estimate tunnel speed every 5 seconds
 static const time_t TUNNEL_CLEANING_LAPS_TIME  	=  10 ;		/// clean tunnels every 10 secs
-static const uint32_t MAX_TUNNEL_REQS_PER_SECOND=   1 ;		/// maximum number of tunnel requests per second. Was 0.5 before
+static const uint32_t MAX_TUNNEL_REQS_PER_SECOND=   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
+static const uint32_t MAX_ALLOWED_SR_IN_CACHE   = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
 
 p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mConnMgr(cm)
@@ -145,9 +146,10 @@ int p3turtle::tick()
 			RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 			_last_tunnel_management_time = now ;
 
-			// update traffic statistics
-
-			_traffic_info = _traffic_info*0.75 + _traffic_info_buffer*0.25 ;
+			// Update traffic statistics. The constants are important: they allow a smooth variation of the 
+			// traffic speed, which is used to moderate tunnel requests statistics.
+			//
+			_traffic_info = _traffic_info*0.9 + _traffic_info_buffer*0.1 ;
 			_traffic_info_buffer.reset() ;
 		}
 	}
@@ -549,7 +551,7 @@ RsSerialiser *p3turtle::setupSerialiser()
 	return rss ;
 }
 
-bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>& lst)
+bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>&)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: saving list..." << std::endl ;
@@ -700,6 +702,15 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	std::cerr << "Received search request from peer " << item->PeerId() << ": " << std::endl ;
 	item->print(std::cerr,0) ;
 #endif
+	if(_search_requests_origins.size() > MAX_ALLOWED_SR_IN_CACHE)
+	{
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "  Dropping, because the search request cache is full." << std::endl ;
+#endif
+		std::cerr << "  More than " << MAX_ALLOWED_SR_IN_CACHE << " search request in cache. A peer is probably trying to flood your network See the depth charts to find him." << std::endl;
+		return ;
+	}
+
 	// If the item contains an already handled search request, give up.  This
 	// happens when the same search request gets relayed by different peers
 	//
@@ -1625,8 +1636,6 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,false) ;
 			res_item->PeerId(item->PeerId()) ;
 
-			_traffic_info_buffer.tr_up_Bps += static_cast<RsTurtleItem*>(res_item)->serial_size() ;
-
 			sendItem(res_item) ;
 
 			// Note in the tunnels list that we have an ending tunnel here.
@@ -1659,7 +1668,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 	// If search depth not too large, also forward this search request to all other peers.
 	//
-	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->partial_tunnel_id)&0x7)==2)) ;
+	bool random_bypass = (item->depth >= TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->partial_tunnel_id)&0x7)==2)) ;
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
@@ -1669,11 +1678,37 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		std::cerr << "  Forwarding tunnel request: Looking for online peers" << std::endl ;
 #endif
 
+		// TR forwarding. We must pay attention not to flood the network. The policy is to force a statistical behavior
+		// according to the followin grules:
+		// 	- below a number of tunnel request forwards per second MAX_TR_FORWARD_PER_SEC, we keep the traffic
+		// 	- if we get close to that limit, we drop long tunnels first with a probability that is larger for long tunnels
+		//
+		// Variables involved:
+		// 	distance_to_maximum		: in [0,inf] is the proportion of the current up TR speed with respect to the maximum allowed speed. This is estimated
+		// 										as an average between the average number of TR over the 60 last seconds and the current TR up speed.
+		// 	corrected_distance 		: in [0,inf] is a squeezed version of distance: small values become very small and large values become very large.
+		// 	depth_peer_probability	: basic probability of forwarding when the speed limit is reached.
+		// 	forward_probability		: final probability of forwarding the packet, per peer.
+		//
+		// When the number of peers increases, the speed limit is reached faster, but the behavior per peer is the same.
+		//
+		static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.4f,0.15f,0.1f } ;
+		static const int TUNNEL_REQUEST_PACKET_SIZE 	= 50 ;
+		static const int MAX_TR_FORWARD_PER_SEC 		= 40 ;
+		static const int DISTANCE_SQUEEZING_POWER 	= 8 ;
+
+		float distance_to_maximum	= std::min(100.0f,_traffic_info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*MAX_TR_FORWARD_PER_SEC)) ;
+		float corrected_distance 	= pow(distance_to_maximum,DISTANCE_SQUEEZING_POWER) ;
+		float forward_probability	= pow(depth_peer_probability[std::min((uint16_t)6,item->depth)],corrected_distance) ;
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "Forwarding probability: depth=" << item->depth << ", distance to max speed=" << distance_to_maximum << ", corrected=" << corrected_distance << ", prob.=" << forward_probability << std::endl;
+#endif
+
 		for(std::list<std::string>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
-			if(*it != item->PeerId())
+			if(*it != item->PeerId() && RSRandom::random_f32() <= forward_probability)
 			{
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "  Forwarding request to peer = " << *it << std::endl ;
+ 			std::cerr << "  Forwarding request to peer = " << *it << std::endl ;
 #endif
 				// Copy current item and modify it.
 				RsTurtleOpenTunnelItem *fwd_item = new RsTurtleOpenTunnelItem(*item) ;
