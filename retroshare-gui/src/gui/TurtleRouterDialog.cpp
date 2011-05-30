@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QStylePainter>
 
+#include "gui/settings/rsharesettings.h"
+
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 class TRHistogram
@@ -135,6 +137,8 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
 	setupUi(this) ;
+	
+	m_bProcessSettings = false;
 
 	// Init the basic setup.
 	//
@@ -160,7 +164,43 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	_tunnel_statistics_F->viewport()->setBackgroundRole(QPalette::NoRole);
 	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
+	
+	// load settings
+    processSettings(true);
 }
+
+TurtleRouterDialog::~TurtleRouterDialog()
+{
+
+    // save settings
+    processSettings(false);
+}
+
+void TurtleRouterDialog::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    Settings->beginGroup(QString("TurtleRouterDialog"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of splitter
+        splitter->restoreState(Settings->value("Splitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of splitter
+        Settings->setValue("Splitter", splitter->saveState());
+
+    }
+
+    Settings->endGroup();
+    
+    m_bProcessSettings = false;
+
+}
+
 
 void TurtleRouterDialog::updateDisplay()
 {
