@@ -40,6 +40,7 @@
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
 #include "TurtleRouterDialog.h"
+#include "TurtleRouterStatistics.h"
 #include "xprogressbar.h"
 #include "settings/rsharesettings.h"
 
@@ -262,7 +263,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
-	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Tunneling")) ;
+	 ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
+
+	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
+	 
 
 //    TurtleRouterDialog *trdl = new TurtleRouterDialog();
 //    ui.tunnelInfoWidget->setWidget(trdl);
