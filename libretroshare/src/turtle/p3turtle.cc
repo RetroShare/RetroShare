@@ -728,6 +728,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	TurtleRequestInfo& req( _search_requests_origins[item->request_id] ) ;
 	req.origin = item->PeerId() ;
 	req.time_stamp = time(NULL) ;
+	req.depth = item->depth ;
 
 	// If it's not for us, perform a local search. If something found, forward the search result back.
 
