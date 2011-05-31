@@ -32,7 +32,6 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 		QTreeWidgetItem *top_level_s_requests ;
 		QTreeWidgetItem *top_level_t_requests ;
 
-		//TurtleRouterStatisticsWidget *_tst_CW ;
 } ;
 
 

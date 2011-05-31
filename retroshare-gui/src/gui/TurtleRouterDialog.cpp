@@ -83,8 +83,7 @@ void TurtleRouterDialog::updateDisplay()
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
-	//_tst_CW->updateTunnelStatistics(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
-	//_tst_CW->update();
+
 }
 
 QString TurtleRouterDialog::getPeerName(const std::string& peer_id)
