@@ -66,6 +66,16 @@
 #define ROLE_UNREAD   Qt::UserRole + 3
 #define ROLE_MSGFLAGS Qt::UserRole + 4
 
+#define ROLE_QUICKVIEW_TYPE Qt::UserRole
+#define ROLE_QUICKVIEW_ID   Qt::UserRole + 1
+#define ROLE_QUICKVIEW_TEXT Qt::UserRole + 2
+
+#define QUICKVIEW_TYPE_NOTHING 0
+#define QUICKVIEW_TYPE_STATIC  1
+#define QUICKVIEW_TYPE_TAG     2
+
+#define QUICKVIEW_STATIC_ID_STARRED 1
+
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
 #define ROW_DRAFTBOX      2
@@ -144,7 +154,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.setupUi(this);
 
     m_bProcessSettings = false;
-    m_bInChange = false;
+    inChange = false;
     m_nLockUpdate = 0;
 
     connect(ui.messagestreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageslistWidgetCostumPopupMenu(QPoint)));
@@ -152,7 +162,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.messagestreeView, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
     connect(ui.messagestreeView, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
-    connect(ui.tagWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeTag(int)));
+    connect(ui.quickViewWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
@@ -283,8 +293,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     ui.tagButton->setMenu(menu);
 
-    // fill tags
-    fillTags();
+    // fill quick view
+    fillQuickView();
 
     // create timer for navigation
     timer = new QTimer(this);
@@ -339,9 +349,9 @@ void MessagesDialog::processSettings(bool load)
             msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
         }
 
-        // state of tag list
-        bool value = Settings->value("tagList", true).toBool();
-        ui.Tags_Button->setChecked(value);
+        // state of quick view list
+        bool value = Settings->value("QuickViewList", true).toBool();
+        ui.quickViewsButton->setChecked(value);
 
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
@@ -358,8 +368,8 @@ void MessagesDialog::processSettings(bool load)
         Settings->setValue("MessageTree", msgwheader->saveState());
         Settings->setValue("MessageTreeVersion", messageTreeVersion);
 
-        // state of tag list
-        Settings->setValue("tagList", ui.Tags_Button->isChecked());
+        // state of quick view list
+        Settings->setValue("QuickViewList", ui.quickViewsButton->isChecked());
 
         // state of splitter
         Settings->setValue("Splitter", ui.msgSplitter->saveState());
@@ -397,46 +407,60 @@ bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
     return MainPage::eventFilter(obj, event);
 }
 
-void MessagesDialog::fillTags()
+void MessagesDialog::fillQuickView()
 {
 	MsgTagType tags;
 	rsMsgs->getMessageTagTypes(tags);
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
 
 	// fill tags
-	m_bInChange = true;
+	inChange = true;
 
 	// save current selection
-	QListWidgetItem *item = ui.tagWidget->currentItem();
-	uint32_t nSelectecTagId = 0;
+	QListWidgetItem *item = ui.quickViewWidget->currentItem();
+	int nSelectedType = 0;
+	uint32_t nSelectedId = 0;
 	if (item) {
-		nSelectecTagId = item->data(Qt::UserRole).toInt();
+		nSelectedType = item->data(ROLE_QUICKVIEW_TYPE).toInt();
+		nSelectedId = item->data(ROLE_QUICKVIEW_ID).toInt();
 	}
 
 	QListWidgetItem *itemToSelect = NULL;
-
 	QString text;
 
-	ui.tagWidget->clear();
+	ui.quickViewWidget->clear();
+
+	// add static items
+	item = new QListWidgetItem(tr("Starred"), ui.quickViewWidget);
+	item->setIcon(QIcon(IMAGE_STAR_ON));
+	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
+	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_STARRED);
+	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
+
+	if (nSelectedType == QUICKVIEW_TYPE_STATIC && nSelectedId == QUICKVIEW_STATIC_ID_STARRED) {
+		itemToSelect = item;
+	}
+
 	for (tag = tags.types.begin(); tag != tags.types.end(); tag++) {
 		text = TagDefs::name(tag->first, tag->second.first);
 
-		item = new QListWidgetItem (text, ui.tagWidget);
+		item = new QListWidgetItem (text, ui.quickViewWidget);
 		item->setForeground(QBrush(QColor(tag->second.second)));
 		item->setIcon(QIcon(":/images/foldermail.png"));
-		item->setData(Qt::UserRole, tag->first);
-		item->setData(Qt::UserRole + 1, text); // for updateMessageSummaryList
+		item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_TAG);
+		item->setData(ROLE_QUICKVIEW_ID, tag->first);
+		item->setData(ROLE_QUICKVIEW_TEXT, text); // for updateMessageSummaryList
 
-		if (tag->first == nSelectecTagId) {
+		if (nSelectedType == QUICKVIEW_TYPE_TAG && tag->first == nSelectedId) {
 			itemToSelect = item;
 		}
 	}
 
 	if (itemToSelect) {
-		ui.tagWidget->setCurrentItem(itemToSelect);
+		ui.quickViewWidget->setCurrentItem(itemToSelect);
 	}
 
-	m_bInChange = false;
+	inChange = false;
 
 	updateMessageSummaryList();
 }
@@ -691,42 +715,44 @@ void MessagesDialog::editmessage()
 
 void MessagesDialog::changeBox(int)
 {
-    if (m_bInChange) {
+    if (inChange) {
         // already in change method
         return;
     }
 
-    m_bInChange = true;
+    inChange = true;
 
     MessagesModel->removeRows (0, MessagesModel->rowCount());
 
-    ui.tagWidget->setCurrentItem(NULL);
+    ui.quickViewWidget->setCurrentItem(NULL);
     m_eListMode = LIST_BOX;
 
     insertMessages();
     insertMsgTxtAndFiles();
 
-    m_bInChange = false;
+    inChange = false;
 }
 
-void MessagesDialog::changeTag(int)
+void MessagesDialog::changeQuickView(int newrow)
 {
-    if (m_bInChange) {
+    Q_UNUSED(newrow);
+
+    if (inChange) {
         // already in change method
         return;
     }
 
-    m_bInChange = true;
+    inChange = true;
 
     MessagesModel->removeRows (0, MessagesModel->rowCount());
 
     ui.listWidget->setCurrentItem(NULL);
-    m_eListMode = LIST_TAG;
+    m_eListMode = LIST_QUICKVIEW;
 
     insertMessages();
     insertMsgTxtAndFiles();
 
-    m_bInChange = false;
+    inChange = false;
 }
 
 void MessagesDialog::messagesTagsChanged()
@@ -735,7 +761,7 @@ void MessagesDialog::messagesTagsChanged()
         return;
     }
 
-    fillTags();
+    fillQuickView();
     insertMessages();
 }
 
@@ -823,7 +849,8 @@ void MessagesDialog::insertMessages()
     unsigned int msgbox = 0;
     bool isTrash = false;
     bool doFill = true;
-    uint32_t tagId = 0;
+    int quickViewType = 0;
+    uint32_t quickViewId = 0;
     QString boxText;
     QIcon boxIcon;
 
@@ -868,14 +895,19 @@ void MessagesDialog::insertMessages()
         }
         break;
 
-    case LIST_TAG:
+   case LIST_QUICKVIEW:
         {
-            QListWidgetItem *item = ui.tagWidget->currentItem();
+            QListWidgetItem *item = ui.quickViewWidget->currentItem();
             if (item) {
-                tagId = item->data (Qt::UserRole).toInt();
+                quickViewType = item->data(ROLE_QUICKVIEW_TYPE).toInt();
+                quickViewId = item->data(ROLE_QUICKVIEW_ID).toInt();
 
                 boxText = item->text();
                 boxIcon = item->icon();
+
+                if (quickViewType == QUICKVIEW_TYPE_NOTHING) {
+                    doFill = false;
+                }
             } else {
                 doFill = false;
             }
@@ -917,10 +949,14 @@ void MessagesDialog::insertMessages()
                         continue;
                     }
                 }
-            } else if (m_eListMode == LIST_TAG) {
+            } else if (m_eListMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_TAG) {
                 MsgTagInfo tagInfo;
                 rsMsgs->getMessageTag(it->msgId, tagInfo);
-                if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), tagId) == tagInfo.tagIds.end()) {
+                if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), quickViewId) == tagInfo.tagIds.end()) {
+                    continue;
+                }
+            } else if (m_eListMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_STATIC) {
+                if ((it->msgflags & RS_MSG_STAR) == 0) {
                     continue;
                 }
             } else {
@@ -1305,7 +1341,7 @@ void MessagesDialog::markWithStar(bool checked)
     getSelectedMsgCount (&Rows, NULL, NULL, NULL);
 
     setMsgStar(Rows, checked);
- }
+}
 
 void MessagesDialog::setMsgStar(const QList<int> &Rows, bool star)
 {
@@ -1333,6 +1369,8 @@ void MessagesDialog::setMsgStar(const QList<int> &Rows, bool star)
             item[COLUMN_DATA]->setData(msgFlag, ROLE_MSGFLAGS);
 
             InitIconAndFont(item);
+
+            Lock.setUpdate(true);
         }
     }
 
@@ -1567,6 +1605,7 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int newSentboxCount = 0;
     unsigned int inboxCount = 0;
     unsigned int trashboxCount = 0;
+    unsigned int starredCount = 0;
 
     /* calculating the new messages */
 //    rsMsgs->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
@@ -1587,6 +1626,11 @@ void MessagesDialog::updateMessageSummaryList()
             int nCount = tagCount [*tagId];
             nCount++;
             tagCount [*tagId] = nCount;
+        }
+
+        if (it->msgflags & RS_MSG_STAR) {
+            starredCount++;
+            continue;
         }
 
         /* calculate box */
@@ -1721,19 +1765,36 @@ void MessagesDialog::updateMessageSummaryList()
         item->setText(textItem);
     }
 
-
     /* set tag counts */
-    int nRowCount = ui.tagWidget->count();
-    for (int nRow = 0; nRow < nRowCount; nRow++) {
-        QListWidgetItem *pItem = ui.tagWidget->item(nRow);
-        int nCount = tagCount[pItem->data(Qt::UserRole).toInt()];
+    int rowCount = ui.quickViewWidget->count();
+    for (int row = 0; row < rowCount; row++) {
+        QListWidgetItem *item = ui.quickViewWidget->item(row);
+        switch (item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
+        case QUICKVIEW_TYPE_TAG:
+            {
+                int count = tagCount[item->data(ROLE_QUICKVIEW_ID).toInt()];
 
-        QString sText = pItem->data(Qt::UserRole + 1).toString();
-        if (nCount) {
-            sText += " (" + QString::number(nCount) + ")";
+                QString text = item->data(ROLE_QUICKVIEW_TEXT).toString();
+                if (count) {
+                    text += " (" + QString::number(count) + ")";
+                }
+
+                item->setText(text);
+            }
+            break;
+        case QUICKVIEW_TYPE_STATIC:
+            {
+                QString text = item->data(ROLE_QUICKVIEW_TEXT).toString();
+                switch (item->data(ROLE_QUICKVIEW_ID).toInt()) {
+                case QUICKVIEW_STATIC_ID_STARRED:
+                    text += " (" + QString::number(starredCount) + ")";
+                    break;
+                }
+
+                item->setText(text);
+            }
+            break;
         }
-
-        pItem->setText(sText);
     }
 }
 

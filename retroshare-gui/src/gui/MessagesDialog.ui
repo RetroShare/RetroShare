@@ -1018,11 +1018,6 @@ border-image: url(:/images/closepressed.png)
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QTabBar::tab {
-}
-</string>
-     </property>
      <property name="tabsClosable">
       <bool>true</bool>
      </property>
@@ -1177,7 +1172,7 @@ border-image: url(:/images/closepressed.png)
             </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QListWidget" name="tagWidget">
+            <widget class="QListWidget" name="quickViewWidget">
              <property name="maximumSize">
               <size>
                <width>160</width>
@@ -1193,7 +1188,7 @@ border-image: url(:/images/closepressed.png)
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QToolButton" name="Tags_Button">
+            <widget class="QToolButton" name="quickViewsButton">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -1207,14 +1202,14 @@ border-image: url(:/images/closepressed.png)
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QToolButton#Tags_Button{ 
+              <string notr="true">QToolButton#quickViewsButton{ 
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
 stop:0 #FEFEFE, stop:1 #E8E8E8);
 
 border: 1px solid #CCCCCC;}</string>
              </property>
              <property name="text">
-              <string>Favorite Tags</string>
+              <string>Quick View</string>
              </property>
              <property name="icon">
               <iconset resource="images.qrc">
@@ -1390,9 +1385,9 @@ padding: 4px;
  </resources>
  <connections>
   <connection>
-   <sender>Tags_Button</sender>
+   <sender>quickViewsButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>tagWidget</receiver>
+   <receiver>quickViewWidget</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">

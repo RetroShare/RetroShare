@@ -6956,12 +6956,12 @@ p, li { white-space: pre-wrap; }
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+576"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+603"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+627"/>
         <source>New Message</source>
         <translation>Neue Nachricht</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-65"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-66"/>
         <source>Reply to Message</source>
         <translation>Antworten nur an Absender</translation>
     </message>
@@ -6976,20 +6976,20 @@ p, li { white-space: pre-wrap; }
         <translation>In neuem Tab öffnen</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+55"/>
         <source>Remove Message</source>
         <translation>Nachricht entfernen</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+393"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-397"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-412"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
         <location line="-5"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+705"/>
+        <location line="+728"/>
         <source>From</source>
         <translation>Von</translation>
     </message>
@@ -7070,17 +7070,17 @@ p, li { white-space: pre-wrap; }
         <translation>Anhänge</translation>
     </message>
     <message>
-        <location line="+180"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-46"/>
-        <location line="+806"/>
+        <location line="+175"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-51"/>
+        <location line="+823"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-812"/>
-        <location line="+825"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-829"/>
+        <location line="+842"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -7092,9 +7092,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-825"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-842"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Quick View</source>
+        <translation>Schnellansicht</translation>
     </message>
     <message>
         <source>Download all Recommended Files</source>
@@ -7113,7 +7118,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Schlagwörter:</translation>
     </message>
     <message>
-        <location line="+173"/>
+        <location line="+117"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>Drucken...</translation>
@@ -7159,8 +7164,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Dokument drucken</translation>
     </message>
     <message>
-        <location line="-412"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-673"/>
+        <location line="-407"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-691"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
@@ -7195,7 +7200,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gewählte Nachricht weiterleiten</translation>
     </message>
     <message>
-        <location line="+311"/>
+        <location line="+182"/>
+        <source>Starred</source>
+        <translation>Gekennzeichnet</translation>
+    </message>
+    <message>
+        <location line="+167"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
@@ -7205,17 +7215,17 @@ p, li { white-space: pre-wrap; }
         <translation>Als neu bearbeiten</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+7"/>
         <source>Remove Messages</source>
         <translation>Nachrichten entfernen</translation>
     </message>
     <message>
-        <location line="-39"/>
+        <location line="-40"/>
         <source>Forward Message</source>
         <translation>Weiterleiten</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-367"/>
         <source>Click to sort by attachments</source>
         <translation>Klicken, um nach Anhang zu sortieren</translation>
     </message>
@@ -7231,12 +7241,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <location line="+697"/>
+        <location line="+720"/>
         <source>Click to sort by from</source>
         <translation>Klicken, um nach Von zu sortieren</translation>
     </message>
     <message>
-        <location line="-696"/>
+        <location line="-719"/>
         <source>Click to sort by date</source>
         <translation>Klicken, um nach Datum zu sortieren</translation>
     </message>
@@ -7262,7 +7272,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Empfohlene Dateien einblenden</translation>
     </message>
     <message>
-        <location line="+698"/>
+        <location line="+721"/>
         <source>Click to sort by to</source>
         <translation>Klicken, um nach Empfänger zu sortieren</translation>
     </message>
@@ -7283,8 +7293,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-653"/>
-        <location line="+299"/>
+        <location line="-676"/>
+        <location line="+313"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
     </message>
@@ -7296,13 +7306,13 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alle Dateien runterladen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+432"/>
+        <location filename="../gui/MessagesDialog.ui" line="+427"/>
         <source>Total Inbox:</source>
         <translation>Posteingang gesamt:</translation>
     </message>
     <message>
-        <location line="-277"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-352"/>
+        <location line="-272"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-366"/>
         <source>Content</source>
         <translation>Inhalt</translation>
     </message>
@@ -7320,20 +7330,19 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Schlagwort</translation>
     </message>
     <message>
-        <location line="+177"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+583"/>
-        <location line="+852"/>
+        <location line="+172"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+601"/>
+        <location line="+869"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Favorite Tags</source>
-        <translation>Schlagwörter</translation>
+        <translation type="obsolete">Schlagwörter</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+114"/>
         <source>Folders</source>
         <translation>Ordner</translation>
     </message>
@@ -7346,7 +7355,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Neues Schlagwort...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1155"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1187"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
     </message>
@@ -7361,7 +7370,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kennzeichnung</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+30"/>
         <source>Undelete</source>
         <translation>Wiederherstellen</translation>
     </message>
@@ -7371,14 +7380,14 @@ p, li { white-space: pre-wrap; }
         <translation>Papierkorb leeren</translation>
     </message>
     <message>
-        <location line="+237"/>
-        <location line="+841"/>
+        <location line="+240"/>
+        <location line="+858"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
     </message>
     <message>
-        <location line="-808"/>
+        <location line="-820"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -7387,12 +7396,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Editieren...</translation>
     </message>
     <message>
-        <location line="-696"/>
+        <location line="-719"/>
         <source>Click to sort by star</source>
         <translation>Klicken, um nach Kennzeichnung zu sortieren</translation>
     </message>
     <message>
-        <location line="+1424"/>
+        <location line="+1459"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -9845,7 +9854,7 @@ Lockdatei:
         <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="+108"/>
+        <location filename="../gui/TurtleRouterStatistics.cpp" line="+136"/>
         <source>(Age in seconds)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9855,13 +9864,13 @@ Lockdatei:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+215"/>
-        <source>Evolution of search requests:</source>
+        <location line="+135"/>
+        <source>Search requests repartition:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Evolution of tunnel requests:</source>
+        <location line="+6"/>
+        <source>Tunnel requests repartition:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12322,7 +12331,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+291"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+297"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12332,7 +12341,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-152"/>
+        <location line="-157"/>
         <location line="+59"/>
         <source>Status</source>
         <translation>Status</translation>
@@ -12361,7 +12370,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Cache Übertragungen</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+80"/>
         <source>Uploads</source>
         <translation></translation>
     </message>
@@ -12384,11 +12393,6 @@ p, li { white-space: pre-wrap; }
         <location line="+21"/>
         <source>Outstanding</source>
         <translation>Ausstehend</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Tunneling</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="-2"/>
@@ -12445,7 +12449,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+123"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -12570,7 +12574,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-914"/>
+        <location line="-919"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -12597,7 +12601,17 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+50"/>
+        <source>Router Statistics</source>
+        <translation type="unfinished">Router Statistiken</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Router Requests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -12832,14 +12846,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TurtleRouterDialog</name>
     <message>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="-183"/>
-        <location line="+94"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="+28"/>
+        <location line="+127"/>
         <source>Search requests</source>
         <translation>Suchanfragen</translation>
     </message>
     <message>
-        <location line="-89"/>
-        <location line="+109"/>
+        <location line="-122"/>
+        <location line="+142"/>
         <source>Tunnel requests</source>
         <translation>Tunnelanfragen</translation>
     </message>
@@ -12852,15 +12866,23 @@ p, li { white-space: pre-wrap; }
         <translation>Router Statistiken</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+14"/>
         <source>F2F router information</source>
         <translation>F2F Routerinformationen</translation>
     </message>
 </context>
 <context>
+    <name>TurtleRouterStatistics</name>
+    <message>
+        <location filename="../gui/TurtleRouterStatistics.ui" line="+14"/>
+        <source>Router Statistics</source>
+        <translation type="unfinished">Router Statistiken</translation>
+    </message>
+</context>
+<context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="+79"/>
+        <location filename="../gui/TurtleRouterStatistics.cpp" line="+11"/>
         <source>Turtle router traffic:</source>
         <translation type="unfinished"></translation>
     </message>

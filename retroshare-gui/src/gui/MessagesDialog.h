@@ -54,8 +54,8 @@ private slots:
   void messageslistWidgetCostumPopupMenu( QPoint point );
   void folderlistWidgetCostumPopupMenu(QPoint);
 
-  void changeBox( int newrow );
-  void changeTag( int newrow );
+  void changeBox(int newrow);
+  void changeQuickView(int newrow);
   void updateCurrentMessage();
   void currentChanged(const QModelIndex&);
   void clicked(const QModelIndex&);
@@ -123,15 +123,15 @@ private:
   void processSettings(bool load);
 
   void setToolbarButtonStyle(Qt::ToolButtonStyle style);
-  void fillTags();
+  void fillQuickView();
 
   void closeTab(const std::string &msgId);
 
   bool m_bProcessSettings;
-  bool m_bInChange;
+  bool inChange;
   int m_nLockUpdate; // use with LockUpdate
 
-  enum { LIST_NOTHING, LIST_BOX, LIST_TAG } m_eListMode;
+  enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } m_eListMode;
 
   std::string mCurrMsgId;
 
