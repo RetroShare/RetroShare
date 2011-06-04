@@ -4370,7 +4370,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+84"/>
         <source>is typing...</source>
         <translation type="unfinished">tippt...</translation>
     </message>
@@ -6604,9 +6604,13 @@ Willst Du die Nachricht speichern ?</translation>
 <context>
     <name>MessagePage</name>
     <message>
-        <location filename="../gui/settings/MessagePage.ui" line="+506"/>
         <source>Misc</source>
-        <translation>Verschiedenes</translation>
+        <translation type="obsolete">Verschiedenes</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/MessagePage.ui" line="+506"/>
+        <source>Reading</source>
+        <translation>Lesen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6614,7 +6618,12 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Setze Nachricht beim Aktivieren als gelesen</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
+        <source>Open messages in</source>
+        <translation>Nachricht durch Doppelklick öffnen in</translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Tags</source>
         <translation>Schlagwörter</translation>
     </message>
@@ -6644,7 +6653,17 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="../gui/settings/MessagePage.cpp" line="+147"/>
+        <location filename="../gui/settings/MessagePage.cpp" line="+51"/>
+        <source>A new tab</source>
+        <translation>Neuem Tab</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>A new window</source>
+        <translation>Neuem Fenster</translation>
+    </message>
+    <message>
+        <location line="+100"/>
         <source>Edit Tag</source>
         <translation>Schlagwort bearbeiten</translation>
     </message>
@@ -6673,43 +6692,13 @@ Willst Du die Nachricht speichern ?</translation>
     </message>
 </context>
 <context>
-    <name>MessagesDialog</name>
+    <name>MessageWidget</name>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+576"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+614"/>
-        <source>New Message</source>
-        <translation>Neue Nachricht</translation>
+        <source>MainWindow</source>
+        <translation type="obsolete">Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-59"/>
-        <source>Reply to Message</source>
-        <translation>Antworten nur an Absender</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>Remove Message</source>
-        <translation>Nachricht entfernen</translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesDialog.ui" line="+393"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-382"/>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <location line="-5"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+829"/>
-        <source>From</source>
-        <translation>Von</translation>
-    </message>
-    <message>
-        <location line="+778"/>
-        <source>Size</source>
-        <translation>Grösse</translation>
-    </message>
-    <message>
-        <location line="-381"/>
+        <location filename="../gui/msgs/MessageWidget.ui" line="+80"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -6717,7 +6706,306 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Empfohlene Dateien&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-722"/>
+        <location line="+41"/>
+        <source>Download all Recommended Files</source>
+        <translation>Alle Dateien runterladen</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>Subject:</source>
+        <translation>Betreff:</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>From:</source>
+        <translation>Von:</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>To:</source>
+        <translation>An:</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Cc:</source>
+        <translation>Cc:</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Bcc:</source>
+        <translation>Bcc:</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Tags:</source>
+        <translation>Schlagwörter:</translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>File Name</source>
+        <translation>Dateiname</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Size</source>
+        <translation>Grösse</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Hash</source>
+        <translation>Prüfsumme</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Print</source>
+        <translation>Drucken</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Print Preview</source>
+        <translation>Druckvorschau</translation>
+    </message>
+    <message>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="+223"/>
+        <source>No subject</source>
+        <translation>Kein Betreff</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Download</source>
+        <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Download all</source>
+        <translation>Alle herunterladen</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Expand</source>
+        <translation>Erweitern</translation>
+    </message>
+    <message>
+        <location line="+271"/>
+        <source>File</source>
+        <translation>Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Files</source>
+        <translation>Dateien</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Print Document</source>
+        <translation>Dokument drucken</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Save as...</source>
+        <translation>Speichern unter...</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
+        <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+    </message>
+</context>
+<context>
+    <name>MessageWindow</name>
+    <message>
+        <source>MainWindow</source>
+        <translation type="obsolete">Hauptfenster</translation>
+    </message>
+    <message>
+        <location filename="../gui/msgs/MessageWindow.ui" line="+77"/>
+        <source>New Message</source>
+        <translation>Neue Nachricht</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Compose</source>
+        <translation>Verfassen</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Reply to selected message</source>
+        <translation>Auf gewählte Nachricht antworten</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Reply</source>
+        <translation>Antwort</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Reply all to selected message</source>
+        <translation>Auf gewählte Nachricht an alle Empfänger antworten</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Reply all</source>
+        <translation>Allen antworten</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Forward selected message</source>
+        <translation>Gewählte Nachricht weiterleiten</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Foward</source>
+        <translation>Weiterleiten</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Remove selected message</source>
+        <translation>Gewählte Nachricht entfernen</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Print selected message</source>
+        <translation>Gewählte Nachricht drucken</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+112"/>
+        <source>Print</source>
+        <translation>Drucken</translation>
+    </message>
+    <message>
+        <location line="-83"/>
+        <source>Display</source>
+        <translation>Anzeige</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <location line="+3"/>
+        <location filename="../gui/msgs/MessageWindow.cpp" line="+58"/>
+        <source>Tags</source>
+        <translation>Schlagwörter</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Print Preview</source>
+        <translation>Druckvorschau</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+3"/>
+        <source>Buttons Icon Only</source>
+        <translation>Buttons nur mit Icon</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Buttons Text Beside Icon</source>
+        <translation>Button Text neben Icon</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Buttons with Text</source>
+        <translation>Buttons mit Text</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Buttons Text Under Icon</source>
+        <translation>Buttons Text unter dem Icon</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set Text Under Icon</source>
+        <translation>Text unter dem Icon</translation>
+    </message>
+    <message>
+        <location filename="../gui/msgs/MessageWindow.cpp" line="+136"/>
+        <source>&amp;File</source>
+        <translation>&amp;Datei</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save &amp;As File</source>
+        <translation>Speichern &amp;unter</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Print...</source>
+        <translation>&amp;Drucken...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Print Preview...</source>
+        <translation>Druckvorschau...</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Schliessen</translation>
+    </message>
+</context>
+<context>
+    <name>MessagesDialog</name>
+    <message>
+        <location filename="../gui/MessagesDialog.ui" line="+576"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+603"/>
+        <source>New Message</source>
+        <translation>Neue Nachricht</translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="-65"/>
+        <source>Reply to Message</source>
+        <translation>Antworten nur an Absender</translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <source>Open in a new window</source>
+        <translation>In neuem Fenster öffnen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Open in a new tab</source>
+        <translation>In neuem Tab öffnen</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Remove Message</source>
+        <translation>Nachricht entfernen</translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.ui" line="+393"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-397"/>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <location line="-5"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1"/>
+        <location line="+705"/>
+        <source>From</source>
+        <translation>Von</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="obsolete">Grösse</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Empfohlene Dateien&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="-325"/>
         <source>Reply</source>
         <translation>Antworten</translation>
     </message>
@@ -6783,16 +7071,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+180"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-44"/>
-        <location line="+1041"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-46"/>
+        <location line="+806"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1046"/>
-        <location line="+1059"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-812"/>
+        <location line="+825"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -6804,32 +7092,28 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1057"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-825"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
     </message>
     <message>
-        <location line="+241"/>
         <source>Download all Recommended Files</source>
-        <translation>Alle Dateien runterladen</translation>
+        <translation type="obsolete">Alle Dateien runterladen</translation>
     </message>
     <message>
-        <location line="+180"/>
         <source>Cc:</source>
-        <translation>Cc:</translation>
+        <translation type="obsolete">Cc:</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Bcc:</source>
-        <translation>Bcc:</translation>
+        <translation type="obsolete">Bcc:</translation>
     </message>
     <message>
-        <location line="+43"/>
         <source>Tags:</source>
-        <translation>Schlagwörter:</translation>
+        <translation type="obsolete">Schlagwörter:</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+173"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>Drucken...</translation>
@@ -6871,63 +7155,67 @@ p, li { white-space: pre-wrap; }
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="+813"/>
         <source>Print Document</source>
-        <translation>Dokument drucken</translation>
+        <translation type="obsolete">Dokument drucken</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-839"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1615"/>
+        <location line="-412"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-673"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
     <message>
-        <location line="+511"/>
         <source>Subject:</source>
-        <translation>Betreff:</translation>
+        <translation type="obsolete">Betreff:</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>From:</source>
-        <translation>Von:</translation>
+        <translation type="obsolete">Von:</translation>
     </message>
     <message>
-        <location line="+56"/>
         <source>To:</source>
-        <translation>An:</translation>
+        <translation type="obsolete">An:</translation>
     </message>
     <message>
-        <location line="+188"/>
         <source>File Name</source>
-        <translation>Dateiname</translation>
+        <translation type="obsolete">Dateiname</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="obsolete">Prüfsumme</translation>
     </message>
     <message>
-        <location line="-928"/>
+        <location line="-140"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="+70"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+57"/>
         <source>Forward selected Message</source>
         <translation>Gewählte Nachricht weiterleiten</translation>
     </message>
     <message>
-        <location line="+315"/>
+        <location line="+311"/>
+        <source>Edit</source>
+        <translation>Bearbeiten</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Edit as new</source>
+        <translation>Als neu bearbeiten</translation>
+    </message>
+    <message>
+        <location line="+30"/>
         <source>Remove Messages</source>
         <translation>Nachrichten entfernen</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-39"/>
         <source>Forward Message</source>
         <translation>Weiterleiten</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-353"/>
         <source>Click to sort by attachments</source>
         <translation>Klicken, um nach Anhang zu sortieren</translation>
     </message>
@@ -6943,12 +7231,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <location line="+821"/>
+        <location line="+697"/>
         <source>Click to sort by from</source>
         <translation>Klicken, um nach Von zu sortieren</translation>
     </message>
     <message>
-        <location line="-820"/>
+        <location line="-696"/>
         <source>Click to sort by date</source>
         <translation>Klicken, um nach Datum zu sortieren</translation>
     </message>
@@ -6962,48 +7250,41 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Klicken, um nach Kennzeichnung zu sortieren</translation>
     </message>
     <message>
-        <location line="+400"/>
         <source>Download</source>
-        <translation>Herunterladen</translation>
+        <translation type="obsolete">Herunterladen</translation>
     </message>
     <message>
-        <location line="+140"/>
         <source>Hide</source>
-        <translation>Empfohlene Dateien ausblenden</translation>
+        <translation type="obsolete">Empfohlene Dateien ausblenden</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Expand</source>
-        <translation>Empfohlene Dateien einblenden</translation>
+        <translation type="obsolete">Empfohlene Dateien einblenden</translation>
     </message>
     <message>
-        <location line="+279"/>
+        <location line="+698"/>
         <source>Click to sort by to</source>
         <translation>Klicken, um nach Empfänger zu sortieren</translation>
     </message>
     <message>
-        <location line="+676"/>
         <source>File</source>
-        <translation>Datei</translation>
+        <translation type="obsolete">Datei</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation type="obsolete">Dateien</translation>
     </message>
     <message>
-        <location line="+137"/>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation type="obsolete">Speichern unter...</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+        <translation type="obsolete">HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-1578"/>
-        <location line="+277"/>
+        <location line="-653"/>
+        <location line="+299"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
     </message>
@@ -7021,27 +7302,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-277"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-343"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-352"/>
         <source>Content</source>
         <translation>Inhalt</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+11"/>
+        <location line="+3"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+113"/>
+        <location line="+90"/>
         <source>Tags</source>
         <translation>Schlagwörter</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Tag</source>
-        <translation>Schlagwort</translation>
+        <translation type="obsolete">Schlagwort</translation>
     </message>
     <message>
         <location line="+177"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+690"/>
-        <location line="+1083"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+583"/>
+        <location line="+852"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
@@ -7065,7 +7346,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Neues Schlagwort...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1531"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1155"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
     </message>
@@ -7085,34 +7366,33 @@ p, li { white-space: pre-wrap; }
         <translation>Wiederherstellen</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+25"/>
         <source>Empty trash</source>
         <translation>Papierkorb leeren</translation>
     </message>
     <message>
-        <location line="+364"/>
-        <location line="+1074"/>
+        <location line="+237"/>
+        <location line="+841"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
     </message>
     <message>
-        <location line="-1045"/>
+        <location line="-808"/>
         <source>To</source>
         <translation>An</translation>
     </message>
     <message>
-        <location line="-477"/>
         <source>Edit...</source>
-        <translation>Editieren...</translation>
+        <translation type="obsolete">Editieren...</translation>
     </message>
     <message>
-        <location line="-343"/>
+        <location line="-696"/>
         <source>Click to sort by star</source>
         <translation>Klicken, um nach Kennzeichnung zu sortieren</translation>
     </message>
     <message>
-        <location line="+1785"/>
+        <location line="+1424"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -9411,13 +9691,13 @@ Lockdatei:
         <translation>Die Datei wurde zur Downloadliste hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1207"/>
-        <location filename="../gui/RetroShareLink.cpp" line="+8"/>
+        <location line="+8"/>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="-295"/>
         <source>File Request canceled</source>
         <translation>Dateianforderung abgebrochen</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="+0"/>
         <source>The following has not been added to your download list, because you already have it:
     </source>
         <translation>Die folgende Datei wurde nicht zur Downloadliste hinzugefügt, da Du diese schon hast:
@@ -9563,6 +9843,26 @@ Lockdatei:
         <location filename="../util/EventReceiver.cpp" line="+120"/>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
+    </message>
+    <message>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="+108"/>
+        <source>(Age in seconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>(Depth)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+215"/>
+        <source>Evolution of search requests:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Evolution of tunnel requests:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12532,14 +12832,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TurtleRouterDialog</name>
     <message>
-        <location filename="../gui/TurtleRouterDialog.cpp" line="+19"/>
-        <location line="+64"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="-183"/>
+        <location line="+94"/>
         <source>Search requests</source>
         <translation>Suchanfragen</translation>
     </message>
     <message>
-        <location line="-59"/>
-        <location line="+81"/>
+        <location line="-89"/>
+        <location line="+109"/>
         <source>Tunnel requests</source>
         <translation>Tunnelanfragen</translation>
     </message>
@@ -12552,9 +12852,42 @@ p, li { white-space: pre-wrap; }
         <translation>Router Statistiken</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+18"/>
         <source>F2F router information</source>
         <translation>F2F Routerinformationen</translation>
+    </message>
+</context>
+<context>
+    <name>TurtleRouterStatisticsWidget</name>
+    <message>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="+79"/>
+        <source>Turtle router traffic:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Tunnel requests Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Tunnel requests Dn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Incoming file data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Outgoing file data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Forwarded data    </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

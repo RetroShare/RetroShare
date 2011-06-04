@@ -503,7 +503,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Misc</string>
+      <string>Reading</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
@@ -512,6 +512,20 @@
          <string>Set message to read on activate</string>
         </property>
        </widget>
+      </item>
+      <item row="2" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="openLabel">
+          <property name="text">
+           <string>Open messages in</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="openComboBox"/>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

@@ -627,6 +627,32 @@ void RshareSettings::setMsgSetToReadOnActivate (bool bValue)
     setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", bValue);
 }
 
+RshareSettings::enumMsgOpen RshareSettings::getMsgOpen()
+{
+    enumMsgOpen value = (enumMsgOpen) valueFromGroup("MessageDialog", "msgOpen", MSG_OPEN_TAB).toInt();
+
+    switch (value) {
+    case MSG_OPEN_TAB:
+    case MSG_OPEN_WINDOW:
+        return value;
+    }
+
+    return MSG_OPEN_TAB;
+}
+
+void RshareSettings::setMsgOpen(enumMsgOpen value)
+{
+    switch (value) {
+    case MSG_OPEN_TAB:
+    case MSG_OPEN_WINDOW:
+        break;
+    default:
+        value = MSG_OPEN_TAB;
+    }
+
+    setValueToGroup("MessageDialog", "msgOpen", value);
+}
+
 /* Forums */
 bool RshareSettings::getForumMsgSetToReadOnActivate ()
 {

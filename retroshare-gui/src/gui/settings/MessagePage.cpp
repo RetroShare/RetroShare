@@ -47,6 +47,9 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
 
     ui.editpushButton->setEnabled(false);
     ui.deletepushButton->setEnabled(false);
+
+    ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
+    ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
 }
 
 MessagePage::~MessagePage()
@@ -65,6 +68,7 @@ bool
 MessagePage::save(QString &errmsg)
 {
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
+    Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
     for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
@@ -92,6 +96,7 @@ void
 MessagePage::load()
 {
     ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
+    ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
     // fill items
     rsMsgs->getMessageTagTypes(*m_pTags);

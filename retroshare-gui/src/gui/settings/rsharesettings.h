@@ -75,6 +75,12 @@ public:
     TOASTERPOS_BOTTOMRIGHT
   };
 
+  enum enumMsgOpen
+  {
+    MSG_OPEN_TAB,
+    MSG_OPEN_WINDOW
+  };
+
 public:
   /* create settings object */
   static void Create ();
@@ -209,6 +215,9 @@ public:
   /* Messages */
   bool getMsgSetToReadOnActivate ();
   void setMsgSetToReadOnActivate (bool bValue);
+
+  enumMsgOpen getMsgOpen();
+  void setMsgOpen(enumMsgOpen value);
 
   /* Forums */
   bool getForumMsgSetToReadOnActivate ();

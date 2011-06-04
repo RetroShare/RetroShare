@@ -19,33 +19,22 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMessageBox>
 #include <QStandardItemModel>
 #include <QShortcut>
 #include <QTimer>
 #include <QDateTime>
-#include <QPrinter>
-#include <QPrintDialog>
-#include <QTextStream>
-#include <QTextCodec>
 #include <QKeyEvent>
-#include <QFileDialog>
 
 #include "MessagesDialog.h"
 #include "msgs/MessageComposer.h"
+#include "msgs/MessageWidget.h"
 #include "msgs/TagsMenu.h"
-#include "util/printpreview.h"
 #include "settings/rsharesettings.h"
-#include "util/misc.h"
 #include "common/TagDefs.h"
 #include "common/PeerDefs.h"
 #include "common/RSItemDelegate.h"
-#include "common/Emoticons.h"
-#include "RetroShareLink.h"
 
-#include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
 #include <retroshare/rsmsgs.h>
 
 #include <algorithm>
@@ -56,8 +45,6 @@
 #define IMAGE_MESSAGEREPLYALL  ":/images/mail_replyall.png"
 #define IMAGE_MESSAGEFORWARD   ":/images/mail_forward.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
-#define IMAGE_DOWNLOAD         ":/images/start.png"
-#define IMAGE_DOWNLOADALL      ":/images/startall.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
@@ -78,11 +65,6 @@
 #define ROLE_SRCID    Qt::UserRole + 2
 #define ROLE_UNREAD   Qt::UserRole + 3
 #define ROLE_MSGFLAGS Qt::UserRole + 4
-
-#define COLUMN_FILE_NAME   0
-#define COLUMN_FILE_SIZE   1
-#define COLUMN_FILE_HASH   2
-#define COLUMN_FILE_COUNT  3
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -165,44 +147,36 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     m_bInChange = false;
     m_nLockUpdate = 0;
 
-    connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.listWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( folderlistWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
-    connect( ui.messagestreeView, SIGNAL(doubleClicked ( const QModelIndex& ) ) , this, SLOT( doubleClicked( const QModelIndex & ) ) );
-    connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
-    connect( ui.tagWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeTag ( int) ) );
-
+    connect(ui.messagestreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageslistWidgetCostumPopupMenu(QPoint)));
+    connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCostumPopupMenu(QPoint)));
+    connect(ui.messagestreeView, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
+    connect(ui.messagestreeView, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
+    connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
+    connect(ui.tagWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeTag(int)));
+    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+    connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
-    connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
-    connect(ui.replymessageButton, SIGNAL(clicked()), this, SLOT(replytomessage()));
-    connect(ui.replyallmessageButton, SIGNAL(clicked()), this, SLOT(replyallmessage()));
-    connect(ui.forwardmessageButton, SIGNAL(clicked()), this, SLOT(forwardmessage()));
 
-    connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
-    ui.actionPrint->setDisabled(true);
-    connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
-    ui.actionPrintPreview->setDisabled(true);
-    connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
+    connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+    connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+    connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
 
-    connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
-    connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
+    ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
+    ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
+    ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
 
-    connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonstextbesideicon()));
-    connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonsicononly()));
-    connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonstextundericon()));
-
-    connect(ui.actionSave_as, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
-    ui.actionSave_as->setDisabled(true);
-
-    connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-    connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
+    msgWidget = new MessageWidget(true, this);
+	ui.msgLayout->addWidget(msgWidget);
+
+    connectActions();
+
     m_eListMode = LIST_NOTHING;
 
-    mCurrCertId = "";
     mCurrMsgId  = "";
 
     // Set the QStandardItemModel
@@ -231,6 +205,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     proxyModel->sort (COLUMN_DATE, Qt::DescendingOrder);
     ui.messagestreeView->setModel(proxyModel);
     ui.messagestreeView->setSelectionBehavior(QTreeView::SelectRows);
+    connect(ui.messagestreeView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateInterface()));
 
     RSItemDelegate *itemDelegate = new RSItemDelegate(this);
     itemDelegate->removeFocusRect(COLUMN_UNREAD);
@@ -252,10 +227,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     Shortcut = new QShortcut(QKeySequence (Qt::SHIFT | Qt::Key_Delete), ui.messagestreeView, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT( removemessage ()));
 
-    /* hide the Tree +/- */
-    ui.msgList->setRootIsDecorated( false );
-    ui.msgList->setSelectionMode( QAbstractItemView::ExtendedSelection );
-
     /* Set header initial section sizes */
     QHeaderView * msgwheader = ui.messagestreeView->header () ;
     msgwheader->resizeSection (COLUMN_ATTACHEMENTS, 24);
@@ -267,16 +238,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_STAR, 24);
-
-    /* Set header resize modes and initial section sizes */
-    QHeaderView * msglheader = ui.msgList->header () ;
-    msglheader->setResizeMode (COLUMN_FILE_NAME, QHeaderView::Interactive);
-    msglheader->setResizeMode (COLUMN_FILE_SIZE, QHeaderView::Interactive);
-    msglheader->setResizeMode (COLUMN_FILE_HASH, QHeaderView::Interactive);
-
-    msglheader->resizeSection (COLUMN_FILE_NAME, 200);
-    msglheader->resizeSection (COLUMN_FILE_SIZE, 100);
-    msglheader->resizeSection (COLUMN_FILE_HASH, 200);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -292,22 +253,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     //viewmenu->addAction(ui.actionTextUnderIcon);
     ui.viewtoolButton->setMenu(viewmenu);
 
-    loadToolButtonsettings();
-
-    mFont = QFont("Arial", 10, QFont::Bold);
-    ui.subjectText->setFont(mFont);
-    
     ui.filterPatternLineEdit->setMinimumWidth(20);
 
     //setting default filter by column as subject
     proxyModel->setFilterKeyColumn(FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex()));
 
     ui.clearButton->hide();
-
-    ui.bcclabel->setVisible(false);
-    ui.bccText->setVisible(false);
-    ui.cclabel->setVisible(false);
-    ui.ccText->setVisible(false);
 
     // load settings
     processSettings(true);
@@ -343,6 +294,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     ui.messagestreeView->installEventFilter(this);
 
+    // remove close button of the the first tab
+    QTabBar::ButtonPosition buttonPosition = (QTabBar::ButtonPosition) ui.tabWidget->tabBar()->style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition, 0, 0);
+    QWidget *tabButton = ui.tabWidget->tabBar()->tabButton(0, buttonPosition);
+    if (tabButton) {
+        tabButton->hide();
+    }
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -359,7 +317,7 @@ MessagesDialog::~MessagesDialog()
     processSettings(false);
 }
 
-void MessagesDialog::processSettings(bool bLoad)
+void MessagesDialog::processSettings(bool load)
 {
     int messageTreeVersion = 2; // version number for the settings to solve problems when modifying the column count
 
@@ -367,16 +325,10 @@ void MessagesDialog::processSettings(bool bLoad)
 
     QHeaderView *msgwheader = ui.messagestreeView->header () ;
 
-    Settings->beginGroup(QString("MessageDialog"));
+    Settings->beginGroup("MessageDialog");
 
-    if (bLoad) {
+    if (load) {
         // load settings
-
-        // expandFiles
-        bool bValue = Settings->value("expandFiles", true).toBool();
-        ui.expandFilesButton->setChecked(bValue);
-        ui.msgList->setVisible(bValue);
-        togglefileview_internal();
 
         // filterColumn
         int nValue = FilterColumnToComboBox(Settings->value("filterColumn", true).toInt());
@@ -388,13 +340,17 @@ void MessagesDialog::processSettings(bool bLoad)
         }
 
         // state of tag list
-        bValue = Settings->value("tagList", true).toBool();
-        ui.Tags_Button->setChecked(bValue);
+        bool value = Settings->value("tagList", true).toBool();
+        ui.Tags_Button->setChecked(value);
 
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
         ui.msgSplitter_2->restoreState(Settings->value("Splitter2").toByteArray());
         ui.listSplitter->restoreState(Settings->value("Splitter3").toByteArray());
+
+        /* toolbar button style */
+        Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Stlye", Qt::ToolButtonIconOnly).toInt();
+        setToolbarButtonStyle(style);
     } else {
         // save settings
 
@@ -409,9 +365,16 @@ void MessagesDialog::processSettings(bool bLoad)
         Settings->setValue("Splitter", ui.msgSplitter->saveState());
         Settings->setValue("Splitter2", ui.msgSplitter_2->saveState());
         Settings->setValue("Splitter3", ui.listSplitter->saveState());
+
+        /* toolbar button style */
+        Settings->setValue("ToolButon_Stlye", ui.newmessageButton->toolButtonStyle());
     }
 
     Settings->endGroup();
+
+    if (msgWidget) {
+        msgWidget->processSettings("MessageDialog", load);
+    }
 
     m_bProcessSettings = false;
 }
@@ -543,7 +506,13 @@ bool MessagesDialog::hasMessageStar(int nRow)
 
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 {
-    QMenu contextMnu( this );
+    std::string cid;
+    std::string mid;
+
+    MessageInfo msgInfo;
+    if (getCurrentMsg(cid, mid)) {
+        rsMsgs->getMessage(mid, msgInfo);
+    }
 
     QList<int> RowsRead;
     QList<int> RowsUnread;
@@ -552,7 +521,21 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     /** Defines the actions for the context menu */
 
-    QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to Message"), this, SLOT(replytomessage()));
+    QMenu contextMnu( this );
+
+    QAction *action = contextMnu.addAction(tr("Open in a new window"), this, SLOT(openAsWindow()));
+    if (nCount != 1) {
+        action->setDisabled(true);
+    }
+
+    action = contextMnu.addAction(tr("Open in a new tab"), this, SLOT(openAsTab()));
+    if (nCount != 1) {
+        action->setDisabled(true);
+    }
+
+    contextMnu.addSeparator();
+
+    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to Message"), this, SLOT(replytomessage()));
     if (nCount != 1) {
         action->setDisabled(true);
     }
@@ -561,11 +544,6 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
         action->setDisabled(true);
     }
     action = contextMnu.addAction(QIcon(IMAGE_MESSAGEFORWARD), tr("Forward Message"), this, SLOT(forwardmessage()));
-    if (nCount != 1) {
-        action->setDisabled(true);
-    }
-
-    action = contextMnu.addAction(tr("Edit..."), this, SLOT(editmessage()));
     if (nCount != 1) {
         action->setDisabled(true);
     }
@@ -591,7 +569,19 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     // add tags
     contextMnu.addMenu(ui.tagButton->menu());
+
     contextMnu.addSeparator();
+
+    QString text;
+    if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX) {
+        text = tr("Edit");
+    } else {
+        text = tr("Edit as new");
+    }
+    action = contextMnu.addAction(text, this, SLOT(editmessage()));
+    if (nCount != 1) {
+        action->setDisabled(true);
+    }
 
     action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREMOVE), (nCount > 1) ? tr("Remove Messages") : tr("Remove Message"), this, SLOT(removemessage()));
     if (nCount == 0) {
@@ -606,29 +596,13 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
         }
     }
 
-    contextMnu.addAction(ui.actionSave_as);
+    contextMnu.addAction(ui.actionSaveAs);
     contextMnu.addAction(ui.actionPrintPreview);
     contextMnu.addAction(ui.actionPrint);
     contextMnu.addSeparator();
 
     contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("New Message"), this, SLOT(newmessage()));
 
-    contextMnu.exec(QCursor::pos());
-}
-
-
-void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
-{
-    QMenu contextMnu( this );
-
-    QAction* getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu );
-    connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
-
-//   QAction* getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), &contextMnu );
-//   connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
-
-    contextMnu.addAction( getRecAct);
-//    contextMnu.addAction( getAllRecAct);
     contextMnu.exec(QCursor::pos());
 }
 
@@ -653,11 +627,45 @@ void MessagesDialog::newmessage()
         return;
     }
 
-    /* fill it in */
-    //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
+    /* window will destroy itself! */
+}
+
+void MessagesDialog::openAsWindow()
+{
+    std::string cid;
+    std::string mid;
+
+    if(!getCurrentMsg(cid, mid))
+        return ;
+
+    MessageWidget *msgWidget = MessageWidget::openMsg(mid, true);
+    if (msgWidget == NULL) {
+        return;
+    }
+
+    msgWidget->activateWindow();
+
+    /* window will destroy itself! */
+}
+
+void MessagesDialog::openAsTab()
+{
+    std::string cid;
+    std::string mid;
+
+    if(!getCurrentMsg(cid, mid))
+        return ;
+
+    MessageWidget *msgWidget = MessageWidget::openMsg(mid, false);
+    if (msgWidget == NULL) {
+        return;
+    }
+
+    ui.tabWidget->addTab(msgWidget, msgWidget->subject(true));
+    ui.tabWidget->setCurrentWidget(msgWidget);
 
     /* window will destroy itself! */
 }
@@ -670,180 +678,15 @@ void MessagesDialog::editmessage()
     if(!getCurrentMsg(cid, mid))
         return ;
 
-    MessageComposer *pMsgDialog = MessageComposer::newMsg(mid);
-    if (pMsgDialog == NULL) {
+    MessageComposer *msgComposer = MessageComposer::newMsg(mid);
+    if (msgComposer == NULL) {
         return;
     }
 
-    pMsgDialog->show();
-    pMsgDialog->activateWindow();
+    msgComposer->show();
+    msgComposer->activateWindow();
 
     /* window will destroy itself! */
-}
-
-void MessagesDialog::replytomessage()
-{
-    /* put msg on msgBoard, and switch to it. */
-
-    std::string cid;
-    std::string mid;
-
-    if(!getCurrentMsg(cid, mid))
-        return ;
-
-    mCurrCertId = cid;
-    mCurrMsgId  = mid;
-
-    MessageComposer *nMsgDialog = MessageComposer::replyMsg(mid, false);
-    if (nMsgDialog == NULL) {
-        return;
-    }
-
-    nMsgDialog->show();
-    nMsgDialog->activateWindow();
-
-    /* window will destroy itself! */
-}
-
-void MessagesDialog::replyallmessage()
-{
-    /* put msg on msgBoard, and switch to it. */
-
-    std::string cid;
-    std::string mid;
-
-    if(!getCurrentMsg(cid, mid))
-        return ;
-
-    mCurrCertId = cid;
-    mCurrMsgId  = mid;
-
-    MessageComposer *nMsgDialog = MessageComposer::replyMsg(mid, true);
-    if (nMsgDialog == NULL) {
-        return;
-    }
-
-    nMsgDialog->show();
-    nMsgDialog->activateWindow();
-
-    /* window will destroy itself! */
-}
-
-void MessagesDialog::forwardmessage()
-{
-    /* put msg on msgBoard, and switch to it. */
-
-    std::string cid;
-    std::string mid;
-
-    if(!getCurrentMsg(cid, mid))
-        return ;
-
-    mCurrCertId = cid;
-    mCurrMsgId  = mid;
-
-    MessageComposer *nMsgDialog = MessageComposer::forwardMsg(mid);
-    if (nMsgDialog == NULL) {
-        return;
-    }
-
-    nMsgDialog->show();
-    nMsgDialog->activateWindow();
-
-    /* window will destroy itself! */
-}
-
-void MessagesDialog::togglefileview_internal()
-{
-    /* if msg header visible -> change icon and tooltip
-    * three widgets...
-    */
-
-    if (ui.expandFilesButton->isChecked()) {
-        ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-        ui.expandFilesButton->setToolTip(tr("Hide"));
-    } else {
-        ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-        ui.expandFilesButton->setToolTip(tr("Expand"));
-    }
-}
-
-void MessagesDialog::togglefileview()
-{
-    // save state of files view
-    Settings->setValueToGroup("MessageDialog", "expandFiles", ui.expandFilesButton->isChecked());
-
-    togglefileview_internal();
-}
-
-
-/* download the recommendations... */
-void MessagesDialog::getcurrentrecommended()
-{
-    MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mCurrMsgId, msgInfo))
-        return;
-
-    std::list<std::string> srcIds;
-    srcIds.push_back(msgInfo.srcId);
-
-    QModelIndexList list = ui.msgList->selectionModel()->selectedIndexes();
-
-    std::map<int,FileInfo> files ;
-
-    for(QModelIndexList::const_iterator it(list.begin());it!=list.end();++it)
-    {
-        FileInfo& f(files[it->row()]) ;
-
-        switch(it->column())
-        {
-        case COLUMN_FILE_NAME:
-            f.fname = it->data().toString().toStdString() ;
-            break ;
-        case COLUMN_FILE_SIZE:
-            f.size = it->data().toULongLong() ;
-            break ;
-        case COLUMN_FILE_HASH:
-            f.hash = it->data().toString().toStdString() ;
-            break ;
-        }
-    }
-
-    for(std::map<int,FileInfo>::const_iterator it(files.begin());it!=files.end();++it)
-    {
-        const FileInfo& f(it->second) ;
-        std::cout << "Requesting file " << f.fname << ", size=" << f.size << ", hash=" << f.hash << std::endl ;
-
-		  if(! rsFiles->FileRequest(it->second.fname,it->second.hash,it->second.size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
-		  {
-			  QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:\n    ")+QString::fromStdString(it->second.fname),QMessageBox::Critical,QMessageBox::Ok,0,0);
-			  mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-			  mb.exec();
-		  }
-    }
-}
-
-void MessagesDialog::getallrecommended()
-{
-    /* get Message */
-    MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mCurrMsgId, msgInfo))
-    {
-        return;
-    }
-
-    const std::list<FileInfo> &recList = msgInfo.files;
-    std::list<FileInfo>::const_iterator it;
-
-    /* do the requests */
-    for(it = recList.begin(); it != recList.end(); it++)
-    {
-        std::cerr << "MessagesDialog::getallrecommended() Calling File Request";
-        std::cerr << std::endl;
-        std::list<std::string> srcIds;
-        srcIds.push_back(msgInfo.srcId);
-        rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
-    }
 }
 
 void MessagesDialog::changeBox(int)
@@ -894,8 +737,6 @@ void MessagesDialog::messagesTagsChanged()
 
     fillTags();
     insertMessages();
-
-    showTagLabels();
 }
 
 static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
@@ -965,7 +806,6 @@ void MessagesDialog::insertMessages()
     }
 
     std::cerr <<"MessagesDialog::insertMessages called";
-    fflush(0);
 
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
@@ -976,7 +816,6 @@ void MessagesDialog::insertMessages()
     rsMsgs -> getMessageSummaries(msgList);
 
     std::cerr << "MessagesDialog::insertMessages()" << std::endl;
-    fflush(0);
 
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
@@ -1284,9 +1123,7 @@ void MessagesDialog::insertMessages()
 
             // No of Files.
             {
-                std::ostringstream out;
-                out << it -> count;
-                item[COLUMN_ATTACHEMENTS] -> setText(QString::fromStdString(out.str()));
+                item[COLUMN_ATTACHEMENTS] -> setText(QString::number(it -> count));
                 item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, ROLE_SORT);
                 item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
             }
@@ -1378,8 +1215,31 @@ void MessagesDialog::doubleClicked(const QModelIndex &index)
     /* activate row */
     clicked (index);
 
+    std::string cid;
+    std::string mid;
+
+    if(!getCurrentMsg(cid, mid))
+        return ;
+
+    MessageInfo msgInfo;
+    if (!rsMsgs->getMessage(mid, msgInfo)) {
+        return;
+    }
+
+    if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX) {
+        editmessage();
+        return;
+    }
+
     /* edit message */
-    editmessage();
+    switch (Settings->getMsgOpen()) {
+    case RshareSettings::MSG_OPEN_TAB:
+        openAsTab();
+        break;
+    case RshareSettings::MSG_OPEN_WINDOW:
+        openAsWindow();
+        break;
+    }
 }
 
 // show current message directly
@@ -1479,55 +1339,6 @@ void MessagesDialog::setMsgStar(const QList<int> &Rows, bool star)
     // LockUpdate
 }
 
-void MessagesDialog::clearTagLabels()
-{
-    /* clear all tags */
-    while (tagLabels.size()) {
-        delete tagLabels.front();
-        tagLabels.pop_front();
-    }
-    while (ui.taglayout->count()) {
-        delete ui.taglayout->takeAt(0);
-    }
-
-    ui.tagslabel->setVisible(false);
-}
-
-void MessagesDialog::showTagLabels()
-{
-    clearTagLabels();
-
-    if (mCurrMsgId.empty()) {
-        return;
-    }
-
-    MsgTagInfo tagInfo;
-    rsMsgs->getMessageTag(mCurrMsgId, tagInfo);
-
-    if (tagInfo.tagIds.empty() == false) {
-        ui.tagslabel->setVisible(true);
-
-        MsgTagType Tags;
-        rsMsgs->getMessageTagTypes(Tags);
-
-        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-        for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
-            Tag = Tags.types.find(*tagId);
-            if (Tag != Tags.types.end()) {
-                QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
-                tagLabel->setMaximumHeight(16);
-                tagLabel->setStyleSheet(TagDefs::labelStyleSheet(Tag->second.second));
-                tagLabels.push_back(tagLabel);
-                ui.taglayout->addWidget(tagLabel);
-                ui.taglayout->addSpacing(3);
-            }
-        }
-        ui.taglayout->addStretch();
-    } else {
-        ui.tagslabel->setVisible(false);
-    }
-}
-
 void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
 {
     std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
@@ -1537,52 +1348,29 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     std::string mid;
 
     QModelIndex currentIndex = proxyModel->mapToSource(Index);
-    if (currentIndex.isValid() == false)
-    {
-        mCurrCertId.clear();
+    if (currentIndex.isValid() == false) {
         mCurrMsgId.clear();
-
-        /* blank it */
-        ui.dateText-> setText("");
-        ui.toText->setText("");
-        ui.fromText->setText("");
-        ui.filesText->setText("");
-
-        ui.cclabel->setVisible(false);
-        ui.ccText->setVisible(false);
-        ui.ccText->clear();
-
-        ui.bcclabel->setVisible(false);
-        ui.bccText->setVisible(false);
-        ui.bccText->clear();
-
-        ui.subjectText->setText("");
-        ui.msgList->clear();
-        ui.msgText->clear();
-
-        ui.actionSave_as->setDisabled(true);
-        ui.actionPrintPreview->setDisabled(true);
-        ui.actionPrint->setDisabled(true);
-
-        clearTagLabels();
-
+        msgWidget->fill(mCurrMsgId);
+        updateInterface();
         return;
     }
 
     QStandardItem *item = MessagesModel->item(currentIndex.row(),COLUMN_DATA);
     if (item == NULL) {
+        mCurrMsgId.clear();
+        msgWidget->fill(mCurrMsgId);
+        updateInterface();
         return;
     }
-    cid = item->data(ROLE_SRCID).toString().toStdString();
     mid = item->data(ROLE_MSGID).toString().toStdString();
 
     int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
     if (nCount == 1) {
-        ui.actionSave_as->setEnabled(true);
+        ui.actionSaveAs->setEnabled(true);
         ui.actionPrintPreview->setEnabled(true);
         ui.actionPrint->setEnabled(true);
     } else {
-        ui.actionSave_as->setDisabled(true);
+        ui.actionSaveAs->setDisabled(true);
         ui.actionPrintPreview->setDisabled(true);
         ui.actionPrint->setDisabled(true);
     }
@@ -1592,16 +1380,12 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         return;
     }
 
-    clearTagLabels();
-
     /* Save the Data.... for later */
 
-    mCurrCertId = cid;
-    mCurrMsgId  = mid;
+    mCurrMsgId = mid;
 
     MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mid, msgInfo))
-    {
+    if (!rsMsgs -> getMessage(mid, msgInfo)) {
         std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
         return;
     }
@@ -1628,114 +1412,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         }
     }
 
-    const std::list<FileInfo> &recList = msgInfo.files;
-    std::list<FileInfo>::const_iterator it;
-
-    /* get a link to the table */
-    QTreeWidget *tree = ui.msgList;
-
-    /* get the MessageInfo */
-
-    tree->clear();
-
-    QList<QTreeWidgetItem *> items;
-    for(it = recList.begin(); it != recList.end(); it++)
-    {
-        /* make a widget per person */
-        QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-        /* (0) Filename */
-        item -> setText(COLUMN_FILE_NAME, QString::fromStdString(it->fname));
-        //std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
-
-        item -> setText(COLUMN_FILE_SIZE, QString::number(it->size)); /* (1) Size */
-        item -> setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash));
-
-        /* add to the list */
-        items.append(item);
-    }
-
-    /* add the items in! */
-    tree->insertTopLevelItems(0, items);
-
-    /* iterate through the sources */
-    std::list<std::string>::const_iterator pit;
-
-    RetroShareLink link;
-    QString text;
-
-    for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
-    {
-        if (link.createMessage(*pit, "")) {
-            text += link.toHtml() + "   ";
-        }
-    }
-    ui.toText->setText(text);
-
-    if (msgInfo.msgcc.size() > 0) {
-        ui.cclabel->setVisible(true);
-        ui.ccText->setVisible(true);
-
-        text.clear();
-        for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
-        {
-            if (link.createMessage(*pit, "")) {
-                text += link.toHtml() + "   ";
-            }
-        }
-        ui.ccText->setText(text);
-    } else {
-        ui.cclabel->setVisible(false);
-        ui.ccText->setVisible(false);
-        ui.ccText->clear();
-    }
-
-    if (msgInfo.msgbcc.size() > 0) {
-        ui.bcclabel->setVisible(true);
-        ui.bccText->setVisible(true);
-
-        text.clear();
-        for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
-        {
-            if (link.createMessage(*pit, "")) {
-                text += link.toHtml() + "   ";
-            }
-        }
-        ui.bccText->setText(text);
-    } else {
-        ui.bcclabel->setVisible(false);
-        ui.bccText->setVisible(false);
-        ui.bccText->clear();
-    }
-
-    {
-        QDateTime qtime;
-        qtime.setTime_t(msgInfo.ts);
-        QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
-        ui.dateText-> setText(timestamp);
-    }
-
-    std::string srcId;
-    if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
-        // outgoing message are from me
-        srcId = rsPeers->getOwnId();
-    } else {
-        srcId = msgInfo.srcId;
-    }
-    link.createMessage(srcId, "");
-
-    ui.fromText->setText(link.toHtml());
-    ui.fromText->setToolTip(PeerDefs::rsidFromId(srcId));
-
-    ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
-
-    text = RsHtml::formatText(QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-    ui.msgText->setHtml(text);
-
-    ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
-
-    showTagLabels();
-
-    std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Msg Displayed OK!" << std::endl;
+    msgWidget->fill(mCurrMsgId);
+    updateInterface();
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
@@ -1782,8 +1460,7 @@ void MessagesDialog::removemessage()
     for(QList<QModelIndex>::iterator it = selectedIndexList.begin(); it != selectedIndexList.end(); it++) {
         selectedIndex = proxyModel->mapToSource(*it);
         int row = selectedIndex.row();
-        if (rowList.contains(row) == false)
-        {
+        if (rowList.contains(row) == false) {
             rowList.append(row);
         }
     }
@@ -1802,6 +1479,10 @@ void MessagesDialog::removemessage()
         QStandardItem *pItem = MessagesModel->item((*it1), COLUMN_DATA);
         if (pItem) {
             QString mid = pItem->data(ROLE_MSGID).toString();
+
+            // close tab showing this message
+//            closeTab(mid.toStdString());
+
             if (bDelete) {
                 rsMsgs->MessageDelete(mid.toStdString());
             } else {
@@ -1827,63 +1508,6 @@ void MessagesDialog::undeletemessage()
     // LockUpdate -> insertMessages();
 }
 
-void MessagesDialog::print()
-{
-#ifndef QT_NO_PRINTER
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setFullPage(true);
-    QPrintDialog *dlg = new QPrintDialog(&printer, this);
-    if (ui.msgText->textCursor().hasSelection())
-        dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
-    dlg->setWindowTitle(tr("Print Document"));
-    if (dlg->exec() == QDialog::Accepted) {
-        ui.msgText->print(&printer);
-    }
-    delete dlg;
-#endif
-}
-
-void MessagesDialog::printpreview()
-{
-    PrintPreview *preview = new PrintPreview(ui.msgText->document(), this);
-    preview->setWindowModality(Qt::WindowModal);
-    preview->setAttribute(Qt::WA_DeleteOnClose);
-    preview->show();
-}
-
-bool MessagesDialog::fileSave()
-{
-    if (fileName.isEmpty())
-        return fileSaveAs();
-
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly))
-        return false;
-    QTextStream ts(&file);
-    ts.setCodec(QTextCodec::codecForName("UTF-8"));
-    ts << ui.msgText->document()->toHtml("UTF-8");
-    ui.msgText->document()->setModified(false);
-    return true;
-}
-
-bool MessagesDialog::fileSaveAs()
-{
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
-    if (fn.isEmpty())
-        return false;
-    setCurrentFileName(fn);
-    return fileSave();
-}
-
-void MessagesDialog::setCurrentFileName(const QString &fileName)
-{
-    this->fileName = fileName;
-    ui.msgText->document()->setModified(false);
-
-    setWindowModified(false);
-}
-
 void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
 {
     ui.newmessageButton->setToolButtonStyle(style);
@@ -1896,31 +1520,9 @@ void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
     ui.viewtoolButton->setToolButtonStyle(style);
 }
 
-void MessagesDialog::buttonsicononly()
+void MessagesDialog::buttonStyle()
 {
-    setToolbarButtonStyle(Qt::ToolButtonIconOnly);
-
-    Settings->setValueToGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonIconOnly);
-}
-
-void MessagesDialog::buttonstextbesideicon()
-{
-    setToolbarButtonStyle(Qt::ToolButtonTextBesideIcon);
-
-    Settings->setValueToGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonTextBesideIcon);
-}
-
-void MessagesDialog::buttonstextundericon()
-{
-    setToolbarButtonStyle(Qt::ToolButtonTextUnderIcon);
-
-    Settings->setValueToGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonTextUnderIcon);
-}
-
-void MessagesDialog::loadToolButtonsettings()
-{
-    Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->valueFromGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonIconOnly).toInt();
-    setToolbarButtonStyle(style);
+    setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
 }
 
 void MessagesDialog::filterRegExpChanged()
@@ -2179,8 +1781,6 @@ void MessagesDialog::tagRemoveAll()
 		Lock.setUpdate(true);
 	}
 
-	showTagLabels();
-
 	// LockUpdate -> insertMessages();
 }
 
@@ -2203,9 +1803,6 @@ void MessagesDialog::tagSet(int tagId, bool set)
 		}
 	}
 
-
-	showTagLabels();
-
 	// LockUpdate -> insertMessages();
 }
 
@@ -2224,4 +1821,99 @@ void MessagesDialog::emptyTrash()
     }
 
     // LockUpdate -> insertMessages();
+}
+
+void MessagesDialog::tabChanged(int tab)
+{
+	connectActions();
+	updateInterface();
+}
+
+void MessagesDialog::tabCloseRequested(int tab)
+{
+	if (tab == 0) {
+		return;
+	}
+
+	QWidget *widget = ui.tabWidget->widget(tab);
+
+	if (widget) {
+		widget->deleteLater();
+	}
+}
+
+void MessagesDialog::closeTab(const std::string &msgId)
+{
+    QList<MessageWidget*> msgWidgets;
+
+    for (int tab = 1; tab < ui.tabWidget->count(); tab++) {
+        MessageWidget *msgWidget = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
+        if (msgWidget && msgWidget->msgId() == msgId) {
+            msgWidgets.append(msgWidget);
+        }
+    }
+    qDeleteAll(msgWidgets);
+}
+
+void MessagesDialog::connectActions()
+{
+	int tab = ui.tabWidget->currentIndex();
+
+	MessageWidget *msg;
+	if (tab == 0) {
+		msg = msgWidget;
+	} else {
+		msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
+	}
+
+	ui.replymessageButton->disconnect();
+	ui.replyallmessageButton->disconnect();
+	ui.forwardmessageButton->disconnect();
+	ui.printbutton->disconnect();
+	ui.actionPrint->disconnect();
+	ui.actionPrintPreview->disconnect();
+	ui.actionSaveAs->disconnect();
+	ui.removemessageButton->disconnect();
+
+	if (msg) {
+		if (tab == 0) {
+			// connect with own slot to remove multiple messages
+			connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
+		} else {
+			msg->connectAction(MessageWidget::ACTION_REMOVE, ui.removemessageButton);
+		}
+		msg->connectAction(MessageWidget::ACTION_REPLY, ui.replymessageButton);
+		msg->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.replyallmessageButton);
+		msg->connectAction(MessageWidget::ACTION_FORWARD, ui.forwardmessageButton);
+		msg->connectAction(MessageWidget::ACTION_PRINT, ui.printbutton);
+		msg->connectAction(MessageWidget::ACTION_PRINT, ui.actionPrint);
+		msg->connectAction(MessageWidget::ACTION_PRINT_PREVIEW, ui.actionPrintPreview);
+		msg->connectAction(MessageWidget::ACTION_SAVE_AS, ui.actionSaveAs);
+	}
+}
+
+void MessagesDialog::updateInterface()
+{
+	int count = 0;
+
+	int tab = ui.tabWidget->currentIndex();
+
+	if (tab == 0) {
+		count = getSelectedMsgCount(NULL, NULL, NULL, NULL);
+	} else {
+		MessageWidget *msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
+		if (msg && msg->msgId().empty() == false) {
+			count = 1;
+		}
+	}
+
+	ui.replymessageButton->setEnabled(count == 1);
+	ui.replyallmessageButton->setEnabled(count == 1);
+	ui.forwardmessageButton->setEnabled(count == 1);
+	ui.printbutton->setEnabled(count == 1);
+	ui.actionPrint->setEnabled(count == 1);
+	ui.actionPrintPreview->setEnabled(count == 1);
+	ui.actionSaveAs->setEnabled(count == 1);
+	ui.removemessageButton->setEnabled(count >= 1);
+	ui.tagButton->setEnabled(count >= 1);
 }

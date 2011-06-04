@@ -27,6 +27,8 @@
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
+class MessageWidget;
+
 class MessagesDialog : public MainPage 
 {
   Q_OBJECT
@@ -50,7 +52,6 @@ public slots:
 private slots:
   /** Create the context popup menu and it's submenus */
   void messageslistWidgetCostumPopupMenu( QPoint point );
-  void msgfilelistWidgetCostumPopupMenu(QPoint);
   void folderlistWidgetCostumPopupMenu(QPoint);
 
   void changeBox( int newrow );
@@ -61,18 +62,10 @@ private slots:
   void doubleClicked(const QModelIndex &);
 
   void newmessage();
+  void openAsWindow();
+  void openAsTab();
   void editmessage();
 
-  void replytomessage();
-  void replyallmessage();
-  void forwardmessage();
-
-  void print();
-  void printpreview();
-  
-  bool fileSave();
-  bool fileSaveAs();
-  
   void removemessage();
   void undeletemessage();
 
@@ -82,17 +75,7 @@ private slots:
 
   void emptyTrash();
 
-  void getcurrentrecommended();
-  void getallrecommended();
-
-  /* handle splitter */
-  void togglefileview();
-  
-  void buttonstextbesideicon();
-  void buttonsicononly();
-  void buttonstextundericon();
-  
-  void loadToolButtonsettings();
+  void buttonStyle();
   
   void filterRegExpChanged();
   void filterColumnChanged();
@@ -101,6 +84,11 @@ private slots:
   void tagAboutToShow();
   void tagSet(int tagId, bool set);
   void tagRemoveAll();
+
+  void tabChanged(int tab);
+  void tabCloseRequested(int tab);
+
+  void updateInterface();
 
 private:
   class LockUpdate
@@ -119,6 +107,8 @@ private:
   class QStandardItemModel *MessagesModel;
   QSortFilterProxyModel *proxyModel;
 
+  void connectActions();
+
   void updateMessageSummaryList();
   void insertMsgTxtAndFiles(QModelIndex index = QModelIndex(), bool bSetToRead = true);
 
@@ -126,38 +116,30 @@ private:
   void setMsgAsReadUnread(const QList<int> &Rows, bool read);
   void setMsgStar(const QList<int> &Rows, bool mark);
 
-  void setCurrentFileName(const QString &fileName);
-
   int getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread, QList<int> *pRowsStar);
   bool isMessageRead(int nRow);
   bool hasMessageStar(int nRow);
 
-  /* internal handle splitter */
-  void togglefileview_internal();
-
-  void processSettings(bool bLoad);
-
-  void clearTagLabels();
-  void showTagLabels();
+  void processSettings(bool load);
 
   void setToolbarButtonStyle(Qt::ToolButtonStyle style);
   void fillTags();
+
+  void closeTab(const std::string &msgId);
+
   bool m_bProcessSettings;
   bool m_bInChange;
   int m_nLockUpdate; // use with LockUpdate
 
   enum { LIST_NOTHING, LIST_BOX, LIST_TAG } m_eListMode;
 
-  std::string mCurrCertId;
   std::string mCurrMsgId;
-  QList<QLabel*> tagLabels;
-
-  QString fileName;
-  QFont mFont;
 
   // timer and index for showing message
   QTimer *timer;
   QModelIndex timerIndex;
+
+  MessageWidget *msgWidget;
 
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;
