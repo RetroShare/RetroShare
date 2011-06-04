@@ -141,6 +141,8 @@ class RetroshareDirModel : public QAbstractItemModel
 //
 class TreeStyle_RDM: public RetroshareDirModel
 {
+	Q_OBJECT
+
 	public:
 		TreeStyle_RDM(bool mode)
 			: RetroshareDirModel(mode)
