@@ -41,9 +41,6 @@
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
-#define IMAGE_MESSAGEREPLY	   ":/images/mail_reply.png"
-#define IMAGE_MESSAGEREPLYALL  ":/images/mail_replyall.png"
-#define IMAGE_MESSAGEFORWARD   ":/images/mail_forward.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
@@ -252,12 +249,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
 
-    QMenu * printmenu = new QMenu();
+    QMenu *printmenu = new QMenu();
     printmenu->addAction(ui.actionPrint);
     printmenu->addAction(ui.actionPrintPreview);
     ui.printbutton->setMenu(printmenu);
 
-    QMenu * viewmenu = new QMenu();
+    QMenu *viewmenu = new QMenu();
     viewmenu->addAction(ui.actionTextBesideIcon);
     viewmenu->addAction(ui.actionIconOnly);
     //viewmenu->addAction(ui.actionTextUnderIcon);
@@ -559,18 +556,14 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     contextMnu.addSeparator();
 
-    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to Message"), this, SLOT(replytomessage()));
-    if (nCount != 1) {
-        action->setDisabled(true);
-    }
-    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREPLYALL), tr("Reply to All"), this, SLOT(replyallmessage()));
-    if (nCount != 1) {
-        action->setDisabled(true);
-    }
-    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEFORWARD), tr("Forward Message"), this, SLOT(forwardmessage()));
-    if (nCount != 1) {
-        action->setDisabled(true);
-    }
+    contextMnu.addAction(ui.actionReply);
+    ui.actionReply->setEnabled(nCount == 1);
+
+    contextMnu.addAction(ui.actionReplyAll);
+    ui.actionReplyAll->setEnabled(nCount == 1);
+
+    contextMnu.addAction(ui.actionForward);
+    ui.actionForward->setEnabled(nCount == 1);
 
     contextMnu.addSeparator();
 
@@ -1935,6 +1928,17 @@ void MessagesDialog::connectActions()
 	ui.actionPrintPreview->disconnect();
 	ui.actionSaveAs->disconnect();
 	ui.removemessageButton->disconnect();
+
+	ui.actionReply->disconnect();
+	ui.actionReplyAll->disconnect();
+	ui.actionForward->disconnect();
+
+	if (msgWidget) {
+		// connect actions
+		msg->connectAction(MessageWidget::ACTION_REPLY, ui.actionReply);
+		msg->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.actionReplyAll);
+		msg->connectAction(MessageWidget::ACTION_FORWARD, ui.actionForward);
+	}
 
 	if (msg) {
 		if (tab == 0) {
