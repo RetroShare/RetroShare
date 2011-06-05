@@ -6956,17 +6956,17 @@ p, li { white-space: pre-wrap; }
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+576"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+627"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+621"/>
         <source>New Message</source>
         <translation>Neue Nachricht</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-66"/>
+        <location line="+799"/>
         <source>Reply to Message</source>
         <translation>Antworten nur an Absender</translation>
     </message>
     <message>
-        <location line="-12"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-74"/>
         <source>Open in a new window</source>
         <translation>In neuem Fenster öffnen</translation>
     </message>
@@ -6976,20 +6976,20 @@ p, li { white-space: pre-wrap; }
         <translation>In neuem Tab öffnen</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+51"/>
         <source>Remove Message</source>
         <translation>Nachricht entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+393"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-412"/>
+        <location filename="../gui/MessagesDialog.ui" line="-406"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-408"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
         <location line="-5"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+728"/>
+        <location line="+736"/>
         <source>From</source>
         <translation>Von</translation>
     </message>
@@ -7071,16 +7071,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+175"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-51"/>
-        <location line="+823"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-62"/>
+        <location line="+834"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-829"/>
-        <location line="+842"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-840"/>
+        <location line="+853"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -7092,7 +7092,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-842"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-853"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
     </message>
@@ -7165,7 +7165,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-407"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-691"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-688"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
@@ -7205,7 +7205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gekennzeichnet</translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+163"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
@@ -7220,12 +7220,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichten entfernen</translation>
     </message>
     <message>
-        <location line="-40"/>
+        <location filename="../gui/MessagesDialog.ui" line="+574"/>
         <source>Forward Message</source>
         <translation>Weiterleiten</translation>
     </message>
     <message>
-        <location line="-367"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-403"/>
         <source>Click to sort by attachments</source>
         <translation>Klicken, um nach Anhang zu sortieren</translation>
     </message>
@@ -7241,12 +7241,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <location line="+720"/>
+        <location line="+728"/>
         <source>Click to sort by from</source>
         <translation>Klicken, um nach Von zu sortieren</translation>
     </message>
     <message>
-        <location line="-719"/>
+        <location line="-727"/>
         <source>Click to sort by date</source>
         <translation>Klicken, um nach Datum zu sortieren</translation>
     </message>
@@ -7272,7 +7272,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Empfohlene Dateien einblenden</translation>
     </message>
     <message>
-        <location line="+721"/>
+        <location line="+729"/>
         <source>Click to sort by to</source>
         <translation>Klicken, um nach Empfänger zu sortieren</translation>
     </message>
@@ -7293,8 +7293,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-676"/>
-        <location line="+313"/>
+        <location filename="../gui/MessagesDialog.ui" line="-9"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-684"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
     </message>
@@ -7306,13 +7306,13 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alle Dateien runterladen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+427"/>
+        <location line="-138"/>
         <source>Total Inbox:</source>
         <translation>Posteingang gesamt:</translation>
     </message>
     <message>
         <location line="-272"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-366"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-53"/>
         <source>Content</source>
         <translation>Inhalt</translation>
     </message>
@@ -7331,8 +7331,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+172"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+601"/>
-        <location line="+869"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+598"/>
+        <location line="+880"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
@@ -7355,7 +7355,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Neues Schlagwort...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1187"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1199"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
     </message>
@@ -7380,8 +7380,8 @@ p, li { white-space: pre-wrap; }
         <translation>Papierkorb leeren</translation>
     </message>
     <message>
-        <location line="+240"/>
-        <location line="+858"/>
+        <location line="+241"/>
+        <location line="+869"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
@@ -7396,12 +7396,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Editieren...</translation>
     </message>
     <message>
-        <location line="-719"/>
+        <location line="-727"/>
         <source>Click to sort by star</source>
         <translation>Klicken, um nach Kennzeichnung zu sortieren</translation>
     </message>
     <message>
-        <location line="+1459"/>
+        <location line="+703"/>
+        <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
+        <translation>Es sind keine gekennzeichneten Nachrichten vorhanden. Durch die Kennzeichnung kannst du Nachrichten mit einem speziellen Status versehen, sodass sie leichter zu finden sind. Klicke zum Kennzeichnen einer Nachricht auf den hellgrauen Stern neben der jeweiligen Nachricht.</translation>
+    </message>
+    <message>
+        <location line="+764"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>

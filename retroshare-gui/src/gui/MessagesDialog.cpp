@@ -846,6 +846,7 @@ void MessagesDialog::insertMessages()
     uint32_t quickViewId = 0;
     QString boxText;
     QIcon boxIcon;
+    QString placeholderText;
 
     switch (m_eListMode) {
     case LIST_NOTHING:
@@ -898,8 +899,19 @@ void MessagesDialog::insertMessages()
                 boxText = item->text();
                 boxIcon = item->icon();
 
-                if (quickViewType == QUICKVIEW_TYPE_NOTHING) {
+                switch (quickViewType) {
+                case QUICKVIEW_TYPE_NOTHING:
                     doFill = false;
+                    break;
+                case QUICKVIEW_TYPE_STATIC:
+                    switch (quickViewId) {
+                    case QUICKVIEW_STATIC_ID_STARRED:
+                        placeholderText = tr("No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.");
+                        break;
+                    }
+                    break;
+                case QUICKVIEW_TYPE_TAG:
+                    break;
                 }
             } else {
                 doFill = false;
@@ -913,6 +925,7 @@ void MessagesDialog::insertMessages()
 
     ui.tabWidget->setTabText (0, boxText);
     ui.tabWidget->setTabIcon (0, boxIcon);
+    ui.messagestreeView->setPlaceholderText(placeholderText);
 
     if (msgbox == RS_MSG_INBOX) {
         MessagesModel->setHeaderData(COLUMN_FROM, Qt::Horizontal, tr("From"));

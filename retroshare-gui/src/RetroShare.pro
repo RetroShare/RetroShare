@@ -310,6 +310,7 @@ HEADERS +=  rshare.h \
             gui/common/PeerDefs.h \
             gui/common/PopularityDefs.h \
             gui/common/GroupTreeWidget.h \
+            gui/common/RSTreeView.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -523,6 +524,7 @@ SOURCES +=  main.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/PopularityDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
+            gui/common/RSTreeView.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
