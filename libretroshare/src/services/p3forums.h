@@ -97,7 +97,7 @@ std::string createForumMsg(std::string fId, std::string pId,
 std::string mForumsDir;
 std::list<RsItem *> mSaveList; // store save data
 
-std::list<RsForumReadStatus *> mReadStatus;
+std::map<std::string, RsForumReadStatus*> mReadStatus;
 
 };
 

@@ -233,7 +233,7 @@ bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &
 
 	getParentMsgList(fId, pId, msgIds);
 
-        std::list<std::string> msgDummyIds;
+	std::list<std::string> msgDummyIds;
 	getDummyParentMsgList(fId, pId, msgDummyIds);
 
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
@@ -357,6 +357,9 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 		return false;
 	}
 
+	// return id
+	info.msgId = mId;
+
 	return setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ, FORUM_MSG_STATUS_MASK);
 }
 
@@ -365,28 +368,18 @@ bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,co
 	{
 		RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
-		std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
-
-		for(; lit != mReadStatus.end(); lit++)
+		std::map<std::string, RsForumReadStatus*>::iterator mit = mReadStatus.find(fId);
+		if (mit != mReadStatus.end())
 		{
-
-			if((*lit)->forumId == fId)
-			{
-					RsForumReadStatus* rsi = *lit;
-					rsi->msgReadStatus[mId] &= ~statusMask;
-					rsi->msgReadStatus[mId] |= (status & statusMask);
-					break;
-			}
-
-		}
-
-		// if forum id does not exist create one
-		if(lit == mReadStatus.end())
-		{
+			RsForumReadStatus* rsi = mit->second;
+			rsi->msgReadStatus[mId] &= ~statusMask;
+			rsi->msgReadStatus[mId] |= (status & statusMask);
+		} else {
+			// if forum id does not exist create one
 			RsForumReadStatus* rsi = new RsForumReadStatus();
 			rsi->forumId = fId;
 			rsi->msgReadStatus[mId] = status & statusMask;
-			mReadStatus.push_back(rsi);
+			mReadStatus[fId] = rsi;
 			mSaveList.push_back(rsi);
 		}
 		
@@ -400,33 +393,22 @@ bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,co
 
 bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status)
 {
-
 	status = 0;
 
 	RsStackMutex stack(distribMtx);
 
-	std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
+	std::map<std::string, RsForumReadStatus*>::iterator fit = mReadStatus.find(fId);
 
-	for(; lit != mReadStatus.end(); lit++)
-	{
-
-		if((*lit)->forumId == fId)
-		{
-				break;
-		}
-
-	}
-
-	if(lit == mReadStatus.end())
+	if (fit == mReadStatus.end())
 	{
 		return false;
 	}
 
-	std::map<std::string, uint32_t >::iterator mit = (*lit)->msgReadStatus.find(mId);
+	std::map<std::string, uint32_t >::iterator rit = fit->second->msgReadStatus.find(mId);
 
-	if(mit != (*lit)->msgReadStatus.end())
+	if(rit != fit->second->msgReadStatus.end())
 	{
-		status = mit->second;
+		status = rit->second;
 		return true;
 	}
 
@@ -569,28 +551,22 @@ bool p3Forums::getMessageCount(const std::string &fId, unsigned int &newCount, u
 		if (grpFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
 			std::list<std::string> msgIds;
 			if (getAllMsgList(fId, msgIds)) {
-				std::list<std::string>::iterator mit;
 
 				RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
-				std::list<RsForumReadStatus *>::iterator lit;
-				for(lit = mReadStatus.begin(); lit != mReadStatus.end(); lit++) {
-					if ((*lit)->forumId == fId) {
-						break;
-					}
-				}
-
-				if (lit == mReadStatus.end()) {
+				std::map<std::string, RsForumReadStatus*>::iterator fit = mReadStatus.find(fId);
+				if (fit == mReadStatus.end()) {
 					// no status available -> all messages are new
 					newCount += msgIds.size();
 					unreadCount += msgIds.size();
 					continue;
 				}
 
+				std::list<std::string>::iterator mit;
 				for (mit = msgIds.begin(); mit != msgIds.end(); mit++) {
-					std::map<std::string, uint32_t >::iterator rit = (*lit)->msgReadStatus.find(*mit);
+					std::map<std::string, uint32_t >::iterator rit = fit->second->msgReadStatus.find(*mit);
 
-					if (rit == (*lit)->msgReadStatus.end()) {
+					if (rit == fit->second->msgReadStatus.end()) {
 						// no status available -> message is new
 						newCount++;
 						unreadCount++;
@@ -799,7 +775,7 @@ bool p3Forums::childLoadList(std::list<RsItem* >& configSaves)
 	{
 		if(NULL != (drs = dynamic_cast<RsForumReadStatus* >(*it)))
 		{
-			mReadStatus.push_back(drs);
+			mReadStatus[drs->forumId] = drs;
 			mSaveList.push_back(drs);
 		}
 		else

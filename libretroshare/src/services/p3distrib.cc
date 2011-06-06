@@ -402,7 +402,7 @@ void p3GroupDistrib::updateCacheDocument()
 	pCacheId pCid;
 
 	int count = 0;
-	int count2 = 0, count3 = 0;
+//	int count2 = 0, count3 = 0;
 
 	for(; msgIt != mMsgHistPending.end(); msgIt++)
 	{
@@ -2321,7 +2321,7 @@ void p3GroupDistrib::getPopularGroupList(uint32_t popMin, uint32_t popMax, std::
 
 
 /* get Msg Lists */
-bool p3GroupDistrib::getAllMsgList(std::string grpId, std::list<std::string> &msgIds)
+bool p3GroupDistrib::getAllMsgList(const std::string& grpId, std::list<std::string> &msgIds)
 {
 
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
@@ -2346,7 +2346,7 @@ bool p3GroupDistrib::getAllMsgList(std::string grpId, std::list<std::string> &ms
 	return true;
 }
 
-bool p3GroupDistrib::getParentMsgList(std::string grpId, std::string pId, 
+bool p3GroupDistrib::getParentMsgList(const std::string& grpId, const std::string& pId,
 						std::list<std::string> &msgIds)
 {
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
@@ -2373,7 +2373,7 @@ bool p3GroupDistrib::getParentMsgList(std::string grpId, std::string pId,
 	return true;
 }
 
-bool p3GroupDistrib::getTimePeriodMsgList(std::string grpId, uint32_t timeMin, 
+bool p3GroupDistrib::getTimePeriodMsgList(const std::string& grpId, uint32_t timeMin,
 						uint32_t timeMax, std::list<std::string> &msgIds)
 {
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
@@ -2397,7 +2397,7 @@ bool p3GroupDistrib::getTimePeriodMsgList(std::string grpId, uint32_t timeMin,
 }
 
 
-GroupInfo *p3GroupDistrib::locked_getGroupInfo(std::string grpId)
+GroupInfo *p3GroupDistrib::locked_getGroupInfo(const std::string& grpId)
 {
 	/************* ALREADY LOCKED ************/
 	std::map<std::string, GroupInfo>::iterator git;
@@ -2409,7 +2409,7 @@ GroupInfo *p3GroupDistrib::locked_getGroupInfo(std::string grpId)
 }
 
 
-RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(std::string grpId, std::string msgId)
+RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(const std::string& grpId, const std::string& msgId)
 {
 
 	/************* ALREADY LOCKED ************/
@@ -2765,7 +2765,6 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 	RsSerialType* childSer = createSerialiser();
 	grpCachePair gcPair;
 	pCacheId cId;
-	bool cached = false;
 	for(lit = load.begin(); lit != load.end(); lit++)
 	{
 		/* decide what type it is */
@@ -2782,6 +2781,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 			if(loadGroup(newGrp, false)){
 
 #ifdef ENABLE_CACHE_OPT
+				bool cached = false;
 				RsStackMutex stack(distribMtx);
 
 				if(!locked_historyCached(newGrp->grpId, cached)){
@@ -5117,7 +5117,7 @@ bool p3GroupDistrib::locked_printDummyMsgs(GroupInfo &grp)
 /***** These Functions are used by the children classes to access the dummyData
  ****/
 
-bool p3GroupDistrib::getDummyParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds)
+bool p3GroupDistrib::getDummyParentMsgList(const std::string& grpId, const std::string& pId, std::list<std::string> &msgIds)
 {
 
 #ifdef DISTRIB_DUMMYMSG_DEBUG
@@ -5159,9 +5159,8 @@ bool p3GroupDistrib::getDummyParentMsgList(std::string grpId, std::string pId, s
 }
 
 
-RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(std::string grpId, std::string msgId)
+RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(const std::string& grpId, const std::string& msgId)
 {
-
 	locked_processHistoryCached(grpId);
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg(grpId:" << grpId << "," << msgId << ")";

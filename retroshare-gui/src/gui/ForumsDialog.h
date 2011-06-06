@@ -91,6 +91,8 @@ private slots:
     void filterRegExpChanged();
     void clearFilter();
 
+    void generateMassData();
+
 private:
     void insertForums();
     void insertThreads();
@@ -112,7 +114,7 @@ private:
     void togglethreadview_internal();
 
     void FilterItems();
-    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
+    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn);
 
     bool m_bProcessSettings;
 
@@ -123,12 +125,12 @@ private:
 
     std::string mCurrForumId;
     std::string mCurrThreadId;
-    bool m_bIsForumSubscribed;
-    bool m_bIsForumAdmin;
+    bool isForumSubscribed;
+    bool isForumAdmin;
 
     QFont m_ForumNameFont;
-    int m_LastViewType;
-    std::string m_LastForumID;
+    int lastViewType;
+    std::string lastForumID;
 
     /** Qt Designer generated object */
     Ui::ForumsDialog ui;

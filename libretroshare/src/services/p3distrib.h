@@ -545,14 +545,14 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 
 			/* get Msg Lists */
-		bool 	getAllMsgList(std::string grpId, std::list<std::string> &msgIds);
-		bool 	getParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds);
-		bool 	getTimePeriodMsgList(std::string grpId, uint32_t timeMin,
+		bool 	getAllMsgList(const std::string& grpId, std::list<std::string> &msgIds);
+		bool 	getParentMsgList(const std::string& grpId, const std::string& pId, std::list<std::string> &msgIds);
+		bool 	getTimePeriodMsgList(const std::string& grpId, uint32_t timeMin,
 							uint32_t timeMax, std::list<std::string> &msgIds);
 
 
-		GroupInfo *locked_getGroupInfo(std::string grpId);
-		RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
+		GroupInfo *locked_getGroupInfo(const std::string& grpId);
+		RsDistribMsg *locked_getGroupMsg(const std::string& grpId, const std::string& msgId);
 
 		/*!
 		 * for retrieving the grpList for which public keys are available
@@ -834,8 +834,8 @@ bool 	locked_printAllDummyMsgs();
 bool 	locked_printDummyMsgs(GroupInfo &info);
 
 	/* access the dummy msgs */
-bool    getDummyParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds);
-RsDistribDummyMsg *locked_getGroupDummyMsg(std::string grpId, std::string msgId);
+bool    getDummyParentMsgList(const std::string& grpId, const std::string& pId, std::list<std::string> &msgIds);
+RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::string& msgId);
 
 
 	/* key cache functions - we use .... (not overloaded)
