@@ -1,6 +1,37 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+      - Optimized the functions for the forum messages.
+      - added a star functionality to forums
+      - placed private message editing into a separate window
+      - added a tab to graphically display turtle router statistics
+      - added automatic handling of turtle requests/search conjestion cases
+      - patched for compilation on OpenSuze11.4
+      - put links to peer and signers in certificate dialog
+      - updated french translation
+      - added copy/paste functionality of RS links to friends keys
+      - various GUI tweaks
+      - added to RetroShare Help page noew commands entry for "-r retroshare://..."
+      - added history cache optimisation to subscribed/client groups (functionality is now disabled)
+      - Added new RetroShare link format to write a message retroshare://message?id=...[&subject=...]
+      - Added new RetroShare link format to start a search retroshare://search?keywords=...
+      - Enabled on Private Chat to display for the status string smileys, when there is smiley codes used.
+
+  * Bug fixes
+      - Channels: Fixed bug related to opening cache hist file in text mode for windows
+      - Chat:     Sending large messages now works, thanks to RsChatMsgItem splitting (not 100% backward compatible, but avoids crashing)
+      - Chat:     Removed crash due to dynamic_cast onto a deleted pointer.
+      - Dbase:    Removed the difference of the separator for Linux and Windows.
+      - Dbase:    Removed extra "/" of the filename (e.g. "E://") of the hashed file when sharing a whole drive.
+      - Forums:   Fixed drag and drop of files to a forum message with utf8 chars.
+      - General:  Fixed recommend friend.
+      - Search:   Fixed sorting by date in search
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4179~lucid) lucid; urgency=low
+
+  * Improvements
       - updated packaging for ubuntu natty, removed dependency on qt4-opengl
       - updated french/german translations 
       - updated icons 
@@ -104,6 +135,6 @@ retroshare (0.5.1-0.4069~lucid) lucid; urgency=low
 retroshare (0.5.1-0.4059~lucid) lucid; urgency=low
 
   * Release 0.5.1: 
-  		New features (DHT, Channels, Network View), Improved stability w.r.t. previous version 0.5.0g
+      New features (DHT, Channels, Network View), Improved stability w.r.t. previous version 0.5.0g
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 24 Feb 2010 21:35:46 +0100
