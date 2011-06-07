@@ -22,11 +22,14 @@
 #ifndef _FORUMSDIALOG_H
 #define _FORUMSDIALOG_H
 
+#include <QThread>
+
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
 #include "ui_ForumsDialog.h"
 
 class ForumInfo;
+class ForumsFillThread;
 
 class ForumsDialog : public RsAutoUpdatePage 
 {
@@ -93,6 +96,9 @@ private slots:
 
     void generateMassData();
 
+    void fillThreadFinished();
+    void fillThreadProgress(int current, int count);
+
 private:
     void insertForums();
     void insertThreads();
@@ -101,8 +107,8 @@ private:
     void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
 
     void forumSubscribe(bool subscribe);
-    void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
-    void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
+    void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
+    void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
 
     int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
     void setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead);
@@ -125,15 +131,46 @@ private:
 
     std::string mCurrForumId;
     std::string mCurrThreadId;
-    bool isForumSubscribed;
-    bool isForumAdmin;
+    int subscribeFlags;
 
     QFont m_ForumNameFont;
     int lastViewType;
     std::string lastForumID;
 
+    ForumsFillThread *fillThread;
+
     /** Qt Designer generated object */
     Ui::ForumsDialog ui;
+};
+
+class ForumsFillThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    ForumsFillThread(ForumsDialog *parent);
+    ~ForumsFillThread();
+
+    void run();
+    void stop();
+    bool wasStopped() { return stopped; }
+
+signals:
+    void progress(int current, int count);
+
+public:
+    std::string forumId;
+    int filterColumn;
+    int subscribeFlags;
+    bool fillComplete;
+    int viewType;
+    bool expandNewMessages;
+
+    QList<QTreeWidgetItem*> items;
+    QList<QTreeWidgetItem*> itemToExpand;
+
+private:
+    volatile bool stopped;
 };
 
 #endif

@@ -149,7 +149,7 @@ static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtm
 
 QString formatText(const QString &text, unsigned int flag)
 {
-	if (flag == 0) {
+	if (flag == 0 || text.isEmpty()) {
 		// nothing to do
 		return text;
 	}

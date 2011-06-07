@@ -51,7 +51,6 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:
-    void createThreadTerminated();
     void createThreadFinished();
     void createThreadProgress(int current, int count);
 
@@ -104,6 +103,8 @@ public:
     ~ImHistoryBrowserCreateItemsThread();
 
     void run();
+    void stop();
+    bool wasStopped() { return stopped; }
 
 signals:
     void progress(int current, int count);
@@ -114,6 +115,7 @@ public:
 private:
     IMHistoryKeeper &m_historyKeeper;
     ImHistoryBrowser *m_historyBrowser;
+    volatile bool stopped;
 };
 
 #endif

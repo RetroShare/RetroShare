@@ -289,7 +289,7 @@ border-image: url(:/images/closepressed.png)
         <number>1000</number>
        </property>
        <property name="value">
-        <number>24</number>
+        <number>0</number>
        </property>
        <property name="textVisible">
         <bool>false</bool>

@@ -45,6 +45,7 @@ ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBr
     : QThread(parent), m_historyKeeper(histKeeper)
 {
     m_historyBrowser = parent;
+    stopped = false;
 }
 
 ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
@@ -58,6 +59,13 @@ ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
     m_items.clear();
 }
 
+void ImHistoryBrowserCreateItemsThread::stop()
+{
+    disconnect();
+    stopped = true;
+    wait();
+}
+
 void ImHistoryBrowserCreateItemsThread::run()
 {
     QList<IMHistoryItem> historyItems;
@@ -67,6 +75,9 @@ void ImHistoryBrowserCreateItemsThread::run()
     int current = 0;
 
     foreach(IMHistoryItem item, historyItems) {
+        if (stopped) {
+            break;
+        }
         QListWidgetItem *itemWidget = m_historyBrowser->createItem(item);
         if (itemWidget) {
             m_items.push_back(itemWidget);
@@ -129,7 +140,6 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &h
 
     m_createThread = new ImHistoryBrowserCreateItemsThread(this, historyKeeper);
     connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
-    connect(m_createThread, SIGNAL(terminated()), this, SLOT(createThreadTerminated()));
     connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
     m_createThread->start();
 }
@@ -139,14 +149,8 @@ ImHistoryBrowser::~ImHistoryBrowser()
     Settings->setValueToGroup("HistorieBrowser", "Geometry", saveGeometry());
 
     if (m_createThread) {
-        m_createThread->terminate();
-    }
-}
-
-void ImHistoryBrowser::createThreadTerminated()
-{
-    if (m_createThread == sender()) {
-        ui.progressBar->setVisible(false);
+        m_createThread->stop();
+        delete(m_createThread);
         m_createThread = NULL;
     }
 }
@@ -156,28 +160,30 @@ void ImHistoryBrowser::createThreadFinished()
     if (m_createThread == sender()) {
         ui.progressBar->setVisible(false);
 
-        // append created items
-        QList<QListWidgetItem*>::iterator it;
-        for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); it++) {
-            ui.listWidget->addItem(*it);
+        if (!m_createThread->wasStopped()) {
+            // append created items
+            QList<QListWidgetItem*>::iterator it;
+            for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); it++) {
+                ui.listWidget->addItem(*it);
+            }
+
+            // clear list
+            m_createThread->m_items.clear();
+
+            filterRegExpChanged();
+
+            // dummy call for set buttons
+            itemSelectionChanged();
+
+            m_createThread->deleteLater();
+            m_createThread = NULL;
+
+            QList<IMHistoryItem>::iterator histIt;
+            for (histIt = m_itemsAddedOnLoad.begin(); histIt != m_itemsAddedOnLoad.end(); histIt++) {
+                historyAdd(*histIt);
+            }
+            m_itemsAddedOnLoad.clear();
         }
-
-        // clear list
-        m_createThread->m_items.clear();
-
-        filterRegExpChanged();
-
-        // dummy call for set buttons
-        itemSelectionChanged();
-
-        delete(m_createThread);
-        m_createThread = NULL;
-
-        QList<IMHistoryItem>::iterator histIt;
-        for (histIt = m_itemsAddedOnLoad.begin(); histIt != m_itemsAddedOnLoad.end(); histIt++) {
-            historyAdd(*histIt);
-        }
-        m_itemsAddedOnLoad.clear();
     }
 }
 
