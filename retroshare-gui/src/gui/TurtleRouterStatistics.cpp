@@ -96,11 +96,12 @@ class TRHistogram
 				}
 			}
 
+			int max_bi = std::max(max_hits,max_depth) ;
 			int p=0 ;
 
 			for(it=depths.begin();it!=depths.end();++it,++p)
 				for(int i=0;i<MaxDepth;++i)
-					painter->fillRect(ox+MaxTime*cellx+20+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_depth)) ;
+					painter->fillRect(ox+MaxTime*cellx+20+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_bi)) ;
 			
 			painter->setPen(QColor::fromRgb(0,0,0)) ;
 			painter->drawRect(ox+MaxTime*cellx+20,oy,MaxDepth*cellx,p*celly) ;
@@ -109,19 +110,22 @@ class TRHistogram
 				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
 
 			p=0 ;
+			int great_total = 0 ;
+
 			for(it=hits.begin();it!=hits.end();++it,++p)
 			{
 				int total = 0 ;
 
 				for(int i=0;i<MaxTime;++i)
 				{
-					painter->fillRect(ox+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_hits)) ;
+					painter->fillRect(ox+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_bi)) ;
 					total += it->second[i] ;
 				}
 
 				painter->setPen(QColor::fromRgb(0,0,0)) ;
 				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx,oy+(p+1)*celly,TurtleRouterStatistics::getPeerName(it->first)) ;
 				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+(p+1)*celly,"("+QString::number(total)+")") ;
+				great_total += total ;
 			}
 
 			painter->drawRect(ox,oy,MaxTime*cellx,p*celly) ;
@@ -130,21 +134,37 @@ class TRHistogram
 				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
 			for(int i=0;i<MaxDepth;i++)
 				painter->drawText(ox+MaxTime*cellx+20+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
+			painter->setPen(QColor::fromRgb(255,130,80)) ;
+			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+(p+1)*celly+4,"("+QString::number(great_total)+")");
 
-			oy += (p+1)*celly+4 ;
+			oy += (p+1)*celly+6 ;
 
+			painter->setPen(QColor::fromRgb(0,0,0)) ;
 			painter->drawText(ox,oy+celly,QObject::tr("(Age in seconds)"));
 			painter->drawText(ox+MaxTime*cellx+20,oy+celly,QObject::tr("(Depth)"));
+
+			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+celly,"("+QObject::tr("total")+")");
+
 			oy += 3*celly ;
 
 			// now, draw a scale
 
+			int last_hts = -1 ;
+			int cellid = 0 ;
+
 			for(int i=0;i<=10;++i)
 			{
-				painter->fillRect(ox+i*(cellx+20),oy,cellx,celly,colorScale(i/10.0f)) ;
-				painter->setPen(QColor::fromRgb(0,0,0)) ;
-				painter->drawRect(ox+i*(cellx+20),oy,cellx,celly) ;
-				painter->drawText(ox+i*(cellx+20)+cellx+4,oy+celly,QString::number((int)(max_hits*i/10.0))) ;
+				int hts = (int)(max_bi*i/10.0) ;
+
+				if(hts > last_hts)
+				{
+					painter->fillRect(ox+cellid*(cellx+22),oy,cellx,celly,colorScale(i/10.0f)) ;
+					painter->setPen(QColor::fromRgb(0,0,0)) ;
+					painter->drawRect(ox+cellid*(cellx+22),oy,cellx,celly) ;
+					painter->drawText(ox+cellid*(cellx+22)+cellx+4,oy+celly,QString::number(hts)) ;
+					last_hts = hts ;
+					++cellid ;
+				}
 			}
 
 			oy += celly*2 ;
