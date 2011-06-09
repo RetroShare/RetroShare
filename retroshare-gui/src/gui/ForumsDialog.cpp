@@ -491,6 +491,7 @@ static void CleanupItems (QList<QTreeWidgetItem *> &Items)
             delete (*Item);
         }
     }
+    Items.clear();
 }
 
 void ForumsDialog::forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo)
@@ -585,6 +586,10 @@ void ForumsDialog::changedForum(const QString &id)
 
 void ForumsDialog::changedThread ()
 {
+    if (fillThread) {
+        return;
+    }
+
     /* just grab the ids of the current item */
     QTreeWidgetItem *curr = ui.threadTreeWidget->currentItem();
 
@@ -718,13 +723,6 @@ void ForumsDialog::fillThreadFinished()
 
                 // clear list
                 fillThread->items.clear();
-
-                QList<QTreeWidgetItem*>::iterator Item;
-                for (Item = fillThread->itemToExpand.begin(); Item != fillThread->itemToExpand.end(); Item++) {
-                    if ((*Item)->isHidden() == false) {
-                        (*Item)->setExpanded(true);
-                    }
-                }
             } else {
                 FillThreads (fillThread->items, fillThread->expandNewMessages, fillThread->itemToExpand);
 
@@ -732,6 +730,12 @@ void ForumsDialog::fillThreadFinished()
                 CleanupItems (fillThread->items);
             }
 
+            QList<QTreeWidgetItem*>::iterator Item;
+            for (Item = fillThread->itemToExpand.begin(); Item != fillThread->itemToExpand.end(); Item++) {
+                if ((*Item)->isHidden() == false) {
+                    (*Item)->setExpanded(true);
+                }
+            }
             fillThread->itemToExpand.clear();
 
             if (ui.filterPatternLineEdit->text().isEmpty() == false) {
@@ -808,7 +812,6 @@ void ForumsDialog::insertThreads()
     ui.forumName->setText(QString::fromStdWString(fi.forumName));
 
     ui.progressBar->show();
-    ui.threadTreeWidget->clear();
 
     // create fill thread
     fillThread = new ForumsFillThread(this);
