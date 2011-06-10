@@ -144,6 +144,12 @@ void  CreateForumMsg::createMsg()
     QString name = misc::removeNewLine(ui.forumSubject->text());
     QString desc = ui.forumMessage->toHtml();
 
+	 if(desc == QTextDocument(ui.forumMessage->toPlainText()).toHtml())
+	 {
+		 desc = ui.forumMessage->toPlainText() ;
+		 std::cerr << "Optimized forum message to " << desc.length() << " bytes , instead of " << ui.forumMessage->toHtml().length() << std::endl;
+	 }
+
     if(name.isEmpty())
     {	/* error message */
         QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"),
