@@ -1,8 +1,8 @@
-#ifndef RS_UDP_PEER_RECV_H
-#define RS_UDP_PEER_RECV_H
+#ifndef RS_UDP_RELAY_H
+#define RS_UDP_RELAY_H
 
 /*
- * tcponudp/udppeer.h
+ * tcponudp/udprelay.h
  *
  * libretroshare.
  *
@@ -26,50 +26,7 @@
  *
  */
 
-#ifndef WINDOWS_SYS
-#include <netinet/in.h>
-#endif
-
-#include "util/rsthreads.h"
-
-#include <iosfwd>
-#include <list>
-#include <deque>
-
-#include "tcponudp/rsudpstack.h"
-
-class UdpPeer
-{
-	public:
-virtual ~UdpPeer() { return; }
-virtual void recvPkt(void *data, int size) = 0;
-};
-
-
-class UdpPeerReceiver: public UdpSubReceiver
-{
-	public:
-
-	UdpPeerReceiver(UdpPublisher *pub);
-virtual ~UdpPeerReceiver() { return; }
-
-	/* add a TCPonUDP stream */
-int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
-int 	removeUdpPeer(UdpPeer *peer);
-
-	/* callback for recved data (overloaded from UdpReceiver) */
-virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
-
-int     status(std::ostream &out);
-
-	private:
-
-	RsMutex peerMtx; /* for all class data (below) */
-
-	std::map<struct sockaddr_in, UdpPeer *> streams;
-
-};
-
+#include "tcponudp/udppeer.h"
 
 class UdpRelayReceiver: public UdpSubReceiver, public UdpPublisher
 {

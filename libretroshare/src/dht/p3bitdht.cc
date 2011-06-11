@@ -59,6 +59,13 @@ virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t statu
 	return mParent->ValueCallback(id, key, status);
 }
 
+virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
+                                        uint32_t mode, uint32_t point, uint32_t cbtype)
+{
+	// nothing here fore now!
+	//return mParent->ValueCallback(id, key, status);
+}
+
 	private:
 
 	p3BitDht *mParent;
