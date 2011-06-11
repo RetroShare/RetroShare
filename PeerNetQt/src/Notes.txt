@@ -1,0 +1,9 @@
+
+PeerNetQt.
+
+requires:
+ 1) libbitdht.
+ 2) tou.
+ 3) udp stack.
+ 4) forwarding.
+
