@@ -54,6 +54,7 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
+//#define DEBUG_MGR 1
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
@@ -423,9 +424,9 @@ void bdNodeManager::QueryRandomLocalNet()
 int bdNodeManager::status()
 {
 	/* do status of bdNode */
-#ifdef DEBUG_MGR
+//#ifdef DEBUG_MGR
 	printState();
-#endif
+//#endif
 
 	checkStatus();
 
@@ -434,10 +435,10 @@ int bdNodeManager::status()
 	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
 					BITDHT_PEER_STATUS_DHT_APPL);
 
-#ifdef DEBUG_MGR
+//#ifdef DEBUG_MGR
 	std::cerr << "BitDHT NetworkSize: " << mNetworkSize << std::endl;
 	std::cerr << "BitDHT App NetworkSize: " << mBdNetworkSize << std::endl;
-#endif
+//#endif
 
 	return 1;
 }
@@ -794,6 +795,11 @@ int bdNodeManager::getDhtValue(const bdNodeId *id, std::string key, std::string 
 	return 1;
 }
 
+int bdNodeManager::getDhtBucket(const int idx, bdBucket &bucket)
+{
+	return mNodeSpace.getDhtBucket(idx, bucket);
+}
+
 
 
         /***** Add / Remove Callback Clients *****/
@@ -870,7 +876,7 @@ void bdNodeManager::doPeerCallback(const bdId *id, uint32_t status)
 
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doPeerCallback()";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mFns->bdPrintId(std::cerr, id);
 	std::cerr << "status: " << status;
 	std::cerr << std::endl;
 #endif
@@ -899,6 +905,8 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_
         }
         return;
 }
+
+
 
         /******************* Internals *************************/
 int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in & from)
@@ -1006,12 +1014,12 @@ bdDebugCallback::~bdDebugCallback()
 {
 }
 
-int bdDebugCallback::dhtPeerCallback(const bdNodeId *id, uint32_t status)
+int bdDebugCallback::dhtPeerCallback(const bdId *id, uint32_t status)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtPeerCallback() Id: ";
 #endif
-	bdStdPrintNodeId(std::cerr, id);
+	bdStdPrintId(std::cerr, id);
 #ifdef DEBUG_MGR
 	std::cerr << " status: " << std::hex << status << std::dec << std::endl;
 #endif
@@ -1032,4 +1040,66 @@ int bdDebugCallback::dhtValueCallback(const bdNodeId *id, std::string key, uint3
 	return 1;
 }
 
+
+
+
+
+/******************* Connection Stuff ********************/
+
+
+
+void bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
+{
+	bdNode::requestConnection(laddr, target, mode);
+}
+
+void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
+{
+	if (answer)
+	{
+		AuthConnectionOk(srcId, proxyId, destId, mode, loc);
+	}
+	else
+	{
+		AuthConnectionNo(srcId, proxyId, destId, mode, loc);
+	}
+}
+
+
+        /***** Connections Requests *****/
+
+        // Overloaded from bdnode for external node callback. 
+void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int point, int cbtype)
+{
+	std::cerr << "bdNodeManager::callbackConnect()";
+	std::cerr << std::endl;
+
+#ifdef DEBUG_MGR
+#endif
+        /* search list */
+        std::list<BitDhtCallback *>::iterator it;
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        {
+                (*it)->dhtConnectCallback(srcId, proxyId, destId, mode, point, cbtype);
+        }
+        return;
+}
+
+int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
+		uint32_t mode, uint32_t point, uint32_t cbtype)
+{
+#ifdef DEBUG_MGR
+	std::cerr << "bdDebugCallback::dhtConnectCallback() Type: " << cbtype;
+	std::cerr << " srcId: ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << " proxyId: ";
+	bdStdPrintId(std::cerr, proxyId);
+	std::cerr << " destId: ";
+	bdStdPrintId(std::cerr, destId);
+	std::cerr << " mode: " << mode;
+	std::cerr << " point: " << point << std::endl;
+#endif
+
+	return 1;
+}
 

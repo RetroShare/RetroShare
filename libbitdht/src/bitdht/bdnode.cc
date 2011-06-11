@@ -80,7 +80,7 @@ void bdNode::restartNode()
 	bdPeer peer;
 	while(mStore.getPeer(&peer))
 	{
-		addPotentialPeer(&(peer.mPeerId));
+		addPotentialPeer(&(peer.mPeerId), NULL);
 	}
 }
 
@@ -317,21 +317,15 @@ void bdNode::iteration()
 		/* go through the possible queries */
 		if (query->nextQuery(id, targetNodeId))
 		{
-			/* push out query */
-			bdToken transId;
-			genNewTransId(&transId);
-			//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
-
-			msgout_find_node(&id, &transId, &targetNodeId);
-
 #ifdef DEBUG_NODE_MSGS 
-			std::cerr << "bdNode::iteration() Find Node Req for : ";
+			std::cerr << "bdNode::iteration() send_query(";
 			mFns->bdPrintId(std::cerr, &id);
-			std::cerr << " searching for : ";
+			std::cerr << ",";
 			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+			std::cerr << ")";
 			std::cerr << std::endl;
 #endif
-			mCounterQueryNode++;
+			send_query(&id, &targetNodeId);
 			sentMsgs++;
 			sentQueries++;
 		}
@@ -376,6 +370,26 @@ void bdNode::iteration()
 	//printQueries();
 }
 
+void bdNode::send_query(bdId *id, bdNodeId *targetNodeId)
+{
+	/* push out query */
+	bdToken transId;
+	genNewTransId(&transId);
+	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
+
+	msgout_find_node(id, &transId, targetNodeId);
+
+#ifdef DEBUG_NODE_MSGS 
+	std::cerr << "bdNode::send_query() Find Node Req for : ";
+	mFns->bdPrintId(std::cerr, &id);
+	std::cerr << " searching for : ";
+	mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+	std::cerr << std::endl;
+#endif
+	mCounterQueryNode++;
+}
+
+
 #define LPF_FACTOR  (0.90)
 
 void bdNode::doStats()
@@ -408,12 +422,31 @@ void bdNode::doStats()
 	mLpfRecvReplyQueryHash *= (LPF_FACTOR);  	
 	mLpfRecvReplyQueryHash += (1.0 - LPF_FACTOR) * mCounterRecvReplyQueryHash;	
 
+	// connection stats.
+	mLpfConnectRequest *= (LPF_FACTOR);  	
+	mLpfConnectRequest += (1.0 - LPF_FACTOR) * mCounterConnectRequest;	
+	mLpfConnectReply *= (LPF_FACTOR);  	
+	mLpfConnectReply += (1.0 - LPF_FACTOR) * mCounterConnectReply;	
+	mLpfConnectStart *= (LPF_FACTOR);  	
+	mLpfConnectStart += (1.0 - LPF_FACTOR) * mCounterConnectStart;	
+	mLpfConnectAck *= (LPF_FACTOR);  	
+	mLpfConnectAck += (1.0 - LPF_FACTOR) * mCounterConnectAck;	
+
+	mLpfRecvConnectRequest *= (LPF_FACTOR);  	
+	mLpfRecvConnectRequest += (1.0 - LPF_FACTOR) * mCounterRecvConnectRequest;	
+	mLpfRecvConnectReply *= (LPF_FACTOR);  	
+	mLpfRecvConnectReply += (1.0 - LPF_FACTOR) * mCounterRecvConnectReply;	
+	mLpfRecvConnectStart *= (LPF_FACTOR);  	
+	mLpfRecvConnectStart += (1.0 - LPF_FACTOR) * mCounterRecvConnectStart;	
+	mLpfRecvConnectAck *= (LPF_FACTOR);  	
+	mLpfRecvConnectAck += (1.0 - LPF_FACTOR) * mCounterRecvConnectAck;	
 
 	resetCounters();
 }
 
 void bdNode::printStats(std::ostream &out)
 {
+
 	out << "bdNode::printStats()" << std::endl;
 	out << "  Send                                                 Recv: ";
 	out << std::endl;
@@ -438,6 +471,24 @@ void bdNode::printStats(std::ostream &out)
 	out << "  mLpfRecvQueryHash/sec  : " << std::setw(10) << mLpfRecvQueryHash;
 	out << std::endl;
 	out << std::endl;
+
+	out << "  mLpfConnectRequest/sec : " << std::setw(10) << mLpfConnectRequest;
+	out << std::endl;
+	out << "  mLpfConnectReply/sec   : " << std::setw(10) << mLpfConnectReply;
+	out << std::endl;
+	out << "  mLpfConnectStart/sec   : " << std::setw(10) << mLpfConnectStart;
+	out << std::endl;
+	out << "  mLpfConnectAck/sec     : " << std::setw(10) << mLpfConnectAck;
+	out << std::endl;
+	out << "  mLpfRecvConnectReq/sec : " << std::setw(10) << mLpfRecvConnectRequest;
+	out << std::endl;
+	out << "  mLpfRecvConnReply/sec  : " << std::setw(10) << mLpfRecvConnectReply;
+	out << std::endl;
+	out << "  mLpfRecvConnStart/sec  : " << std::setw(10) << mLpfRecvConnectStart;
+	out << std::endl;
+	out << "  mLpfRecvConnectAck/sec : " << std::setw(10) << mLpfRecvConnectAck;
+	out << std::endl;
+	out << std::endl;
 }
 
 void bdNode::resetCounters()
@@ -456,6 +507,16 @@ void bdNode::resetCounters()
 	mCounterRecvQueryHash = 0;
 	mCounterRecvReplyFindNode = 0;
 	mCounterRecvReplyQueryHash = 0;
+
+	mCounterConnectRequest = 0;
+	mCounterConnectReply = 0;
+	mCounterConnectStart = 0;
+	mCounterConnectAck = 0;
+
+	mCounterRecvConnectRequest = 0;
+	mCounterRecvConnectReply = 0;
+	mCounterRecvConnectStart = 0;
+	mCounterRecvConnectAck = 0;
 }
 
 void bdNode::resetStats()
@@ -479,14 +540,14 @@ void bdNode::resetStats()
 }
 
 
-void bdNode::checkPotentialPeer(bdId *id)
+void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {
 	bool isWorthyPeer = false;
 	/* also push to queries */
 	std::list<bdQuery *>::iterator it;
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
 	{
-		if ((*it)->addPotentialPeer(id, 0))
+		if ((*it)->addPotentialPeer(id, src, 0))
 		{
 			isWorthyPeer = true;
 		}
@@ -494,12 +555,12 @@ void bdNode::checkPotentialPeer(bdId *id)
 
 	if (isWorthyPeer)
 	{
-		addPotentialPeer(id);
+		addPotentialPeer(id, src);
 	}
 }
 
 
-void bdNode::addPotentialPeer(bdId *id)
+void bdNode::addPotentialPeer(bdId *id, bdId *src)
 {
 	mPotentialPeers.push_back(*id);
 }
@@ -571,21 +632,23 @@ void bdNode::addQuery(const bdNodeId *id, uint32_t qflags)
 {
 
 	std::list<bdId> startList;
-        std::multimap<bdMetric, bdId> nearest;
-        std::multimap<bdMetric, bdId>::iterator it;
+	std::multimap<bdMetric, bdId> nearest;
+	std::multimap<bdMetric, bdId>::iterator it;
 
-        mNodeSpace.find_nearest_nodes(id, BITDHT_QUERY_START_PEERS, startList, nearest);
+	//mNodeSpace.find_nearest_nodes(id, BITDHT_QUERY_START_PEERS, startList, nearest, 0);
+
+	mNodeSpace.find_nearest_nodes(id, BITDHT_QUERY_START_PEERS, nearest);
 
 	fprintf(stderr, "bdNode::addQuery(");
 	mFns->bdPrintNodeId(std::cerr, id);
 	fprintf(stderr, ")\n");
 
-        for(it = nearest.begin(); it != nearest.end(); it++)
-        {
-                startList.push_back(it->second);
-        }
+	for(it = nearest.begin(); it != nearest.end(); it++)
+	{
+		startList.push_back(it->second);
+	}
 
-        bdQuery *query = new bdQuery(id, startList, qflags, mFns);
+	bdQuery *query = new bdQuery(id, startList, qflags, mFns);
 	mLocalQueries.push_back(query);
 }
 
@@ -645,12 +708,15 @@ void bdNode::processRemoteQuery()
 				case BD_QUERY_NEIGHBOURS:
 				{
 					/* search bdSpace for neighbours */
-					std::list<bdId> excludeList;
-					std::list<bdId> nearList;
+						//std::list<bdId> excludeList;
+					
+						std::list<bdId> nearList;
         				std::multimap<bdMetric, bdId> nearest;
         				std::multimap<bdMetric, bdId>::iterator it;
 
-        				mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, excludeList, nearest);
+						//mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, excludeList, nearest, 0);
+
+						mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, nearest);
 
         				for(it = nearest.begin(); it != nearest.end(); it++)
         				{
@@ -1588,7 +1654,7 @@ void bdNode::msgin_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> &
 	/* add neighbours to the potential list */
 	for(it = nodes.begin(); it != nodes.end(); it++)
 	{
-		checkPotentialPeer(&(*it));
+		checkPotentialPeer(&(*it), id);
 	}
 
 	/* received reply - so peer must be good */
@@ -1872,5 +1938,8 @@ bdNodeNetMsg::~bdNodeNetMsg()
 {
 	free(data);
 }
+
+
+
 
 

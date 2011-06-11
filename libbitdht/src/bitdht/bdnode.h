@@ -34,6 +34,8 @@
 #include "bitdht/bdhash.h"
 #include "bitdht/bdhistory.h"
 
+#include "bitdht/bdconnection.h"
+
 
 #define BD_QUERY_NEIGHBOURS		1
 #define BD_QUERY_HASH			2
@@ -106,12 +108,16 @@ class bdNode
 	virtual void addPeer(const bdId *id, uint32_t peerflags);
 
 	void printState();
-	void checkPotentialPeer(bdId *id);
-	void addPotentialPeer(bdId *id);
+	void checkPotentialPeer(bdId *id, bdId *src);
+	void addPotentialPeer(bdId *id, bdId *src);
 
 	void addQuery(const bdNodeId *id, uint32_t qflags);
 	void clearQuery(const bdNodeId *id);
 	void QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap);
+
+	/* connection functions */
+	void requestConnection(bdNodeId *id, uint32_t modes);
+	void allowConnection(bdNodeId *id, uint32_t modes);
 
 	void iterationOff();
 	void iteration();
@@ -127,6 +133,8 @@ void 	incomingMsg(struct sockaddr_in *addr, char *msg, int len);
 void	sendPkt(char *msg, int len, struct sockaddr_in addr);
 void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
+	/* internal assistance functions */
+	void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
 
 	/* output functions (send msg) */
 	void msgout_ping(bdId *id, bdToken *transId);
@@ -184,6 +192,65 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	void resetCounters();
 	void resetStats();
 
+
+	/****************************** Connection Code (in bdconnection.cc) ****************************/
+
+	/* Connections: Messages */
+
+	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status);
+	void msgin_connect_genmsg(bdId *id, bdToken *transId, int type,
+                                        bdId *srcAddr, bdId *destAddr, int mode, int status);
+
+	/* Connections: Initiation */
+
+	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+	int requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target);	
+	int requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+
+	int checkExistingConnectionAttempt(bdNodeId *target);
+	void addPotentialConnectionProxy(bdId *srcId, bdId *target);
+	void iterateConnectionRequests();
+
+	/* Connections: Outgoing */
+
+	int  startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	void AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+	void AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+	void iterateConnections();
+
+
+	/* Connections: Utility State */
+
+	bdConnection *findExistingConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
+	bdConnection *newConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
+	int cleanConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
+
+	int determinePosition(bdNodeId *sender, bdNodeId *src, bdNodeId *dest);
+	int determineProxyId(bdNodeId *sender, bdNodeId *src, bdNodeId *dest, bdNodeId *proxyId);
+
+	bdConnection *findExistingConnectionBySender(bdId *sender, bdId *src, bdId *dest);
+	bdConnection *newConnectionBySender(bdId *sender, bdId *src, bdId *dest);
+	int cleanConnectionBySender(bdId *sender, bdId *src, bdId *dest);
+
+	// Overloaded Generalised Connection Callback.
+	virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
+					int mode, int point, int cbtype);
+
+	/* Connections: */
+	int recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	int recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status);
+	int recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int bandwidth);
+	int recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+
+	private:
+
+	std::map<bdProxyTuple, bdConnection> mConnections;
+	std::map<bdNodeId, bdConnectionRequest> mConnectionRequests;
+
+
+	/****************************** Connection Code (in bdconnection.cc) ****************************/
+
 	protected:
 
 
@@ -218,6 +285,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	 double mCounterQueryHash;
 	 double mCounterReplyFindNode;
 	 double mCounterReplyQueryHash;
+	 // connection stats.
+	 double mCounterConnectRequest;
+	 double mCounterConnectReply;
+	 double mCounterConnectStart;
+	 double mCounterConnectAck;
 
 	 double mCounterRecvPing;
 	 double mCounterRecvPong;
@@ -225,6 +297,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	 double mCounterRecvQueryHash;
 	 double mCounterRecvReplyFindNode;
 	 double mCounterRecvReplyQueryHash;
+	 // connection stats.
+	 double mCounterRecvConnectRequest;
+	 double mCounterRecvConnectReply;
+	 double mCounterRecvConnectStart;
+	 double mCounterRecvConnectAck;
 
 	 double mLpfOutOfDatePing;
 	 double mLpfPings;
@@ -233,6 +310,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	 double mLpfQueryHash;
 	 double mLpfReplyFindNode;
 	 double mLpfReplyQueryHash;
+	 // connection stats.
+	 double mLpfConnectRequest;
+	 double mLpfConnectReply;
+	 double mLpfConnectStart;
+	 double mLpfConnectAck;
 
 	 double mLpfRecvPing;
 	 double mLpfRecvPong;
@@ -240,6 +322,12 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	 double mLpfRecvQueryHash;
 	 double mLpfRecvReplyFindNode;
 	 double mLpfRecvReplyQueryHash;
+	 // connection stats.
+	 double mLpfRecvConnectRequest;
+	 double mLpfRecvConnectReply;
+	 double mLpfRecvConnectStart;
+	 double mLpfRecvConnectAck;
+
 
 };
 

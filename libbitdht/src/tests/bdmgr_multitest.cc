@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 			}
 			if (it != nodes.end())
 			{
-				nit->second->addPotentialPeer((bdId *) &(it->first));
+				nit->second->addPotentialPeer((bdId *) &(it->first), NULL);
 			}
 		}
 	}

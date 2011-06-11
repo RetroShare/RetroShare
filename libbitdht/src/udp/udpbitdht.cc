@@ -118,6 +118,24 @@ void UdpBitDht::removeCallback(BitDhtCallback *cb)
 	mBitDhtManager->removeCallback(cb);
 }
 
+void UdpBitDht::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->ConnectionRequest(laddr, target, mode);
+}
+
+
+
+void UdpBitDht::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->ConnectionAuth(srcId, proxyId, destId, mode, loc, answer);
+}
+
+
+
 int UdpBitDht::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
@@ -130,6 +148,13 @@ int 	UdpBitDht::getDhtValue(const bdNodeId *id, std::string key, std::string &va
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
 	return mBitDhtManager->getDhtValue(id, key, value);
+}
+
+int 	UdpBitDht::getDhtBucket(const int idx, bdBucket &bucket)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->getDhtBucket(idx, bucket);
 }
 
 

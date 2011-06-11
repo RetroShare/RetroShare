@@ -104,6 +104,17 @@ bool bdQuery::result(std::list<bdId> &answer)
 	return (i > 0);
 }
 
+bool bdQuery::proxies(std::list<bdId> &answer)
+{
+	/* get all the matches to our query */
+        std::list<bdPeer>::iterator it;
+	int i = 0;
+	for(it = mPotentialProxies.begin(); it != mPotentialProxies.end(); it++, i++)
+	{
+		answer.push_back(it->mPeerId);
+	}
+	return (i > 0);
+}
 
 int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 {
@@ -399,7 +410,7 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
  * simple list of closest.
  */
 
-int bdQuery::addPotentialPeer(const bdId *id, uint32_t mode)
+int bdQuery::addPotentialPeer(const bdId *id, const bdId *src, uint32_t mode)
 {
 	bdMetric dist;
 	time_t ts = time(NULL);
@@ -541,6 +552,44 @@ int bdQuery::addPotentialPeer(const bdId *id, uint32_t mode)
 #ifdef DEBUG_QUERY 
 	fprintf(stderr, "Flagging as Potential Peer!\n");
 #endif
+
+	/* finally if it is an exact match, add as potential proxy */
+	int bucket = mFns->bdBucketDistance(&dist);
+	if ((bucket == 0) && (src != NULL))
+	{
+
+#ifdef DEBUG_QUERY 
+		fprintf(stderr, "Bucket = 0, Have Potential Proxy!\n");
+#endif
+		std::list<bdPeer>::iterator it;
+		for(it = mPotentialProxies.begin(); it != mPotentialProxies.end(); it++)
+		{
+			if (*src == it->mPeerId)
+			{
+				/* found it ;( */
+#ifdef DEBUG_QUERY 
+				fprintf(stderr, "Source Already in Potential Proxy List, updating timestamp!\n");
+#endif
+				it->mLastRecvTime = ts;
+				break;
+			}
+		}
+		if (it == mPotentialProxies.end())
+		{
+#ifdef DEBUG_QUERY 
+			fprintf(stderr, "Adding Source to Potential Proxy List:\n");
+#endif
+			/* add it in */
+			bdPeer peer;
+			peer.mPeerId = *src;
+			peer.mLastSendTime = 0;
+			peer.mLastRecvTime = ts;
+			peer.mFoundTime = ts;
+
+			mPotentialProxies.push_back(peer);
+		}
+	}
+
 	retval = 1;
 	return retval;
 }
@@ -590,6 +639,18 @@ int     bdQuery::printQuery()
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
 		fprintf(stderr, "\n");
 	}
+
+	std::list<bdPeer>::iterator lit;
+	fprintf(stderr, "\nPotential Proxies:\n");
+	for(lit = mPotentialProxies.begin(); lit != mPotentialProxies.end(); lit++)
+	{
+		fprintf(stderr, "ProxyId:  ");
+		mFns->bdPrintId(std::cerr, &(lit->mPeerId));
+		fprintf(stderr," Found: %ld ago", ts-lit->mFoundTime);
+		fprintf(stderr," LastSent: %ld ago", ts-lit->mLastSendTime);
+		fprintf(stderr," LastRecv: %ld ago", ts-lit->mLastRecvTime);
+		fprintf(stderr, "\n");
+	}
 #else
 	// shortened version.
 	fprintf(stderr, "Closest Available Peer: ");
@@ -615,6 +676,18 @@ int     bdQuery::printQuery()
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
 	}
 	fprintf(stderr, "\n");
+
+	std::list<bdPeer>::iterator lit;
+	fprintf(stderr, "Potential Proxies:\n");
+	for(lit = mPotentialProxies.begin(); lit != mPotentialProxies.end(); lit++)
+	{
+		fprintf(stderr, "ProxyId:  ");
+		mFns->bdPrintId(std::cerr, &(lit->mPeerId));
+		fprintf(stderr," Found: %ld ago", ts-lit->mFoundTime);
+		fprintf(stderr," LastSent: %ld ago", ts-lit->mLastSendTime);
+		fprintf(stderr," LastRecv: %ld ago", ts-lit->mLastRecvTime);
+		fprintf(stderr, "\n");
+	}
 #endif
 
 	return 1;

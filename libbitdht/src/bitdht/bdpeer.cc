@@ -337,7 +337,10 @@ int     bdSpace::clear()
 }
 
 
-int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId> /*excluding*/, std::multimap<bdMetric, bdId> &nearest)
+
+int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number, 
+		std::list<bdId> /* excluding */, 
+		std::multimap<bdMetric, bdId> &nearest, uint32_t with_flag)
 {
 	std::multimap<bdMetric, bdId> closest;
 	std::multimap<bdMetric, bdId>::iterator mit;
@@ -363,16 +366,19 @@ int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId>
 	{
 		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
 		{
-			mFns->bdDistance(id, &(eit->mPeerId.id), &dist);
-			closest.insert(std::pair<bdMetric, bdId>(dist, eit->mPeerId));
+			if ((!with_flag) || (with_flag & eit->mPeerFlags))
+			{
+			  mFns->bdDistance(id, &(eit->mPeerId.id), &dist);
+			  closest.insert(std::pair<bdMetric, bdId>(dist, eit->mPeerId));
 
 #if 0
-			std::cerr << "Added NodeId: ";
-			bdPrintNodeId(std::cerr, &(eit->mPeerId.id));
-			std::cerr << " Metric: ";
-			bdPrintNodeId(std::cerr, &(dist));
-			std::cerr << std::endl;
+			  std::cerr << "Added NodeId: ";
+			  bdPrintNodeId(std::cerr, &(eit->mPeerId.id));
+			  std::cerr << " Metric: ";
+			  bdPrintNodeId(std::cerr, &(dist));
+			  std::cerr << std::endl;
 #endif
+			}
 		}
 	}
 
@@ -427,6 +433,15 @@ int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId>
 #endif
 
 	return 1;
+}
+
+int bdSpace::find_nearest_nodes(const bdNodeId *id, int number,
+                		std::multimap<bdMetric, bdId> &nearest)
+{
+	std::list<bdId> excluding;
+	uint32_t with_flag = 0;
+
+	return find_nearest_nodes_with_flags(id, number, excluding, nearest, with_flag);
 }
 
 
@@ -591,6 +606,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 		newPeer.mPeerId = *id;
 		newPeer.mLastRecvTime = ts;
 		newPeer.mLastSendTime = ts; //????
+		newPeer.mFoundTime = ts;
 		newPeer.mPeerFlags = peerflags;
 
 		buck.entries.push_back(newPeer);
@@ -763,6 +779,16 @@ int     bdSpace::printDHT()
 	return 1;
 }
 
+
+int     bdSpace::getDhtBucket(const int idx, bdBucket &bucket)
+{
+	if ((idx < 0) || (idx > (int) buckets.size() - 1 ))
+	{
+		return 0;
+	}
+	bucket = buckets[idx];
+	return 1;
+}
 
 uint32_t  bdSpace::calcNetworkSize()
 {

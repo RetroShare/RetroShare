@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 			int peeridx = rand() % n_nodes;
 
 			bdId pid = portIdx[peeridx];
-			node->addPotentialPeer(&pid);
+			node->addPotentialPeer(&pid, NULL);
 		}
 	}
 

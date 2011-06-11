@@ -52,6 +52,8 @@ int bdStdBucketDistance(const bdNodeId *a, const bdNodeId *b);
 
 void bdStdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid);
 
+int  bdStdLoadNodeId(bdNodeId *id, std::string input);
+
 void bdStdPrintId(std::ostream &out, const bdId *a);
 void bdStdPrintNodeId(std::ostream &out, const bdNodeId *a);
 

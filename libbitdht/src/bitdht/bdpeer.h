@@ -116,6 +116,10 @@ int operator==(const bdId &a, const bdId &b);
 
 //std::string bdConvertToPrintable(std::string input);
 
+/****
+ * DEFINED in bdiface.h
+ *
+
 class bdPeer
 {
 	public:
@@ -124,10 +128,8 @@ class bdPeer
 	uint32_t mPeerFlags;
 	time_t mLastSendTime;
 	time_t mLastRecvTime;
-	time_t mFoundTime;     /* time stamp that peer was found */
+	time_t mFoundTime;     // time stamp that peer was found 
 };
-
-
 
 
 class bdBucket
@@ -136,9 +138,12 @@ class bdBucket
 
 	bdBucket();
 
-	/* list so we can queue properly */
+	// list so we can queue properly 
 	std::list<bdPeer> entries;
 };
+ *
+ *
+ *****/
 
 class bdSpace
 {
@@ -150,11 +155,16 @@ int	clear();
 
 	/* accessors */
 int 	find_nearest_nodes(const bdNodeId *id, int number, 
-		std::list<bdId> excluding, std::multimap<bdMetric, bdId> &nearest);
+		std::multimap<bdMetric, bdId> &nearest);
+
+int 	find_nearest_nodes_with_flags(const bdNodeId *id, int number, 
+		std::list<bdId> excluding, 
+		std::multimap<bdMetric, bdId> &nearest, uint32_t with_flag);
 
 int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
 int     add_peer(const bdId *id, uint32_t mode);
 int     printDHT();
+int     getDhtBucket(const int idx, bdBucket &bucket);
 
 uint32_t calcNetworkSize();
 uint32_t calcNetworkSizeWithFlag(uint32_t withFlag);

@@ -116,6 +116,43 @@ void bdStdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *m
 	}
 }
 
+int  bdStdLoadNodeId(bdNodeId *id, std::string input)
+{
+	uint8_t *a_data = (uint8_t *) id->data;
+	int reqlen = BITDHT_KEY_LEN * 2;
+	if (input.size() < reqlen)
+	{
+		return 0;
+	}
+
+	for(int i = 0; i < BITDHT_KEY_LEN; i++)
+	{
+		char ch1 = input[2 * i];
+		char ch2 = input[2 * i + 1];
+		uint8_t value1 = 0;
+		uint8_t value2 = 0;
+
+		/* do char1 */
+        	if (ch1 >= '0' && ch1 <= '9')
+            		value1 = (ch1 - '0');
+        	else if (ch1 >= 'A' && ch1 <= 'F')
+            		value1 = (ch1 - 'A' + 10);
+        	else if (ch1 >= 'a' && ch1 <= 'f')
+            		value1 = (ch1 - 'a' + 10);
+
+		/* do char2 */
+        	if (ch2 >= '0' && ch2 <= '9')
+            		value2 = (ch2 - '0');
+        	else if (ch2 >= 'A' && ch2 <= 'F')
+            		value2 = (ch2 - 'A' + 10);
+        	else if (ch2 >= 'a' && ch2 <= 'f')
+            		value2 = (ch2 - 'a' + 10);
+
+		a_data[i] = (value1 << 4) + value2;
+	}
+	return 1;
+}
+
 std::string bdStdConvertToPrintable(std::string input)
 {
 	std::ostringstream out;

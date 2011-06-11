@@ -44,12 +44,13 @@ class bdQuery
 
 	// get the answer.
 bool	result(std::list<bdId> &answer);
+bool	proxies(std::list<bdId> &answer);
 
 	// returning results get passed to all queries.
 //void 	addNode(const bdId *id, int mode);		
 int 	nextQuery(bdId &id, bdNodeId &targetId);
 int 	addPeer(const bdId *id, uint32_t mode);
-int 	addPotentialPeer(const bdId *id, uint32_t mode);
+int 	addPotentialPeer(const bdId *id, const bdId *src, uint32_t mode);
 int 	printQuery();
 
 	// searching for
@@ -67,6 +68,7 @@ int 	printQuery();
 	// closest peers
 	std::multimap<bdMetric, bdPeer>  mClosest;
 	std::multimap<bdMetric, bdPeer>  mPotentialClosest;
+	std::list<bdPeer>  mPotentialProxies;
 
 	bdDhtFunctions *mFns;
 };
