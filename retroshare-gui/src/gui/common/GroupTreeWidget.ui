@@ -66,7 +66,7 @@ color:gray;
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>22</height>
+         <height>16777215</height>
         </size>
        </property>
        <property name="styleSheet">
@@ -237,6 +237,8 @@ border-image: url(:/images/closepressed.png)
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
