@@ -134,5 +134,35 @@ virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
 	double lossFraction;
 };
 
+class PortRange
+{
+	public:
+	PortRange();
+	PortRange(uint16_t lp, uint16_t up);
+
+	bool inRange(uint16_t port);
+
+	uint16_t lport;
+	uint16_t uport;
+};
+
+
+/* For Testing - drops packets */
+class RestrictedUdpLayer: public UdpLayer
+{
+	public:
+  RestrictedUdpLayer(UdpReceiver *udpr, struct sockaddr_in &local);
+virtual ~RestrictedUdpLayer();
+
+void	addRestrictedPortRange(int lp, int up);
+
+        protected:
+
+virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
+virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
+
+	std::list<PortRange> mLostPorts;
+};
+
 
 #endif

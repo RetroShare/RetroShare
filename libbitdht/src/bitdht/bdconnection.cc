@@ -28,12 +28,16 @@
 #include "bitdht/bdnode.h"
 #include "bitdht/bdconnection.h"
 #include "bitdht/bdmsgs.h"
+#include "bitdht/bdstddht.h"
+#include "util/bdnet.h"
+
+#define DEBUG_NODE_CONNECTION	1 
 
 #if 0
 #include "bitdht/bencode.h"
 #include "bitdht/bdmsgs.h"
 
-#include "util/bdnet.h"
+
 
 #include <string.h>
 #include <stdlib.h>
@@ -73,7 +77,6 @@ std::string getConnectMsgType(int msgtype)
 
 void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int status)
 {
-#ifdef DEBUG_NODE_MSGOUT
 	std::cerr << "bdNode::msgout_connect_genmsg() Type: " << getConnectMsgType(msgtype);
 	std::cerr << " TransId: ";
 	bdPrintTransId(std::cerr, transId);
@@ -86,6 +89,7 @@ void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId
 	std::cerr << " Mode: " << mode;
 	std::cerr << " Status: " << status;
 	std::cerr << std::endl;
+#ifdef DEBUG_NODE_MSGOUT
 #endif
 
 	registerOutgoingMsg(id, transId, msgtype);
@@ -105,7 +109,6 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
 {
 	std::list<bdId>::iterator it;
 
-#ifdef DEBUG_NODE_MSGS
 	std::cerr << "bdNode::msgin_connect_genmsg() Type: " << getConnectMsgType(msgtype);
 	std::cerr << " TransId: ";
 	bdPrintTransId(std::cerr, transId);
@@ -118,6 +121,7 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
 	std::cerr << " Mode: " << mode;
 	std::cerr << " Status: " << status;
 	std::cerr << std::endl;
+#ifdef DEBUG_NODE_MSGS
 #else
 	(void) transId;
 #endif
@@ -179,16 +183,16 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
  *  1) Direct Endpoint.
  *  2) Using a Proxy.
  */
- 
+
 int bdNode::requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
 {
 	/* check if connection obj already exists */
 #ifdef DEBUG_NODE_CONNECTION
 	std::cerr << "bdNode::requestConnection() Mode: " << mode;
 	std::cerr << " Target: ";
-	mFns->bdPrintNodeId(std::cerr, id);
-	std::cerr << " Local NetAddress: ";
-	mFns->bdPrintAddr(std::cerr, laddr);
+	mFns->bdPrintNodeId(std::cerr, target);
+	std::cerr << " Local NetAddress: " << inet_ntoa(laddr->sin_addr);
+        std::cerr << ":" << ntohs(laddr->sin_port);
 	std::cerr << std::endl;
 #endif
 
@@ -244,6 +248,10 @@ int bdNode::requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target
 			continue;
 		}
 
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::requestConnection_direct() Found Matching Query";
+		std::cerr << std::endl;
+#endif
 		/* matching query */
 		/* find any potential proxies (must be same DHT type XXX TODO) */
 		(*qit)->result(connreq.mPotentialProxies);		
@@ -292,6 +300,10 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 			continue;
 		}
 
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::requestConnection_proxy() Found Matching Query";
+		std::cerr << std::endl;
+#endif
 		/* matching query */
 		/* find any potential proxies (must be same DHT type XXX TODO) */
 		(*qit)->proxies(connreq.mPotentialProxies);		
@@ -350,8 +362,21 @@ void bdNode::addPotentialConnectionProxy(bdId *srcId, bdId *target)
 	}
 }
 
+
+int bdNode::tickConnections()
+{
+	iterateConnectionRequests();
+	iterateConnections();
+}
+
+
 void bdNode::iterateConnectionRequests()
 {
+	time_t now = time(NULL);
+
+	std::list<bdNodeId> eraseList;
+	std::list<bdNodeId>::iterator eit;
+
 	std::map<bdNodeId, bdConnectionRequest>::iterator it;
 	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
 	{
@@ -359,9 +384,68 @@ void bdNode::iterateConnectionRequests()
 		if (it->second.mState == BITDHT_CONNREQUEST_INIT)
 		{
 			/* kick off the connection if possible */
-			//startConnectionAttempt(it->second);
+			startConnectionAttempt(&(it->second));
+		}
+
+		// Cleanup
+		if (now - it->second.mStateTS > BITDHT_CONNREQUEST_MAX_AGE)
+		{
+			std::cerr << "bdNode::iterateConnectionAttempt() Cleaning Old ConnReq: ";
+			std::cerr << std::endl;
+			std::cerr << it->second;
+			std::cerr << std::endl;
+
+			/* cleanup */
+			eraseList.push_back(it->first);
 		}
 	}
+	
+	for(eit = eraseList.begin(); eit != eraseList.end(); eit++)
+	{
+		it = mConnectionRequests.find(*eit);
+		if (it != mConnectionRequests.end())
+		{
+			mConnectionRequests.erase(it);
+		}
+	}
+}
+
+int bdNode::startConnectionAttempt(bdConnectionRequest *req)
+{
+	std::cerr << "bdNode::startConnectionAttempt() ConnReq: ";
+	std::cerr << std::endl;
+	std::cerr << *req;
+	std::cerr << std::endl;
+
+	if (req->mPotentialProxies.size() < 1)
+	{
+		std::cerr << "bdNode::startConnectionAttempt() No Potential Proxies... delaying attempt";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	bdId proxyId;
+	bdId srcConnAddr;
+	bdId destConnAddr;
+
+	int mode = req->mMode;
+
+	destConnAddr.id = req->mTarget;
+	bdsockaddr_clear(&(destConnAddr.addr));
+
+	srcConnAddr.id = mOwnId;
+	srcConnAddr.addr = req->mLocalAddr;
+
+	proxyId = req->mPotentialProxies.front();
+	req->mPotentialProxies.pop_front();
+
+	req->mCurrentAttempt = proxyId;
+	req->mPeersTried.push_back(proxyId);	
+
+	req->mState = BITDHT_CONNREQUEST_INPROGRESS;
+	req->mStateTS = time(NULL);
+
+	return startConnectionAttempt(&proxyId, &srcConnAddr, &destConnAddr, mode);
 }
 
 
@@ -407,11 +491,13 @@ int bdNode::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destC
 	conn->ConnectionSetup(proxyId, srcConnAddr, destConnAddr, mode);
 
 	/* push off message */
-	bdToken *transId;
+	bdToken transId;
+	genNewTransId(&transId);
+
 	int msgtype =  BITDHT_MSG_TYPE_CONNECT_REQUEST;
 	int status = BITDHT_CONNECT_ANSWER_OKAY;
 
-	msgout_connect_genmsg(&(conn->mProxyId), transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
+	msgout_connect_genmsg(&(conn->mProxyId), &transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
 
 	return 1;
 }
@@ -475,10 +561,12 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 			conn->AuthoriseEndConnection(srcId, proxyId, destId, mode, loc);
 			
 			/* we respond to the proxy which will finalise connection */
-			bdToken *transId;
+			bdToken transId;
+			genNewTransId(&transId);
+
 			int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 			int status = BITDHT_CONNECT_ANSWER_OKAY;
-			msgout_connect_genmsg(&(conn->mProxyId), transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
+			msgout_connect_genmsg(&(conn->mProxyId), &transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
 			
 			return;
 		}
@@ -497,10 +585,12 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	
 		conn->AuthoriseProxyConnection(srcId, proxyId, destId, mode, loc);
 	
-		bdToken *transId;
+		bdToken transId;
+		genNewTransId(&transId);
+
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REQUEST;
 		int status = BITDHT_CONNECT_ANSWER_OKAY;
-		msgout_connect_genmsg(&(conn->mDestId), transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
+		msgout_connect_genmsg(&(conn->mDestId), &transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
 	}
 	else
 	{
@@ -536,10 +626,12 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	if (mode == BITDHT_CONNECT_MODE_DIRECT)
 	{
 		/* we respond to the proxy which will finalise connection */
-		bdToken *transId;
+		bdToken transId;
+		genNewTransId(&transId);
+
 		int status = BITDHT_CONNECT_ANSWER_NOK;
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-		msgout_connect_genmsg(&(conn->mSrcId), transId, msgtype, 
+		msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, 
 							  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 		
 		cleanConnection(&(srcId->id), &(proxyId->id), &(destId->id));
@@ -549,10 +641,12 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	if (loc == BD_PROXY_CONNECTION_END_POINT)
 	{
 		/* we respond to the proxy which will finalise connection */
-		bdToken *transId;
+		bdToken transId;
+		genNewTransId(&transId);
+
 		int status = BITDHT_CONNECT_ANSWER_NOK;
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-		msgout_connect_genmsg(&(conn->mProxyId), transId, msgtype, 
+		msgout_connect_genmsg(&(conn->mProxyId), &transId, msgtype, 
 							  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 		
 		cleanConnection(&(srcId->id), &(proxyId->id), &(destId->id));
@@ -561,10 +655,12 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	}
 
 	/* otherwise we are the proxy (for either), reply FAIL */
-	bdToken *transId;
+	bdToken transId;
+	genNewTransId(&transId);
+
 	int status = BITDHT_CONNECT_ANSWER_NOK;
 	int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-	msgout_connect_genmsg(&(conn->mSrcId), transId, msgtype, 
+	msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, 
 						  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 
 	cleanConnection(&(srcId->id), &(proxyId->id), &(destId->id));
@@ -609,17 +705,21 @@ void bdNode::iterateConnections()
 				it->second.mRetryCount++;
 				if (!it->second.mSrcAck)
 				{
-					bdToken *transId;
+					bdToken transId;
+					genNewTransId(&transId);
+
 					int msgtype = BITDHT_MSG_TYPE_CONNECT_START;
-					msgout_connect_genmsg(&(it->second.mSrcId), transId, msgtype, 
+					msgout_connect_genmsg(&(it->second.mSrcId), &transId, msgtype, 
 										  &(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
 										  it->second.mMode, it->second.mBandwidth);
 				}
 				if (!it->second.mDestAck)
 				{
-					bdToken *transId;
+					bdToken transId;
+					genNewTransId(&transId);
+
 					int msgtype = BITDHT_MSG_TYPE_CONNECT_START;
-					msgout_connect_genmsg(&(it->second.mDestId), transId, msgtype, 
+					msgout_connect_genmsg(&(it->second.mDestId), &transId, msgtype, 
 										  &(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
 										  it->second.mMode, it->second.mBandwidth);
 				}
@@ -723,6 +823,22 @@ bdConnection::bdConnection()
 	//time_t mCompletedTS;
 }
 
+	/* heavy check, used to check for alternative connections, coming from other direction
+	 * Caller must switch src/dest to use it properly (otherwise it'll find your connection!)
+	 */
+bdConnection *bdNode::findSimilarConnection(bdNodeId *srcId, bdNodeId *destId)
+{
+	std::map<bdProxyTuple, bdConnection>::iterator it;
+	for(it = mConnections.begin(); it != mConnections.end(); it++)
+	{
+		if ((it->first.srcId == *srcId) && (it->first.destId == *destId))
+		{
+			/* found similar connection */
+			return &(it->second);
+		}
+	}
+	return NULL;
+}
 
 bdConnection *bdNode::findExistingConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId)
 {
@@ -872,6 +988,22 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 		return 0;
 	}
 
+	/* Switch the order of peers around to test for "opposite connections" */
+	if (NULL != findSimilarConnection(&(destConnAddr->id), &(srcConnAddr->id)))
+	{
+		std::cerr << "bdNode::recvedConnectionRequest() Found Similar Connection. Replying NO";
+		std::cerr << std::endl;
+
+		/* reply existing connection */
+		bdToken transId;
+		genNewTransId(&transId);
+
+		int status = BITDHT_CONNECT_ANSWER_NOK;
+		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
+		msgout_connect_genmsg(id, &transId, msgtype, srcConnAddr, destConnAddr, mode, status);
+		return 0;
+	}
+
 	/* INSTALL a NEW CONNECTION */
 	conn = bdNode::newConnectionBySender(id, srcConnAddr, destConnAddr);
 
@@ -994,9 +1126,11 @@ int bdNode::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 								conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED);
 
 				/* send on message to SRC */
-				bdToken *transId;
+				bdToken transId;
+				genNewTransId(&transId);
+
 				int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-				msgout_connect_genmsg(&(conn->mSrcId), transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
+				msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 
 				/* connection is killed */
 				cleanConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -1018,6 +1152,9 @@ int bdNode::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 
 int bdNode::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int bandwidth)
 {
+	std::cerr << "bdNode::recvedConnectionStart()";
+	std::cerr << std::endl;
+
 	/* retrieve existing connection data */
 	bdConnection *conn = findExistingConnectionBySender(id, srcConnAddr, destConnAddr);
 	if (!conn)
@@ -1033,29 +1170,40 @@ int bdNode::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 
 	if (conn->mPoint == BD_PROXY_CONNECTION_MID_POINT)
 	{
+		std::cerr << "bdNode::recvedConnectionStart() ERROR We Are Connection MID Point";
+		std::cerr << std::endl;
 		/* ERROR */
 	}
 
 	/* check state */
-	if ((conn->mState != BITDHT_CONNECTION_WAITING_START) || (conn->mState != BITDHT_CONNECTION_COMPLETED))
+	if ((conn->mState != BITDHT_CONNECTION_WAITING_START) && (conn->mState != BITDHT_CONNECTION_COMPLETED))
 	{
 		/* ERROR */
+		std::cerr << "bdNode::recvedConnectionStart() ERROR State != WAITING_START && != COMPLETED";
+		std::cerr << std::endl;
 
 		return 0;
 	}
 
 	/* ALL Okay, Send ACK */
+	std::cerr << "bdNode::recvedConnectionStart() Passed basic tests, Okay to send ACK";
+	std::cerr << std::endl;
 
-	bdToken *transId;
+	bdToken transId;
+	genNewTransId(&transId);
+
 	int msgtype = BITDHT_MSG_TYPE_CONNECT_ACK;
 	int status = BITDHT_CONNECT_ANSWER_OKAY;
-	msgout_connect_genmsg(id, transId, msgtype, &(conn->mSrcId), &(conn->mDestId), mode, status);
+	msgout_connect_genmsg(id, &transId, msgtype, &(conn->mSrcId), &(conn->mDestId), mode, status);
 
 	/* do complete Callback */
 
 	/* flag as completed */
 	if (conn->mState != BITDHT_CONNECTION_COMPLETED)
 	{
+		std::cerr << "bdNode::recvedConnectionStart() Switching State to COMPLETED, doing callback";
+		std::cerr << std::endl;
+
 		/* Store Final Addresses */
 		time_t now = time(NULL);
 
@@ -1080,6 +1228,11 @@ int bdNode::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START);
 
 		}
+	}
+	else
+	{
+		std::cerr << "bdNode::recvedConnectionStart() Just sent duplicate ACK";
+		std::cerr << std::endl;
 	}
 	/* don't delete, if ACK is lost, we want to be able to re-respond */
 
@@ -1358,19 +1511,71 @@ int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bd
 
 int bdConnectionRequest::setupDirectConnection(struct sockaddr_in *laddr, bdNodeId *target)
 {
-	return 0;
+	mState = BITDHT_CONNREQUEST_INIT;
+	mStateTS = time(NULL);
+	mTarget = *target;
+	mLocalAddr = *laddr;
+	mMode = BITDHT_CONNECT_MODE_DIRECT;
+
+	return 1;
 }
 
 int bdConnectionRequest::setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
 {
-	return 0;
+	mState = BITDHT_CONNREQUEST_INIT;
+	mStateTS = time(NULL);
+	mTarget = *target;
+	mLocalAddr = *laddr;
+	mMode = mode;
+
+	return 1;
 }
 
 int bdConnectionRequest::addPotentialProxy(bdId *srcId)
 {
+	std::cerr << "bdConnectionRequest::addPotentialProxy() ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << std::endl;
+
+	std::list<bdId>::iterator it = std::find(mPeersTried.begin(), mPeersTried.end(), *srcId);
+	if (it == mPeersTried.end())
+	{
+		it = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *srcId);
+		if (it == mPotentialProxies.end())
+		{
+			mPotentialProxies.push_back(*srcId);
+			return 1;
+		}
+		else
+		{
+			std::cerr << "bdConnectionRequest::addPotentialProxy() Duplicate in mPotentialProxies List";
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		std::cerr << "bdConnectionRequest::addPotentialProxy() Already tried this peer";
+		std::cerr << std::endl;
+	}
 	return 0;
 }
 
 
+std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
+{
+	out << "bdConnectionRequest: ";
+	out << "State: " << req.mState;
+	out << std::endl;
+	out << "PotentialProxies:";
+	out << std::endl;
 
+        std::list<bdId>::const_iterator it;
+	for(it = req.mPotentialProxies.begin(); it != req.mPotentialProxies.end(); it++)
+	{
+		out << "\t";
+		bdStdPrintId(out, &(*it));
+		out << std::endl;
+	}
+	return out;
+}
 

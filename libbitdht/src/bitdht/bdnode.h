@@ -199,7 +199,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
 				bdId *srcAddr, bdId *destAddr, int mode, int status);
-	void msgin_connect_genmsg(bdId *id, bdToken *transId, int type,
+	void msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
                                         bdId *srcAddr, bdId *destAddr, int mode, int status);
 
 	/* Connections: Initiation */
@@ -210,7 +210,10 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	int checkExistingConnectionAttempt(bdNodeId *target);
 	void addPotentialConnectionProxy(bdId *srcId, bdId *target);
+
+	int tickConnections();
 	void iterateConnectionRequests();
+	int startConnectionAttempt(bdConnectionRequest *req);
 
 	/* Connections: Outgoing */
 
@@ -229,6 +232,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	int determinePosition(bdNodeId *sender, bdNodeId *src, bdNodeId *dest);
 	int determineProxyId(bdNodeId *sender, bdNodeId *src, bdNodeId *dest, bdNodeId *proxyId);
 
+	bdConnection *findSimilarConnection(bdNodeId *srcId, bdNodeId *destId);
 	bdConnection *findExistingConnectionBySender(bdId *sender, bdId *src, bdId *dest);
 	bdConnection *newConnectionBySender(bdId *sender, bdId *src, bdId *dest);
 	int cleanConnectionBySender(bdId *sender, bdId *src, bdId *dest);

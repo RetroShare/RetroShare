@@ -363,6 +363,11 @@ void bdNode::iteration()
 		//msgout_find_node(&id, &transId, &(id.id));
 	}
 
+
+	// Handle Connection loops.
+	tickConnections();
+
+
 	doStats();
 
 	//printStats(std::cerr);
@@ -473,19 +478,15 @@ void bdNode::printStats(std::ostream &out)
 	out << std::endl;
 
 	out << "  mLpfConnectRequest/sec : " << std::setw(10) << mLpfConnectRequest;
-	out << std::endl;
-	out << "  mLpfConnectReply/sec   : " << std::setw(10) << mLpfConnectReply;
-	out << std::endl;
-	out << "  mLpfConnectStart/sec   : " << std::setw(10) << mLpfConnectStart;
-	out << std::endl;
-	out << "  mLpfConnectAck/sec     : " << std::setw(10) << mLpfConnectAck;
-	out << std::endl;
 	out << "  mLpfRecvConnectReq/sec : " << std::setw(10) << mLpfRecvConnectRequest;
 	out << std::endl;
+	out << "  mLpfConnectReply/sec   : " << std::setw(10) << mLpfConnectReply;
 	out << "  mLpfRecvConnReply/sec  : " << std::setw(10) << mLpfRecvConnectReply;
 	out << std::endl;
+	out << "  mLpfConnectStart/sec   : " << std::setw(10) << mLpfConnectStart;
 	out << "  mLpfRecvConnStart/sec  : " << std::setw(10) << mLpfRecvConnectStart;
 	out << std::endl;
+	out << "  mLpfConnectAck/sec     : " << std::setw(10) << mLpfConnectAck;
 	out << "  mLpfRecvConnectAck/sec : " << std::setw(10) << mLpfRecvConnectAck;
 	out << std::endl;
 	out << std::endl;
@@ -1365,6 +1366,108 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 		beMsgGetUInt32(be_port, &port);
 	}
 
+	/****************** handle Connect (lots) ***************************/
+	bdId connSrcAddr;
+	bdId connDestAddr;
+	uint32_t connMode;
+	uint32_t connStatus;
+	uint32_t connType;
+
+	be_node  *be_ConnSrcAddr = NULL;
+	be_node  *be_ConnDestAddr = NULL;
+	be_node  *be_ConnMode = NULL;
+	be_node  *be_ConnStatus = NULL;
+	be_node  *be_ConnType = NULL;
+	if (beType == BITDHT_MSG_TYPE_CONNECT)
+	{
+		/* SrcAddr */
+		be_ConnSrcAddr = beMsgGetDictNode(be_data, "src");
+		if (!be_ConnSrcAddr)
+		{
+#ifdef DEBUG_NODE_PARSE
+			std::cerr << "bdNode::recvPkt() CONNECT Missing SrcAddr. Dropping Msg";
+			std::cerr << std::endl;
+#endif
+			be_free(node);
+			return;
+		}
+
+		/* DestAddr */
+		be_ConnDestAddr = beMsgGetDictNode(be_data, "dest");
+		if (!be_ConnDestAddr)
+		{
+#ifdef DEBUG_NODE_PARSE
+			std::cerr << "bdNode::recvPkt() CONNECT Missing DestAddr. Dropping Msg";
+			std::cerr << std::endl;
+#endif
+			be_free(node);
+			return;
+		}
+
+		/* Mode */
+		be_ConnMode = beMsgGetDictNode(be_data, "mode");
+		if (!be_ConnMode)
+		{
+#ifdef DEBUG_NODE_PARSE
+			std::cerr << "bdNode::recvPkt() CONNECT Missing Mode. Dropping Msg";
+			std::cerr << std::endl;
+#endif
+			be_free(node);
+			return;
+		}
+
+		/* Status */
+		be_ConnStatus = beMsgGetDictNode(be_data, "status");
+		if (!be_ConnStatus)
+		{
+#ifdef DEBUG_NODE_PARSE
+			std::cerr << "bdNode::recvPkt() CONNECT Missing Status. Dropping Msg";
+			std::cerr << std::endl;
+#endif
+			be_free(node);
+			return;
+		}
+
+		/* Type */
+		be_ConnType = beMsgGetDictNode(be_data, "type");
+		if (!be_ConnType)
+		{
+#ifdef DEBUG_NODE_PARSE
+			std::cerr << "bdNode::recvPkt() CONNECT Missing Type. Dropping Msg";
+			std::cerr << std::endl;
+#endif
+			be_free(node);
+			return;
+		}
+	}
+
+	if (be_ConnSrcAddr)
+	{
+		beMsgGetBdId(be_ConnSrcAddr, connSrcAddr);
+	}
+
+	if (be_ConnDestAddr)
+	{
+		beMsgGetBdId(be_ConnDestAddr, connDestAddr);
+	}
+
+	if (be_ConnMode)
+	{
+		beMsgGetUInt32(be_ConnMode, &connMode);
+	}
+
+	if (be_ConnStatus)
+	{
+		beMsgGetUInt32(be_ConnStatus, &connStatus);
+	}
+
+	if (be_ConnType)
+	{
+		beMsgGetUInt32(be_ConnType, &connType);
+	}
+
+
+
 	/****************** Bits Parsed Ok. Process Msg ***********************/
 	/* Construct Source Id */
 	bdId srcId(id, addr);
@@ -1475,6 +1578,18 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 			std::cerr << std::endl;
 #endif
 			msgin_reply_post(&srcId, &transId);
+			break;
+		}
+		case BITDHT_MSG_TYPE_CONNECT:  /* a: id, src, dest, mode, status, type */     
+		{
+//#ifdef DEBUG_NODE_MSGS 
+			std::cerr << "bdNode::recvPkt() ConnectMsg from: ";
+			mFns->bdPrintId(std::cerr, &srcId);
+			std::cerr << std::endl;
+//#endif
+			msgin_connect_genmsg(&srcId, &transId, connType,
+					&connSrcAddr, &connDestAddr, 
+					connMode, connStatus);
 			break;
 		}
 		default:

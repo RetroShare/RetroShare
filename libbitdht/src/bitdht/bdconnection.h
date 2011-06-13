@@ -38,6 +38,8 @@
 #define BITDHT_CONNREQUEST_INPROGRESS		2
 #define BITDHT_CONNREQUEST_DONE			3
 
+#define BITDHT_CONNREQUEST_MAX_AGE		60
+
 
 #define BITDHT_CONNECTION_WAITING_AUTH		1
 #define BITDHT_CONNECTION_WAITING_REPLY		2
@@ -132,13 +134,20 @@ class bdConnectionRequest
 
 	int addPotentialProxy(bdId *srcId);
 
-	std::list<bdId> mPotentialProxies;
+	bdNodeId mTarget;
+	struct sockaddr_in mLocalAddr;
+	int mMode;
 
 	int mState;
+	time_t mStateTS;
 
-	int stuff;
+	std::list<bdId> mPotentialProxies;
+
+	bdId mCurrentAttempt;
+	std::list<bdId> mPeersTried;
 };
 
+std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req);
 
 #endif
 

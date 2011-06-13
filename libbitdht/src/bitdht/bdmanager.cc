@@ -257,9 +257,11 @@ void bdNodeManager::iteration()
 			 * if, after 60 secs, we haven't reached MIN_OP_SPACE_SIZE, restart....
 			 */
 			
-#define MAX_FINDSELF_TIME		60
 #define TRANSITION_OP_SPACE_SIZE	100 /* 1 query / sec, should take 12-15 secs */
-#define MIN_OP_SPACE_SIZE		20 
+//#define MAX_FINDSELF_TIME		60
+//#define MIN_OP_SPACE_SIZE		20 
+#define MAX_FINDSELF_TIME		10
+#define MIN_OP_SPACE_SIZE		3   // for testing.
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
@@ -424,9 +426,9 @@ void bdNodeManager::QueryRandomLocalNet()
 int bdNodeManager::status()
 {
 	/* do status of bdNode */
-//#ifdef DEBUG_MGR
+#ifdef DEBUG_MGR
 	printState();
-//#endif
+#endif
 
 	checkStatus();
 
@@ -435,10 +437,10 @@ int bdNodeManager::status()
 	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
 					BITDHT_PEER_STATUS_DHT_APPL);
 
-//#ifdef DEBUG_MGR
+#ifdef DEBUG_MGR
 	std::cerr << "BitDHT NetworkSize: " << mNetworkSize << std::endl;
 	std::cerr << "BitDHT App NetworkSize: " << mBdNetworkSize << std::endl;
-//#endif
+#endif
 
 	return 1;
 }
@@ -1050,11 +1052,17 @@ int bdDebugCallback::dhtValueCallback(const bdNodeId *id, std::string key, uint3
 
 void bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
 {
+	std::cerr << "bdNodeManager::ConnectionRequest()";
+	std::cerr << std::endl;
+
 	bdNode::requestConnection(laddr, target, mode);
 }
 
 void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
 {
+	std::cerr << "bdNodeManager::ConnectionAuth()";
+	std::cerr << std::endl;
+
 	if (answer)
 	{
 		AuthConnectionOk(srcId, proxyId, destId, mode, loc);

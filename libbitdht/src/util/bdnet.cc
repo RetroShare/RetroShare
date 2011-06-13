@@ -346,3 +346,10 @@ ssize_t bdnet_sendto(int s, const void *buf, size_t len, int flags,
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+
+void    bdsockaddr_clear(struct sockaddr_in *addr)
+{
+	memset(addr, 0, sizeof(*addr));
+}
+
+

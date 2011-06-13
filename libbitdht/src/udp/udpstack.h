@@ -63,12 +63,20 @@ virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl)
 };
 
 
+#define UDP_TEST_LOSSY_LAYER		1
+#define UDP_TEST_RESTRICTED_LAYER	2
+
+#define UDP_TEST_LOSSY_FRAC		(0.10)
+
 class UdpStack: public UdpReceiver, public UdpPublisher
 {
 	public:
 
 	UdpStack(struct sockaddr_in &local);
+	UdpStack(int testmode, struct sockaddr_in &local);
 virtual ~UdpStack() { return; }
+
+UdpLayer *getUdpLayer(); /* for testing only */
 
 bool	resetAddress(struct sockaddr_in &local);
 

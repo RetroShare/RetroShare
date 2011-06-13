@@ -576,6 +576,13 @@ uint32_t beMsgType(be_node *n)
 #endif
 			return BITDHT_MSG_TYPE_POST_HASH;
 		}
+		else if (beMsgMatchString(query, "connect", 7))
+		{
+#ifdef DEBUG_MSG_TYPE 
+			std::cerr << "bsMsgType() QUERY:connect MSG TYPE" << std::endl;
+#endif
+			return BITDHT_MSG_TYPE_CONNECT;
+		}
 #ifdef DEBUG_MSG_TYPE 
 		std::cerr << "bsMsgType() QUERY:UNKNOWN MSG TYPE, dumping dict" << std::endl;
         	/* dump answer */
@@ -733,6 +740,28 @@ int beMsgGetListBdIds(be_node *n, std::list<bdId> &nodes)
 		}
 	}
         return 1;
+}
+
+int beMsgGetBdId(be_node *n, bdId &id)
+{
+	/* extract the string pointer, and size */
+	/* split into parts */
+
+        if (n->type != BE_STR)
+        {
+                return 0;
+        }
+
+	int len = be_str_len(n);
+	if (len < BITDHT_COMPACTNODEID_LEN)
+	{
+		return 0;
+	}
+	if (decodeCompactNodeId(&id, n->val.s, BITDHT_COMPACTNODEID_LEN))
+	{
+        	return 1;
+	}
+	return 0;
 }
 
 std::string encodeCompactNodeId(bdId *id)
@@ -953,31 +982,30 @@ int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bd
 	be_node *destnode = be_create_str_wlen(destEnc.c_str(), BITDHT_COMPACTNODEID_LEN);
 	be_node *typenode = be_create_int(msgtype);
 	be_node *statusnode = be_create_int(status);
+	be_node *modenode = be_create_int(mode);
 
 	be_node *tidnode = be_create_str_wlen((char *) tid->data, tid->len);
 	be_node *yqrnode = be_create_str("q");
 	be_node *cmdnode = be_create_str("connect");
-	
-#define CONNECT_MODE_DIRECT			0x0001
-#define CONNECT_MODE_PROXY			0x0002
-#define CONNECT_MODE_RELAY			0x0004
-	
+
+#if 0	
 	be_node *modenode = NULL;
 	switch(mode)
 	{
-		case CONNECT_MODE_DIRECT:
+		case BITDHT_CONNECT_MODE_DIRECT:
 			modenode = be_create_str("d");
 			break;
-		case CONNECT_MODE_PROXY:
+		case BITDHT_CONNECT_MODE_PROXY:
 			modenode = be_create_str("p");
 			break;
-		case CONNECT_MODE_RELAY:
+		case BITDHT_CONNECT_MODE_RELAY:
 			modenode = be_create_str("r");
 			break;
 		default:
 			modenode = be_create_str("u");
 			break;
 	}
+#endif
 			
 	be_add_keypair(iddict, "id", idnode);
 	be_add_keypair(iddict, "src", srcnode);

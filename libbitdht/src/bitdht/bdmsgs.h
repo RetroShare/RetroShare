@@ -45,7 +45,11 @@
 #define BITDHT_MSG_TYPE_POST_HASH       8
 #define BITDHT_MSG_TYPE_REPLY_POST      9
 
+
+
 // THESE ARE EXTENSIONS
+#define BITDHT_MSG_TYPE_CONNECT     	20
+
 // CONNECTIONS.
 #define BITDHT_MSG_TYPE_CONNECT_REQUEST     	101
 #define BITDHT_MSG_TYPE_CONNECT_REPLY     	102
@@ -108,6 +112,7 @@ be_node *makeCompactNodeIdString(std::list<bdId> &nodes);
 
 int beMsgGetToken(be_node *n, bdToken &token);
 int beMsgGetNodeId(be_node *n, bdNodeId &nodeId);
+int beMsgGetBdId(be_node *n, bdId &id);
 int beMsgGetListBdIds(be_node *n, std::list<bdId> &nodes);
 
 int beMsgGetListStrings(be_node *n, std::list<std::string> &values);
