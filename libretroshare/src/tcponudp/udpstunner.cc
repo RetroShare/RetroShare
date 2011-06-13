@@ -27,13 +27,16 @@
 #include <iostream>
 #include <sstream>
 
+#include "util/rsprint.h"
+
 static const int STUN_TTL = 64;
 
 #define TOU_STUN_MIN_PEERS 5
 
 /*
- * #define DEBUG_UDP_STUN 1
+ * #define DEBUG_UDP_STUNNER 1
  */
+//#define DEBUG_UDP_STUNNER 1
 
 const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
 const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
@@ -144,7 +147,7 @@ bool UdpStunner::locked_handleStunPkt(void *data, int size, struct sockaddr_in &
 #ifdef DEBUG_UDP_STUNNER
 			std::cerr << "UdpStunner::handleStunPkt() got Ext Addr: ";
 			std::cerr << inet_ntoa(eAddr.sin_addr) << ":" << ntohs(eAddr.sin_port);
-			out << " from: " << from;
+			std::cerr << " from: " << from;
 			std::cerr << std::endl;
 #endif
 			locked_recvdStun(from, eAddr);
@@ -233,8 +236,7 @@ int     UdpStunner::doStun(struct sockaddr_in stun_addr)
 
 #ifdef DEBUG_UDP_STUNNER
 	std::ostringstream out;
-	out << "UdpStunner::doStun() Sent Stun Packet(" << sentlen << ") from:";
-	out << inet_ntoa(laddr.sin_addr) << ":" << ntohs(laddr.sin_port);
+	out << "UdpStunner::doStun() Sent Stun Packet(" << sentlen << ") ";
 	out << " to:";
 	out << inet_ntoa(stun_addr.sin_addr) << ":" << ntohs(stun_addr.sin_port);
 
