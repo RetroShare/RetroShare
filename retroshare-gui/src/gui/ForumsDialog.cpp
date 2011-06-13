@@ -707,36 +707,51 @@ void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem /*= NULL*/)
 
 void ForumsDialog::fillThreadFinished()
 {
-    // thread has finished
-    if (fillThread == sender()) {
-        ui.progressBar->hide();
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsDialog::fillThreadFinished" << std::endl;
+#endif
 
-        if (fillThread->wasStopped()) {
+    // thread has finished
+    ForumsFillThread *thread = dynamic_cast<ForumsFillThread*>(sender());
+    if (thread) {
+        if (thread == fillThread) {
+            // current thread has finished, hide progressbar and release thread
+            ui.progressBar->hide();
+            fillThread = NULL;
+        }
+
+        if (thread->wasStopped()) {
             // thread was stopped
+#ifdef DEBUG_FORUMS
+            std::cerr << "ForumsDialog::fillThreadFinished Thread was stopped" << std::endl;
+#endif
         } else {
+#ifdef DEBUG_FORUMS
+            std::cerr << "ForumsDialog::fillThreadFinished Add messages" << std::endl;
+#endif
             /* add all messages in! */
-            if (lastViewType != fillThread->viewType || lastForumID != mCurrForumId) {
+            if (lastViewType != thread->viewType || lastForumID != mCurrForumId) {
                 ui.threadTreeWidget->clear();
-                lastViewType = fillThread->viewType;
+                lastViewType = thread->viewType;
                 lastForumID = mCurrForumId;
-                ui.threadTreeWidget->insertTopLevelItems(0, fillThread->items);
+                ui.threadTreeWidget->insertTopLevelItems(0, thread->items);
 
                 // clear list
-                fillThread->items.clear();
+                thread->items.clear();
             } else {
-                FillThreads (fillThread->items, fillThread->expandNewMessages, fillThread->itemToExpand);
+                FillThreads (thread->items, thread->expandNewMessages, thread->itemToExpand);
 
                 // cleanup list
-                CleanupItems (fillThread->items);
+                CleanupItems (thread->items);
             }
 
             QList<QTreeWidgetItem*>::iterator Item;
-            for (Item = fillThread->itemToExpand.begin(); Item != fillThread->itemToExpand.end(); Item++) {
+            for (Item = thread->itemToExpand.begin(); Item != thread->itemToExpand.end(); Item++) {
                 if ((*Item)->isHidden() == false) {
                     (*Item)->setExpanded(true);
                 }
             }
-            fillThread->itemToExpand.clear();
+            thread->itemToExpand.clear();
 
             if (ui.filterPatternLineEdit->text().isEmpty() == false) {
                 FilterItems();
@@ -749,9 +764,17 @@ void ForumsDialog::fillThreadFinished()
             ui.newthreadButton->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags));
         }
 
-        fillThread->deleteLater();
-        fillThread = NULL;
+#ifdef DEBUG_FORUMS
+        std::cerr << "ForumsDialog::fillThreadFinished Delete thread" << std::endl;
+#endif
+
+        thread->deleteLater();
+        thread = NULL;
     }
+
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsDialog::fillThreadFinished done" << std::endl;
+#endif
 }
 
 void ForumsDialog::fillThreadProgress(int current, int count)
@@ -770,10 +793,16 @@ void ForumsDialog::insertThreads()
 #endif
 
     if (fillThread) {
-        // delete fill thread
-        fillThread->stop();
-        delete(fillThread);
+#ifdef DEBUG_FORUMS
+        std::cerr << "ForumsDialog::insertThreads() stop current fill thread" << std::endl;
+#endif
+        // stop and disconnect current fill thread
+        ForumsFillThread *thread = fillThread;
         fillThread = NULL;
+
+        // disconnect only the signal "progress", the signal "finished" is needed to delete the thread
+        thread->disconnect(this, SIGNAL(progress(int,int)));
+        thread->stop();
 
         ui.progressBar->hide();
     }
@@ -835,12 +864,20 @@ void ForumsDialog::insertThreads()
     connect(fillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
     connect(fillThread, SIGNAL(progress(int,int)), this, SLOT(fillThreadProgress(int,int)));
 
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsDialog::insertThreads() Start fill thread" << std::endl;
+#endif
+
     // start thread
     fillThread->start();
 }
 
 void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
 {
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsDialog::FillThreads()" << std::endl;
+#endif
+
     int Index = 0;
     QTreeWidgetItem *Thread;
     QList<QTreeWidgetItem *>::iterator NewThread;
@@ -908,6 +945,10 @@ void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool expand
             }
         }
     }
+
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsDialog::FillThreads() done" << std::endl;
+#endif
 }
 
 void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
@@ -1615,6 +1656,9 @@ ForumsFillThread::ForumsFillThread(ForumsDialog *parent)
 
 ForumsFillThread::~ForumsFillThread()
 {
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsFillThread::~ForumsFillThread" << std::endl;
+#endif
     // remove all items (when items are available, the thread was terminated)
     CleanupItems (items);
     itemToExpand.clear();
@@ -1622,13 +1666,15 @@ ForumsFillThread::~ForumsFillThread()
 
 void ForumsFillThread::stop()
 {
-    disconnect();
     stopped = true;
-    wait();
 }
 
 void ForumsFillThread::run()
 {
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsFillThread::run()" << std::endl;
+#endif
+
     uint32_t status;
 
     std::list<ThreadInfoSummary> threads;
@@ -1659,15 +1705,13 @@ void ForumsFillThread::run()
         }
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "FForumsFillThread::run() Adding TopLevel Thread: mId: ";
-        std::cerr << tit->msgId << std::endl;
+        std::cerr << "ForumsFillThread::run() Adding TopLevel Thread: mId: " << tit->msgId << std::endl;
 #endif
 
         ForumMsgInfo msginfo;
         if (rsForums->getForumMessage(forumId, tit->msgId, msginfo) == false) {
 #ifdef DEBUG_FORUMS
-            std::cerr << "ForumsFillThread::run() Failed to Get Msg";
-            std::cerr << std::endl;
+            std::cerr << "ForumsFillThread::run() Failed to Get Msg" << std::endl;
 #endif
             continue;
         }
@@ -1760,30 +1804,26 @@ void ForumsFillThread::run()
             std::list<ThreadInfoSummary>::iterator mit;
 
 #ifdef DEBUG_FORUMS
-            std::cerr << "ForumsFillThread::run() Getting Children of : " << pId;
-            std::cerr << std::endl;
+            std::cerr << "ForumsFillThread::run() Getting Children of : " << pId << std::endl;
 #endif
 
             if (rsForums->getForumThreadMsgList(forumId, pId, msgs))
             {
 #ifdef DEBUG_FORUMS
-                std::cerr << "ForumsFillThread::run() #Children " << msgs.size();
-                std::cerr << std::endl;
+                std::cerr << "ForumsFillThread::run() #Children " << msgs.size() << std::endl;
 #endif
 
                 /* iterate through child */
                 for(mit = msgs.begin(); mit != msgs.end(); mit++)
                 {
 #ifdef DEBUG_FORUMS
-                    std::cerr << "ForumsFillThread::run() adding " << mit->msgId;
-                    std::cerr << std::endl;
+                    std::cerr << "ForumsFillThread::run() adding " << mit->msgId << std::endl;
 #endif
 
                     ForumMsgInfo msginfo;
                     if (rsForums->getForumMessage(forumId, mit->msgId, msginfo) == false) {
 #ifdef DEBUG_FORUMS
-                        std::cerr << "ForumsFillThread::run() Failed to Get Msg";
-                        std::cerr << std::endl;
+                        std::cerr << "ForumsFillThread::run() Failed to Get Msg" << std::endl;
 #endif
                         continue;
                     }
@@ -1885,4 +1925,8 @@ void ForumsFillThread::run()
 
         emit progress(++pos, count);
     }
+
+#ifdef DEBUG_FORUMS
+    std::cerr << "ForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
+#endif
 }
