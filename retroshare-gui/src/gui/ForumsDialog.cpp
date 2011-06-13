@@ -832,7 +832,7 @@ void ForumsDialog::insertThreads()
     }
 
     // connect thread
-    connect(fillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()));
+    connect(fillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
     connect(fillThread, SIGNAL(progress(int,int)), this, SLOT(fillThreadProgress(int,int)));
 
     // start thread
