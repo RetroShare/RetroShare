@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	// connect add Peer button.
     	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addPeer()));
+    	connect(ui->chatLineEdit, SIGNAL(returnPressed()), this, SLOT(sendChat()));
 }
 
 MainWindow::~MainWindow()
@@ -51,6 +52,9 @@ void MainWindow::update()
 	updateDhtPeers();
 	updateNetPeers();
 	updateChat();
+
+	// Shouldn't do it here! but for now.
+	mPeerNet->tick();
 }
 
 
@@ -177,12 +181,19 @@ void MainWindow::updateNetPeers()
 	QTreeWidget *peerTreeWidget = ui->peerTreeWidget;
 
 	std::list<std::string> peerIds;
+	std::list<std::string> failedPeerIds;
 	std::list<std::string>::iterator it;
 	mPeerNet->get_net_peers(peerIds);
+	mPeerNet->get_net_failedpeers(failedPeerIds);
 
 #define PTW_COL_PEERID		0
-#define PTW_COL_STATUS		1
-#define PTW_COL_UPDATETS	2
+#define PTW_COL_DHT_STATUS	1
+#define PTW_COL_DHT_ADDRESS	2
+#define PTW_COL_DHT_UPDATETS	3
+
+#define PTW_COL_PEER_STATUS	4
+#define PTW_COL_PEER_ADDRESS	5
+#define PTW_COL_PEER_UPDATETS	6
 
 	/* clear old entries */
 	int itemCount = peerTreeWidget->topLevelItemCount();
@@ -192,9 +203,12 @@ void MainWindow::updateNetPeers()
 		std::string tmpid = tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString().toStdString();
 		if (peerIds.end() == std::find(peerIds.begin(), peerIds.end(), tmpid))
 		{
-			peerTreeWidget->removeItemWidget(tmp_item, 0);
-			/* remove it! */
-			itemCount--;
+			if (failedPeerIds.end() == std::find(failedPeerIds.begin(), failedPeerIds.end(), tmpid))
+			{
+				peerTreeWidget->removeItemWidget(tmp_item, 0);
+				/* remove it! */
+				itemCount--;
+			}
 		}
 		else
 		{
@@ -228,14 +242,86 @@ void MainWindow::updateNetPeers()
 		/* update the data */
 		PeerStatus status;
 		mPeerNet->get_peer_status(*it, status);
-
-		std::ostringstream updatestr;
 		time_t now = time(NULL);
-		updatestr << now - status.mUpdateTS << " secs ago";
+
+		std::ostringstream dhtipstr;
+		if ((status.mDhtState == PN_DHT_STATE_ONLINE) || (status.mDhtState == PN_DHT_STATE_UNREACHABLE)) 
+		{
+			dhtipstr << inet_ntoa(status.mDhtAddr.sin_addr);
+			dhtipstr << ":" << ntohs(status.mDhtAddr.sin_port);
+		}
+
+		std::ostringstream dhtupdatestr;
+		dhtupdatestr << now - status.mDhtUpdateTS << " secs ago";
+
+		std::ostringstream peeripstr;
+		//if (status.mPeerState == PN_PEER_STATE_ONLINE)
+		{
+			peeripstr << inet_ntoa(status.mPeerAddr.sin_addr);
+			peeripstr << ":" << ntohs(status.mPeerAddr.sin_port);
+		}
+
+		std::ostringstream peerupdatestr;
+		peerupdatestr << now - status.mPeerUpdateTS << " secs ago";
+
 
 		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(*it));
-		peer_item -> setData(PTW_COL_STATUS, Qt::DisplayRole, QString::fromStdString(status.mStatusMsg));
-		peer_item -> setData(PTW_COL_UPDATETS, Qt::DisplayRole, QString::fromStdString(updatestr.str()));
+		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, QString::fromStdString(status.mDhtStatusMsg));
+		peer_item -> setData(PTW_COL_DHT_ADDRESS, Qt::DisplayRole, QString::fromStdString(dhtipstr.str()));
+		peer_item -> setData(PTW_COL_DHT_UPDATETS, Qt::DisplayRole, QString::fromStdString(dhtupdatestr.str()));
+
+		peer_item -> setData(PTW_COL_PEER_STATUS, Qt::DisplayRole, QString::fromStdString(status.mPeerStatusMsg));
+		peer_item -> setData(PTW_COL_PEER_ADDRESS, Qt::DisplayRole, QString::fromStdString(peeripstr.str()));
+		peer_item -> setData(PTW_COL_PEER_UPDATETS, Qt::DisplayRole, QString::fromStdString(peerupdatestr.str()));
+	}
+
+	for(it = failedPeerIds.begin(); it != failedPeerIds.end(); it++)
+	{
+		/* find the entry */
+		QTreeWidgetItem *peer_item = NULL;
+		QString qpeerid = QString::fromStdString(*it);
+		int itemCount = peerTreeWidget->topLevelItemCount();
+		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+		{
+			QTreeWidgetItem *tmp_item = peerTreeWidget->topLevelItem(nIndex);
+			if (tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString() == qpeerid) 
+			{
+				peer_item = tmp_item;
+				break;
+			}
+		}
+
+		if (!peer_item)
+		{
+			/* insert */
+			peer_item = new QTreeWidgetItem();
+			peerTreeWidget->addTopLevelItem(peer_item);
+		}
+
+		/* update the data */
+		PeerStatus status;
+		mPeerNet->get_failedpeer_status(*it, status);
+		time_t now = time(NULL);
+
+		std::ostringstream peeripstr;
+		//if (status.mPeerState == PN_PEER_STATE_ONLINE)
+		{
+			peeripstr << inet_ntoa(status.mPeerAddr.sin_addr);
+			peeripstr << ":" << ntohs(status.mPeerAddr.sin_port);
+		}
+
+		std::ostringstream peerupdatestr;
+		peerupdatestr << now - status.mPeerUpdateTS << " secs ago";
+
+
+		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(*it));
+		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, "Unknown Peer");
+		peer_item -> setData(PTW_COL_DHT_ADDRESS, Qt::DisplayRole, "");
+		peer_item -> setData(PTW_COL_DHT_UPDATETS, Qt::DisplayRole, "");
+
+		peer_item -> setData(PTW_COL_PEER_STATUS, Qt::DisplayRole, QString::fromStdString(status.mPeerStatusMsg));
+		peer_item -> setData(PTW_COL_PEER_ADDRESS, Qt::DisplayRole, QString::fromStdString(peeripstr.str()));
+		peer_item -> setData(PTW_COL_PEER_UPDATETS, Qt::DisplayRole, QString::fromStdString(peerupdatestr.str()));
 	}
 }
 
@@ -249,15 +335,41 @@ void MainWindow::addPeer()
 
 void MainWindow::sendChat()
 {
+	std::string msg = ui->chatLineEdit->text().toStdString();
+	ui->chatLineEdit->clear();
 
-
+	if (msg.size() > 0)
+	{
+		mPeerNet->sendMessage(msg);
+	}
 }
 
 
 void MainWindow::updateChat()
 {
+	std::list<std::string> peerIds;
+	std::list<std::string>::iterator it;
+	mPeerNet->get_net_peers(peerIds);
+	for(it = peerIds.begin(); it != peerIds.end(); it++)
+	{
+		std::string msg;
+		if (mPeerNet->getMessage(*it, msg))
+		{
+			addChatMsg(*it, msg);
+		}
+	}
+}
 
+void MainWindow::addChatMsg(std::string id, std::string msg)
+{
+	QString chat = ui->chatBrowser->toPlainText();
+	QString newmsg = "<";
+	newmsg += QString::fromStdString(id);
+	newmsg += "> ";
+	newmsg += QString::fromStdString(msg);
+	newmsg += "\n";
 
-
+	chat += newmsg;
+	ui->chatBrowser->setPlainText(chat);
 }
 

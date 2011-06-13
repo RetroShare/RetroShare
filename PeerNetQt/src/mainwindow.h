@@ -19,12 +19,13 @@ public:
 	void updateNetStatus();
 	void updateDhtPeers();
 	void updateNetPeers();
-	void sendChat();
 	void updateChat();
+	void addChatMsg(std::string id, std::string msg);
 
 public slots:
 	void update();
 	void addPeer();
+	void sendChat();
 	
 protected:
     void changeEvent(QEvent *e);

@@ -37,7 +37,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QLineEdit" name="peerLine">
@@ -61,19 +61,39 @@
           </column>
           <column>
            <property name="text">
-            <string>Status</string>
+            <string>Dht Status</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Last Update</string>
+            <string>Dht Address</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Dht Update</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Connect Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Connect Address</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Connect Update</string>
            </property>
           </column>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -94,7 +114,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="dhtLabel">
