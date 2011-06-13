@@ -1012,6 +1012,7 @@ void ForumsDialog::insertPost()
         // there is something wrong
         ui.previousButton->setEnabled(false);
         ui.nextButton->setEnabled(false);
+		return;
     }
 
     ui.newmessageButton->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags) && mCurrThreadId.empty() == false);

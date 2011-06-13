@@ -127,7 +127,8 @@ win32 {
 
 macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    # CONFIG += ppc x86
+    	CONFIG += ppc x86
+	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
