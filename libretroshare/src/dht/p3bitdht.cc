@@ -64,6 +64,7 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 {
 	// nothing here fore now!
 	//return mParent->ValueCallback(id, key, status);
+	return 0;
 }
 
 	private:

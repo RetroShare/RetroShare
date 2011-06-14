@@ -71,31 +71,4 @@ int     status(std::ostream &out);
 };
 
 
-class UdpRelayReceiver: public UdpSubReceiver, public UdpPublisher
-{
-	public:
-
-	UdpRelayReceiver(UdpPublisher *pub);
-virtual ~UdpRelayReceiver() { return; }
-
-	/* add a TCPonUDP stream */
-int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
-int 	removeUdpPeer(UdpPeer *peer);
-
-	/* callback for recved data (overloaded from UdpReceiver) */
-virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
-
-	/* wrapper function for relay (overloaded from UdpPublisher) */
-virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
-
-int     status(std::ostream &out);
-
-	private:
-
-	RsMutex peerMtx; /* for all class data (below) */
-
-	std::map<struct sockaddr_in, UdpPeer *> streams;
-
-};
-
 #endif
