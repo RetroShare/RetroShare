@@ -310,7 +310,7 @@ void UdpLayer::recv_loop()
 }
 
 
-int UdpLayer::sendPkt(const void *data, int size, sockaddr_in &to, int ttl)
+int UdpLayer::sendPkt(const void *data, int size, const sockaddr_in &to, int ttl)
 {
 	/* if ttl is different -> set it */
 	if (ttl != getTTL())
@@ -492,7 +492,7 @@ int UdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
 	return -1;
 }
 
-int UdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
+int UdpLayer::sendUdpPacket(const void *data, int size, const struct sockaddr_in &to)
 {
 	/* send out */
 #ifdef DEBUG_UDP_LAYER

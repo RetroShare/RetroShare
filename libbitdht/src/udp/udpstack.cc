@@ -112,7 +112,7 @@ int UdpStack::recvPkt(void *data, int size, struct sockaddr_in &from)
 	return 1;
 }
 
-int  UdpStack::sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl)
+int  UdpStack::sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl)
 {
 	/* print packet information */
 #ifdef DEBUG_UDP_RECV
@@ -226,7 +226,7 @@ UdpSubReceiver::UdpSubReceiver(UdpPublisher *pub)
 	return; 
 }
 
-int  UdpSubReceiver::sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl)
+int  UdpSubReceiver::sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl)
 {
 	/* print packet information */
 #ifdef DEBUG_UDP_RECV

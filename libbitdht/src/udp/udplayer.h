@@ -60,7 +60,7 @@ class UdpPublisher
 {
 	public:
 virtual ~UdpPublisher() {}
-virtual	int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl) = 0;
+virtual	int sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl) = 0;
 };
 
 
@@ -86,7 +86,7 @@ void	recv_loop(); /* uses callback to UdpReceiver */
 
 	/* Higher Level Interface */
 	//int  readPkt(void *data, int *size, struct sockaddr_in &from);
-	int  sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
+	int  sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl);
 
 	/* monitoring / updates */
 	int okay();
@@ -98,7 +98,7 @@ void	recv_loop(); /* uses callback to UdpReceiver */
 	protected:
 
 virtual	int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
-virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
+virtual	int sendUdpPacket(const void *data, int size, const struct sockaddr_in &to);
  
 	int setTTL(int t);
 	int getTTL();

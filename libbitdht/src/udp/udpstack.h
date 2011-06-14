@@ -55,7 +55,7 @@ class UdpSubReceiver: public UdpReceiver
 	UdpSubReceiver(UdpPublisher *pub);
 
 		/* calls mPublisher->sendPkt */
-virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
+virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl);
 		/* callback for recved data (overloaded from UdpReceiver) */
 //virtual int recvPkt(void *data, int size, struct sockaddr_in &from) = 0;
 
@@ -87,7 +87,7 @@ int 	removeReceiver(UdpReceiver *recv);
 
 	/* Packet IO */
 		/* pass-through send packets */
-virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
+virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl);
 		/* callback for recved data (overloaded from UdpReceiver) */
 
 virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
