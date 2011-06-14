@@ -417,7 +417,11 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
     sMsgText += BuildRecommendHtml(peerids);
     pMsgDialog->insertMsgText(sMsgText);
 
-//    pMsgDialog->insertFileList(files_info);
+    std::list <std::string>::iterator peerIt;
+    for (peerIt = peerids.begin(); peerIt != peerids.end(); peerIt++) {
+        pMsgDialog->addRecipient(CC, *peerIt, false);
+    }
+
     pMsgDialog->show();
 
     /* window will destroy itself! */
@@ -651,7 +655,7 @@ void MessageComposer::insertSendList()
                 }
             }
 
-            if (state != RS_STATUS_OFFLINE) {
+            if (state != (int) RS_STATUS_OFFLINE) {
                 item->setTextColor(COLUMN_CONTACT_NAME, COLOR_CONNECT);
             }
 
@@ -2433,6 +2437,11 @@ void MessageComposer::addRecommend()
 
     if (gpgIds.empty()) {
         return;
+    }
+
+    std::list <std::string>::iterator it;
+    for (it = gpgIds.begin(); it != gpgIds.end(); it++) {
+        addRecipient(CC, *it, false);
     }
 
     QString text = BuildRecommendHtml(gpgIds);
