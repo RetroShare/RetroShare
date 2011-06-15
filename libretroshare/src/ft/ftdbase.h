@@ -57,7 +57,7 @@ virtual bool search(const std::string &hash, uint32_t hintflags, FileInfo &info)
 class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 {
 	public:
-	ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid);
+	ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid,const std::string& config_dir);
 
 	/* overloaded search function */
 	virtual bool search(const std::string &hash, uint32_t hintflags, FileInfo &info) const;

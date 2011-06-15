@@ -48,11 +48,12 @@
 //***********
 //#define FIM_DEBUG 1
 // ***********/
+#define FIM_DEBUG 1
 
-FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid)
+FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
-		mForceCheck(false), mInCheck(false),cb(cb_in), hashCache(cachedir+"/" + "fc-own-cache.rsfa"),useHashCache(true)
+		mForceCheck(false), mInCheck(false),cb(cb_in), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
 
 {
 	updatePeriod = 60;
@@ -123,7 +124,7 @@ HashCache::HashCache(const std::string& path)
 	int n=0 ;
 #endif
 
-	while(f.good())
+	while(!f.eof())
 	{
 		HashCacheInfo info ;
 
@@ -602,17 +603,27 @@ void 	FileIndexMonitor::updateCycle()
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::updateCycle()";
 			std::cerr << " Missing Dir: " << realpath << std::endl;
+			std::cerr << " Root Dir: " << rootdir << std::endl;
+			std::cerr << " remdir: " << remdir << std::endl;
 #endif
-			/* bad directory - delete */
-			if (!fi.removeOldDirectory(olddir->parent->path, olddir->name, stamp))
+			if(directoryMap.end() != directoryMap.find(rootdir) && remdir=="")
 			{
-				/* bad... drop out of updateCycle() - hopefully the initial cleanup
-				 * will deal with it next time! - otherwise we're in a continual loop
-				 */
-				std::cerr << "FileIndexMonitor::updateCycle()";
-				std::cerr << "ERROR Failed to Remove: " << olddir->path << std::endl;
+#ifdef FIM_DEBUG
+				std::cerr << " This is a root directory. Keeping it empty." << std::endl;
+#endif
 			}
-			continue;
+			else 
+			{
+				if (!fi.removeOldDirectory(olddir->parent->path, olddir->name, stamp))/* bad directory - delete */
+				{
+					/* bad... drop out of updateCycle() - hopefully the initial cleanup
+					 * will deal with it next time! - otherwise we're in a continual loop
+					 */
+					std::cerr << "FileIndexMonitor::updateCycle()";
+					std::cerr << "ERROR Failed to Remove: " << olddir->path << std::endl;
+				}
+				continue;
+			}
 		}
 
 		/* update this dir - as its valid */
@@ -1069,18 +1080,18 @@ void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& d
 #endif
 
 		/* check if dir exists before adding in */
-		std::string path = (*it).filename;
-		if (!RsDirUtil::checkDirectory(path))
-		{
-#ifdef FIM_DEBUG
-			std::cerr << "FileIndexMonitor::setSharedDirectories()";
-			std::cerr << " Ignoring NonExistant SharedDir: " << path << std::endl;
-#endif
-		}
-		else
-		{
+//		std::string path = (*it).filename;
+//		if (!RsDirUtil::checkDirectory(path))
+//		{
+//#ifdef FIM_DEBUG
+//			std::cerr << "FileIndexMonitor::setSharedDirectories()";
+//			std::cerr << " Ignoring NonExistant SharedDir: " << path << std::endl;
+//#endif
+//		}
+//		else
+//		{
 			checkeddirs.push_back(*it);
-		}
+//		}
 	}
 
 	{
@@ -1247,13 +1258,13 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 {
 	RsStackMutex mutex(fiMutex) ;
 
-#ifdef FIM_DEBUG
+#ifdef FIM_DEBUG2
 	std::cerr << "FileIndexMonitor::RequestDirDetails() ref=" << ref << " flags: " << flags << std::endl;
 #endif
 
 	/* root case */
 
-#ifdef FIM_DEBUG
+#ifdef FIM_DEBUG2
 	fi.root->checkParentPointers();
 #endif
 
@@ -1261,7 +1272,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 
 	if (ref == NULL)
 	{
-#ifdef FI_DEBUG
+#ifdef FI_DEBUG2
 		std::cerr << "FileIndex::RequestDirDetails() ref=NULL (root)" << std::endl;
 #endif
 		/* local only */
@@ -1321,7 +1332,7 @@ uint32_t FileIndexMonitor::locked_findShareFlags(FileEntry *file) const
 
 	if(dir != NULL && dir->parent != NULL)
 	{
-#ifdef FIM_DEBUG
+#ifdef FIM_DEBUG2
 		std::cerr << "FileIndexMonitor::RequestDirDetails: top parent name=" << dir->name << std::endl ;
 #endif
 		std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(dir->name) ;
@@ -1330,7 +1341,7 @@ uint32_t FileIndexMonitor::locked_findShareFlags(FileEntry *file) const
 			std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
 		else
 			flags = it->second.shareflags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
-#ifdef FIM_DEBUG
+#ifdef FIM_DEBUG2
 		std::cerr << "flags = " << flags << std::endl ;
 #endif
 	}

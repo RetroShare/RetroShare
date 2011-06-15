@@ -107,7 +107,7 @@ class HashCache
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
-		FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in, std::string cachedir, std::string pid);
+		FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in, std::string cachedir, std::string pid, const std::string& config_dir);
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
