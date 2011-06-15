@@ -12,8 +12,8 @@ UI_DIR  = temp/ui
 MOC_DIR = temp/moc
 
 CONFIG += bitdht librs
-#CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
-#QT     += network xml script
+CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
+QT     += network xml script
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -62,6 +62,18 @@ macx {
         CONFIG -= uitools
 
 }
+linux-g++ {
+        #CONFIG += version_detail_bash_script
+        LIBS += ../../libretroshare/src/lib/libretroshare.a
+        
+	LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error 
+
+        INCLUDEPATH += .
+        #DEFINES* = MAC_IDLE # for idle feature
+        CONFIG -= uitools
+
+}
+
 
 ############################## Common stuff ######################################
 

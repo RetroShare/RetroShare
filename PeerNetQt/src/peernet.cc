@@ -1,5 +1,6 @@
 
 #include "peernet.h"
+#include <stdio.h>
 #include <iostream>
 #include <sstream>
 

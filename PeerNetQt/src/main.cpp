@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <QtGui/QApplication>
 #include "mainwindow.h"
 #include "peernet.h"
