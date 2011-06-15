@@ -261,7 +261,7 @@ void bdNodeManager::iteration()
 //#define MAX_FINDSELF_TIME		60
 //#define MIN_OP_SPACE_SIZE		20 
 #define MAX_FINDSELF_TIME		10
-#define MIN_OP_SPACE_SIZE		3   // for testing.
+#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
@@ -280,7 +280,7 @@ void bdNodeManager::iteration()
 
 				if (modeAge > MAX_FINDSELF_TIME) 
 				{
-					if (nodeSpaceSize > MIN_OP_SPACE_SIZE)
+					if (nodeSpaceSize >= MIN_OP_SPACE_SIZE)
 					{
 						mMode = BITDHT_MGR_STATE_REFRESH;
 						mModeTS = now;

@@ -445,6 +445,74 @@ int bdSpace::find_nearest_nodes(const bdNodeId *id, int number,
 }
 
 
+/* This is much cheaper than find nearest... we only look in the one bucket
+ */
+
+int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds, uint32_t with_flag)
+{
+	bdMetric dist;
+	mFns->bdDistance(id, &(mOwnId), &dist);
+	int buckno = mFns->bdBucketDistance(&dist);
+
+	std::cerr << "bdSpace::find_node(NodeId:";
+	mFns->bdPrintNodeId(std::cerr, id);
+	std::cerr << ")";
+
+	std::cerr << " Number: " << number;
+	std::cerr << " Bucket #: " << buckno;
+	std::cerr << std::endl;
+#ifdef DEBUG_BD_SPACE
+#endif
+
+	bdBucket &buck = buckets[buckno];
+
+	std::list<bdPeer>::iterator eit;
+	int matchCount = 0;
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	{
+		std::cerr << "bdSpace::find_node() Checking Against Peer: ";
+		mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+		std::cerr << " withFlags: " << eit->mPeerFlags;
+		std::cerr << std::endl;
+
+		if ((!with_flag) || (with_flag & eit->mPeerFlags))
+		{
+			if (*id == eit->mPeerId.id)
+			{
+		  		matchIds.push_back(eit->mPeerId);
+				matchCount++;
+
+				std::cerr << "bdSpace::find_node() Found Matching Peer: ";
+			  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+				std::cerr << " withFlags: " << eit->mPeerFlags;
+			  	std::cerr << std::endl;
+			}
+		}
+		else
+		{
+			if (*id == eit->mPeerId.id)
+			{
+		  		//matchIds.push_back(eit->mPeerId);
+				//matchCount++;
+
+				std::cerr << "bdSpace::find_node() Found (WITHOUT FLAGS) Matching Peer: ";
+			  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+				std::cerr << " withFlags: " << eit->mPeerFlags;
+			  	std::cerr << std::endl;
+			}
+		}
+	}
+
+	std::cerr << "bdSpace::find_node() Found " << matchCount << " Matching Peers";
+	std::cerr << std::endl << std::endl;
+#ifdef DEBUG_BD_SPACE
+#endif
+
+	return matchCount;
+}
+
+
+
 int	bdSpace::out_of_date_peer(bdId &id)
 {
 	/* 

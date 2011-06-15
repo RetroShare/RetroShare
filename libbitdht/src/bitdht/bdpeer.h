@@ -161,6 +161,9 @@ int 	find_nearest_nodes_with_flags(const bdNodeId *id, int number,
 		std::list<bdId> excluding, 
 		std::multimap<bdMetric, bdId> &nearest, uint32_t with_flag);
 
+int 	find_node(const bdNodeId *id, int number, 
+		std::list<bdId> &matchIds, uint32_t with_flag);
+
 int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
 int     add_peer(const bdId *id, uint32_t mode);
 int     printDHT();

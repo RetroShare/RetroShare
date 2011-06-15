@@ -66,6 +66,7 @@ class bdProxyTuple
 	bdNodeId destId;
 };
 
+std::ostream &operator<(std::ostream &out, const bdProxyTuple &t);
 int operator<(const bdProxyTuple &a, const bdProxyTuple &b);
 int operator==(const bdProxyTuple &a, const bdProxyTuple &b);
 
@@ -82,7 +83,7 @@ class bdConnection
 
 	// Initialise a new Connection. (receiving a Connection Request)
 	int ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *destConnAddr);
-	int ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	int ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destConnAddr, int mode);
 	int ConnectionRequestEnd(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
 
 	// Setup Finishing Stage, (receiving a Connection Reply).
@@ -148,6 +149,7 @@ class bdConnectionRequest
 };
 
 std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req);
+std::ostream &operator<<(std::ostream &out, const bdConnection &conn);
 
 #endif
 
