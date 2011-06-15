@@ -48,7 +48,6 @@
 //***********
 //#define FIM_DEBUG 1
 // ***********/
-#define FIM_DEBUG 1
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid),
@@ -1079,6 +1078,12 @@ void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& d
 		std::cerr <<  std::endl;
 #endif
 
+		checkeddirs.push_back(*it);
+
+#ifdef REMOVED_CODE
+		// this code has been removed because it prevents unmounted shared directories to stay in the list of shared files. It's better
+		// to keep them showing empty than removing them completely.
+		//
 		/* check if dir exists before adding in */
 //		std::string path = (*it).filename;
 //		if (!RsDirUtil::checkDirectory(path))
@@ -1090,8 +1095,9 @@ void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& d
 //		}
 //		else
 //		{
-			checkeddirs.push_back(*it);
+//			checkeddirs.push_back(*it);
 //		}
+#endif
 	}
 
 	{
