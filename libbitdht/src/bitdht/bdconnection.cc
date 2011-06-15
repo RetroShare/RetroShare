@@ -23,6 +23,7 @@
  *
  */
 
+#include <algorithm>
 #include "bitdht/bdiface.h"
 
 #include "bitdht/bdnode.h"
