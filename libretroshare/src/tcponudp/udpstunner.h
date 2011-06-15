@@ -25,7 +25,9 @@
  *
  */
 
+#ifndef WINDOWS_SYS
 #include <netinet/in.h>
+#endif
 
 #include "tcponudp/rsudpstack.h"
 #include "util/rsthreads.h"
