@@ -62,7 +62,7 @@ UdpRelayReceiver::~UdpRelayReceiver()
 }
 
 
-int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in &proxyaddr)
+int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in *proxyaddr)
 {
 	RsStackMutex stack(peerMtx);   /********** LOCK MUTEX *********/
 	
@@ -81,7 +81,7 @@ int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, 
 	}
 	
 	/* setup a peer */
-	UdpRelayEnd ure(peer, endPoints, &proxyaddr);
+	UdpRelayEnd ure(peer, endPoints, proxyaddr);
 	
 	mStreams[realPeerAddr] = ure;
 	
@@ -627,4 +627,121 @@ int createRelayUdpPacket(const void *data, const int size, void *newpkt, int new
 
 	return pktsize;
 }
+
+
+
+/******* Small Container Class Helper Functions ****/
+
+UdpRelayAddrSet::UdpRelayAddrSet()
+{
+	sockaddr_clear(&mSrcAddr);
+	sockaddr_clear(&mDestAddr);
+}
+
+UdpRelayAddrSet::UdpRelayAddrSet(const sockaddr_in *ownAddr, const sockaddr_in *destAddr)
+{
+	mSrcAddr = *ownAddr;
+	mDestAddr = *destAddr;
+}
+
+UdpRelayAddrSet UdpRelayAddrSet::flippedSet()
+{	
+	UdpRelayAddrSet flipped(&mDestAddr, &mSrcAddr);
+	return flipped;
+}
+
+
+int operator<(const UdpRelayAddrSet &a, const UdpRelayAddrSet &b)
+{
+	if (a.mSrcAddr < b.mSrcAddr)
+	{
+		return 1;
+	}
+
+	if (a.mSrcAddr == b.mSrcAddr)
+	{
+		if (a.mDestAddr < b.mDestAddr)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
+UdpRelayProxy::UdpRelayProxy()
+{
+	mBandwidth = 0;
+	mDataSize = 0;
+	mLastBandwidthTS = 0;
+	mLastTS = 0;
+	mRelayClass = 0;
+}
+
+UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass)
+{
+	mAddrs = *addrSet;
+	mRelayClass = relayClass;
+
+	mBandwidth = 0;
+	mDataSize = 0;
+	mLastBandwidthTS = 0;
+	mLastTS = 0;
+}
+
+UdpRelayEnd::UdpRelayEnd() 
+{ 
+	sockaddr_clear(&mLocalAddr);
+	sockaddr_clear(&mProxyAddr);
+	sockaddr_clear(&mRemoteAddr);
+
+	mPeer = NULL;
+}
+
+UdpRelayEnd::UdpRelayEnd(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in *proxyaddr)
+{
+	mPeer = peer;
+	mLocalAddr = endPoints->mSrcAddr;
+	mRemoteAddr = endPoints->mDestAddr;
+	mProxyAddr = *proxyaddr;
+}
+
+
+
+
+
+std::ostream &operator<<(std::ostream &out, const UdpRelayAddrSet &uras)
+{
+	out << "<" << uras.mSrcAddr << "," << uras.mDestAddr << ">";
+	return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const UdpRelayProxy &urp)
+{
+	time_t now = time(NULL);
+	out << "UdpRelayProxy for " << urp.mAddrs;
+	out << std::endl;
+	out << "\tRelayClass: " << urp.mRelayClass;
+	out << std::endl;
+	out << "\tBandwidth: " << urp.mBandwidth;
+	out << std::endl;
+	out << "\tDataSize: " << urp.mDataSize;
+	out << std::endl;
+	out << "\tLastBandwidthTS: " << now - urp.mLastBandwidthTS << " secs ago";
+	out << std::endl;
+	out << "\tLastTS: " << now - urp.mLastTS << " secs ago";
+	out << std::endl;
+
+	return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure)
+{
+	out << "UdpRelayEnd: <" << ure.mLocalAddr << " => " << ure.mProxyAddr << " <= ";
+	out << ure.mRemoteAddr << ">";
+	return out;
+}
+
+
+
 

@@ -99,7 +99,9 @@ int pqissludp::reset()
 
 int	pqissludp::attach()
 {
-	sockfd = tou_socket(0,0,0);
+	// IN THE IMPROVED TOU LIBRARY, we need to be careful with the tou_socket PARAMETERS.
+	// For now, this should do!
+	sockfd = tou_socket(0,TOU_RECEIVER_TYPE_UDPPEER,0);
 	if (0 > sockfd)
 	{
   		rslog(RSL_WARNING, pqissludpzone, 

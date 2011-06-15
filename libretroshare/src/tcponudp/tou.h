@@ -50,22 +50,34 @@
 #endif
 
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 /* standard C interface (as Unix-like as possible)
  * for the tou (Tcp On Udp) library
  */
 	/*
 	 * Init: 
-	 * (1) need UdpStack item, which has our address already.
+	 * The TOU library no longer references any UdpStack items.
+	 * instead, two arrays should be passed to the init function.
+	 * int tou_init( (void **) UdpSubReceiver **udpRecvers, int *udpType, int nUdps);
+	 * 
+	 * The UdpSubReceivers should be derived classes, with corresponding types:
+	 *   UdpPeerReceiver	TOU_RECEIVER_TYPE_UDPPEER	
+	 *   UdpRelayReceiver	TOU_RECEIVER_TYPE_UDPRELAY
+	 *
 	 */
 
+#define MAX_TOU_RECEIVERS       16
+
+#define TOU_RECEIVER_TYPE_NONE          0x0000
+#define TOU_RECEIVER_TYPE_UDPPEER       0x0001
+#define TOU_RECEIVER_TYPE_UDPRELAY      0x0002
+
 // hack to avoid classes in C code. (MacOSX complaining)
-// will pass as UdpStack * as void * 
-int  	tou_init(void *udpStack); 
+int  	tou_init(void **udpSubRecvs, int *udpTypes, int nUdps);
 
-
-#ifdef  __cplusplus
-extern "C" {
-#endif
 	/* Connections are as similar to UNIX as possible 
 	 * (1) create a socket: tou_socket() this reserves a socket id.
 	 * (2) connect: active: tou_connect() or passive: tou_listenfor().
@@ -77,6 +89,18 @@ extern "C" {
 	 * tou_bind() is not valid. tou_init performs this role.
 	 * tou_listen() is not valid. (must listen for a specific address) use tou_listenfor() instead.
 	 * tou_accept() can still be used.
+	 *
+	 ****** THE ABOVE IS BECOMING LESS TRUE ********
+	 *
+	 * I have now added Multiple type of TOU Connections (Proxy, Relay), 
+	 * and multiple UDP Receivers (meaning you can use different ports too).
+	 *
+	 * The UDP receivers must be specified at startup (new tou_init())
+	 * and the Receiver, and Type of connection must be specified when you
+	 * open the socket.
+	 *
+	 * The parameters to tou_socket, therefore mean something!
+	 * some extra checking has been put in to try and catch bad usage.
 	 */ 
 
 	/* creation/connections */
@@ -86,6 +110,12 @@ int 	tou_listen(int sockfd, int backlog); 						/* null op now */
 int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, 
 					socklen_t addrlen, uint32_t conn_period);
 int 	tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);		
+
+	/* for relay connections */
+int     tou_connect_via_relay(int sockfd,
+                        const struct sockaddr_in *own_addr,
+                        const struct sockaddr_in *proxy_addr,
+                        const struct sockaddr_in *dest_addr);
 
 /* non-standard bonuses */
 int	tou_connected(int sockfd);

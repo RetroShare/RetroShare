@@ -73,7 +73,7 @@ class TcpStream: public UdpPeer
 	public:
 	/* Top-Level exposed */
 
-	TcpStream(UdpPeerReceiver *udp);
+	TcpStream(UdpSubReceiver *udp);
 virtual ~TcpStream() { return; }
 
 	/* user interface */
@@ -230,8 +230,8 @@ uint32 	int_rbytes();
 	struct sockaddr_in 	peeraddr;
 	bool 			peerKnown;
 
-	/* UdpPeerReceiver (has own Mutex!) */
-	UdpPeerReceiver *udp;
+	/* UdpSubReceiver (has own Mutex!) */
+	UdpSubReceiver *udp;
 
 };
 

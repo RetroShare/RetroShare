@@ -35,6 +35,7 @@ class UdpRelayAddrSet
 {
 	public:
 	UdpRelayAddrSet();
+	UdpRelayAddrSet(const sockaddr_in *ownAddr, const sockaddr_in *destAddr);
 
 	UdpRelayAddrSet flippedSet();
 
@@ -64,7 +65,7 @@ class UdpRelayEnd
 {
 	public:
 
-	UdpRelayEnd() { return; }
+	UdpRelayEnd();
 	UdpRelayEnd(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in *proxyaddr);
 
 	struct sockaddr_in mLocalAddr; 
@@ -111,7 +112,7 @@ class UdpRelayReceiver: public UdpSubReceiver
 virtual ~UdpRelayReceiver();
 
 	/* add a TCPonUDP stream (ENDs) */
-int	addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in &proxyaddr);
+int	addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in *proxyaddr);
 int 	removeUdpPeer(UdpPeer *peer);
 
 	/* add a Relay Point (for the Relay).

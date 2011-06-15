@@ -82,6 +82,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/tcpstream.cc \
 		tcponudp/tou.cc \
 		tcponudp/bss_tou.c \
+		tcponudp/udpstunner.cc \
 		tcponudp/udprelay.cc \
 
 # These two aren't actually used (and don't compile) .... 

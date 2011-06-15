@@ -1740,6 +1740,8 @@ RsTurtle *rsTurtle = NULL ;
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
 #include "udp/udpstack.h"
+#include "tcponudp/udppeer.h"
+#include "tcponudp/udprelay.h"
 #endif
 
 /****
@@ -1883,11 +1885,53 @@ int RsServer::StartupRetroShare()
 		}
 	}
 
-	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, 
-				mUdpStack, bootstrapfile);
+	/* construct the rest of the stack, important to build them in the correct order! */
+	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
 
-	/* construct the rest of the stack */
-	tou_init(mUdpStack);
+	UdpSubReceiver *udpReceivers[3];
+	int udpTypes[3];
+
+	// BITDHT FIRST.
+	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, 
+									 mUdpStack, bootstrapfile);
+	
+	// THEN STUNNER.
+	//UdpStunner *mDhtStunner = new UdpStunner(mUdpStack);
+	
+	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
+	//UdpRelayReceiver *mRelayRecver = new UdpRelayReceiver(mUdpStack); 
+	//udpReceivers[2] = mRelayRecver; /* RELAY Connections (DHT Port) */
+	//udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
+	//mUdpStack->addReceiver(udpReceivers[2]);
+	
+	// LAST ON THIS STACK IS STANDARD DIRECT TOU
+	udpReceivers[0] = new UdpPeerReceiver(mUdpStack);  /* standard DIRECT Connections (DHT Port) */
+	udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
+	mUdpStack->addReceiver(udpReceivers[0]);
+
+	// NOW WE BUILD THE SECOND STACK.
+	// Create the Second UdpStack... Port should be random (but openable!).
+	//struct sockaddr_in sndladdr;
+	//sockaddr_clear(&sndladdr);
+	//sndladdr.sin_port = htons(RsInitConfig::port + 1111);
+	//rsUdpStack *mUdpProxyStack = new rsUdpStack(sndladdr);
+
+	// FIRSTLY THE PROXY STUNNER.
+	//UdpStunner *mProxyStunner = new UdpStunner(mUdpProxyStack);
+	
+	// FINALLY THE PROXY UDP CONNECTIONS
+	//udpReceivers[1] = new UdpPeerReceiver(mUdpProxyStack); /* PROXY Connections (Alt UDP Port) */	
+	//udpTypes[1] = TOU_RECEIVER_TYPE_UDPPEER;	
+	//mUdpProxyStack->addReceiver(udpReceivers[1]);
+	
+	
+	// NOW WE CAN PASS THE RECEIVERS TO TOU.
+	// temp initialisation of only the DIRECT TOU.	
+	tou_init((void **) udpReceivers, udpTypes, 1);
+
+	// REAL INITIALISATION - WITH THREE MODES - FOR LATER.
+	//tou_init((void **) udpReceivers, udpTypes, 3);
+
 #endif
 
 
