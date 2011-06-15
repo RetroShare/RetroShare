@@ -86,13 +86,6 @@ void ServerPage::toggleTunnelConnection(bool b)
         rsPeers->allowTunnelConnection(b) ;
 }
 
-void
-ServerPage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
-}
-
-
 /** Saves the changes on this page */
 bool
 ServerPage::save(QString &errmsg)

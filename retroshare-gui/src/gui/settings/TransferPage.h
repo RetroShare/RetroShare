@@ -47,8 +47,6 @@ class TransferPage: public ConfigPage
 
 	private:
 
-		void closeEvent (QCloseEvent * event);
-
 		Ui::TransferPage ui;
 };
 

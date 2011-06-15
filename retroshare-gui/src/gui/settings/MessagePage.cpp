@@ -34,7 +34,6 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
-    setAttribute(Qt::WA_QuitOnClose, false);
 
     m_pTags = new MsgTagType;
 
@@ -55,12 +54,6 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
 MessagePage::~MessagePage()
 {
     delete(m_pTags);
-}
-
-void
-MessagePage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
 }
 
 /** Saves the changes on this page */

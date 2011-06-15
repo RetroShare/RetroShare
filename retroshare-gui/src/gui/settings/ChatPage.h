@@ -50,7 +50,6 @@ class ChatPage : public ConfigPage
       void on_historyList_currentRowChanged(int currentRow);
 
   private:
-      void closeEvent (QCloseEvent * event);
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
       void fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
 

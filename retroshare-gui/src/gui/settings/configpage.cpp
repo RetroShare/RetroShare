@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006 - 2010 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,37 +19,26 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef SERVERPAGE_H
-#define SERVERPAGE_H
-
 #include "configpage.h"
-#include "ui_ServerPage.h"
 
-class ServerPage: public ConfigPage
+ConfigPage::ConfigPage(QWidget *parent, Qt::WFlags flags) : QWidget(parent, flags)
 {
-    Q_OBJECT
+	loaded = false;
+}
 
-public:
-    ServerPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-    ~ServerPage() {}
+void ConfigPage::showEvent(QShowEvent *event)
+{
+	if (loaded) {
+		return;
+	}
 
-    /** Saves the changes on this page */
-    bool save(QString &errmsg);
-    /** Loads the settings for this page */
-    void load();
+	loaded = true;
 
-public slots:
-    void updateStatus();
+	/* Load the settings */
+	load();
+}
 
-private slots:
-    void saveAddresses();
-    void toggleUPnP();
-    void toggleIpDetermination(bool) ;
-    void toggleTunnelConnection(bool) ;
-
-private:
-    Ui::ServerPage ui;
-};
-
-#endif // !SERVERPAGE_H
-
+bool ConfigPage::wasLoaded()
+{
+	return loaded;
+}

@@ -37,12 +37,6 @@ ForumPage::~ForumPage()
 {
 }
 
-void
-ForumPage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
-}
-
 /** Saves the changes on this page */
 bool
 ForumPage::save(QString &errmsg)

@@ -32,30 +32,14 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
-    setAttribute(Qt::WA_QuitOnClose, false);
-
-	ui.checkBox->setChecked(rsFiles->getShareDownloadDirectory());		/* signal not emitted */
-
-	uint32_t t = rsFiles->rememberHashFilesDuration() ;
-	bool b = rsFiles->rememberHashFiles() ;
-
-	ui.rememberHashesSB->setValue(t) ;
-	ui.rememberHashesCB->setChecked(b) ;
-
-	int u = rsFiles->watchPeriod() ;
-	ui.autoCheckDirectoriesDelay_SB->setValue(abs(u)) ;
-	ui.autoCheckDirectories_CB->setChecked(u>0) ;
-	ui.autoCheckDirectoriesDelay_SB->setEnabled(u>0) ;
 
     connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
     connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
-    connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
-    connect(ui.editButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
+    connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
     connect(ui.cleanHashCachePB, SIGNAL(clicked()), this, SLOT(clearHashCache()));
-    connect(ui.rememberHashesCB, SIGNAL(toggled(bool)), this, SLOT(toggleRememberHashes(bool)));
-    connect(ui.rememberHashesSB, SIGNAL(valueChanged(int)), this, SLOT(setRememberHashesDuration(int)));
-    connect(ui.autoCheckDirectoriesDelay_SB, SIGNAL(valueChanged(int)), this, SLOT(setAutoCheckDirectoriesDelay(int)));
-    connect(ui.autoCheckDirectories_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
+    connect(ui.rememberHashesCB, SIGNAL(clicked(bool)), this, SLOT(clickedRememberHashes(bool)));
+    connect(ui.rememberHashesCB, SIGNAL(clicked(bool)), this, SLOT(toggleRememberHashes()));
+    connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
 
 	/* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -63,62 +47,15 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
-void DirectoriesPage::setAutoCheckDirectoriesDelay(int b)
-{
-	rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()) ;
-}
-void DirectoriesPage::toggleAutoCheckDirectories(bool b)
-{
-	if(!b)
-	{
-		rsFiles->setWatchPeriod(-ui.autoCheckDirectoriesDelay_SB->value()) ;
-		ui.autoCheckDirectoriesDelay_SB->setEnabled(false) ;
-	}
-	else
-	{
-		rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()) ;
-		ui.autoCheckDirectoriesDelay_SB->setEnabled(true) ;
-	}
-}
-
-void DirectoriesPage::setRememberHashesDuration(int d)
-{
-	rsFiles->setRememberHashFilesDuration(d) ;
-}
-
-void DirectoriesPage::toggleRememberHashes(bool b)
-{
-	if(!b)
-	{
-		if(QMessageBox::question(NULL,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?") == QMessageBox::Ok)
-		{
-			rsFiles->clearHashCache() ;
-			rsFiles->setRememberHashFiles(b) ;
-			ui.rememberHashesSB->setEnabled(false) ;
-			ui.cleanHashCachePB->setEnabled(false) ;
-		}
-		else
-			ui.rememberHashesCB->setChecked(true) ;
-	}
-	else
-	{
-		rsFiles->setRememberHashFiles(true) ;
-		ui.rememberHashesSB->setEnabled(true) ;
-		ui.cleanHashCachePB->setEnabled(true) ;
-	}
-}
-
-
 void DirectoriesPage::clearHashCache()
 {
-	if(QMessageBox::question(NULL,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?", QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Ok)
+	if(QMessageBox::question(this,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
 		rsFiles->clearHashCache() ;
 }
 
-void
-DirectoriesPage::closeEvent (QCloseEvent * event)
+void DirectoriesPage::toggleAutoCheckDirectories(bool b)
 {
-    QWidget::closeEvent(event);
+	ui.autoCheckDirectoriesDelay_SB->setEnabled(b);
 }
 
 void DirectoriesPage::editDirectories()
@@ -126,13 +63,54 @@ void DirectoriesPage::editDirectories()
 	ShareManager::showYourself() ;
 }
 
+void DirectoriesPage::clickedRememberHashes(bool b)
+{
+	if (!b) {
+		if (QMessageBox::question(this,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+			ui.rememberHashesCB->setChecked(true);
+		}
+	}
+}
+
+void DirectoriesPage::toggleRememberHashes()
+{
+	bool b = ui.rememberHashesCB->isChecked();
+	ui.rememberHashesSB->setEnabled(b);
+	ui.cleanHashCachePB->setEnabled(b);
+}
+
 /** Saves the changes on this page */
 bool DirectoriesPage::save(QString &errmsg)
 {
-	/* this is usefull especially when shared incoming files is
-	 * default option and when the user don't check/uncheck the
-	 * checkBox, so no signal is emitted to update the shared list */
-	rsFiles->shareDownloadDirectory(ui.checkBox->isChecked());
+	rsFiles->setRememberHashFilesDuration(ui.rememberHashesSB->value());
+	rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value());
+
+	std::string dir = ui.incomingDir->text().toUtf8().constData();
+	if (!dir.empty())
+	{
+		rsFiles->setDownloadDirectory(dir);
+	}
+
+	dir = ui.partialsDir->text().toUtf8().constData();
+	if (!dir.empty())
+	{
+		rsFiles->setPartialsDirectory(dir);
+	}
+
+	if (ui.rememberHashesCB->isChecked()) {
+		rsFiles->setRememberHashFiles(true);
+	} else {
+		rsFiles->setRememberHashFiles(false);
+		rsFiles->clearHashCache() ;
+	}
+
+	if (ui.autoCheckDirectories_CB->isChecked()) {
+		rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value());
+	} else {
+		rsFiles->setWatchPeriod(-ui.autoCheckDirectoriesDelay_SB->value());
+	}
+
+	rsFiles->shareDownloadDirectory(ui.shareDownloadDirectoryCB->isChecked());
 
 	return true;
 }
@@ -140,64 +118,37 @@ bool DirectoriesPage::save(QString &errmsg)
 /** Loads the settings for this page */
 void DirectoriesPage::load()
 {
-	std::list<SharedDirInfo>::const_iterator it;
-	std::list<SharedDirInfo> dirs;
-	rsFiles->getSharedDirectories(dirs);
+	ui.shareDownloadDirectoryCB->setChecked(rsFiles->getShareDownloadDirectory());
 
-	/* get a link to the table */
-	QListWidget *listWidget = ui.dirList;
+	ui.rememberHashesSB->setValue(rsFiles->rememberHashFilesDuration());
+	ui.rememberHashesCB->setChecked(rsFiles->rememberHashFiles());
+	toggleRememberHashes();
 
-	/* save current index */
-	QModelIndex rootIndex = listWidget->rootIndex();
-
-	/* remove old items ??? */
-	listWidget->clear();
-
-	for(it = dirs.begin(); it != dirs.end(); it++)
-	{
-		/* (0) Dir Name */
-		listWidget->addItem(QString::fromUtf8((*it).filename.c_str()));
-	}
-
-	/* set saved index */
-	listWidget->setCurrentIndex(rootIndex);
+	int u = rsFiles->watchPeriod() ;
+	ui.autoCheckDirectoriesDelay_SB->setValue(abs(u)) ;
+	ui.autoCheckDirectories_CB->setChecked(u>0) ;
+	ui.autoCheckDirectoriesDelay_SB->setEnabled(u>0) ;
 
 	ui.incomingDir->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
 	ui.partialsDir->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
-
-	listWidget->update(); /* update display */
 }
 
 void DirectoriesPage::setIncomingDirectory()
 {
 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-	std::string dir = qdir.toUtf8().constData();
-	if (dir != "")
-	{
-		rsFiles->setDownloadDirectory(dir);
-		if (ui.checkBox->isChecked())
-		{
-			rsFiles->shareDownloadDirectory(true);
-		}
+	if (qdir.isEmpty()) {
+		return;
 	}
-	load();
+
+	ui.incomingDir->setText(qdir);
 }
 
 void DirectoriesPage::setPartialsDirectory()
 {
 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-	std::string dir = qdir.toUtf8().constData();
-	if (dir != "")
-	{
-		rsFiles->setPartialsDirectory(dir);
+	if (qdir.isEmpty()) {
+		return;
 	}
-	load();
-}
 
-void DirectoriesPage::shareDownloadDirectory(int state)
-{
-	rsFiles->shareDownloadDirectory(state == Qt::Checked);
-	load();
+	ui.partialsDir->setText(qdir);
 }

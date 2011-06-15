@@ -22,12 +22,8 @@
 #ifndef FORUMPAGE_H
 #define FORUMPAGE_H
 
-#include <QtGui/QWidget>
-
 #include "configpage.h"
 #include "ui_ForumPage.h"
-
-#include "NewTag.h"
 
 class ForumPage : public ConfigPage
 {
@@ -43,8 +39,6 @@ public:
     void load();
 
 private:
-    void closeEvent (QCloseEvent * event);
-
     Ui::ForumPage ui;
 };
 

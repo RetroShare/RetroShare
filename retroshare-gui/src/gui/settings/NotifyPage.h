@@ -22,38 +22,27 @@
 #ifndef NOTIFYPAGE_H
 #define NOTIFYPAGE_H
 
-#include <QFileDialog>
-#include <QtGui/QWidget>
-
 #include "configpage.h"
 #include "ui_NotifyPage.h"
 
 class NotifyPage : public ConfigPage
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
-      /** Default Constructor */
-      NotifyPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-      /** Default Destructor */
-      ~NotifyPage();
+public:
+    /** Default Constructor */
+    NotifyPage(QWidget *parent = 0, Qt::WFlags flags = 0);
+    /** Default Destructor */
+    ~NotifyPage();
 
-      /** Saves the changes on this page */
-      bool save(QString &errmsg);
-      /** Loads the settings for this page */
-      void load();
+    /** Saves the changes on this page */
+    bool save(QString &errmsg);
+    /** Loads the settings for this page */
+    void load();
 
-  public slots:
-      void updateStatus();
-
-  private slots:
-
-  private:
-
-       void closeEvent (QCloseEvent * event);
-
-      /** Qt Designer generated object */
-      Ui::NotifyPage ui;
+private:
+    /** Qt Designer generated object */
+    Ui::NotifyPage ui;
 };
 
 #endif // !NOTIFYPAGE_H

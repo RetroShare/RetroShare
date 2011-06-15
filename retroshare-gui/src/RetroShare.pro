@@ -280,6 +280,7 @@ HEADERS +=  rshare.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
+            gui/settings/configpage.h \
             gui/settings/GeneralPage.h \
             gui/settings/DirectoriesPage.h \
             gui/settings/ServerPage.h \
@@ -528,6 +529,7 @@ SOURCES +=  main.cpp \
             gui/common/RSTreeView.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
+            gui/settings/configpage.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \

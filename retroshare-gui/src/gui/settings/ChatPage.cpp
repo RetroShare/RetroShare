@@ -91,12 +91,6 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
-void
-ChatPage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
-}
-
 /** Saves the changes on this page */
 bool
 ChatPage::save(QString &errmsg)

@@ -22,8 +22,6 @@
 #ifndef MESSAGEPAGE_H
 #define MESSAGEPAGE_H
 
-#include <QtGui/QWidget>
-
 #include <stdint.h>
 
 #include "configpage.h"
@@ -53,7 +51,6 @@ private slots:
     void currentRowChangedTag(int row);
 
 private:
-    void closeEvent (QCloseEvent * event);
     void fillTags();
 
     /* Pointer for not include of rsmsgs.h */

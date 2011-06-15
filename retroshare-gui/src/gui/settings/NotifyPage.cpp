@@ -35,8 +35,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  setAttribute(Qt::WA_QuitOnClose, false);
-  setWindowTitle(windowTitle() + QLatin1String(" - Notify"));
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -46,12 +44,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
 
 NotifyPage::~NotifyPage()
 {
-}
-
-void
-NotifyPage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
 }
 
 /** Saves the changes on this page */
@@ -188,9 +180,4 @@ void NotifyPage::load()
     QPoint margin = Settings->getToasterMargin();
     ui.spinBoxToasterXMargin->setValue(margin.x());
     ui.spinBoxToasterYMargin->setValue(margin.y());
-}
-
-/** Loads the settings for this page */
-void NotifyPage::updateStatus()
-{
 }

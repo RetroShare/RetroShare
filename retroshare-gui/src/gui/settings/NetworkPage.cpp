@@ -30,13 +30,6 @@ NetworkPage::NetworkPage(QWidget * parent, Qt::WFlags flags)
 
 }
 
-void
-NetworkPage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
-}
-
-
 /** Saves the changes on this page */
 bool
 NetworkPage::save(QString &errmsg)
@@ -48,6 +41,5 @@ NetworkPage::save(QString &errmsg)
 void
 NetworkPage::load()
 {
-
 }
 

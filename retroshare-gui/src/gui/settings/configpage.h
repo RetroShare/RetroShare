@@ -30,13 +30,20 @@ class ConfigPage : public QWidget
 {
 public:
   /** Default Constructor */
-  ConfigPage(QWidget *parent = 0, Qt::WFlags flags = 0) : QWidget(parent, flags) {}
+  ConfigPage(QWidget *parent = 0, Qt::WFlags flags = 0);
 
   /** Pure virtual method. Subclassed pages load their config settings here. */
   virtual void load() = 0;
   /** Pure virtual method. Subclassed pages save their config settings here
    * and return true if everything was saved successfully. */
   virtual bool save(QString &errmsg) = 0;
+
+  bool wasLoaded();
+
+protected:
+  void showEvent(QShowEvent * event);
+
+  bool loaded;
 };
 
 #endif

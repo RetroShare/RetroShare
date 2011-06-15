@@ -40,10 +40,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
   connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
 
-
-  loadPublicKey();
-
-
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -52,13 +48,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 
 CryptoPage::~CryptoPage()
 {
-}
-
-void
-CryptoPage::closeEvent (QCloseEvent * event)
-{
-
-    QWidget::closeEvent(event);
 }
 
 /** Saves the changes on this page */
@@ -72,13 +61,7 @@ CryptoPage::save(QString &errmsg)
 void
 CryptoPage::load()
 {
-
-}
-
-/** Loads ouer default Puplickey  */
-void
-CryptoPage::loadPublicKey()
-{
+    /* Loads ouer default Puplickey */
     QFont font("Courier New",9,50,false) ;
     ui.certtextEdit->setFont(font) ;
 
@@ -96,7 +79,6 @@ CryptoPage::copyPublicKey()
                                 " friend via email or some other way"));
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(ui.certtextEdit->toPlainText());
-
 }
 
 bool CryptoPage::fileSave()

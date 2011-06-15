@@ -62,12 +62,6 @@ RSettingsWin::~RSettingsWin()
     _instance = NULL;
 }
 
-void
-RSettingsWin::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
-}
-
 /*static*/ void RSettingsWin::showYourself(QWidget *parent, PageType page /*= LastPage*/)
 {
     if(_instance == NULL) {
@@ -121,8 +115,6 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new AppearancePage());
     stackedWidget->addWidget(new SoundPage() );
 
-    loadSettings();	/* load saved settings */
-
     setNewPage(General);
 }
 
@@ -135,31 +127,31 @@ RSettingsWin::setNewPage(int page)
     {
         case General:
             text = tr("General");
-	    pageicon->setPixmap(QPixmap(":/images/kcmsystem24.png"));
+            pageicon->setPixmap(QPixmap(":/images/kcmsystem24.png"));
             break;
         case Directories:
             text = tr("Directories");
-	    pageicon->setPixmap(QPixmap(":/images/folder_doments.png"));
+            pageicon->setPixmap(QPixmap(":/images/folder_doments.png"));
             break;
         case Server:
             text = tr("Server");
-	    pageicon->setPixmap(QPixmap(":/images/server_24x24.png"));
+            pageicon->setPixmap(QPixmap(":/images/server_24x24.png"));
             break;
         case Transfer:
             text = tr("Transfer");
-	    pageicon->setPixmap(QPixmap(":/images/ktorrent32.png"));
+            pageicon->setPixmap(QPixmap(":/images/ktorrent32.png"));
             break;    
         case Notify:
             text = tr("Notify");
-	    pageicon->setPixmap(QPixmap(":/images/status_unknown.png"));
+            pageicon->setPixmap(QPixmap(":/images/status_unknown.png"));
             break;
         case Security:
             text = tr("Security");
-	    pageicon->setPixmap(QPixmap(":/images/encrypted32.png"));
+            pageicon->setPixmap(QPixmap(":/images/encrypted32.png"));
             break;
         case Message:
             text = tr("Message");
-	    pageicon->setPixmap(QPixmap(":/images/evolution.png"));
+            pageicon->setPixmap(QPixmap(":/images/evolution.png"));
             break;      
         case Forum:
             text = tr("Forum");
@@ -167,20 +159,20 @@ RSettingsWin::setNewPage(int page)
             break;
         case Chat:
             text = tr("Chat");
-	    pageicon->setPixmap(QPixmap(":/images/chat_24.png"));
+            pageicon->setPixmap(QPixmap(":/images/chat_24.png"));
             break;
         case Appearance:
             text = tr("Appearance");
-	    pageicon->setPixmap(QPixmap(":/images/looknfeel.png"));
+            pageicon->setPixmap(QPixmap(":/images/looknfeel.png"));
             break;
       /*//  #ifndef RS_RELEASE_VERSION
         case Fileassociations:
             text = tr("File Associations");
-	    pageicon->setPixmap(QPixmap(":/images/filetype-association.png"));
+            pageicon->setPixmap(QPixmap(":/images/filetype-association.png"));
             break;*/
         case Sound:
             text = tr("Sound");
-	    pageicon->setPixmap(QPixmap(":/images/sound.png"));
+            pageicon->setPixmap(QPixmap(":/images/sound.png"));
             break;
       //  #endif
         default:
@@ -190,19 +182,6 @@ RSettingsWin::setNewPage(int page)
     pageName->setText(text);
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
-}
-
-void
-RSettingsWin::loadSettings()
-{
-    /* Call each config page's load() method to load its data */
-    int i, count = stackedWidget->count();
-    for (i = 0; i < count; i++) {
-        ConfigPage *page = dynamic_cast<ConfigPage *> (stackedWidget->widget(i));
-        if (page) {
-            page->load();
-        }
-    }
 }
 
 /** Saves changes made to settings. */
@@ -216,25 +195,25 @@ RSettingsWin::saveChanges()
 	for (i = 0; i < count; i++) 
 	{
 		ConfigPage *page = dynamic_cast<ConfigPage *>(stackedWidget->widget(i));
+		if (page && page->wasLoaded()) {
+			if (!page->save(errmsg))
+			{
+				/* Display the offending page */
+				stackedWidget->setCurrentWidget(page);
 
-                if(page && !page->save(errmsg))
-		{
-			/* Display the offending page */
-			stackedWidget->setCurrentWidget(page);
+				/* Show the user what went wrong */
+				QMessageBox::warning(this,
+				tr("Error Saving Configuration on page ")+QString::number(i), errmsg,
+				QMessageBox::Ok, QMessageBox::NoButton);
 
-			/* Show the user what went wrong */
-			QMessageBox::warning(this,
-			tr("Error Saving Configuration on page ")+QString::number(i), errmsg,
-			QMessageBox::Ok, QMessageBox::NoButton);
-
-			/* Don't process the rest of the pages */
-			return;
+				/* Don't process the rest of the pages */
+				return;
+			}
 		}
 	}
 
 	/* call to RsIface save function.... */
 	//rsicontrol -> ConfigSave();
 
-	QDialog::close();
+    close();
 }
-

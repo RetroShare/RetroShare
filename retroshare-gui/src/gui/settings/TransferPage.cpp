@@ -80,10 +80,3 @@ void TransferPage::updateQueueSize(int s)
 {
 	rsFiles->setQueueSize(s) ;
 }
-
-void TransferPage::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
-}
-
-

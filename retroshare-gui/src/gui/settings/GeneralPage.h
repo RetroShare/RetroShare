@@ -26,7 +26,6 @@
 #include "configpage.h"
 #include "ui_GeneralPage.h"
 
-
 class GeneralPage : public ConfigPage
 {
   Q_OBJECT

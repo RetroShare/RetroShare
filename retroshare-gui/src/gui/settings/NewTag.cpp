@@ -64,11 +64,6 @@ NewTag::NewTag(MsgTagType &Tags, uint32_t nId /*= 0*/, QWidget *parent, Qt::WFla
     showColor (m_Color);
 }
 
-void NewTag::closeEvent (QCloseEvent * event)
-{
-    QDialog::closeEvent(event);
-}
-
 void NewTag::OnOK()
 {
     if (m_nId == 0) {

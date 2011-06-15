@@ -22,27 +22,22 @@
 #ifndef NETWORKPAGE_H
 #define NETWORKPAGE_H
 
-#include <QtGui/QWidget>
-
 #include "configpage.h"
 #include "ui_NetworkPage.h"
 
 class NetworkPage : public ConfigPage
 {
-    public:
-        NetworkPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~NetworkPage() {}
+public:
+    NetworkPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+    ~NetworkPage() {}
 
     /** Saves the changes on this page */
     bool save(QString &errmsg);
     /** Loads the settings for this page */
     void load();
 
-    private:
-
-       void closeEvent (QCloseEvent * event);
-
-       Ui::NetworkPage ui;
+private:
+    Ui::NetworkPage ui;
 };
 
 #endif // !NETWROKPAGE_H

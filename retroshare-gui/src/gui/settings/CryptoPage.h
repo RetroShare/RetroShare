@@ -35,29 +35,21 @@ class CryptoPage : public ConfigPage
       /** Default Destructor */
       ~CryptoPage();
 
-
       /** Saves the changes on this page */
       bool save(QString &errmsg);
       /** Loads the settings for this page */
       void load();
 
   private slots:
-
-      void loadPublicKey();
-
       void copyPublicKey();
       
       bool fileSave();
       bool fileSaveAs();
 
-
   private:
-      void closeEvent (QCloseEvent * event);
-      
       void setCurrentFileName(const QString &fileName);
       
       QString fileName;
-
 
       /** Qt Designer generated object */
       Ui::CryptoPage ui;

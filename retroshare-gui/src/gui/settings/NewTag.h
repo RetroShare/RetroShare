@@ -40,9 +40,6 @@ public:
 
     uint32_t m_nId;
 
-protected:
-    void closeEvent (QCloseEvent * event);
-
 private slots:
     void OnOK();
     void OnCancel();

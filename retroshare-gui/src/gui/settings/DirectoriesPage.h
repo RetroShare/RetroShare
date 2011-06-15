@@ -20,7 +20,7 @@
  ****************************************************************/
 
 #ifndef DIRECTORIESPAGE_H
-# define DIRECTORIESPAGE_H
+#define DIRECTORIESPAGE_H
 
 #include "configpage.h"
 #include "ui_DirectoriesPage.h"
@@ -29,34 +29,25 @@ class DirectoriesPage: public ConfigPage
 {
   Q_OBJECT
 
-    public:
-        DirectoriesPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-      //  ~DirectoriesPage() {}
+public:
+    DirectoriesPage(QWidget * parent = 0, Qt::WFlags flags = 0);
 
     /** Saves the changes on this page */
     bool save(QString &errmsg);
     /** Loads the settings for this page */
     void load();
 
-
-
-    private slots:
-
+private slots:
     void editDirectories() ;
     void setIncomingDirectory();
     void setPartialsDirectory();
-    void shareDownloadDirectory(int state);
-	 void clearHashCache() ;
-	 void setRememberHashesDuration(int) ;
-	 void toggleRememberHashes(bool) ;
-	 void setAutoCheckDirectoriesDelay(int) ;
-	 void toggleAutoCheckDirectories(bool) ;
+	void clearHashCache();
+	void clickedRememberHashes(bool);
+	void toggleRememberHashes();
+	void toggleAutoCheckDirectories(bool);
 
-    private:
-
-       void closeEvent (QCloseEvent * event);
-
-       Ui::DirectoriesPage ui;
+private:
+   Ui::DirectoriesPage ui;
 };
 
 #endif // !GENERALPAGE_H
