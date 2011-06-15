@@ -101,25 +101,83 @@ void PeerNet::init()
         	mUdpStack = new UdpStack(tmpladdr);
 	}
 
-        std::cerr << "PeerNet() startup ... creating UdpStunner";
+        std::cerr << "PeerNet() startup ... creating Advanced Stack";
         std::cerr << std::endl;
 
+	/* ADVANCED STACK BUILDING! */
+
+	/* construct the rest of the stack, important to build them in the correct order! */
+	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
+
+	UdpSubReceiver *udpReceivers[3];
+	int udpTypes[3];
+
+	
+	std::cerr << "PeerNet() startup ... creating UdpStunner on UdpStack";
+	std::cerr << std::endl;
+
+	// STUNNER.
 	mDhtStunner = new UdpStunner(mUdpStack);
-	//mDhtStunner->setStunKeepAlive(0); // default.
-	//mDhtStunner->setStunKeepAlive(1);
+	mUdpStack->addReceiver(mDhtStunner);
+	
+	std::cerr << "PeerNet() startup ... creating BitDHT on UdpStack";
+	std::cerr << std::endl;
 
-        std::cerr << "PeerNet() startup ... creating UdpBitDht";
+	// BITDHT.
+	mUdpBitDht = new UdpBitDht(mUdpStack, &mOwnId, dhtVersion, mBootstrapFile, stdfns);
+	mUdpStack->addReceiver(mUdpBitDht);
+
+	/* setup callback to here */
+	mUdpBitDht->addCallback(this);
+
+	
+	std::cerr << "PeerNet() startup ... creating UdpRelayReceiver on UdpStack";
+	std::cerr << std::endl;
+
+	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
+	UdpRelayReceiver *mRelayRecver = new UdpRelayReceiver(mUdpStack); 
+	udpReceivers[2] = mRelayRecver; /* RELAY Connections (DHT Port) */
+	udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
+	mUdpStack->addReceiver(udpReceivers[2]);
+	
+	std::cerr << "PeerNet() startup ... creating UdpPeerReceiver on UdpStack";
+	std::cerr << std::endl;
+	
+	// LAST ON THIS STACK IS STANDARD DIRECT TOU
+	udpReceivers[0] = new UdpPeerReceiver(mUdpStack);  /* standard DIRECT Connections (DHT Port) */
+	udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
+	mUdpStack->addReceiver(udpReceivers[0]);
+
+	std::cerr << "PeerNet() startup ... creating UdpProxyStack";
+	std::cerr << std::endl;
+
+	// NOW WE BUILD THE SECOND STACK.
+	// Create the Second UdpStack... Port should be random (but openable!).
+	struct sockaddr_in sndladdr;
+	sockaddr_clear(&sndladdr);
+	sndladdr.sin_port = htons(mPort + 1111);
+	rsUdpStack *mUdpProxyStack = new rsUdpStack(sndladdr);
+
+        std::cerr << "PeerNet() startup ... creating UdpStunner on UdpProxyStack";
         std::cerr << std::endl;
+	
+	// FIRSTLY THE PROXY STUNNER.
+	mProxyStunner = new UdpStunner(mUdpProxyStack);
+        mUdpProxyStack->addReceiver(mProxyStunner);
 
-        /* create dht */
-        mUdpBitDht = new UdpBitDht(mUdpStack, &mOwnId, dhtVersion, mBootstrapFile, stdfns);
-        mUdpStack->addReceiver(mUdpBitDht);
+        std::cerr << "PeerNet() startup ... creating UdpPeerReceiver(Proxy) on UdpProxyStack";
+        std::cerr << std::endl;
+	
+	// FINALLY THE PROXY UDP CONNECTIONS
+	udpReceivers[1] = new UdpPeerReceiver(mUdpProxyStack); /* PROXY Connections (Alt UDP Port) */	
+	udpTypes[1] = TOU_RECEIVER_TYPE_UDPPEER;	
+	mUdpProxyStack->addReceiver(udpReceivers[1]);
+	
+	
+	// NOW WE CAN PASS THE RECEIVERS TO TOU.
+	// REAL INITIALISATION - WITH THREE MODES - FOR LATER.
+	tou_init((void **) udpReceivers, udpTypes, 3);
 
-        /* setup callback to here */
-        mUdpBitDht->addCallback(this);
-
-	/* setup TOU part */
-	tou_init(mUdpStack);
 
 	/* startup the Udp stuff! */
         mUdpBitDht->start();
@@ -128,6 +186,17 @@ void PeerNet::init()
 	// handle configuration.
 	loadPeers(mPeersFile);
 	storeConfig(mConfigFile);
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

@@ -13,6 +13,8 @@
 #include "bitdht/bdstddht.h"
 
 #include "tcponudp/udpstunner.h"
+#include "tcponudp/udppeer.h"
+#include "tcponudp/udprelay.h"
 
 #define PN_DHT_STATE_UNKNOWN           0
 #define PN_DHT_STATE_SEARCHING         1
@@ -144,11 +146,19 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 
 	private:
 
+	/* The Two Stacks */
 	UdpStack *mUdpStack;
-	UdpBitDht *mUdpBitDht;
+	UdpStack *mUdpProxyStack;
 
+	// ON Stack 1.
 	UdpStunner *mDhtStunner;
-	//UdpStunner *mSyncStunner;
+	UdpBitDht *mUdpBitDht;
+	UdpRelayReceiver *mRelayReceiver;
+	// Dont need reference to DIRECT UDP Receiver.
+
+	// ON Stack 2.
+	UdpStunner *mProxyStunner;
+	// Dont need reference to PROXY UDP Receiver.
 
 
 	bdNodeId mOwnId;
