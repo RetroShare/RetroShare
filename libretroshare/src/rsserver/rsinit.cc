@@ -38,6 +38,7 @@
 #include "util/rsrandom.h"
 #include "util/folderiterator.h"
 #include "retroshare/rsinit.h"
+#include "plugins/pluginmanager.h"
 #include "rsserver/rsloginhandler.h"
 
 #include <list>
@@ -1703,7 +1704,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3gamelauncher.h"
-#include "services/p3ranking.h"
 #include "services/p3photoservice.h"
 #include "services/p3forums.h"
 #include "services/p3channels.h"
@@ -1725,7 +1725,6 @@ RsTurtle *rsTurtle = NULL ;
 /* Implemented Rs Interfaces */
 #include "rsserver/p3face.h"
 #include "rsserver/p3peers.h"
-#include "rsserver/p3rank.h"
 #include "rsserver/p3msgs.h"
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
@@ -1916,11 +1915,39 @@ int RsServer::StartupRetroShare()
 	rsFiles = ftserver;
 
 
-        mConfigMgr = new p3ConfigMgr(RsInitConfig::configDir, "rs-v0.5.cfg", "rs-v0.5.sgn");
+	mConfigMgr = new p3ConfigMgr(RsInitConfig::configDir, "rs-v0.5.cfg", "rs-v0.5.sgn");
 	mGeneralConfig = new p3GeneralConfig();
 
+	/* create Cache Services */
+	std::string config_dir = RsInitConfig::configDir;
+	std::string localcachedir = config_dir + "/cache/local";
+	std::string remotecachedir = config_dir + "/cache/remote";
+	std::string channelsdir = config_dir + "/channels";
+	std::string blogsdir = config_dir + "/blogs";
+	std::string forumdir = config_dir + "/forums";
+	std::string plugins_dir = "." ;
+
+
+	std::vector<std::string> plugins_directories ;
+	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
+														// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
+
+	RsPluginManager *mPluginsManager = new RsPluginManager ;
+	rsPlugins  = mPluginsManager ;
+
+	// These are needed to load plugins: plugin devs might want to know the place of
+	// cache directories, get pointers to cache strapper, or access ownId()
+	//
+	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
+	mPluginsManager->setFileServer(ftserver) ;
+	mPluginsManager->setConnectMgr(mConnMgr) ;
+
+	// Now load the plugins. This parses the available SO/DLL files for known symbols.
+	//
+	mPluginsManager->loadPlugins(plugins_directories) ;
+
 	/* create Services */
-        ad = new p3disc(mConnMgr, pqih);
+	ad = new p3disc(mConnMgr, pqih);
 #ifndef MINIMAL_LIBRS
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
@@ -1943,51 +1970,32 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
 	pqih ->addService(mStatusSrv);
+
 #endif // MINIMAL_LIBRS
-
-	/* create Cache Services */
-	std::string config_dir = RsInitConfig::configDir;
-	std::string localcachedir = config_dir + "/cache/local";
-	std::string remotecachedir = config_dir + "/cache/remote";
-	std::string channelsdir = config_dir + "/channels";
-	std::string blogsdir = config_dir + "/blogs";
-	std::string forumdir = config_dir + "/forums";
-
-
 #ifndef MINIMAL_LIBRS
-	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
-			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
 
-        CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
-	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
+	mForums = new p3Forums(RS_SERVICE_TYPE_FORUM, mCacheStrapper, mCacheTransfer, localcachedir, remotecachedir, forumdir);
 
-	mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
-			mCacheStrapper, mCacheTransfer,
-                        localcachedir, remotecachedir, forumdir);
-
-        CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
-	mCacheStrapper -> addCachePair(cp4);
+	mCacheStrapper -> addCachePair( CachePair(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0)));
 	pqih -> addService(mForums);  /* This must be also ticked as a service */
 
-	mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
-			mCacheStrapper, mCacheTransfer, rsFiles,
-                        localcachedir, remotecachedir, channelsdir);
+	mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL, mCacheStrapper, mCacheTransfer, rsFiles, localcachedir, remotecachedir, channelsdir);
 
-        CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
-	mCacheStrapper -> addCachePair(cp5);
+	mCacheStrapper -> addCachePair(CachePair(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0)));
 	pqih -> addService(mChannels);  /* This must be also ticked as a service */
 #ifdef RS_USE_BLOGS	
-			p3Blogs *mBlogs = new p3Blogs(RS_SERVICE_TYPE_QBLOG,
-			mCacheStrapper, mCacheTransfer, rsFiles,
-                        localcachedir, remotecachedir, blogsdir);
+	p3Blogs *mBlogs = new p3Blogs(RS_SERVICE_TYPE_QBLOG, mCacheStrapper, mCacheTransfer, rsFiles, localcachedir, remotecachedir, blogsdir);
 
-        CachePair cp6(mBlogs, mBlogs, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
-	mCacheStrapper -> addCachePair(cp6);
+	mCacheStrapper -> addCachePair(CachePair(mBlogs, mBlogs, CacheId(RS_SERVICE_TYPE_QBLOG, 0)));
 	pqih -> addService(mBlogs);  /* This must be also ticked as a service */
 
 #endif
-
+	// now add plugin objects inside the loop:
+	// 	- client services provided by plugins.
+	// 	- cache services provided by plugins.
+	//
+	mPluginsManager->registerClientServices(pqih) ;
+	mPluginsManager->registerCacheServices() ;
 
 #ifndef RS_RELEASE
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
@@ -2044,13 +2052,14 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_BLOGS	
         mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
 #endif
-	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 #endif // MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
-        mConfigMgr->addConfiguration("p3disc.cfg", ad);
+	mConfigMgr->addConfiguration("p3disc.cfg", ad);
+
+	mPluginsManager->addConfigurations(mConfigMgr) ;
 
 	ftserver->addConfiguration(mConfigMgr);
 
@@ -2210,10 +2219,9 @@ int RsServer::StartupRetroShare()
 	rsDisc  = new p3Discovery(ad);
 
 #ifndef MINIMAL_LIBRS
-        rsMsgs  = new p3Msgs(msgSrv, chatSrv);
+	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsForums = mForums;
 	rsChannels = mChannels;
-	rsRanks = new p3Rank(mRanking);
 #ifdef RS_USE_BLOGS	
 	rsBlogs = mBlogs;
 #endif
@@ -2227,7 +2235,6 @@ int RsServer::StartupRetroShare()
 	rsPhoto = NULL;
 #endif
 #endif // MINIMAL_LIBRS
-
 
 #ifndef MINIMAL_LIBRS
 	/* put a welcome message in! */

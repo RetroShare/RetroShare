@@ -39,7 +39,6 @@
 
 /* These are Cache Only */
 const uint16_t RS_SERVICE_TYPE_FILE_INDEX  = 0x0001;
-const uint16_t RS_SERVICE_TYPE_RANK        = 0x0002;
 
 /* These are Services only */
 const uint16_t RS_SERVICE_TYPE_DISC        = 0x0011;

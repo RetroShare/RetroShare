@@ -41,7 +41,6 @@
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
-#include "services/p3ranking.h"
 #include "services/p3blogs.h"
 #include "services/p3statusservice.h"
 #include "services/p3channels.h"
@@ -165,7 +164,6 @@ class RsServer: public RsControl, public RsThread
 		p3Channels *mChannels;
 		p3Forums *mForums;
 		/* caches (that need ticking) */
-		p3Ranking *mRanking;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;

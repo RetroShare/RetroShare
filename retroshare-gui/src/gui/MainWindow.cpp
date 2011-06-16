@@ -32,6 +32,7 @@
 #include "gui/unfinished/blogs/BlogsDialog.h"
 #endif 
 
+#include <retroshare/rsplugin.h>
 #include "rshare.h"
 #include "MainWindow.h"
 #include "MessengerWindow.h"
@@ -43,9 +44,6 @@
 #include "PluginsPage.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
-#ifdef RS_USE_LINKS
-#include "LinksDialog.h"
-#endif
 #include "ForumsDialog.h"
 #include "FriendsDialog.h"
 #include "HelpDialog.h"
@@ -96,7 +94,6 @@
 #define IMAGE_PEERS         	":/images/groupchat.png"
 #define IMAGE_SEARCH    		":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
-#define IMAGE_LINKS             ":/images/irkick.png"
 #define IMAGE_FILES   	        ":/images/fileshare32.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_FORUMS            ":/images/konversation.png"
@@ -244,17 +241,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                       channelAction = createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
 
 #ifdef BLOGS
-    ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
-		createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
+	 ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
 #endif
                       
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        forumAction = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
-#ifdef RS_USE_LINKS
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
-#endif
+	 std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
+	 for(uint32_t i = 0;i<rsPlugins->nbPlugins();++i)
+	 {
+		 if(rsPlugins->plugin(i)->qt_page() != NULL && rsPlugins->plugin(i)->qt_icon() != NULL)
+		 {
+			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
+			 ui.stackPages->add(rsPlugins->plugin(i)->qt_page(), createPageAction(*rsPlugins->plugin(i)->qt_icon(), QString::fromStdString(rsPlugins->plugin(i)->getPluginName()), grp));
+		 }
+			 //ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages), createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
+	 }
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
@@ -913,11 +915,6 @@ void MainWindow::addAction(QAction *action, const char *slot)
     case Messages:
         Page = _instance->messagesDialog;
         break;
-#ifdef RS_USE_LINKS
-    case Links:
-        Page = _instance->linksDialog;
-        break;
-#endif
     case Channels:
         Page = _instance->channelFeed;
         break;

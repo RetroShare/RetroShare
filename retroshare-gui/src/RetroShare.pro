@@ -1,5 +1,4 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
-#CONFIG += use_links
 QT     += network xml script 
 
 TEMPLATE = app
@@ -39,6 +38,7 @@ linux-* {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -lssl -lgpgme -lupnp -lXss -lgnome-keyring
+	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
 }
@@ -660,18 +660,18 @@ SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
 DEFINES += BLOGS
 }
 
-use_links {
-HEADERS += gui/AddLinksDialog.h \
-           gui/LinksDialog.h
-
-FORMS += gui/AddLinksDialog.ui \
-         gui/LinksDialog.ui
-
-SOURCES += gui/AddLinksDialog.cpp \
-           gui/LinksDialog.cpp
-
-DEFINES += RS_USE_LINKS
-}
+# use_links {
+# HEADERS += gui/AddLinksDialog.h \
+#            gui/LinksDialog.h
+# 
+# FORMS += gui/AddLinksDialog.ui \
+#          gui/LinksDialog.ui
+# 
+# SOURCES += gui/AddLinksDialog.cpp \
+#            gui/LinksDialog.cpp
+# 
+# DEFINES += RS_USE_LINKS
+# }
 
 unfinished {
 

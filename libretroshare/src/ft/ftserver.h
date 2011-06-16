@@ -88,8 +88,9 @@ void	setP3Interface(P3Interface *pqi);
 	/* add Config Items (Extra, Controller) */
 void	addConfigComponents(p3ConfigMgr *mgr);
 
-CacheStrapper *getCacheStrapper();
-CacheTransfer *getCacheTransfer();
+virtual CacheStrapper *getCacheStrapper();
+virtual CacheTransfer *getCacheTransfer();
+
 std::string 	OwnId();
 
 	/* Final Setup (once everything is assigned) */

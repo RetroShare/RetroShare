@@ -82,7 +82,6 @@ const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
 /* wish these ids where higher...
  * may move when switch to v0.5
  */
-const uint32_t CONFIG_TYPE_RANK_LINK 	 = 0x0011;
 const uint32_t CONFIG_TYPE_CHAT 	       = 0x0012;
 const uint32_t CONFIG_TYPE_STATUS 		 = 0x0013;
 

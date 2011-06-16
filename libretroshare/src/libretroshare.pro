@@ -128,6 +128,7 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsforums.h \
 					retroshare/rsiface.h \
 					retroshare/rsinit.h \
+					retroshare/rsplugin.h \
 					retroshare/rsloginhandler.h \
 					retroshare/rsmsgs.h \
 					retroshare/rsnotify.h \
@@ -136,6 +137,8 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsstatus.h \
 					retroshare/rsturtle.h \
 					retroshare/rstypes.h
+
+HEADERS += plugins/pluginmanager.h
 
 HEADERS += $$PUBLIC_HEADERS
 
@@ -359,7 +362,6 @@ HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
 			rsserver/p3photo.h \
-			rsserver/p3rank.h \
 			rsserver/p3status.h
 
 HEADERS +=	serialiser/rsbaseitems.h \
@@ -373,7 +375,6 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsgameitems.h \
 			serialiser/rsmsgitems.h \
 			serialiser/rsphotoitems.h \
-			serialiser/rsrankitems.h \
 			serialiser/rsserial.h \
 			serialiser/rsserviceids.h \
 			serialiser/rsserviceitems.h \
@@ -396,7 +397,6 @@ HEADERS +=	services/p3channels.h \
 			services/p3msgservice.h \
 			services/p3photoservice.h \
 			services/p3portservice.h \
-			services/p3ranking.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3tunnel.h
@@ -477,12 +477,13 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3msgs.cc \
 			rsserver/p3peers.cc \
 			rsserver/p3photo.cc \
-			rsserver/p3rank.cc \
 			rsserver/p3status.cc \
 			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
 			rsserver/rsloginhandler.cc \
 			rsserver/rstypes.cc
+
+SOURCES += plugins/pluginmanager.cc
 
 SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsbaseserial.cc \
@@ -495,7 +496,6 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsgameitems.cc \
 			serialiser/rsmsgitems.cc \
 			serialiser/rsphotoitems.cc \
-			serialiser/rsrankitems.cc \
 			serialiser/rsserial.cc \
 			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \
@@ -517,7 +517,6 @@ SOURCES +=	services/p3channels.cc \
 			services/p3msgservice.cc \
 			services/p3photoservice.cc \
 			services/p3portservice.cc \
-			services/p3ranking.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
@@ -548,13 +547,11 @@ SOURCES +=	util/folderiterator.cc \
 
 minimal {
 	SOURCES -= rsserver/p3msgs.cc \
-			rsserver/p3rank.cc \
 			rsserver/p3status.cc \
 			rsserver/p3photo.cc
 
 	SOURCES -= serialiser/rsforumitems.cc \
 			serialiser/rsstatusitems.cc \
-			serialiser/rsrankitems.cc \
 			serialiser/rschannelitems.cc \
 			serialiser/rsgameitems.cc \
 			serialiser/rsphotoitems.cc
@@ -562,7 +559,6 @@ minimal {
 	SOURCES -= services/p3forums.cc \
 			services/p3msgservice.cc \
 			services/p3statusservice.cc \
-			services/p3ranking.cc \
 			services/p3channels.cc \
 			services/p3gamelauncher.cc \
 			services/p3photoservice.cc

@@ -37,6 +37,8 @@ class RsFiles;
 extern RsFiles  *rsFiles;
 
 class Expression;
+class CacheStrapper ;
+class CacheTransfer;
 
 /* These are used mainly by ftController at the moment */
 const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
@@ -194,7 +196,8 @@ class RsFiles
 				virtual void setWatchPeriod(int minutes) =0;
 		virtual int watchPeriod() const =0;
 
-
+		virtual CacheStrapper *getCacheStrapper() =0;
+		virtual CacheTransfer *getCacheTransfer() =0;
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;
