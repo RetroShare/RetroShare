@@ -61,8 +61,139 @@ void MainWindow::update()
 
 void MainWindow::updateNetStatus()
 {
+        QString status = QString::fromStdString(mPeerNet->getPeerStatusString());
+	QString oldstatus = ui->peerLine->text();
+	if (oldstatus != status)
+	{
+		ui->peerLine->setText(status);
+	}
+
+	uint32_t netMode = mPeerNet->getNetStateNetworkMode();
+
+	QLabel *label = ui->networkLabel;
+	switch(netMode)
+	{
+		case PNSB_NETWORK_UNKNOWN:
+			label->setText("Unknown NetState");
+			break;
+		case PNSB_NETWORK_OFFLINE:
+			label->setText("Offline");
+			break;
+		case PNSB_NETWORK_LOCALNET:
+			label->setText("Local Net");
+			break;
+		case PNSB_NETWORK_BEHINDNAT:
+			label->setText("Behind NAT");
+			break;
+		case PNSB_NETWORK_EXTERNALIP:
+			label->setText("External IP");
+			break;
+	}
+
+	label = ui->natTypeLabel;
+	switch(mPeerNet->getNetStateNatTypeMode())
+	{
+		case PNSB_NATTYPE_UNKNOWN:
+			label->setText("UNKNOWN NAT STATE");
+			break;
+		case PNSB_NATTYPE_SYMMETRIC:
+			label->setText("SYMMETRIC NAT");
+			break;
+		case PNSB_NATTYPE_RESTRICTED_CONE:
+			label->setText("RESTRICTED CONE NAT");
+			break;
+		case PNSB_NATTYPE_FULL_CONE:
+			label->setText("FULL CONE NAT");
+			break;
+		case PNSB_NATTYPE_OTHER:
+			label->setText("OTHER NAT");
+			break;
+		case PNSB_NATTYPE_NONE:
+			label->setText("NO NAT");
+			break;
+	}
 
 
+	label = ui->natHoleLabel;
+	switch(mPeerNet->getNetStateNatHoleMode())
+	{
+		case PNSB_NATHOLE_UNKNOWN:
+			label->setText("UNKNOWN NAT HOLE STATUS");
+			break;
+		case PNSB_NATHOLE_NONE:
+			label->setText("NO NAT HOLE");
+			break;
+		case PNSB_NATHOLE_UPNP:
+			label->setText("UPNP FORWARD");
+			break;
+		case PNSB_NATHOLE_NATPMP:
+			label->setText("NATPMP FORWARD");
+			break;
+		case PNSB_NATHOLE_FORWARDED:
+			label->setText("MANUAL FORWARD");
+			break;
+	}
+
+	label = ui->connectLabel;
+	std::ostringstream connOut;
+	uint32_t connect = mPeerNet->getNetStateConnectModes();
+	if (connect & PNSB_CONNECT_OUTGOING_TCP)
+	{
+		connOut << "TCP_OUT ";
+	}
+	if (connect & PNSB_CONNECT_ACCEPT_TCP)
+	{
+		connOut << "TCP_IN ";
+	}
+	if (connect & PNSB_CONNECT_DIRECT_UDP)
+	{
+		connOut << "DIRECT_UDP ";
+	}
+	if (connect & PNSB_CONNECT_PROXY_UDP)
+	{
+		connOut << "PROXY_UDP ";
+	}
+	if (connect & PNSB_CONNECT_RELAY_UDP)
+	{
+		connOut << "RELAY_UDP ";
+	}
+
+	label->setText(QString::fromStdString(connOut.str()));
+
+	label = ui->netStatusLabel;
+	switch(mPeerNet->getNetStateNetStateMode())
+	{
+		case PNSB_NETSTATE_BAD_UNKNOWN:
+			label->setText("NET BAD: Unknown State");
+			break;
+		case PNSB_NETSTATE_BAD_OFFLINE:
+			label->setText("NET BAD: Offline");
+			break;
+		case PNSB_NETSTATE_BAD_NATSYM:
+			label->setText("NET BAD: Behind Symmetric NAT");
+			break;
+		case PNSB_NETSTATE_BAD_NODHT_NAT:
+			label->setText("NET BAD: Behind NAT & No DHT");
+			break;
+		case PNSB_NETSTATE_WARNING_RESTART:
+			label->setText("NET WARNING: NET Restart");
+			break;
+		case PNSB_NETSTATE_WARNING_NATTED:
+			label->setText("NET WARNING: Behind NAT");
+			break;
+		case PNSB_NETSTATE_WARNING_NODHT:
+			label->setText("NET WARNING: No DHT");
+			break;
+		case PNSB_NETSTATE_GOOD:
+			label->setText("NET STATE GOOD!");
+			break;
+		case PNSB_NETSTATE_ADV_FORWARD:
+			label->setText("CAUTION: UNVERIFABLE FORWARD!");
+			break;
+		case PNSB_NETSTATE_ADV_DARK_FORWARD:
+			label->setText("CAUTION: UNVERIFABLE FORWARD & NO DHT");
+			break;
+	}
 
 }
 
@@ -171,13 +302,6 @@ void MainWindow::updateDhtPeers()
 
 void MainWindow::updateNetPeers()
 {
-        QString status = QString::fromStdString(mPeerNet->getPeerStatusString());
-	QString oldstatus = ui->peerLine->text();
-	if (oldstatus != status)
-	{
-		ui->peerLine->setText(status);
-	}
-
 
 	QTreeWidget *peerTreeWidget = ui->peerTreeWidget;
 
@@ -186,6 +310,21 @@ void MainWindow::updateNetPeers()
 	std::list<std::string>::iterator it;
 	mPeerNet->get_net_peers(peerIds);
 	mPeerNet->get_net_failedpeers(failedPeerIds);
+
+	/* collate peer stats */
+	int nPeers = peerIds.size();
+
+	// from DHT peers
+	int nOnlinePeers = 0;
+	int nUnreachablePeers = 0;
+	int nOfflinePeers = 0;
+
+	// Connect States.
+	int nDisconnPeers = 0;
+	int nDirectPeers = 0;
+	int nProxyPeers = 0;
+	int nRelayPeers = 0;
+
 
 #define PTW_COL_PEERID		0
 #define PTW_COL_DHT_STATUS	1
@@ -274,7 +413,53 @@ void MainWindow::updateNetPeers()
 		peer_item -> setData(PTW_COL_PEER_STATUS, Qt::DisplayRole, QString::fromStdString(status.mPeerStatusMsg));
 		peer_item -> setData(PTW_COL_PEER_ADDRESS, Qt::DisplayRole, QString::fromStdString(peeripstr.str()));
 		peer_item -> setData(PTW_COL_PEER_UPDATETS, Qt::DisplayRole, QString::fromStdString(peerupdatestr.str()));
+
+
+		switch(status.mDhtState)
+		{
+			default:
+			case PN_DHT_STATE_UNKNOWN:
+			case PN_DHT_STATE_SEARCHING:
+			case PN_DHT_STATE_FAILURE:
+			case PN_DHT_STATE_OFFLINE:
+				nOfflinePeers++;
+				break;
+			case PN_DHT_STATE_UNREACHABLE:
+				nUnreachablePeers++;
+				break;
+			case PN_DHT_STATE_ONLINE:
+				nOnlinePeers++;
+				break;
+		}
+			
+
+		switch(status.mPeerState)
+		{
+			default:
+			case PN_PEER_STATE_DISCONNECTED:
+				nDisconnPeers++;
+				break;
+			case PN_PEER_STATE_CONNECTED:
+			{
+				switch(status.mPeerConnectMode)
+				{
+					default:
+					case PN_CONNECT_UDP_DIRECT:
+						nDirectPeers++;
+						break;
+					case PN_CONNECT_UDP_PROXY:
+						nProxyPeers++;
+						break;
+					case PN_CONNECT_UDP_RELAY:
+						nRelayPeers++;
+						break;
+				}
+			}
+				break;
+		}
+			
 	}
+
 
 	for(it = failedPeerIds.begin(); it != failedPeerIds.end(); it++)
 	{
@@ -324,7 +509,24 @@ void MainWindow::updateNetPeers()
 		peer_item -> setData(PTW_COL_PEER_ADDRESS, Qt::DisplayRole, QString::fromStdString(peeripstr.str()));
 		peer_item -> setData(PTW_COL_PEER_UPDATETS, Qt::DisplayRole, QString::fromStdString(peerupdatestr.str()));
 	}
+
+
+	std::ostringstream connstr;
+	connstr << "#Peers: " << nPeers;
+	connstr << " DHT: (#off:" << nOfflinePeers;
+	connstr << ",unreach:" << nUnreachablePeers;
+	connstr << ",online:" << nOnlinePeers;
+	connstr << ") Connections: (#dis:" << nDisconnPeers;
+	connstr << ",#dir:" << nDirectPeers;
+	connstr << ",#proxy:" << nProxyPeers;
+	connstr << ",#relay:" << nRelayPeers;
+	connstr << ")";
+
+	QLabel *label = ui->peerSummaryLabel;
+	label->setText(QString::fromStdString(connstr.str()));
 }
+
+
 
 
 void MainWindow::addPeer()

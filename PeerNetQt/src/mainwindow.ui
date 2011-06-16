@@ -18,17 +18,106 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QPushButton" name="addButton">
+       <widget class="QLineEdit" name="peerLine">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
-         <string>Add Peer</string>
+         <string>Peer Details</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="peerLineEdit"/>
+       <widget class="QLabel" name="netStatusLabel">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="connectLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Connect Options</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="networkLabel">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="natTypeLabel">
+        <property name="text">
+         <string>proxyExtLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="natHoleLabel">
+        <property name="text">
+         <string>dhtExtLabel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="connectStateLabel_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>TL1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="extraLabel_2">
+        <property name="text">
+         <string>TL2</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="proxyExtLabel">
+        <property name="text">
+         <string>proxyExtLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="dhtExtLabel">
+        <property name="text">
+         <string>dhtExtLabel</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -37,18 +126,32 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="">
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QLineEdit" name="peerLine">
-          <property name="enabled">
-           <bool>true</bool>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>-1</number>
           </property>
+          <item>
+           <widget class="QPushButton" name="addButton">
+            <property name="text">
+             <string>Add Peer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="peerLineEdit"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="peerSummaryLabel">
           <property name="text">
-           <string>Peer Details</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
+           <string>TextLabel</string>
           </property>
          </widget>
         </item>

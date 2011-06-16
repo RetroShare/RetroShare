@@ -392,8 +392,30 @@ std::string PeerNet::getPeerStatusString()
 	return out.str();
 }
 
+uint32_t PeerNet::getNetStateNetworkMode()
+{
+	return mNetStateBox.getNetworkMode();
+}
 
+uint32_t PeerNet::getNetStateNatTypeMode()
+{
+	return mNetStateBox.getNatTypeMode();
+}
 
+uint32_t PeerNet::getNetStateNatHoleMode()
+{
+	return mNetStateBox.getNatHoleMode();
+}
+
+uint32_t PeerNet::getNetStateConnectModes()
+{
+	return mNetStateBox.getConnectModes();
+}
+
+uint32_t PeerNet::getNetStateNetStateMode()
+{
+	return mNetStateBox.getNetStateMode();
+}
 
 
 int PeerNet::get_net_peers(std::list<std::string> &peerIds)
@@ -634,6 +656,31 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 				it->second.mDhtStatusMsg = "Peer Unreachable";	
 				it->second.mDhtState = PN_DHT_STATE_UNREACHABLE;
 				it->second.mDhtAddr = id->addr;
+
+				if ((it->second.mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
+					(it->second.mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
+					(it->second.mPeerState == PN_PEER_STATE_UDP_STARTED) ||
+					(it->second.mPeerState == PN_PEER_STATE_CONNECTED))
+				{
+
+					std::cerr << "dhtPeerCallback. Peer Unreachable, but connection already underway: ";
+					bdStdPrintId(std::cerr, id);
+					std::cerr << std::endl;
+				}
+				else
+				{
+					std::cerr << "dhtPeerCallback. Peer Unreachable, triggering Proxy Connection for: ";
+					bdStdPrintId(std::cerr, id);
+					std::cerr << std::endl;
+
+					/* Push Back PeerAction */
+					PeerAction ca;
+					ca.mType = PEERNET_ACTION_TYPE_CONNECT;
+					ca.mMode = BITDHT_CONNECT_MODE_PROXY;
+					ca.mDestId = *id;
+
+					mActions.push_back(ca);
+				}
 			}
 				break;
 			case BITDHT_MGR_QUERY_PEER_ONLINE:
@@ -699,6 +746,21 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 {
 	std::cerr << "PeerNet::dhtConnectCallback()";
 	std::cerr << std::endl;
+	std::cerr << "srcId: ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << std::endl;
+	std::cerr << "proxyId: ";
+	bdStdPrintId(std::cerr, proxyId);
+	std::cerr << std::endl;
+	std::cerr << "destId: ";
+	bdStdPrintId(std::cerr, destId);
+	std::cerr << std::endl;
+
+	std::cerr << "mode: " << mode;
+	std::cerr << " point: " << point;
+	std::cerr << " cbtype: " << cbtype;
+	std::cerr << std::endl;
+
 
 	/* we handle MID and START/END points differently... this is biggest difference.
 	 * so handle first.
@@ -955,9 +1017,18 @@ int PeerNet::doActions()
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
 
-				struct sockaddr_in laddr; // THIS CANNOT BE FILLED UNTIL STUN IS FUNCTIONAL XXX.
-				sockaddr_clear(&laddr);
-				mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode);
+				if (action.mMode == BITDHT_CONNECT_MODE_DIRECT)
+				{
+					struct sockaddr_in laddr; // THIS CANNOT BE FILLED UNTIL STUN IS FUNCTIONAL XXX.
+					sockaddr_clear(&laddr);
+					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode);
+				}
+				else if (action.mMode == BITDHT_CONNECT_MODE_PROXY)
+				{
+					struct sockaddr_in laddr; // THIS CANNOT BE FILLED UNTIL STUN IS FUNCTIONAL XXX.
+					sockaddr_clear(&laddr);
+					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode);
+				}
 			}
 			break;
 

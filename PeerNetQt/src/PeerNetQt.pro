@@ -17,10 +17,12 @@ QT     += network xml script
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-	peernet.cc
+	peernet.cc \
+	netstatebox.cc
 
 HEADERS  += mainwindow.h \
-	peernet.h
+	peernet.h \
+	netstatebox.h
 
 FORMS    += mainwindow.ui
 

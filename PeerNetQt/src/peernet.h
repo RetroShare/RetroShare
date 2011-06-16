@@ -16,6 +16,8 @@
 #include "tcponudp/udppeer.h"
 #include "tcponudp/udprelay.h"
 
+#include "netstatebox.h"
+
 #define PN_DHT_STATE_UNKNOWN           0
 #define PN_DHT_STATE_SEARCHING         1
 #define PN_DHT_STATE_FAILURE           2
@@ -34,6 +36,12 @@
 #define PN_PEER_STATE_CONNECTION_AUTHORISED  	8
 #define PN_PEER_STATE_UDP_STARTED      		9
 #define PN_PEER_STATE_CONNECTED        		10
+
+
+#define PN_CONNECT_UDP_DIRECT	1
+#define PN_CONNECT_UDP_PROXY	2
+#define PN_CONNECT_UDP_RELAY	3
+
 
 class DhtPeer
 {
@@ -59,6 +67,7 @@ class PeerStatus
 	time_t             mPeerUpdateTS;
 	
 	int		   mPeerFd;
+	uint32_t           mPeerConnectMode;
 	time_t             mPeerConnTS;
 	std::string	   mPeerIncoming;
 };
@@ -94,6 +103,13 @@ class PeerNet: public BitDhtCallback
 
 	int add_peer(std::string id);
 	int remove_peer(std::string id);
+
+
+	uint32_t getNetStateNetworkMode();
+	uint32_t getNetStateNatTypeMode();
+	uint32_t getNetStateNatHoleMode();
+	uint32_t getNetStateConnectModes();
+	uint32_t getNetStateNetStateMode();
 
 	std::string getPeerStatusString();
 	std::string getDhtStatusString();
@@ -160,6 +176,7 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 	UdpStunner *mProxyStunner;
 	// Dont need reference to PROXY UDP Receiver.
 
+	PeerNetStateBox mNetStateBox;
 
 	bdNodeId mOwnId;
 
