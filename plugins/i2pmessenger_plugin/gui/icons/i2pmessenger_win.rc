@@ -1,3 +1,0 @@
-#include "i2pmessenger_win.rc.h"
-
-IDI_ICON1               ICON    "gui/icons/personal.ico"
