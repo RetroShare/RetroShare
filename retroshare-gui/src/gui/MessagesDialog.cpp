@@ -215,8 +215,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.messagestreeView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateInterface()));
 
     RSItemDelegate *itemDelegate = new RSItemDelegate(this);
-    itemDelegate->removeFocusRect(COLUMN_UNREAD);
-    itemDelegate->removeFocusRect(COLUMN_STAR);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.messagestreeView->setItemDelegate(itemDelegate);
 
@@ -1636,7 +1634,6 @@ void MessagesDialog::updateMessageSummaryList()
 
         if (it->msgflags & RS_MSG_STAR) {
             starredCount++;
-            continue;
         }
 
         /* calculate box */

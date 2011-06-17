@@ -71,7 +71,6 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Add own item delegate */
 	RSItemDelegate *itemDelegate = new RSItemDelegate(this);
-	itemDelegate->removeFocusRect(COLUMN_POPULARITY);
 	itemDelegate->setSpacing(QSize(0, 2));
 	ui->treeWidget->setItemDelegate(itemDelegate);
 

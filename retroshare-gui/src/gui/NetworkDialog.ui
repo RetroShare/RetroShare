@@ -80,6 +80,9 @@
          <property name="animated">
           <bool>true</bool>
          </property>
+         <property name="allColumnsShowFocus">
+          <bool>true</bool>
+         </property>
          <property name="wordWrap">
           <bool>true</bool>
          </property>
@@ -168,7 +171,7 @@ border: 1px solid #CCCCCC;}</string>
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="images.qrc">:/images/rs1.png</pixmap>
+             <pixmap>:/images/rs1.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -203,7 +206,7 @@ p, li { white-space: pre-wrap; }
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
+               <pixmap>:/images/find-16.png</pixmap>
               </property>
              </widget>
             </item>
@@ -320,7 +323,7 @@ subcontrol-position: bottom right;
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset>
               <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
             </property>
             <property name="default">
@@ -373,7 +376,7 @@ subcontrol-position: bottom right;
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
+                <pixmap>:/images/ledoff1.png</pixmap>
                </property>
               </widget>
              </item>
@@ -406,7 +409,7 @@ subcontrol-position: bottom right;
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
+                <pixmap>:/images/ledoff1.png</pixmap>
                </property>
               </widget>
              </item>
@@ -439,7 +442,7 @@ subcontrol-position: bottom right;
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
+                <pixmap>:/images/ledoff1.png</pixmap>
                </property>
               </widget>
              </item>
@@ -475,6 +478,9 @@ subcontrol-position: bottom right;
           <enum>Qt::CustomContextMenu</enum>
          </property>
          <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
          <attribute name="headerCascadingSectionResizes">
@@ -564,7 +570,7 @@ subcontrol-position: bottom right;
   </action>
   <action name="actionAddFriend">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/user/add_user16.png</normaloff>:/images/user/add_user16.png</iconset>
    </property>
    <property name="text">
@@ -578,7 +584,7 @@ subcontrol-position: bottom right;
   </action>
   <action name="actionExportKey">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/exportpeers_16x16.png</normaloff>:/images/exportpeers_16x16.png</iconset>
    </property>
    <property name="text">
@@ -594,8 +600,6 @@ subcontrol-position: bottom right;
    </property>
   </action>
  </widget>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

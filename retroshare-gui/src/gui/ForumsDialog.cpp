@@ -164,7 +164,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     /* Set own item delegate */
     RSItemDelegate *itemDelegate = new RSItemDelegate(this);
-    itemDelegate->removeFocusRect(COLUMN_THREAD_READ);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.threadTreeWidget->setItemDelegate(itemDelegate);
 
@@ -1433,7 +1432,7 @@ void ForumsDialog::replytomessage()
         QTextDocument doc ;
         doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
 
-        nMsgDialog->insertPastedText(doc.toPlainText());
+        nMsgDialog->insertReplyText(doc.toPlainText());
         nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
         nMsgDialog->show();
         nMsgDialog->activateWindow();

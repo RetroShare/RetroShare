@@ -38,7 +38,6 @@
 #include "GenCertDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "settings/rsharesettings.h"
-#include "common/RSItemDelegate.h"
 #include "RetroShareLink.h"
 
 #include <time.h>
@@ -100,11 +99,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.connecttreeWidget -> setRootIsDecorated( false );
     ui.connecttreeWidget -> setColumnCount(5);
     ui.unvalidGPGkeyWidget-> setColumnCount(5);
-
-    RSItemDelegate *itemDelegate = new RSItemDelegate(this);
-    itemDelegate->removeFocusRect(0);
-    ui.connecttreeWidget->setItemDelegate(itemDelegate);
-    ui.unvalidGPGkeyWidget->setItemDelegate(itemDelegate);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connecttreeWidget->header () ;
@@ -370,6 +364,12 @@ void NetworkDialog::insertConnect()
 	if (!rsPeers)
 		return;
 
+	if (ui.showUnvalidKeys->isChecked()) {
+		ui.unvalidGPGkeyWidget->show();
+	} else {
+		ui.unvalidGPGkeyWidget->hide();
+	}
+
 	// Because this is called from a qt signal, there's no limitation between calls.
 	time_t now = time(NULL);
 	if(last_time + 5 > now)		// never update more often then every 5 seconds.
@@ -557,11 +557,6 @@ void NetworkDialog::insertConnect()
 	}
 	connectWidget->addTopLevelItem(self_item);
 
-	if (ui.showUnvalidKeys->isChecked()) {
-		ui.unvalidGPGkeyWidget->show();
-	} else {
-		ui.unvalidGPGkeyWidget->hide();
-	}
 	connectWidget->update(); /* update display */
 	ui.unvalidGPGkeyWidget->update(); /* update display */
 

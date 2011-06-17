@@ -1311,6 +1311,9 @@ padding: 4px;
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
+            <property name="allColumnsShowFocus">
+             <bool>true</bool>
+            </property>
            </widget>
            <widget class="QWidget" name="layoutWidget">
             <layout class="QGridLayout" name="msgLayout"/>

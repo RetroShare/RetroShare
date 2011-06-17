@@ -216,6 +216,9 @@ border-image: url(:/images/closepressed.png)
        <height>19</height>
       </size>
      </property>
+     <property name="allColumnsShowFocus">
+      <bool>true</bool>
+     </property>
      <attribute name="headerVisible">
       <bool>false</bool>
      </attribute>
@@ -237,8 +240,6 @@ border-image: url(:/images/closepressed.png)
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

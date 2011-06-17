@@ -805,6 +805,9 @@ background: white;
           <property name="sortingEnabled">
            <bool>true</bool>
           </property>
+          <property name="allColumnsShowFocus">
+           <bool>true</bool>
+          </property>
           <column>
            <property name="text">
             <string>Title</string>
