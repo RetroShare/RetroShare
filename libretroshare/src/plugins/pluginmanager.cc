@@ -11,8 +11,9 @@
 #include <plugins/pluginclasses.h>
 
 // lets disable the plugin system for now, as it's unfinished.
-#define WINDOWS_SYS
-#ifndef WINDOWS_SYS
+#ifdef WINDOWS_SYS
+#include "dlfcn_win32.h"
+#else
 #include <dlfcn.h>
 #endif
 
@@ -79,7 +80,6 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 
 bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 {
-#ifndef WINDOWS_SYS
 	std::cerr << "  Loading plugin " << plugin_name << std::endl;
 
 	// The following choice is somewhat dangerous since the program can stop when a symbol can
@@ -122,9 +122,6 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr << "  Symbols have been linked in LAZY mode. This means that undefined symbols may" << std::endl ;
 		std::cerr << "  crash your program any time." << std::endl ;
 	}
-#else
-	std::cerr << "  Plugin load is yet unimplemented under windows." << std::endl;
-#endif
 
 	return true ;
 }
