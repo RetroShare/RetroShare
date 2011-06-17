@@ -331,8 +331,7 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 	number = CONNECT_NUM_PROXY_ATTEMPTS - number;
 
 	mNodeSpace.find_nearest_nodes_with_flags(target, number, excluding, nearest, 
-			BITDHT_PEER_STATUS_DHT_APPL      |
-			BITDHT_PEER_STATUS_DHT_VERSION);
+							BITDHT_PEER_STATUS_DHT_ENGINE_VERSION );
 
 	std::multimap<bdMetric, bdId>::iterator it;
 	for(it = nearest.begin(); it != nearest.end(); it++)
@@ -1066,8 +1065,8 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 			std::cerr << "bdNode::recvedConnectionRequest() WARNING searching for \"VERSION\" flag... TO FIX LATER";
 			std::cerr << std::endl;
 
-			uint32_t with_flag = BITDHT_PEER_STATUS_DHT_VERSION;
-			//BITDHT_PEER_STATUS_DHT_APPL | BITDHT_PEER_STATUS_DHT_VERSION);
+			uint32_t with_flag = BITDHT_PEER_STATUS_DHT_ENGINE_VERSION;
+			//BITDHT_PEER_STATUS_DHT_APPL | BITDHT_PEER_STATUS_DHT_APPL_VERSION);
 
 			bool proxyOk = false;
 			bdId destId;

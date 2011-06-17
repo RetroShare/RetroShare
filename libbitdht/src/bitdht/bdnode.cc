@@ -1655,8 +1655,9 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 
 	/* calculate version match with peer */
 	bool sameDhtEngine = false;
+	bool sameDhtVersion = false;
 	bool sameAppl = false;
-	bool sameVersion = false;
+	bool sameApplVersion = false;
 
 	if (versionId)
 	{
@@ -1677,18 +1678,36 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 			sameDhtEngine = true;
 		}
 	
-		/* check two bytes */
-		if ((versionId->len >= 4) && (mDhtVersion.size() >= 4) &&
-			(versionId->data[2] == mDhtVersion[2]) && (versionId->data[3] == mDhtVersion[3]))
+		/* check two bytes. 
+		 * Due to Old Versions not having this field, we need to check that they are numbers. 
+		 * We have a Major version, and minor version....	
+		 * This flag is set if Major is same, and minor is greater or equal to our version.
+		 */
+		if ((versionId->len >= 4) && (mDhtVersion.size() >= 4))
 		{
-			sameAppl = true;
+			if ((isdigit(versionId->data[2]) && isdigit(versionId->data[3])) && 
+				(versionId->data[2] == mDhtVersion[2]) && (versionId->data[3] >= mDhtVersion[3]))
+			{
+				sameDhtVersion = true;
+			}
 		}
 	
 		/* check two bytes */
 		if ((versionId->len >= 6) && (mDhtVersion.size() >= 6) &&
 			(versionId->data[4] == mDhtVersion[4]) && (versionId->data[5] == mDhtVersion[5]))
 		{
-			sameVersion = true;
+			sameAppl = true;
+		}
+	
+	
+		/* check two bytes */
+		if ((versionId->len >= 8) && (mDhtVersion.size() >= 8))
+		{
+			if ((isdigit(versionId->data[6]) && isdigit(versionId->data[7])) && 
+				(versionId->data[6] == mDhtVersion[6]) && (versionId->data[7] >= mDhtVersion[7]))
+			{
+				sameApplVersion = true;
+			}
 		}
 	}
 	else
@@ -1701,20 +1720,22 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	}
 	
 
-	
-
 	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PONG; /* should have id too */
 	if (sameDhtEngine)
 	{
 		peerflags |= BITDHT_PEER_STATUS_DHT_ENGINE; 
 	}
+	if (sameDhtVersion)
+	{
+		peerflags |= BITDHT_PEER_STATUS_DHT_ENGINE_VERSION; 
+	}
 	if (sameAppl)
 	{
 		peerflags |= BITDHT_PEER_STATUS_DHT_APPL; 
 	}
-	if (sameVersion)
+	if (sameApplVersion)
 	{
-		peerflags |= BITDHT_PEER_STATUS_DHT_VERSION; 
+		peerflags |= BITDHT_PEER_STATUS_DHT_APPL_VERSION; 
 	}
 
 	addPeer(id, peerflags);
