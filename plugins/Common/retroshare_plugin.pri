@@ -1,8 +1,11 @@
 TEMPLATE = lib
-CONFIG = 
+
+INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 
 linux-g++ {
-	INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
+	LIBS *= -ldl
+}
+linux-g++-64 {
 	LIBS *= -ldl
 }
 
