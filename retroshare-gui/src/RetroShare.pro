@@ -290,6 +290,7 @@ HEADERS +=  rshare.h \
             gui/settings/MessagePage.h \
             gui/settings/NewTag.h \
             gui/settings/ForumPage.h \
+            gui/settings/PluginsPage.h \
             gui/settings/AppearancePage.h \
             gui/settings/FileAssociationsPage.h \
             gui/settings/SoundPage.h \
@@ -401,6 +402,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
             gui/settings/ForumPage.ui \
+            gui/settings/PluginsPage.ui \
             gui/settings/AppearancePage.ui \
             gui/settings/TransferPage.ui \
             gui/settings/SoundPage.ui \
@@ -543,6 +545,7 @@ SOURCES +=  main.cpp \
             gui/settings/MessagePage.cpp \
             gui/settings/NewTag.cpp \
             gui/settings/ForumPage.cpp \
+            gui/settings/PluginsPage.cpp \
             gui/settings/AppearancePage.cpp \
             gui/settings/FileAssociationsPage.cpp \
             gui/settings/SoundPage.cpp \

@@ -176,6 +176,15 @@
         <normaloff>:/images/sound.png</normaloff>:/images/sound.png</iconset>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Plugins</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/extension_32.png</normaloff>:/images/extension_32.png</iconset>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="0" column="1">

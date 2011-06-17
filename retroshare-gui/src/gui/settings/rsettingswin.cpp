@@ -34,6 +34,7 @@
 #include "ChatPage.h"
 #include "MessagePage.h"
 #include "ForumPage.h"
+#include "PluginsPage.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -114,6 +115,7 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new ChatPage());
     stackedWidget->addWidget(new AppearancePage());
     stackedWidget->addWidget(new SoundPage() );
+    stackedWidget->addWidget(new PluginsPage() );
 
     setNewPage(General);
 }
@@ -156,6 +158,10 @@ RSettingsWin::setNewPage(int page)
         case Forum:
             text = tr("Forum");
             pageicon->setPixmap(QPixmap(":/images/konversation.png"));
+            break;
+        case Plugins:
+            text = tr("Plugins");
+            pageicon->setPixmap(QPixmap(":/images/extension_32.png"));
             break;
         case Chat:
             text = tr("Chat");

@@ -28,6 +28,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
@@ -61,6 +62,8 @@ class RsPluginHandler
 		//
 		virtual int nbPlugins() const = 0 ;
 		virtual RsPlugin *plugin(int i) = 0 ;
+		virtual const std::vector<std::string>& getPluginDirectories() const = 0;
+
 		virtual void slowTickPlugins(time_t sec) = 0 ;
 
 		virtual const std::string& getLocalCacheDir() const =0;

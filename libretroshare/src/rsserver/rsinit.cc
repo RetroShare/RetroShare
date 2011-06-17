@@ -1925,10 +1925,13 @@ int RsServer::StartupRetroShare()
 	std::string channelsdir = config_dir + "/channels";
 	std::string blogsdir = config_dir + "/blogs";
 	std::string forumdir = config_dir + "/forums";
-	std::string plugins_dir = "." ;
-
 
 	std::vector<std::string> plugins_directories ;
+
+#ifndef WINDOWS_SYS
+	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions/")) ;
+#endif
+	plugins_directories.push_back(RsInitConfig::basedir + "/extensions/") ;
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
 														// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
 

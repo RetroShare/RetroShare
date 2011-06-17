@@ -16,6 +16,8 @@ class RsPluginManager: public RsPluginHandler
 		
 		virtual int nbPlugins() const { return _plugins.size() ; }
 		virtual RsPlugin *plugin(int i) { return _plugins[i] ; }
+		virtual const std::vector<std::string>& getPluginDirectories() const { return _plugin_directories ; }
+
 
 		virtual void slowTickPlugins(time_t sec) ;
 		virtual void addConfigurations(p3ConfigMgr *cfgMgr) ;
@@ -44,5 +46,7 @@ class RsPluginManager: public RsPluginHandler
 		static std::string _local_cache_dir ;
 		static ftServer *_ftserver ;
 		static p3ConnectMgr *_connectmgr ;
+
+		static std::vector<std::string> _plugin_directories ;
 };
 

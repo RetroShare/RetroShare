@@ -20,6 +20,8 @@
 std::string RsPluginManager::_plugin_entry_symbol ;
 std::string RsPluginManager::_local_cache_dir ;
 std::string RsPluginManager::_remote_cache_dir ;
+std::vector<std::string> RsPluginManager::_plugin_directories ;
+
 ftServer   		*RsPluginManager::_ftserver 					= NULL ;
 p3ConnectMgr   *RsPluginManager::_connectmgr 				= NULL ;
 
@@ -45,6 +47,7 @@ bool RsPluginManager::acceptablePluginName(const std::string& name)
 
 void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directories)
 {
+	_plugin_directories = plugin_directories ;
 	_plugin_entry_symbol = "RETROSHARE_PLUGIN_provide" ;
 
 	// 0 - get the list of files to read
@@ -55,7 +58,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 		if(!dirIt.isValid())
 		{
 			std::cerr << "Plugin directory : " << plugin_directories[i] << " does not exist." << std::endl ;
-			return ;
+			continue ;
 		}
 
 		while(dirIt.readdir())
