@@ -21,11 +21,13 @@ CC = g++
 RM = /bin/rm
 RANLIB = ranlib
 LIBDIR = $(RS_TOP_DIR)/lib
+BITDIR = $(DHT_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
-
+BITDHT = $(BITDIR)/libbitdht.a
 # Unix: Linux/Cygwin
 INCLUDE = -I $(RS_TOP_DIR) 
-CFLAGS = -Wall -g $(INCLUDE) 
+CFLAGS = -Wall -g $(INCLUDE)
+#CFLAGS += -fprofile-arcs -ftest-coverage
 CFLAGS += ${DEFINES}
 
 #ifdef PQI_USE_XPGP
@@ -56,7 +58,8 @@ BIOCFLAGS =  -I $(SSL_DIR)/include ${DEFINES} -DOPENSSL_THREADS -D_REENTRANT -DD
 # OS specific Linking.
 #########################################################################
 
-LIBS =  -L$(LIBDIR) -lretroshare 
+LIBS =  -lgpgme -L$(LIBDIR) -lretroshare 
+LIBS +=  -L$(BITDIR) -lbitdht -lgnome-keyring
 ifdef PQI_USE_XPGP
 	LIBS +=  -L$(SSL_DIR) 
   endif
@@ -64,7 +67,7 @@ LIBS +=  -lssl -lcrypto  -lpthread
 #LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
 LIBS +=  -lupnp
-LIBS +=  -lgpgme
+
 	
 RSLIBS = $(LIBS)
 

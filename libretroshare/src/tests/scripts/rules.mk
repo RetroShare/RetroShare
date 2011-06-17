@@ -13,7 +13,8 @@ librs:  $(RSOBJ)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	-/bin/rm $(RSOBJ) $(EXECOBJ) $(TESTOBJ)
+	-/bin/rm -f $(RSOBJ) $(EXECOBJ) $(TESTOBJ) *.gcno *.gcda \
+	*.gcov *.tstout $(TESTS)
 
 clobber: clean retest
 	-/bin/rm $(EXEC) $(TESTS)

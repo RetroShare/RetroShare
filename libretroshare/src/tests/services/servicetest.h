@@ -1,5 +1,5 @@
 /*
- * libretroshare/src/tests/services distrib_test_main.cc
+ * libretroshare/src/tests/services Service_Test.h
  *
  * RetroShare Service Testing
  *
@@ -24,15 +24,43 @@
  */
 
 
-#include "distrib_services.h"
+#ifndef SERVICE_TEST_H_
+#define SERVICE_TEST_H_
 
-int main()
-{
+#include "pqi/p3connmgr.h"
+#include "rsserver/p3peers.h"
+#include "dbase/cachestrapper.h"
+#include "pqi/pqipersongrp.h"
 
-	ServiceTestFrame tf;
-	RsForum_Test* forum_test = new RsForum_Test();
-	std::string testName("test1");
-	tf.addTest(testName, forum_test);
 
-	return 0;
-}
+
+/*!
+ * A convenience class from which tests derive from
+ * This enables user to test in shallow manner the public methods
+ * of a service
+ */
+class ServiceTest {
+
+public:
+	ServiceTest();
+	virtual ~ServiceTest();
+
+	/*!
+	 * all tests of service should be implemented here
+	 */
+    virtual void runTests() = 0;
+
+protected:
+
+
+    p3ConnectMgr* mConnMgr;
+	CacheStrapper *mCs;
+	CacheTransfer *mCt;
+	p3Peers* mPeers;
+	pqipersongrp* mPersonGrp;
+
+};
+
+
+
+#endif /* SERVICE_TEST_H_ */

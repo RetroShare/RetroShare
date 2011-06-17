@@ -27,42 +27,32 @@
 #ifndef DISTRIB_SERVICE_TEST_H_
 #define DISTRIB_SERVICE_TEST_H_
 
-#include "Service_Test.h"
-
+#include "servicetest.h"
 #include "services/p3forums.h"
-#include "services/p3channels.h"
-#include "services/p3blogs.h"
 
-/*!
- * For testing forums
- */
-class RsForum_Test : public RsServiceTest {
+class forumServiceTest : public ServiceTest {
 
 public:
 
-	RsForum_Test();
-	virtual ~RsForum_Test();
+	forumServiceTest();
+	~forumServiceTest();
 
-	/*!
-	 * goes returns the result for given test cases
-	 */
-	void result(std::map<std::string, bool>&);
 
-	bool setTestCases(std::list<std::string>& );
-	bool runCases(std::list<std::string>&);
-
-	/*!
-	 * This is important for the get functions used by the deriving service
-	 */
-	void loadDummyData();
-
-	const std::string TEST_CREATE_FORUMS;
+	void runTests();
 
 private:
 
-	bool testCreateForums();
-	BIO *bio_err;
-	p3Forums* forum;
+	bool getForumMsgTest();
+	bool setForumMsgTest();
+	bool createGroupTests();
+
+private:
+
+	void loadDummyData();
+
+private:
+
+	p3Forums* mForums;
 
 };
 
