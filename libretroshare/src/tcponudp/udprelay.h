@@ -66,13 +66,11 @@ class UdpRelayEnd
 	public:
 
 	UdpRelayEnd();
-	UdpRelayEnd(UdpPeer *peer, UdpRelayAddrSet *endPoints, const struct sockaddr_in *proxyaddr);
+	UdpRelayEnd(UdpRelayAddrSet *endPoints, const struct sockaddr_in *proxyaddr);
 
 	struct sockaddr_in mLocalAddr; 
 	struct sockaddr_in mProxyAddr; 
 	struct sockaddr_in mRemoteAddr; 
-
-	UdpPeer *mPeer;
 };
 
 std::ostream &operator<<(std::ostream &out, const UdpRelayAddrSet &uras);
@@ -144,10 +142,24 @@ int     status(std::ostream &out);
 
 	private:
 
-	int installRelayClass_locked(int classIdx);
-	int removeRelayClass_locked(int classIdx);
+	int removeUdpRelay_relayLocked(UdpRelayAddrSet *addrs);
+	int installRelayClass_relayLocked(int classIdx);
+	int removeRelayClass_relayLocked(int classIdx);
 
-	RsMutex peerMtx; /* for all class data (below) */
+	/* Unfortunately, Due the reentrant nature of this classes activities...
+	 * the SendPkt() must be callable from inside RecvPkt().
+	 * This means we need two seperate mutexes.
+	 *  - one for UdpPeer's, and one for Relay Data.
+	 *
+	 * care must be taken to lock these mutex's in a consistent manner to avoid deadlock.
+	 *  - You are not allowed to hold both at the same time!
+	 */
+
+	RsMutex udppeerMtx; /* for all class data (below) */
+	
+	std::map<struct sockaddr_in, UdpPeer *> mPeers; /* indexed by <dest> */
+
+	RsMutex relayMtx; /* for all class data (below) */
 
 	std::vector<int> mClassLimit, mClassCount;
 	std::map<struct sockaddr_in, UdpRelayEnd> mStreams; /* indexed by <dest> */
