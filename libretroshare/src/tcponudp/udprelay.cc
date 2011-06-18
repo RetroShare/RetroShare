@@ -32,6 +32,14 @@
 
 #define DEBUG_UDP_RELAY 1
 
+
+#ifdef DEBUG_UDP_RELAY
+// DEBUG FUNCTION
+#include <sstream>
+#include <iomanip>
+int displayUdpRelayPacketHeader(const void *data, const int size);
+#endif
+
 /****************** UDP RELAY STUFF **********/
 
 #define MAX_RELAY_UDP_PACKET_SIZE 1024
@@ -431,7 +439,10 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 #ifdef DEBUG_UDP_RELAY
 	std::cerr << "UdpRelayReceiver::recvPkt(" << size << ") from: " << from;
 	std::cerr << std::endl;
+	displayUdpRelayPacketHeader(data, size);
+
 #endif
+ 
 	if (!isUdpRelayPacket(data, size))
 	{
 #ifdef DEBUG_UDP_RELAY
@@ -556,13 +567,44 @@ int UdpRelayReceiver::sendPkt(const void *data, int size, const struct sockaddr_
  * 16 Bytes: 4 ID, 6 IP:Port 1, 6 IP:Port 2 
  */
 
+#define UDP_IDENTITY_STRING_V1	"RLY1"
+#define UDP_IDENTITY_SIZE_V1	4
+
 int isUdpRelayPacket(const void *data, const int size)
 {
 	if (size < UDP_RELAY_HEADER_SIZE)
 		return 0;
 	
-	return (0 == strncmp((char *) data, "RLY1", 4));
+	return (0 == strncmp((char *) data, UDP_IDENTITY_STRING_V1, UDP_IDENTITY_SIZE_V1));
 }
+
+#ifdef DEBUG_UDP_RELAY
+
+int displayUdpRelayPacketHeader(const void *data, const int size)
+{
+	int dsize = UDP_RELAY_HEADER_SIZE + 16;
+	if (size < dsize)
+	{
+		dsize = size;
+	}
+
+	std::ostringstream out;
+        for(int i = 0; i < dsize; i++)
+        {
+		if ((i > 0) && (i % 16 == 0))
+		{
+			out << std::endl;
+		}
+
+                out << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) ((uint8_t*) data)[i];
+        }
+
+	std::cerr << "displayUdpRelayPacketHeader()" << std::endl;
+	std::cerr << out.str();
+	std::cerr << std::endl;
+
+}
+#endif
 
 
 int extractUdpRelayAddrSet(const void *data, const int size, UdpRelayAddrSet &addrSet)
@@ -609,6 +651,7 @@ int createRelayUdpPacket(const void *data, const int size, void *newpkt, int new
 		return 0;
 	}
 	uint8_t *header = (uint8_t *) newpkt;
+	memcpy(header, UDP_IDENTITY_STRING_V1, UDP_IDENTITY_SIZE_V1);
 
 	/* as IP:Port are already in network byte order, we can just write them to the dataspace */
 	uint32_t ipaddr = ure->mLocalAddr.sin_addr.s_addr;
