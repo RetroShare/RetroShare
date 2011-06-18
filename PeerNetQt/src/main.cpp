@@ -22,8 +22,10 @@ int main(int argc, char *argv[])
 	bool doFixedPort = false;
 	int portNumber = 0;
 
+	bool doLocalTesting = false;
+
 	int c;
-	while((c = getopt(argc, argv,"r:p:c:n")) != -1)
+	while((c = getopt(argc, argv,"r:p:c:nl")) != -1)
 	{
 		switch (c)
 		{
@@ -45,6 +47,10 @@ int main(int argc, char *argv[])
 			case 'n':
 				std::cerr << "Disabling GUI" << std::endl;
 				showGUI = false;
+				break;
+			case 'l':
+				std::cerr << "Enabling Local Testing" << std::endl;
+				doLocalTesting = true;
 				break;
 		}
 	}
@@ -74,6 +80,12 @@ int main(int argc, char *argv[])
 			pnet->setUdpStackRestrictions(portRestrictions);
 		}
 	}
+
+	if (doLocalTesting)
+	{
+		pnet->setLocalTesting();
+	}
+
 
 	pnet->init();
 

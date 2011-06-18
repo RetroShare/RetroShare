@@ -68,6 +68,13 @@ void MainWindow::updateNetStatus()
 		ui->peerLine->setText(status);
 	}
 
+        status = QString::fromStdString(mPeerNet->getPeerAddressString());
+	oldstatus = ui->peerAddressLabel->text();
+	if (oldstatus != status)
+	{
+		ui->peerAddressLabel->setText(status);
+	}
+
 	uint32_t netMode = mPeerNet->getNetStateNetworkMode();
 
 	QLabel *label = ui->networkLabel;
@@ -348,6 +355,10 @@ void MainWindow::updateNetPeers()
 				peerTreeWidget->removeItemWidget(tmp_item, 0);
 				/* remove it! */
 				itemCount--;
+			}
+			else
+			{
+				nIndex++;
 			}
 		}
 		else

@@ -39,7 +39,7 @@
       <item>
        <widget class="QLabel" name="netStatusLabel">
         <property name="text">
-         <string>TextLabel</string>
+         <string>Net Status</string>
         </property>
        </widget>
       </item>
@@ -63,21 +63,21 @@
       <item>
        <widget class="QLabel" name="networkLabel">
         <property name="text">
-         <string>TextLabel</string>
+         <string>Network Mode</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="natTypeLabel">
         <property name="text">
-         <string>proxyExtLabel</string>
+         <string>Nat Type</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="natHoleLabel">
         <property name="text">
-         <string>dhtExtLabel</string>
+         <string>Nat Hole</string>
         </property>
        </widget>
       </item>
@@ -86,7 +86,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QLabel" name="connectStateLabel_2">
+       <widget class="QLabel" name="peerAddressLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -94,28 +94,14 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>TL1</string>
+         <string>Peer Address</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="extraLabel_2">
+       <widget class="QLabel" name="extraLabel">
         <property name="text">
-         <string>TL2</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="proxyExtLabel">
-        <property name="text">
-         <string>proxyExtLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="dhtExtLabel">
-        <property name="text">
-         <string>dhtExtLabel</string>
+         <string>Extra Label</string>
         </property>
        </widget>
       </item>

@@ -77,6 +77,8 @@ class PeerNetStateBox
 	void setAddressNatPMP(bool active, struct sockaddr_in *addr);
 	void setAddressWebIP(bool active, struct sockaddr_in *addr);
 
+	void setDhtState(bool dhtOn, bool dhtActive);
+
 	uint32_t getNetStateMode();
 	uint32_t getNetworkMode();
 	uint32_t getNatTypeMode();
@@ -115,8 +117,13 @@ class PeerNetStateBox
 	bool mStunProxyStable;
 	struct sockaddr_in mStunProxyAddr;
 
+	bool mDhtSet;
+	time_t mDhtTS;
+	bool mDhtOn;
+	bool mDhtActive;
+
 	bool mUPnPSet;
-    struct sockaddr_in mUPnPAddr;
+	struct sockaddr_in mUPnPAddr;
 	bool mUPnPActive;
 	time_t mUPnPTS;
 
@@ -132,8 +139,6 @@ class PeerNetStateBox
 
 	bool mPortForwardedSet;
 	uint16_t  mPortForwarded;
-
-	bool mDhtActive;
 };
 
 #endif

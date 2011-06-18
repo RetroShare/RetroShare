@@ -89,6 +89,20 @@ void PeerNetStateBox::setAddressWebIP(bool active, struct sockaddr_in *addr)
 }
 
 
+void PeerNetStateBox::setDhtState(bool on, bool active)
+{
+	if ((!mDhtSet) || (mDhtActive != active) || (mDhtOn != on))
+	{
+		mDhtSet = true;
+		mDhtActive = active;
+		mDhtOn = on;
+
+		mStatusOkay = false;
+	}
+	mDhtTS = time(NULL);
+}
+
+
 /* Extract Net State */
 uint32_t PeerNetStateBox::getNetworkMode()
 {
@@ -162,7 +176,10 @@ PeerNetStateBox::PeerNetStateBox()
 	mPortForwardedSet = false;
 	mPortForwarded = 0;
 	
+	mDhtSet = false;
 	mDhtActive = false;
+	mDhtOn = false;
+
 }
 
 #define NETSTATE_PARAM_TIMEOUT		600

@@ -15,6 +15,7 @@
 PeerNet::PeerNet(std::string id, std::string configpath, uint16_t port)
 {
 	mDoUdpStackRestrictions = false;
+        mLocalNetTesting = false;
 
 
         std::cerr << "PeerNet::PeerNet()" << std::endl;
@@ -71,6 +72,10 @@ void PeerNet::setUdpStackRestrictions(std::list<std::pair<uint16_t, uint16_t> > 
 	mUdpStackRestrictions = restrictions;
 }
 
+void PeerNet::setLocalTesting()
+{
+	mLocalNetTesting = true;
+}
 
 void PeerNet::init()
 {
@@ -110,8 +115,14 @@ void PeerNet::init()
 	/* construct the rest of the stack, important to build them in the correct order! */
 	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
 
-	UdpSubReceiver *udpReceivers[3];
-	int udpTypes[3];
+#define PN_TOU_RECVER_DIRECT_IDX	0
+#define PN_TOU_RECVER_PROXY_IDX		1
+#define PN_TOU_RECVER_RELAY_IDX		2
+
+#define PN_TOU_NUM_RECVERS		3
+
+	UdpSubReceiver *udpReceivers[PN_TOU_NUM_RECVERS];
+	int udpTypes[PN_TOU_NUM_RECVERS];
 
 	
 	std::cerr << "PeerNet() startup ... creating UdpStunner on UdpStack";
@@ -120,6 +131,8 @@ void PeerNet::init()
 	// STUNNER.
 	mDhtStunner = new UdpStunner(mUdpStack);
 	mUdpStack->addReceiver(mDhtStunner);
+	//mDhtStunner->setTargetStunPeriod(0); /* passive */
+	mDhtStunner->setTargetStunPeriod(300); /* very slow (300 = 5minutes) */
 	
 	std::cerr << "PeerNet() startup ... creating BitDHT on UdpStack";
 	std::cerr << std::endl;
@@ -136,18 +149,18 @@ void PeerNet::init()
 	std::cerr << std::endl;
 
 	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
-	UdpRelayReceiver *mRelayRecver = new UdpRelayReceiver(mUdpStack); 
-	udpReceivers[2] = mRelayRecver; /* RELAY Connections (DHT Port) */
-	udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
-	mUdpStack->addReceiver(udpReceivers[2]);
+	mRelayReceiver = new UdpRelayReceiver(mUdpStack); 
+	udpReceivers[PN_TOU_RECVER_RELAY_IDX] = mRelayReceiver; /* RELAY Connections (DHT Port) */
+	udpTypes[PN_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
+	mUdpStack->addReceiver(udpReceivers[PN_TOU_RECVER_RELAY_IDX]);
 	
 	std::cerr << "PeerNet() startup ... creating UdpPeerReceiver on UdpStack";
 	std::cerr << std::endl;
 	
 	// LAST ON THIS STACK IS STANDARD DIRECT TOU
-	udpReceivers[0] = new UdpPeerReceiver(mUdpStack);  /* standard DIRECT Connections (DHT Port) */
-	udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
-	mUdpStack->addReceiver(udpReceivers[0]);
+	udpReceivers[PN_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mUdpStack);  /* standard DIRECT Connections (DHT Port) */
+	udpTypes[PN_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+	mUdpStack->addReceiver(udpReceivers[PN_TOU_RECVER_DIRECT_IDX]);
 
 	std::cerr << "PeerNet() startup ... creating UdpProxyStack";
 	std::cerr << std::endl;
@@ -156,7 +169,7 @@ void PeerNet::init()
 	// Create the Second UdpStack... Port should be random (but openable!).
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
-	sndladdr.sin_port = htons(mPort + 1111);
+	sndladdr.sin_port = htons(mPort + 11);
 	rsUdpStack *mUdpProxyStack = new rsUdpStack(sndladdr);
 
         std::cerr << "PeerNet() startup ... creating UdpStunner on UdpProxyStack";
@@ -165,19 +178,18 @@ void PeerNet::init()
 	// FIRSTLY THE PROXY STUNNER.
 	mProxyStunner = new UdpStunner(mUdpProxyStack);
         mUdpProxyStack->addReceiver(mProxyStunner);
+	//mProxyStunner->setTargetStunPeriod(0); /* passive */
 
         std::cerr << "PeerNet() startup ... creating UdpPeerReceiver(Proxy) on UdpProxyStack";
         std::cerr << std::endl;
 	
 	// FINALLY THE PROXY UDP CONNECTIONS
-	udpReceivers[1] = new UdpPeerReceiver(mUdpProxyStack); /* PROXY Connections (Alt UDP Port) */	
-	udpTypes[1] = TOU_RECEIVER_TYPE_UDPPEER;	
-	mUdpProxyStack->addReceiver(udpReceivers[1]);
-	
+	udpReceivers[PN_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mUdpProxyStack); /* PROXY Connections (Alt UDP Port) */	
+	udpTypes[PN_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;	
+	mUdpProxyStack->addReceiver(udpReceivers[PN_TOU_RECVER_PROXY_IDX]);
 	
 	// NOW WE CAN PASS THE RECEIVERS TO TOU.
-	// REAL INITIALISATION - WITH THREE MODES - FOR LATER.
-	tou_init((void **) udpReceivers, udpTypes, 3);
+	tou_init((void **) udpReceivers, udpTypes,  PN_TOU_NUM_RECVERS);
 
 
 	/* startup the Udp stuff! */
@@ -189,14 +201,12 @@ void PeerNet::init()
 	storeConfig(mConfigFile);
 
 
-
-
-
-
-
-
-
-
+	/* enable local net stuns (for testing) */
+	if (mLocalNetTesting)
+	{
+		mProxyStunner->SetAcceptLocalNet();
+		mDhtStunner->SetAcceptLocalNet();
+	}
 
 
 }
@@ -366,27 +376,52 @@ std::string PeerNet::getPeerStatusString()
 	out << "OwnId: ";
 	bdStdPrintNodeId(out, &mOwnId);	
 
+	return out.str();
+}
+
+std::string PeerNet::getPeerAddressString()
+{
+	std::ostringstream out;
+
 	out << " LocalPort: " << mPort;
 
 	struct sockaddr_in extAddr;
 	uint8_t extStable;
 	if (mDhtStunner->externalAddr(extAddr, extStable))
 	{
-		out << " ExtAddress: " << inet_ntoa(extAddr.sin_addr);
+		out << " DhtExtAddr: " << inet_ntoa(extAddr.sin_addr);
                 out << ":" << ntohs(extAddr.sin_port);
 
 		if (extStable)
 		{
-			out << " is Stable";
+			out << " (Stable) ";
 		}
 		else
 		{
-			out << " is Unstable (symmetric NAT)";
+			out << " (Unstable) ";
 		}
 	}
 	else
 	{
-		out << " ExtAddress Unknown";
+		out << " DhtExtAddr: Unknown ";
+	}
+	if (mProxyStunner->externalAddr(extAddr, extStable))
+	{
+		out << " ProxyExtAddr: " << inet_ntoa(extAddr.sin_addr);
+                out << ":" << ntohs(extAddr.sin_port);
+
+		if (extStable)
+		{
+			out << " (Stable) ";
+		}
+		else
+		{
+			out << " (Unstable) ";
+		}
+	}
+	else
+	{
+		out << " ProxyExtAddr: Unknown ";
 	}
 
 	return out.str();
@@ -460,7 +495,7 @@ int PeerNet::get_failedpeer_status(std::string id, PeerStatus &status)
 {
 	bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
 
-	std::map<std::string, PeerStatus>::iterator it = mPeers.find(id);
+	std::map<std::string, PeerStatus>::iterator it = mFailedPeers.find(id);
 	if (it != mFailedPeers.end())
 	{
 		status = it->second;
@@ -599,7 +634,8 @@ int PeerNet::dhtNodeCallback(const bdId *id, uint32_t peerflags)
 #endif
 	}
 
-	if (peerflags & BITDHT_PEER_STATUS_DHT_APPL)
+	if ((peerflags & BITDHT_PEER_STATUS_DHT_APPL)
+		&& (peerflags & BITDHT_PEER_STATUS_DHT_APPL_VERSION))
 	{
 #ifdef PEERNET_DEBUG
 		std::cerr << "PeerNet::dhtNodeCallback() Passing Local Peer to DhtStunner: ";
@@ -607,7 +643,17 @@ int PeerNet::dhtNodeCallback(const bdId *id, uint32_t peerflags)
 		std::cerr << std::endl;
 #endif
 
-		if (mDhtStunner)
+		/* pass off to the Stunners
+		 * but only if they need them.
+		 * ideally don't pass to both peers... (XXX do later)
+		 */
+		if ((mProxyStunner) && (mProxyStunner->needStunPeers()))
+		{
+			mProxyStunner->addStunPeer(id->addr, strId.c_str());
+		}
+		/* else */ // removed else until we have lots of peers.
+
+		if ((mDhtStunner) && (mDhtStunner->needStunPeers()))
 		{
 			mDhtStunner->addStunPeer(id->addr, strId.c_str());
 		}
@@ -657,30 +703,7 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 				it->second.mDhtState = PN_DHT_STATE_UNREACHABLE;
 				it->second.mDhtAddr = id->addr;
 
-				if ((it->second.mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
-					(it->second.mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
-					(it->second.mPeerState == PN_PEER_STATE_UDP_STARTED) ||
-					(it->second.mPeerState == PN_PEER_STATE_CONNECTED))
-				{
-
-					std::cerr << "dhtPeerCallback. Peer Unreachable, but connection already underway: ";
-					bdStdPrintId(std::cerr, id);
-					std::cerr << std::endl;
-				}
-				else
-				{
-					std::cerr << "dhtPeerCallback. Peer Unreachable, triggering Proxy Connection for: ";
-					bdStdPrintId(std::cerr, id);
-					std::cerr << std::endl;
-
-					/* Push Back PeerAction */
-					PeerAction ca;
-					ca.mType = PEERNET_ACTION_TYPE_CONNECT;
-					ca.mMode = BITDHT_CONNECT_MODE_PROXY;
-					ca.mDestId = *id;
-
-					mActions.push_back(ca);
-				}
+				UnreachablePeerCallback_locked(id, status, &(it->second));
 			}
 				break;
 			case BITDHT_MGR_QUERY_PEER_ONLINE:
@@ -689,31 +712,7 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 				it->second.mDhtState = PN_DHT_STATE_ONLINE;
 				it->second.mDhtAddr = id->addr;
 
-
-				if ((it->second.mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
-					(it->second.mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
-					(it->second.mPeerState == PN_PEER_STATE_UDP_STARTED) ||
-					(it->second.mPeerState == PN_PEER_STATE_CONNECTED))
-				{
-
-					std::cerr << "dhtPeerCallback. Peer Online, but connection already underway: ";
-					bdStdPrintId(std::cerr, id);
-					std::cerr << std::endl;
-				}
-				else
-				{
-					std::cerr << "dhtPeerCallback. Peer Online, triggering Direct Connection for: ";
-					bdStdPrintId(std::cerr, id);
-					std::cerr << std::endl;
-
-					/* Push Back PeerAction */
-					PeerAction ca;
-					ca.mType = PEERNET_ACTION_TYPE_CONNECT;
-					ca.mMode = BITDHT_CONNECT_MODE_DIRECT;
-					ca.mDestId = *id;
-
-					mActions.push_back(ca);
-				}
+				OnlinePeerCallback_locked(id, status, &(it->second));
 			}
 				break;
 		}
@@ -731,6 +730,125 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 
 	return 1;
 }
+
+
+
+int PeerNet::OnlinePeerCallback_locked(const bdId *id, uint32_t status, PeerStatus *peerStatus)
+{
+
+	if ((peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
+		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
+		(peerStatus->mPeerState == PN_PEER_STATE_UDP_STARTED) ||
+		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTED))
+	{
+
+		std::cerr << "dhtPeerCallback. Peer Online, but connection already underway: ";
+		bdStdPrintId(std::cerr, id);
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "dhtPeerCallback. Peer Online, triggering Direct Connection for: ";
+		bdStdPrintId(std::cerr, id);
+		std::cerr << std::endl;
+
+		/* Push Back PeerAction */
+		PeerAction ca;
+		ca.mType = PEERNET_ACTION_TYPE_CONNECT;
+		ca.mMode = BITDHT_CONNECT_MODE_DIRECT;
+		ca.mDestId = *id;
+
+		mActions.push_back(ca);
+	}
+	return 1;
+}
+
+
+/* Fn Was getting too big, so moved this specific callback here */
+int PeerNet::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, PeerStatus *peerStatus)
+{
+
+	if ((peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
+		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
+		(peerStatus->mPeerState == PN_PEER_STATE_UDP_STARTED) ||
+		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTED))
+	{
+		std::cerr << "dhtPeerCallback. Peer Unreachable, but connection already underway: ";
+		bdStdPrintId(std::cerr, id);
+		std::cerr << std::endl;
+
+		return 1;
+	}
+
+	std::cerr << "dhtPeerCallback. Peer Unreachable, triggering Proxy | Relay Connection for: ";
+	bdStdPrintId(std::cerr, id);
+	std::cerr << std::endl;
+
+	/*** At This point we need to be clever about re-connect attempts ....
+	 * How do we store the historical attempts?
+	 */
+
+	bool proxyOk = false;
+	bool connectOk = true;
+
+	{
+		// must check for extAddress before starting connection.
+
+		struct sockaddr_in extaddr;
+		uint8_t extStable = 0;
+		sockaddr_clear(&extaddr);
+
+		if (mProxyStunner->externalAddr(extaddr, extStable))
+		{
+			if (extStable)
+			{
+				proxyOk = true;	
+			}
+		}
+	}
+
+	/* determine if we should try and connect! */
+
+	if (proxyOk)
+	{
+		proxyOk = false;
+		//connectOk = false;
+		std::cerr << "dhtPeerCallback. Forcing all to RELAY for the moment.";
+		std::cerr << std::endl;
+	}
+
+	if (connectOk)
+	{
+		/* Push Back PeerAction */
+		PeerAction ca;
+		ca.mType = PEERNET_ACTION_TYPE_CONNECT;
+		ca.mDestId = *id;
+
+		if (proxyOk)
+		{
+			ca.mMode = BITDHT_CONNECT_MODE_PROXY;
+			std::cerr << "dhtPeerCallback. Trying Proxy Connection.";
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "dhtPeerCallback. Trying Relay Connection.";
+			std::cerr << std::endl;
+			ca.mMode = BITDHT_CONNECT_MODE_RELAY;
+		}
+
+		mActions.push_back(ca);
+	}
+	else
+	{
+		std::cerr << "dhtPeerCallback. Cancelled Connection Attempt for";
+		bdStdPrintId(std::cerr, id);
+		std::cerr << std::endl;
+	}
+
+	return 1;
+}
+
 
 
 int PeerNet::dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status)
@@ -837,7 +955,8 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 
 					if (mode == BITDHT_CONNECT_MODE_RELAY)
 					{
-						installRelayConnection(srcId, destId, mode);
+						//Installed at Request Now.
+						//installRelayConnection(srcId, destId, mode);
 					}
 				}
 				break;
@@ -862,7 +981,7 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 
 					if (mode == BITDHT_CONNECT_MODE_RELAY)
 					{
-						removeRelayConnection(srcId, destId, mode);
+						removeRelayConnection(srcId, destId);
 					}
 				}
 				break;
@@ -911,13 +1030,59 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 			/* Push Back PeerAction */
 			PeerAction ca;
 			ca.mType = PEERNET_ACTION_TYPE_AUTHORISE;
-			ca.mMode = mode;
 			ca.mProxyId = *proxyId;
 			ca.mSrcId = *srcId;
 			ca.mDestId = *destId;
+	
+			/* Check Proxy ExtAddress Status */	
+			if (mode == BITDHT_CONNECT_MODE_PROXY)
+			{
+				std::cerr << "dhtConnectionCallback() Checking Address for Proxy";
+				std::cerr << std::endl;
+
+				struct sockaddr_in extaddr;
+				uint8_t extStable = 0;
+				sockaddr_clear(&extaddr);
+
+				if (mProxyStunner->externalAddr(extaddr, extStable))
+				{
+					if (extStable)
+					{
+						std::cerr << "dhtConnectionCallback() Proxy Connection ";
+						std::cerr << " is OkGo as we have Stable Own External Proxy Address";
+						std::cerr << std::endl;
+						if (point == BD_PROXY_CONNECTION_END_POINT)
+						{
+							ca.mDestId.addr = extaddr;
+						}
+						else
+						{
+							ca.mSrcId.addr = extaddr;
+						}
+						
+					}
+					else
+					{
+						connectionAllowed = 0;
+						std::cerr << "dhtConnectionCallback() Proxy Connection";
+						std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
+						std::cerr << std::endl;
+					}
+				}
+				else
+				{
+					connectionAllowed = 0;
+					std::cerr << "PeerAction: ERROR Proxy Connection ";
+					std::cerr << " is Discarded, as Failed to get Own External Proxy Address.";
+					std::cerr << std::endl;
+				}
+			}
+
+
+			ca.mMode = mode;
 			ca.mPoint = point;
 			ca.mAnswer = connectionAllowed;
-		
+
 			mActions.push_back(ca);
 		}
 		break;
@@ -978,11 +1143,53 @@ int PeerNet::tick()
 	if (mDhtStunner)
 		mDhtStunner->tick();
 
+	if (mProxyStunner)
+		mProxyStunner->tick();
+
 	doActions();
 	monitorConnections();
-	
+
+	minuteTick();
+
 	return 1;
 }
+
+#define MINUTE_IN_SECS	60
+
+int PeerNet::minuteTick()
+{
+	/* should be Mutex protected? Only one thread should get here for now */
+
+	time_t now = time(NULL);
+	if (now - mMinuteTS > MINUTE_IN_SECS)
+	{
+		mMinuteTS = now;
+		netStateTick();
+		mRelayReceiver->checkRelays();
+	}
+}
+
+#define DHT_PEERS_ACTIVE	2
+
+int PeerNet::netStateTick()
+{
+	bool dhtOn = true;
+	bool dhtActive = (mUdpBitDht->statsNetworkSize() > DHT_PEERS_ACTIVE);
+	mNetStateBox.setDhtState(dhtOn, dhtActive);
+
+	struct sockaddr_in extAddr;
+	uint8_t extStable;
+	if (mDhtStunner->externalAddr(extAddr, extStable))
+	{
+		mNetStateBox.setAddressStunDht(&extAddr, extStable != 0);
+	}
+
+	if (mProxyStunner->externalAddr(extAddr, extStable))
+	{
+		mNetStateBox.setAddressStunProxy(&extAddr, extStable != 0);
+	}
+}
+
 
 int PeerNet::doActions()
 {
@@ -1017,17 +1224,45 @@ int PeerNet::doActions()
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
 
-				if (action.mMode == BITDHT_CONNECT_MODE_DIRECT)
+				if ((action.mMode == BITDHT_CONNECT_MODE_DIRECT) ||
+						(action.mMode == BITDHT_CONNECT_MODE_RELAY))
 				{
-					struct sockaddr_in laddr; // THIS CANNOT BE FILLED UNTIL STUN IS FUNCTIONAL XXX.
+					struct sockaddr_in laddr; // We zero this address. The DHT layer should be able to handle this!
 					sockaddr_clear(&laddr);
 					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode);
 				}
 				else if (action.mMode == BITDHT_CONNECT_MODE_PROXY)
 				{
-					struct sockaddr_in laddr; // THIS CANNOT BE FILLED UNTIL STUN IS FUNCTIONAL XXX.
-					sockaddr_clear(&laddr);
-					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode);
+					struct sockaddr_in extaddr;
+					uint8_t extStable = 0;
+					sockaddr_clear(&extaddr);
+
+					if (mProxyStunner->externalAddr(extaddr, extStable))
+					{
+						if (extStable)
+						{
+							std::cerr << "PeerAction: Proxy Connection Attempt to: ";
+							bdStdPrintId(std::cerr, &(action.mDestId));
+							std::cerr << " is OkGo as we have Stable Own External Proxy Address";
+							std::cerr << std::endl;
+
+							mUdpBitDht->ConnectionRequest(&extaddr, &(action.mDestId.id), action.mMode);
+						}
+						else
+						{
+							std::cerr << "PeerAction: ERROR Proxy Connection Attempt to: ";
+							bdStdPrintId(std::cerr, &(action.mDestId));
+							std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
+							std::cerr << std::endl;
+						}
+					}
+					else
+					{
+						std::cerr << "PeerAction: ERROR Proxy Connection Attempt to: ";
+						bdStdPrintId(std::cerr, &(action.mDestId));
+						std::cerr << " is Discarded, as Failed to get Own External Proxy Address.";
+						std::cerr << std::endl;
+					}
 				}
 			}
 			break;
@@ -1051,7 +1286,7 @@ int PeerNet::doActions()
 			{
 				/* connect attempt */
 				std::cerr << "PeerAction. Start Connection between: ";
-				bdStdPrintId(std::cerr, &(action.mDestId));
+				bdStdPrintId(std::cerr, &(action.mSrcId));
 				std::cerr << " and ";
 				bdStdPrintId(std::cerr, &(action.mDestId));
 				std::cerr << " mode: " << action.mMode;
@@ -1088,7 +1323,11 @@ int PeerNet::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode)
 	std::cerr << "PeerNet::checkProxyAllowed()";
 	std::cerr << std::endl;
 
-	bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+	// Dont think that a mutex is required here! But might be so just lock to ensure that it is possible.
+	{
+		bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+
+	}
 
 	if (mode == BITDHT_CONNECT_MODE_PROXY) 
 	{
@@ -1099,10 +1338,31 @@ int PeerNet::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode)
 		//return CONNECTION_OKAY;
 	}
 
-	std::cerr << "PeerNet::checkProxyAllowed() to finish RELAY connections, DENIED";
-	std::cerr << std::endl;
+	if (mode != BITDHT_CONNECT_MODE_RELAY)
+	{
+		std::cerr << "PeerNet::checkProxyAllowed() unknown Connect Mode DENIED";
+		std::cerr << std::endl;
+		return 0;
+	}
 
-	/* as we haven't finished relay code yet... just deny */
+	/* will install the Relay Here... so that we reserve the Relay Space for later. */
+	if (installRelayConnection(srcId, destId))
+	{
+		std::cerr << "PeerNet::checkProxyAllowed() Successfully added Relay, Connection OKAY";
+		std::cerr << std::endl;
+
+		return 1;
+		// CONNECT_OKAY.
+	}
+	else
+	{
+		std::cerr << "PeerNet::checkProxyAllowed() Failed to install Relay, Connection DENIED";
+		std::cerr << std::endl;
+
+		return 0;
+		//return CONNECT_MODE_OVERLOADED;
+	}
+
 	return 0;
 	//return CONNECT_MODE_NOTAVAILABLE;
 	//return CONNECT_MODE_OVERLOADED;
@@ -1169,6 +1429,7 @@ int PeerNet::checkConnectionAllowed(const bdId *peerId, int mode)
 		//return ALREADY_CONNECTED;
 	}
 
+#if 0
 	/* are we capable of making this type of connection? */
 	if (mode == BITDHT_CONNECT_MODE_RELAY) 
 	{
@@ -1181,6 +1442,7 @@ int PeerNet::checkConnectionAllowed(const bdId *peerId, int mode)
 		return 0;
 		//return NOT_CAPABLE;
 	}
+#endif
 
 	it->second.mPeerAddr = peerId->addr;
 	it->second.mPeerStatusMsg = "Connection Authorised";	
@@ -1197,14 +1459,33 @@ void PeerNet::initiateConnection(const bdId *srcId, const bdId *proxyId, const b
 	std::cerr << " mode: " << mode;
 	std::cerr << std::endl;
 
+	bdId peerConnectId;
+
+	/* determine who the actual destination is.
+	 * as we always specify the remote address, this is all we need. 
+	 */
+	if (loc == BD_PROXY_CONNECTION_START_POINT)
+	{
+		peerConnectId = *destId;
+	}
+	else if (loc == BD_PROXY_CONNECTION_END_POINT)
+	{
+		peerConnectId = *srcId;
+	}
+	else
+	{
+		std::cerr << "PeerNet::initiateConnection() ERROR, NOT either START or END";
+		std::cerr << std::endl;
+		/* ERROR */
+		return;
+	}
+
 	std::ostringstream str;
-	bdStdPrintNodeId(str, &(proxyId->id));
+	bdStdPrintNodeId(str, &(peerConnectId.id));
 	std::string peerId = str.str();
 
-	struct sockaddr_in peerAddr = proxyId->addr;
-
 	std::cerr << "PeerNet::initiateConnection() Connecting to ";
-	bdStdPrintId(std::cerr, proxyId);
+	bdStdPrintId(std::cerr, &peerConnectId);
 	std::cerr << std::endl;
 
 	bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
@@ -1216,26 +1497,125 @@ void PeerNet::initiateConnection(const bdId *srcId, const bdId *proxyId, const b
 		return;
 	}
 
+	int fd = 0;
 
 	/* start the connection */
-	int fd = tou_socket(0, 0, 0);
+	/* These Socket Modes must match the TOU Stack - or it breaks. */
+	switch(mode)
+	{
+		default:
+		case BITDHT_CONNECT_MODE_DIRECT:
+			fd = tou_socket(PN_TOU_RECVER_DIRECT_IDX, TOU_RECEIVER_TYPE_UDPPEER, 0);
+			break;
+
+		case BITDHT_CONNECT_MODE_PROXY:
+			fd = tou_socket(PN_TOU_RECVER_PROXY_IDX, TOU_RECEIVER_TYPE_UDPPEER, 0);
+			break;
+	
+		case BITDHT_CONNECT_MODE_RELAY:
+			fd = tou_socket(PN_TOU_RECVER_RELAY_IDX, TOU_RECEIVER_TYPE_UDPRELAY, 0);
+			break;
+	}
+
+	if (fd < 0)
+	{
+		std::cerr << "PeerNet::initiateConnection()";
+		std::cerr << " ERROR Open TOU Socket FAILED";
+		std::cerr << std::endl;
+		return;
+	}
+
 	it->second.mPeerFd = fd;
 
-#define PEERNET_CONN_PERIOD	30
+#define PEERNET_DIRECT_CONN_PERIOD	5
+#define PEERNET_PROXY_CONN_PERIOD	30
+
 #define PEERNET_CONNECT_TIMEOUT		(60)
 
-	tou_connect(fd, (const struct sockaddr *)  (&peerAddr), sizeof(peerAddr), PEERNET_CONN_PERIOD);
+	int connPeriod = PEERNET_PROXY_CONN_PERIOD;
+
+	switch(mode)
+	{
+		default:
+		case BITDHT_CONNECT_MODE_DIRECT:
+			connPeriod = PEERNET_DIRECT_CONN_PERIOD; // can be much smaller as we are already talking to the peer.
+			// Fall through.
+		case BITDHT_CONNECT_MODE_PROXY:
+			tou_connect(fd, (const struct sockaddr *)  (&(peerConnectId.addr)), sizeof(peerConnectId.addr), connPeriod);
+			break;
+	
+		case BITDHT_CONNECT_MODE_RELAY:
+
+			if (loc == BD_PROXY_CONNECTION_START_POINT)
+			{
+				/* standard order connection call */
+				tou_connect_via_relay(fd, &(srcId->addr), &(proxyId->addr), &(destId->addr));
+			}
+			else // END_POINT
+			{
+				/* reverse order connection call */
+				tou_connect_via_relay(fd, &(destId->addr), &(proxyId->addr), &(srcId->addr));
+			}
+			break;
+	}
 
 	/* store results in Status */
 	it->second.mPeerStatusMsg = "UDP started";
 	it->second.mPeerState = PN_PEER_STATE_UDP_STARTED;
 	it->second.mPeerConnTS = time(NULL);
+	it->second.mPeerConnectMode = mode;
+	it->second.mPeerConnectPoint = loc;
+
 }
 
 
-void PeerNet::installRelayConnection(const bdId *srcId, const bdId *destId, int mode)
+int PeerNet::installRelayConnection(const bdId *srcId, const bdId *destId)
 {
 	bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+
+	/* work out if either srcId or DestId is a friend */
+	int relayClass = UDP_RELAY_CLASS_GENERAL;
+
+	std::ostringstream str;
+	bdStdPrintNodeId(str, &(srcId->id));
+	std::string strId1 = str.str();
+
+	str.clear();
+	bdStdPrintNodeId(str, &(destId->id));
+	std::string strId2 = str.str();
+
+        /* grab a socket */
+        std::map<std::string, PeerStatus>::iterator it;
+	it = mPeers.find(strId1);
+        if (it != mPeers.end())
+        {
+		relayClass = UDP_RELAY_CLASS_FRIENDS;
+        }
+
+	it = mPeers.find(strId2);
+        if (it != mPeers.end())
+        {
+		relayClass = UDP_RELAY_CLASS_FRIENDS;
+        }
+
+	/* will install the Relay Here... so that we reserve the Relay Space for later. */
+	UdpRelayAddrSet relayAddrs(&(srcId->addr), &(destId->addr));
+	if (mRelayReceiver->addUdpRelay(&relayAddrs, relayClass))
+	{
+		std::cerr << "PeerNet::installRelayConnection() Successfully added Relay, Connection OKAY";
+		std::cerr << std::endl;
+
+		return 1;
+		// CONNECT_OKAY.
+	}
+	else
+	{
+		std::cerr << "PeerNet::installRelayConnection() Failed to install Relay, Connection DENIED";
+		std::cerr << std::endl;
+
+		return 0;
+		//return CONNECT_MODE_OVERLOADED;
+	}
 
 	/* these todo */
 	std::cerr << "PeerNet::installRelayConnection() TODO";
@@ -1243,13 +1623,25 @@ void PeerNet::installRelayConnection(const bdId *srcId, const bdId *destId, int 
 }
 
 
-void PeerNet::removeRelayConnection(const bdId *srcId, const bdId *destId, int mode)
+int PeerNet::removeRelayConnection(const bdId *srcId, const bdId *destId)
 {
-	bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+	//bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
 
-	/* these shouldn't do anything yet */
-	std::cerr << "PeerNet::removeRelayConnection() TODO";
-	std::cerr << std::endl;
+	UdpRelayAddrSet relayAddrs(&(srcId->addr), &(destId->addr));
+	if (mRelayReceiver->removeUdpRelay(&relayAddrs))
+	{
+		std::cerr << "PeerNet::removeRelayConnection() Successfully removed Relay";
+		std::cerr << std::endl;
+
+		return 1;
+	}
+	else
+	{
+		std::cerr << "PeerNet::removeRelayConnection() ERROR Failed to remove Relay";
+		std::cerr << std::endl;
+
+		return 0;
+	}
 }
 
 /***************************************************** UDP Connections *****************************/

@@ -68,6 +68,7 @@ class PeerStatus
 	
 	int		   mPeerFd;
 	uint32_t           mPeerConnectMode;
+	uint32_t           mPeerConnectPoint;
 	time_t             mPeerConnTS;
 	std::string	   mPeerIncoming;
 };
@@ -96,7 +97,10 @@ class PeerNet: public BitDhtCallback
 	public:
 	PeerNet(std::string id, std::string bootstrapfile, uint16_t port);
 
+	/* setup functions. must be called before init() */
 	void setUdpStackRestrictions(std::list<std::pair<uint16_t, uint16_t> > &restrictions);
+	void setLocalTesting();
+
 	void init();
 
 	int getOwnId(bdNodeId *id);
@@ -112,6 +116,7 @@ class PeerNet: public BitDhtCallback
 	uint32_t getNetStateNetStateMode();
 
 	std::string getPeerStatusString();
+	std::string getPeerAddressString();
 	std::string getDhtStatusString();
 	int get_dht_peers(int lvl, bdBucket &peers);
 	//int get_dht_peers(int lvl, std::list<DhtPeer> &peers);
@@ -130,6 +135,9 @@ class PeerNet: public BitDhtCallback
 	/* under the hood */
 
 	int tick();
+	int minuteTick();
+	int netStateTick();
+
 	int doActions();
 
 	void sendMessage(std::string msg);
@@ -142,17 +150,20 @@ virtual int dhtNodeCallback(const bdId *id, uint32_t peerflags);
                 // must be implemented.
 virtual int dhtPeerCallback(const bdId *id, uint32_t status);
 virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status);
-
-                // connection callback. Not required for basic behaviour, but forced for initial development.
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
                                         uint32_t mode, uint32_t point, uint32_t cbtype); 
 
+	// Sub Callback Functions.
+int 	OnlinePeerCallback_locked(const bdId *id, 
+			uint32_t status, PeerStatus *peerStatus);
+int 	UnreachablePeerCallback_locked(const bdId *id, 
+			uint32_t status, PeerStatus *peerStatus);
 
 	/**** Connection Handling ******/
 	void monitorConnections();
 
-	void removeRelayConnection(const bdId *srcId, const bdId *destId, int mode);
-	void installRelayConnection(const bdId *srcId, const bdId *destId, int mode);
+	int removeRelayConnection(const bdId *srcId, const bdId *destId);
+	int installRelayConnection(const bdId *srcId, const bdId *destId);
 	void initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
 			uint32_t mode, uint32_t loc, uint32_t answer);
 
@@ -186,9 +197,15 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 
 	uint16_t mPort;
 
+	bool mLocalNetTesting;
+
+
 	/* port restrictions */
 	bool mDoUdpStackRestrictions;
 	std::list<std::pair<uint16_t, uint16_t> > mUdpStackRestrictions;
+
+	/* these probably should be protected - but aren't for now */
+	time_t mMinuteTS;
 
 
 	/* below here must be mutex protected */
