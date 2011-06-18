@@ -1432,7 +1432,7 @@ void ForumsDialog::replytomessage()
         QTextDocument doc ;
         doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
 
-        nMsgDialog->insertReplyText(doc.toPlainText());
+        nMsgDialog->insertPastedText(doc.toPlainText());
         nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
         nMsgDialog->show();
         nMsgDialog->activateWindow();
