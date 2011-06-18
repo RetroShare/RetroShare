@@ -68,7 +68,7 @@ static void global_add( HMODULE hModule )
 
     for( pobject = &first_object; pobject->next ; pobject = pobject->next );
 
-    nobject = malloc( sizeof(global_object) );
+    nobject = (global_object*) malloc( sizeof(global_object) );
 
     /* Should this be enough to fail global_add, and therefore also fail
      * dlopen?
@@ -146,7 +146,7 @@ static void save_err_str( const char *str )
     pos  = copy_string( error_buffer,     sizeof(error_buffer),     "\"" );
     pos += copy_string( error_buffer+pos, sizeof(error_buffer)-pos, str );
     pos += copy_string( error_buffer+pos, sizeof(error_buffer)-pos, "\": " );
-    pos += FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwMessageId,
+    pos += FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwMessageId,
                           MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
                           error_buffer+pos, sizeof(error_buffer)-pos, NULL );
 
@@ -216,7 +216,7 @@ void *dlopen( const char *file, int mode )
          * to UNIX's search paths (start with system folders instead of current
          * folder).
          */
-        hModule = LoadLibraryEx( (LPSTR) lpFileName, NULL, 
+        hModule = LoadLibraryExA( (LPSTR) lpFileName, NULL,
                                  LOAD_WITH_ALTERED_SEARCH_PATH );
 
         /* If the object was loaded with RTLD_GLOBAL, add it to list of global
@@ -267,7 +267,7 @@ void *dlsym( void *handle, const char *name )
 
     current_error = NULL;
 
-    symbol = GetProcAddress( handle, name );
+    symbol = GetProcAddress( (HINSTANCE) handle, name );
 
     if( symbol == NULL )
     {
@@ -294,7 +294,8 @@ void *dlsym( void *handle, const char *name )
             }
         }
 
-        CloseHandle( hModule );
+        // Do not close the handle of the calling process
+//        CloseHandle( hModule );
     }
 
     if( symbol == NULL )

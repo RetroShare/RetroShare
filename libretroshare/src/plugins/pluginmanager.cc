@@ -39,7 +39,7 @@ bool RsPluginManager::acceptablePluginName(const std::string& name)
 	// Needs some windows specific code here
 	//
 #ifdef WINDOWS_SYS
-	return name.size() > 4 && !strcmp(name.c_str()+name.size()-3,".dll") ;
+	return name.size() > 4 && name.substr(name.size() - 4) == ".dll";
 #else
 	return name.size() > 3 && !strcmp(name.c_str()+name.size()-3,".so") ;
 #endif
@@ -106,10 +106,11 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	
 	void *pf = dlsym(handle,_plugin_entry_symbol.c_str()) ;
 
-	if(pf == NULL)
+	if(pf == NULL) {
 		std::cerr << dlerror() << std::endl ;
-	else
-		std::cerr << "  Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
+		return false ;
+	}
+	std::cerr << "  Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
 
 	RsPlugin *p = ( (*(RetroSharePluginEntry)pf)() ) ;
 
