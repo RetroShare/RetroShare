@@ -34,20 +34,6 @@
 
 #define DEBUG_NODE_CONNECTION	1 
 
-#if 0
-#include "bitdht/bencode.h"
-#include "bitdht/bdmsgs.h"
-
-
-
-#include <string.h>
-#include <stdlib.h>
-
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#endif
-
 
 /************************************************************************************************************
 ******************************************** Message Interface **********************************************
@@ -367,6 +353,8 @@ int bdNode::tickConnections()
 {
 	iterateConnectionRequests();
 	iterateConnections();
+	
+	return 1;
 }
 
 
@@ -488,7 +476,15 @@ int bdNode::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destC
 	// not offically playing by the rules, but it should work.
 	conn = newConnectionBySender(proxyId, srcConnAddr, destConnAddr);
 
-	conn->ConnectionSetup(proxyId, srcConnAddr, destConnAddr, mode);
+	if (mode == BITDHT_CONNECT_MODE_DIRECT)
+	{
+		/* proxy is the real peer address, destConnAddr has an invalid address */
+        	conn->ConnectionSetupDirect(proxyId, srcConnAddr);
+	}
+	else
+	{
+		conn->ConnectionSetup(proxyId, srcConnAddr, destConnAddr, mode);
+	}
 
 	/* push off message */
 	bdToken transId;
@@ -540,6 +536,10 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	{	
 		if (conn->mState == BITDHT_CONNECTION_WAITING_AUTH)
 		{	
+#ifdef DEBUG_NODE_CONNECTION
+			std::cerr << "bdNode::AuthConnectionOk() Direct Connection, in WAITING_AUTH state... Authorising Direct Connect";
+			std::cerr << std::endl;
+#endif
 			/* This pushes it into the START/ACK cycle, 
 			 * which handles messages elsewhere
 			 */
@@ -548,6 +548,10 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 		else
 		{
 			/* ERROR */
+#ifdef DEBUG_NODE_CONNECTION
+			std::cerr << "bdNode::AuthConnectionOk() ERROR Direct Connection, !WAITING_AUTH state... Ignoring";
+			std::cerr << std::endl;
+#endif
 
 		}
 		return;
@@ -557,6 +561,10 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	{
 		if (conn->mState == BITDHT_CONNECTION_WAITING_AUTH)
 		{
+#ifdef DEBUG_NODE_CONNECTION
+			std::cerr << "bdNode::AuthConnectionOk() Proxy End Connection, in WAITING_AUTH state... Authorising";
+			std::cerr << std::endl;
+#endif
 			/*** XXX MUST RECEIVE THE ADDRESS FROM DEST for connection */
 			conn->AuthoriseEndConnection(srcId, proxyId, destId, mode, loc);
 			
@@ -574,12 +582,20 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 		{
 
 			/* ERROR */
+#ifdef DEBUG_NODE_CONNECTION
+			std::cerr << "bdNode::AuthConnectionOk() ERROR Proxy End Connection, !WAITING_AUTH state... Ignoring";
+			std::cerr << std::endl;
+#endif
 		}
 	}
 
 	if (conn->mState == BITDHT_CONNECTION_WAITING_AUTH)
 	{
 		/* otherwise we are the proxy (for either), pass on the request */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::AuthConnectionOk() Proxy Mid Connection, in WAITING_AUTH state... Authorising";
+		std::cerr << std::endl;
+#endif
 	
 		/* SEARCH for IP:Port of destination is done before AUTH  */
 	
@@ -595,6 +611,10 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	else
 	{
 		/* ERROR */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::AuthConnectionOk() ERROR Proxy Mid Connection, !WAITING_AUTH state... Ignoring";
+		std::cerr << std::endl;
+#endif
 	}
 
 	return;	
@@ -626,6 +646,10 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	if (mode == BITDHT_CONNECT_MODE_DIRECT)
 	{
 		/* we respond to the proxy which will finalise connection */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::AuthConnectionNo() Direct End Connection Cleaning up";
+		std::cerr << std::endl;
+#endif
 		bdToken transId;
 		genNewTransId(&transId);
 
@@ -641,6 +665,10 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	if (loc == BD_PROXY_CONNECTION_END_POINT)
 	{
 		/* we respond to the proxy which will finalise connection */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::AuthConnectionNo() Proxy End Connection Cleaning up";
+		std::cerr << std::endl;
+#endif
 		bdToken transId;
 		genNewTransId(&transId);
 
@@ -655,6 +683,10 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	}
 
 	/* otherwise we are the proxy (for either), reply FAIL */
+#ifdef DEBUG_NODE_CONNECTION
+	std::cerr << "bdNode::AuthConnectionNo() Proxy Mid Connection Cleaning up";
+	std::cerr << std::endl;
+#endif
 	bdToken transId;
 	genNewTransId(&transId);
 
@@ -683,6 +715,10 @@ void bdNode::iterateConnections()
 		if (now - it->second.mLastEvent > BD_CONNECTION_MAX_TIMEOUT)
 		{
 			/* cleanup event */
+#ifdef DEBUG_NODE_CONNECTION
+			std::cerr << "bdNode::iterateConnections() Connection Timed Out: " << (it->first);
+			std::cerr << std::endl;
+#endif
 			eraseList.push_back(it->first);
 			continue;
 		}
@@ -692,6 +728,10 @@ void bdNode::iterateConnections()
 		{
 			if (it->second.mRetryCount > BD_CONNECTION_START_MAX_RETRY)
 			{
+#ifdef DEBUG_NODE_CONNECTION
+				std::cerr << "bdNode::iterateConnections() Start/ACK cycle, Too many iterations: " << it->first;
+				std::cerr << std::endl;
+#endif
 				/* connection failed! cleanup */
 				callbackConnect(&(it->second.mSrcId),&(it->second.mProxyId),&(it->second.mDestId),
 							it->second.mMode, it->second.mPoint, BITDHT_CONNECT_CB_FAILED);
@@ -701,6 +741,10 @@ void bdNode::iterateConnections()
 			}
 			else
 			{
+#ifdef DEBUG_NODE_CONNECTION
+				std::cerr << "bdNode::iterateConnections() Start/ACK cycle, Retransmitting START: " << it->first;
+				std::cerr << std::endl;
+#endif
 				it->second.mLastStart = now;
 				it->second.mRetryCount++;
 				if (!it->second.mSrcAck)
@@ -1203,11 +1247,6 @@ int bdNode::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 			 /*    We are proxy. and OK / NOK for connection proceed.
 			  */
 
-			std::cerr << "bdNode::recvedConnectionReply() ERROR Unexpected Message, Killing It: ";
-			std::cerr << std::endl;
-			std::cerr << *conn;
-			std::cerr << std::endl;
-
 			if ((status == BITDHT_CONNECT_ANSWER_OKAY) && (conn->mState == BITDHT_CONNECTION_WAITING_REPLY))
 			{
 				/* OK, continue connection! */
@@ -1314,30 +1353,11 @@ int bdNode::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 		std::cerr << "bdNode::recvedConnectionStart() Switching State to COMPLETED, doing callback";
 		std::cerr << std::endl;
 
-		/* Store Final Addresses */
-		time_t now = time(NULL);
+		conn->CompleteConnection(id, srcConnAddr, destConnAddr);
 
-		conn->mSrcConnAddr = *srcConnAddr;
-		conn->mDestConnAddr = *destConnAddr;
-		conn->mState = BITDHT_CONNECTION_COMPLETED;
-		conn->mCompletedTS = now;
+		callbackConnect(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestConnAddr),
+						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START);
 
-		if (conn->mPoint == BD_PROXY_CONNECTION_START_POINT)
-		{
-			/* callback to connect to Dest address! */
-			// Slightly different callback, use ConnAddr for start message!
-			callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestConnAddr),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START);
-
-		}
-		else
-		{
-			/* callback to connect to Src address! */
-			// Slightly different callback, use ConnAddr for start message!
-			callbackConnect(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START);
-
-		}
 	}
 	else
 	{
@@ -1444,19 +1464,47 @@ int bdNode::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr,
 // Initialise a new Connection (request by User)
 
 // Any Connection initialised at Source (START_POINT), prior to Auth.
-int bdConnection::ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode)
+int bdConnection::ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destId, int mode)
 {
 	mState = BITDHT_CONNECTION_WAITING_START; /* or REPLY, no AUTH required */
 	mLastEvent = time(NULL);
 	mSrcId = *srcConnAddr;    /* self, IP unknown */
-	mDestId = *destConnAddr;  /* dest, IP unknown */
+	mDestId = *destId;  /* dest, IP unknown */
 	mProxyId =  *proxyId;  /* full proxy/dest address */
 
 	mPoint = BD_PROXY_CONNECTION_START_POINT;
 	mMode = mode;
 
-	mSrcConnAddr = *srcConnAddr; /* self */
-	mDestConnAddr = *destConnAddr; /* IP unknown */
+	mSrcConnAddr = *srcConnAddr; /* self, full ID/IP */
+	mDestConnAddr = *destId; /* IP unknown */
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mSrcId.addr)); 
+	bdsockaddr_clear(&(mDestId.addr)); 
+	bdsockaddr_clear(&(mDestConnAddr.addr)); 
+
+	/* don't bother with START/ACK parameters */
+	
+	return 1;
+}
+
+int bdConnection::ConnectionSetupDirect(bdId *destId, bdId *srcConnAddr)
+{
+	mState = BITDHT_CONNECTION_WAITING_START; /* or REPLY, no AUTH required */
+	mLastEvent = time(NULL);
+	mSrcId = *srcConnAddr;    /* self, IP unknown */
+	mDestId = *destId;  /* full proxy/dest address */
+	mProxyId =  *destId;  /* full proxy/dest address */
+
+	mPoint = BD_PROXY_CONNECTION_START_POINT;
+	mMode = BITDHT_CONNECT_MODE_DIRECT;
+
+	mSrcConnAddr = *srcConnAddr; /* self, full ID/IP */
+	mDestConnAddr = *destId; /* IP unknown */
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mSrcId.addr)); 
+	bdsockaddr_clear(&(mDestConnAddr.addr)); 
 
 	/* don't bother with START/ACK parameters */
 	
@@ -1467,19 +1515,23 @@ int bdConnection::ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destCo
 
 // Initialise a new Connection. (receiving a Connection Request)
 // Direct Connection initialised at Destination (END_POINT), prior to Auth.
-int bdConnection::ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *destConnAddr)
+int bdConnection::ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *destId)
 {
 	mState = BITDHT_CONNECTION_WAITING_AUTH;
 	mLastEvent = time(NULL);
-	mSrcId = *id;
-	mDestId = *destConnAddr;  /* self, IP unknown */
-	mProxyId = *id;  /* src */
+	mSrcId = *id;       /* peer ID/IP known */
+	mDestId = *destId;  /* self, IP unknown */
+	mProxyId = *id;  /* src ID/IP known */
 
 	mPoint = BD_PROXY_CONNECTION_END_POINT;
 	mMode = BITDHT_CONNECT_MODE_DIRECT;
 
-	mSrcConnAddr = *srcConnAddr;
-	mDestConnAddr = *destConnAddr; /* self */
+	mSrcConnAddr = *srcConnAddr; /* connect address ID/IP known */
+	mDestConnAddr = *destId; /* self IP unknown */
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mDestId.addr)); 
+	bdsockaddr_clear(&(mDestConnAddr.addr)); 
 
 	/* don't bother with START/ACK parameters */
 	
@@ -1488,19 +1540,23 @@ int bdConnection::ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *des
 
 
 // Proxy Connection initialised at Proxy (MID_POINT), prior to Auth.
-int bdConnection::ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destConnAddr, int mode)
+int bdConnection::ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destId, int mode)
 {
 	mState = BITDHT_CONNECTION_WAITING_AUTH;
 	mLastEvent = time(NULL);
-	mSrcId = *id;
-	mDestId = *destConnAddr;  /* self, IP unknown */
-	mProxyId.id =  *ownId;  /* own id, must be set for callback */
+	mSrcId = *id;		/* ID/IP Known */
+	mDestId = *destId;  /* destination, ID/IP known  */
+	mProxyId.id =  *ownId;  /* own id, must be set for callback, IP Unknown */
 
 	mPoint = BD_PROXY_CONNECTION_MID_POINT;
 	mMode = mode;
 
 	mSrcConnAddr = *srcConnAddr;
-	mDestConnAddr = *destConnAddr; /* other peer, IP unknown */
+	mDestConnAddr = *destId; /* other peer, IP unknown */
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mProxyId.addr)); 
+	bdsockaddr_clear(&(mDestConnAddr.addr)); 
 
 	/* don't bother with START/ACK parameters */
 	
@@ -1509,19 +1565,25 @@ int bdConnection::ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *
 
 
 // Proxy Connection initialised at Destination (END_POINT), prior to Auth.
-int bdConnection::ConnectionRequestEnd(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode)
+int bdConnection::ConnectionRequestEnd(bdId *id, bdId *srcId, bdId *destId, int mode)
 {
 	mState = BITDHT_CONNECTION_WAITING_AUTH;
 	mLastEvent = time(NULL);
-	mSrcId = *srcConnAddr;   /* src IP unknown */
-	mDestId = *destConnAddr;  /* self, IP unknown */
-	mProxyId = *id;  /* src */
+	mSrcId = *srcId;   /* src IP unknown */
+	mDestId = *destId;  /* self, IP unknown */
+	mProxyId = *id;  /* src of message, full ID/IP of proxy */
 
 	mPoint = BD_PROXY_CONNECTION_END_POINT;
 	mMode = mode;
 
-	mSrcConnAddr = *srcConnAddr;
-	mDestConnAddr = *destConnAddr; /* self */
+	mSrcConnAddr = *srcId;   /* ID, not IP */
+	mDestConnAddr = *destId; /* ID, not IP */
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mSrcId.addr)); 
+	bdsockaddr_clear(&(mDestId.addr)); 
+	bdsockaddr_clear(&(mSrcConnAddr.addr)); 
+	bdsockaddr_clear(&(mDestConnAddr.addr)); 
 
 	/* don't bother with START/ACK parameters */
 	
@@ -1529,20 +1591,24 @@ int bdConnection::ConnectionRequestEnd(bdId *id, bdId *srcConnAddr, bdId *destCo
 }
 
 // Received AUTH, step up to next stage.
+// Search for dest ID/IP is done before AUTH. so actually nothing to do here, except set the state
 int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc)
 {
 	mState = BITDHT_CONNECTION_WAITING_REPLY;
 	mLastEvent = time(NULL);
 
-	//mSrcId, (peer) should be okay.
-	//mDestId (other peer) install now (just received)
-	mDestId = *destId;
-	//mProxyId (self) doesn't matter.
+	//mSrcId, (peer) (ID/IP known)
+	//mDestId (other peer) (ID/IP known)
+	//mProxyId (self) (IP unknown)
 
 	// mPoint, mMode should be okay.
 
-	// mSrcConnAddr should be okay.
+	// mSrcConnAddr (ID/IP known)
 	// mDestConnAddr is still pending.
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mProxyId.addr)); 
+	bdsockaddr_clear(&(mDestConnAddr.addr)); 
 
 	/* don't bother with START/ACK parameters */
 	
@@ -1550,20 +1616,27 @@ int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *des
 }
 
 
+/* we are end of a Proxy Connection */
 int bdConnection::AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destConnAddr, int mode, int loc)
 {
 	mState = BITDHT_CONNECTION_WAITING_START;
 	mLastEvent = time(NULL);
 
-	//mSrcId, (peer) should be okay.
-	//mDestId (self) doesn't matter.
-	//mProxyId (peer) should be okay.
+	//mSrcId, (peer) should be okay. (IP unknown)
+	//mDestId (self) doesn't matter. (IP unknown)
+	//mProxyId (peer) should be okay. (ID/IP known)
 
 	// mPoint, mMode should be okay.
 
-	// mSrcConnAddr should be okay.
+	// mSrcConnAddr should be okay. (IP unknown)
 	// Install the correct destConnAddr. (just received)
 	mDestConnAddr = *destConnAddr; 
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mSrcId.addr)); 
+	bdsockaddr_clear(&(mDestId.addr)); 
+	bdsockaddr_clear(&(mSrcConnAddr.addr)); 
+
 
 	// Initialise the START/ACK Parameters.
 	mRetryCount = 0;
@@ -1584,15 +1657,21 @@ int bdConnection::AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *de
 	mState = BITDHT_CONNECTION_WAITING_ACK;
 	mLastEvent = time(NULL);
 
-	//mSrcId, (peer) should be okay.
-	//mDestId (self) doesn't matter.
-	//mProxyId (peer) should be okay.
+	//mSrcId, (peer) should be okay. (ID/IP known)
+	//mDestId (self) doesn't matter. (IP Unknown)
+	//mProxyId (peer) should be okay. (ID/IP known)
 
 	// mPoint, mMode should be okay.
 
-	// mSrcConnAddr should be okay.
+	// mSrcConnAddr should be okay.  (ID/IP known)
 	// Install the correct destConnAddr. (just received)
 	mDestConnAddr = *destConnAddr; 
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mDestId.addr)); 
+
+	// Should we check for these? This will not help for the Dest address, as we just blanked it above! */
+	checkForDefaultConnectAddress();
 
 	// Initialise the START/ACK Parameters.
 	mRetryCount = 0;
@@ -1610,14 +1689,19 @@ int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bd
 	mState = BITDHT_CONNECTION_WAITING_ACK;
 	mLastEvent = time(NULL);
 
-	//mSrcId,mDestId should be okay.
-	//mProxyId, not set, doesn't matter.
+	//mSrcId,mDestId should be okay. (ID/IP okay)
+	//mProxyId, not set, doesn't matter. (IP Unknown)
 
 	// mPoint, mMode should be okay.
 
-	// mSrcConnAddr should be okay.
+	// mSrcConnAddr should be okay. (ID/IP known)
 	// Install the correct destConnAddr. (just received)
 	mDestConnAddr = *destConnAddr; 
+
+	/* clear IP Addresses to enforce this */
+	bdsockaddr_clear(&(mProxyId.addr)); 
+
+	checkForDefaultConnectAddress();
 
 	// Initialise the START/ACK Parameters.
 	mRetryCount = 0;
@@ -1630,7 +1714,54 @@ int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bd
 }
 
 
+// Final Sorting out of Addresses.
+int bdConnection::CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr)
+{
+	/* Store Final Addresses */
+	time_t now = time(NULL);
 
+	mState = BITDHT_CONNECTION_COMPLETED;
+	mCompletedTS = now;
+	mLastEvent = now;
+
+	// Received Definitive Final Addresses from Proxy.
+	// These have to be done by proxy, as its the only one who know both our addresses.
+
+	mSrcConnAddr = *srcConnAddr;
+	mDestConnAddr = *destConnAddr;
+
+	checkForDefaultConnectAddress();
+
+	return 1;
+}
+
+
+
+int bdConnection::checkForDefaultConnectAddress()
+{
+	// We can check if the DestConnAddr / SrcConnAddr are real.
+	// If there is nothing there, we assume that that want to connect on the 
+	// same IP:Port as the DHT Node.
+
+	if (mSrcConnAddr.addr.sin_addr.s_addr == 0)
+	{
+		std::cerr << "bdNode::checkForDefaultConnectAddress() SrcConnAddr.addr is BLANK, installing Dht Node Address";
+		std::cerr << std::endl;
+
+		mSrcConnAddr.addr = mSrcId.addr;
+	}
+
+	if (mDestConnAddr.addr.sin_addr.s_addr == 0)
+	{
+		std::cerr << "bdNode::checkForDefaultConnectAddress() DestConnAddr.addr is BLANK, installing Dht Node Address";
+		std::cerr << std::endl;
+
+		mDestConnAddr.addr = mDestId.addr;
+	}
+
+	return 1;
+
+}
 
 
 int bdConnectionRequest::setupDirectConnection(struct sockaddr_in *laddr, bdNodeId *target)

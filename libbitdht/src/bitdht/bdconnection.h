@@ -66,7 +66,7 @@ class bdProxyTuple
 	bdNodeId destId;
 };
 
-std::ostream &operator<(std::ostream &out, const bdProxyTuple &t);
+std::ostream &operator<<(std::ostream &out, const bdProxyTuple &t);
 int operator<(const bdProxyTuple &a, const bdProxyTuple &b);
 int operator==(const bdProxyTuple &a, const bdProxyTuple &b);
 
@@ -80,6 +80,7 @@ class bdConnection
 
 	// User initialised Connection.
 	int ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	int ConnectionSetupDirect(bdId *destId, bdId *srcConnAddr);
 
 	// Initialise a new Connection. (receiving a Connection Request)
 	int ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *destConnAddr);
@@ -92,6 +93,10 @@ class bdConnection
 	int AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
 	int AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
 	int AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+
+	int CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr);
+
+	int checkForDefaultConnectAddress();
 
 	/* Connection State, and TimeStamp of Update */
 	int mState;
