@@ -114,6 +114,7 @@ class bdNode
 	void addQuery(const bdNodeId *id, uint32_t qflags);
 	void clearQuery(const bdNodeId *id);
 	void QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap);
+	int  QuerySummary(const bdNodeId *id, bdQuerySummary &query);
 
 	/* connection functions */
 	void requestConnection(bdNodeId *id, uint32_t modes);

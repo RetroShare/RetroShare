@@ -168,6 +168,23 @@ int 	UdpBitDht::getDhtBucket(const int idx, bdBucket &bucket)
 }
 
 
+
+int 	UdpBitDht::getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->getDhtQueries(queries);
+}
+
+int 	UdpBitDht::getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->getDhtQueryStatus(id, query);
+}
+
+
+
         /* stats and Dht state */
 int UdpBitDht:: startDht()
 {

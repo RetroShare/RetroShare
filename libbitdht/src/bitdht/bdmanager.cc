@@ -802,6 +802,16 @@ int bdNodeManager::getDhtBucket(const int idx, bdBucket &bucket)
 	return mNodeSpace.getDhtBucket(idx, bucket);
 }
 
+int bdNodeManager::getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries)
+{
+	bdNode::QueryStatus(queries);
+	return 1;
+}
+
+int bdNodeManager::getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query)
+{
+	return bdNode::QuerySummary(id, query);
+}
 
 
         /***** Add / Remove Callback Clients *****/

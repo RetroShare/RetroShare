@@ -77,6 +77,9 @@ virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from);
 virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value);
 virtual int getDhtBucket(const int idx, bdBucket &bucket);
 
+virtual int getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries);
+virtual int getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query);
+
         /* stats and Dht state */
 virtual int startDht();
 virtual int stopDht();

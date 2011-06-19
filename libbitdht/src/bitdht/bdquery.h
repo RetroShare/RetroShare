@@ -63,7 +63,7 @@ int 	printQuery();
 
 	int32_t mQueryIdlePeerRetryPeriod; // seconds between retries.
 
-	private:
+	//private:
 
 	// closest peers
 	std::multimap<bdMetric, bdPeer>  mClosest;
@@ -73,6 +73,8 @@ int 	printQuery();
 	bdDhtFunctions *mFns;
 };
 
+#if 0
+
 class bdQueryStatus
 {
 	public:
@@ -80,6 +82,8 @@ class bdQueryStatus
 	uint32_t mQFlags;
 	std::list<bdId> mResults;
 };
+
+#endif
 
 
 

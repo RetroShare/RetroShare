@@ -115,6 +115,9 @@ virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from);
 virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value);
 virtual int getDhtBucket(const int idx, bdBucket &bucket);
 
+virtual int getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries);
+virtual int getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query);
+
 	/***** Connection Interface ****/
 virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
 virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, 

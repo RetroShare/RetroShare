@@ -686,6 +686,30 @@ void bdNode::QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap)
 	}
 }
 
+int bdNode::QuerySummary(const bdNodeId *id, bdQuerySummary &query)
+{
+	std::list<bdQuery *>::iterator it;
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	{
+		if ((*it)->mId == *id)
+		{
+			query.mId = (*it)->mId;
+			query.mLimit = (*it)->mLimit;
+			query.mState = (*it)->mState;
+			query.mQueryTS = (*it)->mQueryTS;
+			query.mQueryFlags = (*it)->mQueryFlags;
+			query.mSearchTime = (*it)->mSearchTime;
+			query.mClosest = (*it)->mClosest;
+			query.mPotentialClosest = (*it)->mPotentialClosest;
+			query.mPotentialProxies = (*it)->mPotentialProxies;
+
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
 
 /************************************ Process Remote Query *************************/
 void bdNode::processRemoteQuery()

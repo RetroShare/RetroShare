@@ -198,6 +198,35 @@ class bdBucket
 	std::list<bdPeer> entries;
 };
 
+class bdQueryStatus
+{
+        public:
+        uint32_t mStatus;
+        uint32_t mQFlags;
+        std::list<bdId> mResults;
+};
+
+class bdQuerySummary
+{
+        public:
+
+        bdNodeId mId;
+        bdMetric mLimit;
+        uint32_t mState;
+        time_t mQueryTS;
+        uint32_t mQueryFlags;
+        int32_t mSearchTime;
+
+        int32_t mQueryIdlePeerRetryPeriod; // seconds between retries.
+
+        // closest peers
+        std::multimap<bdMetric, bdPeer>  mClosest;
+        std::multimap<bdMetric, bdPeer>  mPotentialClosest;
+        std::list<bdPeer>  mPotentialProxies;
+};
+
+
+
 
 /* Status options */
 #define BITDHT_QUERY_READY		1
@@ -267,6 +296,9 @@ virtual void removeCallback(BitDhtCallback *cb) = 0;
 virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from) = 0;
 virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value) = 0;
 virtual int getDhtBucket(const int idx, bdBucket &bucket) = 0;
+
+virtual int getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries) = 0;
+virtual int getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query) = 0;
 
         /* stats and Dht state */
 virtual int startDht() = 0;
