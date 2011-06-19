@@ -77,7 +77,7 @@ static int	tou_tick_all();
  *      Unfortunately, the UdpSubReceivers have different initialisation for starting a connection.
  *      So the TOU interface has to accomodate this.
  *      
- *      UdpSubReceive
+ */
 /* 	tou_init - opens the udp port (universal bind) */
 int 	tou_init(void **in_udpsubrecvs, int *type, int number)
 {
