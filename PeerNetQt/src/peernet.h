@@ -3,6 +3,10 @@
 
 /* top-level p2p overlay network interface */
 
+#ifdef _WIN32
+#include "util/rswin.h"
+#endif
+
 #include <string>
 #include <list>
 

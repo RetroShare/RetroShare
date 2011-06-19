@@ -1,7 +1,9 @@
+
+
+#include "peernet.h"
 #include <stdio.h>
 #include <QtGui/QApplication>
 #include "mainwindow.h"
-#include "peernet.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,6 +29,7 @@ int main(int argc, char *argv[])
 
 	bool doLocalTesting = false;
 
+#ifndef _WIN32 
 	int c;
 	while((c = getopt(argc, argv,"r:R:p:c:nl")) != -1)
 	{
@@ -62,6 +65,7 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
+#endif
 
 
 	PeerNet *pnet = new PeerNet("", configPath, portNumber); 
