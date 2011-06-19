@@ -76,6 +76,19 @@ linux-g++ {
 
 }
 
+win32 {
+
+    LIBS += ../../libretroshare/src/lib/libretroshare.a
+    LIBS += -L"../../../../../lib"    
+	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
+    LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+    LIBS += -lole32 -lwinmm
+    LIBS += -lws2_32
+    DEFINES += WINDOWS_SYS
+
+
+}
+
 
 ############################## Common stuff ######################################
 
