@@ -1,6 +1,6 @@
 
-#include "netstatebox.h"
 #include "util/rsnet.h"
+#include "netstatebox.h"
 
 // External Interface.
 
