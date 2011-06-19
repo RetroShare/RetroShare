@@ -151,7 +151,7 @@ virtual int dhtNodeCallback(const bdId *id, uint32_t peerflags);
 virtual int dhtPeerCallback(const bdId *id, uint32_t status);
 virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-                                        uint32_t mode, uint32_t point, uint32_t cbtype); 
+						uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode); 
 
 	// Sub Callback Functions.
 int 	OnlinePeerCallback_locked(const bdId *id, 

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QTimer>
+#include <QDateTime>
 
 #include <sstream>
 #include <algorithm>
@@ -556,6 +557,7 @@ void MainWindow::sendChat()
 	{
 		mPeerNet->sendMessage(msg);
 	}
+	addChatMsg("yourself", msg);
 }
 
 
@@ -576,9 +578,13 @@ void MainWindow::updateChat()
 
 void MainWindow::addChatMsg(std::string id, std::string msg)
 {
+	QDateTime now = QDateTime::currentDateTime();
+	QString nowstr = now.toString("hh:mm:ss");
 	QString chat = ui->chatBrowser->toPlainText();
 	QString newmsg = "<";
-	newmsg += QString::fromStdString(id);
+	newmsg += QString::fromStdString(id.substr(0,5));
+	newmsg += "...@";
+	newmsg += nowstr;
 	newmsg += "> ";
 	newmsg += QString::fromStdString(msg);
 	newmsg += "\n";

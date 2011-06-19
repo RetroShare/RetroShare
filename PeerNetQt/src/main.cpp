@@ -19,13 +19,16 @@ int main(int argc, char *argv[])
 	bool doRestricted = false;
 	std::list<std::string> restrictions;
 
+	bool doProxyRestricted = false;
+	std::list<std::string> proxyrestrictions;
+
 	bool doFixedPort = false;
 	int portNumber = 0;
 
 	bool doLocalTesting = false;
 
 	int c;
-	while((c = getopt(argc, argv,"r:p:c:nl")) != -1)
+	while((c = getopt(argc, argv,"r:R:p:c:nl")) != -1)
 	{
 		switch (c)
 		{
@@ -33,6 +36,11 @@ int main(int argc, char *argv[])
 				std::cerr << "Adding Port Restriction: " << optarg << std::endl;
 				doRestricted = true;
 				restrictions.push_back(optarg);
+				break;
+			case 'R':
+				std::cerr << "Adding Proxy Restriction: " << optarg << std::endl;
+				doProxyRestricted = true;
+				proxyrestrictions.push_back(optarg);
 				break;
 			case 'p':
 				std::cerr << "Setting Fixed Port: " << optarg << std::endl;

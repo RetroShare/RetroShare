@@ -143,7 +143,8 @@ void PeerNet::init()
 
 	/* setup callback to here */
 	mUdpBitDht->addCallback(this);
-
+	mUdpBitDht->ConnectionOptions(BITDHT_CONNECT_MODE_DIRECT |
+		BITDHT_CONNECT_MODE_PROXY | BITDHT_CONNECT_MODE_RELAY, 0);
 	
 	std::cerr << "PeerNet() startup ... creating UdpRelayReceiver on UdpStack";
 	std::cerr << std::endl;
@@ -757,6 +758,7 @@ int PeerNet::OnlinePeerCallback_locked(const bdId *id, uint32_t status, PeerStat
 		ca.mType = PEERNET_ACTION_TYPE_CONNECT;
 		ca.mMode = BITDHT_CONNECT_MODE_DIRECT;
 		ca.mDestId = *id;
+		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
 
 		mActions.push_back(ca);
 	}
@@ -837,6 +839,7 @@ int PeerNet::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Pee
 			ca.mMode = BITDHT_CONNECT_MODE_RELAY;
 		}
 
+		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
 		mActions.push_back(ca);
 	}
 	else
@@ -860,7 +863,7 @@ int PeerNet::dhtValueCallback(const bdNodeId *id, std::string key, uint32_t stat
 }
 
 int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-                                        uint32_t mode, uint32_t point, uint32_t cbtype)
+							uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode)
 {
 	std::cerr << "PeerNet::dhtConnectCallback()";
 	std::cerr << std::endl;
@@ -916,15 +919,16 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 					bdStdPrintId(std::cerr, destId);
 					std::cerr << std::endl;
 
-					int connectionAllowed = 0;
+					int connectionAllowed = BITDHT_CONNECT_ERROR_GENERIC;
 					if (checkProxyAllowed(srcId, destId, mode))
 					{
-						connectionAllowed = 1;
+						connectionAllowed = BITDHT_CONNECT_ANSWER_OKAY;
 						std::cerr << "dhtConnectionCallback() Connection Allowed";
 						std::cerr << std::endl;
 					}
 					else
 					{
+						connectionAllowed = BITDHT_CONNECT_ERROR_AUTH_DENIED;
 						std::cerr << "dhtConnectionCallback() Connection Denied";
 						std::cerr << std::endl;
 					}
@@ -977,6 +981,14 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 					bdStdPrintId(std::cerr, srcId);
 					std::cerr << " and ";
 					bdStdPrintId(std::cerr, destId);
+					
+					std::cerr << " ErrorCode: " << errcode;
+					int errsrc = errcode & BITDHT_CONNECT_ERROR_MASK_SOURCE;
+					int errtype = errcode & BITDHT_CONNECT_ERROR_MASK_TYPE;
+					
+					std::cerr << " ErrorSrc: " << errsrc;
+					std::cerr << " ErrorType: " << errtype;
+					
 					std::cerr << std::endl;
 
 					if (mode == BITDHT_CONNECT_MODE_RELAY)
@@ -1012,15 +1024,16 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
 
-			int connectionAllowed = 0;
+			int connectionAllowed = BITDHT_CONNECT_ERROR_GENERIC;
 			if (checkConnectionAllowed(&(peerId), mode))
 			{
-				connectionAllowed = 1;
+				connectionAllowed = BITDHT_CONNECT_ANSWER_OKAY;
 				std::cerr << "dhtConnectionCallback() Connection Allowed";
 				std::cerr << std::endl;
 			}
 			else
 			{
+				connectionAllowed = BITDHT_CONNECT_ERROR_AUTH_DENIED;
 				std::cerr << "dhtConnectionCallback() Connection Denied";
 				std::cerr << std::endl;
 			}
@@ -1063,7 +1076,7 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 					}
 					else
 					{
-						connectionAllowed = 0;
+						connectionAllowed = BITDHT_CONNECT_ERROR_UNREACHABLE;
 						std::cerr << "dhtConnectionCallback() Proxy Connection";
 						std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
 						std::cerr << std::endl;
@@ -1071,7 +1084,7 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 				}
 				else
 				{
-					connectionAllowed = 0;
+					connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
 					std::cerr << "PeerAction: ERROR Proxy Connection ";
 					std::cerr << " is Discarded, as Failed to get Own External Proxy Address.";
 					std::cerr << std::endl;
@@ -1103,7 +1116,7 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 			ca.mSrcId = *srcId;
 			ca.mDestId = *destId;
 			ca.mPoint = point;
-			ca.mAnswer = 1;
+			ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
 		
 			mActions.push_back(ca);
 
@@ -1115,7 +1128,21 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 			std::cerr << "dhtConnectionCallback() Connection Attempt Failed with:";
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
-
+			
+			std::cerr << "dhtConnectionCallback() Proxy:";			
+			bdStdPrintId(std::cerr, proxyId);
+			std::cerr << std::endl;
+				
+			std::cerr << "dhtConnectionCallback() ";			
+			std::cerr << " ErrorCode: " << errcode;
+			int errsrc = errcode & BITDHT_CONNECT_ERROR_MASK_SOURCE;
+			int errtype = errcode & BITDHT_CONNECT_ERROR_MASK_TYPE;
+				
+			std::cerr << " ErrorSrc: " << errsrc;
+			std::cerr << " ErrorType: " << errtype;
+			std::cerr << std::endl;
+			
+			
 		}
 		break;
 
@@ -1123,7 +1150,7 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 		case BITDHT_CONNECT_CB_PENDING:
 		case BITDHT_CONNECT_CB_PROXY:
 		{
-			std::cerr << "dhtConnectionCallback() ERROR unexpected Connection ConnectionCallback:";
+			std::cerr << "dhtConnectionCallback() ERROR unexpected ConnectionCallback:";
 			std::cerr << std::endl;
 			bdStdPrintId(std::cerr, srcId);
 			std::cerr << " and ";
