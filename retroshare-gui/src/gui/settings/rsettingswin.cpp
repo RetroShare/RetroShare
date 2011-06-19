@@ -108,6 +108,7 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new ServerPage());
     stackedWidget->addWidget(new TransferPage());
     stackedWidget->addWidget(new DirectoriesPage());
+	stackedWidget->addWidget(new PluginsPage() );
     stackedWidget->addWidget(new NotifyPage());
     stackedWidget->addWidget(new CryptoPage());
     stackedWidget->addWidget(new MessagePage());
@@ -115,7 +116,6 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new ChatPage());
     stackedWidget->addWidget(new AppearancePage());
     stackedWidget->addWidget(new SoundPage() );
-    stackedWidget->addWidget(new PluginsPage() );
 
     setNewPage(General);
 }

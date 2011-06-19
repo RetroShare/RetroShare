@@ -59,6 +59,9 @@
      <property name="layoutMode">
       <enum>QListView::SinglePass</enum>
      </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <property name="gridSize">
       <size>
        <width>100</width>
@@ -111,6 +114,15 @@
       <property name="icon">
        <iconset resource="../images.qrc">
         <normaloff>:/images/folder_doments.png</normaloff>:/images/folder_doments.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Plugins</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/extension_32.png</normaloff>:/images/extension_32.png</iconset>
       </property>
      </item>
      <item>
@@ -174,15 +186,6 @@
       <property name="icon">
        <iconset resource="../images.qrc">
         <normaloff>:/images/sound.png</normaloff>:/images/sound.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Plugins</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../images.qrc">
-        <normaloff>:/images/extension_32.png</normaloff>:/images/extension_32.png</iconset>
       </property>
      </item>
     </widget>
