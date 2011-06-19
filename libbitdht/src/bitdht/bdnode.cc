@@ -62,6 +62,7 @@ bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bd
 	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns)
 {
 	resetStats();
+	defaultConnectionOptions();
 }
 
 void bdNode::getOwnId(bdNodeId *id)

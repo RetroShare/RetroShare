@@ -1063,21 +1063,26 @@ void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uin
 	std::cerr << "bdNodeManager::ConnectionAuth()";
 	std::cerr << std::endl;
 
-	if (answer)
+	if (answer == BITDHT_CONNECT_ANSWER_OKAY)
 	{
 		AuthConnectionOk(srcId, proxyId, destId, mode, loc);
 	}
 	else
 	{
-		AuthConnectionNo(srcId, proxyId, destId, mode, loc);
+		AuthConnectionNo(srcId, proxyId, destId, mode, loc, answer);
 	}
+}
+
+void bdNodeManager::ConnectionOptions(uint32_t allowedModes, uint32_t flags)
+{
+	bdNode::setConnectionOptions(allowedModes, flags);
 }
 
 
         /***** Connections Requests *****/
 
         // Overloaded from bdnode for external node callback. 
-void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int point, int cbtype)
+void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int point, int cbtype, int errcode)
 {
 	std::cerr << "bdNodeManager::callbackConnect()";
 	std::cerr << std::endl;
@@ -1088,16 +1093,17 @@ void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, in
         std::list<BitDhtCallback *>::iterator it;
         for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
         {
-                (*it)->dhtConnectCallback(srcId, proxyId, destId, mode, point, cbtype);
+                (*it)->dhtConnectCallback(srcId, proxyId, destId, mode, point, cbtype, errcode);
         }
         return;
 }
 
 int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-		uint32_t mode, uint32_t point, uint32_t cbtype)
+		uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtConnectCallback() Type: " << cbtype;
+	std::cerr << " errCode: " << errcode;
 	std::cerr << " srcId: ";
 	bdStdPrintId(std::cerr, srcId);
 	std::cerr << " proxyId: ";

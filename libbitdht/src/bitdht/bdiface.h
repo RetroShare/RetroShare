@@ -129,10 +129,10 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_PEER_STATUS_RECV_HASHES		0x00000004
 #define 	BITDHT_PEER_STATUS_RECV_CONNECT_MSG	0x00000008
 
-#define 	BITDHT_PEER_STATUS_DHT_ENGINE				0x00000100
-#define 	BITDHT_PEER_STATUS_DHT_ENGINE_VERSION		0x00000200
-#define 	BITDHT_PEER_STATUS_DHT_APPL					0x00000400
-#define 	BITDHT_PEER_STATUS_DHT_APPL_VERSION			0x00000800
+#define 	BITDHT_PEER_STATUS_DHT_ENGINE		0x00000100
+#define 	BITDHT_PEER_STATUS_DHT_ENGINE_VERSION	0x00000200
+#define 	BITDHT_PEER_STATUS_DHT_APPL		0x00000400
+#define 	BITDHT_PEER_STATUS_DHT_APPL_VERSION	0x00000800
 
 #define 	BITDHT_PEER_STATUS_DHT_WHITELIST	0x00010000
 #define 	BITDHT_PEER_STATUS_DHT_FOF		0x00020000
@@ -140,18 +140,39 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 
 
-#define 	BITDHT_CONNECT_MASK_MODE		0x000000ff
-#define 	BITDHT_CONNECT_MASK_ANSWER		0x0000ff00
-
 #define 	BITDHT_CONNECT_MODE_DIRECT		0x00000001
 #define 	BITDHT_CONNECT_MODE_PROXY		0x00000002
 #define 	BITDHT_CONNECT_MODE_RELAY		0x00000004
 
-#define 	BITDHT_CONNECT_ANSWER_OKAY		0x00000100
-#define 	BITDHT_CONNECT_ANSWER_NOK		0x00000200
-#define 	BITDHT_CONNECT_ANSWER_NCONN		0x00000400
+#define 	BITDHT_CONNECT_OPTION_AUTOPROXY		0x00000001
 
-#define 	BITDHT_CONNECT_ANSWER_TOAUTH		0x00001000
+// STATUS CODES. == 0 is okay, != 0 is error.
+#define 	BITDHT_CONNECT_ANSWER_OKAY		0x00000000
+#define 	BITDHT_CONNECT_ERROR_NONE		(BITDHT_CONNECT_ANSWER_OKAY)
+
+#define 	BITDHT_CONNECT_ERROR_MASK_TYPE		0x0000ffff
+#define 	BITDHT_CONNECT_ERROR_MASK_SOURCE	0x000f0000
+
+#define 	BITDHT_CONNECT_ERROR_SOURCE_START	0x00010000
+#define 	BITDHT_CONNECT_ERROR_SOURCE_MID		0x00020000
+#define 	BITDHT_CONNECT_ERROR_SOURCE_END 	0x00040000
+#define 	BITDHT_CONNECT_ERROR_SOURCE_OTHER 	0x00080000
+
+// ERROR CODES.
+#define 	BITDHT_CONNECT_ERROR_GENERIC		0x00000001
+#define 	BITDHT_CONNECT_ERROR_PROTOCOL		0x00000002
+#define 	BITDHT_CONNECT_ERROR_TIMEOUT		0x00000003
+#define 	BITDHT_CONNECT_ERROR_TEMPUNAVAIL	0x00000004   // Haven't got ext address yet.
+#define 	BITDHT_CONNECT_ERROR_NOADDRESS		0x00000005   // Can't find the peer in tables.
+#define 	BITDHT_CONNECT_ERROR_UNREACHABLE	0x00000006   // Symmetric NAT
+
+#define 	BITDHT_CONNECT_ERROR_UNSUPPORTED	0x00000007
+#define 	BITDHT_CONNECT_ERROR_OVERLOADED		0x00000008
+#define 	BITDHT_CONNECT_ERROR_AUTH_DENIED	0x00000009
+#define 	BITDHT_CONNECT_ERROR_DUPLICATE		0x0000000a
+
+
+
 
 
 /* Definitions of bdSpace Peer and Bucket are publically available, 
@@ -218,7 +239,7 @@ virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t statu
 
 		// connection callback. Not required for basic behaviour, but forced for initial development.
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
-					uint32_t mode, uint32_t point, uint32_t cbtype) = 0; /*  { return 0; }  */
+			uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
 
 };
 
@@ -235,6 +256,8 @@ virtual void findDhtValue(bdNodeId *id, std::string key, uint32_t mode) = 0;
 	/***** Connections Requests *****/
 virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode) = 0;
 virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer) = 0;
+virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags) = 0;
+
 
         /***** Add / Remove Callback Clients *****/
 virtual void addCallback(BitDhtCallback *cb) = 0;

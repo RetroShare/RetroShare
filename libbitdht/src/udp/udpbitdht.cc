@@ -138,6 +138,12 @@ void UdpBitDht::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_
 	mBitDhtManager->ConnectionAuth(srcId, proxyId, destId, mode, loc, answer);
 }
 
+void UdpBitDht::ConnectionOptions(uint32_t allowedModes, uint32_t flags)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->ConnectionOptions(allowedModes, flags);
+}
 
 
 int UdpBitDht::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from)

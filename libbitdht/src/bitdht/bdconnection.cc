@@ -35,6 +35,36 @@
 #define DEBUG_NODE_CONNECTION	1 
 
 
+uint32_t createConnectionErrorCode(uint32_t userProvided, uint32_t fallback, uint32_t point);
+
+/************************************************************************************************************
+******************************************** Connection Config **********************************************
+************************************************************************************************************/
+
+void bdNode::defaultConnectionOptions()
+{
+	/* by default we want to help people proxy connections.
+	 * As this involves no interaction at higher levels, 
+	 * we want ALL BitDHT clients to support - unless explicitly disabled.
+	 */
+
+	setConnectionOptions(BITDHT_CONNECT_MODE_PROXY, 
+			BITDHT_CONNECT_OPTION_AUTOPROXY);
+}
+
+void bdNode::setConnectionOptions(uint32_t allowedModes, uint32_t flags)
+{
+	mConfigAllowedModes = allowedModes;
+	mConfigAutoProxy = false;
+
+	if (flags & BITDHT_CONNECT_OPTION_AUTOPROXY)
+	{
+		mConfigAutoProxy = true;
+	}
+
+}
+
+
 /************************************************************************************************************
 ******************************************** Message Interface **********************************************
 ************************************************************************************************************/
@@ -182,6 +212,16 @@ int bdNode::requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint3
         std::cerr << ":" << ntohs(laddr->sin_port);
 	std::cerr << std::endl;
 #endif
+
+	if (!(mConfigAllowedModes & mode))
+	{
+		/* MODE not supported */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::requestConnection() Mode Not Supported";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
 
 	if (mode == BITDHT_CONNECT_MODE_DIRECT)
 	{
@@ -460,6 +500,16 @@ int bdNode::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destC
 	std::cerr << std::endl;
 #endif
 
+	if (!(mConfigAllowedModes & mode))
+	{
+		/* MODE not supported */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::startConnectionAttempt() Mode Not Supported";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
 	/* Check for existing Connection */
 	bdConnection *conn = findExistingConnectionBySender(proxyId, srcConnAddr, destConnAddr);
 	if (conn)
@@ -619,9 +669,11 @@ void bdNode::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 
 	return;	
 }
-	
+
+
+
  
-void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc)
+void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int errCode)
 {
 	
 #ifdef DEBUG_NODE_CONNECTION
@@ -641,8 +693,10 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 		return;
 	}
 	
-	/* we need to continue the connection */
-	
+	/* we need indicate failure of the connection */
+	int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
+	uint32_t status = createConnectionErrorCode(errCode, BITDHT_CONNECT_ERROR_AUTH_DENIED, conn->mPoint);
+
 	if (mode == BITDHT_CONNECT_MODE_DIRECT)
 	{
 		/* we respond to the proxy which will finalise connection */
@@ -653,8 +707,6 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 		bdToken transId;
 		genNewTransId(&transId);
 
-		int status = BITDHT_CONNECT_ANSWER_NOK;
-		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 		msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, 
 							  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 		
@@ -672,8 +724,6 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 		bdToken transId;
 		genNewTransId(&transId);
 
-		int status = BITDHT_CONNECT_ANSWER_NOK;
-		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 		msgout_connect_genmsg(&(conn->mProxyId), &transId, msgtype, 
 							  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 		
@@ -690,8 +740,6 @@ void bdNode::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode
 	bdToken transId;
 	genNewTransId(&transId);
 
-	int status = BITDHT_CONNECT_ANSWER_NOK;
-	int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 	msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, 
 						  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
 
@@ -733,8 +781,14 @@ void bdNode::iterateConnections()
 				std::cerr << std::endl;
 #endif
 				/* connection failed! cleanup */
-				callbackConnect(&(it->second.mSrcId),&(it->second.mProxyId),&(it->second.mDestId),
-							it->second.mMode, it->second.mPoint, BITDHT_CONNECT_CB_FAILED);
+				if ((it->second.mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
+				{
+					uint32_t errCode = createConnectionErrorCode(0, 
+						BITDHT_CONNECT_ERROR_TIMEOUT,it->second.mPoint);
+					callbackConnect(&(it->second.mSrcId),&(it->second.mProxyId),
+						&(it->second.mDestId), it->second.mMode, it->second.mPoint, 
+						BITDHT_CONNECT_CB_FAILED, errCode);
+				}
 
 				/* add to erase list */
 				eraseList.push_back(it->first);
@@ -754,8 +808,8 @@ void bdNode::iterateConnections()
 
 					int msgtype = BITDHT_MSG_TYPE_CONNECT_START;
 					msgout_connect_genmsg(&(it->second.mSrcId), &transId, msgtype, 
-										  &(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
-										  it->second.mMode, it->second.mBandwidth);
+						&(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
+						it->second.mMode, it->second.mBandwidth);
 				}
 				if (!it->second.mDestAck)
 				{
@@ -764,8 +818,8 @@ void bdNode::iterateConnections()
 
 					int msgtype = BITDHT_MSG_TYPE_CONNECT_START;
 					msgout_connect_genmsg(&(it->second.mDestId), &transId, msgtype, 
-										  &(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
-										  it->second.mMode, it->second.mBandwidth);
+						  &(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
+						  it->second.mMode, it->second.mBandwidth);
 				}
 			}
 		}
@@ -790,7 +844,8 @@ void bdNode::iterateConnections()
 ************************************************************************************************************/
 
 
-void bdNode::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int point, int cbtype)
+void bdNode::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
+					int mode, int point, int cbtype, int errcode)
 {
 	/* This is overloaded at a higher level */
 }
@@ -1044,6 +1099,26 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 	std::cerr << "bdNode::recvedConnectionRequest()";
 	std::cerr << std::endl;
 #endif
+
+	if (!(mConfigAllowedModes & mode))
+	{
+		/* MODE not supported */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::recvedConnectionRequest() Mode Not Supported";
+		std::cerr << std::endl;
+#endif
+		/* reply existing connection */
+		bdToken transId;
+		genNewTransId(&transId);
+
+		int pos = determinePosition(&(id->id), &(srcConnAddr->id), &(destConnAddr->id));
+		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_UNSUPPORTED, pos);
+		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
+		msgout_connect_genmsg(id, &transId, msgtype, srcConnAddr, destConnAddr, mode, status);
+
+		return 0;
+	}
+
 	/* Check for existing Connection */
 	bdConnection *conn = findExistingConnectionBySender(id, srcConnAddr, destConnAddr);
 	if (conn)
@@ -1053,8 +1128,17 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 		std::cerr << "bdNode::recvedConnectionRequest() ERROR EXISTING CONNECTION";
 		std::cerr << std::endl;
 #endif
+		/* reply existing connection */
+		bdToken transId;
+		genNewTransId(&transId);
+
+		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_DUPLICATE, conn->mPoint);
+		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
+		msgout_connect_genmsg(id, &transId, msgtype, srcConnAddr, destConnAddr, mode, status);
+
 		return 0;
 	}
+
 
 	/* Switch the order of peers around to test for "opposite connections" */
 	if (NULL != findSimilarConnection(&(destConnAddr->id), &(srcConnAddr->id)))
@@ -1065,8 +1149,8 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 		/* reply existing connection */
 		bdToken transId;
 		genNewTransId(&transId);
-
-		int status = BITDHT_CONNECT_ANSWER_NOK;
+		int pos = determinePosition(&(id->id), &(srcConnAddr->id), &(destConnAddr->id));
+		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_DUPLICATE, pos);
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 		msgout_connect_genmsg(id, &transId, msgtype, srcConnAddr, destConnAddr, mode, status);
 		return 0;
@@ -1089,7 +1173,8 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 		conn->ConnectionRequestDirect(id, srcConnAddr, destConnAddr);
 
 		callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH);
+					conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH,
+					BITDHT_CONNECT_ERROR_NONE);
 	}
 	else
 	{
@@ -1140,8 +1225,19 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 
 				conn->ConnectionRequestProxy(id, srcConnAddr, &mOwnId, &destId, mode);
 
-				callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH);
+				/* ALLOW AUTO AUTH for MID Proxy Connections. */
+				if (mConfigAutoProxy)
+				{
+				  	AuthConnectionOk(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
+							conn->mMode, conn->mPoint);
+				}
+				else
+				{
+
+				  	callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
+							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH,
+							BITDHT_CONNECT_ERROR_NONE);
+				}
 			}
 			else
 			{
@@ -1155,7 +1251,7 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 				genNewTransId(&transId);
 
 				int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-				int status = BITDHT_CONNECT_ANSWER_NOK; /* NO DEST ADDRESS */
+				uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_NOADDRESS, point);
 				msgout_connect_genmsg(id, &transId, msgtype, srcConnAddr, destConnAddr, mode, status);
 
 				/* remove connection */
@@ -1173,7 +1269,8 @@ int bdNode::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnA
 			conn->ConnectionRequestEnd(id, srcConnAddr, destConnAddr, mode);
 
 			callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH);
+						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH,
+						BITDHT_CONNECT_ERROR_NONE);
 		}
 	}
 	return 1;
@@ -1212,14 +1309,15 @@ int bdNode::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 			/* Only situation we expect this, is if the connection is not allowed.
 			 * DEST has sent back an ERROR Message
 			 */
-
-			if ((status == BITDHT_CONNECT_ANSWER_NOK) && (conn->mPoint == BD_PROXY_CONNECTION_START_POINT))
+			uint32_t errCode = BITDHT_CONNECT_ERROR_GENERIC;
+			if ((status != BITDHT_CONNECT_ANSWER_OKAY) && (conn->mPoint == BD_PROXY_CONNECTION_START_POINT))
 			{
 				/* connection is killed */
 				std::cerr << "bdNode::recvedConnectionReply() Connection Rejected, Killing It: "; 
 				std::cerr << std::endl;
 				std::cerr << *conn;
 				std::cerr << std::endl;
+				errCode = status; // Pass on the Error Message.
 
 			}
 			else
@@ -1229,11 +1327,12 @@ int bdNode::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 				std::cerr << std::endl;
 				std::cerr << *conn;
 				std::cerr << std::endl;
+				errCode = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_PROTOCOL, conn->mPoint );
 			}
 
 			/* do Callback for Failed Connection */
 			callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED);
+					conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED, errCode);
 
 			/* Kill Connection always */
 			cleanConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -1257,29 +1356,47 @@ int bdNode::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 				conn->upgradeProxyConnectionToFinish(id, srcConnAddr, destConnAddr, mode, status);
 
 				/* do Callback for Pending Connection */
-				callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-								conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_PENDING);
+				/* DONT CALLBACK in AutoProxy Mode: (PROXY & mConfigAutoProxy) */
+				if ((conn->mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
+				{
+					callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
+							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_PENDING,
+							BITDHT_CONNECT_ERROR_NONE);
+				}
 
 				return 1;
 			}
 			else
 			{
 
+
 				std::cerr << "bdNode::recvedConnectionReply() @MIDPOINT Some ERROR, Killing It: ";
 				std::cerr << std::endl;
 				std::cerr << *conn;
 				std::cerr << std::endl;
 
+				uint32_t errCode = status;
+				if (errCode == BITDHT_CONNECT_ERROR_NONE)
+				{
+					errCode = createConnectionErrorCode(0, 
+						BITDHT_CONNECT_ERROR_PROTOCOL, conn->mPoint );
+				}
+
 				/* do Callback for Failed Connection */
-				callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-								conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED);
+				/* DONT CALLBACK in AutoProxy Mode: (PROXY & mConfigAutoProxy) */
+				if ((conn->mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
+				{
+					callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
+						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED, errCode);
+				}
+
 
 				/* send on message to SRC */
 				bdToken transId;
 				genNewTransId(&transId);
 
 				int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-				msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
+				msgout_connect_genmsg(&(conn->mSrcId), &transId, msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, errCode);
 
 				/* connection is killed */
 				cleanConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -1356,7 +1473,8 @@ int bdNode::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAdd
 		conn->CompleteConnection(id, srcConnAddr, destConnAddr);
 
 		callbackConnect(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestConnAddr),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START);
+						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START,
+						BITDHT_CONNECT_ERROR_NONE);
 
 	}
 	else
@@ -1438,14 +1556,21 @@ int bdNode::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr,
 			/* callback to connect to Src address! */
 			// Slightly different callback, use ConnAddr for start message!
 			callbackConnect(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START);
+						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START,
+						BITDHT_CONNECT_ERROR_NONE);
 
 		}
 		else
 		{
-			int mode = conn->mMode | BITDHT_CONNECT_ANSWER_OKAY;
-			callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_PROXY);
+			/* DONT CALLBACK in AutoProxy Mode: (PROXY & mConfigAutoProxy) */
+			if ((conn->mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
+			{
+				int mode = conn->mMode | BITDHT_CONNECT_ANSWER_OKAY;
+				callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
+						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_PROXY, 
+						BITDHT_CONNECT_ERROR_NONE);
+			}
+
 
 		}
 
@@ -1873,4 +1998,33 @@ std::ostream &operator<<(std::ostream &out, const bdConnection &conn)
 
 }
 
+
+uint32_t createConnectionErrorCode(uint32_t userProvided, uint32_t fallback, uint32_t point)
+{	
+	int status = userProvided & BITDHT_CONNECT_ERROR_MASK_TYPE;
+	if (status == BITDHT_CONNECT_ERROR_NONE)
+	{
+		status = fallback; 
+	}
+	/* backup, backup. */
+	if (status == BITDHT_CONNECT_ERROR_NONE)
+	{
+		status = BITDHT_CONNECT_ERROR_GENERIC; /* FALLBACK ERROR CODE */
+	}
+
+	switch(point)
+	{
+		case BD_PROXY_CONNECTION_START_POINT:
+			status |= BITDHT_CONNECT_ERROR_SOURCE_START;
+			break;
+		case BD_PROXY_CONNECTION_MID_POINT:
+			status |= BITDHT_CONNECT_ERROR_SOURCE_MID;
+			break;
+		case BD_PROXY_CONNECTION_END_POINT:
+			status |= BITDHT_CONNECT_ERROR_SOURCE_END;
+			break;
+	}
+
+	return status;
+}
 

@@ -195,6 +195,10 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	/****************************** Connection Code (in bdconnection.cc) ****************************/
 
+	/* Connections: Configuration */
+	void defaultConnectionOptions();
+	virtual void setConnectionOptions(uint32_t allowedModes, uint32_t flags);
+
 	/* Connections: Messages */
 
 	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
@@ -219,7 +223,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	int  startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
 	void AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
-	void AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+	void AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int errcode);
 	void iterateConnections();
 
 
@@ -239,7 +243,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	// Overloaded Generalised Connection Callback.
 	virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
-					int mode, int point, int cbtype);
+				int mode, int point, int cbtype, int errcode);
 
 	/* Connections: */
 	int recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
@@ -252,6 +256,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	std::map<bdProxyTuple, bdConnection> mConnections;
 	std::map<bdNodeId, bdConnectionRequest> mConnectionRequests;
 
+        uint32_t mConfigAllowedModes;
+        bool mConfigAutoProxy;
 
 	/****************************** Connection Code (in bdconnection.cc) ****************************/
 
