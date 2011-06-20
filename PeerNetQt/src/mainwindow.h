@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include "peernet.h"
 
-#include "DhtWindow.h"
+#include "dhtwindow.h"
 
 namespace Ui {
     class MainWindow;
