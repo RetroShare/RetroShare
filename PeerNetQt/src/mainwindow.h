@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "peernet.h"
 
+#include "DhtWindow.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -15,9 +17,9 @@ public:
     ~MainWindow();
 
 	void setPeerNet(PeerNet *pnet);
+	void setDhtWindow(DhtWindow *dw);
 	
 	void updateNetStatus();
-	void updateDhtPeers();
 	void updateNetPeers();
 	void updateChat();
 	void addChatMsg(std::string id, std::string msg);
@@ -26,6 +28,7 @@ public slots:
 	void update();
 	void addPeer();
 	void sendChat();
+	void showDhtWindow();
 	
 protected:
     void changeEvent(QEvent *e);
@@ -33,6 +36,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 	PeerNet *mPeerNet;
+	DhtWindow *mDhtWindow;
 };
 
 #endif // MAINWINDOW_H

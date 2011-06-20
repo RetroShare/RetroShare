@@ -505,6 +505,23 @@ int PeerNet::get_failedpeer_status(std::string id, PeerStatus &status)
 	return 0;
 }
 
+
+int PeerNet::get_dht_queries(std::map<bdNodeId, bdQueryStatus> &queries)
+{
+	return mUdpBitDht->getDhtQueries(queries);
+}
+
+int PeerNet::get_query_status(std::string id, bdQuerySummary &query)
+{
+	bdNodeId tmpId;
+        if (!bdStdLoadNodeId(&tmpId, id))
+	{
+		return 0;
+	}
+
+	return mUdpBitDht->getDhtQueryStatus(&tmpId, query);
+}
+
         /* remember peers */
 int PeerNet::storePeers(std::string filepath)
 {
@@ -1178,6 +1195,8 @@ int PeerNet::tick()
 
 	minuteTick();
 
+	keepaliveConnections();
+
 	return 1;
 }
 
@@ -1719,10 +1738,36 @@ void PeerNet::monitorConnections()
 				int read = tou_read(fd, buf, 10240);
 				if (read > 0)
 				{
-					it->second.mPeerIncoming += std::string(buf);
-					std::cerr << "PeerNet::monitorConnections() Read from Connection: " << it->second.mId;
+					std::string msg(buf);
+					std::cerr << "TS: " << time(NULL) << " From: " << it->second.mId;
+					std::cerr << " RawMsg: " << msg;
 					std::cerr << std::endl;
 
+#if 1
+					for(int i = 0; i < msg.size(); )
+					{
+						if (msg[i] == '^')
+						{
+							msg.erase(i,1);
+						}
+						else
+						{
+							i++;
+						}
+					}
+#endif
+					if (msg.size() > 0)
+					{
+						//std::cerr << "PeerNet::monitorConnections() Read from Connection: " << it->second.mId;
+						//std::cerr << std::endl;
+						//std::cerr << "PeerNet::monitorConnections() CleanedMsg: " << msg;
+						//std::cerr << std::endl;
+						std::cerr << "TS: " << time(NULL) << " From: " << it->second.mId;
+						std::cerr << " RawMsg: " << msg;
+						std::cerr << std::endl;
+
+						it->second.mPeerIncoming += msg;
+					}
 				}
 			}
 			else
@@ -1796,5 +1841,11 @@ int  PeerNet::getMessage(std::string id, std::string &msg)
 
 
 
+
+void PeerNet::keepaliveConnections()
+{
+	std::string msg("^");
+	sendMessage(msg);
+}
 
 

@@ -122,8 +122,12 @@ class PeerNet: public BitDhtCallback
 	std::string getPeerStatusString();
 	std::string getPeerAddressString();
 	std::string getDhtStatusString();
+
+	int get_dht_queries(std::map<bdNodeId, bdQueryStatus> &queries);
+	int get_query_status(std::string id, bdQuerySummary &query);
+
 	int get_dht_peers(int lvl, bdBucket &peers);
-	//int get_dht_peers(int lvl, std::list<DhtPeer> &peers);
+
 	int get_net_peers(std::list<std::string> &peerIds);
 	int get_peer_status(std::string peerId, PeerStatus &status);
 
@@ -165,6 +169,7 @@ int 	UnreachablePeerCallback_locked(const bdId *id,
 
 	/**** Connection Handling ******/
 	void monitorConnections();
+	void keepaliveConnections();
 
 	int removeRelayConnection(const bdId *srcId, const bdId *destId);
 	int installRelayConnection(const bdId *srcId, const bdId *destId);

@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>PeerNetQt</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -33,6 +33,13 @@
         </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="dhtButton">
+        <property name="text">
+         <string>Dht Info</string>
         </property>
        </widget>
       </item>
@@ -112,7 +119,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
          <number>0</number>
@@ -200,56 +207,6 @@
         </item>
         <item>
          <widget class="QTextBrowser" name="chatBrowser"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="dhtLabel">
-          <property name="text">
-           <string>DHT Details:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTreeWidget" name="dhtTreeWidget">
-          <column>
-           <property name="text">
-            <string>Bucket</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Ip:Port</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Key</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>StatusFlags</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Found</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Last Send</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Last Recv</string>
-           </property>
-          </column>
-         </widget>
         </item>
        </layout>
       </widget>

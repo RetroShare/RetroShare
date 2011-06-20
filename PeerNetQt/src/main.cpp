@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <QtGui/QApplication>
 #include "mainwindow.h"
+#include "dhtwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -106,8 +107,12 @@ int main(int argc, char *argv[])
     		QApplication a(argc, argv);
     		MainWindow w;
     		w.show();
+		DhtWindow  dw;
+		dw.hide();
 	
 		w.setPeerNet(pnet);
+		w.setDhtWindow(&dw);
+		dw.setPeerNet(pnet);
 	
     		return a.exec();
 	}
