@@ -30,7 +30,7 @@
  * #define DEBUG_UDP_RELAY 1
  */
 
-#define DEBUG_UDP_RELAY 1
+//#define DEBUG_UDP_RELAY 1
 
 
 #ifdef DEBUG_UDP_RELAY
@@ -156,8 +156,33 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 	return 1;
 }
 
+int UdpRelayReceiver::getRelayEnds(std::list<UdpRelayEnd> &relayEnds)
+{
+        RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
+
+	std::map<struct sockaddr_in, UdpRelayEnd>::iterator rit;
+	
+	for(rit = mStreams.begin(); rit != mStreams.end(); rit++)
+	{
+		relayEnds.push_back(rit->second);
+	}
+	return 1;
 
 
+}
+
+int UdpRelayReceiver::getRelayProxies(std::list<UdpRelayProxy> &relayProxies)
+{
+        RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
+
+	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
+	
+	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	{
+		relayProxies.push_back(rit->second);
+	}
+	return 1;
+}
 
 #define RELAY_MAX_BANDWIDTH 1000
 #define RELAY_TIMEOUT		30
@@ -248,10 +273,11 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass)
 		/* create UdpRelay */
 		UdpRelayProxy udpRelay(addrSet, relayClass);
 		UdpRelayAddrSet alt = addrSet->flippedSet();
+		UdpRelayProxy altUdpRelay(alt, relayClass);
 
 		/* must install two (A, B) & (B, A) */
 		mRelays[*addrSet] = udpRelay;
-		mRelays[alt] = udpRelay;
+		mRelays[alt] = altUdpRelay;
 
 		return 1;
 	}

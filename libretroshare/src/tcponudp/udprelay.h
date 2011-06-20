@@ -131,6 +131,9 @@ int 	removeUdpPeer(UdpPeer *peer);
 	int getRelayCount(int classIdx); /* how many relays (of this type) do we have */
 	int RelayStatus(std::ostream &out);
 
+	/* Extract Relay Data */
+	int getRelayEnds(std::list<UdpRelayEnd> &relayEnds); 		
+	int getRelayProxies(std::list<UdpRelayProxy> &relayProxies); 
 	
 	/* callback for recved data (overloaded from UdpReceiver) */
 virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
