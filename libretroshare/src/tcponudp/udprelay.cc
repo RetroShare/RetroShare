@@ -273,7 +273,7 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass)
 		/* create UdpRelay */
 		UdpRelayProxy udpRelay(addrSet, relayClass);
 		UdpRelayAddrSet alt = addrSet->flippedSet();
-		UdpRelayProxy altUdpRelay(alt, relayClass);
+		UdpRelayProxy altUdpRelay(&alt, relayClass);
 
 		/* must install two (A, B) & (B, A) */
 		mRelays[*addrSet] = udpRelay;
