@@ -1716,6 +1716,17 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 				sameDhtVersion = true;
 			}
 		}
+
+		if ((sameDhtVersion) && (!sameDhtEngine))
+		{
+			sameDhtVersion = false;
+			std::cerr << "bdNode::msgin_pong() STRANGE Peer Version: ";
+			for(int i = 0; i < versionId->len; i++)
+			{
+				std::cerr << versionId->data[i];
+			}
+			std::cerr << std::endl;
+		}
 	
 		/* check two bytes */
 		if ((versionId->len >= 6) && (mDhtVersion.size() >= 6) &&
