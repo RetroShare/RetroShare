@@ -17,7 +17,7 @@
    <string>PeerNetQt</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -209,6 +209,48 @@
          <widget class="QTextBrowser" name="chatBrowser"/>
         </item>
        </layout>
+      </widget>
+      <widget class="QTreeWidget" name="relayTreeWidget">
+       <column>
+        <property name="text">
+         <string>Relay Mode</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Source</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Proxy</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Destination</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Class</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Age</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Sent</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Bandwidth</string>
+        </property>
+       </column>
       </widget>
      </widget>
     </item>

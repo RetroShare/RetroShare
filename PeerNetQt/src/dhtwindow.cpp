@@ -120,7 +120,14 @@ void DhtWindow::updateDhtPeers()
 		foundstr << now - it->mFoundTime << " secs ago";
 
 		std::ostringstream lastsendstr;
-		lastsendstr << now - it->mLastSendTime << " secs ago";
+		if (it->mLastSendTime == 0)
+		{
+			lastsendstr << "never";
+		}
+		else
+		{
+			lastsendstr << now - it->mLastSendTime << " secs ago";
+		}
 
 		std::ostringstream lastrecvstr;
 		lastrecvstr << now - it->mLastRecvTime << " secs ago";

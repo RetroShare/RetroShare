@@ -21,6 +21,7 @@ public:
 	
 	void updateNetStatus();
 	void updateNetPeers();
+	void updateRelays();
 	void updateChat();
 	void addChatMsg(std::string id, std::string msg);
 

@@ -134,6 +134,9 @@ class PeerNet: public BitDhtCallback
 	int get_net_failedpeers(std::list<std::string> &peerIds);
 	int get_failedpeer_status(std::string peerId, PeerStatus &status);
 
+	int get_relayends(std::list<UdpRelayEnd> &relayEnds);
+        int get_relayproxies(std::list<UdpRelayProxy> &relayProxies);
+
 	/* remember peers */
 	int storePeers(std::string filepath);
 	int loadPeers(std::string filepath);

@@ -505,6 +505,16 @@ int PeerNet::get_failedpeer_status(std::string id, PeerStatus &status)
 	return 0;
 }
 
+int PeerNet::get_relayends(std::list<UdpRelayEnd> &relayEnds)
+{
+	mRelayReceiver->getRelayEnds(relayEnds);
+}
+
+int PeerNet::get_relayproxies(std::list<UdpRelayProxy> &relayProxies)
+{
+	mRelayReceiver->getRelayProxies(relayProxies);
+}
+
 
 int PeerNet::get_dht_queries(std::map<bdNodeId, bdQueryStatus> &queries)
 {

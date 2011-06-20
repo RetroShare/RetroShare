@@ -63,6 +63,7 @@ void MainWindow::update()
 	//std::cerr << "MainWindow::update()" << std::endl;
 	updateNetStatus();
 	updateNetPeers();
+	updateRelays();
 	updateChat();
 
 	// Shouldn't do it here! but for now.
@@ -445,6 +446,129 @@ void MainWindow::updateNetPeers()
 	label->setText(QString::fromStdString(connstr.str()));
 }
 
+
+
+void MainWindow::updateRelays()
+{
+
+	QTreeWidget *relayTreeWidget = ui->relayTreeWidget;
+
+	std::list<UdpRelayEnd> relayEnds;
+	std::list<UdpRelayProxy> relayProxies;
+
+	std::list<UdpRelayEnd>::iterator reit;
+	std::list<UdpRelayProxy>::iterator rpit;
+
+	std::list<std::string> failedPeerIds;
+	std::list<std::string>::iterator it;
+	mPeerNet->get_relayends(relayEnds);
+	mPeerNet->get_relayproxies(relayProxies);
+
+
+#define RTW_COL_TYPE		0
+#define RTW_COL_SRC		1
+#define RTW_COL_PROXY		2
+#define RTW_COL_DEST		3
+#define RTW_COL_CLASS		4
+#define RTW_COL_AGE		5
+#define RTW_COL_LASTSEND	6
+#define RTW_COL_BANDWIDTH	7
+
+	relayTreeWidget->clear();
+	time_t now = time(NULL);
+
+	for(reit = relayEnds.begin(); reit != relayEnds.end(); reit++)
+	{
+		/* find the entry */
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+		relayTreeWidget->addTopLevelItem(item);
+
+		std::ostringstream typestr;
+		typestr << "RELAY END";
+
+		std::ostringstream srcstr;
+		srcstr << "Yourself";
+
+		std::ostringstream proxystr;
+		proxystr << rs_inet_ntoa(reit->mProxyAddr.sin_addr) << ":"
+				 << ntohs(reit->mProxyAddr.sin_port);
+
+		std::ostringstream deststr;
+		deststr << rs_inet_ntoa(reit->mRemoteAddr.sin_addr) << ":"
+				 << ntohs(reit->mRemoteAddr.sin_port);
+
+		std::ostringstream agestr;
+		agestr << "unknown";
+
+		std::ostringstream lastsendstr;
+		lastsendstr << "unknown";
+
+		std::ostringstream bandwidthstr;
+		bandwidthstr << "unlimited";
+
+		std::ostringstream classstr;
+		classstr << "Own Relay";
+
+		//std::ostringstream dhtupdatestr;
+		//dhtupdatestr << now - status.mDhtUpdateTS << " secs ago";
+
+
+		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, QString::fromStdString(typestr.str()));
+		item -> setData(RTW_COL_SRC, Qt::DisplayRole, QString::fromStdString(srcstr.str()));
+		item -> setData(RTW_COL_PROXY, Qt::DisplayRole, QString::fromStdString(proxystr.str()));
+		item -> setData(RTW_COL_DEST, Qt::DisplayRole, QString::fromStdString(deststr.str()));
+		item -> setData(RTW_COL_CLASS, Qt::DisplayRole, QString::fromStdString(classstr.str()));
+		item -> setData(RTW_COL_AGE, Qt::DisplayRole, QString::fromStdString(agestr.str()));
+		item -> setData(RTW_COL_LASTSEND, Qt::DisplayRole, QString::fromStdString(lastsendstr.str()));
+		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, QString::fromStdString(bandwidthstr.str()));
+
+	}
+
+
+	for(rpit = relayProxies.begin(); rpit != relayProxies.end(); rpit++)
+	{
+		/* find the entry */
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+		relayTreeWidget->addTopLevelItem(item);
+
+		std::ostringstream typestr;
+		typestr << "RELAY PROXY";
+
+		std::ostringstream srcstr;
+		srcstr << rs_inet_ntoa(rpit->mAddrs.mSrcAddr.sin_addr) << ":"
+				 << ntohs(rpit->mAddrs.mSrcAddr.sin_port);
+
+		std::ostringstream proxystr;
+		proxystr << "Yourself";
+
+		std::ostringstream deststr;
+		deststr << rs_inet_ntoa(rpit->mAddrs.mDestAddr.sin_addr) << ":"
+				 << ntohs(rpit->mAddrs.mDestAddr.sin_port);
+
+		std::ostringstream agestr;
+		agestr << "unknown";
+		//agestr << now - rpit->mLastTS << " secs ago";
+
+		std::ostringstream lastsendstr;
+		lastsendstr << now - rpit->mLastTS << " secs ago";
+
+		std::ostringstream bandwidthstr;
+		bandwidthstr << rpit->mBandwidth << "B/s";
+
+		std::ostringstream classstr;
+		classstr << rpit->mRelayClass;
+
+		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, QString::fromStdString(typestr.str()));
+		item -> setData(RTW_COL_SRC, Qt::DisplayRole, QString::fromStdString(srcstr.str()));
+		item -> setData(RTW_COL_PROXY, Qt::DisplayRole, QString::fromStdString(proxystr.str()));
+		item -> setData(RTW_COL_DEST, Qt::DisplayRole, QString::fromStdString(deststr.str()));
+		item -> setData(RTW_COL_CLASS, Qt::DisplayRole, QString::fromStdString(classstr.str()));
+		item -> setData(RTW_COL_AGE, Qt::DisplayRole, QString::fromStdString(agestr.str()));
+		item -> setData(RTW_COL_LASTSEND, Qt::DisplayRole, QString::fromStdString(lastsendstr.str()));
+		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, QString::fromStdString(bandwidthstr.str()));
+
+	}
+}
 
 
 

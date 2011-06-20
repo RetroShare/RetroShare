@@ -6,6 +6,12 @@ import random, os, stat
 
 basePort = 20000;
 ipaddr = '127.0.0.1'; 
+nPeers = 30
+nConnect = 20;
+nGUIs = 3;
+fBlockedDirect = 0.3;
+fBlockedProxy = 0.1;
+
 # for OSX.
 #execpath = '../../PeerNetQt.app/Contents/MacOS/PeerNetQt';
 # for Linux
@@ -155,4 +161,4 @@ def makePeerConfig(folder, id):
 tmpId = generatePeerId()
 print tmpId;
 
-generateNet('testpeernet', 30, 10, 0.3, 0.1, 3);
+generateNet('testpeernet', nPeers, nConnect, fBlockedDirect, fBlockedProxy, nGUIs);
