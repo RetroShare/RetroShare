@@ -7,7 +7,7 @@ uint32_t bdRandom::index = 0 ;
 std::vector<uint32_t> bdRandom::MT(bdRandom::N,0u) ;
 bdMutex bdRandom::rndMtx ;
 
-#ifdef WINDOWS_SYS
+#if defined(_WIN32) || defined(__MINGW32__)
 static bool auto_seed = bdRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;
 #else
   #ifdef __APPLE__
