@@ -56,6 +56,12 @@
 
 //#define DEBUG_MGR 1
 
+//#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_APPL)
+#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_ENGINE)
+// This is eventually what we want.
+//#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
+
+
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
 {
@@ -393,7 +399,7 @@ void bdNodeManager::QueryRandomLocalNet()
         bdId id;
 	bdNodeId targetNodeId;
 
-	uint32_t withFlag = BITDHT_PEER_STATUS_DHT_APPL;
+	uint32_t withFlag = LOCAL_NET_FLAG;
 	if (mNodeSpace.findRandomPeerWithFlag(id, withFlag))
 	{
 		/* calculate mid point */
@@ -435,7 +441,7 @@ int bdNodeManager::status()
 	/* update the network numbers */
 	mNetworkSize = mNodeSpace.calcNetworkSize();
 	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
-					BITDHT_PEER_STATUS_DHT_APPL);
+					LOCAL_NET_FLAG);
 
 #ifdef DEBUG_MGR
 	std::cerr << "BitDHT NetworkSize: " << mNetworkSize << std::endl;

@@ -26,6 +26,7 @@
 
 #include "bitdht/bdpeer.h"
 #include "util/bdnet.h"
+#include "bitdht/bdiface.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -310,7 +311,6 @@ int bdBucketDistance(const bdMetric *m)
 #endif
 
 
-
 bdBucket::bdBucket()
 {
 	return;
@@ -529,14 +529,52 @@ int	bdSpace::out_of_date_peer(bdId &id)
 	/* iterate through the buckets, and sort by distance */
 	for(it = buckets.begin(); it != buckets.end(); it++)
 	{
-		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); ) 
 		{
 			/* timeout on last send time! */
 			if (ts - eit->mLastSendTime > BITDHT_MAX_SEND_PERIOD )
 			{
-				id = eit->mPeerId;
-				eit->mLastSendTime = ts;
-				return 1;
+				/* We want to ping a peer iff:
+		 	 	 * 1) They are out-of-date: mLastRecvTime is too old.
+			 	 * 2) They don't have 0x0001 flag (we haven't received a PONG) and never sent.
+			 	 */
+				if ((ts - eit->mLastRecvTime > BITDHT_MAX_SEND_PERIOD ) || 
+					!(eit->mPeerFlags & BITDHT_PEER_STATUS_RECV_PONG))
+				{
+					id = eit->mPeerId;
+					eit->mLastSendTime = ts;
+					return 1;
+				}
+			}
+
+
+			/* we also want to remove very old entries (should it happen here?) 
+			 * which are not pushed out by newer entries (will happen in for closer buckets)
+			 */
+
+			bool discard = false;
+			/* discard very old entries */
+			if (ts - eit->mLastRecvTime > BITDHT_DISCARD_PERIOD)
+			{
+				discard = true;
+			}
+		
+			/* discard peers which have not responded to anything (ie have no flags set) */
+			if ((ts - eit->mFoundTime > BITDHT_MAX_RESPONSE_PERIOD ) &&
+				(eit->mPeerFlags == 0))
+			{
+				discard = true;
+			}
+			
+
+			/* INCREMENT */
+			if (discard)
+			{	
+				eit = it->entries.erase(eit);
+			}
+			else
+			{
+				eit++;
 			}
 		}
 	}
@@ -632,7 +670,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 	{
 		/* check head of list */
 		bdPeer &peer = buck.entries.front();
-		if (peer.mLastRecvTime - ts >  BITDHT_MAX_RECV_PERIOD)
+		if (ts - peer.mLastRecvTime >  BITDHT_MAX_RECV_PERIOD)
 		{
 #ifdef DEBUG_BD_SPACE
 			std::cerr << "Dropping Out-of-Date peer in bucket" << std::endl;
@@ -673,7 +711,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 
 		newPeer.mPeerId = *id;
 		newPeer.mLastRecvTime = ts;
-		newPeer.mLastSendTime = ts; //????
+		newPeer.mLastSendTime = 0; // ts; //????
 		newPeer.mFoundTime = ts;
 		newPeer.mPeerFlags = peerflags;
 

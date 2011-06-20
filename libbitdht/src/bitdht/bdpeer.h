@@ -49,8 +49,14 @@
 
 #define BITDHT_ULLONG_BITS 64
 
-#define BITDHT_MAX_SEND_PERIOD	600   // retry every 10 secs.
-#define BITDHT_MAX_RECV_PERIOD	1500   // out-of-date
+#define BITDHT_MAX_RESPONSE_PERIOD      (15)
+#define BITDHT_MAX_SEND_PERIOD	300   // 5 minutes.
+#define BITDHT_MAX_RECV_PERIOD	(BITDHT_MAX_SEND_PERIOD + BITDHT_MAX_RESPONSE_PERIOD) // didn't respond to a ping.
+
+// Properly out of date.
+#define BITDHT_DISCARD_PERIOD		(2 * BITDHT_MAX_SEND_PERIOD + BITDHT_MAX_RESPONSE_PERIOD) // didn't respond to two pings.
+
+// Must have a FLAG by this time. (Make it really quick - so we through away the rubbish).
 
 
 #include <list>
