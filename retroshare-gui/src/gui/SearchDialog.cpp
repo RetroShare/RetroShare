@@ -34,6 +34,7 @@
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
+#include <retroshare/rsexpr.h>
 
 /* Images for context menu icons */
 #define IMAGE_START  		    ":/images/download.png"
@@ -590,7 +591,6 @@ void SearchDialog::advancedSearch(Expression* expression)
 //	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id+1, results);
 }
 
-
 void SearchDialog::searchKeywords()
 {
 	searchKeywords(ui.lineEdit->text());
@@ -605,10 +605,30 @@ void SearchDialog::searchKeywords(const QString& keywords)
 
 	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
 
+	QStringList qWords = keywords.split(" ", QString::SkipEmptyParts);
+	std::list<std::string> words;
+	QStringListIterator qWordsIter(qWords);
+	while (qWordsIter.hasNext())
+		words.push_back(qWordsIter.next().toStdString());
+
+	int n = words.size() ;
+
+	if (n < 1)
+		return;
+
+	NameExpression exprs(ContainsAllStrings,words,false) ;
+	LinearizedExpression lin_exp ;
+	exprs.linearize(lin_exp) ;
+
 	TurtleRequestId req_id ;
 
 	if(ui._anonF2Fsearch_CB->isChecked())
-		req_id = rsTurtle->turtleSearch(txt) ;
+	{
+		if(n==1)
+			req_id = rsTurtle->turtleSearch(txt) ;
+		else
+			req_id = rsTurtle->turtleSearch(lin_exp) ;
+	}
 	else
 		req_id = (((uint32_t)rand()) << 16)^0x1e2fd5e4 + ((uint32_t)rand())^0x1b19acfe ; // generate a random 32 bits request id
 
@@ -617,19 +637,8 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if(ui._friendListsearch_SB->isChecked() || ui._ownFiles_CB->isChecked())
 	{
 		/* extract keywords from lineEdit */
-		QStringList qWords = keywords.split(" ", QString::SkipEmptyParts);
-		std::list<std::string> words;
-		QStringListIterator qWordsIter(qWords);
-		while (qWordsIter.hasNext())
-		{
-			words.push_back(qWordsIter.next().toStdString());
-		}
-
-		if (words.size() < 1)
-		{
-			/* ignore */
-			return;
-		}
+		// make a compound expression with an AND
+		//
 
 		std::list<DirDetails> finalResults ;
 
@@ -637,7 +646,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		{
 			std::list<DirDetails> initialResults;
 
-			rsFiles -> SearchKeywords(words, initialResults, DIR_FLAGS_REMOTE) ;
+			rsFiles->SearchBoolExp(&exprs, initialResults, DIR_FLAGS_REMOTE) ;
 
 			/* which extensions do we use? */
 			DirDetails dd;
@@ -653,7 +662,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		{
 			std::list<DirDetails> initialResults;
 
-			rsFiles -> SearchKeywords(words, initialResults, DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
+			rsFiles->SearchBoolExp(&exprs, initialResults, DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
 
 			/* which extensions do we use? */
 			DirDetails dd;
