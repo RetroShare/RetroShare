@@ -6,6 +6,13 @@
 #include "mainwindow.h"
 #include "dhtwindow.h"
 
+	/* for static PThreads under windows... we need to init the library...  
+	 * Not sure if this is needed?
+	 */
+#ifdef PTW32_STATIC_LIB
+	#include <pthread.h>
+#endif
+
 int main(int argc, char *argv[])
 {
 
@@ -67,6 +74,35 @@ int main(int argc, char *argv[])
 		}
 	}
 #endif
+
+
+	/****************** WINDOWS  SPECIFIC INITIALISATION ****************/
+#if defined(_WIN32) || defined(__MINGW32__)
+
+	/* for static PThreads under windows... we need to init the library...  */
+#ifdef PTW32_STATIC_LIB
+	pthread_win32_process_attach_np();
+#endif
+
+	// Windows Networking Init.
+	WORD wVerReq = MAKEWORD(2,2);
+	WSADATA wsaData;
+	
+	if (0 != WSAStartup(wVerReq, &wsaData))
+	{
+		std::cerr << "Failed to Startup Windows Networking";
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "Started Windows Networking";
+		std::cerr << std::endl;
+	}
+
+#endif
+
+
+
 
 
 	PeerNet *pnet = new PeerNet("", configPath, portNumber); 
