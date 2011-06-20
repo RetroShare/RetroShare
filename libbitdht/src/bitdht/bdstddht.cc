@@ -26,10 +26,12 @@
 
 #include "bitdht/bdstddht.h"
 #include "bitdht/bdpeer.h"
+#include "util/bdrandom.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include <iostream>
 #include <sstream>
@@ -42,9 +44,8 @@
 void bdStdRandomId(bdId *id)
 {
 	bdStdRandomNodeId(&(id->id));
-
-	id->addr.sin_addr.s_addr = rand();
-	id->addr.sin_port = rand();
+	id->addr.sin_addr.s_addr = bdRandom::random_u32();
+	id->addr.sin_port = (bdRandom::random_u32() % USHRT_MAX);
 
 	return;
 }
@@ -54,7 +55,7 @@ void bdStdRandomNodeId(bdNodeId *id)
 	uint32_t *a_data = (uint32_t *) id->data;
 	for(int i = 0; i < BITDHT_KEY_INTLEN; i++)
 	{
-		a_data[i] = rand();
+		a_data[i] = bdRandom::random_u32();
 	}
 	return;
 }

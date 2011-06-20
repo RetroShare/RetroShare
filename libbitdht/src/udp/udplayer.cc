@@ -24,6 +24,7 @@
  */
 
 #include "udp/udplayer.h"
+#include "util/bdrandom.h"
 
 #include <iostream>
 #include <sstream>
@@ -527,8 +528,7 @@ int LossyUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &f
 {
 	if (0 < UdpLayer::receiveUdpPacket(data, size, from))
 	{
-		double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
-	
+		float prob = bdRandom::random_f32();
 		if (prob < lossFraction)
 		{
 			/* discard */

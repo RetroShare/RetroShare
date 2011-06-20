@@ -26,6 +26,7 @@
 
 #include "bitdht/bdpeer.h"
 #include "util/bdnet.h"
+#include "util/bdrandom.h"
 #include "bitdht/bdiface.h"
 
 #include <stdlib.h>
@@ -179,136 +180,6 @@ int operator==(const bdId &a, const bdId &b)
 	return 0;
 }
 
-
-#if 0
-void bdRandomId(bdId *id)
-{
-	bdRandomNodeId(&(id->id));
-
-	id->addr.sin_addr.s_addr = rand();
-	id->addr.sin_port = rand();
-
-	return;
-}
-
-void bdRandomNodeId(bdNodeId *id)
-{
-	uint32_t *a_data = (uint32_t *) id->data;
-	for(int i = 0; i < BITDHT_KEY_INTLEN; i++)
-	{
-		a_data[i] = rand();
-	}
-	return;
-}
-
-
-/* fills in dbNodeId r, with XOR of a and b */
-int bdDistance(const bdNodeId *a, const bdNodeId *b, bdMetric *r)
-{
-	uint8_t *a_data = (uint8_t *) a->data;
-	uint8_t *b_data = (uint8_t *) b->data;
-	uint8_t *ans = (uint8_t *) r->data;
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
-	{
-		*(ans++) = *(a_data++) ^ *(b_data++);
-	}
-	return 1;
-}
-
-void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *midId)
-{
-	bdMetric dist;
-	
-	/* get distance between a & c */
-	bdDistance(target, other, &dist);
-
-	/* generate Random Id */
-	bdRandomNodeId(midId);
-
-	/* zero bits of Random Id until under 1/2 of distance 
-	 * done in bytes for ease... matches one extra byte than distance = 0 
-	 * -> hence wierd order of operations
-	 */
-	bool done = false;
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)
-	{
-		midId->data[i] = target->data[i];
-
-		if (dist.data[i] != 0)
-			break;
-	}
-}
-
-std::string bdConvertToPrintable(std::string input)
-{
-	std::ostringstream out;
-        for(uint32_t i = 0; i < input.length(); i++)
-        {
-                /* sensible chars */
-                if ((input[i] > 31) && (input[i] < 127))
-                {
-                        out << input[i];
-                }
-                else
-                {
-			out << "[0x" << std::hex << (uint32_t) input[i] << "]";
-			out << std::dec;
-                }
-        }
-	return out.str();
-}
-
-void bdPrintNodeId(std::ostream &out, const bdNodeId *a)
-{
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
-	{
-		out << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) (a->data)[i];
-	}
-	out << std::dec;
-
-	return;
-}
-
-
-void bdPrintId(std::ostream &out, const bdId *a)
-{
-	bdPrintNodeId(out, &(a->id));
-	out << " ip:" << inet_ntoa(a->addr.sin_addr);
-	out << ":" << ntohs(a->addr.sin_port);
-	return;
-}
-
-/* returns 0-160 depending on bucket */
-int bdBucketDistance(const bdNodeId *a, const bdNodeId *b)
-{
-	bdMetric m;
-	bdDistance(a, b, &m);
-	return bdBucketDistance(&m);
-}
-
-/* returns 0-160 depending on bucket */
-int bdBucketDistance(const bdMetric *m)
-{
-	for(int i = 0; i < BITDHT_KEY_BITLEN; i++)
-	{
-		int bit = BITDHT_KEY_BITLEN - i - 1;
-		int byte = i / 8;
-		int bbit = 7 - (i % 8);
-		unsigned char comp = (1 << bbit);
-
-#ifdef BITDHT_DEBUG
-		fprintf(stderr, "bdBucketDistance: bit:%d  byte:%d bbit:%d comp:%x, data:%x\n", bit, byte, bbit, comp, m->data[byte]);
-#endif
-
-		if (comp & m->data[byte])
-		{
-			return bit;
-		}
-	}
-	return 0;
-}
-
-#endif
 
 
 bdBucket::bdBucket()
@@ -1114,7 +985,7 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 	if(totalcount == 0)
 		return false ;
 
-	uint32_t rnd = rand() % totalcount;
+	uint32_t rnd = bdRandom::random_u32() % totalcount;
 	uint32_t i = 0;
 	uint32_t buck = 0;
 

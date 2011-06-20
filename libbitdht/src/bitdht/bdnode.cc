@@ -29,6 +29,7 @@
 #include "bitdht/bdmsgs.h"
 
 #include "util/bdnet.h"
+#include "util/bdrandom.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -1968,8 +1969,12 @@ void bdNode::genNewToken(bdToken *token)
 	fprintf(stderr, ")\n");
 #endif
 
+	// XXX is this a good way to do it?
+	// Variable length, from 4 chars up to lots... 10?
+	// leave for the moment, but fix.
 	std::ostringstream out;
-	out << std::setw(4) << std::setfill('0') << rand() << std::setw(4) << std::setfill('0') << rand();
+	out << std::setw(4) << std::setfill('0') << bdRandom::random_u32();
+
 	std::string num = out.str();
 	int len = num.size();
 	if (len > BITDHT_TOKEN_MAX_LEN)

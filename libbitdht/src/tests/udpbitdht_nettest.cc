@@ -72,8 +72,6 @@ int main(int argc, char **argv)
 	bool doThreadJoin = false;
 	int noQueries = 0;
 
-	srand(time(NULL));
-
 	while((c = getopt(argc, argv,"rjp:b:u:q:")) != -1)
 	{
 		switch (c)
