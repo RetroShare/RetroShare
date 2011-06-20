@@ -351,39 +351,50 @@ void ForumMsgItem::sendMsg()
 		return;
 	}
 
-	QString name = prevSubLabel->text();
-    QString desc = textEdit->toHtml();
-    
+	QString desc = textEdit->toHtml();
+
 	if(textEdit->toPlainText().isEmpty())
-    {	/* error message */
+	{	/* error message */
 		QMessageBox::warning(this, "RetroShare",tr("Please give a Text Message"),
-                             QMessageBox::Ok, QMessageBox::Ok);
+							 QMessageBox::Ok, QMessageBox::Ok);
 
-        return; //Don't add  a empty Message!!
-    }
+		return; //Don't add  a empty Message!!
+	}
 
-    ForumMsgInfo msgInfo;
+	ForumMsgInfo msg;
 
-    msgInfo.forumId = mForumId;
-    msgInfo.threadId = "";
-    msgInfo.parentId = mPostId;
-    msgInfo.msgId = "";
+	/* get message */
+	if (rsForums->getForumMessage(mForumId, mPostId, msg)) {
+		ForumMsgInfo msgInfo;
 
-    msgInfo.title = name.toStdWString();
-    msgInfo.msg = desc.toStdWString();
-    msgInfo.msgflags = 0;
+		msgInfo.forumId = mForumId;
+		msgInfo.threadId = "";
+		msgInfo.parentId = mPostId;
+		msgInfo.msgId = "";
 
-    if (signedcheckBox->isChecked())
-    {
-        msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
-    }
+		/* modify title */
+		QString text = QString::fromStdWString(msg.title);
+		if (text.startsWith("Re:", Qt::CaseInsensitive)) {
+			msgInfo.title = msg.title;
+		} else {
+			msgInfo.title = L"Re: " + msg.title;
+		}
 
-    if ((msgInfo.msg == L"") && (msgInfo.title == L""))
-        return; /* do nothing */
+		msgInfo.msg = desc.toStdWString();
+		msgInfo.msgflags = 0;
 
-    if (rsForums->ForumMessageSend(msgInfo) == true) {
-            textEdit->clear();
-    }
+		if (signedcheckBox->isChecked())
+		{
+			msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
+		}
+
+		if ((msgInfo.msg == L"") && (msgInfo.title == L""))
+			return; /* do nothing */
+
+		if (rsForums->ForumMessageSend(msgInfo) == true) {
+			textEdit->clear();
+		}
+	}
 }
 
 void ForumMsgItem::updateAvatar(const QString &peer_id)

@@ -759,7 +759,6 @@ void ForumsDialog::fillThreadFinished()
             insertPost ();
             CalculateIconsAndFonts();
 
-            ui.newmessageButton->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags));
             ui.newthreadButton->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags));
         }
 
