@@ -616,7 +616,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if (n < 1)
 		return;
 
-	NameExpression exprs(ContainsAllStrings,words,false) ;
+	NameExpression exprs(ContainsAllStrings,words,true) ;
 	LinearizedExpression lin_exp ;
 	exprs.linearize(lin_exp) ;
 
