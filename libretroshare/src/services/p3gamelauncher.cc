@@ -611,7 +611,7 @@ bool    p3GameLauncher::confirmPeer(std::string gameId, std::string peerId,
 
 	int32_t i = 0;
 	for(it = git->second.peerIds.begin(); (i < pos) &&
-		(it != git->second.peerIds.end()); it++, i++);
+		(it != git->second.peerIds.end()); it++, i++) ;
 
 	if ((pos < 0) || (it == git->second.peerIds.end()))
 	{

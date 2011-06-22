@@ -845,7 +845,7 @@ bool    UdpStunner::getStunPeer(int idx, std::string &id,
 
 	std::list<TouStunPeer>::iterator it;
 	int i;
-	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++);
+	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++) ;
 
 	if (it != mStunList.end())
 	{

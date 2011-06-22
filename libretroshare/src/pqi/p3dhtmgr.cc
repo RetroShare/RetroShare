@@ -1637,7 +1637,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 	time_t now = time(NULL);
 
 	/* if notify - we must match on the second hash */
-	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash2 != idhash); it++);
+	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash2 != idhash); it++) ;
 
 	/* update data */
 	std::string peerid;
@@ -1697,7 +1697,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 	dhtPeerEntry ent;
 
 	/* if search - we must match on the second hash */
-	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash1 != idhash); it++);
+	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash1 != idhash); it++) ;
 
 	/* update data */
 	/* ignore OFF peers */

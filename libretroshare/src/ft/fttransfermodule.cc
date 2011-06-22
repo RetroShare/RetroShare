@@ -688,7 +688,7 @@ bool ftTransferModule::checkCRC()
 				int n = rand()%(mFileSources.size()) ;
 				int p=0 ;
 				std::map<std::string,peerInfo>::const_iterator mit ;
-				for(mit = mFileSources.begin();mit != mFileSources.end() && p<n;++mit,++p);
+				for(mit = mFileSources.begin();mit != mFileSources.end() && p<n;++mit,++p) ;
 
 #ifdef FT_DEBUG
 				std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;

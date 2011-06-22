@@ -829,7 +829,7 @@ bool    p3Ranking::getRankings(uint32_t first, uint32_t count, std::list<std::st
 
 	uint32_t i = 0;
 	std::multimap<float, std::string>::reverse_iterator rit;
-	for(rit = mRankings.rbegin(); (i < first) && (rit != mRankings.rend()); rit++, i++);
+	for(rit = mRankings.rbegin(); (i < first) && (rit != mRankings.rend()); rit++, i++) ;
 
 	i = 0;
 	for(; (i < count) && (rit != mRankings.rend()); rit++, i++)

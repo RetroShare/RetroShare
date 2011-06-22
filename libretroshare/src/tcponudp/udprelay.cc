@@ -283,7 +283,7 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass)
 	}
 
 //#ifdef DEBUG_UDP_RELAY
-	std::cerr << "UdpRelayReceiver::addUdpRelay() ERROR Too many Relays!" << std::endl;
+	std::cerr << "UdpRelayReceiver::addUdpRelay() WARNING Too many Relays!" << std::endl;
 //#endif
 	return 0;
 }
@@ -315,7 +315,7 @@ int UdpRelayReceiver::removeUdpRelay_relayLocked(UdpRelayAddrSet *addrSet)
 	if (rit == mRelays.end())
 	{
 		std::cerr << "UdpRelayReceiver::removeUdpRelay()";
-		std::cerr << "Error Finding Alt Relay: " << alt;
+		std::cerr << "ERROR Finding Alt Relay: " << alt;
 		std::cerr << std::endl;
 		/* ERROR */
 	}
@@ -332,7 +332,7 @@ int UdpRelayReceiver::installRelayClass_relayLocked(int classIdx)
 	/* check for total number of Relays */
 	if (mClassCount[UDP_RELAY_CLASS_ALL] >= mClassLimit[UDP_RELAY_CLASS_ALL])
 	{
-		std::cerr << "UdpRelayReceiver::installRelayClass() ERROR Too many Relays already";
+		std::cerr << "UdpRelayReceiver::installRelayClass() WARNING Too many Relays already";
 		std::cerr << std::endl;
 		return 0;
 	}
@@ -348,7 +348,7 @@ int UdpRelayReceiver::installRelayClass_relayLocked(int classIdx)
 	/* now check the specifics of the class */
 	if (mClassCount[classIdx] >= mClassLimit[classIdx])
 	{
-		std::cerr << "UdpRelayReceiver::installRelayClass() ERROR Relay Class Limit Exceeded";
+		std::cerr << "UdpRelayReceiver::installRelayClass() WARNING Relay Class Limit Exceeded";
 		std::cerr << std::endl;
 
 		return 0;
@@ -797,7 +797,7 @@ UdpRelayProxy::UdpRelayProxy()
 	mBandwidth = 0;
 	mDataSize = 0;
 	mLastBandwidthTS = 0;
-	mLastTS = 0;
+	mLastTS = time(NULL); // Must be set here, otherwise Proxy Timesout before anything can happen!
 	mRelayClass = 0;
 }
 
@@ -809,7 +809,7 @@ UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass)
 	mBandwidth = 0;
 	mDataSize = 0;
 	mLastBandwidthTS = 0;
-	mLastTS = 0;
+	mLastTS = time(NULL);
 }
 
 UdpRelayEnd::UdpRelayEnd() 
