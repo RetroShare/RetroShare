@@ -16,7 +16,7 @@ PeerNet::PeerNet(std::string id, std::string configpath, uint16_t port)
 {
 	mDoUdpStackRestrictions = false;
         mLocalNetTesting = false;
-
+	mMinuteTS = 0;
 
         std::cerr << "PeerNet::PeerNet()" << std::endl;
         std::cerr << "Using Id: " << id;
@@ -263,10 +263,33 @@ int PeerNet::add_peer(std::string id)
 		it->second.mDhtState = PN_DHT_STATE_SEARCHING;
 		it->second.mDhtUpdateTS = time(NULL);
 
-		it->second.mPeerStatusMsg = "Disconnected";
-		bdsockaddr_clear(&(it->second.mPeerAddr));
-		it->second.mPeerState = PN_PEER_STATE_DISCONNECTED;
-		it->second.mPeerUpdateTS = time(NULL);
+		// Initialise Everything.
+
+		it->second.mPeerReqStatusMsg = "Just Added";
+		it->second.mPeerReqState = PN_PEER_REQ_STOPPED;
+		  it->second.mPeerReqMode = 0;
+		  //it->second.mPeerReqProxyId;
+		it->second.mPeerReqTS = time(NULL);
+
+		it->second.mPeerCbMsg = "No CB Yet";
+		it->second.mPeerCbMode = 0;
+		it->second.mPeerCbPoint = 0;
+		  //it->second.mPeerCbProxyId = 0;
+		  //it->second.mPeerCbDestId = 0;
+		  it->second.mPeerCbTS = 0;
+
+		it->second.mPeerConnectState = PN_PEER_CONN_DISCONNECTED;
+		it->second.mPeerConnectMsg = "Disconnected";
+		  it->second.mPeerConnectFd = 0;
+		  it->second.mPeerConnectMode = 0;
+		  //it->second.mPeerConnectProxyId;
+		  it->second.mPeerConnectPoint = 0;
+		  
+		  it->second.mPeerConnectUdpTS = 0;
+		  it->second.mPeerConnectTS = 0;
+		  it->second.mPeerConnectClosedTS = 0;
+
+		bdsockaddr_clear(&(it->second.mPeerConnectAddr));
 
 		addedPeer = true;
 	  }
@@ -508,11 +531,13 @@ int PeerNet::get_failedpeer_status(std::string id, PeerStatus &status)
 int PeerNet::get_relayends(std::list<UdpRelayEnd> &relayEnds)
 {
 	mRelayReceiver->getRelayEnds(relayEnds);
+	return 1;
 }
 
 int PeerNet::get_relayproxies(std::list<UdpRelayProxy> &relayProxies)
 {
 	mRelayReceiver->getRelayProxies(relayProxies);
+	return 1;
 }
 
 
@@ -662,8 +687,7 @@ int PeerNet::dhtNodeCallback(const bdId *id, uint32_t peerflags)
 #endif
 	}
 
-	if ((peerflags & BITDHT_PEER_STATUS_DHT_APPL)
-		&& (peerflags & BITDHT_PEER_STATUS_DHT_APPL_VERSION))
+	if (peerflags & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 	{
 #ifdef PEERNET_DEBUG
 		std::cerr << "PeerNet::dhtNodeCallback() Passing Local Peer to DhtStunner: ";
@@ -721,13 +745,13 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 				break;
 			case BITDHT_MGR_QUERY_PEER_OFFLINE:
 			{
-				it->second.mDhtStatusMsg = "Peer Offline";	
+				it->second.mDhtStatusMsg = "Offline";	
 				it->second.mDhtState = PN_DHT_STATE_OFFLINE;
 			}
 				break;
 			case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
 			{
-				it->second.mDhtStatusMsg = "Peer Unreachable";	
+				it->second.mDhtStatusMsg = "Unreachable";	
 				it->second.mDhtState = PN_DHT_STATE_UNREACHABLE;
 				it->second.mDhtAddr = id->addr;
 
@@ -736,7 +760,7 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 				break;
 			case BITDHT_MGR_QUERY_PEER_ONLINE:
 			{
-				it->second.mDhtStatusMsg = "Peer Online";	
+				it->second.mDhtStatusMsg = "Online";	
 				it->second.mDhtState = PN_DHT_STATE_ONLINE;
 				it->second.mDhtAddr = id->addr;
 
@@ -764,13 +788,10 @@ int PeerNet::dhtPeerCallback(const bdId *id, uint32_t status)
 int PeerNet::OnlinePeerCallback_locked(const bdId *id, uint32_t status, PeerStatus *peerStatus)
 {
 
-	if ((peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
-		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
-		(peerStatus->mPeerState == PN_PEER_STATE_UDP_STARTED) ||
-		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTED))
+	if (peerStatus->mPeerConnectState != PN_PEER_CONN_DISCONNECTED)
 	{
 
-		std::cerr << "dhtPeerCallback. Peer Online, but connection already underway: ";
+		std::cerr << "dhtPeerCallback. WARNING Ignoring Callback. Peer Online, but connection already underway: ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
 	}
@@ -797,12 +818,9 @@ int PeerNet::OnlinePeerCallback_locked(const bdId *id, uint32_t status, PeerStat
 int PeerNet::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, PeerStatus *peerStatus)
 {
 
-	if ((peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_INITIATED) ||
-		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTION_AUTHORISED) ||
-		(peerStatus->mPeerState == PN_PEER_STATE_UDP_STARTED) ||
-		(peerStatus->mPeerState == PN_PEER_STATE_CONNECTED))
+	if (peerStatus->mPeerConnectState != PN_PEER_CONN_DISCONNECTED)
 	{
-		std::cerr << "dhtPeerCallback. Peer Unreachable, but connection already underway: ";
+		std::cerr << "dhtPeerCallback. WARNING Ignoring Callback, Peer Unreachable, but connection already underway: ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
 
@@ -889,6 +907,32 @@ int PeerNet::dhtValueCallback(const bdNodeId *id, std::string key, uint32_t stat
 	return 1;
 }
 
+PeerStatus *PeerNet::getPeerStatus_locked(const bdId *peerId)
+{
+	std::cerr << "PeerNet::getPeerStatus_locked() for: ";
+	bdStdPrintId(std::cerr,peerId);
+	std::cerr << std::endl;
+
+	std::ostringstream str;
+	bdStdPrintNodeId(str, &(peerId->id));
+	std::string id = str.str();
+
+	/* check if they are in our friend list */
+	std::map<std::string, PeerStatus>::iterator it = mPeers.find(id);
+
+	if (it == mPeers.end())
+	{
+		std::cerr << "PeerNet::getPeerStatus_locked() WARNING Failed to find PeerStatus for: ";
+		bdStdPrintId(std::cerr,peerId);
+		std::cerr << std::endl;
+
+		return NULL;
+	}
+	return &(it->second);
+}
+
+
+
 int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
 							uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode)
 {
@@ -915,6 +959,7 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 	 */
 
 	bdId peerId;
+	time_t now = time(NULL);
 
 	switch(point)
 	{
@@ -1169,7 +1214,79 @@ int PeerNet::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bd
 			std::cerr << " ErrorType: " << errtype;
 			std::cerr << std::endl;
 			
+			bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+
+			PeerStatus *ps = getPeerStatus_locked(&peerId);
+			if (ps)
+			{
+				ps->mPeerCbMsg = "ERROR : ";
+				ps->mPeerCbMsg += decodeConnectionError(errcode);
+				ps->mPeerCbMode = mode;
+				ps->mPeerCbPoint = point;
+				ps->mPeerCbProxyId = *proxyId;
+				ps->mPeerCbDestId = peerId;
+				ps->mPeerCbTS = now;
+			}
+			else
+			{
+				std::cerr << "dhtConnectionCallback() ";			
+				std::cerr << "ERROR Unknown Peer";
+				std::cerr << std::endl;
+			}
+		}
+		break;
+
+		case BITDHT_CONNECT_CB_REQUEST: 
+		{
+			std::cerr << "dhtConnectionCallback() Local Connection Request Feedback:";
+			bdStdPrintId(std::cerr, &(peerId));
+			std::cerr << std::endl;
 			
+			std::cerr << "dhtConnectionCallback() Proxy:";			
+			bdStdPrintId(std::cerr, proxyId);
+			std::cerr << std::endl;
+
+			if (point != BD_PROXY_CONNECTION_START_POINT)
+			{
+				std::cerr << "dhtConnectionCallback() ERROR Cannot find PeerStatus";
+				std::cerr << std::endl;
+				return 0;
+			}
+
+			bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+
+			PeerStatus *ps = getPeerStatus_locked(&peerId);
+			if (ps)
+			{
+				if (errcode)
+				{
+					ps->mPeerReqStatusMsg = "STOPPED: ";
+					ps->mPeerReqStatusMsg += decodeConnectionError(errcode);
+					ps->mPeerReqState = PN_PEER_REQ_STOPPED;
+					ps->mPeerReqTS = now;
+				}
+				else // a new connection attempt.
+				{
+					ps->mPeerReqStatusMsg = "Connect Attempt";
+					ps->mPeerReqState = PN_PEER_REQ_RUNNING;
+					ps->mPeerReqMode = mode;
+					ps->mPeerReqProxyId = *proxyId;
+					ps->mPeerReqTS = now;
+
+					// This also is flagged into the instant Cb info.
+					ps->mPeerCbMsg = "Local Connect Attempt";
+					ps->mPeerCbMode = mode;
+					ps->mPeerCbPoint = point;
+					ps->mPeerCbProxyId = *proxyId;
+					ps->mPeerCbDestId = peerId;
+					ps->mPeerCbTS = now;
+				}
+			}
+			else
+			{
+				std::cerr << "dhtConnectionCallback() ERROR Cannot find PeerStatus";
+				std::cerr << std::endl;
+			}
 		}
 		break;
 
@@ -1223,6 +1340,7 @@ int PeerNet::minuteTick()
 		netStateTick();
 		mRelayReceiver->checkRelays();
 	}
+	return 1;
 }
 
 #define DHT_PEERS_ACTIVE	2
@@ -1244,6 +1362,8 @@ int PeerNet::netStateTick()
 	{
 		mNetStateBox.setAddressStunProxy(&extAddr, extStable != 0);
 	}
+	
+	return 1;
 }
 
 
@@ -1253,6 +1373,7 @@ int PeerNet::doActions()
 	std::cerr << "PeerNet::doActions()" << std::endl;
 #endif
 
+	time_t now = time(NULL);
 
 	while(mActions.size() > 0)
 	{
@@ -1280,12 +1401,16 @@ int PeerNet::doActions()
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
 
+				bool connectionRequested = false;
+
 				if ((action.mMode == BITDHT_CONNECT_MODE_DIRECT) ||
 						(action.mMode == BITDHT_CONNECT_MODE_RELAY))
 				{
 					struct sockaddr_in laddr; // We zero this address. The DHT layer should be able to handle this!
 					sockaddr_clear(&laddr);
-					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode);
+					uint32_t start = 1;
+					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start);
+					connectionRequested = true;
 				}
 				else if (action.mMode == BITDHT_CONNECT_MODE_PROXY)
 				{
@@ -1302,7 +1427,9 @@ int PeerNet::doActions()
 							std::cerr << " is OkGo as we have Stable Own External Proxy Address";
 							std::cerr << std::endl;
 
-							mUdpBitDht->ConnectionRequest(&extaddr, &(action.mDestId.id), action.mMode);
+							int start = 1;
+							mUdpBitDht->ConnectionRequest(&extaddr, &(action.mDestId.id), action.mMode, start);
+							connectionRequested = true;
 						}
 						else
 						{
@@ -1320,6 +1447,26 @@ int PeerNet::doActions()
 						std::cerr << std::endl;
 					}
 				}
+
+				if (connectionRequested)
+				{
+					bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+
+					PeerStatus *ps = getPeerStatus_locked(&(action.mDestId));
+					if (ps)
+					{
+						ps->mPeerReqStatusMsg = "Connect Request";
+						ps->mPeerReqState = PN_PEER_REQ_RUNNING;
+						ps->mPeerReqMode = action.mMode;
+						ps->mPeerReqTS = now;
+					}
+					else
+					{
+						std::cerr << "PeerAction: Connect ERROR Cannot find PeerStatus";
+						std::cerr << std::endl;
+					}
+				}
+
 			}
 			break;
 
@@ -1335,6 +1482,44 @@ int PeerNet::doActions()
 
 				mUdpBitDht->ConnectionAuth(&(action.mSrcId), &(action.mProxyId), &(action.mDestId), 
 					action.mMode, action.mPoint, action.mAnswer);
+
+				// Only feedback to the gui if we are at END.
+				if (action.mPoint == BD_PROXY_CONNECTION_END_POINT)
+				{
+					bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+
+					PeerStatus *ps = getPeerStatus_locked(&(action.mSrcId));
+					if (ps)
+					{	
+						if (action.mAnswer)
+						{
+							ps->mPeerCbMsg = "WE DENIED AUTH: ERROR : ";
+							ps->mPeerCbMsg += decodeConnectionError(action.mAnswer);
+						}
+						else
+						{
+							ps->mPeerCbMsg = "We AUTHED";
+						}
+						ps->mPeerCbMode = action.mMode;
+						ps->mPeerCbPoint = action.mPoint;
+						ps->mPeerCbProxyId = action.mProxyId;
+						ps->mPeerCbDestId = action.mSrcId;
+						ps->mPeerCbTS = now;
+					}
+					// Not an error if AUTH_DENIED - cos we don't know them! (so won't be in peerList).
+					else if (action.mAnswer | BITDHT_CONNECT_ERROR_AUTH_DENIED)
+					{
+						std::cerr << "PeerAction Authorise Connection ";			
+						std::cerr << "Denied Unknown Peer";
+						std::cerr << std::endl;
+					}
+					else 
+					{
+						std::cerr << "PeerAction Authorise Connection ";			
+						std::cerr << "ERROR Unknown Peer & !DENIED ???";
+						std::cerr << std::endl;
+					}
+				}
 			}
 			break;
 
@@ -1458,29 +1643,38 @@ int PeerNet::checkConnectionAllowed(const bdId *peerId, int mode)
 
 		/* flag as failed */
 		it->second.mId = id;
-		it->second.mPeerAddr = peerId->addr;
 
 		it->second.mDhtStatusMsg = "Unknown";
 		it->second.mDhtState = PN_DHT_STATE_UNKNOWN;
 		it->second.mDhtUpdateTS = now;
 
-		it->second.mPeerStatusMsg = "Denied Non-Friend";
-		it->second.mPeerState = PN_PEER_STATE_DENIED_NOT_FRIEND;
-		it->second.mPeerUpdateTS = now;
+		it->second.mPeerReqStatusMsg = "Denied Non-Friend";
+		it->second.mPeerReqState = PN_PEER_REQ_STOPPED;
+		it->second.mPeerReqTS = now;
+		it->second.mPeerReqMode = 0;
+		//it->second.mPeerProxyId;
+		it->second.mPeerReqTS = now;
 
+		it->second.mPeerCbMsg = "Denied Non-Friend";
+
+		it->second.mPeerConnectMsg = "Denied Non-Friend";
+		it->second.mPeerConnectState = PN_PEER_CONN_DISCONNECTED;
+
+		
 		return 0;
 		//return NOT_FRIEND;
 	}
 
 	/* are a friend */
 
-	if (it->second.mPeerState == PN_PEER_STATE_CONNECTED)
+	if (it->second.mPeerConnectState == PN_PEER_CONN_CONNECTED)
 	{
-		std::cerr << "PeerNet::checkConnectionAllowed() Peer Already Connected, DENIED";
+		std::cerr << "PeerNet::checkConnectionAllowed() ERROR Peer Already Connected, DENIED";
 		std::cerr << std::endl;
 
-		it->second.mPeerStatusMsg = "2nd Connection Attempt!";	
-		it->second.mPeerUpdateTS = now;
+		// STATUS UPDATE DONE IN ACTION.
+		//it->second.mPeerStatusMsg = "2nd Connection Attempt!";	
+		//it->second.mPeerUpdateTS = now;
 		return 0;
 		//return ALREADY_CONNECTED;
 	}
@@ -1500,14 +1694,13 @@ int PeerNet::checkConnectionAllowed(const bdId *peerId, int mode)
 	}
 #endif
 
-	it->second.mPeerAddr = peerId->addr;
-	it->second.mPeerStatusMsg = "Connection Authorised";	
-	it->second.mPeerState = PN_PEER_STATE_CONNECTION_AUTHORISED;
-	it->second.mPeerUpdateTS = now;
-
 	return 1;
 	//return CONNECTION_OKAY;		
 }
+
+
+
+
 
 void PeerNet::initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
 {
@@ -1550,6 +1743,15 @@ void PeerNet::initiateConnection(const bdId *srcId, const bdId *proxyId, const b
 	std::map<std::string, PeerStatus>::iterator it = mPeers.find(peerId);
 	if (it == mPeers.end())
 	{
+		std::cerr << "PeerNet::initiateConnection() ERROR Peer not found";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (it->second.mPeerConnectState != PN_PEER_CONN_DISCONNECTED)
+	{
+		std::cerr << "PeerNet::initiateConnection() ERROR Peer is not Disconnected";
+		std::cerr << std::endl;
 		return;
 	}
 
@@ -1581,8 +1783,10 @@ void PeerNet::initiateConnection(const bdId *srcId, const bdId *proxyId, const b
 		return;
 	}
 
-	it->second.mPeerFd = fd;
-
+	it->second.mPeerConnectFd = fd;
+	it->second.mPeerConnectProxyId = *proxyId;
+	it->second.mPeerConnectPeerId = peerConnectId;
+	
 #define PEERNET_DIRECT_CONN_PERIOD	5
 #define PEERNET_PROXY_CONN_PERIOD	30
 
@@ -1616,9 +1820,9 @@ void PeerNet::initiateConnection(const bdId *srcId, const bdId *proxyId, const b
 	}
 
 	/* store results in Status */
-	it->second.mPeerStatusMsg = "UDP started";
-	it->second.mPeerState = PN_PEER_STATE_UDP_STARTED;
-	it->second.mPeerConnTS = time(NULL);
+	it->second.mPeerConnectMsg = "UDP started";
+	it->second.mPeerConnectState = PN_PEER_CONN_UDP_STARTED;
+	it->second.mPeerConnectUdpTS = time(NULL);
 	it->second.mPeerConnectMode = mode;
 	it->second.mPeerConnectPoint = loc;
 
@@ -1672,10 +1876,7 @@ int PeerNet::installRelayConnection(const bdId *srcId, const bdId *destId)
 		return 0;
 		//return CONNECT_MODE_OVERLOADED;
 	}
-
-	/* these todo */
-	std::cerr << "PeerNet::installRelayConnection() TODO";
-	std::cerr << std::endl;
+	return 0;
 }
 
 
@@ -1709,37 +1910,81 @@ void PeerNet::monitorConnections()
 	time_t now = time(NULL);
 	for(it = mPeers.begin(); it != mPeers.end(); it++)
 	{
-		if (it->second.mPeerState == PN_PEER_STATE_UDP_STARTED)
+		if (it->second.mPeerConnectState == PN_PEER_CONN_UDP_STARTED)
 		{
 			std::cerr << "PeerNet::monitorConnections() Connection in progress to: " << it->second.mId;
 			std::cerr << std::endl;
 
-			int fd = it->second.mPeerFd;
+			int fd = it->second.mPeerConnectFd;
 			if (tou_connected(fd))
 			{
 				std::cerr << "PeerNet::monitorConnections() InProgress Connection Now Active: " << it->second.mId;
 				std::cerr << std::endl;
 
 				/* switch state! */
-				it->second.mPeerState = PN_PEER_STATE_CONNECTED;
-				it->second.mPeerStatusMsg = "Connected!";
+				it->second.mPeerConnectState = PN_PEER_CONN_CONNECTED;
+				it->second.mPeerConnectTS = time(NULL);
+
+				std::ostringstream msg;
+				msg << "Connected in " << it->second.mPeerConnectTS - it->second.mPeerConnectUdpTS;
+				msg << " secs";
+				it->second.mPeerConnectMsg = msg.str();
+
+				// Remove the Connection Request.
+				if (it->second.mPeerReqState == PN_PEER_REQ_RUNNING)
+				{
+					std::cerr << "PeerNet::monitorConnections() Request Active, Stopping Request";
+					std::cerr << std::endl;
+				
+				
+					struct sockaddr_in tmpaddr;
+					bdsockaddr_clear(&tmpaddr);
+					int start = 0;
+					mUdpBitDht->ConnectionRequest(&tmpaddr, &(it->second.mPeerConnectPeerId.id), it->second.mPeerConnectMode, start);
+				}
+				// only an error if we initiated the connection.
+				else if (it->second.mPeerConnectPoint == BD_PROXY_CONNECTION_START_POINT)
+				{
+					std::cerr << "PeerNet::monitorConnections() ERROR Request not active, can't stop";
+					std::cerr << std::endl;										
+				}
+
 			}
-			else if (now - it->second.mPeerConnTS > PEERNET_CONNECT_TIMEOUT)
+			else if (now - it->second.mPeerConnectUdpTS > PEERNET_CONNECT_TIMEOUT)
 			{
 				std::cerr << "PeerNet::monitorConnections() InProgress Connection Failed: " << it->second.mId;
 				std::cerr << std::endl;
 
 				/* shut id down */
-				it->second.mPeerState = PN_PEER_STATE_UDP_FAILED;
-				it->second.mPeerStatusMsg = "UDP Failed";
+				it->second.mPeerConnectState = PN_PEER_CONN_DISCONNECTED;
+				it->second.mPeerConnectMsg = "UDP Failed";
 				tou_close(fd);
+				
+				if (it->second.mPeerReqState == PN_PEER_REQ_RUNNING)
+				{
+					std::cerr << "PeerNet::monitorConnections() Request Active (Paused)... restarting";
+					std::cerr << std::endl;					
+					
+					// tell it to keep going.
+					struct sockaddr_in tmpaddr;
+					bdsockaddr_clear(&tmpaddr);
+					int start = 1;
+					mUdpBitDht->ConnectionRequest(&tmpaddr, &(it->second.mPeerConnectPeerId.id), it->second.mPeerConnectMode, start);
+				}
+				// only an error if we initiated the connection.
+				else if (it->second.mPeerConnectPoint == BD_PROXY_CONNECTION_START_POINT)
+				{
+					std::cerr << "PeerNet::monitorConnections() ERROR Request not active, can't stop";
+					std::cerr << std::endl;										
+				}
+
 			}
 		}
 
-		if (it->second.mPeerState == PN_PEER_STATE_CONNECTED)
+		if (it->second.mPeerConnectState == PN_PEER_CONN_CONNECTED)
 		{
 			/* fd should be valid, check it */
-			int fd = it->second.mPeerFd;
+			int fd = it->second.mPeerConnectFd;
 			if (tou_connected(fd))
 			{
 				/* check for traffic */
@@ -1749,33 +1994,16 @@ void PeerNet::monitorConnections()
 				if (read > 0)
 				{
 					std::string msg(buf);
-					std::cerr << "TS: " << time(NULL) << " From: " << it->second.mId;
-					std::cerr << " RawMsg: " << msg;
-					std::cerr << std::endl;
-
-#if 1
 					for(int i = 0; i < msg.size(); )
 					{
 						if (msg[i] == '^')
-						{
 							msg.erase(i,1);
-						}
 						else
-						{
 							i++;
-						}
 					}
-#endif
+
 					if (msg.size() > 0)
 					{
-						//std::cerr << "PeerNet::monitorConnections() Read from Connection: " << it->second.mId;
-						//std::cerr << std::endl;
-						//std::cerr << "PeerNet::monitorConnections() CleanedMsg: " << msg;
-						//std::cerr << std::endl;
-						std::cerr << "TS: " << time(NULL) << " From: " << it->second.mId;
-						std::cerr << " RawMsg: " << msg;
-						std::cerr << std::endl;
-
 						it->second.mPeerIncoming += msg;
 					}
 				}
@@ -1785,8 +2013,12 @@ void PeerNet::monitorConnections()
 				std::cerr << "PeerNet::monitorConnections() Active Connection Closed: " << it->second.mId;
 				std::cerr << std::endl;
 
-				it->second.mPeerState = PN_PEER_STATE_UDP_CLOSED;
-				it->second.mPeerStatusMsg = "Connection Closed";
+				it->second.mPeerConnectState = PN_PEER_CONN_DISCONNECTED;
+				it->second.mPeerConnectClosedTS = time(NULL);
+				std::ostringstream msg;
+				msg << "Closed, Alive for: " << it->second.mPeerConnectClosedTS - it->second.mPeerConnectTS;
+				msg << " secs";
+				it->second.mPeerConnectMsg = msg.str();
 				tou_close(fd);
 			}
 		}
@@ -1798,17 +2030,17 @@ void PeerNet::sendMessage(std::string msg)
 {
 	bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
 
-	std::cerr << "PeerNet::sendMessage() : " << msg;
-	std::cerr << std::endl;
+	//std::cerr << "PeerNet::sendMessage() : " << msg;
+	//std::cerr << std::endl;
 
 
 	std::map<std::string, PeerStatus>::iterator it;
 	for(it = mPeers.begin(); it != mPeers.end(); it++)
 	{
-		if (it->second.mPeerState == PN_PEER_STATE_CONNECTED)
+		if (it->second.mPeerConnectState == PN_PEER_CONN_CONNECTED)
 		{
 			/* fd should be valid, check it */
-			int fd = it->second.mPeerFd;
+			int fd = it->second.mPeerConnectFd;
 			if (tou_connected(fd))
 			{
 				int written = tou_write(fd, msg.c_str(), msg.size());
@@ -1820,8 +2052,8 @@ void PeerNet::sendMessage(std::string msg)
 				}	
 				else
 				{
-					std::cerr << "PeerNet::sendMessage() Sent to " << it->second.mId;
-					std::cerr << std::endl;
+					//std::cerr << "PeerNet::sendMessage() Sent to " << it->second.mId;
+					//std::cerr << std::endl;
 				}
 			}
 		}

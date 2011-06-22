@@ -67,6 +67,26 @@ def generateNet(basefolder, npeers, nfriends, fracProxy, fracRelay, nguis):
   fd = open(scriptfilename, 'w');
   fd.write('#!/bin/sh\n\n');
 
+  #
+  analysisfilename = '%s/checkforerrs.sh' % (basefolder);
+  fd2 = open(analysisfilename, 'w');
+  fd2.write('#!/bin/sh\n\n');
+
+  #
+  warningfilename = '%s/checkforwarnings.sh' % (basefolder);
+  fd3 = open(warningfilename, 'w');
+  fd3.write('#!/bin/sh\n\n');
+
+  #
+  exprfilename = '%s/checkforexpr.sh' % (basefolder);
+  fd4 = open(exprfilename, 'w');
+  fd4.write('#!/bin/sh\n\n');
+  fd4.write('if [$# -lt 2]\n');
+  fd4.write('then\n');
+  fd4.write('  echo \"script needs expression as argument\"\n');
+  fd4.write('fi\n\n')
+
+
   for i in range(npeers):
     random.shuffle(shuffledIdxs);
     print 'Peer %d : %s' % (i+1, ids[i]);
@@ -77,8 +97,11 @@ def generateNet(basefolder, npeers, nfriends, fracProxy, fracRelay, nguis):
     friends = [];
     for j in range(nfriends):
       fid = shuffledIdxs[j];
-      print '\t\tIdx: %d Port: %d Id: %s' % (fid, ports[fid], ids[fid])
-      friends.append(ids[fid]);
+      if (fid != i):
+        print '\t\tIdx: %d Port: %d Id: %s' % (fid, ports[fid], ids[fid])
+        friends.append(ids[fid]);
+      else:
+        print '\t\tSkipping Self as Peer!'
   
     folder = '%s/%s' % (basefolder, folders[i]);
     if (os.path.exists(folder)):
@@ -96,8 +119,30 @@ def generateNet(basefolder, npeers, nfriends, fracProxy, fracRelay, nguis):
     fd.write('./run.sh &\n');
     fd.write('cd ..\n\n');
   
+    fd2.write('echo ------------ PEER FOLDER: %s\n' % folders[i]);
+    fd2.write('cd %s\n' % folders[i]);
+    fd2.write('grep -n ERROR pn.log\n');
+    fd2.write('cd ..\n\n');
+
+    fd3.write('echo ------------ PEER FOLDER: %s\n' % folders[i]);
+    fd3.write('cd %s\n' % folders[i]);
+    fd3.write('grep -n WARNING pn.log\n');
+    fd3.write('cd ..\n\n');
+
+    fd4.write('echo ------------ PEER FOLDER: %s\n' % folders[i]);
+    fd4.write('cd %s\n' % folders[i]);
+    fd4.write('grep -n -A 10 $1 pn.log\n');
+    fd4.write('cd ..\n\n');
+
   fd.close();
+  fd2.close();
+  fd3.close();
+  fd4.close();
+
   os.chmod(scriptfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
+  os.chmod(analysisfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
+  os.chmod(warningfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
+  os.chmod(exprfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
 
   return;
 
@@ -133,8 +178,8 @@ def makePeerRunScript(folder, gui, port, proxyblock, proxyrange, relayblock, rel
 
   fd.write('#/bin/sh\n\n');
   fd.write('EXEC=%s\n\n' % execpath);
-  fd.write(('$EXEC %s -l -p %d -r %d-%d -R %d-%d -c . > /dev/null 2>&1' % (noguistr, port, proxyblock, proxyblock+proxyrange, relayblock, relayblock+relayrange)));
-  #fd.write(('$EXEC %s -l -p %d -r %d-%d -R %d-%d -c . > pn.log 2>&1' % (noguistr, port, proxyblock, proxyblock+proxyrange, relayblock, relayblock+relayrange)));
+  #fd.write(('$EXEC %s -l -p %d -r %d-%d -R %d-%d -c . > /dev/null 2>&1' % (noguistr, port, proxyblock, proxyblock+proxyrange, relayblock, relayblock+relayrange)));
+  fd.write(('$EXEC %s -l -p %d -r %d-%d -R %d-%d -c . > pn.log 2>&1' % (noguistr, port, proxyblock, proxyblock+proxyrange, relayblock, relayblock+relayrange)));
   
   fd.close();
   os.chmod(filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 

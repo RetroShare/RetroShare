@@ -153,13 +153,13 @@ PeerNetStateBox::PeerNetStateBox()
 	/* Parameters set externally */
 	
 	mStunDhtSet = false;
-	//time_t mStunDhtTS;
-	//bool mStunDhtStable;
+	time_t mStunDhtTS = 0;
+	bool mStunDhtStable = false;
 	//struct sockaddr_in mStunDhtAddr;
 	
 	mStunProxySet = false;
-	//time_t mStunProxyTS;
-	//bool mStunProxyStable;
+	time_t mStunProxyTS = 0;
+	bool mStunProxyStable = false;
 	//struct sockaddr_in mStunProxyAddr;
 	
 	mUPnPSet = false;

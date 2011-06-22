@@ -29,6 +29,7 @@
 #define PN_DHT_STATE_UNREACHABLE       4
 #define PN_DHT_STATE_ONLINE            5
 
+#if 0
 #define PN_PEER_STATE_DISCONNECTED   		1
 #define PN_PEER_STATE_DENIED_NOT_FRIEND   	2
 #define PN_PEER_STATE_DENIED_UNAVAILABLE_MODE   3
@@ -40,12 +41,20 @@
 #define PN_PEER_STATE_CONNECTION_AUTHORISED  	8
 #define PN_PEER_STATE_UDP_STARTED      		9
 #define PN_PEER_STATE_CONNECTED        		10
+#endif
 
 
-#define PN_CONNECT_UDP_DIRECT	1
-#define PN_CONNECT_UDP_PROXY	2
-#define PN_CONNECT_UDP_RELAY	3
+//#define PN_CONNECT_UDP_DIRECT	1
+//#define PN_CONNECT_UDP_PROXY	2
+//#define PN_CONNECT_UDP_RELAY	3
 
+#define PN_PEER_CONN_DISCONNECTED   		1
+#define PN_PEER_CONN_UDP_STARTED      		2
+#define PN_PEER_CONN_CONNECTED        		3
+
+
+#define PN_PEER_REQ_STOPPED			1
+#define PN_PEER_REQ_RUNNING			2
 
 class DhtPeer
 {
@@ -64,17 +73,39 @@ class PeerStatus
 	struct sockaddr_in mDhtAddr;
 	time_t             mDhtUpdateTS;
 
-	/* Connection Status */
-	std::string        mPeerStatusMsg;
-	uint32_t           mPeerState;
-	struct sockaddr_in mPeerAddr;
-	time_t             mPeerUpdateTS;
-	
-	int		   mPeerFd;
+	/* Connection Request Status */
+	std::string        mPeerReqStatusMsg;
+	uint32_t           mPeerReqState;
+	uint32_t           mPeerReqMode;
+	bdId		   mPeerReqProxyId;
+	time_t             mPeerReqTS;
+
+	/* Callback Info */
+	std::string	mPeerCbMsg;
+	uint32_t        mPeerCbMode;
+	uint32_t        mPeerCbPoint;
+	bdId		mPeerCbProxyId;
+	bdId		mPeerCbDestId;
+	time_t		mPeerCbTS;
+
+
+	/* Actual Connection Status */	
+	uint32_t           mPeerConnectState;
+	std::string        mPeerConnectMsg;
+	int		   mPeerConnectFd;
 	uint32_t           mPeerConnectMode;
+	bdId		   mPeerConnectPeerId;
+	bdId		   mPeerConnectProxyId;
+	struct sockaddr_in mPeerConnectAddr;
 	uint32_t           mPeerConnectPoint;
-	time_t             mPeerConnTS;
+
+	time_t             mPeerConnectUdpTS;
+	time_t             mPeerConnectTS;
+	time_t             mPeerConnectClosedTS;
+
+	/* Chat Messages */
 	std::string	   mPeerIncoming;
+
 };
 
 
@@ -184,6 +215,10 @@ int 	UnreachablePeerCallback_locked(const bdId *id,
 
 
 	private:
+
+	// Utility functions.
+	PeerStatus *getPeerStatus_locked(const bdId *peerId);
+
 
 	/* The Two Stacks */
 	UdpStack *mUdpStack;
