@@ -138,7 +138,7 @@ static int test_RsTlvIPAddr()
 	test_IpAddr(&addr, 1234);
 	
 	inet_aton("128.255.255.1", &(addr.sin_addr));
-	addr.sin_port = htons(0);
+	addr.sin_port = htons(1);
 
 	test_IpAddr(&addr, 1234);
 

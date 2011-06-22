@@ -29,6 +29,9 @@
 
 #include "servicetest.h"
 #include "services/p3forums.h"
+#include "util/utest.h"
+
+	INITTEST()
 
 class forumServiceTest : public ServiceTest {
 

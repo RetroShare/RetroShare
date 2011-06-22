@@ -51,7 +51,7 @@
 
 INITTEST();
 
-#define TEST_LENGTH 30
+#define TEST_LENGTH 10
 
 static int test_TlvRandom(void *data, uint32_t len, uint32_t offset);
 
@@ -99,8 +99,8 @@ int main()
 
 #define BIN_LEN 523456  /* bigger than 64k */
 
-int test_TlvItem(RsTlvItem *item, void *data, uint32_t size, uint32_t offset);
-int test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, uint32_t offset);
+bool test_TlvItem(RsTlvItem *item, void *data, uint32_t size, uint32_t offset);
+bool test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, uint32_t offset);
 
 
 int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
@@ -130,44 +130,44 @@ int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
    
 	/* try to decode - with all types first */
 	std::cerr << "test_TlvRandom:: Testing Files " << std::endl;
-	test_TlvItem(&bindata, data, len, offset);
-	test_TlvItem(&fileitem, data, len, offset);
-	test_TlvItem(&fileset, data, len, offset);
-	test_TlvItem(&filedata, data, len, offset);
+	CHECK(test_TlvItem(&bindata, data, len, offset));
+	CHECK(test_TlvItem(&fileitem, data, len, offset));
+	CHECK(test_TlvItem(&fileset, data, len, offset));
+	CHECK(test_TlvItem(&filedata, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Sets " << std::endl;
-	test_TlvItem(&peerset, data, len, offset);
-	test_TlvItem(&servset, data, len, offset);
-	test_TlvItem(&kv, data, len, offset);
-	test_TlvItem(&kvset, data, len, offset);
-	test_TlvItem(&kvwide, data, len, offset);
-	test_TlvItem(&kvwideset, data, len, offset);
+	CHECK(test_TlvItem(&peerset, data, len, offset));
+	CHECK(test_TlvItem(&servset, data, len, offset));
+	CHECK(test_TlvItem(&kv, data, len, offset));
+	CHECK(test_TlvItem(&kvset, data, len, offset));
+	CHECK(test_TlvItem(&kvwide, data, len, offset));
+	CHECK(test_TlvItem(&kvwideset, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Keys " << std::endl;
-	test_TlvItem(&skey, data, len, offset);
-	test_TlvItem(&skeyset, data, len, offset);
-	test_TlvItem(&keysign, data, len, offset);
+	CHECK(test_TlvItem(&skey, data, len, offset));
+	CHECK(test_TlvItem(&skeyset, data, len, offset));
+	CHECK(test_TlvItem(&keysign, data, len, offset));
 
 	/* now set the type correctly before decoding */
 	std::cerr << "test_TlvRandom:: Testing Files (TYPESET)" << std::endl;
-	test_SetTlvItem(&bindata, TLV_TYPE_IMAGE, data, len, offset);
-	test_SetTlvItem(&fileitem,TLV_TYPE_FILEITEM, data, len, offset);
-	test_SetTlvItem(&fileset, TLV_TYPE_FILESET, data, len, offset);
-	test_SetTlvItem(&filedata, TLV_TYPE_FILEDATA, data, len, offset);
+	CHECK(test_SetTlvItem(&bindata, TLV_TYPE_IMAGE, data, len, offset));
+	CHECK(test_SetTlvItem(&fileitem,TLV_TYPE_FILEITEM, data, len, offset));
+	CHECK(test_SetTlvItem(&fileset, TLV_TYPE_FILESET, data, len, offset));
+	CHECK(test_SetTlvItem(&filedata, TLV_TYPE_FILEDATA, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Sets (TYPESET)" << std::endl;
-	test_SetTlvItem(&peerset, TLV_TYPE_PEERSET, data, len, offset);
-	test_SetTlvItem(&servset, TLV_TYPE_SERVICESET, data, len, offset);
-	test_SetTlvItem(&kv, TLV_TYPE_KEYVALUE, data, len, offset);
-	test_SetTlvItem(&kvset, TLV_TYPE_KEYVALUESET, data, len, offset);
-	test_SetTlvItem(&kvwide, TLV_TYPE_WKEYVALUE, data, len, offset);
-	test_SetTlvItem(&kvwideset, TLV_TYPE_WKEYVALUESET, data, len, offset);
+	CHECK(test_SetTlvItem(&peerset, TLV_TYPE_PEERSET, data, len, offset));
+	CHECK(test_SetTlvItem(&servset, TLV_TYPE_SERVICESET, data, len, offset));
+	CHECK(test_SetTlvItem(&kv, TLV_TYPE_KEYVALUE, data, len, offset));
+	CHECK(test_SetTlvItem(&kvset, TLV_TYPE_KEYVALUESET, data, len, offset));
+	CHECK(test_SetTlvItem(&kvwide, TLV_TYPE_WKEYVALUE, data, len, offset));
+	CHECK(test_SetTlvItem(&kvwideset, TLV_TYPE_WKEYVALUESET, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Keys (TYPESET)" << std::endl;
-	test_SetTlvItem(&skey, TLV_TYPE_SECURITYKEY, data, len, offset);
-	test_SetTlvItem(&skeyset, TLV_TYPE_SECURITYKEYSET, data, len, offset);
-	test_SetTlvItem(&keysign, TLV_TYPE_KEYSIGNATURE, data, len, offset);
+	CHECK(test_SetTlvItem(&skey, TLV_TYPE_SECURITYKEY, data, len, offset));
+	CHECK(test_SetTlvItem(&skeyset, TLV_TYPE_SECURITYKEYSET, data, len, offset));
+	CHECK(test_SetTlvItem(&keysign, TLV_TYPE_KEYSIGNATURE, data, len, offset));
 
 	return 26; /* number of tests */
 }
 
-int test_TlvItem(RsTlvItem *item, void *data, uint32_t size, uint32_t offset)
+bool test_TlvItem(RsTlvItem *item, void *data, uint32_t size, uint32_t offset)
 {
 	uint32_t tmp_offset = offset;
 	if (item->GetTlv(data, size, &tmp_offset))
@@ -175,15 +175,17 @@ int test_TlvItem(RsTlvItem *item, void *data, uint32_t size, uint32_t offset)
 		std::cerr << "TLV decoded Random!";
 		std::cerr << std::endl;
 		item->print(std::cerr, 20);
+		return false;
 	}
 	else
 	{
 		std::cerr << "TLV failed to decode";
 		std::cerr << std::endl;
+		return true;
 	}
 }
 
-int test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, uint32_t offset)
+bool test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, uint32_t offset)
 {
 	/* set TLV type first! */
 	void *typedata = (((uint8_t *) data) + offset);

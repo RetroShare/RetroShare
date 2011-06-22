@@ -52,7 +52,7 @@ int main()
 	return TESTRESULT();
 }
 
-#define BIN_LEN 523456  /* bigger than 64k */
+#define BIN_LEN 65536  /* bigger than 64k */
 
 int test_RsTlvBinData()
 {

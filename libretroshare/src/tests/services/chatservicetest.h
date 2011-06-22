@@ -10,6 +10,7 @@
 
 #include "servicetest.h"
 #include "services/p3chatservice.h"
+#include "util/utest.h"
 
 class chatServiceTest: public ServiceTest {
 
@@ -19,6 +20,8 @@ public:
 
 public:
 	void runTests();
+
+	void insertChatItems();
 
 private:
 

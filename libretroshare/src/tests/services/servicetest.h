@@ -34,6 +34,7 @@
 
 
 
+
 /*!
  * A convenience class from which tests derive from
  * This enables user to test in shallow manner the public methods
@@ -50,6 +51,11 @@ public:
 	 */
     virtual void runTests() = 0;
 
+    /*!
+     * use this to populate the service with messages
+     */
+    void sendItem(RsItem* item);
+
 protected:
 
 
@@ -58,6 +64,8 @@ protected:
 	CacheTransfer *mCt;
 	p3Peers* mPeers;
 	pqipersongrp* mPersonGrp;
+
+	std::string fakePeer; // ssl id of fake receiving peer
 
 };
 

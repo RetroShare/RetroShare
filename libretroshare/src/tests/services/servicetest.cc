@@ -34,6 +34,8 @@ ServiceTest::ServiceTest()
 	SecurityPolicy *none = secpolicy_create();
 	mPersonGrp = new pqisslpersongrp(none, NULL);
 	mPeers = new p3Peers(mConnMgr);
+
+	mConnMgr->addFriend(fakePeer);
 }
 
 ServiceTest::~ServiceTest()

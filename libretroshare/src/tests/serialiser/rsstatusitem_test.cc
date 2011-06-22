@@ -32,17 +32,26 @@ INITTEST();
 RsSerialType* init_item(RsStatusItem& rsi)
 {
 
+	rsi.sendTime = rand()%5353;
+	rsi.status = rand()%2032;
 	return new RsStatusSerialiser();
 }
 
 bool operator ==(RsStatusItem& rsi1, RsStatusItem& rsi2)
 {
-	return false;
+	// note: recv time is not serialised
+
+	if(rsi1.sendTime != rsi2.sendTime) return false;
+	if(rsi1.status != rsi2.status) return false;
+
+	return true;
 }
 
 
 int main()
 {
+
+	std::cerr << "RsStatusItem Tests" << std::endl;
 
 	test_RsItem<RsStatusItem >(); REPORT("Serialise/Deserialise RsStatusItem");
 	FINALREPORT("RsStatusItem Tests");

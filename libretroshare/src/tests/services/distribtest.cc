@@ -24,9 +24,7 @@
  */
 
 #include "forumservicetest.h"
-#include "util/utest.h"
 
-	INITTEST()
 
 // distrib services are tested here
 int main()

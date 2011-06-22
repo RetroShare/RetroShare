@@ -20,3 +20,7 @@ chatServiceTest::~chatServiceTest() {
 void chatServiceTest::runTests(){
 
 }
+
+void chatServiceTest::insertChatItems(){
+
+}
