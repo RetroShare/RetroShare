@@ -18,16 +18,19 @@ QT     += network xml script
 SOURCES += main.cpp\
         mainwindow.cpp \
         dhtwindow.cpp \
+        dhtquery.cpp \
 	peernet.cc \
 	netstatebox.cc
 
 HEADERS  += mainwindow.h \
 	dhtwindow.h \
+	dhtquery.h \
 	peernet.h \
 	netstatebox.h
 
 FORMS    += mainwindow.ui \
-	dhtwindow.ui
+	dhtwindow.ui \
+	dhtquery.ui
 
 
 librs {

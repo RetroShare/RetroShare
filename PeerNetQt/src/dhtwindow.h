@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "peernet.h"
 
+#include "dhtquery.h"
+
 namespace Ui {
     class DhtWindow;
 }
@@ -15,12 +17,16 @@ public:
     ~DhtWindow();
 
 	void setPeerNet(PeerNet *pnet);
+	void setDhtQuery(DhtQuery *qw);
 	
 	void updateDhtPeers();
 	void updateDhtQueries();
 
 public slots:
 	void update();
+	void setQueryId();
+	void showQuery();
+
 	
 protected:
     void changeEvent(QEvent *e);
@@ -28,6 +34,7 @@ protected:
 private:
     Ui::DhtWindow *ui;
     PeerNet *mPeerNet;
+    DhtQuery *mQueryWindow;
 };
 
 #endif // DHTWINDOW_H

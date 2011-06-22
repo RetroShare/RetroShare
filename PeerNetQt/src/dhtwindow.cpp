@@ -1,4 +1,5 @@
 #include "dhtwindow.h"
+#include "dhtquery.h"
 #include "ui_dhtwindow.h"
 #include <QTimer>
 #include <QDateTime>
@@ -7,6 +8,13 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+
+
+#define QTW_COL_PEERID	0
+#define QTW_COL_STATUS	1
+#define QTW_COL_FLAGS	2
+#define QTW_COL_RESULTS	3
+
 
 DhtWindow::DhtWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,8 +28,8 @@ DhtWindow::DhtWindow(QWidget *parent) :
     timer->start(1000);
 
 	// connect add Peer button.
-    	//connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addPeer()));
-    	//connect(ui->chatLineEdit, SIGNAL(returnPressed()), this, SLOT(sendChat()));
+    	connect(ui->queryTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(setQueryId()));
+    	connect(ui->queryButton, SIGNAL(clicked()), this, SLOT(showQuery()));
 }
 
 DhtWindow::~DhtWindow()
@@ -44,6 +52,36 @@ void DhtWindow::changeEvent(QEvent *e)
 void DhtWindow::setPeerNet(PeerNet *pnet)
 {
 	mPeerNet = pnet;
+}
+
+
+void DhtWindow::setDhtQuery(DhtQuery *qw)
+{
+	mQueryWindow = qw;
+}
+
+
+void DhtWindow::showQuery()
+{
+	mQueryWindow->show();
+}
+
+
+void DhtWindow::setQueryId()
+{
+	std::cerr << "DhtWindow::setQueryId()";
+	std::cerr << std::endl;
+
+	/* get the item that is selected in the queryWindow */
+	QTreeWidget *queryTreeWidget = ui->queryTreeWidget;
+	QTreeWidgetItem *item = queryTreeWidget->currentItem();
+	if (item)
+	{
+                std::string id = item->data(QTW_COL_PEERID, Qt::DisplayRole).toString().toStdString();
+		mQueryWindow->setQueryId(id);
+		std::cerr << "Setting Query Id to: " << id;
+		std::cerr << std::endl;
+	}
 }
 
 
@@ -146,10 +184,7 @@ void DhtWindow::updateDhtPeers()
 
 }
 
-#define QTW_COL_PEERID	0
-#define QTW_COL_STATUS	1
-#define QTW_COL_FLAGS	2
-#define QTW_COL_RESULTS	3
+
 
 void DhtWindow::updateDhtQueries()
 {

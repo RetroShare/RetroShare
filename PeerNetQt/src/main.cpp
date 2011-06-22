@@ -5,6 +5,7 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
 #include "dhtwindow.h"
+#include "dhtquery.h"
 
 	/* for static PThreads under windows... we need to init the library...  
 	 * Not sure if this is needed?
@@ -145,10 +146,15 @@ int main(int argc, char *argv[])
     		w.show();
 		DhtWindow  dw;
 		dw.hide();
+		DhtQuery  qw;
+		qw.hide();
 	
 		w.setPeerNet(pnet);
 		w.setDhtWindow(&dw);
 		dw.setPeerNet(pnet);
+		dw.setDhtQuery(&qw);
+		qw.setPeerNet(pnet);
+		qw.setQueryId("");
 	
     		return a.exec();
 	}

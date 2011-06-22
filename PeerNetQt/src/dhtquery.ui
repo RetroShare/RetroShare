@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DhtQuery</class>
+ <widget class="QMainWindow" name="DhtQuery">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>644</width>
+    <height>590</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DhtQueryWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLineEdit" name="queryLine">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Query Peer Id</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="queryStatusLabel">
+        <property name="text">
+         <string>Query Status</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="queryExtraLabel">
+      <property name="text">
+       <string>Query Extra</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QTreeWidget" name="closestTreeWidget">
+       <column>
+        <property name="text">
+         <string>Metrix</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Closest Id</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Ip Address</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Flags</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Found</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Sent</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Recv</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QTreeWidget" name="potTreeWidget">
+       <column>
+        <property name="text">
+         <string>Metrix</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Potential Peer Id</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>IP Address</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Flags</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Found</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Sent</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Recv</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QTreeWidget" name="proxyTreeWidget">
+       <column>
+        <property name="text">
+         <string>Metrix</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Ip Address</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Potential Proxy Id</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Flags</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Found</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Sent</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Recv</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>644</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
