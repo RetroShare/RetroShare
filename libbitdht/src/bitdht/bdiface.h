@@ -151,12 +151,18 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_CONNECT_ERROR_NONE		(BITDHT_CONNECT_ANSWER_OKAY)
 
 #define 	BITDHT_CONNECT_ERROR_MASK_TYPE		0x0000ffff
-#define 	BITDHT_CONNECT_ERROR_MASK_SOURCE	0x000f0000
+#define 	BITDHT_CONNECT_ERROR_MASK_SOURCE	0x00ff0000
+#define 	BITDHT_CONNECT_ERROR_MASK_CRMOVE	0xff000000
 
 #define 	BITDHT_CONNECT_ERROR_SOURCE_START	0x00010000
 #define 	BITDHT_CONNECT_ERROR_SOURCE_MID		0x00020000
 #define 	BITDHT_CONNECT_ERROR_SOURCE_END 	0x00040000
 #define 	BITDHT_CONNECT_ERROR_SOURCE_OTHER 	0x00080000
+
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_FATAL 	0x01000000
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_NOMOREIDS 	0x02000000
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_NEXTID 	0x04000000
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_PAUSED 	0x08000000
 
 // ERROR CODES.
 #define 	BITDHT_CONNECT_ERROR_GENERIC		0x00000001
@@ -170,6 +176,12 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_CONNECT_ERROR_OVERLOADED		0x00000008
 #define 	BITDHT_CONNECT_ERROR_AUTH_DENIED	0x00000009
 #define 	BITDHT_CONNECT_ERROR_DUPLICATE		0x0000000a
+
+// These are slightly special ones used for CB_REQUEST
+#define 	BITDHT_CONNECT_ERROR_TOOMANYRETRY	0x0000000b
+#define 	BITDHT_CONNECT_ERROR_OUTOFPROXY		0x0000000c
+#define 	BITDHT_CONNECT_ERROR_USER		0x0000000d
+
 
 
 
@@ -248,6 +260,7 @@ class bdQuerySummary
 #define BITDHT_CONNECT_CB_START		3
 #define BITDHT_CONNECT_CB_PROXY		4
 #define BITDHT_CONNECT_CB_FAILED	5
+#define BITDHT_CONNECT_CB_REQUEST	6
 
 #define BD_PROXY_CONNECTION_UNKNOWN_POINT       0
 #define BD_PROXY_CONNECTION_START_POINT         1
@@ -283,7 +296,7 @@ virtual void removeFindNode(bdNodeId *id) = 0;
 virtual void findDhtValue(bdNodeId *id, std::string key, uint32_t mode) = 0;
 
 	/***** Connections Requests *****/
-virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode) = 0;
+virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start) = 0;
 virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer) = 0;
 virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags) = 0;
 
@@ -307,6 +320,14 @@ virtual int stateDht() = 0; /* STOPPED, STARTING, ACTIVE, FAILED */
 virtual uint32_t statsNetworkSize() = 0;
 virtual uint32_t statsBDVersionSize() = 0; /* same version as us! */
 };
+
+
+// general helper functions for decoding error messages.
+std::string decodeConnectionError(uint32_t errcode);
+std::string decodeConnectionErrorCRMove(uint32_t errcode);
+std::string decodeConnectionErrorSource(uint32_t errcode);
+std::string decodeConnectionErrorType(uint32_t errcode);
+
 
 #endif
 

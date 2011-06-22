@@ -559,7 +559,13 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 	if (isWorthyPeer)
 	{
 		addPotentialPeer(id, src);
+
+		// Should this be inside about check? (Probably!)
+		// We can only really connect to peers that we are searching for???
+		// Its not enforced, but sensible!
+		bdNode::addPotentialConnectionProxy(src, id); // CAUTION: Order switched!
 	}
+
 }
 
 

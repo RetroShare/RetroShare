@@ -34,10 +34,14 @@
 ************************************** ProxyTuple + Connection State ****************************************
 ************************************************************************************************************/
 
-#define BITDHT_CONNREQUEST_INIT			1
-#define BITDHT_CONNREQUEST_INPROGRESS		2
-#define BITDHT_CONNREQUEST_DONE			3
+#define BITDHT_CONNREQUEST_READY		1
+#define BITDHT_CONNREQUEST_PAUSED		2
+#define BITDHT_CONNREQUEST_INPROGRESS		3
+#define BITDHT_CONNREQUEST_EXTCONNECT		4
+#define BITDHT_CONNREQUEST_DONE			5
 
+#define BITDHT_CONNREQUEST_TIMEOUT_CONNECT	30
+#define BITDHT_CONNREQUEST_TIMEOUT_INPROGRESS	30
 #define BITDHT_CONNREQUEST_MAX_AGE		60
 
 
@@ -147,7 +151,12 @@ class bdConnectionRequest
 	int mState;
 	time_t mStateTS;
 
+	time_t mPauseTS;
+	uint32_t mErrCode;
+	
+
 	std::list<bdId> mPotentialProxies;
+	int mRecycled;
 
 	bdId mCurrentAttempt;
 	std::list<bdId> mPeersTried;

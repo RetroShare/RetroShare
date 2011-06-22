@@ -382,6 +382,46 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 	return matchCount;
 }
 
+/* even cheaper again... no big lists */
+int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
+{
+	bdMetric dist;
+	mFns->bdDistance(&(id->id), &(mOwnId), &dist);
+	int buckno = mFns->bdBucketDistance(&dist);
+
+	std::cerr << "bdSpace::find_exactnode(Id:";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << ")";
+
+	std::cerr << " Bucket #: " << buckno;
+	std::cerr << std::endl;
+
+#ifdef DEBUG_BD_SPACE
+#endif
+
+	bdBucket &buck = buckets[buckno];
+
+	std::list<bdPeer>::iterator eit;
+	int matchCount = 0;
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	{
+		if (*id == eit->mPeerId)
+		{
+			std::cerr << "bdSpace::find_exactnode() Found Matching Peer: ";
+		  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+			std::cerr << " withFlags: " << eit->mPeerFlags;
+		  	std::cerr << std::endl;
+
+			peer = (*eit);
+			return 1;
+		}
+	}
+	std::cerr << "bdSpace::find_exactnode() ERROR Failed to find Matching Peer: ";
+	std::cerr << std::endl;
+
+	return 0;
+}
+
 
 
 int	bdSpace::out_of_date_peer(bdId &id)

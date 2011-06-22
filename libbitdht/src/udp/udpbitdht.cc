@@ -122,11 +122,11 @@ void UdpBitDht::removeCallback(BitDhtCallback *cb)
 	mBitDhtManager->removeCallback(cb);
 }
 
-void UdpBitDht::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
+void UdpBitDht::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
-	mBitDhtManager->ConnectionRequest(laddr, target, mode);
+	mBitDhtManager->ConnectionRequest(laddr, target, mode, start);
 }
 
 

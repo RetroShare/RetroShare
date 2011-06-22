@@ -256,7 +256,11 @@ int bdnet_w2u_errno(int err)
 			break;
 		 *
 		 ***/
-		
+	
+		case WSANOTINITIALISED:	
+			std::cerr << "tou_net_w2u_errno(" << err << ") WSANOTINITIALISED. Fix Your Code!";
+			std::cerr << std::endl;
+			break;
 		default:
 			std::cerr << "tou_net_w2u_errno(" << err << ") Unknown";
 			std::cerr << std::endl;

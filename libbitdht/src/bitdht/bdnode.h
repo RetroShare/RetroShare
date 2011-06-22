@@ -209,16 +209,23 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	/* Connections: Initiation */
 
-	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start);
 	int requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target);	
 	int requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
 
+	int killConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+
 	int checkExistingConnectionAttempt(bdNodeId *target);
 	void addPotentialConnectionProxy(bdId *srcId, bdId *target);
+	int checkPeerForFlag(const bdId *id, uint32_t with_flag);
 
 	int tickConnections();
 	void iterateConnectionRequests();
 	int startConnectionAttempt(bdConnectionRequest *req);
+
+	// internal Callback -> normally continues to callbackConnect().
+	void callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId, 
+				int mode, int point, int cbtype, int errcode);
 
 	/* Connections: Outgoing */
 

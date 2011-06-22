@@ -169,6 +169,7 @@ int 	find_nearest_nodes_with_flags(const bdNodeId *id, int number,
 
 int 	find_node(const bdNodeId *id, int number, 
 		std::list<bdId> &matchIds, uint32_t with_flag);
+int 	find_exactnode(const bdId *id, bdPeer &peer);
 
 int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
 int     add_peer(const bdId *id, uint32_t mode);
