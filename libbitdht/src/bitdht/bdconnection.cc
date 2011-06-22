@@ -31,9 +31,16 @@
 #include "bitdht/bdmsgs.h"
 #include "bitdht/bdstddht.h"
 #include "util/bdnet.h"
+#include "util/bdrandom.h"
 
 #define DEBUG_NODE_CONNECTION	1 
 
+
+
+#define BITDHT_CR_PAUSE_BASE_PERIOD 5
+#define BITDHT_CR_PAUSE_RND_PERIOD  15
+
+#define MAX_NUM_RETRIES 3
 
 uint32_t createConnectionErrorCode(uint32_t userProvided, uint32_t fallback, uint32_t point);
 
@@ -483,7 +490,8 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 		time_t now = time(NULL);
 		/* PAUSE the connection Attempt, so we can wait for responses */
 		connreq.mState = BITDHT_CONNREQUEST_PAUSED;
-		connreq.mPauseTS = now + 15;
+		connreq.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD +
+				(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 	}
 
 #ifdef DEBUG_NODE_CONNECTION
@@ -502,17 +510,77 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 
 void bdNode::addPotentialConnectionProxy(bdId *srcId, bdId *target)
 {
+#ifdef DEBUG_NODE_CONNECTION
+	std::cerr << "bdNode::addPotentialConnectionProxy() ";
+	std::cerr << " srcId: ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << " target: ";
+	bdStdPrintId(std::cerr, target);
+	std::cerr << std::endl;
+#endif
+
+	if (!srcId)
+	{
+		/* not one of our targets... drop it */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::addPotentialConnectionProxy() srcID = NULL, useless to us";
+		std::cerr << std::endl;
+#endif
+		return;
+	}
+	
 	std::map<bdNodeId, bdConnectionRequest>::iterator it;
 	it = mConnectionRequests.find(target->id);
 	if (it == mConnectionRequests.end())
 	{
 		/* not one of our targets... drop it */
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::addPotentialConnectionProxy() Dropping Not one of Our Targets";
+		std::cerr << std::endl;
+#endif
+		return;
+	}
+
+	if (it->second.mMode == BITDHT_CONNECT_MODE_DIRECT)
+	{
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::addPotentialConnectionProxy() Dropping Target is DIRECT";
+		std::cerr << std::endl;
+#endif
+		return;
+	}
+
+	/* This is one is strange elsewhere.... srcId = targetId.
+	 * This means that peer is actually reachable! and we should be connecting directly.
+	 * however there is not much we can do about it here. Really up to higher level logic.
+	 */
+	if (srcId->id == target->id)
+	{
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::addPotentialConnectionProxy() ERROR srcId.id == target.id (more of a WARNING)";
+		std::cerr << std::endl;
+		std::cerr << "bdNode::addPotentialConnectionProxy() NB: This means peer is actually reachable....";
+		std::cerr << std::endl;
+		std::cerr << "bdNode::addPotentialConnectionProxy() and we should be connecting directly. Oh Well!";
+		std::cerr << std::endl;
+#endif
 		return;
 	}
 
 	if (checkPeerForFlag(srcId, BITDHT_PEER_STATUS_DHT_ENGINE_VERSION))
 	{
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::addPotentialConnectionProxy() Src passes FLAG test";
+		std::cerr << std::endl;
+#endif
 		it->second.addPotentialProxy(srcId);
+	}
+	else
+	{
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::addPotentialConnectionProxy() Dropping SrcId failed FLAG test";
+		std::cerr << std::endl;
+#endif
 	}
 }
 
@@ -577,17 +645,17 @@ void bdNode::iterateConnectionRequests()
 			// goes to BITDHT_CONNREQUEST_INPROGRESS;
 			if (!startConnectionAttempt(&(it->second)))
 			{
-				// FAILS if no peers.
-				std::cerr << "bdNode::iterateConnectionAttempt() Failed startup => DONE";
+				// FAILS if proxy is bad / nonexistent
+				std::cerr << "bdNode::iterateConnectionAttempt() Failed startup => PAUSED";
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
 
-				it->second.mState = BITDHT_CONNREQUEST_DONE;
+				/* timeout and restart */
+				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
 				it->second.mStateTS = now;
-				it->second.mErrCode = BITDHT_CONNECT_ERROR_SOURCE_START |
-							BITDHT_CONNECT_ERROR_OUTOFPROXY;
-
+				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
+					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 
 			}
 		}
@@ -610,7 +678,7 @@ void bdNode::iterateConnectionRequests()
 					it->second.mState = BITDHT_CONNREQUEST_DONE;
 					it->second.mStateTS = now;
 				}
-				else if (it->second.mRecycled * 2 > it->second.mPotentialProxies.size())
+				else if (it->second.mRecycled > it->second.mPotentialProxies.size() * MAX_NUM_RETRIES)
 				{
 					std::cerr << "bdNode::iterateConnectionAttempt() to many retries => DONE";
 					std::cerr << std::endl;
@@ -637,13 +705,12 @@ void bdNode::iterateConnectionRequests()
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
-
-#define BITDHT_CR_PAUSE_PERIOD 15
 				
 				/* timeout and restart */
 				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_PERIOD;
+				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
+					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 			}
 		}
 		else if (it->second.mState == BITDHT_CONNREQUEST_EXTCONNECT)
@@ -659,7 +726,8 @@ void bdNode::iterateConnectionRequests()
 				/* timeout and restart */
 				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_PERIOD;
+				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
+					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 			}
 		}
 		else if (it->second.mState == BITDHT_CONNREQUEST_DONE)
@@ -745,6 +813,30 @@ int bdNode::startConnectionAttempt(bdConnectionRequest *req)
 
 	req->mState = BITDHT_CONNREQUEST_INPROGRESS;
 	req->mStateTS = time(NULL);
+
+	bool failProxy = false;
+	if (mode == BITDHT_CONNECT_MODE_DIRECT)	
+	{
+		// ONE BUG I HAVE SEEN.
+		if (!(req->mTarget == proxyId.id))
+		{
+			std::cerr << "bdNode::startConnectionAttempt() ERROR Trying to use a Proxy for DIRECT";
+			std::cerr << std::endl;
+
+			return 0;
+		}
+	}
+	else
+	{
+		if (req->mTarget == proxyId.id)
+		{
+			std::cerr << "bdNode::startConnectionAttempt() ERROR Trying connect direct for PROXY|RELAY";
+			std::cerr << std::endl;
+
+			return 0;
+		}
+	}
+
 
 	return startConnectionAttempt(&proxyId, &srcConnAddr, &destConnAddr, mode);
 }
@@ -1054,7 +1146,8 @@ void bdNode::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId,
 
 				/* setup for next one */
 				cr->mState = BITDHT_CONNREQUEST_PAUSED;
-				cr->mPauseTS = now + BITDHT_CR_PAUSE_PERIOD;
+				cr->mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
+					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 			}
 
 			cr->mStateTS = now;
@@ -1113,7 +1206,7 @@ int bdNode::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destC
 	{
 		/* MODE not supported */
 #ifdef DEBUG_NODE_CONNECTION
-		std::cerr << "bdNode::startConnectionAttempt() Mode Not Supported";
+		std::cerr << "bdNode::startConnectionAttempt() ERROR Mode Not Supported";
 		std::cerr << std::endl;
 #endif
 		return 0;

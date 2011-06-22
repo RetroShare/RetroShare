@@ -52,7 +52,7 @@
 #define BITDHT_CONNECTION_COMPLETED		5
 
 
-#define BD_CONNECTION_START_RETRY_PERIOD	10
+#define BD_CONNECTION_START_RETRY_PERIOD	5  // Should only take a couple of seconds to get reply.
 #define BD_CONNECTION_START_MAX_RETRY		3
 #define BD_CONNECTION_MAX_TIMEOUT		30
 
