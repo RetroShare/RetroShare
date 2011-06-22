@@ -84,7 +84,7 @@ bool AuthGPGtest::InitAuth()
 
 
         /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
-int AuthGPGtest::GPGInit(std::string ownId)
+int AuthGPGtest::GPGInit(const std::string& ownId)
 {
 	std::cerr << "AuthGPGtest::GPGInit(): new OwnId: " << ownId;
 	std::cerr << std::endl;
@@ -118,14 +118,14 @@ bool AuthGPGtest::GeneratePGPCertificate(std::string name, std::string email, st
  * provide access to details in cache list.
  *
  ****/
-std::string AuthGPGtest::getGPGName(GPG_id pgp_id)
+std::string getGPGName(const std::string &pgp_id)
 {
 	std::cerr << "AuthGPGtest::getGPGName()";
 	std::cerr << std::endl;
 	return "DUMMY_NAME";
 }
 
-std::string AuthGPGtest::getGPGEmail(GPG_id pgp_id)
+std::string getGPGEmail(const std::string &pgp_id)
 {
 	std::cerr << "AuthGPGtest::getGPGEmail()";
 	std::cerr << std::endl;
@@ -158,7 +158,7 @@ std::string AuthGPGtest::getGPGOwnEmail()
 }
 #endif
 
-bool AuthGPGtest::getGPGDetails(std::string id, RsPeerDetails &d)
+bool AuthGPGtest::getGPGDetails(const std::string& id, RsPeerDetails &d)
 {
 	std::cerr << "AuthGPGtest::getGPGDetails()";
 	std::cerr << std::endl;
@@ -193,28 +193,28 @@ bool AuthGPGtest::getGPGSignedList(std::list<std::string> &ids)
 	return true;
 }
 
-bool AuthGPGtest::isGPGValid(std::string id)
+bool AuthGPGtest::isGPGValid(const std::string& id)
 {
 	std::cerr << "AuthGPGtest::isGPGValid()";
 	std::cerr << std::endl;
 	return true;
 }
 
-bool AuthGPGtest::isGPGSigned(std::string id)
+bool AuthGPGtest::isGPGSigned(const std::string& id)
 {
 	std::cerr << "AuthGPGtest::isGPGSigned()";
 	std::cerr << std::endl;
 	return true;
 }
 
-bool AuthGPGtest::isGPGAccepted(std::string id)
+bool AuthGPGtest::isGPGAccepted(const std::string& id)
 {
 	std::cerr << "AuthGPGtest::isGPGAccepted()";
 	std::cerr << std::endl;
 	return true;
 }
 
-bool AuthGPGtest::isGPGId(GPG_id id)
+bool    isGPGId(const std::string &id)
 {
 	std::cerr << "AuthGPGtest::isGPGId()";
 	std::cerr << std::endl;
@@ -229,14 +229,15 @@ bool AuthGPGtest::isGPGId(GPG_id id)
  * STAGE 4: Loading and Saving Certificates. (Strings and Files)
  *
  ****/
-bool AuthGPGtest::LoadCertificateFromString(std::string pem, std::string &gpg_id)
+bool AuthGPGtest::LoadCertificateFromString(const std::string& pem, std::string &gpg_id,
+		std::string& error_string)
 {
 	std::cerr << "AuthGPGtest::LoadCertificateFromString()";
 	std::cerr << std::endl;
-	return false;
+	return true;
 }
 
-std::string AuthGPGtest::SaveCertificateToString(std::string id)
+std::string AuthGPGtest::SaveCertificateToString(const std::string& id)
 {
 	std::cerr << "AuthGPGtest::SaveCertificateToString()";
 	std::cerr << std::endl;
@@ -254,25 +255,37 @@ std::string AuthGPGtest::SaveCertificateToString(std::string id)
  * done in gpgroot already.
  *
  ****/
-bool AuthGPGtest::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance) 
+bool AuthGPGtest::setAcceptToConnectGPGCertificate(const std::string& gpg_id,
+		bool acceptance)
 {
 	std::cerr << "AuthGPGtest::setAcceptToConnectGPGCertificate()";
 	std::cerr << std::endl;
 	return true;
 }
 
-bool AuthGPGtest::SignCertificateLevel0(std::string id)
+bool AuthGPGtest::SignCertificateLevel0(const std::string& id)
 {
 	std::cerr << "AuthGPGtest::SignCertificateLevel0()";
 	std::cerr << std::endl;
 	return true;
 }
 
-bool AuthGPGtest::RevokeCertificate(std::string id)
+bool AuthGPGtest::RevokeCertificate(const std::string& id)
 {
 	std::cerr << "AuthGPGtest::RevokeCertificate()";
 	std::cerr << std::endl;
 	return true;
+}
+
+virtual bool TrustCertificate(const std::string &id,  int trustlvl)
+{
+	std::cerr << "AuthGPGtest::TrustCertificate()";
+	std::cerr << std::endl;
+	return true;
+}
+void AuthGPGtest::run()
+{
+
 }
 
 #if 0
@@ -343,21 +356,47 @@ bool AuthGPGtest::SignDataBin(const void *data, const uint32_t len, unsigned cha
 {
 	std::cerr << "AuthGPGtest::SignDataBin()";
 	std::cerr << std::endl;
-	return false;
+	return true;
 }
 
-bool AuthGPGtest::VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint)
+bool AuthGPGtest::VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string& withfingerprint)
 {
 	std::cerr << "AuthGPGtest::VerifySignBin()";
 	std::cerr << std::endl;
-	return false;
+	return true;
 }
 
 bool AuthGPGtest::decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN)
 {
 	std::cerr << "AuthGPGtest::decryptText()";
 	std::cerr << std::endl;
-	return false;
+	return true;
+}
+
+bool AuthGPGimpl::addService(AuthGPGService *service)
+{
+	std::cerr << "AuthGPGtest::addService()";
+	std::cerr << std::endl;
+	return true;
+}
+
+std::string AuthGPGtest::getGPGName(const std::string & pgp_id)
+{
+	std::cerr << "AuthGPGtest::getGPGName()";
+	std::cerr << std::endl;
+	return std::string("");
+}
+
+bool AuthGPGtest::TrustCertificate(const std::string & id, int trustlvl)
+{
+}
+
+bool AuthGPGtest::isGPGId(const std::string & id)
+{
+}
+
+std::string AuthGPGtest::getGPGEmail(const std::string & pgp_id)
+{
 }
 
 bool AuthGPGtest::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER)

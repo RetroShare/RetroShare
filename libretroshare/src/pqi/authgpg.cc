@@ -40,12 +40,14 @@ void cleanupZombies(int numkill); // function to cleanup zombies under OSX.
 
 //#define GPG_DEBUG 1
 
-static AuthGPGimpl *instance_gpg = NULL;
+static AuthGPG *instance_gpg = NULL;
 
 void AuthGPGInit()
 {
 	instance_gpg = new AuthGPGimpl();
 }
+
+
 
 void AuthGPGExit()
 {

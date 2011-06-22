@@ -139,7 +139,7 @@ typedef std::map<std::string, gpgcert> certmap;
 extern void AuthGPGInit();
 extern void AuthGPGExit();
 
-class AuthGPG 
+class AuthGPG : public RsThread
 {
 
 	public:
@@ -259,7 +259,7 @@ virtual bool addService(AuthGPGService *service) = 0;
 /* The real implementation! */
 
 
-class AuthGPGimpl : public AuthGPG, public p3Config, public RsThread
+class AuthGPGimpl : public AuthGPG, public p3Config
 {
 	public:
 

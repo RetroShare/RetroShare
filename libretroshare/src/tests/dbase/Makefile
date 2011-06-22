@@ -8,10 +8,10 @@ DHT_TOP_DIR = ../../../../libbitdht/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ =  fitest2.o fisavetest.o searchtest.o 
+TESTOBJ =  fitest2.o fisavetest.o searchtest.o #ficachetest.o 
 #ficachetest.o 
 
-TESTS =  fitest2 fisavetest searchtest 
+TESTS =  fitest2 fisavetest searchtest #ficachetest
 #ficachetest 
 
 ifeq ($(OS),Linux)

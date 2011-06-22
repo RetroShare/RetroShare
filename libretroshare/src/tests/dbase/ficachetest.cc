@@ -23,6 +23,7 @@
 
 #include "dbase/cachestrapper.h"
 #include "dbase/cachetest.h"
+#include "pqi/p3connmgr.h"
 
 #include <iostream>
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -52,9 +53,9 @@ int main(int argc, char **argv)
 	RsPeerId  pid2("0x0102");
 	RsPeerId  pid3("0x0103");
 
-	p3ConnectMgr *connMgr1 = NULL;
-	p3ConnectMgr *connMgr2 = NULL;
-	p3ConnectMgr *connMgr3 = NULL;
+	p3ConnectMgr *connMgr1 = new p3ConnectMgr();
+	p3ConnectMgr *connMgr2 = connMgr1;
+	p3ConnectMgr *connMgr3 = connMgr1;
 
 	CacheStrapper sc1(connMgr1);
 	CacheStrapper sc2(connMgr2);
@@ -72,15 +73,15 @@ int main(int argc, char **argv)
 	std::string nulldir = "";
 
 	CacheSource *csrc1 = new CacheTestSource(&sc1, nulldir);
-	CacheStore  *cstore1 = new CacheTestStore(&ctt1, nulldir);
+	CacheStore  *cstore1 = new CacheTestStore(&ctt1, &sc1, nulldir);
 	CacheId cid1(TESTID, 0);
 
 	CacheSource *csrc2 = new CacheTestSource(&sc2, nulldir);
-	CacheStore  *cstore2 = new CacheTestStore(&ctt2, nulldir);
+	CacheStore  *cstore2 = new CacheTestStore(&ctt2, &sc2, nulldir);
 	CacheId cid2(TESTID, 0);
 
 	CacheSource *csrc3 = new CacheTestSource(&sc3, nulldir);
-	CacheStore  *cstore3 = new CacheTestStore(&ctt3, nulldir);
+	CacheStore  *cstore3 = new CacheTestStore(&ctt3, &sc3, nulldir);
 	CacheId cid3(TESTID, 0);
 
 	CachePair cp1(csrc1, cstore1, cid1);
@@ -183,7 +184,7 @@ void handleQuery(CacheStrapper *csp, RsPeerId pid,
 
 	std::cerr << "Cache Query from: " << pid << std::endl;
 
-	csp -> sendCacheQuery(ids, time(NULL));
+	//csp -> sendCacheQuery(ids, time(NULL));
 	for(pit = ids.begin(); pit != ids.end(); pit++)
 	{
 		std::cerr << "Cache Query for: " << (*pit) << std::endl;

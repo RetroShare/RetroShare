@@ -21,6 +21,9 @@
  *
  */
 
+#include "pqi/p3connmgr.h"
+#include "retroshare/rsiface.h"
+#include "dbase/cachestrapper.h"
 #include "dbase/findex.h"
 #include "dbase/fimonitor.h"
 
@@ -34,7 +37,12 @@ void usage(char *name)
 }
 
 
-
+/*!
+ * What is tested:
+ * 1.
+ * 2.
+ * 3.
+ */
 int main(int argc, char **argv)
 {
 	/* handle commandline arguments */
@@ -73,12 +81,13 @@ int main(int argc, char **argv)
 		usage(argv[0]);
 	}
 
-	sleep(1);
+	//p3ConnectMgr connMgr;
+	NotifyBase nb;
+	CacheStrapper* cs = NULL;
 
-	FileIndexMonitor mon(NULL,NULL, "", "OWN ID");
+	FileIndexMonitor mon(cs, &nb, "", "OWN ID", std::string("."));
 
 	/* setup monitor */
-	mon.setPeriod(period);
 	mon.setSharedDirectories(rootdirs);
 
 	/* simulate running the thread */

@@ -33,7 +33,7 @@ int main()
 		}
 	}
 	
-	ftFileCreator *creator = new ftFileCreator(filename, size, "hash");
+	ftFileCreator *creator = new ftFileCreator(filename, size, "hash", true);
 	for(offset = 0; offset != size; offset += chunk)
 	{
 		if (!creator->addFileData(offset, chunk, data))
@@ -49,7 +49,7 @@ int main()
 	std::cerr << std::endl;
 
 	/* load it with file provider */
-	creator = new ftFileCreator(filename2, size, "hash");
+	creator = new ftFileCreator(filename2, size, "hash", true);
 	ftFileProvider *provider = new ftFileProvider(filename, size, "hash");
 
 	/* create duplicate with file creator */

@@ -17,7 +17,7 @@ static int test_fill(ftFileCreator *creator);
 int main()
 {
 	/* use ftcreator to create a file on tmp drive */
-	ftFileCreator fcreator("/tmp/rs-ftfc-test.dta",100000,"hash");
+	ftFileCreator fcreator("/tmp/rs-ftfc-test.dta",100000,"hash", false);
 
 	test_timeout(&fcreator);
 	test_fill(&fcreator);
@@ -32,7 +32,7 @@ int test_timeout(ftFileCreator *creator)
 {
 	uint32_t chunk = 1000;
 	uint64_t offset = 0;
-	int max_timeout = 30;
+	int max_timeout = 5;
 	int max_offset = chunk * max_timeout;
 	int i;
 	std::cerr << "60 second test of chunk queue.";
@@ -48,7 +48,7 @@ int test_timeout(ftFileCreator *creator)
 		std::cerr << "Allocated Offset: " << offset << " chunk: " << chunk << std::endl;
 
                 CHECK(offset <= max_offset);
-		sleep(1);
+	//	sleep(1);
 	}
 
 	std::cerr << "Expect Repeats now";
@@ -56,7 +56,7 @@ int test_timeout(ftFileCreator *creator)
 
 	for(i = 0; i < max_timeout; i++)
 	{
-		sleep(1);
+	//	sleep(1);
 		creator->getMissingChunk(peer_id, size_hint, offset, chunk, toOld);
 		std::cerr << "Allocated Offset: " << offset << " chunk: " << chunk << std::endl;
 

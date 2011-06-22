@@ -13,13 +13,13 @@ TESTOBJ  = tlvbase_test.o tlvbase_test2.o rstunnelitem_test.o
 TESTOBJ += tlvitems_test.o tlvstack_test.o rsserial_test.o 
 TESTOBJ += rstlvwidetest.o tlvrandom_test.o rsturtleitem_test.o
 TESTOBJ += tlvtypes_test.o support.o distribitem_test.o rsmsgitem_test.o  
-TESTOBJ += rsstatusitem_test.o
+TESTOBJ += rsstatusitem_test.o rsconfigitem_test.o
 
 TESTS  = tlvbase_test tlvbase_test2 rstlvwidetest
 TESTS += tlvitems_test tlvstack_test rstunnelitem_test
 TESTS +=  tlvrandom_test rsserial_test rsturtleitem_test
 TESTS +=  tlvtypes_test distribitem_test rsmsgitem_test
-TESTS +=  rsstatusitem_test
+TESTS +=  rsstatusitem_test rsconfigitem_test
 
 #rsbaseitem_test
 
@@ -66,6 +66,9 @@ rsmsgitem_test : rsmsgitem_test.o support.o
 
 rsstatusitem_test : rsstatusitem_test.o support.o
 	$(CC) $(CFLAGS) -o rsstatusitem_test rsstatusitem_test.o support.o $(OBJ) $(LIBS)
+	
+rsconfigitem_test : rsconfigitem_test.o 
+	$(CC) $(CFLAGS) -o rsconfigitem_test rsconfigitem_test.o support.o $(OBJ) $(LIBS) 
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk
