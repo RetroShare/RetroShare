@@ -1932,8 +1932,10 @@ int RsServer::StartupRetroShare()
 	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions/")) ;
 #endif
 	plugins_directories.push_back(RsInitConfig::basedir + "/extensions/") ;
+#ifdef DEBUG_PLUGIN_SYSTEM
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
 														// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
+#endif
 
 	RsPluginManager *mPluginsManager = new RsPluginManager ;
 	rsPlugins  = mPluginsManager ;
