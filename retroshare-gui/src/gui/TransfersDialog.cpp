@@ -1008,12 +1008,16 @@ void TransfersDialog::insertTransfers()
 			pinfo.type = FileProgressInfo::UPLOAD_LINE ;
 			pinfo.nb_chunks = pinfo.cmap._map.empty()?0:nb_chunks ;
 
-			if(filled_chunks > 1) {
-				pinfo.progress = (nb_chunks==0)?0:(filled_chunks*100.0/nb_chunks) ;
-				completed = std::min(info.size,((uint64_t)filled_chunks)*chunk_size) ;
+			if(filled_chunks > 0 && nb_chunks > 0) 
+			{
+				pinfo.progress = filled_chunks*100.0/nb_chunks ;
+				completed = std::min(info.size,((uint64_t)filled_chunks)*chunk_size) ;	// we use min, because the last chunk might be smaller than chunk_size.
 			} 
 			else 
-				pinfo.progress = progress ;
+			{
+				completed = pit->transfered % chunk_size ;	// use the position with respect to last request.
+				pinfo.progress = (info.size>0)?((pit->transfered % chunk_size)*100.0/info.size):0 ;
+			}
 
 			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, source,QString::fromStdString(pit->peerId),  status, completed, remaining);
 
