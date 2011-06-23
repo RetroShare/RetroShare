@@ -105,6 +105,7 @@ p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 	_last_tunnel_speed_estimate_time = 0 ;
 
 	_traffic_info.reset() ;
+	_sharing_strategy = SHARE_ENTIRE_NETWORK ;
 }
 
 int p3turtle::tick()
