@@ -712,8 +712,9 @@ int bdNode::QuerySummary(const bdNodeId *id, bdQuerySummary &query)
 			query.mQueryFlags = (*it)->mQueryFlags;
 			query.mSearchTime = (*it)->mSearchTime;
 			query.mClosest = (*it)->mClosest;
-			query.mPotentialClosest = (*it)->mPotentialClosest;
-			query.mPotentialProxies = (*it)->mPotentialProxies;
+			query.mPotentialPeers = (*it)->mPotentialPeers;
+			query.mProxiesUnknown = (*it)->mProxiesUnknown;
+			query.mProxiesFlagged = (*it)->mProxiesFlagged;
 
 			return 1;
 		}

@@ -95,7 +95,8 @@ virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric)
 virtual int bdBucketDistance(const bdNodeId *n1, const bdNodeId *n2) = 0;
 virtual int bdBucketDistance(const bdMetric *metric) = 0;
 
-virtual uint32_t bdLikelySameNode(const bdId *id1, const bdId *id2) = 0;
+virtual uint32_t bdSimilarId(const bdId *id1, const bdId *id2) = 0;
+virtual void bdUpdateSimilarId(bdId *dest, const bdId *src) = 0;
 
 virtual void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid) = 0;
 
@@ -233,8 +234,9 @@ class bdQuerySummary
 
         // closest peers
         std::multimap<bdMetric, bdPeer>  mClosest;
-        std::multimap<bdMetric, bdPeer>  mPotentialClosest;
-        std::list<bdPeer>  mPotentialProxies;
+        std::multimap<bdMetric, bdPeer>  mPotentialPeers;
+        std::list<bdPeer>  mProxiesUnknown;
+        std::list<bdPeer>  mProxiesFlagged;
 };
 
 

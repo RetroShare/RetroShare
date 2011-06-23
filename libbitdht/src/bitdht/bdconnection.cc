@@ -434,7 +434,9 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 		std::cerr << std::endl;
 #endif
 		/* matching query */
-		(*qit)->proxies(proxies);		
+		// XXX to finish off!
+		//(*qit)->proxies(proxies);		
+		(*qit)->potentialProxies(proxies);		
 
 		/* will only be one matching query.. so end loop */
 		break;
