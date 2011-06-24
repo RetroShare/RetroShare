@@ -44,6 +44,7 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 /***
 #define RSITEM_DEBUG 1
 #define DEBUG_TRANSFERS	 1
+#define DEBUG_PQISTREAMER 1
  ***/
 
 
@@ -707,8 +708,14 @@ continue_packet:
 		{
 			void *extradata = (void *) (((char *) block) + blen);
 			int tmplen ;
-			// reset the block, to avoid uninitialized memory reads.
-			memset( extradata,0,extralen ) ;	// for checking later
+
+			// Don't reset the block now! If pqissl is in the middle of a multiple-chunk
+			// packet (larger than 16384 bytes), and pqistreamer jumped directly yo
+			// continue_packet:, then readdata is going to write after the beginning of
+			// extradata, yet not exactly at start -> the start of the packet would be wiped out.
+			//
+			// so, don't do that:
+			//		memset( extradata,0,extralen ) ;	
 
 			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
 			{

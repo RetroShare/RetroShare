@@ -1478,18 +1478,18 @@ int 	pqissl::readdata(void *data, int len)
 #ifdef DEBUG_PQISSL
 		std::cerr << "calling SSL_read. len=" << len << ", total_len=" << total_len << std::endl ;
 #endif
-		tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len) ;
+		tmppktlen = SSL_read(ssl_connection, (void*)( &(((uint8_t*)data)[total_len])), len-total_len) ;
 #ifdef DEBUG_PQISSL
 		std::cerr << "have read " << tmppktlen << " bytes" << std::endl ;
 		std::cerr << "data[0] = " 
-			<< (int)((uint8_t*)data)[0] << " "
-			<< (int)((uint8_t*)data)[1] << " "
-			<< (int)((uint8_t*)data)[2] << " "
-			<< (int)((uint8_t*)data)[3] << " "
-			<< (int)((uint8_t*)data)[4] << " "
-			<< (int)((uint8_t*)data)[5] << " "
-			<< (int)((uint8_t*)data)[6] << " "
-			<< (int)((uint8_t*)data)[7] << std::endl ;
+			<< (int)((uint8_t*)data)[total_len+0] << " "
+			<< (int)((uint8_t*)data)[total_len+1] << " "
+			<< (int)((uint8_t*)data)[total_len+2] << " "
+			<< (int)((uint8_t*)data)[total_len+3] << " "
+			<< (int)((uint8_t*)data)[total_len+4] << " "
+			<< (int)((uint8_t*)data)[total_len+5] << " "
+			<< (int)((uint8_t*)data)[total_len+6] << " "
+			<< (int)((uint8_t*)data)[total_len+7] << std::endl ;
 #endif
 
 		// Need to catch errors.....
