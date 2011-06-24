@@ -1831,13 +1831,14 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 
 bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
-#ifdef CONTROL_DEBUG
 	std::cerr << "ftController::CancelCacheFile(" << id << ",";
 	std::cerr << path << "," << hash << "," << size << ")";
 	std::cerr << std::endl;
+#ifdef CONTROL_DEBUG
 #endif
 
-	return true;
+	return FileCancel(hash);
+
 }
 
 const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");

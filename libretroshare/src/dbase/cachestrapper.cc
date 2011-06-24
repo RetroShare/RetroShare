@@ -99,14 +99,21 @@ bool    CacheSource::refreshCache(const CacheData &data)
 	bool ret = false;
 	if (data.cid.type == getCacheType())
 	{
+		int subid = 0;
 		if (isMultiCache())
 		{
-			caches[data.cid.subid] = data;
+			subid = data.cid.subid;
 		}
-		else
+
+		/* Backup the old Caches */
+		CacheSet::const_iterator it;
+		if (caches.end() != (it = caches.find(subid)))
 		{
-			caches[0] = data;
+			mOldCaches[it->second.hash] = it->second;
 		}
+
+		/* store new cache */
+		caches[subid] = data;
 		ret = true;
 	}
 
@@ -127,6 +134,8 @@ bool    CacheSource::clearCache(CacheId id)
 		CacheSet::iterator it;
 		if (caches.end() != (it = caches.find(id.subid)))
 		{
+			/* Backup the old Caches */
+			mOldCaches[it->second.hash] = it->second;
 			caches.erase(it);
 			ret = true;
 		}
@@ -167,6 +176,17 @@ bool    CacheSource::findCache(std::string hash, CacheData &data) const
 			data = it->second;
 			found = true;
 			break;
+		}
+	}
+
+	if (!found)
+	{
+		std::map<std::string, CacheData>::const_iterator oit;
+		oit = mOldCaches.find(hash);
+		if (oit != mOldCaches.end())
+		{
+			data = oit->second;
+			found = true;
 		}
 	}
 
@@ -384,6 +404,7 @@ void	CacheStore::availableCache(const CacheData &data)
 }
 
 
+
 	/* called when the download is completed ... updates internal data */
 void 	CacheStore::downloadedCache(const CacheData &data)
 {
@@ -404,6 +425,7 @@ void 	CacheStore::failedCache(const CacheData &data)
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::failedCache() :" << data << std::endl;
 #endif
+
 	return;
 }
 

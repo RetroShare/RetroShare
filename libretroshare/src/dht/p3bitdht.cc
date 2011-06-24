@@ -71,6 +71,7 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::st
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
 	bdNodeId ownId;
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::p3BitDht()" << std::endl;
 	std::cerr << "Using Id: " << id;
 	std::cerr << std::endl;
@@ -78,21 +79,26 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::st
 	std::cerr << std::endl;
 	std::cerr << "Converting OwnId to bdNodeId....";
 	std::cerr << std::endl;
+#endif
 
 	/* setup ownId */
 	storeTranslation(id);
 	lookupNodeId(id, &ownId);
 
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "Own NodeId: ";
 	bdStdPrintNodeId(std::cerr, &ownId);
 	std::cerr << std::endl;
+#endif
 
 	/* standard dht behaviour */
 	bdDhtFunctions *stdfns = new bdStdDht();
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht() startup ... creating UdpBitDht";
 	std::cerr << std::endl;
+#endif
 
 	/* create dht */
 	mUdpBitDht = new UdpBitDht(udpstack, &ownId, dhtVersion, bootstrapfile, stdfns);
@@ -112,8 +118,10 @@ p3BitDht::~p3BitDht()
 
 void    p3BitDht::start()
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::start()";
 	std::cerr << std::endl;
+#endif
 
 	mUdpBitDht->start(); /* starts up the bitdht thread */
 
@@ -123,8 +131,10 @@ void    p3BitDht::start()
 	/* pqiNetAssist - external interface functions */
 void    p3BitDht::enable(bool on)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::enable(" << on << ")";
 	std::cerr << std::endl;
+#endif
 
 	if (on)
 	{
@@ -169,8 +179,10 @@ bool    p3BitDht::getNetworkStats(uint32_t &netsize, uint32_t &localnetsize)
 	/* add / remove peers */
 bool 	p3BitDht::findPeer(std::string pid)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::findPeer(" << pid << ")";
 	std::cerr << std::endl;
+#endif
 
 	/* convert id -> NodeId */
 	if (!storeTranslation(pid))
@@ -192,9 +204,11 @@ bool 	p3BitDht::findPeer(std::string pid)
 		return false;
 	}
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::findPeer() calling AddFindNode() with pid => NodeId: ";
 	bdStdPrintNodeId(std::cerr, &nid);
 	std::cerr << std::endl;
+#endif
 
 	/* add in peer */
 	mUdpBitDht->addFindNode(&nid, BITDHT_QFLAGS_DO_IDLE);
@@ -204,8 +218,10 @@ bool 	p3BitDht::findPeer(std::string pid)
 
 bool 	p3BitDht::dropPeer(std::string pid)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::dropPeer(" << pid << ")";
 	std::cerr << std::endl;
+#endif
 
 	/* convert id -> NodeId */
 	bdNodeId nid;
@@ -218,9 +234,11 @@ bool 	p3BitDht::dropPeer(std::string pid)
 		return false;
 	}
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::dropPeer() Translated to NodeId: ";
 	bdStdPrintNodeId(std::cerr, &nid);
 	std::cerr << std::endl;
+#endif
 
 	/* remove in peer */
 	mUdpBitDht->removeFindNode(&nid);
@@ -243,8 +261,10 @@ bool 	p3BitDht::getPeerStatus(std::string id,
 				struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
 				uint32_t &type, uint32_t &mode)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::getPeerStatus(" << id << ")";
 	std::cerr << std::endl;
+#endif
 
 
 	return false;
@@ -254,8 +274,10 @@ bool 	p3BitDht::getExternalInterface(struct sockaddr_in &raddr,
 					uint32_t &mode)
 {
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::getExternalInterface()";
 	std::cerr << std::endl;
+#endif
 
 
 	return false;
@@ -273,7 +295,9 @@ const	uint8_t rs_dht_version_data[RS_DHT_VERSION_LEN] = "RS_VERSION_0.5.1";
 int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
 {
 	/* generate node id from pid */
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::calculateNodeId() " << pid;
+#endif
 
 	/* use a hash to make it impossible to reverse */
 
@@ -292,17 +316,21 @@ int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
         }
 	delete sha_ctx;
 
+#ifdef DEBUG_BITDHT
 	std::cerr << " => ";
 	bdStdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
+#endif
 
 	return 1;
 }
 
 int p3BitDht::lookupNodeId(const std::string pid, bdNodeId *id)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::lookupNodeId() for : " << pid;
 	std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(dhtMtx);
 
@@ -310,17 +338,21 @@ int p3BitDht::lookupNodeId(const std::string pid, bdNodeId *id)
 	it = mTransToNodeId.find(pid);
 	if (it == mTransToNodeId.end())
 	{
+#ifdef DEBUG_BITDHT
 		std::cerr << "p3BitDht::lookupNodeId() failed";
 		std::cerr << std::endl;
+#endif
 
 		return 0;
 	}
 	*id = it->second;
 
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::lookupNodeId() Found NodeId: ";
 	bdStdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
+#endif
 
 	return 1;
 }
@@ -350,31 +382,39 @@ int p3BitDht::lookupRsId(const bdNodeId *id, std::string &pid)
 	pid = nit->second;
 
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::lookupRsId() Found Matching RsId: " << pid;
 	std::cerr << std::endl;
+#endif
 
 	return 1;
 }
 
 int p3BitDht::storeTranslation(const std::string pid)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::storeTranslation(" << pid << ")";
 	std::cerr << std::endl;
+#endif
 
 	bdNodeId nid;
 	calculateNodeId(pid, &nid);
 
 	RsStackMutex stack(dhtMtx);
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::storeTranslation() Converts to NodeId: ";
 	bdStdPrintNodeId(std::cerr, &(nid));
 	std::cerr << std::endl;
+#endif
 
 	mTransToNodeId[pid] = nid;
 	mTransToRsId[nid] = pid;
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::storeTranslation() Success";
 	std::cerr << std::endl;
+#endif
 
 	return 1;
 }
@@ -383,8 +423,10 @@ int p3BitDht::removeTranslation(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::removeTranslation(" << pid << ")";
 	std::cerr << std::endl;
+#endif
 
 	std::map<std::string, bdNodeId>::iterator it = mTransToNodeId.find(pid);
 	it = mTransToNodeId.find(pid);
@@ -398,9 +440,11 @@ int p3BitDht::removeTranslation(const std::string pid)
 
 	bdNodeId nid = it->second;
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::removeTranslation() Found Translation: NodeId: ";
 	bdStdPrintNodeId(std::cerr, &(nid));
 	std::cerr << std::endl;
+#endif
 
 
 	std::map<bdNodeId, std::string>::iterator nit;
@@ -416,8 +460,10 @@ int p3BitDht::removeTranslation(const std::string pid)
 	mTransToNodeId.erase(it);
 	mTransToRsId.erase(nit);
 
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::removeTranslation() SUCCESS";
 	std::cerr << std::endl;
+#endif
 
 	return 1;
 }
@@ -462,11 +508,13 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 	/* check for translation */
 	if (lookupRsId(&(id->id), pid))
 	{
+#ifdef DEBUG_BITDHT
 		/* we found it ... do callback to p3connmgr */
 		std::cerr << "p3BitDht::NodeCallback() FOUND NODE!!!: ";
 		bdStdPrintNodeId(std::cerr, &(id->id));
 		std::cerr << "-> " << pid << " flags: " << peerflags;
 		std::cerr << std::endl;
+#endif
 			/* send status info to p3connmgr */
 
 
@@ -526,43 +574,53 @@ uint32_t translatebdcbflgs(uint32_t peerflags)
 
 int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::PeerCallback() bdId: ";
 	bdStdPrintId(std::cerr, id);
 	std::cerr << std::endl;
+#endif
 
 	/* is it one that we are interested in? */
 	std::string pid;
 	/* check for translation */
 	if (lookupRsId(&(id->id), pid))
 	{
+#ifdef DEBUG_BITDHT
 		std::cerr << "p3BitDht::PeerCallback() => RsId: ";
 		std::cerr << pid << " status: " << status;
 		std::cerr << " NOOP for NOW";
 		std::cerr << std::endl;
+#endif
 
 		bool connect = false;
 		switch(status)
 		{
   			case BITDHT_MGR_QUERY_FAILURE:
 				/* do nothing */
+#ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::PeerCallback() QUERY FAILURE ... do nothin ";
 				std::cerr << std::endl;
+#endif
 
 			break;
 
 			case BITDHT_MGR_QUERY_PEER_OFFLINE:
 				/* do nothing */
 
+#ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::PeerCallback() QUERY PEER OFFLINE ... do nothin ";
 				std::cerr << std::endl;
+#endif
 
 			break;
 
 			case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
 				/* do nothing */
 
+#ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::PeerCallback() QUERY PEER UNREACHABLE ... flag? / do nothin ";
 				std::cerr << std::endl;
+#endif
 
 
 			break;
@@ -570,8 +628,10 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 			case BITDHT_MGR_QUERY_PEER_ONLINE:
 				/* do something */
 
+#ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::PeerCallback() QUERY PEER ONLINE ... try udp connection";
 				std::cerr << std::endl;
+#endif
 
 				connect = true;
 			break;
@@ -579,8 +639,10 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 		if (connect)
 		{
+#ifdef DEBUG_BITDHT
 			std::cerr << "p3BitDht::PeerCallback() mConnCb->peerConnectRequest()";
 			std::cerr << std::endl;
+#endif
 
 			mConnCb->peerConnectRequest(pid, id->addr, RS_CB_DHT);
 			return 1;
@@ -592,11 +654,13 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 	}
 	else
 	{
+#ifdef DEBUG_BITDHT
 		std::cerr << "p3BitDht::PeerCallback()";
 		std::cerr << " FAILED TO TRANSLATE ID ";
 		std::cerr << " status: " << status;
 		std::cerr << " NOOP for NOW";
 		std::cerr << std::endl;
+#endif
 	}
 
 	return 0;
@@ -604,8 +668,10 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 int p3BitDht::ValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::ValueCallback() NOOP for NOW";
 	std::cerr << std::endl;
+#endif
 
 	/* ignore for now */
 	return 0;

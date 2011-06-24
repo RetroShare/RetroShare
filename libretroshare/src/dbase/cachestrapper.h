@@ -206,7 +206,8 @@ class CacheSource
 		void	lockData() const;
 		void	unlockData() const;
 
-		CacheSet caches; /// all cache data local and remote stored here
+		CacheSet caches; /// all local cache data stored here
+                std::map<std::string, CacheData> mOldCaches; /// replaced/cleared caches are pushed here (in case requested)
 
 		private:
 
