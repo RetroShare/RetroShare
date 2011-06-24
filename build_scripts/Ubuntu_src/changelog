@@ -1,6 +1,40 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+      - Started dev of plugin system. Works on linux, not yet on windows.
+      - Added gui for plugins in Settings
+      - Ported LinksCloud service as a plugin
+      - Improvement of the unit tests, and coverage calculations.
+      - Hash cache: missing root directories are not discarded anymore, but kept empty, 
+        unless the user really removes them explicitely.
+      - Reworked settings dialog
+      - Automatic add the recommended friend(s) as CC in the MessageComposer.
+      - Send plain text message instead of html, when the text contains no html specifics. 
+        This is a huge gain in forum posts size, up to a factor of 50
+      - Enabled Spanish translation
+      - Moved the fill function of the ForumsDialog to a QThread.
+      - Made multiple keyword search use an AND instead of an OR. 
+
+  * Bug fixes
+      - Fixed display of upload transfers
+      - Fixed the Missing Cache File bug.
+      - Added Old Cache Storage... so these can be retrieved.
+      - Connected up the CancelCacheFile() -> FileCancel.
+      - Removed "ipaddr=1" bug 
+      - Fixed uninitialized value in p3turtle
+      - Fixed html title bug in forum message when answering from news feed
+      - Fixed reaction of the checkbox "web of trust"
+      - Fixed calculation of the unread messages in MessagesDialog
+      - Corrected bug that would wipe out the hash cache file every other start
+      - Fixed crash in ForumsDialog 
+      - Fixed memory leak of the fill thread of the history browser
+      - Fixed refill of the threads tree after receiving a new message. Now the new message is expanded.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4239~lucid) lucid; urgency=low
+
+  * Improvements
       - Optimized the functions for the forum messages.
       - added a star functionality to forums
       - placed private message editing into a separate window
