@@ -142,7 +142,8 @@ class bdConnectionRequest
 	int setupDirectConnection(struct sockaddr_in *laddr, bdNodeId *target);
 	int setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
 
-	int addPotentialProxy(bdId *srcId);
+	int addGoodProxy(const bdId *srcId);
+	int checkGoodProxyPeer(const bdId *Id);
 
 	bdNodeId mTarget;
 	struct sockaddr_in mLocalAddr;
@@ -155,6 +156,7 @@ class bdConnectionRequest
 	uint32_t mErrCode;
 	
 
+	std::list<bdId> mGoodProxies;
 	std::list<bdId> mPotentialProxies;
 	int mRecycled;
 

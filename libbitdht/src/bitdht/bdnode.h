@@ -216,7 +216,9 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	int killConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
 
 	int checkExistingConnectionAttempt(bdNodeId *target);
-	void addPotentialConnectionProxy(bdId *srcId, bdId *target);
+	void addPotentialConnectionProxy(const bdId *srcId, const bdId *target);
+	void updatePotentialConnectionProxy(const bdId *id, uint32_t mode);
+
 	int checkPeerForFlag(const bdId *id, uint32_t with_flag);
 
 	int tickConnections();

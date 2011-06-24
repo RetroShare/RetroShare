@@ -351,7 +351,7 @@ int bdNode::requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target
 #endif
 		/* matching query */
 		/* find any potential proxies (must be same DHT type XXX TODO) */
-		(*qit)->result(connreq.mPotentialProxies);		
+		(*qit)->result(connreq.mGoodProxies);		
 
 		/* will only be one matching query.. so end loop */
 		break;
@@ -359,7 +359,7 @@ int bdNode::requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target
 
 	
 	/* now look in the bdSpace as well */
-	if (connreq.mPotentialProxies.size() < MIN_START_DIRECT_COUNT)
+	if (connreq.mGoodProxies.size() < MIN_START_DIRECT_COUNT)
 	{
 		int number = CONNECT_NUM_PROXY_ATTEMPTS;
 		int with_flag = BITDHT_PEER_STATUS_DHT_ENGINE_VERSION;
@@ -371,10 +371,10 @@ int bdNode::requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target
 		/* merge lists (costly should use sets or something) */
 		for(it = matchIds.begin(); it != matchIds.end(); it++)
 		{
-			pit = std::find(connreq.mPotentialProxies.begin(), connreq.mPotentialProxies.end(), *it);
-			if (pit != connreq.mPotentialProxies.end())
+			pit = std::find(connreq.mGoodProxies.begin(), connreq.mGoodProxies.end(), *it);
+			if (pit != connreq.mGoodProxies.end())
 			{
-				connreq.mPotentialProxies.push_back(*it);
+				connreq.mGoodProxies.push_back(*it);
 			}
 		}
 	}
@@ -382,7 +382,7 @@ int bdNode::requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target
 	/* Actually if we lots of ids at this point... its likely that something is wrong 
 	 */
 
-	if (connreq.mPotentialProxies.size() > 1)
+	if (connreq.mGoodProxies.size() > 1)
 	{
 		std::cerr << "bdNode::requestConnection_direct() ERROR Multiple Peers for DIRECT connection";
 		std::cerr << std::endl;
@@ -419,7 +419,7 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 
 	/* grab any peers from any existing query */
 	std::list<bdQuery *>::iterator qit;
-	std::list<bdId> proxies;
+	std::list<bdId> potentialProxies;
 	std::list<bdId>::iterator pit;
 
 	for(qit = mLocalQueries.begin(); qit != mLocalQueries.end(); qit++)
@@ -434,25 +434,60 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 		std::cerr << std::endl;
 #endif
 		/* matching query */
-		// XXX to finish off!
-		//(*qit)->proxies(proxies);		
-		(*qit)->potentialProxies(proxies);		
+		// Extract the proxies, that the query has gathered.
+		// The good ones go straight over.
+		// The potentials must be further checked.
+		(*qit)->proxies(connreq.mGoodProxies);		
+		(*qit)->potentialProxies(potentialProxies);		
 
 		/* will only be one matching query.. so end loop */
 		break;
 	}
 
 	/* check any potential proxies, must be same DHT Type */
-	for(pit = proxies.begin(); pit != proxies.end(); pit++)
+	for(pit = potentialProxies.begin(); pit != potentialProxies.end(); )
 	{
 		/* check the type in bdSpace */
 		if (checkPeerForFlag(&(*pit), BITDHT_PEER_STATUS_DHT_ENGINE_VERSION))
 		{
-			connreq.mPotentialProxies.push_back(*pit);
+			connreq.mGoodProxies.push_back(*pit);
+			pit = potentialProxies.erase(pit);
+		}
+		else
+		{
+			pit++;
 		}
 	}
 
-	if (proxies.size() < MIN_START_PROXY_COUNT)
+
+	/* if we don't have enough proxies ... ping the potentials */
+	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
+	{
+		/* unknown, add to potential list, and ping! */
+		for(pit = potentialProxies.begin(); pit != potentialProxies.end(); pit++)
+		{
+
+			connreq.mPotentialProxies.push_back(*pit);
+
+			// If the pings come back will be handled by
+			// updatePotentialConnectionProxy()
+
+			/* push out ping */
+			bdToken transId;
+			genNewTransId(&transId);
+			//registerOutgoingMsg(&(*pit), &transId, BITDHT_MSG_TYPE_PING);
+			msgout_ping(&(*pit), &transId);
+			
+			std::cerr << "bdNode::requestConnection_proxy() Pinging Potential Proxy";
+			mFns->bdPrintId(std::cerr, &(*pit));
+			std::cerr << std::endl;
+			
+			mCounterPings++;
+		}
+	}
+
+	// Final Desperate Measures!
+	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
 	{
 		/* now find closest acceptable peers, 
 	 	 * and trigger a search for target...
@@ -484,9 +519,16 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 		}
 	}
 
-	if (connreq.mPotentialProxies.size() < 1)
+
+	if (connreq.mGoodProxies.size() < 1)
 	{
-		std::cerr << "bdNode::requestConnection_proxy() ERROR initial proxyList.size() == 0 PAUSING";
+		std::cerr << "bdNode::requestConnection_proxy() ERROR initial proxyList.size() == 0";
+		std::cerr << std::endl;
+	}
+
+	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
+	{
+		std::cerr << "bdNode::requestConnection_proxy() WARNING initial proxyList.size() == SMALL PAUSING";
 		std::cerr << std::endl;
 
 		time_t now = time(NULL);
@@ -510,7 +552,7 @@ int bdNode::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target,
 	return 1;
 }
 
-void bdNode::addPotentialConnectionProxy(bdId *srcId, bdId *target)
+void bdNode::addPotentialConnectionProxy(const bdId *srcId, const bdId *target)
 {
 #ifdef DEBUG_NODE_CONNECTION
 	std::cerr << "bdNode::addPotentialConnectionProxy() ";
@@ -575,7 +617,7 @@ void bdNode::addPotentialConnectionProxy(bdId *srcId, bdId *target)
 		std::cerr << "bdNode::addPotentialConnectionProxy() Src passes FLAG test";
 		std::cerr << std::endl;
 #endif
-		it->second.addPotentialProxy(srcId);
+		it->second.addGoodProxy(srcId);
 	}
 	else
 	{
@@ -607,6 +649,23 @@ int bdNode::checkPeerForFlag(const bdId *id, uint32_t with_flag)
 	return 0;
 }
 
+
+void bdNode::updatePotentialConnectionProxy(const bdId *id, uint32_t mode)
+{
+	if (mode & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
+	{
+#ifdef DEBUG_NODE_CONNECTION
+		std::cerr << "bdNode::updatePotentialConnectionProxy() Peer is GOOD, checking Connection Requests";
+		std::cerr << std::endl;
+#endif
+		/* good peer, see if any of our connectionrequests can use it */
+		std::map<bdNodeId, bdConnectionRequest>::iterator it;
+		for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
+		{
+			it->second.checkGoodProxyPeer(id);
+		}
+	}
+}
 
 
 int bdNode::tickConnections()
@@ -670,7 +729,7 @@ void bdNode::iterateConnectionRequests()
 				std::cerr << std::endl;
 
 				/* if we have run out of proxies, or recycled too many times. kill it */	
-				if (it->second.mPotentialProxies.size() == 0)
+				if (it->second.mGoodProxies.size() == 0)
 				{
 					std::cerr << "bdNode::iterateConnectionAttempt() no more proxies => DONE";
 					std::cerr << std::endl;
@@ -680,7 +739,7 @@ void bdNode::iterateConnectionRequests()
 					it->second.mState = BITDHT_CONNREQUEST_DONE;
 					it->second.mStateTS = now;
 				}
-				else if (it->second.mRecycled > it->second.mPotentialProxies.size() * MAX_NUM_RETRIES)
+				else if (it->second.mRecycled > it->second.mGoodProxies.size() * MAX_NUM_RETRIES)
 				{
 					std::cerr << "bdNode::iterateConnectionAttempt() to many retries => DONE";
 					std::cerr << std::endl;
@@ -788,7 +847,7 @@ int bdNode::startConnectionAttempt(bdConnectionRequest *req)
 	std::cerr << *req;
 	std::cerr << std::endl;
 
-	if (req->mPotentialProxies.size() < 1)
+	if (req->mGoodProxies.size() < 1)
 	{
 		std::cerr << "bdNode::startConnectionAttempt() No Potential Proxies... delaying attempt";
 		std::cerr << std::endl;
@@ -807,8 +866,8 @@ int bdNode::startConnectionAttempt(bdConnectionRequest *req)
 	srcConnAddr.id = mOwnId;
 	srcConnAddr.addr = req->mLocalAddr;
 
-	proxyId = req->mPotentialProxies.front();
-	req->mPotentialProxies.pop_front();
+	proxyId = req->mGoodProxies.front();
+	req->mGoodProxies.pop_front();
 
 	req->mCurrentAttempt = proxyId;
 	//req->mPeersTried.push_back(proxyId);	
@@ -1138,7 +1197,7 @@ void bdNode::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId,
 				 if (recycle)
 				{
 					/* rotate around */
-					cr->mPotentialProxies.push_back(cr->mCurrentAttempt);
+					cr->mGoodProxies.push_back(cr->mCurrentAttempt);
 					cr->mRecycled++;
 				}
 				else
@@ -2666,15 +2725,40 @@ int bdConnectionRequest::setupProxyConnection(struct sockaddr_in *laddr, bdNodeI
 	return 1;
 }
 
-int bdConnectionRequest::addPotentialProxy(bdId *srcId)
+/* this is a good proxy peer (with flags already checked).
+ * if it is in the potential proxy list, then we can add it into the good proxy list.
+ */
+
+int bdConnectionRequest::checkGoodProxyPeer(const bdId *id)
 {
-	std::cerr << "bdConnectionRequest::addPotentialProxy() ";
+	std::cerr << "bdConnectionRequest::checkProxyPeer() ";
+	bdStdPrintId(std::cerr, id);
+	std::cerr << std::endl;
+
+	std::list<bdId>::iterator it = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *id);
+	if (it != mPeersTried.end())
+	{
+		std::cerr << "bdConnectionRequest::checkProxyPeer() Found in PotentialProxies List, adding in";
+		std::cerr << std::endl;
+
+		it = mPotentialProxies.erase(it);
+
+		/* now add it in */
+		addGoodProxy(id);
+	}
+	return 1;
+}
+
+
+int bdConnectionRequest::addGoodProxy(const bdId *srcId)
+{
+	std::cerr << "bdConnectionRequest::addGoodProxy() ";
 	bdStdPrintId(std::cerr, srcId);
 	std::cerr << std::endl;
 
 	if (*srcId == mCurrentAttempt)
 	{
-		std::cerr << "bdConnectionRequest::addPotentialProxy() Duplicate with CurrentAttempt";
+		std::cerr << "bdConnectionRequest::addGoodProxy() Duplicate with CurrentAttempt";
 		std::cerr << std::endl;
 		return 0;
 	}
@@ -2682,25 +2766,35 @@ int bdConnectionRequest::addPotentialProxy(bdId *srcId)
 	std::list<bdId>::iterator it = std::find(mPeersTried.begin(), mPeersTried.end(), *srcId);
 	if (it == mPeersTried.end())
 	{
-		it = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *srcId);
-		if (it == mPotentialProxies.end())
+		it = std::find(mGoodProxies.begin(), mGoodProxies.end(), *srcId);
+		if (it == mGoodProxies.end())
 		{
-			std::cerr << "bdConnectionRequest::addPotentialProxy() CRINITSTATE Found New Proxy: ";
+			std::cerr << "bdConnectionRequest::addGoodProxy() CRINITSTATE Found New Proxy: ";
 			bdStdPrintId(std::cerr, srcId);
 			std::cerr << std::endl;
 
-			mPotentialProxies.push_back(*srcId);
+			mGoodProxies.push_back(*srcId);
+
+			/* if it is potentialProxies then remove */
+			it = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *srcId);
+			if (it != mPotentialProxies.end())
+			{
+				std::cerr << "bdConnectionRequest::addGoodProxy() Removing from PotentialProxy List";
+				std::cerr << std::endl;
+
+				it = mPotentialProxies.erase(it);
+			}
 			return 1;
 		}
 		else
 		{
-			std::cerr << "bdConnectionRequest::addPotentialProxy() Duplicate in mPotentialProxies List";
+			std::cerr << "bdConnectionRequest::addGoodProxy() Duplicate in mPotentialProxies List";
 			std::cerr << std::endl;
 		}
 	}
 	else
 	{
-		std::cerr << "bdConnectionRequest::addPotentialProxy() Already tried this peer";
+		std::cerr << "bdConnectionRequest::addGoodProxy() Already tried this peer";
 		std::cerr << std::endl;
 	}
 	return 0;
@@ -2725,16 +2819,27 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 	bdStdPrintId(out, &(req.mCurrentAttempt));
 	out << std::endl;
 
-	out << "PotentialProxies:";
+	out << "GoodProxies:";
 	out << std::endl;
 
         std::list<bdId>::const_iterator it;
+	for(it = req.mGoodProxies.begin(); it != req.mGoodProxies.end(); it++)
+	{
+		out << "\t";
+		bdStdPrintId(out, &(*it));
+		out << std::endl;
+	}
+
+	out << "PotentialProxies:";
+	out << std::endl;
+
 	for(it = req.mPotentialProxies.begin(); it != req.mPotentialProxies.end(); it++)
 	{
 		out << "\t";
 		bdStdPrintId(out, &(*it));
 		out << std::endl;
 	}
+
 	out << "PeersTried:";
 	out << std::endl;
 

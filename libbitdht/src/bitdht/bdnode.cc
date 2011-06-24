@@ -564,10 +564,6 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 
 	if (src) // src can be NULL!
 	{
-		// Should this be inside isWorthPeer check? 
-		// We can only really connect to peers that we are searching for???
-		// Its not enforced, but sensible!
-		// here to maximise the number of hits.
 		bdNode::addPotentialConnectionProxy(src, id); // CAUTION: Order switched!
 	}
 
@@ -606,6 +602,10 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 	peer.mPeerFlags = peerflags;
 	peer.mLastRecvTime = time(NULL);
 	mStore.addStore(&peer);
+
+	// Finally we pass to connections for them to use.
+	bdNode::updatePotentialConnectionProxy(id, peerflags);
+
 }
 
 
