@@ -195,7 +195,7 @@ void DhtQuery::updateDhtQuery()
 	QTreeWidget *qpcTreeWidget = ui->potTreeWidget;
 	qpcTreeWidget->clear();
 
-	for(cit = query.mPotentialClosest.begin(); cit != query.mPotentialClosest.end(); cit++)
+	for(cit = query.mPotentialPeers.begin(); cit != query.mPotentialPeers.end(); cit++)
 	{
 		/* find the entry */
 		QTreeWidgetItem *item = NULL;
@@ -258,7 +258,7 @@ void DhtQuery::updateDhtQuery()
 	QTreeWidget *qpTreeWidget = ui->proxyTreeWidget;
 	qpTreeWidget->clear();
 
-	for(lit = query.mPotentialProxies.begin(); lit != query.mPotentialProxies.end(); lit++)
+	for(lit = query.mProxiesFlagged.begin(); lit != query.mProxiesFlagged.end(); lit++)
 	{
 		/* find the entry */
 		QTreeWidgetItem *item = NULL;
@@ -268,7 +268,65 @@ void DhtQuery::updateDhtQuery()
 		item = new QTreeWidgetItem();
 
 		std::ostringstream buckstr;
-		buckstr << "n/a";
+		buckstr << "GOOD PROXY";
+		//bdStdPrintNodeId(buckstr, &(lit->first));
+
+		std::ostringstream ipstr;
+		ipstr << inet_ntoa(bdp->mPeerId.addr.sin_addr);
+		ipstr << ":" << ntohs(bdp->mPeerId.addr.sin_port);
+
+		std::ostringstream idstr;
+		bdStdPrintNodeId(idstr, &(bdp->mPeerId.id));
+
+		std::ostringstream flagsstr;
+		flagsstr << "0x" << std::hex << std::setfill('0') << bdp->mPeerFlags;
+
+		std::ostringstream foundstr;
+		foundstr << now - bdp->mFoundTime << " secs ago";
+
+		std::ostringstream lastsendstr;
+		if (bdp->mLastSendTime == 0)
+		{
+			lastsendstr << "never";
+		}
+		else
+		{
+			lastsendstr << now - bdp->mLastSendTime << " secs ago";
+		}
+
+		std::ostringstream lastrecvstr;
+		if (bdp->mLastRecvTime == 0)
+		{
+			lastrecvstr << "never";
+		}
+		else
+		{
+			lastrecvstr << now - bdp->mLastRecvTime << " secs ago";
+		}
+
+		item -> setData(QTW_COL_BUCKET, Qt::DisplayRole, QString::fromStdString(buckstr.str()));
+		item -> setData(QTW_COL_IPADDR, Qt::DisplayRole, QString::fromStdString(ipstr.str()));
+		item -> setData(QTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(idstr.str()));
+		item -> setData(QTW_COL_FLAGS, Qt::DisplayRole, QString::fromStdString(flagsstr.str()));
+
+		item -> setData(QTW_COL_FOUND, Qt::DisplayRole, QString::fromStdString(foundstr.str()));
+		item -> setData(QTW_COL_SEND, Qt::DisplayRole, QString::fromStdString(lastsendstr.str()));
+		item -> setData(QTW_COL_RECV, Qt::DisplayRole, QString::fromStdString(lastrecvstr.str()));
+
+		qpTreeWidget->addTopLevelItem(item);
+	}
+
+	for(lit = query.mProxiesUnknown.begin(); lit != query.mProxiesUnknown.end(); lit++)
+	{
+		/* find the entry */
+		QTreeWidgetItem *item = NULL;
+		bdPeer *bdp = &(*lit);
+
+		/* insert */
+		item = new QTreeWidgetItem();
+
+		std::ostringstream buckstr;
+		buckstr << "POTENTIAL";
 		//bdStdPrintNodeId(buckstr, &(lit->first));
 
 		std::ostringstream ipstr;
