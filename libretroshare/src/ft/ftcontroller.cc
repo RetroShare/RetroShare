@@ -356,15 +356,16 @@ void ftController::cleanCacheDownloads()
 			if (((it->second)->mFlags & RS_FILE_HINTS_CACHE) && it->second->mState != ftFileControl::DOWNLOADING)
 				// check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
 			{
-#ifdef CONTROL_DEBUG
 				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second)->mCreateTime);
 				std::cerr << std::endl;
-#endif
-				if ((now > (it->second)->mCreator->creationTimeStamp()) + TIMOUT_CACHE_FILE_TRANSFER) 
-				{
 #ifdef CONTROL_DEBUG
+#endif
+				if (now > (it->second)->mCreator->creationTimeStamp() + TIMOUT_CACHE_FILE_TRANSFER) 
+				{
 					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second)->mHash << ", time=" << (it->second)->mCreateTime << ", now = " << time(NULL) ;
+					std::cerr << "ftController::run() creationTimeStamp: " << (it->second)->mCreator->creationTimeStamp();
 					std::cerr << std::endl;
+#ifdef CONTROL_DEBUG
 #endif
 					toCancel.push_back((it->second)->mHash);
 				}
