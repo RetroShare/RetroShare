@@ -7,6 +7,10 @@
 #include "dhtwindow.h"
 #include "dhtquery.h"
 
+#ifdef _WIN32
+#include <getopt.h>
+#endif
+
 	/* for static PThreads under windows... we need to init the library...  
 	 * Not sure if this is needed?
 	 */
@@ -38,7 +42,6 @@ int main(int argc, char *argv[])
 
 	bool doLocalTesting = false;
 
-#ifndef _WIN32 
 	int c;
 	while((c = getopt(argc, argv,"r:R:p:c:nl")) != -1)
 	{
@@ -74,7 +77,6 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
-#endif
 
 
 	/****************** WINDOWS  SPECIFIC INITIALISATION ****************/
