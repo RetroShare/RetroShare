@@ -1,3 +1,131 @@
+Changes for v0.5.1d
+
+* Found the CacheTransfer Killing Bug... misplaced brackets!
+* fixed a bug in pqissl and pqistreamer. The 2nd one was responsible for disconnections and errors in GetTlvString type
+* Fixed the Missing Cache File bug.
+* Added Old Cache Storage... so these can be retrieved.
+* Connected up the CancelCacheFile() -> FileCancel.
+* Removed ipaddr = 1 bug
+* added #ifdefs to remove debugging output in p3BitDht.
+* corrected uninitialized value
+* made "." be a plugin directory for debugging only
+* corrected display of uploaded size
+* made search case insentitive, by default
+* made the default behavior for multiple keywords search to eb an AND between keywords (emule style)
+* Fixed html title bug in the forum message when answering to a message in ForumMsgItem.
+* Fixed enabled sate of the new message buton in ForumsDialog.
+* moved Plugins page little bit to the top of the settings
+* PluginManager:
+  * Fixed compile under Windows.
+  * Removed CloseHandle of GetModuleHandle.
+  * Added missing return when the function entry of the plugin is NULL.
+  * Fixed checking for the extension ".dll".
+* Fixed reaction of the checkbox "web of trust". Now the list of unvalid gpg keys is shown or hide directly after the click.
+* Fixed calculation of the unread messages in MessagesDialog. The starred messages was not counted as unread.
+* Set some tree widgets to allColumnsShowFocus.
+* added settings page for plugins.
+* fixed LinksCloud Plugin
+* fixed plugin .pri file for windows and ubuntu
+* added dlopen method for windows. To be tested.
+* Added basic infrastructure to plugin system in libretroshare and retroshare-gui.
+* ported LinksCloud to a new plugin, and removed it from main sources
+* Made the hash-cache more compliant with mounted/network drives:
+  * corrected bug that would wipe out the cache file every other start
+  * missing root directories are not discarded anymore, but kept empty, unless the user really removes them
+* Reworked settings dialog:
+  * The settings page loads the data with the first show. The dialog now starts faster.
+  * Cleaned DirectoriesPage, removed the directory list and save the data with the OK button.
+* Automatic add the recommended friend(s) as CC in the MessageComposer.
+* Fixed crash in ForumsDialog (second try).
+* Added a "return" if QTreeWidgetItem = NULL, to stop crash.
+* Fixed crash in ForumsDialog (hopefully)
+* send plain text message instead of html, when the text contains no html specifics.
+* enabled new Spanish translation
+* Fixed refill of the threads tree after receiving a new message.
+* Now the new message is expanded.
+* Moved the fill function of the ForumsDialog to a QThread.
+* Fixed memory leak of the fill thread of the history browser.
+* cleaned display of TR statistics
+* Optimized the functions for the forum messages.
+  - used "const std::string&" for the parameters
+  - used "std::map" for the read status
+  - removed useless variables
+* Added new define DEBUG_FORUMS in ForumsDialog.cpp.
+* Added function to generate mass data for the forum messages.
+* Fixed german language for the FriendsDialog.
+* Added a placeholder text to the message list in the MessagesDialog (currently used when Starred is selected).
+* Connected the menu actions reply, reply all and forward in MessagesDialog. Now they work again.
+* Added missing Q_OBJECT to TreeStyle_RDM and fixed translation.
+* MessagesDialog:
+  - Renamed "Favorite Tags" to "Quick View".
+  - Added the quick view "Starred" to the list to show all messages signed with a star.
+* Redesigned the MessagesDialog to open the message in a new tab or new window for reading.
+* The MessageComposer is now only for writing a new message or editing a message from the draft box.
+* Added a new setting to the MessagePage.
+* Added a second tab for Router Statistics
+* renamed Tunneling to Router Requests
+* added missing info for search depths
+* improved tunnel statistics gui
+* moved TR filtering to beginning of TR handlign function. Makes it more consistent w.t.r. the displayed turtle statistics
+* added automatic limitation of turtle search and turtle tunnel requests as a function of current traffic
+* added additional statistics from turtle router. 
+* Moved the star to the first column in MessagesDialog.
+* Fixed debug output in FriendsDialog.
+* Show the selected tag in the tab title in MessagesDialog.
+* Included patch to compile on OpenSUSE 11.4 (from AsamK)
+* Added a star column for messages.
+* added a display of turtle search/tunnel requests over time, to help spotting potential spammers
+* Added to sort by Age when one day, one week or one month is selected
+* Fixed compile Problems on Ubuntu LTS
+* Added tags to the MessageComposer.
+* Added context menu to contact list in MessageComposer.
+* Show the RetroShare id of the peer and the signers of the key in ConfCertDialog as clickable links.
+* Disabled the CACHE_OPT code, until the duplicate cache entries is fixed.
+* re-worked printcache to analyse a large batch of cache files.
+* Added "Copy RetroShare Link" of the selected peer in PeersDialog and NetworkDialog.
+* Removed the + button in channels and forums and moved the post button to the right side. 
+* Added tooltip's for Messages columns
+* Added word wrap to the title of the thread and the subject of the message to avoid the stretch of the splitter.
+* Changed style sheet of the tags in MessageDialog to gradient color.
+* Added a new button in the forums dialog to download all links in the selected forum message.
+* Fixed style sheet of auto download button in channels.
+* Removed the difference of the separator for Linux and Windows.
+* Removed extra "/" of the filename (e.g. "E://") of the hashed file when sharing a whole drive.
+* fixed bug related to opening cache hist file in text mode for windows
+* added cleaning of cipher context to authssl encrypt decrypt functions 
+* added header to trustview which caused compilation error
+* Fixed drag and drop of files to a forum message with utf8 chars.
+* Fixed recommend friend.
+* fixed the layout of ForumMsgItem
+* added to RetroShare Help page new commands entry for "-r retroshare://..."
+* Fixed some more utf8 handling in the GUI.
+* Optimized creation of the RetroShare links for forum and channel messages.
+* added history cache optimisation to subscribed/client groups. 
+* added couple more ifdefines to remove cache opt code. 
+* fixed ForumsMsgItem to not stretch the widget
+* Added new RetroShare link format to write a message
+* retroshare://message?id=...[&subject=...]
+* Added clickable links in ForumMsgItem for the signer of the message to start the MessageComposer.
+* Fixed creation of the RetroShare links as anchor.
+* Corrected bugs in chat:
+  - sending large messages now works, thanks to RsChatMsgItem splitting (not 100% backward compatible, but avoids crashing)
+  - removed crash due to dynamic_cast onto a deleted pointer.
+* Enabled on Private Chat to display for the status string smileys, when there is smiley codes used.
+* Added new RetroShare link format to start a search retroshare://search?keywords=...
+* Enabled key "delete" to remove search results.
+* Removed the GoTo buttons from the feeds and added clickable links.
+* Enabled space to switch the read state in MessagesDialog and ForumsDialog.
+* Added the name and location to the title of the MainWindow.
+* Get the name and location for the window tile and tray tooltip only once at start.
+* Added title to the RetroShare file links shown as toolhelp "hash (size)".
+* added script to gather statistics from ppa repository
+* suppressed channel source ID from the file source peer list
+* updated base resolution of RS icon to 48x48
+* Enabled drag and drop in ShareManager to add folders to the share.
+* improved strategy of cleaning unfinished cache transfers
+* fixed display inconsistency in tunnel local src/dst when getPeerDetails() call fails
+* always set location for connected peer. Previous settign was causing blank location display
+
 Changes for v0.5.1c
 
 * added print-cache code to the tests suite
