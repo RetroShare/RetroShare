@@ -7,8 +7,8 @@
 
 #include <string>
 
-#define LIB_VERSION "0.5.1"
-#define SVN_REVISION "Revision: $WCREV$"
+#define LIB_VERSION "0.5.1d"
+#define SVN_REVISION "Revision $WCREV$"
 
 namespace RsUtil {
 
