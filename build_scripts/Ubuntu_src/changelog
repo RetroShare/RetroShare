@@ -1,5 +1,15 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  * Bug fixes
+      - Fixed the cache transfer killing bug (misplaced brackets)
+      - Fixed bug in pqissl wrongly casting a pointer to unsigned long, possibly impacting 64bit systems
+      - Fixed bug responsible for corrupting large packets. Solved the chat bug,
+        the errors in GetTlvString, the corrupted exchange of keys, location names, etc.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 25 Jun 2011 19:35:46 +0100
+
+retroshare (0.5.1-0.4331~lucid) lucid; urgency=low
+
   * Improvements
       - Started dev of plugin system. Works on linux, not yet on windows.
       - Added gui for plugins in Settings
