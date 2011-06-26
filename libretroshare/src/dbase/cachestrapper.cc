@@ -918,24 +918,48 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 			}
 			else
 			{
-				if (cd.pid == ownId)
-				{
-					/* load local */
-					(it2 -> second).source -> loadLocalCache(cd);
+				/* check that the file exists first.... */
+				std::string filename = cd.path;
+				filename += "/";
+				filename += cd.name;
 #ifdef CS_DEBUG 
-					std::cerr << "CacheStrapper::loadList() loaded Local";
+				std::cerr << "CacheStrapper::loadList() Checking File: " << filename;
+				std::cerr << std::endl;
+#endif
+
+				bool fileExists = RsDirUtil::checkFile(filename);
+				if (fileExists)
+				{
+#ifdef CS_DEBUG 
+					std::cerr << "CacheStrapper::loadList() Exists ... continuing";
 					std::cerr << std::endl;
 #endif
+					if (cd.pid == ownId)
+					{
+	
+						/* load local */
+						(it2 -> second).source -> loadLocalCache(cd);
+#ifdef CS_DEBUG 
+						std::cerr << "CacheStrapper::loadList() loaded Local";
+						std::cerr << std::endl;
+#endif
+					}
+					else
+					{
+						/* load remote */
+						(it2 -> second).store -> loadCache(cd);
+#ifdef CS_DEBUG 
+						std::cerr << "CacheStrapper::loadList() loaded Remote";
+						std::cerr << std::endl;
+#endif
+					}
 				}
 				else
 				{
-					/* load remote */
-					(it2 -> second).store -> loadCache(cd);
-#ifdef CS_DEBUG 
-					std::cerr << "CacheStrapper::loadList() loaded Remote";
+					std::cerr << "CacheStrapper::loadList() Doesn't Exist dropping: " << filename;
 					std::cerr << std::endl;
-#endif
 				}
+
 			}
 
 			/* cleanup */
