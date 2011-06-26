@@ -24,7 +24,8 @@
  */
 
 #include "udptestfn.h"
-#include "udplayer.h"
+#include "udp/udplayer.h"
+#include <stdlib.h>
 
 #define MAX_PEERS 16
 

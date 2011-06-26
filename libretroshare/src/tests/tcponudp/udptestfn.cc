@@ -25,7 +25,7 @@
 
 #include "udptestfn.h"
 
-void UdpRecvTest::recvPkt(void *data, int size, struct sockaddr_in &from)
+int UdpRecvTest::recvPkt(void *data, int size, struct sockaddr_in &from)
 {
 	/* print packet information */
 	std::cerr << "UdpRecvTest::recvPkt(" << size << ") from: " << from;

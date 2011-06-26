@@ -26,17 +26,12 @@
 
 
 
-#include "udplayer.h"
-#include "tcpstream.h"
+#include "udp/udpstack.h"
+#include "tcponudp/udppeer.h"
+#include "tcponudp/tcpstream.h"
+#include "tcponudp/tou.h"
 
 #include <iostream>
-
-/* unix only
-#include <netinet/in.h>
-#include <arpa/inet.h>
-*/
-
-#include "tou_net.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -94,7 +89,6 @@ int main(int argc, char **argv)
 	/* setup the local/remote addresses.
 	 */
 
-	tounet_init();
 
 	struct sockaddr_in laddr;
 	struct sockaddr_in raddr;
@@ -102,8 +96,8 @@ int main(int argc, char **argv)
 	laddr.sin_family = AF_INET;
 	raddr.sin_family = AF_INET;
 
-	if ((!tounet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
-		(!tounet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
+	if ((!bdnet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
+		(!bdnet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
 	{
 		std::cerr << "Invalid addresses!" << std::endl;
 		usage(argv[0]);
@@ -115,16 +109,18 @@ int main(int argc, char **argv)
 	std::cerr << "Local Address: " << laddr << std::endl;
 	std::cerr << "Remote Address: " << raddr << std::endl;
 
-	UdpSorter udps(laddr);
+        UdpStack udps(laddr);
+        UdpPeerReceiver *upr = new UdpPeerReceiver(&udps);
+        udps.addReceiver(upr);
+
 	if (!udps.okay())
 	{
 		std::cerr << "UdpSorter not Okay (Cannot Open Local Address): " << laddr << std::endl;
 		exit(1);
 	}
 
-
-	TcpStream tcp(&udps);
-	udps.addUdpPeer(&tcp, raddr);
+	TcpStream tcp(upr);
+	upr->addUdpPeer(&tcp, raddr);
 
 	if (toConnect)
 	{
@@ -157,15 +153,15 @@ int main(int argc, char **argv)
 		char buffer[bufsize];
 		int readsize = 0;
 
-		tounet_fcntl(0, F_SETFL, O_NONBLOCK);
+		bdnet_fcntl(0, F_SETFL, O_NONBLOCK);
 
 		bool done = false;
 		bool blockread = false;
 		while(!done)
 		{
 			//sleep(1);
-			usleep(100000);
-			//usleep(1000);
+			//usleep(100000);
+			usleep(1000);
 			if (blockread != true)
 			{
 				readsize = read(0, buffer, bufsize);
@@ -219,7 +215,7 @@ int main(int argc, char **argv)
 	/* recv data */
 	int  bufsize = 1523;
 	char data[bufsize];
-	tounet_fcntl(1,F_SETFL,O_NONBLOCK);
+	bdnet_fcntl(1,F_SETFL,O_NONBLOCK);
 	while(1)
 	{
 		//sleep(1);

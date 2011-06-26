@@ -27,14 +27,15 @@
 
 
 #include <iostream>
+#include <stdlib.h>
 
 //#define USE_TCP_SOCKET
 
 // for printing sockaddr
-#include "udplayer.h"
+#include "udp/udpstack.h"
 
 #ifndef USE_TCP_SOCKET
-	#include "tou.h"
+	#include "tcponudp/tou.h"
 #endif
 
 /* shouldn't do this - but for convenience
@@ -44,7 +45,7 @@
  * This includes the whole networking interface
  */
 
-#include "tou_net.h"
+#include "util/bdnet.h"
 
 /* These three includes appear to work in both W & L.
  * and they shouldn't!!!! maybe cygwin is allowing it...
@@ -109,7 +110,6 @@ int main(int argc, char **argv)
 		return 1;	
 	}
 
-	tounet_init();
 
 	/* setup the local/remote addresses.
 	 */
@@ -119,8 +119,8 @@ int main(int argc, char **argv)
 	laddr.sin_family = AF_INET;
 	raddr.sin_family = AF_INET;
 
-	if ((!tounet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
-		(!tounet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
+	if ((!bdnet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
+		(!bdnet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
 	{
 		std::cerr << "Invalid addresses!" << std::endl;
 		usage(argv[0]);
@@ -132,6 +132,8 @@ int main(int argc, char **argv)
 	std::cerr << "Local Address: " << laddr << std::endl;
 	std::cerr << "Remote Address: " << raddr << std::endl;
 
+	UdpStack udps(laddr);
+	tou_init((void *) &udps);
 
 #ifdef USE_TCP_SOCKET
 	int sockfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -153,7 +155,7 @@ int main(int argc, char **argv)
 
 	/* make nonblocking */
 #ifdef USE_TCP_SOCKET
-	int err = tounet_fcntl(sockfd,F_SETFL,O_NONBLOCK);
+	int err = bdnet_fcntl(sockfd,F_SETFL,O_NONBLOCK);
 #else
 	int err = 0;
 #endif
@@ -168,17 +170,23 @@ int main(int argc, char **argv)
 
 #ifdef USE_TCP_SOCKET
         err = bind(sockfd, (struct sockaddr *) &laddr, sizeof(laddr));
-#else
-        err = tou_bind(sockfd, (struct sockaddr *) &laddr, sizeof(laddr));
-#endif
 	if (err < 0)
 	{
 		std::cerr << "Error: Cannot bind socket: ";
 		std::cerr << err << std::endl;
 		return -1;
 	}
-
 	std::cerr << "Socket Bound to: " << laddr << std::endl;
+#else
+        err = tou_bind(sockfd, (struct sockaddr *) &laddr, sizeof(laddr));
+	if (err < 0)
+	{
+		std::cerr << "As expected, cannot bind a tou socket";
+		std::cerr << err << std::endl;
+		//return -1;
+	}
+#endif
+
 
 	if (toConnect)
 	{
@@ -264,15 +272,15 @@ int main(int argc, char **argv)
 		char buffer[bufsize];
 		int readsize = 0;
 
-		tounet_fcntl(0, F_SETFL, O_NONBLOCK);
+		bdnet_fcntl(0, F_SETFL, O_NONBLOCK);
 
 		bool done = false;
 		bool blockread = false;
 		while(!done)
 		{
-			sleep(1);
+			//sleep(1);
 			//usleep(10000);
-			//usleep(1000);
+			usleep(100);
 			if (blockread != true)
 			{
 				readsize = read(0, buffer, bufsize);
@@ -317,18 +325,28 @@ int main(int argc, char **argv)
 
 		std::cerr << "Transfer Complete: " << totalwbytes << " bytes";
 		std::cerr << std::endl;
+
+		// ACTUALLY tou_close() is not blocking...
+		// and kills the connection instantly. 
+		// The transfer will fail if there is any data left in the send queue (which there is in most cases).
+		// Interestingly.. if we slow the transmit and speed up the recv,
+		// Then it can succeed.
+		//
+		// The settings are done to make this fail.
+
 		return 1;
 	}
 
 	/* recv data */
 	int  bufsize = 1523;
 	char data[bufsize];
-	tounet_fcntl(1,F_SETFL,O_NONBLOCK);
+	bdnet_fcntl(1,F_SETFL,O_NONBLOCK);
 	while(1)
 	{
-		sleep(1);
+		//sleep(1);
 		//usleep(10000);
 		//usleep(1000);
+		usleep(100);
 		int writesize = bufsize;
 		int ret;
 

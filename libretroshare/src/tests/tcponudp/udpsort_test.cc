@@ -24,7 +24,8 @@
  */
 
 #include "udptestfn.h"
-#include "udpsorter.h"
+#include "udp/udpstack.h"
+#include "tcponudp/udppeer.h"
 
 #define MAX_PEERS 16
 
@@ -58,7 +59,9 @@ int main(int argc, char **argv)
 	std::cerr << argv[0] << " Local Port: " << ntohs(local.sin_port);
 	std::cerr << std::endl;
 
-	UdpSorter udps(local);
+	UdpStack udps(local);
+	UdpPeerReceiver *upr = new UdpPeerReceiver(&udps);
+	udps.addReceiver(upr);
 
 	for(i = 2; i < argc; i++)
 	{
@@ -68,7 +71,7 @@ int main(int argc, char **argv)
 		std::cerr << std::endl;
 
 		UdpPeerTest *pt = new UdpPeerTest(peers[i-2]);
-		udps.addUdpPeer(pt, peers[i-2]);
+		upr->addUdpPeer(pt, peers[i-2]);
 	}
 
 	int size = 12;

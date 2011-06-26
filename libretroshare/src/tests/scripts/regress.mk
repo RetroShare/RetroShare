@@ -1,7 +1,7 @@
 
 testoutputfiles = $(foreach tt,$(1),$(tt).tstout)
 
-%.tstout : %.sh
+%.tstout : %.sh %
 	-sh ./$< > $@ 2>&1
 
 %.tstout : %

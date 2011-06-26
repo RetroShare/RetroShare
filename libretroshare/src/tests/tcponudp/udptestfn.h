@@ -23,8 +23,11 @@
  *
  */
 
-#include "udplayer.h"
-#include "udpsorter.h"
+#include "udp/udplayer.h"
+#include "udp/udpstack.h"
+#include "tcponudp/udppeer.h"
+
+//#include "udpsorter.h"
 
 #ifndef TOU_UDP_TEST_FN_H
 #define TOU_UDP_TEST_FN_H
@@ -32,7 +35,8 @@
 class UdpRecvTest: public UdpReceiver
 {
 	public:
-virtual void recvPkt(void *data, int size, struct sockaddr_in &from);
+virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
+virtual int status(std::ostream&) { return 0; }
 };
 
 

@@ -5,26 +5,30 @@ DHT_TOP_DIR = ../../../../libbitdht/src
 ###############################################################
 
 ###############################################################
-include $(RS_TOP_DIR)/scripts/config.mk
+include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-BIOOBJ = bss_tou.o 
+#BIOOBJ = bss_tou.o 
 
-RSOBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o extaddrfinder.o
-RSOBJ += tcppacket.o tcpstream.o tou.o $(BIOOBJ)
+#RSOBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o extaddrfinder.o
+#RSOBJ += tcppacket.o tcpstream.o tou.o $(BIOOBJ)
 
-EXECS = librs  udpsock_test udpsort_test udp_server 
-#test_tou pair_tou reset_tou internal_tou largefile_tou 
+OBJ  = udptestfn.o 
+
+EXECS = udpsock_test udpsort_test udp_server test_tou 
+#pair_tou reset_tou internal_tou largefile_tou 
 
 TESTOBJ  = udpsock_test.o udpsort_test.o udp_server.o test_tou.o
-TESTOBJ += pair_tou.o reset_tou.o largefile_tou.o
+#TESTOBJ += pair_tou.o reset_tou.o largefile_tou.o
 #internal_tou.o 
 
 TESTS  = udpsock_test udpsort_test udp_server test_tou 
-TESTS += pair_tou reset_tou largefile_tou
+# Unfortunately the design of tou has changed over time.
+# and these tests cannot be performed at the moment.
+#TESTS += pair_tou reset_tou largefile_tou
 #internal_tou 
 
-all: librs tests
+all: tests
 
 udpsock_test : $(OBJ) udpsock_test.o
 	$(CC) $(CFLAGS) -o udpsock_test udpsock_test.o $(OBJ) $(LIBS)
@@ -56,6 +60,8 @@ largefile_tou : $(OBJ) largefile_tou.o
 	$(BIOCC) $(BIOCFLAGS) -c $<
 
 ###############################################################
-include $(RS_TOP_DIR)/scripts/rules.mk
+include $(RS_TOP_DIR)/tests/scripts/rules.mk
 ###############################################################
+
+CFLAGS += -DRS_USE_BITDHT -I$(DHT_TOP_DIR)
 

@@ -27,17 +27,18 @@
 
 
 #include <iostream>
+#include <stdlib.h>
 
 //#define USE_TCP_SOCKET
 
 // for printing sockaddr
-#include "udplayer.h"
+#include "udp/udpstack.h"
 
 #ifndef USE_TCP_SOCKET
-	#include "tou.h"
+	#include "tcponudp/tou.h"
 #endif
 
-#include "tou_net.h"
+#include "util/bdnet.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -99,8 +100,6 @@ int main(int argc, char **argv)
 		return 1;	
 	}
 
-	tounet_init();
-
 	/* setup the local/remote addresses.
 	 */
 	struct sockaddr_in laddr;
@@ -109,8 +108,8 @@ int main(int argc, char **argv)
 	laddr.sin_family = AF_INET;
 	raddr.sin_family = AF_INET;
 
-	if ((!tounet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
-		(!tounet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
+	if ((!bdnet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
+		(!bdnet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
 	{
 		std::cerr << "Invalid addresses!" << std::endl;
 		usage(argv[0]);
@@ -121,6 +120,9 @@ int main(int argc, char **argv)
 
 	std::cerr << "Local Address: " << laddr << std::endl;
 	std::cerr << "Remote Address: " << raddr << std::endl;
+
+        UdpStack udps(laddr);
+        tou_init((void *) &udps);
 
 
 #ifdef USE_TCP_SOCKET
@@ -284,8 +286,8 @@ int main(int argc, char **argv)
 	char data[bufsize];
 	int readsize = 0;
 
-	tounet_fcntl(0, F_SETFL, O_NONBLOCK);
-	tounet_fcntl(1,F_SETFL,O_NONBLOCK);
+	bdnet_fcntl(0, F_SETFL, O_NONBLOCK);
+	bdnet_fcntl(1,F_SETFL,O_NONBLOCK);
 
 	bool doneWrite = false;
 	bool doneRead  = false;
