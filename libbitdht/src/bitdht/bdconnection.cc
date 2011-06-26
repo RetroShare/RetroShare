@@ -2736,7 +2736,7 @@ int bdConnectionRequest::checkGoodProxyPeer(const bdId *id)
 	std::cerr << std::endl;
 
 	std::list<bdId>::iterator it = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *id);
-	if (it != mPeersTried.end())
+	if (it != mPotentialProxies.end())
 	{
 		std::cerr << "bdConnectionRequest::checkProxyPeer() Found in PotentialProxies List, adding in";
 		std::cerr << std::endl;
