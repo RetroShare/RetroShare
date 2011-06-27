@@ -38,7 +38,6 @@ testnetwork {
 
  	# DEFINES *= PGRP_DEBUG
  	# DEFINES *= PERSON_DEBUG
-	# DEFINES *= DEBUG_PQISSL
 
 	#DEFINES *= DEBUG_UDP_SORTER DEBUG_UDP_LAYER EXTADDRSEARCH_DEBUG
 
@@ -255,7 +254,6 @@ win32 {
                 #QMAKE_CXXFLAGS_DEBUG += -O2
                 #QMAKE_CFLAGS_DEBUG += -O2
 
-                DEFINES -= DEBUG_PQISSL
                 DEFINES += USE_CMD_ARGS
 
                 #miniupnp implementation files

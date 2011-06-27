@@ -53,9 +53,10 @@ const int pqisslzone = 37714;
 #define WAITING_SSL_AUTHORISE  5
 #define WAITING_FAIL_INTERFACE 6
 
-
 #define PQISSL_PASSIVE  0x00
 #define PQISSL_ACTIVE   0x01
+
+#define PQISSL_DEBUG 1
 
 const int PQISSL_LOCAL_FLAG = 0x01;
 const int PQISSL_REMOTE_FLAG = 0x02;
@@ -629,40 +630,45 @@ int 	pqissl::Initiate_Connection()
 	int size = sizeof(int);
 
 	err = getsockopt(osock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, &size);
+#ifdef PQISSL_DEBUG
 	if (err == 0) {
 		std::cerr << "pqissl::Initiate_Connection: Current TCP receive buffer size " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error getting TCP receive buffer size. Error " << err << std::endl;
 	}
+#endif
 
 	sockbufsize = 0;
 
 	err = getsockopt(osock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, &size);
-
+#ifdef PQISSL_DEBUG
 	if (err == 0) {
 		std::cerr << "pqissl::Initiate_Connection: Current TCP send buffer size " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error getting TCP send buffer size. Error " << err << std::endl;
 	}
+#endif
 
 	sockbufsize = WINDOWS_TCP_BUFFER_SIZE;
 
 	err = setsockopt(osock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, sizeof(sockbufsize));
-
+#ifdef PQISSL_DEBUG
 	if (err == 0) {
 		std::cerr << "pqissl::Initiate_Connection: TCP receive buffer size set to " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error setting TCP receive buffer size. Error " << err << std::endl;
 	}
+#endif
 
 	err = setsockopt(osock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, sizeof(sockbufsize));
-
+#ifdef PQISSL_DEBUG
 	if (err == 0) {
 		std::cerr << "pqissl::Initiate_Connection: TCP send buffer size set to " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error setting TCP send buffer size. Error " << err << std::endl;
 	}
 #endif
+#endif // WINDOWS_SYS
 
 	mTimeoutTS = time(NULL) + mConnectTimeout;
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
@@ -1381,7 +1387,7 @@ int 	pqissl::senddata(void *data, int len)
 {
 	int tmppktlen ;
 
-#ifdef DEBUG_PQISSL
+#ifdef PQISSL_DEBUG
 	std::cout << "Sending data thread=" << pthread_self() << ", ssl=" << (void*)this << ", size=" << len << std::endl ;
 #endif
 	tmppktlen = SSL_write(ssl_connection, data, len) ;
@@ -1401,7 +1407,7 @@ int 	pqissl::senddata(void *data, int len)
 		{
 			out << "SSL_write() SSL_ERROR_SYSCALL";
 			out << std::endl;
-	        	out << "Socket Closed Abruptly.... Resetting PQIssl";
+			out << "Socket Closed Abruptly.... Resetting PQIssl";
 			out << std::endl;
 			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
@@ -1464,7 +1470,7 @@ int 	pqissl::senddata(void *data, int len)
 
 int 	pqissl::readdata(void *data, int len)
 {
-#ifdef DEBUG_PQISSL
+#ifdef PQISSL_DEBUG
 	std::cout << "Reading data thread=" << pthread_self() << ", ssl=" << (void*)this << std::endl ;
 #endif
 
@@ -1475,11 +1481,11 @@ int 	pqissl::readdata(void *data, int len)
 	{
 		int tmppktlen  ;
 
-#ifdef DEBUG_PQISSL
+#ifdef PQISSL_DEBUG
 		std::cerr << "calling SSL_read. len=" << len << ", total_len=" << total_len << std::endl ;
 #endif
 		tmppktlen = SSL_read(ssl_connection, (void*)( &(((uint8_t*)data)[total_len])), len-total_len) ;
-#ifdef DEBUG_PQISSL
+#ifdef PQISSL_DEBUG
 		std::cerr << "have read " << tmppktlen << " bytes" << std::endl ;
 		std::cerr << "data[0] = " 
 			<< (int)((uint8_t*)data)[total_len+0] << " "
@@ -1606,7 +1612,7 @@ int 	pqissl::readdata(void *data, int len)
 			total_len+=tmppktlen ;
 	} while(total_len < len) ;
 
-#ifdef DEBUG_PQISSL
+#ifdef PQISSL_DEBUG
 	std::cerr << "pqissl: have read data of length " << total_len << ", expected is " << len << std::endl ;
 #endif
 
