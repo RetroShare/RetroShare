@@ -1674,9 +1674,13 @@ std::ostream &operator<<(std::ostream &out, const bdProxyTuple &t)
 
 bdConnection::bdConnection()
 {
-	///* Connection State, and TimeStamp of Update */
-	//int mState;
-	//time_t mLastEvent;
+	/* DUMMY INITIALISATION FOR ALL DATA - DON"T THINK IT MATTERS
+	 * But keeps Valgrind happy
+	 */
+
+	/* Connection State, and TimeStamp of Update */
+	int mState = 0;
+	time_t mLastEvent = 0;
 	//
 	///* Addresses of Start/Proxy/End Nodes */
 	//bdId mSrcId;
@@ -1686,24 +1690,24 @@ bdConnection::bdConnection()
 	///* Where we are in the connection,
 	//* and what connection mode.
 	//*/
-	//int mPoint;
-	//int mMode;
+	int mPoint = 0;
+	int mMode = 0;
 	//
 	///* must have ip:ports of connection ends (if proxied) */
 	//bdId mSrcConnAddr;
 	//bdId mDestConnAddr;
 	//
-	//int mBandwidth;
+	int mBandwidth = 0;
 	//
 	///* START/ACK Finishing ****/
-	//time_t mLastStart;   /* timer for retries */
-	//int mRetryCount;     /* retry counter */
+	time_t mLastStart = 0;   /* timer for retries */
+	int mRetryCount = 0;     /* retry counter */
 	//
-	//bool mSrcAck;
-	//bool mDestAck;
+	bool mSrcAck = false;
+	bool mDestAck = false;
 	//
 	//// Completion TS.
-	//time_t mCompletedTS;
+	time_t mCompletedTS = 0;
 }
 
 	/* heavy check, used to check for alternative connections, coming from other direction

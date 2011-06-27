@@ -105,6 +105,7 @@ HEADERS += \
 	udp/udpstack.h		\
 	udp/udpbitdht.h   	\
 	bitdht/bdconnection.h	\
+	bitdht/bdfilter.h	\
 
 SOURCES += \
 	bitdht/bencode.c	\
@@ -125,5 +126,6 @@ SOURCES += \
 	udp/udpstack.cc		\
 	udp/udpbitdht.cc  	\
 	bitdht/bdconnection.cc	\
+	bitdht/bdfilter.cc	\
 
 
