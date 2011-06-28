@@ -60,6 +60,15 @@ bool bdFilter::filtered(std::list<bdFilteredPeer> &answer)
 	return (answer.size() > 0);
 }
 
+bool bdFilter::filteredIPs(std::list<struct sockaddr_in> &answer)
+{
+	std::list<bdFilteredPeer>::iterator it;
+	for(it = mFiltered.begin(); it != mFiltered.end(); it++)
+	{
+		answer.push_back(it->mAddr);
+	}
+	return (answer.size() > 0);
+}
 
 int bdFilter::checkPeer(const bdId *id, uint32_t mode)
 {
@@ -111,11 +120,30 @@ int bdFilter::addPeerToFilter(const bdId *id, uint32_t flags)
 		fp.mLastSeen = now;
 
 		mFiltered.push_back(fp);
-	}
 
-	return found;
+		uint32_t saddr = id->addr.sin_addr.s_addr;
+		mIpsBanned.insert(saddr);
+
+		std::cerr << "Adding New Banned Ip Address: " << inet_ntoa(id->addr.sin_addr);
+		std::cerr << std::endl;
+
+		return true;
+	}
+	return false;
 }
 
+/* fast check if the addr is in the structure */
+int bdFilter::addrOkay(struct sockaddr_in *addr)
+{
+	std::set<uint32_t>::const_iterator it = mIpsBanned.find(addr->sin_addr.s_addr);
+	if (it == mIpsBanned.end())
+	{
+		return 1; // Address is Okay!
+	}
+	std::cerr << "Detected Packet From Banned Ip Address: " << inet_ntoa(addr->sin_addr);
+	std::cerr << std::endl;
+	return 0;
+}
 
 
 bool bdFilter::isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags)

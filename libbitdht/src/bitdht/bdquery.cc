@@ -316,7 +316,11 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
 			if (mode)
 			{
 				/* also update port from incoming id, as we have definitely recved from it */
-				mFns->bdUpdateSimilarId(&(it->second.mPeerId), id);
+				if (mFns->bdUpdateSimilarId(&(it->second.mPeerId), id))
+				{
+					/* updated it... must be Unstable */
+					it->second.mExtraFlags |= BITDHT_PEER_EXFLAG_UNSTABLE;
+				}
 			}
 			if (mode & BITDHT_PEER_STATUS_RECV_NODES)
 			{
@@ -567,7 +571,11 @@ int bdQuery::updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType
 			else if (mode) 
 			{
 				/* also update port from incoming id, as we have definitely recved from it */
-				mFns->bdUpdateSimilarId(&(it->second.mPeerId), id);
+				if (mFns->bdUpdateSimilarId(&(it->second.mPeerId), id))
+				{
+					/* updated it... must be Unstable */
+					it->second.mExtraFlags |= BITDHT_PEER_EXFLAG_UNSTABLE;
+				}
 			}
 			return 0;
 		}
@@ -818,7 +826,11 @@ int bdQuery::updateProxyList(const bdId *id, uint32_t mode, std::list<bdPeer> &s
 			if (mode)
 			{
 				/* also update port from incoming id, as we have definitely recved from it */
-				mFns->bdUpdateSimilarId(&(it->mPeerId), id);
+				if (mFns->bdUpdateSimilarId(&(it->mPeerId), id))
+				{
+					/* updated it... must be Unstable */
+					it->mExtraFlags |= BITDHT_PEER_EXFLAG_UNSTABLE;
+				}
 			}
 			it->mPeerFlags |= mode;
 			it->mLastRecvTime = now;

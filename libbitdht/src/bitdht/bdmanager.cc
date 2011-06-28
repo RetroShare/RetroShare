@@ -42,6 +42,8 @@
 #include "bitdht/bdmanager.h"
 #include "bitdht/bdmsgs.h"
 #include "bitdht/bencode.h"
+#include "bitdht/bdquerymgr.h"
+
 
 #include <algorithm>
 #include <sstream>
@@ -72,7 +74,6 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
         mNetworkSize = 0;
         mBdNetworkSize = 0;
 
-	/* setup a query for self */
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::bdNodeManager() ID: ";
 	mFns->bdPrintNodeId(std::cerr, id);
@@ -190,7 +191,7 @@ void bdNodeManager::startQueries()
 			it->second.mStatus = BITDHT_QUERY_QUERYING;
 
 			uint32_t qflags = it->second.mQFlags | BITDHT_QFLAGS_DISGUISE;
-			addQuery(&(it->first), qflags); 
+			mQueryMgr->addQuery(&(it->first), qflags); 
 
 			// add all queries at the same time!
 			//return;
@@ -215,7 +216,7 @@ void bdNodeManager::removeFindNode(bdNodeId *id)
 	}
 
 	/* cleanup any actions */
-	clearQuery(&(it->first));
+	mQueryMgr->clearQuery(&(it->first));
 	//clearPing(&(it->first));
 
 	/* remove from map */
@@ -250,7 +251,7 @@ void bdNodeManager::iteration()
 #endif
 				bdNodeId id;
 				getOwnId(&id);
-				addQuery(&id, BITDHT_QFLAGS_DO_IDLE | BITDHT_QFLAGS_DISGUISE); 
+				mQueryMgr->addQuery(&id, BITDHT_QFLAGS_DO_IDLE | BITDHT_QFLAGS_DISGUISE); 
 				
 				mMode = BITDHT_MGR_STATE_FINDSELF;
 				mModeTS = now;
@@ -407,24 +408,22 @@ void bdNodeManager::QueryRandomLocalNet()
 
 		/* do standard find_peer message */
 
-		bdToken transId;
-		genNewTransId(&transId);
-		msgout_find_node(&id, &transId, &targetNodeId);
+		send_query(&id, &targetNodeId);
 			
-//#ifdef DEBUG_NODE_MSGS
+#ifdef DEBUG_NODE_MSGS
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
 		mFns->bdPrintId(std::cerr, &id);
 		std::cerr << " searching for : ";
 		mFns->bdPrintNodeId(std::cerr, &targetNodeId);
 		std::cerr << std::endl;
-//#endif
+#endif
 	}
 	else
 	{
-//#ifdef DEBUG_NODE_MSGS
+#ifdef DEBUG_NODE_MSGS
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() No LocalNet Peer Found";
 		std::cerr << std::endl;
-//#endif
+#endif
 	}
 }
 
@@ -464,7 +463,7 @@ int bdNodeManager::checkStatus()
         std::map<bdNodeId, bdQueryStatus> queryStatus;
 
 
-        QueryStatus(queryStatus);
+    mQueryMgr->QueryStatus(queryStatus);
 
 	for(it = queryStatus.begin(); it != queryStatus.end(); it++)
 	{
@@ -561,7 +560,7 @@ int bdNodeManager::checkStatus()
 		mFns->bdPrintNodeId(std::cerr, &(it->first));
 		std::cerr << std::endl;
 #endif
-			clearQuery(&(it->first));
+			mQueryMgr->clearQuery(&(it->first));
 		}
 
 		/* FIND in activePeers */
@@ -810,13 +809,13 @@ int bdNodeManager::getDhtBucket(const int idx, bdBucket &bucket)
 
 int bdNodeManager::getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries)
 {
-	bdNode::QueryStatus(queries);
+	mQueryMgr->QueryStatus(queries);
 	return 1;
 }
 
 int bdNodeManager::getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query)
 {
-	return bdNode::QuerySummary(id, query);
+	return mQueryMgr->QuerySummary(id, query);
 }
 
 
@@ -1071,7 +1070,7 @@ void bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *targe
 	std::cerr << "bdNodeManager::ConnectionRequest()";
 	std::cerr << std::endl;
 
-	bdNode::requestConnection(laddr, target, mode, start);
+	mConnMgr->requestConnection(laddr, target, mode, start);
 }
 
 void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
@@ -1081,17 +1080,17 @@ void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uin
 
 	if (answer == BITDHT_CONNECT_ANSWER_OKAY)
 	{
-		AuthConnectionOk(srcId, proxyId, destId, mode, loc);
+		mConnMgr->AuthConnectionOk(srcId, proxyId, destId, mode, loc);
 	}
 	else
 	{
-		AuthConnectionNo(srcId, proxyId, destId, mode, loc, answer);
+		mConnMgr->AuthConnectionNo(srcId, proxyId, destId, mode, loc, answer);
 	}
 }
 
 void bdNodeManager::ConnectionOptions(uint32_t allowedModes, uint32_t flags)
 {
-	bdNode::setConnectionOptions(allowedModes, flags);
+	mConnMgr->setConnectionOptions(allowedModes, flags);
 }
 
 

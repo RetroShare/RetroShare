@@ -32,6 +32,7 @@
 
 
 #include "bitdht/bdiface.h"
+#include <set>
 
 /* Query result flags are in bdiface.h */
 
@@ -54,7 +55,11 @@ class bdFilter
 
 	// get the answer.
 bool	filtered(std::list<bdFilteredPeer> &answer);
+bool	filteredIPs(std::list<struct sockaddr_in> &answer);
+
 int 	checkPeer(const bdId *id, uint32_t peerFlags);
+
+int 	addrOkay(struct sockaddr_in *addr);
 
 	private:
 
@@ -67,6 +72,9 @@ bool	isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags);
 
 	std::list<bdFilteredPeer> mFiltered;
 	bdDhtFunctions *mFns;
+
+	// = addr.sin_addr.s_addr (uint32_t) stored in network order.
+	std::set<uint32_t> mIpsBanned; 
 };
 
 

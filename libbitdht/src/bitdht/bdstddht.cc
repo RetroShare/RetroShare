@@ -75,22 +75,29 @@ void bdStdZeroNodeId(bdNodeId *id)
 // can could end-up with the wrong port.
 // However this only matters with firewalled peers anyway.
 // So not too serious.
-uint32_t bdStdSimilarId(const bdId *n1, const bdId *n2)
+bool bdStdSimilarId(const bdId *n1, const bdId *n2)
 {
 	if (n1->id == n2->id)
 	{
 		if (n1->addr.sin_addr.s_addr == n2->addr.sin_addr.s_addr)
 		{
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-void bdStdUpdateSimilarId(bdId *dest, const bdId *src)
+bool bdStdUpdateSimilarId(bdId *dest, const bdId *src)
 {
 	/* only difference that's currently allowed */
+	if (dest->addr.sin_port == src->addr.sin_port)
+	{
+		/* no update required */
+		return false;
+	}
+
 	dest->addr.sin_port = src->addr.sin_port;
+	return true;
 }
 
 
@@ -274,13 +281,13 @@ int bdStdDht::bdBucketDistance(const bdMetric *metric)
 }
 	
 
-uint32_t bdStdDht::bdSimilarId(const bdId *id1, const bdId *id2)
+bool bdStdDht::bdSimilarId(const bdId *id1, const bdId *id2)
 {
 	return bdStdSimilarId(id1, id2);
 }
 	
 
-void bdStdDht::bdUpdateSimilarId(bdId *dest, const bdId *src)
+bool bdStdDht::bdUpdateSimilarId(bdId *dest, const bdId *src)
 {
 	return bdStdUpdateSimilarId(dest, src);
 }

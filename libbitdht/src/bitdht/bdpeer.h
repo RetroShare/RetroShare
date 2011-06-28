@@ -159,6 +159,8 @@ class bdSpace
 
 int	clear();
 
+int	setAttachedFlag(uint32_t withflags, int count);
+
 	/* accessors */
 int 	find_nearest_nodes(const bdNodeId *id, int number, 
 		std::multimap<bdMetric, bdId> &nearest);
@@ -171,7 +173,11 @@ int 	find_node(const bdNodeId *id, int number,
 		std::list<bdId> &matchIds, uint32_t with_flag);
 int 	find_exactnode(const bdId *id, bdPeer &peer);
 
-int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
+// switched to more efficient single sweep.
+//int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
+int     scanOutOfDatePeers(std::list<bdId> &peerIds);
+int     updateAttachedPeers();
+
 int     add_peer(const bdId *id, uint32_t mode);
 int     printDHT();
 int     getDhtBucket(const int idx, bdBucket &bucket);
@@ -192,6 +198,10 @@ int	updateOwnId(bdNodeId *newOwnId);
 	std::vector<bdBucket> buckets;
 	bdNodeId mOwnId;
 	bdDhtFunctions *mFns;
+
+	uint32_t mAttachedFlags;
+	uint32_t mAttachedCount;
+	time_t   mAttachTS;
 };
 
 

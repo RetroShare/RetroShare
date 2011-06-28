@@ -107,6 +107,7 @@ HEADERS += \
 	bitdht/bdconnection.h	\
 	bitdht/bdfilter.h	\
 	bitdht/bdaccount.h	\
+	bitdht/bdquerymgr.h	\
 
 SOURCES += \
 	bitdht/bencode.c	\
@@ -129,5 +130,6 @@ SOURCES += \
 	bitdht/bdconnection.cc	\
 	bitdht/bdfilter.cc	\
 	bitdht/bdaccount.cc	\
+	bitdht/bdquerymgr.cc	\
 
 

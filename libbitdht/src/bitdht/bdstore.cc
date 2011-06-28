@@ -101,6 +101,7 @@ int bdStore::reloadFromStore()
 
 }
 
+// This is a very ugly function!
 int 	bdStore::getPeer(bdPeer *peer)
 {
 #ifdef DEBUG_STORE
@@ -118,6 +119,34 @@ int 	bdStore::getPeer(bdPeer *peer)
 	}
 	return 0;
 }
+
+int     bdStore::filterIpList(const std::list<struct sockaddr_in> &filteredIPs)
+{
+	// Nasty O(n^2) iteration over 500 entries!!!. 
+	// hope its not used to often.
+
+	std::list<struct sockaddr_in>::const_iterator it;
+	for(it = filteredIPs.begin(); it != filteredIPs.end(); it++)
+	{
+		std::list<bdPeer>::iterator sit;
+		for(sit = store.begin(); sit != store.end();)
+		{
+			if (it->sin_addr.s_addr == sit->mPeerId.addr.sin_addr.s_addr)
+			{
+				std::cerr << "bdStore::filterIpList() Found Bad entry in Store. Erasing!";
+				std::cerr << std::endl;
+
+				sit = store.erase(sit);
+			}
+			else
+			{
+				sit++;
+			}
+		}
+	}
+}
+			
+		
 
 #define MAX_ENTRIES 500
 
@@ -218,4 +247,6 @@ void	bdStore::writeStore()
 #endif
 	return writeStore(mStoreFile);
 }
+
+
 

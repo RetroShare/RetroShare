@@ -29,6 +29,8 @@
 
 #include "bitdht/bdiface.h"
 
+class bdQueryManager;
+class bdNodePublisher;
 
 /************************************************************************************************************
 ************************************** ProxyTuple + Connection State ****************************************
@@ -167,5 +169,106 @@ class bdConnectionRequest
 std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req);
 std::ostream &operator<<(std::ostream &out, const bdConnection &conn);
 
-#endif
 
+/*********
+ * The Connection Management Class.
+ * this encapsulates all of the functionality..
+ * except for a couple of message in/outs + callback.
+ */
+
+class bdConnectManager
+{
+	public:
+
+	bdConnectManager(bdNodeId *ownid, bdSpace *space, bdQueryManager *qmgr, bdDhtFunctions *fns, bdNodePublisher *pub);	
+
+
+	/* connection functions */
+	void requestConnection(bdNodeId *id, uint32_t modes);
+	void allowConnection(bdNodeId *id, uint32_t modes);
+
+
+	/* high level */
+
+        void shutdownConnections();
+        void printConnections();
+
+	/* Connections: Configuration */
+	void defaultConnectionOptions();
+	virtual void setConnectionOptions(uint32_t allowedModes, uint32_t flags);
+
+	/* Connections: Initiation */
+
+	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start);
+	int requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target);	
+	int requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+
+	int killConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+
+	int checkExistingConnectionAttempt(bdNodeId *target);
+	void addPotentialConnectionProxy(const bdId *srcId, const bdId *target);
+	void updatePotentialConnectionProxy(const bdId *id, uint32_t mode);
+
+	int checkPeerForFlag(const bdId *id, uint32_t with_flag);
+
+	int tickConnections();
+	void iterateConnectionRequests();
+	int startConnectionAttempt(bdConnectionRequest *req);
+
+	// internal Callback -> normally continues to callbackConnect().
+	void callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId, 
+				int mode, int point, int cbtype, int errcode);
+
+	/* Connections: Outgoing */
+
+	int  startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	void AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+	void AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int errcode);
+	void iterateConnections();
+
+
+	/* Connections: Utility State */
+
+	bdConnection *findExistingConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
+	bdConnection *newConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
+	int cleanConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
+
+	int determinePosition(bdNodeId *sender, bdNodeId *src, bdNodeId *dest);
+	int determineProxyId(bdNodeId *sender, bdNodeId *src, bdNodeId *dest, bdNodeId *proxyId);
+
+	bdConnection *findSimilarConnection(bdNodeId *srcId, bdNodeId *destId);
+	bdConnection *findExistingConnectionBySender(bdId *sender, bdId *src, bdId *dest);
+	bdConnection *newConnectionBySender(bdId *sender, bdId *src, bdId *dest);
+	int cleanConnectionBySender(bdId *sender, bdId *src, bdId *dest);
+
+	// Overloaded Generalised Connection Callback.
+	virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
+				int mode, int point, int cbtype, int errcode);
+
+	/* Connections: */
+	int recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	int recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status);
+	int recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int bandwidth);
+	int recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+
+	private:
+
+	std::map<bdProxyTuple, bdConnection> mConnections;
+	std::map<bdNodeId, bdConnectionRequest> mConnectionRequests;
+
+        uint32_t mConfigAllowedModes;
+        bool mConfigAutoProxy;
+
+	/****************************** Connection Code (in bdconnection.cc) ****************************/
+
+	private:
+
+	bdNodeId mOwnId;
+	bdSpace *mNodeSpace;
+	bdQueryManager *mQueryMgr;
+	bdDhtFunctions *mFns;
+	bdNodePublisher *mPub;
+};
+
+
+#endif // BITDHT_CONNECTION_H

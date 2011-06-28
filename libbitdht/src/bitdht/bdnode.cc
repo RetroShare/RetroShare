@@ -28,8 +28,12 @@
 #include "bitdht/bencode.h"
 #include "bitdht/bdmsgs.h"
 
+#include "bitdht/bdquerymgr.h"
+#include "bitdht/bdfilter.h"
+
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
+
 
 #include <string.h>
 #include <stdlib.h>
@@ -60,11 +64,39 @@
 
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns)
+	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns),
+	mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL)
 {
-	resetStats();
-	defaultConnectionOptions();
+
+	init(); /* (uses this pointers) stuff it - do it here! */
 }
+
+void bdNode::init()
+{
+	mQueryMgr = new bdQueryManager(&mNodeSpace, mFns, this);
+	mConnMgr = new bdConnectManager(&mOwnId, &mNodeSpace, mQueryMgr, mFns, this);
+
+ 	std::list<bdFilteredPeer> emptyList;
+	mFilterPeers = new bdFilter(&mOwnId, emptyList, BITDHT_FILTER_REASON_OWNID, mFns);
+	
+	setNodeOptions(BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT);
+
+}
+
+#define ATTACH_NUMBER 10
+void bdNode::setNodeOptions(uint32_t optFlags)
+{
+	mNodeOptionFlags = optFlags;	
+	if (optFlags & BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT)
+	{
+		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE, ATTACH_NUMBER);
+	}
+	else
+	{
+		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE, 0);
+	}
+}
+
 
 void bdNode::getOwnId(bdNodeId *id)
 {
@@ -74,7 +106,7 @@ void bdNode::getOwnId(bdNodeId *id)
 /***** Startup / Shutdown ******/
 void bdNode::restartNode()
 {
-	resetStats();
+	mAccount.resetStats();
 
 	mStore.reloadFromStore();
 
@@ -90,7 +122,9 @@ void bdNode::restartNode()
 void bdNode::shutdownNode()
 {
 	/* clear the queries */
-	mLocalQueries.clear();
+	mQueryMgr->shutdownQueries();
+	mConnMgr->shutdownConnections();
+
 	mRemoteQueries.clear();
 
 	/* clear the space */
@@ -127,31 +161,15 @@ void bdNode::printState()
 
 	mNodeSpace.printDHT();
 
-	printQueries();
+	mQueryMgr->printQueries();
+	mConnMgr->printConnections();
 
 #ifdef USE_HISTORY
 	mHistory.printMsgs();
 #endif
 	
-	printStats(std::cerr);
+	mAccount.printStats(std::cerr);
 }
-
-void bdNode::printQueries()
-{
-	std::cerr << "bdNode::printQueries() for Peer: ";
-	mFns->bdPrintNodeId(std::cerr, &mOwnId);
-	std::cerr << std::endl;
-
-	int i = 0;
-	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++, i++)
-	{
-		fprintf(stderr, "Query #%d:\n", i);
-		(*it)->printQuery();
-		fprintf(stderr, "\n");
-	}
-}
-
 
 void bdNode::iterationOff()
 {
@@ -244,18 +262,6 @@ void bdNode::iteration()
 	int sentMsgs = 0;
 	int sentPings = 0;
 
-#if 0
-	int ilim = mLocalQueries.size() * 15;
-	if (ilim < 20)
-	{
-		ilim = 20;
-	}
-	if (ilim > 500)
-	{
-		ilim = 500;
-	}
-#endif
-
 	while((mPotentialPeers.size() > 0) && (sentMsgs < allowedPings))
 	{
 		/* check history ... is we have pinged them already...
@@ -285,12 +291,7 @@ void bdNode::iteration()
 		/**** TEMP ****/
 
 		{
-
-
-			bdToken transId;
-			genNewTransId(&transId);
-			//registerOutgoingMsg(&pid, &transId, BITDHT_MSG_TYPE_PING);
-			msgout_ping(&pid, &transId);
+			send_ping(&pid);
 		
 			sentMsgs++;
 			sentPings++;
@@ -301,81 +302,61 @@ void bdNode::iteration()
 			std::cerr << std::endl;
 #endif
 
-			mCounterPings++;
 		}
 
 	}
 	
 	/* allow each query to send up to one query... until maxMsgs has been reached */
-	int numQueries = mLocalQueries.size();
-	int sentQueries = 0;
-	int i = 0;
-	while((i < numQueries) && (sentMsgs < maxMsgs))
-	{
-		bdQuery *query = mLocalQueries.front();
-		mLocalQueries.pop_front();
-		mLocalQueries.push_back(query);
-
-		/* go through the possible queries */
-		if (query->nextQuery(id, targetNodeId))
-		{
-#ifdef DEBUG_NODE_MSGS 
-			std::cerr << "bdNode::iteration() send_query(";
-			mFns->bdPrintId(std::cerr, &id);
-			std::cerr << ",";
-			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
-			std::cerr << ")";
-			std::cerr << std::endl;
-#endif
-			send_query(&id, &targetNodeId);
-			sentMsgs++;
-			sentQueries++;
-		}
-		i++;
-	}
+	int sentQueries = mQueryMgr->iterateQueries(maxMsgs-sentMsgs);
+	sentMsgs += sentQueries;
 	
 #ifdef DEBUG_NODE_ACTIONS 
 	std::cerr << "bdNode::iteration() maxMsgs: " << maxMsgs << " sentPings: " << sentPings;
 	std::cerr << " / " << allowedPings;
 	std::cerr << " sentQueries: " << sentQueries;
-	std::cerr << " / " << numQueries;
 	std::cerr << std::endl;
 #endif
 
 	/* process remote query too */
 	processRemoteQuery();
 
-	while(mNodeSpace.out_of_date_peer(id))
+	std::list<bdId> peerIds;
+	std::list<bdId>::iterator oit;
+	mNodeSpace.scanOutOfDatePeers(peerIds);
+
+	for(oit = peerIds.begin(); oit != peerIds.end(); oit++)
 	{
-		/* push out ping */
-		bdToken transId;
-		genNewTransId(&transId);
-		//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_PING);
-		msgout_ping(&id, &transId);
+		send_ping(&(*oit));
+		mAccount.incCounter(BDACCOUNT_MSG_OUTOFDATEPING, true);
 
 #ifdef DEBUG_NODE_MSGS 
 		std::cerr << "bdNode::iteration() Pinging Out-Of-Date Peer: ";
-		mFns->bdPrintId(std::cerr, &id);
+		mFns->bdPrintId(std::cerr, *oit);
 		std::cerr << std::endl;
 #endif
-
-		mCounterOutOfDatePing++;
-
-		//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
-		//msgout_find_node(&id, &transId, &(id.id));
 	}
 
-
 	// Handle Connection loops.
-	tickConnections();
+	mConnMgr->tickConnections();
 
-
-	doStats();
-
-	//printStats(std::cerr);
-
-	//printQueries();
+	mAccount.doStats();
 }
+
+
+
+/***************************************************************************************
+ ***************************************************************************************
+ ***************************************************************************************/
+
+void bdNode::send_ping(bdId *id)
+{
+	bdToken transId;
+	genNewTransId(&transId);
+	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_PING);
+
+	msgout_ping(id, &transId);
+}
+
 
 void bdNode::send_query(bdId *id, bdNodeId *targetNodeId)
 {
@@ -393,168 +374,32 @@ void bdNode::send_query(bdId *id, bdNodeId *targetNodeId)
 	mFns->bdPrintNodeId(std::cerr, &targetNodeId);
 	std::cerr << std::endl;
 #endif
-	mCounterQueryNode++;
 }
 
 
-#define LPF_FACTOR  (0.90)
-
-void bdNode::doStats()
+void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int status)
 {
-	mLpfOutOfDatePing *= (LPF_FACTOR) ;
-	mLpfOutOfDatePing += (1.0 - LPF_FACTOR) * mCounterOutOfDatePing;	
-	mLpfPings *= (LPF_FACTOR);  	
-	mLpfPings += (1.0 - LPF_FACTOR) * mCounterPings;	
-	mLpfPongs *= (LPF_FACTOR);  	
-	mLpfPongs += (1.0 - LPF_FACTOR) * mCounterPongs;	
-	mLpfQueryNode *= (LPF_FACTOR);  	
-	mLpfQueryNode += (1.0 - LPF_FACTOR) * mCounterQueryNode;	
-	mLpfQueryHash *= (LPF_FACTOR);  	
-	mLpfQueryHash += (1.0 - LPF_FACTOR) * mCounterQueryHash;	
-	mLpfReplyFindNode *= (LPF_FACTOR);  	
-	mLpfReplyFindNode += (1.0 - LPF_FACTOR) * mCounterReplyFindNode;	
-	mLpfReplyQueryHash *= (LPF_FACTOR);  	
-	mLpfReplyQueryHash += (1.0 - LPF_FACTOR) * mCounterReplyQueryHash;	
+	/* push out query */
+	bdToken transId;
+	genNewTransId(&transId);
+	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
-	mLpfRecvPing *= (LPF_FACTOR);  	
-	mLpfRecvPing += (1.0 - LPF_FACTOR) * mCounterRecvPing;	
-	mLpfRecvPong *= (LPF_FACTOR);  	
-	mLpfRecvPong += (1.0 - LPF_FACTOR) * mCounterRecvPong;	
-	mLpfRecvQueryNode *= (LPF_FACTOR);  	
-	mLpfRecvQueryNode += (1.0 - LPF_FACTOR) * mCounterRecvQueryNode;	
-	mLpfRecvQueryHash *= (LPF_FACTOR);  	
-	mLpfRecvQueryHash += (1.0 - LPF_FACTOR) * mCounterRecvQueryHash;	
-	mLpfRecvReplyFindNode *= (LPF_FACTOR);  	
-	mLpfRecvReplyFindNode += (1.0 - LPF_FACTOR) * mCounterRecvReplyFindNode;	
-	mLpfRecvReplyQueryHash *= (LPF_FACTOR);  	
-	mLpfRecvReplyQueryHash += (1.0 - LPF_FACTOR) * mCounterRecvReplyQueryHash;	
+	msgout_connect_genmsg(id, &transId, msgtype, srcAddr, destAddr, mode, status);
 
-	// connection stats.
-	mLpfConnectRequest *= (LPF_FACTOR);  	
-	mLpfConnectRequest += (1.0 - LPF_FACTOR) * mCounterConnectRequest;	
-	mLpfConnectReply *= (LPF_FACTOR);  	
-	mLpfConnectReply += (1.0 - LPF_FACTOR) * mCounterConnectReply;	
-	mLpfConnectStart *= (LPF_FACTOR);  	
-	mLpfConnectStart += (1.0 - LPF_FACTOR) * mCounterConnectStart;	
-	mLpfConnectAck *= (LPF_FACTOR);  	
-	mLpfConnectAck += (1.0 - LPF_FACTOR) * mCounterConnectAck;	
-
-	mLpfRecvConnectRequest *= (LPF_FACTOR);  	
-	mLpfRecvConnectRequest += (1.0 - LPF_FACTOR) * mCounterRecvConnectRequest;	
-	mLpfRecvConnectReply *= (LPF_FACTOR);  	
-	mLpfRecvConnectReply += (1.0 - LPF_FACTOR) * mCounterRecvConnectReply;	
-	mLpfRecvConnectStart *= (LPF_FACTOR);  	
-	mLpfRecvConnectStart += (1.0 - LPF_FACTOR) * mCounterRecvConnectStart;	
-	mLpfRecvConnectAck *= (LPF_FACTOR);  	
-	mLpfRecvConnectAck += (1.0 - LPF_FACTOR) * mCounterRecvConnectAck;	
-
-	resetCounters();
+#ifdef DEBUG_NODE_MSGS 
+	std::cerr << "bdNode::send_connect_msg() to: ";
+	mFns->bdPrintId(std::cerr, &id);
+	std::cerr << std::endl;
+#endif
 }
 
-void bdNode::printStats(std::ostream &out)
-{
 
-	out << "bdNode::printStats()" << std::endl;
-	out << "  Send                                                 Recv: ";
-	out << std::endl;
-	out << "  mLpfOutOfDatePing      : " << std::setw(10) << mLpfOutOfDatePing;
-	out << std::endl;
-	out << "  mLpfPings              : " << std::setw(10) <<  mLpfPings;
-	out << "  mLpfRecvPongs          : " << std::setw(10) << mLpfRecvPong;
-	out << std::endl;
-	out << "  mLpfPongs              : " << std::setw(10) << mLpfPongs;
-	out << "  mLpfRecvPings          : " << std::setw(10) << mLpfRecvPing;
-	out << std::endl;
-	out << "  mLpfQueryNode          : " << std::setw(10) << mLpfQueryNode;
-	out << "  mLpfRecvReplyFindNode  : " << std::setw(10) << mLpfRecvReplyFindNode;
-	out << std::endl;
-	out << "  mLpfQueryHash          : " << std::setw(10) << mLpfQueryHash;
-	out << "  mLpfRecvReplyQueryHash : " << std::setw(10) << mLpfRecvReplyQueryHash;
-	out << std::endl;
-	out << "  mLpfReplyFindNode      : " << std::setw(10) << mLpfReplyFindNode; 
-	out << "  mLpfRecvQueryNode      : " << std::setw(10) << mLpfRecvQueryNode;
-	out << std::endl;
-	out << "  mLpfReplyQueryHash/sec : " << std::setw(10) << mLpfReplyQueryHash;
-	out << "  mLpfRecvQueryHash/sec  : " << std::setw(10) << mLpfRecvQueryHash;
-	out << std::endl;
-	out << std::endl;
 
-	out << "  mLpfConnectRequest/sec : " << std::setw(10) << mLpfConnectRequest;
-	out << "  mLpfRecvConnectReq/sec : " << std::setw(10) << mLpfRecvConnectRequest;
-	out << std::endl;
-	out << "  mLpfConnectReply/sec   : " << std::setw(10) << mLpfConnectReply;
-	out << "  mLpfRecvConnReply/sec  : " << std::setw(10) << mLpfRecvConnectReply;
-	out << std::endl;
-	out << "  mLpfConnectStart/sec   : " << std::setw(10) << mLpfConnectStart;
-	out << "  mLpfRecvConnStart/sec  : " << std::setw(10) << mLpfRecvConnectStart;
-	out << std::endl;
-	out << "  mLpfConnectAck/sec     : " << std::setw(10) << mLpfConnectAck;
-	out << "  mLpfRecvConnectAck/sec : " << std::setw(10) << mLpfRecvConnectAck;
-	out << std::endl;
-	out << std::endl;
-}
-
-void bdNode::resetCounters()
-{
-	mCounterOutOfDatePing = 0;
-	mCounterPings = 0;
-	mCounterPongs = 0;
-	mCounterQueryNode = 0;
-	mCounterQueryHash = 0;
-	mCounterReplyFindNode = 0;
-	mCounterReplyQueryHash = 0;
-
-	mCounterRecvPing = 0;
-	mCounterRecvPong = 0;
-	mCounterRecvQueryNode = 0;
-	mCounterRecvQueryHash = 0;
-	mCounterRecvReplyFindNode = 0;
-	mCounterRecvReplyQueryHash = 0;
-
-	mCounterConnectRequest = 0;
-	mCounterConnectReply = 0;
-	mCounterConnectStart = 0;
-	mCounterConnectAck = 0;
-
-	mCounterRecvConnectRequest = 0;
-	mCounterRecvConnectReply = 0;
-	mCounterRecvConnectStart = 0;
-	mCounterRecvConnectAck = 0;
-}
-
-void bdNode::resetStats()
-{
-	mLpfOutOfDatePing = 0;
-	mLpfPings = 0;
-	mLpfPongs = 0;
-	mLpfQueryNode = 0;
-	mLpfQueryHash = 0;
-	mLpfReplyFindNode = 0;
-	mLpfReplyQueryHash = 0;
-
-	mLpfRecvPing = 0;
-	mLpfRecvPong = 0;
-	mLpfRecvQueryNode = 0;
-	mLpfRecvQueryHash = 0;
-	mLpfRecvReplyFindNode = 0;
-	mLpfRecvReplyQueryHash = 0;
-
-	resetCounters();
-}
 
 
 void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {
-	bool isWorthyPeer = false;
-	/* also push to queries */
-	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
-	{
-		if ((*it)->addPotentialPeer(id, src, 0))
-		{
-			isWorthyPeer = true;
-		}
-	}
+	bool isWorthyPeer = mQueryMgr->checkPotentialPeer(id, src);
 
 	if (isWorthyPeer)
 	{
@@ -564,7 +409,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 
 	if (src) // src can be NULL!
 	{
-		bdNode::addPotentialConnectionProxy(src, id); // CAUTION: Order switched!
+		mConnMgr->addPotentialConnectionProxy(src, id); // CAUTION: Order switched!
 	}
 
 }
@@ -588,13 +433,22 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 	fprintf(stderr, ")\n");
 #endif
 
-	/* iterate through queries */
-	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	/* first check the filters */
+        if (mFilterPeers->checkPeer(id, peerflags))
 	{
-		(*it)->addPeer(id, peerflags);
+		std::cerr << "bdNode::addPeer(";
+		mFns->bdPrintId(std::cerr, id);
+		std::cerr << ", " << std::hex << peerflags << std::dec;
+		std::cerr << ") FAILED the BAD PEER FILTER!!!! DISCARDING MSG";
+
+		std::list<struct sockaddr_in> filteredIPs;
+		mFilterPeers->filteredIPs(filteredIPs);
+		mStore.filterIpList(filteredIPs);
+
+		return;
 	}
 
+	mQueryMgr->addPeer(id, peerflags);
 	mNodeSpace.add_peer(id, peerflags);
 
 	bdPeer peer;
@@ -604,125 +458,9 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 	mStore.addStore(&peer);
 
 	// Finally we pass to connections for them to use.
-	bdNode::updatePotentialConnectionProxy(id, peerflags);
+	mConnMgr->updatePotentialConnectionProxy(id, peerflags);
 
 }
-
-
-#if 0
-        // virtual so manager can do callback.
-        // peer flags defined in bdiface.h
-void bdNode::PeerResponse(const bdId *id, const bdNodeId *target, uint32_t peerflags)
-{
-
-#ifdef DEBUG_NODE_ACTIONS 
-	std::cerr << "bdNode::PeerResponse(";
-	mFns->bdPrintId(std::cerr, id);
-	std::cerr << ", target: ";
-	mFns->bdPrintNodeId(std::cerr, target);
-	fprintf(stderr, ")\n");
-#endif
-
-	/* iterate through queries */
-	std::list<bdQuery>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
-	{
-		it->PeerResponse(id, target, peerflags);
-	}
-
-	mNodeSpace.add_peer(id, peerflags);
-
-	bdPeer peer;
-	peer.mPeerId = *id;
-	peer.mPeerFlags = peerflags;
-	peer.mLastRecvTime = time(NULL);
-	mStore.addStore(&peer);
-}
-
-#endif
-
-/************************************ Query Details        *************************/
-void bdNode::addQuery(const bdNodeId *id, uint32_t qflags)
-{
-
-	std::list<bdId> startList;
-	std::multimap<bdMetric, bdId> nearest;
-	std::multimap<bdMetric, bdId>::iterator it;
-
-	//mNodeSpace.find_nearest_nodes(id, BITDHT_QUERY_START_PEERS, startList, nearest, 0);
-
-	mNodeSpace.find_nearest_nodes(id, BITDHT_QUERY_START_PEERS, nearest);
-
-	fprintf(stderr, "bdNode::addQuery(");
-	mFns->bdPrintNodeId(std::cerr, id);
-	fprintf(stderr, ")\n");
-
-	for(it = nearest.begin(); it != nearest.end(); it++)
-	{
-		startList.push_back(it->second);
-	}
-
-	bdQuery *query = new bdQuery(id, startList, qflags, mFns);
-	mLocalQueries.push_back(query);
-}
-
-
-void bdNode::clearQuery(const bdNodeId *rmId)
-{
-	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end();)
-	{
-		if ((*it)->mId == *rmId)
-		{
-			bdQuery *query = (*it);
-			it = mLocalQueries.erase(it);
-			delete query;
-		}
-		else
-		{
-			it++;
-		}
-	}
-}
-
-void bdNode::QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap)
-{
-	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
-	{
-		bdQueryStatus status;
-		status.mStatus = (*it)->mState;
-		status.mQFlags = (*it)->mQueryFlags;
-		(*it)->result(status.mResults);
-		statusMap[(*it)->mId] = status;
-	}
-}
-
-int bdNode::QuerySummary(const bdNodeId *id, bdQuerySummary &query)
-{
-	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
-	{
-		if ((*it)->mId == *id)
-		{
-			query.mId = (*it)->mId;
-			query.mLimit = (*it)->mLimit;
-			query.mState = (*it)->mState;
-			query.mQueryTS = (*it)->mQueryTS;
-			query.mQueryFlags = (*it)->mQueryFlags;
-			query.mSearchTime = (*it)->mSearchTime;
-			query.mClosest = (*it)->mClosest;
-			query.mPotentialPeers = (*it)->mPotentialPeers;
-			query.mProxiesUnknown = (*it)->mProxiesUnknown;
-			query.mProxiesFlagged = (*it)->mProxiesFlagged;
-
-			return 1;
-		}
-	}
-	return 0;
-}
-
-
 
 /************************************ Process Remote Query *************************/
 void bdNode::processRemoteQuery()
@@ -770,8 +508,6 @@ void bdNode::processRemoteQuery()
 					std::cerr << ", found " << nearest.size() << " nodes ";
 					std::cerr << std::endl;
 #endif
-					
-					mCounterReplyFindNode++;
 
 					break;
 				}
@@ -783,8 +519,6 @@ void bdNode::processRemoteQuery()
 					std::cerr << " TODO";
 					std::cerr << std::endl;
 #endif
-					mCounterReplyQueryHash++;
-
 
 					/* TODO */
 					break;
@@ -859,8 +593,17 @@ int     bdNode::outgoingMsg(struct sockaddr_in *addr, char *msg, int *len)
 
 void    bdNode::incomingMsg(struct sockaddr_in *addr, char *msg, int len)
 {
-	bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, addr);
-	mIncomingMsgs.push_back(bdmsg);
+	/* check against the filter */
+	if (mFilterPeers->addrOkay(addr))
+	{
+		bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, addr);
+		mIncomingMsgs.push_back(bdmsg);
+	}
+        else
+        {
+                std::cerr << "bdNode::incomingMsg() Incoming Packet Filtered";
+                std::cerr << std::endl;
+        }
 }
 
 /************************************ Message Handling *****************************/
@@ -887,6 +630,7 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
         int blen = bitdht_create_ping_msg(transId, &(mOwnId), msg, avail-1);
         sendPkt(msg, blen, id->addr);
 
+	mAccount.incCounter(BDACCOUNT_MSG_PING, true);
 
 }
 
@@ -920,6 +664,8 @@ void bdNode::msgout_pong(bdId *id, bdToken *transId)
         int blen = bitdht_response_ping_msg(transId, &(mOwnId), &vid, msg, avail-1);
 
         sendPkt(msg, blen, id->addr);
+	
+	mAccount.incCounter(BDACCOUNT_MSG_PONG, true);
 
 }
 
@@ -947,6 +693,7 @@ void bdNode::msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query)
 
         sendPkt(msg, blen, id->addr);
 
+	mAccount.incCounter(BDACCOUNT_MSG_QUERYNODE, true);
 
 }
 
@@ -957,6 +704,7 @@ void bdNode::msgout_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> 
 
 	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NODE);
 	
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYFINDNODE, true);
 
         int blen = bitdht_resp_node_msg(transId, &(mOwnId), peers, msg, avail-1);
 
@@ -1005,6 +753,7 @@ void bdNode::msgout_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash)
 
         sendPkt(msg, blen, id->addr);
 
+	mAccount.incCounter(BDACCOUNT_MSG_QUERYHASH, true);
 
 }
 
@@ -1037,6 +786,7 @@ void bdNode::msgout_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::
 
         sendPkt(msg, blen, id->addr);
 
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYQUERYHASH, true);
 
 }
 
@@ -1070,6 +820,8 @@ void bdNode::msgout_reply_nearest(bdId *id, bdToken *transId, bdToken *token, st
         int blen = bitdht_peers_reply_closest_msg(transId, &(mOwnId), token, nodes, msg, avail-1);
 
         sendPkt(msg, blen, id->addr);
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYQUERYHASH, true);
+
 
 }
 
@@ -1097,6 +849,8 @@ void bdNode::msgout_post_hash(bdId *id, bdToken *transId, bdNodeId *info_hash, u
         int blen = bitdht_announce_peers_msg(transId,&(mOwnId),info_hash,port,token,msg,avail-1);
 
         sendPkt(msg, blen, id->addr);
+	mAccount.incCounter(BDACCOUNT_MSG_POSTHASH, true);
+
 
 }
 
@@ -1111,14 +865,15 @@ void bdNode::msgout_reply_post(bdId *id, bdToken *transId)
 #endif
 
 	/* generate message, send to udp */
-        char msg[10240];
-        int avail = 10240;
+	char msg[10240];
+	int avail = 10240;
 
 	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_POST);
 
-        int blen = bitdht_reply_announce_msg(transId, &(mOwnId), msg, avail-1);
+	int blen = bitdht_reply_announce_msg(transId, &(mOwnId), msg, avail-1);
 
-        sendPkt(msg, blen, id->addr);
+	sendPkt(msg, blen, id->addr);
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYPOSTHASH, true);
 
 }
 
@@ -1128,10 +883,19 @@ void    bdNode::sendPkt(char *msg, int len, struct sockaddr_in addr)
 	//fprintf(stderr, "bdNode::sendPkt(%d) to %s:%d\n", 
 	//		len, inet_ntoa(addr.sin_addr), htons(addr.sin_port));
 
-	bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, &addr);
-	//bdmsg->print(std::cerr);
-	mOutgoingMsgs.push_back(bdmsg);
-	//bdmsg->print(std::cerr);
+	/* filter outgoing packets */
+        if (mFilterPeers->addrOkay(&addr))
+	{
+		bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, &addr);
+		//bdmsg->print(std::cerr);
+		mOutgoingMsgs.push_back(bdmsg);
+		//bdmsg->print(std::cerr);
+	}
+	else
+	{
+		std::cerr << "bdNode::sendPkt() Outgoing Packet Filtered";
+		std::cerr << std::endl;
+	}
 
 	return;
 }
@@ -1658,11 +1422,11 @@ void bdNode::msgin_ping(bdId *id, bdToken *transId)
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << std::endl;
 #endif
-	mCounterRecvPing++;
-	mCounterPongs++;
 
+	mAccount.incCounter(BDACCOUNT_MSG_PING, false);
+	
 	/* peer is alive */
-	uint32_t peerflags = 0; /* no id typically, so cant get version */
+	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PING; /* no id typically, so cant get version */
 	addPeer(id, peerflags);
 
 	/* reply */
@@ -1687,7 +1451,8 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	(void) transId;
 #endif
 
-	mCounterRecvPong++;
+	mAccount.incCounter(BDACCOUNT_MSG_PONG, false);
+
 	/* recv pong, and peer is alive. add to DHT */
 	//uint32_t vId = 0; // TODO XXX convertBdVersionToVID(versionId);
 
@@ -1804,7 +1569,8 @@ void bdNode::msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query)
 	std::cerr << std::endl;
 #endif
 
-	mCounterRecvQueryNode++;
+	mAccount.incCounter(BDACCOUNT_MSG_QUERYNODE, false);
+
 
 	/* store query... */
 	queueQuery(id, query, transId, BD_QUERY_NEIGHBOURS);
@@ -1833,8 +1599,8 @@ void bdNode::msgin_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> &
 #else
 	(void) transId;
 #endif
-	mCounterRecvReplyFindNode++;
 
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYFINDNODE, false);
 
 	/* add neighbours to the potential list */
 	for(it = nodes.begin(); it != nodes.end(); it++)
@@ -1853,6 +1619,8 @@ void bdNode::msgin_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> &
 
 void bdNode::msgin_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash)
 {
+
+	
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_get_hash() TransId: ";
 	bdPrintTransId(std::cerr, transId);
@@ -1863,7 +1631,8 @@ void bdNode::msgin_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash)
 	std::cerr << std::endl;
 #endif
 
-	mCounterRecvQueryHash++;
+
+	mAccount.incCounter(BDACCOUNT_MSG_QUERYHASH, false);
 
 	/* generate message, send to udp */
 	queueQuery(id, info_hash, transId, BD_QUERY_HASH);
@@ -1872,7 +1641,7 @@ void bdNode::msgin_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash)
 
 void bdNode::msgin_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::list<std::string> &values)
 {
-	mCounterRecvReplyQueryHash++;
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYQUERYHASH, false);
 
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_reply_hash() TransId: ";
@@ -1900,7 +1669,7 @@ void bdNode::msgin_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::l
 
 void bdNode::msgin_reply_nearest(bdId *id, bdToken *transId, bdToken *token, std::list<bdId> &nodes)
 {
-	//mCounterRecvReplyNearestHash++;
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYQUERYHASH, false);
 
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_reply_nearest() TransId: ";
@@ -1930,7 +1699,8 @@ void bdNode::msgin_reply_nearest(bdId *id, bdToken *transId, bdToken *token, std
 
 void bdNode::msgin_post_hash(bdId *id,  bdToken *transId,  bdNodeId *info_hash,  uint32_t port, bdToken *token)
 {
-	//mCounterRecvPostHash++;
+
+	mAccount.incCounter(BDACCOUNT_MSG_POSTHASH, false);
 
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_post_hash() TransId: ";
@@ -1957,7 +1727,7 @@ void bdNode::msgin_post_hash(bdId *id,  bdToken *transId,  bdNodeId *info_hash, 
 void bdNode::msgin_reply_post(bdId *id, bdToken *transId)
 {
 	/* generate message, send to udp */
-	//mCounterRecvReplyPostHash++;
+	mAccount.incCounter(BDACCOUNT_MSG_REPLYPOSTHASH, false);
 
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_reply_post() TransId: ";
@@ -1970,6 +1740,153 @@ void bdNode::msgin_reply_post(bdId *id, bdToken *transId)
 	(void) transId;
 #endif
 }
+
+
+
+/************************************************************************************************************
+******************************************** Message Interface **********************************************
+************************************************************************************************************/
+
+/* Outgoing Messages */
+std::string getConnectMsgType(int msgtype)
+{
+	switch(msgtype)
+	{
+		case BITDHT_MSG_TYPE_CONNECT_REQUEST:
+			return "ConnectRequest";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_REPLY:
+			return "ConnectReply";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_START:
+			return "ConnectStart";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_ACK:
+			return "ConnectAck";
+			break;
+		default:
+			return "ConnectUnknown";
+			break;
+	}
+}
+
+void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int status)
+{
+	std::cerr << "bdConnectManager::msgout_connect_genmsg() Type: " << getConnectMsgType(msgtype);
+	std::cerr << " TransId: ";
+	bdPrintTransId(std::cerr, transId);
+	std::cerr << " To: ";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << " SrcAddr: ";
+	mFns->bdPrintId(std::cerr, srcAddr);
+	std::cerr << " DestAddr: ";
+	mFns->bdPrintId(std::cerr, destAddr);
+	std::cerr << " Mode: " << mode;
+	std::cerr << " Status: " << status;
+	std::cerr << std::endl;
+#ifdef DEBUG_NODE_MSGOUT
+#endif
+
+	switch(msgtype)
+	{
+		default:
+		case BITDHT_MSG_TYPE_CONNECT_REQUEST:
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTREQUEST, true);
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_REPLY:
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTREPLY, true);
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_START:
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTSTART, true);
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_ACK:
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTACK, true);
+			break;
+	}
+			
+	registerOutgoingMsg(id, transId, msgtype);
+	
+        /* create string */
+        char msg[10240];
+        int avail = 10240;
+
+        int blen = bitdht_connect_genmsg(transId, &(mOwnId), msgtype, srcAddr, destAddr, mode, status, msg, avail-1);
+        sendPkt(msg, blen, id->addr);
+}
+
+
+void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
+					bdId *srcAddr, bdId *destAddr, int mode, int status)
+{
+	std::list<bdId>::iterator it;
+
+	std::cerr << "bdConnectManager::msgin_connect_genmsg() Type: " << getConnectMsgType(msgtype);
+	std::cerr << " TransId: ";
+	bdPrintTransId(std::cerr, transId);
+	std::cerr << " From: ";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << " SrcAddr: ";
+	mFns->bdPrintId(std::cerr, srcAddr);
+	std::cerr << " DestAddr: ";
+	mFns->bdPrintId(std::cerr, destAddr);
+	std::cerr << " Mode: " << mode;
+	std::cerr << " Status: " << status;
+	std::cerr << std::endl;
+#ifdef DEBUG_NODE_MSGS
+#else
+	(void) transId;
+#endif
+
+	/* switch to actual work functions */
+	uint32_t peerflags = 0;
+	switch(msgtype)
+	{
+		case BITDHT_MSG_TYPE_CONNECT_REQUEST:
+			peerflags = BITDHT_PEER_STATUS_RECV_CONNECT_MSG; 
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTREQUEST, false);
+
+
+			mConnMgr->recvedConnectionRequest(id, srcAddr, destAddr, mode);
+
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_REPLY:
+			peerflags = BITDHT_PEER_STATUS_RECV_CONNECT_MSG; 
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTREPLY, false);
+
+			mConnMgr->recvedConnectionReply(id, srcAddr, destAddr, mode, status);
+
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_START:
+			peerflags = BITDHT_PEER_STATUS_RECV_CONNECT_MSG; 
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTSTART, false);
+
+			mConnMgr->recvedConnectionStart(id, srcAddr, destAddr, mode, status);
+
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_ACK:
+			peerflags = BITDHT_PEER_STATUS_RECV_CONNECT_MSG; 
+			mAccount.incCounter(BDACCOUNT_MSG_CONNECTACK, false);
+
+			mConnMgr->recvedConnectionAck(id, srcAddr, destAddr, mode);
+
+			break;
+		default:
+			break;
+	}
+
+	/* received message - so peer must be good */
+	addPeer(id, peerflags);
+
+}
+
+
+
+
+
+
+
+
+
 
 
 /****************** Other Functions ******************/

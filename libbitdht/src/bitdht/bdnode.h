@@ -35,6 +35,9 @@
 #include "bitdht/bdhistory.h"
 
 #include "bitdht/bdconnection.h"
+#include "bitdht/bdaccount.h"
+
+class bdFilter;
 
 
 #define BD_QUERY_NEIGHBOURS		1
@@ -92,16 +95,38 @@ class bdNodeNetMsg
 
 };
 
-class bdNode
+class bdNodePublisher
+{
+	public:
+	/* simplified outgoing msg functions (for the managers) */
+	virtual void send_ping(bdId *id) = 0; /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId) = 0; /* message out */
+	virtual void send_connect_msg(bdId *id, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status) = 0;
+
+        // internal Callback -> normally continues to callbackConnect().
+        virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
+                                int mode, int point, int cbtype, int errcode) = 0;
+
+};
+
+
+class bdNode: public bdNodePublisher
 {
 	public:
 
 	bdNode(bdNodeId *id, std::string dhtVersion, std::string bootfile, 
 		bdDhtFunctions *fns);	
 
+	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
+
+	void setNodeOptions(uint32_t optFlags);
+
 	/* startup / shutdown node */
 	void restartNode();
 	void shutdownNode();
+
+	void getOwnId(bdNodeId *id);
 
 	// virtual so manager can do callback.
 	// peer flags defined in bdiface.h
@@ -111,31 +136,33 @@ class bdNode
 	void checkPotentialPeer(bdId *id, bdId *src);
 	void addPotentialPeer(bdId *id, bdId *src);
 
-	void addQuery(const bdNodeId *id, uint32_t qflags);
-	void clearQuery(const bdNodeId *id);
-	void QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap);
-	int  QuerySummary(const bdNodeId *id, bdQuerySummary &query);
-
-	/* connection functions */
-	void requestConnection(bdNodeId *id, uint32_t modes);
-	void allowConnection(bdNodeId *id, uint32_t modes);
-
 	void iterationOff();
 	void iteration();
 	void processRemoteQuery();
 	void updateStore();
 
+	/* simplified outgoing msg functions (for the managers) */
+	virtual void send_ping(bdId *id); /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
+	virtual void send_connect_msg(bdId *id, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status);
 
-	/* interaction with outside world */
+// This is implemented in bdManager.
+//        virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
+//                                int mode, int point, int cbtype, int errcode);
+
+	/* interaction with outside world (Accessed by controller to deliver us msgs) */
 int 	outgoingMsg(struct sockaddr_in *addr, char *msg, int *len);
 void 	incomingMsg(struct sockaddr_in *addr, char *msg, int len);
+
+
+	// Below is internal Management of incoming / outgoing messages.
+	private:
 
 	/* internal interaction with network */
 void	sendPkt(char *msg, int len, struct sockaddr_in addr);
 void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
-	/* internal assistance functions */
-	void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
 
 	/* output functions (send msg) */
 	void msgout_ping(bdId *id, bdToken *transId);
@@ -172,6 +199,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 				bdNodeId *info_hash,  uint32_t port, bdToken *token);
 	void msgin_reply_post(bdId *id, bdToken *transId);
 
+	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status);
+	void msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
+                                        bdId *srcAddr, bdId *destAddr, int mode, int status);
+
 
 
 	/* token handling */
@@ -184,171 +216,43 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	uint32_t checkIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType);
 	void cleanupTransIdRegister();
 
-	void getOwnId(bdNodeId *id);
 
 	void doStats();
-	void printStats(std::ostream &out);	
-	void printQueries();
 
-	void resetCounters();
-	void resetStats();
-
-
-	/****************************** Connection Code (in bdconnection.cc) ****************************/
-
-	/* Connections: Configuration */
-	void defaultConnectionOptions();
-	virtual void setConnectionOptions(uint32_t allowedModes, uint32_t flags);
-
-	/* Connections: Messages */
-
-	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
-				bdId *srcAddr, bdId *destAddr, int mode, int status);
-	void msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
-                                        bdId *srcAddr, bdId *destAddr, int mode, int status);
-
-	/* Connections: Initiation */
-
-	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start);
-	int requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target);	
-	int requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
-
-	int killConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
-
-	int checkExistingConnectionAttempt(bdNodeId *target);
-	void addPotentialConnectionProxy(const bdId *srcId, const bdId *target);
-	void updatePotentialConnectionProxy(const bdId *id, uint32_t mode);
-
-	int checkPeerForFlag(const bdId *id, uint32_t with_flag);
-
-	int tickConnections();
-	void iterateConnectionRequests();
-	int startConnectionAttempt(bdConnectionRequest *req);
-
-	// internal Callback -> normally continues to callbackConnect().
-	void callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId, 
-				int mode, int point, int cbtype, int errcode);
-
-	/* Connections: Outgoing */
-
-	int  startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
-	void AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
-	void AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int errcode);
-	void iterateConnections();
-
-
-	/* Connections: Utility State */
-
-	bdConnection *findExistingConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
-	bdConnection *newConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
-	int cleanConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNodeId *destId);
-
-	int determinePosition(bdNodeId *sender, bdNodeId *src, bdNodeId *dest);
-	int determineProxyId(bdNodeId *sender, bdNodeId *src, bdNodeId *dest, bdNodeId *proxyId);
-
-	bdConnection *findSimilarConnection(bdNodeId *srcId, bdNodeId *destId);
-	bdConnection *findExistingConnectionBySender(bdId *sender, bdId *src, bdId *dest);
-	bdConnection *newConnectionBySender(bdId *sender, bdId *src, bdId *dest);
-	int cleanConnectionBySender(bdId *sender, bdId *src, bdId *dest);
-
-	// Overloaded Generalised Connection Callback.
-	virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
-				int mode, int point, int cbtype, int errcode);
-
-	/* Connections: */
-	int recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
-	int recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status);
-	int recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int bandwidth);
-	int recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
-
+	/********** Variables **********/
 	private:
 
-	std::map<bdProxyTuple, bdConnection> mConnections;
-	std::map<bdNodeId, bdConnectionRequest> mConnectionRequests;
-
-        uint32_t mConfigAllowedModes;
-        bool mConfigAutoProxy;
-
-	/****************************** Connection Code (in bdconnection.cc) ****************************/
-
+	/**** Some Variables are Protected to allow inherited classes to use *****/
 	protected:
 
+	bdSpace mNodeSpace;
+
+	bdQueryManager *mQueryMgr;
+	bdConnectManager *mConnMgr;
+	bdFilter *mFilterPeers;
 
 	bdNodeId mOwnId;
 	bdId 	mLikelyOwnId; // Try to workout own id address.
-	bdSpace mNodeSpace;
+	std::string mDhtVersion;
+
+	bdAccount mAccount;
+	bdStore mStore;
+
+	bdDhtFunctions *mFns;
+	bdHashSpace mHashSpace;
 
 	private:
 
-	bdStore mStore;
-	std::string mDhtVersion;
+	uint32_t mNodeOptionFlags;	
 
-	bdDhtFunctions *mFns;
-
-	bdHashSpace mHashSpace;
-	
 	bdHistory mHistory; /* for understanding the DHT */
 
-	std::list<bdQuery *> mLocalQueries;
 	std::list<bdRemoteQuery> mRemoteQueries;
 
 	std::list<bdId> mPotentialPeers;
 
 	std::list<bdNodeNetMsg *> mOutgoingMsgs;
 	std::list<bdNodeNetMsg *> mIncomingMsgs;
-
-	// Statistics.
-	 double mCounterOutOfDatePing;
-	 double mCounterPings;
-	 double mCounterPongs;
-	 double mCounterQueryNode;
-	 double mCounterQueryHash;
-	 double mCounterReplyFindNode;
-	 double mCounterReplyQueryHash;
-	 // connection stats.
-	 double mCounterConnectRequest;
-	 double mCounterConnectReply;
-	 double mCounterConnectStart;
-	 double mCounterConnectAck;
-
-	 double mCounterRecvPing;
-	 double mCounterRecvPong;
-	 double mCounterRecvQueryNode;
-	 double mCounterRecvQueryHash;
-	 double mCounterRecvReplyFindNode;
-	 double mCounterRecvReplyQueryHash;
-	 // connection stats.
-	 double mCounterRecvConnectRequest;
-	 double mCounterRecvConnectReply;
-	 double mCounterRecvConnectStart;
-	 double mCounterRecvConnectAck;
-
-	 double mLpfOutOfDatePing;
-	 double mLpfPings;
-	 double mLpfPongs;
-	 double mLpfQueryNode;
-	 double mLpfQueryHash;
-	 double mLpfReplyFindNode;
-	 double mLpfReplyQueryHash;
-	 // connection stats.
-	 double mLpfConnectRequest;
-	 double mLpfConnectReply;
-	 double mLpfConnectStart;
-	 double mLpfConnectAck;
-
-	 double mLpfRecvPing;
-	 double mLpfRecvPong;
-	 double mLpfRecvQueryNode;
-	 double mLpfRecvQueryHash;
-	 double mLpfRecvReplyFindNode;
-	 double mLpfRecvReplyQueryHash;
-	 // connection stats.
-	 double mLpfRecvConnectRequest;
-	 double mLpfRecvConnectReply;
-	 double mLpfRecvConnectStart;
-	 double mLpfRecvConnectAck;
-
-
 };
 
 

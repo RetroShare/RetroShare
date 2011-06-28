@@ -76,8 +76,8 @@ virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric)
 virtual int bdBucketDistance(const bdNodeId *n1, const bdNodeId *n2);
 virtual int bdBucketDistance(const bdMetric *metric);
 
-virtual uint32_t bdSimilarId(const bdId *id1, const bdId *id2);
-virtual void bdUpdateSimilarId(bdId *dest, const bdId *src);
+virtual bool bdSimilarId(const bdId *id1, const bdId *id2);
+virtual bool bdUpdateSimilarId(bdId *dest, const bdId *src); /* returns true if update was necessary */
 
 virtual void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid);
 

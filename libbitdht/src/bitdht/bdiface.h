@@ -95,8 +95,8 @@ virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric)
 virtual int bdBucketDistance(const bdNodeId *n1, const bdNodeId *n2) = 0;
 virtual int bdBucketDistance(const bdMetric *metric) = 0;
 
-virtual uint32_t bdSimilarId(const bdId *id1, const bdId *id2) = 0;
-virtual void bdUpdateSimilarId(bdId *dest, const bdId *src) = 0;
+virtual bool bdSimilarId(const bdId *id1, const bdId *id2) = 0;
+virtual bool bdUpdateSimilarId(bdId *dest, const bdId *src) = 0;
 
 virtual void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid) = 0;
 
@@ -107,11 +107,15 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 
 
+/* NODE OPTIONS */
+#define BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT		0x00000001
+
 
 
 /* peer flags
  * order is important!
  * higher bits = more priority.
+ * BITDHT_PEER_STATUS_RECVPING
  * BITDHT_PEER_STATUS_RECVPONG
  * BITDHT_PEER_STATUS_RECVNODES
  * BITDHT_PEER_STATUS_RECVHASHES
@@ -125,10 +129,11 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_PEER_STATUS_MASK_DHT		0x0000ff00
 #define 	BITDHT_PEER_STATUS_MASK_KNOWN		0x00ff0000
 
-#define 	BITDHT_PEER_STATUS_RECV_PONG		0x00000001
-#define 	BITDHT_PEER_STATUS_RECV_NODES		0x00000002
-#define 	BITDHT_PEER_STATUS_RECV_HASHES		0x00000004
-#define 	BITDHT_PEER_STATUS_RECV_CONNECT_MSG	0x00000008
+#define 	BITDHT_PEER_STATUS_RECV_PING		0x00000001
+#define 	BITDHT_PEER_STATUS_RECV_PONG		0x00000002
+#define 	BITDHT_PEER_STATUS_RECV_NODES		0x00000004
+#define 	BITDHT_PEER_STATUS_RECV_HASHES		0x00000008
+#define 	BITDHT_PEER_STATUS_RECV_CONNECT_MSG	0x00000010
 
 #define 	BITDHT_PEER_STATUS_DHT_ENGINE		0x00000100
 #define 	BITDHT_PEER_STATUS_DHT_ENGINE_VERSION	0x00000200
@@ -138,6 +143,15 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_PEER_STATUS_DHT_WHITELIST	0x00010000
 #define 	BITDHT_PEER_STATUS_DHT_FOF		0x00020000
 #define 	BITDHT_PEER_STATUS_DHT_FRIEND		0x00040000
+
+
+// EXTRA FLAGS are our internal thoughts about the peer.
+#define 	BITDHT_PEER_EXFLAG_MASK_BASIC		0x000000ff
+#define 	BITDHT_PEER_EXFLAG_UNSTABLE		0x00000001	// Port changes.
+#define 	BITDHT_PEER_EXFLAG_ATTACHED		0x00000002 	// We will ping in heavily. (if unstable)
+
+
+
 
 
 
@@ -195,11 +209,15 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 class bdPeer
 {
 	public:
+	bdPeer():mPeerFlags(0), mLastSendTime(0), mLastRecvTime(0), mFoundTime(0), mExtraFlags(0) { return; }
+
 	bdId   mPeerId;
 	uint32_t mPeerFlags;
 	time_t mLastSendTime;
 	time_t mLastRecvTime;
 	time_t mFoundTime;     /* time stamp that peer was found */
+
+	uint32_t mExtraFlags;
 };
 	
 class bdBucket
