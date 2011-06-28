@@ -1918,6 +1918,9 @@ void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	// to do: split search string into words.
 	Expression *exp = LinearizedExpression::toExpr(expr) ;
 
+	if(exp == NULL)
+		return ;
+
 	// now, search!
 	rsFiles->SearchBoolExp(exp,initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
 

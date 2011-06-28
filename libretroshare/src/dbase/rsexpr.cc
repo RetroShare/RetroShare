@@ -208,14 +208,13 @@ Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_to
 
 	switch(tok)
 	{
-		case EXPR_COMP:	{ 
-									LogicalOperator op = static_cast<LogicalOperator>(e._ints[n_ints++]) ;
+		case EXPR_DATE:  {
+								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+								  int lv = e._ints[n_ints++] ;
+								  int hv = e._ints[n_ints++] ;
 
-									Expression *e1 = toExpr(e,n_tok,n_ints,n_strings) ;
-									Expression *e2 = toExpr(e,n_tok,n_ints,n_strings) ;
-
-									return new CompoundExpression(op,e1,e2) ;
-								}
+								  return new DateExpression(op,lv,hv) ;
+							  }
 
 		case EXPR_POP:	  {
 								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
@@ -231,13 +230,6 @@ Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_to
 
 								  return new SizeExpression(op,lv,hv) ;
 							  }
-		case EXPR_DATE:  {
-								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
-								  int lv = e._ints[n_ints++] ;
-								  int hv = e._ints[n_ints++] ;
-
-								  return new DateExpression(op,lv,hv) ;
-							  }
 		case EXPR_HASH:	{
 									std::list<std::string> strings ;
 									StringOperator op ;
@@ -246,28 +238,7 @@ Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_to
 									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
 									return new HashExpression(op,strings) ;
 								}
-		case EXPR_EXT:
-								{
-									std::list<std::string> strings ;
-									StringOperator op ;
-									bool b ;
-
-									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
-
-									return new ExtExpression(op,strings,b) ;
-								}
-		case EXPR_PATH:
-								{
-									std::list<std::string> strings ;
-									StringOperator op ;
-									bool b ;
-
-									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
-
-									return new ExtExpression(op,strings,b) ;
-								}
-		case EXPR_NAME:	
-								{
+		case EXPR_NAME:	{
 									std::list<std::string> strings ;
 									StringOperator op ;
 									bool b ;
@@ -276,6 +247,39 @@ Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_to
 
 									return new NameExpression(op,strings,b) ;
 								}
+		case EXPR_PATH: {
+									std::list<std::string> strings ;
+									StringOperator op ;
+									bool b ;
+
+									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+
+									return new ExtExpression(op,strings,b) ;
+								}
+		case EXPR_EXT: {
+									std::list<std::string> strings ;
+									StringOperator op ;
+									bool b ;
+
+									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+
+									return new ExtExpression(op,strings,b) ;
+								}
+		case EXPR_COMP:	{ 
+									LogicalOperator op = static_cast<LogicalOperator>(e._ints[n_ints++]) ;
+
+									Expression *e1 = toExpr(e,n_tok,n_ints,n_strings) ;
+									Expression *e2 = toExpr(e,n_tok,n_ints,n_strings) ;
+
+									return new CompoundExpression(op,e1,e2) ;
+								}
+		case EXPR_SIZE_MB: {
+									 RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+									 int lv = e._ints[n_ints++] ;
+									 int hv = e._ints[n_ints++] ;
+
+									 return new SizeExpressionMB(op,lv,hv) ;
+								 }
 		default:
 								std::cerr << "No expression match the current value " << tok << std::endl ;
 								return NULL ;
