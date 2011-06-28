@@ -54,6 +54,10 @@ class bdQueryManager
 	int  proxies(bdNodeId *target, std::list<bdId> &answer);
 	int  potentialProxies(bdNodeId *target, std::list<bdId> &answer);
 
+	// extra "Worthy Peers" we will want to ping.
+	void addWorthyPeerSource(bdId *src);
+	bool checkWorthyPeerSources(bdId *src);
+
 	private:
 
 	int getResults(bdNodeId *target, std::list<bdId> &answer, int querytype);
@@ -66,6 +70,7 @@ class bdQueryManager
 	bdNodePublisher *mPub;
 
 	std::list<bdQuery *> mLocalQueries;
+	std::list<bdPeer> mWorthyPeerSources;
 };
 
 

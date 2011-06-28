@@ -243,8 +243,8 @@ int bdConnectManager::killConnectionRequest(struct sockaddr_in *laddr, bdNodeId 
 
 
 
-#define MIN_START_DIRECT_COUNT 1
-#define MIN_START_PROXY_COUNT 3
+#define MIN_START_DIRECT_COUNT 		1
+#define MIN_START_PROXY_COUNT 		10
 #define CONNECT_NUM_PROXY_ATTEMPTS	10
 
 

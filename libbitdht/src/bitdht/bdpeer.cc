@@ -600,8 +600,8 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 
 	if ((ts - mAttachTS > ATTACH_UPDATE_PERIOD) || (attachedCount != mAttachedCount))
 	{
-		std::cerr << "Updating ATTACH Stuff";
-		std::cerr << std::endl;
+		//std::cerr << "Updating ATTACH Stuff";
+		//std::cerr << std::endl;
 		updateAttachedPeers(); /* XXX TEMP HACK to look at stability */
 		mAttachTS = ts;
 	}

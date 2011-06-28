@@ -150,6 +150,12 @@ bool bdQueryManager::checkPotentialPeer(bdId *id, bdId *src)
 			isWorthyPeer = true;
 		}
 	}
+
+	if (!isWorthyPeer)
+	{
+		isWorthyPeer = checkWorthyPeerSources(src);
+	}
+
 	return isWorthyPeer;
 }
 
@@ -244,6 +250,7 @@ int bdQueryManager::QuerySummary(const bdNodeId *id, bdQuerySummary &query)
 			query.mPotentialPeers = (*it)->mPotentialPeers;
 			query.mProxiesUnknown = (*it)->mProxiesUnknown;
 			query.mProxiesFlagged = (*it)->mProxiesFlagged;
+ 			query.mQueryIdlePeerRetryPeriod = (*it)->mQueryIdlePeerRetryPeriod;
 
 			return 1;
 		}
@@ -307,4 +314,61 @@ int  bdQueryManager::potentialProxies(bdNodeId *target, std::list<bdId> &answer)
 {
 	return getResults(target, answer,  BDQRYMGR_POTPROXIES);
 }
-		
+
+
+/************ WORTHY PEERS **********/
+
+#define MAX_WORTHY_PEER_AGE 15
+
+void bdQueryManager::addWorthyPeerSource(bdId *src)
+{
+	time_t now = time(NULL);
+
+	bdPeer peer;
+	peer.mPeerId = *src;
+	peer.mFoundTime = now;
+
+	std::cerr << "bdQueryManager::addWorthyPeerSource(";
+	mFns->bdPrintId(std::cerr, src);
+	std::cerr << ")" << std::endl;
+#ifdef DEBUG_NODE_ACTIONS 
+#endif
+
+	mWorthyPeerSources.push_back(peer);
+}
+
+bool bdQueryManager::checkWorthyPeerSources(bdId *src)
+{
+	if (!src)
+		return false;
+
+	time_t now = time(NULL);
+	std::list<bdPeer>::iterator it;
+	for(it = mWorthyPeerSources.begin(); it != mWorthyPeerSources.end(); )
+	{
+		if (now - it->mFoundTime > MAX_WORTHY_PEER_AGE)
+		{
+			std::cerr << "bdQueryManager::checkWorthyPeerSource() Discard old Source: ";
+			mFns->bdPrintId(std::cerr, &(it->mPeerId));
+			std::cerr << std::endl;
+
+			it = mWorthyPeerSources.erase(it);
+		}
+		else
+		{
+			if (it->mPeerId == *src)
+			{
+				//std::cerr << "bdQueryManager::checkWorthyPeerSource(";
+				//mFns->bdPrintId(std::cerr, src);
+				//std::cerr << ") = true" << std::endl;
+
+				return true;
+			}
+			it++;
+		}
+	}
+	return false;
+}
+
+
+

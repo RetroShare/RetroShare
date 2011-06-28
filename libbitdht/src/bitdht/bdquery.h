@@ -90,6 +90,7 @@ int 	trimProxies();
 	std::list<bdPeer>  mProxiesUnknown;
 	std::list<bdPeer>  mProxiesFlagged;
 
+	int mClosestListSize;
 	bdDhtFunctions *mFns;
 };
 

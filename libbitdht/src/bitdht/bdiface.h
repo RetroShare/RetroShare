@@ -269,10 +269,12 @@ class bdQuerySummary
 #define BITDHT_QUERY_SUCCESS            6
 
 /* Query Flags */
-#define BITDHT_QFLAGS_NONE		0
-#define BITDHT_QFLAGS_DISGUISE		1
-#define BITDHT_QFLAGS_DO_IDLE		2
-#define BITDHT_QFLAGS_INTERNAL		4  // means it runs through startup.
+#define BITDHT_QFLAGS_NONE		0x0000
+#define BITDHT_QFLAGS_DISGUISE		0x0001
+#define BITDHT_QFLAGS_DO_IDLE		0x0002
+#define BITDHT_QFLAGS_INTERNAL		0x0004  // means it runs through startup.
+#define BITDHT_QFLAGS_QUICK		0x0008  // ONE Request per peer.
+#define BITDHT_QFLAGS_UPDATES		0x0010  // Do regular updates.
 
 /* Connect Callback Flags */
 #define BITDHT_CONNECT_CB_AUTH		1

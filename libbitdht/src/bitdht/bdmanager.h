@@ -152,13 +152,19 @@ int	checkStatus();
 int 	checkPingStatus();
 int 	SearchOutOfDate();
 void	startQueries();
-void 	QueryRandomLocalNet();
+
+int     QueryRandomLocalNet();
+void    SearchForLocalNet();
 
 	std::map<bdNodeId, bdQueryPeer>	mActivePeers;
         std::list<BitDhtCallback *> mCallbacks;
 
 	uint32_t mMode;
 	time_t   mModeTS;
+
+        time_t mStartTS;
+        time_t mSearchTS;
+        bool mSearchingDone;
 
         bdDhtFunctions *mFns;
 

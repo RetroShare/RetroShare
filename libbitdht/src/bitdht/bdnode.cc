@@ -83,7 +83,7 @@ void bdNode::init()
 
 }
 
-#define ATTACH_NUMBER 10
+#define ATTACH_NUMBER 5
 void bdNode::setNodeOptions(uint32_t optFlags)
 {
 	mNodeOptionFlags = optFlags;	
@@ -440,6 +440,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 		mFns->bdPrintId(std::cerr, id);
 		std::cerr << ", " << std::hex << peerflags << std::dec;
 		std::cerr << ") FAILED the BAD PEER FILTER!!!! DISCARDING MSG";
+		std::cerr << std::endl;
 
 		std::list<struct sockaddr_in> filteredIPs;
 		mFilterPeers->filteredIPs(filteredIPs);

@@ -37,7 +37,7 @@
 **/
 
 
-#define EXPECTED_REPLY 20
+#define EXPECTED_REPLY 10 // Speed up queries
 #define QUERY_IDLE_RETRY_PEER_PERIOD 300 // 5min =  (mFns->bdNodesPerBucket() * 30)
 
 
@@ -82,6 +82,7 @@ bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryF
 	mQueryFlags = queryFlags;
 	mQueryTS = now;
 	mSearchTime = 0;
+	mClosestListSize = (int) (1.5 * mFns->bdNodesPerBucket());
 
 	mQueryIdlePeerRetryPeriod = QUERY_IDLE_RETRY_PEER_PERIOD;
 	mRequiredPeerFlags = BITDHT_PEER_STATUS_DHT_ENGINE_VERSION; // XXX to update later.
@@ -128,7 +129,8 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 
 	bool notFinished = false;
 	std::multimap<bdMetric, bdPeer>::iterator it;
-	for(it = mClosest.begin(); it != mClosest.end(); it++)
+	int i = 0;
+	for(it = mClosest.begin(); it != mClosest.end(); it++, i++)
 	{
 		bool queryPeer = false;
 
@@ -158,11 +160,15 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 		/* expecting every peer to be up-to-date is too hard...
 		 * enough just to have received lists from each 
 		 * - replacement policy will still work.
+		 *
+		 * Need to wait at least EXPECTED_REPLY, to make sure their answers are pinged
 		 */	
-		if (it->second.mLastRecvTime == 0)
+
+		if (((it->second.mLastRecvTime == 0) || (now - it->second.mLastRecvTime < EXPECTED_REPLY)) && 
+				(i < mFns->bdNodesPerBucket()))
 		{
 #ifdef DEBUG_QUERY 
-        		fprintf(stderr, "NextQuery() Never Received: notFinished = true: ");
+        		fprintf(stderr, "NextQuery() Never Received @Idx(%d) notFinished = true: ", i);
 			mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
 			std::cerr << std::endl;
 #endif
@@ -296,7 +302,8 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
         fprintf(stderr, "Searching.... %di = %d - %d peers closer than this one\n", i, actualCloser, toDrop);
 #endif
 
-	if (i > mFns->bdNodesPerBucket() - 1)
+
+	if (i > mClosestListSize - 1)
 	{
 #ifdef DEBUG_QUERY 
         	fprintf(stderr, "Distance to far... dropping\n");
@@ -367,7 +374,7 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
 	}
 
 	/* trim it back */
-	while(mClosest.size() > (uint32_t) (mFns->bdNodesPerBucket() - 1))
+	while(mClosest.size() > (uint32_t) (mClosestListSize - 1))
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mClosest.end();

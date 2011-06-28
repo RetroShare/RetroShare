@@ -44,12 +44,12 @@
 #include "bitdht/bencode.h"
 #include "bitdht/bdquerymgr.h"
 
-
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
 
 #include "util/bdnet.h"
+#include "util/bdrandom.h"
 
 /***
  * #define DEBUG_MGR 1
@@ -112,6 +112,10 @@ int	bdNodeManager::startDht()
 
 	mMode = BITDHT_MGR_STATE_STARTUP;
 	mModeTS = now;
+
+	mStartTS = now;
+	mSearchingDone = false;
+	mSearchTS = now;
 
 	return 1;
 }
@@ -347,6 +351,26 @@ void bdNodeManager::iteration()
 				/* run a random search for ourselves, from own App DHT peer */
 				QueryRandomLocalNet();
 
+#define SEARCH_MAX_SIZE 10					
+ 				if (mBdNetworkSize < SEARCH_MAX_SIZE)
+				{
+					std::cerr << "Local Netsize: " << mBdNetworkSize << " to small...searching";
+					std::cerr << std::endl;
+
+					/* if the network size is very small */
+					SearchForLocalNet();
+					mSearchingDone = false;
+				}
+				else
+				{
+					if (!mSearchingDone)
+					{
+						mSearchingDone = true;
+						mSearchTS = now;
+						std::cerr << "Completed LocalNet Search in : " << mSearchTS-mStartTS;
+						std::cerr << std::endl;
+					}
+				}
 
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): REFRESH ";
@@ -354,6 +378,9 @@ void bdNodeManager::iteration()
 #endif
 
 				status();
+
+				mAccount.printStats(std::cerr);
+
 			}
 			break;
 
@@ -395,7 +422,10 @@ void bdNodeManager::iteration()
 	/* NB: This is a bit of a hack, the code is duplicated from bdnode & bdquery.
 	 * should use fn calls into their functions for good generality
 	 */
-void bdNodeManager::QueryRandomLocalNet()
+
+#define RANDOM_SEARCH_FRAC	(0.2)
+
+int bdNodeManager::QueryRandomLocalNet()
 {
         bdId id;
 	bdNodeId targetNodeId;
@@ -403,27 +433,102 @@ void bdNodeManager::QueryRandomLocalNet()
 	uint32_t withFlag = LOCAL_NET_FLAG;
 	if (mNodeSpace.findRandomPeerWithFlag(id, withFlag))
 	{
-		/* calculate mid point */
-		mFns->bdRandomMidId(&mOwnId, &(id.id), &targetNodeId);
+		/* if we've got a very small network size... then ask them about a random peer.
+		 * (so we get there 159/158 boxes!
+		 */
+		bool isRandom = false;
+ 		if ((mBdNetworkSize < SEARCH_MAX_SIZE) || (RANDOM_SEARCH_FRAC > bdRandom::random_f32()))
+		{
+			bdStdRandomNodeId(&targetNodeId);
+			isRandom = true;
+		}
+		else
+		{
+			/* calculate mid point */
+			mFns->bdRandomMidId(&mOwnId, &(id.id), &targetNodeId);
+		}
 
 		/* do standard find_peer message */
 
+		mQueryMgr->addWorthyPeerSource(&id); /* Tell BitDHT that we really want to ping their peers */
 		send_query(&id, &targetNodeId);
 			
-#ifdef DEBUG_NODE_MSGS
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
 		mFns->bdPrintId(std::cerr, &id);
 		std::cerr << " searching for : ";
 		mFns->bdPrintNodeId(std::cerr, &targetNodeId);
 		std::cerr << std::endl;
+
+		if (isRandom)
+		{
+			std::cerr << "bdNodeManager::QueryRandomLocalNet() Search is Random!";
+			std::cerr << std::endl;
+		}
+
+#ifdef DEBUG_NODE_MSGS
 #endif
+		return 1;
 	}
 	else
 	{
 #ifdef DEBUG_NODE_MSGS
+#endif
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() No LocalNet Peer Found";
 		std::cerr << std::endl;
+	}
+
+	return 0;
+}
+
+
+
+void bdNodeManager::SearchForLocalNet()
+{
+
+
+#ifdef DEBUG_MGR
 #endif
+	std::cerr << "bdNodeManager::SearchForLocalNet()";
+	std::cerr << std::endl;
+
+	/* Check how many "Search Queries" we've got going. */
+
+	/* check queries */
+        std::map<bdNodeId, bdQueryStatus>::iterator it;
+        std::map<bdNodeId, bdQueryStatus> queryStatus;
+
+
+	mQueryMgr->QueryStatus(queryStatus);
+
+	int numSearchQueries = 0;
+	for(it = queryStatus.begin(); it != queryStatus.end(); it++)
+	{
+		if (it->second.mQFlags & BITDHT_QFLAGS_INTERNAL)
+		{
+			std::cerr << "bdNodeManager::SearchForLocalNet() Existing Internal Search: ";
+			mFns->bdPrintNodeId(std::cerr, &(it->first));
+			std::cerr << std::endl;
+
+			numSearchQueries++;
+		}
+	}
+
+#define MAX_SEARCH_QUERIES 5
+
+	for(;numSearchQueries < MAX_SEARCH_QUERIES; numSearchQueries++)
+	{
+		/* install a new query */
+		bdNodeId targetNodeId;
+		bdStdRandomNodeId(&targetNodeId);
+
+		uint32_t qflags = BITDHT_QFLAGS_INTERNAL | BITDHT_QFLAGS_DISGUISE;
+		mQueryMgr->addQuery(&targetNodeId, qflags); 
+
+#ifdef DEBUG_NODE_MSGS
+#endif
+		std::cerr << "bdNodeManager::SearchForLocalNet() Adding New Internal Search: ";
+		mFns->bdPrintNodeId(std::cerr, &(targetNodeId));
+		std::cerr << std::endl;
 	}
 }
 

@@ -99,13 +99,14 @@ void bdAccount::doStats()
 void bdAccount::printStats(std::ostream &out)
 {
 	int i;
+	out << "  Send                                                 Recv: ";
+	out << std::endl;
 	for(i = 0; i < mNoStats; i++)
 	{
-		out << "  Send                                                 Recv: ";
-		out << std::endl;
 
-		out << "Send " << mLabel[i] << " : " << std::setw(10) << mLpfOut[i];
-		out << "Recv " << mLabel[i] << " : " << std::setw(10) << mLpfRecv[i];
+		out << "Send" << mLabel[i] << " : " << std::setw(10) << mLpfOut[i];
+		out << "          ";
+		out << "Recv" << mLabel[i] << " : " << std::setw(10) << mLpfRecv[i];
 		out << std::endl;
 	}
 }
