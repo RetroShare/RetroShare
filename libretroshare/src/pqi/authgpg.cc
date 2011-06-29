@@ -2459,8 +2459,8 @@ void cleanupZombies(int numkill)
 		}
 	}
 
-	std::cerr << "cleanupZombies() Killed " << i << " zombies";
-	std::cerr << std::endl;
+	//std::cerr << "cleanupZombies() Killed " << i << " zombies";
+	//std::cerr << std::endl;
 
 #endif
 

@@ -289,7 +289,7 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 #endif
 
 		/* store the cache file for later processing */
-        mPendingCaches.push_back(CacheDataPending(data, true, false));
+        	mPendingCaches.push_back(CacheDataPending(data, true, false));
 	}
 
 	if (data.size > 0)
