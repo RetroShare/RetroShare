@@ -538,7 +538,10 @@ void bdConnectManager::updatePotentialConnectionProxy(const bdId *id, uint32_t m
 	if (mode & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 	{
 #ifdef DEBUG_NODE_CONNECTION
-		std::cerr << "bdConnectManager::updatePotentialConnectionProxy() Peer is GOOD, checking Connection Requests";
+		std::cerr << "bdConnectManager::updatePotentialConnectionProxy() Peer is GOOD : ";
+		bdStdPrintId(std::cerr, id);
+		std::cerr << std::endl;
+		std::cerr << "bdConnectManager::updatePotentialConnectionProxy() checking Connection Requests";
 		std::cerr << std::endl;
 #endif
 		/* good peer, see if any of our connectionrequests can use it */

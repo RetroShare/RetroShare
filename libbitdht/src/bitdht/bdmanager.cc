@@ -377,10 +377,16 @@ void bdNodeManager::iteration()
 				std::cerr << std::endl;
 #endif
 
-				status();
+				status(); /* calculates mNetworkSize */
 
 				mAccount.printStats(std::cerr);
 
+				/* Finally, Fail, and restart if we lose all peers */
+				if (mNetworkSize < MIN_OP_SPACE_SIZE)
+				{
+					mMode = BITDHT_MGR_STATE_FAILED;
+					mModeTS = now;
+				}
 			}
 			break;
 
@@ -423,7 +429,7 @@ void bdNodeManager::iteration()
 	 * should use fn calls into their functions for good generality
 	 */
 
-#define RANDOM_SEARCH_FRAC	(0.2)
+#define RANDOM_SEARCH_FRAC	(0.1)
 
 int bdNodeManager::QueryRandomLocalNet()
 {
