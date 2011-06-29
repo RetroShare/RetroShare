@@ -52,12 +52,14 @@ int bdStdBucketDistance(const bdNodeId *a, const bdNodeId *b);
 
 void bdStdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid);
 
+int  bdStdLoadNodeId(bdNodeId *id, std::string input);
+
 void bdStdPrintId(std::ostream &out, const bdId *a);
 void bdStdPrintNodeId(std::ostream &out, const bdNodeId *a);
 
 std::string bdStdConvertToPrintable(std::string input);
 
-uint32_t bdStdLikelySameNode(const bdId*, const bdId*);
+//uint32_t bdStdSimilarNode(const bdId*, const bdId*);
 
 
 class bdStdDht: public bdDhtFunctions
@@ -74,7 +76,8 @@ virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric)
 virtual int bdBucketDistance(const bdNodeId *n1, const bdNodeId *n2);
 virtual int bdBucketDistance(const bdMetric *metric);
 
-virtual uint32_t bdLikelySameNode(const bdId *id1, const bdId *id2);
+virtual bool bdSimilarId(const bdId *id1, const bdId *id2);
+virtual bool bdUpdateSimilarId(bdId *dest, const bdId *src); /* returns true if update was necessary */
 
 virtual void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid);
 

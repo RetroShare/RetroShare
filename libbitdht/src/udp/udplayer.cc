@@ -24,6 +24,7 @@
  */
 
 #include "udp/udplayer.h"
+#include "util/bdrandom.h"
 
 #include <iostream>
 #include <sstream>
@@ -310,7 +311,7 @@ void UdpLayer::recv_loop()
 }
 
 
-int UdpLayer::sendPkt(const void *data, int size, sockaddr_in &to, int ttl)
+int UdpLayer::sendPkt(const void *data, int size, const sockaddr_in &to, int ttl)
 {
 	/* if ttl is different -> set it */
 	if (ttl != getTTL())
@@ -492,7 +493,7 @@ int UdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
 	return -1;
 }
 
-int UdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
+int UdpLayer::sendUdpPacket(const void *data, int size, const struct sockaddr_in &to)
 {
 	/* send out */
 #ifdef DEBUG_UDP_LAYER
@@ -525,28 +526,26 @@ LossyUdpLayer::~LossyUdpLayer() { return; }
 
 int LossyUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
 {
-	double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
-	
-	if (prob < lossFraction)
+	if (0 < UdpLayer::receiveUdpPacket(data, size, from))
 	{
-	/* but discard */
-		if (0 < UdpLayer::receiveUdpPacket(data, size, from))
+		float prob = bdRandom::random_f32();
+		if (prob < lossFraction)
 		{
+			/* discard */
 			std::cerr << "LossyUdpLayer::receiveUdpPacket() Dropping packet!";
 			std::cerr << std::endl;
 			std::cerr << printPkt(data, *size);
 			std::cerr << std::endl;
 			std::cerr << "LossyUdpLayer::receiveUdpPacket() Packet Dropped!";
 			std::cerr << std::endl;
+
+			size = 0;
+			return -1;
 		}
 	
-		size = 0;
-		return -1;
-	
+		return *size;	
 	}
-	
-	// otherwise read normally;
-	return UdpLayer::receiveUdpPacket(data, size, from);
+	return -1; 
 }
 	
 int LossyUdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
@@ -565,6 +564,102 @@ int LossyUdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in 
 		std::cerr << std::endl;
 	
 		return size;
+	}
+	
+	// otherwise read normally;
+	return UdpLayer::sendUdpPacket(data, size, to);
+}
+	
+/**************************** LossyUdpLayer - for Testing **************/
+
+PortRange::PortRange() :lport(0), uport(0) { return; }
+PortRange::PortRange(uint16_t lp, uint16_t up) :lport(lp), uport(up) { return; }
+
+bool PortRange::inRange(uint16_t port)
+{
+	if (port < lport)
+	{
+		return false;
+	}
+	
+	if (port > uport)
+	{
+		return false;
+	}
+	return true;
+}
+
+
+
+RestrictedUdpLayer::RestrictedUdpLayer(UdpReceiver *udpr, 
+			struct sockaddr_in &local)
+	:UdpLayer(udpr, local)
+{
+	return;
+}
+RestrictedUdpLayer::~RestrictedUdpLayer() { return; }
+
+void RestrictedUdpLayer::addRestrictedPortRange(int lp, int up)
+{
+	PortRange pr(lp, up);
+	mLostPorts.push_back(pr);
+}
+
+int RestrictedUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
+{
+	if (0 < UdpLayer::receiveUdpPacket(data, size, from))
+	{
+		/* check the port against list */
+		uint16_t inPort = ntohs(from.sin_port);
+
+		std::list<PortRange>::iterator it;
+		for(it = mLostPorts.begin(); it != mLostPorts.end(); it++)
+		{
+			if (it->inRange(inPort))
+			{
+#ifdef DEBUG_UDP_LAYER 	
+				std::cerr << "RestrictedUdpLayer::receiveUdpPacket() Dropping packet";
+				std::cerr << ", Port(" << inPort << ") in restricted range!";
+				std::cerr << std::endl;
+				//std::cerr << printPkt(data, *size);
+				//std::cerr << std::endl;
+#endif
+
+				size = 0;
+				return -1;
+	
+			}
+	
+		}
+		/* acceptable port */
+		return *size;
+	}
+	return -1;
+}
+	
+int RestrictedUdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
+{
+	/* check the port against list */
+	uint16_t outPort = ntohs(to.sin_port);
+
+	std::list<PortRange>::iterator it;
+	for(it = mLostPorts.begin(); it != mLostPorts.end(); it++)
+	{
+		if (it->inRange(outPort))
+		{
+			/* drop */
+#ifdef DEBUG_UDP_LAYER 	
+			std::cerr << "RestrictedUdpLayer::sendUdpPacket() Dropping packet";
+			std::cerr << ", Port(" << outPort << ") in restricted range!";
+			std::cerr << std::endl;
+			//std::cerr << printPkt(data, *size);
+			//std::cerr << std::endl;
+#endif
+
+			return size;
+		}
+	
+	
 	}
 	
 	// otherwise read normally;

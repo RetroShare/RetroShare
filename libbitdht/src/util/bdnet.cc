@@ -256,7 +256,11 @@ int bdnet_w2u_errno(int err)
 			break;
 		 *
 		 ***/
-		
+	
+		case WSANOTINITIALISED:	
+			std::cerr << "tou_net_w2u_errno(" << err << ") WSANOTINITIALISED. Fix Your Code!";
+			std::cerr << std::endl;
+			break;
 		default:
 			std::cerr << "tou_net_w2u_errno(" << err << ") Unknown";
 			std::cerr << std::endl;
@@ -345,4 +349,11 @@ ssize_t bdnet_sendto(int s, const void *buf, size_t len, int flags,
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+
+void    bdsockaddr_clear(struct sockaddr_in *addr)
+{
+	memset(addr, 0, sizeof(*addr));
+}
+
 

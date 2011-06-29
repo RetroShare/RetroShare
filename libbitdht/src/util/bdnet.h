@@ -103,7 +103,7 @@ int bdnet_inet_aton(const char *name, struct in_addr *addr);
 /* check if we can modify the TTL on a UDP packet */
 int bdnet_checkTTL(int fd);
 
-
+void	bdsockaddr_clear(struct sockaddr_in *addr);
 
 /* Extra stuff to declare for windows error handling (mimics unix errno)
  */

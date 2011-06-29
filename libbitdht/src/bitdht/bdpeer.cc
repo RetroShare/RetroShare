@@ -26,6 +26,8 @@
 
 #include "bitdht/bdpeer.h"
 #include "util/bdnet.h"
+#include "util/bdrandom.h"
+#include "bitdht/bdiface.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -179,137 +181,6 @@ int operator==(const bdId &a, const bdId &b)
 }
 
 
-#if 0
-void bdRandomId(bdId *id)
-{
-	bdRandomNodeId(&(id->id));
-
-	id->addr.sin_addr.s_addr = rand();
-	id->addr.sin_port = rand();
-
-	return;
-}
-
-void bdRandomNodeId(bdNodeId *id)
-{
-	uint32_t *a_data = (uint32_t *) id->data;
-	for(int i = 0; i < BITDHT_KEY_INTLEN; i++)
-	{
-		a_data[i] = rand();
-	}
-	return;
-}
-
-
-/* fills in dbNodeId r, with XOR of a and b */
-int bdDistance(const bdNodeId *a, const bdNodeId *b, bdMetric *r)
-{
-	uint8_t *a_data = (uint8_t *) a->data;
-	uint8_t *b_data = (uint8_t *) b->data;
-	uint8_t *ans = (uint8_t *) r->data;
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
-	{
-		*(ans++) = *(a_data++) ^ *(b_data++);
-	}
-	return 1;
-}
-
-void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *midId)
-{
-	bdMetric dist;
-	
-	/* get distance between a & c */
-	bdDistance(target, other, &dist);
-
-	/* generate Random Id */
-	bdRandomNodeId(midId);
-
-	/* zero bits of Random Id until under 1/2 of distance 
-	 * done in bytes for ease... matches one extra byte than distance = 0 
-	 * -> hence wierd order of operations
-	 */
-	bool done = false;
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)
-	{
-		midId->data[i] = target->data[i];
-
-		if (dist.data[i] != 0)
-			break;
-	}
-}
-
-std::string bdConvertToPrintable(std::string input)
-{
-	std::ostringstream out;
-        for(uint32_t i = 0; i < input.length(); i++)
-        {
-                /* sensible chars */
-                if ((input[i] > 31) && (input[i] < 127))
-                {
-                        out << input[i];
-                }
-                else
-                {
-			out << "[0x" << std::hex << (uint32_t) input[i] << "]";
-			out << std::dec;
-                }
-        }
-	return out.str();
-}
-
-void bdPrintNodeId(std::ostream &out, const bdNodeId *a)
-{
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
-	{
-		out << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) (a->data)[i];
-	}
-	out << std::dec;
-
-	return;
-}
-
-
-void bdPrintId(std::ostream &out, const bdId *a)
-{
-	bdPrintNodeId(out, &(a->id));
-	out << " ip:" << inet_ntoa(a->addr.sin_addr);
-	out << ":" << ntohs(a->addr.sin_port);
-	return;
-}
-
-/* returns 0-160 depending on bucket */
-int bdBucketDistance(const bdNodeId *a, const bdNodeId *b)
-{
-	bdMetric m;
-	bdDistance(a, b, &m);
-	return bdBucketDistance(&m);
-}
-
-/* returns 0-160 depending on bucket */
-int bdBucketDistance(const bdMetric *m)
-{
-	for(int i = 0; i < BITDHT_KEY_BITLEN; i++)
-	{
-		int bit = BITDHT_KEY_BITLEN - i - 1;
-		int byte = i / 8;
-		int bbit = 7 - (i % 8);
-		unsigned char comp = (1 << bbit);
-
-#ifdef BITDHT_DEBUG
-		fprintf(stderr, "bdBucketDistance: bit:%d  byte:%d bbit:%d comp:%x, data:%x\n", bit, byte, bbit, comp, m->data[byte]);
-#endif
-
-		if (comp & m->data[byte])
-		{
-			return bit;
-		}
-	}
-	return 0;
-}
-
-#endif
-
-
 
 bdBucket::bdBucket()
 {
@@ -321,6 +192,11 @@ bdSpace::bdSpace(bdNodeId *ownId, bdDhtFunctions *fns)
 {
 	/* make some space for data */
 	buckets.resize(mFns->bdNumBuckets());
+
+	mAttachTS = 0;
+	mAttachedFlags = 0;
+	mAttachedCount = 0;
+
 	return;
 }
 
@@ -336,8 +212,17 @@ int     bdSpace::clear()
 	return 1;
 }
 
+int     bdSpace::setAttachedFlag(uint32_t withflags, int count)
+{
+	mAttachedFlags = withflags;
+	mAttachedCount = count;
+	mAttachTS = 0;
+	return 1;
+}
 
-int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId> /*excluding*/, std::multimap<bdMetric, bdId> &nearest)
+int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number, 
+		std::list<bdId> /* excluding */, 
+		std::multimap<bdMetric, bdId> &nearest, uint32_t with_flags)
 {
 	std::multimap<bdMetric, bdId> closest;
 	std::multimap<bdMetric, bdId>::iterator mit;
@@ -363,16 +248,19 @@ int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId>
 	{
 		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
 		{
-			mFns->bdDistance(id, &(eit->mPeerId.id), &dist);
-			closest.insert(std::pair<bdMetric, bdId>(dist, eit->mPeerId));
+			if ((!with_flags) || ((with_flags & eit->mPeerFlags) == with_flags))
+			{
+			  mFns->bdDistance(id, &(eit->mPeerId.id), &dist);
+			  closest.insert(std::pair<bdMetric, bdId>(dist, eit->mPeerId));
 
 #if 0
-			std::cerr << "Added NodeId: ";
-			bdPrintNodeId(std::cerr, &(eit->mPeerId.id));
-			std::cerr << " Metric: ";
-			bdPrintNodeId(std::cerr, &(dist));
-			std::cerr << std::endl;
+			  std::cerr << "Added NodeId: ";
+			  bdPrintNodeId(std::cerr, &(eit->mPeerId.id));
+			  std::cerr << " Metric: ";
+			  bdPrintNodeId(std::cerr, &(dist));
+			  std::cerr << std::endl;
 #endif
+			}
 		}
 	}
 
@@ -429,7 +317,124 @@ int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId>
 	return 1;
 }
 
+int bdSpace::find_nearest_nodes(const bdNodeId *id, int number,
+                		std::multimap<bdMetric, bdId> &nearest)
+{
+	std::list<bdId> excluding;
+	uint32_t with_flag = 0;
 
+	return find_nearest_nodes_with_flags(id, number, excluding, nearest, with_flag);
+}
+
+
+/* This is much cheaper than find nearest... we only look in the one bucket
+ */
+
+int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds, uint32_t with_flags)
+{
+	bdMetric dist;
+	mFns->bdDistance(id, &(mOwnId), &dist);
+	int buckno = mFns->bdBucketDistance(&dist);
+
+	std::cerr << "bdSpace::find_node(NodeId:";
+	mFns->bdPrintNodeId(std::cerr, id);
+	std::cerr << ")";
+
+	std::cerr << " Number: " << number;
+	std::cerr << " Bucket #: " << buckno;
+	std::cerr << std::endl;
+#ifdef DEBUG_BD_SPACE
+#endif
+
+	bdBucket &buck = buckets[buckno];
+
+	std::list<bdPeer>::iterator eit;
+	int matchCount = 0;
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	{
+		std::cerr << "bdSpace::find_node() Checking Against Peer: ";
+		mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+		std::cerr << " withFlags: " << eit->mPeerFlags;
+		std::cerr << std::endl;
+
+		if ((!with_flags) || ((with_flags & eit->mPeerFlags) == with_flags))
+		{
+			if (*id == eit->mPeerId.id)
+			{
+		  		matchIds.push_back(eit->mPeerId);
+				matchCount++;
+
+				std::cerr << "bdSpace::find_node() Found Matching Peer: ";
+			  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+				std::cerr << " withFlags: " << eit->mPeerFlags;
+			  	std::cerr << std::endl;
+			}
+		}
+		else
+		{
+			if (*id == eit->mPeerId.id)
+			{
+		  		//matchIds.push_back(eit->mPeerId);
+				//matchCount++;
+
+				std::cerr << "bdSpace::find_node() Found (WITHOUT FLAGS) Matching Peer: ";
+			  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+				std::cerr << " withFlags: " << eit->mPeerFlags;
+			  	std::cerr << std::endl;
+			}
+		}
+	}
+
+	std::cerr << "bdSpace::find_node() Found " << matchCount << " Matching Peers";
+	std::cerr << std::endl << std::endl;
+#ifdef DEBUG_BD_SPACE
+#endif
+
+	return matchCount;
+}
+
+/* even cheaper again... no big lists */
+int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
+{
+	bdMetric dist;
+	mFns->bdDistance(&(id->id), &(mOwnId), &dist);
+	int buckno = mFns->bdBucketDistance(&dist);
+
+	std::cerr << "bdSpace::find_exactnode(Id:";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << ")";
+
+	std::cerr << " Bucket #: " << buckno;
+	std::cerr << std::endl;
+
+#ifdef DEBUG_BD_SPACE
+#endif
+
+	bdBucket &buck = buckets[buckno];
+
+	std::list<bdPeer>::iterator eit;
+	int matchCount = 0;
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	{
+		if (*id == eit->mPeerId)
+		{
+			std::cerr << "bdSpace::find_exactnode() Found Matching Peer: ";
+		  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+			std::cerr << " withFlags: " << eit->mPeerFlags;
+		  	std::cerr << std::endl;
+
+			peer = (*eit);
+			return 1;
+		}
+	}
+	std::cerr << "bdSpace::find_exactnode() ERROR Failed to find Matching Peer: ";
+	std::cerr << std::endl;
+
+	return 0;
+}
+
+
+#if 0
 int	bdSpace::out_of_date_peer(bdId &id)
 {
 	/* 
@@ -446,19 +451,228 @@ int	bdSpace::out_of_date_peer(bdId &id)
 	/* iterate through the buckets, and sort by distance */
 	for(it = buckets.begin(); it != buckets.end(); it++)
 	{
-		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); ) 
 		{
 			/* timeout on last send time! */
 			if (ts - eit->mLastSendTime > BITDHT_MAX_SEND_PERIOD )
 			{
-				id = eit->mPeerId;
-				eit->mLastSendTime = ts;
-				return 1;
+				/* We want to ping a peer iff:
+		 	 	 * 1) They are out-of-date: mLastRecvTime is too old.
+			 	 * 2) They don't have 0x0001 flag (we haven't received a PONG) and never sent.
+			 	 */
+				if ((ts - eit->mLastRecvTime > BITDHT_MAX_SEND_PERIOD ) || 
+					!(eit->mPeerFlags & BITDHT_PEER_STATUS_RECV_PONG))
+				{
+					id = eit->mPeerId;
+					eit->mLastSendTime = ts;
+					return 1;
+				}
+			}
+
+
+			/* we also want to remove very old entries (should it happen here?) 
+			 * which are not pushed out by newer entries (will happen in for closer buckets)
+			 */
+
+			bool discard = false;
+			/* discard very old entries */
+			if (ts - eit->mLastRecvTime > BITDHT_DISCARD_PERIOD)
+			{
+				discard = true;
+			}
+		
+			/* discard peers which have not responded to anything (ie have no flags set) */
+			if ((ts - eit->mFoundTime > BITDHT_MAX_RESPONSE_PERIOD ) &&
+				(eit->mPeerFlags == 0))
+			{
+				discard = true;
+			}
+			
+
+			/* INCREMENT */
+			if (discard)
+			{	
+				eit = it->entries.erase(eit);
+			}
+			else
+			{
+				eit++;
 			}
 		}
 	}
 	return 0;
 }
+
+#endif
+
+
+
+
+#define BITDHT_ATTACHED_SEND_PERIOD 	17
+
+int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
+{
+	/* 
+	 * 
+	 */
+	bool doAttached = (mAttachedCount > 0);
+	int attachedCount = 0;
+
+	std::map<bdMetric, bdId> closest;
+	std::map<bdMetric, bdId>::iterator mit;
+
+	std::vector<bdBucket>::iterator it;
+	std::list<bdPeer>::iterator eit;
+	time_t ts = time(NULL);
+
+	/* iterate through the buckets, and sort by distance */
+	for(it = buckets.begin(); it != buckets.end(); it++)
+	{
+		for(eit = it->entries.begin(); eit != it->entries.end(); ) 
+		{
+			bool added = false;
+			if (doAttached)
+			{
+				if (eit->mExtraFlags & BITDHT_PEER_EXFLAG_ATTACHED)
+				{
+					/* add to send list, if we haven't pinged recently */
+					if ((ts - eit->mLastSendTime > BITDHT_ATTACHED_SEND_PERIOD ) &&
+						(ts - eit->mLastRecvTime > BITDHT_ATTACHED_SEND_PERIOD ))
+					{
+						peerIds.push_back(eit->mPeerId);
+						eit->mLastSendTime = ts;
+						added = true;
+					}
+					attachedCount++;
+				}
+			}
+				
+
+			/* timeout on last send time! */
+			if ((!added) && (ts - eit->mLastSendTime > BITDHT_MAX_SEND_PERIOD ))
+			{
+				/* We want to ping a peer iff:
+		 	 	 * 1) They are out-of-date: mLastRecvTime is too old.
+			 	 * 2) They don't have 0x0001 flag (we haven't received a PONG) and never sent.
+			 	 */
+				if ((ts - eit->mLastRecvTime > BITDHT_MAX_SEND_PERIOD ) || 
+					!(eit->mPeerFlags & BITDHT_PEER_STATUS_RECV_PONG))
+				{
+					peerIds.push_back(eit->mPeerId);
+					eit->mLastSendTime = ts;
+				}
+			}
+
+
+			/* we also want to remove very old entries (should it happen here?) 
+			 * which are not pushed out by newer entries (will happen in for closer buckets)
+			 */
+
+			bool discard = false;
+			/* discard very old entries */
+			if (ts - eit->mLastRecvTime > BITDHT_DISCARD_PERIOD)
+			{
+				discard = true;
+			}
+		
+			/* discard peers which have not responded to anything (ie have no flags set) */
+			/* changed into have not id'ed themselves, as we've added ping to list of flags. */
+			if ((ts - eit->mFoundTime > BITDHT_MAX_RESPONSE_PERIOD ) &&
+				!(eit->mPeerFlags & BITDHT_PEER_STATUS_RECV_PONG))
+			{
+				discard = true;
+			}
+			
+
+			/* INCREMENT */
+			if (discard)
+			{	
+				eit = it->entries.erase(eit);
+			}
+			else
+			{
+				eit++;
+			}
+		}
+	}
+
+#define ATTACH_UPDATE_PERIOD	600
+
+	if ((ts - mAttachTS > ATTACH_UPDATE_PERIOD) || (attachedCount != mAttachedCount))
+	{
+		//std::cerr << "Updating ATTACH Stuff";
+		//std::cerr << std::endl;
+		updateAttachedPeers(); /* XXX TEMP HACK to look at stability */
+		mAttachTS = ts;
+	}
+
+	return (peerIds.size());
+}
+
+
+int	bdSpace::updateAttachedPeers()
+{
+	/* 
+	 * 
+	 */
+	bool doAttached = (mAttachedCount > 0);
+	int attachedCount = 0;
+
+	if (!doAttached)
+	{
+		return 0;
+	}
+
+	std::map<bdMetric, bdId> closest;
+	std::map<bdMetric, bdId>::iterator mit;
+
+	std::vector<bdBucket>::iterator it;
+	std::list<bdPeer>::reverse_iterator eit;
+
+
+	/* skip the first bucket, as we don't want to ping ourselves! */	
+	it = buckets.begin();
+	if (it != buckets.end())
+	{
+		it++;
+	}
+
+	/* iterate through the buckets (sorted by distance) */
+	for(; it != buckets.end(); it++)
+	{
+		/* start from the back, as these are the most recently seen (and more likely to be the old ATTACHED) */
+		for(eit = it->entries.rbegin(); eit != it->entries.rend(); eit++) 
+		{
+			bool added = false;
+			if (doAttached)
+			{
+				if ((eit->mPeerFlags & mAttachedFlags) == mAttachedFlags)
+				{
+					/* flag as attached */
+					eit->mExtraFlags |= BITDHT_PEER_EXFLAG_ATTACHED;
+
+					/* inc count, and cancel search if we've found them */
+					attachedCount++;
+					if (attachedCount >= mAttachedCount)
+					{
+						doAttached = false;
+					}
+				}
+				else
+				{
+					eit->mExtraFlags &= ~BITDHT_PEER_EXFLAG_ATTACHED;
+				}
+			}
+			else
+			{
+				eit->mExtraFlags &= ~BITDHT_PEER_EXFLAG_ATTACHED;
+			}
+		}
+	}
+}
+
+
+
 
 /* Called to add or update peer.
  * sorts bucket lists by lastRecvTime.
@@ -468,6 +682,7 @@ int	bdSpace::out_of_date_peer(bdId &id)
 /* peer flags
  * order is important!
  * higher bits = more priority.
+ * BITDHT_PEER_STATUS_RECVPING
  * BITDHT_PEER_STATUS_RECVPONG
  * BITDHT_PEER_STATUS_RECVNODES
  * BITDHT_PEER_STATUS_RECVHASHES
@@ -511,14 +726,21 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 	/* loop through ids, to find it */
 	for(it = buck.entries.begin(); it != buck.entries.end(); it++)
 	{
-		if (*id == it->mPeerId)
-		// should check addr too!
-		{
+                /* similar id check */
+                if (mFns->bdSimilarId(id, &(it->mPeerId)))
+                {
 			bdPeer peer = *it;
 			it = buck.entries.erase(it);
 
 			peer.mLastRecvTime = ts;
 			peer.mPeerFlags |= peerflags; /* must be cumulative ... so can do online, replynodes, etc */
+
+			/* also update port from incoming id, as we have definitely recved from it */
+			if (mFns->bdUpdateSimilarId(&(peer.mPeerId), id))
+			{
+				/* updated it... must be Unstable */
+				peer.mExtraFlags |= BITDHT_PEER_EXFLAG_UNSTABLE;
+			}
 
 			buck.entries.push_back(peer);
 
@@ -549,7 +771,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 	{
 		/* check head of list */
 		bdPeer &peer = buck.entries.front();
-		if (peer.mLastRecvTime - ts >  BITDHT_MAX_RECV_PERIOD)
+		if (ts - peer.mLastRecvTime >  BITDHT_MAX_RECV_PERIOD)
 		{
 #ifdef DEBUG_BD_SPACE
 			std::cerr << "Dropping Out-of-Date peer in bucket" << std::endl;
@@ -590,8 +812,10 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 
 		newPeer.mPeerId = *id;
 		newPeer.mLastRecvTime = ts;
-		newPeer.mLastSendTime = ts; //????
+		newPeer.mLastSendTime = 0; // ts; //????
+		newPeer.mFoundTime = ts;
 		newPeer.mPeerFlags = peerflags;
+		newPeer.mExtraFlags = 0;
 
 		buck.entries.push_back(newPeer);
 
@@ -763,6 +987,16 @@ int     bdSpace::printDHT()
 	return 1;
 }
 
+
+int     bdSpace::getDhtBucket(const int idx, bdBucket &bucket)
+{
+	if ((idx < 0) || (idx > (int) buckets.size() - 1 ))
+	{
+		return 0;
+	}
+	bucket = buckets[idx];
+	return 1;
+}
 
 uint32_t  bdSpace::calcNetworkSize()
 {
@@ -982,7 +1216,7 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 	if(totalcount == 0)
 		return false ;
 
-	uint32_t rnd = rand() % totalcount;
+	uint32_t rnd = bdRandom::random_u32() % totalcount;
 	uint32_t i = 0;
 	uint32_t buck = 0;
 
@@ -1004,10 +1238,11 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 			{
 				if (i == rnd)
 				{
+#ifdef BITDHT_DEBUG
 					std::cerr << "bdSpace::findRandomPeerWithFlag() found #" << i;
 					std::cerr << " in bucket #" << buck;
 					std::cerr << std::endl;
-
+#endif
 					/* found */
 					id = lit->mPeerId;
 					return true;
@@ -1018,6 +1253,8 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 	}
 	std::cerr << "bdSpace::findRandomPeerWithFlag() failed to find " << rnd << " / " << totalcount;
 	std::cerr << std::endl;
+#ifdef BITDHT_DEBUG
+#endif
 
 	return false;
 }

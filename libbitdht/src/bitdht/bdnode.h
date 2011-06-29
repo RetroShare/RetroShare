@@ -34,6 +34,11 @@
 #include "bitdht/bdhash.h"
 #include "bitdht/bdhistory.h"
 
+#include "bitdht/bdconnection.h"
+#include "bitdht/bdaccount.h"
+
+class bdFilter;
+
 
 #define BD_QUERY_NEIGHBOURS		1
 #define BD_QUERY_HASH			2
@@ -90,38 +95,69 @@ class bdNodeNetMsg
 
 };
 
-class bdNode
+class bdNodePublisher
+{
+	public:
+	/* simplified outgoing msg functions (for the managers) */
+	virtual void send_ping(bdId *id) = 0; /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId) = 0; /* message out */
+	virtual void send_connect_msg(bdId *id, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status) = 0;
+
+        // internal Callback -> normally continues to callbackConnect().
+        virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
+                                int mode, int point, int cbtype, int errcode) = 0;
+
+};
+
+
+class bdNode: public bdNodePublisher
 {
 	public:
 
 	bdNode(bdNodeId *id, std::string dhtVersion, std::string bootfile, 
 		bdDhtFunctions *fns);	
 
+	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
+
+	void setNodeOptions(uint32_t optFlags);
+
 	/* startup / shutdown node */
 	void restartNode();
 	void shutdownNode();
+
+	void getOwnId(bdNodeId *id);
 
 	// virtual so manager can do callback.
 	// peer flags defined in bdiface.h
 	virtual void addPeer(const bdId *id, uint32_t peerflags);
 
 	void printState();
-	void checkPotentialPeer(bdId *id);
-	void addPotentialPeer(bdId *id);
-
-	void addQuery(const bdNodeId *id, uint32_t qflags);
-	void clearQuery(const bdNodeId *id);
-	void QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap);
+	void checkPotentialPeer(bdId *id, bdId *src);
+	void addPotentialPeer(bdId *id, bdId *src);
 
 	void iterationOff();
 	void iteration();
 	void processRemoteQuery();
 	void updateStore();
 
+	/* simplified outgoing msg functions (for the managers) */
+	virtual void send_ping(bdId *id); /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
+	virtual void send_connect_msg(bdId *id, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status);
 
-	/* interaction with outside world */
+// This is implemented in bdManager.
+//        virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
+//                                int mode, int point, int cbtype, int errcode);
+
+	/* interaction with outside world (Accessed by controller to deliver us msgs) */
 int 	outgoingMsg(struct sockaddr_in *addr, char *msg, int *len);
 void 	incomingMsg(struct sockaddr_in *addr, char *msg, int len);
+
+
+	// Below is internal Management of incoming / outgoing messages.
+	private:
 
 	/* internal interaction with network */
 void	sendPkt(char *msg, int len, struct sockaddr_in addr);
@@ -163,6 +199,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 				bdNodeId *info_hash,  uint32_t port, bdToken *token);
 	void msgin_reply_post(bdId *id, bdToken *transId);
 
+	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
+				bdId *srcAddr, bdId *destAddr, int mode, int status);
+	void msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
+                                        bdId *srcAddr, bdId *destAddr, int mode, int status);
+
 
 
 	/* token handling */
@@ -175,72 +216,43 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	uint32_t checkIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType);
 	void cleanupTransIdRegister();
 
-	void getOwnId(bdNodeId *id);
 
 	void doStats();
-	void printStats(std::ostream &out);	
-	void printQueries();
 
-	void resetCounters();
-	void resetStats();
+	/********** Variables **********/
+	private:
 
+	/**** Some Variables are Protected to allow inherited classes to use *****/
 	protected:
 
+	bdSpace mNodeSpace;
+
+	bdQueryManager *mQueryMgr;
+	bdConnectManager *mConnMgr;
+	bdFilter *mFilterPeers;
 
 	bdNodeId mOwnId;
 	bdId 	mLikelyOwnId; // Try to workout own id address.
-	bdSpace mNodeSpace;
+	std::string mDhtVersion;
+
+	bdAccount mAccount;
+	bdStore mStore;
+
+	bdDhtFunctions *mFns;
+	bdHashSpace mHashSpace;
 
 	private:
 
-	bdStore mStore;
-	std::string mDhtVersion;
+	uint32_t mNodeOptionFlags;	
 
-	bdDhtFunctions *mFns;
-
-	bdHashSpace mHashSpace;
-	
 	bdHistory mHistory; /* for understanding the DHT */
 
-	std::list<bdQuery *> mLocalQueries;
 	std::list<bdRemoteQuery> mRemoteQueries;
 
 	std::list<bdId> mPotentialPeers;
 
 	std::list<bdNodeNetMsg *> mOutgoingMsgs;
 	std::list<bdNodeNetMsg *> mIncomingMsgs;
-
-	// Statistics.
-	 double mCounterOutOfDatePing;
-	 double mCounterPings;
-	 double mCounterPongs;
-	 double mCounterQueryNode;
-	 double mCounterQueryHash;
-	 double mCounterReplyFindNode;
-	 double mCounterReplyQueryHash;
-
-	 double mCounterRecvPing;
-	 double mCounterRecvPong;
-	 double mCounterRecvQueryNode;
-	 double mCounterRecvQueryHash;
-	 double mCounterRecvReplyFindNode;
-	 double mCounterRecvReplyQueryHash;
-
-	 double mLpfOutOfDatePing;
-	 double mLpfPings;
-	 double mLpfPongs;
-	 double mLpfQueryNode;
-	 double mLpfQueryHash;
-	 double mLpfReplyFindNode;
-	 double mLpfReplyQueryHash;
-
-	 double mLpfRecvPing;
-	 double mLpfRecvPong;
-	 double mLpfRecvQueryNode;
-	 double mLpfRecvQueryHash;
-	 double mLpfRecvReplyFindNode;
-	 double mLpfRecvReplyQueryHash;
-
 };
 
 

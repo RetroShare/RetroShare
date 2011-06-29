@@ -29,7 +29,8 @@
 
 void bdPrintTransId(std::ostream &out, bdToken *transId)
 {
-	out << transId->data;
+	//out << transId->data;
+	bdPrintToken(out, transId);
 	return;
 }
 

@@ -55,7 +55,7 @@ class UdpSubReceiver: public UdpReceiver
 	UdpSubReceiver(UdpPublisher *pub);
 
 		/* calls mPublisher->sendPkt */
-virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
+virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl);
 		/* callback for recved data (overloaded from UdpReceiver) */
 //virtual int recvPkt(void *data, int size, struct sockaddr_in &from) = 0;
 
@@ -63,12 +63,20 @@ virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl)
 };
 
 
+#define UDP_TEST_LOSSY_LAYER		1
+#define UDP_TEST_RESTRICTED_LAYER	2
+
+#define UDP_TEST_LOSSY_FRAC		(0.10)
+
 class UdpStack: public UdpReceiver, public UdpPublisher
 {
 	public:
 
 	UdpStack(struct sockaddr_in &local);
+	UdpStack(int testmode, struct sockaddr_in &local);
 virtual ~UdpStack() { return; }
+
+UdpLayer *getUdpLayer(); /* for testing only */
 
 bool	resetAddress(struct sockaddr_in &local);
 
@@ -79,7 +87,7 @@ int 	removeReceiver(UdpReceiver *recv);
 
 	/* Packet IO */
 		/* pass-through send packets */
-virtual int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
+virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl);
 		/* callback for recved data (overloaded from UdpReceiver) */
 
 virtual int recvPkt(void *data, int size, struct sockaddr_in &from);

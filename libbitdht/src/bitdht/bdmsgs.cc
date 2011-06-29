@@ -576,6 +576,13 @@ uint32_t beMsgType(be_node *n)
 #endif
 			return BITDHT_MSG_TYPE_POST_HASH;
 		}
+		else if (beMsgMatchString(query, "connect", 7))
+		{
+#ifdef DEBUG_MSG_TYPE 
+			std::cerr << "bsMsgType() QUERY:connect MSG TYPE" << std::endl;
+#endif
+			return BITDHT_MSG_TYPE_CONNECT;
+		}
 #ifdef DEBUG_MSG_TYPE 
 		std::cerr << "bsMsgType() QUERY:UNKNOWN MSG TYPE, dumping dict" << std::endl;
         	/* dump answer */
@@ -735,6 +742,28 @@ int beMsgGetListBdIds(be_node *n, std::list<bdId> &nodes)
         return 1;
 }
 
+int beMsgGetBdId(be_node *n, bdId &id)
+{
+	/* extract the string pointer, and size */
+	/* split into parts */
+
+        if (n->type != BE_STR)
+        {
+                return 0;
+        }
+
+	int len = be_str_len(n);
+	if (len < BITDHT_COMPACTNODEID_LEN)
+	{
+		return 0;
+	}
+	if (decodeCompactNodeId(&id, n->val.s, BITDHT_COMPACTNODEID_LEN))
+	{
+        	return 1;
+	}
+	return 0;
+}
+
 std::string encodeCompactNodeId(bdId *id)
 {
 	std::string enc;
@@ -828,6 +857,178 @@ int beMsgGetUInt32(be_node *n, uint32_t *port)
 	}
 	*port = n->val.i;
 	return 1;
+}
+
+
+
+
+
+
+
+/********************************************************************************************************************
+ * CONNECTION EXTENSIONS
+ *
+ */
+
+	/*	
+ping Query = {"t":"aa", "y":"q", "q":"ping", "a":{"id":"abcdefghij0123456789"}}
+bencoded = d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe
+	*/
+
+	/*
+Response = {"t":"aa", "y":"r", "r": {"id":"mnopqrstuvwxyz123456"}}
+bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
+	*/
+
+        /*
+find_node Query = {"t":"aa", "y":"q", "q":"find_node", "a": {"id":"abcdefghij0123456789", "target":"mnopqrstuvwxyz123456"}}
+bencoded = d1:ad2:id20:abcdefghij01234567896:target20:mnopqrstuvwxyz123456e1:q9:find_node1:t2:aa1:y1:qe
+        */
+
+#if 0
+int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target,
+                                        char *msg, int avail)
+{
+#ifdef DEBUG_MSGS
+        fprintf(stderr, "bitdht_find_node_msg()\n");
+#endif
+
+        be_node *dict = be_create_dict();
+
+        be_node *iddict = be_create_dict();
+        be_node *idnode = be_create_str_wlen((char *) id->data, BITDHT_KEY_LEN);
+        be_node *targetnode = be_create_str_wlen((char *) target->data, BITDHT_KEY_LEN);
+
+        be_node *tidnode = be_create_str_wlen((char *) tid->data, tid->len);
+        be_node *yqrnode = be_create_str("q");
+        be_node *findnode = be_create_str("find_node");
+
+        be_add_keypair(iddict, "id", idnode);
+        be_add_keypair(iddict, "target", targetnode);
+        be_add_keypair(dict, "a", iddict);
+
+        be_add_keypair(dict, "t", tidnode);
+        be_add_keypair(dict, "y", yqrnode);
+        be_add_keypair(dict, "q", findnode);
+
+#ifdef DEBUG_MSG_DUMP
+        /* dump answer */
+        be_dump(dict);
+#endif
+
+        int blen = be_encode(dict, msg, avail);
+        be_free(dict);
+
+        return blen;
+}
+#endif
+
+/****
+ * Thinking about the format of this message.
+ * id: ownId is stanard in all other messages, so should keep the same!.
+ * src:
+ * target:
+ * mode: d,p or r
+ *
+ * A -> B -> C
+ * direct:  A ------> B
+ *     ---> id:A src:A target:B mode:d
+ *     <--- id:B src:A target:B mode:d a:OK
+ *
+ * proxy:   A ------> B -------> C
+ *     A->B id:A src:A target:C mode:p q
+ *
+ * a)  
+ *     B->A id:B src:A target:C mode:p r:NOK
+ *
+ * b)  
+ *     B->C id:B src:A target:C mode:p q
+ *     C->B id:C src:A target:C mode:p r:NOK
+ *     B->A id:B src:A target:C mode:p r:NOK
+ *
+ * c)  
+ *     B->C id:B src:A target:C mode:p q
+ *     C->B id:C src:A target:C mode:p r:OK
+ *     B->A id:B src:A target:C mode:p r:OK
+ *	connect happens.
+ * Dropped packets will affect this!
+ *
+ *
+ * REQUIRED BITS FOR A MESSAGE
+ * 1) DIRECT
+ *     -> REQUEST,  ownId, targetId, transId, mode.
+ *     -> RESPONSE, ownId, targetId, transId, mode, answer.
+ *
+ * 2) PROXY
+ */
+
+
+int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bdId *dest, int mode, int status, char *msg, int avail)
+{
+#ifdef DEBUG_MSGS
+	fprintf(stderr, "bitdht_connect_genmsg()\n");
+#endif
+	
+	be_node *dict = be_create_dict();
+	
+	be_node *iddict = be_create_dict();
+
+	be_node *idnode = be_create_str_wlen((char *) id->data, BITDHT_KEY_LEN);
+
+	std::string srcEnc = encodeCompactNodeId(src);
+	std::string destEnc = encodeCompactNodeId(dest);
+
+	be_node *srcnode = be_create_str_wlen(srcEnc.c_str(), BITDHT_COMPACTNODEID_LEN);
+	be_node *destnode = be_create_str_wlen(destEnc.c_str(), BITDHT_COMPACTNODEID_LEN);
+	be_node *typenode = be_create_int(msgtype);
+	be_node *statusnode = be_create_int(status);
+	be_node *modenode = be_create_int(mode);
+
+	be_node *tidnode = be_create_str_wlen((char *) tid->data, tid->len);
+	be_node *yqrnode = be_create_str("q");
+	be_node *cmdnode = be_create_str("connect");
+
+#if 0	
+	be_node *modenode = NULL;
+	switch(mode)
+	{
+		case BITDHT_CONNECT_MODE_DIRECT:
+			modenode = be_create_str("d");
+			break;
+		case BITDHT_CONNECT_MODE_PROXY:
+			modenode = be_create_str("p");
+			break;
+		case BITDHT_CONNECT_MODE_RELAY:
+			modenode = be_create_str("r");
+			break;
+		default:
+			modenode = be_create_str("u");
+			break;
+	}
+#endif
+			
+	be_add_keypair(iddict, "id", idnode);
+	be_add_keypair(iddict, "src", srcnode);
+	be_add_keypair(iddict, "dest", destnode);
+	be_add_keypair(iddict, "mode", modenode);
+	be_add_keypair(iddict, "status", statusnode);
+	be_add_keypair(iddict, "type", typenode);
+
+	be_add_keypair(dict, "a", iddict);
+	
+	be_add_keypair(dict, "t", tidnode);
+	be_add_keypair(dict, "y", yqrnode);
+	be_add_keypair(dict, "q", cmdnode);
+	
+#ifdef DEBUG_MSG_DUMP
+	/* dump answer */
+	be_dump(dict);
+#endif
+	
+	int blen = be_encode(dict, msg, avail);
+	be_free(dict);
+	
+	return blen;
 }
 
 

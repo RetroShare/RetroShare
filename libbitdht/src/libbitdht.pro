@@ -100,9 +100,14 @@ HEADERS += \
 	bitdht/bdhistory.h	\
 	util/bdnet.h	\
 	util/bdthreads.h	\
+	util/bdrandom.h		\
 	udp/udplayer.h   	\
 	udp/udpstack.h		\
 	udp/udpbitdht.h   	\
+	bitdht/bdconnection.h	\
+	bitdht/bdfilter.h	\
+	bitdht/bdaccount.h	\
+	bitdht/bdquerymgr.h	\
 
 SOURCES += \
 	bitdht/bencode.c	\
@@ -116,10 +121,15 @@ SOURCES += \
 	bitdht/bdmanager.cc	\
 	bitdht/bdstddht.cc	\
 	bitdht/bdhistory.cc	\
-	util/bdnet.cc  	\
+	util/bdnet.cc 	 	\
 	util/bdthreads.cc  	\
+	util/bdrandom.cc  	\
 	udp/udplayer.cc		\
 	udp/udpstack.cc		\
 	udp/udpbitdht.cc  	\
+	bitdht/bdconnection.cc	\
+	bitdht/bdfilter.cc	\
+	bitdht/bdaccount.cc	\
+	bitdht/bdquerymgr.cc	\
 
 

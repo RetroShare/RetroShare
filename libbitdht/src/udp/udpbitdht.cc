@@ -48,6 +48,9 @@
 //#define DEBUG_UDP_BITDHT 1
 
 #define BITDHT_VERSION_IDENTIFER	1
+
+//#define BITDHT_VERSION			"01" // Original RS 0.5.0/0.5.1 version.
+#define BITDHT_VERSION			"02" // Connections + Full DHT implementation.
 /*************************************/
 
 UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, bdDhtFunctions *fns)
@@ -57,6 +60,7 @@ UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, st
 
 #ifdef BITDHT_VERSION_IDENTIFER
 	usedVersion = "BD";
+	usedVersion += BITDHT_VERSION;
 #endif
 	usedVersion += appVersion;
 
@@ -118,6 +122,30 @@ void UdpBitDht::removeCallback(BitDhtCallback *cb)
 	mBitDhtManager->removeCallback(cb);
 }
 
+void UdpBitDht::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->ConnectionRequest(laddr, target, mode, start);
+}
+
+
+
+void UdpBitDht::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->ConnectionAuth(srcId, proxyId, destId, mode, loc, answer);
+}
+
+void UdpBitDht::ConnectionOptions(uint32_t allowedModes, uint32_t flags)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->ConnectionOptions(allowedModes, flags);
+}
+
+
 int UdpBitDht::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
@@ -131,6 +159,30 @@ int 	UdpBitDht::getDhtValue(const bdNodeId *id, std::string key, std::string &va
 
 	return mBitDhtManager->getDhtValue(id, key, value);
 }
+
+int 	UdpBitDht::getDhtBucket(const int idx, bdBucket &bucket)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->getDhtBucket(idx, bucket);
+}
+
+
+
+int 	UdpBitDht::getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->getDhtQueries(queries);
+}
+
+int 	UdpBitDht::getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->getDhtQueryStatus(id, query);
+}
+
 
 
         /* stats and Dht state */

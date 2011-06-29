@@ -26,10 +26,12 @@
 
 #include "bitdht/bdstddht.h"
 #include "bitdht/bdpeer.h"
+#include "util/bdrandom.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include <iostream>
 #include <sstream>
@@ -42,9 +44,8 @@
 void bdStdRandomId(bdId *id)
 {
 	bdStdRandomNodeId(&(id->id));
-
-	id->addr.sin_addr.s_addr = rand();
-	id->addr.sin_port = rand();
+	id->addr.sin_addr.s_addr = bdRandom::random_u32();
+	id->addr.sin_port = (bdRandom::random_u32() % USHRT_MAX);
 
 	return;
 }
@@ -54,7 +55,7 @@ void bdStdRandomNodeId(bdNodeId *id)
 	uint32_t *a_data = (uint32_t *) id->data;
 	for(int i = 0; i < BITDHT_KEY_INTLEN; i++)
 	{
-		a_data[i] = rand();
+		a_data[i] = bdRandom::random_u32();
 	}
 	return;
 }
@@ -69,13 +70,34 @@ void bdStdZeroNodeId(bdNodeId *id)
 	return;
 }
 
-uint32_t bdStdLikelySameNode(const bdId *n1, const bdId *n2)
+// Ignore differences in port....
+// must be careful which one we accept after this.
+// can could end-up with the wrong port.
+// However this only matters with firewalled peers anyway.
+// So not too serious.
+bool bdStdSimilarId(const bdId *n1, const bdId *n2)
 {
-	if (*n1 == *n2)
+	if (n1->id == n2->id)
 	{
-		return 1;
+		if (n1->addr.sin_addr.s_addr == n2->addr.sin_addr.s_addr)
+		{
+			return true;
+		}
 	}
-	return 0;
+	return false;
+}
+
+bool bdStdUpdateSimilarId(bdId *dest, const bdId *src)
+{
+	/* only difference that's currently allowed */
+	if (dest->addr.sin_port == src->addr.sin_port)
+	{
+		/* no update required */
+		return false;
+	}
+
+	dest->addr.sin_port = src->addr.sin_port;
+	return true;
 }
 
 
@@ -114,6 +136,43 @@ void bdStdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *m
 		if (dist.data[i] != 0)
 			break;
 	}
+}
+
+int  bdStdLoadNodeId(bdNodeId *id, std::string input)
+{
+	uint8_t *a_data = (uint8_t *) id->data;
+	int reqlen = BITDHT_KEY_LEN * 2;
+	if (input.size() < reqlen)
+	{
+		return 0;
+	}
+
+	for(int i = 0; i < BITDHT_KEY_LEN; i++)
+	{
+		char ch1 = input[2 * i];
+		char ch2 = input[2 * i + 1];
+		uint8_t value1 = 0;
+		uint8_t value2 = 0;
+
+		/* do char1 */
+        	if (ch1 >= '0' && ch1 <= '9')
+            		value1 = (ch1 - '0');
+        	else if (ch1 >= 'A' && ch1 <= 'F')
+            		value1 = (ch1 - 'A' + 10);
+        	else if (ch1 >= 'a' && ch1 <= 'f')
+            		value1 = (ch1 - 'a' + 10);
+
+		/* do char2 */
+        	if (ch2 >= '0' && ch2 <= '9')
+            		value2 = (ch2 - '0');
+        	else if (ch2 >= 'A' && ch2 <= 'F')
+            		value2 = (ch2 - 'A' + 10);
+        	else if (ch2 >= 'a' && ch2 <= 'f')
+            		value2 = (ch2 - 'a' + 10);
+
+		a_data[i] = (value1 << 4) + value2;
+	}
+	return 1;
 }
 
 std::string bdStdConvertToPrintable(std::string input)
@@ -222,9 +281,15 @@ int bdStdDht::bdBucketDistance(const bdMetric *metric)
 }
 	
 
-uint32_t bdStdDht::bdLikelySameNode(const bdId *id1, const bdId *id2)
+bool bdStdDht::bdSimilarId(const bdId *id1, const bdId *id2)
 {
-	return bdStdLikelySameNode(id1, id2);
+	return bdStdSimilarId(id1, id2);
+}
+	
+
+bool bdStdDht::bdUpdateSimilarId(bdId *dest, const bdId *src)
+{
+	return bdStdUpdateSimilarId(dest, src);
 }
 	
 

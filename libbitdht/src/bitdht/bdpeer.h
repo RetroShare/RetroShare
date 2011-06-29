@@ -49,8 +49,14 @@
 
 #define BITDHT_ULLONG_BITS 64
 
-#define BITDHT_MAX_SEND_PERIOD	600   // retry every 10 secs.
-#define BITDHT_MAX_RECV_PERIOD	1500   // out-of-date
+#define BITDHT_MAX_RESPONSE_PERIOD      (15)
+#define BITDHT_MAX_SEND_PERIOD	300   // 5 minutes.
+#define BITDHT_MAX_RECV_PERIOD	(BITDHT_MAX_SEND_PERIOD + BITDHT_MAX_RESPONSE_PERIOD) // didn't respond to a ping.
+
+// Properly out of date.
+#define BITDHT_DISCARD_PERIOD		(2 * BITDHT_MAX_SEND_PERIOD + BITDHT_MAX_RESPONSE_PERIOD) // didn't respond to two pings.
+
+// Must have a FLAG by this time. (Make it really quick - so we through away the rubbish).
 
 
 #include <list>
@@ -116,6 +122,10 @@ int operator==(const bdId &a, const bdId &b);
 
 //std::string bdConvertToPrintable(std::string input);
 
+/****
+ * DEFINED in bdiface.h
+ *
+
 class bdPeer
 {
 	public:
@@ -124,10 +134,8 @@ class bdPeer
 	uint32_t mPeerFlags;
 	time_t mLastSendTime;
 	time_t mLastRecvTime;
-	time_t mFoundTime;     /* time stamp that peer was found */
+	time_t mFoundTime;     // time stamp that peer was found 
 };
-
-
 
 
 class bdBucket
@@ -136,9 +144,12 @@ class bdBucket
 
 	bdBucket();
 
-	/* list so we can queue properly */
+	// list so we can queue properly 
 	std::list<bdPeer> entries;
 };
+ *
+ *
+ *****/
 
 class bdSpace
 {
@@ -148,13 +159,28 @@ class bdSpace
 
 int	clear();
 
+int	setAttachedFlag(uint32_t withflags, int count);
+
 	/* accessors */
 int 	find_nearest_nodes(const bdNodeId *id, int number, 
-		std::list<bdId> excluding, std::multimap<bdMetric, bdId> &nearest);
+		std::multimap<bdMetric, bdId> &nearest);
 
-int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
+int 	find_nearest_nodes_with_flags(const bdNodeId *id, int number, 
+		std::list<bdId> excluding, 
+		std::multimap<bdMetric, bdId> &nearest, uint32_t with_flag);
+
+int 	find_node(const bdNodeId *id, int number, 
+		std::list<bdId> &matchIds, uint32_t with_flag);
+int 	find_exactnode(const bdId *id, bdPeer &peer);
+
+// switched to more efficient single sweep.
+//int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
+int     scanOutOfDatePeers(std::list<bdId> &peerIds);
+int     updateAttachedPeers();
+
 int     add_peer(const bdId *id, uint32_t mode);
 int     printDHT();
+int     getDhtBucket(const int idx, bdBucket &bucket);
 
 uint32_t calcNetworkSize();
 uint32_t calcNetworkSizeWithFlag(uint32_t withFlag);
@@ -172,6 +198,10 @@ int	updateOwnId(bdNodeId *newOwnId);
 	std::vector<bdBucket> buckets;
 	bdNodeId mOwnId;
 	bdDhtFunctions *mFns;
+
+	uint32_t mAttachedFlags;
+	uint32_t mAttachedCount;
+	time_t   mAttachTS;
 };
 
 

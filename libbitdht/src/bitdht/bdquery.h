@@ -44,12 +44,14 @@ class bdQuery
 
 	// get the answer.
 bool	result(std::list<bdId> &answer);
+bool	proxies(std::list<bdId> &answer);
+bool	potentialProxies(std::list<bdId> &answer);
 
 	// returning results get passed to all queries.
 //void 	addNode(const bdId *id, int mode);		
 int 	nextQuery(bdId &id, bdNodeId &targetId);
 int 	addPeer(const bdId *id, uint32_t mode);
-int 	addPotentialPeer(const bdId *id, uint32_t mode);
+int 	addPotentialPeer(const bdId *id, const bdId *src, uint32_t srcmode);
 int 	printQuery();
 
 	// searching for
@@ -62,14 +64,37 @@ int 	printQuery();
 
 	int32_t mQueryIdlePeerRetryPeriod; // seconds between retries.
 
-	private:
+	//private:
 
-	// closest peers
+	// Closest Handling Fns.
+int 	addClosestPeer(const bdId *id, uint32_t mode);
+
+	// Potential Handling Fns.
+int 	worthyPotentialPeer(const bdId *id);
+int 	updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType);
+int 	trimPotentialPeers_FixedLength();
+int 	trimPotentialPeers_toClosest();
+
+	// Proxy Handling Fns.
+int 	addProxy(const bdId *id, const bdId *src, uint32_t srcmode);
+int 	updateProxy(const bdId *id, uint32_t mode);
+int 	updateProxyList(const bdId *id, uint32_t mode, std::list<bdPeer> &searchProxyList);
+int 	trimProxies();
+
+
+	// closest peers.
 	std::multimap<bdMetric, bdPeer>  mClosest;
-	std::multimap<bdMetric, bdPeer>  mPotentialClosest;
+	std::multimap<bdMetric, bdPeer>  mPotentialPeers;
 
+	uint32_t mRequiredPeerFlags; 
+	std::list<bdPeer>  mProxiesUnknown;
+	std::list<bdPeer>  mProxiesFlagged;
+
+	int mClosestListSize;
 	bdDhtFunctions *mFns;
 };
+
+#if 0
 
 class bdQueryStatus
 {
@@ -78,6 +103,8 @@ class bdQueryStatus
 	uint32_t mQFlags;
 	std::list<bdId> mResults;
 };
+
+#endif
 
 
 

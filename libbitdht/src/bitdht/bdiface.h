@@ -29,6 +29,7 @@
 #include <iosfwd>
 #include <map>
 #include <string>
+#include <list>
 #include <inttypes.h>
 
 #include "util/bdnet.h"
@@ -94,7 +95,8 @@ virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric)
 virtual int bdBucketDistance(const bdNodeId *n1, const bdNodeId *n2) = 0;
 virtual int bdBucketDistance(const bdMetric *metric) = 0;
 
-virtual uint32_t bdLikelySameNode(const bdId *id1, const bdId *id2) = 0;
+virtual bool bdSimilarId(const bdId *id1, const bdId *id2) = 0;
+virtual bool bdUpdateSimilarId(bdId *dest, const bdId *src) = 0;
 
 virtual void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *mid) = 0;
 
@@ -105,11 +107,15 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 
 
+/* NODE OPTIONS */
+#define BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT		0x00000001
+
 
 
 /* peer flags
  * order is important!
  * higher bits = more priority.
+ * BITDHT_PEER_STATUS_RECVPING
  * BITDHT_PEER_STATUS_RECVPONG
  * BITDHT_PEER_STATUS_RECVNODES
  * BITDHT_PEER_STATUS_RECVHASHES
@@ -121,14 +127,137 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 #define 	BITDHT_PEER_STATUS_MASK_RECVD		0x000000ff
 #define 	BITDHT_PEER_STATUS_MASK_DHT		0x0000ff00
+#define 	BITDHT_PEER_STATUS_MASK_KNOWN		0x00ff0000
 
-#define 	BITDHT_PEER_STATUS_RECV_PONG		0x00000001
-#define 	BITDHT_PEER_STATUS_RECV_NODES		0x00000002
-#define 	BITDHT_PEER_STATUS_RECV_HASHES		0x00000004
+#define 	BITDHT_PEER_STATUS_RECV_PING		0x00000001
+#define 	BITDHT_PEER_STATUS_RECV_PONG		0x00000002
+#define 	BITDHT_PEER_STATUS_RECV_NODES		0x00000004
+#define 	BITDHT_PEER_STATUS_RECV_HASHES		0x00000008
+#define 	BITDHT_PEER_STATUS_RECV_CONNECT_MSG	0x00000010
 
 #define 	BITDHT_PEER_STATUS_DHT_ENGINE		0x00000100
-#define 	BITDHT_PEER_STATUS_DHT_APPL		0x00000200
-#define 	BITDHT_PEER_STATUS_DHT_VERSION		0x00000400
+#define 	BITDHT_PEER_STATUS_DHT_ENGINE_VERSION	0x00000200
+#define 	BITDHT_PEER_STATUS_DHT_APPL		0x00000400
+#define 	BITDHT_PEER_STATUS_DHT_APPL_VERSION	0x00000800
+
+#define 	BITDHT_PEER_STATUS_DHT_WHITELIST	0x00010000
+#define 	BITDHT_PEER_STATUS_DHT_FOF		0x00020000
+#define 	BITDHT_PEER_STATUS_DHT_FRIEND		0x00040000
+
+
+// EXTRA FLAGS are our internal thoughts about the peer.
+#define 	BITDHT_PEER_EXFLAG_MASK_BASIC		0x000000ff
+#define 	BITDHT_PEER_EXFLAG_UNSTABLE		0x00000001	// Port changes.
+#define 	BITDHT_PEER_EXFLAG_ATTACHED		0x00000002 	// We will ping in heavily. (if unstable)
+
+
+
+
+
+
+#define 	BITDHT_CONNECT_MODE_DIRECT		0x00000001
+#define 	BITDHT_CONNECT_MODE_PROXY		0x00000002
+#define 	BITDHT_CONNECT_MODE_RELAY		0x00000004
+
+#define 	BITDHT_CONNECT_OPTION_AUTOPROXY		0x00000001
+
+// STATUS CODES. == 0 is okay, != 0 is error.
+#define 	BITDHT_CONNECT_ANSWER_OKAY		0x00000000
+#define 	BITDHT_CONNECT_ERROR_NONE		(BITDHT_CONNECT_ANSWER_OKAY)
+
+#define 	BITDHT_CONNECT_ERROR_MASK_TYPE		0x0000ffff
+#define 	BITDHT_CONNECT_ERROR_MASK_SOURCE	0x00ff0000
+#define 	BITDHT_CONNECT_ERROR_MASK_CRMOVE	0xff000000
+
+#define 	BITDHT_CONNECT_ERROR_SOURCE_START	0x00010000
+#define 	BITDHT_CONNECT_ERROR_SOURCE_MID		0x00020000
+#define 	BITDHT_CONNECT_ERROR_SOURCE_END 	0x00040000
+#define 	BITDHT_CONNECT_ERROR_SOURCE_OTHER 	0x00080000
+
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_FATAL 	0x01000000
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_NOMOREIDS 	0x02000000
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_NEXTID 	0x04000000
+#define 	BITDHT_CONNECT_ERROR_CRMOVE_PAUSED 	0x08000000
+
+// ERROR CODES.
+#define 	BITDHT_CONNECT_ERROR_GENERIC		0x00000001
+#define 	BITDHT_CONNECT_ERROR_PROTOCOL		0x00000002
+#define 	BITDHT_CONNECT_ERROR_TIMEOUT		0x00000003
+#define 	BITDHT_CONNECT_ERROR_TEMPUNAVAIL	0x00000004   // Haven't got ext address yet.
+#define 	BITDHT_CONNECT_ERROR_NOADDRESS		0x00000005   // Can't find the peer in tables.
+#define 	BITDHT_CONNECT_ERROR_UNREACHABLE	0x00000006   // Symmetric NAT
+
+#define 	BITDHT_CONNECT_ERROR_UNSUPPORTED	0x00000007
+#define 	BITDHT_CONNECT_ERROR_OVERLOADED		0x00000008
+#define 	BITDHT_CONNECT_ERROR_AUTH_DENIED	0x00000009
+#define 	BITDHT_CONNECT_ERROR_DUPLICATE		0x0000000a
+
+// These are slightly special ones used for CB_REQUEST
+#define 	BITDHT_CONNECT_ERROR_TOOMANYRETRY	0x0000000b
+#define 	BITDHT_CONNECT_ERROR_OUTOFPROXY		0x0000000c
+#define 	BITDHT_CONNECT_ERROR_USER		0x0000000d
+
+
+
+
+
+
+/* Definitions of bdSpace Peer and Bucket are publically available, 
+ * so we can expose the bucket entries for the gui.
+ */
+
+class bdPeer
+{
+	public:
+	bdPeer():mPeerFlags(0), mLastSendTime(0), mLastRecvTime(0), mFoundTime(0), mExtraFlags(0) { return; }
+
+	bdId   mPeerId;
+	uint32_t mPeerFlags;
+	time_t mLastSendTime;
+	time_t mLastRecvTime;
+	time_t mFoundTime;     /* time stamp that peer was found */
+
+	uint32_t mExtraFlags;
+};
+	
+class bdBucket
+{
+	public:
+	
+	bdBucket();
+	/* list so we can queue properly */
+	std::list<bdPeer> entries;
+};
+
+class bdQueryStatus
+{
+        public:
+        uint32_t mStatus;
+        uint32_t mQFlags;
+        std::list<bdId> mResults;
+};
+
+class bdQuerySummary
+{
+        public:
+
+        bdNodeId mId;
+        bdMetric mLimit;
+        uint32_t mState;
+        time_t mQueryTS;
+        uint32_t mQueryFlags;
+        int32_t mSearchTime;
+
+        int32_t mQueryIdlePeerRetryPeriod; // seconds between retries.
+
+        // closest peers
+        std::multimap<bdMetric, bdPeer>  mClosest;
+        std::multimap<bdMetric, bdPeer>  mPotentialPeers;
+        std::list<bdPeer>  mProxiesUnknown;
+        std::list<bdPeer>  mProxiesFlagged;
+};
+
+
 
 
 /* Status options */
@@ -140,10 +269,25 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define BITDHT_QUERY_SUCCESS            6
 
 /* Query Flags */
-#define BITDHT_QFLAGS_NONE		0
-#define BITDHT_QFLAGS_DISGUISE		1
-#define BITDHT_QFLAGS_DO_IDLE		2
-#define BITDHT_QFLAGS_INTERNAL		4  // means it runs through startup.
+#define BITDHT_QFLAGS_NONE		0x0000
+#define BITDHT_QFLAGS_DISGUISE		0x0001
+#define BITDHT_QFLAGS_DO_IDLE		0x0002
+#define BITDHT_QFLAGS_INTERNAL		0x0004  // means it runs through startup.
+#define BITDHT_QFLAGS_QUICK		0x0008  // ONE Request per peer.
+#define BITDHT_QFLAGS_UPDATES		0x0010  // Do regular updates.
+
+/* Connect Callback Flags */
+#define BITDHT_CONNECT_CB_AUTH		1
+#define BITDHT_CONNECT_CB_PENDING	2
+#define BITDHT_CONNECT_CB_START		3
+#define BITDHT_CONNECT_CB_PROXY		4
+#define BITDHT_CONNECT_CB_FAILED	5
+#define BITDHT_CONNECT_CB_REQUEST	6
+
+#define BD_PROXY_CONNECTION_UNKNOWN_POINT       0
+#define BD_PROXY_CONNECTION_START_POINT         1
+#define BD_PROXY_CONNECTION_MID_POINT           2
+#define BD_PROXY_CONNECTION_END_POINT           3
 
 class BitDhtCallback
 {
@@ -156,6 +300,11 @@ virtual int dhtNodeCallback(const bdId *  /*id*/, uint32_t /*peerflags*/)  { ret
 		// must be implemented.
 virtual int dhtPeerCallback(const bdId *id, uint32_t status) = 0;
 virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status) = 0;
+
+		// connection callback. Not required for basic behaviour, but forced for initial development.
+virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
+			uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
+
 };
 
 
@@ -168,6 +317,12 @@ virtual void addFindNode(bdNodeId *id, uint32_t mode) = 0;
 virtual void removeFindNode(bdNodeId *id) = 0;
 virtual void findDhtValue(bdNodeId *id, std::string key, uint32_t mode) = 0;
 
+	/***** Connections Requests *****/
+virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start) = 0;
+virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer) = 0;
+virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags) = 0;
+
+
         /***** Add / Remove Callback Clients *****/
 virtual void addCallback(BitDhtCallback *cb) = 0;
 virtual void removeCallback(BitDhtCallback *cb) = 0;
@@ -175,6 +330,10 @@ virtual void removeCallback(BitDhtCallback *cb) = 0;
 	/***** Get Results Details *****/
 virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from) = 0;
 virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value) = 0;
+virtual int getDhtBucket(const int idx, bdBucket &bucket) = 0;
+
+virtual int getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries) = 0;
+virtual int getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query) = 0;
 
         /* stats and Dht state */
 virtual int startDht() = 0;
@@ -183,6 +342,14 @@ virtual int stateDht() = 0; /* STOPPED, STARTING, ACTIVE, FAILED */
 virtual uint32_t statsNetworkSize() = 0;
 virtual uint32_t statsBDVersionSize() = 0; /* same version as us! */
 };
+
+
+// general helper functions for decoding error messages.
+std::string decodeConnectionError(uint32_t errcode);
+std::string decodeConnectionErrorCRMove(uint32_t errcode);
+std::string decodeConnectionErrorSource(uint32_t errcode);
+std::string decodeConnectionErrorType(uint32_t errcode);
+
 
 #endif
 
