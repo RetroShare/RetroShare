@@ -27,7 +27,7 @@
 
 #include <sstream>
 #include <iomanip>
-
+#include <malloc.h>
 
 /* Bloom Filter implementation */
 
