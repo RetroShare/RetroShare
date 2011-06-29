@@ -144,6 +144,7 @@ int     bdStore::filterIpList(const std::list<struct sockaddr_in> &filteredIPs)
 			}
 		}
 	}
+	return 1;
 }
 			
 		

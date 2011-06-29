@@ -74,6 +74,10 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
         mNetworkSize = 0;
         mBdNetworkSize = 0;
 
+	std::string bfilter = "15108044002028000000200040400081a20840001000010400070240220000020501196b2420105218204008000000201102802041000a000004000004002881001180068301458000180000040000010080820e0005811000220200040800210280582001118024041002200004000000c44400080485a50008011084040200";
+
+	mBloomFilter.setFilterBits(bfilter);
+
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::bdNodeManager() ID: ";
 	mFns->bdPrintNodeId(std::cerr, id);
@@ -379,11 +383,19 @@ void bdNodeManager::iteration()
 
 				status(); /* calculates mNetworkSize */
 
+#ifdef DEBUG_MGR
 				mAccount.printStats(std::cerr);
+#endif
 
 				/* Finally, Fail, and restart if we lose all peers */
-				if (mNetworkSize < MIN_OP_SPACE_SIZE)
+				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
+				if (nodeSpaceSize < MIN_OP_SPACE_SIZE)
 				{
+					std::cerr << "bdNodeManager::iteration(): SpaceSize to Small: " << nodeSpaceSize;
+					std::cerr << std::endl;
+					std::cerr << "bdNodeManager::iteration(): REFRESH ==> FAILED";
+					std::cerr << std::endl;
+
 					mMode = BITDHT_MGR_STATE_FAILED;
 					mModeTS = now;
 				}
@@ -459,28 +471,30 @@ int bdNodeManager::QueryRandomLocalNet()
 		mQueryMgr->addWorthyPeerSource(&id); /* Tell BitDHT that we really want to ping their peers */
 		send_query(&id, &targetNodeId);
 			
+#ifdef DEBUG_NODE_MSGS
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
 		mFns->bdPrintId(std::cerr, &id);
 		std::cerr << " searching for : ";
 		mFns->bdPrintNodeId(std::cerr, &targetNodeId);
 		std::cerr << std::endl;
+#endif
 
 		if (isRandom)
 		{
+#ifdef DEBUG_NODE_MSGS
 			std::cerr << "bdNodeManager::QueryRandomLocalNet() Search is Random!";
 			std::cerr << std::endl;
+#endif
 		}
 
-#ifdef DEBUG_NODE_MSGS
-#endif
 		return 1;
 	}
 	else
 	{
 #ifdef DEBUG_NODE_MSGS
-#endif
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() No LocalNet Peer Found";
 		std::cerr << std::endl;
+#endif
 	}
 
 	return 0;
@@ -525,7 +539,38 @@ void bdNodeManager::SearchForLocalNet()
 	{
 		/* install a new query */
 		bdNodeId targetNodeId;
-		bdStdRandomNodeId(&targetNodeId);
+
+		/* get something that filter approves of */
+		bool filterOk = false;
+		int i;
+
+#define MAX_FILTER_ATTEMPTS	3000
+
+		for(i = 0; (!filterOk) && (i < MAX_FILTER_ATTEMPTS); i++)
+		{
+			bdStdRandomNodeId(&targetNodeId);
+			std::ostringstream tststr;
+			bdStdPrintNodeId(tststr, &targetNodeId);
+
+			if (mBloomFilter.test(tststr.str()))
+			{
+				filterOk = true;
+			}
+		}
+
+		if (filterOk)
+		{
+			std::cerr << "bdNodeManager::SearchForLocalNet() " << i << " Attempts to find OkNode: ";
+			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "bdNodeManager::SearchForLocalNet() Failed to Find FilterOk this time: ";
+			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+			std::cerr << std::endl;
+		}
+
 
 		uint32_t qflags = BITDHT_QFLAGS_INTERNAL | BITDHT_QFLAGS_DISGUISE;
 		mQueryMgr->addQuery(&targetNodeId, qflags); 

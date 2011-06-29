@@ -461,6 +461,18 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 	// Finally we pass to connections for them to use.
 	mConnMgr->updatePotentialConnectionProxy(id, peerflags);
 
+
+//#define DISPLAY_BITDHTNODES	1
+#ifdef DISPLAY_BITDHTNODES
+	/* TEMP to extract IDS for BloomFilter */
+	if (peerflags & BITDHT_PEER_STATUS_DHT_ENGINE)
+	{
+		std::cerr << "bdNode::addPeer() FOUND BITDHT PEER";
+		std::cerr << std::endl;
+		mFns->bdPrintNodeId(std::cerr, &(id->id));
+		std::cerr << std::endl;
+	}
+#endif
 }
 
 /************************************ Process Remote Query *************************/

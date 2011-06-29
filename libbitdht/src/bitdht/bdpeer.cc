@@ -669,6 +669,7 @@ int	bdSpace::updateAttachedPeers()
 			}
 		}
 	}
+	return 1;
 }
 
 
@@ -1220,8 +1221,8 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 	uint32_t i = 0;
 	uint32_t buck = 0;
 
-	std::cerr << "bdSpace::findRandomPeerWithFlag()";
-	std::cerr << std::endl;
+	//std::cerr << "bdSpace::findRandomPeerWithFlag()";
+	//std::cerr << std::endl;
 
 	it = buckets.begin();
 	if (it != buckets.end())
