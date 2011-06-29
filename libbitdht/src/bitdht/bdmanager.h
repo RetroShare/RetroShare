@@ -53,8 +53,9 @@
 #define BITDHT_PS_STATE_ONLINE		(0x00000400)
 #define BITDHT_PS_STATE_CONNECTED	(0x00000800)
 
-#include "bdiface.h"
-#include "bdnode.h"
+#include "bitdht/bdiface.h"
+#include "bitdht/bdnode.h"
+#include "util/bdbloom.h"
 
 
 
@@ -170,6 +171,8 @@ void    SearchForLocalNet();
 
 	uint32_t mNetworkSize;
 	uint32_t mBdNetworkSize;
+
+	bdBloom mBloomFilter;
 
 	/* future node functions */
 	//addPeerPing(foundId);

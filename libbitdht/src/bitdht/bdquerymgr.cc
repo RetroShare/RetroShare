@@ -297,6 +297,7 @@ int  bdQueryManager::getResults(bdNodeId *target, std::list<bdId> &answer, int q
 		/* will only be one matching query.. so end loop */
 		return results;
 	}
+	return 0;
 }
 
 		
@@ -328,10 +329,10 @@ void bdQueryManager::addWorthyPeerSource(bdId *src)
 	peer.mPeerId = *src;
 	peer.mFoundTime = now;
 
+#ifdef DEBUG_NODE_ACTIONS 
 	std::cerr << "bdQueryManager::addWorthyPeerSource(";
 	mFns->bdPrintId(std::cerr, src);
 	std::cerr << ")" << std::endl;
-#ifdef DEBUG_NODE_ACTIONS 
 #endif
 
 	mWorthyPeerSources.push_back(peer);
@@ -348,9 +349,11 @@ bool bdQueryManager::checkWorthyPeerSources(bdId *src)
 	{
 		if (now - it->mFoundTime > MAX_WORTHY_PEER_AGE)
 		{
+#ifdef DEBUG_NODE_ACTIONS 
 			std::cerr << "bdQueryManager::checkWorthyPeerSource() Discard old Source: ";
 			mFns->bdPrintId(std::cerr, &(it->mPeerId));
 			std::cerr << std::endl;
+#endif
 
 			it = mWorthyPeerSources.erase(it);
 		}
@@ -358,9 +361,11 @@ bool bdQueryManager::checkWorthyPeerSources(bdId *src)
 		{
 			if (it->mPeerId == *src)
 			{
-				//std::cerr << "bdQueryManager::checkWorthyPeerSource(";
-				//mFns->bdPrintId(std::cerr, src);
-				//std::cerr << ") = true" << std::endl;
+#ifdef DEBUG_NODE_ACTIONS 
+				std::cerr << "bdQueryManager::checkWorthyPeerSource(";
+				mFns->bdPrintId(std::cerr, src);
+				std::cerr << ") = true" << std::endl;
+#endif
 
 				return true;
 			}

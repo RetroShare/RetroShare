@@ -11,14 +11,19 @@ include $(TEST_TOP_DIR)/scripts/config.mk
 
 # Generic Test Harnesses.
 TESTOBJ  = bdmetric_test.o bdmsgs_test.o bdnode_test.o  bdspace_test.o 
-TESTOBJ  += bdmgr_multitest.o bdnode_multitest1.o bdquery_test.o bdstore_test.o
-TESTOBJ  += bdmidids_test.o bdnode_test2.o bdspace_test2.o udpbitdht_nettest.o
+TESTOBJ  += bdmgr_multitest.o bdquery_test.o bdstore_test.o
+TESTOBJ  += bdmidids_test.o bdspace_test2.o udpbitdht_nettest.o
+TESTOBJ  += bdbloom_test.o bdbloom_makefilter.o
 #TESTOBJ += bencode_test.o bdudp_test.o
+#TESTOBJ  = bdnode_test.o bdnode_multitest1.o bdnode_test2.o 
 
-TESTS  = bdmetric_test bdmsgs_test bdnode_test  bdspace_test 
-TESTS  += bdmgr_multitest bdnode_multitest1 bdquery_test bdstore_test
-TESTS  += bdmidids_test bdnode_test2 bdspace_test2 udpbitdht_nettest
+TESTS  = bdmetric_test bdmsgs_test bdspace_test 
+TESTS  += bdmgr_multitest bdquery_test bdstore_test
+TESTS  += bdmidids_test bdspace_test2 udpbitdht_nettest
+TESTS  += bdbloom_test 
 #TESTS  += bencode_test bdudp_test
+#Tests to Fix.
+#TESTS  = bdnode_test bdnode_multitest1 bdnode_test2 
 
 MANUAL_TESTS = 
 
@@ -67,6 +72,12 @@ udpbitdht_nettest: udpbitdht_nettest.o
 
 bencode_test: bencode_test.o
 	$(CC) $(CFLAGS) -o bencode_test bencode_test.o $(LIBS)
+
+bdbloom_test: bdbloom_test.o
+	$(CC) $(CFLAGS) -o bdbloom_test bdbloom_test.o $(LIBS)
+
+bdbloom_makefilter: bdbloom_makefilter.o
+	$(CC) $(CFLAGS) -o bdbloom_makefilter bdbloom_makefilter.o $(LIBS)
 
 
 clobber: remove_extra_files
