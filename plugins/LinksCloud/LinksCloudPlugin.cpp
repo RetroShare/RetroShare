@@ -20,7 +20,7 @@ LinksCloudPlugin::LinksCloudPlugin()
 {
 	mRanking = NULL ;
 	mainpage = NULL ;
-	mIcon		= new QIcon(IMAGE_LINKS) ;
+	mIcon		= NULL ;
 }
 
 MainPage *LinksCloudPlugin::qt_page() const
@@ -44,6 +44,9 @@ RsCacheService *LinksCloudPlugin::rs_cache_service() const
 
 QIcon *LinksCloudPlugin::qt_icon() const
 {
+	if(mIcon == NULL)
+		mIcon = new QIcon(IMAGE_LINKS) ;
+
 	return mIcon ;
 }
 
