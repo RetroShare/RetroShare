@@ -128,7 +128,7 @@ bool p3Notify::SetPopupMessageMode(uint32_t ptype, uint32_t mode)
 
 
 	/* Input from libretroshare */
-bool p3Notify::AddPopupMessage(uint32_t ptype, std::string name, std::string title, std::string msg)
+bool p3Notify::AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
 
@@ -136,7 +136,7 @@ bool p3Notify::AddPopupMessage(uint32_t ptype, std::string name, std::string tit
 
 	pmsg.type = ptype;
 	pmsg.name = name;
-        pmsg.title = title;
+	pmsg.title = title;
 	pmsg.msg = msg;
 
 	pendingPopupMsgs.push_back(pmsg);
@@ -145,8 +145,7 @@ bool p3Notify::AddPopupMessage(uint32_t ptype, std::string name, std::string tit
 }
 
 
-bool p3Notify::AddSysMessage(uint32_t sysid, uint32_t type, 
-					std::string title, std::string msg)
+bool p3Notify::AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
 
@@ -162,8 +161,7 @@ bool p3Notify::AddSysMessage(uint32_t sysid, uint32_t type,
 	return true;
 }
 
-bool p3Notify::AddLogMessage(uint32_t sysid, uint32_t type,
-					std::string title, std::string msg)
+bool p3Notify::AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
 
@@ -195,7 +193,7 @@ bool p3Notify::GetFeedItem(RsFeedItem &item)
 }
 
 
-bool p3Notify::AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3)
+bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
 	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3));

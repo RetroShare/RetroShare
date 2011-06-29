@@ -580,7 +580,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param historical: is this msg from an historical cache
 		 * @return successfully executed or not
 		 */
-		virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id, bool historical) = 0;
+		virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, const std::string& id, bool historical) = 0;
 
 		/*!
 		 * Inheriting class should implement this as a response to a new msg arriving
@@ -590,7 +590,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param historical: is this msg from an historical cache
 		 * @return
 		 */
-		virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id, bool historical) = 0;
+		virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, const std::string& id, bool historical) = 0;
 
 /***************************************************************************************/
 /********************************* p3Config ********************************************/

@@ -912,38 +912,38 @@ void p3GroupDistrib::run() /* called once the thread is started */
 		bool isLocal = false;
 		bool isHistorical = false;
 		{
-		RsStackMutex stack(distribMtx);
-		if(!mHistoricalCaches){
+			RsStackMutex stack(distribMtx);
+			if(!mHistoricalCaches){
 
 
-			if(mPendingHistCaches.size() > 0){
+				if(mPendingHistCaches.size() > 0){
 
-//				std::cerr << "loaded pending caches: " <<  mPendingHistCaches.size() << std::endl;
-				CacheDataPending &pendingCache = mPendingHistCaches.front();
-				cache = pendingCache.mData;
-				isLocal = pendingCache.mLocal;
-				isHistorical = pendingCache.mHistorical;
+//					std::cerr << "loaded pending caches: " <<  mPendingHistCaches.size() << std::endl;
+					CacheDataPending &pendingCache = mPendingHistCaches.front();
+					cache = pendingCache.mData;
+					isLocal = pendingCache.mLocal;
+					isHistorical = pendingCache.mHistorical;
 
-				validCache = true;
-				mPendingHistCaches.pop_front();
-			}
-			else if (mPendingCaches.size() > 0)
-			{
-				CacheDataPending &pendingCache = mPendingCaches.front();
-				cache = pendingCache.mData;
-				isLocal = pendingCache.mLocal;
-				isHistorical = pendingCache.mHistorical;
+					validCache = true;
+					mPendingHistCaches.pop_front();
+				}
+				else if (mPendingCaches.size() > 0)
+				{
+					CacheDataPending &pendingCache = mPendingCaches.front();
+					cache = pendingCache.mData;
+					isLocal = pendingCache.mLocal;
+					isHistorical = pendingCache.mHistorical;
 				
-				validCache = true;
-				mPendingCaches.pop_front();
+					validCache = true;
+					mPendingCaches.pop_front();
 
 #ifdef DISTRIB_THREAD_DEBUG
-				std::cerr << "p3GroupDistrib::run() found pendingCache";
-				std::cerr << std::endl;
+					std::cerr << "p3GroupDistrib::run() found pendingCache";
+					std::cerr << std::endl;
 #endif
 
+				}
 			}
-		}
 		}
 		if (validCache)
 		{
@@ -1000,16 +1000,15 @@ int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local, bool his
 	std::cerr << "Cid: " << data.cid.type << ":" << data.cid.subid << std::endl;
 #endif
 
-		if (data.cid.subid == 1)
-		{
-
-			cidPair = std::make_pair(data.pid, data.cid.subid);
-			loadFileGroups(file, data.pid, local, historical, cidPair);
-		}
-		else
-		{
-			loadFileMsgs(file, data.cid.subid, data.pid, data.recvd, local, historical);
-		}
+	if (data.cid.subid == 1)
+	{
+		cidPair = std::make_pair(data.pid, data.cid.subid);
+		loadFileGroups(file, data.pid, local, historical, cidPair);
+	}
+	else
+	{
+		loadFileMsgs(file, data.cid.subid, data.pid, data.recvd, local, historical);
+	}
 
 	return true;
 }
@@ -1141,9 +1140,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	RsDistribSignedMsg *newMsg;
 	std::string grpId;
 
-
-
-	while(NULL != (item = store->GetItem()))
+	while(isRunning() && (NULL != (item = store->GetItem())))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::loadFileMsgs() Got Item:";
@@ -1157,13 +1154,11 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 			grpId = newMsg->grpId;
 			if(loadMsg(newMsg, src, local, historical))
 			{
-
 				if(cache)
 				{
 					msgCacheMap.insert(grpCachePair(grpId, pCacheId(src, cacheSubId)));
 				}
 			}
-
 		}
 		else
 		{
@@ -1197,8 +1192,6 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 		if(msgCacheMap.empty())
 			mMsgHistPending.push_back(grpCachePair(failedCacheId, failedCache));
 	}
-
-
 
 	if (local)
 	{
@@ -1277,8 +1270,6 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 	RsDistribSignedMsg *newMsg;
 	std::string grpId;
 
-
-
 	while(NULL != (item = store->GetItem()))
 	{
 #ifdef DISTRIB_DEBUG
@@ -1293,13 +1284,11 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 			grpId = newMsg->grpId;
 			if(locked_loadMsg(newMsg, src, local, historical))
 			{
-
 				if(cache)
 				{
 					msgCacheMap.insert(grpCachePair(grpId, pCacheId(src, cacheSubId)));
 				}
 			}
-
 		}
 		else
 		{
@@ -1331,8 +1320,6 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 		if(msgCacheMap.empty())
 			mMsgHistPending.push_back(grpCachePair(failedCacheId, failedCache));
 	}
-
-
 
 	if (local)
 	{
@@ -1519,17 +1506,14 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey, bool historical)
 	{
 
 #ifdef DISTRIB_DEBUG
-
-                std::cerr << "p3GroupDistrib::loadGroupKey() Group for key not found: discarding";
-                std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::loadGroupKey() Group for key not found: discarding";
+		std::cerr << std::endl;
 #endif
 
-                    delete newKey;
-                    newKey = NULL;
-                    return false;
-
+		delete newKey;
+		newKey = NULL;
+		return false;
 	}
-
 
 	/* have the group -> add in the key */
 	bool updateOk = false;
@@ -1549,7 +1533,7 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey, bool historical)
 	}
 	else
 	{
-                if(!locked_updateGroupPublishKey(it->second, newKey))
+		if(!locked_updateGroupPublishKey(it->second, newKey))
 		{
 #ifdef DISTRIB_DEBUG
 			std::cerr << "p3GroupDistrib::loadGroupKey() Failed Publish Key Update";
@@ -1559,27 +1543,22 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey, bool historical)
 		else
 		{
 			updateOk = true;
-
 		}
-
-
 	}
 
-        if (updateOk)
-            locked_notifyGroupChanged(it->second, GRP_LOAD_KEY, historical);
-
-
+	if (updateOk)
+		locked_notifyGroupChanged(it->second, GRP_LOAD_KEY, historical);
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadGroupKey() Done - Cleaning up.";
 	std::cerr << std::endl;
 #endif
 
-//		  if(!updateOk)
-			  delete newKey;
+//	if(!updateOk)
+		delete newKey;
 
-        newKey = NULL;
-        return updateOk;
+	newKey = NULL;
+	return updateOk;
 }
 
 
@@ -1620,7 +1599,6 @@ bool	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 		return false;
 	}
 
-
 	/****************** check the msg ******************/
 	/* check for duplicate message, do this first to ensure minimal signature validations. 
 	 * therefore, duplicateMsg... could potentially be called on a dodgey msg (not a big problem!)
@@ -1651,26 +1629,24 @@ bool	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 		return false;
 	}
 
-        void *temp_ptr = newMsg->packet.bin_data;
-        int temp_len = newMsg->packet.bin_len;
+	void *temp_ptr = newMsg->packet.bin_data;
+	int temp_len = newMsg->packet.bin_len;
 
 	if(git->second.grpFlags & RS_DISTRIB_ENCRYPTED){
+		void *out_data = NULL;
+		int out_len = 0;
 
-                void *out_data = NULL;
-                int out_len = 0;
-
-                if(decrypt(out_data, out_len, newMsg->packet.bin_data, newMsg->packet.bin_len, newMsg->grpId)){
-                        newMsg->packet.TlvShallowClear();
-                        newMsg->packet.setBinData(out_data, out_len);
-                        delete[] (unsigned char*) out_data;
-
+		if(decrypt(out_data, out_len, newMsg->packet.bin_data, newMsg->packet.bin_len, newMsg->grpId)){
+				newMsg->packet.TlvShallowClear();
+				newMsg->packet.setBinData(out_data, out_len);
+				delete[] (unsigned char*) out_data;
 		}else{
+			if((out_data != NULL) && (out_len != 0))
+				delete[] (unsigned char*) out_data;
 
-                        if((out_data != NULL) && (out_len != 0))
-                                delete[] (unsigned char*) out_data;
 #ifdef DISTRIB_DEBUG
-                		std::cerr << "p3GroupDistrib::loadMsg() Failed to decrypt" << std::endl;
-                		std::cerr << std::endl;
+			std::cerr << "p3GroupDistrib::loadMsg() Failed to decrypt" << std::endl;
+			std::cerr << std::endl;
 #endif
 			return false;
 		}
@@ -1718,7 +1694,6 @@ bool	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 	std::cerr << std::endl;
 #endif
 
-
 	/* Callback for any derived classes to play with */
 	locked_eventNewMsg(&(git->second), msg, src, historical);
 
@@ -1731,10 +1706,10 @@ bool	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 		std::cerr << std::endl;
 #endif
 
-                if(git->second.grpFlags & RS_DISTRIB_ENCRYPTED){
-                    newMsg->packet.TlvClear();
-                    newMsg->packet.setBinData(temp_ptr, temp_len);
-                }
+		if(git->second.grpFlags & RS_DISTRIB_ENCRYPTED){
+			newMsg->packet.TlvClear();
+			newMsg->packet.setBinData(temp_ptr, temp_len);
+		}
 
 		locked_toPublishMsg(newMsg);
 	}
@@ -4302,8 +4277,7 @@ bool 	p3GroupDistrib::locked_choosePublishKey(GroupInfo &info)
 
 /********************/
 
-bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
-				GroupInfo &info, RsDistribSignedMsg *newMsg)
+bool 	p3GroupDistrib::locked_validateDistribSignedMsg(GroupInfo &info, RsDistribSignedMsg *newMsg)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg()";
@@ -4351,12 +4325,11 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 		return false;
 	}
 
-
 	/* decode key */
 	const unsigned char *keyptr = (const unsigned char *) kit->second.keyData.bin_data;
 	long keylen = kit->second.keyData.bin_len;
 	unsigned int siglen = newMsg->publishSignature.signData.bin_len;
-        unsigned char *sigbuf = (unsigned char *) newMsg->publishSignature.signData.bin_data;
+	unsigned char *sigbuf = (unsigned char *) newMsg->publishSignature.signData.bin_data;
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Decode Key";
@@ -4397,14 +4370,13 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 	EVP_PKEY_free(signKey);
 	EVP_MD_CTX_destroy(mdctx);
 
-
 	/* now verify Personal signature */
-        if ((signOk == 1) && ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK) & RS_DISTRIB_AUTHEN_REQ))
+	if ((signOk == 1) && ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK) & RS_DISTRIB_AUTHEN_REQ))
 	{
-                unsigned int personalsiglen =
-                                newMsg->personalSignature.signData.bin_len;
-                unsigned char *personalsigbuf = (unsigned char *)
-                                newMsg->personalSignature.signData.bin_data;
+		unsigned int personalsiglen =
+						newMsg->personalSignature.signData.bin_len;
+		unsigned char *personalsigbuf = (unsigned char *)
+						newMsg->personalSignature.signData.bin_data;
 
 		RsPeerDetails signerDetails;
 		std::string gpg_fpr;
@@ -4413,20 +4385,20 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 			gpg_fpr = signerDetails.fpr;
 		}
 
-                bool gpgSign = AuthGPG::getAuthGPG()->VerifySignBin(
-                        newMsg->packet.bin_data, newMsg->packet.bin_len,
-                        personalsigbuf, personalsiglen, gpg_fpr);
-                if (gpgSign) {
-                    #ifdef DISTRIB_DEBUG
-                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Success for gpg signature." << std::endl;
-                    #endif
-                    signOk = 1;
-                } else {
-                    #ifdef DISTRIB_DEBUG
-                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail for gpg signature." << std::endl;
-                    #endif
-                    signOk = 0;
-                }
+		bool gpgSign = AuthGPG::getAuthGPG()->VerifySignBin(
+				newMsg->packet.bin_data, newMsg->packet.bin_len,
+				personalsigbuf, personalsiglen, gpg_fpr);
+		if (gpgSign) {
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Success for gpg signature." << std::endl;
+#endif
+			signOk = 1;
+		} else {
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail for gpg signature." << std::endl;
+#endif
+			signOk = 0;
+		}
 	}
 
 	if (signOk == 1)

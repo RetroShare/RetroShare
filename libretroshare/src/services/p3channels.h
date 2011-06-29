@@ -92,8 +92,8 @@ virtual bool channelGetAutoDl(const std::string& chId, bool& autoDl);
 
 	protected:
 virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags, bool historical);
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, const std::string&, bool historical);
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, const std::string&, bool historical);
 
 
 /****************************************/

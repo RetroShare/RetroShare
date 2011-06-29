@@ -292,14 +292,14 @@ const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600;
  *
  */
 
-bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
+bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
 {
 	return true;
 }
 
 #include "pqi/pqinotify.h"
 
-bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
+bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;

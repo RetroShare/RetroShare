@@ -634,12 +634,12 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags, bool h
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags, historical);
 }
 
-bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
+bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
 {
 	return true;
 }
 
-bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
+bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;

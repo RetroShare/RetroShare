@@ -69,8 +69,8 @@ virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, uns
 /***************************************************************************************/
 
 virtual void locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool historical);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, const std::string&, bool historical);
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, const std::string&, bool historical);
 
 
 /****************************************/
