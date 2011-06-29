@@ -47,6 +47,8 @@ struct TcpOnUdp_t
 	int tou_fd;
 	int lasterrno;
 	TcpStream *tcp;
+	UdpSubReceiver *udpsr;
+	int udptype;
 	bool idle;
 };
 
@@ -57,39 +59,79 @@ static  std::vector<TcpOnUdp *> tou_streams;
 static  int tou_inited = 0;
 
 
-#include "udp/udpstack.h"
 #include "tcponudp/udppeer.h"
+#include "tcponudp/udprelay.h"
 
-static  UdpStack *udpstack = NULL;
-static  UdpPeerReceiver *udps = NULL;
+static  UdpSubReceiver *udpSR[MAX_TOU_RECEIVERS] = {NULL};
+static  uint32_t	udpType[MAX_TOU_RECEIVERS] = {NULL};
+static  uint32_t        noUdpSR = 0;
 
 static int	tou_tick_all();
 
+/* 	tou_init 
+ *
+ * 	Modified to accept a number of UdpSubRecievers!
+ * 	these can be linked to arbitary UdpStacks. 
+ *      (removed all UdpStack references here!)
+ *
+ *      Unfortunately, the UdpSubReceivers have different initialisation for starting a connection.
+ *      So the TOU interface has to accomodate this.
+ *      
+ */
 /* 	tou_init - opens the udp port (universal bind) */
-int 	tou_init(void *in_udpstack)
+int 	tou_init(void **in_udpsubrecvs, int *type, int number)
 {
-	UdpStack *stack = (UdpStack *) in_udpstack;
+	UdpSubReceiver **usrArray = (UdpSubReceiver **) in_udpsubrecvs;
+	if (number > MAX_TOU_RECEIVERS)
+	{
+		std::cerr << "tou_init() Invalid number of receivers";
+		std::cerr << std::endl;
+		return 0;
+	}
+
 	if (tou_inited)
 	{
 		return 1;
 	}
 
-	tou_streams.resize(kInitStreamTable);
+	noUdpSR = number;
+	int i;
+	for(i = 0; i < noUdpSR; i++)
+	{
+		udpSR[i] = usrArray[i];
+		udpType[i] = type[i];
+	}
 
-	udpstack = stack;
-	udps = new UdpPeerReceiver(stack);
-	stack->addReceiver(udps);
+	tou_streams.resize(kInitStreamTable);
 
 	tou_inited = 1;
 	return 1;
 }
 
 
-/* 	open - which does nothing */
-int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
+/* 	open - allocates a sockfd, and checks that the type is okay */
+int     tou_socket(int recvIdx, int type, int /*protocol*/)
 {
 	if (!tou_inited)
 	{
+		return -1;
+	}
+
+	if (recvIdx >= noUdpSR)
+	{
+		std::cerr << "tou_socket() ERROR recvIdx greater than #receivers";
+		std::cerr << std::endl;
+		return -1;
+	}
+
+	/* check that the index matches the type */
+	UdpSubReceiver *recver = udpSR[recvIdx];
+	uint32_t recverType = udpType[recvIdx];
+
+	if (recverType != type)
+	{
+		std::cerr << "tou_socket() ERROR type doesn't match expected type";
+		std::cerr << std::endl;
 		return -1;
 	}
 
@@ -100,6 +142,8 @@ int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 			tou_streams[i] = new TcpOnUdp();
 			tou_streams[i] -> tou_fd = i;
 			tou_streams[i] -> tcp = NULL;
+			tou_streams[i] -> udpsr = recver;
+			tou_streams[i] -> udptype = recverType;
 			return i;
 		}
 	}
@@ -112,6 +156,8 @@ int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 	{
 		tou -> tou_fd = tou_streams.size() -1;
 		tou -> tcp = NULL;
+		tou -> udpsr = recver;
+		tou -> udptype = recverType;
 		return tou->tou_fd;
 	}
 
@@ -158,11 +204,35 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 		return -1;
 	}
 
+	/* enforce that the udptype is correct */
+	if (tous -> udptype != TOU_RECEIVER_TYPE_UDPPEER)
+	{
+		std::cerr << "tou_connect() ERROR connect method invalid for udptype";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+	
+#ifdef TOU_DYNAMIC_CAST_CHECK 
+	/* extra checking -> for testing purposes (dynamic cast) */
+	UdpPeerReceiver *upr = dynamic_cast<UdpPeerReceiver *>(tous->udpsr);
+	if (!upr)
+	{
+		std::cerr << "tou_connect() ERROR cannot convert type to UdpPeerReceiver";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+#else
+	UdpPeerReceiver *upr = (UdpPeerReceiver *) (tous->udpsr);
+#endif
+
 	/* create a TCP stream to connect with. */
 	if (!tous->tcp)
 	{
-		tous->tcp = new TcpStream(udps);
-		udps->addUdpPeer(tous->tcp, 
+		tous->tcp = new TcpStream(tous->udpsr);
+		upr->addUdpPeer(tous->tcp, 
 			*((const struct sockaddr_in *) serv_addr));
 	}
 
@@ -178,6 +248,7 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 	return -1;
 }
 
+/* is this ever used? should it be depreciated? */
 int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, 
 					socklen_t addrlen)
 {
@@ -193,11 +264,34 @@ int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr,
 		return -1;
 	}
 
+	/* enforce that the udptype is correct */
+	if (tous -> udptype != TOU_RECEIVER_TYPE_UDPPEER)
+	{
+		std::cerr << "tou_connect() ERROR connect method invalid for udptype";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+#ifdef TOU_DYNAMIC_CAST_CHECK 
+	/* extra checking -> for testing purposes (dynamic cast) */
+	UdpPeerReceiver *upr = dynamic_cast<UdpPeerReceiver *>(tous->udpsr);
+	if (!upr)
+	{
+		std::cerr << "tou_connect() ERROR cannot convert type to UdpPeerReceiver";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+#else
+	UdpPeerReceiver *upr = (UdpPeerReceiver *) (tous->udpsr);
+#endif
+
 	/* create a TCP stream to connect with. */
 	if (!tous->tcp)
 	{
-		tous->tcp = new TcpStream(udps);
-		udps->addUdpPeer(tous->tcp, 
+		tous->tcp = new TcpStream(tous->udpsr);
+		upr->addUdpPeer(tous->tcp, 
 			*((const struct sockaddr_in *) serv_addr));
 	}
 
@@ -212,6 +306,84 @@ int     tou_listen(int /* sockfd */ , int /* backlog */ )
 {
 	tou_tick_all();
 	return 1;
+}
+
+/*
+ *	This is the alternative RELAY connection.
+ *
+ *	User needs to provide 3 ip addresses.
+ *      These addresses should have been provided by the RELAY negogiation
+ *	a) own ip:port
+ *	b) proxy ip:port
+ *	c) dest ip:port
+ *
+ *	The reset of the startup is similar to other TOU connections.
+ *	As this is likely to be run over an established UDP connection, 
+ *	there is little need for a big connection period.
+ *
+ *  	- like a tcp/ip connection, the connect
+ *  	will return -1 EAGAIN, until connection complete.
+ *  	- always non blocking.
+ */
+#define DEFAULT_RELAY_CONN_PERIOD		1
+
+int 	tou_connect_via_relay(int sockfd, 
+			const struct sockaddr_in *own_addr, 
+			const struct sockaddr_in *proxy_addr, 
+			const struct sockaddr_in *dest_addr)
+
+{
+	if (tou_streams[sockfd] == NULL)
+	{
+		return -1;
+	}
+	TcpOnUdp *tous = tou_streams[sockfd];
+	
+	/* enforce that the udptype is correct */
+	if (tous -> udptype != TOU_RECEIVER_TYPE_UDPRELAY)
+	{
+		std::cerr << "tou_connect() ERROR connect method invalid for udptype";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+#ifdef TOU_DYNAMIC_CAST_CHECK 
+	/* extra checking -> for testing purposes (dynamic cast) */
+	UdpRelayReceiver *urr = dynamic_cast<UdpRelayReceiver *>(tous->udpsr);
+	if (!urr)
+	{
+		std::cerr << "tou_connect() ERROR cannot convert type to UdpRelayReceiver";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+#else
+	UdpRelayReceiver *urr = (UdpRelayReceiver *) (tous->udpsr);
+#endif
+
+	/* create a TCP stream to connect with. */
+	if (!tous->tcp)
+	{
+		tous->tcp = new TcpStream(tous->udpsr);
+
+		UdpRelayAddrSet addrSet(own_addr, dest_addr);
+		urr->addUdpPeer(tous->tcp, &addrSet, proxy_addr);
+	}
+
+	/* We Point it at the Destination Address.
+	 * The UdpRelayReceiver wraps and re-directs the packets to the proxy
+	 */
+	tous->tcp->connect(*dest_addr, DEFAULT_RELAY_CONN_PERIOD);
+	tous->tcp->tick();
+	tou_tick_all();
+	if (tous->tcp->isConnected())
+	{
+		return 0;	
+	}
+
+	tous -> lasterrno = EINPROGRESS;
+	return -1;
 }
 
 
@@ -362,8 +534,50 @@ int 	tou_close(int sockfd)
 
 		/* shut it down */
 		tous->tcp->close();
-		udps->removeUdpPeer(tous->tcp);
+
+		/* now we need to work out which type of receiver we have */
+#ifdef TOU_DYNAMIC_CAST_CHECK 
+		/* extra checking -> for testing purposes (dynamic cast) */
+		UdpRelayReceiver *urr = dynamic_cast<UdpRelayReceiver *>(tous->udpsr);
+		UdpPeerReceiver *upr = dynamic_cast<UdpPeerReceiver *>(tous->udpsr);
+		if (urr)
+		{
+			urr->removeUdpPeer(tous->tcp);
+		}
+		else if (upr)
+		{
+			upr->removeUdpPeer(tous->tcp);
+		}
+		else
+		{
+			/* error */
+			std::cerr << "tou_close() ERROR unknown udptype";
+			std::cerr << std::endl;
+			tous -> lasterrno = EINVAL;
+		}
+#else
+		if (tous -> udptype == TOU_RECEIVER_TYPE_UDPRELAY)
+		{
+			UdpRelayReceiver *urr = (UdpRelayReceiver *) (tous->udpsr);
+			urr->removeUdpPeer(tous->tcp);
+		}
+		else if (tous -> udptype == TOU_RECEIVER_TYPE_UDPPEER)
+		{
+			UdpPeerReceiver *upr = (UdpPeerReceiver *) (tous->udpsr);
+			upr->removeUdpPeer(tous->tcp);
+		}
+		else
+		{
+			/* error */
+			std::cerr << "tou_close() ERROR unknown udptype";
+			std::cerr << std::endl;
+			tous -> lasterrno = EINVAL;
+		}
+		
+#endif
+
 		delete tous->tcp;
+
 	}
 
 	delete tous;
@@ -374,10 +588,6 @@ int 	tou_close(int sockfd)
 /*	get an error number */
 int	tou_errno(int sockfd)
 {
-	if (!udps)
-	{
-		return ENOTSOCK;
-	}
 	if (tou_streams[sockfd] == NULL)
 	{
 		return ENOTSOCK;

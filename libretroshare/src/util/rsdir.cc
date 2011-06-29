@@ -64,8 +64,8 @@ std::string 	RsDirUtil::getTopDir(const std::string& dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--);
-	for(i = j; (i > 0) && (dir[i] != '/'); i--);
+	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--) ;
+	for(i = j; (i > 0) && (dir[i] != '/'); i--) ;
 
 	if (dir[i] == '/')
 		i++;
@@ -165,11 +165,11 @@ std::string 	RsDirUtil::removeTopDir(const std::string& dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--);
-	for(i = j; (i >= 0) && (dir[i] != '/'); i--);
+	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--) ;
+	for(i = j; (i >= 0) && (dir[i] != '/'); i--) ;
 
 	/* remove any more slashes */
-	for(; (i >= 0) && (dir[i] == '/'); i--);
+	for(; (i >= 0) && (dir[i] == '/'); i--) ;
 
 	for(j = 0; j <= i; j++)
 	{
@@ -187,8 +187,8 @@ std::string 	RsDirUtil::getRootDir(const std::string& dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(i = 0; (i < len) && (dir[i] == '/'); i++);
-	for(j = i; (j < len) && (dir[j] != '/'); j++);
+	for(i = 0; (i < len) && (dir[i] == '/'); i++) ;
+	for(j = i; (j < len) && (dir[j] != '/'); j++) ;
 	if (i == j)
 		return root; /* empty */
 	for(; i < j; i++)
@@ -205,12 +205,12 @@ std::string RsDirUtil::removeRootDir(const std::string& path)
 	std::string output;
 
 	/* chew leading '/'s */
-	for(i = 0; (i < len) && (path[i] == '/'); i++);
+	for(i = 0; (i < len) && (path[i] == '/'); i++) ;
 	if (i == len)
 			return output; /*  empty string */
 
-	for(j = i; (j < len) && (path[j] != '/'); j++); /* run to next '/' */
-	for(; (j < len) && (path[j] == '/'); j++); 	/* chew leading '/'s */
+	for(j = i; (j < len) && (path[j] != '/'); j++) ; /* run to next '/' */
+	for(; (j < len) && (path[j] == '/'); j++) ; 	/* chew leading '/'s */
 
 	for(; j < len; j++)
 	{
@@ -236,7 +236,7 @@ std::string RsDirUtil::removeRootDirs(const std::string& path, const std::string
 		i++;
 	}
 
-	for(; (i < path.length()) && (j < root.length()) && (path[i] == root[j]); i++, j++);
+	for(; (i < path.length()) && (j < root.length()) && (path[i] == root[j]); i++, j++) ;
 
 	/* should have consumed root. */
 	if (j == root.length())

@@ -27,25 +27,71 @@
 #include <iostream>
 #include <sstream>
 
+#include "util/rsprint.h"
+
 static const int STUN_TTL = 64;
 
 #define TOU_STUN_MIN_PEERS 5
 
 /*
- * #define DEBUG_UDP_STUN 1
+ * #define DEBUG_UDP_STUNNER 1
  */
+//#define DEBUG_UDP_STUNNER 1
 
 const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
 const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
 const int32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
-const int32_t TOU_STUN_ADDR_MAX_AGE  = 120; /* 2 minutes */
+// TIMEOUT is now tied to  STUN RATE ... const int32_t TOU_STUN_ADDR_MAX_AGE  = 120; /* 2 minutes */
+
+const int32_t TOU_STUN_DEFAULT_TARGET_RATE  = 15; /* 20 secs is minimum to keep a NAT UDP port open */
+const double  TOU_SUCCESS_LPF_FACTOR = 0.90;
 
 
 UdpStunner::UdpStunner(UdpPublisher *pub)
 	:UdpSubReceiver(pub), eaddrKnown(false), eaddrStable(false),
-        mStunKeepAlive(false), mStunLastRecv(0), mStunLastSend(0)
+        	mStunLastRecvResp(0), mStunLastRecvAny(0), 
+		mStunLastSendStun(0), mStunLastSendAny(0)
 {
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+	mAcceptLocalNet = false;
+#endif
+
+
+
+	/* these parameters determine the rate we attempt stuns */
+	mPassiveStunMode = false;
+	mSuccessRate = 0.0; 
+	mTargetStunPeriod = TOU_STUN_DEFAULT_TARGET_RATE;
+
 	return;
+}
+
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+
+	// For Local Testing Only (Releases should have the #define disabled)
+void	UdpStunner::SetAcceptLocalNet()
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	mAcceptLocalNet = true;
+}
+
+#endif
+
+void	UdpStunner::setTargetStunPeriod(uint32_t sec_per_stun)
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	if (sec_per_stun == 0)
+	{
+		mPassiveStunMode = true;
+	}
+	else
+	{
+		mPassiveStunMode = false;
+	}
+	mTargetStunPeriod = sec_per_stun;
+
 }
 
 /* higher level interface */
@@ -62,7 +108,7 @@ int UdpStunner::recvPkt(void *data, int size, struct sockaddr_in &from)
 	/* check for STUN packet */
 	if (UdpStun_isStunPacket(data, size))
 	{
-		mStunLastRecv = time(NULL);
+		mStunLastRecvAny = time(NULL);
 #ifdef DEBUG_UDP_STUNNER
 		std::cerr << "UdpStunner::recvPkt() is Stun Packet";
 		std::cerr << std::endl;
@@ -76,9 +122,14 @@ int UdpStunner::recvPkt(void *data, int size, struct sockaddr_in &from)
 	return 0;
 }
 
+
 int     UdpStunner::status(std::ostream &out)
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	out << "UdpStunner::status() TargetStunPeriod: " << mTargetStunPeriod;
+	out << " SuccessRate: " << mSuccessRate;
+	out << std::endl;
 
 	out << "UdpStunner::status()" << std::endl;
 	out << "UdpStunner::potentialpeers:" << std::endl;
@@ -94,10 +145,15 @@ int     UdpStunner::status(std::ostream &out)
 
 int UdpStunner::tick()
 {
+
 #ifdef DEBUG_UDP_STUNNER
 	std::cerr << "UdpStunner::tick()" << std::endl;
 #endif
-	checkStunKeepAlive();
+
+	if (checkStunDesired())
+	{
+		attemptStun();
+	}
 
 	return 1;
 }
@@ -120,6 +176,8 @@ bool UdpStunner::locked_handleStunPkt(void *data, int size, struct sockaddr_in &
 		if (!pkt)
 			return false;
 
+		time_t now = time(NULL);
+		mStunLastSendAny = now;
 		int sentlen = sendPkt(pkt, len, from, STUN_TTL);
 		free(pkt);
 
@@ -144,7 +202,7 @@ bool UdpStunner::locked_handleStunPkt(void *data, int size, struct sockaddr_in &
 #ifdef DEBUG_UDP_STUNNER
 			std::cerr << "UdpStunner::handleStunPkt() got Ext Addr: ";
 			std::cerr << inet_ntoa(eAddr.sin_addr) << ":" << ntohs(eAddr.sin_port);
-			out << " from: " << from;
+			std::cerr << " from: " << from;
 			std::cerr << std::endl;
 #endif
 			locked_recvdStun(from, eAddr);
@@ -168,7 +226,7 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 	if (eaddrKnown)
 	{
 		/* address timeout */
-		if (time(NULL) - eaddrTime > TOU_STUN_ADDR_MAX_AGE)
+		if (time(NULL) - eaddrTime > (mTargetStunPeriod * 2))
 		{
 			std::cerr << "UdpStunner::externalAddr() eaddr expired";
 			std::cerr << std::endl;
@@ -228,13 +286,14 @@ int     UdpStunner::doStun(struct sockaddr_in stun_addr)
 
 	{
         	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
-		mStunLastSend = time(NULL);
+		time_t now = time(NULL);
+		mStunLastSendStun = now;
+		mStunLastSendAny = now;
 	}
 
 #ifdef DEBUG_UDP_STUNNER
 	std::ostringstream out;
-	out << "UdpStunner::doStun() Sent Stun Packet(" << sentlen << ") from:";
-	out << inet_ntoa(laddr.sin_addr) << ":" << ntohs(laddr.sin_port);
+	out << "UdpStunner::doStun() Sent Stun Packet(" << sentlen << ") ";
 	out << " to:";
 	out << inet_ntoa(stun_addr.sin_addr) << ":" << ntohs(stun_addr.sin_port);
 
@@ -380,24 +439,11 @@ bool UdpStun_isStunPacket(void *data, int size)
 
 
 /******************************* STUN Handling ********************************
- * The KeepAlive part - slightly more complicated
+ * KeepAlive has been replaced by a targetStunRate. Set this to zero to disable.
  */
 
 /******************************* STUN Handling ********************************/
 
-bool UdpStunner::setStunKeepAlive(uint32_t required)
-{
-        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
-
-	mStunKeepAlive = (required != 0);
-
-#ifdef DEBUG_UDP_STUNNER
-	std::cerr << "UdpStunner::setStunKeepAlive() to: " << mStunKeepAlive;
-	std::cerr << std::endl;
-#endif
-
-	return 1;
-}
 
 bool    UdpStunner::addStunPeer(const struct sockaddr_in &remote, const char *peerid)
 {
@@ -407,20 +453,18 @@ bool    UdpStunner::addStunPeer(const struct sockaddr_in &remote, const char *pe
 	std::cerr << std::endl;
 #endif
 
-	bool needStun;
+	bool toStore = true;
 	{
         	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
-		needStun = (!eaddrKnown);
-        }
 
-	storeStunPeer(remote, peerid, needStun);
-
-
-	if (needStun)
-	{
-		doStun(remote);
+		/* only store if we're active */
+		toStore = !mPassiveStunMode;
 	}
 
+	if (toStore)
+	{
+		storeStunPeer(remote, peerid, 0);
+	}
 	return true;
 }
 
@@ -472,88 +516,154 @@ bool    UdpStunner::storeStunPeer(const struct sockaddr_in &remote, const char *
 }
 
 
-bool    UdpStunner::checkStunKeepAlive()
+bool    UdpStunner::checkStunDesired()
 {
 
 #ifdef DEBUG_UDP_STUNNER
-	std::cerr << "UdpStunner::checkStunKeepAlive()";
+	std::cerr << "UdpStunner::checkStunDesired()";
 	std::cerr << std::endl;
 #endif
 
-	TouStunPeer peer;
 	time_t now;
 	{
           RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
-	  if (!mStunKeepAlive)
+	  if (mPassiveStunMode)
 	  {
 #ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunKeepAlive() FALSE";
+		std::cerr << "UdpStunner::checkStunDesired() In Passive Mode";
 		std::cerr << std::endl;
 #endif
 		return false; /* all good */
 	  }
 
+	  if (!eaddrKnown)
+	  {
+#ifdef DEBUG_UDP_STUNNER
+		std::cerr << "UdpStunner::checkStunDesired() YES, we don't have extAddr Yet";
+		std::cerr << std::endl;
+#endif
+		return true; /* want our external address */
+	}
+
 	  /* check if we need to send one now */
 	  now = time(NULL);
 
-	  if ((now - mStunLastSend < TOU_STUN_MAX_SEND_RATE) || 
-	      (now - mStunLastRecv < TOU_STUN_MAX_RECV_RATE))
-	  {
-#ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunKeepAlive() To Fast ... delaying";
-		std::cerr << std::endl;
-#endif
-	  	/* too fast */
-		return false;
-	  }
-
-	  if (mStunList.size() < 1)
-	  {
-#ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunKeepAlive() No Peers in List!";
-		std::cerr << std::endl;
-#endif
-		return false;
-	  }
-
-	  /* extract entry */
-	  peer = mStunList.front();
-	  mStunList.pop_front();
-	}
-
-	doStun(peer.remote);
-
-	{
-          RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
-	  if (peer.failCount < TOU_STUN_MAX_FAIL_COUNT)
-	  {
-	  	peer.failCount++;
-		peer.lastsend = now;
-		mStunList.push_back(peer);
+	  /* based on SuccessRate & TargetStunRate, we work out if we should send one 
+	   *
+	   * if we have 100% success rate, then we can delay until exactly TARGET RATE.
+	   * if we have 0% success rate, then try at double TARGET RATE.
+	   *
+	   */
+	  double stunPeriod = (mTargetStunPeriod / 2.0) * (1.0 + mSuccessRate);
+	  time_t nextStun = mStunLastRecvResp + (int) stunPeriod;
 
 #ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunKeepAlive() pushing Stun peer to back of list";
-		std::cerr << std::endl;
+	std::cerr << "UdpStunner::checkStunDesired() TargetStunPeriod: " << mTargetStunPeriod;
+	std::cerr << " SuccessRate: " << mSuccessRate;
+	std::cerr << " DesiredStunPeriod: " << stunPeriod;
+	std::cerr << " NextStun: " << nextStun - now << " secs";
+	std::cerr << std::endl;
 #endif
 
+	  if (now >= nextStun)
+	  {
+#ifdef DEBUG_UDP_STUNNER
+		std::cerr << "UdpStunner::checkStunDesired() Stun is Desired";
+		std::cerr << std::endl;
+#endif
+		return true;
 	  }
 	  else
 	  {
 #ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunKeepAlive() Discarding bad stun peer";
+		std::cerr << "UdpStunner::checkStunDesired() Stun is Not Needed";
 		std::cerr << std::endl;
 #endif
+		return false;
+	  }
+	}
+}
+
+
+bool    UdpStunner::attemptStun()
+{
+	bool found = false;
+	TouStunPeer peer;
+	time_t now = time(NULL);
+
+#ifdef DEBUG_UDP_STUNNER
+	std::cerr << "UdpStunner::attemptStun()";
+	std::cerr << std::endl;
+#endif
+
+	{
+          RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	  int i;
+	  for(i = 0; ((i < mStunList.size()) && (mStunList.size() > 0) && (!found)); i++)
+	  {
+	  	/* extract entry */
+		peer = mStunList.front();
+		mStunList.pop_front();
+
+		/* check if expired */
+		if (peer.failCount > TOU_STUN_MAX_FAIL_COUNT)
+		{
+#ifdef DEBUG_UDP_STUNNER
+			std::cerr << "UdpStunner::attemptStun() Peer has expired, dropping";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+			// Peer Okay, check last send time.
+			if (now - peer.lastsend < TOU_STUN_MAX_SEND_RATE) 
+			{
+#ifdef DEBUG_UDP_STUNNER
+				std::cerr << "UdpStunner::attemptStun() Peer was sent to Too Recently, pushing back";
+				std::cerr << std::endl;
+#endif
+				mStunList.push_back(peer);
+			}
+			else
+			{
+				/* we have found a peer! */
+#ifdef DEBUG_UDP_STUNNER
+				std::cerr << "UdpStunner::attemptStun() Found Peer to Stun.";
+				std::cerr << std::endl;
+#endif
+				peer.failCount++;
+				peer.lastsend = now;
+				mStunList.push_back(peer);
+				mSuccessRate *= TOU_SUCCESS_LPF_FACTOR;
+
+				found = true;
+			}
+		}
+	  } // END OF WHILE LOOP.
+
+	  if (mStunList.size() < 1)
+	  {
+#ifdef DEBUG_UDP_STUNNER
+		std::cerr << "UdpStunner::attemptStun() No Peers in List. FAILED";
+		std::cerr << std::endl;
+#endif
+		return false;
 	  }
 
 #ifdef DEBUG_UDP_STUNNER
 	  locked_printStunList();
 #endif
 
+	} // END OF MUTEX LOCKING.
+
+	if (found)
+	{
+		doStun(peer.remote);
+		return true;
 	}
-
-
-	return true;
+	return false;
 }
 
 
@@ -584,6 +694,29 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 			break;
 		}
 	}
+
+	/* if not found.. should we add it back in? */
+	
+	/* How do we calculate the success rate?
+	 * Don't want to count all the stuns?
+	 * Low Pass filter won't work either...
+	 * at send... 
+	 *		mSuccessRate = 0.95 * mSuccessRate.
+	 * at recv...
+	 *      mSuccessRate = 0.95 * mSuccessRate + 0.05;
+	 *
+	 * But if we split into a two stage eqn. it'll work!
+	 * a
+	 *		mSuccessRate = 0.95 * mSuccessRate.
+	 * at recv...
+	 *      mSuccessRate +=  0.05;
+	 */
+	 
+	mSuccessRate += (1.0-TOU_SUCCESS_LPF_FACTOR); 
+
+	time_t now = time(NULL);	
+        mStunLastRecvResp = now;
+        mStunLastRecvAny = now;
 
 #ifdef DEBUG_UDP_STUNNER
 	locked_printStunList();
@@ -619,8 +752,13 @@ bool    UdpStunner::locked_checkExternalAddress()
 		 */
 
 		time_t age = (now - it->lastsend);
-		if (it->response && isExternalNet(&(it->eaddr.sin_addr)) &&
-			(it->failCount == 0) && (age < TOU_STUN_ADDR_MAX_AGE))
+		if (it->response && 
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+			( mAcceptLocalNet || isExternalNet(&(it->eaddr.sin_addr))) &&
+#else
+			(isExternalNet(&(it->eaddr.sin_addr))) &&
+#endif
+			(it->failCount == 0) && (age < (mTargetStunPeriod * 2)))
 		{
 			if (!found1)
 			{
@@ -675,8 +813,10 @@ bool    UdpStunner::locked_printStunList()
 
 	time_t now = time(NULL);
 	out << "locked_printStunList()" << std::endl;
-	out << "\tLastSend: " << now - mStunLastSend << std::endl;
-	out << "\tLastRecv: " << now - mStunLastRecv << std::endl;
+	out << "\tLastSendStun: " << now - mStunLastSendStun << std::endl;
+	out << "\tLastSendAny: " << now - mStunLastSendAny << std::endl;
+	out << "\tLastRecvResp: " << now - mStunLastRecvResp << std::endl;
+	out << "\tLastRecvAny: " << now - mStunLastRecvAny << std::endl;
 
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
@@ -705,7 +845,7 @@ bool    UdpStunner::getStunPeer(int idx, std::string &id,
 
 	std::list<TouStunPeer>::iterator it;
 	int i;
-	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++);
+	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++) ;
 
 	if (it != mStunList.end())
 	{

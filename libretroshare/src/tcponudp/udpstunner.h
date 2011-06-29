@@ -25,7 +25,13 @@
  *
  */
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif
+
+#ifndef WINDOWS_SYS
 #include <netinet/in.h>
+#endif
 
 #include "tcponudp/rsudpstack.h"
 #include "util/rsthreads.h"
@@ -60,7 +66,10 @@ class TouStunPeer
 	time_t lastsend;
 	uint32_t failCount;
 };
-	
+
+/*
+ * #define UDPSTUN_ALLOW_LOCALNET	1	
+ */
 
 class UdpStunner: public UdpSubReceiver
 {
@@ -69,13 +78,17 @@ class UdpStunner: public UdpSubReceiver
 	UdpStunner(UdpPublisher *pub);
 virtual ~UdpStunner() { return; }
 
-bool 	setStunKeepAlive(uint32_t required);
+#ifdef UDPSTUN_ALLOW_LOCALNET
+	// For Local Testing Mode.
+	void SetAcceptLocalNet();
+#endif
+
+void 	setTargetStunPeriod(uint32_t sec_per_stun);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
                 uint32_t &failCount, time_t &lastSend);
 
-bool    checkStunKeepAlive();
 bool	needStunPeers();
 
 bool    externalAddr(struct sockaddr_in &remote, uint8_t &stable);
@@ -89,17 +102,20 @@ virtual int status(std::ostream &out);
 
 	private:
 
+bool  	checkStunDesired();
+bool 	attemptStun();
+
+int     doStun(struct sockaddr_in stun_addr);
+bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool sent);
+
+
 	/* STUN handling */
 bool 	locked_handleStunPkt(void *data, int size, struct sockaddr_in &from);
 
-int     doStun(struct sockaddr_in stun_addr);
-
-	/* stun keepAlive */
 bool    locked_printStunList();
 bool    locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr);
 bool    locked_checkExternalAddress();
 
-bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool sent);
 
 	RsMutex stunMtx; /* for all class data (below) */
 
@@ -109,11 +125,21 @@ bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
 	time_t eaddrTime;
 
-	bool mStunKeepAlive;
-	time_t mStunLastRecv;
-	time_t mStunLastSend;
+	time_t mStunLastRecvResp;
+	time_t mStunLastRecvAny;
+	time_t mStunLastSendStun;
+	time_t mStunLastSendAny;
 
 	std::list<TouStunPeer> mStunList; /* potentials */
+
+#ifdef UDPSTUN_ALLOW_LOCALNET
+	// For Local Testing Mode.
+        bool mAcceptLocalNet;
+#endif
+
+	bool mPassiveStunMode;
+        uint32_t mTargetStunPeriod;
+	double mSuccessRate;
 
 };
 

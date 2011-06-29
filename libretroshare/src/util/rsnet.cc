@@ -26,6 +26,7 @@
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
 #include <string.h>
+#include <sstream>
 
 #ifdef WINDOWS_SYS
 #else
@@ -137,14 +138,21 @@ std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 }
 
 /* thread-safe version of inet_ntoa */
-
-static RsMutex inetMtx;
+/*** XXX, PROBLEM this function is not Thread-Safe.
+ * because it can be called in lots of other parts of the program.
+ * which could still collide with this one!
+ *
+ * Must rewrite to make truely thread-safe.
+ */
 
 std::string rs_inet_ntoa(struct in_addr in)
 {
-	RsStackMutex stack(inetMtx);
-
-	std::string addr(inet_ntoa(in));
-	return addr;
+	std::ostringstream str;
+	uint8_t *bytes = (uint8_t *) &(in.s_addr);
+	str << (int) bytes[0] << ".";
+	str << (int) bytes[1] << ".";
+	str << (int) bytes[2] << ".";
+	str << (int) bytes[3];
+	return str.str();
 }
 

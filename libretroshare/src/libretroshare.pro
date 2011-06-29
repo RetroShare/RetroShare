@@ -73,12 +73,16 @@ HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/tcppacket.h \
 		tcponudp/tcpstream.h \
 		tcponudp/tou.h \
+		tcponudp/udpstunner.h \
+		tcponudp/udprelay.h \
 
 SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/tcppacket.cc \
 		tcponudp/tcpstream.cc \
 		tcponudp/tou.cc \
 		tcponudp/bss_tou.c \
+		tcponudp/udpstunner.cc \
+		tcponudp/udprelay.cc \
 
 # These two aren't actually used (and don't compile) .... 
 # but could be useful later
