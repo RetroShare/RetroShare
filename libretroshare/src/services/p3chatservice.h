@@ -151,6 +151,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		 */
 		bool clearPrivateChatQueue(bool incoming, const std::string &id);
 
+	protected:
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
 
@@ -210,6 +211,21 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		std::string _custom_status_string ;
 		std::map<std::string,StateStringInfo> _state_strings ;
+};
+
+class p3ChatService::StateStringInfo
+{
+   public:
+	  StateStringInfo()
+	  {
+		  _custom_status_string = "" ;	// the custom status string of the peer
+		  _peer_is_new = false ;			// true when the peer has a new avatar
+		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
+	  }
+
+	  std::string _custom_status_string ;
+	  int _peer_is_new ;			// true when the peer has a new avatar
+	  int _own_is_new ;			// true when I myself a new avatar to send to this peer.
 };
 
 #endif // SERVICE_CHAT_HEADER
