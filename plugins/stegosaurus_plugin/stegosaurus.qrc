@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/StegoSaurus" >
+        <file>images/stegosaurus-128x128.png</file>
+        <file>images/stegosaurus-16x16.png</file>
+        <file>images/stegosaurus-256x256.png</file>
+        <file>images/stegosaurus-32x32.png</file>
+        <file>images/stegosaurus-48x48.png</file>
+    </qresource>
+</RCC>

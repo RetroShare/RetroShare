@@ -1,0 +1,196 @@
+retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+      - Updated tests for tcponudp. 
+
+  * Bug fixes
+      - fixed bug in search with size in MB. Caused crash due to deserialization error.
+      - Added Check for the existance of each Cache File before that are passed on the loader.
+        This should once and for-all remove the copy file warnings 
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 28 Jun 2011 19:35:46 +0100
+
+retroshare (0.5.1-0.4337~lucid) lucid; urgency=low
+
+  * Bug fixes
+      - Fixed the cache transfer killing bug (misplaced brackets)
+      - Fixed bug in pqissl wrongly casting a pointer to unsigned long, possibly impacting 64bit systems
+      - Fixed bug responsible for corrupting large packets. Solved the chat bug,
+        the errors in GetTlvString, the corrupted exchange of keys, location names, etc.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 25 Jun 2011 19:35:46 +0100
+
+retroshare (0.5.1-0.4331~lucid) lucid; urgency=low
+
+  * Improvements
+      - Started dev of plugin system. Works on linux, not yet on windows.
+      - Added gui for plugins in Settings
+      - Ported LinksCloud service as a plugin
+      - Improvement of the unit tests, and coverage calculations.
+      - Hash cache: missing root directories are not discarded anymore, but kept empty, 
+        unless the user really removes them explicitely.
+      - Reworked settings dialog
+      - Automatic add the recommended friend(s) as CC in the MessageComposer.
+      - Send plain text message instead of html, when the text contains no html specifics. 
+        This is a huge gain in forum posts size, up to a factor of 50
+      - Enabled Spanish translation
+      - Moved the fill function of the ForumsDialog to a QThread.
+      - Made multiple keyword search use an AND instead of an OR. 
+
+  * Bug fixes
+      - Fixed display of upload transfers
+      - Fixed the Missing Cache File bug.
+      - Added Old Cache Storage... so these can be retrieved.
+      - Connected up the CancelCacheFile() -> FileCancel.
+      - Removed "ipaddr=1" bug 
+      - Fixed uninitialized value in p3turtle
+      - Fixed html title bug in forum message when answering from news feed
+      - Fixed reaction of the checkbox "web of trust"
+      - Fixed calculation of the unread messages in MessagesDialog
+      - Corrected bug that would wipe out the hash cache file every other start
+      - Fixed crash in ForumsDialog 
+      - Fixed memory leak of the fill thread of the history browser
+      - Fixed refill of the threads tree after receiving a new message. Now the new message is expanded.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4239~lucid) lucid; urgency=low
+
+  * Improvements
+      - Optimized the functions for the forum messages.
+      - added a star functionality to forums
+      - placed private message editing into a separate window
+      - added a tab to graphically display turtle router statistics
+      - added automatic handling of turtle requests/search conjestion cases
+      - patched for compilation on OpenSuze11.4
+      - put links to peer and signers in certificate dialog
+      - updated french translation
+      - added copy/paste functionality of RS links to friends keys
+      - various GUI tweaks
+      - added to RetroShare Help page noew commands entry for "-r retroshare://..."
+      - added history cache optimisation to subscribed/client groups (functionality is now disabled)
+      - Added new RetroShare link format to write a message retroshare://message?id=...[&subject=...]
+      - Added new RetroShare link format to start a search retroshare://search?keywords=...
+      - Enabled on Private Chat to display for the status string smileys, when there is smiley codes used.
+
+  * Bug fixes
+      - Channels: Fixed bug related to opening cache hist file in text mode for windows
+      - Chat:     Sending large messages now works, thanks to RsChatMsgItem splitting (not 100% backward compatible, but avoids crashing)
+      - Chat:     Removed crash due to dynamic_cast onto a deleted pointer.
+      - Dbase:    Removed the difference of the separator for Linux and Windows.
+      - Dbase:    Removed extra "/" of the filename (e.g. "E://") of the hashed file when sharing a whole drive.
+      - Forums:   Fixed drag and drop of files to a forum message with utf8 chars.
+      - General:  Fixed recommend friend.
+      - Search:   Fixed sorting by date in search
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4179~lucid) lucid; urgency=low
+
+  * Improvements
+      - updated packaging for ubuntu natty, removed dependency on qt4-opengl
+      - updated french/german translations 
+      - updated icons 
+      - enabled drag and drop of directories in share manager
+
+  * Bug fixes
+      - suppred unwanted apparence of channel source id as channel source
+      - improved strategy for cleaning stalled cache transfers
+      - fixed leaking of sources in channel posts
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4166~lucid) lucid; urgency=low
+
+  * Improvements
+      - made flat view for shared files less CPU demanding
+      - added automated treatment of RS links from web browser
+
+  * Bug fixes
+      - removed potential segfault when decrypting cache file
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4154~lucid) lucid; urgency=low
+
+  * Improvements
+      - added flat view for shared files, with search, sorting and temporised update
+      - enabled file preview for partially downloaded files, for non windows users
+      - removed display of directories from search
+      - added auto-download option to channels
+      - added random bias to turtle search and tunnels at maximum depth, to prevent security issues
+      - added biased rerouting of tunnels requests to statistically optimize tunnel length
+      - made sign GPG button disabled by default
+      - optimized lookups of/into FileEntry structures (faster, better memory coalescence)
+      - added tunning for auto-check of shared directories, in config
+      - updated french/german translations
+      - saved the visible state of the avatar picture in private chat for the friend.
+      - removed own settings for news feed
+      - added tooltip for systray to display nickname and location
+      - made lock file warning more explicit
+
+  * Bug fixes
+      - channel download is now called only once for each channel post
+      - fixed cleaning issue of certificates. Added a button in cert dialog for cleaning. 
+      - removed automatic cleaning of certs.
+      - fixed bug with utf8 chatacters in %appdata% paths on windows
+      - fixed crash on shutdown when the cache loading is running
+      - fixed some stylesheets to use gradients instead of a background images,
+      - fixed thread leak in file checking due to not calling pthread_join() on finished thread
+      - showing uploads by default, instead of current transfer
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4097~lucid) lucid; urgency=low
+
+  * Improvements
+      - attempt to make GPG errors more verbose at cert exchange time
+      - translate QuickStartWizard, GenCertDialog and StartDialog into german
+      - fixed tab order of the upload and download settings in QuickStartWizard
+      - Added a basic description of the chat style
+      - Added share incoming directory to the QuickStartWizard, while keeping 
+        the Download directory shared by default
+
+  * Bug Fixes
+      - implemented a backward compatible fix for advance searching with size 
+        larger than 2Gb
+      - implemented a better management of tunnel requests
+
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 07 Mar 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4087~lucid) lucid; urgency=low
+
+  * Improvements
+      - The working (hashing) thread FileIndexMonitor is now stopped when RetroShare is closed.
+      - Removed tab focus from the toolbar and image buttons.
+      - Fixed german translation.
+
+  * Bug Fixes:
+      - Fixed a toolbar icon to display with a correct size on macosx
+      - Added missing return... which was causing crash at start during directory creation.
+      - Supressed memory leak due to not deleting a RsItem
+      - Suppressed potential SIGSEGV as exit time
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 07 Mar 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4069~lucid) lucid; urgency=low
+
+  * Improvements:
+      - Added a confirm to the delete history action.  
+      - Added the RetroShare icon to the password input window. 
+      - Added display of number of intermediate tunnels, and limited the number of displayed tunnel requests 
+
+  * Bug Fixes:
+      - Fixed potential SIGSEGV because of not checking returned pointer in DHT code. 
+      - Fixed memory leak in GUI responsible for high leaks in large networks.
+      - Fixed memory leak in p3distrib
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 28 Feb 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4059~lucid) lucid; urgency=low
+
+  * Release 0.5.1: 
+      New features (DHT, Channels, Network View), Improved stability w.r.t. previous version 0.5.0g
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 24 Feb 2010 21:35:46 +0100

@@ -1,0 +1,354 @@
+Bu, GNU Genel Kamu Lisansýnýn (GPL) Türkçe'ye gayrýresmi çevirisidir. Bu çeviri 
+Free Software Foundation tarafýndan yayýnlanmamýþ olup GNU GPL kullanan 
+yazýlýmlarýn daðýtým þartlarýný belirleme açýsýndan hukuki baðlayýcýlýðý yoktur 
+-- Hukuki açýdan yalnýzca GNU GPL'in Ýngilizce metni baðlayýcýdýr. Bu çeviri, 
+Türkçe kullanýcýlarýnýn GNU GPL'i daha iyi anlayabilmeleri için hazýrlanmýþtýr. 
+
+GNU Genel Kamu Lisansý (GPL) 
+
+Sürüm 2, Haziran 1991 
+
+Telif Hakký © 1989, 1991 Free Software Foundation, Inc. 59 Temple Place - Suite 
+330, Boston, MA 02111-1307, USA 
+
+Bu lisans dökümanýnýn birebir kopyalarýný yapma ve daðýtma izni herkese 
+verilmiþtir, fakat metinde deðiþiklik yapma izni yoktur. 
+
+GÝRÝÞ 
+
+Yazýlým lisanslarýnýn çoðu sizin yazýlýmý paylaþma ve deðiþtirme hakkýnýzýn 
+elinizden alýnmasý için hazýrlanmýþtýr. Buna karþýlýk, GNU Genel Kamu Lisansý 
+sizin serbest yazýlýmlarý deðiþtirme ve paylaþma hakkýnýzýn mahfuz tutulmasý ve 
+yazýlýmýn bütün kullanýcýlarý için serbest olmasý amacý ile yazýlmýþtýr. Bu 
+Genel Kamu Lisansý, Free Software Foundation'un çoðu yazýlýmý ve bu lisansý 
+kullanmayý düstur edinen diðer yazýlýmcýlarýn yazýlýmlarý için kullanýlmaktadýr. 
+(Free Software Foundation'un bazý yazýlýmlarý GNU Kitaplýk Genel Kamu Lisansý -- 
+GNU LGPL -- altýnda daðýtýlmaktadýr.) Siz de bu lisansý yazýlýmlarýnýza 
+uygulayabilirsiniz. 
+
+Serbest yazýlýmdan bahsettiðimiz zaman fiyattan deðil, özgürlükten bahsediyoruz. 
+Bizim Genel Kamu Lisanslarýmýz, sizin serbest yazýlýmlarýn kopyalarýný daðýtma 
+özgürlüðünüzü (ve isterseniz bu hizmet için para almanýzý), yazýlým kaynak 
+kodlarýnýn size daðýtým esnasýnda veya eðer isterseniz verilmesini, yazýlýmý 
+deðiþtirebilmenizi, yazýlýmýn parçalarýný yeni yazýlýmlar içerisinde 
+kullanabilmenizi ve bunlarý yapabileceðinizi bilmenizi saðlamaktadýr. 
+
+Haklarýnýzý koruyabilmemiz için sizin haklarýnýzý kýsýtlama veya sizin bu 
+haklarýnýzdan feragat etmenizi isteme yollarýný yasaklayýcý bazý kýsýtlamalar 
+getirmemiz gerekmektedir. Bu kýsýtlamalar eðer serbest yazýlým daðýtýyor veya 
+deðiþtiriyorsanýz size bazý yükümlülükler getirmektedir. 
+
+Örneðin böyle bir programýn kopyalarýný, bedava veya ücret karþýlýðý 
+daðýtýyorsanýz alýcýlara sizin sahip olduðunuz bütün haklarý saðlamalýsýnýz. 
+Onlarýn da kaynak kodlarýna sahip olmalarýný veya ulaþabilmelerini 
+saðlamalýsýnýz. Onlara da haklarýný bilebilmeleri için bu þartlarý 
+göstermelisiniz. 
+
+Haklarýnýzý iki koruma iki aþamada gerçekleþmektedir: 
+
+Yazýlýma telif hakký alýnmaktadýr. 
+
+Yazýlým lisansý olarak size, hukuki olarak, yazýlýmý kopyalama, daðýtma ve/veya 
+deðiþtirme hakký tanýyan bu lisans sunulmaktadýr. 
+
+Ayrýca, yazarlarýn ve bizim korunmamýz için bu serbest yazýlýmýn herhangi bir 
+garantisi olmadýðýný herkesin anlamasýný istiyoruz. Eðer yazýlým baþkasý 
+tarafýndan deðiþtirilmiþ ve deðiþtirilmiþ hali ile tarafýnýza ulaþtýrýlmýþ ise 
+alýcýlarýn, ellerinde olan yazýlýmýn orjinal olmadýðýný, dolayýsýyla baþkalarý 
+tarafýndan eklenen problemlerin ilk yazarlarýn þöhretlerine olumsuz etkide 
+bulunmamasý gerektiðini bilmelerini istiyoruz. 
+
+Son olarak, bütün serbest yazýlýmlar yazýlým patentleri tarafýndan sürekli 
+tehdit altýnda bulunmaktadýr. Serbest bir yazýlýmýn daðýtýcýlarýnýn bireysel 
+olarak patent lisansý almalarýný ve bu yol ile yazýlýmý müseccel hale 
+getirmelerine imkan vermemek istiyoruz. Bunu engellemek için, yazýlým için 
+alýnacak her patentin herkesin serbest kullanýmýna izin vermesi veya 
+patentlenmemesi gerektiðini açýk olarak ortaya koyuyoruz. 
+
+Kopyalama, daðýtým ve deðiþtirme ile ilgili kesin þart ve kayýtlar aþaðýda yer 
+almaktadýr. 
+
+KOPYALAMA, DAÐITIM VE DEÐÝÞTÝRME ÝLE ÝLGÝLÝ ÞART VE KAYITLAR 
+
+0. Bu Lisans, telif hakký sahibi tarafýndan içerisine bu Genel Kamu Lisansý 
+altýnda daðýtýldýðýna dair ibare konmuþ olan herhangi bir yazýlým veya baþka 
+eseri kapsamaktadýr. Aþaðýda "Yazýlým", bu kapsamdaki herhangi bir yazýlým veya 
+eser, "Yazýlýmý baz alan ürün", ise Yazýlým veya telif kanunu altýnda Yazýlým'dan 
+iþtikak etmiþ, yani Yazýlým'ýn tamamýný veya bir parçasýný, deðiþtirmeden veya 
+deðiþiklikler ile, veya baþka bir dile tercüme edilmiþ hali ile içeren herhangi 
+bir ürün, manasýnda kullanýlmaktadýr. (Bundan sonra tercüme "deðiþtirme" 
+kapsamýnda sýnýrsýz olarak içerilecektir.) Her ruhsat sahibine "siz" olarak 
+hitap edilmektedir. 
+
+Kopyalama, daðýtým ve deðiþtirme haricinde kalan faaliyetler bu Lisans'ýn 
+kapsamý dýþýndadýrlar. Yazýlým'ý çalýþtýrma eylemi sýnýrlandýrýlmamýþtýr ve 
+Yazýlým'ýn çýktýsý yalnýzca çýktýnýn içeriði (Yazýlým'ý çalýþtýrmak yolu ile 
+elde edilmesinden baðýmsýz olarak) Yazýlým'ý baz alan ürün kapsamýna girer ise 
+bu Lisans kapsamýndadýr. Bu koþulun saðlanýp saðlanmadýðý Yazýlým'ýn ne yaptýðý 
+ile ilgilidir. 
+
+1. Yazýlým'ýn kaynak kodlarýný birebir, aldýðýnýz þekilde, herhangi bir ortamda 
+ve vasýta ile, uygun ve görünür bir þekilde telif hakký bildirimi ve garantisiz 
+olduðuna dair bildirim koymak, bu Lisans'dan bahseden herhangi bir bildirimi 
+aynen muhafaza etmek ve bütün diðer alýcýlara Yazýlým ile birlikte bu Lisans'ýn 
+bir kopyasýný vermek þartý ile kopyalayabilir ve daðýtabilirsiniz. 
+
+Kopyalamak fiili iþlemi için bir ücret talep edebilir ve sizin seçiminize baðlý 
+olarak ücret karþýlýðý garanti verebilirsiniz. 
+
+2. Yazýlým'ýn kopyasýný veya kopyalarýný veya herhangi bir parçasýný 
+deðiþtirerek Yazýlým'ý baz alan ürün elde edebilir, bu deðiþiklikleri veya 
+ürünün kendisini yukarýda 1. bölümdeki þartlar dahilinde ve aþaðýda sýralanan 
+þartlarýn yerine getirilmesi koþulu ile kopyalayabilir ve daðýtabilirsiniz. 
+
+a) Deðiþtirilen dosyalarýn görünür bir þekilde dosyalarýn sizin tarafýnýzdan 
+deðiþtirildiðine dair, tarihli bir bildirim içermesini saðlamalýsýnýz. 
+
+b) Yazýlým'dan veya Yazýlým'ýn bir parçasýndan tamamen veya kýsmen iþtikak etmiþ 
+ve sizin tarafýnýzdan daðýtýlan veya yayýnlanan herhangi bir ürünün bütün üçüncü 
+þahýslara bu Lisans þartlarý altýnda ücretsiz olarak ruhsatlanmasýný 
+saðlamalýsýnýz. 
+
+c) Eðer deðiþtirilen yazýlým olaðan kullaným altýnda komutlarý interaktif olarak 
+alýyor ise, yazýlým, en olaðan kullaným için interaktif olarak çalýþtýrýldýðý 
+zaman uygun bir telif hakký bildirimi, garantisi olmadýðýna (veya sizin 
+tarafýnýzdan garanti verildiðine), kullanýcýlarýn bu yazýlýmý bu þartlar altýnda 
+tekrar daðýtabileceklerine, ve kullanýcýnýn bu Lisansýn bir kopyasýný nasýl 
+görebileceðine dair bir bildirim yazdýrmalý veya göstermelidir. (Ýstisna: Eðer 
+Yazýlým'ýn kendisi interaktif ise fakat böyle bir bildirimi olaðan kullaným 
+esnasýnda yazdýrmýyor ise, sizin Yazýlým'ý baz alan ürününüz böyle bir 
+bildirimde bulunmak zorunda deðildir.) 
+
+Bu þartlar deðiþtirilmiþ eserin tamamýný kapsamaktadýr. Eðer eserin tespit 
+edilebilir kýsýmlarý Yazýlým'dan iþtikak etmemiþ ise ve makul surette kendi 
+baþlarýna baðýmsýz ve ayrý eserler olarak kabul edilebilir ise, o zaman bu 
+Lisans ve þartlarý, bu parçalarý ayrý eser olarak daðýttýðýnýz zaman baðlayýcý 
+deðildir. Fakat, ayný parçalarý Yazýlým'ý baz alan bir ürün bütününün bir 
+parçasý olarak daðýttýðýnýz zaman bütünün daðýtýmý, diðer ruhsat sahiplerine 
+verilen izinlerin bütüne ait olduðu ve parçalarýna, yazarýnýn kim olduðuna 
+bakýlmaksýzýn bütün parçalarýna tek tek ve müþterek olarak uygulandýðý bu Lisans 
+þartlarýna uygun olmalýdýr. 
+
+Bu bölümün hedefi tamamen sizin tarafýnýzdan yazýlan bir eser üzerinde hak iddia 
+etmek veya sizin böyle bir eser üzerindeki haklarýnýza muhalefet etmek deðil, 
+Yazýlým'ý baz alan, Yazýlým'dan iþtikak etmiþ veya müþterek olarak ortaya 
+çýkarýlmýþ eserlerin daðýtýmýný kontrol etme haklarýný düzenlemektir. 
+
+Buna ek olarak, Yazýlým'ý baz almayan herhangi bir ürünün Yazýlým ile (veya 
+Yazýlým'ý baz alan bir ürün ile) bir bilgi saklama ortamýnda veya bir daðýtým 
+ortamýnda beraber tutulmasý diðer eseri bu Lisans kapsamýna sokmaz. 
+
+3. Yazýlým'ý ( veya 2. bölümde tanýmlandýðý hali ile onu baz alan bir ürünü) ara 
+derlenmiþ veya uygulama hali ile 1. ve 2. Bölüm'deki þartlar dahilinde ve 
+aþaðýda sýralanan yöntemlerden birisine uygun olarak kopyalayabilir ve 
+daðýtabilirsiniz. 
+
+a) Yaygýn olarak yazýlým daðýtýmýnda kullanýlan bir ortam üzerinde, yukarýda 1. 
+ve 2. Bölüm'de bulunan þartlar dahilinde, bilgisayar tarafýndan okunabilir 
+kaynak kodlarýnýn tamamý ile birlikte daðýtmak. 
+
+b)Herhangi bir üçüncü þahsa, fiziksel olarak daðýtýmý gerçekleþtirme 
+masrafýnýzdan daha fazla ücret almayarak, yaygýn olarak yazýlým daðýtýmýnda 
+kullanýlan bir ortam üzerinde, yukarýda 1. ve 2. Bölüm'de bulunan þartlar 
+dahilinde, bilgisayar tarafýndan okunabilir kaynak kodlarýnýn tamamýný 
+daðýtacaðýnýza dair en az üç yýl geçerli olacak yazýlý bir taahhütname ile 
+birlikte daðýtmak. 
+
+c)Size verilmiþ olan ilgili kaynak kodunu daðýtma taahhütnamesi ile birlikte 
+daðýtmak. (Bu alternatif yalnýzca ticari olmayan daðýtýmlar için ve yalnýzca siz 
+de yazýlýmý ara derlenmiþ veya uygulama biçeminde ve yukarýda b) bölümünde 
+anlatýlan þekli ile bir taahhütname ile birlikte almýþ iseniz geçerlidir.) 
+
+Bir eserin kaynak kodu, esere deðiþtirme yapmak için en uygun yöntem ve imkan 
+anlamýnda kullanýlmaktadýr. Uygulama biçeminde bir eser için, kaynak kodu, 
+içerdiði bütün parçalar için ilgili kaynak kodlarý, ilgili arayüz taným 
+dosyalarý ve derleme ve yükleme iþlemlerinde kullanýlan bütün betikler anlamýnda 
+kullanýlmaktadýr. Bir istisna olarak, daðýtýlan kaynak kodu, genelde uygulamanýn 
+üzerinde çalýþacaðý iþletim sisteminin ana parçalarý (derleyici, çekirdek v.b.) 
+ile birlikte daðýtýlan herhangi bir bileþeni,eðer ilgili bileþen, uygulama ile 
+birlikte daðýtýlmýyorsa, içermek zorunda deðildir. 
+
+Eðer uygulama veya ara derlenmiþ biçemde yazýlýmýn daðýtýmý belli bir yere 
+eriþim ve oradan kopyalama imkaný olarak yapýlýyorsa, ayný yerden, ayný koþullar 
+altýnda kaynak koduna eriþim imkaný saðlamak, üçüncü þahýslarýn ara derlenmiþ ve 
+uygulama biçemleri ile birlikte kaynak kodunu kopyalama zorunluluklarý olmasa 
+bile kaynak kodunu daðýtmak olarak kabul edilmektedir. 
+
+4. Yazýlým'ý bu Lisans'ta sarih olarak belirtilen þartlar haricinde kopyalayamaz, 
+deðiþtiremez, ruhsat hakkýný veremez ve daðýtamazsýnýz. Buna aykýrý herhangi bir 
+kopyalama, deðiþtirme, ruhsat hakký verme, veya daðýtýmda bulunma hükümsüzdür ve 
+böyle bir teþebbüs halinde bu Lisans altýndaki bütün haklarýnýz iptal edilir. 
+Sizden, bu Lisans kapsamýnda kopya veya hak almýþ olan üçüncü þahýslar, Lisans 
+þartlarýna uygunluklarýný devam ettirdikleri sürece, ruhsat haklarýný muhafaza 
+edeceklerdir. 
+
+5. Bu Lisans sizin tarafýnýzdan imzalanmadýðý için bu Lisans'ý kabul etmek 
+zorunda deðilsiniz. Fakat, size Yazýlým'ý veya onu baz alan ürünleri deðiþtirmek 
+veya daðýtmak için izin veren baþka bir belge yoktur. Eðer bu Lisans'ý kabul 
+etmiyorsanýz bu eylemler kanun tarafýndan sizin için yasaklanmýþtýr. Dolayýsýyla, 
+Yazýlým'ý (veya onu baz alan bir ürünü) deðiþtirmeniz veya daðýtmanýz bu Lisans'ý 
+ve Lisans'ýn Yazýlým'ý veya ondan iþtikak etmiþ bütün eserleri kopyalamak, 
+deðiþtirmek ve daðýtmak için getirdiði þart ve kayýtlarý kabul ettiðiniz 
+manasýna gelmektedir. 
+
+6. Yazýlým'ý (veya onu baz alan herhangi bir ürünü) yeniden daðýttýðýnýz her 
+defada alýcý, ilk ruhsat sahibinden otomatik olarak Yazýlým'ý bu þartlar ve 
+kayýtlar dahilinde kopyalamak, deðiþtirmek ve daðýtmak için ruhsat almaktadýr. 
+Alýcýnýn burada verilen haklarý kullanmasýna ek bir takým kýsýtlamalar 
+getiremezsiniz. Üçüncü þahýslarý bu Lisans mucibince hareket etmeðe mecbur etmek 
+sizin sorumluluk ve yükümlülüðünüz altýnda deðildir. 
+
+7. Eðer bir mahkeme kararý veya patent ihlal iddiasý veya herhangi baþka bir (patent 
+meseleleri ile sýnýrlý olmayan) sebep sonucunda size, bu Lisans'ýn þart ve 
+kayýtlarýna aykýrý olan bir takým (mahkeme kararý, özel anlaþma veya baþka bir 
+þekilde) kýsýtlamalar getirilirse, bu sizi bu Lisans þart ve kayýtlarýna uyma 
+mecburiyetinden serbest býrakmaz. Eðer ayný anda hem bu Lisans'ýn þartlarýný 
+yerine getiren hem de diðer kýsýtlamalara uygun olan bir þekilde Yazýlým'ý 
+daðýtamýyorsanýz, o zaman Yazýlým'ý daðýtamazsýnýz. Örneðin, eðer bir patent 
+lisansý direkt veya endirekt olarak sizden kopya alacak olan üçüncü þahýslarýn 
+bedel ödemeksizin Yazýlým'ý daðýtmalarýna hak tanýmýyorsa o zaman sizin hem bu 
+koþulu hem Lisans koþullarýný yerine getirmenizin tek yolu Yazýlým'ý daðýtmamak 
+olacaktýr. 
+
+Eðer bu bölümün herhangi bir parçasý herhangi bir þart altýnda uygulanamaz veya 
+hatalý bulunur ise o þartlar dahilinde bölümün geri kalan kýsmý, bütün diðer 
+þartlar altýnda da bölümün tamamý geçerlidir. 
+
+Bu bölümün amacý sizin patent haklarýný, herhangi bir mülkiyet hakkýný ihlal 
+etmenize yol açmak veya bu haklarýn geçerliliðine muhalefet etmenizi saðlamak 
+deðildir; bu bölümün bütün amacý kamu lisans uygulamalarý ile oluþturulan 
+serbest yazýlým daðýtým sisteminin bütünlüðünü ve iþlerliðini korumaktýr. Bu 
+sistemin tutarlý uygulanmasýna dayanarak pek çok kiþi bu sistemle daðýtýlan 
+geniþ yelpazedeki yazýlýmlara katkýda bulunmuþtur; yazýlýmýný bu veya baþka bir 
+sistemle daðýtmak kararý yazara aittir, herhangi bir kullanýcý bu kararý veremez. 
+
+Bu bölüm Lisans'ýn geri kalanýnýn doðurduðu sonuçlarýn ne olduðunu açýklýða 
+kavuþturmak amacýný gütmektedir. 
+
+8. Eðer Yazýlým'ýn kullanýmý ve/veya daðýtýmý bazý ülkelerde telif hakký taþýyan 
+arayüzler veya patentler yüzünden kýsýtlanýrsa, Yazýlým'ý bu Lisans kapsamýna 
+ilk koyan telif hakký sahibi, Yazýlým'ýn yalnýzca bu ülkeler haricinde 
+daðýtýlabileceðine dair açýk bir coðrafi daðýtým kýsýtlamasý koyabilir. Böyle 
+bir durumda bu Lisans bu kýsýtlamayý sanki Lisans'ýn içerisine yazýlmýþ gibi 
+kapsar. 
+
+9. Free Software Foundation zaman zaman Genel Kamu Lisansý'nýn yeni ve/veya 
+deðiþtirilmiþ biçimlerini yayýnlayabilir. Böyle yeni sürümler mana olarak 
+þimdiki haline benzer olacaktýr, fakat doðacak yeni problemler veya kaygýlara 
+cevap verecek þekilde detayda farklýlýk arzedebilir. 
+
+Her yeni biçime ayýrdedici bir sürüm numarasý verilmektedir. Eðer Yazýlým bir 
+sürüm numarasý belirtiyor ve "bu ve bundan sonraki sürümler" altýnda 
+daðýtýlýyorsa, belirtilen sürüm veya Free Software Foundation tarafýndan 
+yayýnlanan herhangi sonraki bir sürümün þart ve kayýtlarýna uymakta serbestsiniz. 
+Eðer Yazýlým Lisans için bir sürüm numarasý belirtmiyor ise, Free Software 
+Foundation tarafýndan yayýnlanmýþ olan herhangi bir sürümün þart ve kayýtlarýna 
+uymakta serbestsiniz. 
+
+10. Eðer bu Yazýlým'ýn parçalarýný daðýtým koþullarý farklý olan baþka serbest 
+yazýlýmlarýn içerisinde kullanmak isterseniz, yazara sorarak izin isteyin. Telif 
+hakký Free Software Foundation'a ait olan yazýlýmlar için Free Software 
+Foundation'a yazýn, bazen istisnalar kabul edilmektedir. Kararýmýz, serbest 
+yazýlýmlarýmýzdan iþtikak etmiþ yazýlýmlarýn serbest statülerini korumak ve 
+genel olarak yazýlýmlarýn yeniden kullanýlabilirliðini ve paylaþýmýný saðlamak 
+amaçlarý doðrultusunda þekillenecektir. 
+
+GARANTÝ YOKTUR 
+
+11. BU YAZILIM ÜCRETSÝZ OLARAK RUHSATLANDIÐI ÝÇÝN, YAZILIM ÝÇÝN ÝLGÝLÝ 
+KANUNLARIN ÝZÝN VERDÝÐÝ ÖLÇÜDE HERHANGÝ BÝR GARANTÝ VERÝLMEMEKTEDÝR. AKSÝ YAZILI 
+OLARAK BELÝRTÝLMEDÝÐÝ MÜDDETÇE TELÝF HAKKI SAHÝPLERÝ VE/VEYA BAÞKA ÞAHISLAR 
+YAZILIMI "OLDUÐU GÝBÝ", AÞÝKAR VEYA ZIMNEN, SATILABÝLÝRLÝÐÝ VEYA HERHANGÝ BÝR 
+AMACA UYGUNLUÐU DA DAHÝL OLMAK ÜZERE HÝÇBÝR GARANTÝ VERMEKSÝZÝN DAÐITMAKTADIRLAR. 
+YAZILIMIN KALÝTESÝ VEYA PERFORMANSI ÝLE ÝLGÝLÝ TÜM SORUNLAR SÝZE AÝTTÝR. 
+YAZILIMDA HERHANGÝ BÝR BOZUKLUKTAN DOLAYI DOÐABÝLECEK OLAN BÜTÜN SERVÝS, TAMÝR 
+VEYA DÜZELTME MASRAFLARI SÝZE AÝTTÝR. 
+
+12. ÝLGÝLÝ KANUNUN ÝCBAR ETTÝÐÝ DURUMLAR VEYA YAZILI ANLAÞMA HARÝCÝNDE HERHANGÝ 
+BÝR ÞEKÝLDE TELÝF HAKKI SAHÝBÝ VEYA YUKARIDA ÝZÝN VERÝLDÝÐÝ ÞEKÝLDE YAZILIMI 
+DEÐÝÞTÝREN VEYA YENÝDEN DAÐITAN HERHANGÝ BÝR KÝÞÝ, YAZILIMIN KULLANIMI VEYA 
+KULLANILAMAMASI (VEYA VERÝ KAYBI OLUÞMASI, VERÝNÝN YANLIÞ HALE GELMESÝ, SÝZÝN 
+VEYA ÜÇÜNCÜ ÞAHISLARIN ZARARA UÐRAMASI VEYA YAZILIMIN BAÞKA YAZILIMLARLA BERABER 
+ÇALIÞAMAMASI) YÜZÜNDEN OLUÞAN GENEL, ÖZEL, DOÐRUDAN YA DA DOLAYLI HERHANGÝ BÝR 
+ZARARDAN, BÖYLE BÝR TAZMÝNAT TALEBÝ TELÝF HAKKI SAHÝBÝ VEYA ÝLGÝLÝ KÝÞÝYE 
+BÝLDÝRÝLMÝÞ OLSA DAHÝ, SORUMLU DEÐÝLDÝR. 
+
+ÞART VE KAYITLARIN SONU 
+
+Bu Þartlar Yeni Yazýlýmlara Nasýl Uygulanýr 
+
+Eðer yeni bir yazýlým geliþtiriyor ve bunun kamuya en fazla düzeyde yarar 
+saðlamasýný istiyorsanýz, yazýlýmýnýzý herkesin daðýtýp, deðiþtirebileceði özgür 
+yazýlým haline getirmenizi öneriyoruz. 
+
+Bu koþullarý uygulamak için yazýlýma aþaðýdaki bildirimleri ekleyin. En saðlýklý 
+yöntem her kaynak kodu dosyasýnýn baþýna bu bildirimi ekleyerek garanti 
+olmadýðýna dair bilginin verildiðinden emin olmaktýr; her dosya en azýndan "copyright" 
+(telif hakký) satýrýný ve bildirimin tam metninin nerede bulunabileceðine dair 
+bilgi içermelidir. 
+
+{yazýlýmýn adýný ve ne yaptýðýný anlatan bir satýr.} 
+
+Copyright (C) {yýl} {yazarýn adý} 
+
+This program is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public License as published by the Free Software 
+Foundation; either version 2 of the License, or (at your option) any later 
+version. 
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY 
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+
+You should have received a copy of the GNU General Public License along with 
+this library; if not, write to the Free Software Foundation, Inc., 59 Temple 
+Place, Suite 330, Boston, MA 02111-1307 USA 
+
+Size normal ve elektronik posta ile nasýl ulaþýlabileceðine dair bilgi eklemeyi 
+unutmayýn. 
+
+Eðer yazýlýmýnýz interaktif ise, interaktif kipte baþlatýldýðý zaman gösterilen 
+kýsa bir bildirim koyun. 
+
+Gnomovizyon version 69, Copyright (C) yýl yazarýn adý
+Gnomovizyon comes with ABSOLUTELY NO WARRANTY; for details type `show w'. This 
+is free software, and you are welcome to redistribute it under certain 
+conditions; type `show c' for details. 
+
+Gnomovizyon sürüm 69, Telif hakký (C) yýl yazarýn adý
+Gnomovizyon için HÝÇ BÝR GARANTÝ verilmemektedir; detaylar için `show w' yazýn. 
+Bu bir serbest yazýlýmdýr ve belli koþullar altýnda yeniden daðýtýlabilir; 
+detaylar için `show c' yazýn. 
+
+Örnekte verilen `show w' ve `show c' komutlarý GNU Genel Kamu Lisansý'nýn ilgili 
+bölümlerini göstermelidir. Elbette kullanýlan komutlar daha farklý olabilir veya 
+yazýlýmýnýza uyan baþka yöntemlerle bu bildirim yapýlabilir. 
+
+Ýþvereninizin (eðer programcý olarak çalýþýyorsanýz) veya, eðer öðrenci iseniz, 
+okulunuzun telif haklarýndan feragat ettiklerine dair bir feragatname 
+imzalamalarýný isteyebilirsiniz. Aþaðýda bir örnek yer almaktadýr, isimleri 
+deðiþtirin: 
+
+GereksizÝþler, A.Þ., Mehmet Herhangibiri tarafýndan yazýlmýþ `AbidikGubidik' 
+yazýlýmýnda (kapýkolu çevirmekte kullanýlan bir yazýlým) olabilecek bütün telif 
+haklarýndan feragat eder. 
+
+{Yön Etici Ýmzasý}, 1 April 1990
+Yön Etici, GereksizÝþler Yetkilisi
+
+Bu Genel Kamu Lisansý yazýlýmýnýzýn serbest olmayan yazýlýmlarýn içerisine dahil 
+edilmesine imkan tanýmaz. Eðer yazýlýmýnýz bir kitaplýk ise, serbest olmayan 
+yazýlýmlarýn kitaplýðýnýza baðlanmasýna imkan tanýmak isteyebilirsiniz. Eðer 
+yapmak istediðiniz bu ise, bu Lisans yerine GNU Kýsýtlý Genel Kamu Lisansý'ný 
+kullanabilirsiniz. 
+
+Çeviren: Deniz Akkuþ Kanca, 2001
+Translated by: Deniz Akkuþ Kanca, 2001 
+
+
+This is an unofficial translation of the GNU General Public License into Turkish. 
+It was not published by the Free Software Foundation, and does not legally state 
+the distribution terms for software that uses the GNU GPL--only the original 
+English text of the GNU GPL does that. However, we hope that this translation 
+will help Turkish speakers understand the GNU GPL better. 
+

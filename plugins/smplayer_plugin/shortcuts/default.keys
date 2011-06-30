@@ -1,0 +1,193 @@
+open_file	Ctrl+F
+open_directory	
+open_playlist	
+open_vcd	
+open_audio_cd	
+open_dvd	
+open_dvd_folder	
+open_url	Ctrl+U
+close	Ctrl+X
+clear_recents	
+play	
+play_or_pause	Media Play
+pause	Space
+pause_and_frame_step	
+stop	Media Stop
+frame_step	.
+rewind1	Left
+rewind2	Down
+rewind3	PgDown
+forward1	Right
+forward2	Up
+forward3	PgUp
+repeat	
+jump_to	Ctrl+J
+normal_speed	Backspace
+halve_speed	{
+double_speed	}
+dec_speed	[
+inc_speed	]
+dec_speed_4	
+inc_speed_4	
+dec_speed_1	
+inc_speed_1	
+fullscreen	F
+compact	Ctrl+C
+video_equalizer	Ctrl+E
+screenshot	S
+video_preview	
+flip	
+mirror	
+postprocessing	
+autodetect_phase	
+deblock	
+dering	
+add_noise	
+add_letterbox	
+upscaling	
+audio_equalizer	
+mute	M
+decrease_volume	9, /
+increase_volume	0, *
+dec_audio_delay	-
+inc_audio_delay	+
+load_audio_file	
+unload_audio_file	
+extrastereo_filter	
+karaoke_filter	
+volnorm_filter	
+load_subs	
+unload_subs	
+dec_sub_delay	Z
+inc_sub_delay	X
+dec_sub_pos	R
+inc_sub_pos	T
+dec_sub_scale	Shift+R
+inc_sub_scale	Shift+T
+dec_sub_step	G
+inc_sub_step	Y
+use_ass_lib	
+use_closed_caption	
+use_forced_subs_only	
+show_find_sub_dialog	
+upload_subtitles	
+show_playlist	Ctrl+L
+show_file_properties	Ctrl+I
+frame_counter	
+motion_vectors	
+show_preferences	Ctrl+P
+show_mplayer_log	Ctrl+M
+show_smplayer_log	Ctrl+S
+faq	
+cl_options	
+tips	
+about_qt	
+about_smplayer	
+play_next	>
+play_prev	<
+move_up	Alt+Up
+move_down	Alt+Down
+move_left	Alt+Left
+move_right	Alt+Right
+inc_zoom	E
+dec_zoom	W
+reset_zoom	Shift+E
+auto_zoom	Shift+W
+zoom_169	Shift+A
+zoom_235	Shift+S
+exit_fullscreen	Esc
+next_osd	O
+dec_contrast	1
+inc_contrast	2
+dec_brightness	3
+inc_brightness	4
+dec_hue	5
+inc_hue	6
+dec_saturation	7
+inc_saturation	8
+dec_gamma	
+inc_gamma	
+next_video	
+next_audio	H
+next_subtitle	J
+next_chapter	@
+prev_chapter	!
+toggle_double_size	Ctrl+D
+reset_video_equalizer	
+reset_audio_equalizer	
+show_context_menu	
+next_aspect	A
+osd_none	
+osd_seek	
+osd_timer	
+osd_total	
+denoise_none	
+denoise_normal	
+denoise_soft	
+size_50	
+size_75	
+size_100	Ctrl+1
+size_125	
+size_150	
+size_175	
+size_200	Ctrl+2
+size_300	
+size_400	
+deinterlace_none	
+deinterlace_l5	
+deinterlace_yadif0	
+deinterlace_yadif1	
+deinterlace_lb	
+deinterlace_kern	
+channels_stereo	
+channels_surround	
+channels_ful51	
+stereo	
+left_channel	
+right_channel	
+aspect_detect	
+aspect_4:3	
+aspect_5:4	
+aspect_14:9	
+aspect_16:9	
+aspect_16:10	
+aspect_2.35:1	
+aspect_1:1	
+aspect_none	
+rotate_none	
+rotate_clockwise_flip	
+rotate_clockwise	
+rotate_counterclockwise	
+rotate_counterclockwise_flip	
+on_top_always	
+on_top_never	
+on_top_playing	
+dvdnav_up	Shift+Up
+dvdnav_down	Shift+Down
+dvdnav_left	Shift+Left
+dvdnav_right	Shift+Right
+dvdnav_menu	Shift+Return
+dvdnav_select	Return
+dvdnav_prev	Shift+Esc
+dvdnav_mouse	
+quit	
+show_tray_icon	
+restore/hide	
+pl_open	
+pl_save	
+pl_play	
+pl_next	N
+pl_prev	P
+pl_move_up	
+pl_move_down	
+pl_repeat	
+pl_shuffle	
+pl_preferences	
+pl_add_current	
+pl_add_files	
+pl_add_directory	
+pl_remove_selected	
+pl_remove_all	
+pl_edit	
+show_main_toolbar	F5
+show_language_toolbar	F6

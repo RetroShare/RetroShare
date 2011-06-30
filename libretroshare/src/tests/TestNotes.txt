@@ -1,0 +1,21 @@
+
+This file documents the high-level status of the regression cases.
+------------------------------------------------------------------------------------
+DIRECTORY	   STATUS			TODO		
+------------------------------------------------------------------------------------
+services	:  NO TESTS			write test framework for services.
+turtle		:  NO TESTS			write tests
+rsserver	:  NO TESTS			write tests
+upnp		:  NO TESTS			write tests.
+util		:  limited manual tests		complete tests, convert to automatic
+dbase		:  limited manual tests		complete tests, convert to automatic
+pqi		:  limited manual tests		complete tests, convert to automatic
+ft		:  manual tests			complete tests, convert to automatic
+tcponudp	:  manual tests			convert to automatic
+dht		:  manual tests			ignore - old code - to be replaced soon.
+serialiser	:  automatic tests		complete tests, update tests.
+
+
+
+
+

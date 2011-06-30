@@ -1,0 +1,7 @@
+RetroShare Todo list
+====================================================================
+
+Projects list and Todo list on Wiki:
+http://retroshare.sourceforge.net/wiki/index.php/Development
+
+http://retroshare.sourceforge.net/wiki/index.php/To_do_list

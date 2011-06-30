@@ -1,0 +1,1375 @@
+Changes for v0.5.1d
+
+* Found the CacheTransfer Killing Bug... misplaced brackets!
+* fixed a bug in pqissl and pqistreamer. The 2nd one was responsible for disconnections and errors in GetTlvString type
+* Fixed the Missing Cache File bug.
+* Added Old Cache Storage... so these can be retrieved.
+* Connected up the CancelCacheFile() -> FileCancel.
+* Removed ipaddr = 1 bug
+* added #ifdefs to remove debugging output in p3BitDht.
+* corrected uninitialized value
+* made "." be a plugin directory for debugging only
+* corrected display of uploaded size
+* made search case insentitive, by default
+* made the default behavior for multiple keywords search to eb an AND between keywords (emule style)
+* Fixed html title bug in the forum message when answering to a message in ForumMsgItem.
+* Fixed enabled sate of the new message buton in ForumsDialog.
+* moved Plugins page little bit to the top of the settings
+* PluginManager:
+  * Fixed compile under Windows.
+  * Removed CloseHandle of GetModuleHandle.
+  * Added missing return when the function entry of the plugin is NULL.
+  * Fixed checking for the extension ".dll".
+* Fixed reaction of the checkbox "web of trust". Now the list of unvalid gpg keys is shown or hide directly after the click.
+* Fixed calculation of the unread messages in MessagesDialog. The starred messages was not counted as unread.
+* Set some tree widgets to allColumnsShowFocus.
+* added settings page for plugins.
+* fixed LinksCloud Plugin
+* fixed plugin .pri file for windows and ubuntu
+* added dlopen method for windows. To be tested.
+* Added basic infrastructure to plugin system in libretroshare and retroshare-gui.
+* ported LinksCloud to a new plugin, and removed it from main sources
+* Made the hash-cache more compliant with mounted/network drives:
+  * corrected bug that would wipe out the cache file every other start
+  * missing root directories are not discarded anymore, but kept empty, unless the user really removes them
+* Reworked settings dialog:
+  * The settings page loads the data with the first show. The dialog now starts faster.
+  * Cleaned DirectoriesPage, removed the directory list and save the data with the OK button.
+* Automatic add the recommended friend(s) as CC in the MessageComposer.
+* Fixed crash in ForumsDialog (second try).
+* Added a "return" if QTreeWidgetItem = NULL, to stop crash.
+* Fixed crash in ForumsDialog (hopefully)
+* send plain text message instead of html, when the text contains no html specifics.
+* enabled new Spanish translation
+* Fixed refill of the threads tree after receiving a new message.
+* Now the new message is expanded.
+* Moved the fill function of the ForumsDialog to a QThread.
+* Fixed memory leak of the fill thread of the history browser.
+* cleaned display of TR statistics
+* Optimized the functions for the forum messages.
+  - used "const std::string&" for the parameters
+  - used "std::map" for the read status
+  - removed useless variables
+* Added new define DEBUG_FORUMS in ForumsDialog.cpp.
+* Added function to generate mass data for the forum messages.
+* Fixed german language for the FriendsDialog.
+* Added a placeholder text to the message list in the MessagesDialog (currently used when Starred is selected).
+* Connected the menu actions reply, reply all and forward in MessagesDialog. Now they work again.
+* Added missing Q_OBJECT to TreeStyle_RDM and fixed translation.
+* MessagesDialog:
+  - Renamed "Favorite Tags" to "Quick View".
+  - Added the quick view "Starred" to the list to show all messages signed with a star.
+* Redesigned the MessagesDialog to open the message in a new tab or new window for reading.
+* The MessageComposer is now only for writing a new message or editing a message from the draft box.
+* Added a new setting to the MessagePage.
+* Added a second tab for Router Statistics
+* renamed Tunneling to Router Requests
+* added missing info for search depths
+* improved tunnel statistics gui
+* moved TR filtering to beginning of TR handlign function. Makes it more consistent w.t.r. the displayed turtle statistics
+* added automatic limitation of turtle search and turtle tunnel requests as a function of current traffic
+* added additional statistics from turtle router. 
+* Moved the star to the first column in MessagesDialog.
+* Fixed debug output in FriendsDialog.
+* Show the selected tag in the tab title in MessagesDialog.
+* Included patch to compile on OpenSUSE 11.4 (from AsamK)
+* Added a star column for messages.
+* added a display of turtle search/tunnel requests over time, to help spotting potential spammers
+* Added to sort by Age when one day, one week or one month is selected
+* Fixed compile Problems on Ubuntu LTS
+* Added tags to the MessageComposer.
+* Added context menu to contact list in MessageComposer.
+* Show the RetroShare id of the peer and the signers of the key in ConfCertDialog as clickable links.
+* Disabled the CACHE_OPT code, until the duplicate cache entries is fixed.
+* re-worked printcache to analyse a large batch of cache files.
+* Added "Copy RetroShare Link" of the selected peer in PeersDialog and NetworkDialog.
+* Removed the + button in channels and forums and moved the post button to the right side. 
+* Added tooltip's for Messages columns
+* Added word wrap to the title of the thread and the subject of the message to avoid the stretch of the splitter.
+* Changed style sheet of the tags in MessageDialog to gradient color.
+* Added a new button in the forums dialog to download all links in the selected forum message.
+* Fixed style sheet of auto download button in channels.
+* Removed the difference of the separator for Linux and Windows.
+* Removed extra "/" of the filename (e.g. "E://") of the hashed file when sharing a whole drive.
+* fixed bug related to opening cache hist file in text mode for windows
+* added cleaning of cipher context to authssl encrypt decrypt functions 
+* added header to trustview which caused compilation error
+* Fixed drag and drop of files to a forum message with utf8 chars.
+* Fixed recommend friend.
+* fixed the layout of ForumMsgItem
+* added to RetroShare Help page new commands entry for "-r retroshare://..."
+* Fixed some more utf8 handling in the GUI.
+* Optimized creation of the RetroShare links for forum and channel messages.
+* added history cache optimisation to subscribed/client groups. 
+* added couple more ifdefines to remove cache opt code. 
+* fixed ForumsMsgItem to not stretch the widget
+* Added new RetroShare link format to write a message
+* retroshare://message?id=...[&subject=...]
+* Added clickable links in ForumMsgItem for the signer of the message to start the MessageComposer.
+* Fixed creation of the RetroShare links as anchor.
+* Corrected bugs in chat:
+  - sending large messages now works, thanks to RsChatMsgItem splitting (not 100% backward compatible, but avoids crashing)
+  - removed crash due to dynamic_cast onto a deleted pointer.
+* Enabled on Private Chat to display for the status string smileys, when there is smiley codes used.
+* Added new RetroShare link format to start a search retroshare://search?keywords=...
+* Enabled key "delete" to remove search results.
+* Removed the GoTo buttons from the feeds and added clickable links.
+* Enabled space to switch the read state in MessagesDialog and ForumsDialog.
+* Added the name and location to the title of the MainWindow.
+* Get the name and location for the window tile and tray tooltip only once at start.
+* Added title to the RetroShare file links shown as toolhelp "hash (size)".
+* added script to gather statistics from ppa repository
+* suppressed channel source ID from the file source peer list
+* updated base resolution of RS icon to 48x48
+* Enabled drag and drop in ShareManager to add folders to the share.
+* improved strategy of cleaning unfinished cache transfers
+* fixed display inconsistency in tunnel local src/dst when getPeerDetails() call fails
+* always set location for connected peer. Previous settign was causing blank location display
+
+Changes for v0.5.1c
+
+* added print-cache code to the tests suite
+* Added new RetroShare link formats:
+  - retroshare://forum?
+  - retroshare://channel?...
+* Added "Go to" from the news feed of forums and channels.
+* Added "Copy RetroShare Link" to the forum/channel tree and messagees.
+* Fixed style sheet of the auto download button in ChannelFeed.
+* Fixed wrong size of the transfered link from the command line in EventReceiver.
+* changed policy for canceling cache files: only inactive transfers get canceled now.
+* used tr1::unordered_set instead of std::set to store pointer checking list, as it is more efficients for lookups
+* Adding a link from the browser now starts RetroShare when it is not running.
+* Added handling of RetroShare protocol under Windows.
+* Added new command line parameter "-r retroshare://..." for adding links to the registered running RetroShare.
+* attempt at making remoteDirModel less CPU intentive. Remove potential deadlock source in SearchDialog.
+* removed potential seg fault with decrypting cache file
+* implemented a verification for tunnel results. 
+  - When the network gets heavily loaded, some tunnel results happen to get back twice. 
+  - This stops the tunnel result sibblings
+* fixed cache opt bug related to new msg notice being flagged up for historical msgs
+* New dialog for defining own colors for the private chat window.
+* enabled file preview again for non windows users, using a direct call to the file in partials
+*  added logic to deal with case where auto dl has been disabled then re-enabled after a manual download
+* for each channel msg post download request is now only called once. 
+* fast simplification of code in pqistreamer, and added a missing =null in p3service that could cause a bug
+* Removed automatic cleaning of the certificate in p3Peers::loadDetailsFromStringCert.
+* Added new button in ConnectFriendWizard for cleaning the certificate.
+* Fixed cleaning:
+  - added blank line after the armor header
+  - moved the checksum to a new line
+* auto download option:
+  - ability to enable and disable channels auto dl added
+  - added gui update to channel feed
+* reduced path to only parent directory, to make cost tractable
+* added random bias to search and tunnel request maximum depth
+* added random (and biased) re-routing of tunnel request to improve tunnel length.
+* added a column for directory in flat view of shared files
+* made sign GPG key button disabled by default, and added a tooltip. As this action cannot be undone,it must be performed knowingly.
+* Fixed Q_ASSERT in SharedFilesDialog on Windows.
+* Load and save the view type (flat or tree) in SharedFilesDialog.
+* fix the msg download problem 
+* part of code the disable auto download for channels
+* Fixed problem with utf characters in the %APPDATA% path on Windows.
+* made FileEntry derive from SmallObject class, to improve memory cache efficiency (50% time gained)
+* added some optimization to RequestDirDetails internal functions
+* improved sorting/selection in shared files flat mode
+* Fixed crash on shutdown of RetroShare, when the cache loading is running.
+  - Now the p3distrib threads are stopped before the instance of AuthGPG is deleted.
+* fixed some stylesheets to use gradients instead of a background images, to solve some problems
+* implemented an optional flat view for shared files that allows sorting by date/peer/name
+* restored the search for flat view only (very slow for tree view)
+* cleaned the code a bit: made two subclasses of RetroshareDirModel: TreeStyle_RDM and FlatStyle_RDM
+* turned some uint32_t into int, for file watch period (did not produce a bug, but was still incorrect)
+* added a missing pthread_join in file checking, that eventually caused a leak of thread resources
+* changed the order of check in tick() to allow cancelling a file that is being checked
+* removed the hash step from mutex protection
+* added error message when thread creation fails
+* made sign GPG key checkbox unchecked by default
+* made current index be 0 for showing uploads by default
+* added a checkbox in settings for tuning auto-check of shared directories
+* Saved the visible state of the avatar picture in private chat for the friend.
+* Added parameter to RSettingsWin::showYourself to show the options with a specific page for news feed.
+* added tooltip for systray to display nickname and location
+* Show last error (GetLastError) in log when lock file cannot be accessed on Windows.
+* fixed file leak in history cache opt
+* added main parts of history cache optimisation. disabled at the moment (has file leakage)
+* check-pointing work essentially, but in principle working,
+* added lockfile path info to the multiple-instances warning window in rs-
+* attempt to make GPG errors more verbose at cert exchange time
+* implemented a backward compatible fix for bug when searching (advanced) with max size larger than 2Gb
+* implemented a better management of tunnel requests
+* Added a basic description of the chat style.
+* disabled the default context menus for the QToolBar's
+* Share the download directory by default.
+* Removed member ftController::mShareDownloadDir and calculate the value from the shared directories.
+* Combined the two methods for share and unshare of the download dir.
+* Added share incoming directory to the QuickStartWizard.
+* Translate QuickStartWizard, GenCertDialog and StartDialog into german.
+* Fixed tab order of the upload and download settings in QuickStartWizard.
+* Fixed utf8 issues when the partial or the download dir is set to a utf8 dir.
+* Use the native dialog for selecting the shared folder.
+* Messages with plain text (like the welcome message) are shown correctly.
+* added missign destructors, causing some parasitic memory leaks
+
+Changes for v0.5.1b
+
+* Added missing return... which was crashing OSX during directory creation.
+* fixed a toolbar icon to display with a correct size on macosx
+* The working (hashing) thread FileIndexMonitor is now stopped when RetroShare is closed.
+* Removed tab focus from the toolbar and image buttons.
+* Fixd german translation.
+* supressed memory leak due to not deleting a RsItem
+* suppressed potential SIGSEGV as exit time
+* suppressed memory leak in GUI
+* Added a confirm to the delete history action.
+* Added the RetroShare icon to the password input window.
+* fixed soem other potential SIGSEGVs
+* fixed potential SIGSEGV because of not checking returned pointer
+
+Changes for v0.5.1a
+
+New features (DHT, Channels, Network View) 
+Improved stability w.r.t. previous version 0.5.0g"
+Added lots of improvements, check for details svn log entrys
+
+Changes for v0.5.0g
+
+* corrected a bug that caused file copy error: a closeFile() was missing when the file is complete. 
+
+
+Changes for v0.5.0f
+
+* restored the retroshare-nogui executable
+* bug corrections in cachestrapper
+* bug corrections in RsTunnelItem and p3tunnel
+* better error handling in rstunnelitem on windows
+* removed deadlock in data multiplex
+* improved p3disc info update
+
+
+Changes for v0.5.0e
+
+* Made a pass on the code in p3disc. 
+
+* Corrected some bugs:
+    - suppressed an unwanted return in packet treatment
+    - prevented sending info to a peer about itself
+    - changed askInfoToAllPeers() such as not to discard info from peers with
+      NODISC flag (because we especially need info for these)
+    - enabled receiving p3disc info even if p3discovery is disabled. Indeed,
+      disabeling p3disc is a measure of protection, so it should limit the 
+      export of p3disc info, not the import.
+    - removed test discarding info about dummy friends, because it is useless
+    - don't discard info about peers that have the NODISC flag (meaning that we
+      especially need info for them)
+    - added safety check about received GPG keys. Before we relied on this test
+      being performed by p3ConnMgr::addFriend()
+    - added some debug info
+
+* put correct (i.e. non conservative) size for RsDiscReply packets
+
+* corrected bug in rsdiscitem that prevented RsDiscReply packets to transfer cp serialiser/rsdiscitems.cc
+
+* switched ip addr finder to on by default (users seem to request it, and its not harmful)
+
+* automatic removal of file lists from deleted peers, at restart (After double check that this does not alter exchange of file lists in any way)
+
+* set heartbeat values to intermediate value
+
+* added verification for file size computation (bug correction)
+
+* augmented the heartbeat parameters, to reduce the stress on connections. Seems to help a lot when the traffic is high.
+
+Changes for v0.5.0d
+
+Package improvements:
+
+* suppressed package dependency on gpg-agent
+
+Improvements:
+
+* implemented a free disk space checking method, with a warning when running low
+* fixed proper sorting/updating of IP lists.
+* only keep the most recent port for identical ips.
+* don't start when the local address+port are already in use to avoid corrupting file lists, config files etc
+* added failure tests for fwrite
+* added tests against wrong ip 1.0.0.0 on MacOS
+
+Major bug corrections:
+
+* added missing locks in search requests into fimonitor.cc
+* Suppressed the possibility for browsable only files to be searched by hash from turtle router.
+* cleaned up some deadly code in rsdiscitems.cc, causing crashes
+* improved the security of size determination for file lists, that caused a chain reaction ending in crash at clients.
+* added missign lock in ftcontroller
+
+Minor bug corrections:
+
+* added a check to avoid (possibly rare) data races in data multiplex
+* suppressed double click action for download in Shared File lists
+
+
+Changes for v0.5.0c
+
+* Fixes two problems in the current group chat:
+  - the parser fails to embed two links in the same sentence
+  - the parser can potentially put smileys in the middle of <a> tags
+  Solution:
+  Since the message is in HTML, it is parsed into a DOM tree, then that DOM tree
+  is traversed and only the text nodes are parsed (see HandleRichText.cpp for details).
+  Bonus fixes:
+  - missing std:: for endl (which was falling back to its Qt counterpart)
+  - commenting useless code in PeersDialog::smileyWidgetgroupchat()
+  - replacing int by size_t
+  - RetroShare.pro now queries gpgme-config for its include path
+* fixed Memory leaks:
+	- getLocalInterfaces -> iptable = (MIB_IPADDRTABLE *) malloc(dwSize);
+	- main -> RshareSettings  *_settings = new RshareSettings();
+	- ExtAddrFinder::~ExtAddrFinder - use free for pointer allocated with malloc
+*	fixed RetroShare stopped responding during signing a key and asking for password.
+	- The QSingleShotTimer of ConfCertDialog wants to update the gui and stopped in  PeerItem::updateItem.
+* fixed chat bug that was truncating some messages, due to using a uint16_t to store a local size. Totally backward compatible.
+* fixed	crash with second open of HelpDialog solved
+* implemented a short circuit to local cache transfers. 
+  - This saves a large number of file descriptors, and improves reactivity of the software
+
+Changes for v0.5.0b
+
+* suppressed unused files 
+* added a checkpoint to file hashing, to save intermediate results every 10 GB
+* corrected memory leak in p3disc heart-beat system.
+* correct bug with selection with human readable delegate.
+* fixed the sorting of SearchDialog by age and by size, by using proper delegates for displaying the numbers. 
+* Removed the SR_REALSIZE_COL column, that is no longer necessary.
+* improved readability of cert generation dialog. Added tooltips, information, and wait cursor
+* corrected bug in search: files with size > 2Gb would not be added to transfers
+* corrected bug about persistence of default chunk strategy
+* fix a gui bug 
+* The settings in the settings window are only loaded once.
+* Saving the settings without changing the network settings doesn't shutdown the connections
+* Forwarding a message keep the attached recommended files  
+  - starting with ssl_id which has saved pword, and switching ids at start dialog
+	- secondary id may or may not have saved pword. 
+* added check for the result of fscanf
+* fixed compatibility issue with dyndns patch
+* Ported trunk commit 2780: Set the trust lvl to 3 when accepting a friend and the trust lvl is unknown.
+* Removed some potentially harmful (deadlock) code.
+* Put some printf into debugging #ifdef
+* Bug fix: Checkbox for automatic share of the incoming directory doesn't correctly set with setDown, use setChecked
+* ShareManager and RSettingsWin doesn't need to be created all the time
+* RSettingsWin: Save the last active page for the current runtime
+* ShareManager and DirectoryPage: Show changed shared directories direct after the change
+
+Changes for v0.5.0a
+
+* Bug fix: Checkbox for automatic share of the incoming directory doesn't correctly set with setDown, use setChecked
+* ShareManager and RSettingsWin doesn't need to be created all the time
+* RSettingsWin: Save the last active page for the current runtime
+* ShareManager and DirectoryPage: Show changed shared directories direct after the change
+* corrected handling of null strings in RsTlvBase::GetTlvString()
+* suppressed uninitialized memory read
+* added security check against malformed packets
+* added a security check to avoid core dump when a bad p3discReply packet is received
+* corrected other mismatched free/delete in avatar items
+* corrected mismatched free/delete in avatar items. Might have caused random crashes.
+* removed double definition of fingerprint
+* Fixed deadlock when asking for GPG passwd with gpg callback during session.
+* Added a method lockAllEvents()/unlockAllEvents() to remove timer updates in RsAutoUpdatePage
+* Updated passwd message to be more user-friendly
+* removed some warnings in authgpg.cc
+* added commandline option '-U' to allow user to access different profile 
+  - in the situation where autologin is enabled 
+  - BUG found (or rather autologin induced it), if one asks to make friends to a 
+  peer (in ConfCertDialog) 'within' a session that uses autologin it freezes   
+* add the internal counter mutex lock. Move the code of the rw mutec to the rsthreads.cc file
+* fix a code bug
+* add a read / write lock and refactor authgpg with it
+* Fix a bug when adding a cert
+* Fixed new message string
+* added gpg initialization for autologin
+  - your friends are not authenticated if not
+* Added support for Auto-login 
+  - Using rc4 to store ssl pword on file for linux,  for windows already using cryptprotect
+  - yes its not safe, but its the user's choice to keep pword or not
+  - consider using method closely hooked to linux kernel (another layer of obfuscation)
+  - windows i believe is stronger (because its proprietary/ heavily obfuscated)
+  - added checkbox in start dialog including warning (autologin not safe)
+  - added check box in gen setting to disable autologin on shutdown
+* block the notify callback of authgpg when the main windows is launched
+
+Changes for v0.5.0
+
+* corrected small bug in max search determination
+* Fixed translations on StatusBar display.
+* added a state message for examining files.
+* suppressed bug in settings
+* cleaned the code and debugged the icons
+* suppressed notify callback in main thread, resulting in deadlock, and explicitely askes for queued message passing for notifyError
+* bug fixed for deleting selected messages
+* change the timings and add some randomness for tcp connections
+* corrected one nasty bug due to missing return
+* added security to fd management, corrected bug causing bad fseeks
+* suppressed some uninitialized memory reads
+* made the key font Courier New to allow fixed-size display (makes the key much more readable)
+* suppressed uninitialized memory read in file transfer, also made the TransferDialog more secure
+* reset only ComboBox when close all search results
+* Fixed to display Dir Count in search
+* fixed to display Certificate in CryptoPage userfriendly
+* restored the courier new font, to allow the user to quickly vizualize errors in the keys (and to make the display less messy)
+* fixed open file, removed file action menu (already handled by the system)
+* fixed the update of message icon when there is a new message
+* fixed: enabled translation for Hide/Expand Button in Messages
+* cleaned some debug text, suppressed a few memory leaks
+* suppressed some memory leaks due to bad use of QMenu
+* fixed Folder Age with min_age
+* Change the status bar network display
+* add the ability to copy file details text
+
+Changes for v0.5.0 alpha 2
+
+* fixed a bug in download queue when ticking inactive files. Added a checkbox for showing cache transfers. Cleaned the dialog cleaning method.
+* suppresed bad lookup in _queue causing SIGV
+* utf8 fix
+* fixed RS link clipboard so that links can be imported/exported from both RS and the application clipboard.
+* cleaned the config->Transfers tab, made the default chunk strategy combobox effective.
+* fixed copy/paste of RS links in public and private chat
+* cleaned the code for anchorClick() in private chat
+* added return false for FileRequest of already have files
+* suppressed sources when the file is complete, in TransfersDialog.
+* added info and consistency for gpg sign and trust signification
+* added proper close for file transfers. This drops down the number of FDs from 250 to ... 50 svn status
+* added missing locks, that caused random crashes
+* improve the recieving of bad gpg keys
+* fixed RS link copy/paste from shared/search to transfers/forums/messages
+* increase udp ttl
+* fixed queue menu to work on multiple languages
+* change ssl binary encryption to aes debug code
+* change ssl binary encryption to aes
+* lower connection attempt timings
+* moved removal of sources off turtle mutex to avoid cross-lock. Added a closeFile() call when moving files out of the queue
+* fixed to get work again Chinese language , and load now Qt translations for widgets 
+* bug correction: avoid reading deleted pointers by moving saveDone() after the next line
+* added paste multiple links
+* added Timestamps for forum message feeds to know the date for each Forum Message.
+* cleaned the RS link code, factorized the parsing into a single class. 
+* fix a bug in the double file configuration loading
+* Fixed config forward compatibility problem
+  - note to self: C++ binary file not same as C binary file 
+* fixed sharemanager closing
+* fixed to enable translation suppor for Trustview strings
+* added for Queue actions own icons
+* clean up languages and corrected few languages
+* added proper dynamic suppression of sources from chunkmap, and updated the gui
+* suppressed bug in dynamic removal of sources. suppressed bug in string search. Suppressed some warnings.
+* added to show bytes and formates size FileTranferInfoWidget
+* suppressed debug msg
+* Added proper dl queue behavior
+	- suppressed old DwlQueue class
+	- turned mDownloads into a list of pointers to allow easy cross-info update between queue and std::map of downloads
+	- added queue functionality for moving files top/bottom/up/down
+	- added the necessary functions in rsFiles
+* reengineered the network dialog insert connect method
+* small design change of confcertdialog
+* restrain ip list exchange in an attempt for bug solving
+* small update of connct mgr and ssl connection
+* added Popularity view as icons to display for each channel
+* fixed to display pasted plaintext retroshare link in public chat in html format to get click able.
+* added Copy link as html format
+* fixed to get click able the retroshare links in privat chat
+* fixed only show a new message icon on tray when its a inbox message
+* small change in ext address detection
+* Added new 2-pass save method to configuration management
+  - essentially if any part of the file saving procedure fails, there should be config files whose signatures/hash match up
+* set a item foreground color for Inbox when get a new message, set gridsize for listwidget to 18
+* disable the extract failed certificate
+* make the gpg key list reading a little more error proof
+* change the pointer offset cast
+* added Download Time column to Downloads
+* added to DetailsDialog Download Time label
+* added formating the filesize's for FileTransferInfoWidget 
+* suppressed bug in file transfer while removing inactive chunks.
+* added initialisation of gpgmeKeySelected.
+* suppressed deadlock (mutex explicitely locked before thread exit)
+* Fixed to get again gui resize able , search not allowed more to set gui to a minimum size.
+* color adjustement for the network dialog
+* cleaned some memory leak in search, added 2 checkboxes for F2F and friend lists, made the "include own files" work properly
+* put the max result test at a more appropriate place in the code
+* fixed display of uploads tunnels
+* fixed trayicon tooltip
+* added change trayicon when get a new message, added change trust icons when trust is changed
+* added a spacer when counting Messages
+* added to installer to install gpg4win
+* change the color of peer display
+* change the button at the end the the connect friend wizard dialog
+* small fix on gencert dialog
+* small fix xhen loading detail from a string cert
+* change the gpg key list display
+* add own ip addresses list to profile widget
+* cleaned the code in fimonitor, modified the order of file hashing, and put a more explicit progress message while hashing.
+* connect PrintButton when not use the menu
+* disable the ssl cert config persistance
+* changed add friend icon
+* small bug correction in display of unknown hashes
+* added a spinbox to limit the number of search results (too many results may hang the gui)
+* add the tunnel config to server tab, and activate the tunnel on fresh configs
+* reimplemented the tunnel handshake
+* update implemention for new ssl encryption
+* remove some exit(1)
+* implementation of an SSL binary encryption
+* enabled Run Email Program for all platforms
+* moved the Buttons Make Friends,Deny Friend, Sig GPG Key to the Bottom of Trust Tab
+* improved the icons and Buttons in Trust Tab
+* use for color sources friends sources + anonymous sources
+* added missing NetworkWide flag to download from recommendation
+* added missing NetworkWide flag to download from recommendation
+* corrected bug in MessageDialog: friendly size was could not be properly converted into a real file size. We should not use it.
+* Properly close ssl connection when receiving error SYS_CALL. Bug solved
+* Fixed Load and Save own status Message in MessengerWindow works now.
+* suppressed unninitialisez memory reads
+* added context menu action for Paste retroshare Link for Create Forum Message
+* added smotth interpolation flag to image scaling
+* added Paste retroshare link's from a Button in Create Forum Message, and fixed to not allow send blank Forum Messages
+* improved display of turtle router info
+* changed the default Blog Header stylesheet, and use now white Text Color
+* include own files check option on search
+* fixed Resume/Pause context menu actions to work properly in all Translations
+* redesign Create Blog Msg Publisher with html Formating features and fixed textSize formating for Message Composer
+* added to can use *.gif pictures now too for Avatars.
+* added new French translation
+* search result filtering
+* fixed display issue in transfers (bad colors in crosses)
+* improved display of tunnel info
+* made gpg ids more consistent with the way gpg lists them
+* added more detailed info about gpg ids in login and gen certificates dialogs
+* fixed to get work properly Play and OpenFile when File Transfer is complete, Play action is only visible when its a media file. 
+* added additional info into FileTransferInfoWidget
+* added actions for disable/enable Emoticons in Privat Chat and for Clear Chat History
+* made complete files stay in the download list
+* fixed bug in clink on link in group chat
+* added action to GroupChats Button Menu for disable/enable Emoticon's
+* filter after search, not before search
+* fixed group chat download
+* fixed the recommend system
+* corrected compled completion and file progress issues
+* security fix to xprogressbar display
+* reengineered the transfer list display
+* reduced cost of progress bar display
+* fixed a bug on MessengerWindow context menu
+* messenger-window thumbnail photo update on change
+* set TextAlignment for sources to AlignRight
+* added to show files sources count in form of friend source/ total source
+* fixed stylesheets for Search LineEdit's frame
+* put a safety check against sockfd==-1
+* limited the search to > 3 chars
+* fixed remove a bug in peersdialog
+* added clear Filter Button for Messages Filter
+* change the profile widget to replave spinbox by lineedit
+* add some validators for gpg key gen
+* fixed setFocus for search LineEdit when clearing it.
+* improved turtle router display
+* added put the tunnel info as a new tab in the transfer page.
+* added hide reset button when search field is empty
+* fixed to get work again to hide/show the Messages Filelist
+* added a ending 0 to form a proper string in gpg cert export
+* fixed the left side friends list for Message Composer to get resizeable
+* fixed display issues: always -> all and void string -> unknown for turtle hashes
+* fixed Messages items to not editable
+* corrected bug in file completion
+* added Messages Filter for Attachments,Subject,From,Date,
+* rewrite MessagesDialog to use QTreeView with QStandardItemModel
+* added change search results text color when it has more sources
+* fixed stylesheets and enable OpenExternalLinks on InfoDialog 
+* change peericon when indicator changed
+* added Save Cert Button to ConnectFriend Wizard
+* added more info for Network Wide/Browsable to the Description Label in Share Manager
+* added icon for gpg key checkbox
+* improved design of profile generation
+
+Changes for v0.5.0 alpha 1
+
+* suppressed uninitialized memory read
+* corrected display bug in transfers
+* suppressed bug in creation of cache directories
+* suppressed uninitialized memory due to empty cache file
+* corrected invalid memory read due to bad deletion method in std::map
+* suppressed some uninitialised memory reads
+* add error info when gpg password is wrong
+* add gpg password static store when gpg password callback is called
+* added for indicator change Folder icons
+* solve a bug when the tmpcfg directory already exists under windows
+* added security check
+* suppressed possible SIGSEGV due to null information in certificate
+* improved display of turtle routing info, corrected some minor compilation issues
+* made the age indicator functional, by recursively changing color of directory/files
+* use CreatForumMsg when replying from News Feed
+* re implement chat parsing for urls. External web browser call might not work on some systems
+* fixed to show for Folders Type Folder, and set root is decorated to not download a dir when want expand it.
+* fix a bug in quick start wizard
+* added some security checks to turtle router
+* add new info to infodialog
+* redesign cert generation
+* set private key trust to full when the validity was unknown
+* solve a bug with gpg private key validity unknown
+* fix a bug wich stops multiple connection against the same peer
+* set a default Avatar when Friend has no Avatar for Privat Chat.
+* corrected issue in display of download/upload progress
+* Msg forums are now signed by ssl certs
+* corrected bug about display/selection of anonymous files
+* add gpg authentication everytime we got an ssl auth error
+* Added to send own Shared File as link to Public Chat
+* Added attaching files to Public Chat via Button/Drag and Drop
+* in message composer, connected peers are colored in blue
+* factorized and cleaned the common code between fistore.cc and fimonitor.cc, 
+  - improved the stability of FileIndex,
+  - improved the display in RemoteDirModel
+* store file certs as .rsc extension* 
+* changed the Date Format to dd.MM.yyyy for Messages
+* update start wizard, change gui settings directory into ssl profile directory (RestroShare.conf)
+* added NETWORK_WIDE flag to remote dir model download
+* added file priority strategy based on which files are requested first. This provides:
+	- equal file speed for files with equal (source,priority)
+	- effective priority speed for file of same source but different priority
+* removed state variable load/save from turtle, as it's not needed anymore (FileRequest re-opens tunnels as needed)
+* manage availability per peer instead of per file type: direct peer ids always assume file availability, while turtle tunnels don't
+* added Chunk size and Number of Chunks to DetailsDialog
+* solve a bug with gpg signature summary
+* add input validator for gpg key gen
+* improved peer name info in cachestrapper, gence improving dir names in file lists
+* added Copy and Send retroshare links for Search 
+* reduce the reading access to gpgme
+* added regular cleaning of inactive chunks and slices, so that they can be treated by a different peer
+* fixed don't send an empty gpg key in p3disc
+* Added Attach File feature for Messages
+* added RS_FILE_HINTS_NETWORK_WIDE for SubFileItem
+* added a icon for SSL item when connected
+* add the possibility to create a gpg key for new profile
+* add a check button to hide unconnected friends
+* update display of the profilewidget tab in peersdialog
+* don't send gpg key when all the ssl childs are on no disc or when we got no ssl child of it
+* ask disc info when adding a new friend
+* removing of own gpg key as friend when not necessary
+* Added a new CreateChannelMsg Dialog as replacement for GeneralMessage for Channels.
+* add key generation at startup if no gpg key found
+* Added Timestamp for each Channel Message
+* fixed up file attachement to forum msgs
+* fixed startup password handling, so that it wont ask for passwd again, hence preventing deadlocks when the gui is running
+* added to Send RetroShare link as html format for Messages
+* added to can download from Messages when clicked on link.
+* added when start connection attempt then change icon on location.
+* added functionnality to complain when a download is initiated over a file already in download, or in the HD
+* fixed downloading of links attached to forums
+* adding a deleted ssl friends persistence in p3disc to avoid getting back a friend we just deleted
+* fix a bug when removing friends
+* Added attaching files feature for Forums.
+* add a ssl check that the peer isn't already connected
+* change mutex lock in authgpg to avoid deadlock
+* send just connected peer info to all others
+* implementation of p3disc with new gpg key management
+* implement the remove friend for gpg key, and improve the tranfer of ip address from a dummy peer to a normal peer
+* change the design of the connect friends wizard
+* change the cert to gpg + some ssl details
+* show correct location when adding an sl cert
+* solve a bug in the load list af connect mgr
+* add persistence of accepted gpg key to connect with
+* remove the ssl cert storage. Big rewrite of ssl cert and friend management
+* allow ssl connection with a new cert, ad a friend when happening
+* implement the trust settings in the gui
+* make peer detail gui work for the gpg and the ssl id
+* make peer details work for GPG key in the network view gui
+* remove the store of the pgp password
+* implemented the sign, trust and validitty functionnality in authGPG. Fix a singleton bug for authGPG and authSSL
+* fix a bug in rsinit with pgp name
+* added flags to file request: RS_FILE_HINTS_ASSUME_AVAILABILITY to not wait/ask for chunk maps. 
+  - Used for cache transfer and also whenever the turtle traffic is not involved, such as chat file exchange, 
+  - and RS_FILE_HINTS_NETWORK_WIDE to force using turtle routing for traffic. 
+* Implemented chunk-based file transfer from partial sources. This in particular means:
+  - exchange of chunk availability maps from different peers
+  - correct handling of what is available to which source before asking the data
+  - correct display of chunks in the progress bars
+  - generalised the use of compressed chunk maps
+  - removed the size parameters from the hash search functions
+* added Reply to Author feature for each Forum Message
+* added Quick Start Wizard
+* added DetailsDialog for Transfers
+* added allowed Messages Information for each Forum if its a Anonymous or Authenticated Forum
+* added Smiley Support when creating new Forum Message
+* fix a bug in peer display
+* added when no Thread selected clear Forum Name ,Post Text and  Thread Title
+* added when switched Thread then clear last Post Text and  Thread Title
+* added a generic RsItem to the turtle router and the methods to route it. This makes the code much more elegant.
+* suppressed a cross mutex lock bug that happened rarely while digging tunnels
+* changed FileDetails in ftServer so that it's now possiblt to search for hashes of files being downloaded
+* improved the search code in ftdatamultiplex
+* added some comments to the turtle code
+* added Popularity/Date to Forum Details
+* Added Forum Details Dialog
+* show Popularity as ToolTip, removed not usefull items which stretches the Forums list
+* added use for Authd forum a different forum icon
+* Added setFocus feature, when creating new Thread or Reply Message change the Focus
+* suspending the auth code in p3distrib to allow forum messages to display.
+* implemented a visualisation for currently handled chunks, availability maps, and transfer info
+* implemented transfer protocol for chunk availability maps between peers (not enabled yet though)
+* don't do a tunnell connect attempt when already connected through a tunnel
+* use siglen -1 for both gpg2 and gpg1 verify signature
+* Add heartbeat (an empty packet, wich is 100 bytes long)  in p3disc every 4 seconds
+* start listener not immediately after net reset to avoid connection flickering.
+* stop ssl listening when already connected
+* stop sending data when ssl read returns 0
+* The external ip address is now set when a peer is connected if there is no upnp or extadrfinder
+* change packet version for rsdisc
+* fix a bug with ip serialization when ip or port is 0
+* add serializiont of own ipaddress list in rsdiscitem
+* send own ip address list with p3disc
+* change the way we handle our own address when recieving a disc item
+* fix a bug for own disc item and address list
+* fix a bug when connected through a tunnel
+* add a break in case ipAddressList don't deserialize correctly
+* add current local and external address to ip list
+* fix a bug in the udp timeout
+* DHT disabled, remove DHT from the gui
+* perform a net reset when network config is changed
+* change the address selection of udp connection
+* Add the tunneling connection.
+* Implemented load/save of chunk maps for current downloads.
+* added a ChunkMap class responsible for allocating new chunks to be downloaded, according to 
+	- a given chunk strategy
+	- the availablility map of each source 
+  - Integrated this into ftFileCreator
+  - added gui menu in file transfer+right click to change the chunk strategy: streaming vs. random
+* Added consistent display of chunk map
+* Modified and renamed the taskGraphPainterWidget to display info about currently selected file transfers.
+* Added a parent page widget (class RsAutoUpdatePage) to handle auto-update.
+* check to see a peer is connected before doing a net reset. 
+* remove upnp mapping before adding new ones
+* fix a bug when removing 1 from a zero siglen
+* simplified and improve ip list for connect attempt. Show the ip in the gui
+* add port filtering if 0 for address list
+* add address list to gui
+* add the ip list to the connect attemps
+* implemented the ipAddressList methods
+* change to only one ip list instead of one local and one remote
+* added the serializing of ip adress list, and the process to ad ip to the list when a connection is made to a peer
+* fix a bug when closing RS for upnp
+* update of network dialog when peer address was manualy changed.
+* display the best available ip for peers in the gui, instead of 0.0.0.0. This does only affect the gui, not the way ips are trusted and propagated.
+* setup reconnexion time to 5 seconds after reset
+* added reset of current connexions and force-reconnect when network configuration changes.
+* added dynamic local and external ip reconfiguration. I still need to reset connexions when changing ips.
+* made the passwd dialog call Qt-independent (thanks to notifyBase)
+* added gpgme and gpg error includes for win32
+* added a QTDialog for the gpg key passphrase input
+* fix uninitialized pointer fir libupnp
+* improving safe upnp shutdown
+* rewrite connection manager
+* improved stun check
+* improve time for initialisation of upnp
+* store exaddr from upnp to stun
+* improved stun failure resistance
+* added network reset ehancement for stun and udp
+* added reset net status when shutingdown
+* added loopback network interface compatibility
+* added new method for external upnp address
+* change back the engine setting. Now it should work with gpg1 and gpg2
+* fix the length of the encrypting ssl passphrase
+* remove the pgp/password fields for start dialog
+* set gpg2 engine for gpgme
+* change ssl password encryption to non symmetric
+* added new/old age indicator for shared files
+* added functionality to edit your own Personal message on Label click
+* suppressed sigsegv when deleting an unallocated object
+* fixed exchange of custom strings.
+* fixed the update of avatars in the various chat dialogs
+* added a "peer is typing" function to the group chat.
+* fixed up avatar exchange between peers
+* Added and ToolTip's For Avatar Button
+* added StatusMessage Dialog
+* added functionality to store own status to chat.cfg and to gui settings
+* added timers for update own status/avatar faster
+* edited ProfileWidget to open from there the StatusMessage Dialog
+* added code for storing and sending a custom status string (for e.g. saying "I'm not here now") in p3ChatService
+* added code for sending group chat status messages "peer is typing". 
+* Redesign MessageToaster
+* bugfix with rehashing already shared files 
+* Added ProfileWidget as Tab to show own Profile Details
+* make possible to download an entire found directory from search dialog
+* Added Age column for Search Results
+* added For Friends Context Menu a Title Widget
+* fixed the file size issue with turtle search
+* fixed keeps transfers sorted when redisplay them
+* replace double with one clik when browsing channels
+* few changes added to channel gui - list of groups and channels was replaced with a tree view
+* correct speed for non active downloads
+* GUI mods for new Forum sorting method. (Last Post)
+* added extra forum sorting method: Last Post.
+* Integrated turtle download to all kind of user-requested downloads
+* fixed core dump issue where AuthSSL::VerifySignBin() is called with NULL parameters. Still, this should not happen.
+* added Enable disable minimize to Tray feature when closing RetroShare
+* correct wrong the setting of the friend ip address when adding a contact
+* add debug info when ip address is set to an unknown peer
+* restored accounting for LAN transfer rates.
+* win32 fix for large file support
+* added to Friends own Avatar and own nick labels
+* Teaked the TrustView and NetworkView so that they only update when visible. Doing so, the CPU overload is only present when strictly needed.
+* downloading directories from search dialog
+* added support for searching and display directories
+* add random ssl password generation
+* hide ssl password when logging in
+* added encrypt and decrypt ssl password
+* add links to cloud from shared files dialog
+* improved turtle router console
+* Integrated the turtle search and download to the gui. Now the search handles both friend and turtle searching.
+* added a console in config->server->F2F routing to be able to visualize turtle routing statistics
+* download recommended files from inside links cloud dialog
+* corrected potentially harmful uninitialized memory reads
+* scroll to previously selected item(s) at next redisplay
+* fixed some mutex bugs and some pointer access bugs in the FileIndexStore
+* ensured early creation of cache directories to avoid "Cannot copy file" bug
+* added a pointer controller to findex to avoid RemoteDirModel to incidentally request for deleted pointers.
+* suppressed auto-collapse of directories when updated.
+* Share Flags:
+    - now, only files with the NETWORK_WIDE flag are searchable by turtle hopping.
+* added persistence to download queue
+* Share Flags:
+	- 1st attempt at displaying share properties in the SharedFlagsDialog.
+	- added share flags in DirDetails structure in place of Rank, that is not used anymore.
+* Share Flags:
+  - own directory browsing is now done through FileIndexMonitor. This allows:
+	- to browse shared directories independently of their flags
+	- to update files as they get hashed
+* Share Flags:
+  - now only the directories with flag "browsable" on are dispatched to friends
+  - when switching flags, directories are re-sent to friends
+* added checkbox for Preferences to can disable the Quit MessageBox
+* Changes to startup / login function to handle multiple accounts.
+* Switched on OpenPGP version by default
+* Major change to the way certificates are stored now defaults to ~/.retroshare/SSLID/
+* Added to supports Multiple Accounts on same computer.
+* Changend mods to use miniupnpc v1.3
+* Fixed Bug to use WriteFile instead of write under windows with gpgme.
+* Redesign of dwl queue - dwls will be enqueued and picked from there.
+* Changed to display the dwl queue in the transfers dialog 
+* Added implementation for priority download queue
+* Added switching colors for different uploads 
+* Changend Quit RetroShare MessageBox with "Yes" and not more with "OK"
+* Added use real name instead hash name for partials for preview
+* Fixed Bug to make pgp friend sharing work.
+* Fixes to the PGP Network View. 
+* Fixed corrected the connexion + one-way bug
+* Suppressed bug in RsTlvBinData that could return true even when the serialisation fails
+* Redesign SharedFiles, with splitted view for Remote and Local Dirs
+* Added show Friends RS version on peer details panel
+* Added download of whole directory from gui
+* Added Add Friend and Export Cert to Menu Button
+* Added Export Cert to Network Dialog Context menu
+* Added a Security Page for Options to View, Copy and Export own Public Key.
+* Added checkbox for group chat in Notify Options.
+* Added Copy Cert to Clipboard functionality for ConnectFriendWizard.
+* Added alert chat window when a new message was arrived
+* Added systray notification for group chat
+* Fixed proper update of shared list when list is modiffied from a different place
+* Changend default name for finished downloads directory was changed from Downloads to Incoming
+* Added share of incoming directory by default
+* Added storing Network Tab Position
+* Added for Check files button to change text when checking files
+* Change on the Timers of Network Menu that weren't wroking properlly
+* Fixed the context menu position of the Netwok Log
+* Fixed Bug - right click on local shared list won't abort the app
+* Fixed Bug for gpg connections.
+* Added open file/folder actions in local sharedfiles dialog
+* Added open or preview downloading files with a suitable application
+* Changend reorder transfer context menu
+* Added pause, resume and open folder actions added in context menu for Downloads
+* Added exchange of what version of retroshare our friends are using.
+* Restored backward compatibility in p3disc.
+
+Changes for v0.4.13c
+
+* Changed the order of upnp/stun and extaddrFinder to limit wrong analysis of firewalled situation
+* Bug fix about not acconting identical tunnels appropriately
+* Added missing continue which caused sigsegv
+* Added removal of turtle handling when canceling/ending a file transfer.
+* Added function for properly removing handled file hashes (turtle)
+* Made turtle tunnel ids asymetric
+* Cleaned up the documentation in p3turtle.h
+* Update tunnel time stamp only *on the way back* to avoid unsuccessful requests to update a timestamp.
+* Implemented persistence of which hashes are to be handled.
+* Fixed bug when storing incoming and partials directory
+* Added suppressed file download memory leak
+* Added new computing for download and upload rate. No more indiv rate settings
+* Added turtle tunnel management
+* Added delete autostart functionality when uninstall RetroShare on windows
+* Added functionality when collapse tree change treeicon
+* Added status icon in the name field of download peers 
+* Added view functionality to can set root decorated or not decorated for Downloads list.
+* Added integration of filetype icons on downloading files
+* First commit for the turtle download. It works without perturbating RS traffic, but still needs some (internal) smoothing
+* switched pgp password to encrypted entry
+* corrected NetworkDialog / NetworkView to use validLvl instead of trustLvl.
+* Major bugfixes to get PGP authentication finished.
+* p3disc now exchanges "Issuer" (pgp) certificates as well.
+* additional types for rsdiscitems.h
+* Bug Fix for NULL packet in p3service.cc
+* Allow unauthed SSL certificates to be added in AuthSSL - otherwise cant add new friends!
+* Only save authed SSL certificates.
+* Fixed ref/unref of PGP keys in AuthGPG
+* Added Mutex protection to AuthGPG
+* Added PGP reloading when key is imported, or signed.
+* Fixed PGP key signing.
+* Added Additional field validLvl to RsPeerDetails.
+* Corrected bug in connectFriendWizard gui
+
+Changes for v0.4.13b
+
+* Minor changes required to get the gui working with PGP, 
+* Improved NetworkView to show signatures, and friends.
+* Addition of openpgp support!
+* Added switch trayicon if online count is 0 or bigger
+* Added for FileTransfer: line is click-able, when collapsed it displays all download peers
+* Added for FileTransfer: sources column shows number of peers as online (offline)
+* Added for FileTransfer: name column for root/peer shows filename/peername
+* Added proper notification for network list update.
+* Added a make friend with friends of my friends option in the connection wizard.
+* Added Copy/Paste/Send retroshare//: file urls/links
+* Restored file recommendation feature. Improved it a little.
+* Corrected upload/download status in upload transfers
+* Disabled auto-login for non windows systems.
+* Suppressed Settings/ directory, as it_s not used at all
+* Suppressed unused smplayer action from left bar
+* set tooltip for OK Button
+* Added smooth avatar scaling
+* Setup connection so that deny friend in peers dialog updates the network view.
+* Changed popup fchat focus for typingnotification
+* Fixed don't send the extrafil link when SubFileItem is cancel (ERROR mode). Improve chat url parsing.
+* Fixed set the SubFileItem in error mode when cancelling from the GUI
+* Added a missing return after deletion of membio in case of fail read (error handling)
+* Suppressed double item deletion that happens rarely (error handling case)
+* Added More alternative colours to NetworkView.
+* Added tooltip for add file button
+* Fixed the history problem with SearchDialog
+* Refuse directory drop for extrafile
+* Added the drag'n drop file to popup chat, still a bug when adding a directory
+* Enabled double click download feature for SearchDialog
+* Enabled reseting keywords in SearchDialog
+* Enabled translation for STATUS strings
+* Fixed NetworkView lets get refresh the graph at rs start too
+* Fixed startMinized now it works
+* Enabled for the MessageBox'es translations support
+
+Changes for v0.4.13a
+
+* Merged peer detail dialogs from network and friends tab
+* Enabled multiple selections via mouse,keyboard,CTRL + A ...
+* Added feature to can delete files via Qt::Key_Delete
+* Added messagebox when cancel files from Transfers
+* Modified libretroshare to compile on Cygwin / MinGW.
+* Removed exceptions from serialiser (had troubles previously on win32).
+* Modified code in startup (enable CRYPTO structure) and rsdir.
+* Remove the downloads item for file index cache transfer
+* Set fileIndex cache transfer timeout to 300sec
+* Corrected setLogInfo core dump state.
+* Added add the ip adress to the cert text for friend add wizard
+* Changed Bad Packet message to log in network dialog
+* Added "peer is typing" functionality to private chat.
+* Moved Network Status Tab from Preferences to NetworkDialog
+* Fixed the total Transfer rate is lower than the individual rate.
+* Added grey user icon for statusbar when no Online Friends avaible else blue
+* Added NAT status to statusbar
+* Added DHT status to statusbar
+* Added Network Status for Log Tab too
+* Enabled toolbar moveable to all toolbar areas.
+* Added view button for Network Tabs
+
+Changes for v0.4.12d
+
+* Added partially completed authssl.cc, as we move towards openpgp authentication.
+* Tweaks, and removed debug statements.
+* Added missing files (extaddrfinder & p3turtle) to Makefiles.
+* Turtle tunnel management. In progress.
+* win32 compilation fix
+* Corrected potential mutex lock problem
+* Implemented turtle tunneling. 
+* Fixed the bug with copypasting certifcates.
+* Added new icon for Notify
+* Set correct icon for Deny Friend Context Menu
+* Added qmovie for InDirectoryCheck
+* Fixed libretroshare.pro for win32 compile
+* Polished drop down menus in the network tab
+* Added Feature: user can set commands fo opening shared files with some external applications. First revision. 
+* Added automatic slicing of search response packets so as to cope with streaming packet size requirements.
+* Added NULL gard in dhtPublish()
+* Added a checkbox to control the use of external servers for ip determination.
+* put back Network on the left
+* NetworkDialog: - set the info in columns about trust to be more explicit
+* NetworkDialog: - changed dark green into light green to comply with colors in the trust matrix (it's also more readable in light green)
+* NetworkDialog: - corrected trust strings that appeared in the Last Contact column
+* Changed "generate certificate" in connect friends wizard into "export my certificate..." which is more appropriate
+* Added missing file entry
+* Corrected compilation pb + pushed news feed out of release version + put back network in left most place.
+* Added server-based ip determination as a fallback to existing methods. Forced Dht publishing as soon as an external ip is known
+* Replaced doquit with normal QMessageBox
+* Fixed compilation fix for cygwin
+* Corrected the 127.0.0.1 persistency bug
+* Fixed file rename by using a common rsDirUtil function
+* Added Wizard for adding friends
+
+Changes for v0.4.12c
+
+For the sake of increased stability, internal file formats have slightly
+changed. As a result, prople using the new version will have to re-trust
+their friends. This can be done efficiently using the drop down menu in
+the network view.
+
+* Fixed win32 compatibility
+* Suppressed #ifdef TURTLE_HOPPING from libretroshare, as it s not anymore needed.
+* Added a direct make friend button in the drop down list of network dialog
+* Suppressed misleading ssl error.
+* Secured the output of .cfg files and cache files. Now closing RS or serializing errors while saving these files cannot corrupt them anymore.
+* Added a callback to notify when clicking on make friend button
+* Made own avatar persistent. Next task will be to make friends avatars persistent too
+* Fixed file moving between different file systems, which forced people to have their Incoming directory on the same file system than the Partials directory
+* Invitation text contains only certificate information; 
+* Buttons for saving/opening pqi-files become more noticeable.
+* Removed "Email" button from invite dialog. 
+* Update, during the GUI for invitation changes
+* Turtle search now connected to the gui. Next move: digg turtle tunnels for fast download.
+* Turtle dev. Worked on serialisation, mainly, and connexion to gui.
+* Finished turtle router.Next task: turtle serializer
+* Fixed bug: the MainWindow object wasn't deleted.
+* Added history support in group chat; almost stable;
+* Suppressed uninitialized memory read
+* Fixed the ssl connexion problem
+* Added another anti-lag strategy in pqissl.cc. This is to avoid connexion problems
+* Started turtle hopping implementation.
+* Added a rsicontrol global variable for compatibility with new notification method
+* Added a workarround for the packet sending problem.
+* Improved the gui to increase responsiveness (e.g. forum display, network discovery info, friends, msg deletion and selection)
+* Improved the notification model so that it uses Qt signals to avoid core dumps,
+* Update Wiki Link in Help Dialog
+* Fixed win32 compilation compatibility
+* Suppressed some debuggign output.
+* Fixed a bug with wrong packet size.
+* Set Refresh Rate for down/up speed on statusbar to 1000
+* Added Uptime and Since to Statistics
+
+Changes for v0.4.12b
+
+* Suppressed an initialized memory read
+* Changed PreMods() and postMods() functions into signals in notifyqt
+* Added functionality for Bandwidth Graph
+* Suppressed bug when creating new certificate
+* Added Reply to all Button for Messages
+* Changed pointer cast from int to void
+* Changed retroshare invite so that it does not contain signatures anymore.
+* Small fix to upload transfer rates
+* Plugin system: plugin management features added (loading and unloading)
+* Fixed bugs in upload speed computation
+* Added info for upload peers and rate in Transfer tab
+* Enabled translations for QString's in RemoteDirModel
+* Fixed Bug: incorrect creation of the plugin
+* Fixed Launch Email Bug
+* Fixed Save cert to File
+
+Changes for v0.4.12a
+
+* Implemented plugin system: first demo version
+* Removed streching for Remote Directories
+* Added icon Label for Messages Toaster
+* Set userfriendly Column names for Remote/local Directories to Friends Directories and My Directories
+* Removed not needed path show in Rank
+* Set Qt::IgnoreAspectRatio for pictures
+* Added for MessengerWindow the new getAvatar and updateAvatar function
+* Added protocol for Avatar exchange in private chat.
+* Redesign SharedFiles dialog with Tabs 
+* Set Font Size for MainWindow ToolBar to 9
+* Corrected two nasty bugs in file transfer which caused random core dumps (at least on ubuntu 32 and 64 bits)
+* Fixed font formating MAC OS X releated
+* Set colors for Online, Friends, Network and set First Tab of Peer Details to first
+* Set for Online Toaster Peer Online Bold and set TextColor
+* Fixed directory problem wirh emoticons
+* Added darkBlue TextColor for Connected Friend, Set TextColor Bold
+* Put emoticon images and .acs file into qrc image file
+* Suppressed line with pouty.png which caused a bug by altering actual html code.
+* Added a layout to hashing info widget to get it left-aligned
+* Regression of ft/ftcontroler.{h,cc} to svn=932 because the 933 commit (download queue) causes a large scope bug.
+* Added to remove when deinstalling RetroShare to delete from APPDATA cache,Partials folder, *.cfg,*.log and *.conf files
+* Added a "Trusts me" text field to the peer details dialog
+* Replaced toText in MessagesDialog QTextEdit with QTextBrowser to get use a scrollbar 
+* Set context menu icon for Connect To Friend
+* Fixed OnlineToaster's Picture Label Layout
+* Set for Make Friend a Header Image and Text
+* Added a display for file hashing activity using notifyQt class
+* Corrected a bug in openDHT for 64 bits systems
+* Added a Menu Entry for KDE/Gnome/XFCe
+* Updated Changelog for .deb Packages
+* Fixed time out unused uploads
+* Removed march=i686 commandline options, causes problems while 64Bit compiling.
+* Fixed error: ‘UINT_MAX’ was not declared in this scope
+* Added a Doxygen configuration file in order to help me sort out libretroshare...
+* Redesign Login Dialog
+* Redesign Online Toaster
+* Switched to use autostart,it will be bether then Run with Registry
+* Added for Messenger Window Share Manager Button
+* Added for systray contextmenu Open Messages
+* Set for MessengerWindow to use RWindow now
+* Set for the Avatar Button a Background image
+* Set for Avatar Pictures to use IgnoreAspectRatio
+* Added QMessagesBox feature for the ShareManager's Add/Remove
+* Fixed DirectoriesDialogs's Add Folder method.
+* Set ToolTips for The DirectoriesDialogs's Buttons
+* Added a callback in MainWindow.cpp to display info about hashed files.
+* Added a callback to fimonitor to be able to keep track of file hashing
+* Added svn version number in build script
+* Added basic set avatar picture for MessengerWindow and Privat Chat
+* Added second tab in Peer Details for Trust Settings
+* Added Last Contact info to Peer Details
+* Added doubleclick download feature
+* Update Preferences and Settings forms
+* Added context menu for Share Manager to can remove a Shared Directory
+* Update RemoteDirModel's extension's
+* Added tool tip and info to peer that trust you, in NetworkDialog
+* small improvement in display of 3rd party trust info
+* Added the infrastructure for propagating trust info through third parties
+* Added to clean up completed cache files automatically
+* Added to display peer names in transfers dialog
+* Added two hidden columns in searchresultTableWidget to store the real size and srcId hash
+* Added for Partials Directory to Directories
+* Added New Share Manager
+
+Changes for v0.4.11d
+
+* Bugfix for launching desktop support.
+* Small fix to universal script and some extra debugging.
+* switched off some debugging.
+* fixed tickrate slow down (when no activity)
+* added extra flags to interface.
+* Added NewsFeed / Popup / Chat Configuration options.
+* Gui modifications to support authenticated forums.
+* Added Authenticated Forums.
+* add Sign / Verify functions to authxpgp
+* sign/verify messages, and control flags for p3distrib/p3forums.
+* add authmgr to p3distrib etc.
+* added AUTH flags to rsforums interface.
+* implement function for clearCompleted on filetransfer panel
+* added display for author of forum posts
+* suppressed uninitialized memory read.
+* remove temporary file when cancel file transfer
+* Bugfixes for correct Channels display.
+* Corrected search in ftserver.
+* Updated avail in controller FileDetails.
+* Fixed Channel: SubFileItem display and play.
+* added openFile function to MainWindow. (uses QtDesktopServices)
+* disabled PlayAll in ChanMsgItem (as we can't do this).
+* enabled play() once files downloaded. 
+
+Changes for v0.4.11c
+
+* suppressed uninitialized memory read.
+* remove temporary file when cancel file transfer
+* Bugfixes for correct Channels display.
+* Corrected search in ftserver.
+* Updated avail in controller FileDetails.
+* Fixed Channel: SubFileItem display and play.
+* added openFile function to MainWindow. (uses QtDesktopServices)
+* disabled PlayAll in ChanMsgItem (as we can't do this).
+* enabled play() once files downloaded. 
+* tested play audio/video files on MacOSX
+* Fixed Add Friend and Invite Frieds Dialogs
+* Set  minimum size for Channels frame
+* Set minimum size for Friends TreeWidget
+* add code for cancen file transfer
+* Tweaked tabs and order. 
+* Added NewsFeed.
+* Added Template functions for ssl+xpgp code.
+* changed trust table name into trust matrix
+* Tuned the matrix to show sub-networks
+* Added a function to  not allow to create a Forum/Channel without a Name.
+* Fixed sorting in Friends
+* disabled auto scroll for Friends Widgett
+* added retroshare own logo for Network icon
+* Fixed layouts/margins/spacings of the Create Forum Message Dialog
+* Fixed Create Forum Message Dialog 
+* Fixed some Displaying isues for statusbar
+* Enabled save() function in SubFileItems.
+* Improved Channel Menu Item: added Icon and popularity.
+* Reduced most of the margins in Channel Feed.
+* updated libretroshare interface files.
+* Added Function to move an 'extraFile' to another location.This will be used to retrieve channel files.
+* set correct WindowsTitle for Create Channel
+* Added Forward Message Button with Forward feature 
+* set for Reply Message/Forward Message correct WindowTitle from  Message Title
+* Added for Forward Message insertForwardPastedText() function to add Forwarded Message in  a <blockquote>
+* suppressed double mutex lock
+* added files gpgauthmgr.cc and gpgauthmgr.h this provides the new GPG implementation 
+* added API to store all GPG keys in a map
+* added APIs to get GPG certificate IDs
+* added APIs to get Details from the Certificates
+* set Text Alignments for some columns to Center
+* missing file for defining sleep() etc under windows.
+* fixed SharedFiles columns
+
+Changes for v0.4.11b
+
+* Bugfixes for 'sleep' issues under windows.
+* Extra debugging for transfer module.
+* Fixed channel directory creation. (extra 'break' statement)
+* Fixed very slow transfers on Windows platform (uninitialised variable)
+* Added Mutex protection to the core comms (pqihandler + pqipersongrp).
+* Added a Mutex to the ServiceServer.
+* Fixed, transfer start when subscribing to channel.
+* Cleaned up p3distrib callbacks.
+* Added holdQueue for transfer startup in controller. 
+* Fixed partial resume.
+* Updated Mac script to only build library.
+* Fixed compatibility bug in file transfer...
+* Can now communicate between V0.4.9b and V0.4.11+
+* Improvements to the file transfer algorithm.
+* Increased max individual file speed to 1MB/s
+* Bugfixes in CreateForumMsg 
+* Added auto update feature to the trust matrix
+* Implemented a big trust table where people can see who trusts who, and who is trusted by who.
+* Added Configurations to new file transfer.
+* Enabled config in p3file-startup.cc
+* Enabled resumeTransfers
+* Added new RsFileConfigItem to serialiser.
+* Extended ftFiMonitor to use Configuration.
+* Bug fix to add/remove Shared Dirs.
+* Increased Channel/forum periods to 3/12 months.
+* Create channels directory correctly.
+* Added File Transfers to Config List.
+* Connected statusChange() monitor callback.
+* Fixed file sources in transfermodule.
+* Fixed up transfer restarts / sleeps.
+* Enabled opening files read only.
+* More bugfixes for file transfer.
+* Added File Transfer / ExtraList to channels.
+* Fixed mutex deadlock.
+* Added slow transfer for background tf.
+* Added checks to FileRequest to accumulate peers.
+* Added ExtraList callback
+* Show Date in Network Tab using QT functions.
+* Added multiple selection to the msgWidget QTreeView and setup context menu in accordance
+* Added Delete key function to easily delete messages
+* Enabled (and implemented) response to message
+* Enabled for Uploads progess xprogressbar
+* Added for Files Treeview File Typ icons 
+* Added for Files Treeview Folder icons
+* Added Help System Dialog
+
+
+Changes for V0.4.10b 
+* Cleaned up Mac Fonts 
+* Improvements to ft - but still in development. 
+* Various GUI tweaks. 
+
+Changes for V0.4.10a 
+* BUGFIX for multiple reconnect attempts. 
+* Addition of new NewsFeed System 
+* Addition of Basic Calendar Interface (Unfinished) 
+* Addition of Forums / Channels (Demo) 
+* Improvements to Blog System (Unfinished) 
+* Partial Fixes for GCC4.4 compilation. 
+
+Changes for V0.4.09b 
+* Tweaked Status Bar. 
+* Added Icons and Sorting to Links Cloud 
+* Updated default chat html/css 
+* Fixed Chat from Messenger Window. Changes for V0.4.09a (STANDARD RELEASE) 
+* BUGFIX for Determining External Address. 
+* Fixed AutoLogin. 
+* Fixed Toaster. 
+* Added Status Bar functionality (data rates, peers online) 
+* Fixed Transfer Display (data rates, file name, peer name) Changes for V0.4.08a 
+* Addition of Chat Styles. 
+* Improved Link Cloud Rankings + Bugfixes. 
+* Moved Link Cloud to MainWindow. Changes for V0.4.07b 
+* Full Mutex protection for ConnectionMgr 
+* Context Menus for Link Cloud 
+* Share Anonymously in Link Cloud. 
+* Beginnings of qBlog and Status added. Changes for V0.4.07a 
+* New implementation for Link Cloud. 
+* dummy Forum system. 
+* Added NonRelease features back in Changes for V0.4.06d 
+* BUGFIX: mutex not being released if UPNP unavailable. 
+
+Changes for V0.4.06c 
+* Fixed Upnp Issues. 
+* Various GUI/stylesheet tweaks Changes for V0.4.06b 
+* Added Fonts + Bold/Italic to Group Chat. 
+* Fixed Color/Font issues for Chats 
+* Fixed Server and Peer Config windows. 
+* Enabled saving of data rate limits. 
+* Fixed Lost certificates issue(!) 
+* Tweaked Tick rate parameters. 
+* Improved Chat Delays (under a second now) 
+
+Changes for V0.4.06a 
+* Reduced CPU requirements by removing some debug. 
+* Fixed Memory Leaks (serialiser + file transfer) 
+* Fixed Application Quit when window is closed. 
+* Fixed Unread Msgs bug. 
+* Reinstated variable Tick rate (reduces CPU load). 
+* Added "Stop Retroshare" message to installer. Changes for V0.4.05a 
+* HTML Chat and Messages. 
+* emoticons, bold, italic, fonts, colors for chat 
+* save, print, pdf functions for messages. 
+* New Side Toolbar. 
+* Switched Link Cloud to share Friends Links. 
+* BUGFIX: Added Emergency Dir if existing Incoming fails. 
+* BUGFIX: Added notify for connection to RS V0.3.X. 
+* Fixed Online/Offline Message Forwarding. 
+* Added Check Files, and Icon to indicate Hashing State. 
+* Added <play> functions to Transfers + LocalSharedDirs. 
+* Included MPlayer in release. * reenabled skins. 
+* new Multi-Language Installer. 
+
+Changes for V0.4.04a 
+* Fixed UPnP on Windows platform. 
+* added TIMEOUTS for TCP connections (5 secs) 
+* GUI display of connection type (UDP/TCP) 
+* Increased default data rates (100/500 kb/s) 
+* Removed Default bootstrap Ids. Changes for V0.4.03c 
+* NEW: HTML Messaging! 
+* NEW: Msg Composing Window. 
+* NEW: Contacts docking window. 
+
+Changes for V0.4.03b 
+* BUGFIX: EXT PORT notification. 
+* BUGFIX: Save Config after Signature of Peer. 
+* BUGFIX: Config MetaFile + Sig saved in correct directory. 
+* BUGFIX: ForceExtPort initialised correctly. 
+* Improvements to Chat Layout 
+* New Log Display in Network Tab. 
+* Show/Hide Network View Settings. 
+
+Changes for V0.4.03a: 
+* Modifications to the Chat. 
+* new Icons for new GUi bits. 
+* Network View has been done with elastic forces between nodes. 
+* Network View have been added to Network Tab. 
+* New Automatic Bootstrap system. 
+* BUGFIX for reconnection attempts. 
+* BUGFIX for UDP + TCP simulateous connections. 
+* Added Bootstrap Monitoring tools
+
+Changes for V0.3.52a:
+* New improved search system.
+* New Translations.
+* Fixed Bugs in UPnP
+* Can now remove Shared Directories.
+* Attached the 'Recommend to' Context Menus.
+* New Timestamps in Chats / Messages.
+* Notification of Offline Peer in Chats.
+* Example Games (not networked yet)
+* Updated About Text.
+
+Changes for V0.3.51a
+ * Fixed 2-3 hour crash bug.
+ * Fixed On-Off Reconnect behaviour
+
+Changes for V0.3.x Development 
+We have available for those interested in retroshare: 
+(1) New Source release for Linux! V0.3.12B, The compilation script can also compile from SVN. 
+(2) deb installation files for debian/etch and kubuntu/feisty 
+(3) Language pack for those interested in translating.
+
+  

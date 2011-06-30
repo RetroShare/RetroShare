@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>703</width>
+    <height>527</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QFrame" name="frameLibraryNavigator">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame {
+    background-color: rgb(199, 202, 255);
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_16">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item row="2" column="0" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_80">
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QToolButton" name="toolButtonShareFiles">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Manage the physical folders in your library.</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Share Files</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/Actions/Graphics/Actions/SharedFolders.png</normaloff>:/Actions/Graphics/Actions/SharedFolders.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QTabWidget" name="pagesLibraryNavigator">
+        <property name="styleSheet">
+         <string notr="true">QTabWidget::pane { /* The tab widget frame */
+     border-top: 2px solid #C2C7CB;
+ }
+
+ QTabWidget::tab-bar {
+     left: 5px; /* move to the right by 5px */
+ }
+
+ /* Style the tab using the tab sub-control. Note that
+     it reads QTabBar _not_ QTabWidget */
+ QTabBar::tab {
+     background:transparent;
+     border: 2px solid transparent;
+     min-width: 8ex;
+     padding: 2px;
+ }
+
+ QTabBar::tab:selected, QTabBar::tab:hover {
+     border: 1px solid rgb(78, 96, 255);
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
+ }
+
+ QTabBar::tab:selected {
+     border: 1px solid rgb(78, 96, 255);
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
+ }</string>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="pageLibraryNavigatorFolders">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/Actions/Graphics/Actions/OpenDownloadFolder.png</normaloff>:/Actions/Graphics/Actions/OpenDownloadFolder.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Shares</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_18">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTreeView" name="treeViewLibraryNavigatorFolders">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QTreeView {
+	background-color: rgb(255, 255, 255);
+}</string>
+            </property>
+            <property name="headerHidden">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QComboBox" name="comboBoxType">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QAbstractItemView {
+	background-color: rgb(255, 255, 255);
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="pageLibraryNavigatorOrganiser">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/Actions/Graphics/Actions/Libary.png</normaloff>:/Actions/Graphics/Actions/Libary.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Organiser</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_17">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTreeWidget" name="treeWidgetLibraryNavigatorOrganiser">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QTreeWidget {
+	background-color: rgb(255, 255, 255);
+}</string>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Organiser</string>
+             </property>
+            </column>
+            <item>
+             <property name="text">
+              <string>All Files</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Actions/Graphics/Actions/Libary.png</normaloff>:/Actions/Graphics/Actions/Libary.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Favorites</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/Favorites.png</normaloff>:/Controls/Graphics/Controls/Favorites.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Ghost Files</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/GhostFiles.png</normaloff>:/Controls/Graphics/Controls/GhostFiles.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>My Applications</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/MyApplications.png</normaloff>:/Controls/Graphics/Controls/MyApplications.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>All Applications</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>My eBooks</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/MyeBooks.png</normaloff>:/Controls/Graphics/Controls/MyeBooks.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>All eBooks</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>My Documents</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/MyDocuments.png</normaloff>:/Controls/Graphics/Controls/MyDocuments.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>All Documents</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>My Images</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/MyImages.png</normaloff>:/Controls/Graphics/Controls/MyImages.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>All Images</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>My Music</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Controls/Graphics/Controls/MyMusic.png</normaloff>:/Controls/Graphics/Controls/MyMusic.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>All Music</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>By Album</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>By Artist</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>By Genre</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>My Video</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Actions/Graphics/Actions/Media.png</normaloff>:/Actions/Graphics/Actions/Media.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>All Video</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Films</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Music Videos</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TV Shows</string>
+              </property>
+             </item>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QStackedWidget" name="pagesLibrary">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="pageFolders">
+      <layout class="QGridLayout" name="gridLayout_21">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="2" column="0">
+        <widget class="QFrame" name="frameFoldersToolbar">
+         <layout class="QGridLayout" name="gridLayout_20">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0" colspan="2">
+           <layout class="QGridLayout" name="gridLayout_91">
+            <item row="0" column="0">
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::MinimumExpanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEditFoldersSearchFiles">
+              <property name="maximumSize">
+               <size>
+                <width>250</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QToolButton" name="toolButtonFoldersSearchFiles">
+              <property name="text">
+               <string>Search</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/Actions/Graphics/Actions/Search.png</normaloff>:/Actions/Graphics/Actions/Search.png</iconset>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QFrame" name="frameFoldersHeaderToolbar">
+         <layout class="QGridLayout" name="gridLayout_19">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>143</width>
+              <height>32</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="toolButtonFoldersSetView">
+            <property name="text">
+             <string>Tile View</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/Controls/Graphics/Controls/TileView.png</normaloff>:/Controls/Graphics/Controls/TileView.png</iconset>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::NoArrow</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QToolButton" name="toolButtonFoldersShowDetails">
+            <property name="text">
+             <string>Show Details</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/Controls/Graphics/Controls/ShowDetails.png</normaloff>:/Controls/Graphics/Controls/ShowDetails.png</iconset>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelFoldersHeader">
+            <property name="minimumSize">
+             <size>
+              <width>240</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/Actions/Graphics/Actions/OpenDownloadFolder.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Exploring My Shared Folders&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QFrame" name="frameFoldersFileBrowser">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageOrganiser">
+      <layout class="QGridLayout" name="gridLayout_87">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="1" column="0">
+        <widget class="QFrame" name="frameOrganiserFileBrowser">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QFrame" name="frameOrganiserTopToolbar">
+         <layout class="QGridLayout" name="gridLayout_86" rowminimumheight="0" columnminimumwidth="0,0,0,0,0">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelOrganiserHeader">
+            <property name="minimumSize">
+             <size>
+              <width>240</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/Icons/Resource/Folder Libary_32.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Exploring With The Organiser&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_23">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>143</width>
+              <height>32</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="3">
+           <widget class="QToolButton" name="toolButtonOrganiserSetView">
+            <property name="text">
+             <string>Tile View</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/Controls/Graphics/Controls/TileView.png</normaloff>:/Controls/Graphics/Controls/TileView.png</iconset>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QToolButton" name="toolButtonOrganiserShowDetails">
+            <property name="text">
+             <string>Show Details</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/Controls/Graphics/Controls/ShowDetails.png</normaloff>:/Controls/Graphics/Controls/ShowDetails.png</iconset>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QFrame" name="frameLibraryHeader">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>23</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(11, 27, 99);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_48">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QFrame" name="frameOrganiserBottomToolbar">
+         <layout class="QGridLayout" name="gridLayout_85">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_168">
+            <item row="0" column="0">
+             <widget class="QToolButton" name="toolButtonOrganiserAddAlbum">
+              <property name="text">
+               <string>Create Album</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/Controls/Graphics/Controls/Add.png</normaloff>:/Controls/Graphics/Controls/Add.png</iconset>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QToolButton" name="toolButtonOrganiserDeleteAlbum">
+              <property name="text">
+               <string>Delete Album</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/Controls/Graphics/Controls/Remove.png</normaloff>:/Controls/Graphics/Controls/Remove.png</iconset>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_22">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::MinimumExpanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLineEdit" name="lineEditOrganiserFileSearch">
+              <property name="maximumSize">
+               <size>
+                <width>250</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QToolButton" name="toolButtonOrganiserFileSearch">
+              <property name="text">
+               <string>Search</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/Actions/Graphics/Actions/Search.png</normaloff>:/Actions/Graphics/Actions/Search.png</iconset>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
