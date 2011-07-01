@@ -206,6 +206,18 @@ int IntroPage::nextId() const
 
     return ConnectFriendWizard::Page_Foff;
 }
+void TextPage::toggleSignatureState()
+{
+	_shouldAddSignatures = !_shouldAddSignatures ;
+
+	if(_shouldAddSignatures)
+		userCertIncludeSignaturesButton->setToolTip("Remove signatures") ;
+	else
+		userCertIncludeSignaturesButton->setToolTip("Include signatures") ;
+
+	updateOwnCert() ;
+}
+
 //
 //============================================================================
 //============================================================================
@@ -225,16 +237,10 @@ TextPage::TextPage(QWidget *parent)
 
     std::cerr << "TextPage() getting Invite" << std::endl;
     userCertEdit = new QTextEdit;
-    std::string invite = rsPeers->GetRetroshareInvite();
-
     userCertEdit->setReadOnly(true);
-    QFont font("Courier New",10,50,false);
-    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
-    font.setStyle(QFont::StyleNormal);
-    userCertEdit->setFont(font);
-    userCertEdit->setText(QString::fromStdString(invite));
 
-    std::cerr << "TextPage() getting Invite: " << invite << std::endl;
+	 _shouldAddSignatures = false ;
+	 updateOwnCert() ;
 
     userCertHelpButton = new QPushButton;
     userCertHelpButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -244,6 +250,15 @@ TextPage::TextPage(QWidget *parent)
     connect (userCertHelpButton,  SIGNAL( clicked()),
              this,                SLOT(   showHelpUserCert()) );
     
+    userCertIncludeSignaturesButton = new QPushButton;
+    userCertIncludeSignaturesButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    userCertIncludeSignaturesButton->setFixedSize(20,20);
+    userCertIncludeSignaturesButton->setFlat(true);
+    userCertIncludeSignaturesButton->setIcon( QIcon(":images/gpgp_key_generate.png") );
+    userCertIncludeSignaturesButton->setToolTip(tr("Include signatures"));
+
+    connect (userCertIncludeSignaturesButton, SIGNAL(clicked()), this, SLOT(toggleSignatureState()));
+
     userCertCopyButton = new QPushButton;
     userCertCopyButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     userCertCopyButton->setFixedSize(20,20);
@@ -274,6 +289,10 @@ TextPage::TextPage(QWidget *parent)
 
     userCertButtonsLayout = new QVBoxLayout();
     userCertButtonsLayout->addWidget(userCertHelpButton);
+
+	 if(rsPeers->hasExportMinimal())
+		 userCertButtonsLayout->addWidget(userCertIncludeSignaturesButton);
+
     userCertButtonsLayout->addWidget(userCertCopyButton);
     userCertButtonsLayout->addWidget(userCertSaveButton);
     userCertButtonsLayout->addWidget(userCertMailButton);
@@ -288,6 +307,9 @@ TextPage::TextPage(QWidget *parent)
     friendCertEdit = new QTextEdit;
 
     //font.setWeight(75);
+    QFont font("Courier New",10,50,false);
+    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+    font.setStyle(QFont::StyleNormal);
     friendCertEdit->setFont(font);
 
     friendCertCleanButton = new QPushButton;
@@ -314,6 +336,20 @@ TextPage::TextPage(QWidget *parent)
 //
     setLayout(textPageLayout);
 }
+
+void TextPage::updateOwnCert()
+{
+    std::string invite = rsPeers->GetRetroshareInvite(_shouldAddSignatures);
+
+    std::cerr << "TextPage() getting Invite: " << invite << std::endl;
+
+    QFont font("Courier New",10,50,false);
+    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+    font.setStyle(QFont::StyleNormal);
+    userCertEdit->setFont(font);
+    userCertEdit->setText(QString::fromStdString(invite));
+}
+
 //
 //============================================================================
 //
@@ -706,7 +742,7 @@ void CertificatePage::loadFriendCert() {
 void CertificatePage::generateCertificateCalled() {
     qDebug() << "  generateCertificateCalled";
 
-    std::string cert = rsPeers->GetRetroshareInvite();
+    std::string cert = rsPeers->GetRetroshareInvite(false);
     if (cert.empty()) {
         QMessageBox::information(this, tr("RetroShare"),
                          tr("Sorry, create certificate failed"),
@@ -1239,7 +1275,7 @@ bool EmailPage::validatePage()
     if (mailaddresses.isEmpty() == false)
     {
         std::string body = inviteTextEdit->toPlainText().toStdString();
-        body += "\n\n" + rsPeers->GetRetroshareInvite();
+        body += "\n\n" + rsPeers->GetRetroshareInvite(false);
 
         sendMail (mailaddresses.toStdString(), subjectEdit->text().toStdString(), body);
         return true;

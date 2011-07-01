@@ -129,6 +129,15 @@ p3Peers::p3Peers(p3ConnectMgr *cm)
 	return;
 }
 
+bool p3Peers::hasExportMinimal()
+{
+#ifdef GPGME_EXPORT_MODE_MINIMAL
+	return true ;
+#else
+	return false ;
+#endif
+}
+
 	/* Updates ... */
 bool p3Peers::FriendsChanged()
 {
@@ -858,13 +867,13 @@ p3Peers::setVisState(const std::string &id, uint32_t extVisState)
 //===========================================================================
 	/* Auth Stuff */
 std::string
-p3Peers::GetRetroshareInvite()
+p3Peers::GetRetroshareInvite(bool include_signatures)
 {
-	return GetRetroshareInvite(getOwnId());
+	return GetRetroshareInvite(getOwnId(),include_signatures);
 }
 
 std::string
-p3Peers::GetRetroshareInvite(const std::string& ssl_id)
+p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
 {
         #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
@@ -876,7 +885,7 @@ p3Peers::GetRetroshareInvite(const std::string& ssl_id)
 
         if (getPeerDetails(ssl_id, Detail)) 
 		  {
-			  invite = AuthGPG::getAuthGPG()->SaveCertificateToString(Detail.gpg_id);
+			  invite = AuthGPG::getAuthGPG()->SaveCertificateToString(Detail.gpg_id,include_signatures);
 
 			  if(!Detail.isOnlyGPGdetail)
 			  {

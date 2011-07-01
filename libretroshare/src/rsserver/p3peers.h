@@ -89,9 +89,10 @@ virtual bool getAllowTunnelConnection() ;
 
 	/* Auth Stuff */
 // Get the invitation (GPG cert + local/ext address + SSL id for the given peer)
-virtual	std::string GetRetroshareInvite(const std::string& ssl_id);
+virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures);
 // same but for own id
-virtual	std::string GetRetroshareInvite();
+virtual	std::string GetRetroshareInvite(bool include_signatures);
+virtual bool hasExportMinimal() ;
 
 virtual	bool loadCertificateFromFile(const std::string &fname, std::string &id, std::string &gpg_id);
 virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, std::string& error_string);

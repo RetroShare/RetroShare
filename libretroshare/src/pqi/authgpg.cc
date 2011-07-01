@@ -428,7 +428,7 @@ void AuthGPGimpl::processServices()
 #endif
 
             /* save the certificate to string */
-            loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId);
+            loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId,true);
         }
 
         service->setGPGOperation(loadOrSave);
@@ -1353,7 +1353,7 @@ bool	AuthGPGimpl::isGPGAccepted(const std::string &id)
 
 
 /* SKTAN : do not know how to use std::string id */
-std::string AuthGPGimpl::SaveCertificateToString(const std::string &id)
+std::string AuthGPGimpl::SaveCertificateToString(const std::string &id,bool include_signatures)
 {
 
         if (!isGPGId(id)) {
@@ -1368,13 +1368,19 @@ std::string AuthGPGimpl::SaveCertificateToString(const std::string &id)
 	pattern[0] = id.c_str();
 	gpgme_data_t gpgmeData;
 
+#ifdef GPGME_EXPORT_MODE_MINIMAL
+	gpgme_export_mode_t export_mode = include_signatures?0:GPGME_EXPORT_MODE_MINIMAL ;
+#else
+	gpgme_export_mode_t export_mode = 0 ;
+#endif
+
 	if (GPG_ERR_NO_ERROR != gpgme_data_new (&gpgmeData))
 	{
                 std::cerr << "Error create Data" << std::endl;
 	}
 	gpgme_set_armor (CTX, 1);
 
-	if (GPG_ERR_NO_ERROR != gpgme_op_export_ext (CTX, pattern, 0, gpgmeData))
+	if (GPG_ERR_NO_ERROR != gpgme_op_export_ext (CTX, pattern, export_mode, gpgmeData))
 	{
                 std::cerr << "Error export Data" << std::endl;
 	}

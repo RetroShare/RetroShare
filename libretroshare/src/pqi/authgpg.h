@@ -213,7 +213,7 @@ virtual bool    isGPGId(const std::string &id) = 0;
  *
  ****/
 virtual bool LoadCertificateFromString(const std::string &pem, std::string &gpg_id,std::string& error_string) = 0;
-virtual std::string SaveCertificateToString(const std::string &id) = 0;
+virtual std::string SaveCertificateToString(const std::string &id,bool include_signatures) = 0;
 
 /*********************************************************************************/
 /************************* STAGE 6 ***********************************************/
@@ -333,7 +333,7 @@ virtual bool    isGPGId(const std::string &id);
  *
  ****/
 virtual bool LoadCertificateFromString(const std::string &pem, std::string &gpg_id,std::string& error_string);
-virtual std::string SaveCertificateToString(const std::string &id);
+virtual std::string SaveCertificateToString(const std::string &id,bool include_signatures) ;
 
 /*********************************************************************************/
 /************************* STAGE 6 ***********************************************/

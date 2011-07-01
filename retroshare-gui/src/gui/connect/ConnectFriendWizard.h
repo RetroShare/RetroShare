@@ -84,6 +84,7 @@ private:
     QVBoxLayout* userCertButtonsLayout;
     QPushButton* userCertHelpButton;
     QPushButton* userCertCopyButton;
+    QPushButton* userCertIncludeSignaturesButton;
     QPushButton* userCertSaveButton;
     QPushButton* userCertMailButton;//! on Windows, click on this button
                                    //! launches default email client
@@ -96,13 +97,16 @@ private:
     QVBoxLayout* textPageLayout;
     
     void setCurrentFileName(const QString &fileName);
+	 void updateOwnCert() ;
       
+	 bool _shouldAddSignatures ;
     QString fileName;
 
 private slots:
     void showHelpUserCert();
     void copyCert();
     void cleanFriendCert();
+	 void toggleSignatureState();
 
     bool fileSave();
     bool fileSaveAs();

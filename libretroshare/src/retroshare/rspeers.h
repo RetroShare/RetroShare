@@ -211,8 +211,9 @@ virtual bool getAllowServerIPDetermination() = 0 ;
 virtual bool getAllowTunnelConnection() = 0 ;
 
 	/* Auth Stuff */
-virtual	std::string GetRetroshareInvite(const std::string& ssl_id) 			= 0;
-virtual	std::string GetRetroshareInvite() 			= 0;
+virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures) 			= 0;
+virtual	std::string GetRetroshareInvite(bool include_signatures) 			= 0;
+virtual  bool hasExportMinimal() = 0 ;
 
 virtual	bool loadCertificateFromFile(const std::string &fname, std::string &ssl_id, std::string &gpg_id)  = 0;
 virtual	bool loadDetailsFromStringCert(const std::string &certGPG, RsPeerDetails &pd,std::string& error_string) = 0;
