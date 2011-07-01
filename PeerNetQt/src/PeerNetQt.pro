@@ -20,13 +20,15 @@ SOURCES += main.cpp\
         dhtwindow.cpp \
         dhtquery.cpp \
 	peernet.cc \
-	netstatebox.cc
+	netstatebox.cc \
+	connectstatebox.cc
 
 HEADERS  += mainwindow.h \
 	dhtwindow.h \
 	dhtquery.h \
 	peernet.h \
-	netstatebox.h
+	netstatebox.h \
+	connectstatebox.h
 
 FORMS    += mainwindow.ui \
 	dhtwindow.ui \
