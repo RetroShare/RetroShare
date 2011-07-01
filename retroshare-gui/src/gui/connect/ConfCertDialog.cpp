@@ -316,7 +316,7 @@ void ConfCertDialog::load()
     }
     ui.signers->setHtml(text);
 
-    std::string invite = rsPeers->GetRetroshareInvite(detail.id) ; // this needs to be a SSL id
+    std::string invite = rsPeers->GetRetroshareInvite(detail.id,true) ; // this needs to be a SSL id
 
     ui.userCertificateText->setReadOnly(true);
     ui.userCertificateText->setMinimumHeight(200);
