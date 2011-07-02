@@ -63,7 +63,7 @@
 // This is eventually what we want.
 //#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 
-#define QUERY_UPDATE_PERIOD 120
+#define QUERY_UPDATE_PERIOD 59 	// just under one minute... as that gets called every minute...
 
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
@@ -315,7 +315,7 @@ void bdNodeManager::iteration()
 			break;
 
 		case BITDHT_MGR_STATE_ACTIVE:
-			if (modeAge > MAX_REFRESH_TIME)
+			if (modeAge >= MAX_REFRESH_TIME)
 			{
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): ACTIVE -> REFRESH";
