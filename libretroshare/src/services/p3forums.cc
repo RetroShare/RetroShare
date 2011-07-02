@@ -76,7 +76,7 @@ RsForums *rsForums = NULL;
  * remember 2^16 = 64K max units in store period.
  * PUBPERIOD * 2^16 = max STORE PERIOD */
 #define FORUM_STOREPERIOD (365*24*3600)    /* 365 * 24 * 3600 - secs in a year */
-#define FORUM_PUBPERIOD   600 		   /* 10 minutes ... (max = 455 days) */
+#define FORUM_PUBPERIOD   10 		   /* 10 minutes ... (max = 455 days) */
 
 p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
                         std::string srcdir, std::string storedir, std::string forumDir)
@@ -549,42 +549,33 @@ bool p3Forums::getMessageCount(const std::string &fId, unsigned int &newCount, u
 		} /******* UNLOCKED ********/
 
 		if (grpFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
-			std::list<std::string> msgIds;
-			if (getAllMsgList(fId, msgIds)) {
 
-				RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+			RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
-				std::map<std::string, RsForumReadStatus*>::iterator fit = mReadStatus.find(fId);
-				if (fit == mReadStatus.end()) {
-					// no status available -> all messages are new
-					newCount += msgIds.size();
-					unreadCount += msgIds.size();
-					continue;
-				}
+			std::map<std::string, RsForumReadStatus*>::iterator fit = mReadStatus.find(fId);
+			if (fit == mReadStatus.end()) {
+				// not status available
+				continue;
+			}
 
-				std::list<std::string>::iterator mit;
-				for (mit = msgIds.begin(); mit != msgIds.end(); mit++) {
-					std::map<std::string, uint32_t >::iterator rit = fit->second->msgReadStatus.find(*mit);
-
-					if (rit == fit->second->msgReadStatus.end()) {
-						// no status available -> message is new
-						newCount++;
-						unreadCount++;
-						continue;
-					}
-
-					if (rit->second & FORUM_MSG_STATUS_READ) {
-						// message is not new
-						if (rit->second & FORUM_MSG_STATUS_UNREAD_BY_USER) {
-							// message is unread
-							unreadCount++;
-						}
-					} else {
-						newCount++;
+			// iterator through read status map to determine number of new and old
+			std::map<std::string, uint32_t >::iterator rit = fit->second->msgReadStatus.begin();
+			for(; rit != fit->second->msgReadStatus.end(); rit++)
+			{
+				if(rit->second & FORUM_MSG_STATUS_READ)
+				{
+					if (rit->second & FORUM_MSG_STATUS_UNREAD_BY_USER) {
+						// message is unread
 						unreadCount++;
 					}
 				}
-			} /******* UNLOCKED ********/
+				else
+				{
+					newCount++;
+					unreadCount++;
+				}
+			}
+			/******* UNLOCKED ********/
 		}
 	}
 

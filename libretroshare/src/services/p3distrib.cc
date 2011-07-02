@@ -316,7 +316,7 @@ void p3GroupDistrib::updateCacheDocument()
 	std::vector<grpNodePair> grpNodes;
 	std::string failedCacheId = FAILED_CACHE_CONT;
 
-	// failed cache content node is has not been created add to doc
+	// failed cache content node has not been created, so add to doc
 	if(mCacheTable.find(failedCacheId) == mCacheTable.end()){
 
 		mCacheDoc.append_child("group");
@@ -384,7 +384,7 @@ void p3GroupDistrib::updateCacheDocument()
 
 	// add groups to cache table
 	locked_updateCacheTableGrp(grpNodes, false);
-	//grpNodeIter.clear();
+
 
 	std::map<std::string, std::set<pCacheId> > msgCacheMap;
 	pugi::xml_node nodeIter;
@@ -402,7 +402,6 @@ void p3GroupDistrib::updateCacheDocument()
 	pCacheId pCid;
 
 	int count = 0;
-//	int count2 = 0, count3 = 0;
 
 	for(; msgIt != mMsgHistPending.end(); msgIt++)
 	{
@@ -414,17 +413,6 @@ void p3GroupDistrib::updateCacheDocument()
 
 			pCid = pCacheId(msgIt->second.first,
 					msgIt->second.second);
-
-			// ensure you don't add cache ids twice to same group
-//			// by checking cache table and current msg additions
-//			if(nodeCache_iter->second.cIdSet.find(pCid) !=
-//					nodeCache_iter->second.cIdSet.end())
-//				count2++;
-//
-//			if(msgCacheMap[msgIt->first].find(pCid) != msgCacheMap[msgIt->first].end())
-//				count3++;
-
-
 
 			nodeIter = nodeCache_iter->second.node;
 			messages_node = nodeIter.child("messages");
@@ -446,7 +434,6 @@ void p3GroupDistrib::updateCacheDocument()
 
 			// add msg to grp set
 			msgCacheMap[msgIt->first].insert(pCid);
-			count++;
 
 		}
 		else{
@@ -461,8 +448,6 @@ void p3GroupDistrib::updateCacheDocument()
 			msgHistRestart.push_back(*msgIt);
 		}
 	}
-
-
 
 	// now update cache table by tagging msg cache ids to their
 	// respective groups
@@ -1127,6 +1112,8 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
 	// with same cache id)
 	std::map<std::string, pCacheId> msgCacheMap;
+
+	// if message loaded before check failed cache
 	pCacheId failedCache = pCacheId(src, cacheSubId);
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
