@@ -711,7 +711,10 @@ int PeerNet::dhtNodeCallback(const bdId *id, uint32_t peerflags)
 #endif
 	}
 
-	if (peerflags & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
+	// These are the flags that will be returned by PeerNet & RS peers with the new DHT.
+	// if (peerflags & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)  // Change to this later...
+	if ((peerflags & BITDHT_PEER_STATUS_DHT_ENGINE) && 
+		(peerflags & BITDHT_PEER_STATUS_DHT_APPL))
 	{
 #ifdef PEERNET_DEBUG
 		std::cerr << "PeerNet::dhtNodeCallback() Passing Local Peer to DhtStunner: ";
