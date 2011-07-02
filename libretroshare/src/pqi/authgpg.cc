@@ -1371,7 +1371,7 @@ std::string AuthGPGimpl::SaveCertificateToString(const std::string &id,bool incl
 #ifdef GPGME_EXPORT_MODE_MINIMAL
 	gpgme_export_mode_t export_mode = include_signatures?0:GPGME_EXPORT_MODE_MINIMAL ;
 #else
-	gpgme_export_mode_t export_mode = 0 ;
+	unsigned int export_mode = 0 ;
 #endif
 
 	if (GPG_ERR_NO_ERROR != gpgme_data_new (&gpgmeData))
