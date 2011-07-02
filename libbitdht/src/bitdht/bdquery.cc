@@ -38,6 +38,7 @@
 
 #define EXPECTED_REPLY 10 // Speed up queries
 #define QUERY_IDLE_RETRY_PEER_PERIOD 300 // 5min =  (mFns->bdNodesPerBucket() * 30)
+#define MAX_QUERY_IDLE_PERIOD 	     900 // 15min.
 
 
 /************************************************************
@@ -125,6 +126,10 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 	if ((now - mQueryTS) / 2 > mQueryIdlePeerRetryPeriod)
 	{
 		mQueryIdlePeerRetryPeriod = (now-mQueryTS) / 2;
+		if (mQueryIdlePeerRetryPeriod > MAX_QUERY_IDLE_PERIOD)
+		{
+			mQueryIdlePeerRetryPeriod = MAX_QUERY_IDLE_PERIOD;
+		}
 	}
 
 	bool notFinished = false;
