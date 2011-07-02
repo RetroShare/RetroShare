@@ -49,6 +49,7 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 
+
 #define FAILED_CACHE_CONT "failedcachegrp" // cache id which have failed are stored under a node of this name/grpid
 #define HIST_CACHE_FNAME "grp_history.xml"
 
@@ -199,7 +200,7 @@ int	p3GroupDistrib::tick()
                 receivePubKeys();
 	}
 
-	// update cache document every 1 minute (should be 5 mins in production)
+	// update cache document every 1 minute (5 mins in production)
 	// after historical files have loaded and there is reason to
 	bool updateCacheDoc = false;
 	{
@@ -680,7 +681,7 @@ void p3GroupDistrib::locked_processHistoryCached(const std::string& grpId)
 	std::list<CacheData> cDataList;
 	std::list<CacheData>::iterator cit;
 	std::string file;
-
+	CacheData cDataTemp;
 	uint16_t cacheType = CacheSource::getCacheType();
 
 	// if not history cached then load it
@@ -701,7 +702,7 @@ void p3GroupDistrib::locked_processHistoryCached(const std::string& grpId)
 			// note: you could load msgs for a cache historied group that is not loaded,
 			// but any request for info of affected grp will consequently load
 			// all its msgs through this function anyways
-			locked_loadFileMsgs(file, cit->cid.subid, cit->pid, cit->recvd, (cit->pid == mOwnId), true);
+			locked_loadFileMsgs(file, cit->cid.subid, cit->pid, cit->recvd, false, true);
 
 		}
 
@@ -1987,7 +1988,6 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	newCache.cid.type = CacheSource::getCacheType();
 	newCache.cid.subid = locked_determineCacheSubId();
 
-
 	/* create filename */
 	std::string path = CacheSource::getCacheDir();
 	std::ostringstream out;
@@ -2002,11 +2002,6 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 	bool resave = false;
 	std::list<RsDistribSignedMsg *>::iterator it;
-
-	// for cache opt
-	std::list<grpCachePair> gcpList;
-	pCacheId pcId(newCache.pid, newCache.cid.subid);
-
 	for(it = mPendingPublish.begin(); it != mPendingPublish.end(); it++)
 	{
 #ifdef DISTRIB_DEBUG
@@ -2028,15 +2023,10 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 		// prevent sending original source of message to peers
 		(*it)->PeerId(mOwnId);
 
-		gcpList.push_back(grpCachePair((*it)->grpId, pcId));
-
 		if(!store->SendItem(*it)) /* deletes it */
 		{
 			ok &= false;
 		}
-
-
-
 	}
 
 	/* Extract File Information from pqistore */
@@ -2071,7 +2061,6 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	if(ok)
 		refreshCache(newCache);
 
-	std::list<grpCachePair>::iterator git = gcpList.begin();
 
 	if (ok && resave)
 	{
@@ -2081,15 +2070,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 #endif
 		/* flag to store config (saying we've published messages) */
 		IndicateConfigChanged(); /**** INDICATE CONFIG CHANGED! *****/
-
-		// add new cache to cache opt doc
-
-		for(;git != gcpList.end(); git++)
-			mMsgHistPending.push_back(*git);
-
-		mUpdateCacheDoc = true;
 	}
-
 }
 
 
@@ -2409,9 +2390,7 @@ RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(const std::string& grpId, const
 
 	/************* ALREADY LOCKED ************/
 
-#ifdef ENABLE_CACHE_OPT
 	locked_processHistoryCached(grpId);
-#endif
 
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
@@ -5155,11 +5134,7 @@ bool p3GroupDistrib::getDummyParentMsgList(const std::string& grpId, const std::
 
 RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(const std::string& grpId, const std::string& msgId)
 {
-
-#ifdef ENABLE_CACHE_OPT
 	locked_processHistoryCached(grpId);
-#endif
-
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg(grpId:" << grpId << "," << msgId << ")";
 	std::cerr << std::endl;
