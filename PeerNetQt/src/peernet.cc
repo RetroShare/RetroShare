@@ -1640,6 +1640,14 @@ int PeerNet::doActions()
 							bdStdPrintId(std::cerr, &(action.mDestId));
 							std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
 							std::cerr << std::endl;
+
+							bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+	
+							PeerStatus *ps = getPeerStatus_locked(&(action.mDestId));
+							if (ps)
+							{
+								ps->mConnectLogic.updateCb(CSB_UPDATE_MODE_UNAVAILABLE);
+							}
 						}
 					}
 					else
@@ -1648,6 +1656,14 @@ int PeerNet::doActions()
 						bdStdPrintId(std::cerr, &(action.mDestId));
 						std::cerr << " is Discarded, as Failed to get Own External Proxy Address.";
 						std::cerr << std::endl;
+
+						bdStackMutex stack(mPeerMutex); /********** LOCKED MUTEX ***************/	
+	
+						PeerStatus *ps = getPeerStatus_locked(&(action.mDestId));
+						if (ps)
+						{
+							ps->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
+						}
 					}
 				}
 

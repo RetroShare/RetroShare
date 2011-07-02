@@ -5,11 +5,14 @@
 
 #define CSB_START		1
 #define CSB_DIRECT_ATTEMPT	2
-#define CSB_PROXY_ATTEMPT	3
-#define CSB_RELAY_ATTEMPT	4
-#define CSB_REVERSE_WAIT	5
-#define CSB_FAILED_WAIT		6
-#define CSB_CONNECTED		7
+#define CSB_DIRECT_WAIT 	3
+#define CSB_PROXY_ATTEMPT	4
+#define CSB_PROXY_WAIT		5
+#define CSB_RELAY_ATTEMPT	6
+#define CSB_RELAY_WAIT		7
+#define CSB_REVERSE_WAIT	8
+#define CSB_FAILED_WAIT		9
+#define CSB_CONNECTED		10
 
 
 #define CSB_NETSTATE_UNKNOWN		0
@@ -72,7 +75,7 @@ class PeerConnectStateBox
 
 	uint32_t mState;
 	uint32_t mNetState;
-	time_t mAttemptTS;
+	time_t mStateTS;
 	uint32_t mNoAttempts;
 };
 
