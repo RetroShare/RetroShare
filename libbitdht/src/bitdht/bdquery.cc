@@ -717,16 +717,20 @@ int bdQuery::removeOldPotentialPeers()
 			mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
 			fprintf(stderr, "\n");
 #endif
+			std::multimap<bdMetric, bdPeer>::iterator it2 = it;
+			++it2 ;
 			mPotentialPeers.erase(it);
+			it = it2 ;
 
 			// Unfortunately have to start again... as pointers invalidated.
-			it = mPotentialPeers.begin();
+			//it = mPotentialPeers.begin();
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
+	return 1 ;
 }
 
 

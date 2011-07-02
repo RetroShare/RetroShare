@@ -3,7 +3,7 @@
 #include "connectstatebox.h"
 #include "netstatebox.h"
 
-#include <iostream.h>
+#include <iostream>
 
 #define FAILED_WAIT_TIME	(1800) // 30 minutes.
 #define DIRECT_WAIT_TIME	(60)   // 1 minutes.

@@ -25,6 +25,7 @@
 
 #include "util/bdbloom.h"
 
+#include <stdlib.h>
 #include <sstream>
 #include <iomanip>
 
