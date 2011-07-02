@@ -390,8 +390,10 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
 				BITDHT_PEER_STATUS_DHT_FOF       |
 				BITDHT_PEER_STATUS_DHT_FRIEND);
-	
-		number = CONNECT_NUM_PROXY_ATTEMPTS - number;
+
+		// just ask for the same number of closest (above doesn't return anything atm)	
+		//int nFound = nearest.size();	
+		//number = CONNECT_NUM_PROXY_ATTEMPTS - nFound;
 	
 		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
 								BITDHT_PEER_STATUS_DHT_ENGINE_VERSION );
@@ -400,13 +402,14 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		for(it = nearest.begin(); it != nearest.end(); it++)
 		{
 			std::cerr << "bdConnectManager::requestConnection_proxy() is Entry it connected to Friend? : ";
-			mFns->bdPrintId(std::cerr, &(*pit));
+			mFns->bdPrintId(std::cerr, &(it->second));
 			std::cerr << std::endl;
 
-			bdNodeId midId;
-			mFns->bdRandomMidId(target, &(it->second.id), &midId);
+			//bdNodeId midId;
+			//mFns->bdRandomMidId(target, &(it->second.id), &midId);
 			/* trigger search */
-			mPub->send_query(&(it->second), &midId);
+			//mPub->send_query(&(it->second), &midId);
+			mPub->send_query(&(it->second), target);
 		}
 	}
 
@@ -445,13 +448,13 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 
 void bdConnectManager::addPotentialConnectionProxy(const bdId *srcId, const bdId *target)
 {
-#ifdef DEBUG_NODE_CONNECTION
-	//std::cerr << "bdConnectManager::addPotentialConnectionProxy() ";
-	//std::cerr << " srcId: ";
-	//bdStdPrintId(std::cerr, srcId);
-	//std::cerr << " target: ";
-	//bdStdPrintId(std::cerr, target);
-	//std::cerr << std::endl;
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
+	std::cerr << "bdConnectManager::addPotentialConnectionProxy() ";
+	std::cerr << " srcId: ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << " target: ";
+	bdStdPrintId(std::cerr, target);
+	std::cerr << std::endl;
 #endif
 
 	if (!srcId)
@@ -469,9 +472,9 @@ void bdConnectManager::addPotentialConnectionProxy(const bdId *srcId, const bdId
 	if (it == mConnectionRequests.end())
 	{
 		/* not one of our targets... drop it */
-#ifdef DEBUG_NODE_CONNECTION
-		//std::cerr << "bdConnectManager::addPotentialConnectionProxy() Dropping Not one of Our Targets";
-		//std::cerr << std::endl;
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
+		std::cerr << "bdConnectManager::addPotentialConnectionProxy() Dropping Not one of Our Targets";
+		std::cerr << std::endl;
 #endif
 		return;
 	}
