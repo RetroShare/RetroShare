@@ -49,8 +49,9 @@
 
 #define BITDHT_VERSION_IDENTIFER	1
 
-//#define BITDHT_VERSION			"01" // Original RS 0.5.0/0.5.1 version.
-#define BITDHT_VERSION			"02" // Connections + Full DHT implementation.
+//#define BITDHT_VERSION			"00" // Reset IDS.
+#define BITDHT_VERSION			"01" // Full Connections 
+//#define BITDHT_VERSION			"02" // Full DHT implementation.
 /*************************************/
 
 UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, bdDhtFunctions *fns)

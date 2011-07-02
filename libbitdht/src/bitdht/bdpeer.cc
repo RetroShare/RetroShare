@@ -400,14 +400,13 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	mFns->bdDistance(&(id->id), &(mOwnId), &dist);
 	int buckno = mFns->bdBucketDistance(&dist);
 
+#ifdef DEBUG_BD_SPACE
 	std::cerr << "bdSpace::find_exactnode(Id:";
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << ")";
 
 	std::cerr << " Bucket #: " << buckno;
 	std::cerr << std::endl;
-
-#ifdef DEBUG_BD_SPACE
 #endif
 
 	bdBucket &buck = buckets[buckno];
@@ -418,17 +417,21 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	{
 		if (*id == eit->mPeerId)
 		{
+#ifdef DEBUG_BD_SPACE
 			std::cerr << "bdSpace::find_exactnode() Found Matching Peer: ";
 		  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
 			std::cerr << " withFlags: " << eit->mPeerFlags;
 		  	std::cerr << std::endl;
+#endif
 
 			peer = (*eit);
 			return 1;
 		}
 	}
-	std::cerr << "bdSpace::find_exactnode() ERROR Failed to find Matching Peer: ";
+#ifdef DEBUG_BD_SPACE
+	std::cerr << "bdSpace::find_exactnode() WARNING Failed to find Matching Peer: ";
 	std::cerr << std::endl;
+#endif
 
 	return 0;
 }

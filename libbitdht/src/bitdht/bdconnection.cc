@@ -34,8 +34,12 @@
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
 
-#define DEBUG_NODE_CONNECTION	1 
+/*
+ * #define DEBUG_NODE_CONNECTION		1 
+ * #define DEBUG_NODE_CONNECTION_EXTRA		1 
+ */
 
+#define DEBUG_NODE_CONNECTION		1 
 
 
 #define BITDHT_CR_PAUSE_BASE_PERIOD 5
@@ -537,7 +541,7 @@ void bdConnectManager::updatePotentialConnectionProxy(const bdId *id, uint32_t m
 {
 	if (mode & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 	{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
 		std::cerr << "bdConnectManager::updatePotentialConnectionProxy() Peer is GOOD : ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
@@ -1761,9 +1765,10 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 	bdConnection *conn = findExistingConnectionBySender(id, srcConnAddr, destConnAddr);
 	if (conn)
 	{
-		/* ERROR */
+		/* Likely ERROR: Warning */
 #ifdef DEBUG_NODE_CONNECTION
-		std::cerr << "bdConnectManager::recvedConnectionRequest() ERROR EXISTING CONNECTION";
+		std::cerr << "bdConnectManager::recvedConnectionRequest() WARNING Existing Connection: ";
+		std::cerr << std::endl;
 		std::cerr << std::endl;
 #endif
 		/* reply existing connection */
