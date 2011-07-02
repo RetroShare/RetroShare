@@ -1005,7 +1005,7 @@ background: white;}</string>
                   <enum>Qt::CustomContextMenu</enum>
                  </property>
                  <property name="toolTip">
-                  <string>Messages entered here are sent to all collected friends</string>
+                  <string>Messages entered here are sent to all connected friends</string>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">QTextEdit#lineEdit{border: 1px solid #CCCCCC;
