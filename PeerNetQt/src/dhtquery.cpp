@@ -155,6 +155,7 @@ void DhtQuery::updateDhtQuery()
 
 		std::ostringstream flagsstr;
 		flagsstr << "0x" << std::hex << std::setfill('0') << bdp->mPeerFlags;
+		flagsstr << " EX:0x" << std::hex << std::setfill('0') << bdp->mExtraFlags;
 
 		std::ostringstream foundstr;
 		foundstr << now - bdp->mFoundTime << " secs ago";
@@ -219,6 +220,7 @@ void DhtQuery::updateDhtQuery()
 
 		std::ostringstream flagsstr;
 		flagsstr << "0x" << std::hex << std::setfill('0') << bdp->mPeerFlags;
+		flagsstr << " EX:0x" << std::hex << std::setfill('0') << bdp->mExtraFlags;
 
 		std::ostringstream foundstr;
 		foundstr << now - bdp->mFoundTime << " secs ago";
@@ -280,7 +282,8 @@ void DhtQuery::updateDhtQuery()
 
 		std::ostringstream flagsstr;
 		flagsstr << "0x" << std::hex << std::setfill('0') << bdp->mPeerFlags;
-
+		flagsstr << " EX:0x" << std::hex << std::setfill('0') << bdp->mExtraFlags;
+		
 		std::ostringstream foundstr;
 		foundstr << now - bdp->mFoundTime << " secs ago";
 
@@ -338,6 +341,7 @@ void DhtQuery::updateDhtQuery()
 
 		std::ostringstream flagsstr;
 		flagsstr << "0x" << std::hex << std::setfill('0') << bdp->mPeerFlags;
+		flagsstr << " EX:0x" << std::hex << std::setfill('0') << bdp->mExtraFlags;
 
 		std::ostringstream foundstr;
 		foundstr << now - bdp->mFoundTime << " secs ago";

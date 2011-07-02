@@ -1,6 +1,7 @@
 /* a connect state box */
 
 #include "connectstatebox.h"
+#include "netstatebox.h"
 
 #include <iostream.h>
 
@@ -16,14 +17,15 @@
 
 
 
-PeerConnectStateBox::PeerConnectStateBox(std::string id)
+PeerConnectStateBox::PeerConnectStateBox()
 {
-	mPeerId = id;
+	//mPeerId = id;
 	mState = CSB_START;
 	mNetState = CSB_NETSTATE_UNKNOWN;
 	mAttemptTS = 0;
 	mNoAttempts = 0;
 }
+
 
 std::string NetStateAsString(uint32_t netstate)
 {
@@ -151,8 +153,48 @@ std::string PeerConnectStateBox::connectState()
 }
 
 
-uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netstate)
+uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nattype)
 {
+	uint32_t connNet = CSB_NETSTATE_UNKNOWN;
+		
+	if (netmode == PNSB_NETWORK_EXTERNALIP)
+	{
+		connNet = CSB_NETSTATE_FORWARD;
+	}
+	else if (netmode == PNSB_NETWORK_BEHINDNAT)
+	{
+		if ((nattype == PNSB_NATTYPE_RESTRICTED_CONE) ||
+			(nattype == PNSB_NATTYPE_FULL_CONE))
+		{
+			connNet = CSB_NETSTATE_STABLENAT;
+		}
+		else
+		{
+			connNet = CSB_NETSTATE_FIREWALLED;
+		}
+	}
+	return connNet;
+}
+
+bool shouldUseProxyPortInternal(uint32_t netstate)
+{
+	if (netstate == CSB_NETSTATE_FORWARD)
+	{
+		return false;
+	}
+	return true;
+}
+
+bool PeerConnectStateBox::shouldUseProxyPort(uint32_t netmode, uint32_t nattype)
+{
+	uint32_t netstate = convertNetStateToInternal(netmode, nattype);
+	return shouldUseProxyPortInternal(netstate);
+}
+
+uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nattype)
+{
+	uint32_t netstate = convertNetStateToInternal(netmode, nattype);
+
 	std::cerr << "PeerConnectStateBox::connectCb(";
 	if (cbtype == CSB_CONNECT_DIRECT)
 	{
@@ -260,6 +302,9 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 		}
 			break;
 	}
+
+	return retval;
+
 }
 
 
@@ -268,10 +313,11 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 	uint32_t retval = 0;
 
 	uint32_t proxyPortMode = CSB_ACTION_PROXY_PORT;
-	if (mNetState == CSB_NETSTATE_FORWARD)
+	if (!shouldUseProxyPortInternal(mNetState))
 	{
 		proxyPortMode = CSB_ACTION_DHT_PORT;
 	}
+
 	time_t now = time(NULL);
 
 	switch(mState)

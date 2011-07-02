@@ -245,18 +245,20 @@ void MainWindow::updateNetPeers()
 #define PTW_COL_PEERID			0
 #define PTW_COL_DHT_STATUS		1
 	
-#define PTW_COL_PEER_CONNECT_STATUS	2
-#define PTW_COL_PEER_CONNECT_MODE	3
-#define PTW_COL_PEER_REQ_STATUS		4
+#define PTW_COL_PEER_CONNECTLOGIC	2
+
+#define PTW_COL_PEER_CONNECT_STATUS	3
+#define PTW_COL_PEER_CONNECT_MODE	4
+#define PTW_COL_PEER_REQ_STATUS		5
 	
-#define PTW_COL_PEER_CB_MSG		5
+#define PTW_COL_PEER_CB_MSG		6
 
 // These aren't that important.	
-#define PTW_COL_PEER_CB_MODE		6
-#define PTW_COL_PEER_CB_PROXY		7
+#define PTW_COL_PEER_CB_MODE		7
+#define PTW_COL_PEER_CB_PROXY		8
 
-#define PTW_COL_DHT_ADDRESS		8
-#define PTW_COL_DHT_UPDATETS		9
+#define PTW_COL_DHT_ADDRESS		9
+#define PTW_COL_DHT_UPDATETS		10
 	
 
 	/* clear old entries */
@@ -388,8 +390,10 @@ void MainWindow::updateNetPeers()
 		bdStdPrintId(cbpstr, &(status.mPeerCbProxyId));
 		
 		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mPeerCbMsg));
-		peer_item -> setData(PTW_COL_PEER_CB_MODE, Qt::DisplayRole, QString::fromStdString(cbmstr.str()));
-		peer_item -> setData(PTW_COL_PEER_CB_PROXY, Qt::DisplayRole, QString::fromStdString(cbpstr.str()));
+		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole, 
+						QString::fromStdString(status.mConnectLogic.connectState()));
+		//peer_item -> setData(PTW_COL_PEER_CB_MODE, Qt::DisplayRole, QString::fromStdString(cbmstr.str()));
+		//peer_item -> setData(PTW_COL_PEER_CB_PROXY, Qt::DisplayRole, QString::fromStdString(cbpstr.str()));
 
 
 		switch(status.mDhtState)
@@ -468,8 +472,8 @@ void MainWindow::updateNetPeers()
 
 		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(*it));
 		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, "Unknown Peer");
-		peer_item -> setData(PTW_COL_DHT_ADDRESS, Qt::DisplayRole, "");
-		peer_item -> setData(PTW_COL_DHT_UPDATETS, Qt::DisplayRole, "");
+		//peer_item -> setData(PTW_COL_DHT_ADDRESS, Qt::DisplayRole, "");
+		//peer_item -> setData(PTW_COL_DHT_UPDATETS, Qt::DisplayRole, "");
 			
 		// NOW CONNECT STATE
 		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, QString::fromStdString(status.mPeerConnectMsg));
@@ -478,9 +482,12 @@ void MainWindow::updateNetPeers()
 		
 		// NOW CB
 		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mPeerCbMsg));
-		peer_item -> setData(PTW_COL_PEER_CB_MODE, Qt::DisplayRole, "");
-		peer_item -> setData(PTW_COL_PEER_CB_PROXY, Qt::DisplayRole, "None");
-		
+		//peer_item -> setData(PTW_COL_PEER_CB_MODE, Qt::DisplayRole, "");
+		//peer_item -> setData(PTW_COL_PEER_CB_PROXY, Qt::DisplayRole, "None");
+
+		// CONNECT LOGIC		
+		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole, 
+						QString::fromStdString("Not a Friend"));
 	
 	}
 

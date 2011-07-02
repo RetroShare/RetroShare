@@ -50,13 +50,17 @@
 class PeerConnectStateBox
 {
 	public:
-	PeerConnectStateBox(std::string id);
+	PeerConnectStateBox();
 
-	uint32_t connectCb(uint32_t cbtype, uint32_t netstate);
+	uint32_t connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nattype);
 	uint32_t updateCb(uint32_t updateType);
+
+	bool shouldUseProxyPort(uint32_t netmode, uint32_t nattype);
 
 	std::string connectState();
 
+	std::string mPeerId;
+	
 	private:
 
 	uint32_t connectCb_direct();
@@ -65,7 +69,7 @@ class PeerConnectStateBox
 	void errorMsg(std::ostream &out, std::string msg, uint32_t updateParam);
 	void stateMsg(std::ostream &out, std::string msg, uint32_t updateParam);
 
-	std::string mPeerId;
+
 	uint32_t mState;
 	uint32_t mNetState;
 	time_t mAttemptTS;

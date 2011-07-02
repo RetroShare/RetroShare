@@ -133,6 +133,29 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (doProxyRestricted)
+	{
+		std::list<std::pair<uint16_t, uint16_t> > portRestrictions;
+		std::list<std::string>::iterator sit;
+
+		for(sit = proxyrestrictions.begin(); sit != proxyrestrictions.end(); sit++)
+		{
+			/* parse the string */
+			unsigned int lport, uport;
+			if (2 == sscanf(sit->c_str(), "%u-%u", &lport, &uport))
+			{
+				std::cerr << "Adding Port Restriction (" << lport << "-" << uport << ")";
+				std::cerr << std::endl;
+				portRestrictions.push_back(std::make_pair<uint16_t, uint16_t>(lport, uport));
+			}
+		}
+
+		if (portRestrictions.size() > 0)
+		{
+			pnet->setProxyUdpStackRestrictions(portRestrictions);
+		}
+	}
+
 	if (doLocalTesting)
 	{
 		pnet->setLocalTesting();

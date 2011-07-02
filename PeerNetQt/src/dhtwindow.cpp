@@ -153,7 +153,7 @@ void DhtWindow::updateDhtPeers()
 
 		std::ostringstream flagsstr;
 		flagsstr << "0x" << std::hex << std::setfill('0') << it->mPeerFlags;
-
+		flagsstr << " EX:0x" << std::hex << std::setfill('0') << it->mExtraFlags;
 		std::ostringstream foundstr;
 		foundstr << now - it->mFoundTime << " secs ago";
 

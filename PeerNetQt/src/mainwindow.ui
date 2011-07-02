@@ -162,6 +162,11 @@
           </column>
           <column>
            <property name="text">
+            <string>ConnectLogic</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Connect Status</string>
            </property>
           </column>
@@ -178,26 +183,6 @@
           <column>
            <property name="text">
             <string>Cb Status</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Cb Mode</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Cb Address</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Dht Address</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Dht Update</string>
            </property>
           </column>
          </widget>

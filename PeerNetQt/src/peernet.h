@@ -21,6 +21,7 @@
 #include "tcponudp/udprelay.h"
 
 #include "netstatebox.h"
+#include "connectstatebox.h"
 
 #define PN_DHT_STATE_UNKNOWN           0
 #define PN_DHT_STATE_SEARCHING         1
@@ -80,6 +81,16 @@ class PeerStatus
 	bdId		   mPeerReqProxyId;
 	time_t             mPeerReqTS;
 
+	/* Connection Request History / Connection Logic */
+	uint32_t	mCRHState;
+	uint32_t	mCRHFlags;
+	uint32_t	mCRHDirectTS;
+	uint32_t	mCRHDirectAttempts;
+	uint32_t	mCRHProxyTS;
+	uint32_t	mCRHProxyAttempts;
+	uint32_t	mCRHRelayTS;
+	uint32_t	mCRHRelayAttempts;
+
 	/* Callback Info */
 	std::string	mPeerCbMsg;
 	uint32_t        mPeerCbMode;
@@ -88,6 +99,11 @@ class PeerStatus
 	bdId		mPeerCbDestId;
 	time_t		mPeerCbTS;
 
+	/* new ConnectLogic stuff. */
+	PeerConnectStateBox mConnectLogic;
+	uint32_t           mConnectLogicTS;
+	uint32_t           mConnectLogicFlags;
+	bool	           mConnectLogicProxyPort;
 
 	/* Actual Connection Status */	
 	uint32_t           mPeerConnectState;
@@ -98,6 +114,7 @@ class PeerStatus
 	bdId		   mPeerConnectProxyId;
 	struct sockaddr_in mPeerConnectAddr;
 	uint32_t           mPeerConnectPoint;
+
 
 	time_t             mPeerConnectUdpTS;
 	time_t             mPeerConnectTS;
@@ -112,6 +129,8 @@ class PeerStatus
 #define PEERNET_ACTION_TYPE_CONNECT     1
 #define PEERNET_ACTION_TYPE_AUTHORISE   2
 #define PEERNET_ACTION_TYPE_START	3
+#define PEERNET_ACTION_TYPE_RESTARTREQ	4
+#define PEERNET_ACTION_TYPE_KILLREQ	5
 
 class PeerAction
 {
@@ -134,6 +153,8 @@ class PeerNet: public BitDhtCallback
 
 	/* setup functions. must be called before init() */
 	void setUdpStackRestrictions(std::list<std::pair<uint16_t, uint16_t> > &restrictions);
+	void setProxyUdpStackRestrictions(std::list<std::pair<uint16_t, uint16_t> > &restrictions);
+
 	void setLocalTesting();
 
 	void init();
@@ -250,6 +271,9 @@ int 	UnreachablePeerCallback_locked(const bdId *id,
 	/* port restrictions */
 	bool mDoUdpStackRestrictions;
 	std::list<std::pair<uint16_t, uint16_t> > mUdpStackRestrictions;
+
+	bool mDoProxyUdpStackRestrictions;
+	std::list<std::pair<uint16_t, uint16_t> > mProxyUdpStackRestrictions;
 
 	/* these probably should be protected - but aren't for now */
 	time_t mMinuteTS;

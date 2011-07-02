@@ -86,6 +86,10 @@ def generateNet(basefolder, npeers, nfriends, fracProxy, fracRelay, nguis):
   fd4.write('  echo \"script needs expression as argument\"\n');
   fd4.write('fi\n\n')
 
+  #
+  lsfilename = '%s/checklogs.sh' % (basefolder);
+  fd5 = open(lsfilename, 'w');
+  fd5.write('#!/bin/sh\n\n');
 
   for i in range(npeers):
     random.shuffle(shuffledIdxs);
@@ -134,15 +138,23 @@ def generateNet(basefolder, npeers, nfriends, fracProxy, fracRelay, nguis):
     fd4.write('grep -n -A 10 $1 pn.log\n');
     fd4.write('cd ..\n\n');
 
+
+    fd5.write('echo ------------ PEER FOLDER: %s\n' % folders[i]);
+    fd5.write('cd %s\n' % folders[i]);
+    fd5.write('ls -l pn.log\n');
+    fd5.write('cd ..\n\n');
+
   fd.close();
   fd2.close();
   fd3.close();
   fd4.close();
+  fd5.close();
 
   os.chmod(scriptfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
   os.chmod(analysisfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
   os.chmod(warningfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
   os.chmod(exprfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
+  os.chmod(lsfilename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IROTH); 
 
   return;
 
