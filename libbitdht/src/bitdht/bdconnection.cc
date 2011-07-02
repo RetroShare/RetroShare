@@ -399,6 +399,10 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		std::multimap<bdMetric, bdId>::iterator it;
 		for(it = nearest.begin(); it != nearest.end(); it++)
 		{
+			std::cerr << "bdConnectManager::requestConnection_proxy() is Entry it connected to Friend? : ";
+			mFns->bdPrintId(std::cerr, &(*pit));
+			std::cerr << std::endl;
+
 			bdNodeId midId;
 			mFns->bdRandomMidId(target, &(it->second.id), &midId);
 			/* trigger search */
@@ -578,19 +582,19 @@ void bdConnectManager::iterateConnectionRequests()
 	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
 	{
 		bool erase = false;
+
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
 		std::cerr << "bdConnectManager::iterateConnectionAttempt() Request is:";
 		std::cerr << std::endl;
 		std::cerr << it->second;
 		std::cerr << std::endl;
-
+#endif
 
 		/* check status of connection */
 		if (it->second.mState == BITDHT_CONNREQUEST_READY)
 		{
 			std::cerr << "bdConnectManager::iterateConnectionAttempt() Request is READY, starting";
 			std::cerr << std::endl;
-
-
 
 			/* kick off the connection if possible */
 			// goes to BITDHT_CONNREQUEST_INPROGRESS;
