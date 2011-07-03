@@ -853,7 +853,9 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	checkOutgoingMessages(); 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
+
+	checkOutgoingMessages();
 
 	return 1;
 }
