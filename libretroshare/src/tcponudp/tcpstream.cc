@@ -72,7 +72,7 @@ static const double RTT_ALPHA = 0.875;
 static double getCurrentTS();
 
 TcpStream::TcpStream(UdpSubReceiver *lyr)
-	:inSize(0), outSizeRead(0), outSizeNet(0), 
+	: tcpMtx("TcpStream"), inSize(0), outSizeRead(0), outSizeNet(0), 
 	state(TCP_CLOSED), 
         inStreamActive(false),
         outStreamActive(false),

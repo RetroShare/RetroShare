@@ -80,7 +80,7 @@ class RsIfaceReal: public RsIface
 {
 public:
         RsIfaceReal(NotifyBase &callback)
-	:RsIface(callback)
+	:RsIface(callback), rsIfaceMutex("RsIface")
 	{ return; }
 
 	virtual void lockData()

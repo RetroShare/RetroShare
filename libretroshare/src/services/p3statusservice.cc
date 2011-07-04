@@ -44,7 +44,7 @@ std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 RsStatus *rsStatus = NULL;
 
 p3StatusService::p3StatusService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_STATUS), p3Config(CONFIG_TYPE_STATUS), mConnMgr(cm)
+	:p3Service(RS_SERVICE_TYPE_STATUS), p3Config(CONFIG_TYPE_STATUS), mConnMgr(cm), mStatusMtx("p3StatusService")
 {
 	addSerialType(new RsStatusSerialiser());
 

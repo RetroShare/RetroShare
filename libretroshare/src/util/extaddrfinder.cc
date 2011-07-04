@@ -271,7 +271,7 @@ ExtAddrFinder::~ExtAddrFinder()
 	free (_addr) ;
 }
 
-ExtAddrFinder::ExtAddrFinder()
+ExtAddrFinder::ExtAddrFinder() : _addrMtx("ExtAddrFinder")
 {
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Creating new ExtAddrFinder." << std::endl ;

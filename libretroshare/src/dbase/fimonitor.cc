@@ -50,7 +50,7 @@
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
-	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid),
+	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fiMutex("FileIndexMonitor"), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
 		mForceCheck(false), mInCheck(false),cb(cb_in), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
 

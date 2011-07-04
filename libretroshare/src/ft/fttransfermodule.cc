@@ -71,7 +71,7 @@ const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 2 ;
 #define FT_TM_FLAG_CHUNK_CRC 		4
 
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
-	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(FT_TM_FLAG_DOWNLOADING)
+	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), tfMtx("ftTransferModule"), mFlag(FT_TM_FLAG_DOWNLOADING)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
@@ -518,7 +518,7 @@ class HashThread: public RsThread
 {
 	public:
 		HashThread(ftFileCreator *m) 
-			: _m(m),_finished(false),_hash("") {}
+			: _hashThreadMtx("HashThread"), _m(m),_finished(false),_hash("") {}
 
 		virtual void run()
 		{

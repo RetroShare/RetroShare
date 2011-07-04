@@ -30,6 +30,10 @@
 #include <errno.h>    /* for usleep() */
 #include <iostream>
 
+#ifdef RSMUTEX_DEBUG
+#include <stdio.h>
+#endif
+
 /*******
  * #define DEBUG_THREADS 1
  *******/
@@ -86,7 +90,7 @@ pthread_t  createThread(RsThread &thread)
 
 }
 
-RsThread::RsThread ()
+RsThread::RsThread () : mMutex("RsThread")
 {
 	mIsRunning = true;
 
@@ -168,4 +172,31 @@ void RsQueueThread::run()
 		usleep(1000 * mLastSleep);
 #endif
 	}
+}
+
+void RsMutex::lock()
+{
+#ifdef RSMUTEX_DEBUG
+	clock_t t1 = clock();
+#endif
+
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+	if(!trylock())
+		if(!pthread_equal(_thread_id,pthread_self()))
+#endif
+			pthread_mutex_lock(&realMutex);
+
+	_thread_id = pthread_self() ;
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+	++_cnt ;
+#endif
+
+#ifdef RSMUTEX_DEBUG
+	clock_t t2 = clock();
+	double duration = (double) (t2 - t1) / CLOCKS_PER_SEC;
+	if (duration * 1000 > RSMUTEX_DEBUG) {
+		fprintf(stderr, "RsMutex::lock() %s --> %.3fs\n", name.c_str(), duration);
+		fflush(stderr);
+	}
+#endif
 }

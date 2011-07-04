@@ -5,7 +5,7 @@
 
 uint32_t RSRandom::index = 0 ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
-RsMutex RSRandom::rndMtx ;
+RsMutex RSRandom::rndMtx("RSRandom") ;
 
 #ifdef WINDOWS_SYS
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;

@@ -43,7 +43,7 @@ time_t 	RsDiscSpace::_last_check[3] 	= { 0,0,0 } ;
 uint32_t RsDiscSpace::_size_limit_mb 	= 100 ;
 uint32_t RsDiscSpace::_current_size[3] = { 10000,10000,10000 } ;
 bool		RsDiscSpace::_last_res[3] = { true,true,true };
-RsMutex 	RsDiscSpace::_mtx ;
+RsMutex 	RsDiscSpace::_mtx("RsDiscSpace") ;
 
 bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, uint64_t& block_size)
 {

@@ -89,7 +89,7 @@ dhtPeerEntry::dhtPeerEntry()
 }
 
 p3DhtMgr::p3DhtMgr(std::string id, pqiConnectCb *cb)
-	:pqiNetAssistConnect(id, cb), mStunRequired(true) 
+	:pqiNetAssistConnect(id, cb), dhtMtx("p3DhtMgr"), mStunRequired(true) 
 {
 	/* setup own entry */
 	dhtMtx.lock(); /* LOCK MUTEX */

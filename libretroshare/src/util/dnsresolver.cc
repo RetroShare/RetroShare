@@ -154,7 +154,7 @@ DNSResolver::~DNSResolver()
 	delete _thread_running ;
 }
 
-DNSResolver::DNSResolver()
+DNSResolver::DNSResolver() : _rdnsMtx("DNSResolver")
 {
 	RsStackMutex mut(_rdnsMtx) ;
 

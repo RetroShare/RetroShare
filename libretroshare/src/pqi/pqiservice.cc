@@ -33,7 +33,7 @@ const int pqiservicezone = 60478;
  * #define SERVICE_DEBUG 1
  ****/
 
-p3ServiceServer::p3ServiceServer()
+p3ServiceServer::p3ServiceServer() : srvMtx("p3ServiceServer")
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 

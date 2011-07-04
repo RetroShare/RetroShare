@@ -88,7 +88,7 @@ static const uint32_t MAX_TUNNEL_REQS_PER_SECOND=   1 ;		/// maximum number of t
 static const uint32_t MAX_ALLOWED_SR_IN_CACHE   = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
 
 p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
-	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mConnMgr(cm)
+	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mConnMgr(cm), mTurtleMtx("p3turtle")
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 

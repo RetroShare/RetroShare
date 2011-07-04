@@ -42,7 +42,7 @@
  */
 
 p3ChatService::p3ChatService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mConnMgr(cm) 
+	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mConnMgr(cm) 
 {
 	addSerialType(new RsChatSerialiser());
 

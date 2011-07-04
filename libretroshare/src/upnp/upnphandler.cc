@@ -840,7 +840,7 @@ bool upnphandler::shutdown_upnp()
  */
 
 upnphandler::upnphandler()
-	:toEnable(false), toStart(false), toStop(false),
+	: dataMtx("upnpState"), toEnable(false), toStart(false), toStop(false),
 	eport(0), eport_curr(0),
 	upnpState(RS_UPNP_S_UNINITIALISED),
 	upnpConfig(NULL)

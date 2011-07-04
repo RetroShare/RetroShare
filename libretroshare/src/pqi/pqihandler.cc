@@ -38,7 +38,7 @@ const int pqihandlerzone = 34283;
 #define RSITEM_DEBUG 1
 ****/
 
-pqihandler::pqihandler(SecurityPolicy *Global)
+pqihandler::pqihandler(SecurityPolicy *Global) : coreMtx("pqihandler")
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 

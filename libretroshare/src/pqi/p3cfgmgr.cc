@@ -43,7 +43,7 @@
 
 
 p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
-        :basedir(dir), metafname(fname), metasigfname(signame),
+        :basedir(dir), metafname(fname), metasigfname(signame), cfgMtx("p3ConfigMgr"),
 	mConfigSaveActive(true)
 {
 	oldConfigType = checkForGlobalSigConfig();
@@ -1295,7 +1295,7 @@ bool    p3GeneralConfig::loadList(std::list<RsItem *>& load)
 bool pqiConfig::globalConfigType = false;
 
 pqiConfig::pqiConfig(uint32_t t)
-	:ConfInd(2), type(t)
+	: cfgMtx("pqiConfig"), ConfInd(2), type(t)
 {
 	return;
 }

@@ -100,6 +100,8 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string c
 	last_clean_time(0),
 	mDataplex(dm),
 	mTurtle(NULL), 
+	ctrlMutex("ftController"),
+	doneMutex("ftController"),
 	mFtActive(false),
 	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) 
 {

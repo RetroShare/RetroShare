@@ -86,7 +86,7 @@ p3disc::p3disc(p3ConnectMgr *cm, pqipersongrp *pqih)
         :p3Service(RS_SERVICE_TYPE_DISC),
 				 p3Config(CONFIG_TYPE_P3DISC),
 		  mConnMgr(cm), 
-		  mPqiPersonGrp(pqih)
+		  mPqiPersonGrp(pqih), mDiscMtx("p3disc")
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 

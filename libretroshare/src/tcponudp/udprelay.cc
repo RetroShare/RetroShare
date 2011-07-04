@@ -45,7 +45,7 @@ int displayUdpRelayPacketHeader(const void *data, const int size);
 #define MAX_RELAY_UDP_PACKET_SIZE 1024
 
 UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
-	:UdpSubReceiver(pub)
+	:UdpSubReceiver(pub), udppeerMtx("UdpSubReceiver"), relayMtx("UdpSubReceiver")
 {
 	mClassLimit.resize(UDP_RELAY_NUM_CLASS);
 	mClassCount.resize(UDP_RELAY_NUM_CLASS);

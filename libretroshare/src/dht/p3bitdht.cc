@@ -72,7 +72,7 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 
 
 p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::string bootstrapfile)
-	:pqiNetAssistConnect(id, cb)
+	:pqiNetAssistConnect(id, cb), dhtMtx("p3BitDht")
 {
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
 	bdNodeId ownId;

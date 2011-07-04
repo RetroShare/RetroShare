@@ -58,7 +58,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 	pkt_wpending(NULL), 
 	totalRead(0), totalSent(0),
 	currRead(0), currSent(0),
-	avgReadCount(0), avgSentCount(0)
+	avgReadCount(0), avgSentCount(0), streamerMtx("pqistreamer")
 {
 	avgLastUpdate = currReadTS = currSentTS = time(NULL);
 

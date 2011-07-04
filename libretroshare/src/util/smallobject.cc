@@ -4,7 +4,7 @@
 
 using namespace RsMemoryManagement ;
 
-RsMutex SmallObject::_mtx ;
+RsMutex SmallObject::_mtx("SmallObject") ;
 SmallObjectAllocator SmallObject::_allocator(RsMemoryManagement::MAX_SMALL_OBJECT_SIZE) ;
 
 void Chunk::init(size_t blockSize,unsigned char blocks)

@@ -63,7 +63,7 @@ ftServer::ftServer(p3ConnectMgr *connMgr)
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
 		mFtController(NULL), mFtExtra(NULL),
-		mFtDataplex(NULL), mFtSearch(NULL)
+		mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
 {
         mCacheStrapper = new ftCacheStrapper(connMgr);
 }

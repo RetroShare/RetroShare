@@ -49,7 +49,7 @@ PhotoSet::PhotoSet()
 p3PhotoService::p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir)
 	:CacheSource(type, true, cs, sourcedir), 
-	CacheStore(type, true, cs, cft, storedir),
+	CacheStore(type, true, cs, cft, storedir), mPhotoMtx("p3PhotoService"),
 	mUpdated(true)
 {
 

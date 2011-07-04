@@ -50,7 +50,7 @@ static const char FILE_CACHE_SEPARATOR_CHAR = '|' ;
  * #define FI_DEBUG_ALL 1
  ****/
 
-static RsMutex FIndexPtrMtx ;
+static RsMutex FIndexPtrMtx("FIndexPtrMtx") ;
 std::tr1::unordered_set<void*> FileIndex::_pointers ;
 
 void FileIndex::registerEntry(void*p)

@@ -32,7 +32,7 @@
 
 
 UdpPeerReceiver::UdpPeerReceiver(UdpPublisher *pub)
-	:UdpSubReceiver(pub)
+	:UdpSubReceiver(pub), peerMtx("UdpSubReceiver")
 {
 	return;
 }

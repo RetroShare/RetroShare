@@ -37,16 +37,20 @@
 /* RsIface Thread Wrappers */
 
 #undef RSTHREAD_SELF_LOCKING_GUARD
+//#define RSMUTEX_DEBUG 300 // Milliseconds for print in the stderr
 
 class RsMutex
 {
 	public:
 
-	RsMutex() 
-        {
+	RsMutex(const std::string &name)
+	{
 		pthread_mutex_init(&realMutex, NULL); 
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 		_thread_id = 0 ;
+#endif
+#ifdef RSMUTEX_DEBUG
+		this->name = name;
 #endif
 	}
 	~RsMutex() 
@@ -54,19 +58,14 @@ class RsMutex
 		pthread_mutex_destroy(&realMutex); 
 	}
 
-	void	lock() 
-	{ 
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-		if(!trylock())
-			if(!pthread_equal(_thread_id,pthread_self()))
-#endif
-				pthread_mutex_lock(&realMutex); 
-
-		_thread_id = pthread_self() ;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-		++_cnt ;
-#endif
+#ifdef RSMUTEX_DEBUG
+	void setName(const std::string &name)
+	{
+		this->name = name;
 	}
+#endif
+
+	void	lock();
 	void	unlock() 
 	{ 
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
@@ -89,6 +88,9 @@ class RsMutex
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 		uint32_t _cnt ;
 #endif
+#ifdef RSMUTEX_DEBUG
+		std::string name;
+#endif
 };
 
 class RsStackMutex
@@ -96,7 +98,7 @@ class RsStackMutex
 	public:
 
 	RsStackMutex(RsMutex &mtx): mMtx(mtx) { mMtx.lock(); }
-        ~RsStackMutex() { mMtx.unlock(); }
+	~RsStackMutex() { mMtx.unlock(); }
 
 	private:
 	RsMutex &mMtx;
@@ -149,6 +151,5 @@ virtual bool doWork() = 0;
 	time_t   mLastWork;  /* secs */
 	float    mRelaxFactor; 
 };
-
 
 #endif

@@ -134,7 +134,7 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 }
 
 AuthGPGimpl::AuthGPGimpl()
-        :p3Config(CONFIG_TYPE_AUTHGPG),gpgmeInit(false),gpgmeKeySelected(false)
+        :p3Config(CONFIG_TYPE_AUTHGPG), gpgMtxEngine("AuthGPG-engine"), gpgMtxData("AuthGPG-data"),gpgmeInit(false),gpgmeKeySelected(false), gpgMtxService("AuthGPG-service")
 {
         {
             RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/

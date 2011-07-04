@@ -40,7 +40,7 @@
 ****/
 
 RsServer::RsServer(RsIface &i, NotifyBase &callback)
-	:RsControl(i, callback)
+	:RsControl(i, callback), coreMutex("RsServer")
 {
 	ftserver = NULL;
 

@@ -58,7 +58,7 @@ class p3Service: public pqiService
 
 	p3Service(uint16_t type) 
 	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
-	rsSerialiser(NULL)
+	srvMtx("p3Service"), rsSerialiser(NULL)
 	{
 		rsSerialiser = new RsSerialiser();
 		return; 

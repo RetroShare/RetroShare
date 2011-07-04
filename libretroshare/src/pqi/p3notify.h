@@ -66,7 +66,7 @@ class p3Notify: public RsNotify, public pqiNotify
 {
 	public:
 
-	p3Notify() { return; }
+	p3Notify() : noteMtx("p3Notify") { return; }
 virtual ~p3Notify() { return; }
 
 	/* Output for retroshare-gui */

@@ -56,7 +56,7 @@ const int msgservicezone = 54319;
 
 p3MsgService::p3MsgService(p3ConnectMgr *cm)
 	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
-	mConnMgr(cm), msgChanged(1), mMsgUniqueId(1)
+	mConnMgr(cm), mMsgMtx("p3MsgService"), msgChanged(1), mMsgUniqueId(1)
 {
 	addSerialType(new RsMsgSerialiser());
 

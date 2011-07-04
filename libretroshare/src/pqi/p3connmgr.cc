@@ -176,7 +176,7 @@ void pqiNetStatus::print(std::ostream &out)
 
 
 p3ConnectMgr::p3ConnectMgr()
-	:p3Config(CONFIG_TYPE_PEERS), 
+	:p3Config(CONFIG_TYPE_PEERS), connMtx("p3ConnectMgr"),
         mNetStatus(RS_NET_UNKNOWN),
 	mStatusChanged(false)
 {

@@ -123,8 +123,8 @@ sslcert::sslcert(X509 *x509, std::string pid)
 
 
 AuthSSLimpl::AuthSSLimpl()
-        : p3Config(CONFIG_TYPE_AUTHSSL), sslctx(NULL), 
-	mOwnCert(NULL), mOwnPrivateKey(NULL), mOwnPublicKey(NULL), init(0)
+	: p3Config(CONFIG_TYPE_AUTHSSL), sslctx(NULL),
+	mOwnCert(NULL), sslMtx("AuthSSL"), mOwnPrivateKey(NULL), mOwnPublicKey(NULL), init(0)
 {
 }
 

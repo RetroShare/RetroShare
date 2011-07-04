@@ -63,7 +63,7 @@ std::ostream &operator<<(std::ostream &out, const CacheData &d)
  ********************************* Cache Store / Source *************************/
 
 CacheSource::CacheSource(uint16_t t, bool m, CacheStrapper *cs, std::string cachedir)
-	:cacheType(t), multiCache(m), mStrapper(cs), cacheDir(cachedir)
+	:cacheType(t), multiCache(m), mStrapper(cs), cacheDir(cachedir), cMutex("CacheSource")
 	{ 
 		return; 
 	}
@@ -218,7 +218,7 @@ void    CacheSource::listCaches(std::ostream &out)
 CacheStore::CacheStore(uint16_t t, bool m, 	
 			CacheStrapper *cs, CacheTransfer *cft, std::string cachedir)
 	:cacheType(t), multiCache(m), mStrapper(cs), 
-		cacheTransfer(cft), cacheDir(cachedir)
+		cacheTransfer(cft), cacheDir(cachedir), cMutex("CacheStore")
 	{ 
 		/* not much */
 		return; 
@@ -543,7 +543,7 @@ void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
  ********************************* CacheStrapper ********************************/
 
 CacheStrapper::CacheStrapper(p3ConnectMgr *cm)
-        :p3Config(CONFIG_TYPE_CACHE), mConnMgr(cm)
+		:p3Config(CONFIG_TYPE_CACHE), mConnMgr(cm), csMtx("CacheStrapper")
 {
 	return;
 }

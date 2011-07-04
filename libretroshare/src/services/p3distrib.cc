@@ -105,9 +105,9 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
         p3Config(configId), p3ThreadedService(subtype),
-	mHistoricalCaches(true),
+	mHistoricalCaches(true), distribMtx(""),
 	mStorePeriod(storePeriod), 
-	mPubPeriod(pubPeriod), 
+	mPubPeriod(pubPeriod),
 	mLastPublishTime(0),
 	mMaxCacheSubId(1),
 	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log"), mLastKeyPublishTime(0), mLastRecvdKeyTime(0)
@@ -119,9 +119,14 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	mLastCacheDocUpdate  = time(NULL);
 	mHistoricalCachesLoaded = false;
 
-        mOwnId = AuthSSL::getAuthSSL()->OwnId();
+#ifdef RSMUTEX_DEBUG
+	distribMtx.setName("p3GroupDistrib - " + keyBackUpDir.substr(keyBackUpDir.find_last_of('/') + 1));
+#endif
 
-        addSerialType(new RsDistribSerialiser(getRsItemService(getType())));
+	mOwnId = AuthSSL::getAuthSSL()->OwnId();
+
+	addSerialType(new RsDistribSerialiser(getRsItemService(getType())));
+
 	return;
 }
 

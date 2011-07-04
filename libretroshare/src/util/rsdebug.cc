@@ -45,7 +45,7 @@ static int lineCount = 0;
 static std::string crashfile;
 static int debugTS = 0;
 
-static RsMutex logMtx;
+static RsMutex logMtx("logMtx");
 
 int locked_setDebugFile(const char *fname);
 int locked_getZoneLevel(int zone);

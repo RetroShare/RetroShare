@@ -64,7 +64,7 @@ ftRequest::ftRequest(uint32_t type, std::string peerId, std::string hash, uint64
 }
 
 ftDataMultiplex::ftDataMultiplex(std::string ownId, ftDataSend *server, ftSearch *search)
-	:RsQueueThread(DMULTIPLEX_MIN, DMULTIPLEX_MAX, DMULTIPLEX_RELAX),
+	:RsQueueThread(DMULTIPLEX_MIN, DMULTIPLEX_MAX, DMULTIPLEX_RELAX), dataMtx("ftDataMultiplex"),
 	mDataSend(server),  mSearch(search), mOwnId(ownId)
 {
 	return;

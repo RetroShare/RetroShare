@@ -48,7 +48,7 @@ const double  TOU_SUCCESS_LPF_FACTOR = 0.90;
 
 
 UdpStunner::UdpStunner(UdpPublisher *pub)
-	:UdpSubReceiver(pub), eaddrKnown(false), eaddrStable(false),
+	:UdpSubReceiver(pub), stunMtx("UdpSubReceiver"), eaddrKnown(false), eaddrStable(false),
         	mStunLastRecvResp(0), mStunLastRecvAny(0), 
 		mStunLastSendStun(0), mStunLastSendAny(0)
 {
