@@ -272,11 +272,12 @@ void bdNodeManager::iteration()
 			 * if, after 60 secs, we haven't reached MIN_OP_SPACE_SIZE, restart....
 			 */
 			
-#define TRANSITION_OP_SPACE_SIZE	100 /* 1 query / sec, should take 12-15 secs */
-//#define MAX_FINDSELF_TIME		60
-//#define MIN_OP_SPACE_SIZE		20 
-#define MAX_FINDSELF_TIME		10
-#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
+#define TRANSITION_OP_SPACE_SIZE	50 /* 1 query / sec, should take 12-15 secs */
+#define MAX_FINDSELF_TIME		30
+#define MIN_OP_SPACE_SIZE		10
+// testing parameters.
+//#define MAX_FINDSELF_TIME		10
+//#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();

@@ -79,7 +79,8 @@ void bdNode::init()
  	std::list<bdFilteredPeer> emptyList;
 	mFilterPeers = new bdFilter(&mOwnId, emptyList, BITDHT_FILTER_REASON_OWNID, mFns);
 	
-	setNodeOptions(BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT);
+	//setNodeOptions(BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT);
+	setNodeOptions(0);
 
 }
 

@@ -27,8 +27,10 @@
 
 #include <sstream>
 #include <iomanip>
-#include <malloc.h>
 
+#if defined(_WIN32) || defined(__MINGW32__)
+	#include <malloc.h>
+#endif
 /* Bloom Filter implementation */
 
 
