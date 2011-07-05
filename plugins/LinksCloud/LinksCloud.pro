@@ -8,4 +8,4 @@ FORMS   = LinksDialog.ui AddLinksDialog.ui
 
 TARGET = LinksCloud
 
-RESOURCES = images.qrc
+RESOURCES = linksCloud_images.qrc

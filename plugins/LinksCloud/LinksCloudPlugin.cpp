@@ -52,7 +52,11 @@ RsCacheService *LinksCloudPlugin::rs_cache_service() const
 QIcon *LinksCloudPlugin::qt_icon() const
 {
 	if(mIcon == NULL)
+	{
+		Q_INIT_RESOURCE(linksCloud_images) ;
+
 		mIcon = new QIcon(IMAGE_LINKS) ;
+	}
 
 	return mIcon ;
 }
