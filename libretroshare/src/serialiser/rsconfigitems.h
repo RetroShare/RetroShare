@@ -41,6 +41,7 @@ const uint8_t RS_PKT_TYPE_GENERAL_CONFIG = 0x01;
 const uint8_t RS_PKT_TYPE_PEER_CONFIG    = 0x02;
 const uint8_t RS_PKT_TYPE_CACHE_CONFIG   = 0x03;
 const uint8_t RS_PKT_TYPE_FILE_CONFIG    = 0x04;
+const uint8_t RS_PKT_TYPE_PLUGIN_CONFIG  = 0x05;
 
 	/* GENERAL CONFIG SUBTYPES */
 const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;

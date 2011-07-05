@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2011 Cyril Soler  
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -15,33 +15,31 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
 #pragma once
 
-#include "configpage.h"
-#include "ui_PluginsPage.h"
+#include "ui_PluginItem.h"
 
-class PluginsPage : public ConfigPage
+class PluginItem: public QWidget, public Ui::PluginItem
 {
 	Q_OBJECT
 
 	public:
-		PluginsPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-		~PluginsPage();
+		PluginItem(int id,const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon) ;
 
-		/** Saves the changes on this page */
-		bool save(QString &errmsg);
-		/** Loads the settings for this page */
-		void load();
+	protected slots:
+		void togglePlugin(bool) ;
+		void configurePlugin() ;
 
-	public slots:
-		void togglePlugin(bool b,const QString&) ;
-		void configurePlugin(int i) ;
+	signals:
+		void pluginEnabled(bool,const QString&) ;
+		void pluginConfigure(int) ;
 
 	private:
-			Ui::PluginsPage ui;
+		int _id ;
 };
+
 

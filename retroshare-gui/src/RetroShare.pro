@@ -291,6 +291,7 @@ HEADERS +=  rshare.h \
             gui/settings/NewTag.h \
             gui/settings/ForumPage.h \
             gui/settings/PluginsPage.h \
+            gui/settings/PluginItem.h \
             gui/settings/AppearancePage.h \
             gui/settings/FileAssociationsPage.h \
             gui/settings/SoundPage.h \
@@ -407,6 +408,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/TransferPage.ui \
             gui/settings/SoundPage.ui \
             gui/settings/ChatPage.ui \
+            gui/settings/PluginItem.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
             gui/toaster/DownloadToaster.ui \
@@ -546,6 +548,7 @@ SOURCES +=  main.cpp \
             gui/settings/NewTag.cpp \
             gui/settings/ForumPage.cpp \
             gui/settings/PluginsPage.cpp \
+            gui/settings/PluginItem.cpp \
             gui/settings/AppearancePage.cpp \
             gui/settings/FileAssociationsPage.cpp \
             gui/settings/SoundPage.cpp \

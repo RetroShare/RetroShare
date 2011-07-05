@@ -15,6 +15,8 @@ class LinksCloudPlugin: public RsPlugin
 		virtual QIcon          *qt_icon()       			const	;
 		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_RANK ; }
 
+		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const ;
+
 		virtual std::string configurationFileName() const { return std::string() ; }
 
 		virtual std::string getShortPluginDescription() const ;

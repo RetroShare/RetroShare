@@ -37,9 +37,20 @@ class p3Service ;
 class p3ConnectMgr ;
 class MainPage ;
 class QIcon ;
+class QString ;
+class QWidget ;
 class RsCacheService ;
 class ftServer ;
 class pqiService ;
+
+// Used for the status of plugins.
+//
+#define PLUGIN_STATUS_NO_STATUS      0x0000
+#define PLUGIN_STATUS_UNKNOWN_HASH   0x0001
+#define PLUGIN_STATUS_DLOPEN_ERROR   0x0002
+#define PLUGIN_STATUS_MISSING_SYMBOL 0x0003
+#define PLUGIN_STATUS_NULL_PLUGIN    0x0004
+#define PLUGIN_STATUS_LOADED         0x0005
 
 class RsPlugin
 {
@@ -47,12 +58,15 @@ class RsPlugin
 		virtual RsCacheService *rs_cache_service() 	const	{ return NULL ; }
 		virtual pqiService     *rs_pqi_service() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
+
 		virtual MainPage       *qt_page()       		const	{ return NULL ; }
+		virtual QWidget        *qt_config_panel()		const	{ return NULL ; }
 		virtual QIcon          *qt_icon()       		const	{ return NULL ; }
 
 		virtual std::string configurationFileName() const { return std::string() ; }
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
+		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
 };
 
 class RsPluginHandler
@@ -63,6 +77,9 @@ class RsPluginHandler
 		virtual int nbPlugins() const = 0 ;
 		virtual RsPlugin *plugin(int i) = 0 ;
 		virtual const std::vector<std::string>& getPluginDirectories() const = 0;
+		virtual void getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& file_hash,std::string& error_string) const = 0 ;
+		virtual void enablePlugin(const std::string& hash) = 0;
+		virtual void disablePlugin(const std::string& hash) = 0;
 
 		virtual void slowTickPlugins(time_t sec) = 0 ;
 

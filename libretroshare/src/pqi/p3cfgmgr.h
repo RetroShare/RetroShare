@@ -64,11 +64,7 @@ const uint32_t CONFIG_TYPE_PEERS 	    = 0x0002;
 const uint32_t CONFIG_TYPE_FSERVER 	    = 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	       = 0x0004;
 const uint32_t CONFIG_TYPE_CACHE_OLDID  = 0x0005;
-const uint32_t CONFIG_TYPE_AUTHGPG	 	 = 0x006;
-
-const uint32_t CONFIG_TYPE_P3DISC	 	 = 0x00B;
-const uint32_t CONFIG_TYPE_AUTHSSL	 	 = 0x00C;
-
+const uint32_t CONFIG_TYPE_AUTHGPG	 	 = 0x0006;
 
 /* new FileTransfer */
 const uint32_t CONFIG_TYPE_FT_SHARED 	 = 0x0007;
@@ -76,19 +72,23 @@ const uint32_t CONFIG_TYPE_FT_EXTRA_LIST= 0x0008;
 const uint32_t CONFIG_TYPE_FT_CONTROL 	 = 0x0009;
 const uint32_t CONFIG_TYPE_FT_DWLQUEUE	 = 0x000A;
 
-/// turtle router
-const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
+const uint32_t CONFIG_TYPE_P3DISC	 	 = 0x000B;
+const uint32_t CONFIG_TYPE_AUTHSSL	 	 = 0x000C;
 
 /* wish these ids where higher...
  * may move when switch to v0.5
  */
 const uint32_t CONFIG_TYPE_CHAT 	       = 0x0012;
 const uint32_t CONFIG_TYPE_STATUS 		 = 0x0013;
+const uint32_t CONFIG_TYPE_PLUGINS	 	 = 0x0014;
+
+/// turtle router
+const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
 
 /* standard services */
-const uint32_t CONFIG_TYPE_QBLOG 	= 0x0101;
-const uint32_t CONFIG_TYPE_FORUMS 	= 0x0102;
-const uint32_t CONFIG_TYPE_CHANNELS 	= 0x0103;
+const uint32_t CONFIG_TYPE_QBLOG 	    = 0x0101;
+const uint32_t CONFIG_TYPE_FORUMS 	    = 0x0102;
+const uint32_t CONFIG_TYPE_CHANNELS 	 = 0x0103;
 
 /* CACHE ID Must be at the END so that other configurations
  * are loaded First (Cache Config --> Cache Loading)

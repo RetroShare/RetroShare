@@ -1990,6 +1990,9 @@ int RsServer::StartupRetroShare()
 
 	RsPluginManager *mPluginsManager = new RsPluginManager ;
 	rsPlugins  = mPluginsManager ;
+	mConfigMgr->addConfiguration("plugins.cfg", mPluginsManager);
+
+	mPluginsManager->loadConfiguration() ;
 
 	// These are needed to load plugins: plugin devs might want to know the place of
 	// cache directories, get pointers to cache strapper, or access ownId()
@@ -2095,18 +2098,17 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-        mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
-        mConfigMgr->loadConfiguration();
+	mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
+	mConfigMgr->loadConfiguration();
 
-        //mConfigMgr->addConfiguration("sslcerts.cfg", AuthSSL::getAuthSSL());
-        mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
+	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 #ifndef MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 #ifdef RS_USE_BLOGS	
-        mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
+	mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
 #endif
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);

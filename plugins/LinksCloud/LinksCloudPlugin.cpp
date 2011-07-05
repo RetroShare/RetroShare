@@ -16,6 +16,13 @@ extern "C" {
 
 #define IMAGE_LINKS ":/images/irkick.png"
 
+void LinksCloudPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const
+{
+	major = 5 ;
+	minor = 1 ;
+	svn_rev = 4350 ;
+}
+
 LinksCloudPlugin::LinksCloudPlugin()
 {
 	mRanking = NULL ;

@@ -250,12 +250,23 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 	 std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(uint32_t i = 0;i<rsPlugins->nbPlugins();++i)
 	 {
-		 if(rsPlugins->plugin(i)->qt_page() != NULL && rsPlugins->plugin(i)->qt_icon() != NULL)
+		 QIcon icon ;
+
+		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_page() != NULL)
 		 {
+			 if(rsPlugins->plugin(i)->qt_icon() != NULL)
+				 icon = *rsPlugins->plugin(i)->qt_icon() ;
+			 else
+				 icon = QIcon(":images/extension_48.png") ;
+
 			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
-			 ui.stackPages->add(rsPlugins->plugin(i)->qt_page(), createPageAction(*rsPlugins->plugin(i)->qt_icon(), QString::fromStdString(rsPlugins->plugin(i)->getPluginName()), grp));
+			 ui.stackPages->add(rsPlugins->plugin(i)->qt_page(), createPageAction(icon, QString::fromStdString(rsPlugins->plugin(i)->getPluginName()), grp));
 		 }
-			 //ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages), createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
+		 else if(rsPlugins->plugin(i) == NULL)
+			 std::cerr << "  No plugin object !" << std::endl;
+		 else
+			 std::cerr << "  No plugin page !" << std::endl;
+
 	 }
 
 #ifndef RS_RELEASE_VERSION

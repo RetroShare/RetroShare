@@ -2,6 +2,11 @@
 
 #include "pluginmanager.h"
 #include <dirent.h>
+#include <serialiser/rsserial.h>
+#include <serialiser/rstlvbase.h>
+#include <serialiser/rstlvtypes.h>
+#include <serialiser/rspluginitems.h>
+#include <util/rsdir.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
 #include <dbase/cachestrapper.h>
@@ -28,6 +33,16 @@ p3ConnectMgr   *RsPluginManager::_connectmgr 				= NULL ;
 typedef RsPlugin *(*RetroSharePluginEntry)(void) ;
 RsPluginHandler *rsPlugins ;
 
+RsPluginManager::RsPluginManager() : p3Config(CONFIG_TYPE_PLUGINS)
+{
+}
+
+void RsPluginManager::loadConfiguration()
+{
+	std::string dummyHash = "dummyHash";
+	p3Config::loadConfiguration(dummyHash);
+}
+
 void RsPluginManager::setCacheDirectories(const std::string& local_cache, const std::string& remote_cache)
 {
 	_local_cache_dir = local_cache ;
@@ -43,6 +58,30 @@ bool RsPluginManager::acceptablePluginName(const std::string& name)
 #else
 	return name.size() > 3 && !strcmp(name.c_str()+name.size()-3,".so") ;
 #endif
+}
+
+void RsPluginManager::disablePlugin(const std::string& hash)
+{
+	std::set<std::string>::iterator it = _accepted_hashes.find(hash) ;
+	
+	if(it != _accepted_hashes.end())
+	{
+		std::cerr << "RsPluginManager::disablePlugin(): removing hash " << hash << " from white list" << std::endl;
+
+		_accepted_hashes.erase(it) ;
+		IndicateConfigChanged() ;
+	}
+}
+
+void RsPluginManager::enablePlugin(const std::string& hash)
+{
+	if(_accepted_hashes.find(hash) == _accepted_hashes.end())
+	{
+		std::cerr << "RsPluginManager::enablePlugin(): inserting hash " << hash << " in white list" << std::endl;
+
+		_accepted_hashes.insert(hash) ;
+		IndicateConfigChanged() ;
+	}
 }
 
 void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directories)
@@ -81,53 +120,99 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 	std::cerr << "Loaded a total of " << _plugins.size() << " plugins." << std::endl;
 }
 
+void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& hash,std::string& error_string) const
+{
+	if((uint32_t)i >= _plugins.size())
+		return ;
+
+	status = _plugins[i].status ;
+	error_string = _plugins[i].info_string ;
+	hash = _plugins[i].file_hash ;
+	file_name = _plugins[i].file_name ;
+}
+
+RsSerialiser *RsPluginManager::setupSerialiser()
+{
+	RsSerialiser *rss = new RsSerialiser ;
+	rss->addSerialType(new RsPluginSerialiser()) ;
+
+	return rss ;
+}
+
 bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 {
 	std::cerr << "  Loading plugin " << plugin_name << std::endl;
 
-	// The following choice is somewhat dangerous since the program can stop when a symbol can
-	// not be resolved. However, this is the only way to bind a single .so for both the
-	// interface and command line executables.
+	PluginInfo pf ;
+	pf.plugin = NULL ;
+	pf.file_name = plugin_name ;
+	std::cerr << "    -> hashing." << std::endl;
+	uint64_t size ;
 
-	int link_mode = RTLD_NOW | RTLD_GLOBAL ; // RTLD_NOW
-	//int link_mode = RTLD_GLOBAL ;
+	if(!RsDirUtil::getFileHash(plugin_name,pf.file_hash,size))
+	{
+		std::cerr << "    -> cannot hash file. Plugin read canceled." << std::endl;
+		return false;
+	}
 
-	// Warning: this temporary vector is necessary, because linking with a .so that would include BundleManager.h
-	// is going to call the initialization of the static members of bundleManager a second time, and therefore
-	// will erase whatever is already initialized. So I first open all libraries, then fill the vectors.
+	// This file can be loaded. Insert an entry into the list of detected plugins.
 	//
-	void *handle = dlopen(plugin_name.c_str(),link_mode) ;
+	_plugins.push_back(pf) ;
+	PluginInfo& pinfo(_plugins.back()) ;
 
-	if(handle == NULL)
+	std::cerr << "    -> hash = " << pinfo.file_hash << std::endl;
+
+	if(_accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end())
 	{
-		std::cerr << "  Cannot open plugin: " << dlerror() << std::endl ;
+		std::cerr  << "    -> hash is not in white list. Plugin is rejected. Go to config->plugins to authorise this plugin." << std::endl;
+		pinfo.status = PLUGIN_STATUS_UNKNOWN_HASH ;
+		pinfo.info_string = "" ;
 		return false ;
 	}
-	
-	void *pf = dlsym(handle,_plugin_entry_symbol.c_str()) ;
-
-	if(pf == NULL) {
-		std::cerr << dlerror() << std::endl ;
-		return false ;
-	}
-	std::cerr << "  Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
-
-	RsPlugin *p = ( (*(RetroSharePluginEntry)pf)() ) ;
-
-	if(p == NULL)
+	else
 	{
-		std::cerr << "  Plugin entry function " << _plugin_entry_symbol << " returns NULL ! It should return an object of type RsPlugin* " << std::endl;
-		return false ;
-	}
-	_plugins.push_back(p) ;
-	
-	if(link_mode & RTLD_LAZY)
-	{
-		std::cerr << "  Symbols have been linked in LAZY mode. This means that undefined symbols may" << std::endl ;
-		std::cerr << "  crash your program any time." << std::endl ;
-	}
+		// The following choice is conservative by forcing RS to resolve all dependencies at
+		// the time of loading the plugin. 
 
-	return true ;
+		int link_mode = RTLD_NOW | RTLD_GLOBAL ; 
+
+		void *handle = dlopen(plugin_name.c_str(),link_mode) ;
+
+		if(handle == NULL)
+		{
+			std::cerr << "  Cannot open plugin: " << dlerror() << std::endl ;
+			pinfo.status = PLUGIN_STATUS_DLOPEN_ERROR ;
+			pinfo.info_string = dlerror() ;
+			return false ;
+		}
+
+		void *pf = dlsym(handle,_plugin_entry_symbol.c_str()) ;
+
+		if(pf == NULL) 
+		{
+			std::cerr << dlerror() << std::endl ;
+			pinfo.status = PLUGIN_STATUS_MISSING_SYMBOL ;
+			pinfo.info_string = "Symbol " + _plugin_entry_symbol + " is missing." ;
+			return false ;
+		}
+		std::cerr << "  Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
+
+		RsPlugin *p = ( (*(RetroSharePluginEntry)pf)() ) ;
+
+		if(p == NULL)
+		{
+			std::cerr << "  Plugin entry function " << _plugin_entry_symbol << " returns NULL ! It should return an object of type RsPlugin* " << std::endl;
+			pinfo.status = PLUGIN_STATUS_NULL_PLUGIN ;
+			pinfo.info_string = "Plugin entry " + _plugin_entry_symbol + "() return NULL" ;
+			return false ;
+		}
+
+		pinfo.status = PLUGIN_STATUS_LOADED ;
+		pinfo.plugin = p ;
+		pinfo.info_string = "" ;
+
+		return true;
+	}
 }
 
 p3ConnectMgr *RsPluginManager::getConnectMgr() const
@@ -153,10 +238,10 @@ const std::string& RsPluginManager::getRemoteCacheDir() const
 void RsPluginManager::slowTickPlugins(time_t seconds)
 {
 	for(uint32_t i=0;i<_plugins.size();++i)
-		if(_plugins[i]->rs_cache_service() != NULL && (seconds % _plugins[i]->rs_cache_service()->tickDelay() ))
+		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL && (seconds % _plugins[i].plugin->rs_cache_service()->tickDelay() ))
 		{
-			std::cerr << "  ticking plugin " << _plugins[i]->getPluginName() << std::endl;
-			_plugins[i]->rs_cache_service()->tick() ;
+			std::cerr << "  ticking plugin " << _plugins[i].plugin->getPluginName() << std::endl;
+			_plugins[i].plugin->rs_cache_service()->tick() ;
 		}
 }
 
@@ -165,10 +250,10 @@ void RsPluginManager::registerCacheServices()
 	std::cerr << "  Registering cache services." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
-		if(_plugins[i]->rs_cache_service() != NULL)
+		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL)
 		{
-			rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i]->rs_cache_service(),_plugins[i]->rs_cache_service(),CacheId(_plugins[i]->rs_service_id(), 0))) ;
-			std::cerr << "     adding new cache pair for plugin " << _plugins[i]->getPluginName() << ", with RS_ID " << _plugins[i]->rs_service_id() << std::endl ;
+			rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
+			std::cerr << "     adding new cache pair for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
 		}
 }
 
@@ -177,10 +262,10 @@ void RsPluginManager::registerClientServices(p3ServiceServer *pqih)
 	std::cerr << "  Registering pqi services." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
-		if(_plugins[i]->rs_pqi_service() != NULL)
+		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_pqi_service() != NULL)
 		{
-			pqih->addService(_plugins[i]->rs_pqi_service()) ;
-			std::cerr << "    Added pqi service for plugin " << _plugins[i]->getPluginName() << std::endl;
+			pqih->addService(_plugins[i].plugin->rs_pqi_service()) ;
+			std::cerr << "    Added pqi service for plugin " << _plugins[i].plugin->getPluginName() << std::endl;
 		}
 }
 
@@ -189,12 +274,49 @@ void RsPluginManager::addConfigurations(p3ConfigMgr *ConfigMgr)
 	std::cerr << "  Registering configuration files." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
-		if(_plugins[i]->configurationFileName().length() > 0)
+		if(_plugins[i].plugin != NULL && _plugins[i].plugin->configurationFileName().length() > 0)
 		{
-			ConfigMgr->addConfiguration(_plugins[i]->configurationFileName(), _plugins[i]->rs_cache_service());
-			std::cerr << "    Added configuration for plugin " << _plugins[i]->getPluginName() << ", with file " << _plugins[i]->configurationFileName() << std::endl;
+			ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_cache_service());
+			std::cerr << "    Added configuration for plugin " << _plugins[i].plugin->getPluginName() << ", with file " << _plugins[i].plugin->configurationFileName() << std::endl;
 		}
 }		
+
+bool RsPluginManager::loadList(std::list<RsItem*>& list)
+{
+	_accepted_hashes.clear() ;
+
+	std::cerr << "RsPluginManager::loadList(): " << std::endl;
+
+	std::list<RsItem *>::iterator it;
+	for(it = list.begin(); it != list.end(); it++) 
+	{
+		RsPluginHashSetItem *vitem = dynamic_cast<RsPluginHashSetItem*>(*it);
+
+		if(vitem) 
+			for(std::list<std::string>::const_iterator it(vitem->hashes.ids.begin());it!=vitem->hashes.ids.end();++it)
+			{
+				_accepted_hashes.insert(*it) ;
+				std::cerr << "  loaded hash " << *it << std::endl;
+			}
+		
+		delete (*it);
+	}
+	return true;
+}
+
+bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
+{
+	cleanup = true ;
+
+	RsPluginHashSetItem *vitem = new RsPluginHashSetItem() ;
+
+	for(std::set<std::string>::const_iterator it(_accepted_hashes.begin());it!=_accepted_hashes.end();++it)
+		vitem->hashes.ids.push_back(*it) ;
+
+	list.push_back(vitem) ;
+
+	return true;
+}
 
 RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32_t tick_delay)
 	: CacheSource(service_type, true, rsPlugins->getFileServer()->getCacheStrapper(), rsPlugins->getLocalCacheDir()), 
