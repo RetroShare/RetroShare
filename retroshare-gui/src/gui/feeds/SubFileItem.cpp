@@ -77,6 +77,7 @@ SubFileItem::SubFileItem(const std::string &hash, const std::string &name, const
 
 	mMode = flags & SFI_MASK_STATE;
 	mType = flags & SFI_MASK_TYPE;
+	mFlag = flags & SFI_MASK_FLAG;
 
 	/**** Enable ****
 	*****/
@@ -208,12 +209,12 @@ void SubFileItem::updateItemStatic()
 	{
 		case SFI_STATE_ERROR:
 			progressBar->setRange(0, 100);
-            progressBar->setFormat(tr("ERROR"));
+			progressBar->setFormat(tr("ERROR"));
 
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
-		
+
 			progressBar->setValue(0);
 			filename = "[" + tr("ERROR") + "] " + filename;
 
@@ -227,7 +228,7 @@ void SubFileItem::updateItemStatic()
 
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
-                        cancelButton->setEnabled(false);
+			cancelButton->setEnabled(false);
 
 			progressBar->setValue(0);
 			filename = "[" + tr("EXTRA") + "] " + filename;
@@ -255,7 +256,7 @@ void SubFileItem::updateItemStatic()
 		case SFI_STATE_LOCAL:
 			playButton->setEnabled(true);
 			downloadButton->setEnabled(false);
-                        cancelButton->setEnabled(true);
+			cancelButton->setEnabled(false);
 
 			progressBar->setValue(mFileSize / mDivisor);
 			filename = "[" + tr("LOCAL") + "] " + filename + " (" + misc::friendlyUnit(mFileSize) + ")";
@@ -281,11 +282,14 @@ void SubFileItem::updateItemStatic()
 			if (mMode == SFI_STATE_LOCAL)
 			{
 				saveButton->setEnabled(true);
-				cancelButton->setEnabled(true); // channel files which are extra files are removed
 			}
 			else
 			{
 				saveButton->setEnabled(false);
+			}
+			if (mFlag & SFI_FLAG_CREATE) {
+				cancelButton->setEnabled(true); // channel files which are extra files are removed
+				cancelButton->setToolTip(tr("Remove Attachment"));
 			}
 		}
 			break;
@@ -294,17 +298,15 @@ void SubFileItem::updateItemStatic()
 			playButton->hide();
 			downloadButton->hide();
 			cancelButton->setEnabled(true);
-			cancelButton->setToolTip("Remove Attachment");
+			cancelButton->setToolTip(tr("Remove Attachment"));
 		}
 			break;
 		default:
 			break;
 	}
 
-
 	fileLabel->setText(filename);
 	fileLabel->setToolTip(filename);
-
 }
 
 void SubFileItem::updateItem()
@@ -539,7 +541,7 @@ void SubFileItem::cancel()
 	mMode = SFI_STATE_ERROR;
 
 	/* Only occurs - if it is downloading */
-	if ((mType == SFI_TYPE_ATTACH) || (mType == SFI_TYPE_CHANNEL))
+	if (((mType == SFI_TYPE_ATTACH) || (mType == SFI_TYPE_CHANNEL)) && (mFlag & SFI_FLAG_CREATE))
 	{
 		hide();
 		rsFiles->ExtraFileRemove(FileHash(), RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA);

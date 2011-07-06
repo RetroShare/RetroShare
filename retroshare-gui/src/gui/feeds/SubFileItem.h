@@ -26,7 +26,8 @@
 #include <stdint.h>
 const uint32_t SFI_MASK_STATE  		= 0x000f;
 const uint32_t SFI_MASK_TYPE   		= 0x00f0;
-const uint32_t SFI_MASK_FT     		= 0x0f00;
+//const uint32_t SFI_MASK_FT     		= 0x0f00;
+const uint32_t SFI_MASK_FLAG		= 0xf000;
 
 const uint32_t SFI_STATE_ERROR 		= 0x0001;
 const uint32_t SFI_STATE_EXTRA 		= 0x0002;
@@ -37,6 +38,8 @@ const uint32_t SFI_STATE_UPLOAD 	= 0x0006;
 
 const uint32_t SFI_TYPE_CHANNEL 	= 0x0010;
 const uint32_t SFI_TYPE_ATTACH 		= 0x0020;
+
+const uint32_t SFI_FLAG_CREATE		= 0x1000;
 
 
 //! This create a gui widget that allows users to access files shared by user
@@ -88,7 +91,6 @@ private:
 
 	void Setup();
 
-
 	std::string mPath;
 	std::string mFileHash;
 	std::string mFileName;
@@ -97,17 +99,15 @@ private:
 
 	uint32_t    mMode;
 	uint32_t    mType;
+	uint32_t    mFlag;
 	uint64_t    mDivisor;
 
 	/* for display purposes */
 	float amountDone;
 
 signals:
-		void fileFinished(SubFileItem * subFileItem);
+	void fileFinished(SubFileItem * subFileItem);
 
 };
 
-
-
 #endif
-

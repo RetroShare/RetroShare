@@ -324,8 +324,7 @@ void CreateChannelMsg::addAttachment(const std::string &path)
 	setThumbNail(path, 2000);
 
 	/* add widget in for new destination */
-	uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA;
-
+	uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA | SFI_FLAG_CREATE;
 
 	// check attachment if hash exists already
 	std::list<SubFileItem* >::iterator  it;
@@ -347,9 +346,6 @@ void CreateChannelMsg::addAttachment(const std::string &path)
 	FileInfo fInfo;
 	rsChannels->channelExtraFileHash(path, mChannelId, fInfo);
 
-
-
-
 	// file is not innitial
 	SubFileItem *file = new SubFileItem(fInfo.hash, fInfo.fname, fInfo.path, fInfo.size,
 			flags, mChannelId); // destroyed when fileFrame (this subfileitem) is destroyed
@@ -364,10 +360,7 @@ void CreateChannelMsg::addAttachment(const std::string &path)
 	}
 
 	return;
-
 }
-
-
 
 bool CreateChannelMsg::setThumbNail(const std::string& path, int frame){
 

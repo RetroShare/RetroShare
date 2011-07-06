@@ -163,6 +163,7 @@ void ChanMsgItem::updateItemStatic()
 	}
 
 	msgLabel->setText(QString::fromStdWString(cmi.msg));
+	msgLabel->setVisible(!cmi.msg.empty());
 
 	QDateTime qtime;
 	qtime.setTime_t(cmi.ts);
@@ -174,7 +175,6 @@ void ChanMsgItem::updateItemStatic()
 		out << "(" << cmi.count << " Files)";
 		filelabel->setText(QString::fromStdString(out.str()) + " " + misc::friendlyUnit(cmi.size));
 	}
-		
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;
