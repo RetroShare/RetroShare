@@ -691,7 +691,10 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 
 	if(in == NULL)
 	{
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
+		//getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
+		std::cerr << "******************** FT CONTROLLER ERROR ************************" << std::endl;
+		std::cerr << "Error while copying file " + dest + "\nCannot open input file "+source << std::endl;
+		std::cerr << "*****************************************************************" << std::endl;
 		return false ;
 	}
 
