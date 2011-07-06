@@ -25,12 +25,14 @@
 
 #include "util/bdbloom.h"
 
+#include <stdlib.h>
 #include <sstream>
 #include <iomanip>
 
 #if defined(_WIN32) || defined(__MINGW32__)
-	#include <malloc.h>
+#include <malloc.h>
 #endif
+
 /* Bloom Filter implementation */
 
 

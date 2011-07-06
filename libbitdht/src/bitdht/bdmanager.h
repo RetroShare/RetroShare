@@ -65,9 +65,10 @@ class bdQueryPeer
 	bdId mId;
 	uint32_t mStatus;
 	uint32_t mQFlags;
-	time_t mLastQuery;
-	time_t mLastFound;
+	//time_t mLastQuery;
+	//time_t mLastFound;
 	struct sockaddr_in mDhtAddr;
+	time_t mCallbackTS;   // for UPDATES flag.
 };
 
 

@@ -63,6 +63,8 @@
 // This is eventually what we want.
 //#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 
+#define QUERY_UPDATE_PERIOD 59 	// just under one minute... as that gets called every minute...
+
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
@@ -169,6 +171,8 @@ void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 
 	peer.mDhtAddr.sin_addr.s_addr = 0;
 	peer.mDhtAddr.sin_port = 0;
+
+	peer.mCallbackTS = 0;
 
 	mActivePeers[*id] = peer;
 #ifdef DEBUG_MGR
@@ -312,7 +316,7 @@ void bdNodeManager::iteration()
 			break;
 
 		case BITDHT_MGR_STATE_ACTIVE:
-			if (modeAge > MAX_REFRESH_TIME)
+			if (modeAge >= MAX_REFRESH_TIME)
 			{
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): ACTIVE -> REFRESH";
@@ -620,7 +624,7 @@ int bdNodeManager::checkStatus()
         std::map<bdNodeId, bdQueryStatus> queryStatus;
 
 
-    mQueryMgr->QueryStatus(queryStatus);
+	mQueryMgr->QueryStatus(queryStatus);
 
 	for(it = queryStatus.begin(); it != queryStatus.end(); it++)
 	{
@@ -740,14 +744,40 @@ int bdNodeManager::checkStatus()
 			if (pit->second.mStatus == it->second.mStatus)
 			{
 				/* status is unchanged */
-				doPing = false;
-				doCallback = false;
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::checkStatus() Status unchanged for : ";
 				mFns->bdPrintNodeId(std::cerr, &(it->first));
 				std::cerr << " status: " << it->second.mStatus;
 				std::cerr << std::endl;
 #endif
+
+
+				time_t now = time(NULL);
+				/* now we check if we've done a callback before... */
+				if (it->second.mQFlags & BITDHT_QFLAGS_UPDATES)
+				{
+					if (now - pit->second.mCallbackTS > QUERY_UPDATE_PERIOD)
+					{
+						// keep flags.
+#ifdef DEBUG_MGR
+						std::cerr << "bdNodeManager::checkStatus() Doing Update Callback for";
+						mFns->bdPrintNodeId(std::cerr, &(it->first));
+						std::cerr << " status: " << it->second.mStatus;
+						std::cerr << std::endl;
+#endif
+					}
+					else
+					{
+						/* no callback this time */
+						doPing = false;
+						doCallback = false;
+					}
+				}
+				else
+				{
+					doPing = false;
+					doCallback = false;
+				}
 			}
 			else
 			{
@@ -795,6 +825,9 @@ int bdNodeManager::checkStatus()
 				mFns->bdPrintNodeId(std::cerr, &(it->first));
 				std::cerr << std::endl;
 #endif
+				
+				time_t now = time(NULL);
+				pit->second.mCallbackTS = now;
 				bdId id(it->first,pit->second.mDhtAddr);
 				doPeerCallback(&id, callbackStatus);
 			}

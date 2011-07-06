@@ -400,14 +400,13 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	mFns->bdDistance(&(id->id), &(mOwnId), &dist);
 	int buckno = mFns->bdBucketDistance(&dist);
 
+#ifdef DEBUG_BD_SPACE
 	std::cerr << "bdSpace::find_exactnode(Id:";
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << ")";
 
 	std::cerr << " Bucket #: " << buckno;
 	std::cerr << std::endl;
-
-#ifdef DEBUG_BD_SPACE
 #endif
 
 	bdBucket &buck = buckets[buckno];
@@ -418,94 +417,24 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	{
 		if (*id == eit->mPeerId)
 		{
+#ifdef DEBUG_BD_SPACE
 			std::cerr << "bdSpace::find_exactnode() Found Matching Peer: ";
 		  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
 			std::cerr << " withFlags: " << eit->mPeerFlags;
 		  	std::cerr << std::endl;
+#endif
 
 			peer = (*eit);
 			return 1;
 		}
 	}
-	std::cerr << "bdSpace::find_exactnode() ERROR Failed to find Matching Peer: ";
+#ifdef DEBUG_BD_SPACE
+	std::cerr << "bdSpace::find_exactnode() WARNING Failed to find Matching Peer: ";
 	std::cerr << std::endl;
-
-	return 0;
-}
-
-
-#if 0
-int	bdSpace::out_of_date_peer(bdId &id)
-{
-	/* 
-	 * 
-	 */
-
-	std::map<bdMetric, bdId> closest;
-	std::map<bdMetric, bdId>::iterator mit;
-
-	std::vector<bdBucket>::iterator it;
-	std::list<bdPeer>::iterator eit;
-	time_t ts = time(NULL);
-
-	/* iterate through the buckets, and sort by distance */
-	for(it = buckets.begin(); it != buckets.end(); it++)
-	{
-		for(eit = it->entries.begin(); eit != it->entries.end(); ) 
-		{
-			/* timeout on last send time! */
-			if (ts - eit->mLastSendTime > BITDHT_MAX_SEND_PERIOD )
-			{
-				/* We want to ping a peer iff:
-		 	 	 * 1) They are out-of-date: mLastRecvTime is too old.
-			 	 * 2) They don't have 0x0001 flag (we haven't received a PONG) and never sent.
-			 	 */
-				if ((ts - eit->mLastRecvTime > BITDHT_MAX_SEND_PERIOD ) || 
-					!(eit->mPeerFlags & BITDHT_PEER_STATUS_RECV_PONG))
-				{
-					id = eit->mPeerId;
-					eit->mLastSendTime = ts;
-					return 1;
-				}
-			}
-
-
-			/* we also want to remove very old entries (should it happen here?) 
-			 * which are not pushed out by newer entries (will happen in for closer buckets)
-			 */
-
-			bool discard = false;
-			/* discard very old entries */
-			if (ts - eit->mLastRecvTime > BITDHT_DISCARD_PERIOD)
-			{
-				discard = true;
-			}
-		
-			/* discard peers which have not responded to anything (ie have no flags set) */
-			if ((ts - eit->mFoundTime > BITDHT_MAX_RESPONSE_PERIOD ) &&
-				(eit->mPeerFlags == 0))
-			{
-				discard = true;
-			}
-			
-
-			/* INCREMENT */
-			if (discard)
-			{	
-				eit = it->entries.erase(eit);
-			}
-			else
-			{
-				eit++;
-			}
-		}
-	}
-	return 0;
-}
-
 #endif
 
-
+	return 0;
+}
 
 
 #define BITDHT_ATTACHED_SEND_PERIOD 	17

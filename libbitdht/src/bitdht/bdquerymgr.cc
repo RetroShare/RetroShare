@@ -26,6 +26,7 @@
 #include "bitdht/bdquerymgr.h"
 #include "bitdht/bdnode.h"
 
+#include <stdio.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

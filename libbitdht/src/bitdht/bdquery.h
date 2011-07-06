@@ -34,7 +34,7 @@
 /* Query result flags are in bdiface.h */
 
 #define BITDHT_MIN_QUERY_AGE		10
-#define BITDHT_MAX_QUERY_AGE		1800 /* 30 minutes */
+#define BITDHT_MAX_QUERY_AGE		300 /* Query Should take <1 minute, so 5 minutes sounds reasonable */
 
 class bdQuery
 {
@@ -74,6 +74,7 @@ int 	worthyPotentialPeer(const bdId *id);
 int 	updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType);
 int 	trimPotentialPeers_FixedLength();
 int 	trimPotentialPeers_toClosest();
+int 	removeOldPotentialPeers();
 
 	// Proxy Handling Fns.
 int 	addProxy(const bdId *id, const bdId *src, uint32_t srcmode);
@@ -85,6 +86,7 @@ int 	trimProxies();
 	// closest peers.
 	std::multimap<bdMetric, bdPeer>  mClosest;
 	std::multimap<bdMetric, bdPeer>  mPotentialPeers;
+	time_t mPotPeerCleanTS; // periodic cleanup of PotentialPeers.
 
 	uint32_t mRequiredPeerFlags; 
 	std::list<bdPeer>  mProxiesUnknown;
@@ -92,6 +94,7 @@ int 	trimProxies();
 
 	int mClosestListSize;
 	bdDhtFunctions *mFns;
+
 };
 
 #if 0

@@ -45,7 +45,9 @@
 
 #define BITDHT_QUERY_START_PEERS    10
 #define BITDHT_QUERY_NEIGHBOUR_PEERS    8
+
 #define BITDHT_MAX_REMOTE_QUERY_AGE	10
+#define MAX_REMOTE_PROCESS_PER_CYCLE	5
 
 /****
  * #define USE_HISTORY	1
@@ -477,11 +479,13 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 }
 
 /************************************ Process Remote Query *************************/
+
+/* increased the allowed processing rate from 1/sec => 5/sec */
 void bdNode::processRemoteQuery()
 {
-	bool processed = false;
+	int nProcessed = 0;
 	time_t oldTS = time(NULL) - BITDHT_MAX_REMOTE_QUERY_AGE;
-	while(!processed)
+	while(nProcessed < MAX_REMOTE_PROCESS_PER_CYCLE)
 	{
 		/* extra exit clause */
 		if (mRemoteQueries.size() < 1) return;
@@ -492,7 +496,7 @@ void bdNode::processRemoteQuery()
 		if (query.mQueryTS > oldTS)
 		{
 			/* recent enough to process! */
-			processed = true;
+			nProcessed++;
 
 			switch(query.mQueryType)
 			{
@@ -541,7 +545,7 @@ void bdNode::processRemoteQuery()
 				{
 					/* drop */
 					/* unprocess! */
-					processed = false;
+					nProcessed--;
 					break;
 				}
 			}
@@ -551,10 +555,10 @@ void bdNode::processRemoteQuery()
 		}
 		else
 		{
-#ifdef DEBUG_NODE_MSGS 
 			std::cerr << "bdNode::processRemoteQuery() Query Too Old: Discarding: ";
 			mFns->bdPrintId(std::cerr, &(query.mId));
 			std::cerr << std::endl;
+#ifdef DEBUG_NODE_MSGS 
 #endif
 		}
 

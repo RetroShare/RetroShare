@@ -129,7 +129,7 @@ virtual ~LossyUdpLayer();
         protected:
 
 virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
-virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
+virtual	int sendUdpPacket(const void *data, int size, const struct sockaddr_in &to);
 
 	double lossFraction;
 };
@@ -159,7 +159,7 @@ void	addRestrictedPortRange(int lp, int up);
         protected:
 
 virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
-virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
+virtual	int sendUdpPacket(const void *data, int size, const struct sockaddr_in &to);
 
 	std::list<PortRange> mLostPorts;
 };

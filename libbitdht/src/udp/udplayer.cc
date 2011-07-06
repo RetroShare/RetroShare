@@ -539,7 +539,7 @@ int LossyUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &f
 			std::cerr << "LossyUdpLayer::receiveUdpPacket() Packet Dropped!";
 			std::cerr << std::endl;
 
-			size = 0;
+			*size = 0;
 			return -1;
 		}
 	
@@ -548,7 +548,7 @@ int LossyUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &f
 	return -1; 
 }
 	
-int LossyUdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
+int LossyUdpLayer::sendUdpPacket(const void *data, int size, const struct sockaddr_in &to)
 {
 	double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
 	
@@ -625,19 +625,25 @@ int RestrictedUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_
 				//std::cerr << std::endl;
 #endif
 
-				size = 0;
+				*size = 0;
 				return -1;
 	
 			}
 	
 		}
+
+#ifdef DEBUG_UDP_LAYER 	
+		std::cerr << "RestrictedUdpLayer::receiveUdpPacket() Accepting packet";
+		std::cerr << ", Port(" << inPort << ") in Okay range!";
+		std::cerr << std::endl;
+#endif
 		/* acceptable port */
 		return *size;
 	}
 	return -1;
 }
 	
-int RestrictedUdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
+int RestrictedUdpLayer::sendUdpPacket(const void *data, int size, const struct sockaddr_in &to)
 {
 	/* check the port against list */
 	uint16_t outPort = ntohs(to.sin_port);
@@ -661,6 +667,12 @@ int RestrictedUdpLayer::sendUdpPacket(const void *data, int size, struct sockadd
 	
 	
 	}
+
+#ifdef DEBUG_UDP_LAYER 	
+	std::cerr << "RestrictedUdpLayer::sendUdpPacket() Sending packet";
+	std::cerr << ", Port(" << outPort << ") in Okay range!";
+	std::cerr << std::endl;
+#endif
 	
 	// otherwise read normally;
 	return UdpLayer::sendUdpPacket(data, size, to);

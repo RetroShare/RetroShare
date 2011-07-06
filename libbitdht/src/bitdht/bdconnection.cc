@@ -34,8 +34,12 @@
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
 
-#define DEBUG_NODE_CONNECTION	1 
+/*
+ * #define DEBUG_NODE_CONNECTION		1 
+ * #define DEBUG_NODE_CONNECTION_EXTRA		1 
+ */
 
+#define DEBUG_NODE_CONNECTION		1 
 
 
 #define BITDHT_CR_PAUSE_BASE_PERIOD 5
@@ -386,8 +390,10 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
 				BITDHT_PEER_STATUS_DHT_FOF       |
 				BITDHT_PEER_STATUS_DHT_FRIEND);
-	
-		number = CONNECT_NUM_PROXY_ATTEMPTS - number;
+
+		// just ask for the same number of closest (above doesn't return anything atm)	
+		//int nFound = nearest.size();	
+		//number = CONNECT_NUM_PROXY_ATTEMPTS - nFound;
 	
 		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
 								BITDHT_PEER_STATUS_DHT_ENGINE_VERSION );
@@ -395,10 +401,15 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		std::multimap<bdMetric, bdId>::iterator it;
 		for(it = nearest.begin(); it != nearest.end(); it++)
 		{
-			bdNodeId midId;
-			mFns->bdRandomMidId(target, &(it->second.id), &midId);
+			std::cerr << "bdConnectManager::requestConnection_proxy() is Entry it connected to Friend? : ";
+			mFns->bdPrintId(std::cerr, &(it->second));
+			std::cerr << std::endl;
+
+			//bdNodeId midId;
+			//mFns->bdRandomMidId(target, &(it->second.id), &midId);
 			/* trigger search */
-			mPub->send_query(&(it->second), &midId);
+			//mPub->send_query(&(it->second), &midId);
+			mPub->send_query(&(it->second), target);
 		}
 	}
 
@@ -437,13 +448,13 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 
 void bdConnectManager::addPotentialConnectionProxy(const bdId *srcId, const bdId *target)
 {
-#ifdef DEBUG_NODE_CONNECTION
-	//std::cerr << "bdConnectManager::addPotentialConnectionProxy() ";
-	//std::cerr << " srcId: ";
-	//bdStdPrintId(std::cerr, srcId);
-	//std::cerr << " target: ";
-	//bdStdPrintId(std::cerr, target);
-	//std::cerr << std::endl;
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
+	std::cerr << "bdConnectManager::addPotentialConnectionProxy() ";
+	std::cerr << " srcId: ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << " target: ";
+	bdStdPrintId(std::cerr, target);
+	std::cerr << std::endl;
 #endif
 
 	if (!srcId)
@@ -461,9 +472,9 @@ void bdConnectManager::addPotentialConnectionProxy(const bdId *srcId, const bdId
 	if (it == mConnectionRequests.end())
 	{
 		/* not one of our targets... drop it */
-#ifdef DEBUG_NODE_CONNECTION
-		//std::cerr << "bdConnectManager::addPotentialConnectionProxy() Dropping Not one of Our Targets";
-		//std::cerr << std::endl;
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
+		std::cerr << "bdConnectManager::addPotentialConnectionProxy() Dropping Not one of Our Targets";
+		std::cerr << std::endl;
 #endif
 		return;
 	}
@@ -537,7 +548,7 @@ void bdConnectManager::updatePotentialConnectionProxy(const bdId *id, uint32_t m
 {
 	if (mode & BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 	{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
 		std::cerr << "bdConnectManager::updatePotentialConnectionProxy() Peer is GOOD : ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
@@ -574,19 +585,19 @@ void bdConnectManager::iterateConnectionRequests()
 	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
 	{
 		bool erase = false;
+
+#ifdef DEBUG_NODE_CONNECTION_EXTRA
 		std::cerr << "bdConnectManager::iterateConnectionAttempt() Request is:";
 		std::cerr << std::endl;
 		std::cerr << it->second;
 		std::cerr << std::endl;
-
+#endif
 
 		/* check status of connection */
 		if (it->second.mState == BITDHT_CONNREQUEST_READY)
 		{
 			std::cerr << "bdConnectManager::iterateConnectionAttempt() Request is READY, starting";
 			std::cerr << std::endl;
-
-
 
 			/* kick off the connection if possible */
 			// goes to BITDHT_CONNREQUEST_INPROGRESS;
@@ -1761,9 +1772,10 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 	bdConnection *conn = findExistingConnectionBySender(id, srcConnAddr, destConnAddr);
 	if (conn)
 	{
-		/* ERROR */
+		/* Likely ERROR: Warning */
 #ifdef DEBUG_NODE_CONNECTION
-		std::cerr << "bdConnectManager::recvedConnectionRequest() ERROR EXISTING CONNECTION";
+		std::cerr << "bdConnectManager::recvedConnectionRequest() WARNING Existing Connection: ";
+		std::cerr << std::endl;
 		std::cerr << std::endl;
 #endif
 		/* reply existing connection */
