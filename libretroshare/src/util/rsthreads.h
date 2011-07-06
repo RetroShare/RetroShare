@@ -33,6 +33,7 @@
 
 #include <pthread.h>
 #include <inttypes.h>
+#include <string>
 
 /* RsIface Thread Wrappers */
 

@@ -65,8 +65,8 @@ debug {
 bitdht {
 
 HEADERS +=	dht/p3bitdht.h 
-SOURCES +=	dht/p3bitdht.cc 
-
+SOURCES +=	dht/p3bitdht.cc  \
+		dht/p3bitdht_interface.cc 
 
 HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/bio_tou.h \
@@ -139,7 +139,8 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsrank.h \
 					retroshare/rsstatus.h \
 					retroshare/rsturtle.h \
-					retroshare/rstypes.h
+					retroshare/rstypes.h \
+					retroshare/rsdht.h
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \

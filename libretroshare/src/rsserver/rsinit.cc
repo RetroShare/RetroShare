@@ -1900,12 +1900,14 @@ int RsServer::StartupRetroShare()
 
 	// NEXT BITDHT.
 	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, mUdpStack, bootstrapfile);
+	/* install external Pointer for Interface */
+	rsDht = mBitDht;
 	
 	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
-	//UdpRelayReceiver *mRelayRecver = new UdpRelayReceiver(mUdpStack); 
-	//udpReceivers[2] = mRelayRecver; /* RELAY Connections (DHT Port) */
-	//udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
-	//mUdpStack->addReceiver(udpReceivers[2]);
+	UdpRelayReceiver *mRelayRecver = new UdpRelayReceiver(mUdpStack); 
+	udpReceivers[2] = mRelayRecver; /* RELAY Connections (DHT Port) */
+	udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
+	mUdpStack->addReceiver(udpReceivers[2]);
 	
 	// LAST ON THIS STACK IS STANDARD DIRECT TOU
 	udpReceivers[0] = new UdpPeerReceiver(mUdpStack);  /* standard DIRECT Connections (DHT Port) */
@@ -1938,6 +1940,11 @@ int RsServer::StartupRetroShare()
 	// REAL INITIALISATION - WITH THREE MODES - FOR LATER.
 	//tou_init((void **) udpReceivers, udpTypes, 3);
 
+	//mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelayRecver);
+	mBitDht->setupConnectBits(mDhtStunner, NULL, mRelayRecver);
+#else
+	/* install NULL Pointer for rsDht Interface */
+	rsDht = NULL;
 #endif
 
 

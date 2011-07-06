@@ -28,6 +28,7 @@
 #define MRK_P3_BITDHT_H
 
 #include "pqi/pqiassist.h"
+#include "retroshare/rsdht.h"
 
 #include <string>
 #include <map>
@@ -39,13 +40,53 @@
 #include "udp/udpbitdht.h"
 #include "bitdht/bdiface.h"
 
-class p3BitDht: public pqiNetAssistConnect
+
+class DhtPeerDetails
+{
+	public:
+
+	bdId    mDhtId;
+	std::string mRsId;
+
+};
+
+class UdpRelayReceiver;
+class UdpStunner;
+
+
+class p3BitDht: public pqiNetAssistConnect, public RsDht
 {
 	public:
 	p3BitDht(std::string id, pqiConnectCb *cb, 
 		UdpStack *udpstack, std::string bootstrapfile);
 
+
 virtual	~p3BitDht();
+
+
+/***********************************************************************************************
+ ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
+************************************************************************************************/
+
+virtual uint32_t getNetState(uint32_t type);
+virtual int      getDhtPeers(int lvl, std::list<RsDhtPeer> &peers);
+virtual int      getNetPeerList(std::list<std::string> &peerIds);
+virtual int      getNetPeerStatus(std::string peerId, RsDhtNetPeer &status);
+
+virtual int     getRelayEnds(std::list<RsDhtRelayEnd> &relayEnds);
+virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
+
+//virtual int      getNetFailedPeer(std::string peerId, PeerStatus &status);
+
+/***********************************************************************************************
+ ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
+************************************************************************************************/
+
+
+	void	setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay);
+
+
+
 
 void	start(); /* starts up the bitdht thread */
 
@@ -94,12 +135,16 @@ int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 	int removeTranslation(const std::string pid);
 
 	UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
+	UdpStunner *mDhtStunner;
+	UdpStunner *mProxyStunner;
+	UdpRelayReceiver   *mRelay;
 
 	RsMutex dhtMtx;
 	/* translation maps */
         std::map<std::string, bdNodeId> mTransToNodeId;
         std::map<bdNodeId, std::string> mTransToRsId;
 
+	std::map<std::string, DhtPeerDetails> mPeers;
 };
 
 #endif /* MRK_P3_BITDHT_H */

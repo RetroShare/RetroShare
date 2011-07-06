@@ -29,6 +29,9 @@
 #include "bitdht/bdstddht.h"
 #include "pqi/p3connmgr.h"
 
+#include "tcponudp/udprelay.h"
+#include "tcponudp/udpstunner.h"
+
 #include <openssl/sha.h>
 
 
@@ -36,6 +39,9 @@
  * and the BitDht Interface.
  *
  */
+
+/**** EXTERNAL INTERFACE DHT POINTER *****/
+RsDht *rsDht = NULL;
 
 class p3BdCallback: public BitDhtCallback
 {
@@ -74,6 +80,10 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::string bootstrapfile)
 	:pqiNetAssistConnect(id, cb), dhtMtx("p3BitDht")
 {
+	mDhtStunner = NULL;
+	mProxyStunner = NULL;
+	mRelay = NULL;
+
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
 	bdNodeId ownId;
 
@@ -121,6 +131,15 @@ p3BitDht::~p3BitDht()
 	//udpstack->removeReceiver(mUdpBitDht);
 	delete mUdpBitDht;
 }
+
+
+void    p3BitDht::setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay)
+{
+	mDhtStunner = dhtStunner;
+	mProxyStunner = proxyStunner;
+	mRelay = relay;
+}
+
 
 void    p3BitDht::start()
 {
