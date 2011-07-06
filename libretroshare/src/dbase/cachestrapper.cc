@@ -31,8 +31,8 @@
 #include <iomanip>
 
 /****
- * #define CS_DEBUG 1
- ***/
+*  #define CS_DEBUG 1
+***/
 
 bool operator<(const CacheId &a, const CacheId &b)
 {
@@ -1017,7 +1017,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 #ifdef CS_DEBUG 
 		std::cerr << "CacheStrapper::loadList() Cleaning cache dir: <" << *dit << ">" << std::endl;
 #endif
-		sit = saveFiles.find(*dit);
+                sit = saveFiles.find(RsDirUtil::convertPathToUnix(*dit));
 		if (sit != saveFiles.end())
 		{
 #ifdef CS_DEBUG
