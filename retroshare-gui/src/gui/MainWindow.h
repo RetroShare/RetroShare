@@ -179,6 +179,8 @@ private slots:
     /** Toolbar fns. */
     void addFriend();
     void showMessengerWindow();
+    void showDhtWindow();
+
 #ifdef UNFINISHED    
     void showApplWindow();
 #endif

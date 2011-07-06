@@ -87,6 +87,11 @@
 #include <iomanip>
 #include <unistd.h>
 
+#define USE_DHTWINDOW	1
+#ifdef USE_DHTWINDOW
+#include "dht/DhtWindow.h"
+#endif
+
 #define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
@@ -394,6 +399,9 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
+#ifdef USE_DHTWINDOW
+    trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Dht Details"), this, SLOT(showDhtWindow()));
+#endif
 
 #ifdef UNFINISHED
     trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
@@ -1067,6 +1075,14 @@ void MainWindow::showSettings()
 void MainWindow::showMessengerWindow()
 {
     MessengerWindow::showYourself();
+}
+
+/** Shows Dht window */
+void MainWindow::showDhtWindow()
+{
+#ifdef USE_DHTWINDOW
+    DhtWindow::showYourself();
+#endif
 }
 
 

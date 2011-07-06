@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DhtWindow</class>
+ <widget class="QMainWindow" name="DhtWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>548</width>
+    <height>537</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dht Details</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLineEdit" name="peerLine">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Peer Details</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="netStatusLabel">
+        <property name="text">
+         <string>Net Status</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="connectLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Connect Options</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="networkLabel">
+        <property name="text">
+         <string>Network Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="natTypeLabel">
+        <property name="text">
+         <string>Nat Type</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="natHoleLabel">
+        <property name="text">
+         <string>Nat Hole</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="peerAddressLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Peer Address</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="extraLabel">
+        <property name="text">
+         <string>Extra Label</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>-1</number>
+          </property>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="peerSummaryLabel">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeWidget" name="peerTreeWidget">
+          <column>
+           <property name="text">
+            <string>PeerId</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Dht Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>ConnectLogic</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Connect Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Connect Mode</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Request Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Cb Status</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="dhtLabel">
+          <property name="text">
+           <string>Dht Details</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeWidget" name="dhtTreeWidget">
+          <column>
+           <property name="text">
+            <string>Bucket</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>IP:Port</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Key</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status Flags</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Found</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Last Sent</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Last Recv</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QTreeWidget" name="relayTreeWidget">
+       <column>
+        <property name="text">
+         <string>Relay Mode</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Source</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Proxy</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Destination</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Class</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Age</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Last Sent</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Bandwidth</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>548</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

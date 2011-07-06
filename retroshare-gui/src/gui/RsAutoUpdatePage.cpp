@@ -1,7 +1,6 @@
 #include <iostream>
 #include <QTimer>
 #include "RsAutoUpdatePage.h"
-#include "MessengerWindow.h"
 
 bool RsAutoUpdatePage::_locked = false ;
 
