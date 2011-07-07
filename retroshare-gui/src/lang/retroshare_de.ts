@@ -4051,7 +4051,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+104"/>
         <source>Messages entered here are sent to all connected friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachrichten, die Du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
     <message>
         <location line="+96"/>
