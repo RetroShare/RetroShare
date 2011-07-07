@@ -97,22 +97,6 @@ border-radius: 10px;}</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>138</width>
-            <height>1</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </item>
       <item row="0" column="1">
@@ -457,28 +441,37 @@ border-radius: 10px;}</string>
      </property>
      <layout class="QVBoxLayout">
       <item>
-       <widget class="QLabel" name="msgLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <stylestrategy>PreferAntialias</stylestrategy>
-         </font>
-        </property>
+       <widget class="QWidget" name="msgWidget" native="true">
         <property name="styleSheet">
-         <string notr="true">QLabel#msgLabel{border: 2px solid #238;
+         <string notr="true">QWidget#msgWidget{border: 2px solid #238;
 border-radius: 10px;}</string>
         </property>
-        <property name="text">
-         <string notr="true"/>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="margin">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="msgLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <stylestrategy>PreferAntialias</stylestrategy>
+            </font>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>

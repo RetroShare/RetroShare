@@ -163,7 +163,7 @@ void ChanMsgItem::updateItemStatic()
 	}
 
 	msgLabel->setText(QString::fromStdWString(cmi.msg));
-	msgLabel->setVisible(!cmi.msg.empty());
+	msgWidget->setVisible(!cmi.msg.empty());
 
 	QDateTime qtime;
 	qtime.setTime_t(cmi.ts);
