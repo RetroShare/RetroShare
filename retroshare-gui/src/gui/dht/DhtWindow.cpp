@@ -28,8 +28,9 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <time.h>
 
-#include "RsAutoUpdatePage.h"
+#include "gui/RsAutoUpdatePage.h"
 #include "retroshare/rsdht.h"
 
 
