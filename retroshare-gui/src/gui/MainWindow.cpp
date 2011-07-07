@@ -87,7 +87,12 @@
 #include <iomanip>
 #include <unistd.h>
 
-#define USE_DHTWINDOW	1
+/****
+ *
+ * #define USE_DHTWINDOW	1
+ *
+ ****/
+
 #ifdef USE_DHTWINDOW
 #include "dht/DhtWindow.h"
 #endif
