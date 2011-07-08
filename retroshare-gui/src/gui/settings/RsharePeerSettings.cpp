@@ -158,6 +158,16 @@ void RsharePeerSettings::setPrivateChatFont(const std::string &peerId, const QSt
     set(peerId, "PrivateChatFont", value);
 }
 
+bool RsharePeerSettings::getPrivateChatOnTop(const std::string &peerId)
+{
+    return get(peerId, "PrivateChatOnTop", false).toBool();
+}
+
+void RsharePeerSettings::setPrivateChatOnTop(const std::string &peerId, bool value)
+{
+    set(peerId, "PrivateChatOnTop", value);
+}
+
 void RsharePeerSettings::saveWidgetInformation(const std::string &peerId, QWidget *widget)
 {
     std::string gpgId;

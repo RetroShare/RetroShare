@@ -87,9 +87,15 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT(setStyle()));
     connect(ui.actionDockTab, SIGNAL(triggered()), this, SLOT(dockTab()));
     connect(ui.actionUndockTab, SIGNAL(triggered()), this, SLOT(undockTab()));
+    connect(ui.actionSetOnTop, SIGNAL(toggled(bool)), this, SLOT(setOnTop()));
 
     connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabCurrentChanged(int)));
+
+    if (tabbedWindow) {
+        /* signal toggled is called */
+        ui.actionSetOnTop->setChecked(Settings->valueFromGroup("ChatWindow", "OnTop", false).toBool());
+    }
 
     setWindowIcon(QIcon(IMAGE_WINDOW));
 }
@@ -97,14 +103,24 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
 /** Destructor. */
 PopupChatWindow::~PopupChatWindow()
 {
-    if (tabbedWindow) {
-        Settings->saveWidgetInformation(this);
-    } else {
-        PeerSettings->saveWidgetInformation(peerId, this);
-    }
+    saveSettings();
 
     if (this == instance) {
         instance = NULL;
+    }
+}
+
+void PopupChatWindow::saveSettings()
+{
+    if (tabbedWindow) {
+        Settings->saveWidgetInformation(this);
+
+        Settings->setValueToGroup("ChatWindow", "OnTop", ui.actionSetOnTop->isChecked());
+    } else {
+        if (!peerId.empty()) {
+            PeerSettings->saveWidgetInformation(peerId, this);
+            PeerSettings->setPrivateChatOnTop(peerId, ui.actionSetOnTop->isChecked());
+        }
     }
 }
 
@@ -151,6 +167,9 @@ void PopupChatWindow::addDialog(PopupChatDialog *dialog)
         peerId = dialog->getPeerId();
         chatDialog = dialog;
         calculateStyle(dialog);
+
+        /* signal toggled is called */
+        ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(peerId));
     }
 }
 
@@ -167,8 +186,10 @@ void PopupChatWindow::removeDialog(PopupChatDialog *dialog)
         }
     } else {
         if (chatDialog == dialog) {
+            saveSettings();
             ui.horizontalLayout->removeWidget(dialog);
             chatDialog = NULL;
+            peerId.erase();
             deleteLater();
         }
     }
@@ -345,6 +366,20 @@ void PopupChatWindow::setStyle()
     if (pcd && pcd->setStyle()) {
         calculateStyle(pcd);
     }
+}
+
+void PopupChatWindow::setOnTop()
+{
+    Qt::WindowFlags flags = windowFlags();
+    if (ui.actionSetOnTop->isChecked()) {
+        flags |= Qt::WindowStaysOnTopHint;
+    } else {
+        flags &= ~Qt::WindowStaysOnTopHint;
+    }
+    setWindowFlags(flags);
+
+    /* Show window again */
+    show();
 }
 
 void PopupChatWindow::calculateStyle(PopupChatDialog *dialog)

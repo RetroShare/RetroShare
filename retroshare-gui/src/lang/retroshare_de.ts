@@ -838,7 +838,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+373"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+357"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -2844,6 +2844,166 @@ p, li { white-space: pre-wrap; }
         <location line="+3"/>
         <source>No Comments</source>
         <translation>Keine Kommentare</translation>
+    </message>
+</context>
+<context>
+    <name>DhtWindow</name>
+    <message>
+        <location filename="../gui/dht/DhtWindow.ui" line="+17"/>
+        <location line="+163"/>
+        <source>Dht Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-148"/>
+        <source>Peer Details</source>
+        <translation type="unfinished">Peer-Details</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Net Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Connect Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Network Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Nat Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Nat Hole</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Peer Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Extra Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>PeerId</source>
+        <translation type="unfinished">PeerId</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Dht Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>ConnectLogic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Connect Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Connect Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Request Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Cb Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Bucket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>IP:Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Status Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+45"/>
+        <source>Last Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-40"/>
+        <source>Last Recv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Relay Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Class</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Age</source>
+        <translation type="unfinished">Alter</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Bandwidth</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5723,7 +5883,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+218"/>
+        <location filename="../gui/MainWindow.cpp" line="+228"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
@@ -5734,29 +5894,34 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+8"/>
-        <location line="+288"/>
+        <location line="+302"/>
         <source>Transfers</source>
         <translation>Übertragungen</translation>
     </message>
     <message>
-        <location line="-280"/>
-        <location line="+212"/>
+        <location line="-294"/>
+        <location line="+226"/>
         <source>Messages</source>
         <translation>Nachrichten</translation>
     </message>
     <message>
-        <location line="-209"/>
-        <location line="+243"/>
+        <location line="-223"/>
+        <location line="+257"/>
         <source>Channels</source>
         <translation>Kanäle</translation>
     </message>
     <message>
-        <location line="-240"/>
+        <location line="-254"/>
         <source>Blogs</source>
         <translation>Blogs</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+154"/>
+        <source>Dht Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+117"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
@@ -5812,7 +5977,7 @@ p, li { white-space: pre-wrap; }
         <translation>%1 Freunde verbunden</translation>
     </message>
     <message>
-        <location line="+651"/>
+        <location line="+659"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
     </message>
@@ -5822,23 +5987,23 @@ p, li { white-space: pre-wrap; }
         <translation>Link ist fehlerhaft.</translation>
     </message>
     <message>
-        <location line="-659"/>
+        <location line="-667"/>
         <source>%1 friend connected</source>
         <translation>%1 Freund verbunden</translation>
     </message>
     <message>
-        <location line="+292"/>
+        <location line="+300"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="+88"/>
-        <location filename="../gui/MainWindow.cpp" line="-704"/>
+        <location filename="../gui/MainWindow.cpp" line="-712"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+737"/>
+        <location filename="../gui/MainWindow.cpp" line="+745"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -5848,7 +6013,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-726"/>
+        <location line="-734"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -5879,7 +6044,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-175"/>
+        <location filename="../gui/MainWindow.cpp" line="-189"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -5894,12 +6059,12 @@ p, li { white-space: pre-wrap; }
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+143"/>
+        <location filename="../gui/MainWindow.cpp" line="+154"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+22"/>
         <source>&amp;Quit</source>
         <translation>&amp;Schliessen</translation>
     </message>
@@ -5920,7 +6085,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du hast %1 neue Nachricht</translation>
     </message>
     <message>
-        <location line="-441"/>
+        <location line="-444"/>
         <source>Bandwidth Graph</source>
         <translation>Bandbreiten-Graph</translation>
     </message>
@@ -5935,7 +6100,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+10"/>
+        <location filename="../gui/MainWindow.cpp" line="+13"/>
         <source>Minimize</source>
         <translation>Minimieren</translation>
     </message>
@@ -5949,7 +6114,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Verknüpfungs-Wolke</translation>
     </message>
     <message>
-        <location line="-119"/>
+        <location line="-122"/>
         <source>Unfinished</source>
         <translation>unfertig</translation>
     </message>
@@ -5959,7 +6124,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+116"/>
+        <location filename="../gui/MainWindow.cpp" line="+119"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -5969,33 +6134,33 @@ p, li { white-space: pre-wrap; }
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-143"/>
-        <location line="+219"/>
+        <location filename="../gui/MainWindow.cpp" line="-157"/>
+        <location line="+233"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-290"/>
+        <location line="-304"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+207"/>
+        <location line="+218"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+7"/>
         <source>Applications</source>
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-124"/>
+        <location line="-127"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+815"/>
+        <location line="+826"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Willst Du RetroShare wirklich beenden?</translation>
     </message>
@@ -6005,7 +6170,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-715"/>
+        <location line="-726"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -8889,9 +9054,64 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PluginItem</name>
+    <message>
+        <location filename="../gui/settings/PluginItem.ui" line="+14"/>
+        <source>Form</source>
+        <translation type="unfinished">Formular</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>PushButton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Status: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>File hash:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>File name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+13"/>
+        <location line="+13"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+64"/>
+        <source>Launch configuration panel, if provided by the plugin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Configure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PluginManagerWidget</name>
     <message>
-        <location line="+51"/>
+        <location filename="../gui/PluginManagerWidget.cpp" line="+51"/>
         <source>Install New Plugin...</source>
         <translation>Neues Plugin installieren...</translation>
     </message>
@@ -8909,28 +9129,62 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PluginsPage</name>
     <message>
-        <location filename="../gui/settings/PluginsPage.ui" line="+506"/>
+        <location filename="../gui/settings/PluginsPage.ui" line="+519"/>
         <source>Loaded plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+26"/>
+        <source>Authorize all plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Plugin look-up directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginsPage.cpp" line="+41"/>
-        <source>Plugin</source>
+        <source>Description</source>
+        <translation type="obsolete">Beschreibung</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/PluginsPage.cpp" line="+57"/>
+        <source>Hash rejected. Add to white list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Loading error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Missing symbol. Wrong version?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No plugin object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Plugins is loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unknown status.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Title unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Description</source>
-        <translation type="unfinished">Beschreibung</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&lt;h3&gt;No plugins loaded.&lt;/h3&gt;</source>
+        <source>Description unavailable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8975,30 +9229,30 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="+594"/>
-        <location line="+281"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="+585"/>
+        <location line="+278"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="-246"/>
-        <location line="+256"/>
+        <location line="-243"/>
+        <location line="+253"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-221"/>
-        <location line="+216"/>
+        <location line="-218"/>
+        <location line="+213"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="-146"/>
+        <location line="-143"/>
         <source>Text Color</source>
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+183"/>
         <source>Clear offline messages</source>
         <translation>Entferne offline Nachrichten</translation>
     </message>
@@ -9018,12 +9272,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf leeren</translation>
     </message>
     <message>
-        <location line="-200"/>
+        <location line="-197"/>
         <source>Font</source>
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="+238"/>
+        <location line="+235"/>
         <source>Delete Chat History</source>
         <translation>Nachrichtenverlauf löschen</translation>
     </message>
@@ -9033,12 +9287,12 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location line="-405"/>
+        <location line="-402"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+372"/>
+        <location line="+369"/>
         <source>Disable Emoticons</source>
         <translation>Deaktiviere Emoticons</translation>
     </message>
@@ -9064,12 +9318,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-391"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-388"/>
         <source>Add a File for your Friend</source>
         <translation>Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+413"/>
+        <location line="+410"/>
         <location line="+3"/>
         <source>Save Chat History</source>
         <translation>Nachrichtenverlauf speichern</translation>
@@ -9091,7 +9345,7 @@ Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-448"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-445"/>
         <source>Attach a Picture</source>
         <translation>Bild anhängen</translation>
     </message>
@@ -9139,7 +9393,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>PopupChatWindow</name>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.ui" line="+79"/>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="+92"/>
         <source>Avatar</source>
         <translation>Avatar</translation>
     </message>
@@ -9167,7 +9421,13 @@ Do you want to send them a Message instead</source>
         <translation>Setze Farbe des Chat Fensters</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="+266"/>
+        <location line="+12"/>
+        <location line="+3"/>
+        <source>Set window on top</source>
+        <translation>Immer im Vordergrund</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="+282"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>

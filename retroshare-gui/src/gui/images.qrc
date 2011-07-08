@@ -9,7 +9,7 @@
         <file>images/pgp.png</file>
         <file>images/rs_wizard.png</file>
         <file>images/about.png</file>
-		  <file>images/backblue.png</file>
+		<file>images/backblue.png</file>
         <file>images/backchat.png</file>
         <file>images/buttonframe.png</file>
         <file>images/btn1.png</file>
@@ -314,6 +314,7 @@
         <file>images/peerdetails_16x16.png</file>
         <file>images/peers_16x16.png</file>
         <file>images/peers_24x24.png</file>
+        <file>images/pin32.png</file>
         <file>images/print24.png</file>
         <file>images/priorityauto.png</file>
         <file>images/priorityhigh.png</file>

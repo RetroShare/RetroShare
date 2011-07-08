@@ -59,6 +59,7 @@ private slots:
     void dockTab();
     void undockTab();
     void setStyle();
+    void setOnTop();
 
 private:
     bool tabbedWindow;
@@ -67,6 +68,7 @@ private:
     PopupChatDialog *chatDialog;
 
     PopupChatDialog *getCurrentDialog();
+    void saveSettings();
     void calculateStyle(PopupChatDialog *dialog);
 
     /** Qt Designer generated object */

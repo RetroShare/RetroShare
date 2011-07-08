@@ -79,6 +79,7 @@
    </attribute>
    <addaction name="actionAvatar"/>
    <addaction name="actionColor"/>
+   <addaction name="actionSetOnTop"/>
    <addaction name="actionDockTab"/>
    <addaction name="actionUndockTab"/>
   </widget>
@@ -128,6 +129,21 @@
    </property>
    <property name="toolTip">
     <string>Set Chat Window Color</string>
+   </property>
+  </action>
+  <action name="actionSetOnTop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/pin32.png</normaloff>:/images/pin32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set window on top</string>
+   </property>
+   <property name="toolTip">
+    <string>Set window on top</string>
    </property>
   </action>
  </widget>
