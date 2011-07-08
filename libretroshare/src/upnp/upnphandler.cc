@@ -257,7 +257,7 @@ bool upnphandler::shutdown_upnp()
 
 upnphandler::upnphandler()
 	:
-	upnpState(RS_UPNP_S_UNINITIALISED),
+	upnpState(RS_UPNP_S_UNINITIALISED), dataMtx("upupState"),
 	 cUPnPControlPoint(NULL),
 	   toEnable(false), toStart(false), toStop(false),
 	iport(0),eport(0), eport_curr(0)

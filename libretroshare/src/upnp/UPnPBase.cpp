@@ -912,8 +912,9 @@ m_UPnPClientHandle(),
 m_RootDeviceMap(),
 m_ServiceMap(),
 m_ActivePortMappingsMap(),
-m_RootDeviceListMutex(),
+m_RootDeviceListMutex("UPnPControlPoint-RootDeviceList"),
 m_IGWDeviceDetected(false),
+m_WaitForSearchTimeoutMutex("UPnPControlPoint-WaitForSearchTimeout"),
 m_WanService(NULL)
 {
 #ifdef UPNP_DEBUG
