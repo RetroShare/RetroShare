@@ -394,12 +394,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		bool locked_buildCacheTable(void);
 
-		/*!
-		 * if grp's message is not loaded, load it, and update cache table
-		 * @param grpId group whose messages to load if not cached
-		 */
-		void locked_processHistoryCached(const std::string& grpId);
-
 
 		/*!
 		 * loads cache data which contains location of cache files belonging
@@ -430,8 +424,18 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 			/* load cache files */
 		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical, const pCacheId& cid);
-		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
-		void	locked_loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
+
+		/*!
+		 * @param filename absolute cache file path
+		 * @param cacheSubId cache subid, needed to save cache to history file
+		 * @param src peer src id
+		 * @param ts timestamp
+		 * @param local set to whether it islocal or remote cache
+		 * @param historical set to whether it is an old cache
+		 * @param cacheLoad is a history cache opt load, prevent adding to cache history again
+		 */
+		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts,
+				bool local, bool historical, bool cacheLoad);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -478,6 +482,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
                 bool    loadGroupKey(RsDistribGrpKey *newKey, bool historical);
 
 
+		/*!
+		 * if grp's message is not loaded, load it, and update cache table
+		 * @param grpId group whose messages to load if not cached
+		 */
+		void processHistoryCached(const std::string& grpId);
 
 /***************************************************************************************/
 /***************************************************************************************/
