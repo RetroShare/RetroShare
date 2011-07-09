@@ -213,13 +213,11 @@ int	p3GroupDistrib::tick()
 #endif
 	}
 
-#ifdef ENABLE_CACHE_OPT
 	if(updateCacheDoc){
 		std::cerr << "count: " << mCount << std::endl;
 		updateCacheDocument();
 
 	}
-#endif
 
 	return 0;
 }
@@ -1113,7 +1111,6 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	time_t now = time(NULL);
 	bool cache = false;
 
-#ifdef ENABLE_CACHE_OPT
 	// if cache id exists in cache table exit
 	{
 		RsStackMutex stack(distribMtx);
@@ -1133,7 +1130,6 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 		}
 
 	}
-#endif
 
 	// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
 	// with same cache id)
@@ -2205,9 +2201,8 @@ void p3GroupDistrib::getPopularGroupList(uint32_t popMin, uint32_t popMax, std::
 bool p3GroupDistrib::getAllMsgList(const std::string& grpId, std::list<std::string> &msgIds)
 {
 
-#ifdef ENABLE_CACHE_OPT
 	processHistoryCached(grpId);
-#endif
+
 
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 
@@ -2233,9 +2228,7 @@ bool p3GroupDistrib::getParentMsgList(const std::string& grpId, const std::strin
 						std::list<std::string> &msgIds)
 {
 
-#ifdef ENABLE_CACHE_OPT
 	processHistoryCached(grpId);
-#endif
 
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 
@@ -2299,9 +2292,8 @@ RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(const std::string& grpId, const
 
 	/************* ALREADY LOCKED ************/
 
-#ifdef ENABLE_CACHE_OPT
+
 //	processHistoryCached(grpId);
-#endif
 
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
@@ -2612,9 +2604,7 @@ bool p3GroupDistrib::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	delete childSer;
 
 	// now save hostory doc
-#ifdef ENABLE_CACHE_OPT
 	locked_saveHistoryCacheFile();
-#endif
 
 	return true;
 }
@@ -2638,14 +2628,12 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 {
 	std::list<RsItem *>::iterator lit;
 
-#ifdef ENABLE_CACHE_OPT
 	{
 		RsStackMutex stack(distribMtx);
 
 		if(locked_loadHistoryCacheFile())
 			locked_buildCacheTable();
 	}
-#endif
 
 	/* for child config data */
 	std::list<RsItem* > childLoadL;
@@ -2667,7 +2655,6 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 			const std::string &gid = newGrp -> grpId;
 			if(loadGroup(newGrp, false)){
 
-#ifdef ENABLE_CACHE_OPT
 				bool cached = false;
 				RsStackMutex stack(distribMtx);
 
@@ -2677,7 +2664,6 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 					mGrpHistPending.push_back(gcPair);
 					mUpdateCacheDoc = true;
 				}
-#endif
 			}
 			subscribeToGroup(gid, true);
 		}
@@ -5005,9 +4991,7 @@ bool p3GroupDistrib::getDummyParentMsgList(const std::string& grpId, const std::
 {
 
 	// load grp from history cache if not already loaded
-#ifdef ENABLE_CACHE_OPT
 	processHistoryCached(grpId);
-#endif
 
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::getDummyParentMsgList(grpId:" << grpId << "," << pId << ")";
@@ -5046,9 +5030,7 @@ bool p3GroupDistrib::getDummyParentMsgList(const std::string& grpId, const std::
 RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(const std::string& grpId, const std::string& msgId)
 {
 
-#ifdef ENABLE_CACHE_OPT
 //	processHistoryCached(grpId);
-#endif
 
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg(grpId:" << grpId << "," << msgId << ")";
