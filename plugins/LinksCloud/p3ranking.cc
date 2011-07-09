@@ -57,7 +57,7 @@ std::string generateRandomLinkId();
 
 p3Ranking::p3Ranking()
 		: RsCacheService(RS_SERVICE_TYPE_RANK,CONFIG_TYPE_RANK_LINK,5), 
-		  mRepublish(false), mRepublishFriends(false), mRepublishFriendTS(0), mStorePeriod(RANK_STORE_PERIOD), mUpdated(true)
+		  mRepublish(false), mRepublishFriends(false), mRepublishFriendTS(0), mStorePeriod(RANK_STORE_PERIOD), mUpdated(true),mRankMtx(std::string("p3Ranking"))
 {
 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
