@@ -35,6 +35,11 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include "pqi/p3peermgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3netmgr.h"
+
+
 /****
 #define DEBUG_TICK 1
 ****/
@@ -44,7 +49,9 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 {
 	ftserver = NULL;
 
-	mConnMgr = NULL;
+	mPeerMgr = NULL;
+	mLinkMgr = NULL;
+	mNetMgr = NULL;
 
 	pqih = NULL;
 
@@ -144,8 +151,10 @@ void 	RsServer::run()
 
 			unlockRsCore();
 
-			/* tick the connection Manager */
-			mConnMgr->tick();
+			/* tick the Managers */
+			mPeerMgr->tick();
+			mLinkMgr->tick();
+			mNetMgr->tick();
 			/******************************** RUN SERVER *****************/
 
 			/* adjust tick rate depending on whether there is more.

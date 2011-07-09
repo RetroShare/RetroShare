@@ -424,7 +424,7 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 			std::cerr << std::endl;
 #endif
 			fi.root->row = 0;
-			fi.root->name = data.pname ;
+			fi.root->name = data.pid; // XXX Hack here - TODO
 		}
 		else
 		{

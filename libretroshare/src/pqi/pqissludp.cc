@@ -41,6 +41,8 @@
 #include "util/rsdebug.h"
 #include "util/rsnet.h"
 
+#include "pqi/p3linkmgr.h"
+
 const int pqissludpzone = 3144;
 
 	/* a final timeout, to ensure this never blocks completely
@@ -52,8 +54,8 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
 
-pqissludp::pqissludp(PQInterface *parent, p3ConnectMgr *cm)
-        :pqissl(NULL, parent, cm), tou_bio(NULL),
+pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
+        :pqissl(NULL, parent, lm), tou_bio(NULL),
 	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
 {
 	sockaddr_clear(&remote_addr);
@@ -129,7 +131,7 @@ int 	pqissludp::Initiate_Connection()
 	  "pqissludp::Initiate_Connection() Attempting Outgoing Connection....");
 
 	/* decide if we're active or passive */
-	if (PeerId() < mConnMgr->getOwnId())
+	if (PeerId() < mLinkMgr->getOwnId())
 	{
 		sslmode = PQISSL_ACTIVE;
 	}

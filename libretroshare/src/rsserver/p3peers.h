@@ -27,13 +27,16 @@
  */
 
 #include "retroshare/rspeers.h"
-#include "pqi/p3connmgr.h"
+class p3LinkMgr;
+class p3PeerMgr;
+class p3NetMgr;
+
 
 class p3Peers: public RsPeers 
 {
 	public:
 
-        p3Peers(p3ConnectMgr *cm);
+        p3Peers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm);
 virtual ~p3Peers() { return; }
 
 	/* Updates ... */
@@ -115,7 +118,10 @@ virtual bool assignPeersToGroup(const std::string &groupId, const std::list<std:
 
 	private:
 
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
+	p3PeerMgr *mPeerMgr;
+	p3NetMgr *mNetMgr;
+	
 };
 
 #endif

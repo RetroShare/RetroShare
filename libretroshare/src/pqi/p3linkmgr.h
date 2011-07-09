@@ -40,43 +40,6 @@
 class ExtAddrFinder ;
 class DNSResolver ;
 
-	/* RS_VIS_STATE_XXXX
-	 * determines how public this peer wants to be...
-	 *
-	 * STD = advertise to Peers / DHT checking etc 
-	 * GRAY = share with friends / but not DHT 
-	 * DARK = hidden from all 
-	 * BROWN? = hidden from friends / but on DHT
-	 */
-
-const uint32_t RS_VIS_STATE_NODISC = 0x0001;
-const uint32_t RS_VIS_STATE_NODHT  = 0x0002;
-
-const uint32_t RS_VIS_STATE_STD    = 0x0000;
-const uint32_t RS_VIS_STATE_GRAY   = RS_VIS_STATE_NODHT;
-const uint32_t RS_VIS_STATE_DARK   = RS_VIS_STATE_NODISC | RS_VIS_STATE_NODHT;
-const uint32_t RS_VIS_STATE_BROWN  = RS_VIS_STATE_NODISC;
-
-
-
-
-	/* Startup Modes (confirmed later) */
-const uint32_t RS_NET_MODE_TRYMODE =    0x00f0;
-
-const uint32_t RS_NET_MODE_TRY_EXT  =   0x0010;
-const uint32_t RS_NET_MODE_TRY_UPNP =   0x0020;
-const uint32_t RS_NET_MODE_TRY_UDP  =   0x0040;
-
-	/* Actual State */
-const uint32_t RS_NET_MODE_ACTUAL =      0x000f;
-
-const uint32_t RS_NET_MODE_UNKNOWN =     0x0000;
-const uint32_t RS_NET_MODE_EXT =         0x0001;
-const uint32_t RS_NET_MODE_UPNP =        0x0002;
-const uint32_t RS_NET_MODE_UDP =         0x0004;
-const uint32_t RS_NET_MODE_UNREACHABLE = 0x0008;
-
-
 /* order of attempts ... */
 const uint32_t RS_NET_CONN_TCP_ALL 		= 0x000f;
 const uint32_t RS_NET_CONN_UDP_ALL 		= 0x00f0;
@@ -93,15 +56,6 @@ const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
 //const uint32_t RS_NET_CONN_PEERAGE 		= 0x0f00;
 //const uint32_t RS_NET_CONN_SERVER		= 0x0100; /* TCP only */
 //const uint32_t RS_NET_CONN_PEER			= 0x0200; /* all UDP */
-
-
-/* flags of peerStatus */
-const uint32_t RS_NET_FLAGS_USE_DISC		= 0x0001;
-const uint32_t RS_NET_FLAGS_USE_DHT		= 0x0002;
-const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
-const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
-const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
-const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
 
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
 
@@ -137,7 +91,7 @@ class peerConnectState
 	//std::string gpg_id;
 
 	//uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
-	uint32_t visState; /* STD, GRAY, DARK */	
+	//uint32_t visState; /* STD, GRAY, DARK */	
 
 	//struct sockaddr_in localaddr, serveraddr;
 
@@ -146,19 +100,21 @@ class peerConnectState
 	//struct sockaddr_in currentserveraddr;            /* Mandatory */
         //std::string dyndns;
 
-        //time_t lastcontact; 
 
 	/* list of addresses from various sources */
 	//pqiIpAddrSet ipAddrs;
 
 	/***** Below here not stored permanently *****/
 
+        time_t lastcontact; 
+
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
         time_t lastavailable;
 	time_t lastattempt;
 
 	std::string name;
-        std::string location;
+
+        //std::string location;
 
 	uint32_t    state;
 	uint32_t    actions;
@@ -180,6 +136,9 @@ class p3tunnel;
 class RsPeerGroupItem;
 class RsGroupInfo;
 
+class p3PeerMgr;
+class p3NetMgr;
+
 std::string textPeerConnectState(peerConnectState &state);
 
 
@@ -187,17 +146,17 @@ class p3LinkMgr: public pqiConnectCb
 {
 	public:
 
-        p3LinkMgr();
+        p3LinkMgr(p3PeerMgr *peerMgr, p3NetMgr *netMgr);
 
 void 	tick();
 
 	/*************** Setup ***************************/
-void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
-void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
+//void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
+//void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
 
-void    addNetListener(pqiNetListener *listener);
+//void    addNetListener(pqiNetListener *listener);
 
-bool	checkNetAddress(); /* check our address is sensible */
+//bool	checkNetAddress(); /* check our address is sensible */
 
 	/*************** External Control ****************/
 bool	shutdown(); /* blocking shutdown call */
@@ -207,20 +166,21 @@ bool	retryConnect(const std::string &id);
 void 	setTunnelConnection(bool b);
 bool 	getTunnelConnection();
 
-void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
-bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
-bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
-bool    setDynDNS(const std::string &id, const std::string &dyndns);
-bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
+//void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
+//bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
+//bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
+//bool    setDynDNS(const std::string &id, const std::string &dyndns);
+//bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
 
-bool 	setNetworkMode(const std::string &id, uint32_t netMode);
-bool 	setVisState(const std::string &id, uint32_t visState);
+//bool 	setNetworkMode(const std::string &id, uint32_t netMode);
+//bool 	setVisState(const std::string &id, uint32_t visState);
 
-bool    setLocation(const std::string &pid, const std::string &location);//location is shown in the gui to differentiate ssl certs
+//bool    setLocation(const std::string &pid, const std::string &location);//location is shown in the gui to differentiate ssl certs
 
 	/* add/remove friends */
-bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
+bool 	addFriend(const std::string &ssl_id);
+//, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+//	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
 
 bool	removeFriend(const std::string &ssl_id);
 
@@ -230,12 +190,16 @@ bool	removeFriend(const std::string &ssl_id);
 const std::string getOwnId();
 bool	getOwnNetStatus(peerConnectState &state);
 
+struct sockaddr_in getLocalAddress();
+
 bool	isOnline(const std::string &ssl_id);
 bool	getFriendNetStatus(const std::string &id, peerConnectState &state);
 bool	getOthersNetStatus(const std::string &id, peerConnectState &state);
 
 void	getOnlineList(std::list<std::string> &ssl_peers);
-bool    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool ssl);
+void	getFriendList(std::list<std::string> &ssl_peers);
+int 	getOnlineCount();
+int 	getFriendCount();
 
 
 	/**************** handle monitors *****************/
@@ -286,19 +250,17 @@ bool    retryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr);
 	/* connect attempts TCP */
 bool	retryConnectTCP(const std::string &id);
 
-void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer);
-void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer);
-void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer);
+void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, struct sockaddr_in *localAddr, struct sockaddr_in *serverAddr);
+void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer, const pqiIpAddrSet &ipAddrs);
+void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t dynPort);
 void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 
-bool  	locked_CheckPotentialAddr(struct sockaddr_in *addr, time_t age);
+bool  	locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_t age);
 bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, 
 					peerConnectAddress &pca);
 
-
-	protected:
 
 private:
 	// These should have there own Mutex Protection,
@@ -307,12 +269,16 @@ private:
 
 	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 
+	p3PeerMgr *mPeerMgr;
+	p3NetMgr  *mNetMgr;
 
 	RsMutex mLinkMtx; /* protects below */
 
         uint32_t mRetryPeriod;
 
 	bool     mStatusChanged;
+
+	struct sockaddr_in mLocalAddress;
 
 	std::list<pqiMonitor *> clients;
 
@@ -322,7 +288,7 @@ private:
 	//bool mUpnpAddrValid, mStunAddrValid;
 	//struct sockaddr_in mUpnpExtAddr;
 
-	peerConnectState mOwnState;
+	//peerConnectState mOwnState;
 
 	std::map<std::string, peerConnectState> mFriendList;
 	std::map<std::string, peerConnectState> mOthersList;

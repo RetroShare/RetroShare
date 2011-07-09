@@ -25,11 +25,12 @@
 
 #include "pqi/p3netmgr.h"
 
+#include "pqi/p3peermgr.h"
+#include "pqi/p3linkmgr.h"
+
 #include "util/rsnet.h"
 #include "util/rsrandom.h"
 
-//#include "pqi/p3dhtmgr.h" // Only need it for constants.
-//#include "tcponudp/tou.h"
 #include "util/extaddrfinder.h"
 #include "util/dnsresolver.h"
 
@@ -106,8 +107,8 @@ void pqiNetStatus::print(std::ostream &out)
 }
 
 
-p3NetMgr::p3NetMgr(p3PeerMgr *peerMgr)
-	:mPeerMgr(peerMgr), mNetMtx("p3NetMgr"),
+p3NetMgr::p3NetMgr()
+	:mPeerMgr(NULL), mLinkMgr(NULL), mNetMtx("p3NetMgr"),
 	mNetStatus(RS_NET_UNKNOWN), mStatusChanged(false)
 {
 
@@ -122,6 +123,7 @@ p3NetMgr::p3NetMgr(p3PeerMgr *peerMgr)
 	
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
+
 	}
 	
 #ifdef CONN_DEBUG
@@ -133,71 +135,21 @@ p3NetMgr::p3NetMgr(p3PeerMgr *peerMgr)
 	return;
 }
 
-bool  p3NetMgr::getIPServersEnabled() 
-{ 
-	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-	return mUseExtAddrFinder;
-}
-
-void  p3NetMgr::getIPServersList(std::list<std::string>& ip_servers) 
-{ 
-	mExtAddrFinder->getIPServersList(ip_servers);
-}
-
-void p3NetMgr::setIPServersEnabled(bool b)
+void p3NetMgr::setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr)
 {
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		mUseExtAddrFinder = b;
-	}
-
-#ifdef CONN_DEBUG
-	std::cerr << "p3NetMgr: setIPServers to " << b << std::endl ; 
-#endif
-
+	mPeerMgr = peerMgr;
+	mLinkMgr = linkMgr;
 }
 
-void p3NetMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
+void p3NetMgr::setDhtMgr(p3DhtMgr *dhtMgr)
 {
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		/* only change TRY flags */
+	mDhtMgr = dhtMgr;
+}
 
-#ifdef CONN_DEBUG
-		std::cerr << "p3NetMgr::setOwnNetConfig()" << std::endl;
-		std::cerr << "Existing netMode: " << mOwnState.netMode << " vis: " << mOwnState.visState;
-		std::cerr << std::endl;
-		std::cerr << "Input netMode: " << netMode << " vis: " << visState;
-		std::cerr << std::endl;
-#endif
-		mNetMode &= ~(RS_NET_MODE_TRYMODE);
-
-		switch(netMode & RS_NET_MODE_ACTUAL)
-		{
-			case RS_NET_MODE_EXT:
-				mNetMode |= RS_NET_MODE_TRY_EXT;
-				break;
-			case RS_NET_MODE_UPNP:
-				mNetMode |= RS_NET_MODE_TRY_UPNP;
-				break;
-			default:
-			case RS_NET_MODE_UDP:
-				mNetMode |= RS_NET_MODE_TRY_UDP;
-				break;
-		}
-
-		mVisState = visState;
-	
-#ifdef CONN_DEBUG
-		std::cerr << "Final netMode: " << mNetMode << " vis: " << mVisState;
-		std::cerr << std::endl;
-#endif
-		/* if we've started up - then tweak Dht On/Off */
-		if (mNetStatus != RS_NET_UNKNOWN)
-		{
-			enableNetAssistConnect(!(mVisState & RS_VIS_STATE_NODHT));
-		}
-	}
+void p3NetMgr::setStunners(p3Stunner *dhtStunner, p3Stunner *proxyStunner)
+{
+	mDhtStunner = dhtStunner;
+	mProxyStunner = proxyStunner;
 }
 
 
@@ -266,25 +218,6 @@ void p3NetMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 
 void p3NetMgr::netReset()
 {
-	//don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached
-#if 0
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		time_t delta = time(NULL) - mNetInitTS;
-		#ifdef CONN_DEBUG_RESET
-			std::cerr << "p3NetMgr time since last reset : " << delta << std::endl;
-		#endif
-		if (delta < (time_t)MIN_TIME_BETWEEN_NET_RESET) 
-		{
-		    mNetStatus = RS_NET_NEEDS_RESET;
-		    #ifdef CONN_DEBUG_RESET
-			    std::cerr << "p3NetMgr::netStartup() don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached" << std::endl;
-		    #endif
-		    return;
-		}
-	}
-#endif
-
 #ifdef CONN_DEBUG_RESET
 	std::cerr << "p3NetMgr::netReset() Called" << std::endl;
 #endif
@@ -310,7 +243,6 @@ void p3NetMgr::netReset()
 	std::cerr << "p3NetMgr::netReset() resetting NetStatus" << std::endl;
 #endif
 
-	/* reset udp network - handled by tou_init! */
 	/* reset tcp network - if necessary */
 	{
 		/* NOTE: nNetListeners should be protected via the Mutex.
@@ -350,19 +282,39 @@ void p3NetMgr::netReset()
 }
 
 
-/* to allow resets of network stuff */
-void    p3NetMgr::addNetListener(pqiNetListener *listener)
-{
-        RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-        mNetListeners.push_back(listener);
-}
-
 void p3NetMgr::netStatusReset_locked()
 {
 	//std::cerr << "p3NetMgr::netStatusReset()" << std::endl;;
 
 	mNetFlags = pqiNetStatus();
 }
+
+
+bool p3NetMgr::shutdown() /* blocking shutdown call */
+{
+#ifdef CONN_DEBUG
+	std::cerr << "p3NetMgr::shutdown()";
+	std::cerr << std::endl;
+#endif
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		mNetStatus = RS_NET_UNKNOWN;
+		mNetInitTS = time(NULL);
+		netStatusReset_locked();
+	}
+	netAssistFirewallShutdown();
+	netAssistConnectShutdown();
+
+	return true;
+}
+
+
+
+
+
+
+
+
 
 void p3NetMgr::netStartup()
 {
@@ -376,7 +328,6 @@ void p3NetMgr::netStartup()
 #endif
 
         netDhtInit(); 
-	netUdpInit();
 
 	/* decide which net setup mode we're going into 
 	 */
@@ -439,23 +390,7 @@ void p3NetMgr::tick()
 	netTick();
 }
 
-bool p3NetMgr::shutdown() /* blocking shutdown call */
-{
-#ifdef CONN_DEBUG
-	std::cerr << "p3NetMgr::shutdown()";
-	std::cerr << std::endl;
-#endif
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		mNetStatus = RS_NET_UNKNOWN;
-		mNetInitTS = time(NULL);
-		netStatusReset_locked();
-	}
-	netAssistFirewallShutdown();
-	netAssistConnectShutdown();
-
-	return true;
-}
+#define STARTUP_DELAY 5
 
 
 void p3NetMgr::netTick()
@@ -472,13 +407,15 @@ void p3NetMgr::netTick()
 	checkNetAddress() ;
 	networkConsistencyCheck(); /* check consistency. If not consistent, do a reset inside  networkConsistencyCheck() */
 
-	mNetMtx.lock();   /*   LOCK MUTEX */
+	uint32_t netStatus = 0;
+	time_t   age = 0;
+	{
+		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
 
-	uint32_t netStatus = mNetStatus;
-	time_t   age = time(NULL) - mNetInitTS;
+		netStatus = mNetStatus;
+		age = time(NULL) - mNetInitTS;
 
-	mNetMtx.unlock(); /* UNLOCK MUTEX */
-        /* start tcp network - if necessary */
+	}
 
 	switch(netStatus)
 	{
@@ -498,7 +435,6 @@ void p3NetMgr::netTick()
 			/* add a small delay to stop restarting straight after a RESET 
 			 * This is so can we shutdown cleanly
 			 */
-#define STARTUP_DELAY 5
 			if (age < STARTUP_DELAY)
 			{
 #if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
@@ -532,7 +468,6 @@ void p3NetMgr::netTick()
 			std::cerr << "p3NetMgr::netTick() STATUS: EXT_SETUP" << std::endl;
 #endif
 			netExtCheck();
-			//netDhtInit();
 			break;
 
 		case RS_NET_DONE:
@@ -835,103 +770,9 @@ void p3NetMgr::netExtCheck()
 	}
 }
 
-
-void p3NetMgr::networkConsistencyCheck()
-{
-	return;
-}
-
-
-/**********************************************************************
- **********************************************************************
- ******************** External Setup **********************************
- **********************************************************************
- **********************************************************************/
-
-
-bool    p3NetMgr::setLocalAddress(struct sockaddr_in addr)
-{
-	bool changed = false;
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		if ((mLocalAddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
-		    (mLocalAddr.sin_port != addr.sin_port))
-		{
-			changed = true;
-		}
-
-		mLocalAddr = addr;
-	}
-
-	if (changed)
-	{
-#ifdef CONN_DEBUG_RESET
-		std::cerr << "p3NetMgr::setLocalAddress() Calling NetReset" << std::endl;
-#endif
-		netReset();
-	}
-	return true;
-}
-
-bool    p3NetMgr::setExtAddress(struct sockaddr_in addr)
-{
-	bool changed = false;
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		if ((mExtAddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
-		    (mExtAddr.sin_port != addr.sin_port))
-		{
-			changed = true;
-		}
-
-		mExtAddr = addr;
-	}
-
-	if (changed)
-	{
-#ifdef CONN_DEBUG_RESET
-		std::cerr << "p3NetMgr::setExtAddress() Calling NetReset" << std::endl;
-#endif
-		netReset();
-	}
-	return true;
-}
-
-bool    p3NetMgr::setNetworkMode(uint32_t netMode)
-{
-	uint32_t visState;
-	uint32_t oldNetMode;
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		visState = mVisState;
-		oldNetMode = mNetMode;
-	}
-
-	setOwnNetConfig(netMode, visState);
-
-	if ((netMode & RS_NET_MODE_ACTUAL) != (oldNetMode & RS_NET_MODE_ACTUAL)) 
-	{
-#ifdef CONN_DEBUG_RESET
-		std::cerr << "p3NetMgr::setNetworkMode() Calling NetReset" << std::endl;
-#endif
-		netReset();
-	}
-	return true;
-}
-
-
-bool    p3NetMgr::setVisState(uint32_t visState)
-{
-	uint32_t netMode;
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		netMode = mNetMode;
-	}
-	setOwnNetConfig(netMode, visState);
-	return true;
-}
-
-/*******************************************************************/
+/**********************************************************************************************
+ ************************************** Interfaces    *****************************************
+ **********************************************************************************************/
 
 bool 	p3NetMgr::checkNetAddress()
 {
@@ -1067,16 +908,131 @@ bool 	p3NetMgr::checkNetAddress()
 }
 
 
+/**********************************************************************************************
+ ************************************** Interfaces    *****************************************
+ **********************************************************************************************/
+
+/* to allow resets of network stuff */
+void    p3NetMgr::addNetListener(pqiNetListener *listener)
+{
+        RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+        mNetListeners.push_back(listener);
+}
 
 
 
-/**********************************************************************
- **********************************************************************
- ******************** Interfaces    ***********************************
- **********************************************************************
- **********************************************************************/
+bool    p3NetMgr::setLocalAddress(struct sockaddr_in addr)
+{
+	bool changed = false;
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		if ((mLocalAddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
+		    (mLocalAddr.sin_port != addr.sin_port))
+		{
+			changed = true;
+		}
+
+		mLocalAddr = addr;
+	}
+
+	if (changed)
+	{
+#ifdef CONN_DEBUG_RESET
+		std::cerr << "p3NetMgr::setLocalAddress() Calling NetReset" << std::endl;
+#endif
+		netReset();
+	}
+	return true;
+}
+
+bool    p3NetMgr::setExtAddress(struct sockaddr_in addr)
+{
+	bool changed = false;
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		if ((mExtAddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
+		    (mExtAddr.sin_port != addr.sin_port))
+		{
+			changed = true;
+		}
+
+		mExtAddr = addr;
+	}
+
+	if (changed)
+	{
+#ifdef CONN_DEBUG_RESET
+		std::cerr << "p3NetMgr::setExtAddress() Calling NetReset" << std::endl;
+#endif
+		netReset();
+	}
+	return true;
+}
+
+bool    p3NetMgr::setNetworkMode(uint32_t netMode)
+{
+	uint32_t oldNetMode;
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		/* only change TRY flags */
+
+		oldNetMode = mNetMode;
+
+#ifdef CONN_DEBUG
+		std::cerr << "p3NetMgr::setNetworkMode()";
+		std::cerr << " Existing netMode: " << mNetMode;
+		std::cerr << " Input netMode: " << netMode;
+		std::cerr << std::endl;
+#endif
+		mNetMode &= ~(RS_NET_MODE_TRYMODE);
+
+		switch(netMode & RS_NET_MODE_ACTUAL)
+		{
+			case RS_NET_MODE_EXT:
+				mNetMode |= RS_NET_MODE_TRY_EXT;
+				break;
+			case RS_NET_MODE_UPNP:
+				mNetMode |= RS_NET_MODE_TRY_UPNP;
+				break;
+			default:
+			case RS_NET_MODE_UDP:
+				mNetMode |= RS_NET_MODE_TRY_UDP;
+				break;
+		}
+	}
 
 
+	if ((netMode & RS_NET_MODE_ACTUAL) != (oldNetMode & RS_NET_MODE_ACTUAL)) 
+	{
+#ifdef CONN_DEBUG_RESET
+		std::cerr << "p3NetMgr::setNetworkMode() Calling NetReset" << std::endl;
+#endif
+		netReset();
+	}
+	return true;
+}
+
+
+bool    p3NetMgr::setVisState(uint32_t visState)
+{
+	uint32_t netMode;
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		mVisState = visState;
+
+		/* if we've started up - then tweak Dht On/Off */
+		if (mNetStatus != RS_NET_UNKNOWN)
+		{
+			enableNetAssistConnect(!(mVisState & RS_VIS_STATE_NODHT));
+		}
+	}
+	return true;
+}
+
+
+/**********************************************************************************************
+ ************************************** Interfaces    *****************************************
+ **********************************************************************************************/
 
 void p3NetMgr::addNetAssistFirewall(uint32_t id, pqiNetAssistFirewall *fwAgent)
 {
@@ -1353,3 +1309,37 @@ void	p3NetMgr::getNetStatus(pqiNetStatus &status)
 }
 
 
+
+
+
+
+
+
+
+/**********************************************************************************************
+ ************************************** ExtAddrFinder *****************************************
+ **********************************************************************************************/
+
+bool  p3NetMgr::getIPServersEnabled() 
+{ 
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mUseExtAddrFinder;
+}
+
+void  p3NetMgr::getIPServersList(std::list<std::string>& ip_servers) 
+{ 
+	mExtAddrFinder->getIPServersList(ip_servers);
+}
+
+void p3NetMgr::setIPServersEnabled(bool b)
+{
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		mUseExtAddrFinder = b;
+	}
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3NetMgr: setIPServers to " << b << std::endl ; 
+#endif
+
+}

@@ -34,7 +34,7 @@
  *
  */
 
-class p3ConnectMgr ;
+class p3PeerMgr ;
 
 #include "dbase/findex.h"
 #include "dbase/cachestrapper.h"
@@ -65,7 +65,7 @@ class FileIndexStore: public CacheStore
 {
 	public:
 
-	FileIndexStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3ConnectMgr *cmgr, RsPeerId ownid, std::string cachedir);
+	FileIndexStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3PeerMgr *pmgr, RsPeerId ownid, std::string cachedir);
 virtual ~FileIndexStore();
 
 	/* virtual functions overloaded by cache implementor */
@@ -96,7 +96,7 @@ virtual int loadCache(const CacheData &data);	  /* actual load, once data availa
 	FileIndex *localindex;
 
 	NotifyBase *cb;
-	p3ConnectMgr *mConnMgr ;
+	p3PeerMgr *mPeerMgr ;
 };
 
 

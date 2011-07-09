@@ -38,6 +38,9 @@ const int p3facemsgzone = 11453;
 #include <sys/time.h>
 #include <time.h>
 
+#include "pqi/p3peermgr.h"
+#include "pqi/p3netmgr.h"
+
 
 /****************************************/
 /* RsIface Config */
@@ -106,18 +109,18 @@ int RsServer::UpdateAllConfig()
 
         config.ownId = AuthSSL::getAuthSSL()->OwnId();
         config.ownName = AuthGPG::getAuthGPG()->getGPGOwnName();
-	peerConnectState pstate;
-        mConnMgr->getOwnNetStatus(pstate);
+	peerState pstate;
+        mPeerMgr->getOwnNetStatus(pstate);
 
 	/* ports */
-	config.localAddr = rs_inet_ntoa(pstate.currentlocaladdr.sin_addr);
-	config.localPort = ntohs(pstate.currentlocaladdr.sin_port);
+	config.localAddr = rs_inet_ntoa(pstate.localaddr.sin_addr);
+	config.localPort = ntohs(pstate.localaddr.sin_port);
 
 	config.firewalled = true;
 	config.forwardPort  = true;
 	
-	config.extAddr = rs_inet_ntoa(pstate.currentserveraddr.sin_addr);
-	config.extPort = ntohs(pstate.currentserveraddr.sin_port);
+	config.extAddr = rs_inet_ntoa(pstate.serveraddr.sin_addr);
+	config.extPort = ntohs(pstate.serveraddr.sin_port);
 
 	/* data rates */
 	config.maxDownloadDataRate = (int) pqih -> getMaxRate(true);     /* kb */
@@ -128,7 +131,7 @@ int RsServer::UpdateAllConfig()
 	/* update network configuration */
 
 	pqiNetStatus status;	
-	mConnMgr->getNetStatus(status);
+	mNetMgr->getNetStatus(status);
 
 	config.netLocalOk = status.mLocalAddrOk;  
 	config.netUpnpOk  = status.mUpnpOk;
@@ -141,10 +144,10 @@ int RsServer::UpdateAllConfig()
 
 	/* update DHT/UPnP config */
 
-	config.uPnPState  = mConnMgr->getUPnPState();
-	config.uPnPActive = mConnMgr->getUPnPEnabled();
+	config.uPnPState  = mNetMgr->getUPnPState();
+	config.uPnPActive = mNetMgr->getUPnPEnabled();
 	config.DHTPeers   = 20;
-	config.DHTActive  = mConnMgr->getDHTEnabled();
+	config.DHTActive  = mNetMgr->getDHTEnabled();
 
 	/* Notify of Changes */
 //	iface.setChanged(RsIface::Config);
@@ -175,7 +178,7 @@ void RsServer::rsGlobalShutDown()
 	// TODO: cache should also clean up old files
 
 	ConfigFinalSave(); // save configuration before exit
-	mConnMgr->shutdown(); /* Handles UPnP */
+	mNetMgr->shutdown(); /* Handles UPnP */
 
 	join();
 	ftserver->StopThreads();

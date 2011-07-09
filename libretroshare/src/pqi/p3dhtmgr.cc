@@ -29,7 +29,8 @@
 #include <openssl/sha.h>
 
 #include "pqi/p3dhtmgr.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3peermgr.h"
+#include "pqi/p3linkmgr.h"
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"

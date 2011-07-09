@@ -654,7 +654,7 @@ bool 	getPreferredInterface(struct in_addr &prefAddr) // returns best addr.
 	return false;
 }
 
-bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
+bool    sameNet(const struct in_addr *addr, const struct in_addr *addr2)
 {
 #ifdef NET_DEBUG
 	std::cerr << "sameNet: " << rs_inet_ntoa(*addr);

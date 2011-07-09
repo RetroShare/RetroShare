@@ -32,6 +32,8 @@
 #include <list>
 #include <string>
 
+#include "pqi/p3linkmgr.h"
+
 std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 {
 	out << "StatusInfo: " << std::endl;
@@ -43,8 +45,8 @@ std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 
 RsStatus *rsStatus = NULL;
 
-p3StatusService::p3StatusService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_STATUS), p3Config(CONFIG_TYPE_STATUS), mConnMgr(cm), mStatusMtx("p3StatusService")
+p3StatusService::p3StatusService(p3LinkMgr *cm)
+	:p3Service(RS_SERVICE_TYPE_STATUS), p3Config(CONFIG_TYPE_STATUS), mLinkMgr(cm), mStatusMtx("p3StatusService")
 {
 	addSerialType(new RsStatusSerialiser());
 
@@ -61,7 +63,7 @@ bool p3StatusService::getOwnStatus(StatusInfo& statusInfo)
 #endif
 
 	std::map<std::string, StatusInfo>::iterator it;
-	std::string ownId = mConnMgr->getOwnId();
+	std::string ownId = mLinkMgr->getOwnId();
 
 	RsStackMutex stack(mStatusMtx);
 	it = mStatusInfoMap.find(ownId);
@@ -128,7 +130,7 @@ bool p3StatusService::sendStatus(const std::string &id, uint32_t status)
 	{
 		RsStackMutex stack(mStatusMtx);
 
-		statusInfo.id = mConnMgr->getOwnId();
+		statusInfo.id = mLinkMgr->getOwnId();
 		statusInfo.status = status;
 
 		// don't save inactive status
@@ -148,7 +150,7 @@ bool p3StatusService::sendStatus(const std::string &id, uint32_t status)
 		}
 
 		if (id.empty()) {
-			mConnMgr->getOnlineList(onlineList);
+			mLinkMgr->getOnlineList(onlineList);
 		} else {
 			onlineList.push_back(id);
 		}
@@ -257,11 +259,11 @@ bool p3StatusService::saveList(bool& cleanup, std::list<RsItem*>& ilist){
 
 	{
 		RsStackMutex stack(mStatusMtx);
-		it = mStatusInfoMap.find(mConnMgr->getOwnId());
+		it = mStatusInfoMap.find(mLinkMgr->getOwnId());
 
 		if(it == mStatusInfoMap.end()){
 			std::cerr << "p3StatusService::saveList() :" << "Did not find your status"
-				      << mConnMgr->getOwnId() << std::endl;
+				      << mLinkMgr->getOwnId() << std::endl;
 			delete own_status;
 			return false;
 		}
@@ -295,14 +297,14 @@ bool p3StatusService::loadList(std::list<RsItem*>& load){
 
 	if(own_status != NULL){
 
-		own_info.id = mConnMgr->getOwnId();
+		own_info.id = mLinkMgr->getOwnId();
 		own_info.status = own_status->status;
 		own_info.time_stamp = own_status->sendTime;
 		delete own_status;
 
 		{
 			RsStackMutex stack(mStatusMtx);
-			std::pair<std::string, StatusInfo> pr(mConnMgr->getOwnId(), own_info);
+			std::pair<std::string, StatusInfo> pr(mLinkMgr->getOwnId(), own_info);
 			mStatusInfoMap.insert(pr);
 		}
 

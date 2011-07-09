@@ -72,7 +72,8 @@ class autoneighbour: public autoserver
 
 };
 
-class p3ConnectMgr;
+class p3PeerMgr;
+class p3LinkMgr;
 
 
 class p3disc: public p3Service, public pqiMonitor, public p3Config, public AuthGPGService
@@ -80,7 +81,7 @@ class p3disc: public p3Service, public pqiMonitor, public p3Config, public AuthG
 	public:
 
 
-        p3disc(p3ConnectMgr *cm, pqipersongrp *persGrp);
+        p3disc(p3PeerMgr *pm, p3LinkMgr *lm, pqipersongrp *persGrp);
 
 	/************* from pqiMonitor *******************/
 virtual void statusChange(const std::list<pqipeer> &plist);
@@ -141,9 +142,11 @@ int 	idServers();
 
 	private:
 
-	p3ConnectMgr *mConnMgr;
-        pqipersongrp *mPqiPersonGrp;
-        time_t lastSentHeartbeatTime;
+	p3PeerMgr *mPeerMgr;
+	p3LinkMgr *mLinkMgr;
+	
+	pqipersongrp *mPqiPersonGrp;
+	time_t lastSentHeartbeatTime;
 
 	/* data */
 	RsMutex mDiscMtx;

@@ -27,7 +27,9 @@
 #include "dht/p3bitdht.h"
 
 #include "bitdht/bdstddht.h"
-#include "pqi/p3connmgr.h"
+
+#include "pqi/p3linkmgr.h" // FOR FLAGS... move elsewhere
+#include "pqi/p3peermgr.h"
 
 #include "tcponudp/udprelay.h"
 #include "tcponudp/udpstunner.h"

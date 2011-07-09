@@ -45,13 +45,14 @@
  */
 
 class pqissl;
+class p3PeerMgr;
 
 class pqissllistenbase: public pqilistener
 {
 	public:
 
 
-        pqissllistenbase(struct sockaddr_in addr, p3ConnectMgr *cm);
+        pqissllistenbase(struct sockaddr_in addr, p3PeerMgr *pm);
 virtual ~pqissllistenbase();
 
 /*************************************/
@@ -88,7 +89,7 @@ int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 
 	protected:
 
-	p3ConnectMgr *mConnMgr;
+	p3PeerMgr *mPeerMgr;
 
 };
 
@@ -97,7 +98,7 @@ class pqissllistener: public pqissllistenbase
 {
 	public:
 
-        pqissllistener(struct sockaddr_in addr, p3ConnectMgr *cm);
+        pqissllistener(struct sockaddr_in addr, p3PeerMgr *pm);
 virtual ~pqissllistener();
 
 int 	addlistenaddr(std::string id, pqissl *acc);

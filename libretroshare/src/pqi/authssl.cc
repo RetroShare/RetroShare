@@ -34,7 +34,6 @@
 
 #include "pqinetwork.h"
 #include "authgpg.h"
-#include "pqi/p3connmgr.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
 

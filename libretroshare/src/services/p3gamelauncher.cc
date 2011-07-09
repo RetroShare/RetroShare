@@ -26,7 +26,7 @@
 #include "services/p3gamelauncher.h"
 #include "services/p3gameservice.h"
 #include "util/rsdebug.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 #include <sstream>
 #include <iomanip>
 
@@ -109,9 +109,9 @@ const uint32_t RS_GAME_MSG_REJECT     = 6;  /*  ANY  -> ANY   */
 
 const int p3gamezone = 1745;
 
-p3GameLauncher::p3GameLauncher(p3ConnectMgr *connMgr)
+p3GameLauncher::p3GameLauncher(p3LinkMgr *lm)
 	:p3Service(RS_SERVICE_TYPE_GAME_LAUNCHER), 
-	 mConnMgr(connMgr)
+	 mLinkMgr(lm)
 {
 #ifdef GAME_DEBUG
 	std::cerr << "p3GameLauncher::p3GameLauncher()";
@@ -119,7 +119,7 @@ p3GameLauncher::p3GameLauncher(p3ConnectMgr *connMgr)
 #endif
 
 	addSerialType(new RsGameSerialiser());
-	mOwnId = mConnMgr->getOwnId();
+	mOwnId = mLinkMgr->getOwnId();
 }
 
 int	p3GameLauncher::tick()

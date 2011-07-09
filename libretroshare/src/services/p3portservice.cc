@@ -27,8 +27,10 @@
 #include "services/p3portservice.h"
 #include "serialiser/rsserviceids.h"
 
-p3PortService::p3PortService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_PORT), mConnMgr(cm), mEnabled(false)
+#include "pqi/p3linkmgr.h"
+
+p3PortService::p3PortService(p3LinkMgr *lm)
+	:p3Service(RS_SERVICE_TYPE_PORT), mLinkMgr(lm), mEnabled(false)
 {
 	/* For Version 1, we'll just use the very simple RsRawItem packets 
 	 * which are handled in the RsServiceSerialiser 

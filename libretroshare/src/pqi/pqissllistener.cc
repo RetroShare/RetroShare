@@ -32,6 +32,8 @@
 #include "pqi/pqinetwork.h"
 #include "pqi/sslfns.h"
 
+#include "pqi/p3peermgr.h"
+
 #include <errno.h>
 #include <openssl/err.h>
 
@@ -56,8 +58,8 @@ const int pqissllistenzone = 49787;
  */
 
 
-pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3ConnectMgr *cm)
-        :laddr(addr), active(false), mConnMgr(cm)
+pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3PeerMgr *pm)
+        :laddr(addr), active(false), mPeerMgr(pm)
 
 {
         if (!(AuthSSL::getAuthSSL()-> active())) {
@@ -562,8 +564,8 @@ int	pqissllistenbase::continueaccepts()
  *
  */
 
-pqissllistener::pqissllistener(struct sockaddr_in addr, p3ConnectMgr *cm)
-        :pqissllistenbase(addr, cm)
+pqissllistener::pqissllistener(struct sockaddr_in addr, p3PeerMgr *lm)
+        :pqissllistenbase(addr, lm)
 {
 	return;
 }
@@ -729,8 +731,8 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
-	        std::string pgpid = getX509CNString(peercert->cert_info->issuer);
-		mConnMgr->addFriend(newPeerId, pgpid);
+		std::string pgpid = getX509CNString(peercert->cert_info->issuer);
+		mPeerMgr->addFriend(newPeerId, pgpid);
 	
 		X509_free(peercert);
 		return -1;

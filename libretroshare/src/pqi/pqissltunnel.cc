@@ -29,6 +29,7 @@
 
 #include "pqi/pqissltunnel.h"
 #include "pqi/pqinetwork.h"
+#include "pqi/p3linkmgr.h"
 
 //#include "services/p3tunnel.h"
 
@@ -90,8 +91,8 @@ const int pqisslzone = 37714;
  *
  */
 
-pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm, p3tunnel *p3t)
-        :NetBinInterface(parent, parent->PeerId()), mConnMgr(cm)
+pqissltunnel::pqissltunnel(PQInterface *parent, p3LinkMgr *cm, p3tunnel *p3t)
+        :NetBinInterface(parent, parent->PeerId()), mLinkMgr(cm)
 {
 	active = false;
 	waiting = TUNNEL_WAITING_NOT;
@@ -277,7 +278,7 @@ int	pqissltunnel::tick()
                 std::cerr << "pqissltunnel::tick() attempt to connect through a normal tcp or udp connection." << std::endl;
         #endif
                 last_normal_connection_attempt_time = time(NULL);
-                mConnMgr->retryConnect(parent()->PeerId());
+                mLinkMgr->retryConnect(parent()->PeerId());
         }
 
         if (active && ((time(NULL) - last_ping_send_time) > TUNNEL_REPEAT_PING_TIME)) {
@@ -378,7 +379,7 @@ void 	pqissltunnel::spam_handshake()
         std::cerr << "pqissltunnel::spam_handshake() starting to spam handshake tunnel packet." << std::endl;
 #endif
 	std::list<std::string> peers;
-	mConnMgr->getOnlineList(peers);
+	mLinkMgr->getOnlineList(peers);
 	std::list<std::string>::iterator it = peers.begin();
 	while (it !=  peers.end()) {
             //send a handshake to the destination through the relay
@@ -424,14 +425,14 @@ void pqissltunnel::IncommingHanshakePacket(std::string incRelayPeerId) {
     last_packet_time = time(NULL);
 
     std::string message = "pqissltunnel::IncommingHanshakePacket() mConnMgr->isOnline(parent()->PeerId() : ";
-    if (mConnMgr->isOnline(parent()->PeerId())) {
+    if (mLinkMgr->isOnline(parent()->PeerId())) {
         message += "true";
     } else {
         message += "false";
     }
     rslog(RSL_DEBUG_BASIC, pqisslzone, message);
 
-    if (active || mConnMgr->isOnline(parent()->PeerId())) {
+    if (active || mLinkMgr->isOnline(parent()->PeerId())) {
         //connection is already active, or peer is already online don't do nothing
         return;
     }
@@ -549,7 +550,7 @@ bool 	pqissltunnel::moretoread()
 
 bool 	pqissltunnel::cansend()
 {
-	if (!mConnMgr->isOnline(relayPeerId)) {
+	if (!mLinkMgr->isOnline(relayPeerId)) {
 	    reset();
 	    return false;
 	}

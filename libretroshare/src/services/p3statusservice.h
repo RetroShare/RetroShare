@@ -32,7 +32,10 @@
 #include "serialiser/rsstatusitems.h"
 #include "retroshare/rsstatus.h"
 #include "services/p3service.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3cfgmgr.h"
+#include "pqi/pqimonitor.h"
+
+class p3LinkMgr;
 
 //! handles standard status messages (busy, away, online, offline) set by user
 /*!
@@ -45,7 +48,7 @@ class p3StatusService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
 
-	p3StatusService(p3ConnectMgr* );
+	p3StatusService(p3LinkMgr *lm);
 virtual ~p3StatusService();
 
 /***** overloaded from p3Service *****/
@@ -90,7 +93,7 @@ virtual bool loadList(std::list<RsItem*>& load);
 
 virtual void receiveStatusQueue();
 
-p3ConnectMgr *mConnMgr;
+p3LinkMgr *mLinkMgr;
 
 std::map<std::string, StatusInfo> mStatusInfoMap;
 

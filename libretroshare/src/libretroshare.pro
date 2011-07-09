@@ -331,7 +331,9 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pqi/cleanupxpgp.h \
 			pqi/p3cfgmgr.h \
-			pqi/p3connmgr.h \
+			pqi/p3peermgr.h \
+			pqi/p3linkmgr.h \
+			pqi/p3netmgr.h \
 			pqi/p3dhtmgr.h \
 			pqi/p3notify.h \
 			pqi/p3upnpmgr.h \
@@ -360,7 +362,8 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissludp.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
-			pqi/sslfns.h
+			pqi/sslfns.h \
+			pqi/pqinetstatebox.h 
 
 HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3face.h \
@@ -452,7 +455,9 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pqi/cleanupxpgp.cc \
 			pqi/p3cfgmgr.cc \
-			pqi/p3connmgr.cc \
+			pqi/p3peermgr.cc \
+			pqi/p3linkmgr.cc \
+			pqi/p3netmgr.cc \
 			pqi/p3dhtmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiarchive.cc \
@@ -473,7 +478,8 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissludp.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
-			pqi/sslfns.cc
+			pqi/sslfns.cc \
+			pqi/pqinetstatebox.cc 
 
 SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3face-config.cc \

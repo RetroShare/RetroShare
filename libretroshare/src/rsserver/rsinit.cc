@@ -1735,9 +1735,15 @@ RsTurtle *rsTurtle = NULL ;
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
+#include "pqi/p3peermgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3netmgr.h"
+	
+	
 #include "tcponudp/tou.h"
 #include "tcponudp/rsudpstack.h"
 
+	
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
 #include "udp/udpstack.h"
@@ -1823,8 +1829,12 @@ int RsServer::StartupRetroShare()
 	/* Setup Notify Early - So we can use it. */
 	rsNotify = new p3Notify();
 
-        mConnMgr = new p3ConnectMgr();
-
+	mPeerMgr = new p3PeerMgr();
+	mNetMgr = new p3NetMgr();
+	mLinkMgr = new p3LinkMgr(mPeerMgr, mNetMgr);
+	
+	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
+	
         //load all the SSL certs as friends
 //        std::list<std::string> sslIds;
 //        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
@@ -1899,7 +1909,7 @@ int RsServer::StartupRetroShare()
 	mUdpStack->addReceiver(mDhtStunner);
 
 	// NEXT BITDHT.
-	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, mUdpStack, bootstrapfile);
+	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mUdpStack, bootstrapfile);
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
 	
@@ -1956,20 +1966,21 @@ int RsServer::StartupRetroShare()
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-        ftserver = new ftServer(mConnMgr);
-        ftserver->setP3Interface(pqih); 
+	ftserver = new ftServer(mLinkMgr);
+	ftserver->setP3Interface(pqih); 
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
 	ftserver->SetupFtServer(&(getNotify()));
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
 	CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
-        /* setup any extra bits (Default Paths) */
-        ftserver->setPartialsDirectory(emergencyPartialsDir);
-        ftserver->setDownloadDirectory(emergencySaveDir);
+	/* setup any extra bits (Default Paths) */
+	ftserver->setPartialsDirectory(emergencyPartialsDir);
+	ftserver->setDownloadDirectory(emergencySaveDir);
 
 	/* This should be set by config ... there is no default */
-        //ftserver->setSharedDirectories(fileList);
+	//ftserver->setSharedDirectories(fileList);
+	
 	rsFiles = ftserver;
 
 
@@ -2013,11 +2024,11 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->loadPlugins(plugins_directories) ;
 
 	/* create Services */
-	ad = new p3disc(mConnMgr, pqih);
+	ad = new p3disc(mLinkMgr, pqih);
 #ifndef MINIMAL_LIBRS
-	msgSrv = new p3MsgService(mConnMgr);
-	chatSrv = new p3ChatService(mConnMgr);
-	mStatusSrv = new p3StatusService(mConnMgr);
+	msgSrv = new p3MsgService(mLinkMgr);
+	chatSrv = new p3ChatService(mLinkMgr);
+	mStatusSrv = new p3StatusService(mLinkMgr);
 #endif // MINIMAL_LIBRS
 
 #ifndef PQI_DISABLE_TUNNEL
@@ -2026,7 +2037,7 @@ int RsServer::StartupRetroShare()
 	mConnMgr->setP3tunnel(tn);
 #endif
 
-	p3turtle *tr = new p3turtle(mConnMgr,ftserver) ;
+	p3turtle *tr = new p3turtle(mLinkMgr,ftserver) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
 	ftserver->connectToTurtleRouter(tr) ;
@@ -2064,7 +2075,7 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerCacheServices() ;
 
 #ifndef RS_RELEASE
-	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
+	p3GameLauncher *gameLauncher = new p3GameLauncher(mLinkMgr);
 	pqih -> addService(gameLauncher);
 
 	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
@@ -2079,26 +2090,26 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 #ifdef RS_USE_BITDHT
-        mConnMgr->addNetAssistConnect(1, mBitDht);
-	mConnMgr->addNetListener(mUdpStack); 
+	mNetMgr->addNetAssistConnect(1, mBitDht);
+	mNetMgr->addNetListener(mUdpStack); 
 #endif
-	mConnMgr->addNetAssistFirewall(1, mUpnpMgr);
+	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
 
 	/**************************************************************************/
 	/* need to Monitor too! */
-	mConnMgr->addMonitor(pqih);
-	mConnMgr->addMonitor(mCacheStrapper);
-	mConnMgr->addMonitor(ad);
+	mLinkMgr->addMonitor(pqih);
+	mLinkMgr->addMonitor(mCacheStrapper);
+	mLinkMgr->addMonitor(ad);
 #ifndef MINIMAL_LIBRS
-	mConnMgr->addMonitor(msgSrv);
-	mConnMgr->addMonitor(mStatusSrv);
-	mConnMgr->addMonitor(chatSrv);
+	mLinkMgr->addMonitor(msgSrv);
+	mLinkMgr->addMonitor(mStatusSrv);
+	mLinkMgr->addMonitor(chatSrv);
 #endif // MINIMAL_LIBRS
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.
 	 */
-	mConnMgr->addMonitor(((ftController *) mCacheTransfer));
+	mLinkMgr->addMonitor(((ftController *) mCacheTransfer));
 
 
 	/**************************************************************************/

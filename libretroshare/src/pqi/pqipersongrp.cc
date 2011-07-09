@@ -24,7 +24,7 @@
  */
 
 #include "pqi/pqipersongrp.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
 
 #include <sstream>
@@ -185,11 +185,10 @@ int	pqipersongrp::init_listener()
 	{
 		/* extract details from 
 		 */
-		peerConnectState state;
-		mConnMgr->getOwnNetStatus(state);
-
+		struct sockaddr_in laddr = mLinkMgr->getLocalAddress();
+		
   		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-		pqil = createListener(state.currentlocaladdr);
+		pqil = createListener(laddr);
 	}
 	return 1;
 }
@@ -325,19 +324,19 @@ void pqipersongrp::statusChanged()
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		/* get address from p3connmgr */
-		if (!mConnMgr) {
+		if (!mLinkMgr) {
 			return;
 		}
 
 		/* check for active connections and start waiting id's */
 		std::list<std::string> peers;
-		mConnMgr->getFriendList(peers);
+		mLinkMgr->getFriendList(peers);
 
 		/* count connection attempts */
 		std::list<std::string>::iterator peer;
 		for (peer = peers.begin(); peer != peers.end(); peer++) {
 			peerConnectState state;
-			if (mConnMgr->getFriendNetStatus(*peer, state) == false) {
+			if (mLinkMgr->getFriendNetStatus(*peer, state) == false) {
 				continue;
 			}
 
@@ -485,7 +484,7 @@ int     pqipersongrp::connectPeer(std::string id
 #endif
 
   { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-        if (id == mConnMgr->getOwnId()) {
+        if (id == mLinkMgr->getOwnId()) {
             #ifdef PGRP_DEBUG
             std::cerr << "pqipersongrp::connectPeer() Failed, connecting to own id." << std::endl;
             #endif
@@ -503,7 +502,7 @@ int     pqipersongrp::connectPeer(std::string id
 
 
 	/* get address from p3connmgr */
-	if (!mConnMgr)
+	if (!mLinkMgr)
 		return 0;
 
 #ifdef WINDOWS_SYS
@@ -539,7 +538,7 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t timeout;
 	uint32_t type;
 
-	if (!mConnMgr->connectAttempt(id, addr, delay, period, type))
+	if (!mLinkMgr->connectAttempt(id, addr, delay, period, type))
 	{
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
@@ -621,10 +620,10 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 	}
 
 	
-	if (mConnMgr)
-		mConnMgr->connectResult(id, success, type, raddr);
+	if (mLinkMgr)
+		mLinkMgr->connectResult(id, success, type, raddr);
 	
-	return (NULL != mConnMgr);
+	return (NULL != mLinkMgr);
 }
 
 /******************************** DUMMY Specific features ***************************/

@@ -30,9 +30,9 @@
 
 //#define DB_DEBUG 1
 
-ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3ConnectMgr *cnmgr,
+ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3PeerMgr *pm,
                         RsPeerId ownid, std::string cachedir)
-	:FileIndexStore(cs, cft, cb_in,cnmgr, ownid, cachedir)
+	:FileIndexStore(cs, cft, cb_in, pm, ownid, cachedir)
 {
 	return;
 }
@@ -366,8 +366,8 @@ void	ftFiMonitor::setSharedDirectories(const std::list<SharedDirInfo>& dirList)
 
 
 
-ftCacheStrapper::ftCacheStrapper(p3ConnectMgr *cm)
-        :CacheStrapper(cm)
+ftCacheStrapper::ftCacheStrapper(p3LinkMgr *lm)
+        :CacheStrapper(lm)
 {
 	return;
 }

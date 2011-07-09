@@ -108,7 +108,7 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs); // returns all possib
 
 	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
 bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);
-bool	sameNet(struct in_addr *addr, struct in_addr *addr2); 
+bool	sameNet(const struct in_addr *addr, const struct in_addr *addr2); 
 
 in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.
 

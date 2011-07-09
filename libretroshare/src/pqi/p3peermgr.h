@@ -70,8 +70,6 @@ const uint32_t RS_NET_MODE_UDP =         0x0004;
 const uint32_t RS_NET_MODE_UNREACHABLE = 0x0008;
 
 
-
-
 /* flags of peerStatus */
 const uint32_t RS_NET_FLAGS_USE_DISC		= 0x0001;
 const uint32_t RS_NET_FLAGS_USE_DHT		= 0x0002;
@@ -79,8 +77,6 @@ const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
 const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
 const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
 const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
-
-const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
 
 class peerState
 {
@@ -93,41 +89,17 @@ class peerState
 	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
 	uint32_t visState; /* STD, GRAY, DARK */	
 
-	struct sockaddr_in localaddr, serveraddr;
+        struct sockaddr_in localaddr;
+        struct sockaddr_in serveraddr;
+        std::string dyndns;
 
-        //used to store current ip (for config and connection management)
-	struct sockaddr_in currentlocaladdr;             /* Mandatory */
-	struct sockaddr_in currentserveraddr;            /* Mandatory */
-	std::string dyndns;
-
-	time_t lastcontact; 
+        time_t lastcontact;
 
 	/* list of addresses from various sources */
 	pqiIpAddrSet ipAddrs;
 
-	/***** Below here not stored permanently *****/
-
-	std::string name;
 	std::string location;
-
-	//uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
-	//time_t lastavailable;
-	//time_t lastattempt;
-
-
-	//uint32_t    state;
-	//uint32_t    actions;
-
-	//uint32_t		source; /* most current source */
-	//peerAddrInfo		dht;
-	//peerAddrInfo		disc;
-	//peerAddrInfo		peer;
-
-	/* a list of connect attempts to make (in order) */
-	//bool inConnAttempt;
-	//peerConnectAddress currentConnAddrAttempt;
-	//std::list<peerConnectAddress> connAddrs;
-
+	std::string name;
 
 };
 
@@ -136,23 +108,32 @@ class RsGroupInfo;
 
 std::string textPeerState(peerState &state);
 
+class p3LinkMgr;
+class p3NetMgr;
 
-class p3PeerMgr: public pqiConnectCb, public p3Config
+
+class p3PeerMgr: public p3Config
 {
 	public:
 
         p3PeerMgr();
+
+void	setManagers(p3LinkMgr *linkMgr, p3NetMgr  *netMgr);
+
 
 void 	tick();
 
 	/*************** External Control ****************/
 bool	shutdown(); /* blocking shutdown call */
 
-void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
+void 	setOwnNetworkMode(uint32_t netMode);
+void 	setOwnVisState(uint32_t visState);
+
 bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
 bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
 bool    setDynDNS(const std::string &id, const std::string &dyndns);
 bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
+bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr);
 
 bool 	setNetworkMode(const std::string &id, uint32_t netMode);
 bool 	setVisState(const std::string &id, uint32_t visState);
@@ -213,6 +194,12 @@ void 	tickMonitors();
 	virtual void saveDone();
 	virtual bool    loadList(std::list<RsItem *>& load);
 /*****************************************************************/
+
+	/* other important managers */
+
+	p3LinkMgr *mLinkMgr;
+	p3NetMgr  *mNetMgr;
+
 
 private:
 	RsMutex mPeerMtx; /* protects below */

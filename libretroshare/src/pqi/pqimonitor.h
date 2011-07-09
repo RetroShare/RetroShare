@@ -84,7 +84,7 @@ uint32_t    state;
 uint32_t    actions;
 };
 
-class p3ConnectMgr;
+class p3LinkMgr;
 
 /*!
  * This class should be implemented
@@ -96,13 +96,13 @@ class p3ConnectMgr;
 class pqiMonitor
 {
 	public:
-	pqiMonitor() :mConnMgr(NULL) { return; }
+	pqiMonitor() :mLinkMgr(NULL) { return; }
 virtual ~pqiMonitor() { return; }
 
 	/*!
 	 * passes a handle the retroshare connection manager
 	 */
-	void setConnectionMgr(p3ConnectMgr *cm) { mConnMgr = cm; }
+	void setLinkMgr(p3LinkMgr *lm) { mLinkMgr = lm; }
 
 	/*!
 	 * this serves as a call back function for server which has
@@ -124,7 +124,7 @@ virtual void	statusChanged() {};
 //virtual void	peerStatus(std::string id, uint32_t mode) = 0;
 
 	protected:
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 };
 
 

@@ -23,7 +23,8 @@
 
 #include "dbase/cachestrapper.h"
 #include "serialiser/rsconfigitems.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3peermgr.h"
 #include "util/rsdir.h"
 
 #include <iostream>
@@ -542,8 +543,8 @@ void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
  *
  ********************************* CacheStrapper ********************************/
 
-CacheStrapper::CacheStrapper(p3ConnectMgr *cm)
-		:p3Config(CONFIG_TYPE_CACHE), mConnMgr(cm), csMtx("CacheStrapper")
+CacheStrapper::CacheStrapper(p3LinkMgr *lm)
+		:p3Config(CONFIG_TYPE_CACHE), mLinkMgr(lm), csMtx("CacheStrapper")
 {
 	return;
 }
@@ -595,7 +596,7 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
 
-	mConnMgr->getOnlineList(ids);
+	mLinkMgr->getOnlineList(ids);
 
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
 	for(it = ids.begin(); it != ids.end(); it++)
@@ -607,7 +608,7 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 		mCacheUpdates.push_back(std::make_pair(*it, data));
 	}
 
-	mCacheUpdates.push_back(std::make_pair(mConnMgr->getOwnId(), data));
+	mCacheUpdates.push_back(std::make_pair(mLinkMgr->getOwnId(), data));
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
@@ -688,7 +689,7 @@ void    CacheStrapper::listCaches(std::ostream &out)
 {
 	/* can overwrite for more control! */
 	std::map<uint16_t, CachePair>::iterator it;
-	out << "CacheStrapper::listCaches() [" << mConnMgr->getOwnId();
+	out << "CacheStrapper::listCaches() [" << mLinkMgr->getOwnId();
 	out << "] " << " Total Caches: " << caches.size();
 	out << std::endl;
 	for(it = caches.begin(); it != caches.end(); it++)
@@ -781,7 +782,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	std::list<CacheData>::iterator cit;
 	std::list<CacheData> ownCaches;
 	std::list<CacheData> remoteCaches;
-	std::string ownId = mConnMgr->getOwnId();
+	std::string ownId = mLinkMgr->getOwnId();
 
 	std::map<uint16_t, CachePair>::iterator it;
 	for(it = caches.begin(); it != caches.end(); it++)
@@ -861,11 +862,11 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 #endif
 	std::list<CacheData> ownCaches;
 	std::list<CacheData> remoteCaches;
-	std::string ownId = mConnMgr->getOwnId();
+	std::string ownId = mLinkMgr->getOwnId();
 
-	peerConnectState ownState;
-	mConnMgr->getOwnNetStatus(ownState);
-	std::string ownName = ownState.name+" ("+ownState.location+")";
+	//peerConnectState ownState;
+	//mPeerMgr->getOwnNetStatus(ownState);
+	//std::string ownName = ownState.name+" ("+ownState.location+")";
 
 	std::map<std::string, std::list<std::string> > saveFiles;
 	std::map<std::string, std::list<std::string> >::iterator sit;
@@ -885,6 +886,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 
 			cd.pid = rscc->pid;
 
+#if 0
 			if(cd.pid == ownId)
 			{
 				cd.pname = ownName;
@@ -892,9 +894,10 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 			else
 			{
 				peerConnectState pca;
-				mConnMgr->getFriendNetStatus(rscc->pid, pca);
+				mPeerMgr->getFriendNetStatus(rscc->pid, pca);
 				cd.pname = pca.name+" ("+pca.location+")";
 			}
+#endif
 
 			cd.cid.type = rscc->cachetypeid;
 			cd.cid.subid = rscc->cachesubid;

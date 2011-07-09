@@ -28,6 +28,7 @@
 #include "pqi/pqibin.h"
 #include "pqi/pqinotify.h"
 #include "pqi/pqistore.h"
+#include "pqi/p3linkmgr.h"
 
 #include "services/p3chatservice.h"
 
@@ -41,8 +42,8 @@
  *
  */
 
-p3ChatService::p3ChatService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mConnMgr(cm) 
+p3ChatService::p3ChatService(p3LinkMgr *lm)
+	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) 
 {
 	addSerialType(new RsChatSerialiser());
 
@@ -72,10 +73,10 @@ int     p3ChatService::sendPublicChat(std::wstring &msg)
 
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
-	mConnMgr->getOnlineList(ids);
+	mLinkMgr->getOnlineList(ids);
 
 	/* add in own id -> so get reflection */
-	ids.push_back(mConnMgr->getOwnId());
+	ids.push_back(mLinkMgr->getOwnId());
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sendChat()";
@@ -156,7 +157,7 @@ class p3ChatService::AvatarInfo
 void p3ChatService::sendGroupChatStatusString(const std::string& status_string)
 {
 	std::list<std::string> ids;
-	mConnMgr->getOnlineList(ids);
+	mLinkMgr->getOnlineList(ids);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sendChat(): sending group chat status string: " << status_string << std::endl ;
@@ -235,7 +236,7 @@ bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
 	ci->recvTime = ci->sendTime;
 	ci->message = msg;
 
-	if (!mConnMgr->isOnline(id)) {
+	if (!mLinkMgr->isOnline(id)) {
 		/* peer is offline, add to outgoing list */
 		{
 			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -690,7 +691,7 @@ void p3ChatService::setOwnCustomStateString(const std::string& s)
 		for(std::map<std::string,StateStringInfo>::iterator it(_state_strings.begin());it!=_state_strings.end();++it)
 			it->second._own_is_new = true ;
 
-		mConnMgr->getOnlineList(onlineList);
+		mLinkMgr->getOnlineList(onlineList);
 	}
 
 	rsicontrol->getNotify().notifyOwnStatusMessageChanged() ;
@@ -1022,7 +1023,7 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 	if(_own_avatar != NULL)
 	{
 		RsChatAvatarItem *ci = makeOwnAvatarItem() ;
-		ci->PeerId(mConnMgr->getOwnId());
+		ci->PeerId(mLinkMgr->getOwnId());
 
 		list.push_back(ci) ;
 	}

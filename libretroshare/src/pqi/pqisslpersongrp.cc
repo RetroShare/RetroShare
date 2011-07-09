@@ -53,7 +53,7 @@ const int pqipersongrpzone = 354;
 
 pqilistener * pqisslpersongrp::createListener(struct sockaddr_in laddr)
 {
-        pqilistener *listener = new pqissllistener(laddr, mConnMgr);
+	pqilistener *listener = new pqissllistener(laddr, mPeerMgr);
 	return listener;
 }
 
@@ -66,7 +66,7 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 	}
 
 	pqiperson *pqip = new pqiperson(id, this);
-        pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mConnMgr);
+	pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
 
 	/* construct the serialiser ....
 	 * Needs:
@@ -85,7 +85,7 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
 
 #ifndef PQI_DISABLE_TUNNEL
-        pqissltunnel *pqitun 	= new pqissltunnel(pqip, mConnMgr);
+	pqissltunnel *pqitun 	= new pqissltunnel(pqip, mLinkMgr);
 
 	RsSerialiser *rss3 = new RsSerialiser();
 	rss3->addSerialType(new RsFileItemSerialiser());
@@ -96,18 +96,18 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 #endif
 
 #ifndef PQI_DISABLE_UDP
-        pqissludp *pqius 	= new pqissludp(pqip, mConnMgr);
+	pqissludp *pqius 	= new pqissludp(pqip, mLinkMgr);
 
-        RsSerialiser *rss2 = new RsSerialiser();
-        rss2->addSerialType(new RsFileItemSerialiser());
-        rss2->addSerialType(new RsCacheItemSerialiser());
-        rss2->addSerialType(new RsServiceSerialiser());
+	RsSerialiser *rss2 = new RsSerialiser();
+	rss2->addSerialType(new RsFileItemSerialiser());
+	rss2->addSerialType(new RsCacheItemSerialiser());
+	rss2->addSerialType(new RsServiceSerialiser());
+	
+	pqiconnect *pqiusc 	= new pqiconnect(rss2, pqius);
 
-        pqiconnect *pqiusc 	= new pqiconnect(rss2, pqius);
-
-        // add a ssl + proxy interface.
-        // Add Proxy First.
-        pqip -> addChildInterface(PQI_CONNECT_UDP, pqiusc);
+	// add a ssl + proxy interface.
+	// Add Proxy First.
+	pqip -> addChildInterface(PQI_CONNECT_UDP, pqiusc);
 #endif
 
 	return pqip;

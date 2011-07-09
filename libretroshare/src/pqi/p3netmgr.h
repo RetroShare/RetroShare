@@ -35,8 +35,6 @@
 
 #include "pqi/p3cfgmgr.h"
 
-#include "pqi/p3peermgr.h"
-
 #include "util/rsthreads.h"
 
 class ExtAddrFinder ;
@@ -80,12 +78,22 @@ class pqiNetStatus
 	}
 };
 
+class p3PeerMgr;
+class p3LinkMgr;
+
+class rsUdpStack;
+class UdpStunner;
+class p3BitDht;
+class UdpRelayReceiver;
+
 
 class p3NetMgr
 {
 	public:
 
-        p3NetMgr(p3PeerMgr *peerMgr);
+        p3NetMgr();
+
+void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
 
 void 	tick();
 
@@ -181,8 +189,6 @@ void    netUnreachableCheck();
 void 	networkConsistencyCheck();
 
 
-	protected:
-
 private:
 	// These should have there own Mutex Protection,
 	ExtAddrFinder *mExtAddrFinder ;
@@ -193,7 +199,21 @@ private:
 
         std::list<pqiNetListener *> mNetListeners;
 
-	p3PeerMgr *mPeerMgr; // Feedback about Network Addresses.
+	p3PeerMgr *mPeerMgr; 
+	p3LinkMgr *mLinkMgr; 
+
+	/* UDP Stack - managed here */
+	rsUdpStack *mDhtStack;
+	UdpStunner *mDhtStunner;
+	p3BitDht   *mBitDht;
+	UdpRelayReceiver *mRelay;
+	// No Pointer to UdpPeerReceiver.
+
+	// 2ND Stack.
+	rsUdpStack *mProxyStack;
+	UdpStunner *mProxyStunner;
+	// No Pointer to UdpPeerReceiver.
+
 
 	RsMutex mNetMtx; /* protects below */
 
