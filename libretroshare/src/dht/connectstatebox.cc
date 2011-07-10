@@ -185,7 +185,7 @@ void PeerConnectStateBox::stateMsg(std::ostream &out, std::string msg, uint32_t 
 	out << std::endl;
 }
 
-std::string PeerConnectStateBox::connectState()
+std::string PeerConnectStateBox::connectState() const
 {
 	std::string str = StateAsString(mState);
 	std::ostringstream out;

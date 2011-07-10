@@ -96,6 +96,23 @@ class RsDhtNetPeer
         std::string mRsId;
 
 	uint32_t mDhtState;
+
+	//connectLogic.
+	std::string mConnectState;
+
+	// connect Status
+	uint32_t mPeerConnectState;
+	// connect mode
+	uint32_t mPeerConnectMode;
+
+	std::string mPeerConnectProxyId;
+
+	// Req Status.
+	uint32_t mPeerReqState;
+
+	// Peer Cb Mgs.
+	std::string mCbPeerMsg;
+
 };
 
 class RsDhtRelayEnd

@@ -179,6 +179,35 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 	status.mDhtId = out.str();
 	status.mRsId = details.mRsId;
 
+	status.mDhtState = details.mDhtState;
+
+	status.mConnectState = details.mConnectLogic.connectState();
+
+	status.mPeerReqState = details.mPeerReqState;
+
+	status.mPeerConnectState = details.mPeerConnectState;
+
+	switch(details.mPeerConnectMode)
+	{
+		default:
+		case BITDHT_CONNECT_MODE_DIRECT:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_DIRECT;
+			break;
+		case BITDHT_CONNECT_MODE_PROXY:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_PROXY;
+			break;
+		case BITDHT_CONNECT_MODE_RELAY:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_RELAY;
+			break;
+	}
+
+	//status.mPeerConnectProxyId = details.mPeerConnectProxyId;
+	std::ostringstream out2;
+	bdStdPrintId(out2, &(details.mPeerConnectProxyId));
+	status.mPeerConnectProxyId = out2.str();
+
+	status.mCbPeerMsg = details.mPeerCbMsg;
+
 	return;
 }
 

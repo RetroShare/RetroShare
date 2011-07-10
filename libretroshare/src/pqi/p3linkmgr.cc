@@ -51,10 +51,10 @@ const int p3connectzone = 3431;
 
 
 /****
- * #define CONN_DEBUG 1
- * #define CONN_DEBUG_RESET 1
- * #define CONN_DEBUG_TICK 1
+ * #define LINKMGR_DEBUG 1
  ***/
+
+#define LINKMGR_DEBUG 1
 
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
@@ -151,7 +151,7 @@ p3LinkMgr::p3LinkMgr(p3PeerMgr *peerMgr, p3NetMgr *netMgr)
 		mBannedIpList.push_back(bip);
 	}
 	
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr() Startup" << std::endl;
 #endif
 
@@ -321,7 +321,7 @@ void p3LinkMgr::tick()
 
 bool p3LinkMgr::shutdown() /* blocking shutdown call */
 {
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::shutdown() NOOP";
 	std::cerr << std::endl;
 #endif
@@ -338,7 +338,7 @@ void    p3LinkMgr::statusTick()
 	 * 	etc.
 	 */
 
-#ifdef CONN_DEBUG_TICK
+#ifdef LINKMGR_DEBUG_TICK
 	std::cerr << "p3LinkMgr::statusTick()" << std::endl;
 #endif
 	std::list<std::string> retryIds;
@@ -362,7 +362,7 @@ void    p3LinkMgr::statusTick()
 		if ((it->second.state & RS_PEER_S_ONLINE) &&
 			(it->second.lastavailable < oldavail))
 		{
-#ifdef CONN_DEBUG_TICK
+#ifdef LINKMGR_DEBUG_TICK
 			std::cerr << "p3LinkMgr::statusTick() ONLINE TIMEOUT for: ";
 			std::cerr << it->first;
 			std::cerr << std::endl;
@@ -381,7 +381,7 @@ void    p3LinkMgr::statusTick()
 
         for(it2 = retryIds.begin(); it2 != retryIds.end(); it2++)
 	{
-#ifdef CONN_DEBUG_TICK
+#ifdef LINKMGR_DEBUG_TICK
 		std::cerr << "p3LinkMgr::statusTick() RETRY TIMEOUT for: ";
 		std::cerr << *it2;
 		std::cerr << std::endl;
@@ -442,7 +442,7 @@ void p3LinkMgr::tickMonitors()
 
 	if (mStatusChanged)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::tickMonitors() StatusChanged! List:" << std::endl;
 #endif
 		/* assemble list */
@@ -462,7 +462,7 @@ void p3LinkMgr::tickMonitors()
 
 				actionList.push_back(peer);
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 				std::cerr << "Friend: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
 				if (peer.state & RS_PEER_S_FRIEND)
 					std::cerr << " S:RS_PEER_S_FRIEND";
@@ -512,7 +512,7 @@ void p3LinkMgr::tickMonitors()
 				/* reset action */
 				it->second.actions = 0;
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 				std::cerr << "Other: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
 				if (peer.state & RS_PEER_S_FRIEND)
 					std::cerr << " S:RS_PEER_S_FRIEND";
@@ -554,7 +554,7 @@ void p3LinkMgr::tickMonitors()
 
 	if (doStatusChange)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "Sending to " << clients.size() << " monitorClients" << std::endl;
 #endif
 	
@@ -598,7 +598,7 @@ bool p3LinkMgr::connectAttempt(const std::string &id, struct sockaddr_in &addr,
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::connectAttempt() FAILED Not in FriendList! id: " << id << std::endl;
 #endif
 
@@ -607,7 +607,7 @@ bool p3LinkMgr::connectAttempt(const std::string &id, struct sockaddr_in &addr,
 
 	if (it->second.connAddrs.size() < 1)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::connectAttempt() FAILED No ConnectAddresses id: " << id << std::endl;
 #endif
 		return false;
@@ -616,7 +616,7 @@ bool p3LinkMgr::connectAttempt(const std::string &id, struct sockaddr_in &addr,
 
         if (it->second.state & RS_PEER_S_CONNECTED)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
                 std::cerr << "p3LinkMgr::connectAttempt() Already FLAGGED as connected!!!!"  << std::endl;
                 std::cerr << "p3LinkMgr::connectAttempt() But allowing anyway!!!"  << std::endl;
 #endif
@@ -633,13 +633,13 @@ bool p3LinkMgr::connectAttempt(const std::string &id, struct sockaddr_in &addr,
 	type = it->second.currentConnAddrAttempt.type;
 
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgr::connectAttempt() found an address: id: " << id << std::endl;
 		std::cerr << " laddr: " << rs_inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
 		std::cerr << " type: " << type << std::endl;
 #endif
         if (addr.sin_addr.s_addr == 0 || addr.sin_port == 0) {
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgr::connectAttempt() WARNING: address or port is null" << std::endl;
         	std::cerr << " type: " << type << std::endl;
 #endif
@@ -676,7 +676,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 
 		if (id == getOwnId()) 
 		{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::connectResult() Failed, connecting to own id: ");
 #endif
 			return false;
@@ -686,7 +686,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::connectResult() Failed, missing Friend " << " id: " << id << std::endl;
 #endif
 			return false;
@@ -696,7 +696,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		{
 			/* update address (should also come through from DISC) */
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::connectResult() Connect!: id: " << id << std::endl;
 			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
 #endif
@@ -730,7 +730,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 					 == remote_peer_address.sin_port))
 			{				
 				updatePeerAddr = true;
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 				std::cerr << "p3LinkMgr::connectResult() adding current peer address in list." << std::endl;
 #endif
 			}
@@ -746,7 +746,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		{
 			it->second.inConnAttempt = false;
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::connectResult() Disconnect/Fail: id: " << id << std::endl;
 			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
 #endif
@@ -829,7 +829,7 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 		addrs.printAddrs(out);
 		
 		rslog(RSL_WARNING, p3connectzone, out.str());
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << out.str();
 #endif
 	}
@@ -844,17 +844,17 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 		if (it == mOthersList.end())
 		{
 			/* not found - ignore */
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::peerStatus() Peer Not Found - Ignore" << std::endl;
 #endif
 			return;
 		}
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::peerStatus() Peer is in mOthersList" << std::endl;
 #endif
 	}
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::peerStatus() Current Peer State:" << std::endl;
 	printConnectState(std::cerr, it->second);
 	std::cerr << std::endl;
@@ -865,6 +865,10 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	/* if source is DHT */
 	if (source == RS_CB_DHT)
 	{
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::peerStatus() Update From DHT:";
+		std::cerr << std::endl;
+#endif
 		/* DHT can tell us about
 		 * 1) connect type (UDP/TCP/etc)
 		 * 2) local/external address
@@ -879,6 +883,10 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	}
 	else if (source == RS_CB_DISC)
 	{
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::peerStatus() Update From DISC:";
+		std::cerr << std::endl;
+#endif
 		/* DISC can tell us about
 		 * 1) connect type (UDP/TCP/etc)
 		 * 2) local/external addresses
@@ -903,6 +911,10 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 		 * 2) connect address
 		 * -> update all!
 		 */
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::peerStatus() Update From PERSON:";
+		std::cerr << std::endl;
+#endif
 
 		it->second.source = RS_CB_PERSON;
 		it->second.peer = details;
@@ -990,7 +1002,7 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
 	if (!isFriend)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::peerStatus() NOT FRIEND " << " id: " << id << std::endl;
 #endif
 
@@ -1003,7 +1015,7 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::peerStatus() PEER ONLINE ALREADY " << " id: " << id << std::endl;
 #endif
 		{
@@ -1024,7 +1036,7 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 		mPeerMgr -> setNetworkMode(id, peerNetMode);
 	}
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::peerStatus()" << " id: " << id;
 	std::cerr << " type: " << type << " flags: " << flags;
 	std::cerr << " source: " << source << std::endl;
@@ -1048,7 +1060,7 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 #else 
 #endif  // P3CONNMGR_NO_AUTO_CONNECTION 
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::peerStatus() Resulting Peer State:" << std::endl;
 	printConnectState(std::cerr, it->second);
 	std::cerr << std::endl;
@@ -1059,7 +1071,7 @@ void    p3LinkMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 void    p3LinkMgr::peerConnectRequest(std::string id, struct sockaddr_in raddr,
                        							uint32_t source)
 {
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::peerConnectRequest() id: " << id << " raddr: " << rs_inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
 	std::cerr << " source: " << source << std::endl;
 #endif
@@ -1073,19 +1085,23 @@ void    p3LinkMgr::peerConnectRequest(std::string id, struct sockaddr_in raddr,
 
 	/******************** TCP PART *****************************/
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::peerConnectRequest() Try TCP first" << std::endl;
 #endif
 
 	if (source == RS_CB_DHT)
 	{
-		std::cerr << "p3LinkMgr::peerConnectRequest() source DHT ==> retryConnectUDP()" << std::endl;
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::peerConnectRequest() source DHT ==> retryConnectUDP()";
+		std::cerr << std::endl;
+#endif
 		retryConnectUDP(id, raddr);
 		return;
 	}
 	else
 	{	// IS THIS USED???
-		std::cerr << "p3LinkMgr::peerConnectRequest() source OTHER ==> retryConnect()" << std::endl;
+		std::cerr << "p3LinkMgr::peerConnectRequest() ERROR source OTHER ==> retryConnect()" << std::endl;
+		std::cerr << std::endl;
 
 		retryConnect(id);
 		return;
@@ -1099,7 +1115,7 @@ void    p3LinkMgr::peerConnectRequest(std::string id, struct sockaddr_in raddr,
 bool   p3LinkMgr::retryConnect(const std::string &id)
 {
 	/* push all available addresses onto the connect addr stack */
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::retryConnect() id: " << id << std::endl;
 #endif
 
@@ -1119,12 +1135,12 @@ bool   p3LinkMgr::retryConnectUDP(const std::string &id, struct sockaddr_in &rUd
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	/* push all available addresses onto the connect addr stack */
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::retryConnectTCP() id: " << id << std::endl;
 #endif
 
         if (id == getOwnId()) {
-            #ifdef CONN_DEBUG
+            #ifdef LINKMGR_DEBUG
             rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::retryConnectUDP() Failed, connecting to own id: ");
             #endif
             return false;
@@ -1134,7 +1150,7 @@ bool   p3LinkMgr::retryConnectUDP(const std::string &id, struct sockaddr_in &rUd
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
                std::cerr << "p3LinkMgr::retryConnectUDP() Peer is not Friend" << std::endl;
 #endif
 		return false;
@@ -1143,15 +1159,15 @@ bool   p3LinkMgr::retryConnectUDP(const std::string &id, struct sockaddr_in &rUd
 	/* if already connected -> done */
         if (it->second.state & RS_PEER_S_CONNECTED)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::retryConnectUDP() Peer Already Connected" << std::endl;
 #endif
                 if (it->second.connecttype & RS_NET_CONN_TUNNEL) {
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
                     std::cerr << "p3LinkMgr::retryConnectUDP() Peer Connected through a tunnel connection, let's try a normal connection." << std::endl;
 #endif
                 } else {
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
                     	std::cerr << "p3LinkMgr::retryConnectUDP() Peer Connected no more connection attempts" << std::endl;
 #endif
                     return false;
@@ -1161,7 +1177,7 @@ bool   p3LinkMgr::retryConnectUDP(const std::string &id, struct sockaddr_in &rUd
 	/* Explicit Request to start the UDP connection */
 	if (isValidNet(&(rUdpAddr.sin_addr)))
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "Adding udp connection attempt: ";
 		std::cerr << "Addr: " << rs_inet_ntoa(rUdpAddr.sin_addr);
 		std::cerr << ":" << ntohs(rUdpAddr.sin_port);
@@ -1197,13 +1213,13 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 		     - check address age. don't add old ones
 		 */
 	
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::retryConnectTCP() id: " << id << std::endl;
 #endif
 	
 		if (id == getOwnId()) 
 		{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::retryConnectTCP() Failed, connecting to own id: ");
 #endif
 			return false;
@@ -1213,7 +1229,7 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 	        std::map<std::string, peerConnectState>::iterator it;
 		if (mFriendList.end() == (it = mFriendList.find(id)))
 		{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::retryConnectTCP() Peer is not Friend" << std::endl;
 #endif
 			return false;
@@ -1222,18 +1238,18 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 		/* if already connected -> done */
 		if (it->second.state & RS_PEER_S_CONNECTED)
 		{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::retryConnectTCP() Peer Already Connected" << std::endl;
 #endif
 			if (it->second.connecttype & RS_NET_CONN_TUNNEL) 
 			{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 				std::cerr << "p3LinkMgr::retryConnectTCP() Peer Connected through a tunnel connection, let's try a normal connection." << std::endl;
 #endif
 			} 
 			else 
 			{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 				std::cerr << "p3LinkMgr::retryConnectTCP() Peer Connected no more connection attempts" << std::endl;
 #endif
 				return false;
@@ -1241,6 +1257,10 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 		}
 	} /****** END of LOCKED ******/
 
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgr::retryConnectTCP() Getting Address from PeerMgr for : " << id;
+	std::cerr << std::endl;
+#endif
 	/* If we reach here, must retry .... extract the required info from p3PeerMgr */
 
 	struct sockaddr_in lAddr;
@@ -1272,6 +1292,16 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 			/* finish it off */
 			return locked_ConnectAttempt_Complete(&(it->second));
 		}
+		else
+		{
+			std::cerr << "p3LinkMgr::retryConnectTCP() ERROR failed to find friend data : " << id;
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		std::cerr << "p3LinkMgr::retryConnectTCP() ERROR failed to addresses from PeerMgr for: " << id;
+		std::cerr << std::endl;
 	}
 
 	return false;
@@ -1283,7 +1313,7 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 
 bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_t age)
 {
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::locked_CheckPotentialAddr("; 
 	std::cerr << rs_inet_ntoa(addr->sin_addr);
 	std::cerr << ":" << ntohs(addr->sin_port);
@@ -1296,7 +1326,7 @@ bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_
 	 */
 	if (age > MAX_TCP_ADDR_AGE)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::locked_CheckPotentialAddr() REJECTING - TOO OLD"; 
 		std::cerr << std::endl;
 #endif
@@ -1311,7 +1341,7 @@ bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_
 	/* if invalid - quick rejection */
 	if (!isValid)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::locked_CheckPotentialAddr() REJECTING - INVALID";
 		std::cerr << std::endl;
 #endif
@@ -1326,7 +1356,7 @@ bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_
 	{
 		if (it->s_addr == addr->sin_addr.s_addr)
 		{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::locked_CheckPotentialAddr() REJECTING - ON BANNED IPLIST"; 
 			std::cerr << std::endl;
 #endif
@@ -1340,7 +1370,7 @@ bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_
 	 */
 	if (isExternal)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::locked_CheckPotentialAddr() ACCEPTING - EXTERNAL"; 
 		std::cerr << std::endl;
 #endif
@@ -1360,14 +1390,14 @@ bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_
 
 	if (sameNet(&(mLocalAddress.sin_addr), &(addr->sin_addr)))
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::locked_CheckPotentialAddr() ACCEPTING - PRIVATE & sameNET"; 
 		std::cerr << std::endl;
 #endif
 		return true;
 	}
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgr::locked_CheckPotentialAddr() REJECTING - PRIVATE & !sameNET"; 
 	std::cerr << std::endl;
 #endif
@@ -1380,11 +1410,16 @@ bool  p3LinkMgr::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_
 
 void  p3LinkMgr::locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, struct sockaddr_in *localAddr, struct sockaddr_in *serverAddr)
 {
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgr::locked_ConnectAttempt_CurrentAddresses()";
+	std::cerr << std::endl;
+#endif
 	// Just push all the addresses onto the stack.
 	/* try "current addresses" first */
 	if ((localAddr) && (locked_CheckPotentialAddr(localAddr, 0)))
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::locked_ConnectAttempt_CurrentAddresses() ";
 		std::cerr << "Adding tcp connection attempt: ";
 		std::cerr << "Current Local Addr: " << rs_inet_ntoa(localAddr->sin_addr);
 		std::cerr << ":" << ntohs(localAddr->sin_port);
@@ -1402,7 +1437,8 @@ void  p3LinkMgr::locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, 
 
 	if ((serverAddr) && (locked_CheckPotentialAddr(serverAddr, 0)))
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::locked_ConnectAttempt_CurrentAddresses() ";
 		std::cerr << "Adding tcp connection attempt: ";
 		std::cerr << "Current Ext Addr: " << rs_inet_ntoa(serverAddr->sin_addr);
 		std::cerr << ":" << ntohs(serverAddr->sin_port);
@@ -1427,13 +1463,18 @@ void  p3LinkMgr::locked_ConnectAttempt_HistoricalAddresses(peerConnectState *pee
 	std::list<pqiIpAddress>::const_iterator ait;
 	time_t now = time(NULL);
 
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgr::locked_ConnectAttempt_HistoricalAddresses()";
+	std::cerr << std::endl;
+#endif
 	for(ait = ipAddrs.mLocal.mAddrs.begin(); 
 		ait != ipAddrs.mLocal.mAddrs.end(); ait++)
 	{
 		if (locked_CheckPotentialAddr(&(ait->mAddr), now - ait->mSeenTime))
 		{
 
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::locked_ConnectAttempt_HistoricalAddresses() ";
 			std::cerr << "Adding tcp connection attempt: ";
 			std::cerr << "Local Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
 			std::cerr << ":" << ntohs(ait->mAddr.sin_port);
@@ -1457,7 +1498,8 @@ void  p3LinkMgr::locked_ConnectAttempt_HistoricalAddresses(peerConnectState *pee
 		if (locked_CheckPotentialAddr(&(ait->mAddr), now - ait->mSeenTime))
 		{
 	
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::locked_ConnectAttempt_HistoricalAddresses() ";
 			std::cerr << "Adding tcp connection attempt: ";
 			std::cerr << "Ext Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
 			std::cerr << ":" << ntohs(ait->mAddr.sin_port);
@@ -1479,39 +1521,51 @@ void  p3LinkMgr::locked_ConnectAttempt_HistoricalAddresses(peerConnectState *pee
 void  p3LinkMgr::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t port)
 {
 	/* try dyndns address too */
-	if (!dyndns.empty()) 
+	struct in_addr addr;
+	if (!dyndns.empty() && port) 
 	{
-		struct in_addr addr;
-#ifdef CONN_DEBUG
-		std::cerr << "Looking up DynDNS address" << std::endl;
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::locked_ConnectAttempt_AddDynDNS() Looking up DynDNS address: " << dyndns << std::endl;
 #endif
-		if (port) 
+		if(mDNSResolver->getIPAddressFromString(dyndns, addr))
 		{
-			if(mDNSResolver->getIPAddressFromString(dyndns, addr))
-			{
-#ifdef CONN_DEBUG
-				std::cerr << "Adding tcp connection attempt: ";
-				std::cerr << "DynDNS Addr: " << rs_inet_ntoa(addr);
-				std::cerr << ":" << ntohs(port);
-				std::cerr << std::endl;
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::locked_ConnectAttempt_AddDynDNS() ";
+			std::cerr << "Adding tcp connection attempt: ";
+			std::cerr << "DynDNS Addr: " << rs_inet_ntoa(addr);
+			std::cerr << ":" << ntohs(port);
+			std::cerr << std::endl;
 #endif
-				peerConnectAddress pca;
-				pca.addr.sin_family = AF_INET;
-				pca.addr.sin_addr.s_addr = addr.s_addr;
-				pca.addr.sin_port = htons(port);
-				pca.type = RS_NET_CONN_TCP_EXTERNAL;
-				//for the delay, we add a random time and some more time when the friend list is big
-				pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
-				pca.ts = time(NULL);
-				pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+			peerConnectAddress pca;
+			pca.addr.sin_family = AF_INET;
+			pca.addr.sin_addr.s_addr = addr.s_addr;
+			pca.addr.sin_port = htons(port);
+			pca.type = RS_NET_CONN_TCP_EXTERNAL;
+			//for the delay, we add a random time and some more time when the friend list is big
+			pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+			pca.ts = time(NULL);
+			pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
 
-				/* check address validity */
-				if (locked_CheckPotentialAddr(&(pca.addr), 0))
-				{
-					addAddressIfUnique(peer->connAddrs, pca);
-				}
+			/* check address validity */
+			if (locked_CheckPotentialAddr(&(pca.addr), 0))
+			{
+				addAddressIfUnique(peer->connAddrs, pca);
 			}
 		}
+		else
+		{
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::locked_ConnectAttempt_AddDynDNS() DNSResolver hasn't found addr yet";
+			std::cerr << std::endl;
+#endif
+		}
+	}
+	else
+	{
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::locked_ConnectAttempt_AddDynDNS() Address(" << dyndns << ") or Port(" << port << ") NULL ignoring";
+		std::cerr << std::endl;
+#endif
 	}
 }
 
@@ -1520,7 +1574,7 @@ void  p3LinkMgr::locked_ConnectAttempt_AddTunnel(peerConnectState *peer)
 {
 	if (!(peer->state & RS_PEER_S_CONNECTED) && mAllowTunnelConnection)
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "Adding TUNNEL Connection Attempt";
 		std::cerr << std::endl;
 #endif
@@ -1541,6 +1595,10 @@ bool  p3LinkMgr::addAddressIfUnique(std::list<peerConnectAddress> &addrList, pee
 	/* iterate through the list, and make sure it isn't already 
 	 * in the list 
 	 */
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgr::addAddressIfUnique() Checking Address: " << rs_inet_ntoa(pca.addr.sin_addr);
+	std::cerr << std::endl;
+#endif
 
 	std::list<peerConnectAddress>::iterator it;
 	for(it = addrList.begin(); it != addrList.end(); it++)
@@ -1549,10 +1607,19 @@ bool  p3LinkMgr::addAddressIfUnique(std::list<peerConnectAddress> &addrList, pee
 			(pca.addr.sin_port == it->addr.sin_port)	&&
 			(pca.type == it->type))
 		{
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::addAddressIfUnique() Discarding Duplicate Address";
+			std::cerr << std::endl;
+#endif
 			/* already */
 			return false;
 		}
 	}
+
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgr::addAddressIfUnique() Adding New Address";
+	std::cerr << std::endl;
+#endif
 
 	addrList.push_back(pca);
 
@@ -1571,7 +1638,7 @@ bool  p3LinkMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	if (peer->inConnAttempt) 
 	{
                 /*  -> it'll automatically use the addresses we added */
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgr::locked_ConnectAttempt_Complete() Already in CONNECT ATTEMPT";
 		std::cerr << std::endl;
 		std::cerr << "p3LinkMgr::locked_ConnectAttempt_Complete() Remaining ConnAddr Count: " << peer->connAddrs.size();
@@ -1583,13 +1650,13 @@ bool  p3LinkMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	/* start a connection attempt */
 	if (peer->connAddrs.size() > 0) 
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::ostringstream out;
 		out << "p3LinkMgr::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT! " ;
-	    out << std::endl;
+		out << std::endl;
 		out << "p3LinkMgr::locked_ConnectAttempt_Complete() ConnAddr Count: " << peer->connAddrs.size();
 		rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
-	    std::cerr << out.str() << std::endl;
+	    	std::cerr << out.str() << std::endl;
 
 #endif
 
@@ -1599,11 +1666,11 @@ bool  p3LinkMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	} 
 	else 
 	{
-#ifdef CONN_DEBUG
+#ifdef LINKMGR_DEBUG
 		std::ostringstream out;
 		out << "p3LinkMgr::locked_ConnectAttempt_Complete() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! ";
 		rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
-	    std::cerr << out.str() << std::endl;
+	    	std::cerr << out.str() << std::endl;
 #endif
 	    return false;
 	}
@@ -1620,6 +1687,11 @@ int p3LinkMgr::addFriend(const std::string &id, bool isVisible)
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::addFriend(" << id << "," << isVisible << ")";
+		std::cerr << std::endl;
+#endif
+
 	        std::map<std::string, peerConnectState>::iterator it;
 		it = mFriendList.find(id);
 	
@@ -1632,6 +1704,10 @@ int p3LinkMgr::addFriend(const std::string &id, bool isVisible)
 	
 		peerConnectState pcs;
 		pcs.dhtVisible = isVisible;
+		pcs.id = id;
+		pcs.name = "Dummy Id Name";
+		pcs.state = RS_PEER_S_FRIEND;
+		pcs.actions = RS_PEER_NEW;
 	
 		mFriendList[id] = pcs;
 	}
@@ -1645,6 +1721,11 @@ int p3LinkMgr::addFriend(const std::string &id, bool isVisible)
 int p3LinkMgr::removeFriend(const std::string &id)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgr::removeFriend(" << id << ")";
+	std::cerr << std::endl;
+#endif
 
         std::map<std::string, peerConnectState>::iterator it;
 	it = mFriendList.find(id);
@@ -1662,6 +1743,32 @@ int p3LinkMgr::removeFriend(const std::string &id)
 
 
 
+
+void  printConnectState(std::ostream &out, peerConnectState &peer)
+{
+
+        out << "Friend: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
+        if (peer.state & RS_PEER_S_FRIEND)
+                out << " S:RS_PEER_S_FRIEND";
+        if (peer.state & RS_PEER_S_ONLINE)
+                out << " S:RS_PEER_S_ONLINE";
+        if (peer.state & RS_PEER_S_CONNECTED)
+                out << " S:RS_PEER_S_CONNECTED";
+        out << " Actions: " << peer.actions;
+        if (peer.actions & RS_PEER_NEW)
+                out << " A:RS_PEER_NEW";
+        if (peer.actions & RS_PEER_MOVED)
+                out << " A:RS_PEER_MOVED";
+        if (peer.actions & RS_PEER_CONNECTED)
+                out << " A:RS_PEER_CONNECTED";
+        if (peer.actions & RS_PEER_DISCONNECTED)
+                out << " A:RS_PEER_DISCONNECTED";
+        if (peer.actions & RS_PEER_CONNECT_REQ)
+                out << " A:RS_PEER_CONNECT_REQ";
+
+        out << std::endl;
+        return;
+}
 
 
 

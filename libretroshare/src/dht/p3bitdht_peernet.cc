@@ -21,6 +21,7 @@
 
 #define PEERNET_CONNECT_TIMEOUT 45
 
+#define DEBUG_BITDHT	1
 
 #if 0
 int p3BitDht::add_peer(std::string id)

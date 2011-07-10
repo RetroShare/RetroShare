@@ -33,6 +33,7 @@
 
 #include <openssl/sha.h>
 
+#define DEBUG_BITDHT	1
 
 /******************************************************************************************
  ********************************* Existing Interface *************************************
@@ -181,6 +182,8 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const std::string pid, int type
 
 	/* what do we need to reset? */
 	dpd->mPeerType = type;
+	dpd->mDhtId.id = id;
+	dpd->mRsId = pid;
 
 	return dpd;
 }
@@ -274,7 +277,7 @@ bool p3BitDht::havePeerTranslation_locked(const std::string &pid)
 
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::havePeerTranslation_locked() Found NodeId: ";
-	bdStdPrintNodeId(std::cerr, id);
+	bdStdPrintNodeId(std::cerr, &(it->second));
 	std::cerr << std::endl;
 #endif
 
