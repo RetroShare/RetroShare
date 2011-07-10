@@ -134,13 +134,6 @@ p3LinkMgr::p3LinkMgr(p3PeerMgr *peerMgr, p3NetMgr *netMgr)
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-		/* setup basics of own state */
-		mOwnState.id = AuthSSL::getAuthSSL()->OwnId();
-		mOwnState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
-
-		// user decided.
-		//mOwnState.netMode |= RS_NET_MODE_TRY_UPNP;
 	
 		mAllowTunnelConnection = false;
 		mDNSResolver = new DNSResolver();
@@ -236,9 +229,43 @@ int     p3LinkMgr::getOnlineCount()
 }
 
 
+void    p3LinkMgr::setFriendVisibility(const std::string &id, bool isVisible)
+{
+	/* set visibility */
+	{
+		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+	
+		int count = 0;
+	
+	        std::map<std::string, peerConnectState>::iterator it;
+		it = mFriendList.find(id);
+		if (it == mFriendList.end())
+		{
+			/* */
+			std::cerr << "p3LinkMgr::setFriendVisibility() ERROR peer unknown: " << id;
+			std::cerr << std::endl;
+			return;
+		}
 
+		if (it->second.dhtVisible == isVisible)
+		{
+			/* no change in state */
+			return;
+		}
+	
+		it->second.dhtVisible = isVisible;
+	
+		if (it->second.state & RS_PEER_S_CONNECTED)
+		{
+			/* dont worry about it */
+			return;
+		}
+	}
 
-
+	/* switch the NetAssistOn/Off */
+	mNetMgr->netAssistFriend(id, isVisible);
+}
+	
 
 void p3LinkMgr::tick()
 {
@@ -1176,7 +1203,7 @@ bool   p3LinkMgr::retryConnectTCP(const std::string &id)
 	pqiIpAddrSet histAddrs;
 	std::string dyndns;
 
-	if (mPeerMgr->setConnectAddresses(id, lAddr, eAddr, histAddrs, dyndns))
+	if (mPeerMgr->getConnectAddresses(id, lAddr, eAddr, histAddrs, dyndns))
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1537,6 +1564,59 @@ bool  p3LinkMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	}
 	return false;
 }
+
+
+/***********************************************************************************************************
+ ************************************* Handling of Friends *************************************************
+ ***********************************************************************************************************/
+
+int p3LinkMgr::addFriend(const std::string &id, bool isVisible)
+{
+	{
+		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+	
+	        std::map<std::string, peerConnectState>::iterator it;
+		it = mFriendList.find(id);
+	
+		if (it != mFriendList.end())
+		{
+			std::cerr << "p3LinkMgr::addFriend() ERROR, friend already exists : " << id;
+			std::cerr << std::endl;
+			return 0;
+		}
+	
+		peerConnectState pcs;
+		pcs.dhtVisible = isVisible;
+	
+		mFriendList[id] = pcs;
+	}
+	
+	mNetMgr->netAssistFriend(id, isVisible);
+
+	return 1;
+}
+
+
+int p3LinkMgr::removeFriend(const std::string &id)
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+        std::map<std::string, peerConnectState>::iterator it;
+	it = mFriendList.find(id);
+
+	if (it == mFriendList.end())
+	{
+		std::cerr << "p3LinkMgr::removeFriend() ERROR, friend not there : " << id;
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	mFriendList.erase(it);
+	return 1;
+}
+
+
+
 
 
 

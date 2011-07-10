@@ -141,15 +141,15 @@ void p3NetMgr::setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr)
 	mLinkMgr = linkMgr;
 }
 
-void p3NetMgr::setDhtMgr(p3DhtMgr *dhtMgr)
-{
-	mDhtMgr = dhtMgr;
-}
+//void p3NetMgr::setDhtMgr(p3DhtMgr *dhtMgr)
+//{
+//	mDhtMgr = dhtMgr;
+//}
 
-void p3NetMgr::setStunners(p3Stunner *dhtStunner, p3Stunner *proxyStunner)
+void p3NetMgr::setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun)
 {
-	mDhtStunner = dhtStunner;
-	mProxyStunner = proxyStunner;
+	mDhtStunner = dhtStun;
+	mProxyStunner = proxyStun;
 }
 
 
@@ -899,7 +899,7 @@ bool 	p3NetMgr::checkNetAddress()
 		std::cerr << std::endl;
 #endif
 		
-		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		//mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 		
 		netReset();
 	}

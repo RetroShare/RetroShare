@@ -163,6 +163,9 @@ void	getFriendList(std::list<std::string> &ssl_peers);
 //void	getOthersList(std::list<std::string> &peers); /deprecated
 bool    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool ssl);
 
+int 	getConnectAddresses(const std::string &id, 
+				struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
+				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
 	/**************** handle monitors *****************/
 void	addMonitor(pqiMonitor *mon);

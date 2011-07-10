@@ -106,6 +106,8 @@ class peerConnectState
 
 	/***** Below here not stored permanently *****/
 
+	bool dhtVisible;
+
         time_t lastcontact; 
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
@@ -166,6 +168,8 @@ bool	retryConnect(const std::string &id);
 void 	setTunnelConnection(bool b);
 bool 	getTunnelConnection();
 
+void    setFriendVisibility(const std::string &id, bool isVisible);
+
 //void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 //bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
 //bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
@@ -178,11 +182,8 @@ bool 	getTunnelConnection();
 //bool    setLocation(const std::string &pid, const std::string &location);//location is shown in the gui to differentiate ssl certs
 
 	/* add/remove friends */
-bool 	addFriend(const std::string &ssl_id);
-//, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-//	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
-
-bool	removeFriend(const std::string &ssl_id);
+int 	addFriend(const std::string &ssl_id, bool isVisible);
+int 	removeFriend(const std::string &ssl_id);
 
 	/*************** External Control ****************/
 

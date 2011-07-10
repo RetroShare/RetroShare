@@ -152,7 +152,7 @@ void p3PeerMgr::setOwnNetworkMode(uint32_t netMode)
 	}
 	
 	// Pass on Flags to NetMgr.
-	mNetMgr->setOwnNetworkMode((netMode & RS_NET_MODE_ACTUAL));
+	mNetMgr->setNetworkMode((netMode & RS_NET_MODE_ACTUAL));
 }
 
 void p3PeerMgr::setOwnVisState(uint32_t visState)
@@ -173,7 +173,7 @@ void p3PeerMgr::setOwnVisState(uint32_t visState)
 	}
 	
 	// Pass on Flags to NetMgr.
-	mNetMgr->setOwnVisState(visState);
+	mNetMgr->setVisState(visState);
 }
 
 
@@ -296,6 +296,32 @@ void p3PeerMgr::getOthersList(std::list<std::string> &peers)
 
 
 
+int p3PeerMgr::getConnectAddresses(const std::string &id, 
+					struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
+					pqiIpAddrSet &histAddrs, std::string &dyndns)
+{
+
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(id);
+	if (it == mFriendList.end())
+	{
+		/* ERROR */
+		std::cerr << "p3PeerMgr::getConnectAddresses() ERROR unknown Peer";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	lAddr = it->second.localaddr;
+	eAddr = it->second.serveraddr;
+	histAddrs = it->second.ipAddrs;
+	dyndns = it->second.dyndns;
+
+	return 1;
+}
+
 /****************************
  * Update state,
  * trigger retry if necessary,
@@ -414,7 +440,7 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 
 	if (notifyLinkMgr)
 	{
-		mLinkMgr->addFriend(id, gpg_id, netMode, visState, lastContact);
+		mLinkMgr->addFriend(id, !(visState & RS_VIS_STATE_NODHT));
 	}
 
 	return true;

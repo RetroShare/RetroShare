@@ -66,7 +66,9 @@ bitdht {
 
 HEADERS +=	dht/p3bitdht.h 
 SOURCES +=	dht/p3bitdht.cc  \
-		dht/p3bitdht_interface.cc 
+		dht/p3bitdht_interface.cc \
+		dht/p3bitdht_peers.cc \
+		dht/p3bitdht_peernet.cc 
 
 HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/bio_tou.h \

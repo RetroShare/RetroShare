@@ -50,6 +50,7 @@ class DNSResolver ;
 	 */
 
 
+
 class pqiNetStatus
 {
 	public:
@@ -94,6 +95,7 @@ class p3NetMgr
         p3NetMgr();
 
 void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
+void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
 
 void 	tick();
 
@@ -107,6 +109,16 @@ bool	checkNetAddress(); /* check our address is sensible */
 
 	/*************** External Control ****************/
 bool	shutdown(); /* blocking shutdown call */
+
+	/* a nice simple network configuration */
+uint32_t getNetStateMode();
+uint32_t getNetworkMode();
+uint32_t getNatTypeMode();
+uint32_t getNatHoleMode();
+uint32_t getConnectModes();
+
+
+
 
 bool    getUPnPState();
 bool	getUPnPEnabled();
@@ -133,6 +145,9 @@ bool 	setExtAddress(struct sockaddr_in addr);
 bool 	setNetworkMode(uint32_t netMode);
 bool 	setVisState(uint32_t visState);
 
+
+virtual bool netAssistFriend(std::string id, bool on);
+
 	/*************** External Control ****************/
 
 	/* access to network details (called through Monitor) */
@@ -156,7 +171,7 @@ bool netAssistExtAddress(struct sockaddr_in &extAddr);
 bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
 
 		/* Assist Connect */
-virtual bool netAssistFriend(std::string id, bool on);
+//virtual bool netAssistFriend(std::string id, bool on);
 virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
                                         struct sockaddr_in &eaddr,
 					uint32_t mode);
@@ -202,18 +217,9 @@ private:
 	p3PeerMgr *mPeerMgr; 
 	p3LinkMgr *mLinkMgr; 
 
-	/* UDP Stack - managed here */
-	rsUdpStack *mDhtStack;
-	UdpStunner *mDhtStunner;
-	p3BitDht   *mBitDht;
-	UdpRelayReceiver *mRelay;
-	// No Pointer to UdpPeerReceiver.
-
-	// 2ND Stack.
-	rsUdpStack *mProxyStack;
-	UdpStunner *mProxyStunner;
-	// No Pointer to UdpPeerReceiver.
-
+	//p3BitDht   *mBitDht;
+	pqiAddrAssist *mDhtStunner;
+	pqiAddrAssist *mProxyStunner;
 
 	RsMutex mNetMtx; /* protects below */
 

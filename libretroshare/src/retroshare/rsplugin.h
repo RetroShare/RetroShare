@@ -34,7 +34,7 @@ class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
 
 class p3Service ;
-class p3ConnectMgr ;
+class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
 class QString ;
@@ -86,7 +86,7 @@ class RsPluginHandler
 		virtual const std::string& getLocalCacheDir() const =0;
 		virtual const std::string& getRemoteCacheDir() const =0;
 		virtual ftServer *getFileServer() const = 0;
-		virtual p3ConnectMgr *getConnectMgr() const = 0;
+		virtual p3LinkMgr *getLinkMgr() const = 0;
 };
 
 

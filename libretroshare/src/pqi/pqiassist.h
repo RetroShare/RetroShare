@@ -79,6 +79,22 @@ virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 };
 
 
+/* this is for the Stunners 
+ *
+ *
+ */
+
+class pqiAddrAssist
+{
+	public:
+
+	pqiAddrAssist() { return; }
+virtual	~pqiAddrAssist() { return; }
+
+virtual bool    getExternalAddr(struct sockaddr_in &remote, uint8_t &stable) = 0;
+
+};
+
 
 
 class pqiNetAssistConnect: public pqiNetAssist
