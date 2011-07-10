@@ -168,6 +168,11 @@
             <string>Cb Status</string>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string>RsId</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>

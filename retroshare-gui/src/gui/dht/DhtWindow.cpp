@@ -289,14 +289,13 @@ void DhtWindow::updateNetStatus()
 void DhtWindow::updateNetPeers()
 {
 
-#if  0
+
 	QTreeWidget *peerTreeWidget = ui->peerTreeWidget;
 
 	std::list<std::string> peerIds;
-	std::list<std::string> failedPeerIds;
 	std::list<std::string>::iterator it;
-	mPeerNet->get_net_peers(peerIds);
-	mPeerNet->get_net_failedpeers(failedPeerIds);
+
+	rsDht->getNetPeerList(peerIds);
 
 	/* collate peer stats */
 	int nPeers = peerIds.size();
@@ -323,15 +322,9 @@ void DhtWindow::updateNetPeers()
 #define PTW_COL_PEER_REQ_STATUS		5
 	
 #define PTW_COL_PEER_CB_MSG		6
+#define PTW_COL_RSID			7
 
-// These aren't that important.	
-#define PTW_COL_PEER_CB_MODE		7
-#define PTW_COL_PEER_CB_PROXY		8
-
-#define PTW_COL_DHT_ADDRESS		9
-#define PTW_COL_DHT_UPDATETS		10
-	
-
+#if 0
 	/* clear old entries */
 	int itemCount = peerTreeWidget->topLevelItemCount();
 	for (int nIndex = 0; nIndex < itemCount;) 
@@ -340,28 +333,24 @@ void DhtWindow::updateNetPeers()
 		std::string tmpid = tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString().toStdString();
 		if (peerIds.end() == std::find(peerIds.begin(), peerIds.end(), tmpid))
 		{
-			if (failedPeerIds.end() == std::find(failedPeerIds.begin(), failedPeerIds.end(), tmpid))
-			{
-				peerTreeWidget->removeItemWidget(tmp_item, 0);
-				/* remove it! */
-				itemCount--;
-			}
-			else
-			{
-				nIndex++;
-			}
+			peerTreeWidget->removeItemWidget(tmp_item, 0);
+			/* remove it! */
+			itemCount--;
 		}
 		else
 		{
 			nIndex++;
 		}
 	}
+#endif
+	peerTreeWidget->clear();
 
 	time_t now = time(NULL);
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
 	{
 		/* find the entry */
 		QTreeWidgetItem *peer_item = NULL;
+#if 0
 		QString qpeerid = QString::fromStdString(*it);
 		int itemCount = peerTreeWidget->topLevelItemCount();
 		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
@@ -373,6 +362,7 @@ void DhtWindow::updateNetPeers()
 				break;
 			}
 		}
+#endif
 
 		if (!peer_item)
 		{
@@ -382,52 +372,97 @@ void DhtWindow::updateNetPeers()
 		}
 
 		/* update the data */
-		PeerStatus status;
-		mPeerNet->get_peer_status(*it, status);
+		RsDhtNetPeer status;
+		rsDht->getNetPeerStatus(*it, status);
 
+		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(status.mDhtId));
+		peer_item -> setData(PTW_COL_RSID, Qt::DisplayRole, QString::fromStdString(status.mRsId));
 
-		std::ostringstream dhtipstr;
-		if ((status.mDhtState == PN_DHT_STATE_ONLINE) || (status.mDhtState == PN_DHT_STATE_UNREACHABLE)) 
+		std::ostringstream dhtstate;
+		switch(status.mDhtState)
 		{
-			dhtipstr << inet_ntoa(status.mDhtAddr.sin_addr);
-			dhtipstr << ":" << ntohs(status.mDhtAddr.sin_port);
+			default:
+			case RSDHT_PEERDHT_NOT_ACTIVE:
+				dhtstate << "Unknown";
+				break;
+			case RSDHT_PEERDHT_SEARCHING:
+				dhtstate << "Searching";
+				break;
+			case RSDHT_PEERDHT_FAILURE:
+				dhtstate << "Failed";
+				break;
+			case RSDHT_PEERDHT_OFFLINE:
+				dhtstate << "offline";
+				nOfflinePeers++;
+				break;
+			case RSDHT_PEERDHT_UNREACHABLE:
+				dhtstate << "Unreachable";
+				nUnreachablePeers++;
+				break;
+			case RSDHT_PEERDHT_ONLINE:
+				dhtstate << "ONLINE";
+				nOnlinePeers++;
+				break;
 		}
-
-		std::ostringstream dhtupdatestr;
-		dhtupdatestr << now - status.mDhtUpdateTS << " secs ago";
-
-		//std::ostringstream peerupdatestr;
-		//peerupdatestr << now - status.mPeerUpdateTS << " secs ago";
-
-		
-		
-		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(*it));
-		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, QString::fromStdString(status.mDhtStatusMsg));
-		peer_item -> setData(PTW_COL_DHT_ADDRESS, Qt::DisplayRole, QString::fromStdString(dhtipstr.str()));
-		peer_item -> setData(PTW_COL_DHT_UPDATETS, Qt::DisplayRole, QString::fromStdString(dhtupdatestr.str()));
+			
+		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, QString::fromStdString(dhtstate.str()));
 
 		// NOW CONNECT STATE
 		std::ostringstream cpmstr;
 		switch(status.mPeerConnectMode)
 		{
-			case BITDHT_CONNECT_MODE_DIRECT:
+			case RSDHT_TOU_MODE_DIRECT:
 				cpmstr << "Direct";
 				break;
-			case BITDHT_CONNECT_MODE_PROXY:
+			case RSDHT_TOU_MODE_PROXY:
 				cpmstr << "Proxy VIA ";
-				bdStdPrintId(cpmstr, &(status.mPeerConnectProxyId));
+				cpmstr << status.mPeerConnectProxyId;
 				break;
-			case BITDHT_CONNECT_MODE_RELAY:
+			case RSDHT_TOU_MODE_RELAY:
 				cpmstr << "Relay VIA ";
-				bdStdPrintId(cpmstr, &(status.mPeerConnectProxyId));
+				cpmstr << status.mPeerConnectProxyId;
 				break;
 			default:
 				cpmstr << "None";
 				break;
 		}
+
+
+		std::ostringstream cpsstr;
+		switch(status.mPeerConnectState)
+		{
+			default:
+			case RSDHT_PEERCONN_DISCONNECTED:
+				cpsstr << "Disconnected";
+				nDisconnPeers++;
+				break;
+			case RSDHT_PEERCONN_UDP_STARTED:
+				cpsstr << "Udp Started";
+				break;
+			case RSDHT_PEERCONN_CONNECTED:
+			{
+				cpsstr << "Connected";
+				break;
+				switch(status.mPeerConnectMode)
+				{
+					default:
+					case RSDHT_TOU_MODE_DIRECT:
+						nDirectPeers++;
+						break;
+					case RSDHT_TOU_MODE_PROXY:
+						nProxyPeers++;
+						break;
+					case RSDHT_TOU_MODE_RELAY:
+						nRelayPeers++;
+						break;
+				}
+			}
+				break;
+		}
+
+		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, QString::fromStdString(cpsstr.str()));
 		
-		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, QString::fromStdString(status.mPeerConnectMsg));
-		if (status.mPeerConnectState == PN_PEER_CONN_DISCONNECTED)
+		if (status.mPeerConnectState == RSDHT_PEERCONN_DISCONNECTED)
 		{
 			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, "");
 		}
@@ -440,10 +475,10 @@ void DhtWindow::updateNetPeers()
 		std::ostringstream reqstr;
 		switch(status.mPeerReqState)
 		{
-			case PN_PEER_REQ_RUNNING:
+			case RSDHT_PEERREQ_RUNNING:
 				reqstr << "Request Active";
 				break;
-			case PN_PEER_REQ_STOPPED:
+			case RSDHT_PEERREQ_STOPPED:
 				reqstr << "No Request";
 				break;
 			default:
@@ -452,114 +487,9 @@ void DhtWindow::updateNetPeers()
 		}
 		peer_item -> setData(PTW_COL_PEER_REQ_STATUS, Qt::DisplayRole, QString::fromStdString(reqstr.str()));
 
-	
-		// NOW CB
-		std::ostringstream cbmstr;
-		cpmstr << status.mPeerCbMode;
-		
-		std::ostringstream cbpstr;
-		bdStdPrintId(cbpstr, &(status.mPeerCbProxyId));
-		
-		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mPeerCbMsg));
+		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mCbPeerMsg));
 		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole, 
-						QString::fromStdString(status.mConnectLogic.connectState()));
-		//peer_item -> setData(PTW_COL_PEER_CB_MODE, Qt::DisplayRole, QString::fromStdString(cbmstr.str()));
-		//peer_item -> setData(PTW_COL_PEER_CB_PROXY, Qt::DisplayRole, QString::fromStdString(cbpstr.str()));
-
-
-		switch(status.mDhtState)
-		{
-			default:
-			case PN_DHT_STATE_UNKNOWN:
-			case PN_DHT_STATE_SEARCHING:
-			case PN_DHT_STATE_FAILURE:
-			case PN_DHT_STATE_OFFLINE:
-				nOfflinePeers++;
-				break;
-			case PN_DHT_STATE_UNREACHABLE:
-				nUnreachablePeers++;
-				break;
-			case PN_DHT_STATE_ONLINE:
-				nOnlinePeers++;
-				break;
-		}
-			
-
-		switch(status.mPeerConnectState)
-		{
-			default:
-			case PN_PEER_CONN_DISCONNECTED:
-				nDisconnPeers++;
-				break;
-			case PN_PEER_CONN_UDP_STARTED:
-			case PN_PEER_CONN_CONNECTED:
-			{
-				switch(status.mPeerConnectMode)
-				{
-					default:
-					case BITDHT_CONNECT_MODE_DIRECT:
-						nDirectPeers++;
-						break;
-					case BITDHT_CONNECT_MODE_PROXY:
-						nProxyPeers++;
-						break;
-					case BITDHT_CONNECT_MODE_RELAY:
-						nRelayPeers++;
-						break;
-				}
-			}
-				break;
-		}
-			
-	}
-
-
-	for(it = failedPeerIds.begin(); it != failedPeerIds.end(); it++)
-	{
-		/* find the entry */
-		QTreeWidgetItem *peer_item = NULL;
-		QString qpeerid = QString::fromStdString(*it);
-		int itemCount = peerTreeWidget->topLevelItemCount();
-		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
-		{
-			QTreeWidgetItem *tmp_item = peerTreeWidget->topLevelItem(nIndex);
-			if (tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString() == qpeerid) 
-			{
-				peer_item = tmp_item;
-				break;
-			}
-		}
-
-		if (!peer_item)
-		{
-			/* insert */
-			peer_item = new QTreeWidgetItem();
-			peerTreeWidget->addTopLevelItem(peer_item);
-		}
-
-		/* update the data */
-		PeerStatus status;
-		mPeerNet->get_failedpeer_status(*it, status);
-
-		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(*it));
-		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, "Unknown Peer");
-		//peer_item -> setData(PTW_COL_DHT_ADDRESS, Qt::DisplayRole, "");
-		//peer_item -> setData(PTW_COL_DHT_UPDATETS, Qt::DisplayRole, "");
-			
-		// NOW CONNECT STATE
-		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, QString::fromStdString(status.mPeerConnectMsg));
-		peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, "");
-		peer_item -> setData(PTW_COL_PEER_REQ_STATUS, Qt::DisplayRole, "None");
-		
-		// NOW CB
-		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mPeerCbMsg));
-		//peer_item -> setData(PTW_COL_PEER_CB_MODE, Qt::DisplayRole, "");
-		//peer_item -> setData(PTW_COL_PEER_CB_PROXY, Qt::DisplayRole, "None");
-
-		// CONNECT LOGIC		
-		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole, 
-						QString::fromStdString("Not a Friend"));
-	
+						QString::fromStdString(status.mConnectState));
 	}
 
 
@@ -576,8 +506,6 @@ void DhtWindow::updateNetPeers()
 
 	QLabel *label = ui->peerSummaryLabel;
 	label->setText(QString::fromStdString(connstr.str()));
-
-#endif
 
 }
 
