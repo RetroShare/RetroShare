@@ -154,6 +154,7 @@ virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
 void	start(); /* starts up the bitdht thread */
 
 	/* pqiNetAssist - external interface functions */
+virtual int     tick();
 virtual void    enable(bool on);  
 virtual void    shutdown(); /* blocking call */
 virtual void	restart();
@@ -196,7 +197,7 @@ int 	ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
 
 int 	OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
 int 	UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
-int 	tick();
+//int 	tick();
 int 	minuteTick();
 int 	doActions();
 int 	checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode);

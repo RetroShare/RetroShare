@@ -659,8 +659,7 @@ bool p3LinkMgr::connectAttempt(const std::string &id, struct sockaddr_in &addr,
 
 bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address)
 {
-	bool should_netAssistFriend_false = false ;
-	bool should_netAssistFriend_true  = false ;
+	bool doDhtAssist = false ;
 	bool updatePeerAddr = false;
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
@@ -687,7 +686,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		if (it == mFriendList.end())
 		{
 #ifdef LINKMGR_DEBUG
-			std::cerr << "p3LinkMgr::connectResult() Failed, missing Friend " << " id: " << id << std::endl;
+			std::cerr << "p3LinkMgr::connectResult() ERROR, missing Friend " << " id: " << id << std::endl;
 #endif
 			return false;
 		}
@@ -738,9 +737,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 			/* remove other attempts */
 			it->second.inConnAttempt = false;
 			it->second.connAddrs.clear();
-			should_netAssistFriend_false = true ;
 			mStatusChanged = true;
-			return true;
 		}
 		else
 		{
@@ -759,14 +756,17 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 				mStatusChanged = true;
 
 				it->second.lastcontact = time(NULL);  /* time of disconnect */
-
-				should_netAssistFriend_true = true ;
 			}
 
 			if (it->second.connAddrs.size() >= 1)
 			{
 				it->second.actions |= RS_PEER_CONNECT_REQ;
 				mStatusChanged = true;
+			}
+
+			if (it->second.dhtVisible)
+			{
+				doDhtAssist = true;
 			}
 		}
 	}
@@ -778,15 +778,43 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		raddr.mSeenTime = time(NULL);
 		raddr.mSrc = 0;
 
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::connectResult() SUCCESS and we initiated connection... Updating Address";
+		std::cerr << std::endl;
+#endif
 		mPeerMgr->updateCurrentAddress(id, raddr);
 	}
-	
-	if(should_netAssistFriend_true)
-		mNetMgr->netAssistFriend(id,true) ;
-	if(should_netAssistFriend_false)
-		mNetMgr->netAssistFriend(id,false) ;
 
-	return true;
+
+	if (success)
+	{
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::connectResult() SUCCESS switching off DhtAssist for friend: " << id;
+		std::cerr << std::endl;
+#endif
+		/* always switch it off now */
+		mNetMgr->netAssistFriend(id,false) ;
+	}
+	else
+	{
+		if (doDhtAssist)
+		{
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::connectResult() FAIL, Enabling DhtAssist for: " << id;
+			std::cerr << std::endl;
+#endif
+			mNetMgr->netAssistFriend(id,true) ;
+		}
+		else
+		{
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgr::connectResult() FAIL, No DhtAssist, as No DHT visibility for: " << id;
+			std::cerr << std::endl;
+#endif
+		}
+	}
+
+	return success;
 }
 
 /******************************** Feedback ......  *********************************

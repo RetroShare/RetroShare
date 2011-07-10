@@ -110,6 +110,8 @@ class pqiNetAssistConnect: public pqiNetAssist
 	 * for the DHT, and must be non-blocking and return quickly
 	 */
 
+virtual int	tick() = 0; /* for internal accounting */
+
 	/* add / remove peers */
 virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;

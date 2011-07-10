@@ -164,7 +164,7 @@ virtual bool netAssistConnectEnabled();
 virtual bool netAssistConnectActive();
 virtual bool netAssistConnectShutdown();
 virtual bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
-
+void 		netAssistConnectTick();
 
 /* Assist Firewall */
 bool netAssistExtAddress(struct sockaddr_in &extAddr);

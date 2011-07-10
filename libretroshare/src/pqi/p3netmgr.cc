@@ -73,6 +73,7 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
  * #define NETMGR_DEBUG_TICK 1
  ***/
 
+#define NETMGR_DEBUG 1
 #define NETMGR_DEBUG_RESET 1
 
 pqiNetStatus::pqiNetStatus()
@@ -417,6 +418,7 @@ void p3NetMgr::netStartup()
 void p3NetMgr::tick()
 {
 	netTick();
+	netAssistConnectTick();
 }
 
 #define STARTUP_DELAY 5
@@ -1258,25 +1260,19 @@ bool p3NetMgr::netAssistConnectShutdown()
 bool p3NetMgr::netAssistFriend(std::string id, bool on)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	std::list<pqiNetAssistConnect*> toFind ;
-	std::list<pqiNetAssistConnect*> toDrop ;
 
+#ifdef NETMGR_DEBUG
+	std::cerr << "p3NetMgr::netAssistFriend(" << id << ", " << on << ")";
+	std::cerr << std::endl;
+#endif
+
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
 	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		for(it = mDhts.begin(); it != mDhts.end(); it++)
-		{
-			if (on)
-				toFind.push_back(it->second) ;
-			else
-				toDrop.push_back(it->second) ;
-		}
+		if (on)
+			(it->second)->findPeer(id);
+		else
+			(it->second)->dropPeer(id);
 	}
-
-	for(std::list<pqiNetAssistConnect*>::const_iterator it(toFind.begin());it!=toFind.end();++it)
-		(*it)->findPeer(id) ;
-	for(std::list<pqiNetAssistConnect*>::const_iterator it(toDrop.begin());it!=toDrop.end();++it)
-		(*it)->dropPeer(id) ;
-
 	return true;
 }
 
@@ -1294,6 +1290,18 @@ bool p3NetMgr::netAssistSetAddress( struct sockaddr_in &laddr,
 #endif
 	return true;
 }
+
+void p3NetMgr::netAssistConnectTick()
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->tick();
+	}
+	return;
+}
+
+
 
 /**********************************************************************
  **********************************************************************
