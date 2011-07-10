@@ -170,6 +170,36 @@ bool p3LinkMgr::getTunnelConnection()
 	return mAllowTunnelConnection;
 }
 
+bool    p3LinkMgr::setLocalAddress(struct sockaddr_in addr)
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+	mLocalAddress = addr;
+}
+
+struct sockaddr_in p3LinkMgr::getLocalAddress()
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+	return mLocalAddress;
+}
+
+
+bool    p3LinkMgr::isOnline(const std::string &ssl_id)
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+        std::map<std::string, peerConnectState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	if (it->second.state & RS_PEER_S_CONNECTED)
+	{
+		return true;
+	}
+	return false;
+}
 
 void    p3LinkMgr::getOnlineList(std::list<std::string> &ssl_peers)
 {
@@ -228,6 +258,22 @@ int     p3LinkMgr::getOnlineCount()
 
 }
 
+bool    p3LinkMgr::getFriendNetStatus(const std::string &id, peerConnectState &state)
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+        std::map<std::string, peerConnectState>::iterator it;
+	it = mFriendList.find(id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	state = it->second;
+	return true;
+}
+
+
 
 void    p3LinkMgr::setFriendVisibility(const std::string &id, bool isVisible)
 {
@@ -269,7 +315,6 @@ void    p3LinkMgr::setFriendVisibility(const std::string &id, bool isVisible)
 
 void p3LinkMgr::tick()
 {
-	netTick();
 	statusTick();
 	tickMonitors();
 }
@@ -737,9 +782,9 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 	}
 	
 	if(should_netAssistFriend_true)
-		netAssistFriend(id,true) ;
+		mNetMgr->netAssistFriend(id,true) ;
 	if(should_netAssistFriend_false)
-		netAssistFriend(id,false) ;
+		mNetMgr->netAssistFriend(id,false) ;
 
 	return true;
 }

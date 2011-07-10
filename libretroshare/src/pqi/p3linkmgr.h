@@ -191,11 +191,12 @@ int 	removeFriend(const std::string &ssl_id);
 const std::string getOwnId();
 bool	getOwnNetStatus(peerConnectState &state);
 
+bool 	setLocalAddress(struct sockaddr_in addr);
 struct sockaddr_in getLocalAddress();
 
 bool	isOnline(const std::string &ssl_id);
 bool	getFriendNetStatus(const std::string &id, peerConnectState &state);
-bool	getOthersNetStatus(const std::string &id, peerConnectState &state);
+//bool	getOthersNetStatus(const std::string &id, peerConnectState &state);
 
 void	getOnlineList(std::list<std::string> &ssl_peers);
 void	getFriendList(std::list<std::string> &ssl_peers);
@@ -222,25 +223,21 @@ bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct 
 protected:
 	/****************** Internal Interface *******************/
 
-virtual bool enableNetAssistConnect(bool on);
-virtual bool netAssistConnectEnabled();
-virtual bool netAssistConnectActive();
-virtual bool netAssistConnectShutdown();
-virtual bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
+//virtual bool enableNetAssistConnect(bool on);
+//virtual bool netAssistConnectEnabled();
+//virtual bool netAssistConnectActive();
+//virtual bool netAssistConnectShutdown();
+//virtual bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
 
 		/* Assist Connect */
-virtual bool netAssistFriend(std::string id, bool on);
-virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
-                                        struct sockaddr_in &eaddr,
-					uint32_t mode);
+//virtual bool netAssistFriend(std::string id, bool on);
+//virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
+//                                        struct sockaddr_in &eaddr,
+//					uint32_t mode);
 
 
 	/* Internal Functions */
-void 	netReset();
-
 void 	statusTick();
-void 	netTick();
-void 	netStartup();
 
 	/* monitor control */
 void 	tickMonitors();
@@ -267,8 +264,6 @@ private:
 	// These should have there own Mutex Protection,
 	//p3tunnel *mP3tunnel;
 	DNSResolver *mDNSResolver ;
-
-	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 
 	p3PeerMgr *mPeerMgr;
 	p3NetMgr  *mNetMgr;

@@ -201,9 +201,6 @@ void 	netUpnpCheck();
 
 void    netUnreachableCheck();
 
-void 	networkConsistencyCheck();
-
-
 private:
 	// These should have there own Mutex Protection,
 	ExtAddrFinder *mExtAddrFinder ;

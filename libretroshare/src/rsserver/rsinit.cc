@@ -1836,6 +1836,7 @@ int RsServer::StartupRetroShare()
 	mNetMgr = new p3NetMgr();
 	mLinkMgr = new p3LinkMgr(mPeerMgr, mNetMgr);
 	
+	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 	
         //load all the SSL certs as friends

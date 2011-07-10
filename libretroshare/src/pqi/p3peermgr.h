@@ -181,12 +181,7 @@ bool    assignPeersToGroup(const std::string &groupId, const std::list<std::stri
 
 
 protected:
-
 	/* Internal Functions */
-void 	statusTick();
-
-	/* monitor control */
-void 	tickMonitors();
 
 	protected:
 /*****************************************************************/

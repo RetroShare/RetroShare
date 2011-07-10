@@ -180,8 +180,6 @@ void p3PeerMgr::setOwnVisState(uint32_t visState)
 
 void p3PeerMgr::tick()
 {
-	statusTick();
-	tickMonitors();
 
 	static time_t last_friends_check = time(NULL) ;
 	static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations every 10 minutes.
@@ -603,6 +601,7 @@ bool    p3PeerMgr::setLocalAddress(const std::string &id, struct sockaddr_in add
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 			
 			mNetMgr->setLocalAddress(addr);
+			mLinkMgr->setLocalAddress(addr);
 			
 			#ifdef CONN_DEBUG_RESET
 			std::cerr << "p3PeerMgr::setLocalAddress() Calling NetReset" << std::endl;

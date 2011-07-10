@@ -64,11 +64,15 @@ debug {
 
 bitdht {
 
-HEADERS +=	dht/p3bitdht.h 
+HEADERS +=	dht/p3bitdht.h \
+		dht/connectstatebox.h \
+		dht/stunaddrassist.h
+
 SOURCES +=	dht/p3bitdht.cc  \
 		dht/p3bitdht_interface.cc \
 		dht/p3bitdht_peers.cc \
-		dht/p3bitdht_peernet.cc 
+		dht/p3bitdht_peernet.cc \
+		dht/connectstatebox.cc
 
 HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/bio_tou.h \
@@ -142,7 +146,8 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsstatus.h \
 					retroshare/rsturtle.h \
 					retroshare/rstypes.h \
-					retroshare/rsdht.h
+					retroshare/rsdht.h \
+					retroshare/rsnetwork.h
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \

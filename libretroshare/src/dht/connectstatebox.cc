@@ -1,7 +1,30 @@
-/* a connect state box */
+/*
+ * libretroshare/src/dht: connectstatebox.cc
+ *
+ * RetroShare DHT C++ Interface.
+ *
+ * Copyright 2011-2011 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
 
-#include "connectstatebox.h"
-#include "netstatebox.h"
+#include "dht/connectstatebox.h"
+#include "retroshare/rsnetwork.h"
 
 #include <iostream>
 #include <sstream>
@@ -176,14 +199,14 @@ uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nattype)
 {
 	uint32_t connNet = CSB_NETSTATE_UNKNOWN;
 		
-	if (netmode == PNSB_NETWORK_EXTERNALIP)
+	if (netmode == RSNET_NETWORK_EXTERNALIP)
 	{
 		connNet = CSB_NETSTATE_FORWARD;
 	}
-	else if (netmode == PNSB_NETWORK_BEHINDNAT)
+	else if (netmode == RSNET_NETWORK_BEHINDNAT)
 	{
-		if ((nattype == PNSB_NATTYPE_RESTRICTED_CONE) ||
-			(nattype == PNSB_NATTYPE_FULL_CONE))
+		if ((nattype == RSNET_NATTYPE_RESTRICTED_CONE) ||
+			(nattype == RSNET_NATTYPE_FULL_CONE))
 		{
 			connNet = CSB_NETSTATE_STABLENAT;
 		}
@@ -770,7 +793,7 @@ bool PeerConnectStateBox::getProxyPortChoice()
 	std::cerr << " UseProxyPort? " << mProxyPortChoice;
 	std::cerr << std::endl;
 
-	return useProxyPort;
+	return mProxyPortChoice;
 }
 
 

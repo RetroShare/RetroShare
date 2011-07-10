@@ -153,6 +153,33 @@ void p3NetMgr::setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun)
 }
 
 
+uint32_t p3NetMgr::getNetStateMode()
+{
+	return 0;
+}
+
+uint32_t p3NetMgr::getNetworkMode()
+{
+	return 0;
+}
+
+uint32_t p3NetMgr::getNatTypeMode()
+{
+	return 0;
+}
+
+uint32_t p3NetMgr::getNatHoleMode()
+{
+	return 0;
+}
+
+uint32_t p3NetMgr::getConnectModes()
+{
+	return 0;
+}
+
+
+
 /***** Framework / initial implementation for a connection manager.
  *
  * This needs a state machine for Initialisation.
@@ -405,7 +432,6 @@ void p3NetMgr::netTick()
 	// periodically check for a local net address.
 	//
 	checkNetAddress() ;
-	networkConsistencyCheck(); /* check consistency. If not consistent, do a reset inside  networkConsistencyCheck() */
 
 	uint32_t netStatus = 0;
 	time_t   age = 0;
