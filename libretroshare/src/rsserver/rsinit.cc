@@ -1732,6 +1732,8 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
 #include "rsserver/p3status.h"
+#include "rsserver/p3serverconfig.h"
+
 #include "retroshare/rsgame.h"
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
@@ -2300,6 +2302,7 @@ int RsServer::StartupRetroShare()
 
 	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 	rsDisc  = new p3Discovery(ad);
+	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr);
 
 #ifndef MINIMAL_LIBRS
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);

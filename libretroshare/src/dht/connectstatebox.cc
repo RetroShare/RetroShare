@@ -24,7 +24,7 @@
  */
 
 #include "dht/connectstatebox.h"
-#include "retroshare/rsnetwork.h"
+#include "retroshare/rsconfig.h"
 
 #include <iostream>
 #include <sstream>

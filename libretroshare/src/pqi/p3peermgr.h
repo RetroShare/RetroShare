@@ -170,6 +170,8 @@ int 	getConnectAddresses(const std::string &id,
 				struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
 				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
+bool 	haveOnceConnected();
+
 	/**************** handle monitors *****************/
 void	addMonitor(pqiMonitor *mon);
 void	removeMonitor(pqiMonitor *mon);

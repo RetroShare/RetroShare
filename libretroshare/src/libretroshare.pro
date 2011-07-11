@@ -147,7 +147,7 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsturtle.h \
 					retroshare/rstypes.h \
 					retroshare/rsdht.h \
-					retroshare/rsnetwork.h
+					retroshare/rsconfig.h
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \
@@ -377,7 +377,8 @@ HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
 			rsserver/p3photo.h \
-			rsserver/p3status.h
+			rsserver/p3status.h \
+			rsserver/p3serverconfig.h
 
 HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsbaseserial.h \
@@ -499,7 +500,8 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
 			rsserver/rsloginhandler.cc \
-			rsserver/rstypes.cc
+			rsserver/rstypes.cc \
+			rsserver/p3serverconfig.cc
 
 SOURCES += plugins/pluginmanager.cc \
 				plugins/dlfcn_win32.cc \

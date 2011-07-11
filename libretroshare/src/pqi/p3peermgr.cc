@@ -320,18 +320,36 @@ int p3PeerMgr::getConnectAddresses(const std::string &id,
 	return 1;
 }
 
-/****************************
- * Update state,
- * trigger retry if necessary,
- *
- * remove from DHT?
- *
- */
 
 
-/******************************** Feedback ......  *********************************
- * From various sources
- */
+bool    p3PeerMgr::haveOnceConnected()
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+        std::map<std::string, peerState>::iterator it;
+	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	{
+		if (it->second.lastcontact > 0)
+		{
+#ifdef PEER_DEBUG
+ 			std::cerr << "p3PeerMgr::haveOnceConnected() lastcontact: ";
+			std::cerr << time(NULL) - it->second.lastcontact << " for id: " << it->first;
+			std::cerr << std::endl;
+#endif
+
+			return true;
+		}
+	}
+
+#ifdef PEER_DEBUG
+ 	std::cerr << "p3PeerMgr::haveOnceConnected() all Last Contacts = 0";
+	std::cerr << std::endl;
+#endif
+
+	return false;
+}
+
 
 
 /*******************************************************************/
