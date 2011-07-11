@@ -1175,11 +1175,11 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, bool incoming)
 
 		if (incoming)
 		{
-			notifyType = RS_FEED_ITEM_PEER_HELLO;
+			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
 		}
 		else
 		{
-			notifyType = RS_FEED_ITEM_PEER_AUTH_DENIED;
+			notifyType = RS_FEED_ITEM_SEC_AUTH_DENIED;
 		}
 
 		getPqiNotify()->AddFeedItem(notifyType, gpgid, peerId, sslcn);
@@ -1192,11 +1192,11 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, bool incoming)
 		/* unknown peer! */
 		if (incoming)
 		{
-			notifyType = RS_FEED_ITEM_PEER_UNKNOWN_IN;
+			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_IN;
 		}
 		else
 		{
-			notifyType = RS_FEED_ITEM_PEER_UNKNOWN_OUT;
+			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_OUT;
 		}
 
 		getPqiNotify()->AddFeedItem(notifyType, gpgid, peerId, sslcn);
