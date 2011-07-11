@@ -63,6 +63,10 @@ private:
   void	addFeedItemPeerDisconnect(RsFeedItem &fi);
   void	addFeedItemPeerNew(RsFeedItem &fi);
   void	addFeedItemPeerHello(RsFeedItem &fi);
+  void  addFeedItemPeerAuthDenied(RsFeedItem &fi);
+  void  addFeedItemPeerUnknownIn(RsFeedItem &fi);
+  void  addFeedItemPeerUnknownOut(RsFeedItem &fi);
+
   void	addFeedItemChanNew(RsFeedItem &fi);
   void	addFeedItemChanUpdate(RsFeedItem &fi);
   void	addFeedItemChanMsg(RsFeedItem &fi);

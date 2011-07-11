@@ -102,11 +102,20 @@ void PeerItem::updateItemStatic()
 			case PEER_TYPE_CONNECT:
                                 title = tr("Friend Connected");
 				break;
+			case PEER_TYPE_NEW_FOF:
+                                title = tr("Friend of Friend");
+				break;
 			case PEER_TYPE_HELLO:
                                 title = tr("Connect Attempt");
 				break;
-			case PEER_TYPE_NEW_FOF:
-                                title = tr("Friend of Friend");
+			case PEER_TYPE_AUTH_DENIED:
+                                title = tr("Not Yet Friends");
+				break;
+			case PEER_TYPE_UNKNOWN_IN:
+                                title = tr("Unknown (Incoming) Connect Attempt");
+				break;
+			case PEER_TYPE_UNKNOWN_OUT:
+                                title = tr("Unknown (Outgoing) Connect Attempt");
 				break;
 			default:
                                 title = tr("Peer");
@@ -134,15 +143,53 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
+		/* it is very likely that we will end up here for some of the
+		 * Unknown peer cases.... so allow them here
+	 	 */
+
+		QString title;
+
+		switch(mType)
+		{
+			case PEER_TYPE_STD:
+                                title = tr("Friend");
+				break;
+			case PEER_TYPE_CONNECT:
+                                title = tr("Friend Connected");
+				break;
+			case PEER_TYPE_NEW_FOF:
+                                title = tr("Friend of Friend");
+				break;
+			case PEER_TYPE_HELLO:
+                                title = tr("Connect Attempt");
+				break;
+			case PEER_TYPE_AUTH_DENIED:
+                                title = tr("Not Yet Friends");
+				break;
+			case PEER_TYPE_UNKNOWN_IN:
+                                title = tr("Unknown (Incoming) Connect Attempt");
+				break;
+			case PEER_TYPE_UNKNOWN_OUT:
+                                title = tr("Unknown (Outgoing) Connect Attempt");
+				break;
+			default:
+                                title = tr("Peer");
+				break;
+		}
+
+		titleLabel->setText(title);
+	
+		QDateTime date = QDateTime::fromTime_t(time(NULL));
+		QString stime = date.toString(Qt::LocalDate);
+		lastLabel-> setText(stime);
+		nameLabel->setText(QString::fromStdString(mPeerId));
+		idLabel->setText(QString::fromStdString(mPeerId));
+
                 statusLabel->setText(tr("Unknown Peer"));
-                titleLabel->setText(tr("Unknown Peer"));
                 trustLabel->setText(tr("Unknown Peer"));
-                nameLabel->setText(tr("Unknown Peer"));
-                idLabel->setText(tr("Unknown Peer"));
                 locLabel->setText(tr("Unknown Peer"));
                 ipLabel->setText(tr("Unknown Peer"));
                 connLabel->setText(tr("Unknown Peer"));
-                lastLabel->setText(tr("Unknown Peer"));
 
 		chatButton->setEnabled(false);
 

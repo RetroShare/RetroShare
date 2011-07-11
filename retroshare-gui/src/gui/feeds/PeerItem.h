@@ -27,8 +27,12 @@
 
 const uint32_t PEER_TYPE_STD	 = 0x0001;
 const uint32_t PEER_TYPE_CONNECT = 0x0002;
-const uint32_t PEER_TYPE_HELLO   = 0x0003; /* failed Connect Attempt */
-const uint32_t PEER_TYPE_NEW_FOF = 0x0004; /* new Friend of Friend */
+const uint32_t PEER_TYPE_NEW_FOF = 0x0003; /* new Friend of Friend */
+
+const uint32_t PEER_TYPE_HELLO   = 0x0004; /* failed Connect Attempt */
+const uint32_t PEER_TYPE_AUTH_DENIED = 0x0005; /* failed outgoing attempt */
+const uint32_t PEER_TYPE_UNKNOWN_IN  = 0x0006; /* failed incoming with unknown peer */
+const uint32_t PEER_TYPE_UNKNOWN_OUT = 0x0007; /* failed outgoing with unknown peer */
 
 class FeedHolder;
 

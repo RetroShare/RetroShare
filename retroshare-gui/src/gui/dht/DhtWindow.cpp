@@ -32,7 +32,7 @@
 
 #include "gui/RsAutoUpdatePage.h"
 #include "retroshare/rsdht.h"
-
+#include "retroshare/rspeers.h"
 
 /********************************************** STATIC WINDOW *************************************/
 DhtWindow * DhtWindow::mInstance = NULL;
@@ -104,6 +104,14 @@ void DhtWindow::changeEvent(QEvent *e)
 
 void DhtWindow::update()
 {
+	if (!isVisible())
+	{
+#ifdef DEBUG_DHTWINDOW
+		//std::cerr << "DhtWindow::update() !Visible" << std::endl;
+#endif
+		return;
+	}
+
 	/* do nothing if locked, or not visible */
 	if (RsAutoUpdatePage::eventsLocked() == true) 
 	{
@@ -113,14 +121,6 @@ void DhtWindow::update()
 		return;
     	}
 
-	if (!isVisible())
-	{
-#ifdef DEBUG_DHTWINDOW
-		//std::cerr << "DhtWindow::update() !Visible" << std::endl;
-#endif
-		return;
-	}
-
 	if (!rsDht)
 	{
 #ifdef DEBUG_DHTWINDOW
@@ -129,11 +129,15 @@ void DhtWindow::update()
 		return;
 	}
 
+	RsAutoUpdatePage::lockAllEvents();
+
 	//std::cerr << "DhtWindow::update()" << std::endl;
 	updateNetStatus();
 	updateNetPeers();
 	updateDhtPeers();
 	updateRelays();
+
+	RsAutoUpdatePage::unlockAllEvents() ;
 }
 
 
@@ -312,17 +316,18 @@ void DhtWindow::updateNetPeers()
 	int nRelayPeers = 0;
 
 
-#define PTW_COL_PEERID			0
-#define PTW_COL_DHT_STATUS		1
+#define PTW_COL_RSNAME			0
+#define PTW_COL_PEERID			1
+#define PTW_COL_DHT_STATUS		2
 	
-#define PTW_COL_PEER_CONNECTLOGIC	2
+#define PTW_COL_PEER_CONNECTLOGIC	3
 
-#define PTW_COL_PEER_CONNECT_STATUS	3
-#define PTW_COL_PEER_CONNECT_MODE	4
-#define PTW_COL_PEER_REQ_STATUS		5
+#define PTW_COL_PEER_CONNECT_STATUS	4
+#define PTW_COL_PEER_CONNECT_MODE	5
+#define PTW_COL_PEER_REQ_STATUS		6
 	
-#define PTW_COL_PEER_CB_MSG		6
-#define PTW_COL_RSID			7
+#define PTW_COL_PEER_CB_MSG		7
+#define PTW_COL_RSID			8
 
 #if 0
 	/* clear old entries */
@@ -375,7 +380,10 @@ void DhtWindow::updateNetPeers()
 		RsDhtNetPeer status;
 		rsDht->getNetPeerStatus(*it, status);
 
+		std::string name = rsPeers->getPeerName(*it);
+
 		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(status.mDhtId));
+		peer_item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
 		peer_item -> setData(PTW_COL_RSID, Qt::DisplayRole, QString::fromStdString(status.mRsId));
 
 		std::ostringstream dhtstate;
@@ -383,7 +391,7 @@ void DhtWindow::updateNetPeers()
 		{
 			default:
 			case RSDHT_PEERDHT_NOT_ACTIVE:
-				dhtstate << "Unknown";
+				dhtstate << "Not Active (Maybe Connected!)";
 				break;
 			case RSDHT_PEERDHT_SEARCHING:
 				dhtstate << "Searching";

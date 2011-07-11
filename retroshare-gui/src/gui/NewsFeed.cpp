@@ -101,9 +101,22 @@ void NewsFeed::updateFeed()
 				if (flags & RS_FEED_TYPE_PEER)
 					addFeedItemPeerNew(fi);
 				break;
+
 			case RS_FEED_ITEM_PEER_HELLO:
 				if (flags & RS_FEED_TYPE_PEER)
 					addFeedItemPeerHello(fi);
+				break;
+			case RS_FEED_ITEM_PEER_AUTH_DENIED:
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerAuthDenied(fi);
+				break;
+			case RS_FEED_ITEM_PEER_UNKNOWN_IN:
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerUnknownIn(fi);
+				break;
+			case RS_FEED_ITEM_PEER_UNKNOWN_OUT:
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerUnknownOut(fi);
 				break;
 
 			case RS_FEED_ITEM_CHAN_NEW:
@@ -238,6 +251,60 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerNew()";
+	std::cerr << std::endl;
+#endif
+}
+
+
+
+void	NewsFeed::addFeedItemPeerAuthDenied(RsFeedItem &fi)
+{
+	/* make new widget */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_AUTH_DENIED, false);
+
+	/* store */
+
+	/* add to layout */
+	addFeedItem(pi);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemPeerAuthDenied()";
+	std::cerr << std::endl;
+#endif
+}
+
+
+
+void	NewsFeed::addFeedItemPeerUnknownIn(RsFeedItem &fi)
+{
+	/* make new widget */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_UNKNOWN_IN, false);
+
+	/* store */
+
+	/* add to layout */
+	addFeedItem(pi);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemPeerUnknownIn()";
+	std::cerr << std::endl;
+#endif
+}
+
+
+
+void	NewsFeed::addFeedItemPeerUnknownOut(RsFeedItem &fi)
+{
+	/* make new widget */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_UNKNOWN_OUT, false);
+
+	/* store */
+
+	/* add to layout */
+	addFeedItem(pi);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemPeerUnknownOut()";
 	std::cerr << std::endl;
 #endif
 }
