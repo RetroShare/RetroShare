@@ -149,7 +149,7 @@ void SecurityItem::updateItemStatic()
 		 * Unknown peer cases.... so allow them here
 	 	 */
 
-		QDateTime date = QDateTime::fromTime_t(time(NULL));
+		QDateTime date = QDateTime::currentDateTime();
 		QString stime = date.toString(Qt::LocalDate);
 		lastLabel-> setText(stime);
 		nameLabel->setText(QString::fromStdString(mGpgId));
