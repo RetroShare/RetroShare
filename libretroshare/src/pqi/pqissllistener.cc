@@ -506,11 +506,17 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate()");
 
+	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() FAILED CONNECTION due to security!";
+	std::cerr << std::endl;
+
 	// Get the Peer Certificate....
 	X509 *peercert = SSL_get_peer_certificate(ssl);
 
 	if (peercert == NULL)
 	{
+		std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() ERROR, Peer didn't give Cert!";
+		std::cerr << std::endl;
+
   		pqioutput(PQL_WARNING, pqissllistenzone, 
 		  "pqissllistenbase::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
 		return -1;
@@ -518,6 +524,9 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
+
+	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() Passing Cert to AuthSSL() for analysis";
+	std::cerr << std::endl;
 
 	// save certificate... (and ip locations)
 	// false for outgoing....

@@ -1109,6 +1109,9 @@ int 	pqissl::SSL_Connection_Complete()
 
 int 	pqissl::Extract_Failed_SSL_Certificate()
 {
+	std::cerr << "pqissl::Extract_Failed_SSL_Certificate() FAILED Connection due to Security Issues";
+	std::cerr << std::endl;
+
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Extract_Failed_SSL_Certificate()");
 
@@ -1119,11 +1122,18 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	{
   		rslog(RSL_WARNING, pqisslzone, 
 		  "pqissl::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
+
+		std::cerr << "pqissl::Extract_Failed_SSL_Certificate() ERROR Peer Didn't Give Us Certificate";
+		std::cerr << std::endl;
+
 		return -1;
 	}
 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
+
+	std::cerr << "pqissl::Extract_Failed_SSL_Certificate() Passing FAILED Cert to AuthSSL for analysis";
+	std::cerr << std::endl;
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
