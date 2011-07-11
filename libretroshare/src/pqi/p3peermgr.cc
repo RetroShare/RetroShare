@@ -790,7 +790,7 @@ bool    p3PeerMgr::updateCurrentAddress(const std::string& id, const pqiIpAddres
 		it->second.ipAddrs.updateExtAddrs(addr);
 		it->second.serveraddr = addr.mAddr;
 	}
-	
+
 #ifdef CONN_DEBUG
 	std::cerr << "p3PeerMgr::updatedCurrentAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
@@ -801,7 +801,37 @@ bool    p3PeerMgr::updateCurrentAddress(const std::string& id, const pqiIpAddres
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	
 	return true;
+}
+	
+
+bool    p3PeerMgr::updateLastContact(const std::string& id)
+{
+#ifdef CONN_DEBUG
+	std::cerr << "p3PeerMgr::updateLastContact() called for id : " << id << std::endl;
+#endif
+	
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	
+	/* cannot be own id */
+	
+	/* check if it is a friend */
+	std::map<std::string, peerState>::iterator it;
+	if (mFriendList.end() == (it = mFriendList.find(id)))
+	{
+		if (mOthersList.end() == (it = mOthersList.find(id)))
+		{
+			std::cerr << "p3PeerMgr::updateLastContact() ERROR peer id not found: " << id << std::endl;
+			return false;
+		}
 	}
+
+	it->second.lastcontact = time(NULL);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	
+	return true;
+}
+
 	
 
 

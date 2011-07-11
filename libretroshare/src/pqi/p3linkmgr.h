@@ -108,7 +108,7 @@ class peerConnectState
 
 	bool dhtVisible;
 
-        time_t lastcontact; 
+        //time_t lastcontact; 
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
         time_t lastavailable;

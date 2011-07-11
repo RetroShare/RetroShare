@@ -132,8 +132,10 @@ void 	setOwnVisState(uint32_t visState);
 bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
 bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
 bool    setDynDNS(const std::string &id, const std::string &dyndns);
+
 bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
 bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr);
+bool    updateLastContact(const std::string& id);
 
 bool 	setNetworkMode(const std::string &id, uint32_t netMode);
 bool 	setVisState(const std::string &id, uint32_t visState);

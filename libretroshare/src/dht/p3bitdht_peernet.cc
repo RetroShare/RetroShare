@@ -21,7 +21,11 @@
 
 #define PEERNET_CONNECT_TIMEOUT 45
 
-#define DEBUG_BITDHT	1
+/***
+ *
+ * #define DEBUG_BITDHT_COMMON	1     // These are the things that are called regularly (annoying for debugging specifics)
+ *
+ **/
 
 #if 0
 int p3BitDht::add_peer(std::string id)
@@ -184,7 +188,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 		if ((mProxyStunner) && (mProxyStunner->needStunPeers()))
 		{
-#ifdef DEBUG_BITDHT
+#ifdef DEBUG_BITDHT_COMMON
 			std::cerr << "p3BitDht::NodeCallback() Passing BitDHT Peer to DhtStunner: ";
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
@@ -195,7 +199,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 		if ((mDhtStunner) && (mDhtStunner->needStunPeers()))
 		{
-#ifdef DEBUG_BITDHT
+#ifdef DEBUG_BITDHT_COMMON
 			std::cerr << "p3BitDht::NodeCallback() Passing BitDHT Peer to DhtStunner: ";
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
@@ -915,8 +919,10 @@ int p3BitDht::tick()
 
 	time_t now = time(NULL);
 
+#ifdef PEERNET_DEBUG
 	std::cerr << "p3BitDht::tick() TIME: " << ctime(&now) << std::endl;
 	std::cerr.flush();
+#endif
 
 	return 1;
 }

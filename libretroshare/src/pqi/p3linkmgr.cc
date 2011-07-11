@@ -52,9 +52,10 @@ const int p3connectzone = 3431;
 
 /****
  * #define LINKMGR_DEBUG 1
+ * #define LINKMGR_DEBUG_CONNFAIL 1
  ***/
 
-#define LINKMGR_DEBUG 1
+#define LINKMGR_DEBUG_CONNFAIL 		1
 
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
@@ -90,7 +91,6 @@ peerAddrInfo::peerAddrInfo()
 
 peerConnectState::peerConnectState()
 	:id("unknown"), 
-	 lastcontact(0),
 	 connecttype(0),
 	 lastavailable(0),
          lastattempt(0),
@@ -661,6 +661,8 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 {
 	bool doDhtAssist = false ;
 	bool updatePeerAddr = false;
+	bool updateLastContact = false;
+
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
@@ -694,6 +696,10 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		if (success)
 		{
 			/* update address (should also come through from DISC) */
+#ifdef LINKMGR_DEBUG_CONNFAIL
+			std::cerr << "p3LinkMgr::connectResult() Connect!: id: " << id << std::endl;
+			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
+#endif
 
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgr::connectResult() Connect!: id: " << id << std::endl;
@@ -705,9 +711,9 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 			/* change state */
 			it->second.state |= RS_PEER_S_CONNECTED;
 			it->second.actions |= RS_PEER_CONNECTED;
-			it->second.lastcontact = time(NULL);  /* time of connect */
 			it->second.connecttype = flags;
 
+			updateLastContact = true; /* time of connect */
 
 			/* only update the peer's address if we were in a connect attempt.
 			 * Otherwise, they connected to us, and the address will be a
@@ -741,6 +747,22 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		}
 		else
 		{
+#ifdef LINKMGR_DEBUG_CONNFAIL
+			std::cerr << "p3LinkMgr::connectResult() Disconnect/Fail: flags: " << flags << " id: " << id;
+			std::cerr << std::endl;
+
+			if (it->second.inConnAttempt)
+			{
+				std::cerr << "p3LinkMgr::connectResult() Likely Connect Fail, as inConnAttempt Flag is set";
+				std::cerr << std::endl;
+			}
+			if (it->second.state & RS_PEER_S_CONNECTED)
+			{
+				std::cerr << "p3LinkMgr::connectResult() Likely DISCONNECT, as state set to Connected";
+				std::cerr << std::endl;
+			}
+#endif
+
 			it->second.inConnAttempt = false;
 
 #ifdef LINKMGR_DEBUG
@@ -755,7 +777,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 				it->second.actions |= RS_PEER_DISCONNECTED;
 				mStatusChanged = true;
 
-				it->second.lastcontact = time(NULL);  /* time of disconnect */
+				updateLastContact = true; /* time of disconnect */
 			}
 
 			if (it->second.connAddrs.size() >= 1)
@@ -779,17 +801,22 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		raddr.mSrc = 0;
 
 #ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgr::connectResult() SUCCESS and we initiated connection... Updating Address";
+		std::cerr << "p3LinkMgr::connectResult() Success and we initiated connection... Updating Address";
 		std::cerr << std::endl;
 #endif
 		mPeerMgr->updateCurrentAddress(id, raddr);
+	}
+
+	if (updateLastContact)
+	{
+		mPeerMgr->updateLastContact(id);
 	}
 
 
 	if (success)
 	{
 #ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgr::connectResult() SUCCESS switching off DhtAssist for friend: " << id;
+		std::cerr << "p3LinkMgr::connectResult() Success switching off DhtAssist for friend: " << id;
 		std::cerr << std::endl;
 #endif
 		/* always switch it off now */
@@ -800,7 +827,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		if (doDhtAssist)
 		{
 #ifdef LINKMGR_DEBUG
-			std::cerr << "p3LinkMgr::connectResult() FAIL, Enabling DhtAssist for: " << id;
+			std::cerr << "p3LinkMgr::connectResult() Fail, Enabling DhtAssist for: " << id;
 			std::cerr << std::endl;
 #endif
 			mNetMgr->netAssistFriend(id,true) ;
@@ -808,7 +835,7 @@ bool p3LinkMgr::connectResult(const std::string &id, bool success, uint32_t flag
 		else
 		{
 #ifdef LINKMGR_DEBUG
-			std::cerr << "p3LinkMgr::connectResult() FAIL, No DhtAssist, as No DHT visibility for: " << id;
+			std::cerr << "p3LinkMgr::connectResult() Fail, No DhtAssist, as No DHT visibility for: " << id;
 			std::cerr << std::endl;
 #endif
 		}
