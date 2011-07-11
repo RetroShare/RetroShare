@@ -165,7 +165,7 @@ int p3disc::handleIncoming()
 
 
 		// if discovery reply then respond if haven't already.
-                if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))	{
+		if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))	{
 
 			RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
@@ -182,17 +182,17 @@ int p3disc::handleIncoming()
 			// add item to list for later process
 			pendingDiscReplyInList.push_back(dri); // no delete
 		}
-                else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) {
+		else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) {
 			recvPeerVersionMsg(dvi);
 			nhandled++;
 			delete item;
 		}
-                else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *> (item))) /* Ping */ {
+		else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *> (item))) /* Ping */ {
 			recvAskInfo(inf);
 			nhandled++;
 			delete item;
 		}
-                else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item))) {
+		else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item))) {
 			recvHeartbeatMsg(dta);
 			nhandled++ ;
 			delete item;
@@ -764,6 +764,7 @@ void p3disc::recvAskInfo(RsDiscAskInfo *item) {
         std::cerr << "p3disc::recvAskInfo() From: " << item->PeerId();
         std::cerr << std::endl;
 #endif
+		  RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
         std::list<std::string> &idList = sendIdList[item->PeerId()];
 
