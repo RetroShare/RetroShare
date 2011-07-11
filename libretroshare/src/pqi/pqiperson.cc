@@ -268,7 +268,8 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 					"CONNECT_FAILED->marking so!");
 				active = false;
 				activepqi = NULL;
-                        } else {
+                        } else 
+			{
                                 pqioutput(PQL_WARNING, pqipersonzone,
                                         "CONNECT_FAILED-> from an unactive connection, don't flag the peer as not connected, just try next attempt !");
                         }
@@ -279,7 +280,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 			  "CONNECT_FAILED+NOT active -> try connect again");
 		}
 
-		/* notify up (But not if we are actually active: rtn -1 case above) */
+		/* notify up */
 		if (pqipg)
 		{
                         struct sockaddr_in raddr;

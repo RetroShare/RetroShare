@@ -53,9 +53,12 @@ const int p3connectzone = 3431;
 /****
  * #define LINKMGR_DEBUG 1
  * #define LINKMGR_DEBUG_CONNFAIL 1
+ * #define LINKMGR_DEBUG_ACTIONS  1
  ***/
 
 #define LINKMGR_DEBUG_CONNFAIL 		1
+#define LINKMGR_DEBUG_ACTIONS  		1
+
 
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
@@ -442,7 +445,7 @@ void p3LinkMgr::tickMonitors()
 
 	if (mStatusChanged)
 	{
-#ifdef LINKMGR_DEBUG
+#ifdef LINKMGR_DEBUG_ACTIONS
 		std::cerr << "p3LinkMgr::tickMonitors() StatusChanged! List:" << std::endl;
 #endif
 		/* assemble list */
@@ -462,7 +465,7 @@ void p3LinkMgr::tickMonitors()
 
 				actionList.push_back(peer);
 
-#ifdef LINKMGR_DEBUG
+#ifdef LINKMGR_DEBUG_ACTIONS
 				std::cerr << "Friend: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
 				if (peer.state & RS_PEER_S_FRIEND)
 					std::cerr << " S:RS_PEER_S_FRIEND";
@@ -497,6 +500,7 @@ void p3LinkMgr::tickMonitors()
 				}
 			}
 		}
+
 		/* do the Others as well! */
 		for(it = mOthersList.begin(); it != mOthersList.end(); it++)
 		{
@@ -512,7 +516,7 @@ void p3LinkMgr::tickMonitors()
 				/* reset action */
 				it->second.actions = 0;
 
-#ifdef LINKMGR_DEBUG
+#ifdef LINKMGR_DEBUG_ACTIONS
 				std::cerr << "Other: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
 				if (peer.state & RS_PEER_S_FRIEND)
 					std::cerr << " S:RS_PEER_S_FRIEND";
@@ -554,7 +558,7 @@ void p3LinkMgr::tickMonitors()
 
 	if (doStatusChange)
 	{
-#ifdef LINKMGR_DEBUG
+#ifdef LINKMGR_DEBUG_ACTIONS
 		std::cerr << "Sending to " << clients.size() << " monitorClients" << std::endl;
 #endif
 	
@@ -578,6 +582,14 @@ void p3LinkMgr::tickMonitors()
 
 ///////////////////////////////////////////////////////////
 #endif
+
+	{
+		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+		/* Now Cleanup OthersList (served its purpose (MOVE Action)) */
+		mOthersList.clear();
+	}
+
 }
 
 
@@ -1760,11 +1772,13 @@ int p3LinkMgr::addFriend(const std::string &id, bool isVisible)
 		peerConnectState pcs;
 		pcs.dhtVisible = isVisible;
 		pcs.id = id;
-		pcs.name = "Dummy Id Name";
+		pcs.name = "NoName";
 		pcs.state = RS_PEER_S_FRIEND;
 		pcs.actions = RS_PEER_NEW;
 	
 		mFriendList[id] = pcs;
+
+		mStatusChanged = true;
 	}
 	
 	mNetMgr->netAssistFriend(id, isVisible);
@@ -1775,28 +1789,73 @@ int p3LinkMgr::addFriend(const std::string &id, bool isVisible)
 
 int p3LinkMgr::removeFriend(const std::string &id)
 {
-	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgr::removeFriend(" << id << ")";
-	std::cerr << std::endl;
-#endif
-
-        std::map<std::string, peerConnectState>::iterator it;
-	it = mFriendList.find(id);
-
-	if (it == mFriendList.end())
 	{
-		std::cerr << "p3LinkMgr::removeFriend() ERROR, friend not there : " << id;
+		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+		
+		#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgr::removeFriend(" << id << ")";
 		std::cerr << std::endl;
-		return 0;
-	}
+		#endif
+		
+		std::map<std::string, peerConnectState>::iterator it;
+		it = mFriendList.find(id);
+		
+		if (it == mFriendList.end())
+		{
+			std::cerr << "p3LinkMgr::removeFriend() ERROR, friend not there : " << id;
+			std::cerr << std::endl;
+			return 0;
+		}
+		
+		/* Move to OthersList (so remove can be handled via the action) */
+		peerConnectState peer = it->second;
+		
+		peer.state &= (~RS_PEER_S_FRIEND);
+		peer.state &= (~RS_PEER_S_CONNECTED);
+		peer.state &= (~RS_PEER_S_ONLINE);
+		peer.actions = RS_PEER_MOVED;
+		peer.inConnAttempt = false;
+		mOthersList[id] = peer;
 
-	mFriendList.erase(it);
+		mStatusChanged = true;
+		
+		mFriendList.erase(it);
+	}
+		
+	mNetMgr->netAssistFriend(id, false);
+
 	return 1;
 }
 
 
+void p3LinkMgr::printPeerLists(std::ostream &out)
+{
+        {
+                RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+                out << "p3LinkMgr::printPeerLists() Friend List";
+                out << std::endl;
+
+
+                std::map<std::string, peerConnectState>::iterator it;
+                for(it = mFriendList.begin(); it != mFriendList.end(); it++) 
+                {
+                        out << "\t SSL ID: " << it->second.id;
+                        out << "\t State: " << it->second.state;
+                        out << std::endl;
+                }
+
+                out << "p3LinkMgr::printPeerLists() Others List";
+                out << std::endl;
+                for(it = mOthersList.begin(); it != mOthersList.end(); it++)
+                {
+                        out << "\t SSL ID: " << it->second.id;
+                        out << "\t State: " << it->second.state;
+                }
+        }
+
+        return;
+}
 
 
 void  printConnectState(std::ostream &out, peerConnectState &peer)

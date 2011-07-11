@@ -381,9 +381,9 @@ int     pqipersongrp::addPeer(std::string id)
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
 	}
 
-#ifdef PGRP_DEBUG
-	std::cerr << " pqipersongrp::addPeer() id: " << id;
+	std::cerr << "pqipersongrp::addPeer() id: " << id;
 	std::cerr << std::endl;
+#ifdef PGRP_DEBUG
 #endif
 
 	SearchModule *sm = NULL;
@@ -394,6 +394,10 @@ int     pqipersongrp::addPeer(std::string id)
 	{
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
 			"pqipersongrp::addPeer() Peer already in Use!");
+
+		std::cerr << " pqipersongrp::addPeer() ERROR Peer already in use! id: " << id;
+		std::cerr << std::endl;
+
 		return -1;
 	}
 
@@ -419,9 +423,9 @@ int     pqipersongrp::removePeer(std::string id)
 	std::map<std::string, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
-	std::cerr << " pqipersongrp::removePeer() id: " << id;
-	std::cerr << std::endl;
 #endif
+	std::cerr << "pqipersongrp::removePeer() id: " << id;
+	std::cerr << std::endl;
 
   	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
@@ -437,6 +441,11 @@ int     pqipersongrp::removePeer(std::string id)
 		p -> reset();
 		delete p;
 		mods.erase(it);
+	}
+	else
+	{
+		std::cerr << " pqipersongrp::removePeer() ERROR doesn't exist! id: " << id;
+		std::cerr << std::endl;
 	}
 	return 1;
 }

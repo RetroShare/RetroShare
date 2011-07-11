@@ -184,6 +184,7 @@ void    setFriendVisibility(const std::string &id, bool isVisible);
 	/* add/remove friends */
 int 	addFriend(const std::string &ssl_id, bool isVisible);
 int 	removeFriend(const std::string &ssl_id);
+void 	printPeerLists(std::ostream &out);
 
 	/*************** External Control ****************/
 

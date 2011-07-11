@@ -148,6 +148,7 @@ bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t n
 
 bool	removeFriend(const std::string &ssl_id);
 bool	addNeighbour(const std::string&);
+void    printPeerLists(std::ostream &out);
 
 	/*************** External Control ****************/
 
