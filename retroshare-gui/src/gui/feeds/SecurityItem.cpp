@@ -22,7 +22,7 @@
 #include <QDateTime>
 #include <QTimer>
 
-#include "PeerItem.h"
+#include "SecurityItem.h"
 #include "FeedHolder.h"
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
@@ -40,9 +40,9 @@
  ****/
 
 /** Constructor */
-PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint32_t type, bool isHome)
+SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgId, std::string sslId, uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mPeerId(peerId), mType(type), mIsHome(isHome)
+	mSslId(sslId), mGpgId(gpgId), mType(type), mIsHome(isHome)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -73,11 +73,21 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
     small();
     updateItemStatic();
     updateItem();
-    updateAvatar(QString::fromStdString(mPeerId));
+    updateAvatar(QString::fromStdString(mGpgId));
 }
 
 
-void PeerItem::updateItemStatic()
+bool SecurityItem::isSame(const std::string &sslId, uint32_t type)
+{
+	if ((mSslId == sslId) && (mType == type))
+	{
+		return true;
+	}
+	return false;
+}
+
+
+void SecurityItem::updateItemStatic()
 {
 	if (!rsPeers)
 		return;
@@ -85,43 +95,44 @@ void PeerItem::updateItemStatic()
 
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::updateItemStatic()";
+	std::cerr << "SecurityItem::updateItemStatic()";
 	std::cerr << std::endl;
 #endif
+	QString title;
+
+	switch(mType)
+	{
+		case SEC_TYPE_CONNECT_ATTEMPT:
+			title = tr("Connect Attempt");
+			break;
+		case SEC_TYPE_AUTH_DENIED:
+			title = tr("Not Yet Friends");
+			break;
+		case SEC_TYPE_UNKNOWN_IN:
+			title = tr("Unknown (Incoming) Connect Attempt");
+			break;
+		case SEC_TYPE_UNKNOWN_OUT:
+			title = tr("Unknown (Outgoing) Connect Attempt");
+			break;
+		default:
+			title = tr("Unknown Security Issue");
+			break;
+	}
+
+	titleLabel->setText(title);
+
 
 	RsPeerDetails details;
-	if (rsPeers->getPeerDetails(mPeerId, details))
+	if (rsPeers->getPeerDetails(mGpgId, details))
 	{
-		QString title;
-
-		switch(mType)
-		{
-			case PEER_TYPE_STD:
-                                title = tr("Friend");
-				break;
-			case PEER_TYPE_CONNECT:
-                                title = tr("Friend Connected");
-				break;
-			case PEER_TYPE_HELLO:
-                                title = tr("Connect Attempt");
-				break;
-			case PEER_TYPE_NEW_FOF:
-                                title = tr("Friend of Friend");
-				break;
-			default:
-                                title = tr("Peer");
-				break;
-		}
-
-		titleLabel->setText(title);
 		
 		/* set textcolor for peername  */
-    QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
+    		QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
                                "color:#990033;\">%1</span>");
 	
-    /* set Blog name */
-    QString peername =  QString::fromStdString(details.name);
-    peernameLabel->setText(nameStr.arg(peername));
+    		/* set Blog name */
+    		QString peername =  QString::fromStdString(details.name);
+    		peernameLabel->setText(nameStr.arg(peername));
 
 		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
 		QString stime = date.toString(Qt::LocalDate);
@@ -134,15 +145,21 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
+		/* it is very likely that we will end up here for some of the
+		 * Unknown peer cases.... so allow them here
+	 	 */
+
+		QDateTime date = QDateTime::fromTime_t(time(NULL));
+		QString stime = date.toString(Qt::LocalDate);
+		lastLabel-> setText(stime);
+		nameLabel->setText(QString::fromStdString(mGpgId));
+		idLabel->setText(QString::fromStdString(mSslId));
+
                 statusLabel->setText(tr("Unknown Peer"));
-                titleLabel->setText(tr("Unknown Peer"));
                 trustLabel->setText(tr("Unknown Peer"));
-                nameLabel->setText(tr("Unknown Peer"));
-                idLabel->setText(tr("Unknown Peer"));
                 locLabel->setText(tr("Unknown Peer"));
                 ipLabel->setText(tr("Unknown Peer"));
                 connLabel->setText(tr("Unknown Peer"));
-                lastLabel->setText(tr("Unknown Peer"));
 
 		chatButton->setEnabled(false);
 
@@ -161,19 +178,19 @@ void PeerItem::updateItemStatic()
 }
 
 
-void PeerItem::updateItem()
+void SecurityItem::updateItem()
 {
 	if (!rsPeers)
 		return;
 
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::updateItem()";
+	std::cerr << "SecurityItem::updateItem()";
 	std::cerr << std::endl;
 #endif
 	if(!RsAutoUpdatePage::eventsLocked()) {
 		RsPeerDetails details;
-		if (!rsPeers->getPeerDetails(mPeerId, details))
+		if (!rsPeers->getPeerDetails(mGpgId, details))
 		{
 			return;
 		}
@@ -227,12 +244,12 @@ void PeerItem::updateItem()
 	return;
 }
 
-void PeerItem::small()
+void SecurityItem::small()
 {
 	expandFrame->hide();
 }
 
-void PeerItem::toggle()
+void SecurityItem::toggle()
 {
 	if (expandFrame->isHidden())
 	{
@@ -249,10 +266,10 @@ void PeerItem::toggle()
 }
 
 
-void PeerItem::removeItem()
+void SecurityItem::removeItem()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::removeItem()";
+	std::cerr << "SecurityItem::removeItem()";
 	std::cerr << std::endl;
 #endif
 	hide();
@@ -263,40 +280,40 @@ void PeerItem::removeItem()
 }
 
 
-void PeerItem::gotoHome()
+void SecurityItem::gotoHome()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::gotoHome()";
+	std::cerr << "SecurityItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
 }
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
-void PeerItem::addFriend()
+void SecurityItem::addFriend()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::addFriend()";
+	std::cerr << "SecurityItem::addFriend()";
 	std::cerr << std::endl;
 #endif
 }
 
 
 
-void PeerItem::removeFriend()
+void SecurityItem::removeFriend()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::removeFriend()";
+	std::cerr << "SecurityItem::removeFriend()";
 	std::cerr << std::endl;
 #endif
 }
 
 
 
-void PeerItem::sendMsg()
+void SecurityItem::sendMsg()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::sendMsg()";
+	std::cerr << "SecurityItem::sendMsg()";
 	std::cerr << std::endl;
 #endif
 
@@ -309,7 +326,7 @@ void PeerItem::sendMsg()
         return;
     }
 
-    nMsgDialog->addRecipient(MessageComposer::TO, mPeerId, false);
+    nMsgDialog->addRecipient(MessageComposer::TO, mGpgId, false);
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
@@ -318,21 +335,21 @@ void PeerItem::sendMsg()
 }
 
 
-void PeerItem::openChat()
+void SecurityItem::openChat()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::openChat()";
+	std::cerr << "SecurityItem::openChat()";
 	std::cerr << std::endl;
 #endif
 	if (mParent)
 	{
-		mParent->openChat(mPeerId);
+		mParent->openChat(mGpgId);
 	}
 }
 
-void PeerItem::updateAvatar(const QString &peer_id)
+void SecurityItem::updateAvatar(const QString &peer_id)
 {
-   if (peer_id.toStdString() != mPeerId) {
+   if (peer_id.toStdString() != mGpgId) {
        /* it 's not me */
        return;
    }
@@ -340,7 +357,7 @@ void PeerItem::updateAvatar(const QString &peer_id)
    unsigned char *data = NULL;
    int size = 0 ;
 
-   rsMsgs->getAvatarData(mPeerId,data,size); 
+   rsMsgs->getAvatarData(mGpgId,data,size); 
 
 
    if(size != 0)
@@ -360,7 +377,7 @@ void PeerItem::updateAvatar(const QString &peer_id)
 
 }  
 
-void PeerItem::togglequickmessage()
+void SecurityItem::togglequickmessage()
 {
 	if (messageframe->isHidden())
 	{
@@ -373,14 +390,14 @@ void PeerItem::togglequickmessage()
 
 }
 
-void PeerItem::sendMessage()
+void SecurityItem::sendMessage()
 {
     /* construct a message */
     MessageInfo mi;
     
     mi.title = tr("Quick Message").toStdWString();
     mi.msg =   quickmsgText->toHtml().toStdWString();
-    mi.msgto.push_back(mPeerId);       
+    mi.msgto.push_back(mGpgId);       
     
     rsMsgs->MessageSend(mi);
 
@@ -388,7 +405,7 @@ void PeerItem::sendMessage()
     messageframe->setVisible(false);
 }
 
-void PeerItem::on_quickmsgText_textChanged()
+void SecurityItem::on_quickmsgText_textChanged()
 {
     if (quickmsgText->toPlainText().isEmpty())
     {

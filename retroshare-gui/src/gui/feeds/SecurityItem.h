@@ -19,33 +19,34 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _PEER_ITEM_DIALOG_H
-#define _PEER_ITEM_DIALOG_H
+#ifndef _SECURITY_ITEM_DIALOG_H
+#define _SECURITY_ITEM_DIALOG_H
 
-#include "ui_PeerItem.h"
+#include "ui_SecurityItem.h"
 #include <stdint.h>
 
-const uint32_t PEER_TYPE_STD	 = 0x0001;
-const uint32_t PEER_TYPE_CONNECT = 0x0002;
-const uint32_t PEER_TYPE_HELLO   = 0x0003; /* failed Connect Attempt */
-const uint32_t PEER_TYPE_NEW_FOF = 0x0004; /* new Friend of Friend */
+const uint32_t SEC_TYPE_CONNECT_ATTEMPT 	= 0x0001; /* failed Connect Attempt */
+const uint32_t SEC_TYPE_AUTH_DENIED 		= 0x0002; /* failed outgoing attempt */
+const uint32_t SEC_TYPE_UNKNOWN_IN 		= 0x0003; /* failed incoming with unknown peer */
+const uint32_t SEC_TYPE_UNKNOWN_OUT 		= 0x0004; /* failed outgoing with unknown peer */
 
 class FeedHolder;
 
 
-class PeerItem : public QWidget, private Ui::PeerItem
+class SecurityItem : public QWidget, private Ui::SecurityItem
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint32_t type, bool isHome);
+  SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgId, std::string sslId, uint32_t type, bool isHome);
 
   /** Default Destructor */
 
 	void updateItemStatic();
   	void small();
 
+	bool isSame(const std::string &sslId, uint32_t type);
 private slots:
 	/* default stuff */
   	void gotoHome();
@@ -70,7 +71,8 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-	std::string mPeerId;
+	std::string mSslId;
+	std::string mGpgId;
 	uint32_t mType;
 	bool mIsHome;
 };

@@ -58,14 +58,17 @@ private slots:
 
 private:
   void  addFeedItem(QWidget *item);
+  void  addFeedItemIfUnique(QWidget *item, int itemType, std::string sslId, bool replace);
 
   void	addFeedItemPeerConnect(RsFeedItem &fi);
   void	addFeedItemPeerDisconnect(RsFeedItem &fi);
   void	addFeedItemPeerNew(RsFeedItem &fi);
   void	addFeedItemPeerHello(RsFeedItem &fi);
-  void  addFeedItemPeerAuthDenied(RsFeedItem &fi);
-  void  addFeedItemPeerUnknownIn(RsFeedItem &fi);
-  void  addFeedItemPeerUnknownOut(RsFeedItem &fi);
+
+  void  addFeedItemSecurityConnectAttempt(RsFeedItem &fi);
+  void  addFeedItemSecurityAuthDenied(RsFeedItem &fi);
+  void  addFeedItemSecurityUnknownIn(RsFeedItem &fi);
+  void  addFeedItemSecurityUnknownOut(RsFeedItem &fi);
 
   void	addFeedItemChanNew(RsFeedItem &fi);
   void	addFeedItemChanUpdate(RsFeedItem &fi);
