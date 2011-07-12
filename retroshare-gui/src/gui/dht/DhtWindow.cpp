@@ -32,6 +32,7 @@
 
 #include "gui/RsAutoUpdatePage.h"
 #include "retroshare/rsdht.h"
+#include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 
 /********************************************** STATIC WINDOW *************************************/
@@ -158,136 +159,142 @@ void DhtWindow::updateNetStatus()
 	{
 		ui->peerAddressLabel->setText(status);
 	}
+#endif
 
-	uint32_t netMode = mPeerNet->getNetStateNetworkMode();
+	uint32_t netMode = rsConfig->getNetworkMode();
 
 	QLabel *label = ui->networkLabel;
 	switch(netMode)
 	{
-		case PNSB_NETWORK_UNKNOWN:
+		case RSNET_NETWORK_UNKNOWN:
 			label->setText("Unknown NetState");
 			break;
-		case PNSB_NETWORK_OFFLINE:
+		case RSNET_NETWORK_OFFLINE:
 			label->setText("Offline");
 			break;
-		case PNSB_NETWORK_LOCALNET:
+		case RSNET_NETWORK_LOCALNET:
 			label->setText("Local Net");
 			break;
-		case PNSB_NETWORK_BEHINDNAT:
+		case RSNET_NETWORK_BEHINDNAT:
 			label->setText("Behind NAT");
 			break;
-		case PNSB_NETWORK_EXTERNALIP:
+		case RSNET_NETWORK_EXTERNALIP:
 			label->setText("External IP");
 			break;
 	}
 
 	label = ui->natTypeLabel;
-	switch(mPeerNet->getNetStateNatTypeMode())
+
+	uint32_t natType = rsConfig->getNatTypeMode();
+	switch(natType)
 	{
-		case PNSB_NATTYPE_UNKNOWN:
+		case RSNET_NATTYPE_UNKNOWN:
 			label->setText("UNKNOWN NAT STATE");
 			break;
-		case PNSB_NATTYPE_SYMMETRIC:
+		case RSNET_NATTYPE_SYMMETRIC:
 			label->setText("SYMMETRIC NAT");
 			break;
-		case PNSB_NATTYPE_RESTRICTED_CONE:
+		case RSNET_NATTYPE_RESTRICTED_CONE:
 			label->setText("RESTRICTED CONE NAT");
 			break;
-		case PNSB_NATTYPE_FULL_CONE:
+		case RSNET_NATTYPE_FULL_CONE:
 			label->setText("FULL CONE NAT");
 			break;
-		case PNSB_NATTYPE_OTHER:
+		case RSNET_NATTYPE_OTHER:
 			label->setText("OTHER NAT");
 			break;
-		case PNSB_NATTYPE_NONE:
+		case RSNET_NATTYPE_NONE:
 			label->setText("NO NAT");
 			break;
 	}
 
 
+
 	label = ui->natHoleLabel;
-	switch(mPeerNet->getNetStateNatHoleMode())
+	uint32_t natHole = rsConfig->getNatHoleMode();
+
+	switch(natHole)
 	{
-		case PNSB_NATHOLE_UNKNOWN:
+		case RSNET_NATHOLE_UNKNOWN:
 			label->setText("UNKNOWN NAT HOLE STATUS");
 			break;
-		case PNSB_NATHOLE_NONE:
+		case RSNET_NATHOLE_NONE:
 			label->setText("NO NAT HOLE");
 			break;
-		case PNSB_NATHOLE_UPNP:
+		case RSNET_NATHOLE_UPNP:
 			label->setText("UPNP FORWARD");
 			break;
-		case PNSB_NATHOLE_NATPMP:
+		case RSNET_NATHOLE_NATPMP:
 			label->setText("NATPMP FORWARD");
 			break;
-		case PNSB_NATHOLE_FORWARDED:
+		case RSNET_NATHOLE_FORWARDED:
 			label->setText("MANUAL FORWARD");
 			break;
 	}
 
+	uint32_t connect = rsConfig->getConnectModes();
+
 	label = ui->connectLabel;
 	std::ostringstream connOut;
-	uint32_t connect = mPeerNet->getNetStateConnectModes();
-	if (connect & PNSB_CONNECT_OUTGOING_TCP)
+	if (connect & RSNET_CONNECT_OUTGOING_TCP)
 	{
 		connOut << "TCP_OUT ";
 	}
-	if (connect & PNSB_CONNECT_ACCEPT_TCP)
+	if (connect & RSNET_CONNECT_ACCEPT_TCP)
 	{
 		connOut << "TCP_IN ";
 	}
-	if (connect & PNSB_CONNECT_DIRECT_UDP)
+	if (connect & RSNET_CONNECT_DIRECT_UDP)
 	{
 		connOut << "DIRECT_UDP ";
 	}
-	if (connect & PNSB_CONNECT_PROXY_UDP)
+	if (connect & RSNET_CONNECT_PROXY_UDP)
 	{
 		connOut << "PROXY_UDP ";
 	}
-	if (connect & PNSB_CONNECT_RELAY_UDP)
+	if (connect & RSNET_CONNECT_RELAY_UDP)
 	{
 		connOut << "RELAY_UDP ";
 	}
 
 	label->setText(QString::fromStdString(connOut.str()));
 
+	uint32_t netState = rsConfig->getNetState();
+
 	label = ui->netStatusLabel;
-	switch(mPeerNet->getNetStateNetStateMode())
+	switch(netState)
 	{
-		case PNSB_NETSTATE_BAD_UNKNOWN:
+		case RSNET_NETSTATE_BAD_UNKNOWN:
 			label->setText("NET BAD: Unknown State");
 			break;
-		case PNSB_NETSTATE_BAD_OFFLINE:
+		case RSNET_NETSTATE_BAD_OFFLINE:
 			label->setText("NET BAD: Offline");
 			break;
-		case PNSB_NETSTATE_BAD_NATSYM:
+		case RSNET_NETSTATE_BAD_NATSYM:
 			label->setText("NET BAD: Behind Symmetric NAT");
 			break;
-		case PNSB_NETSTATE_BAD_NODHT_NAT:
+		case RSNET_NETSTATE_BAD_NODHT_NAT:
 			label->setText("NET BAD: Behind NAT & No DHT");
 			break;
-		case PNSB_NETSTATE_WARNING_RESTART:
+		case RSNET_NETSTATE_WARNING_RESTART:
 			label->setText("NET WARNING: NET Restart");
 			break;
-		case PNSB_NETSTATE_WARNING_NATTED:
+		case RSNET_NETSTATE_WARNING_NATTED:
 			label->setText("NET WARNING: Behind NAT");
 			break;
-		case PNSB_NETSTATE_WARNING_NODHT:
+		case RSNET_NETSTATE_WARNING_NODHT:
 			label->setText("NET WARNING: No DHT");
 			break;
-		case PNSB_NETSTATE_GOOD:
+		case RSNET_NETSTATE_GOOD:
 			label->setText("NET STATE GOOD!");
 			break;
-		case PNSB_NETSTATE_ADV_FORWARD:
+		case RSNET_NETSTATE_ADV_FORWARD:
 			label->setText("CAUTION: UNVERIFABLE FORWARD!");
 			break;
-		case PNSB_NETSTATE_ADV_DARK_FORWARD:
+		case RSNET_NETSTATE_ADV_DARK_FORWARD:
 			label->setText("CAUTION: UNVERIFABLE FORWARD & NO DHT");
 			break;
 	}
-
-#endif
-
 }
 
 void DhtWindow::updateNetPeers()
