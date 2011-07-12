@@ -130,10 +130,21 @@ HashCache::HashCache(const std::string& path)
 		f.getline(buff,max_line_size,'\n') ;
 		std::string name(buff) ;
 
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%lld",&info.size) != 1) break ;
+		f.getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
+
+		std::istringstream ss(buff) ;
+		info.size = 0 ;
+		ss >> info.size ;
+
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.time_stamp) != 1) break ;
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.modf_stamp) != 1) break ;
 		f.getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
+
+		if(info.hash.length() != 40)
+		{
+			std::cerr << "Loaded hash is not a hash: " << info.hash << std::endl;
+			break ;
+		}
 
 #ifdef FIM_DEBUG
 		std::cerr << "  (" << name << ", " << info.size << ", " << info.time_stamp << ", " << info.modf_stamp << ", " << info.hash << std::endl ;
