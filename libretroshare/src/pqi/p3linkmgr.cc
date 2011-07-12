@@ -56,9 +56,6 @@ const int p3connectzone = 3431;
  * #define LINKMGR_DEBUG_ACTIONS  1
  ***/
 
-#define LINKMGR_DEBUG_CONNFAIL 		1
-#define LINKMGR_DEBUG_ACTIONS  		1
-
 
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1

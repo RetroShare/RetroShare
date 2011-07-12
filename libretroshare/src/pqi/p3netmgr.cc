@@ -41,6 +41,7 @@
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
 #include "retroshare/rsiface.h"
+#include "retroshare/rsconfig.h"
 
 #include <sstream>
 
@@ -71,8 +72,10 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
  * #define NETMGR_DEBUG 1
  * #define NETMGR_DEBUG_RESET 1
  * #define NETMGR_DEBUG_TICK 1
+ * #define NETMGR_DEBUG_STATEBOX 1
  ***/
 
+#define NETMGR_DEBUG_STATEBOX 1
 
 pqiNetStatus::pqiNetStatus()
 	:mLocalAddrOk(false), mExtAddrOk(false), mExtAddrStableOk(false), 
@@ -125,6 +128,9 @@ p3NetMgr::p3NetMgr()
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
 
+		mLastSlowTickTime = 0;
+		mOldNatType = RSNET_NATTYPE_UNKNOWN;
+		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
 	}
 	
 #ifdef NETMGR_DEBUG
@@ -151,32 +157,6 @@ void p3NetMgr::setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun)
 {
 	mDhtStunner = dhtStun;
 	mProxyStunner = proxyStun;
-}
-
-
-uint32_t p3NetMgr::getNetStateMode()
-{
-	return 0;
-}
-
-uint32_t p3NetMgr::getNetworkMode()
-{
-	return 0;
-}
-
-uint32_t p3NetMgr::getNatTypeMode()
-{
-	return 0;
-}
-
-uint32_t p3NetMgr::getNatHoleMode()
-{
-	return 0;
-}
-
-uint32_t p3NetMgr::getConnectModes()
-{
-	return 0;
 }
 
 
@@ -304,6 +284,8 @@ void p3NetMgr::netReset()
 		netStatusReset_locked();
 	}
 
+	updateNetStateBox_reset();
+
 #ifdef NETMGR_DEBUG_RESET
 	std::cerr << "p3NetMgr::netReset() done" << std::endl;
 #endif
@@ -415,8 +397,40 @@ void p3NetMgr::netStartup()
 
 void p3NetMgr::tick()
 {
+	time_t now = time(NULL);
+	bool doSlowTick = false;
+	{
+		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
+		if (now > mLastSlowTickTime)
+		{
+			mLastSlowTickTime = now;
+			doSlowTick = true;
+		}
+	}
+
+	if (doSlowTick)
+	{
+		slowTick();
+	}
+}
+
+
+void p3NetMgr::slowTick()
+{
 	netTick();
 	netAssistConnectTick();
+	updateNetStateBox_temporal();
+
+	if (mDhtStunner)
+	{
+		mDhtStunner->tick();
+	}
+
+	if (mProxyStunner)
+	{
+		mProxyStunner->tick();
+	}
+
 }
 
 #define STARTUP_DELAY 5
@@ -640,6 +654,8 @@ void p3NetMgr::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 	std::cerr << "p3NetMgr::netExtCheck()" << std::endl;
 #endif
+	bool netSetupDone = false;
+
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 		bool isStable = false;
@@ -730,9 +746,13 @@ void p3NetMgr::netExtCheck()
 			mExtAddr = mNetFlags.mExtAddr;
 
 			mNetStatus = RS_NET_DONE;
+			netSetupDone = true;
+
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgr::netExtCheck() Ext Ok: RS_NET_DONE" << std::endl;
 #endif
+
+
 
 			if (!mNetFlags.mExtAddrStableOk)
 			{
@@ -770,6 +790,7 @@ void p3NetMgr::netExtCheck()
 				}
 
 			}
+
 		}
 
 		if (mNetFlags.mExtAddrOk)
@@ -795,7 +816,17 @@ void p3NetMgr::netExtCheck()
 			std::cerr << "p3NetMgr::netExtCheck() Ext Unstable - Unreachable Check" << std::endl;
 #endif
 		}
+
+
+
 	}
+
+	if (netSetupDone)
+	{
+		/* Setup NetStateBox with this info */
+		updateNetStateBox_startup();
+	}
+
 }
 
 /**********************************************************************************************
@@ -1377,3 +1408,312 @@ void p3NetMgr::setIPServersEnabled(bool b)
 #endif
 
 }
+
+
+
+/**********************************************************************************************
+ ************************************** NetStateBox  ******************************************
+ **********************************************************************************************/
+
+uint32_t p3NetMgr::getNetStateMode()
+{
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mNetStateBox.getNetStateMode();
+}
+
+uint32_t p3NetMgr::getNetworkMode()
+{
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mNetStateBox.getNetworkMode();
+}
+
+uint32_t p3NetMgr::getNatTypeMode()
+{
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mNetStateBox.getNatTypeMode();
+}
+
+uint32_t p3NetMgr::getNatHoleMode()
+{
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mNetStateBox.getNatHoleMode();
+}
+
+uint32_t p3NetMgr::getConnectModes()
+{
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mNetStateBox.getConnectModes();
+}
+
+
+/* These are the regular updates from Dht / Stunners */
+void p3NetMgr::updateNetStateBox_temporal()
+{
+#ifdef	NETMGR_DEBUG_STATEBOX
+	std::cerr << "p3NetMgr::updateNetStateBox_temporal() ";
+	std::cerr << std::endl;
+#endif
+
+	uint8_t isstable = 0;
+	struct sockaddr_in tmpaddr;
+	sockaddr_clear(&tmpaddr);
+
+	if (mDhtStunner)
+	{
+
+        	/* input network bits */
+       		if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
+		{
+			RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+			mNetStateBox.setAddressStunDht(&tmpaddr, isstable);
+			
+#ifdef	NETMGR_DEBUG_STATEBOX
+			std::cerr << "p3NetMgr::updateNetStateBox_temporal() DhtStunner: ";
+			std::cerr << rs_inet_ntoa(tmpaddr.sin_addr) << ":" << htons(tmpaddr.sin_port);
+			std::cerr << " Stable: " << (uint32_t) isstable;
+			std::cerr << std::endl;
+#endif
+			
+		}
+	}
+
+	if (mProxyStunner)
+	{
+
+        	/* input network bits */
+       		if (mProxyStunner->getExternalAddr(tmpaddr, isstable))
+		{
+			RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+			mNetStateBox.setAddressStunProxy(&tmpaddr, isstable);
+
+#ifdef	NETMGR_DEBUG_STATEBOX
+			std::cerr << "p3NetMgr::updateNetStateBox_temporal() ProxyStunner: ";
+			std::cerr << rs_inet_ntoa(tmpaddr.sin_addr) << ":" << htons(tmpaddr.sin_port);
+			std::cerr << " Stable: " << (uint32_t) isstable;
+			std::cerr << std::endl;
+#endif
+		
+		}
+	}
+
+
+	{
+		bool dhtOn = netAssistConnectEnabled();
+		bool dhtActive = netAssistConnectActive();
+
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		mNetStateBox.setDhtState(dhtOn, dhtActive);
+	}
+
+
+	/* now we check if a WebIP address is required? */
+
+
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+
+		uint32_t netstate = mNetStateBox.getNetStateMode();
+		uint32_t netMode = mNetStateBox.getNetworkMode();
+		uint32_t natType = mNetStateBox.getNatTypeMode();
+		uint32_t natHole = mNetStateBox.getNatHoleMode();
+		uint32_t connect = mNetStateBox.getConnectModes();
+
+		std::string netstatestr = NetStateNetStateString(netstate);
+		std::string connectstr = NetStateConnectModesString(connect);
+		std::string natholestr = NetStateNatHoleString(natHole);
+		std::string nattypestr = NetStateNatTypeString(natType);
+		std::string netmodestr = NetStateNetworkModeString(netMode);
+
+#ifdef	NETMGR_DEBUG_STATEBOX
+		std::cerr << "p3NetMgr::updateNetStateBox_temporal() NetStateBox Thinking";
+		std::cerr << std::endl;
+		std::cerr << "\tNetState: " << netstatestr;
+		std::cerr << std::endl;
+		std::cerr << "\tConnectModes: " << netstatestr;
+		std::cerr << std::endl;
+		std::cerr << "\tNetworkMode: " << netmodestr;
+		std::cerr << std::endl;
+		std::cerr << "\tNatHole: " << natholestr;
+		std::cerr << std::endl;
+		std::cerr << "\tNatType: " << nattypestr;
+		std::cerr << std::endl;
+#endif
+
+	}
+	
+	
+	updateNatSetting();
+
+}
+
+#define NET_STUNNER_PERIOD_FAST		(300)	// default of Stunner.
+#define NET_STUNNER_PERIOD_SLOW		(300) 	// 5 minutes.
+
+void p3NetMgr::updateNatSetting()
+{
+	bool updateRefreshRate = false;
+	uint32_t natType = RSNET_NATTYPE_UNKNOWN;
+	uint32_t natHole = RSNET_NATHOLE_UNKNOWN;
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+
+		natType = mNetStateBox.getNatTypeMode();
+		natHole = mNetStateBox.getNatHoleMode();
+		if ((natType != mOldNatType) || (natHole != mOldNatHole))
+		{
+			mOldNatType = natType;
+			mOldNatHole = natHole;
+			updateRefreshRate = true;
+			
+#ifdef	NETMGR_DEBUG_STATEBOX
+			std::cerr << "p3NetMgr::updateNetStateBox_temporal() NatType Change!";
+			std::cerr << "\tNatType: " << NetStateNatTypeString(natType);
+			std::cerr << "\tNatHole: " << NetStateNatHoleString(natHole);
+
+			std::cerr << std::endl;
+#endif
+			
+			
+		}
+	}
+
+	
+	// MUST also use this chance to set ATTACH flag for DHT.
+	if (updateRefreshRate)
+	{
+#ifdef	NETMGR_DEBUG_STATEBOX
+		std::cerr << "p3NetMgr::updateNetStateBox_temporal() Updating Refresh Rate, based on changed NatType";
+		std::cerr << std::endl;
+#endif
+		
+		
+		switch(natType)
+		{
+			case RSNET_NATTYPE_RESTRICTED_CONE: 
+			{
+				if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+				{
+					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_FAST);
+				}
+				else 
+				{
+					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
+				}
+				break;
+			}
+			case RSNET_NATTYPE_NONE:
+			case RSNET_NATTYPE_UNKNOWN:
+			case RSNET_NATTYPE_SYMMETRIC:
+			case RSNET_NATTYPE_FULL_CONE:
+			case RSNET_NATTYPE_OTHER:
+
+				mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
+				break;
+		}
+	}
+}
+
+
+
+void p3NetMgr::updateNetStateBox_startup()
+{
+#ifdef	NETMGR_DEBUG_STATEBOX
+	std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+	std::cerr << std::endl;
+#endif
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+
+		/* fill in the data */
+		struct sockaddr_in tmpip;
+	
+		/* net Assist */
+		if (netAssistExtAddress(tmpip))
+		{
+
+#ifdef	NETMGR_DEBUG_STATEBOX
+			std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+			std::cerr << "Ext supplied from netAssistExternalAddress()";
+			std::cerr << std::endl;
+#endif
+
+			if (isValidNet(&(tmpip.sin_addr)))
+			{
+#ifdef	NETMGR_DEBUG_STATEBOX
+				std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+				std::cerr << "netAssist Returned: " << rs_inet_ntoa(tmpip.sin_addr);
+				std::cerr << ":" << ntohs(tmpip.sin_port);
+				std::cerr << std::endl;
+#endif
+				mNetStateBox.setAddressUPnP(true, &tmpip);
+			}
+			else
+			{
+				mNetStateBox.setAddressUPnP(false, &tmpip);
+#ifdef	NETMGR_DEBUG_STATEBOX
+				std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+				std::cerr << "ERROR Bad Address supplied from netAssistExternalAddress()";
+				std::cerr << std::endl;
+#endif
+			}
+		}
+		else
+		{
+#ifdef	NETMGR_DEBUG_STATEBOX
+			std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+			std::cerr << " netAssistExtAddress() is not active";
+			std::cerr << std::endl;
+#endif
+			mNetStateBox.setAddressUPnP(false, &tmpip);
+		}
+
+
+		/* ExtAddrFinder */
+		if (mUseExtAddrFinder)
+		{
+			bool extFinderOk = mExtAddrFinder->hasValidIP(&(tmpip.sin_addr));
+			if (extFinderOk)
+			{
+				/* best guess at port */
+				tmpip.sin_port = mNetFlags.mLocalAddr.sin_port;
+
+#ifdef	NETMGR_DEBUG_STATEBOX
+				std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+				std::cerr << "ExtAddrFinder Returned: " << rs_inet_ntoa(tmpip.sin_addr);
+				std::cerr << std::endl;
+#endif
+
+				mNetStateBox.setAddressWebIP(true, &tmpip);
+			}
+			else
+			{
+				mNetStateBox.setAddressWebIP(false, &tmpip);
+#ifdef	NETMGR_DEBUG_STATEBOX
+				std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+				std::cerr << " ExtAddrFinder hasn't found an address yet";
+				std::cerr << std::endl;
+#endif
+			}
+		}
+		else
+		{
+#ifdef	NETMGR_DEBUG_STATEBOX
+			std::cerr << "p3NetMgr::updateNetStateBox_startup() ";
+			std::cerr << " ExtAddrFinder is not active";
+			std::cerr << std::endl;
+#endif
+			mNetStateBox.setAddressWebIP(false, &tmpip);
+		}
+	}
+}
+
+void p3NetMgr::updateNetStateBox_reset()
+{
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+
+		mNetStateBox.reset();
+	}
+}
+
+	

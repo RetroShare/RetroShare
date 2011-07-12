@@ -31,12 +31,14 @@
 
 static const int STUN_TTL = 64;
 
-#define TOU_STUN_MIN_PEERS 5
+#define TOU_STUN_MIN_PEERS 20
 
 /*
  * #define DEBUG_UDP_STUNNER 1
+ * #define DEBUG_UDP_STUNNER_FILTER 1
  */
-//#define DEBUG_UDP_STUNNER 1
+
+#define DEBUG_UDP_STUNNER 1
 
 const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
 const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
@@ -78,19 +80,27 @@ void	UdpStunner::SetAcceptLocalNet()
 
 #endif
 
-void	UdpStunner::setTargetStunPeriod(uint32_t sec_per_stun)
+void	UdpStunner::setTargetStunPeriod(int32_t sec_per_stun)
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
-	if (sec_per_stun == 0)
+	if (sec_per_stun < 0)
 	{
-		mPassiveStunMode = true;
+		mPassiveStunMode = false;
+		mTargetStunPeriod = TOU_STUN_DEFAULT_TARGET_RATE;
 	}
 	else
 	{
-		mPassiveStunMode = false;
+		if (sec_per_stun == 0)
+		{
+			mPassiveStunMode = true;
+		}
+		else
+		{
+			mPassiveStunMode = false;
+		}
+		mTargetStunPeriod = sec_per_stun;
 	}
-	mTargetStunPeriod = sec_per_stun;
 
 }
 
@@ -98,7 +108,7 @@ void	UdpStunner::setTargetStunPeriod(uint32_t sec_per_stun)
 int UdpStunner::recvPkt(void *data, int size, struct sockaddr_in &from)
 {
 	/* print packet information */
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 	std::cerr << "UdpStunner::recvPkt(" << size << ") from: " << from;
 	std::cerr << std::endl;
 #endif
@@ -109,7 +119,7 @@ int UdpStunner::recvPkt(void *data, int size, struct sockaddr_in &from)
 	if (UdpStun_isStunPacket(data, size))
 	{
 		mStunLastRecvAny = time(NULL);
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::recvPkt() is Stun Packet";
 		std::cerr << std::endl;
 #endif
@@ -153,6 +163,9 @@ int UdpStunner::tick()
 	if (checkStunDesired())
 	{
 		attemptStun();
+#ifdef DEBUG_UDP_STUNNER
+		status(std::cerr);
+#endif
 	}
 
 	return 1;
@@ -331,7 +344,7 @@ bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr)
 	addr.sin_port = ((uint16_t *) stun_pkt)[11];
 
 
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 	std::ostringstream out;
 	out << "UdpStunner::response() Recvd a Stun Response, ext_addr: ";
 	out << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
@@ -390,14 +403,14 @@ void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 
 bool UdpStun_isStunPacket(void *data, int size)
 {
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 	std::cerr << "UdpStunner::isStunPacket() ?";
 	std::cerr << std::endl;
 #endif
 
 	if (size < 20)
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size < 20) -> false";
 		std::cerr << std::endl;
 #endif
@@ -408,7 +421,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 	uint16_t pktsize = ntohs(((uint16_t *) data)[1]);
 	if (size != pktsize)
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size != pktsize) -> false";
 		std::cerr << std::endl;
 #endif
@@ -417,7 +430,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 
 	if ((size == 20) && (0x0001 == ntohs(((uint16_t *) data)[0])))
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size=20 & data[0]=0x0001) -> true";
 		std::cerr << std::endl;
 #endif
@@ -427,7 +440,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 
 	if ((size == 28) && (0x0101 == ntohs(((uint16_t *) data)[0])))
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size=28 & data[0]=0x0101) -> true";
 		std::cerr << std::endl;
 #endif

@@ -92,6 +92,8 @@ class pqiAddrAssist
 virtual	~pqiAddrAssist() { return; }
 
 virtual bool    getExternalAddr(struct sockaddr_in &remote, uint8_t &stable) = 0;
+virtual void    setRefreshPeriod(int32_t period) = 0;
+virtual int	tick() = 0; /* for internal accounting */
 
 };
 

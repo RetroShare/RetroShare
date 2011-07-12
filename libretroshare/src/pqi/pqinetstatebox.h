@@ -13,61 +13,12 @@
  *
  */
 
-#define PNSB_NETWORK_UNKNOWN		1
-#define PNSB_NETWORK_RESTARTING		2
-#define PNSB_NETWORK_OFFLINE		3
-#define PNSB_NETWORK_LOCALNET		4
-#define PNSB_NETWORK_BEHINDNAT		5
-#define PNSB_NETWORK_EXTERNALIP		6
-
-// WHAT TYPE OF FIREWALL?
-#define PNSB_NATTYPE_NONE			1
-#define PNSB_NATTYPE_UNKNOWN			2
-#define PNSB_NATTYPE_SYMMETRIC 			3
-#define PNSB_NATTYPE_RESTRICTED_CONE		4
-#define PNSB_NATTYPE_FULL_CONE			5
-#define PNSB_NATTYPE_OTHER			6
-
-// WHAT TYPE OF HOLE?
-#define PNSB_NATHOLE_UNKNOWN		0		
-#define PNSB_NATHOLE_NONE		1		
-#define PNSB_NATHOLE_UPNP		2	
-#define PNSB_NATHOLE_NATPMP		3
-#define PNSB_NATHOLE_FORWARDED		4
-
-// Types of Connections.
-#define PNSB_CONNECT_NONE		0x0000
-#define PNSB_CONNECT_ACCEPT_TCP		0x0001
-#define PNSB_CONNECT_OUTGOING_TCP	0x0002
-#define PNSB_CONNECT_DIRECT_UDP		0x0100
-#define PNSB_CONNECT_PROXY_UDP		0x0200
-#define PNSB_CONNECT_RELAY_UDP		0x0400
-
-// net state (good, okay, bad)
-// BAD. (RED)
-#define PNSB_NETSTATE_BAD_UNKNOWN	1
-#define PNSB_NETSTATE_BAD_OFFLINE	2
-#define PNSB_NETSTATE_BAD_NATSYM	3
-#define PNSB_NETSTATE_BAD_NODHT_NAT	4
-
-// CAUTION. (ORANGE)
-#define PNSB_NETSTATE_WARNING_RESTART	5
-#define PNSB_NETSTATE_WARNING_NATTED	6
-#define PNSB_NETSTATE_WARNING_NODHT	7
-
-// GOOD (GREEN)
-// NAT with forwarded port, or EXT port.
-#define PNSB_NETSTATE_GOOD		8
-
-// ADVANCED MODE (BLUE)
-// If the user knows what they are doing... we cannot confirm this.
-#define PNSB_NETSTATE_ADV_FORWARD	9
-#define PNSB_NETSTATE_ADV_DARK_FORWARD	10
-
 class pqiNetStateBox
 {
 	public:
 	pqiNetStateBox();
+
+	void reset();
 
 	/* input network bits */
 	void setAddressStunDht(struct sockaddr_in *, bool stable);
@@ -140,5 +91,14 @@ class pqiNetStateBox
 	bool mPortForwardedSet;
 	uint16_t  mPortForwarded;
 };
+
+
+
+std::string NetStateNetStateString(uint32_t netstate);
+std::string NetStateConnectModesString(uint32_t connect);
+std::string NetStateNatHoleString(uint32_t natHole);
+std::string NetStateNatTypeString(uint32_t natType);
+std::string NetStateNetworkModeString(uint32_t netMode);
+
 
 #endif

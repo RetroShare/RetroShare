@@ -44,6 +44,16 @@ virtual bool    getExternalAddr(struct sockaddr_in &remote, uint8_t &stable)
                 return mStunner->externalAddr(remote, stable);
         }
 
+virtual int     tick()
+	{
+                return mStunner->tick();
+        }
+
+virtual void    setRefreshPeriod(int32_t period)
+	{
+		return mStunner->setTargetStunPeriod(period);
+	}
+
 	private:
 
 	UdpStunner *mStunner;

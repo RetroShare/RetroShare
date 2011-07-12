@@ -33,6 +33,8 @@
 //#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
 
+#include "pqi/pqinetstatebox.h"
+
 #include "pqi/p3cfgmgr.h"
 
 #include "util/rsthreads.h"
@@ -98,6 +100,7 @@ void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
 void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
 
 void 	tick();
+void 	slowTick();
 
 	/*************** Setup ***************************/
 void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
@@ -201,6 +204,13 @@ void 	netUpnpCheck();
 
 void    netUnreachableCheck();
 
+
+	/* net state via NetStateBox */
+void 	updateNetStateBox_temporal();
+void 	updateNetStateBox_startup();
+void 	updateNetStateBox_reset();
+void    updateNatSetting();
+
 private:
 	// These should have there own Mutex Protection,
 	ExtAddrFinder *mExtAddrFinder ;
@@ -238,6 +248,15 @@ void 	netStatusReset_locked();
 	/* network status flags (read by rsiface) */
 	pqiNetStatus mNetFlags;
 	pqiNetStatus mOldNetFlags;
+
+
+	// Improved NetStatusBox, which uses the Stunners!
+	pqiNetStateBox mNetStateBox;
+
+	time_t mLastSlowTickTime;
+	uint32_t mOldNatType;
+	uint32_t mOldNatHole;
+
 };
 
 #endif // MRK_PQI_NET_MANAGER_HEADER

@@ -83,7 +83,7 @@ virtual ~UdpStunner() { return; }
 	void SetAcceptLocalNet();
 #endif
 
-void 	setTargetStunPeriod(uint32_t sec_per_stun);
+void 	setTargetStunPeriod(int32_t sec_per_stun);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
