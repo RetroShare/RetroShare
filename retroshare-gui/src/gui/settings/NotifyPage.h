@@ -40,6 +40,9 @@ public:
     /** Loads the settings for this page */
     void load();
 
+private slots:
+    void privatChatToggled();
+
 private:
     /** Qt Designer generated object */
     Ui::NotifyPage ui;

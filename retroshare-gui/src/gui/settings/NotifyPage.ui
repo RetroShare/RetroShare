@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
+    <width>427</width>
     <height>425</height>
    </rect>
   </property>
@@ -582,53 +582,78 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QCheckBox" name="trayNotify_PrivateChat">
-            <property name="text">
-             <string>Private Message</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="trayNotify_Messages">
-            <property name="text">
-             <string>Message</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="trayNotify_Channels">
-            <property name="text">
-             <string>Channel Post</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="trayNotify_Forums">
-            <property name="text">
-             <string>Forum Post</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="trayNotify_Transfer">
-            <property name="text">
-             <string>Download completed</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="trayNotify_CombinedIcon">
-            <property name="text">
-             <string>Combined icon</string>
-            </property>
-           </widget>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="trayNotify_PrivateChat">
+              <property name="text">
+               <string>Private Message</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="trayNotify_Messages">
+              <property name="text">
+               <string>Message</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="trayNotify_Channels">
+              <property name="text">
+               <string>Channel Post</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="trayNotify_Forums">
+              <property name="text">
+               <string>Forum Post</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QCheckBox" name="trayNotify_Transfer">
+              <property name="text">
+               <string>Download completed</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="trayNotify_PrivateChatCombined">
+              <property name="text">
+               <string>Combined</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="trayNotify_MessagesCombined">
+              <property name="text">
+               <string>Combined</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QCheckBox" name="trayNotify_ChannelsCombined">
+              <property name="text">
+               <string>Combined</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="trayNotify_ForumsCombined">
+              <property name="text">
+               <string>Combined</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QCheckBox" name="trayNotify_TransferCombined">
+              <property name="text">
+               <string>Combined</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

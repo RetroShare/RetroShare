@@ -36,6 +36,12 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
+  connect(ui.trayNotify_PrivateChat, SIGNAL(toggled(bool)), this, SLOT(privatChatToggled()));
+  connect(ui.trayNotify_Messages, SIGNAL(toggled(bool)), this, SLOT(privatChatToggled()));
+  connect(ui.trayNotify_Channels, SIGNAL(toggled(bool)), this, SLOT(privatChatToggled()));
+  connect(ui.trayNotify_Forums, SIGNAL(toggled(bool)), this, SLOT(privatChatToggled()));
+  connect(ui.trayNotify_Transfer, SIGNAL(toggled(bool)), this, SLOT(privatChatToggled()));
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -96,8 +102,17 @@ NotifyPage::save(QString &errmsg)
         traynotifyflags |= TRAYNOTIFY_FORUMS;
     if (ui.trayNotify_Transfer->isChecked())
         traynotifyflags |= TRAYNOTIFY_TRANSFERS;
-    if (ui.trayNotify_CombinedIcon->isChecked())
-        traynotifyflags |= TRAYNOTIFY_COMBINEDICON;
+
+    if (ui.trayNotify_PrivateChatCombined->isChecked())
+        traynotifyflags |= TRAYNOTIFY_PRIVATECHAT_COMBINED;
+    if (ui.trayNotify_MessagesCombined->isChecked())
+        traynotifyflags |= TRAYNOTIFY_MESSAGES_COMBINED;
+    if (ui.trayNotify_ChannelsCombined->isChecked())
+        traynotifyflags |= TRAYNOTIFY_CHANNELS_COMBINED;
+    if (ui.trayNotify_ForumsCombined->isChecked())
+        traynotifyflags |= TRAYNOTIFY_FORUMS_COMBINED;
+    if (ui.trayNotify_TransferCombined->isChecked())
+        traynotifyflags |= TRAYNOTIFY_TRANSFERS_COMBINED;
 
     Settings->setNotifyFlags(notifyflags);
     Settings->setTrayNotifyFlags(traynotifyflags);
@@ -154,7 +169,12 @@ void NotifyPage::load()
     ui.trayNotify_Channels->setChecked(traynotifyflags & TRAYNOTIFY_CHANNELS);
     ui.trayNotify_Forums->setChecked(traynotifyflags & TRAYNOTIFY_FORUMS);
     ui.trayNotify_Transfer->setChecked(traynotifyflags & TRAYNOTIFY_TRANSFERS);
-    ui.trayNotify_CombinedIcon->setChecked(traynotifyflags & TRAYNOTIFY_COMBINEDICON);
+
+    ui.trayNotify_PrivateChatCombined->setChecked(traynotifyflags & TRAYNOTIFY_PRIVATECHAT_COMBINED);
+    ui.trayNotify_MessagesCombined->setChecked(traynotifyflags & TRAYNOTIFY_MESSAGES_COMBINED);
+    ui.trayNotify_ChannelsCombined->setChecked(traynotifyflags & TRAYNOTIFY_CHANNELS_COMBINED);
+    ui.trayNotify_ForumsCombined->setChecked(traynotifyflags & TRAYNOTIFY_FORUMS_COMBINED);
+    ui.trayNotify_TransferCombined->setChecked(traynotifyflags & TRAYNOTIFY_TRANSFERS_COMBINED);
 
     ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
 
@@ -180,4 +200,26 @@ void NotifyPage::load()
     QPoint margin = Settings->getToasterMargin();
     ui.spinBoxToasterXMargin->setValue(margin.x());
     ui.spinBoxToasterYMargin->setValue(margin.y());
+
+    privatChatToggled();
+}
+
+void NotifyPage::privatChatToggled()
+{
+    QList<QPair<QCheckBox*, QCheckBox*> > checkboxes;
+    checkboxes << qMakePair(ui.trayNotify_PrivateChat, ui.trayNotify_PrivateChatCombined)
+               << qMakePair(ui.trayNotify_Messages, ui.trayNotify_MessagesCombined)
+               << qMakePair(ui.trayNotify_Channels, ui.trayNotify_ChannelsCombined)
+               << qMakePair(ui.trayNotify_Forums, ui.trayNotify_ForumsCombined)
+               << qMakePair(ui.trayNotify_Transfer, ui.trayNotify_TransferCombined);
+
+    QList<QPair<QCheckBox*, QCheckBox*> >::iterator checkboxIt;
+    for (checkboxIt = checkboxes.begin(); checkboxIt != checkboxes.end(); checkboxIt++) {
+        if (checkboxIt->first->isChecked()) {
+            checkboxIt->second->setEnabled(true);
+        } else {
+            checkboxIt->second->setChecked(false);
+            checkboxIt->second->setEnabled(false);
+        }
+    }
 }

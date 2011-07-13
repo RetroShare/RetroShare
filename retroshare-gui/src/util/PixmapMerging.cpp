@@ -21,7 +21,8 @@
 
 #include <util/PixmapMerging.h>
 
-#include <QtGui/QtGui>
+#include <QPixmap>
+#include <QPainter>
 
 QPixmap PixmapMerging::merge(const std::string & foregroundPixmapData, const std::string & backgroundPixmapFilename) {
 	QImage foregroundImage;

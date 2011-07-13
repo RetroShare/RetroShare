@@ -226,12 +226,13 @@ private:
     QString nameAndLocation;
 
     QSystemTrayIcon *trayIcon;
-    QSystemTrayIcon *trayIconCombined;
     QSystemTrayIcon *trayIconMessages;
     QSystemTrayIcon *trayIconForums;
     QSystemTrayIcon *trayIconChannels;
     QSystemTrayIcon *trayIconChat;
     QSystemTrayIcon *trayIconTransfers;
+    QMenu *notifyMenu;
+    QString notifyToolTip;
     QAction *trayActionMessages;
     QAction *trayActionForums;
     QAction *trayActionChannels;

@@ -5894,55 +5894,58 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+8"/>
-        <location line="+302"/>
         <source>Transfers</source>
         <translation>Übertragungen</translation>
     </message>
     <message>
-        <location line="-294"/>
-        <location line="+226"/>
+        <location line="+8"/>
         <source>Messages</source>
         <translation>Nachrichten</translation>
     </message>
     <message>
-        <location line="-223"/>
-        <location line="+257"/>
+        <location line="+3"/>
         <source>Channels</source>
         <translation>Kanäle</translation>
     </message>
     <message>
-        <location line="-254"/>
+        <location line="+3"/>
         <source>Blogs</source>
         <translation>Blogs</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+151"/>
+        <source>Notify</source>
+        <translation>Meldungen</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Dht Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+117"/>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation type="obsolete">Chat</translation>
     </message>
     <message>
-        <location line="+94"/>
-        <location line="+41"/>
-        <location line="+41"/>
-        <location line="+160"/>
+        <location line="+217"/>
+        <location line="+42"/>
+        <location line="+42"/>
+        <location line="+73"/>
+        <location line="+115"/>
         <source>%1 new messages</source>
         <translation>%1 neue Nachrichten</translation>
     </message>
     <message>
-        <location line="-240"/>
-        <location line="+41"/>
-        <location line="+41"/>
-        <location line="+160"/>
+        <location line="-270"/>
+        <location line="+42"/>
+        <location line="+42"/>
+        <location line="+71"/>
+        <location line="+117"/>
         <source>%1 new message</source>
         <translation>%1 neue Nachricht</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-166"/>
         <source>You have %1 completed downloads</source>
         <translation>Du hast %1 fertige Downloads</translation>
     </message>
@@ -5952,17 +5955,17 @@ p, li { white-space: pre-wrap; }
         <translation>Du hast %1 fertigen Download</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>%1 completed downloads</source>
         <translation>%1 fertige Downloads</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 completed download</source>
-        <translation>%1 fertigen Download</translation>
+        <translation>%1 fertiger Download</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+105"/>
         <source>Down: %1 (kB/s)</source>
         <translation>Runter: %1 (kB/s)</translation>
     </message>
@@ -5977,7 +5980,7 @@ p, li { white-space: pre-wrap; }
         <translation>%1 Freunde verbunden</translation>
     </message>
     <message>
-        <location line="+659"/>
+        <location line="+664"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
     </message>
@@ -5987,23 +5990,23 @@ p, li { white-space: pre-wrap; }
         <translation>Link ist fehlerhaft.</translation>
     </message>
     <message>
-        <location line="-667"/>
+        <location line="-672"/>
         <source>%1 friend connected</source>
         <translation>%1 Freund verbunden</translation>
     </message>
     <message>
-        <location line="+300"/>
+        <location line="+305"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="+88"/>
-        <location filename="../gui/MainWindow.cpp" line="-712"/>
+        <location filename="../gui/MainWindow.cpp" line="-748"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+745"/>
+        <location filename="../gui/MainWindow.cpp" line="+781"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -6013,7 +6016,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-734"/>
+        <location line="-770"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -6044,7 +6047,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-189"/>
+        <location filename="../gui/MainWindow.cpp" line="-194"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -6064,28 +6067,28 @@ p, li { white-space: pre-wrap; }
         <translation>Anzeigen/Verbergen</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+27"/>
         <source>&amp;Quit</source>
         <translation>&amp;Schliessen</translation>
     </message>
     <message>
-        <location line="+186"/>
-        <location line="+41"/>
-        <location line="+41"/>
-        <location line="+160"/>
+        <location line="+191"/>
+        <location line="+42"/>
+        <location line="+42"/>
+        <location line="+188"/>
         <source>You have %1 new messages</source>
         <translation>Du hast %1 neue Nachrichten</translation>
     </message>
     <message>
-        <location line="-240"/>
-        <location line="+41"/>
-        <location line="+41"/>
-        <location line="+160"/>
+        <location line="-270"/>
+        <location line="+42"/>
+        <location line="+42"/>
+        <location line="+188"/>
         <source>You have %1 new message</source>
         <translation>Du hast %1 neue Nachricht</translation>
     </message>
     <message>
-        <location line="-444"/>
+        <location line="-479"/>
         <source>Bandwidth Graph</source>
         <translation>Bandbreiten-Graph</translation>
     </message>
@@ -6114,7 +6117,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Verknüpfungs-Wolke</translation>
     </message>
     <message>
-        <location line="-122"/>
+        <location line="-127"/>
         <source>Unfinished</source>
         <translation>unfertig</translation>
     </message>
@@ -6124,7 +6127,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+119"/>
+        <location filename="../gui/MainWindow.cpp" line="+124"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -6134,18 +6137,17 @@ p, li { white-space: pre-wrap; }
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-157"/>
-        <location line="+233"/>
+        <location filename="../gui/MainWindow.cpp" line="-162"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-304"/>
+        <location line="-71"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+223"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -6155,12 +6157,12 @@ p, li { white-space: pre-wrap; }
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-127"/>
+        <location line="-132"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+826"/>
+        <location line="+867"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Willst Du RetroShare wirklich beenden?</translation>
     </message>
@@ -6170,7 +6172,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-726"/>
+        <location line="-767"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -6198,7 +6200,7 @@ Normalerweise hält RetroShare jetzt sicher alle Festplattenzugriffe auf das Ver
 Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -8144,7 +8146,7 @@ p, li { white-space: pre-wrap; }
         <translation>Systray Icon</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+8"/>
         <source>Private Message</source>
         <translation>Private Nachricht</translation>
     </message>
@@ -8165,17 +8167,25 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
-        <location line="+67"/>
+        <location line="+97"/>
         <source>Download completed</source>
         <translation>Download fertig</translation>
     </message>
     <message>
-        <location line="-53"/>
         <source>Combined icon</source>
-        <translation>Kombiniertes Icon</translation>
+        <translation type="obsolete">Kombiniertes Icon</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="-90"/>
+        <location line="+7"/>
+        <location line="+7"/>
+        <location line="+7"/>
+        <location line="+7"/>
+        <source>Combined</source>
+        <translation>Kombiniert</translation>
+    </message>
+    <message>
+        <location line="+36"/>
         <source>Toasters</source>
         <translation></translation>
     </message>
@@ -8235,12 +8245,12 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Systemabschnitts-Nachricht an</translation>
     </message>
     <message>
-        <location line="-236"/>
+        <location line="-268"/>
         <source>Add feeds at end</source>
         <translation>Feeds am Ende anfügen</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.cpp" line="+165"/>
+        <location filename="../gui/settings/NotifyPage.cpp" line="+185"/>
         <source>Top Left</source>
         <translation>Oben Links</translation>
     </message>
@@ -9427,7 +9437,7 @@ Do you want to send them a Message instead</source>
         <translation>Immer im Vordergrund</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="+282"/>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="+288"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>

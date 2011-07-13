@@ -309,7 +309,7 @@ void RshareSettings::setNotifyFlags(uint flags)
 
 uint RshareSettings::getTrayNotifyFlags()
 {
-  return value(SETTING_TRAYNOTIFY_FLAGS, TRAYNOTIFY_ALL).toUInt();
+  return value(SETTING_TRAYNOTIFY_FLAGS, TRAYNOTIFY_PRIVATECHAT | TRAYNOTIFY_MESSAGES | TRAYNOTIFY_CHANNELS | TRAYNOTIFY_FORUMS | TRAYNOTIFY_TRANSFERS).toUInt();
 }
 
 void RshareSettings::setTrayNotifyFlags(uint flags)

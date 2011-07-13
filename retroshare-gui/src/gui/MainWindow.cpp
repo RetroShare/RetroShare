@@ -166,7 +166,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     m_bStatusLoadDone = false;
     isIdle = false;
 
-    trayIconCombined = NULL;
+    notifyMenu = NULL;
     trayIconMessages = NULL;
     trayIconForums = NULL;
     trayIconChannels = NULL;
@@ -258,7 +258,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        forumAction = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
 	 std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
-	 for(uint32_t i = 0;i<rsPlugins->nbPlugins();++i)
+	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
 	 {
 		 QIcon icon ;
 
@@ -397,8 +397,13 @@ void MainWindow::createTrayIcon()
     QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
     toggleVisibilityAction = trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
 
-    QMenu *pStatusMenu = trayMenu->addMenu(tr("Status"));
-    initializeStatusObject(pStatusMenu, true);
+    /* Create status menu */
+    QMenu *statusMenu = trayMenu->addMenu(tr("Status"));
+    initializeStatusObject(statusMenu, true);
+
+    /* Create notify menu */
+    notifyMenu = trayMenu->addMenu(tr("Notify"));
+    notifyMenu->menuAction()->setVisible(false);
 
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
@@ -434,44 +439,25 @@ void MainWindow::createTrayIcon()
 
 void MainWindow::createNotifyIcons()
 {
-#define DELETE_ICON(x) if (x) { delete(x); x = NULL; }
+#define DELETE_OBJECT(x) if (x) { delete(x); x = NULL; }
 
     int notifyFlag = Settings->getTrayNotifyFlags();
 
-    QMenu *trayMenu = NULL;
-
-    /* Delete combined systray icon and rebuild it */
-    trayActionMessages = NULL;
-    trayActionForums = NULL;
-    trayActionChannels = NULL;
-    trayActionChat = NULL;
-    trayActionTransfers = NULL;
-    DELETE_ICON(trayIconCombined);
-
-    if (notifyFlag & TRAYNOTIFY_COMBINEDICON) {
-        /* Delete single systray icons */
-        DELETE_ICON(trayIconMessages);
-        DELETE_ICON(trayIconForums);
-        DELETE_ICON(trayIconChannels);
-        DELETE_ICON(trayIconChat);
-        DELETE_ICON(trayIconTransfers);
-
-        /* Create combined systray icon */
-        trayIconCombined = new QSystemTrayIcon(this);
-        trayIconCombined->setIcon(QIcon(":/images/rstray_new.png"));
-
-        trayMenu = new QMenu(this);
-        trayIconCombined->setContextMenu(trayMenu);
-    }
+    /* Delete notify actions */
+    DELETE_OBJECT(trayActionMessages);
+    DELETE_OBJECT(trayActionForums);
+    DELETE_OBJECT(trayActionChannels);
+    DELETE_OBJECT(trayActionChat);
+    DELETE_OBJECT(trayActionTransfers);
 
     /* Create systray icons or actions */
     if (notifyFlag & TRAYNOTIFY_MESSAGES) {
-        if (trayMenu) {
-            DELETE_ICON(trayIconMessages);
+        if (notifyFlag & TRAYNOTIFY_MESSAGES_COMBINED) {
+            DELETE_OBJECT(trayIconMessages);
 
-            trayActionMessages = trayMenu->addAction(QIcon(":/images/newmsg.png"), "", this, SLOT(trayIconMessagesClicked()));
+            trayActionMessages = notifyMenu->addAction(QIcon(":/images/newmsg.png"), "", this, SLOT(trayIconMessagesClicked()));
             trayActionMessages->setVisible(false);
-            trayActionMessages->setData(tr("Messages"));
+//            trayActionMessages->setData(tr("Messages"));
         } else if (trayIconMessages == NULL) {
             // Create the tray icon for messages
             trayIconMessages = new QSystemTrayIcon(this);
@@ -479,16 +465,17 @@ void MainWindow::createNotifyIcons()
             connect(trayIconMessages, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconMessagesClicked(QSystemTrayIcon::ActivationReason)));
         }
     } else {
-        DELETE_ICON(trayIconMessages);
+        DELETE_OBJECT(trayIconMessages);
+        DELETE_OBJECT(trayActionMessages);
     }
 
     if (notifyFlag & TRAYNOTIFY_FORUMS) {
-        if (trayMenu) {
-            DELETE_ICON(trayIconForums);
+        if (notifyFlag & TRAYNOTIFY_FORUMS_COMBINED) {
+            DELETE_OBJECT(trayIconForums);
 
-            trayActionForums = trayMenu->addAction(QIcon(":/images/konversation16.png"), "", this, SLOT(trayIconForumsClicked()));
+            trayActionForums = notifyMenu->addAction(QIcon(":/images/konversation16.png"), "", this, SLOT(trayIconForumsClicked()));
             trayActionForums->setVisible(false);
-            trayActionForums->setData(tr("Forums"));
+//            trayActionForums->setData(tr("Forums"));
         } else if (trayIconForums == NULL) {
             // Create the tray icon for forums
             trayIconForums = new QSystemTrayIcon(this);
@@ -496,16 +483,17 @@ void MainWindow::createNotifyIcons()
             connect(trayIconForums, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconForumsClicked(QSystemTrayIcon::ActivationReason)));
         }
     } else {
-        DELETE_ICON(trayIconForums);
+        DELETE_OBJECT(trayIconForums);
+        DELETE_OBJECT(trayActionForums);
     }
 
     if (notifyFlag & TRAYNOTIFY_CHANNELS) {
-        if (trayMenu) {
-            DELETE_ICON(trayIconChannels);
+        if (notifyFlag & TRAYNOTIFY_CHANNELS_COMBINED) {
+            DELETE_OBJECT(trayIconChannels);
 
-            trayActionChannels = trayMenu->addAction(QIcon(":/images/channels16.png"), "", this, SLOT(trayIconChannelsClicked()));
+            trayActionChannels = notifyMenu->addAction(QIcon(":/images/channels16.png"), "", this, SLOT(trayIconChannelsClicked()));
             trayActionChannels->setVisible(false);
-            trayActionChannels->setData(tr("Channels"));
+//            trayActionChannels->setData(tr("Channels"));
         } else if (trayIconChannels == NULL) {
             // Create the tray icon for channels
             trayIconChannels = new QSystemTrayIcon(this);
@@ -513,16 +501,17 @@ void MainWindow::createNotifyIcons()
             connect(trayIconChannels, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChannelsClicked(QSystemTrayIcon::ActivationReason)));
         }
     } else {
-        DELETE_ICON(trayIconChannels);
+        DELETE_OBJECT(trayIconChannels);
+        DELETE_OBJECT(trayActionChannels);
     }
 
     if (notifyFlag & TRAYNOTIFY_PRIVATECHAT) {
-        if (trayMenu) {
-            DELETE_ICON(trayIconChat);
+        if (notifyFlag & TRAYNOTIFY_PRIVATECHAT_COMBINED) {
+            DELETE_OBJECT(trayIconChat);
 
-            trayActionChat = trayMenu->addAction(QIcon(":/images/chat.png"), "", this, SLOT(trayIconChatClicked()));
+            trayActionChat = notifyMenu->addAction(QIcon(":/images/chat.png"), "", this, SLOT(trayIconChatClicked()));
             trayActionChat->setVisible(false);
-            trayActionChat->setData(tr("Chat"));
+//            trayActionChat->setData(tr("Chat"));
         } else if (trayIconChat == NULL) {
             // Create the tray icon for chat
             trayIconChat = new QSystemTrayIcon(this);
@@ -530,16 +519,17 @@ void MainWindow::createNotifyIcons()
             connect(trayIconChat, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChatClicked(QSystemTrayIcon::ActivationReason)));
         }
     } else {
-        DELETE_ICON(trayIconChat);
+        DELETE_OBJECT(trayIconChat);
+        DELETE_OBJECT(trayActionChat);
     }
 
     if (notifyFlag & TRAYNOTIFY_TRANSFERS) {
-        if (trayMenu) {
-            DELETE_ICON(trayIconTransfers);
+        if (notifyFlag & TRAYNOTIFY_TRANSFERS_COMBINED) {
+            DELETE_OBJECT(trayIconTransfers);
 
-            trayActionTransfers = trayMenu->addAction(QIcon(":/images/ktorrent32.png"), "", this, SLOT(trayIconTransfersClicked()));
+            trayActionTransfers = notifyMenu->addAction(QIcon(":/images/ktorrent32.png"), "", this, SLOT(trayIconTransfersClicked()));
             trayActionTransfers->setVisible(false);
-            trayActionTransfers->setData(tr("Transfers"));
+//            trayActionTransfers->setData(tr("Transfers"));
         } else if (trayIconTransfers == NULL) {
             // Create the tray icon for transfers
             trayIconTransfers = new QSystemTrayIcon(this);
@@ -547,7 +537,8 @@ void MainWindow::createNotifyIcons()
             connect(trayIconTransfers, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconTransfersClicked(QSystemTrayIcon::ActivationReason)));
         }
     } else {
-        DELETE_ICON(trayIconTransfers);
+        DELETE_OBJECT(trayIconTransfers);
+        DELETE_OBJECT(trayActionTransfers);
     }
 
     /* call once */
@@ -557,7 +548,7 @@ void MainWindow::createNotifyIcons()
     privateChatChanged(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
     // transfer
 
-#undef DELETE_ICON
+#undef DELETE_OBJECT
 }
 
 /*static*/ void MainWindow::installGroupChatNotifier()
@@ -614,6 +605,7 @@ void MainWindow::updateMessages()
     }
 
     if (trayActionMessages) {
+        trayActionMessages->setData(newInboxCount);
         if (newInboxCount) {
             if (newInboxCount > 1) {
                 trayActionMessages->setText(tr("%1 new messages").arg(newInboxCount));
@@ -655,6 +647,7 @@ void MainWindow::updateForums()
     }
 
     if (trayActionForums) {
+        trayActionForums->setData(newMessageCount);
         if (newMessageCount) {
             if (newMessageCount > 1) {
                 trayActionForums->setText(tr("%1 new messages").arg(newMessageCount));
@@ -696,6 +689,7 @@ void MainWindow::updateChannels(int type)
     }
 
     if (trayActionChannels) {
+        trayActionChannels->setData(newMessageCount);
         if (newMessageCount) {
             if (newMessageCount > 1) {
                 trayActionChannels->setText(tr("%1 new messages").arg(newMessageCount));
@@ -733,6 +727,7 @@ void MainWindow::updateTransfers(int count)
     }
 
     if (trayActionTransfers) {
+        trayActionTransfers->setData(count);
         if (count) {
             if (count > 1) {
                 trayActionTransfers->setText(tr("%1 completed downloads").arg(count));
@@ -750,27 +745,32 @@ void MainWindow::updateTransfers(int count)
 
 void MainWindow::updateTrayCombine()
 {
-    if (trayIconCombined) {
-        QMenu *trayMenu = trayIconCombined->contextMenu();
-        QList<QAction*> actions = trayMenu->actions();
+    notifyToolTip.clear();
 
-        bool visible = false;
-        QString toolTip;
+    bool visible = false;
 
+    if (notifyMenu) {
+        QList<QAction*> actions = notifyMenu->actions();
+        int count = 0;
         QList<QAction*>::iterator actionIt;
         for (actionIt = actions.begin(); actionIt != actions.end(); actionIt++) {
             if ((*actionIt)->isVisible()) {
                 visible = true;
-                if (toolTip.isEmpty() == false) {
-                    toolTip += "\r";
-                }
-                toolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
-            }
-        }
 
-        trayIconCombined->setToolTip(toolTip);
-        trayIconCombined->setVisible(visible);
+                count += (*actionIt)->data().toInt();
+// ToolTip is too long to show all services
+//                if (notifyToolTip.isEmpty() == false) {
+//                    notifyToolTip += "\r";
+//                }
+//                notifyToolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
+            }
+            if (visible) {
+                notifyToolTip = ((count == 1) ? tr("%1 new message") : tr("%1 new messages")).arg(count);
+            }
+
+        }
     }
+    notifyMenu->menuAction()->setVisible(visible);
 }
 
 void MainWindow::updateStatus()
@@ -803,22 +803,39 @@ void MainWindow::updateStatus()
         discstatus->update();
     }
 
+    QString trayIconResource;
+
     if (nOnlineCount == 0)
     {
-        trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+        trayIconResource = IMAGE_NOONLINE;
     }
     else if (nOnlineCount < 2)
     {
-        trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
+        trayIconResource = IMAGE_ONEONLINE;
     }
     else if (nOnlineCount < 3)
     {
-        trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
+        trayIconResource = IMAGE_TWOONLINE;
     }
     else
     {
-        trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+        trayIconResource = IMAGE_RETROSHARE;
     }
+
+    QIcon icon;
+    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
+        QPixmap trayImage(trayIconResource);
+        QPixmap overlayImage(":/images/rstray_star.png");
+
+        QPainter painter(&trayImage);
+        painter.drawPixmap(0, 0, overlayImage);
+
+        icon.addPixmap(trayImage);
+    } else {
+        icon = QIcon(trayIconResource);
+    }
+
+    trayIcon->setIcon(icon);
 
     QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
 
@@ -830,6 +847,10 @@ void MainWindow::updateStatus()
 
     tray += "\n" + nameAndLocation;
 
+    if (!notifyToolTip.isEmpty()) {
+        tray += "\n";
+        tray += notifyToolTip;
+    }
     trayIcon->setToolTip(tray);
 }
 
@@ -856,6 +877,7 @@ void MainWindow::privateChatChanged(int list, int type)
         }
 
         if (trayActionChat) {
+            trayActionChat->setData(chatCount);
             if (chatCount) {
                 if (chatCount > 1) {
                     trayActionChat->setText(tr("%1 new messages").arg(chatCount));
