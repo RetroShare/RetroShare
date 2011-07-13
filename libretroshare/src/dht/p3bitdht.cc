@@ -85,7 +85,7 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 	mRelay = NULL;
 
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
-	bdNodeId ownId;
+        mOwnRsId = id;
 
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::p3BitDht()" << std::endl;
@@ -99,12 +99,12 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 
 	/* setup ownId */
 	storeTranslation_locked(id);
-	lookupNodeId_locked(id, &ownId);
+	lookupNodeId_locked(id, &mOwnDhtId);
 
 
 #ifdef DEBUG_BITDHT
 	std::cerr << "Own NodeId: ";
-	bdStdPrintNodeId(std::cerr, &ownId);
+	bdStdPrintNodeId(std::cerr, &mOwnDhtId);
 	std::cerr << std::endl;
 #endif
 
@@ -117,7 +117,7 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	/* create dht */
-	mUdpBitDht = new UdpBitDht(udpstack, &ownId, dhtVersion, bootstrapfile, stdfns);
+	mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, stdfns);
 	udpstack->addReceiver(mUdpBitDht);
 
 	/* setup callback to here */

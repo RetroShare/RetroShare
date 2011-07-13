@@ -186,6 +186,20 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 		 * ideally don't pass to both peers... (XXX do later)
 		 */
 
+		{
+			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
+			if (id->id == mOwnDhtId)
+			{
+#ifdef DEBUG_BITDHT_COMMON
+				std::cerr << "p3BitDht::NodeCallback() Skipping own id";
+				bdStdPrintId(std::cerr, id);
+				std::cerr << std::endl;
+#endif
+				return 1;
+			}
+		}
+
+
 		if ((mProxyStunner) && (mProxyStunner->needStunPeers()))
 		{
 #ifdef DEBUG_BITDHT_COMMON

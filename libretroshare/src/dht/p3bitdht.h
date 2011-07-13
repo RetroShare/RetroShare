@@ -249,6 +249,9 @@ int 	calculateNodeId(const std::string pid, bdNodeId *id);
 
 	RsMutex dhtMtx;
 
+	std::string mOwnRsId;
+	bdNodeId    mOwnDhtId;
+
 	time_t mMinuteTS;
 
 	/* translation maps */
