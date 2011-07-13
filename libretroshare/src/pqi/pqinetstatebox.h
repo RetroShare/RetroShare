@@ -66,6 +66,7 @@ class pqiNetStateBox
 	bool mStunProxySet;
 	time_t mStunProxyTS;
 	bool mStunProxyStable;
+	bool mStunProxySemiStable;
 	struct sockaddr_in mStunProxyAddr;
 
 	bool mDhtSet;

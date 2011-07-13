@@ -31,10 +31,22 @@ void pqiNetStateBox::setAddressStunProxy(struct sockaddr_in *addr, bool stable)
 		(addr->sin_port != mStunProxyAddr.sin_port))
 
 	{
+
+		if (addr->sin_addr.s_addr == mStunProxyAddr.sin_addr.s_addr) 
+		{
+			if (mStunProxyStable != stable) 
+			{
+				mStunProxySemiStable = true;	
+			}
+		}
+		else
+		{
+			mStunProxySemiStable = false; // change of address - must trigger this again!
+		}
+
 		mStunProxySet = true;
 		mStunProxyStable = stable;
 		mStunProxyAddr = *addr;
-
 		mStatusOkay = false;
 	}
 	mStunProxyTS = time(NULL);
@@ -168,6 +180,7 @@ void pqiNetStateBox::reset()
 	//struct sockaddr_in mStunDhtAddr;
 	
 	mStunProxySet = false;
+	mStunProxySemiStable = false; 
 	time_t mStunProxyTS = 0;
 	bool mStunProxyStable = false;
 	//struct sockaddr_in mStunProxyAddr;
@@ -268,7 +281,30 @@ void pqiNetStateBox::determineNetworkState()
 			//mExtAddress = mStunDhtExtAddress;
 			//mExtAddrStable = false;
 
-			if (!mStunProxyStable)
+			if (mStunProxySemiStable)
+			{
+				/* I'm guessing this will be a common mode for modern NAT/Firewalls.
+				 * a DETERMINISTIC SYMMETRIC NAT.... This is likely to be the 
+				 * next iteration on the RESTRICTED CONE firewall described below.
+				 * If you Stun fast, it looks like a SYMMETRIC NAT, but if you let
+				 * the NAT timeout, you get back your original port so it looks like
+				 * a RESTRICTED CONE nat...
+				 *
+				 * This kind of NAT is passable, if you only attempt one connection at
+				 * a time, and are careful about it!
+				 *
+				 * NB: The StunDht port will never get this mode.
+				 * It has unsolicited traffic which triggers SYM mode
+				 *
+				 */
+
+				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNatTypeMode = RSNET_NATTYPE_DETERM_SYM;
+				mNatHoleMode = RSNET_NATHOLE_NONE;
+				mNetStateMode = RSNET_NETSTATE_WARNING_NATTED;
+
+			}
+			else if (!mStunProxyStable)
 			{
 				/* both unstable, Symmetric NAT, Firewalled, No UDP Hole */
 				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
@@ -316,7 +352,15 @@ void pqiNetStateBox::determineNetworkState()
 			//mExtAddrStable = true;
 
 			// Initial Fallback Guess at firewall state.
-			if (!mStunProxyStable)
+			if (mStunProxySemiStable)
+			{
+				/* must be a forwarded port/ext or something similar */
+				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNatTypeMode = RSNET_NATTYPE_DETERM_SYM;
+				mNatHoleMode = RSNET_NATHOLE_FORWARDED;
+				mNetStateMode = RSNET_NETSTATE_GOOD;
+			}
+			else if (!mStunProxyStable)
 			{
 				/* must be a forwarded port/ext or something similar */
 				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
@@ -523,7 +567,8 @@ void pqiNetStateBox::workoutNetworkMode()
 				mConnectModes |= RSNET_CONNECT_RELAY_UDP;
 
 				if ((mNatTypeMode == RSNET_NATTYPE_RESTRICTED_CONE) ||
-				    (mNatTypeMode == RSNET_NATTYPE_FULL_CONE))
+				    (mNatTypeMode == RSNET_NATTYPE_FULL_CONE) ||
+				    (mNatTypeMode == RSNET_NATTYPE_DETERM_SYM))
 				{
 					mConnectModes |= RSNET_CONNECT_PROXY_UDP;
 				}
@@ -572,6 +617,9 @@ std::string NetStateNatTypeString(uint32_t natType)
 		break;
 		case RSNET_NATTYPE_SYMMETRIC:
 			str = "SYMMETRIC NAT";
+		break;
+		case RSNET_NATTYPE_DETERM_SYM:       
+			str = "DETERMINISTIC SYM NAT";
 		break;
 		case RSNET_NATTYPE_RESTRICTED_CONE:
 			str = "RESTRICTED CONE NAT";

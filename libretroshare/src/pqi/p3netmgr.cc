@@ -1546,8 +1546,8 @@ void p3NetMgr::updateNetStateBox_temporal()
 
 }
 
-#define NET_STUNNER_PERIOD_FAST		(300)	// default of Stunner.
-#define NET_STUNNER_PERIOD_SLOW		(300) 	// 5 minutes.
+#define NET_STUNNER_PERIOD_FAST		(-1)	// default of Stunner.
+#define NET_STUNNER_PERIOD_SLOW		(180) 	// 3 minutes.
 
 void p3NetMgr::updateNatSetting()
 {

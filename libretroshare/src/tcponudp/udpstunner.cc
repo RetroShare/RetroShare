@@ -65,6 +65,9 @@ UdpStunner::UdpStunner(UdpPublisher *pub)
 	mSuccessRate = 0.0; 
 	mTargetStunPeriod = TOU_STUN_DEFAULT_TARGET_RATE;
 
+	mExclusiveMode = false;
+	mExclusiveModeTS = 0;
+
 	return;
 }
 
@@ -79,6 +82,76 @@ void	UdpStunner::SetAcceptLocalNet()
 }
 
 #endif
+
+
+int	UdpStunner::setExclusiveMode()		/* returns seconds since last send/recv */
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+#ifdef DEBUG_UDP_STUNNER_FILTER
+	std::cerr << "UdpStunner::setExclusiveMode();
+	std::cerr << std::endl;
+#endif
+	if (mExclusiveMode)
+	{
+#ifdef DEBUG_UDP_STUNNER_FILTER
+		std::cerr << "UdpStunner::setExclusiveMode() FAILED;
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	time_t now = time(NULL);
+	mExclusiveMode = true;
+	mExclusiveModeTS = now;
+
+	int lastcomms = mStunLastRecvAny;
+	if (mStunLastSendAny > lastcomms)
+	{
+		lastcomms = mStunLastSendAny;
+	}
+
+	int commsage = now - lastcomms;
+
+	/* cannot return 0, as this indicates error */
+	if (commsage == 0)
+	{
+		commsage = 1;
+	}
+#ifdef DEBUG_UDP_STUNNER_FILTER
+	std::cerr << "UdpStunner::setExclusiveMode() SUCCESS. last comms: " << commsage;
+	std::cerr << " ago";
+	std::cerr << std::endl;
+#endif
+
+	return commsage;
+}
+
+int	UdpStunner::cancelExclusiveMode()
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	if (!mExclusiveMode)
+	{
+#ifdef DEBUG_UDP_STUNNER_FILTER
+		std::cerr << "UdpStunner::cancelExclusiveMode() ERROR, not in exclusive Mode";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	time_t now = time(NULL);
+	mExclusiveMode = false;
+
+#ifdef DEBUG_UDP_STUNNER_FILTER
+	std::cerr << "UdpStunner::cancelExclusiveMode() Canceled. Was in ExclusiveMode for: " << now - mExclusiveModeTS;
+	std::cerr << " secs";
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
+
 
 void	UdpStunner::setTargetStunPeriod(int32_t sec_per_stun)
 {
@@ -238,12 +311,15 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 
 	if (eaddrKnown)
 	{
-		/* address timeout */
-		if (time(NULL) - eaddrTime > (mTargetStunPeriod * 2))
+		/* address timeout
+		 * no timeout if in exclusive mode
+		 */
+		if ((time(NULL) - eaddrTime > (mTargetStunPeriod * 2)) && (!mExclusiveMode))
 		{
 			std::cerr << "UdpStunner::externalAddr() eaddr expired";
 			std::cerr << std::endl;
 
+			eaddrKnown = false;
 			return false;
 		}
 
@@ -550,13 +626,22 @@ bool    UdpStunner::checkStunDesired()
 		return false; /* all good */
 	  }
 
+	  if (mExclusiveMode)
+	  {
+		return false; /* no pings in exclusive mode */
+	  }
+
 	  if (!eaddrKnown)
 	  {
+		/* check properly! (this will limit it to two successful stuns) */
+		if (!locked_checkExternalAddress())
+		{
 #ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunDesired() YES, we don't have extAddr Yet";
-		std::cerr << std::endl;
+			std::cerr << "UdpStunner::checkStunDesired() YES, we don't have extAddr Yet";
+			std::cerr << std::endl;
 #endif
-		return true; /* want our external address */
+			return true; /* want our external address */
+		}
 	}
 
 	  /* check if we need to send one now */
@@ -567,8 +652,11 @@ bool    UdpStunner::checkStunDesired()
 	   * if we have 100% success rate, then we can delay until exactly TARGET RATE.
 	   * if we have 0% success rate, then try at double TARGET RATE.
 	   *
+	   * generalised to a rate_scale parameter below...
 	   */
-	  double stunPeriod = (mTargetStunPeriod / 2.0) * (1.0 + mSuccessRate);
+
+#define RATE_SCALE (3.0)
+	  double stunPeriod = (mTargetStunPeriod / (RATE_SCALE)) * (1.0 + mSuccessRate * (RATE_SCALE - 1.0));
 	  time_t nextStun = mStunLastRecvResp + (int) stunPeriod;
 
 #ifdef DEBUG_UDP_STUNNER
@@ -735,7 +823,10 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	locked_printStunList();
 #endif
 
-	locked_checkExternalAddress();
+	if (!mExclusiveMode)
+	{
+		locked_checkExternalAddress();
+	}
 
 	return found;
 }

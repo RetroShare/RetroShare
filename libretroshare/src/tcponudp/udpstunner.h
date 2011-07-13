@@ -83,6 +83,10 @@ virtual ~UdpStunner() { return; }
 	void SetAcceptLocalNet();
 #endif
 
+int	setExclusiveMode();		/* returns seconds since last send/recv */
+int	cancelExclusiveMode();
+
+
 void 	setTargetStunPeriod(int32_t sec_per_stun);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
 bool    getStunPeer(int idx, std::string &id,
@@ -141,6 +145,8 @@ bool    locked_checkExternalAddress();
         uint32_t mTargetStunPeriod;
 	double mSuccessRate;
 
+	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
+	time_t mExclusiveModeTS;
 };
 
 	/* generic stun functions */

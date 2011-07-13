@@ -30,6 +30,7 @@
 #include <sstream>
 
 #define FAILED_WAIT_TIME	(300) //(1800) // 30 minutes.
+#define TCP_WAIT_TIME		(60)   // 1 minutes.
 #define DIRECT_WAIT_TIME	(60)   // 1 minutes.
 #define PROXY_WAIT_TIME		(60)   // 1 minutes.
 #define RELAY_WAIT_TIME		(60)   // 1 minutes.
@@ -64,6 +65,10 @@ std::string NetStateAsString(uint32_t netstate)
 			str = "StableNat";
 			break;
 			
+		case CSB_NETSTATE_EXCLUSIVENAT:
+			str = "ExclusiveNat";
+			break;
+			
 		case CSB_NETSTATE_FIREWALLED:
 			str = "Firewalled";
 			break;
@@ -81,6 +86,10 @@ std::string StateAsString(uint32_t state)
 	{
 		case CSB_START:
 			str = "Start";
+			break;
+
+		case CSB_TCP_WAIT:
+			str = "TCP Wait";
 			break;
 			
 		case CSB_DIRECT_ATTEMPT:
@@ -210,6 +219,10 @@ uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nattype)
 		{
 			connNet = CSB_NETSTATE_STABLENAT;
 		}
+		else if (nattype == RSNET_NATTYPE_DETERM_SYM)
+		{
+			connNet = CSB_NETSTATE_EXCLUSIVENAT; 
+		}
 		else
 		{
 			connNet = CSB_NETSTATE_FIREWALLED;
@@ -278,6 +291,7 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 
 	switch(mState)
 	{
+
 		case CSB_DIRECT_ATTEMPT:
 		{
 			errorMsg(std::cerr, "mState == DIRECT_ATTEMPT", 0);
@@ -302,7 +316,7 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 		case CSB_FAILED_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < FAILED_WAIT_TIME)
+			if (now - mStateTS < FAILED_WAIT_TIME) 
 			{
 				/* same state */
 				retval = CSB_ACTION_WAIT;
@@ -325,13 +339,32 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 		case CSB_START:
 		{
 			/* starting up the connection */
-			mState = CSB_DIRECT_ATTEMPT;
-			retval = CSB_ACTION_DIRECT_CONN | CSB_ACTION_DHT_PORT;
+			mState = CSB_TCP_WAIT;
+			retval = CSB_ACTION_TCP_CONN;
 			mStateTS = now;
 			mNoAttempts = 0;
 
 		}
 			break;
+		case CSB_TCP_WAIT:
+		{
+			/* if too soon */
+			if (now - mStateTS < TCP_WAIT_TIME)
+			{
+				/* same state */
+				retval = CSB_ACTION_WAIT;
+			}
+			else
+			{
+				/* try again */
+				mState = CSB_DIRECT_ATTEMPT;
+				retval = CSB_ACTION_DIRECT_CONN | CSB_ACTION_DHT_PORT;
+				mStateTS = now;
+				mNoAttempts = 0;
+			}
+		}
+			break;
+
 		case CSB_DIRECT_WAIT:
 		{
 			/* if too soon */
@@ -430,23 +463,42 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 		}	/* FALLTHROUGH TO START CASE */
 		case CSB_START:
 		{
-
 			/* starting up the connection */
-			if (mState != CSB_NETSTATE_FIREWALLED)
+			mState = CSB_TCP_WAIT;
+			retval = CSB_ACTION_WAIT;  /* NO POINT TRYING A TCP_CONN */
+			mStateTS = now;
+			mNoAttempts = 0;
+
+		}
+			break;
+		case CSB_TCP_WAIT:
+		{
+			/* if too soon */
+			if (now - mStateTS < TCP_WAIT_TIME)
 			{
-				stateMsg(std::cerr, "not Firewalled => PROXY_ATTEMPT", 0);
-				mState = CSB_PROXY_ATTEMPT;
-				retval = CSB_ACTION_PROXY_CONN | proxyPortMode;
+				/* same state */
+				retval = CSB_ACTION_WAIT;
 			}
 			else
 			{
-				stateMsg(std::cerr, "Firewalled => RELAY_ATTEMPT", 0);
-				mState = CSB_RELAY_ATTEMPT;
-				retval = CSB_ACTION_RELAY_CONN | CSB_ACTION_DHT_PORT;
-			}
+				/* starting up the connection */
+				if (mState != CSB_NETSTATE_FIREWALLED)
+				{
+					stateMsg(std::cerr, "not Firewalled => PROXY_ATTEMPT", 0);
+					mState = CSB_PROXY_ATTEMPT;
+					retval = CSB_ACTION_PROXY_CONN | proxyPortMode;
+				}
+				else
+				{
+					stateMsg(std::cerr, "Firewalled => RELAY_ATTEMPT", 0);
+					mState = CSB_RELAY_ATTEMPT;
+					retval = CSB_ACTION_RELAY_CONN | CSB_ACTION_DHT_PORT;
 
-			mStateTS = now;
-			mNoAttempts = 0;
+				}
+
+				mStateTS = now;
+				mNoAttempts = 0;
+			}
 
 		}
 			break;
