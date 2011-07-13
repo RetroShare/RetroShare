@@ -101,9 +101,13 @@ bool bdQuery::result(std::list<bdId> &answer)
 	sit = mClosest.begin();
 	eit = mClosest.upper_bound(mLimit);
 	int i = 0;
-	for(; sit != eit; sit++, i++)
+	for(; sit != eit; sit++)
 	{
-		answer.push_back(sit->second.mPeerId);
+		if ((sit->second).mLastRecvTime != 0)
+		{
+			answer.push_back(sit->second.mPeerId);
+			i++;
+		}
 	}
 	return (i > 0);
 }
@@ -252,7 +256,8 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 	/* check if we found the node */
 	if (mClosest.size() > 0)
 	{
-		if ((mClosest.begin()->second).mPeerId.id == mId)
+		if (((mClosest.begin()->second).mPeerId.id == mId) && 
+			((mClosest.begin()->second).mLastRecvTime != 0))
 		{
 			mState = BITDHT_QUERY_SUCCESS;
 		}

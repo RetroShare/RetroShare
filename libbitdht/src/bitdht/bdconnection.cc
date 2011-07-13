@@ -1423,6 +1423,8 @@ void bdConnectManager::iterateConnections()
 			continue;
 		}
 
+		/* Can I add a Quick Kill for connections that just haven't worked? TODO */
+
 		if ((it->second.mState == BITDHT_CONNECTION_WAITING_ACK) &&
 			(now - it->second.mLastStart > BD_CONNECTION_START_RETRY_PERIOD))
 		{

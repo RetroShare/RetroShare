@@ -54,9 +54,9 @@ class bdNodePublisher;
 #define BITDHT_CONNECTION_COMPLETED		5
 
 
-#define BD_CONNECTION_START_RETRY_PERIOD	5  // Should only take a couple of seconds to get reply.
+#define BD_CONNECTION_START_RETRY_PERIOD	3  // Should only take a couple of seconds to get reply.
 #define BD_CONNECTION_START_MAX_RETRY		3
-#define BD_CONNECTION_MAX_TIMEOUT		45
+#define BD_CONNECTION_MAX_TIMEOUT		20 /* should be quick */
 
 
 

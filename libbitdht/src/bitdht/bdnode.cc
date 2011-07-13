@@ -465,7 +465,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 	mConnMgr->updatePotentialConnectionProxy(id, peerflags);
 
 
-//#define DISPLAY_BITDHTNODES	1
+#define DISPLAY_BITDHTNODES	1
 #ifdef DISPLAY_BITDHTNODES
 	/* TEMP to extract IDS for BloomFilter */
 	if (peerflags & BITDHT_PEER_STATUS_DHT_ENGINE)
