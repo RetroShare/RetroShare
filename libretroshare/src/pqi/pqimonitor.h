@@ -65,14 +65,25 @@ const uint32_t RS_STUN_FRIEND 		= 0x0020;
 const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 
 
-
+// for the old p3dhtmgr - amazed it still compiles ;)
 #define RS_CONNECT_PASSIVE 	1
 #define RS_CONNECT_ACTIVE 	2
 
-#define RS_CB_DHT 		1   /* from dht */
-#define RS_CB_DISC 		2   /* from peers */
-#define RS_CB_PERSON 		3   /* from connection */
-#define RS_CB_PROXY 		4   /* via proxy */
+#define RS_CB_DHT 		0x0001   /* from dht */
+#define RS_CB_DISC 		0x0002   /* from peers */
+#define RS_CB_PERSON 		0x0003   /* from connection */
+#define RS_CB_PROXY 		0x0004   /* via proxy */
+
+
+#define RS_CB_FLAG_MASK_MODE		0x00ff
+#define RS_CB_FLAG_MASK_CONN		0x00ff
+
+#define RS_CB_FLAG_MODE_TCP		0x0001
+#define RS_CB_FLAG_MODE_UDP		0x0002
+
+#define RS_CB_FLAG_CONN_UNSPEC		0x0000
+#define RS_CB_FLAG_CONN_PASSIVE		0x0100
+#define RS_CB_FLAG_CONN_ACTIVE		0x0200
 
 
 class pqipeer
@@ -137,8 +148,8 @@ virtual ~pqiConnectCb() { return; }
 virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
-virtual void    peerConnectRequest(std::string id,              
-                        struct sockaddr_in raddr, uint32_t source) = 0;
+virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,  
+                        uint32_t source, uint32_t flags, uint32_t delay) = 0;
 
 //virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
 };

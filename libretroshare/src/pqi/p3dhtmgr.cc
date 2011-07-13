@@ -942,9 +942,9 @@ int p3DhtMgr::checkNotifyDHT()
 
 	/* feedback to say we started it! */
 #ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
-	mConnCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
+	mConnCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT, 0, 0);
 #else
-	mConnCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
+	mConnCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT, 0, 0);
 #endif
 
 	return DHT_MIN_PERIOD; 

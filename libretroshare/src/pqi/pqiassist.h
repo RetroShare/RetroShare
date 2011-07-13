@@ -118,6 +118,8 @@ virtual int	tick() = 0; /* for internal accounting */
 virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
 
+virtual void ConnectionFeedback(std::string pid, int mode) = 0;
+
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 
 			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 

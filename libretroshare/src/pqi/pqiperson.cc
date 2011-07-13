@@ -378,7 +378,7 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout)
+int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags)
 {
 #ifdef PERSON_DEBUG
 	{
@@ -390,6 +390,7 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	  out << " delay: " << delay;
 	  out << " period: " << period;
 	  out << " timeout: " << timeout;
+	  out << " flags: " << flags;
 	  out << std::endl;
 	  std::cerr << out.str();
 	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
@@ -416,6 +417,9 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 		return 0;
 	}
 
+	std::cerr << "pqiperson::connect() WARNING, resetting for new connection attempt" << std::endl;
+#ifdef PERSON_DEBUG
+#endif
 	/* set the parameters */
 	(it->second)->reset();
 
@@ -425,6 +429,7 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
 
 	(it->second)->connect(raddr);	
 		

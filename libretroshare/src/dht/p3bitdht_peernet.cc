@@ -1357,6 +1357,10 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 /* So initiateConnection has to call out to other bits of RS.
  * critical information is:
  *    Peer RsId, Peer Address, Connect Mode (includes Proxy/OrNot).
+
+ *
+ * What do we need: ACTIVE / PASSIVE / UNSPEC
+ * + Min Delay Time, 
  */
 
  
@@ -1758,6 +1762,36 @@ void p3BitDht::Feedback_ConnectionClosed(std::string pid)
 }
 
 
+
+
+void p3BitDht::ConnectionFeedback(std::string pid, int mode)
+{
+	std::cerr << "p3BitDht::ConnectionFeedback() peer: " << pid;
+	std::cerr << " mode: " << mode;
+	std::cerr << std::endl;
+
+	switch(mode)
+	{
+		case NETMGR_DHT_FEEDBACK_CONNECTED:
+			std::cerr << "p3BitDht::ConnectionFeedback() HAVE CONNECTED (tcp?/udp) to peer: " << pid;
+			std::cerr << std::endl;
+
+			Feedback_Connected(pid);
+			break;
+
+		case NETMGR_DHT_FEEDBACK_CONN_FAILED:
+			std::cerr << "p3BitDht::ConnectionFeedback() UDP CONNECTION FAILED to peer: " << pid;
+			std::cerr << std::endl;
+			Feedback_ConnectionFailed(pid);
+			break;
+
+		case NETMGR_DHT_FEEDBACK_CONN_CLOSED:
+			std::cerr << "p3BitDht::ConnectionFeedback() CONNECTION (tcp?/udp) CLOSED to peer: " << pid;
+			std::cerr << std::endl;
+			Feedback_ConnectionClosed(pid);
+			break;
+	}
+}
 
 
 

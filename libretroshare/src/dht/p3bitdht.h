@@ -169,6 +169,9 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
 
+	/* feedback on success failure of Connections */
+virtual void 	ConnectionFeedback(std::string pid, int state);
+
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 
 			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
@@ -181,12 +184,16 @@ virtual bool 	getExternalInterface(struct sockaddr_in &raddr,
 	 * hould all be removed from NetAssist?
 	 */
 
+
+
 	/* pqiNetAssistConnect - external interface functions */
 
 
 /***********************************************************************************************
  ****************************** Connections (p3bitdht_peernet.cc) ******************************
 ************************************************************************************************/
+	/* Feedback from RS Upper Layers */
+//virtual void 	ConnectionFeedback(std::string pid, int state);
 
 	/* Callback functions - from bitdht */
 int 	NodeCallback(const bdId *id, uint32_t peerflags);
@@ -212,6 +219,7 @@ void 	Feedback_Connected(std::string pid);
 void 	Feedback_ConnectionFailed(std::string pid);
 void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
 void 	Feedback_ConnectionClosed(std::string pid);
+
 
 /***********************************************************************************************
  ************************** Internal Accounting (p3bitdht_peers.cc) ****************************

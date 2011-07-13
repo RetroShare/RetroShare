@@ -88,6 +88,8 @@ pqissludp::~pqissludp()
 int pqissludp::reset()
 {
 	/* reset for next time.*/
+	mConnectFlags = 0;
+	mConnectPeriod = PQI_SSLUDP_DEF_CONN_PERIOD;
 	return pqissl::reset();
 }
 
@@ -131,13 +133,24 @@ int 	pqissludp::Initiate_Connection()
 	  "pqissludp::Initiate_Connection() Attempting Outgoing Connection....");
 
 	/* decide if we're active or passive */
-	if (PeerId() < mLinkMgr->getOwnId())
+	if (mConnectFlags & RS_CB_FLAG_CONN_ACTIVE)
 	{
 		sslmode = PQISSL_ACTIVE;
 	}
-	else
+	else if (mConnectFlags & RS_CB_FLAG_CONN_PASSIVE)
 	{
 		sslmode = PQISSL_PASSIVE;
+	}
+	else // likely UNSPEC - use old method to decide.
+	{
+		if (PeerId() < mLinkMgr->getOwnId())
+		{
+			sslmode = PQISSL_ACTIVE;
+		}
+		else
+		{
+			sslmode = PQISSL_PASSIVE;
+		}
 	}
 
 	if (waiting != WAITING_DELAY)
@@ -417,6 +430,15 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectPeriod = value;
+		return true;
+	}
+	else if (type == NET_PARAM_CONNECT_FLAGS)
+	{
+		std::ostringstream out;
+		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " FLAGS: " << value;
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
+		mConnectFlags = value;
 		return true;
 	}
 	return pqissl::connect_parameter(type, value);

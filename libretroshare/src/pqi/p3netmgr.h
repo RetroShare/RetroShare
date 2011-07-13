@@ -93,6 +93,9 @@ class p3BitDht;
 class UdpRelayReceiver;
 
 
+#define NETMGR_DHT_FEEDBACK_CONNECTED	0x0001
+#define NETMGR_DHT_FEEDBACK_CONN_FAILED 0x0002
+#define NETMGR_DHT_FEEDBACK_CONN_CLOSED	0x0003
 
 /**********
  * p3NetMgr Interface....
@@ -115,6 +118,7 @@ virtual bool 	setVisState(uint32_t visState) = 0;
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(std::string id, bool on) = 0;
+virtual bool netAssistStatusUpdate(std::string id, int mode) = 0;
 
 	/* Get Network State */
 virtual uint32_t getNetStateMode() = 0;
@@ -168,6 +172,7 @@ virtual bool 	setVisState(uint32_t visState);
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(std::string id, bool on);
+virtual bool netAssistStatusUpdate(std::string id, int mode);
 
 	/* Get Network State */
 virtual uint32_t getNetStateMode();

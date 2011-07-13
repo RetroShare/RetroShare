@@ -492,10 +492,12 @@ int     pqipersongrp::connectPeer(std::string id
 	std::cerr << std::endl;
 #endif
 
-  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-        if (id == mLinkMgr->getOwnId()) {
+  { 
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+        if (id == mLinkMgr->getOwnId()) 
+	{
+            std::cerr << "pqipersongrp::connectPeer() ERROR Failed, connecting to own id." << std::endl;
             #ifdef PGRP_DEBUG
-            std::cerr << "pqipersongrp::connectPeer() Failed, connecting to own id." << std::endl;
             #endif
             return 0;
         }
@@ -546,8 +548,9 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t period;
 	uint32_t timeout;
 	uint32_t type;
+	uint32_t flags;
 
-	if (!mLinkMgr->connectAttempt(id, addr, delay, period, type))
+	if (!mLinkMgr->connectAttempt(id, addr, delay, period, type, flags))
 	{
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
@@ -562,6 +565,7 @@ int     pqipersongrp::connectPeer(std::string id
 	std::cerr << " delay: " << delay;
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
+	std::cerr << " flags: " << flags;
 	std::cerr << std::endl;
 #endif
 
@@ -603,7 +607,7 @@ int     pqipersongrp::connectPeer(std::string id
 		return 0;
 	}
 
-	p->connect(ptype, addr, delay, period, timeout);
+	p->connect(ptype, addr, delay, period, timeout, flags);
 
   } /* UNLOCKED */
 

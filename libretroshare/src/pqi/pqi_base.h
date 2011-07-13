@@ -229,6 +229,7 @@ static const int NET_CONNECT_FAILED       = 5;
 static const uint32_t NET_PARAM_CONNECT_DELAY   = 1;
 static const uint32_t NET_PARAM_CONNECT_PERIOD  = 2;
 static const uint32_t NET_PARAM_CONNECT_TIMEOUT = 3;
+static const uint32_t NET_PARAM_CONNECT_FLAGS    = 4;
 
 
 /*!

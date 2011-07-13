@@ -1306,6 +1306,24 @@ bool p3NetMgrIMPL::netAssistFriend(std::string id, bool on)
 }
 
 
+
+bool p3NetMgrIMPL::netAssistStatusUpdate(std::string id, int state)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+
+#ifdef NETMGR_DEBUG
+	std::cerr << "p3NetMgrIMPL::netAssistFriend(" << id << ", " << on << ")";
+	std::cerr << std::endl;
+#endif
+
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->ConnectionFeedback(id, state);
+	}
+	return true;
+}
+
+
 bool p3NetMgrIMPL::netAssistSetAddress( struct sockaddr_in &laddr,
 					struct sockaddr_in &eaddr,
 					uint32_t mode)

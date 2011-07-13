@@ -99,6 +99,7 @@ private:
 	long listen_checktime;
 
 	uint32_t mConnectPeriod;
+	uint32_t mConnectFlags;
 };
 
 #endif // MRK_PQI_SSL_UDP_HEADER
