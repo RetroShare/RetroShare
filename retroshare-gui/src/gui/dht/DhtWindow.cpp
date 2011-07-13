@@ -89,6 +89,7 @@ DhtWindow::DhtWindow(QWidget *parent) :
 DhtWindow::~DhtWindow()
 {
     delete ui;
+    mInstance = NULL;
 }
 
 void DhtWindow::changeEvent(QEvent *e)
@@ -193,6 +194,9 @@ void DhtWindow::updateNetStatus()
 			break;
 		case RSNET_NATTYPE_SYMMETRIC:
 			label->setText("SYMMETRIC NAT");
+			break;
+		case RSNET_NATTYPE_DETERM_SYM:
+			label->setText("DETERMINISTIC SYM NAT");
 			break;
 		case RSNET_NATTYPE_RESTRICTED_CONE:
 			label->setText("RESTRICTED CONE NAT");
