@@ -203,7 +203,7 @@ virtual bool	getDHTEnabled();
 /* Extra IMPL Functions (used by p3PeerMgr, p3NetMgr + Setup) */
 /************************************************************************************************/
 
-void	setManagers(p3PeerMgrIMPL *peerMgr, p3LinkMgrIMPL *linkMgr);
+void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
 void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
 
 void 	tick();
@@ -307,8 +307,8 @@ private:
 
         std::list<pqiNetListener *> mNetListeners;
 
-	p3PeerMgrIMPL *mPeerMgr; 
-	p3LinkMgrIMPL *mLinkMgr; 
+	p3PeerMgr *mPeerMgr; 
+	p3LinkMgr *mLinkMgr; 
 
 	//p3BitDht   *mBitDht;
 	pqiAddrAssist *mDhtStunner;

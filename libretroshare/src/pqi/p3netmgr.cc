@@ -142,7 +142,7 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 	return;
 }
 
-void p3NetMgrIMPL::setManagers(p3PeerMgrIMPL *peerMgr, p3LinkMgrIMPL *linkMgr)
+void p3NetMgrIMPL::setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr)
 {
 	mPeerMgr = peerMgr;
 	mLinkMgr = linkMgr;
