@@ -111,82 +111,173 @@ std::string textPeerState(peerState &state);
 class p3LinkMgr;
 class p3NetMgr;
 
+class p3LinkMgrIMPL;
+class p3NetMgrIMPL;
 
-class p3PeerMgr: public p3Config
+class p3PeerMgr
 {
 	public:
 
-        p3PeerMgr();
+        p3PeerMgr() { return; }
+virtual ~p3PeerMgr() { return; }
 
-void	setManagers(p3LinkMgr *linkMgr, p3NetMgr  *netMgr);
+virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0) = 0;
+virtual bool	removeFriend(const std::string &ssl_id) = 0;
 
+virtual bool	isFriend(const std::string &ssl_id) = 0;
+
+
+
+	/******************** Groups **********************/
+	/* This is solely used by p3peers - makes sense   */
+
+virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
+virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    removeGroup(const std::string &groupId) = 0;
+virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
+
+
+	/**************** Set Net Info ****************/
+	/*
+	 * These functions are used by:
+	 * 1) p3linkmgr 
+	 * 2) p3peers - reasonable
+	 * 3) p3disc  - reasonable
+	 */
+
+virtual bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr) = 0;
+virtual bool 	setExtAddress(const std::string &id, struct sockaddr_in addr) = 0;
+virtual bool    setDynDNS(const std::string &id, const std::string &dyndns) = 0;
+
+virtual bool 	setNetworkMode(const std::string &id, uint32_t netMode) = 0;
+virtual bool 	setVisState(const std::string &id, uint32_t visState) = 0;
+
+virtual bool    setLocation(const std::string &pid, const std::string &location) = 0;
+
+virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr) = 0;
+virtual bool    updateLastContact(const std::string& id) = 0;
+virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs) = 0;
+
+	/**************** Net Status Info ****************/
+	/*
+	 * MUST RATIONALISE THE DATA FROM THESE FUNCTIONS
+	 * These functions are used by:
+	 * 1) p3face-config ... to remove!
+	 * 2) p3peers - reasonable
+	 * 3) p3disc  - reasonable
+	 */
+
+virtual bool	getOwnNetStatus(peerState &state) = 0;
+virtual bool	getFriendNetStatus(const std::string &id, peerState &state) = 0;
+virtual bool	getOthersNetStatus(const std::string &id, peerState &state) = 0;
+
+
+        /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+
+		// Single Use Function... shouldn't be here. used by p3serverconfig.cc
+virtual bool 	haveOnceConnected() = 0;
+
+
+/*************************************************************************************************/
+/*************************************************************************************************/
+/*************************************************************************************************/
+/*************************************************************************************************/
+
+
+};
+
+
+class p3PeerMgrIMPL: public p3PeerMgr, public p3Config
+{
+	public:
+
+/************************************************************************************************/
+/* EXTERNAL INTERFACE */
+/************************************************************************************************/
+
+virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
+virtual bool	removeFriend(const std::string &ssl_id);
+
+virtual bool	isFriend(const std::string &ssl_id);
+
+
+	/******************** Groups **********************/
+	/* This is solely used by p3peers - makes sense   */
+
+virtual bool    addGroup(RsGroupInfo &groupInfo);
+virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
+virtual bool    removeGroup(const std::string &groupId);
+virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
+virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
+
+
+	/**************** Set Net Info ****************/
+	/*
+	 * These functions are used by:
+	 * 1) p3linkmgr 
+	 * 2) p3peers - reasonable
+	 * 3) p3disc  - reasonable
+	 */
+
+virtual bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
+virtual bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
+virtual bool    setDynDNS(const std::string &id, const std::string &dyndns);
+
+virtual bool 	setNetworkMode(const std::string &id, uint32_t netMode);
+virtual bool 	setVisState(const std::string &id, uint32_t visState);
+
+virtual bool    setLocation(const std::string &pid, const std::string &location);
+
+virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr);
+virtual bool    updateLastContact(const std::string& id);
+virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
+
+	/**************** Net Status Info ****************/
+	/*
+	 * MUST RATIONALISE THE DATA FROM THESE FUNCTIONS
+	 * These functions are used by:
+	 * 1) p3face-config ... to remove!
+	 * 2) p3peers - reasonable
+	 * 3) p3disc  - reasonable
+	 */
+
+virtual bool	getOwnNetStatus(peerState &state);
+virtual bool	getFriendNetStatus(const std::string &id, peerState &state);
+virtual bool	getOthersNetStatus(const std::string &id, peerState &state);
+
+
+        /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+
+		// Single Use Function... shouldn't be here. used by p3serverconfig.cc
+virtual bool 	haveOnceConnected();
+
+
+/************************************************************************************************/
+/* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */
+/************************************************************************************************/
+
+        p3PeerMgrIMPL();
+
+void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL  *netMgr);
 
 void 	tick();
 
-	/*************** External Control ****************/
-bool	shutdown(); /* blocking shutdown call */
-
+const std::string getOwnId();
 void 	setOwnNetworkMode(uint32_t netMode);
 void 	setOwnVisState(uint32_t visState);
-
-bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
-bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
-bool    setDynDNS(const std::string &id, const std::string &dyndns);
-
-bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
-bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr);
-bool    updateLastContact(const std::string& id);
-
-bool 	setNetworkMode(const std::string &id, uint32_t netMode);
-bool 	setVisState(const std::string &id, uint32_t visState);
-
-bool    setLocation(const std::string &pid, const std::string &location);//location is shown in the gui to differentiate ssl certs
-
-	/* add/remove friends */
-bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
-
-bool	removeFriend(const std::string &ssl_id);
-bool	addNeighbour(const std::string&);
-void    printPeerLists(std::ostream &out);
-
-	/*************** External Control ****************/
-
-	/* access to network details (called through Monitor) */
-const std::string getOwnId();
-bool	getOwnNetStatus(peerState &state);
-
-bool	isFriend(const std::string &ssl_id);
-bool	isOnline(const std::string &ssl_id);
-bool	getFriendNetStatus(const std::string &id, peerState &state);
-bool	getOthersNetStatus(const std::string &id, peerState &state);
-
-void	getOnlineList(std::list<std::string> &ssl_peers);
-void	getFriendList(std::list<std::string> &ssl_peers);
-//void	getOthersList(std::list<std::string> &peers); /deprecated
-bool    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool ssl);
 
 int 	getConnectAddresses(const std::string &id, 
 				struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
 				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
-bool 	haveOnceConnected();
-
-	/**************** handle monitors *****************/
-void	addMonitor(pqiMonitor *mon);
-void	removeMonitor(pqiMonitor *mon);
-
-	/******************** Groups **********************/
-bool    addGroup(RsGroupInfo &groupInfo);
-bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
-bool    removeGroup(const std::string &groupId);
-bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
-bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
-bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
-
-
 protected:
 	/* Internal Functions */
+void    printPeerLists(std::ostream &out);
 
 	protected:
 /*****************************************************************/
@@ -200,8 +291,8 @@ protected:
 
 	/* other important managers */
 
-	p3LinkMgr *mLinkMgr;
-	p3NetMgr  *mNetMgr;
+	p3LinkMgrIMPL *mLinkMgr;
+	p3NetMgrIMPL  *mNetMgr;
 
 
 private:

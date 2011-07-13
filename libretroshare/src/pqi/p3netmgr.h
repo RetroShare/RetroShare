@@ -84,23 +84,128 @@ class pqiNetStatus
 class p3PeerMgr;
 class p3LinkMgr;
 
+class p3PeerMgrIMPL;
+class p3LinkMgrIMPL;
+
 class rsUdpStack;
 class UdpStunner;
 class p3BitDht;
 class UdpRelayReceiver;
 
 
+
+/**********
+ * p3NetMgr Interface....
+ * This allows a drop-in replacement for testing.
+ */
+
 class p3NetMgr
 {
 	public:
 
-        p3NetMgr();
+        p3NetMgr() { return; }
+virtual ~p3NetMgr() { return; }
 
-void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
+
+	/*************** External Control ****************/
+
+	// Setup Network State.
+virtual bool 	setNetworkMode(uint32_t netMode) = 0;
+virtual bool 	setVisState(uint32_t visState) = 0;
+
+	// Switch DHT On/Off.
+virtual bool netAssistFriend(std::string id, bool on) = 0;
+
+	/* Get Network State */
+virtual uint32_t getNetStateMode() = 0;
+virtual uint32_t getNetworkMode() = 0;
+virtual uint32_t getNatTypeMode() = 0;
+virtual uint32_t getNatHoleMode() = 0;
+virtual uint32_t getConnectModes() = 0;
+
+	/* Shut It Down! */
+virtual bool	shutdown() = 0; /* blocking shutdown call */
+
+        /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+
+	// THESE SHOULD BE MOVED TO p3PeerMgr (as it controls the config).
+	// The functional object should be transformed into a NetAssistFirewall object.
+	// ONLY USED by p3peers.cc & p3peermgr.cc
+virtual bool  getIPServersEnabled() = 0;
+virtual void  setIPServersEnabled(bool b)  = 0;
+virtual void  getIPServersList(std::list<std::string>& ip_servers)  = 0;
+
+	// ONLY USED by p3face-config.cc WHICH WILL BE REMOVED.
+virtual void 	getNetStatus(pqiNetStatus &status) = 0;
+virtual bool    getUPnPState() = 0;
+virtual bool	getUPnPEnabled() = 0;
+virtual bool	getDHTEnabled() = 0;
+
+
+/************************************************************************************************/
+/************************************************************************************************/
+/************************************************************************************************/
+/************************************************************************************************/
+
+};
+
+
+class p3NetMgrIMPL: public p3NetMgr
+{
+	public:
+
+        p3NetMgrIMPL();
+
+/************************************************************************************************/
+/* EXTERNAL INTERFACE */
+/************************************************************************************************/
+
+	/*************** External Control ****************/
+
+	// Setup Network State.
+virtual bool 	setNetworkMode(uint32_t netMode);
+virtual bool 	setVisState(uint32_t visState);
+
+	// Switch DHT On/Off.
+virtual bool netAssistFriend(std::string id, bool on);
+
+	/* Get Network State */
+virtual uint32_t getNetStateMode();
+virtual uint32_t getNetworkMode();
+virtual uint32_t getNatTypeMode();
+virtual uint32_t getNatHoleMode();
+virtual uint32_t getConnectModes();
+
+	/* Shut It Down! */
+virtual bool	shutdown(); /* blocking shutdown call */
+
+        /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+
+	// THESE SHOULD BE MOVED TO p3PeerMgr (as it controls the config).
+	// The functional object should be transformed into a NetAssistFirewall object.
+	// ONLY USED by p3peers.cc & p3peermgr.cc
+virtual bool  getIPServersEnabled();
+virtual void  setIPServersEnabled(bool b);
+virtual void  getIPServersList(std::list<std::string>& ip_servers);
+
+	// ONLY USED by p3face-config.cc WHICH WILL BE REMOVED.
+virtual void 	getNetStatus(pqiNetStatus &status);
+virtual bool    getUPnPState();
+virtual bool	getUPnPEnabled();
+virtual bool	getDHTEnabled();
+
+/************************************************************************************************/
+/* Extra IMPL Functions (used by p3PeerMgr, p3NetMgr + Setup) */
+/************************************************************************************************/
+
+void	setManagers(p3PeerMgrIMPL *peerMgr, p3LinkMgrIMPL *linkMgr);
 void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
 
 void 	tick();
-void 	slowTick();
+
+	// THESE MIGHT BE ADDED TO INTERFACE.
+bool 	setLocalAddress(struct sockaddr_in addr);
+bool 	setExtAddress(struct sockaddr_in addr);
 
 	/*************** Setup ***************************/
 void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
@@ -108,65 +213,41 @@ void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
 
 void    addNetListener(pqiNetListener *listener);
 
+	// SHOULD MAKE THIS PROTECTED.
 bool	checkNetAddress(); /* check our address is sensible */
 
-	/*************** External Control ****************/
-bool	shutdown(); /* blocking shutdown call */
 
-	/* a nice simple network configuration */
-uint32_t getNetStateMode();
-uint32_t getNetworkMode();
-uint32_t getNatTypeMode();
-uint32_t getNatHoleMode();
-uint32_t getConnectModes();
+protected:
 
+void 	slowTick();
 
+	/* THESE FUNCTIONS ARE ON_LONGER EXTERNAL - CAN THEY BE REMOVED? */
+//bool    getDHTStats(uint32_t &netsize, uint32_t &localnetsize);
 
+//bool	getNetStatusLocalOk();
+//bool	getNetStatusUpnpOk();
+//bool	getNetStatusDhtOk();
+//bool	getNetStatusStunOk();
+//bool	getNetStatusExtraAddressCheckOk();
 
-bool    getUPnPState();
-bool	getUPnPEnabled();
-bool	getDHTEnabled();
-bool    getDHTStats(uint32_t &netsize, uint32_t &localnetsize);
+//bool 	getUpnpExtAddress(struct sockaddr_in &addr);
+//bool 	getExtFinderAddress(struct sockaddr_in &addr);
 
-bool  getIPServersEnabled();
-void  setIPServersEnabled(bool b) ;
-void  getIPServersList(std::list<std::string>& ip_servers) ;
+//void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 
-bool	getNetStatusLocalOk();
-bool	getNetStatusUpnpOk();
-bool	getNetStatusDhtOk();
-bool	getNetStatusStunOk();
-bool	getNetStatusExtraAddressCheckOk();
-
-bool 	getUpnpExtAddress(struct sockaddr_in &addr);
-bool 	getExtFinderAddress(struct sockaddr_in &addr);
-void 	getNetStatus(pqiNetStatus &status);
-
-void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
-bool 	setLocalAddress(struct sockaddr_in addr);
-bool 	setExtAddress(struct sockaddr_in addr);
-bool 	setNetworkMode(uint32_t netMode);
-bool 	setVisState(uint32_t visState);
-
-
-virtual bool netAssistFriend(std::string id, bool on);
-
-	/*************** External Control ****************/
-
-	/* access to network details (called through Monitor) */
 
 protected:
 	/****************** Internal Interface *******************/
-virtual bool enableNetAssistFirewall(bool on);
-virtual bool netAssistFirewallEnabled();
-virtual bool netAssistFirewallActive();
-virtual bool netAssistFirewallShutdown();
+bool enableNetAssistFirewall(bool on);
+bool netAssistFirewallEnabled();
+bool netAssistFirewallActive();
+bool netAssistFirewallShutdown();
 
-virtual bool enableNetAssistConnect(bool on);
-virtual bool netAssistConnectEnabled();
-virtual bool netAssistConnectActive();
-virtual bool netAssistConnectShutdown();
-virtual bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
+bool enableNetAssistConnect(bool on);
+bool netAssistConnectEnabled();
+bool netAssistConnectActive();
+bool netAssistConnectShutdown();
+bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
 void 		netAssistConnectTick();
 
 /* Assist Firewall */
@@ -174,8 +255,8 @@ bool netAssistExtAddress(struct sockaddr_in &extAddr);
 bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
 
 		/* Assist Connect */
-//virtual bool netAssistFriend(std::string id, bool on);
-virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
+//virtual bool netAssistFriend(std::string id, bool on); (PUBLIC)
+bool netAssistSetAddress( struct sockaddr_in &laddr,
                                         struct sockaddr_in &eaddr,
 					uint32_t mode);
 
@@ -221,8 +302,8 @@ private:
 
         std::list<pqiNetListener *> mNetListeners;
 
-	p3PeerMgr *mPeerMgr; 
-	p3LinkMgr *mLinkMgr; 
+	p3PeerMgrIMPL *mPeerMgr; 
+	p3LinkMgrIMPL *mLinkMgr; 
 
 	//p3BitDht   *mBitDht;
 	pqiAddrAssist *mDhtStunner;

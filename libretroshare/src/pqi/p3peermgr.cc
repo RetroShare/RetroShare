@@ -97,7 +97,7 @@ std::string textPeerConnectState(peerState &state)
 }
 
 
-p3PeerMgr::p3PeerMgr()
+p3PeerMgrIMPL::p3PeerMgrIMPL()
 	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
@@ -126,19 +126,19 @@ p3PeerMgr::p3PeerMgr()
 	return;
 }
 
-void    p3PeerMgr::setManagers(p3LinkMgr *linkMgr, p3NetMgr  *netMgr)
+void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL  *netMgr)
 {
 	mLinkMgr = linkMgr;
 	mNetMgr = netMgr;
 }
 
-void p3PeerMgr::setOwnNetworkMode(uint32_t netMode)
+void p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 {
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgr::setOwnNetworkMode() :";
+		std::cerr << "p3PeerMgrIMPL::setOwnNetworkMode() :";
 		std::cerr << " Existing netMode: " << mOwnState.netMode;
 		std::cerr << " Input netMode: " << netMode;
 		std::cerr << std::endl;
@@ -153,13 +153,13 @@ void p3PeerMgr::setOwnNetworkMode(uint32_t netMode)
 	mNetMgr->setNetworkMode((netMode & RS_NET_MODE_ACTUAL));
 }
 
-void p3PeerMgr::setOwnVisState(uint32_t visState)
+void p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
 {
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgr::setOwnVisState()";
+		std::cerr << "p3PeerMgrIMPL::setOwnVisState()";
 		std::cerr << "Existing vis: " << mOwnState.visState;
 		std::cerr << "Input vis: " << visState;
 		std::cerr << std::endl;
@@ -175,8 +175,7 @@ void p3PeerMgr::setOwnVisState(uint32_t visState)
 }
 
 
-
-void p3PeerMgr::tick()
+void p3PeerMgrIMPL::tick()
 {
 
 	static time_t last_friends_check = time(NULL) ;
@@ -186,7 +185,7 @@ void p3PeerMgr::tick()
 
 	if(now > last_friends_check + INTERVAL_BETWEEN_LOCATION_CLEANING && rsPeers != NULL)
 	{
-		std::cerr << "p3PeerMgr::tick(): cleaning unused locations." << std::endl ;
+		std::cerr << "p3PeerMgrIMPL::tick(): cleaning unused locations." << std::endl ;
 
 		rsPeers->cleanUnusedLocations() ;
 		last_friends_check = now ;
@@ -199,35 +198,34 @@ void p3PeerMgr::tick()
  */
 
 
-
-const std::string p3PeerMgr::getOwnId()
+const std::string p3PeerMgrIMPL::getOwnId()
 {
                 return AuthSSL::getAuthSSL()->OwnId();
 }
 
 
-bool p3PeerMgr::getOwnNetStatus(peerState &state)
+bool p3PeerMgrIMPL::getOwnNetStatus(peerState &state)
 {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
         state = mOwnState;
 	return true;
 }
 
-bool p3PeerMgr::isFriend(const std::string &id)
+bool p3PeerMgrIMPL::isFriend(const std::string &id)
 {
 #ifdef PEER_DEBUG_COMMON
-                std::cerr << "p3PeerMgr::isFriend(" << id << ") called" << std::endl;
+                std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") called" << std::endl;
 #endif
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
         bool ret = (mFriendList.end() != mFriendList.find(id));
 #ifdef PEER_DEBUG_COMMON
-                std::cerr << "p3PeerMgr::isFriend(" << id << ") returning : " << ret << std::endl;
+                std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") returning : " << ret << std::endl;
 #endif
         return ret;
 }
 
 
-bool p3PeerMgr::getFriendNetStatus(const std::string &id, peerState &state)
+bool p3PeerMgrIMPL::getFriendNetStatus(const std::string &id, peerState &state)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -244,7 +242,7 @@ bool p3PeerMgr::getFriendNetStatus(const std::string &id, peerState &state)
 }
 
 
-bool p3PeerMgr::getOthersNetStatus(const std::string &id, peerState &state)
+bool p3PeerMgrIMPL::getOthersNetStatus(const std::string &id, peerState &state)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -260,8 +258,9 @@ bool p3PeerMgr::getOthersNetStatus(const std::string &id, peerState &state)
 	return true;
 }
 
+#if 0
 
-void p3PeerMgr::getFriendList(std::list<std::string> &peers)
+void p3PeerMgrIMPL::getFriendList(std::list<std::string> &peers)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -274,9 +273,10 @@ void p3PeerMgr::getFriendList(std::list<std::string> &peers)
 	return;
 }
 
+#endif
 
 #if 0
-void p3PeerMgr::getOthersList(std::list<std::string> &peers)
+void p3PeerMgrIMPL::getOthersList(std::list<std::string> &peers)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -292,7 +292,7 @@ void p3PeerMgr::getOthersList(std::list<std::string> &peers)
 
 
 
-int p3PeerMgr::getConnectAddresses(const std::string &id, 
+int p3PeerMgrIMPL::getConnectAddresses(const std::string &id, 
 					struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
 					pqiIpAddrSet &histAddrs, std::string &dyndns)
 {
@@ -305,7 +305,7 @@ int p3PeerMgr::getConnectAddresses(const std::string &id,
 	if (it == mFriendList.end())
 	{
 		/* ERROR */
-		std::cerr << "p3PeerMgr::getConnectAddresses() ERROR unknown Peer";
+		std::cerr << "p3PeerMgrIMPL::getConnectAddresses() ERROR unknown Peer";
 		std::cerr << std::endl;
 		return 0;
 	}
@@ -320,7 +320,7 @@ int p3PeerMgr::getConnectAddresses(const std::string &id,
 
 
 
-bool    p3PeerMgr::haveOnceConnected()
+bool    p3PeerMgrIMPL::haveOnceConnected()
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -331,7 +331,7 @@ bool    p3PeerMgr::haveOnceConnected()
 		if (it->second.lastcontact > 0)
 		{
 #ifdef PEER_DEBUG
- 			std::cerr << "p3PeerMgr::haveOnceConnected() lastcontact: ";
+ 			std::cerr << "p3PeerMgrIMPL::haveOnceConnected() lastcontact: ";
 			std::cerr << time(NULL) - it->second.lastcontact << " for id: " << it->first;
 			std::cerr << std::endl;
 #endif
@@ -341,7 +341,7 @@ bool    p3PeerMgr::haveOnceConnected()
 	}
 
 #ifdef PEER_DEBUG
- 	std::cerr << "p3PeerMgr::haveOnceConnected() all Last Contacts = 0";
+ 	std::cerr << "p3PeerMgrIMPL::haveOnceConnected() all Last Contacts = 0";
 	std::cerr << std::endl;
 #endif
 
@@ -353,7 +353,7 @@ bool    p3PeerMgr::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
+bool p3PeerMgrIMPL::addFriend(const std::string &id, const std::string &gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
 	bool notifyLinkMgr = false;
 	{
@@ -362,7 +362,7 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 
 		if (id == AuthSSL::getAuthSSL()->OwnId()) {
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::addFriend() cannot add own id as a friend." << std::endl;
+			std::cerr << "p3PeerMgrIMPL::addFriend() cannot add own id as a friend." << std::endl;
 #endif
 			/* (1) already exists */
 			return false;
@@ -374,14 +374,14 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 		 */
 
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
+		std::cerr << "p3PeerMgrIMPL::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
 
 		std::map<std::string, peerState>::iterator it;
 		if (mFriendList.end() != mFriendList.find(id))
 		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::addFriend() Already Exists" << std::endl;
+			std::cerr << "p3PeerMgrIMPL::addFriend() Already Exists" << std::endl;
 #endif
 			/* (1) already exists */
 			return true;
@@ -392,7 +392,7 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 		if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
 		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::addFriend() gpg is not accepted" << std::endl;
+			std::cerr << "p3PeerMgrIMPL::addFriend() gpg is not accepted" << std::endl;
 #endif
 			/* no auth */
 			return false;
@@ -404,7 +404,7 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 		{
 			/* (2) in mOthersList -> move over */
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::addFriend() Move from Others" << std::endl;
+			std::cerr << "p3PeerMgrIMPL::addFriend() Move from Others" << std::endl;
 #endif
 
 			mFriendList[id] = it->second;
@@ -426,7 +426,7 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 		else
 		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::addFriend() Creating New Entry" << std::endl;
+			std::cerr << "p3PeerMgrIMPL::addFriend() Creating New Entry" << std::endl;
 #endif
 
 			/* create a new entry */
@@ -466,12 +466,12 @@ bool p3PeerMgr::addFriend(const std::string &id, const std::string &gpg_id, uint
 }
 
 
-bool p3PeerMgr::removeFriend(const std::string &id)
+bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 {
 
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::removeFriend() for id : " << id << std::endl;
-	std::cerr << "p3PeerMgr::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
+	std::cerr << "p3PeerMgrIMPL::removeFriend() for id : " << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
 
 	std::list<std::string> toRemove; // This is a list of SSLIds.
@@ -487,7 +487,7 @@ bool p3PeerMgr::removeFriend(const std::string &id)
 		{
 			if (it->second.id == id || it->second.gpg_id == id) {
 #ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgr::removeFriend() friend found in the list." << id << std::endl;
+				std::cerr << "p3PeerMgrIMPL::removeFriend() friend found in the list." << id << std::endl;
 #endif
 				peerState peer = it->second;
 
@@ -510,7 +510,7 @@ bool p3PeerMgr::removeFriend(const std::string &id)
 		}
 
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgr::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
+		std::cerr << "p3PeerMgrIMPL::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
 	}
 
@@ -537,12 +537,12 @@ bool p3PeerMgr::removeFriend(const std::string &id)
 }
 
 
-void p3PeerMgr::printPeerLists(std::ostream &out)
+void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 {
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		out << "p3PeerMgr::printPeerLists() Friend List";
+		out << "p3PeerMgrIMPL::printPeerLists() Friend List";
 		out << std::endl;
 
 
@@ -554,7 +554,7 @@ void p3PeerMgr::printPeerLists(std::ostream &out)
 			out << std::endl;
 		}
 
-		out << "p3PeerMgr::printPeerLists() Others List";
+		out << "p3PeerMgrIMPL::printPeerLists() Others List";
 		out << std::endl;
 		for(it = mOthersList.begin(); it != mOthersList.end(); it++)
 		{
@@ -570,11 +570,11 @@ void p3PeerMgr::printPeerLists(std::ostream &out)
 
 
 #if 0
-bool p3PeerMgr::addNeighbour(std::string id)
+bool p3PeerMgrIMPL::addNeighbour(std::string id)
 {
 
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::addNeighbour() not implemented anymore." << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::addNeighbour() not implemented anymore." << id << std::endl;
 #endif
 
 	/* so three possibilities 
@@ -643,7 +643,7 @@ bool p3PeerMgr::addNeighbour(std::string id)
  **********************************************************************/
 
 
-bool    p3PeerMgr::setLocalAddress(const std::string &id, struct sockaddr_in addr)
+bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in addr)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -677,7 +677,7 @@ bool    p3PeerMgr::setLocalAddress(const std::string &id, struct sockaddr_in add
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
 #endif
 			return false;
 		}
@@ -699,7 +699,7 @@ bool    p3PeerMgr::setLocalAddress(const std::string &id, struct sockaddr_in add
 	return true;
 }
 
-bool    p3PeerMgr::setExtAddress(const std::string &id, struct sockaddr_in addr)
+bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in addr)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -721,7 +721,7 @@ bool    p3PeerMgr::setExtAddress(const std::string &id, struct sockaddr_in addr)
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
 #endif
 			return false;
 		}
@@ -744,7 +744,7 @@ bool    p3PeerMgr::setExtAddress(const std::string &id, struct sockaddr_in addr)
 }
 
 
-bool p3PeerMgr::setDynDNS(const std::string &id, const std::string &dyndns)
+bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
 {
     if (id == AuthSSL::getAuthSSL()->OwnId())
     {
@@ -761,7 +761,7 @@ bool p3PeerMgr::setDynDNS(const std::string &id, const std::string &dyndns)
             if (mOthersList.end() == (it = mOthersList.find(id)))
             {
                     #ifdef PEER_DEBUG
-                                    std::cerr << "p3PeerMgr::setDynDNS() cannot add dyn dns info : peer id not found in friend list  id: " << id << std::endl;
+                                    std::cerr << "p3PeerMgrIMPL::setDynDNS() cannot add dyn dns info : peer id not found in friend list  id: " << id << std::endl;
                     #endif
                     return false;
             }
@@ -775,10 +775,10 @@ bool p3PeerMgr::setDynDNS(const std::string &id, const std::string &dyndns)
     return true;
 }
 
-bool    p3PeerMgr::updateAddressList(const std::string& id, const pqiIpAddrSet &addrs)
+bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrSet &addrs)
 {
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::setAddressList() called for id : " << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::setAddressList() called for id : " << id << std::endl;
 #endif
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -797,7 +797,7 @@ bool    p3PeerMgr::updateAddressList(const std::string& id, const pqiIpAddrSet &
             if (mOthersList.end() == (it = mOthersList.find(id)))
             {
 #ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgr::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
+				std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
 #endif
                     return false;
             }
@@ -806,7 +806,7 @@ bool    p3PeerMgr::updateAddressList(const std::string& id, const pqiIpAddrSet &
 	/* "it" points to peer */
 	it->second.ipAddrs.updateAddrs(addrs);
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::setLocalAddress() Updated Address for: " << id;
+	std::cerr << "p3PeerMgrIMPL::setLocalAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
 	it->second.ipAddrs.printAddrs(std::cerr);
 	std::cerr << std::endl;
@@ -818,10 +818,10 @@ bool    p3PeerMgr::updateAddressList(const std::string& id, const pqiIpAddrSet &
 }
 
 
-bool    p3PeerMgr::updateCurrentAddress(const std::string& id, const pqiIpAddress &addr)
+bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAddress &addr)
 {
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::updateCurrentAddress() called for id : " << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::updateCurrentAddress() called for id : " << id << std::endl;
 #endif
 	
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -834,7 +834,7 @@ bool    p3PeerMgr::updateCurrentAddress(const std::string& id, const pqiIpAddres
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
-			std::cerr << "p3PeerMgr::updateCurrentAddress() ERROR peer id not found: " << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::updateCurrentAddress() ERROR peer id not found: " << id << std::endl;
 			return false;
 		}
 	}
@@ -851,7 +851,7 @@ bool    p3PeerMgr::updateCurrentAddress(const std::string& id, const pqiIpAddres
 	}
 
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::updatedCurrentAddress() Updated Address for: " << id;
+	std::cerr << "p3PeerMgrIMPL::updatedCurrentAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
 	it->second.ipAddrs.printAddrs(std::cerr);
 	std::cerr << std::endl;
@@ -863,10 +863,10 @@ bool    p3PeerMgr::updateCurrentAddress(const std::string& id, const pqiIpAddres
 }
 	
 
-bool    p3PeerMgr::updateLastContact(const std::string& id)
+bool    p3PeerMgrIMPL::updateLastContact(const std::string& id)
 {
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::updateLastContact() called for id : " << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::updateLastContact() called for id : " << id << std::endl;
 #endif
 	
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -879,7 +879,7 @@ bool    p3PeerMgr::updateLastContact(const std::string& id)
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
-			std::cerr << "p3PeerMgr::updateLastContact() ERROR peer id not found: " << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::updateLastContact() ERROR peer id not found: " << id << std::endl;
 			return false;
 		}
 	}
@@ -894,7 +894,7 @@ bool    p3PeerMgr::updateLastContact(const std::string& id)
 	
 
 
-bool    p3PeerMgr::setNetworkMode(const std::string &id, uint32_t netMode)
+bool    p3PeerMgrIMPL::setNetworkMode(const std::string &id, uint32_t netMode)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -920,12 +920,12 @@ bool    p3PeerMgr::setNetworkMode(const std::string &id, uint32_t netMode)
 	return false;
 }
 
-bool    p3PeerMgr::setLocation(const std::string &id, const std::string &location)
+bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &location)
 {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
-        std::cerr << "p3PeerMgr::setLocation() called for id : " << id << "; with location " << location << std::endl;
+        std::cerr << "p3PeerMgrIMPL::setLocation() called for id : " << id << "; with location " << location << std::endl;
 #endif
         if (id == AuthSSL::getAuthSSL()->OwnId())
         {
@@ -943,7 +943,7 @@ bool    p3PeerMgr::setLocation(const std::string &id, const std::string &locatio
         }
 }
 
-bool    p3PeerMgr::setVisState(const std::string &id, uint32_t visState)
+bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -1007,7 +1007,7 @@ bool    p3PeerMgr::setVisState(const std::string &id, uint32_t visState)
 
         /* Key Functions to be overloaded for Full Configuration */
 
-RsSerialiser *p3PeerMgr::setupSerialiser()
+RsSerialiser *p3PeerMgrIMPL::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsPeerConfigSerialiser());
@@ -1017,7 +1017,7 @@ RsSerialiser *p3PeerMgr::setupSerialiser()
 }
 
 
-bool p3PeerMgr::saveList(bool &cleanup, std::list<RsItem *>& saveData)
+bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
 	/* create a list of current peers */
 	cleanup = false;
@@ -1055,7 +1055,7 @@ bool p3PeerMgr::saveList(bool &cleanup, std::list<RsItem *>& saveData)
         mOwnState.ipAddrs.mExt.loadTlv(item->extAddrList);
 
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::saveList() Own Config Item:" << std::endl;
+	std::cerr << "p3PeerMgrIMPL::saveList() Own Config Item:" << std::endl;
 	item->print(std::cerr, 10);
 	std::cerr << std::endl;
 #endif
@@ -1085,7 +1085,7 @@ bool p3PeerMgr::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		saveData.push_back(item);
 		saveCleanupList.push_back(item);
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgr::saveList() Peer Config Item:" << std::endl;
+		std::cerr << "p3PeerMgrIMPL::saveList() Peer Config Item:" << std::endl;
 		item->print(std::cerr, 10);
 		std::cerr << std::endl;
 #endif
@@ -1131,7 +1131,7 @@ bool p3PeerMgr::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	return true;
 }
 
-void    p3PeerMgr::saveDone()
+void    p3PeerMgrIMPL::saveDone()
 {
 	/* clean up the save List */
 	std::list<RsItem *>::iterator it;
@@ -1146,7 +1146,7 @@ void    p3PeerMgr::saveDone()
 	mPeerMtx.unlock(); /****** MUTEX UNLOCKED *******/
 }
 
-bool  p3PeerMgr::loadList(std::list<RsItem *>& load)
+bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 {
 
 	// DEFAULTS.
@@ -1154,12 +1154,12 @@ bool  p3PeerMgr::loadList(std::list<RsItem *>& load)
 	bool allowTunnelConnection = true;
 	
         if (load.size() == 0) {
-            std::cerr << "p3PeerMgr::loadList() list is empty, it may be a configuration problem."  << std::endl;
+            std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
             return false;
         }
 
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgr::loadList() Item Count: " << load.size() << std::endl;
+	std::cerr << "p3PeerMgrIMPL::loadList() Item Count: " << load.size() << std::endl;
 #endif
 
 	std::string ownId = getOwnId();
@@ -1174,7 +1174,7 @@ bool  p3PeerMgr::loadList(std::list<RsItem *>& load)
 			if (pitem->pid == ownId)
 			{
 #ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgr::loadList() Own Config Item:" << std::endl;
+				std::cerr << "p3PeerMgrIMPL::loadList() Own Config Item:" << std::endl;
 				pitem->print(std::cerr, 10);
 				std::cerr << std::endl;
 #endif
@@ -1188,7 +1188,7 @@ bool  p3PeerMgr::loadList(std::list<RsItem *>& load)
 			else
 			{
 #ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgr::loadList() Peer Config Item:" << std::endl;
+				std::cerr << "p3PeerMgrIMPL::loadList() Peer Config Item:" << std::endl;
 				pitem->print(std::cerr, 10);
 				std::cerr << std::endl;
 #endif
@@ -1219,7 +1219,7 @@ bool  p3PeerMgr::loadList(std::list<RsItem *>& load)
 			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::loadList() General Variable Config Item:" << std::endl;
+			std::cerr << "p3PeerMgrIMPL::loadList() General Variable Config Item:" << std::endl;
 			vitem->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
@@ -1245,7 +1245,7 @@ bool  p3PeerMgr::loadList(std::list<RsItem *>& load)
 			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgr::loadList() Peer group item:" << std::endl;
+			std::cerr << "p3PeerMgrIMPL::loadList() Peer group item:" << std::endl;
 			gitem->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
@@ -1357,7 +1357,7 @@ void  printConnectState(std::ostream &out, peerState &peer)
  **********************************************************************
  **********************************************************************/
 
-bool p3PeerMgr::addGroup(RsGroupInfo &groupInfo)
+bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 {
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -1384,7 +1384,7 @@ bool p3PeerMgr::addGroup(RsGroupInfo &groupInfo)
 	return true;
 }
 
-bool p3PeerMgr::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3PeerMgrIMPL::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
 {
 	if (groupId.empty()) {
 		return false;
@@ -1421,7 +1421,7 @@ bool p3PeerMgr::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
 	return changed;
 }
 
-bool p3PeerMgr::removeGroup(const std::string &groupId)
+bool p3PeerMgrIMPL::removeGroup(const std::string &groupId)
 {
 	if (groupId.empty()) {
 		return false;
@@ -1459,7 +1459,7 @@ bool p3PeerMgr::removeGroup(const std::string &groupId)
 	return changed;
 }
 
-bool p3PeerMgr::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3PeerMgrIMPL::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
 {
 	if (groupId.empty()) {
 		return false;
@@ -1479,7 +1479,7 @@ bool p3PeerMgr::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
 	return false;
 }
 
-bool p3PeerMgr::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
+bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1494,7 +1494,7 @@ bool p3PeerMgr::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 }
 
 // groupId == "" && assign == false -> remove from all groups
-bool p3PeerMgr::assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign)
+bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign)
 {
 	if (groupId.empty() && assign == true) {
 		return false;

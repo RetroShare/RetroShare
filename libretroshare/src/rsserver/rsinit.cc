@@ -1834,9 +1834,9 @@ int RsServer::StartupRetroShare()
 	/* Setup Notify Early - So we can use it. */
 	rsNotify = new p3Notify();
 
-	mPeerMgr = new p3PeerMgr();
-	mNetMgr = new p3NetMgr();
-	mLinkMgr = new p3LinkMgr(mPeerMgr, mNetMgr);
+	mPeerMgr = new p3PeerMgrIMPL();
+	mNetMgr = new p3NetMgrIMPL();
+	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 	
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);

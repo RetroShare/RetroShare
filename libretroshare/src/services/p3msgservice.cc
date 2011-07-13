@@ -225,7 +225,7 @@ int     p3MsgService::checkOutgoingMessages()
 			peerConnectState pstate;
 			bool toSend = false;
 
-			if (mLinkMgr->getFriendNetStatus(pid, pstate))
+			if (mLinkMgr->isOnline(pid))
 			{
 				if (pstate.state & RS_PEER_S_CONNECTED)
 				{

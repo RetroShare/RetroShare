@@ -141,101 +141,137 @@ class RsGroupInfo;
 class p3PeerMgr;
 class p3NetMgr;
 
+class p3PeerMgrIMPL;
+class p3NetMgrIMPL;
+
 std::string textPeerConnectState(peerConnectState &state);
 
+/*******
+ * Virtual Interface to allow testing
+ *
+ */
 
 class p3LinkMgr: public pqiConnectCb
 {
 	public:
 
-        p3LinkMgr(p3PeerMgr *peerMgr, p3NetMgr *netMgr);
+        p3LinkMgr() { return; }
+virtual ~p3LinkMgr() { return; }
 
-void 	tick();
 
-	/*************** Setup ***************************/
-//void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
-//void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
+virtual const 	std::string getOwnId() = 0;
+virtual bool  	isOnline(const std::string &ssl_id) = 0;
+virtual void  	getOnlineList(std::list<std::string> &ssl_peers) = 0;
 
-//void    addNetListener(pqiNetListener *listener);
+	/**************** handle monitors *****************/
+virtual void	addMonitor(pqiMonitor *mon) = 0;
+virtual void	removeMonitor(pqiMonitor *mon) = 0;
 
-//bool	checkNetAddress(); /* check our address is sensible */
+	/****************** Connections *******************/
+virtual bool 	connectAttempt(const std::string &id, struct sockaddr_in &addr,
+				uint32_t &delay, uint32_t &period, uint32_t &type) = 0;
+virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address) = 0;
+virtual bool	retryConnect(const std::string &id) = 0;
 
-	/*************** External Control ****************/
-bool	shutdown(); /* blocking shutdown call */
+	/* Network Addresses */
+virtual bool 	setLocalAddress(struct sockaddr_in addr) = 0;
+virtual struct sockaddr_in getLocalAddress() = 0;
 
-bool	retryConnect(const std::string &id);
+	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
-void 	setTunnelConnection(bool b);
-bool 	getTunnelConnection();
+virtual void	getFriendList(std::list<std::string> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
+virtual int 	getOnlineCount() = 0; // ONLY used by p3peers.cc
+virtual int 	getFriendCount() = 0; // ONLY used by p3serverconfig.cc & p3peers.cc
+virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
-void    setFriendVisibility(const std::string &id, bool isVisible);
+virtual void 	setTunnelConnection(bool b) = 0; // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
+virtual bool 	getTunnelConnection() = 0;       // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
 
-//void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
-//bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
-//bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
-//bool    setDynDNS(const std::string &id, const std::string &dyndns);
-//bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
 
-//bool 	setNetworkMode(const std::string &id, uint32_t netMode);
-//bool 	setVisState(const std::string &id, uint32_t visState);
+	/******* overloaded from pqiConnectCb *************/
+// THESE MUSTn't BE specfied HERE - as overloaded from pqiConnectCb.
+//virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
+//                        uint32_t type, uint32_t flags, uint32_t source) = 0;
+//virtual void    peerConnectRequest(std::string id, 
+//			struct sockaddr_in raddr, uint32_t source) = 0;
 
-//bool    setLocation(const std::string &pid, const std::string &location);//location is shown in the gui to differentiate ssl certs
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
 
-	/* add/remove friends */
-int 	addFriend(const std::string &ssl_id, bool isVisible);
-int 	removeFriend(const std::string &ssl_id);
-void 	printPeerLists(std::ostream &out);
+};
 
-	/*************** External Control ****************/
 
-	/* access to network details (called through Monitor) */
-const std::string getOwnId();
-bool	getOwnNetStatus(peerConnectState &state);
 
-bool 	setLocalAddress(struct sockaddr_in addr);
-struct sockaddr_in getLocalAddress();
+class p3LinkMgrIMPL: public p3LinkMgr
+{
+	public:
 
-bool	isOnline(const std::string &ssl_id);
-bool	getFriendNetStatus(const std::string &id, peerConnectState &state);
-//bool	getOthersNetStatus(const std::string &id, peerConnectState &state);
+/************************************************************************************************/
+/* EXTERNAL INTERFACE */
+/************************************************************************************************/
 
-void	getOnlineList(std::list<std::string> &ssl_peers);
-void	getFriendList(std::list<std::string> &ssl_peers);
-int 	getOnlineCount();
-int 	getFriendCount();
+virtual const 	std::string getOwnId();
+virtual bool  	isOnline(const std::string &ssl_id);
+virtual void  	getOnlineList(std::list<std::string> &ssl_peers);
 
 
 	/**************** handle monitors *****************/
-void	addMonitor(pqiMonitor *mon);
-void	removeMonitor(pqiMonitor *mon);
+virtual void	addMonitor(pqiMonitor *mon);
+virtual void	removeMonitor(pqiMonitor *mon);
+
+	/****************** Connections *******************/
+virtual bool 	connectAttempt(const std::string &id, struct sockaddr_in &addr,
+				uint32_t &delay, uint32_t &period, uint32_t &type);
+virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
+virtual bool	retryConnect(const std::string &id);
+
+	/* Network Addresses */
+virtual bool 	setLocalAddress(struct sockaddr_in addr);
+virtual struct sockaddr_in getLocalAddress();
 
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
                         uint32_t type, uint32_t flags, uint32_t source);
 virtual void    peerConnectRequest(std::string id, 
 			struct sockaddr_in raddr, uint32_t source);
-//virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 
-	/****************** Connections *******************/
-bool 	connectAttempt(const std::string &id, struct sockaddr_in &addr,
-				uint32_t &delay, uint32_t &period, uint32_t &type);
-bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
+
+	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+
+virtual void	getFriendList(std::list<std::string> &ssl_peers); // ONLY used by p3peers.cc USE p3PeerMgr instead.
+virtual int 	getOnlineCount(); // ONLY used by p3peers.cc
+virtual int 	getFriendCount(); // ONLY used by p3serverconfig.cc & p3peers.cc
+virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state); // ONLY used by p3peers.cc
+
+virtual void 	setTunnelConnection(bool b); // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
+virtual bool 	getTunnelConnection();       // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
+
+/************************************************************************************************/
+/* Extra IMPL Functions (used by p3PeerMgr, p3NetMgr + Setup) */
+/************************************************************************************************/
+
+        p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr);
+
+void 	tick();
+
+	/* THIS COULD BE ADDED TO INTERFACE */
+void    setFriendVisibility(const std::string &id, bool isVisible);
+
+	/* add/remove friends */
+int 	addFriend(const std::string &ssl_id, bool isVisible);
+int 	removeFriend(const std::string &ssl_id);
+
+void 	printPeerLists(std::ostream &out);
+
+protected:
+	/* THESE CAN PROBABLY BE REMOVED */
+//bool	shutdown(); /* blocking shutdown call */
+//bool	getOwnNetStatus(peerConnectState &state);
+
 
 protected:
 	/****************** Internal Interface *******************/
-
-//virtual bool enableNetAssistConnect(bool on);
-//virtual bool netAssistConnectEnabled();
-//virtual bool netAssistConnectActive();
-//virtual bool netAssistConnectShutdown();
-//virtual bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
-
-		/* Assist Connect */
-//virtual bool netAssistFriend(std::string id, bool on);
-//virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
-//                                        struct sockaddr_in &eaddr,
-//					uint32_t mode);
-
 
 	/* Internal Functions */
 void 	statusTick();
@@ -266,8 +302,8 @@ private:
 	//p3tunnel *mP3tunnel;
 	DNSResolver *mDNSResolver ;
 
-	p3PeerMgr *mPeerMgr;
-	p3NetMgr  *mNetMgr;
+	p3PeerMgrIMPL *mPeerMgr;
+	p3NetMgrIMPL  *mNetMgr;
 
 	RsMutex mLinkMtx; /* protects below */
 

@@ -45,9 +45,9 @@
 #include "services/p3channels.h"
 #include "services/p3forums.h"
 
-class p3PeerMgr;
-class p3LinkMgr;
-class p3NetMgr;
+class p3PeerMgrIMPL;
+class p3LinkMgrIMPL;
+class p3NetMgrIMPL;
 
 
 /* The Main Interface Class - for controlling the server */
@@ -154,9 +154,9 @@ class RsServer: public RsControl, public RsThread
 		//filedexserver *server;
 		ftServer *ftserver;
 
-		p3PeerMgr *mPeerMgr;
-		p3LinkMgr *mLinkMgr;
-		p3NetMgr *mNetMgr;
+		p3PeerMgrIMPL *mPeerMgr;
+		p3LinkMgrIMPL *mLinkMgr;
+		p3NetMgrIMPL *mNetMgr;
 
 		pqipersongrp *pqih;
 
