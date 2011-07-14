@@ -1282,11 +1282,32 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, struct sockaddr_in &r
 									uint32_t flags, uint32_t delay, uint32_t bandwidth)
 
 {
+
+#define DISABLE_UDP_CONNECTIONS	1
+#ifdef DISABLE_UDP_CONNECTIONS
+
+	std::cerr << "p3LinkMgrIMPL::tryConnectUDP() CONNECTIONS DISABLED FOR NOW... id: " << id << std::endl;
+
+	std::cerr << "p3LinkMgrIMPL::tryConnectUDP() PARAMS id: " << id;
+	std::cerr << " raddr: " << rs_inet_ntoa(rUdpAddr.sin_addr) << ":" << ntohs(rUdpAddr.sin_port);
+	std::cerr << " proxyaddr: " << rs_inet_ntoa(proxyaddr.sin_addr) << ":" << ntohs(proxyaddr.sin_port);
+	std::cerr << " srcaddr: " << rs_inet_ntoa(srcaddr.sin_addr) << ":" << ntohs(srcaddr.sin_port);
+	std::cerr << " flags: " << flags;
+	std::cerr << " delay: " << delay;
+	std::cerr << " bandwidth: " << bandwidth;
+	std::cerr << std::endl;
+
+	mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONN_FAILED);
+
+	return false;	
+#endif
+
+
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	/* push all available addresses onto the connect addr stack */
 #ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::retryConnectTCP() id: " << id << std::endl;
+	std::cerr << "p3LinkMgrIMPL::tryConnectUDP() id: " << id << std::endl;
 #endif
 
         if (id == getOwnId()) {
