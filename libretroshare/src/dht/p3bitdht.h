@@ -96,6 +96,7 @@ class DhtPeerDetails
 #define PEERNET_ACTION_TYPE_START       3
 #define PEERNET_ACTION_TYPE_RESTARTREQ  4
 #define PEERNET_ACTION_TYPE_KILLREQ     5
+#define PEERNET_ACTION_TYPE_TCPATTEMPT  6
 
 class PeerAction
 {
@@ -215,6 +216,14 @@ int 	removeRelayConnection(const bdId *srcId, const bdId *destId);
 void 	monitorConnections();
 
 void    ConnectCallout(const std::string &peerId, struct sockaddr_in addr, uint32_t connectMode);
+
+void 	ConnectCalloutTCPAttempt(const std::string &peerId, struct sockaddr_in addr);
+void 	ConnectCalloutDirectOrProxy(const std::string &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay);
+void 	ConnectCalloutRelay(const std::string &peerId, struct sockaddr_in srcaddr, 
+			struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
+                        uint32_t connectMode, uint32_t bandwidth);
+
+
 void 	Feedback_Connected(std::string pid);
 void 	Feedback_ConnectionFailed(std::string pid);
 void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);

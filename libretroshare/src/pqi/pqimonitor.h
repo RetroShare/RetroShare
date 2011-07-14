@@ -76,14 +76,22 @@ const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 
 
 #define RS_CB_FLAG_MASK_MODE		0x00ff
-#define RS_CB_FLAG_MASK_CONN		0x00ff
+#define RS_CB_FLAG_MASK_ORDER		0xff00
 
 #define RS_CB_FLAG_MODE_TCP		0x0001
-#define RS_CB_FLAG_MODE_UDP		0x0002
+#define RS_CB_FLAG_MODE_UDP_DIRECT	0x0002
+#define RS_CB_FLAG_MODE_UDP_PROXY	0x0004
+#define RS_CB_FLAG_MODE_UDP_RELAY	0x0008
 
-#define RS_CB_FLAG_CONN_UNSPEC		0x0000
-#define RS_CB_FLAG_CONN_PASSIVE		0x0100
-#define RS_CB_FLAG_CONN_ACTIVE		0x0200
+#define RS_CB_FLAG_ORDER_UNSPEC		0x0100
+#define RS_CB_FLAG_ORDER_PASSIVE	0x0200
+#define RS_CB_FLAG_ORDER_ACTIVE		0x0400
+
+#define RSUDP_NUM_TOU_RECVERS		3
+
+#define RSUDP_TOU_RECVER_DIRECT_IDX        0
+#define RSUDP_TOU_RECVER_PROXY_IDX         1
+#define RSUDP_TOU_RECVER_RELAY_IDX         2
 
 
 class pqipeer
@@ -149,7 +157,8 @@ virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
 virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,  
-                        uint32_t source, uint32_t flags, uint32_t delay) = 0;
+			struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr,  
+                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
 
 //virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
 };

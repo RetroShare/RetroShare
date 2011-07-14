@@ -18,6 +18,7 @@
 #include "tcponudp/udprelay.h"
 
 #include "pqi/p3netmgr.h"
+#include "pqi/pqimonitor.h"
 
 #define PEERNET_CONNECT_TIMEOUT 45
 
@@ -308,6 +309,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 	}
 
 	bool connectOk = true;
+	bool doTCPCallback = false;
 
 	/* work out network state */
 	uint32_t connectFlags = dpd->mConnectLogic.connectCb(CSB_CONNECT_DIRECT,
@@ -322,6 +324,11 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 			connectOk = false;
 		}
 			break;
+		case CSB_ACTION_TCP_CONN:
+		{
+			connectOk = false;
+			doTCPCallback = true;
+		}
 		case CSB_ACTION_DIRECT_CONN:
 		{
 
@@ -361,6 +368,24 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 
 		mActions.push_back(ca);
 	}
+
+	/* might need to make this an ACTION - leave for now */
+	if (doTCPCallback)
+	{
+		std::cerr << "dhtPeerCallback. Peer Online, triggering TCP Connection for: ";
+		bdStdPrintId(std::cerr, id);
+		std::cerr << std::endl;
+
+		/* Push Back PeerAction */
+		PeerAction ca;
+		ca.mType = PEERNET_ACTION_TYPE_TCPATTEMPT;
+		ca.mMode = BITDHT_CONNECT_MODE_DIRECT;
+		ca.mDestId = *id;
+		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
+
+		//ConnectCalloutTCPAttempt(dpd->mRsId, id->addr);
+	}
+
 	return 1;
 }
 
@@ -1206,6 +1231,46 @@ int p3BitDht::doActions()
 			}
 			break;
 
+			case PEERNET_ACTION_TYPE_TCPATTEMPT:
+			{
+				/* connect attempt */
+				std::cerr << "PeerAction. TCP Connection Attempt to: ";
+				bdStdPrintId(std::cerr, &(action.mDestId));
+				std::cerr << " mode: " << action.mMode;
+				std::cerr << std::endl;
+
+				struct sockaddr_in laddr; 
+				sockaddr_clear(&laddr);
+				uint32_t start = 0;
+				mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start);
+
+				std::string peerRsId;
+				bool foundPeerId = false;
+				{
+					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
+
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_ANY);
+					if (dpd)
+					{
+						peerRsId = dpd->mRsId;
+						foundPeerId = true;
+						std::cerr << "PeerAction. TCP Connection Attempt. DoingCallback for RsID: ";
+						std::cerr << peerRsId;
+						std::cerr << std::endl;
+					}
+					else 
+					{
+						std::cerr << "PeerAction. TCP Connection Attempt. ERROR unknown peer";
+						std::cerr << std::endl;
+					}
+				}
+
+				if (foundPeerId)
+				{
+					ConnectCalloutTCPAttempt(peerRsId, action.mDestId.addr);
+				}
+			}
+			break;
 		}
 	}
 	return 1;
@@ -1364,10 +1429,57 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
  */
 
  
-void p3BitDht::ConnectCallout(const std::string &peerId, struct sockaddr_in addr, uint32_t connectMode)
+void p3BitDht::ConnectCalloutTCPAttempt(const std::string &peerId, struct sockaddr_in raddr)
 {
-	
+	struct sockaddr_in proxyaddr;
+	struct sockaddr_in srcaddr;
+
+	sockaddr_clear(&proxyaddr);
+	sockaddr_clear(&srcaddr);
+
+	uint32_t source = RS_CB_DHT;
+	uint32_t connectFlags = RS_CB_FLAG_ORDER_UNSPEC | RS_CB_FLAG_MODE_TCP;
+	uint32_t delay = 0;
+	uint32_t bandwidth = 0;
+
+	mConnCb->peerConnectRequest(peerId, raddr, proxyaddr, srcaddr, source, connectFlags, delay, bandwidth);
 }
+
+ 
+void p3BitDht::ConnectCalloutDirectOrProxy(const std::string &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay)
+{
+        struct sockaddr_in proxyaddr;
+	struct sockaddr_in srcaddr;
+
+	sockaddr_clear(&proxyaddr);
+	sockaddr_clear(&srcaddr);
+
+	uint32_t source = RS_CB_DHT;
+	uint32_t bandwidth = 0;
+
+	mConnCb->peerConnectRequest(peerId, raddr, proxyaddr, srcaddr, source, connectFlags, delay, bandwidth);
+}
+
+void p3BitDht::ConnectCalloutRelay(const std::string &peerId, 
+		struct sockaddr_in srcaddr, struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
+			uint32_t connectFlags, uint32_t bandwidth)
+{
+
+	sockaddr_clear(&proxyaddr);
+	sockaddr_clear(&srcaddr);
+
+	uint32_t source = RS_CB_DHT;
+	uint32_t delay = 0;
+
+	mConnCb->peerConnectRequest(peerId, destaddr, proxyaddr, srcaddr, source, connectFlags, delay, bandwidth);
+}
+
+
+	
+
+//virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
+//                        struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr,
+//                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
  
 
 void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
@@ -1378,16 +1490,38 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 
 	bdId peerConnectId;
 
+	uint32_t connectFlags = 0;
+	uint32_t delay = 0;
+	uint32_t bandwidth = 0;
+
 	/* determine who the actual destination is.
 	 * as we always specify the remote address, this is all we need. 
 	 */
 	if (loc == BD_PROXY_CONNECTION_START_POINT)
 	{
 		peerConnectId = *destId;
+		/* lowest is active */
+		if (srcId < destId)
+		{
+			connectFlags |= RS_CB_FLAG_ORDER_ACTIVE;
+		}
+		else
+		{
+			connectFlags |= RS_CB_FLAG_ORDER_PASSIVE;
+		}
 	}
 	else if (loc == BD_PROXY_CONNECTION_END_POINT)
 	{
 		peerConnectId = *srcId;
+		/* lowest is active (we are now dest - in this case) */
+		if (destId < srcId)
+		{
+			connectFlags |= RS_CB_FLAG_ORDER_ACTIVE;
+		}
+		else
+		{
+			connectFlags |= RS_CB_FLAG_ORDER_PASSIVE;
+		}
 	}
 	else
 	{
@@ -1432,6 +1566,8 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 			default:
 			case BITDHT_CONNECT_MODE_DIRECT:
 				touConnectMode = RSDHT_TOU_MODE_DIRECT;
+				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
+				delay = answer;
 				break;
 
 			case BITDHT_CONNECT_MODE_PROXY:
@@ -1443,13 +1579,16 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				std::cerr << " UseProxyPort? " << useProxyPort;
 				std::cerr << std::endl;
 				
+				delay = answer;
 				if (useProxyPort)
 				{
 					touConnectMode = RSDHT_TOU_MODE_PROXY;
+					connectFlags |= RS_CB_FLAG_MODE_UDP_PROXY;
 				}
 				else
 				{
 					touConnectMode = RSDHT_TOU_MODE_DIRECT;
+					connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				}
 
 			}
@@ -1457,6 +1596,8 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	
 			case BITDHT_CONNECT_MODE_RELAY:
 				touConnectMode = RSDHT_TOU_MODE_RELAY;
+				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
+				bandwidth = answer;
 				break;
 		}
 
@@ -1474,8 +1615,24 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	}
 	
 	/* finally we call out to start the connection (Outside of Mutex) */
-	
-	ConnectCallout(rsId, peerConnectId.addr, touConnectMode);
+
+	if ((mode ==  BITDHT_CONNECT_MODE_DIRECT) || (mode ==  BITDHT_CONNECT_MODE_PROXY))	
+	{
+		ConnectCalloutDirectOrProxy(rsId, peerConnectId.addr, connectFlags, delay);
+	}
+	else if (mode == BITDHT_CONNECT_MODE_RELAY)
+	{
+		if (loc == BD_PROXY_CONNECTION_START_POINT)
+		{
+			ConnectCalloutRelay(rsId, srcId->addr, proxyId->addr, destId->addr, connectFlags, bandwidth);
+		}
+		else // END_POINT
+		{
+			/* reverse order connection call */
+			ConnectCalloutRelay(rsId, destId->addr, proxyId->addr, srcId->addr, connectFlags, bandwidth);
+		}
+	}
+
 	
 }
 

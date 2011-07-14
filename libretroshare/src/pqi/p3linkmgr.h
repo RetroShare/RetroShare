@@ -81,6 +81,11 @@ class peerConnectAddress
 	uint32_t type;
 	uint32_t flags;  /* CB FLAGS defined in pqimonitor.h */
 	time_t ts;
+	
+	// Extra Parameters for Relay connections.
+	struct sockaddr_in proxyaddr; 
+	struct sockaddr_in srcaddr;
+	uint32_t bandwidth;
 };
 
 class peerConnectState
@@ -169,8 +174,10 @@ virtual void	addMonitor(pqiMonitor *mon) = 0;
 virtual void	removeMonitor(pqiMonitor *mon) = 0;
 
 	/****************** Connections *******************/
-virtual bool 	connectAttempt(const std::string &id, struct sockaddr_in &addr,
-				uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags) = 0;
+virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
+					struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth) = 0;
+	
 virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address) = 0;
 virtual bool	retryConnect(const std::string &id) = 0;
 
@@ -193,8 +200,9 @@ virtual bool 	getTunnelConnection() = 0;       // ONLY used by p3peermgr.cc & p3
 // THESE MUSTn't BE specfied HERE - as overloaded from pqiConnectCb.
 //virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
 //                        uint32_t type, uint32_t flags, uint32_t source) = 0;
-//virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr, 
-//			uint32_t source, uint32_t flags, uint32_t delay) = 0;
+//virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
+//                        struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr,
+//                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
 
 /****************************************************************************/
 /****************************************************************************/
@@ -222,8 +230,10 @@ virtual void	addMonitor(pqiMonitor *mon);
 virtual void	removeMonitor(pqiMonitor *mon);
 
 	/****************** Connections *******************/
-virtual bool 	connectAttempt(const std::string &id, struct sockaddr_in &addr,
-				uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags);
+virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
+					struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth);
+	
 virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
 virtual bool	retryConnect(const std::string &id);
 
@@ -234,8 +244,9 @@ virtual struct sockaddr_in getLocalAddress();
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
                         uint32_t type, uint32_t flags, uint32_t source);
-virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr, 
-			uint32_t source, uint32_t flags, uint32_t delay);
+virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
+                        struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr, 
+                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth);
 
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
@@ -281,7 +292,9 @@ void 	statusTick();
 void 	tickMonitors();
 
 	/* connect attempts UDP */
-bool    tryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr, uint32_t flags, uint32_t delay);
+bool   tryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr, 
+							struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+							uint32_t flags, uint32_t delay, uint32_t bandwidth);
 
 	/* connect attempts TCP */
 bool	retryConnectTCP(const std::string &id);

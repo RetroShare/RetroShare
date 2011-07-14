@@ -378,19 +378,23 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags)
+int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, 
+				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth)
 {
 #ifdef PERSON_DEBUG
 	{
 	  std::ostringstream out;
 	  out << "pqiperson::connect() Id: " << PeerId();
 	  out << " type: " << type;
-	  out << " addr: " << rs_inet_ntoa(raddr.sin_addr);
-	  out << ":" << ntohs(raddr.sin_port);
+	  out << " addr: " << rs_inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
+	  out << " proxyaddr: " << rs_inet_ntoa(proxyaddr.sin_addr) << ":" << ntohs(proxyaddr.sin_port);
+	  out << " srcaddr: " << rs_inet_ntoa(srcaddr.sin_addr) << ":" << ntohs(srcaddr.sin_port);
 	  out << " delay: " << delay;
 	  out << " period: " << period;
 	  out << " timeout: " << timeout;
 	  out << " flags: " << flags;
+	  out << " bandwidth: " << bandwidth;
 	  out << std::endl;
 	  std::cerr << out.str();
 	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
@@ -430,8 +434,12 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
 
-	(it->second)->connect(raddr);	
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, &proxyaddr);
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, &srcaddr);
+
+	(it->second)->connect(raddr);
 		
 	// flag if we started a new connectionAttempt.
 	inConnectAttempt = true;

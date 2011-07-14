@@ -230,6 +230,10 @@ static const uint32_t NET_PARAM_CONNECT_DELAY   = 1;
 static const uint32_t NET_PARAM_CONNECT_PERIOD  = 2;
 static const uint32_t NET_PARAM_CONNECT_TIMEOUT = 3;
 static const uint32_t NET_PARAM_CONNECT_FLAGS    = 4;
+static const uint32_t NET_PARAM_CONNECT_BANDWIDTH = 5;
+
+static const uint32_t NET_PARAM_CONNECT_PROXY = 6;
+static const uint32_t NET_PARAM_CONNECT_SOURCE = 7;
 
 
 /*!
@@ -266,6 +270,7 @@ virtual std::string PeerId() { return peerId; }
 virtual int getConnectAddress(struct sockaddr_in &raddr) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
+virtual bool connect_additional_address(uint32_t type, struct sockaddr_in *addr) { return false; } // only needed by udp.
 
 protected:
 PQInterface *parent() { return p; }

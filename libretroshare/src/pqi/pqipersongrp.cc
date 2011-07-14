@@ -550,7 +550,11 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t type;
 	uint32_t flags;
 
-	if (!mLinkMgr->connectAttempt(id, addr, delay, period, type, flags))
+	struct sockaddr_in proxyaddr;
+	struct sockaddr_in srcaddr;
+	uint32_t bandwidth;
+	  	  
+	if (!mLinkMgr->connectAttempt(id, addr, proxyaddr, srcaddr, delay, period, type, flags, bandwidth))
 	{
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
@@ -607,7 +611,7 @@ int     pqipersongrp::connectPeer(std::string id
 		return 0;
 	}
 
-	p->connect(ptype, addr, delay, period, timeout, flags);
+	p->connect(ptype, addr, proxyaddr, srcaddr, delay, period, timeout, flags, bandwidth);
 
   } /* UNLOCKED */
 

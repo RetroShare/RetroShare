@@ -71,6 +71,10 @@ virtual int	stoplistening() 	{ return ni -> stoplistening(); }
 virtual int 	reset() 		{ return ni -> reset(); }
 virtual int 	disconnect() 		{ return ni -> reset(); }
 virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> connect_parameter(type, value);}
+virtual bool 	connect_additional_address(uint32_t type, struct sockaddr_in *addr) { return ni -> connect_additional_address(type, addr);}
+
+
+
 virtual int     getConnectAddress(struct sockaddr_in &raddr){ return ni->getConnectAddress(raddr); }
 
 	// get the contact from the net side!
@@ -106,7 +110,11 @@ virtual ~pqiperson(); // must clean up children.
 int 	reset();
 int 	listen();
 int 	stoplistening();
-int	connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags);
+	
+int		connect(uint32_t type, struct sockaddr_in raddr, 
+				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth);
+	
 int     receiveHeartbeat();
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);

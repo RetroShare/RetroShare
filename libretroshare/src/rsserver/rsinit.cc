@@ -1905,8 +1905,8 @@ int RsServer::StartupRetroShare()
 	/* construct the rest of the stack, important to build them in the correct order! */
 	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
 
-	UdpSubReceiver *udpReceivers[3];
-	int udpTypes[3];
+	UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
+	int udpTypes[RSUDP_NUM_TOU_RECVERS];
 
 	// FIRST DHT STUNNER.
 	UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
@@ -1920,14 +1920,14 @@ int RsServer::StartupRetroShare()
 	
 	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
 	UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack); 
-	udpReceivers[2] = mRelay; /* RELAY Connections (DHT Port) */
-	udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
-	mDhtStack->addReceiver(udpReceivers[2]);
+	udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
+	udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
+	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
 	
 	// LAST ON THIS STACK IS STANDARD DIRECT TOU
-	udpReceivers[0] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
-	udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
-	mDhtStack->addReceiver(udpReceivers[0]);
+	udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
+	udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX]);
 
 	// NOW WE BUILD THE SECOND STACK.
 	// Create the Second UdpStack... Port should be random (but openable!).
@@ -1947,12 +1947,12 @@ int RsServer::StartupRetroShare()
         mProxyStack->addReceiver(mProxyStunner);
 	
 	// FINALLY THE PROXY UDP CONNECTIONS
-	udpReceivers[1] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	
-	udpTypes[1] = TOU_RECEIVER_TYPE_UDPPEER;	
-	mProxyStack->addReceiver(udpReceivers[1]);
+	udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	
+	udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;	
+	mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
 	
 	// REAL INITIALISATION - WITH THREE MODES
-	tou_init((void **) udpReceivers, udpTypes, 3);
+	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
 
 	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
 	

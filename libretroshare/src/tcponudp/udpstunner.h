@@ -68,8 +68,11 @@ class TouStunPeer
 };
 
 /*
+ * FOR TESTING ONLY.
  * #define UDPSTUN_ALLOW_LOCALNET	1	
  */
+
+#define UDPSTUN_ALLOW_LOCALNET	1	
 
 class UdpStunner: public UdpSubReceiver
 {
