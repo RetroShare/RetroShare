@@ -17,6 +17,8 @@
 
 const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
 
+#define EXTADDRSEARCH_DEBUG
+
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 
 static std::string scan_ip(const std::string& text)
@@ -290,7 +292,6 @@ ExtAddrFinder::ExtAddrFinder() : _addrMtx("ExtAddrFinder")
 	_addr = (in_addr*)malloc(sizeof(in_addr)) ;
 
 	_ip_servers.push_back(std::string( "checkip.dyndns.org" )) ;
-	_ip_servers.push_back(std::string( "www.showmyip.com"   )) ;
 	_ip_servers.push_back(std::string( "showip.net"         )) ;
 	_ip_servers.push_back(std::string( "www.displaymyip.com")) ;
 }
