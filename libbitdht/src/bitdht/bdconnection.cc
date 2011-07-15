@@ -265,6 +265,8 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 	
 	if (checkExistingConnectionAttempt(target))
 	{
+		std::cerr << "bdConnectManager::requestConnection_direct() Existing ConnectionRequest... NOOP";
+		std::cerr << std::endl;
 		return 0;
 	}
 
@@ -326,8 +328,15 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	std::cerr << std::endl;
 #endif
 
-	/* create a bdConnect, and put into the queue */
+	
+	if (checkExistingConnectionAttempt(target))
+	{
+		std::cerr << "bdConnectManager::requestConnection_proxy() Existing ConnectionRequest... NOOP";
+		std::cerr << std::endl;
+		return 0;
+	}
 
+	/* create a bdConnect, and put into the queue */
 	bdConnectionRequest connreq;
 	connreq.setupProxyConnection(laddr, target, mode);
 
@@ -676,7 +685,7 @@ void bdConnectManager::iterateConnectionRequests()
 			/* connection completed, doing UDP connection */
 			if (now - it->second.mStateTS > BITDHT_CONNREQUEST_TIMEOUT_CONNECT)
 			{
-				std::cerr << "bdConnectManager::iterateConnectionAttempt() EXTCONNECT has reached timout ->????";
+				std::cerr << "bdConnectManager::iterateConnectionAttempt() ERROR EXTCONNECT has reached timout -> SHOULD NEVER HAPPEN... restart this query:";
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
@@ -854,9 +863,29 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 			{
 				if (it->second.mState == BITDHT_CONNREQUEST_INPROGRESS)
 				{
-        				std::cerr << "bdConnectManager::callbackConnectRequest() ERROR alt CR also in progress!";
+					/* AT THIS POINT - WE SHOULD SWITCH IT INTO EXTCONNECT MODE????, 
+					 * which will timeout - if it fails...
+					 * THIS is effectively the end of the connection attempt anyway.
+					 * if UDP succeeds or fails, will Kill either way.
+					 */
+        				std::cerr << "bdConnectManager::callbackConnectRequest() ERROR ALT CR also in progress!";
         				std::cerr << std::endl;
+
 				}
+
+        			std::cerr << "bdConnectManager::callbackConnectRequest() WARNING Switching ALT CR to EXTCONNECT Mode";
+        			std::cerr << std::endl;
+
+				time_t now = time(NULL);
+				it->second.mState = BITDHT_CONNREQUEST_EXTCONNECT;
+				it->second.mStateTS = now;
+
+			}
+			else
+			{
+        			std::cerr << "bdConnectManager::callbackConnectRequest() No ALT CR - Good";
+        			std::cerr << std::endl;
+
 			}
 			callbackConnect(srcId, proxyId, destId, mode, point, cbtype, errcode);
 			return;
@@ -2233,7 +2262,8 @@ int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *des
 			// Slightly different callback, use ConnAddr for start message!
 			// Also callback to ConnectionRequest first.
 			// ACTUALLY we are END, so shouldn't (AT This Point do this).
-			callbackConnect(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestId),
+			// MUST callback via ConnectRequest - to prevent duplicate REQUESTS.
+			callbackConnectRequest(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestId),
 						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START,
 						BITDHT_CONNECT_ERROR_NONE);
 

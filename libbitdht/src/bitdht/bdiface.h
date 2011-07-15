@@ -317,7 +317,7 @@ virtual void removeFindNode(bdNodeId *id) = 0;
 virtual void findDhtValue(bdNodeId *id, std::string key, uint32_t mode) = 0;
 
 	/***** Connections Requests *****/
-virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start) = 0;
+virtual bool ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start) = 0;
 virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer) = 0;
 virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags) = 0;
 

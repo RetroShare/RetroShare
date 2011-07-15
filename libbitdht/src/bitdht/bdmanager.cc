@@ -1255,12 +1255,12 @@ int bdDebugCallback::dhtValueCallback(const bdNodeId *id, std::string key, uint3
 
 
 
-void bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
+bool bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
 {
 	std::cerr << "bdNodeManager::ConnectionRequest()";
 	std::cerr << std::endl;
 
-	mConnMgr->requestConnection(laddr, target, mode, start);
+	return mConnMgr->requestConnection(laddr, target, mode, start);
 }
 
 void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
