@@ -375,7 +375,7 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 			}
 			else if (mNoAttempts >= MAX_DIRECT_ATTEMPTS) /* if too many attempts */
 			{
-				/* switch to RELAY attempt */
+				/* no RELAY attempt => FAILED_WAIT */
 				mState = CSB_FAILED_WAIT;
 				retval = CSB_ACTION_WAIT;
 				mStateTS = now;

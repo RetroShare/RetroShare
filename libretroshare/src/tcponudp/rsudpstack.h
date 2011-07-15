@@ -38,6 +38,7 @@
 class UdpStack
 {
 	public:
+        rsUdpStack(int testmode, struct sockaddr_in &local) { return; }
 	UdpStack(struct sockaddr_in &local) { return; }
 
 	/* from pqiNetListener */
@@ -57,6 +58,9 @@ class rsUdpStack: public UdpStack, public pqiNetListener
 	rsUdpStack(struct sockaddr_in &local)
 	:UdpStack(local) { return; }
 
+        rsUdpStack(int testmode, struct sockaddr_in &local)
+	:UdpStack(testmode, local) { return; }
+
 	/* from pqiNetListener */
 virtual bool resetListener(struct sockaddr_in &local)
 	{
@@ -74,6 +78,9 @@ class rsFixedUdpStack: public UdpStack, public pqiNetListener
 	public:
 	rsFixedUdpStack(struct sockaddr_in &local)
 	:UdpStack(local) { return; }
+
+        rsFixedUdpStack(int testmode, struct sockaddr_in &local)
+	:UdpStack(testmode, local) { return; }
 
 	/* from pqiNetListener */
 virtual bool resetListener(struct sockaddr_in &local)

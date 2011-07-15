@@ -329,6 +329,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 			connectOk = false;
 			doTCPCallback = true;
 		}
+			break;
 		case CSB_ACTION_DIRECT_CONN:
 		{
 
@@ -421,6 +422,9 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 		default:
 		case CSB_ACTION_WAIT:
 		{
+			std::cerr << "dhtPeerCallback. Request to Wait ... so no Connection Attempt for ";
+			bdStdPrintId(std::cerr, id);
+			std::cerr << std::endl;
 			connectOk = false;
 		}
 			break;
@@ -475,7 +479,7 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 	}
 	else
 	{
-		std::cerr << "dhtPeerCallback. Cancelled Connection Attempt for";
+		std::cerr << "dhtPeerCallback. Cancelled Connection Attempt for ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
 	}
@@ -1023,6 +1027,7 @@ int p3BitDht::doActions()
 				std::cerr << std::endl;
 
 				bool connectionRequested = false;
+				bool connectionReqFailed = false;
 
 				if ((action.mMode == BITDHT_CONNECT_MODE_DIRECT) ||
 						(action.mMode == BITDHT_CONNECT_MODE_RELAY))
@@ -1030,8 +1035,14 @@ int p3BitDht::doActions()
 					struct sockaddr_in laddr; // We zero this address. The DHT layer should be able to handle this!
 					sockaddr_clear(&laddr);
 					uint32_t start = 1;
-					mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start);
-					connectionRequested = true;
+					if (mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start))
+					{
+						connectionRequested = true;
+					}
+					else
+					{
+						connectionReqFailed = true;
+					}
 				}
 				else if (action.mMode == BITDHT_CONNECT_MODE_PROXY)
 				{
@@ -1076,8 +1087,14 @@ int p3BitDht::doActions()
 							std::cerr << std::endl;
 
 							int start = 1;
-							mUdpBitDht->ConnectionRequest(&extaddr, &(action.mDestId.id), action.mMode, start);
-							connectionRequested = true;
+							if (mUdpBitDht->ConnectionRequest(&extaddr, &(action.mDestId.id), action.mMode, start))
+							{
+								connectionRequested = true;
+							}
+							else
+							{
+								connectionReqFailed = true;
+							}
 						}
 						else
 						{
@@ -1086,12 +1103,7 @@ int p3BitDht::doActions()
 							std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
 							std::cerr << std::endl;
 
-							RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-							DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
-							if (dpd)
-							{
-								dpd->mConnectLogic.updateCb(CSB_UPDATE_MODE_UNAVAILABLE);
-							}
+							connectionReqFailed = true;
 						}
 					}
 					else
@@ -1115,6 +1127,12 @@ int p3BitDht::doActions()
 				{
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
+					std::cerr << "PeerAction: Connection Attempt to: ";
+					bdStdPrintId(std::cerr, &(action.mDestId));
+					std::cerr << " has gone ahead";
+					std::cerr << std::endl;
+
+
 					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
 					if (dpd)
 					{
@@ -1127,6 +1145,26 @@ int p3BitDht::doActions()
 					{
 						std::cerr << "PeerAction: Connect ERROR Cannot find PeerStatus";
 						std::cerr << std::endl;
+					}
+				}
+
+				if (connectionReqFailed)
+				{
+					std::cerr << "PeerAction: Connection Attempt to: ";
+					bdStdPrintId(std::cerr, &(action.mDestId));
+					std::cerr << " is Discarded, as Mode is Unavailable";
+					std::cerr << std::endl;
+
+					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+					if (dpd)
+					{
+						dpd->mConnectLogic.updateCb(CSB_UPDATE_MODE_UNAVAILABLE);
+
+						dpd->mPeerReqStatusMsg = "Req Mode Unavailable";
+						dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
+						dpd->mPeerReqMode = action.mMode;
+						dpd->mPeerReqTS = now;
 					}
 				}
 

@@ -38,7 +38,7 @@ static const int STUN_TTL = 64;
  * #define DEBUG_UDP_STUNNER_FILTER 1
  */
 
-#define DEBUG_UDP_STUNNER 1
+//#define DEBUG_UDP_STUNNER 1
 
 const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
 const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
