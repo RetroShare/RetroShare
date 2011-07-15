@@ -29,12 +29,23 @@
 #include <iostream>
 #include <sstream>
 
-#define FAILED_WAIT_TIME	(300) //(1800) // 30 minutes.
-#define TCP_WAIT_TIME		(60)   // 1 minutes.
-#define DIRECT_WAIT_TIME	(60)   // 1 minutes.
-#define PROXY_WAIT_TIME		(60)   // 1 minutes.
-#define RELAY_WAIT_TIME		(60)   // 1 minutes.
-#define REVERSE_WAIT_TIME	(300)  // 5 minutes.
+#define TESTING_PERIODS	1
+
+#ifdef TESTING_PERIODS
+	#define FAILED_WAIT_TIME	(1800)  // 5 minutes.
+	#define TCP_WAIT_TIME		(10)   // 1/6 minutes.
+	#define DIRECT_WAIT_TIME	(10)   // 1/6 minutes.
+	#define PROXY_WAIT_TIME		(30)   // 1/6 minutes.
+	#define RELAY_WAIT_TIME		(30)   // 1/6 minutes.
+	#define REVERSE_WAIT_TIME	(30)   // 1/2 minutes.
+#else
+	#define FAILED_WAIT_TIME	(1800) // 30 minutes.
+	#define TCP_WAIT_TIME		(60)   // 1 minutes.
+	#define DIRECT_WAIT_TIME	(60)   // 1 minutes.
+	#define PROXY_WAIT_TIME		(60)   // 1 minutes.
+	#define RELAY_WAIT_TIME		(60)   // 1 minutes.
+	#define REVERSE_WAIT_TIME	(300)  // 5 minutes.
+#endif
 
 #define MAX_DIRECT_ATTEMPTS	(3)
 #define MAX_PROXY_ATTEMPTS	(3)

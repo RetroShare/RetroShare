@@ -20,7 +20,7 @@
 #include "pqi/p3netmgr.h"
 #include "pqi/pqimonitor.h"
 
-#define PEERNET_CONNECT_TIMEOUT 45
+#define PEERNET_CONNECT_TIMEOUT 90   // Should be BIGGER than Higher level (but okay if not!)
 
 /***
  *
@@ -1884,49 +1884,12 @@ void p3BitDht::Feedback_ConnectionFailed(std::string pid)
 		return;
 	}
 	
+	std::cerr << "p3BitDht::Feedback_ConnectionFailed() UDP Connection Failed: ";
+	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
+	std::cerr << std::endl;
+
 	return UdpConnectionFailed_locked(dpd);
 }
-																	 
-
-void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
-{
-
-	/* shut id down */
-	dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
-	dpd->mPeerConnectMsg = "UDP Failed";
-	
-	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
-	{
-		std::cerr << "p3BitDht::monitorConnections() Request Active (Paused)... restarting";
-		std::cerr << std::endl;					
-		
-		/* Push Back PeerAction */
-		PeerAction ca;
-		ca.mType = PEERNET_ACTION_TYPE_RESTARTREQ;
-		ca.mMode = dpd->mPeerConnectMode;
-		//ca.mProxyId = *proxyId;
-		//ca.mSrcId = *srcId;
-		ca.mDestId = dpd->mPeerConnectPeerId;
-		//ca.mPoint = point;
-		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
-		
-		mActions.push_back(ca);
-		
-		// What the Action should do!	
-		// tell it to keep going.
-		//struct sockaddr_in tmpaddr;
-		//bdsockaddr_clear(&tmpaddr);
-		//int start = 1;
-		//mUdpBitDht->ConnectionRequest(&tmpaddr, &(it->second.mPeerConnectPeerId.id), it->second.mPeerConnectMode, start);
-	}
-	// only an error if we initiated the connection.
-	else if (dpd->mPeerConnectPoint == BD_PROXY_CONNECTION_START_POINT)
-	{
-		std::cerr << "p3BitDht::monitorConnections() ERROR Request not active, can't stop";
-		std::cerr << std::endl;										
-	}
-}
-
 
 void p3BitDht::Feedback_ConnectionClosed(std::string pid)
 {
@@ -1942,18 +1905,69 @@ void p3BitDht::Feedback_ConnectionClosed(std::string pid)
 		return;
 	}
 	
-	std::cerr << "p3BitDht::monitorConnections() Active Connection Closed: ";
+	std::cerr << "p3BitDht::Feedback_ConnectionClosed() Active Connection Closed: ";
 	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 	std::cerr << std::endl;
 
-	dpd->mConnectLogic.updateCb(CSB_UPDATE_DISCONNECTED);
+	return UdpConnectionFailed_locked(dpd);
+}
 
-	dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
-	dpd->mPeerConnectClosedTS = time(NULL);
-	std::ostringstream msg;
-	msg << "Closed, Alive for: " << dpd->mPeerConnectClosedTS - dpd->mPeerConnectTS;
-	msg << " secs";
-	dpd->mPeerConnectMsg = msg.str();
+
+void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
+{
+	if (dpd->mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
+	{
+		std::cerr << "p3BitDht::UdpConnectionFailed_locked() UDP Connection Failed: ";
+		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
+		std::cerr << std::endl;
+
+		/* shut id down */
+		dpd->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
+		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		dpd->mPeerConnectMsg = "UDP Failed";
+
+	}
+	else
+	{
+		std::cerr << "p3BitDht::UdpConnectionFailed_locked() Active Connection Closed: ";
+		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
+		std::cerr << std::endl;
+
+		dpd->mConnectLogic.updateCb(CSB_UPDATE_DISCONNECTED);
+
+		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		dpd->mPeerConnectClosedTS = time(NULL);
+		std::ostringstream msg;
+		msg << "Closed, Alive for: " << dpd->mPeerConnectClosedTS - dpd->mPeerConnectTS;
+		msg << " secs";
+		dpd->mPeerConnectMsg = msg.str();
+	}
+
+
+
+	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+	{
+		std::cerr << "p3BitDht::monitorConnections() Request Active (Paused)... Killing for next Attempt";
+		std::cerr << std::endl;					
+		
+		/* Push Back PeerAction */
+		PeerAction ca;
+		ca.mType = PEERNET_ACTION_TYPE_KILLREQ;
+		ca.mMode = dpd->mPeerConnectMode;
+		//ca.mProxyId = *proxyId;
+		//ca.mSrcId = *srcId;
+		ca.mDestId = dpd->mPeerConnectPeerId;
+		//ca.mPoint = point;
+		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
+		
+		mActions.push_back(ca);
+	}
+	// only an error if we initiated the connection.
+	else if (dpd->mPeerConnectPoint == BD_PROXY_CONNECTION_START_POINT)
+	{
+		std::cerr << "p3BitDht::monitorConnections() ERROR Request not active, can't stop";
+		std::cerr << std::endl;										
+	}
 }
 
 

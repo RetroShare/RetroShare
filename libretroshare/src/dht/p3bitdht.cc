@@ -124,6 +124,11 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 	p3BdCallback *bdcb = new p3BdCallback(this);
 	mUdpBitDht->addCallback(bdcb);
 
+	/* enable all modes */
+	mUdpBitDht->ConnectionOptions(
+			BITDHT_CONNECT_MODE_DIRECT | BITDHT_CONNECT_MODE_PROXY | BITDHT_CONNECT_MODE_RELAY,
+                        BITDHT_CONNECT_OPTION_AUTOPROXY);
+
 }
 
 p3BitDht::~p3BitDht()
