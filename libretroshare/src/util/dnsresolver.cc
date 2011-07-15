@@ -102,7 +102,6 @@ void DNSResolver::reset()
 
 	*_thread_running = false ;
 	_addr_map->clear();
-	_addr_map = NULL ;
 }
 
 bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct in_addr& addr) 
