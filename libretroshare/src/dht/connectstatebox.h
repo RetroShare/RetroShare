@@ -68,8 +68,9 @@
 #define	CSB_UPDATE_CONNECTED		0x0001
 #define	CSB_UPDATE_DISCONNECTED		0x0002
 #define	CSB_UPDATE_AUTH_DENIED		0x0003
-#define	CSB_UPDATE_FAILED_ATTEMPT	0x0004
-#define	CSB_UPDATE_MODE_UNAVAILABLE	0x0005
+#define	CSB_UPDATE_RETRY_ATTEMPT	0x0004
+#define	CSB_UPDATE_FAILED_ATTEMPT	0x0005
+#define	CSB_UPDATE_MODE_UNAVAILABLE	0x0006
 
 #include <iosfwd>
 #include <string>
@@ -108,6 +109,9 @@ class PeerConnectStateBox
 	uint32_t mNetState;
 	time_t mStateTS;
 	uint32_t mNoAttempts;
+	uint32_t mNoFailedAttempts;
+	time_t mNextAttemptTS;
+	time_t mAttemptLength;
 
 	// ProxyPort Storage.
 	uint32_t mProxyPortFlags;

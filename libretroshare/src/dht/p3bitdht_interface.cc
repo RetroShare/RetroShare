@@ -213,18 +213,23 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 
 void	convertUdpRelayEndtoRsDhtRelayEnd(RsDhtRelayEnd &end, const UdpRelayEnd &int_end)
 {
-	std::ostringstream addr;
-	addr << rs_inet_ntoa(int_end.mLocalAddr.sin_addr) << ":" << ntohs(int_end.mLocalAddr.sin_port);
-	end.mLocalAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_end.mLocalAddr.sin_addr) << ":" << ntohs(int_end.mLocalAddr.sin_port);
+		end.mLocalAddr = addr.str();
+	}
 
-	addr.clear();
-	addr << rs_inet_ntoa(int_end.mProxyAddr.sin_addr) << ":" << ntohs(int_end.mProxyAddr.sin_port);
-	end.mProxyAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_end.mProxyAddr.sin_addr) << ":" << ntohs(int_end.mProxyAddr.sin_port);
+		end.mProxyAddr = addr.str();
+	}
 
-
-	addr.clear();
-	addr << rs_inet_ntoa(int_end.mRemoteAddr.sin_addr) << ":" << ntohs(int_end.mRemoteAddr.sin_port);
-	end.mRemoteAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_end.mRemoteAddr.sin_addr) << ":" << ntohs(int_end.mRemoteAddr.sin_port);
+		end.mRemoteAddr = addr.str();
+	}
 
 	end.mCreateTS = 0;
 	return;
@@ -232,13 +237,17 @@ void	convertUdpRelayEndtoRsDhtRelayEnd(RsDhtRelayEnd &end, const UdpRelayEnd &in
 	
 void	convertUdpRelayProxytoRsDhtRelayProxy(RsDhtRelayProxy &proxy, const UdpRelayProxy &int_proxy)
 {
-	std::ostringstream addr;
-	addr << rs_inet_ntoa(int_proxy.mAddrs.mSrcAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mSrcAddr.sin_port);
-	proxy.mSrcAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_proxy.mAddrs.mSrcAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mSrcAddr.sin_port);
+		proxy.mSrcAddr = addr.str();
+	}
 
-	addr.clear();
-	addr << rs_inet_ntoa(int_proxy.mAddrs.mDestAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mDestAddr.sin_port);
-	proxy.mDestAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_proxy.mAddrs.mDestAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mDestAddr.sin_port);
+		proxy.mDestAddr = addr.str();
+	}
 
         proxy.mBandwidth = int_proxy.mBandwidth;
         proxy.mRelayClass = int_proxy.mRelayClass;

@@ -26,6 +26,8 @@
 #include "dht/connectstatebox.h"
 #include "retroshare/rsconfig.h"
 
+#include "util/rsrandom.h"
+
 #include <iostream>
 #include <sstream>
 
@@ -34,32 +36,49 @@
 #ifdef TESTING_PERIODS
 	#define FAILED_WAIT_TIME	(1800)  // 5 minutes.
 	#define TCP_WAIT_TIME		(10)   // 1/6 minutes.
-	#define DIRECT_WAIT_TIME	(10)   // 1/6 minutes.
-	#define PROXY_WAIT_TIME		(30)   // 1/6 minutes.
-	#define RELAY_WAIT_TIME		(30)   // 1/6 minutes.
+	#define DIRECT_MAX_WAIT_TIME	(30)   // 1/6 minutes.
+	#define PROXY_MAX_WAIT_TIME	(30)   // 1/6 minutes.
+	#define RELAY_MAX_WAIT_TIME	(30)   // 1/6 minutes.
 	#define REVERSE_WAIT_TIME	(30)   // 1/2 minutes.
+
+	#define MAX_DIRECT_ATTEMPTS	(3)
+	#define MAX_PROXY_ATTEMPTS	(3)
+	#define MAX_RELAY_ATTEMPTS	(3)
+
+	#define MAX_DIRECT_FAILED_ATTEMPTS	(1)
+	#define MAX_PROXY_FAILED_ATTEMPTS	(1)
+	#define MAX_RELAY_FAILED_ATTEMPTS	(1)
 #else
 	#define FAILED_WAIT_TIME	(1800) // 30 minutes.
 	#define TCP_WAIT_TIME		(60)   // 1 minutes.
-	#define DIRECT_WAIT_TIME	(60)   // 1 minutes.
-	#define PROXY_WAIT_TIME		(60)   // 1 minutes.
-	#define RELAY_WAIT_TIME		(60)   // 1 minutes.
+	#define DIRECT_MAX_WAIT_TIME	(60)   // 1 minutes.
+	#define PROXY_MAX_WAIT_TIME	(60)   // 1 minutes.
+	#define RELAY_MAX_WAIT_TIME	(60)   // 1 minutes.
 	#define REVERSE_WAIT_TIME	(300)  // 5 minutes.
+
+	#define MAX_DIRECT_ATTEMPTS	(10)
+	#define MAX_PROXY_ATTEMPTS	(10)
+	#define MAX_RELAY_ATTEMPTS	(10)
+
+	#define MAX_DIRECT_FAILED_ATTEMPTS	(3)
+	#define MAX_PROXY_FAILED_ATTEMPTS	(3)
+	#define MAX_RELAY_FAILED_ATTEMPTS	(3)
+
 #endif
-
-#define MAX_DIRECT_ATTEMPTS	(3)
-#define MAX_PROXY_ATTEMPTS	(3)
-#define MAX_RELAY_ATTEMPTS	(3)
-
-
 
 PeerConnectStateBox::PeerConnectStateBox()
 {
 	//mPeerId = id;
+	time_t now = time(NULL);
 	mState = CSB_START;
 	mNetState = CSB_NETSTATE_UNKNOWN;
-	mStateTS = 0;
+	mStateTS = now;
 	mNoAttempts = 0;
+        mNoFailedAttempts = 0;
+        mNextAttemptTS = now;
+        mAttemptLength = 0;
+
+
 }
 
 
@@ -210,7 +229,18 @@ std::string PeerConnectStateBox::connectState() const
 	std::string str = StateAsString(mState);
 	std::ostringstream out;
 	time_t now = time(NULL);
-	out << str << "(" << mNoAttempts << ") for " << now - mStateTS << " secs";
+	out << str << "(" << mNoAttempts << "/" << mNoFailedAttempts << ") for " << now - mStateTS << " secs";
+	out << " LA: " << mAttemptLength;
+	if ( (mState == CSB_CONNECTED) || (mState == CSB_DIRECT_ATTEMPT) ||
+		(mState == CSB_PROXY_ATTEMPT) || (mState == CSB_RELAY_ATTEMPT) )
+	{
+		// nothing here... as we are not dependent on the timer.
+	}
+	else
+	{
+		out << " NextAttempt: " << mNextAttemptTS - now;
+	}
+
 	return out.str();
 }
 
@@ -327,7 +357,8 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 		case CSB_FAILED_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < FAILED_WAIT_TIME) 
+			//if (now - mStateTS < FAILED_WAIT_TIME) 
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				retval = CSB_ACTION_WAIT;
@@ -354,13 +385,16 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 			retval = CSB_ACTION_TCP_CONN;
 			mStateTS = now;
 			mNoAttempts = 0;
+			mNoFailedAttempts = 0;
+			mNextAttemptTS = now + TCP_WAIT_TIME;
 
 		}
 			break;
 		case CSB_TCP_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < TCP_WAIT_TIME)
+			//if (now - mStateTS < TCP_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				retval = CSB_ACTION_WAIT;
@@ -372,6 +406,7 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 				retval = CSB_ACTION_DIRECT_CONN | CSB_ACTION_DHT_PORT;
 				mStateTS = now;
 				mNoAttempts = 0;
+				mNoFailedAttempts = 0;
 			}
 		}
 			break;
@@ -379,18 +414,23 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 		case CSB_DIRECT_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < DIRECT_WAIT_TIME)
+			//if (now - mStateTS < DIRECT_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				retval = CSB_ACTION_WAIT;
 			}
-			else if (mNoAttempts >= MAX_DIRECT_ATTEMPTS) /* if too many attempts */
+			else if ((mNoAttempts >= MAX_DIRECT_ATTEMPTS) ||
+				 (mNoFailedAttempts >= MAX_DIRECT_FAILED_ATTEMPTS))
 			{
+				/* if too many attempts */
 				/* no RELAY attempt => FAILED_WAIT */
 				mState = CSB_FAILED_WAIT;
 				retval = CSB_ACTION_WAIT;
 				mStateTS = now;
 				mNoAttempts = 0;
+				mNoFailedAttempts = 0;
+				mNextAttemptTS = now + FAILED_WAIT_TIME;
 			}
 			else
 			{
@@ -453,7 +493,8 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 		case CSB_FAILED_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < FAILED_WAIT_TIME)
+			//if (now - mStateTS < FAILED_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				stateMsg(std::cerr, "too soon, no action", 0);
@@ -479,13 +520,15 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 			retval = CSB_ACTION_WAIT;  /* NO POINT TRYING A TCP_CONN */
 			mStateTS = now;
 			mNoAttempts = 0;
+			mNoFailedAttempts = 0;
+			mNextAttemptTS = now + TCP_WAIT_TIME;
 
 		}
 			break;
 		case CSB_TCP_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < TCP_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				retval = CSB_ACTION_WAIT;
@@ -509,6 +552,7 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 
 				mStateTS = now;
 				mNoAttempts = 0;
+				mNoFailedAttempts = 0;
 			}
 
 		}
@@ -516,20 +560,23 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 		case CSB_PROXY_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < PROXY_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				stateMsg(std::cerr, "too soon, no action", 0);
 				retval = CSB_ACTION_WAIT;
 			}
-			else if (mNoAttempts >= MAX_PROXY_ATTEMPTS) /* if too many attempts */
+			else if ((mNoAttempts >= MAX_PROXY_ATTEMPTS) ||
+				 (mNoFailedAttempts >= MAX_PROXY_FAILED_ATTEMPTS))
 			{
+				/* if too many attempts */
 				/* switch to RELAY attempt */
 				stateMsg(std::cerr, "too many PROXY => RELAY_ATTEMPT", 0);
 				mState = CSB_RELAY_ATTEMPT;
 				retval = CSB_ACTION_RELAY_CONN | CSB_ACTION_DHT_PORT;
 				mStateTS = now;
 				mNoAttempts = 0;
+				mNoFailedAttempts = 0;
 			}
 			else
 			{
@@ -546,7 +593,8 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 		case CSB_REVERSE_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < REVERSE_WAIT_TIME)
+			//if (now - mStateTS < REVERSE_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				stateMsg(std::cerr, "too soon, no action", 0);
@@ -560,6 +608,7 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 				retval = CSB_ACTION_RELAY_CONN | CSB_ACTION_DHT_PORT;
 				mStateTS = now;
 				mNoAttempts = 0;
+				mNoFailedAttempts = 0;
 			}
 		}
 			break;
@@ -567,20 +616,24 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 		case CSB_RELAY_WAIT:
 		{
 			/* if too soon */
-			if (now - mStateTS < RELAY_WAIT_TIME)
+			if (mNextAttemptTS > now)
 			{
 				/* same state */
 				stateMsg(std::cerr, "too soon, no action", 0);
 				retval = CSB_ACTION_WAIT;
 			}
-			else if (mNoAttempts >= MAX_RELAY_ATTEMPTS) /* if too many attempts */
+			else if ((mNoAttempts >= MAX_RELAY_ATTEMPTS) ||
+				 (mNoFailedAttempts >= MAX_RELAY_FAILED_ATTEMPTS))
 			{
+				/* if too many attempts */
 				/* switch to RELAY attempt */
 				stateMsg(std::cerr, "too many RELAY => FAILED_WAIT", 0);
 				mState = CSB_FAILED_WAIT;
 				retval = CSB_ACTION_WAIT;
 				mStateTS = now;
 				mNoAttempts = 0;
+				mNoFailedAttempts = 0;
+				mNextAttemptTS = now + FAILED_WAIT_TIME;
 			}
 			else
 			{
@@ -615,29 +668,31 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 	 * Possible Errors:
 	 * 1) AUTH DENIED.  (fatal) 
 	 * 2) MODE UNAVILABLE 
-	 * 3) FAILED ATTEMPT
-	 * 4) CONNECTION
-	 * 5) DISCONNECTED.
+	 * 3) RETRY ATTEMPT
+	 * 4) FAILED ATTEMPT
+	 * 5) CONNECTION
+	 * 6) DISCONNECTED.
 	 *
 	 * Fitting these into the states:
 		case CSB_START:
 			CONNECTION => CSB_CONNECTED
-			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, DISCONNECTED
+			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT, DISCONNECTED
 		case CSB_CONNECTED:
 			CONNECTION => CSB_CONNECTED
 			DISCONNECTED => CSB_START
-			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT
+			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT
 
 		case CSB_FAILED_WAIT:
 			CONNECTION => CSB_CONNECTED
-			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, DISCONNECTED
+			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT, DISCONNECTED
 		case CSB_REVERSE_WAIT:
 			CONNECTION => CSB_CONNECTED
-			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, DISCONNECTED
+			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT, DISCONNECTED
 		case CSB_DIRECT_ATTEMPT:
 			CONNECTION => CSB_CONNECTED
 			AUTH DENIED => CSB_FAILED_WAIT
 			FAILED ATTEMPT => stay here.
+			RETRY ATTEMPT => stay here
 			MODE UNAVAILABLE - probably error => CSB_FAILED_WAIT
 			error if: MODE UNAVAILABLE, DISCONNECTED
 
@@ -645,6 +700,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 			CONNECTION => CSB_CONNECTED
 			AUTH DENIED => CSB_FAILED_WAIT
 			FAILED ATTEMPT => stay here.
+			RETRY ATTEMPT => stay here
 			MODE_UNAVAILABLE => CSB_REVERSE_WAIT | CSB_RELAY_ATTEMPT
 			error if: DISCONNECTED
 
@@ -652,18 +708,19 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 			CONNECTION => CSB_CONNECTED
 			AUTH DENIED => CSB_FAILED_WAIT
 			FAILED ATTEMPT => stay here.
+			RETRY ATTEMPT => stay here
 			MODE_UNAVAILABLE => CSB_FAILED_WAIT
 			error if: DISCONNECTED
 
 		case CSB_DIRECT_WAIT:
 			CONNECTION => CSB_CONNECTED
-			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, DISCONNECTED
+			error if: AUTH DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT, DISCONNECTED
 		case CSB_PROXY_WAIT:
 			CONNECTION => CSB_CONNECTED
-			error if: AUTH_DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, DISCONNECTED
+			error if: AUTH_DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT, DISCONNECTED
 		case CSB_RELAY_ATTEMPT:
 			CONNECTION => CSB_CONNECTED
-			error if: AUTH_DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, DISCONNECTED
+			error if: AUTH_DENIED, MODE UNAVAILABLE, FAILED ATTEMPT, RETRY ATTEMPT, DISCONNECTED
 	 */
 
 	/* DO Connect / Disconnect Updates ... very specific! */
@@ -672,9 +729,19 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 	{
 		case CSB_UPDATE_CONNECTED:
 		{
+			if ((mState == CSB_DIRECT_ATTEMPT) || (mState == CSB_PROXY_ATTEMPT) || (mState == CSB_PROXY_ATTEMPT))	
+			{
+				mAttemptLength = now - mStateTS;
+			}
+			else
+			{
+				mAttemptLength = 0;
+			}
+	
 			stateMsg(std::cerr, "=> CONNECTED", update);
 			mState = CSB_CONNECTED;
 			mStateTS = now;
+
 			return 0;
 		}
 			break;
@@ -740,27 +807,63 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 			stateMsg(std::cerr, "=> FAILED WAIT", update);
 			mState = CSB_FAILED_WAIT;
 			mStateTS = now;
+			mAttemptLength = now - mStateTS;
+			mNextAttemptTS = now + FAILED_WAIT_TIME;
 
 			return 1;
 		}
 			break;
 		/* if standard FAIL => stay where we are */
-		case CSB_UPDATE_FAILED_ATTEMPT:
+		case CSB_UPDATE_RETRY_ATTEMPT:
 		{
-			stateMsg(std::cerr, "STANDARD FAIL => switch to wait state", update);
+			stateMsg(std::cerr, "RETRY FAIL => switch to wait state", update);
+			mAttemptLength = now - mStateTS;
 			switch(mState)
 			{
 				case CSB_DIRECT_ATTEMPT:
 					mState = CSB_DIRECT_WAIT;
 					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % DIRECT_MAX_WAIT_TIME;
 					break;
 				case CSB_PROXY_ATTEMPT:
 					mState = CSB_PROXY_WAIT;
 					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % PROXY_MAX_WAIT_TIME;
 					break;
 				case CSB_RELAY_ATTEMPT:
 					mState = CSB_RELAY_WAIT;
 					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % RELAY_MAX_WAIT_TIME;
+					break;
+				default:
+					stateMsg(std::cerr, "RETRY FAIL, but unusual state", update);
+					break;
+			}
+					
+			return 1;
+		}
+		/* if standard FAIL => stay where we are */
+		case CSB_UPDATE_FAILED_ATTEMPT:
+		{
+			stateMsg(std::cerr, "STANDARD FAIL => switch to wait state", update);
+			mNoFailedAttempts++;
+			mAttemptLength = now - mStateTS;
+			switch(mState)
+			{
+				case CSB_DIRECT_ATTEMPT:
+					mState = CSB_DIRECT_WAIT;
+					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % DIRECT_MAX_WAIT_TIME;
+					break;
+				case CSB_PROXY_ATTEMPT:
+					mState = CSB_PROXY_WAIT;
+					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % PROXY_MAX_WAIT_TIME;
+					break;
+				case CSB_RELAY_ATTEMPT:
+					mState = CSB_RELAY_WAIT;
+					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % RELAY_MAX_WAIT_TIME;
 					break;
 				default:
 					stateMsg(std::cerr, "STANDARD FAIL, but unusual state", update);
@@ -774,6 +877,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 		/* finally MODE_UNAVAILABLE */
 		case CSB_UPDATE_MODE_UNAVAILABLE:
 		{
+			mAttemptLength = now - mStateTS;
 			if (mState == CSB_PROXY_ATTEMPT)
 			{
 				if (mNetState == CSB_NETSTATE_FORWARD)
@@ -781,6 +885,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 					stateMsg(std::cerr, "as FORWARDED => REVERSE_WAIT", update);
 					mState = CSB_REVERSE_WAIT;
 					mStateTS = now;
+					mNextAttemptTS = now + REVERSE_WAIT_TIME;
 				}
 				else
 				{
@@ -788,6 +893,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 					mState = CSB_RELAY_WAIT;
 					mNoAttempts = 0;
 					mStateTS = now;
+					mNextAttemptTS = now + RSRandom::random_u32() % RELAY_MAX_WAIT_TIME;
 				}
 				return 1;
 			}
@@ -796,6 +902,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 				stateMsg(std::cerr, "MODE UNAVAIL => FAILED_WAIT", update);
 				mState = CSB_FAILED_WAIT;
 				mStateTS = now;
+				mNextAttemptTS = now + FAILED_WAIT_TIME;
 
 				if ((mState == CSB_DIRECT_ATTEMPT)
 					|| (mState == CSB_PROXY_ATTEMPT))

@@ -877,14 +877,20 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 						}
 							break;
 
+
+						/* retry attempts */
+						case BITDHT_CONNECT_ERROR_TEMPUNAVAIL:
+						case BITDHT_CONNECT_ERROR_DUPLICATE:
+						{
+							updatecode = CSB_UPDATE_RETRY_ATTEMPT;
+						}
+							break;
 						/* standard failed attempts */
 						case BITDHT_CONNECT_ERROR_GENERIC:
 						case BITDHT_CONNECT_ERROR_PROTOCOL:
 						case BITDHT_CONNECT_ERROR_TIMEOUT:
-						case BITDHT_CONNECT_ERROR_TEMPUNAVAIL:
 						case BITDHT_CONNECT_ERROR_NOADDRESS:
 						case BITDHT_CONNECT_ERROR_OVERLOADED:
-						case BITDHT_CONNECT_ERROR_DUPLICATE:
 						/* CB_REQUEST errors */
 						case BITDHT_CONNECT_ERROR_TOOMANYRETRY:
 						case BITDHT_CONNECT_ERROR_OUTOFPROXY:
@@ -1502,10 +1508,6 @@ void p3BitDht::ConnectCalloutRelay(const std::string &peerId,
 		struct sockaddr_in srcaddr, struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
 			uint32_t connectFlags, uint32_t bandwidth)
 {
-
-	sockaddr_clear(&proxyaddr);
-	sockaddr_clear(&srcaddr);
-
 	uint32_t source = RS_CB_DHT;
 	uint32_t delay = 0;
 
@@ -1523,7 +1525,20 @@ void p3BitDht::ConnectCalloutRelay(const std::string &peerId,
 void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
 {
 	std::cerr << "p3BitDht::initiateConnection()";
-	std::cerr << " mode: " << mode;
+	std::cerr << std::endl;
+	std::cerr << "\t srcId: ";
+	bdStdPrintId(std::cerr, srcId);
+	std::cerr << std::endl;
+
+	std::cerr << "\t proxyId: ";
+	bdStdPrintId(std::cerr, proxyId);
+	std::cerr << std::endl;
+
+	std::cerr << "\t destId: ";
+	bdStdPrintId(std::cerr, destId);
+	std::cerr << std::endl;
+
+	std::cerr << "\t Mode: " << mode << " loc: " << loc << " answer: " << answer;
 	std::cerr << std::endl;
 
 	bdId peerConnectId;
@@ -1634,7 +1649,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	
 			case BITDHT_CONNECT_MODE_RELAY:
 				touConnectMode = RSDHT_TOU_MODE_RELAY;
-				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
+				connectFlags |= RS_CB_FLAG_MODE_UDP_RELAY;
 				bandwidth = answer;
 				break;
 		}
