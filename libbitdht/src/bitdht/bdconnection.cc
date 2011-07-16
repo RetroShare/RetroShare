@@ -42,8 +42,8 @@
 #define DEBUG_NODE_CONNECTION		1 
 
 
-#define BITDHT_CR_PAUSE_BASE_PERIOD 5
-#define BITDHT_CR_PAUSE_RND_PERIOD  15
+#define BITDHT_CR_PAUSE_SHORT_PERIOD 1
+#define BITDHT_CR_PAUSE_START_PERIOD 10
 
 #define MAX_NUM_RETRIES 3
 
@@ -248,7 +248,8 @@ int bdConnectManager::killConnectionRequest(struct sockaddr_in *laddr, bdNodeId 
 
 
 #define MIN_START_DIRECT_COUNT 		1
-#define MIN_START_PROXY_COUNT 		10
+#define MIN_START_PROXY_COUNT 		3
+#define MED_START_PROXY_COUNT 		5
 #define CONNECT_NUM_PROXY_ATTEMPTS	10
 
 
@@ -363,7 +364,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 
 
 	/* if we don't have enough proxies ... ping the potentials */
-	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
+	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
 	{
 		/* unknown, add to potential list, and ping! */
 		for(pit = potentialProxies.begin(); pit != potentialProxies.end(); pit++)
@@ -383,7 +384,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	}
 
 	// Final Desperate Measures!
-	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
+	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
 	{
 		/* now find closest acceptable peers, 
 	 	 * and trigger a search for target...
@@ -437,8 +438,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		time_t now = time(NULL);
 		/* PAUSE the connection Attempt, so we can wait for responses */
 		connreq.mState = BITDHT_CONNREQUEST_PAUSED;
-		connreq.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD +
-				(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
+		connreq.mPauseTS = now + BITDHT_CR_PAUSE_START_PERIOD; 
 	}
 
 #ifdef DEBUG_NODE_CONNECTION
@@ -613,16 +613,15 @@ void bdConnectManager::iterateConnectionRequests()
 			if (!startConnectionAttempt(&(it->second)))
 			{
 				// FAILS if proxy is bad / nonexistent
-				std::cerr << "bdConnectManager::iterateConnectionAttempt() Failed startup => PAUSED";
+				std::cerr << "bdConnectManager::iterateConnectionAttempt() Failed startup => KILLED";
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
 
-				/* timeout and restart */
-				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
+				it->second.mErrCode = BITDHT_CONNECT_ERROR_SOURCE_START |
+							BITDHT_CONNECT_ERROR_OUTOFPROXY;
+				it->second.mState = BITDHT_CONNREQUEST_DONE;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 
 			}
 		}
@@ -676,8 +675,7 @@ void bdConnectManager::iterateConnectionRequests()
 				/* timeout and restart */
 				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
+				it->second.mPauseTS = now + BITDHT_CR_PAUSE_SHORT_PERIOD;
 			}
 		}
 		else if (it->second.mState == BITDHT_CONNREQUEST_EXTCONNECT)
@@ -685,16 +683,16 @@ void bdConnectManager::iterateConnectionRequests()
 			/* connection completed, doing UDP connection */
 			if (now - it->second.mStateTS > BITDHT_CONNREQUEST_TIMEOUT_CONNECT)
 			{
-				std::cerr << "bdConnectManager::iterateConnectionAttempt() ERROR EXTCONNECT has reached timout -> SHOULD NEVER HAPPEN... restart this query:";
+				std::cerr << "bdConnectManager::iterateConnectionAttempt() ERROR EXTCONNECT has reached timout -> SHOULD NEVER HAPPEN... KILL this query:";
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
 
 				/* timeout and restart */
-				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
+				it->second.mErrCode = BITDHT_CONNECT_ERROR_SOURCE_START |
+							BITDHT_CONNECT_ERROR_PROTOCOL;
+				it->second.mState = BITDHT_CONNREQUEST_DONE;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 			}
 		}
 		else if (it->second.mState == BITDHT_CONNREQUEST_DONE)
@@ -1042,10 +1040,11 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 				{
 					if (errsrc == BITDHT_CONNECT_ERROR_SOURCE_END)
 					{
-						recycle = true;
+						fatal = true;
+						//recycle = true;
 
 	        				std::cerr << "bdConnectManager::callbackConnectRequest() ";
-						std::cerr << "END says TEMPUNAVAIL, recycle";
+						std::cerr << "END says TEMPUNAVAIL, fatal (retried at higher level)";
        		 				std::cerr << std::endl;
 					}
 					else 
@@ -1061,10 +1060,11 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 				{
 
 	        			std::cerr << "bdConnectManager::callbackConnectRequest() ";
-					std::cerr << " DUPLICATE, recycle";
+					std::cerr << " DUPLICATE, fatal";
        		 			std::cerr << std::endl;
 
-					recycle = true;
+					fatal = true;
+					//recycle = true;
 				}	
 					break;
 				case BITDHT_CONNECT_ERROR_OVERLOADED: // not more space. PROXY in RELAY mode.
@@ -1133,8 +1133,7 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 
 				/* setup for next one */
 				cr->mState = BITDHT_CONNREQUEST_PAUSED;
-				cr->mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
+				cr->mPauseTS = now + BITDHT_CR_PAUSE_SHORT_PERIOD;
 			}
 
 			cr->mStateTS = now;
@@ -1910,7 +1909,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 				conn->ConnectionRequestProxy(id, srcConnAddr, &mOwnId, &destId, mode);
 
 				/* ALLOW AUTO AUTH for MID Proxy Connections. */
-				if (mConfigAutoProxy)
+				if ((mConfigAutoProxy) && (mode == BITDHT_CONNECT_MODE_PROXY))
 				{
 				  	AuthConnectionOk(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
 							conn->mMode, conn->mPoint);

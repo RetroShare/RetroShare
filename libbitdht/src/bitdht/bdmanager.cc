@@ -63,7 +63,7 @@
 // This is eventually what we want.
 //#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_ENGINE_VERSION)
 
-#define QUERY_UPDATE_PERIOD 59 	// just under one minute... as that gets called every minute...
+#define QUERY_UPDATE_PERIOD 8 	// under refresh period - so it'll happen at the MAX_REFRESH_PERIOD
 
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
