@@ -3,7 +3,7 @@
 #include <iostream>
 #include "pqi/pqinetwork.h"
 
-#include <tcponudp/extaddrfinder.h>
+#include <util/extaddrfinder.h>
 #include <pqi/authgpg.h>
 
 INITTEST();
