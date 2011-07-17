@@ -85,7 +85,7 @@ void ChatMsgItem::updateItemStatic()
                         "color:#990033;\">%1</span>");
 	
         /* set Peer name */
-        QString peername =  QString::fromStdString(details.name);
+        QString peername =  QString::fromUtf8(details.name.c_str());
         peernameLabel->setText(nameStr.arg(peername));
     }
     else

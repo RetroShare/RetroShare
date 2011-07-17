@@ -163,7 +163,7 @@ void GraphWidget::clearGraph()
 GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth,const std::string& ssl_id,const std::string& gpg_id)
 {
     Node *node = new Node(node_short_string,type,auth,this,ssl_id,gpg_id);
-	 node->setToolTip(QString::fromStdString(node_complete_string)) ;
+     node->setToolTip(QString::fromUtf8(node_complete_string.c_str())) ;
 	 _nodes.push_back(node) ;
     scene()->addItem(node);
 

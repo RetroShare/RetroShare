@@ -442,7 +442,7 @@ void NetworkDialog::insertConnect()
 				item -> setSizeHint(0, QSize( 18,18 ) );
 
 				/* (1) Person */
-				item -> setText(COLUMN_PEERNAME, QString::fromStdString(detail.name));
+				item -> setText(COLUMN_PEERNAME, QString::fromUtf8(detail.name.c_str()));
 
 				/* (4) key id */
 				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
@@ -505,7 +505,7 @@ void NetworkDialog::insertConnect()
 				backgrndcolor=QColor("#B242B2"); //kind of purple
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
-					item -> setToolTip(k, QString::fromStdString(detail.name) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
+					item -> setToolTip(k, QString::fromUtf8(detail.name.c_str()) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
 			}
 			else
 			{
@@ -546,7 +546,7 @@ void NetworkDialog::insertConnect()
 	}
 	self_item -> setText(0, "0");
 	self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
-	self_item->setText(COLUMN_PEERNAME, QString::fromStdString(ownGPGDetails.name) + " (" + tr("yourself") + ")");
+	self_item->setText(COLUMN_PEERNAME, QString::fromUtf8(ownGPGDetails.name.c_str()) + " (" + tr("yourself") + ")");
 	self_item->setText(2,"N/A");
 	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
 

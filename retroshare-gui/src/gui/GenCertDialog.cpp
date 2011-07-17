@@ -114,13 +114,6 @@ void GenCertDialog::show()
   }
 }
 
-void GenCertDialog::closeEvent (QCloseEvent * event)
-{
-
-
- QDialog::closeEvent(event);
-}
-
 void GenCertDialog::closeinfodlg()
 {
 	close();
@@ -163,11 +156,11 @@ void GenCertDialog::genPerson()
 {
 
 	/* Check the data from the GUI. */
-        std::string genLoc  = ui.location_input->text().toStdString();
+		std::string genLoc  = ui.location_input->text().toUtf8().constData();
         std::string PGPId;
 
         if (!genNewGPGKey) {
-            if (ui.location_input->text().length() < 3) {
+            if (genLoc.length() < 3) {
                     /* Message Dialog */
                     QMessageBox::warning ( NULL,
                                     tr("Generate GPG key Failure"),
@@ -226,7 +219,7 @@ void GenCertDialog::genPerson()
 				QCoreApplication::processEvents();
 				while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ; 
 
-            RsInit::GeneratePGPCertificate(ui.name_input->text().toStdString(), ui.email_input->text().toStdString(), ui.password_input->text().toStdString(), PGPId, err_string);
+			RsInit::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), ui.email_input->text().toUtf8().constData(), ui.password_input->text().toStdString(), PGPId, err_string);
 
 				setCursor(Qt::ArrowCursor) ;
         }

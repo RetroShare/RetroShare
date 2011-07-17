@@ -391,7 +391,7 @@ QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 	do
 	{
 #endif
-		dir = QString::fromStdString(det.name)+"/"+dir ;
+		dir = QString::fromUtf8(det.name.c_str())+"/"+dir ;
 
 #ifdef SHOW_TOTAL_PATH
 		if(!requestDirDetails(det.parent,det,flags))
@@ -411,7 +411,7 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 0: return QString::fromUtf8(details.name.c_str());
 			case 1: return misc::friendlyUnit(details.count);
 			case 2: return misc::userFriendlyDuration(details.age);
-			case 3: return QString::fromStdString(rsPeers->getPeerName(details.id));
+			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 			case 4: return computeDirectoryPath(details);
 			default:
 				return QVariant() ;
@@ -497,7 +497,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& deta
 			case 0: return QString::fromUtf8(details.name.c_str());
 			case 1: return (qulonglong) details.count;
 			case 2: return  details.age;
-			case 3: return QString::fromStdString(rsPeers->getPeerName(details.id));
+			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 			case 4: return _ref_entries[index.row()].second ;
 		}
 	}

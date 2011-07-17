@@ -763,7 +763,7 @@ void  MessengerWindow::insertPeers()
 
             gpgIcon = QIcon(StatusDefs::imageIM(bestRSState));
 
-            gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+            gpg_item->setText(COLUMN_NAME, QString::fromUtf8(detail.name.c_str()));
             gpg_item -> setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
 
             std::map<std::string, QString>::iterator customStateString = sslCustomStateStrings.find(bestSslId);
@@ -783,14 +783,14 @@ void  MessengerWindow::insertPeers()
 
                 if (stateString.isEmpty()) {
                     /* show only the name */
-                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+                    gpg_item->setText(COLUMN_NAME, QString::fromUtf8(detail.name.c_str()));
                 } else {
                     /* show the name with location */
-                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + stateString);
+                    gpg_item->setText(COLUMN_NAME, QString::fromUtf8(detail.name.c_str()) + "\n" + stateString);
                 }
             } else {
                 /* show the name with custom state string */
-                gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + customStateString->second);
+                gpg_item->setText(COLUMN_NAME, QString::fromUtf8(detail.name.c_str()) + "\n" + customStateString->second);
             }
 
             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), bestPeerState));
@@ -798,7 +798,7 @@ void  MessengerWindow::insertPeers()
 #endif // MINIMAL_RSGUI
         } else if (gpg_online) {
             gpg_item->setHidden(hideOfflineFriends);
-            gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+            gpg_item->setText(COLUMN_NAME, QString::fromUtf8(detail.name.c_str()));
             gpgIcon = QIcon(IMAGE_AVAIBLE);
             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), PEER_STATE_AVAILABLE));
             QFont font;
@@ -809,7 +809,7 @@ void  MessengerWindow::insertPeers()
             }
         } else {
             gpg_item->setHidden(hideOfflineFriends);
-            gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+            gpg_item->setText(COLUMN_NAME, QString::fromUtf8(detail.name.c_str()));
             gpgIcon = QIcon(StatusDefs::imageIM(RS_STATUS_OFFLINE));
             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
 

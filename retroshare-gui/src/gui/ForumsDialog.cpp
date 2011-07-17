@@ -1744,7 +1744,7 @@ void ForumsFillThread::run()
 
         item->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(tit->title));
 
-        text = QString::fromStdString(rsPeers->getPeerName(msginfo.srcId));
+        text = QString::fromUtf8(rsPeers->getPeerName(msginfo.srcId).c_str());
         if (text.isEmpty())
         {
             item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
@@ -1858,7 +1858,7 @@ void ForumsFillThread::run()
 
                     child->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(mit->title));
 
-                    text = QString::fromStdString(rsPeers->getPeerName(msginfo.srcId));
+                    text = QString::fromUtf8(rsPeers->getPeerName(msginfo.srcId).c_str());
                     if (text.isEmpty())
                     {
                         child->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));

@@ -136,7 +136,7 @@ void ConfCertDialog::load()
         return;
     }
 
-    ui.name->setText(QString::fromStdString(detail.name));
+    ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));
 
     RetroShareLink link;
@@ -325,7 +325,7 @@ void ConfCertDialog::load()
     font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
     font.setStyle(QFont::StyleNormal);
     ui.userCertificateText->setFont(font);
-    ui.userCertificateText->setText(QString::fromStdString(invite));
+    ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
 }
 
 

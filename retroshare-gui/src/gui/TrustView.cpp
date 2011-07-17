@@ -116,10 +116,10 @@ int TrustView::getRowColId(const string& peerid)
 
 		peeridToRow[peerid] = i ;
 
-		std::string name = rsPeers->getPeerName(peerid) ;
+		QString name = QString::fromUtf8(rsPeers->getPeerName(peerid).c_str()) ;
 
-		trustTableTW->setHorizontalHeaderItem(i,new QTableWidgetItem(QString(name.c_str()))) ;
-		trustTableTW->setVerticalHeaderItem(i,new QTableWidgetItem(QString(name.c_str()))) ;
+		trustTableTW->setHorizontalHeaderItem(i,new QTableWidgetItem(name)) ;
+		trustTableTW->setVerticalHeaderItem(i,new QTableWidgetItem(name)) ;
 
 		trustTableTW->setColumnWidth(i,_base_cell_width) ;
 		trustTableTW->setRowHeight(i,_base_cell_height) ;

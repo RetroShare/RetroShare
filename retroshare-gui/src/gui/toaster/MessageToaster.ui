@@ -10,19 +10,6 @@
     <height>100</height>
    </rect>
   </property>
-  <widget class="QLabel" name="namelabel">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>0</y>
-     <width>16</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
   <widget class="QLabel" name="background">
    <property name="geometry">
     <rect>
@@ -77,8 +64,14 @@
      <height>16</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="text">
-    <string>&lt;b&gt;1 new Message from&lt;/b&gt;</string>
+    <string>1 new Message from</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">

@@ -187,7 +187,7 @@ void ProfileView::update()
 
 
 	ui.idLineEdit->setText(QString::fromStdString(pId));
-	ui.nameLineEdit->setText(QString::fromStdString(detail.name));
+	ui.nameLineEdit->setText(QString::fromUtf8(detail.name.c_str()));
 	{
 		std::ostringstream out;
 		out << PostTs;

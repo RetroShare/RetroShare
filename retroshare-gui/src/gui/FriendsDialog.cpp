@@ -256,7 +256,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
         QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
                          "color:#32cd32;\">%1</span>");
-        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + " (" + tr("me") + ") " + QString::fromUtf8(pd.location.c_str())));
+        ui.nicklabel->setText(titleStr.arg(QString::fromUtf8(pd.name.c_str()) + " (" + tr("me") + ") " + QString::fromUtf8(pd.location.c_str())));
     }
 
     /* Hide platform specific features */
@@ -842,7 +842,7 @@ void  FriendsDialog::insertPeers()
 
             availableCount++;
 
-            QString gpgItemText = QString::fromStdString(detail.name);
+            QString gpgItemText = QString::fromUtf8(detail.name.c_str());
 
             // remove items that are not friends anymore
             int childCount = gpgItem->childCount();
@@ -1397,7 +1397,7 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
     std::cerr << "FriendsDialog: received group chat typing info. updating gui." << std::endl ;
 #endif
 
-    QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
+    QString status = QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toAscii());
     ui.statusStringLabel->setText(status) ; // displays info for 5 secs.
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
@@ -1496,7 +1496,7 @@ void FriendsDialog::insertChat()
 
         QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
         QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-        QString name = QString::fromStdString(rsPeers->getPeerName(it->rsid));
+        QString name = QString::fromUtf8(rsPeers->getPeerName(it->rsid).c_str());
         QString msg = QString::fromStdWString(it->msg);
 
 #ifdef FRIENDS_DEBUG

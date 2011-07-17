@@ -1081,7 +1081,7 @@ void MessagesDialog::insertMessages()
             //  From ....
             {
                 if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) {
-                    text = QString::fromStdString(rsPeers->getPeerName(it->srcId));
+                    text = QString::fromUtf8(rsPeers->getPeerName(it->srcId).c_str());
                 } else {
                     if (bGotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                         bGotInfo = true;
@@ -1099,7 +1099,7 @@ void MessagesDialog::insertMessages()
                             if (peerName.empty()) {
                                 text += PeerDefs::rsid("", *pit);
                             } else {
-                                text += QString::fromStdString(peerName);
+                                text += QString::fromUtf8(peerName.c_str());
                             }
                         }
                     } else {

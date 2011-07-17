@@ -141,7 +141,7 @@ void GamesDialog::updateGameList()
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 		std::string serverName = rsPeers->getPeerName(it->serverId);
 		item -> setText(GAME_LIST_TYPE, QString::fromStdString(it->gameType));
-		item -> setText(GAME_LIST_SERVER, QString::fromStdString(serverName));
+		item -> setText(GAME_LIST_SERVER, QString::fromUtf8(serverName.c_str()));
 		item -> setText(GAME_LIST_NAME, QString::fromStdWString(it->gameName));
 		item -> setText(GAME_LIST_STATUS, QString::fromStdString(it->status));
 		item -> setText(GAME_LIST_ID, QString::fromStdString(it->gameId));
@@ -245,7 +245,7 @@ void GamesDialog::updateGameDetails()
 				name = "Yourself";
 			}
 
-			item -> setText(GAME_PEER_PLAYER, QString::fromStdString(name));
+			item -> setText(GAME_PEER_PLAYER, QString::fromUtf8(name.c_str()));
 
 			if (it->second.invite)
 				item -> setText(GAME_PEER_INVITE, "Yes");
@@ -294,7 +294,7 @@ void GamesDialog::updateGameDetails()
 
 	                /* make a widget per friend */
 	                QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-			item -> setText(GAME_PEER_PLAYER, QString::fromStdString(name));
+			item -> setText(GAME_PEER_PLAYER, QString::fromUtf8(name.c_str()));
 			item -> setText(GAME_PEER_INVITE, "No");
 			item -> setText(GAME_PEER_INTEREST, "?");
 			item -> setText(GAME_PEER_PLAY, "?");

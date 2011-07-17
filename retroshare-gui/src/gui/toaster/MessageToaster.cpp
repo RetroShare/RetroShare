@@ -35,7 +35,7 @@ MessageToaster::MessageToaster(const QString &name, const QString &title, const 
 	ui.subjectline->setToolTip(title);
 	ui.contentBrowser->setText(message);
 	ui.contentBrowser->setToolTip(message);
-	ui.namelabel->setText(name);
+	ui.lblTitle->setText(ui.lblTitle->text() + " " + name);
 }
 
 void MessageToaster::openmessageClicked()

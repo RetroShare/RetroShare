@@ -286,7 +286,7 @@ void PhotoDialog::addShows(std::string id)
 	std::list<std::string>::iterator it;
 
         QTreeWidgetItem *peerItem = new QTreeWidgetItem((QTreeWidget*)0);
-	peerItem->setText(PHOTO_PEER_COL_NAME, QString::fromStdString(rsPeers->getPeerName(id)));
+    peerItem->setText(PHOTO_PEER_COL_NAME, QString::fromUtf8(rsPeers->getPeerName(id).c_str()));
 	peerItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
 	peerItem->setText(PHOTO_PEER_COL_SID, "");
 	peerItem->setText(PHOTO_PEER_COL_PHOTOID, "");

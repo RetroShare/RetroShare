@@ -100,7 +100,7 @@ QString TurtleRouterDialog::getPeerName(const std::string& peer_id)
 		if(!rsPeers->getPeerDetails(peer_id,detail))
 			return "unknown peer";
 
-		return (names[peer_id] = QString::fromStdString(detail.name)) ;
+		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
 	}
 }
 
@@ -136,7 +136,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 		if(parent->text(0).left(14) == QString("Unknown hashes"))
 			unknown_hash_found = true ;
 
-		QString str = QString::fromStdString( "Tunnel id: " + tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4] + "\t Speed: " + tunnels_info[i][5] ) ;
+		QString str =  "Tunnel id: " + QString::fromUtf8(tunnels_info[i][0].c_str()) + "\t [" + QString::fromUtf8(tunnels_info[i][2].c_str()) + "] --> [" + QString::fromUtf8(tunnels_info[i][1].c_str()) + "]\t\t last transfer: " + QString::fromStdString(tunnels_info[i][4]) + "\t Speed: " + QString::fromStdString(tunnels_info[i][5]) ;
 		stl.clear() ;
 		stl.push_back(str) ;
 

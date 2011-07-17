@@ -473,7 +473,7 @@ void PopupChatDialog::updateStatusTyping()
 //
 void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
-    QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
+    QString status = QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toAscii());
     ui.statusLabel->setText(status); // displays info for 5 secs.
     ui.typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
@@ -601,7 +601,7 @@ void PopupChatDialog::insertChatMsgs()
             continue;
         }
 
-        addChatMsg(true, it->rsid, QString::fromStdString(rsPeers->getPeerName(it->rsid)), QDateTime::fromTime_t(it->sendTime), QDateTime::fromTime_t(it->recvTime), QString::fromStdWString(it->msg), TYPE_NORMAL, true);
+        addChatMsg(true, it->rsid, QString::fromUtf8(rsPeers->getPeerName(it->rsid).c_str()), QDateTime::fromTime_t(it->sendTime), QDateTime::fromTime_t(it->recvTime), QString::fromStdWString(it->msg), TYPE_NORMAL, true);
     }
 
     rsMsgs->clearPrivateChatQueue(true, dialogId);
@@ -726,7 +726,7 @@ void PopupChatDialog::sendChat()
 
     if (rsMsgs->sendPrivateChat(dialogId, msg)) {
         QDateTime currentTime = QDateTime::currentDateTime();
-        addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
+        addChatMsg(false, ownId, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
     }
 
     chatWidget->clear();
@@ -1018,7 +1018,7 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 
     if (rsMsgs->sendPrivateChat(dialogId, msg)) {
         QDateTime currentTime = QDateTime::currentDateTime();
-        addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
+        addChatMsg(false, ownId, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
     }
 }
 

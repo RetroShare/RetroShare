@@ -256,7 +256,7 @@ QString TurtleRouterStatistics::getPeerName(const std::string& peer_id)
 		if(!rsPeers->getPeerDetails(peer_id,detail))
 			return "unknown peer";
 
-		return (names[peer_id] = QString::fromStdString(detail.name)) ;
+		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
 	}
 }
 

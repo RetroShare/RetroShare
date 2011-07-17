@@ -131,7 +131,7 @@ std::string NotifyQt::askForPassword(const std::string& key_details,bool prev_is
 	QInputDialog dialog;
 	dialog.setWindowTitle(tr("GPG key passphrase"));
 	dialog.setLabelText((prev_is_bad?tr("Wrong password !") + "\n\n" : QString()) +
-						tr("Please enter the password to unlock the following GPG key:") + "\n" + QString::fromStdString(key_details));
+						tr("Please enter the password to unlock the following GPG key:") + "\n" + QString::fromUtf8(key_details.c_str()));
 	dialog.setTextEchoMode(QLineEdit::Password);
 	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
 
@@ -454,16 +454,14 @@ void NotifyQt::UpdateGUI()
 			Toaster *toaster = NULL;
 
 			/* id the name */
-			std::string name;
-			std::string realmsg;
+			QString name;
 			unsigned char *data = NULL;
 			int size = 0 ;
 
 			if (type == RS_POPUP_DOWNLOAD) {
 				/* id = file hash */
 			} else {
-				name = rsPeers->getPeerName(id);
-				realmsg = "<strong>" + name + "</strong>";
+				name = QString::fromUtf8(rsPeers->getPeerName(id).c_str());
 
 				rsMsgs->getAvatarData(id,data,size);
 			}
@@ -473,7 +471,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_MSG:
 					if (popupflags & RS_POPUP_MSG)
 					{
-						toaster = new Toaster(new MessageToaster(QString::fromStdString(realmsg), QString::fromStdString(title), QString::fromStdString(msg)));
+						toaster = new Toaster(new MessageToaster(name, QString::fromUtf8(title.c_str()), QString::fromStdString(msg)));
 					}
 					break;
 				case RS_POPUP_CONNECT:
@@ -490,7 +488,7 @@ void NotifyQt::UpdateGUI()
 							avatar = QPixmap(":/images/user/personal64.png");
 						}
 
-						toaster = new Toaster(new OnlineToaster(id, QString::fromStdString(realmsg), avatar));
+						toaster = new Toaster(new OnlineToaster(id, name, avatar));
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:

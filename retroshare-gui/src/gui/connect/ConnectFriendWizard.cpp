@@ -347,7 +347,7 @@ void TextPage::updateOwnCert()
     font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
     font.setStyle(QFont::StyleNormal);
     userCertEdit->setFont(font);
-    userCertEdit->setText(QString::fromStdString(invite));
+    userCertEdit->setText(QString::fromUtf8(invite.c_str()));
 }
 
 //
@@ -369,7 +369,7 @@ static void sendMail (std::string sAddress, std::string sSubject, std::string sB
     std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
 
     /* pass the url directly to QDesktopServices::openUrl */
-    QDesktopServices::openUrl (QUrl (QString::fromStdString(mailstr)));
+    QDesktopServices::openUrl (QUrl (QString::fromUtf8(mailstr.c_str())));
 }
 
 void 
@@ -380,7 +380,7 @@ TextPage::runEmailClient()
 
 void TextPage::cleanFriendCert()
 {
-    std::string cert = friendCertEdit->toPlainText().toStdString();
+    std::string cert = friendCertEdit->toPlainText().toUtf8().constData();
     std::string cleanCert;
 
     if (rsPeers->cleanCertificate(cert, cleanCert)) {
@@ -462,7 +462,7 @@ void TextPage::setCurrentFileName(const QString &fileName)
 int TextPage::nextId() const {
 
     std::string certstr;
-    certstr = friendCertEdit->toPlainText().toStdString();
+    certstr = friendCertEdit->toPlainText().toUtf8().constData();
 	 std::string error_string ;
     RsPeerDetails pd;
     if ( rsPeers->loadDetailsFromStringCert(certstr, pd,error_string) ) {
@@ -611,7 +611,7 @@ void FofPage::updatePeersList(int e) {
                         _gpg_id_boxes[cb] = details.gpg_id ;
 
 			selectedPeersTW->setCellWidget(row,0,cb) ;
-			selectedPeersTW->setItem(row,1,new QTableWidgetItem(QString::fromStdString(details.name))) ;
+			selectedPeersTW->setItem(row,1,new QTableWidgetItem(QString::fromUtf8(details.name.c_str()))) ;
 
 			QComboBox *qcb = new QComboBox ;
 
@@ -1098,16 +1098,16 @@ void ConclusionPage::initializePage() {
     QString ts;
     std::list<std::string>::iterator it;
     for(it = detail.gpgSigners.begin(); it != detail.gpgSigners.end(); it++) {
-            ts.append(QString::fromStdString( rsPeers->getPeerName(*it) ));
+            ts.append(QString::fromUtf8( rsPeers->getPeerName(*it).c_str() ));
             ts.append( "<" ) ;
             ts.append( QString::fromStdString(*it) );
             ts.append( ">" );
             ts.append( "\n" );
     }
 
-    nameEdit->setText( QString::fromStdString( detail.name ) ) ;
+    nameEdit->setText( QString::fromUtf8( detail.name.c_str() ) ) ;
     trustEdit->setText(QString::fromStdString( trustString ) ) ;
-    emailEdit->setText(QString::fromStdString( detail.email ) );
+    emailEdit->setText(QString::fromUtf8( detail.email.c_str() ) );
     locEdit->setText( QString::fromUtf8( detail.location.c_str() ) );
     signersEdit->setPlainText( ts );
     

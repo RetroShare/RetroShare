@@ -120,7 +120,7 @@ void PeerItem::updateItemStatic()
                                "color:#990033;\">%1</span>");
 	
     /* set Blog name */
-    QString peername =  QString::fromStdString(details.name);
+    QString peername =  QString::fromUtf8(details.name.c_str());
     peernameLabel->setText(nameStr.arg(peername));
 
 		QDateTime date = QDateTime::fromTime_t(details.lastConnect);

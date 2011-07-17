@@ -1047,7 +1047,7 @@ void TransfersDialog::insertTransfers()
 
 QString TransfersDialog::getPeerName(const std::string& id) const
 {
-	QString res = QString::fromStdString(rsPeers->getPeerName(id)) ;
+	QString res = QString::fromUtf8(rsPeers->getPeerName(id).c_str()) ;
 
 	// This is because turtle tunnels have no name (I didn't want to bother with
 	// connect mgr). In such a case their id can suitably hold for a name.

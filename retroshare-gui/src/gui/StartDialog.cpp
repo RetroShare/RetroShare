@@ -76,7 +76,7 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 			const QVariant & userData = QVariant(QString::fromStdString(*it));
                         std::string gpgid, name, email, location;
                         RsInit::getAccountDetails(*it, gpgid, name, email, location);
-                        QString accountName = QString::fromStdString(name + " (") + QString::fromStdString(gpgid).right(8) + ") - " + QString::fromStdString(location);
+                        QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid).right(8) + ") - " + QString::fromUtf8(location.c_str());
        			ui.loadName->addItem(accountName, userData);
 
 			if (preferedId == *it)

@@ -65,7 +65,7 @@ CryptoPage::load()
     QFont font("Courier New",9,50,false) ;
     ui.certtextEdit->setFont(font) ;
 
-    ui.certtextEdit->setPlainText(QString::fromStdString(rsPeers->GetRetroshareInvite(true)));
+    ui.certtextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(true).c_str()));
     ui.certtextEdit->setReadOnly(true);
     ui.certtextEdit->setMinimumHeight(200);
 }

@@ -549,7 +549,7 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
 QString RetroShareLink::niceName() const
 {
     if (type() == TYPE_PERSON) {
-        return PeerDefs::rsid(name().toStdString(), hash().toStdString());
+        return PeerDefs::rsid(name().toUtf8().constData(), hash().toStdString());
     }
 
     return name();

@@ -4759,7 +4759,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+173"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+166"/>
         <location line="+22"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -4817,8 +4817,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-192"/>
-        <location filename="../gui/GenCertDialog.cpp" line="-194"/>
-        <location line="+53"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-187"/>
+        <location line="+46"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -4903,32 +4903,32 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Standorten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-62"/>
-        <location line="+75"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-55"/>
+        <location line="+68"/>
         <source>Create new Location</source>
         <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
-        <location line="-74"/>
-        <location line="+75"/>
+        <location line="-67"/>
+        <location line="+68"/>
         <source>Generate new Location</source>
         <translation>Erstelle neues Ort</translation>
     </message>
     <message>
-        <location line="-74"/>
-        <location line="+75"/>
+        <location line="-67"/>
+        <location line="+68"/>
         <source>Create a new Location</source>
         <translation>Erstelle einen neuen Ort</translation>
     </message>
     <message>
-        <location line="-67"/>
-        <location line="+53"/>
+        <location line="-60"/>
+        <location line="+46"/>
         <source>Generate new Profile</source>
         <translation>Generiere neues Profil</translation>
     </message>
     <message>
-        <location line="-52"/>
-        <location line="+53"/>
+        <location line="-45"/>
+        <location line="+46"/>
         <source>Create a new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -5927,7 +5927,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Chat</translation>
     </message>
     <message>
-        <location line="+217"/>
+        <location line="+198"/>
         <location line="+42"/>
         <location line="+42"/>
         <location line="+73"/>
@@ -6001,12 +6001,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="+88"/>
-        <location filename="../gui/MainWindow.cpp" line="-748"/>
+        <location filename="../gui/MainWindow.cpp" line="-729"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+781"/>
+        <location filename="../gui/MainWindow.cpp" line="+762"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -6016,7 +6016,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-770"/>
+        <location line="-751"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -6072,7 +6072,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Schliessen</translation>
     </message>
     <message>
-        <location line="+191"/>
+        <location line="+172"/>
         <location line="+42"/>
         <location line="+42"/>
         <location line="+188"/>
@@ -6088,7 +6088,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du hast %1 neue Nachricht</translation>
     </message>
     <message>
-        <location line="-479"/>
+        <location line="-460"/>
         <source>Bandwidth Graph</source>
         <translation>Bandbreiten-Graph</translation>
     </message>
@@ -6162,7 +6162,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+867"/>
+        <location line="+848"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Willst Du RetroShare wirklich beenden?</translation>
     </message>
@@ -6172,7 +6172,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-767"/>
+        <location line="-748"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -6796,9 +6796,13 @@ Willst Du die Nachricht speichern ?</translation>
 <context>
     <name>MessageToaster</name>
     <message>
-        <location filename="../gui/toaster/MessageToaster.ui" line="+81"/>
         <source>&lt;b&gt;1 new Message from&lt;/b&gt;</source>
-        <translation>&lt;b&gt;1 neue Nachricht von&lt;/b&gt;</translation>
+        <translation type="obsolete">&lt;b&gt;1 neue Nachricht von&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/MessageToaster.ui" line="+74"/>
+        <source>1 new Message from</source>
+        <translation>1 neue Nachricht von</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -8167,7 +8171,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
-        <location line="+97"/>
+        <location line="+90"/>
         <source>Download completed</source>
         <translation>Download fertig</translation>
     </message>
@@ -8176,7 +8180,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Kombiniertes Icon</translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="-83"/>
         <location line="+7"/>
         <location line="+7"/>
         <location line="+7"/>
@@ -8185,7 +8189,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kombiniert</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+29"/>
         <source>Toasters</source>
         <translation></translation>
     </message>
@@ -8245,7 +8249,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Systemabschnitts-Nachricht an</translation>
     </message>
     <message>
-        <location line="-268"/>
+        <location line="-261"/>
         <source>Add feeds at end</source>
         <translation>Feeds am Ende anfügen</translation>
     </message>

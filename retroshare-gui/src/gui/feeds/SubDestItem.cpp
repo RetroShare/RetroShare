@@ -60,7 +60,7 @@ void SubDestItem::updateItemStatic()
 			typeLabel->setText("Message To: ");
 			if (rsPeers)
 			{
-				name = QString::fromStdString(rsPeers->getPeerName(mGroupId));
+				name = QString::fromUtf8(rsPeers->getPeerName(mGroupId).c_str());
 			}
 		}
 			break;

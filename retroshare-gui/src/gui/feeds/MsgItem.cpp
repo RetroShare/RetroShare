@@ -85,7 +85,7 @@ void MsgItem::updateItemStatic()
 
 	QString title;
 	QString timestamp;
-	QString srcName = QString::fromStdString(rsPeers->getPeerName(mi.srcId));
+	QString srcName = QString::fromUtf8(rsPeers->getPeerName(mi.srcId).c_str());
 
 	{
 		QDateTime qtime;

@@ -265,11 +265,11 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
 	painter->drawEllipse(-10, -10, 20, 20);
-	painter->drawText(-10, 0, QString::fromStdString(_desc_string));
+	painter->drawText(-10, 0, QString::fromUtf8(_desc_string.c_str()));
 
 	if (!mDeterminedBB)
 	{
-		QRect textBox = painter->boundingRect(-10, 0, 400, 20, 0, QString::fromStdString(_desc_string));
+		QRect textBox = painter->boundingRect(-10, 0, 400, 20, 0, QString::fromUtf8(_desc_string.c_str()));
 		mBBWidth = textBox.width();
 		mDeterminedBB = true;
 	}
