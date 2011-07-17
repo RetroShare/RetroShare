@@ -413,6 +413,15 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		bool locked_loadHistoryCacheFile();
 
+		/*!
+		 * this removes the given cache id and associated msgs nodes from
+		 * all grp nodes
+		 * cache table is updated to reflect document
+		 * this costly, and is here to be called once a year has been reached on
+		 * @param pCid the cache id to remove from cache document
+		 */
+		void locked_removeCacheTableEntry(const pCacheId& pCid);
+
 	private:
 
 		/* these lists are filled by the overloaded fns... then cleared by the thread */
@@ -667,6 +676,9 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		void    locked_publishPendingMsgs();
 
 		/*!
+		 * This function is key to determining how long caches permeate
+		 * a distributed network, after mStorePeriod has elapsed for a message
+		 * it is over written since its cache subid is used for the cache file name
 		 * @return cache sub id
 		 */
 		uint16_t locked_determineCacheSubId();

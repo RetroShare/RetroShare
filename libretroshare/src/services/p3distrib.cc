@@ -476,6 +476,54 @@ void p3GroupDistrib::updateCacheDocument()
 	return;
 }
 
+struct by_cacheid
+{
+	bool operator()(pugi::xml_node node) const
+	{
+		bool cachIdEqual = true;
+		cachIdEqual &= (node.child_value("subId") == subId);
+		cachIdEqual &= (node.child_value("pId") == peerId);
+		return cachIdEqual;
+	}
+
+	std::string peerId;
+	std::string subId;
+};
+
+void p3GroupDistrib::locked_removeCacheTableEntry(const pCacheId& pCid)
+{
+
+	// search through cache document for all entries with this cache id
+
+	pugi::xml_node_iterator nit = mCacheDoc.begin();
+	by_cacheid bCid;
+	bCid.peerId = pCid.first;
+
+	char subIdBuffer[6];
+	std::string subId;
+	sprintf(subIdBuffer, "%d", pCid.second);
+	subId = subIdBuffer;
+	bCid.subId = subId;
+
+	// for each grp, remove message nodes that match pCid
+	for(; nit != mCacheDoc.end(); nit++)
+	{
+		pugi::xml_node msgNode = nit->child("messages");
+
+		if(msgNode)
+		{
+			while(pugi::xml_node cNode= msgNode.find_child(bCid))
+			{
+				msgNode.remove_child(cNode);
+			}
+		}
+	}
+
+	locked_buildCacheTable();
+
+	return;
+}
+
 void p3GroupDistrib::locked_updateCacheTableGrp(const std::vector<grpNodePair>& grpNodes, bool historical)
 {
 
@@ -553,6 +601,7 @@ bool p3GroupDistrib::locked_historyCached(const std::string& grpId, bool& cached
 	std::map<std::string, nodeCache>::iterator cit;
 	if(mCacheTable.end() != (cit = mCacheTable.find(grpId)))
 	{
+
 		cached = cit->second.cached;
 		return true;
 	}
@@ -560,6 +609,8 @@ bool p3GroupDistrib::locked_historyCached(const std::string& grpId, bool& cached
 	cached = false;
 	return false;
 }
+
+
 
 bool p3GroupDistrib::locked_historyCached(const pCacheId& cId)
 {
@@ -587,6 +638,9 @@ bool p3GroupDistrib::locked_buildCacheTable(){
 #endif
 		return false;
 	}
+
+	// clear cache table
+	mCacheTable.clear();
 
 	pugi::xml_node_iterator grpIt = mCacheDoc.begin(), msgIt;
 	pugi::xml_node messages_node;
@@ -769,8 +823,7 @@ void p3GroupDistrib::locked_getHistoryCacheData(const std::string& grpId, std::l
 			}
 			else
 				locked_getStoredCache(cDataTemp);
-
-			cDataSet.push_back(cDataTemp);
+				cDataSet.push_back(cDataTemp);
 		}
 	}
 	else
@@ -1869,6 +1922,8 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	newCache.cid.type = CacheSource::getCacheType();
 	newCache.cid.subid = locked_determineCacheSubId();
 
+	// remove old cache entry using this pid
+	locked_removeCacheTableEntry(pCacheId(newCache.pid, newCache.cid.subid));
 
 	/* create filename */
 	std::string path = CacheSource::getCacheDir();
@@ -1916,9 +1971,6 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 		{
 			ok &= false;
 		}
-
-
-
 	}
 
 	/* Extract File Information from pqistore */
