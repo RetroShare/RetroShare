@@ -71,6 +71,7 @@ UdpStunner::UdpStunner(UdpPublisher *pub)
 
 	mExclusiveMode = false;
 	mExclusiveModeTS = 0;
+	mForceRestun = false;
 
 	return;
 }
@@ -150,7 +151,7 @@ int	UdpStunner::grabExclusiveMode()		/* returns seconds since last send/recv */
 	return commsage;
 }
 
-int	UdpStunner::releaseExclusiveMode()
+int	UdpStunner::releaseExclusiveMode(bool forceStun)
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
@@ -165,16 +166,18 @@ int	UdpStunner::releaseExclusiveMode()
 
 	time_t now = time(NULL);
 	mExclusiveMode = false;
-
+	if (forceStun)
+	{
+		mForceRestun = true;
+	}
 
 #ifdef UDPSTUN_ALLOW_LOCALNET	
-	/* if we are simulating an exclusive NAT, then immediately after we release - it'll become unstable.
-	 * This is even harser than reality... so better test.
- 	 *
+	/* if we are simulating an exclusive NAT, then immediately after we release - it'll become unstable. 
 	 * In reality, it will only become unstable if we have tried a UDP connection.
+	 * so we use the forceStun parameter (which is true when a UDP connection has been tried).
 	 */
 
-	if (mSimExclusiveNat)
+	if ((mSimExclusiveNat) && (forceStun))
 	{
 		mSimUnstableExt = true;
 	}
@@ -358,6 +361,14 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 			std::cerr << std::endl;
 
 			eaddrKnown = false;
+			return false;
+		}
+		
+		/* Force Restun is triggered after an Exclusive Mode... as Ext Address is likely to have changed
+		 * Until the Restun has got an address - we act as if we don't have an external address
+		 */
+		if (mForceRestun)
+		{
 			return false;
 		}
 
@@ -669,6 +680,12 @@ bool    UdpStunner::checkStunDesired()
 	  {
 		return false; /* no pings in exclusive mode */
 	  }
+		
+	  if (mForceRestun)
+	  {
+			return true;
+	  }
+		
 
 	  if (!eaddrKnown)
 	  {
@@ -856,6 +873,12 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 		}
 	}
 
+	/* We've received a Stun, so the ForceStun can be cancelled */
+	if (found)
+	{
+		mForceRestun = false;
+	}
+	
 	/* if not found.. should we add it back in? */
 	
 	/* How do we calculate the success rate?

@@ -232,8 +232,7 @@ void 	Feedback_ConnectionFailed(std::string pid);
 void 	Feedback_ConnectionClosed(std::string pid);
 
 void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
-void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd);
-
+void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
 
 
 /***********************************************************************************************

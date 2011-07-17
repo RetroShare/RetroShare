@@ -1565,7 +1565,9 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 }
 
 #define NET_STUNNER_PERIOD_FAST		(-1)	// default of Stunner.
-#define NET_STUNNER_PERIOD_SLOW		(180) 	// 3 minutes.
+#define NET_STUNNER_PERIOD_SLOW		(120) 	// This needs to be as small Routers will allow... try 2 minutes.
+// FOR TESTING ONLY.
+//#define NET_STUNNER_PERIOD_SLOW		(60) 	// 3 minutes.
 
 void p3NetMgrIMPL::updateNatSetting()
 {

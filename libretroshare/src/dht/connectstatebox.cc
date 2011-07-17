@@ -85,11 +85,6 @@ PeerConnectStateBox::PeerConnectStateBox()
 
 }
 
-uint32_t PeerConnectStateBox::getNetState()
-{
-	return mNetState;
-}
-
 
 std::string NetStateAsString(uint32_t netstate)
 {
@@ -300,6 +295,13 @@ bool PeerConnectStateBox::shouldUseProxyPort(uint32_t netmode, uint32_t nathole,
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return shouldUseProxyPortInternal(netstate);
 }
+
+uint32_t PeerConnectStateBox::calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+{
+	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
+	return netstate;
+}
+
 
 uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype)
 {

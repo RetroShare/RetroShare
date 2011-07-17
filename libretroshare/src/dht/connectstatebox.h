@@ -89,7 +89,7 @@ class PeerConnectStateBox
 
 	bool shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype);
 
-	uint32_t getNetState();
+	uint32_t calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype);
 	std::string connectState() const;
 
 	std::string mPeerId;

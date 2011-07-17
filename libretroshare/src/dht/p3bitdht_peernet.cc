@@ -708,14 +708,24 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					std::cerr << " UseProxyPort? " << proxyPort;
 					std::cerr << std::endl;
 
+					std::cerr << "dhtConnectionCallback: Checking ConnectLogic.NetState: ";
+					std::cerr << dpd->mConnectLogic.calcNetState(mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
+					std::cerr << std::endl;
+
 					if (proxyPort)
 					{
-						exclusivePort = (CSB_NETSTATE_EXCLUSIVENAT == dpd->mConnectLogic.getNetState());
+						exclusivePort = (CSB_NETSTATE_EXCLUSIVENAT == dpd->mConnectLogic.calcNetState(
+									mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode()));
 					}
 
 					if (exclusivePort)
 					{
 						std::cerr << "dhtConnectionCallback: we Require Exclusive Proxy Port for connection";
+						std::cerr << std::endl;
+					}
+					else
+					{
+						std::cerr << "dhtConnectionCallback: Dont need Exclusive Proxy Port for connection";
 						std::cerr << std::endl;
 					}
 
@@ -777,7 +787,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 									std::cerr << "PeerAction: Connect Proxy: ERROR Cannot find PeerStatus";
 									std::cerr << std::endl;
 									connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
-									mProxyStunner->releaseExclusiveMode();
+									mProxyStunner->releaseExclusiveMode(false);
 								}
 							}
 							else
@@ -915,7 +925,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			{
 				if (errcode)
 				{
-					ReleaseProxyExclusiveMode_locked(dpd);
+					ReleaseProxyExclusiveMode_locked(dpd, false);
 
 					dpd->mPeerReqStatusMsg = "STOPPED: ";
 					dpd->mPeerReqStatusMsg += decodeConnectionError(errcode);
@@ -1134,9 +1144,19 @@ int p3BitDht::doActions()
 							proxyPort = dpd->mConnectLogic.getProxyPortChoice();
 							if (proxyPort)
 							{
-								std::cerr << "PeerAction:  Using ProxyPort. NetState indicates Exclusive Mode";
+								std::cerr << "PeerAction:  Using ProxyPort. Checking ConnectLogic.NetState: ";
+								std::cerr << dpd->mConnectLogic.calcNetState(mNetMgr->getNetworkMode(), 
+												mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
 								std::cerr << std::endl;
-								exclusivePort = (CSB_NETSTATE_EXCLUSIVENAT == dpd->mConnectLogic.getNetState());
+
+								exclusivePort = (CSB_NETSTATE_EXCLUSIVENAT == dpd->mConnectLogic.calcNetState(
+									mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode()));
+
+								if (exclusivePort)
+								{
+									std::cerr << "PeerAction: NetState indicates Exclusive Mode";
+									std::cerr << std::endl;
+								}
 							}
 						}
 						else
@@ -1271,7 +1291,7 @@ int p3BitDht::doActions()
 
 					if (grabbedExclusivePort)
 					{
-						mProxyStunner->releaseExclusiveMode();
+						mProxyStunner->releaseExclusiveMode(false);
 					}
 
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
@@ -2008,7 +2028,7 @@ void p3BitDht::Feedback_Connected(std::string pid)
 		std::cerr << std::endl;										
 	}
 
-	ReleaseProxyExclusiveMode_locked(dpd);
+	ReleaseProxyExclusiveMode_locked(dpd, true);
 }
 
 void p3BitDht::Feedback_ConnectionFailed(std::string pid)
@@ -2110,12 +2130,12 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 		std::cerr << std::endl;										
 	}
 
-	ReleaseProxyExclusiveMode_locked(dpd);
+	ReleaseProxyExclusiveMode_locked(dpd, true);
 }
 
 
 
-void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd)
+void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely)
 {
 #ifdef DEBUG_BITDHT_COMMON
 	std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked()";
@@ -2125,7 +2145,7 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd)
 
 	if (dpd->mExclusiveProxyLock)
 	{
-		if (mProxyStunner->releaseExclusiveMode())
+		if (mProxyStunner->releaseExclusiveMode(addrChgLikely))
 		{
 			dpd->mExclusiveProxyLock = false;
 
