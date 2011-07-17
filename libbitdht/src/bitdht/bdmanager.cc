@@ -1255,22 +1255,22 @@ int bdDebugCallback::dhtValueCallback(const bdNodeId *id, std::string key, uint3
 
 
 
-bool bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
+bool bdNodeManager::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay, uint32_t start)
 {
 	std::cerr << "bdNodeManager::ConnectionRequest()";
 	std::cerr << std::endl;
 
-	return mConnMgr->requestConnection(laddr, target, mode, start);
+	return mConnMgr->requestConnection(laddr, target, mode, delay, start);
 }
 
-void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
+void bdNodeManager::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t bandwidth, uint32_t delay, uint32_t answer)
 {
 	std::cerr << "bdNodeManager::ConnectionAuth()";
 	std::cerr << std::endl;
 
 	if (answer == BITDHT_CONNECT_ANSWER_OKAY)
 	{
-		mConnMgr->AuthConnectionOk(srcId, proxyId, destId, mode, loc);
+		mConnMgr->AuthConnectionOk(srcId, proxyId, destId, mode, loc, bandwidth, delay);
 	}
 	else
 	{
@@ -1287,7 +1287,7 @@ void bdNodeManager::ConnectionOptions(uint32_t allowedModes, uint32_t flags)
         /***** Connections Requests *****/
 
         // Overloaded from bdnode for external node callback. 
-void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int point, int cbtype, int errcode)
+void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int point, int param, int cbtype, int errcode)
 {
 	std::cerr << "bdNodeManager::callbackConnect()";
 	std::cerr << std::endl;
@@ -1298,13 +1298,13 @@ void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, in
         std::list<BitDhtCallback *>::iterator it;
         for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
         {
-                (*it)->dhtConnectCallback(srcId, proxyId, destId, mode, point, cbtype, errcode);
+                (*it)->dhtConnectCallback(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
         }
         return;
 }
 
 int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-		uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode)
+		uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtConnectCallback() Type: " << cbtype;
@@ -1316,6 +1316,7 @@ int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, 
 	std::cerr << " destId: ";
 	bdStdPrintId(std::cerr, destId);
 	std::cerr << " mode: " << mode;
+	std::cerr << " param: " << param;
 	std::cerr << " point: " << point << std::endl;
 #endif
 

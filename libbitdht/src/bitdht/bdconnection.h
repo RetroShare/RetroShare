@@ -42,7 +42,7 @@ class bdNodePublisher;
 #define BITDHT_CONNREQUEST_EXTCONNECT		4
 #define BITDHT_CONNREQUEST_DONE			5
 
-#define BITDHT_CONNREQUEST_TIMEOUT_CONNECT	120  // MAKE THIS LARGE - SHOULD NEVER HAPPEN.
+#define BITDHT_CONNREQUEST_TIMEOUT_CONNECT	180  // MAKE THIS LARGE - SHOULD NEVER HAPPEN.
 #define BITDHT_CONNREQUEST_TIMEOUT_INPROGRESS	30
 #define BITDHT_CONNREQUEST_MAX_AGE		60
 
@@ -85,22 +85,22 @@ class bdConnection
 	/** Functions to tweak the connection status */
 
 	// User initialised Connection.
-	int ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
+	int ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay);
 	int ConnectionSetupDirect(bdId *destId, bdId *srcConnAddr);
 
 	// Initialise a new Connection. (receiving a Connection Request)
 	int ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *destConnAddr);
-	int ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destConnAddr, int mode);
+	int ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destConnAddr, int mode, int delay);
 	int ConnectionRequestEnd(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
 
 	// Setup Finishing Stage, (receiving a Connection Reply).
-	int upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status);
+	int upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay, int status);
 
 	int AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
-	int AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
-	int AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+	int AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int bandwidth);
+	int AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int delay);
 
-	int CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr);
+	int CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int bandwidth, int delay);
 
 	int checkForDefaultConnectAddress();
 
@@ -124,6 +124,8 @@ class bdConnection
 	bdId mDestConnAddr;
 
 	int mBandwidth;
+	int mMaxDelay;
+	time_t mConnectionStartTS;
 
 	/* START/ACK Finishing ****/
 	time_t mLastStart;   /* timer for retries */
@@ -142,7 +144,7 @@ class bdConnectionRequest
 {
 	public:
 	int setupDirectConnection(struct sockaddr_in *laddr, bdNodeId *target);
-	int setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+	int setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay);
 
 	int addGoodProxy(const bdId *srcId);
 	int checkGoodProxyPeer(const bdId *Id);
@@ -157,6 +159,8 @@ class bdConnectionRequest
 	time_t mPauseTS;
 	uint32_t mErrCode;
 	
+	int mDelay;
+	time_t mRequestTS;   // reference Time for mDelay.
 
 	std::list<bdId> mGoodProxies;
 	std::list<bdId> mPotentialProxies;
@@ -199,9 +203,9 @@ class bdConnectManager
 
 	/* Connections: Initiation */
 
-	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start);
+	int requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay, uint32_t start);
 	int requestConnection_direct(struct sockaddr_in *laddr, bdNodeId *target);	
-	int requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
+	int requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay);
 
 	int killConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode);
 
@@ -217,12 +221,12 @@ class bdConnectManager
 
 	// internal Callback -> normally continues to callbackConnect().
 	void callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId, 
-				int mode, int point, int cbtype, int errcode);
+				int mode, int point, int param, int cbtype, int errcode);
 
 	/* Connections: Outgoing */
 
-	int  startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode);
-	void AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc);
+	int  startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay);
+	void AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int bandwidth, int delay);
 	void AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int errcode);
 	void iterateConnections();
 
@@ -243,12 +247,12 @@ class bdConnectManager
 
 	// Overloaded Generalised Connection Callback.
 	virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
-				int mode, int point, int cbtype, int errcode);
+				int mode, int point, int param, int cbtype, int errcode);
 
 	/* Connections: */
-	int recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
-	int recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status);
-	int recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int bandwidth);
+	int recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay);
+	int recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay, int status);
+	int recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delayOrBandwidth);
 	int recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
 
 	private:

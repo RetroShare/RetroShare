@@ -963,7 +963,7 @@ int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target,
  */
 
 
-int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bdId *dest, int mode, int status, char *msg, int avail)
+int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bdId *dest, int mode, int param, int status, char *msg, int avail)
 {
 #ifdef DEBUG_MSGS
 	fprintf(stderr, "bitdht_connect_genmsg()\n");
@@ -983,34 +983,17 @@ int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bd
 	be_node *typenode = be_create_int(msgtype);
 	be_node *statusnode = be_create_int(status);
 	be_node *modenode = be_create_int(mode);
+	be_node *paramnode = be_create_int(param);
 
 	be_node *tidnode = be_create_str_wlen((char *) tid->data, tid->len);
 	be_node *yqrnode = be_create_str("q");
 	be_node *cmdnode = be_create_str("connect");
 
-#if 0	
-	be_node *modenode = NULL;
-	switch(mode)
-	{
-		case BITDHT_CONNECT_MODE_DIRECT:
-			modenode = be_create_str("d");
-			break;
-		case BITDHT_CONNECT_MODE_PROXY:
-			modenode = be_create_str("p");
-			break;
-		case BITDHT_CONNECT_MODE_RELAY:
-			modenode = be_create_str("r");
-			break;
-		default:
-			modenode = be_create_str("u");
-			break;
-	}
-#endif
-			
 	be_add_keypair(iddict, "id", idnode);
 	be_add_keypair(iddict, "src", srcnode);
 	be_add_keypair(iddict, "dest", destnode);
 	be_add_keypair(iddict, "mode", modenode);
+	be_add_keypair(iddict, "param", paramnode);
 	be_add_keypair(iddict, "status", statusnode);
 	be_add_keypair(iddict, "type", typenode);
 

@@ -50,9 +50,10 @@
 #define BITDHT_VERSION_IDENTIFER	1
 
 // Original RS 0.5.0/0.5.1 version, is un-numbered.
-#define BITDHT_VERSION			"00" // First Release of BitDHT with Connections (Proxy Support + Dht Stun)
-//#define BITDHT_VERSION			"01" // Full Connections 
-//#define BITDHT_VERSION			"02" // Full DHT implementation.
+//#define BITDHT_VERSION			"00" // First Release of BitDHT with Connections (Proxy Support + Dht Stun)
+#define BITDHT_VERSION				"01" // Testing Connections 
+//#define BITDHT_VERSION			"02" // Completed? Full Connections 
+//#define BITDHT_VERSION			"04" // Full DHT implementation.?
 
 /*************************************/
 
@@ -125,20 +126,21 @@ void UdpBitDht::removeCallback(BitDhtCallback *cb)
 	mBitDhtManager->removeCallback(cb);
 }
 
-bool UdpBitDht::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
+bool UdpBitDht::ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay, uint32_t start)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
-	return mBitDhtManager->ConnectionRequest(laddr, target, mode, start);
+	return mBitDhtManager->ConnectionRequest(laddr, target, mode, delay, start);
 }
 
 
 
-void UdpBitDht::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
+void UdpBitDht::ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, 
+								uint32_t bandwidth, uint32_t delay, uint32_t answer)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
-	mBitDhtManager->ConnectionAuth(srcId, proxyId, destId, mode, loc, answer);
+	mBitDhtManager->ConnectionAuth(srcId, proxyId, destId, mode, loc, bandwidth, delay, answer);
 }
 
 void UdpBitDht::ConnectionOptions(uint32_t allowedModes, uint32_t flags)

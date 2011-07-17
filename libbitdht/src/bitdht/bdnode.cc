@@ -380,14 +380,14 @@ void bdNode::send_query(bdId *id, bdNodeId *targetNodeId)
 }
 
 
-void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int status)
+void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int param, int status)
 {
 	/* push out query */
 	bdToken transId;
 	genNewTransId(&transId);
 	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
-	msgout_connect_genmsg(id, &transId, msgtype, srcAddr, destAddr, mode, status);
+	msgout_connect_genmsg(id, &transId, msgtype, srcAddr, destAddr, mode, param, status);
 
 #ifdef DEBUG_NODE_MSGS 
 	std::cerr << "bdNode::send_connect_msg() to: ";
@@ -1190,12 +1190,14 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	bdId connSrcAddr;
 	bdId connDestAddr;
 	uint32_t connMode;
+	uint32_t connParam = 0;
 	uint32_t connStatus;
 	uint32_t connType;
 
 	be_node  *be_ConnSrcAddr = NULL;
 	be_node  *be_ConnDestAddr = NULL;
 	be_node  *be_ConnMode = NULL;
+	be_node  *be_ConnParam = NULL;
 	be_node  *be_ConnStatus = NULL;
 	be_node  *be_ConnType = NULL;
 	if (beType == BITDHT_MSG_TYPE_CONNECT)
@@ -1230,6 +1232,18 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 		{
 #ifdef DEBUG_NODE_PARSE
 			std::cerr << "bdNode::recvPkt() CONNECT Missing Mode. Dropping Msg";
+			std::cerr << std::endl;
+#endif
+			be_free(node);
+			return;
+		}
+
+		/* Param */
+		be_ConnParam = beMsgGetDictNode(be_data, "param");
+		if (!be_ConnParam)
+		{
+#ifdef DEBUG_NODE_PARSE
+			std::cerr << "bdNode::recvPkt() CONNECT Missing Param. Dropping Msg";
 			std::cerr << std::endl;
 #endif
 			be_free(node);
@@ -1274,6 +1288,11 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	if (be_ConnMode)
 	{
 		beMsgGetUInt32(be_ConnMode, &connMode);
+	}
+
+	if (be_ConnParam)
+	{
+		beMsgGetUInt32(be_ConnParam, &connParam);
 	}
 
 	if (be_ConnStatus)
@@ -1409,7 +1428,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 //#endif
 			msgin_connect_genmsg(&srcId, &transId, connType,
 					&connSrcAddr, &connDestAddr, 
-					connMode, connStatus);
+					connMode, connParam, connStatus);
 			break;
 		}
 		default:
@@ -1788,7 +1807,7 @@ std::string getConnectMsgType(int msgtype)
 	}
 }
 
-void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int status)
+void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int param, int status)
 {
 	std::cerr << "bdConnectManager::msgout_connect_genmsg() Type: " << getConnectMsgType(msgtype);
 	std::cerr << " TransId: ";
@@ -1800,6 +1819,7 @@ void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId
 	std::cerr << " DestAddr: ";
 	mFns->bdPrintId(std::cerr, destAddr);
 	std::cerr << " Mode: " << mode;
+	std::cerr << " Param: " << param;
 	std::cerr << " Status: " << status;
 	std::cerr << std::endl;
 #ifdef DEBUG_NODE_MSGOUT
@@ -1828,13 +1848,13 @@ void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId
         char msg[10240];
         int avail = 10240;
 
-        int blen = bitdht_connect_genmsg(transId, &(mOwnId), msgtype, srcAddr, destAddr, mode, status, msg, avail-1);
+        int blen = bitdht_connect_genmsg(transId, &(mOwnId), msgtype, srcAddr, destAddr, mode, param, status, msg, avail-1);
         sendPkt(msg, blen, id->addr);
 }
 
 
 void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
-					bdId *srcAddr, bdId *destAddr, int mode, int status)
+					bdId *srcAddr, bdId *destAddr, int mode, int param, int status)
 {
 	std::list<bdId>::iterator it;
 
@@ -1848,6 +1868,7 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
 	std::cerr << " DestAddr: ";
 	mFns->bdPrintId(std::cerr, destAddr);
 	std::cerr << " Mode: " << mode;
+	std::cerr << " Param: " << param;
 	std::cerr << " Status: " << status;
 	std::cerr << std::endl;
 #ifdef DEBUG_NODE_MSGS
@@ -1864,21 +1885,21 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
 			mAccount.incCounter(BDACCOUNT_MSG_CONNECTREQUEST, false);
 
 
-			mConnMgr->recvedConnectionRequest(id, srcAddr, destAddr, mode);
+			mConnMgr->recvedConnectionRequest(id, srcAddr, destAddr, mode, param);
 
 			break;
 		case BITDHT_MSG_TYPE_CONNECT_REPLY:
 			peerflags = BITDHT_PEER_STATUS_RECV_CONNECT_MSG; 
 			mAccount.incCounter(BDACCOUNT_MSG_CONNECTREPLY, false);
 
-			mConnMgr->recvedConnectionReply(id, srcAddr, destAddr, mode, status);
+			mConnMgr->recvedConnectionReply(id, srcAddr, destAddr, mode, param, status);
 
 			break;
 		case BITDHT_MSG_TYPE_CONNECT_START:
 			peerflags = BITDHT_PEER_STATUS_RECV_CONNECT_MSG; 
 			mAccount.incCounter(BDACCOUNT_MSG_CONNECTSTART, false);
 
-			mConnMgr->recvedConnectionStart(id, srcAddr, destAddr, mode, status);
+			mConnMgr->recvedConnectionStart(id, srcAddr, destAddr, mode, param);
 
 			break;
 		case BITDHT_MSG_TYPE_CONNECT_ACK:
