@@ -23,10 +23,11 @@
  *
  */
 
-#include "udpstunner.h"
+#include "tcponudp/udpstunner.h"
 #include <iostream>
 #include <sstream>
 
+#include "util/rsrandom.h"
 #include "util/rsprint.h"
 
 static const int STUN_TTL = 64;
@@ -56,6 +57,9 @@ UdpStunner::UdpStunner(UdpPublisher *pub)
 {
 #ifdef UDPSTUN_ALLOW_LOCALNET	
 	mAcceptLocalNet = false;
+	mSimExclusiveNat = false;
+	mSimSymmetricNat = false;
+	mSimUnstableExt = false;
 #endif
 
 
@@ -81,10 +85,29 @@ void	UdpStunner::SetAcceptLocalNet()
 	mAcceptLocalNet = true;
 }
 
+	// For Local Testing Only (Releases should have the #define disabled)
+void	UdpStunner::SimExclusiveNat()
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	mSimExclusiveNat = true;
+	mSimUnstableExt = true;
+}
+
+void	UdpStunner::SimSymmetricNat()
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	mSimSymmetricNat = true;
+	mSimUnstableExt = true;
+}
+
+
+
 #endif
 
 
-int	UdpStunner::setExclusiveMode()		/* returns seconds since last send/recv */
+int	UdpStunner::grabExclusiveMode()		/* returns seconds since last send/recv */
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
@@ -127,7 +150,7 @@ int	UdpStunner::setExclusiveMode()		/* returns seconds since last send/recv */
 	return commsage;
 }
 
-int	UdpStunner::cancelExclusiveMode()
+int	UdpStunner::releaseExclusiveMode()
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
@@ -142,6 +165,21 @@ int	UdpStunner::cancelExclusiveMode()
 
 	time_t now = time(NULL);
 	mExclusiveMode = false;
+
+
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+	/* if we are simulating an exclusive NAT, then immediately after we release - it'll become unstable.
+	 * This is even harser than reality... so better test.
+ 	 *
+	 * In reality, it will only become unstable if we have tried a UDP connection.
+	 */
+
+	if (mSimExclusiveNat)
+	{
+		mSimUnstableExt = true;
+	}
+#endif
+
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
 	std::cerr << "UdpStunner::cancelExclusiveMode() Canceled. Was in ExclusiveMode for: " << now - mExclusiveModeTS;
@@ -335,6 +373,7 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 		std::cerr << ":" << ntohs(external.sin_port) << " stable: " << (int) stable;
 		std::cerr << std::endl;
 #endif
+
 
 		return true;
 	}
@@ -780,6 +819,23 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	std::cerr << out.str() << std::endl;
 #endif
 
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+	struct sockaddr_in fakeExtaddr = extaddr;
+	if (mSimUnstableExt)
+	{
+		std::cerr << "UdpStunner::locked_recvdStun() TEST SIM UNSTABLE EXT: Forcing Port to be wrong to sim an ExclusiveNat";
+		std::cerr << std::endl;
+
+#define UNSTABLE_PORT_RANGE 100
+
+		fakeExtaddr.sin_port = htons(ntohs(fakeExtaddr.sin_port) - (UNSTABLE_PORT_RANGE / 2) + RSRandom::random_u32() % UNSTABLE_PORT_RANGE);
+		if (!mSimSymmetricNat)
+		{
+			mSimUnstableExt = false;
+		}
+	}
+#endif
+
 	bool found = true;
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
@@ -788,7 +844,11 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 		    (remote.sin_port == it->remote.sin_port))
 		{
 			it->failCount = 0;
+#ifdef UDPSTUN_ALLOW_LOCALNET
+			it->eaddr = fakeExtaddr;
+#else			
 			it->eaddr = extaddr;
+#endif
 			it->response = true;
 
 			found = true;

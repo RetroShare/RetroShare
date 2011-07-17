@@ -71,6 +71,8 @@ class DhtPeerDetails
 	time_t 		mPeerConnectTS;
 	time_t		mPeerConnectClosedTS;
 	
+	bool 			mExclusiveProxyLock;
+
 	/* keeping the PeerCbMsg, as we will need it for debugging */
 	/* don't think this data is ever used for decisions??? */
 
@@ -109,6 +111,7 @@ class PeerAction
         uint32_t mMode;
         uint32_t mPoint;
         uint32_t mAnswer;
+        uint32_t mDelayOrBandwidth;
 };
 
 
@@ -226,8 +229,11 @@ void 	ConnectCalloutRelay(const std::string &peerId, struct sockaddr_in srcaddr,
 
 void 	Feedback_Connected(std::string pid);
 void 	Feedback_ConnectionFailed(std::string pid);
-void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
 void 	Feedback_ConnectionClosed(std::string pid);
+
+void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
+void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd);
+
 
 
 /***********************************************************************************************

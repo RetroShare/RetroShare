@@ -84,10 +84,12 @@ virtual ~UdpStunner() { return; }
 #ifdef UDPSTUN_ALLOW_LOCALNET
 	// For Local Testing Mode.
 	void SetAcceptLocalNet();
+	void SimExclusiveNat();
+	void SimSymmetricNat();
 #endif
 
-int	setExclusiveMode();		/* returns seconds since last send/recv */
-int	cancelExclusiveMode();
+int	grabExclusiveMode();		/* returns seconds since last send/recv */
+int	releaseExclusiveMode();
 
 
 void 	setTargetStunPeriod(int32_t sec_per_stun);
@@ -142,6 +144,10 @@ bool    locked_checkExternalAddress();
 #ifdef UDPSTUN_ALLOW_LOCALNET
 	// For Local Testing Mode.
         bool mAcceptLocalNet;
+	bool mSimUnstableExt;
+        bool mSimExclusiveNat;
+        bool mSimSymmetricNat;
+
 #endif
 
 	bool mPassiveStunMode;
@@ -150,6 +156,7 @@ bool    locked_checkExternalAddress();
 
 	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
 	time_t mExclusiveModeTS;
+
 };
 
 	/* generic stun functions */

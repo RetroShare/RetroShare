@@ -185,6 +185,8 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 
 	status.mPeerReqState = details.mPeerReqState;
 
+	status.mExclusiveProxyLock = details.mExclusiveProxyLock;
+
 	status.mPeerConnectState = details.mPeerConnectState;
 
 	switch(details.mPeerConnectMode)

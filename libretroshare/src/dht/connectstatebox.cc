@@ -33,31 +33,35 @@
 
 #define TESTING_PERIODS	1
 
+/* Have made the PROXY Attempts + MAX_TIME much larger, 
+ * have have potential for this to take a while.
+ */
+
 #ifdef TESTING_PERIODS
 	#define FAILED_WAIT_TIME	(1800)  // 5 minutes.
 	#define TCP_WAIT_TIME		(10)   // 1/6 minutes.
 	#define DIRECT_MAX_WAIT_TIME	(30)   // 1/6 minutes.
-	#define PROXY_MAX_WAIT_TIME	(30)   // 1/6 minutes.
+	#define PROXY_MAX_WAIT_TIME	(120)   // 1/6 minutes.
 	#define RELAY_MAX_WAIT_TIME	(30)   // 1/6 minutes.
 	#define REVERSE_WAIT_TIME	(30)   // 1/2 minutes.
 
 	#define MAX_DIRECT_ATTEMPTS	(3)
-	#define MAX_PROXY_ATTEMPTS	(3)
+	#define MAX_PROXY_ATTEMPTS	(10)
 	#define MAX_RELAY_ATTEMPTS	(3)
 
 	#define MAX_DIRECT_FAILED_ATTEMPTS	(1)
-	#define MAX_PROXY_FAILED_ATTEMPTS	(1)
+	#define MAX_PROXY_FAILED_ATTEMPTS	(2)
 	#define MAX_RELAY_FAILED_ATTEMPTS	(1)
 #else
 	#define FAILED_WAIT_TIME	(1800) // 30 minutes.
 	#define TCP_WAIT_TIME		(60)   // 1 minutes.
 	#define DIRECT_MAX_WAIT_TIME	(60)   // 1 minutes.
-	#define PROXY_MAX_WAIT_TIME	(60)   // 1 minutes.
+	#define PROXY_MAX_WAIT_TIME	(120)   // 1 minutes.
 	#define RELAY_MAX_WAIT_TIME	(60)   // 1 minutes.
 	#define REVERSE_WAIT_TIME	(300)  // 5 minutes.
 
 	#define MAX_DIRECT_ATTEMPTS	(10)
-	#define MAX_PROXY_ATTEMPTS	(10)
+	#define MAX_PROXY_ATTEMPTS	(20)
 	#define MAX_RELAY_ATTEMPTS	(10)
 
 	#define MAX_DIRECT_FAILED_ATTEMPTS	(3)
@@ -79,6 +83,11 @@ PeerConnectStateBox::PeerConnectStateBox()
         mAttemptLength = 0;
 
 
+}
+
+uint32_t PeerConnectStateBox::getNetState()
+{
+	return mNetState;
 }
 
 
@@ -230,14 +239,15 @@ std::string PeerConnectStateBox::connectState() const
 	std::ostringstream out;
 	time_t now = time(NULL);
 	out << str << "(" << mNoAttempts << "/" << mNoFailedAttempts << ") for " << now - mStateTS << " secs";
-	out << " LA: " << mAttemptLength;
 	if ( (mState == CSB_CONNECTED) || (mState == CSB_DIRECT_ATTEMPT) ||
-		(mState == CSB_PROXY_ATTEMPT) || (mState == CSB_RELAY_ATTEMPT) )
+		(mState == CSB_PROXY_ATTEMPT) || (mState == CSB_RELAY_ATTEMPT) ||
+		(mState == CSB_FAILED_WAIT) )
 	{
-		// nothing here... as we are not dependent on the timer.
+		out << " Last Attempt: " << mAttemptLength;
 	}
 	else
 	{
+		out << " LA: " << mAttemptLength;
 		out << " NextAttempt: " << mNextAttemptTS - now;
 	}
 
@@ -245,11 +255,15 @@ std::string PeerConnectStateBox::connectState() const
 }
 
 
-uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nattype)
+uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nathole, uint32_t nattype)
 {
 	uint32_t connNet = CSB_NETSTATE_UNKNOWN;
 		
 	if (netmode == RSNET_NETWORK_EXTERNALIP)
+	{
+		connNet = CSB_NETSTATE_FORWARD;
+	}
+	else if ((nathole != RSNET_NATHOLE_UNKNOWN) && (nathole != RSNET_NATHOLE_NONE))
 	{
 		connNet = CSB_NETSTATE_FORWARD;
 	}
@@ -281,15 +295,15 @@ bool shouldUseProxyPortInternal(uint32_t netstate)
 	return true;
 }
 
-bool PeerConnectStateBox::shouldUseProxyPort(uint32_t netmode, uint32_t nattype)
+bool PeerConnectStateBox::shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype)
 {
-	uint32_t netstate = convertNetStateToInternal(netmode, nattype);
+	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return shouldUseProxyPortInternal(netstate);
 }
 
-uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nattype)
+uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype)
 {
-	uint32_t netstate = convertNetStateToInternal(netmode, nattype);
+	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 
 	std::cerr << "PeerConnectStateBox::connectCb(";
 	if (cbtype == CSB_CONNECT_DIRECT)

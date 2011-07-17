@@ -89,6 +89,8 @@ bool 	p3BitDht::findPeer(std::string pid)
 		dpd->mPeerReqMode = 0;
 		//dpd->mPeerReqProxyId;
 		dpd->mPeerReqTS = time(NULL);
+
+ 		dpd->mExclusiveProxyLock = false;
 		
 		dpd->mPeerCbMsg = "No CB Yet";
 		dpd->mPeerCbMode = 0;

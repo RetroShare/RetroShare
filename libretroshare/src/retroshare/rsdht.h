@@ -105,6 +105,8 @@ class RsDhtNetPeer
 	// connect mode
 	uint32_t mPeerConnectMode;
 
+	bool  mExclusiveProxyLock;
+
 	std::string mPeerConnectProxyId;
 
 	// Req Status.
