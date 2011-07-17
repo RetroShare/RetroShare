@@ -31,7 +31,11 @@
 #include <iostream>
 #include <sstream>
 
-#define TESTING_PERIODS	1
+/**
+ *
+ * #define TESTING_PERIODS	1
+ *
+ **/
 
 /* Have made the PROXY Attempts + MAX_TIME much larger, 
  * have have potential for this to take a while.
@@ -41,6 +45,7 @@
 	#define FAILED_WAIT_TIME	(1800)  // 5 minutes.
 	#define TCP_WAIT_TIME		(10)   // 1/6 minutes.
 	#define DIRECT_MAX_WAIT_TIME	(30)   // 1/6 minutes.
+	#define PROXY_BASE_WAIT_TIME	(30)   // 1/6 minutes.
 	#define PROXY_MAX_WAIT_TIME	(120)   // 1/6 minutes.
 	#define RELAY_MAX_WAIT_TIME	(30)   // 1/6 minutes.
 	#define REVERSE_WAIT_TIME	(30)   // 1/2 minutes.
@@ -54,15 +59,18 @@
 	#define MAX_RELAY_FAILED_ATTEMPTS	(1)
 #else
 	#define FAILED_WAIT_TIME	(1800) // 30 minutes.
-	#define TCP_WAIT_TIME		(60)   // 1 minutes.
+	#define TCP_WAIT_TIME		(30)   // 1 minutes.
 	#define DIRECT_MAX_WAIT_TIME	(60)   // 1 minutes.
+
+	#define PROXY_BASE_WAIT_TIME	(30)   // 1/2 minutes.
 	#define PROXY_MAX_WAIT_TIME	(120)   // 1 minutes.
+
 	#define RELAY_MAX_WAIT_TIME	(60)   // 1 minutes.
 	#define REVERSE_WAIT_TIME	(300)  // 5 minutes.
 
-	#define MAX_DIRECT_ATTEMPTS	(10)
-	#define MAX_PROXY_ATTEMPTS	(20)
-	#define MAX_RELAY_ATTEMPTS	(10)
+	#define MAX_DIRECT_ATTEMPTS	(5)
+	#define MAX_PROXY_ATTEMPTS	(10)
+	#define MAX_RELAY_ATTEMPTS	(5)
 
 	#define MAX_DIRECT_FAILED_ATTEMPTS	(3)
 	#define MAX_PROXY_FAILED_ATTEMPTS	(3)
@@ -844,7 +852,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 				case CSB_PROXY_ATTEMPT:
 					mState = CSB_PROXY_WAIT;
 					mStateTS = now;
-					mNextAttemptTS = now + RSRandom::random_u32() % PROXY_MAX_WAIT_TIME;
+					mNextAttemptTS = now + PROXY_BASE_WAIT_TIME + (RSRandom::random_u32() % (PROXY_MAX_WAIT_TIME - PROXY_BASE_WAIT_TIME));
 					break;
 				case CSB_RELAY_ATTEMPT:
 					mState = CSB_RELAY_WAIT;
@@ -874,7 +882,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 				case CSB_PROXY_ATTEMPT:
 					mState = CSB_PROXY_WAIT;
 					mStateTS = now;
-					mNextAttemptTS = now + RSRandom::random_u32() % PROXY_MAX_WAIT_TIME;
+					mNextAttemptTS = now + PROXY_BASE_WAIT_TIME + (RSRandom::random_u32() % (PROXY_MAX_WAIT_TIME - PROXY_BASE_WAIT_TIME));
 					break;
 				case CSB_RELAY_ATTEMPT:
 					mState = CSB_RELAY_WAIT;

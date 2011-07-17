@@ -20,7 +20,9 @@
 #include "pqi/p3netmgr.h"
 #include "pqi/pqimonitor.h"
 
-#define PEERNET_CONNECT_TIMEOUT 90   // Should be BIGGER than Higher level (but okay if not!)
+#define PEERNET_CONNECT_TIMEOUT 120   // Should be BIGGER than Higher level (but okay if not!)
+
+#define MIN_DETERMINISTIC_SWITCH_PERIOD 	60
 
 /***
  *
@@ -298,7 +300,8 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd)
 {
 
-	if (dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED)
+	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
+			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
 	{
 
 		std::cerr << "p3BitDht::OnlinePeerCallback_locked() WARNING Ignoring Callback: connection already underway: ";
@@ -395,7 +398,8 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd)
 {
 
-	if (dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED)
+	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
+			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
 	{
 
 		std::cerr << "p3BitDht::UnreachablePeerCallback_locked() WARNING Ignoring Callback: connection already underway: ";
@@ -498,7 +502,7 @@ int p3BitDht::ValueCallback(const bdNodeId *id, std::string key, uint32_t status
 }
 
 int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-						uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode)
+						uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode)
 {
 	std::cerr << "p3BitDht::ConnectCallback()";
 	std::cerr << std::endl;
@@ -512,7 +516,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	bdStdPrintId(std::cerr, destId);
 	std::cerr << std::endl;
 
-	std::cerr << "mode: " << mode;
+	std::cerr << " mode: " << mode;
+	std::cerr << " param: " << param;
 	std::cerr << " point: " << point;
 	std::cerr << " cbtype: " << cbtype;
 	std::cerr << std::endl;
@@ -554,9 +559,11 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					std::cerr << " and ";
 					bdStdPrintId(std::cerr, destId);
 					std::cerr << std::endl;
+					
+					uint32_t bandwidth = 0;
 
 					int connectionAllowed = BITDHT_CONNECT_ERROR_GENERIC;
-					if (checkProxyAllowed(srcId, destId, mode))
+					if (checkProxyAllowed(srcId, destId, mode, bandwidth))
 					{
 						connectionAllowed = BITDHT_CONNECT_ANSWER_OKAY;
 						std::cerr << "dhtConnectionCallback() Connection Allowed";
@@ -580,7 +587,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					ca.mDestId = *destId;
 					ca.mPoint = point;
 					ca.mAnswer = connectionAllowed;
-					ca.mDelayOrBandwidth = 0;
+					ca.mDelayOrBandwidth = bandwidth;
 		
 					mActions.push_back(ca);
 				}
@@ -768,11 +775,22 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 						{
 							std::cerr << "dhtConnectionCallback: Attempting to Grab ExclusiveLock of UdpStunner";
 							std::cerr << std::endl;
-							int delay = mProxyStunner->grabExclusiveMode();
-							if (delay > 0)
+							int stun_age = mProxyStunner->grabExclusiveMode();
+							if (stun_age > 0)
 							{
+								int delay = 0;
+								if (stun_age < MIN_DETERMINISTIC_SWITCH_PERIOD)
+								{
+									delay = MIN_DETERMINISTIC_SWITCH_PERIOD - stun_age;
+								}
+
 								/* great we got it! */
 								ca.mDelayOrBandwidth = delay;
+
+								std::cerr << "dhtConnectionCallback: GotExclusiveLock With Delay: " << delay;
+								std::cerr << " for stable port";
+								std::cerr << std::endl;
+
 								DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
 								if (dpd)
 								{
@@ -853,6 +871,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			ca.mSrcId = *srcId;
 			ca.mDestId = *destId;
 			ca.mPoint = point;
+			ca.mDelayOrBandwidth = param;
 			ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
 		
 			mActions.push_back(ca);
@@ -1183,9 +1202,19 @@ int p3BitDht::doActions()
 							/* check if we require exclusive use of the proxy port */
 							if (exclusivePort)
 							{
-								int delay = mProxyStunner->grabExclusiveMode();
-								if (delay > 0)
+								int stun_age = mProxyStunner->grabExclusiveMode();
+								if (stun_age > 0)
 								{
+									int delay = 0;
+									if (stun_age < MIN_DETERMINISTIC_SWITCH_PERIOD)
+									{
+										delay = MIN_DETERMINISTIC_SWITCH_PERIOD - stun_age;
+									}
+
+									std::cerr << "PeerAction: Stunner has indicated a Delay of " << delay;
+									std::cerr << " to ensure a stable Port!";
+									std::cerr << std::endl;
+									
 									/* great we got it! */
 									connAddr = extaddr;
 									connDelay = delay;
@@ -1244,9 +1273,7 @@ int p3BitDht::doActions()
 
 				if (doConnectionRequest)
 				{
-					// XXX TO DO.
-					//if (mUdpBitDht->ConnectionRequest(&connAddr, &(action.mDestId.id), action.mMode, connStart, connDelay))
-					if (mUdpBitDht->ConnectionRequest(&connAddr, &(action.mDestId.id), action.mMode, connStart))
+					if (mUdpBitDht->ConnectionRequest(&connAddr, &(action.mDestId.id), action.mMode, connDelay, connStart))
 					{
 						RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	
@@ -1321,12 +1348,19 @@ int p3BitDht::doActions()
 				std::cerr << " delay/bandwidth: " << action.mDelayOrBandwidth;
 				std::cerr << std::endl;
 
-				// XXX TODO
-				//mUdpBitDht->ConnectionAuth(&(action.mSrcId), &(action.mProxyId), &(action.mDestId), 
-				//						   action.mMode, action.mPoint, action.mAnswer, action.mDelayOrBandwidth);
+				int delay = 0;
+				int bandwidth = 0;
+				if (action.mMode == BITDHT_CONNECT_MODE_RELAY)
+				{
+					bandwidth = action.mDelayOrBandwidth;
+				}
+				else 
+				{
+					delay = action.mDelayOrBandwidth;
+				}
 
 				mUdpBitDht->ConnectionAuth(&(action.mSrcId), &(action.mProxyId), &(action.mDestId), 
-					action.mMode, action.mPoint, action.mAnswer);
+					action.mMode, action.mPoint, bandwidth, delay, action.mAnswer);
 
 				// Only feedback to the gui if we are at END.
 				if (action.mPoint == BD_PROXY_CONNECTION_END_POINT)
@@ -1379,12 +1413,8 @@ int p3BitDht::doActions()
 				std::cerr << " delay/bandwidth: " << action.mDelayOrBandwidth;
 				std::cerr << std::endl;
 
-				// XXX TO DO.
-				//initiateConnection(&(action.mSrcId), &(action.mProxyId), &(action.mDestId), 
-				//				   action.mMode, action.mPoint, action.mAnswer, action.mDelayOrBandwidth);
-
 				initiateConnection(&(action.mSrcId), &(action.mProxyId), &(action.mDestId), 
-					action.mMode, action.mPoint, action.mAnswer);
+					action.mMode, action.mPoint, action.mDelayOrBandwidth);
 			}
 			break;
 
@@ -1399,10 +1429,9 @@ int p3BitDht::doActions()
 				struct sockaddr_in laddr; 
 				sockaddr_clear(&laddr);
 				uint32_t start = 1;
-				// XXX TO DO.
-				//mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start, 0);
+				uint32_t delay = 0;
 
-				mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start);
+				mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, delay, start);
 			}
 			break;
 
@@ -1417,10 +1446,9 @@ int p3BitDht::doActions()
 				struct sockaddr_in laddr; 
 				sockaddr_clear(&laddr);
 				uint32_t start = 0;
+				uint32_t delay = 0;
 				
-				// XXX TO DO.
-				//mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start, 0);
-				mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, start);
+				mUdpBitDht->ConnectionRequest(&laddr, &(action.mDestId.id), action.mMode, delay, start);
 			}
 			break;
 
@@ -1481,7 +1509,7 @@ int p3BitDht::doActions()
  * Can also validate addresses with own secure connections.
  */
 
-int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode)
+int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode, uint32_t &bandwidth)
 {
 	std::cerr << "p3BitDht::checkProxyAllowed()";
 	std::cerr << std::endl;
@@ -1497,6 +1525,7 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode)
 		std::cerr << "p3BitDht::checkProxyAllowed() Allowing all PROXY connections, OKAY";
 		std::cerr << std::endl;
 
+		bandwidth = 0; // unlimited as p2p.
 		return 1;
 		//return CONNECTION_OKAY;
 	}
@@ -1508,8 +1537,10 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode)
 		return 0;
 	}
 
-	/* will install the Relay Here... so that we reserve the Relay Space for later. */
-	if (installRelayConnection(srcId, destId))
+	/* will install the Relay Here... so that we reserve the Relay Space for later. 
+	 * decide on relay bandwidth limitation as well
+	 */
+	if (installRelayConnection(srcId, destId, bandwidth))
 	{
 		std::cerr << "p3BitDht::checkProxyAllowed() Successfully added Relay, Connection OKAY";
 		std::cerr << std::endl;
@@ -1666,7 +1697,8 @@ void p3BitDht::ConnectCalloutRelay(const std::string &peerId,
 //                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
  
 
-void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer)
+void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
+								  uint32_t mode, uint32_t loc, uint32_t delayOrBandwidth)
 {
 	std::cerr << "p3BitDht::initiateConnection()";
 	std::cerr << std::endl;
@@ -1682,12 +1714,15 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	bdStdPrintId(std::cerr, destId);
 	std::cerr << std::endl;
 
-	std::cerr << "\t Mode: " << mode << " loc: " << loc << " answer: " << answer;
+	std::cerr << "\t Mode: " << mode << " loc: " << loc;
+	std::cerr << std::endl;
+	std::cerr << "\t DelayOrBandwidth: " << delayOrBandwidth;
 	std::cerr << std::endl;
 
 	bdId peerConnectId;
 
 	uint32_t connectFlags = 0;
+	
 	uint32_t delay = 0;
 	uint32_t bandwidth = 0;
 
@@ -1764,7 +1799,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 			case BITDHT_CONNECT_MODE_DIRECT:
 				touConnectMode = RSDHT_TOU_MODE_DIRECT;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
-				delay = answer;
+				delay = delayOrBandwidth;
 				break;
 
 			case BITDHT_CONNECT_MODE_PROXY:
@@ -1776,7 +1811,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				std::cerr << " UseProxyPort? " << useProxyPort;
 				std::cerr << std::endl;
 				
-				delay = answer;
+				delay = delayOrBandwidth;
 				if (useProxyPort)
 				{
 					touConnectMode = RSDHT_TOU_MODE_PROXY;
@@ -1794,7 +1829,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 			case BITDHT_CONNECT_MODE_RELAY:
 				touConnectMode = RSDHT_TOU_MODE_RELAY;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_RELAY;
-				bandwidth = answer;
+				bandwidth = delayOrBandwidth;
 				break;
 		}
 
@@ -1834,7 +1869,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 }
 
 
-int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId)
+int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint32_t &bandwidth)
 {
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
@@ -1876,7 +1911,7 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId)
 	
 	/* will install the Relay Here... so that we reserve the Relay Space for later. */
 	UdpRelayAddrSet relayAddrs(&(srcId->addr), &(destId->addr));
-	if (mRelay->addUdpRelay(&relayAddrs, relayClass))
+	if (mRelay->addUdpRelay(&relayAddrs, relayClass, bandwidth))
 	{
 		std::cerr << "p3BitDht::installRelayConnection() Successfully added Relay, Connection OKAY";
 		std::cerr << std::endl;
@@ -1944,7 +1979,8 @@ void p3BitDht::monitorConnections()
 
 			if (now - it->second.mPeerConnectUdpTS > PEERNET_CONNECT_TIMEOUT)
 			{
-				std::cerr << "p3BitDht::monitorConnections() ERROR InProgress Connection Failed: ";
+				/* This CAN happen ;( */
+				std::cerr << "p3BitDht::monitorConnections() WARNING InProgress Connection Failed: ";
 				bdStdPrintNodeId(std::cerr, &(it->second.mDhtId.id));
 				std::cerr << std::endl;
 
@@ -2082,8 +2118,13 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 		std::cerr << std::endl;
 
-		/* shut id down */
-		dpd->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
+		/* shut it down */
+
+		/* ONLY need to update ConnectLogic - if it was our Attempt Running */
+		if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+		{
+			dpd->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
+		}
 		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
 		dpd->mPeerConnectMsg = "UDP Failed";
 

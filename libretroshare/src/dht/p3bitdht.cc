@@ -65,9 +65,9 @@ virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t statu
 }
 
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-                        uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode)
+                        uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode)
 { 
-	return mParent->ConnectCallback(srcId, proxyId, destId, mode, point, cbtype, errcode);
+	return mParent->ConnectCallback(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
 }  
 
 	private:

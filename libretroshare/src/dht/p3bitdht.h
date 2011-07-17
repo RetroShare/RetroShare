@@ -204,17 +204,17 @@ int 	NodeCallback(const bdId *id, uint32_t peerflags);
 int 	PeerCallback(const bdId *id, uint32_t status);
 int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 int 	ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-				uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode);
+				uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode);
 
 int 	OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
 int 	UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
 //int 	tick();
 int 	minuteTick();
 int 	doActions();
-int 	checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode);
+int 	checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode, uint32_t &bandwidth);
 int 	checkConnectionAllowed(const bdId *peerId, int mode);
-void 	initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer);
-int 	installRelayConnection(const bdId *srcId, const bdId *destId);
+void 	initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t delayOrBandwidth);
+int 	installRelayConnection(const bdId *srcId, const bdId *destId, uint32_t &bandwidth);
 int 	removeRelayConnection(const bdId *srcId, const bdId *destId);
 void 	monitorConnections();
 
