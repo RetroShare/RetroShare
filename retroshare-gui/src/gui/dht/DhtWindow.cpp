@@ -492,6 +492,10 @@ void DhtWindow::updateNetPeers()
 	
 		// NOW REQ STATE.
 		std::ostringstream reqstr;
+                if (status.mExclusiveProxyLock)
+                {
+                        reqstr << "(E) ";
+                }
 		switch(status.mPeerReqState)
 		{
 			case RSDHT_PEERREQ_RUNNING:
