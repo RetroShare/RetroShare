@@ -363,8 +363,10 @@ void bdNodeManager::iteration()
 #define SEARCH_MAX_SIZE 10					
  				if (mBdNetworkSize < SEARCH_MAX_SIZE)
 				{
+#ifdef DEBUG_MGR
 					std::cerr << "Local Netsize: " << mBdNetworkSize << " to small...searching";
 					std::cerr << std::endl;
+#endif
 
 					/* if the network size is very small */
 					SearchForLocalNet();
@@ -376,8 +378,10 @@ void bdNodeManager::iteration()
 					{
 						mSearchingDone = true;
 						mSearchTS = now;
+#ifdef DEBUG_MGR
 						std::cerr << "Completed LocalNet Search in : " << mSearchTS-mStartTS;
 						std::cerr << std::endl;
+#endif
 					}
 				}
 
@@ -476,7 +480,7 @@ int bdNodeManager::QueryRandomLocalNet()
 		mQueryMgr->addWorthyPeerSource(&id); /* Tell BitDHT that we really want to ping their peers */
 		send_query(&id, &targetNodeId);
 			
-#ifdef DEBUG_NODE_MSGS
+#ifdef DEBUG_MGR
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
 		mFns->bdPrintId(std::cerr, &id);
 		std::cerr << " searching for : ";
@@ -486,7 +490,7 @@ int bdNodeManager::QueryRandomLocalNet()
 
 		if (isRandom)
 		{
-#ifdef DEBUG_NODE_MSGS
+#ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::QueryRandomLocalNet() Search is Random!";
 			std::cerr << std::endl;
 #endif
@@ -496,7 +500,7 @@ int bdNodeManager::QueryRandomLocalNet()
 	}
 	else
 	{
-#ifdef DEBUG_NODE_MSGS
+#ifdef DEBUG_MGR
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() No LocalNet Peer Found";
 		std::cerr << std::endl;
 #endif
@@ -512,9 +516,9 @@ void bdNodeManager::SearchForLocalNet()
 
 
 #ifdef DEBUG_MGR
-#endif
 	std::cerr << "bdNodeManager::SearchForLocalNet()";
 	std::cerr << std::endl;
+#endif
 
 	/* Check how many "Search Queries" we've got going. */
 
@@ -565,26 +569,30 @@ void bdNodeManager::SearchForLocalNet()
 
 		if (filterOk)
 		{
+#ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::SearchForLocalNet() " << i << " Attempts to find OkNode: ";
 			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
 			std::cerr << std::endl;
+#endif
 		}
 		else
 		{
+#ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::SearchForLocalNet() Failed to Find FilterOk this time: ";
 			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
 			std::cerr << std::endl;
+#endif
 		}
 
 
 		uint32_t qflags = BITDHT_QFLAGS_INTERNAL | BITDHT_QFLAGS_DISGUISE;
 		mQueryMgr->addQuery(&targetNodeId, qflags); 
 
-#ifdef DEBUG_NODE_MSGS
-#endif
+#ifdef DEBUG_MGR
 		std::cerr << "bdNodeManager::SearchForLocalNet() Adding New Internal Search: ";
 		mFns->bdPrintNodeId(std::cerr, &(targetNodeId));
 		std::cerr << std::endl;
+#endif
 	}
 }
 
