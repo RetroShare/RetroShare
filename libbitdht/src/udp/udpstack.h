@@ -78,6 +78,7 @@ virtual ~UdpStack() { return; }
 
 UdpLayer *getUdpLayer(); /* for testing only */
 
+bool    getLocalAddress(struct sockaddr_in &local);
 bool	resetAddress(struct sockaddr_in &local);
 
 

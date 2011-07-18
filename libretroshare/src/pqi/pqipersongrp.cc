@@ -24,7 +24,7 @@
  */
 
 #include "pqi/pqipersongrp.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
 
 #include <sstream>
@@ -185,11 +185,10 @@ int	pqipersongrp::init_listener()
 	{
 		/* extract details from 
 		 */
-		peerConnectState state;
-		mConnMgr->getOwnNetStatus(state);
-
+		struct sockaddr_in laddr = mLinkMgr->getLocalAddress();
+		
   		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-		pqil = createListener(state.currentlocaladdr);
+		pqil = createListener(laddr);
 	}
 	return 1;
 }
@@ -325,19 +324,19 @@ void pqipersongrp::statusChanged()
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		/* get address from p3connmgr */
-		if (!mConnMgr) {
+		if (!mLinkMgr) {
 			return;
 		}
 
 		/* check for active connections and start waiting id's */
 		std::list<std::string> peers;
-		mConnMgr->getFriendList(peers);
+		mLinkMgr->getFriendList(peers);
 
 		/* count connection attempts */
 		std::list<std::string>::iterator peer;
 		for (peer = peers.begin(); peer != peers.end(); peer++) {
 			peerConnectState state;
-			if (mConnMgr->getFriendNetStatus(*peer, state) == false) {
+			if (mLinkMgr->getFriendNetStatus(*peer, state) == false) {
 				continue;
 			}
 
@@ -382,9 +381,9 @@ int     pqipersongrp::addPeer(std::string id)
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
 	}
 
-#ifdef PGRP_DEBUG
-	std::cerr << " pqipersongrp::addPeer() id: " << id;
+	std::cerr << "pqipersongrp::addPeer() id: " << id;
 	std::cerr << std::endl;
+#ifdef PGRP_DEBUG
 #endif
 
 	SearchModule *sm = NULL;
@@ -395,6 +394,10 @@ int     pqipersongrp::addPeer(std::string id)
 	{
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
 			"pqipersongrp::addPeer() Peer already in Use!");
+
+		std::cerr << " pqipersongrp::addPeer() ERROR Peer already in use! id: " << id;
+		std::cerr << std::endl;
+
 		return -1;
 	}
 
@@ -420,9 +423,9 @@ int     pqipersongrp::removePeer(std::string id)
 	std::map<std::string, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
-	std::cerr << " pqipersongrp::removePeer() id: " << id;
-	std::cerr << std::endl;
 #endif
+	std::cerr << "pqipersongrp::removePeer() id: " << id;
+	std::cerr << std::endl;
 
   	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
@@ -438,6 +441,11 @@ int     pqipersongrp::removePeer(std::string id)
 		p -> reset();
 		delete p;
 		mods.erase(it);
+	}
+	else
+	{
+		std::cerr << " pqipersongrp::removePeer() ERROR doesn't exist! id: " << id;
+		std::cerr << std::endl;
 	}
 	return 1;
 }
@@ -484,10 +492,12 @@ int     pqipersongrp::connectPeer(std::string id
 	std::cerr << std::endl;
 #endif
 
-  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-        if (id == mConnMgr->getOwnId()) {
+  { 
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+        if (id == mLinkMgr->getOwnId()) 
+	{
+            std::cerr << "pqipersongrp::connectPeer() ERROR Failed, connecting to own id." << std::endl;
             #ifdef PGRP_DEBUG
-            std::cerr << "pqipersongrp::connectPeer() Failed, connecting to own id." << std::endl;
             #endif
             return 0;
         }
@@ -503,7 +513,7 @@ int     pqipersongrp::connectPeer(std::string id
 
 
 	/* get address from p3connmgr */
-	if (!mConnMgr)
+	if (!mLinkMgr)
 		return 0;
 
 #ifdef WINDOWS_SYS
@@ -538,8 +548,13 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t period;
 	uint32_t timeout;
 	uint32_t type;
+	uint32_t flags;
 
-	if (!mConnMgr->connectAttempt(id, addr, delay, period, type))
+	struct sockaddr_in proxyaddr;
+	struct sockaddr_in srcaddr;
+	uint32_t bandwidth;
+	  	  
+	if (!mLinkMgr->connectAttempt(id, addr, proxyaddr, srcaddr, delay, period, type, flags, bandwidth))
 	{
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
@@ -554,6 +569,7 @@ int     pqipersongrp::connectPeer(std::string id
 	std::cerr << " delay: " << delay;
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
+	std::cerr << " flags: " << flags;
 	std::cerr << std::endl;
 #endif
 
@@ -595,7 +611,7 @@ int     pqipersongrp::connectPeer(std::string id
 		return 0;
 	}
 
-	p->connect(ptype, addr, delay, period, timeout);
+	p->connect(ptype, addr, proxyaddr, srcaddr, delay, period, timeout, flags, bandwidth);
 
   } /* UNLOCKED */
 
@@ -621,10 +637,10 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 	}
 
 	
-	if (mConnMgr)
-		mConnMgr->connectResult(id, success, type, raddr);
+	if (mLinkMgr)
+		mLinkMgr->connectResult(id, success, type, raddr);
 	
-	return (NULL != mConnMgr);
+	return (NULL != mLinkMgr);
 }
 
 /******************************** DUMMY Specific features ***************************/

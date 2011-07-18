@@ -24,12 +24,12 @@
 #include "dbase/fistore.h"
 #include "retroshare/rsexpr.h"
 #include "serialiser/rsserviceids.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3peermgr.h"
 
 FileIndexStore::FileIndexStore(CacheStrapper *cs, CacheTransfer *cft,
-		NotifyBase *cb_in,p3ConnectMgr *cnmgr, RsPeerId ownid, std::string cachedir)
+		NotifyBase *cb_in,p3PeerMgr *cnmgr, RsPeerId ownid, std::string cachedir)
 	:CacheStore(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cft, cachedir),
-		localId(ownid), localindex(NULL), cb(cb_in),mConnMgr(cnmgr)
+		localId(ownid), localindex(NULL), cb(cb_in),mPeerMgr(cnmgr)
 {
 	return;
 }
@@ -83,7 +83,7 @@ int FileIndexStore::loadCache(const CacheData &data)
 
 	FileIndex *finew = new FileIndex(data.pid);
 
-	if(mConnMgr->isFriend(data.pid))
+	if(mPeerMgr->isFriend(data.pid))
 	{
 		// We discard file lists from non friends. This is the place to remove file lists of deleted friends
 		// from the cache. Doing this, the file list still shows in a session where we deleted a friend, but will be removed
@@ -95,7 +95,7 @@ int FileIndexStore::loadCache(const CacheData &data)
 			std::cerr << "FileIndexStore::loadCache() Succeeded!" << std::endl;
 #endif
 			/* set the name */
-			finew->root->name = data.pname;
+			finew->root->name = data.pid; // HACK HERE TODO XXX. name;
 
 			if (local)
 			{

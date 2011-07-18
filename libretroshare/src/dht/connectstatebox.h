@@ -1,0 +1,124 @@
+#ifndef CONNECT_STATUS_BOX_H
+#define CONNECT_STATUS_BOX_H
+
+/*
+ * libretroshare/src/dht: connectstatebox.h
+ *
+ * RetroShare DHT C++ Interface.
+ *
+ * Copyright 2011-2011 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+/* a connect state box */
+
+#define CSB_START		1
+#define CSB_TCP_WAIT		2
+#define CSB_DIRECT_ATTEMPT	3
+#define CSB_DIRECT_WAIT 	4
+#define CSB_PROXY_ATTEMPT	5
+#define CSB_PROXY_WAIT		6
+#define CSB_RELAY_ATTEMPT	7
+#define CSB_RELAY_WAIT		8
+#define CSB_REVERSE_WAIT	9
+#define CSB_FAILED_WAIT		10
+#define CSB_CONNECTED		11
+
+
+#define CSB_NETSTATE_UNKNOWN		0
+#define CSB_NETSTATE_FORWARD		1
+#define CSB_NETSTATE_STABLENAT		2
+#define CSB_NETSTATE_EXCLUSIVENAT	3
+#define CSB_NETSTATE_FIREWALLED		4
+
+#define CSB_CONNECT_DIRECT		1
+#define CSB_CONNECT_UNREACHABLE		2
+
+/* return values */
+#define CSB_ACTION_MASK_MODE		0x00ff
+#define CSB_ACTION_MASK_PORT		0xff00
+
+#define CSB_ACTION_WAIT			0x0001
+#define CSB_ACTION_TCP_CONN		0x0002
+#define CSB_ACTION_DIRECT_CONN		0x0004
+#define CSB_ACTION_PROXY_CONN		0x0008
+#define CSB_ACTION_RELAY_CONN		0x0010
+
+#define CSB_ACTION_DHT_PORT		0x0100
+#define CSB_ACTION_PROXY_PORT		0x0200
+
+/* update input */
+#define	CSB_UPDATE_NONE			0x0000
+#define	CSB_UPDATE_CONNECTED		0x0001
+#define	CSB_UPDATE_DISCONNECTED		0x0002
+#define	CSB_UPDATE_AUTH_DENIED		0x0003
+#define	CSB_UPDATE_RETRY_ATTEMPT	0x0004
+#define	CSB_UPDATE_FAILED_ATTEMPT	0x0005
+#define	CSB_UPDATE_MODE_UNAVAILABLE	0x0006
+
+#include <iosfwd>
+#include <string>
+
+#include <stdlib.h>
+#include <time.h>
+#include <inttypes.h>
+
+class PeerConnectStateBox
+{
+	public:
+	PeerConnectStateBox();
+
+	uint32_t connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	uint32_t updateCb(uint32_t updateType);
+
+	bool shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype);
+
+	uint32_t calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	std::string connectState() const;
+
+	std::string mPeerId;
+
+	bool storeProxyPortChoice(uint32_t flags, bool useProxyPort);
+	bool getProxyPortChoice();
+	
+	private:
+
+	uint32_t connectCb_direct();
+	uint32_t connectCb_unreachable();
+
+	void errorMsg(std::ostream &out, std::string msg, uint32_t updateParam);
+	void stateMsg(std::ostream &out, std::string msg, uint32_t updateParam);
+
+
+	uint32_t mState;
+	uint32_t mNetState;
+	time_t mStateTS;
+	uint32_t mNoAttempts;
+	uint32_t mNoFailedAttempts;
+	time_t mNextAttemptTS;
+	time_t mAttemptLength;
+
+	// ProxyPort Storage.
+	uint32_t mProxyPortFlags;
+	bool     mProxyPortChoice;
+	time_t   mProxyPortTS;
+};
+
+
+#endif

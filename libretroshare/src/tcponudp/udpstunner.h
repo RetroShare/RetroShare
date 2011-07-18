@@ -68,8 +68,11 @@ class TouStunPeer
 };
 
 /*
+ * FOR TESTING ONLY.
  * #define UDPSTUN_ALLOW_LOCALNET	1	
  */
+
+#define UDPSTUN_ALLOW_LOCALNET	1	
 
 class UdpStunner: public UdpSubReceiver
 {
@@ -81,9 +84,15 @@ virtual ~UdpStunner() { return; }
 #ifdef UDPSTUN_ALLOW_LOCALNET
 	// For Local Testing Mode.
 	void SetAcceptLocalNet();
+	void SimExclusiveNat();
+	void SimSymmetricNat();
 #endif
 
-void 	setTargetStunPeriod(uint32_t sec_per_stun);
+int	grabExclusiveMode();		/* returns seconds since last send/recv */
+int     releaseExclusiveMode(bool forceStun);
+
+
+void 	setTargetStunPeriod(int32_t sec_per_stun);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
@@ -135,11 +144,19 @@ bool    locked_checkExternalAddress();
 #ifdef UDPSTUN_ALLOW_LOCALNET
 	// For Local Testing Mode.
         bool mAcceptLocalNet;
+	bool mSimUnstableExt;
+        bool mSimExclusiveNat;
+        bool mSimSymmetricNat;
+
 #endif
 
 	bool mPassiveStunMode;
         uint32_t mTargetStunPeriod;
 	double mSuccessRate;
+
+	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
+	time_t mExclusiveModeTS;
+	bool mForceRestun;
 
 };
 

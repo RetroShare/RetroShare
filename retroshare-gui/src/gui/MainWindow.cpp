@@ -59,6 +59,11 @@
 #include "unfinished/ApplicationWindow.h"
 #endif
 
+#define GETSTARTED_GUI  1
+#ifdef GETSTARTED_GUI
+#include "gui/GetStartedDialog.h"
+#endif
+
 #include "gui/TurtleRouterDialog.h"
 #include "idle/idle.h"
 
@@ -92,6 +97,7 @@
  * #define USE_DHTWINDOW	1
  *
  ****/
+#define USE_DHTWINDOW	1
 
 #ifdef USE_DHTWINDOW
 #include "dht/DhtWindow.h"
@@ -285,6 +291,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 #endif
 #endif
+
+#ifdef GETSTARTED_GUI
+    MainPage *getStartedPage = NULL;
+    ui.stackPages->add(getStartedPage = new GetStartedDialog(ui.stackPages),
+                       createPageAction(QIcon(IMG_HELP), tr("Getting Started"), grp));
+#endif
+
 
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());

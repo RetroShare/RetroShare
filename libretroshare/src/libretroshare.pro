@@ -64,9 +64,15 @@ debug {
 
 bitdht {
 
-HEADERS +=	dht/p3bitdht.h 
+HEADERS +=	dht/p3bitdht.h \
+		dht/connectstatebox.h \
+		dht/stunaddrassist.h
+
 SOURCES +=	dht/p3bitdht.cc  \
-		dht/p3bitdht_interface.cc 
+		dht/p3bitdht_interface.cc \
+		dht/p3bitdht_peers.cc \
+		dht/p3bitdht_peernet.cc \
+		dht/connectstatebox.cc
 
 HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/bio_tou.h \
@@ -140,7 +146,8 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsstatus.h \
 					retroshare/rsturtle.h \
 					retroshare/rstypes.h \
-					retroshare/rsdht.h
+					retroshare/rsdht.h \
+					retroshare/rsconfig.h
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \
@@ -331,7 +338,9 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pqi/cleanupxpgp.h \
 			pqi/p3cfgmgr.h \
-			pqi/p3connmgr.h \
+			pqi/p3peermgr.h \
+			pqi/p3linkmgr.h \
+			pqi/p3netmgr.h \
 			pqi/p3dhtmgr.h \
 			pqi/p3notify.h \
 			pqi/p3upnpmgr.h \
@@ -360,14 +369,16 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissludp.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
-			pqi/sslfns.h
+			pqi/sslfns.h \
+			pqi/pqinetstatebox.h 
 
 HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3face.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
 			rsserver/p3photo.h \
-			rsserver/p3status.h
+			rsserver/p3status.h \
+			rsserver/p3serverconfig.h
 
 HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsbaseserial.h \
@@ -452,7 +463,9 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pqi/cleanupxpgp.cc \
 			pqi/p3cfgmgr.cc \
-			pqi/p3connmgr.cc \
+			pqi/p3peermgr.cc \
+			pqi/p3linkmgr.cc \
+			pqi/p3netmgr.cc \
 			pqi/p3dhtmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiarchive.cc \
@@ -473,7 +486,8 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissludp.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
-			pqi/sslfns.cc
+			pqi/sslfns.cc \
+			pqi/pqinetstatebox.cc 
 
 SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3face-config.cc \
@@ -486,7 +500,8 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
 			rsserver/rsloginhandler.cc \
-			rsserver/rstypes.cc
+			rsserver/rstypes.cc \
+			rsserver/p3serverconfig.cc
 
 SOURCES += plugins/pluginmanager.cc \
 				plugins/dlfcn_win32.cc \

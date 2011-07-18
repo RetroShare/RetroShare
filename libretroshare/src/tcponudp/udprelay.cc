@@ -213,10 +213,12 @@ int UdpRelayReceiver::checkRelays()
 		std::cerr << " using bandwidth: " << rit->second.mBandwidth;
 		std::cerr << std::endl;
 
-		if (rit->second.mBandwidth > RELAY_MAX_BANDWIDTH)
+		if (rit->second.mBandwidth > rit->second.mBandwidthLimit)
 		{
-			std::cerr << "UdpRelayReceiver::checkRelays()";
-			std::cerr << "Dropping Relay due to excessive Bandwidth: " << rit->first;
+			std::cerr << "UdpRelayReceiver::checkRelays() ";
+			std::cerr << "Dropping Relay due to excessive Bandwidth: " << rit->second.mBandwidth;
+			std::cerr << " Exceeding Limit: " << rit->second.mBandwidthLimit;
+			std::cerr << " Relay: " << rit->first;
 			std::cerr << std::endl;
 
 			/* if exceeding bandwidth -> drop */
@@ -225,10 +227,38 @@ int UdpRelayReceiver::checkRelays()
 		else if (now - rit->second.mLastTS > RELAY_TIMEOUT)
 		{
 			/* if haven't transmitted for ages -> drop */
-			std::cerr << "UdpRelayReceiver::checkRelays()";
+			std::cerr << "UdpRelayReceiver::checkRelays() ";
 			std::cerr << "Dropping Relay due to Timeout: " << rit->first;
 			std::cerr << std::endl;
 			eraseList.push_back(rit->first);
+		}
+		else
+		{
+			/* check the length of the relay - we will drop them after a certain amount of time */
+			int lifetime = 0;
+			switch(rit->second.mRelayClass)
+			{
+				default:
+				case UDP_RELAY_CLASS_GENERAL:
+					lifetime = UDP_RELAY_LIFETIME_GENERAL;
+					break;
+				case UDP_RELAY_CLASS_FOF:
+					lifetime = UDP_RELAY_LIFETIME_FOF;
+					break;
+				case UDP_RELAY_CLASS_FRIENDS:
+					lifetime = UDP_RELAY_LIFETIME_FRIENDS;
+					break;
+			}
+			if (now - rit->second.mStartTS > lifetime)
+			{
+				std::cerr << "UdpRelayReceiver::checkRelays() ";
+				std::cerr << "Dropping Relay due to Passing Lifetime Limit: " << lifetime;
+				std::cerr << " for class: " << rit->second.mRelayClass;
+				std::cerr << " Relay: " << rit->first;
+				std::cerr << std::endl;
+
+				eraseList.push_back(rit->first);
+			}
 		}
 	}
 
@@ -249,7 +279,7 @@ int UdpRelayReceiver::removeUdpRelay(UdpRelayAddrSet *addrSet)
 }
 
 
-int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass)
+int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass, uint32_t &bandwidth)
 {
 	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
 
@@ -278,6 +308,9 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass)
 		/* must install two (A, B) & (B, A) */
 		mRelays[*addrSet] = udpRelay;
 		mRelays[alt] = altUdpRelay;
+
+		/* grab bandwidth from one set */
+		bandwidth = altUdpRelay.mBandwidthLimit;
 
 		return 1;
 	}
@@ -799,6 +832,9 @@ UdpRelayProxy::UdpRelayProxy()
 	mLastBandwidthTS = 0;
 	mLastTS = time(NULL); // Must be set here, otherwise Proxy Timesout before anything can happen!
 	mRelayClass = 0;
+
+        mStartTS = time(NULL);
+        mBandwidthLimit = 0;
 }
 
 UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass)
@@ -810,6 +846,22 @@ UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass)
 	mDataSize = 0;
 	mLastBandwidthTS = 0;
 	mLastTS = time(NULL);
+
+
+        mStartTS = time(NULL);
+	switch(relayClass)
+	{
+		default:
+		case UDP_RELAY_CLASS_GENERAL:
+        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
+			break;
+		case UDP_RELAY_CLASS_FOF:
+        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
+			break;
+		case UDP_RELAY_CLASS_FRIENDS:
+        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
+			break;
+	}
 }
 
 UdpRelayEnd::UdpRelayEnd() 

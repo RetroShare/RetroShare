@@ -43,12 +43,12 @@
 #include "serialiser/rsmsgitems.h"
 #include "util/rsthreads.h"
 
-class p3ConnectMgr;
+class p3LinkMgr;
 
 class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
-	p3MsgService(p3ConnectMgr *cm);
+	p3MsgService(p3LinkMgr *lm);
 
 	/* External Interface */
 bool    MsgsChanged();		/* should update display */
@@ -113,7 +113,7 @@ RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 
 void    initStandardTagTypes();
 
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 
 	/* Mutex Required for stuff below */
 

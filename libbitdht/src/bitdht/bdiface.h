@@ -302,7 +302,7 @@ virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t statu
 
 		// connection callback. Not required for basic behaviour, but forced for initial development.
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
-			uint32_t mode, uint32_t point, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
+			uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
 
 };
 
@@ -317,8 +317,9 @@ virtual void removeFindNode(bdNodeId *id) = 0;
 virtual void findDhtValue(bdNodeId *id, std::string key, uint32_t mode) = 0;
 
 	/***** Connections Requests *****/
-virtual void ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start) = 0;
-virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, uint32_t answer) = 0;
+virtual bool ConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay, uint32_t start) = 0;
+virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t mode, uint32_t loc, 
+						uint32_t bandwidth, uint32_t delay, uint32_t answer) = 0;
 virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags) = 0;
 
 

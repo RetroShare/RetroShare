@@ -28,7 +28,7 @@ std::string RsPluginManager::_remote_cache_dir ;
 std::vector<std::string> RsPluginManager::_plugin_directories ;
 
 ftServer   		*RsPluginManager::_ftserver 					= NULL ;
-p3ConnectMgr   *RsPluginManager::_connectmgr 				= NULL ;
+p3LinkMgr   *RsPluginManager::_linkmgr							= NULL ;
 
 typedef RsPlugin *(*RetroSharePluginEntry)(void) ;
 RsPluginHandler *rsPlugins ;
@@ -215,10 +215,10 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	}
 }
 
-p3ConnectMgr *RsPluginManager::getConnectMgr() const
+p3LinkMgr *RsPluginManager::getLinkMgr() const
 {
-	assert(_connectmgr != NULL) ;
-	return _connectmgr ;
+	assert(_linkmgr != NULL) ;
+	return _linkmgr ;
 }
 ftServer *RsPluginManager::getFileServer() const
 {

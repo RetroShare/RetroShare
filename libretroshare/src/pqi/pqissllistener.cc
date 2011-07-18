@@ -32,6 +32,8 @@
 #include "pqi/pqinetwork.h"
 #include "pqi/sslfns.h"
 
+#include "pqi/p3peermgr.h"
+
 #include <errno.h>
 #include <openssl/err.h>
 
@@ -56,8 +58,8 @@ const int pqissllistenzone = 49787;
  */
 
 
-pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3ConnectMgr *cm)
-        :laddr(addr), active(false), mConnMgr(cm)
+pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3PeerMgr *pm)
+        :laddr(addr), active(false), mPeerMgr(pm)
 
 {
         if (!(AuthSSL::getAuthSSL()-> active())) {
@@ -504,11 +506,17 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate()");
 
+	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() FAILED CONNECTION due to security!";
+	std::cerr << std::endl;
+
 	// Get the Peer Certificate....
 	X509 *peercert = SSL_get_peer_certificate(ssl);
 
 	if (peercert == NULL)
 	{
+		std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() ERROR, Peer didn't give Cert!";
+		std::cerr << std::endl;
+
   		pqioutput(PQL_WARNING, pqissllistenzone, 
 		  "pqissllistenbase::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
 		return -1;
@@ -516,6 +524,9 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
+
+	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() Passing Cert to AuthSSL() for analysis";
+	std::cerr << std::endl;
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
@@ -562,8 +573,8 @@ int	pqissllistenbase::continueaccepts()
  *
  */
 
-pqissllistener::pqissllistener(struct sockaddr_in addr, p3ConnectMgr *cm)
-        :pqissllistenbase(addr, cm)
+pqissllistener::pqissllistener(struct sockaddr_in addr, p3PeerMgr *lm)
+        :pqissllistenbase(addr, lm)
 {
 	return;
 }
@@ -729,8 +740,8 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
-	        std::string pgpid = getX509CNString(peercert->cert_info->issuer);
-		mConnMgr->addFriend(newPeerId, pgpid);
+		std::string pgpid = getX509CNString(peercert->cert_info->issuer);
+		mPeerMgr->addFriend(newPeerId, pgpid);
 	
 		X509_free(peercert);
 		return -1;

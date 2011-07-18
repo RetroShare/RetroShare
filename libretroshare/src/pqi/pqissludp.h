@@ -55,7 +55,7 @@ class cert;
 class pqissludp: public pqissl
 {
 public:
-        pqissludp(PQInterface *parent, p3ConnectMgr *cm);
+        pqissludp(PQInterface *parent, p3LinkMgr *lm);
 
 virtual ~pqissludp();
 
@@ -67,6 +67,7 @@ virtual int tick();
 virtual int reset();
 
 virtual bool connect_parameter(uint32_t type, uint32_t value);
+virtual bool connect_additional_address(uint32_t type, struct sockaddr_in *addr);
 
 	// BinInterface.
 	// These are reimplemented.	
@@ -99,6 +100,11 @@ private:
 	long listen_checktime;
 
 	uint32_t mConnectPeriod;
+	uint32_t mConnectFlags;
+	uint32_t mConnectBandwidth;
+
+	struct sockaddr_in mConnectProxyAddr;
+	struct sockaddr_in mConnectSrcAddr;
 };
 
 #endif // MRK_PQI_SSL_UDP_HEADER

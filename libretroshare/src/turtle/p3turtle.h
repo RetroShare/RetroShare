@@ -153,7 +153,7 @@
 //#define TUNNEL_STATISTICS
 
 class ftServer ;
-class p3ConnectMgr;
+class p3LinkMgr;
 class ftDataMultiplex;
 class RsSerialiser;
 
@@ -214,7 +214,7 @@ class TurtleFileHashInfo
 class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* public ftSearch */ public p3Config
 {
 	public:
-		p3turtle(p3ConnectMgr *cm,ftServer *m);
+		p3turtle(p3LinkMgr *lm,ftServer *m);
 
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
@@ -371,7 +371,7 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		//--------------------------- Local variables --------------------------------//
 		
 		/* data */
-		p3ConnectMgr *mConnMgr;
+		p3LinkMgr *mLinkMgr;
 		ftServer *_ft_server ;
 		ftController *_ft_controller ;
 

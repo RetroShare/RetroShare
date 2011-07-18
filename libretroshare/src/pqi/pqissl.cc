@@ -42,6 +42,8 @@
 
 #include "pqi/pqissllistener.h"
 
+#include "pqi/p3linkmgr.h"
+
 const int pqisslzone = 37714;
 
 /*********
@@ -92,7 +94,7 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  *
  */
 
-pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
+pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	:NetBinInterface(parent, parent->PeerId()), 
 	waiting(WAITING_NOT), active(false), certvalid(false), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
@@ -102,7 +104,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
 	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0), mReadZeroTS(0), 
 	mConnectDelay(0), mConnectTS(0),
-        mConnectTimeout(0), mTimeoutTS(0), mConnMgr(cm)
+        mConnectTimeout(0), mTimeoutTS(0), mLinkMgr(lm)
 
 {
 	/* set address to zero */
@@ -1107,6 +1109,9 @@ int 	pqissl::SSL_Connection_Complete()
 
 int 	pqissl::Extract_Failed_SSL_Certificate()
 {
+	std::cerr << "pqissl::Extract_Failed_SSL_Certificate() FAILED Connection due to Security Issues";
+	std::cerr << std::endl;
+
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Extract_Failed_SSL_Certificate()");
 
@@ -1117,11 +1122,18 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	{
   		rslog(RSL_WARNING, pqisslzone, 
 		  "pqissl::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
+
+		std::cerr << "pqissl::Extract_Failed_SSL_Certificate() ERROR Peer Didn't Give Us Certificate";
+		std::cerr << std::endl;
+
 		return -1;
 	}
 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
+
+	std::cerr << "pqissl::Extract_Failed_SSL_Certificate() Passing FAILED Cert to AuthSSL for analysis";
+	std::cerr << std::endl;
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
@@ -1307,9 +1319,8 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 
 	/* check whether it is on the same LAN */
 
-	peerConnectState details;
-	mConnMgr->getOwnNetStatus(details);
-	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(details.currentlocaladdr.sin_addr));
+	struct sockaddr_in localaddr = mLinkMgr->getLocalAddress();
+	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(localaddr.sin_addr));
 
 	{
 	  std::ostringstream out;
@@ -1317,7 +1328,7 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	  out << std::endl;
 	  out << "\t\tchecking for same LAN";
 	  out << std::endl;
-	  out << "\t localaddr: " << rs_inet_ntoa(details.currentlocaladdr.sin_addr);
+	  out << "\t localaddr: " << rs_inet_ntoa(localaddr.sin_addr);
 	  out << std::endl;
 	  out << "\t remoteaddr: " << rs_inet_ntoa(remote_addr.sin_addr);
 	  out << std::endl;

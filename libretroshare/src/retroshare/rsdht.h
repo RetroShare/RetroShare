@@ -39,11 +39,38 @@ extern RsDht *rsDht;
 //std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
 
 
-#define RS_DHT_NETSTART_NETWORKMODE	0x0001
-#define RS_DHT_NETSTART_NATTYPE		0x0002
-#define RS_DHT_NETSTART_NATHOLE		0x0003
-#define RS_DHT_NETSTART_CONNECTMODES	0x0004
-#define RS_DHT_NETSTART_NETSTATE	0x0005
+#define RSDHT_NETSTART_NETWORKMODE	0x0001
+#define RSDHT_NETSTART_NATTYPE		0x0002
+#define RSDHT_NETSTART_NATHOLE		0x0003
+#define RSDHT_NETSTART_CONNECTMODES	0x0004
+#define RSDHT_NETSTART_NETSTATE		0x0005
+
+
+
+#define RSDHT_PEERTYPE_ANY		0x0000
+#define RSDHT_PEERTYPE_OTHER		0x0001
+#define RSDHT_PEERTYPE_FOF		0x0002
+#define RSDHT_PEERTYPE_FRIEND		0x0003
+
+#define RSDHT_PEERDHT_NOT_ACTIVE	0x0000
+#define RSDHT_PEERDHT_SEARCHING		0x0001
+#define RSDHT_PEERDHT_FAILURE		0x0002
+#define RSDHT_PEERDHT_OFFLINE		0x0003
+#define RSDHT_PEERDHT_UNREACHABLE	0x0004
+#define RSDHT_PEERDHT_ONLINE		0x0005
+
+#define RSDHT_PEERCONN_DISCONNECTED               1
+#define RSDHT_PEERCONN_UDP_STARTED                2
+#define RSDHT_PEERCONN_CONNECTED                  3
+
+#define RSDHT_PEERREQ_STOPPED                     1
+#define RSDHT_PEERREQ_RUNNING                     2
+
+#define RSDHT_TOU_MODE_DIRECT		1
+#define RSDHT_TOU_MODE_PROXY		2
+#define RSDHT_TOU_MODE_RELAY		3
+
+
 
 class RsDhtPeer
 {
@@ -67,6 +94,26 @@ class RsDhtNetPeer
 
         std::string mDhtId;
         std::string mRsId;
+
+	uint32_t mDhtState;
+
+	//connectLogic.
+	std::string mConnectState;
+
+	// connect Status
+	uint32_t mPeerConnectState;
+	// connect mode
+	uint32_t mPeerConnectMode;
+
+	bool  mExclusiveProxyLock;
+
+	std::string mPeerConnectProxyId;
+
+	// Req Status.
+	uint32_t mPeerReqState;
+
+	// Peer Cb Mgs.
+	std::string mCbPeerMsg;
 
 };
 

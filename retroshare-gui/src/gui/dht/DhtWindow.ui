@@ -135,6 +135,11 @@
          <widget class="QTreeWidget" name="peerTreeWidget">
           <column>
            <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>PeerId</string>
            </property>
           </column>
@@ -166,6 +171,11 @@
           <column>
            <property name="text">
             <string>Cb Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>RsId</string>
            </property>
           </column>
          </widget>

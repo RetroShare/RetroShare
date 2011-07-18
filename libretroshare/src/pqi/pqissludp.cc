@@ -41,6 +41,8 @@
 #include "util/rsdebug.h"
 #include "util/rsnet.h"
 
+#include "pqi/p3linkmgr.h"
+
 const int pqissludpzone = 3144;
 
 	/* a final timeout, to ensure this never blocks completely
@@ -52,8 +54,8 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
 
-pqissludp::pqissludp(PQInterface *parent, p3ConnectMgr *cm)
-        :pqissl(NULL, parent, cm), tou_bio(NULL),
+pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
+        :pqissl(NULL, parent, lm), tou_bio(NULL),
 	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
 {
 	sockaddr_clear(&remote_addr);
@@ -86,6 +88,8 @@ pqissludp::~pqissludp()
 int pqissludp::reset()
 {
 	/* reset for next time.*/
+	mConnectFlags = 0;
+	mConnectPeriod = PQI_SSLUDP_DEF_CONN_PERIOD;
 	return pqissl::reset();
 }
 
@@ -101,7 +105,26 @@ int	pqissludp::attach()
 {
 	// IN THE IMPROVED TOU LIBRARY, we need to be careful with the tou_socket PARAMETERS.
 	// For now, this should do!
-	sockfd = tou_socket(0,TOU_RECEIVER_TYPE_UDPPEER,0);
+	sockfd = -1;
+
+	if (mConnectFlags & RS_CB_FLAG_MODE_UDP_DIRECT)
+	{
+		sockfd = tou_socket(RSUDP_TOU_RECVER_DIRECT_IDX,TOU_RECEIVER_TYPE_UDPPEER,0);
+	}
+	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_PROXY)
+	{
+		sockfd = tou_socket(RSUDP_TOU_RECVER_PROXY_IDX,TOU_RECEIVER_TYPE_UDPPEER,0);
+	}
+	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
+	{
+		sockfd = tou_socket(RSUDP_TOU_RECVER_RELAY_IDX,TOU_RECEIVER_TYPE_UDPRELAY,0);
+	}
+	else 
+	{
+		std::cerr << "pqissludp::attach() ERROR unknown Connect Mode" << std::endl;
+		sockfd = -1;
+	}
+
 	if (0 > sockfd)
 	{
   		rslog(RSL_WARNING, pqissludpzone, 
@@ -129,13 +152,24 @@ int 	pqissludp::Initiate_Connection()
 	  "pqissludp::Initiate_Connection() Attempting Outgoing Connection....");
 
 	/* decide if we're active or passive */
-	if (PeerId() < mConnMgr->getOwnId())
+	if (mConnectFlags & RS_CB_FLAG_ORDER_ACTIVE)
 	{
 		sslmode = PQISSL_ACTIVE;
 	}
-	else
+	else if (mConnectFlags & RS_CB_FLAG_ORDER_PASSIVE)
 	{
 		sslmode = PQISSL_PASSIVE;
+	}
+	else // likely UNSPEC - use old method to decide.
+	{
+		if (PeerId() < mLinkMgr->getOwnId())
+		{
+			sslmode = PQISSL_ACTIVE;
+		}
+		else
+		{
+			sslmode = PQISSL_PASSIVE;
+		}
 	}
 
 	if (waiting != WAITING_DELAY)
@@ -192,8 +226,21 @@ int 	pqissludp::Initiate_Connection()
 	//std::cerr << " Connect Period is:" << mConnectPeriod <<  std::endl;
 
 	/* <===================== UDP Difference *******************/
-	if (0 != (err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, 
-						sizeof(remote_addr), mConnectPeriod)))
+
+	if (mConnectFlags & RS_CB_FLAG_MODE_UDP_DIRECT)
+	{
+		err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, sizeof(remote_addr), mConnectPeriod);
+	}
+	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_PROXY)
+	{
+		err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, sizeof(remote_addr), mConnectPeriod);
+	}
+	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
+	{
+                tou_connect_via_relay(sockfd, &(mConnectSrcAddr), &(mConnectProxyAddr), &(remote_addr));
+	}
+
+	if (0 != err)
 	/* <===================== UDP Difference *******************/
 	{
 		int tou_err = tou_errno(sockfd);
@@ -417,7 +464,56 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		mConnectPeriod = value;
 		return true;
 	}
+	else if (type == NET_PARAM_CONNECT_FLAGS)
+	{
+		std::ostringstream out;
+		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " FLAGS: " << value;
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
+		mConnectFlags = value;
+		return true;
+	}
+	else if (type == NET_PARAM_CONNECT_BANDWIDTH)
+	{
+		std::ostringstream out;
+		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " BANDWIDTH: " << value;
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
+		mConnectFlags = value;
+		return true;
+	}
 	return pqissl::connect_parameter(type, value);
+}
+
+bool pqissludp::connect_additional_address(uint32_t type, struct sockaddr_in *addr)
+{
+        struct sockaddr_in mConnectProxyAddr;
+        struct sockaddr_in mConnectSrcAddr;
+	if (type == NET_PARAM_CONNECT_PROXY)
+	{
+		std::ostringstream out;
+		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " PROXYADDR: "; 
+		out << rs_inet_ntoa(addr->sin_addr) << ":"  << ntohs(addr->sin_port);
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
+		mConnectProxyAddr = *addr;
+
+		std::cerr << out.str() << std::endl;
+		return true;
+	}
+	else if (type == NET_PARAM_CONNECT_SOURCE)
+	{
+		std::ostringstream out;
+		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " SRCADDR: ";
+		out << rs_inet_ntoa(addr->sin_addr) << ":"  << ntohs(addr->sin_port);
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
+		mConnectSrcAddr = *addr;
+
+		std::cerr << out.str() << std::endl;
+		return true;
+	}
+	return pqissl::connect_additional_address(type, addr);
 }
 
 /********** PQI STREAMER OVERLOADING *********************************/

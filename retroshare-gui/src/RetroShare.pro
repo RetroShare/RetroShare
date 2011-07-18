@@ -346,9 +346,11 @@ HEADERS +=  rshare.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/SubDestItem.h \
             gui/feeds/AttachFileItem.h \
+            gui/feeds/SecurityItem.h \
             gui/connect/ConnectFriendWizard.h \
             gui/groups/CreateGroup.h \
-            gui/dht/DhtWindow.h
+            gui/dht/DhtWindow.h \
+            gui/GetStartedDialog.h
 
 
 FORMS +=    gui/StartDialog.ui \
@@ -427,11 +429,13 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/SubDestItem.ui \
             gui/feeds/AttachFileItem.ui \
+            gui/feeds/SecurityItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
             gui/groups/CreateGroup.ui \
             gui/common/GroupTreeWidget.ui \
             gui/style/StyleDialog.ui \
-            gui/dht/DhtWindow.ui
+            gui/dht/DhtWindow.ui \
+            gui/GetStartedDialog.ui
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -585,9 +589,11 @@ SOURCES +=  main.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
             gui/feeds/AttachFileItem.cpp \
+            gui/feeds/SecurityItem.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/groups/CreateGroup.cpp \
-            gui/dht/DhtWindow.cpp
+            gui/dht/DhtWindow.cpp \
+            gui/GetStartedDialog.cpp
 
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 

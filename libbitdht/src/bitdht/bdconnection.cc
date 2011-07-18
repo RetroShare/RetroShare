@@ -37,13 +37,15 @@
 /*
  * #define DEBUG_NODE_CONNECTION		1 
  * #define DEBUG_NODE_CONNECTION_EXTRA		1 
+ * #define DEBUG_CONNECTION_DELAY		1
  */
 
 #define DEBUG_NODE_CONNECTION		1 
+#define DEBUG_CONNECTION_DELAY		1
 
 
-#define BITDHT_CR_PAUSE_BASE_PERIOD 5
-#define BITDHT_CR_PAUSE_RND_PERIOD  15
+#define BITDHT_CR_PAUSE_SHORT_PERIOD 1
+#define BITDHT_CR_PAUSE_START_PERIOD 10
 
 #define MAX_NUM_RETRIES 3
 
@@ -142,7 +144,7 @@ void bdConnectManager::printConnections()
  *  2) Using a Proxy.
  */
 
-int bdConnectManager::requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t start)
+int bdConnectManager::requestConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay, uint32_t start)
 {
 	/* check if connection obj already exists */
 #ifdef DEBUG_NODE_CONNECTION
@@ -187,7 +189,7 @@ int bdConnectManager::requestConnection(struct sockaddr_in *laddr, bdNodeId *tar
 	}
 	else
 	{
-		return requestConnection_proxy(laddr, target, mode);
+		return requestConnection_proxy(laddr, target, mode, delay);
 	}
 }
 
@@ -248,7 +250,8 @@ int bdConnectManager::killConnectionRequest(struct sockaddr_in *laddr, bdNodeId 
 
 
 #define MIN_START_DIRECT_COUNT 		1
-#define MIN_START_PROXY_COUNT 		10
+#define MIN_START_PROXY_COUNT 		3
+#define MED_START_PROXY_COUNT 		5
 #define CONNECT_NUM_PROXY_ATTEMPTS	10
 
 
@@ -265,6 +268,8 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 	
 	if (checkExistingConnectionAttempt(target))
 	{
+		std::cerr << "bdConnectManager::requestConnection_direct() Existing ConnectionRequest... NOOP";
+		std::cerr << std::endl;
 		return 0;
 	}
 
@@ -318,7 +323,7 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 }
 
  
-int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
+int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay)
 {
 
 #ifdef DEBUG_NODE_CONNECTION
@@ -326,10 +331,17 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	std::cerr << std::endl;
 #endif
 
-	/* create a bdConnect, and put into the queue */
+	
+	if (checkExistingConnectionAttempt(target))
+	{
+		std::cerr << "bdConnectManager::requestConnection_proxy() Existing ConnectionRequest... NOOP";
+		std::cerr << std::endl;
+		return 0;
+	}
 
+	/* create a bdConnect, and put into the queue */
 	bdConnectionRequest connreq;
-	connreq.setupProxyConnection(laddr, target, mode);
+	connreq.setupProxyConnection(laddr, target, mode, delay);
 
 	/* grab any peers from any existing query */
 	std::list<bdId>::iterator pit;
@@ -354,7 +366,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 
 
 	/* if we don't have enough proxies ... ping the potentials */
-	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
+	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
 	{
 		/* unknown, add to potential list, and ping! */
 		for(pit = potentialProxies.begin(); pit != potentialProxies.end(); pit++)
@@ -374,7 +386,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	}
 
 	// Final Desperate Measures!
-	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
+	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
 	{
 		/* now find closest acceptable peers, 
 	 	 * and trigger a search for target...
@@ -428,8 +440,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		time_t now = time(NULL);
 		/* PAUSE the connection Attempt, so we can wait for responses */
 		connreq.mState = BITDHT_CONNREQUEST_PAUSED;
-		connreq.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD +
-				(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
+		connreq.mPauseTS = now + BITDHT_CR_PAUSE_START_PERIOD; 
 	}
 
 #ifdef DEBUG_NODE_CONNECTION
@@ -604,16 +615,15 @@ void bdConnectManager::iterateConnectionRequests()
 			if (!startConnectionAttempt(&(it->second)))
 			{
 				// FAILS if proxy is bad / nonexistent
-				std::cerr << "bdConnectManager::iterateConnectionAttempt() Failed startup => PAUSED";
+				std::cerr << "bdConnectManager::iterateConnectionAttempt() Failed startup => KILLED";
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
 
-				/* timeout and restart */
-				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
+				it->second.mErrCode = BITDHT_CONNECT_ERROR_SOURCE_START |
+							BITDHT_CONNECT_ERROR_OUTOFPROXY;
+				it->second.mState = BITDHT_CONNREQUEST_DONE;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 
 			}
 		}
@@ -667,8 +677,7 @@ void bdConnectManager::iterateConnectionRequests()
 				/* timeout and restart */
 				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
+				it->second.mPauseTS = now + BITDHT_CR_PAUSE_SHORT_PERIOD;
 			}
 		}
 		else if (it->second.mState == BITDHT_CONNREQUEST_EXTCONNECT)
@@ -676,16 +685,16 @@ void bdConnectManager::iterateConnectionRequests()
 			/* connection completed, doing UDP connection */
 			if (now - it->second.mStateTS > BITDHT_CONNREQUEST_TIMEOUT_CONNECT)
 			{
-				std::cerr << "bdConnectManager::iterateConnectionAttempt() EXTCONNECT has reached timout ->????";
+				std::cerr << "bdConnectManager::iterateConnectionAttempt() ERROR EXTCONNECT has reached timout -> SHOULD NEVER HAPPEN... KILL this query:";
 				std::cerr << std::endl;
 				std::cerr << it->second;
 				std::cerr << std::endl;
 
 				/* timeout and restart */
-				it->second.mState = BITDHT_CONNREQUEST_PAUSED;
+				it->second.mErrCode = BITDHT_CONNECT_ERROR_SOURCE_START |
+							BITDHT_CONNECT_ERROR_PROTOCOL;
+				it->second.mState = BITDHT_CONNREQUEST_DONE;
 				it->second.mStateTS = now;
-				it->second.mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
 			}
 		}
 		else if (it->second.mState == BITDHT_CONNREQUEST_DONE)
@@ -716,8 +725,9 @@ void bdConnectManager::iterateConnectionRequests()
 			bdId destId;
 		
 			destId.id = it->second.mTarget;	
+			int param = 0;
 			callbackConnect(&srcId, &proxyId, &destId, it->second.mMode, 
-					BD_PROXY_CONNECTION_START_POINT, 
+					BD_PROXY_CONNECTION_START_POINT, param,
 					BITDHT_CONNECT_CB_REQUEST, it->second.mErrCode);
 
 			/* cleanup */
@@ -756,6 +766,19 @@ int bdConnectManager::startConnectionAttempt(bdConnectionRequest *req)
 	bdId destConnAddr;
 
 	int mode = req->mMode;
+
+	/* calculate the delay... accounting for the time since the request */
+	time_t now = time(NULL);
+	int timeElapsed = (now - req->mRequestTS);
+	int delay = req->mDelay - timeElapsed;
+	int absDelay = 0;
+	if (delay > 0)
+	{
+		absDelay = delay;
+	}
+	std::cerr << "bdConnectManager::startConnectionAttempt() TimeSinceReq: " << timeElapsed << " Original Delay: " << req->mDelay;
+	std::cerr << " AbsDelay: " << absDelay;
+	std::cerr << std::endl;
 
 	destConnAddr.id = req->mTarget;
 	bdsockaddr_clear(&(destConnAddr.addr));
@@ -796,7 +819,7 @@ int bdConnectManager::startConnectionAttempt(bdConnectionRequest *req)
 	}
 
 
-	return startConnectionAttempt(&proxyId, &srcConnAddr, &destConnAddr, mode);
+	return startConnectionAttempt(&proxyId, &srcConnAddr, &destConnAddr, mode, absDelay);
 }
 
 
@@ -818,13 +841,14 @@ int bdConnectManager::startConnectionAttempt(bdConnectionRequest *req)
  */
 
 void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *destId, 
-					int mode, int point, int cbtype, int errcode)
+					int mode, int point, int param, int cbtype, int errcode)
 {
 	/* Check if we are the originator of the Connect Request. If so, then we do stuff to the CR.
 	 */
         std::cerr << "bdConnectManager::callbackConnectRequest() ";
         std::cerr << "mode: " << mode;
         std::cerr << " point: " << point;
+        std::cerr << " param: " << param;
         std::cerr << " cbtype: " << cbtype;
         std::cerr << " errcode: " << errcode;
         std::cerr << std::endl;
@@ -854,11 +878,31 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 			{
 				if (it->second.mState == BITDHT_CONNREQUEST_INPROGRESS)
 				{
-        				std::cerr << "bdConnectManager::callbackConnectRequest() ERROR alt CR also in progress!";
+					/* AT THIS POINT - WE SHOULD SWITCH IT INTO EXTCONNECT MODE????, 
+					 * which will timeout - if it fails...
+					 * THIS is effectively the end of the connection attempt anyway.
+					 * if UDP succeeds or fails, will Kill either way.
+					 */
+        				std::cerr << "bdConnectManager::callbackConnectRequest() ERROR ALT CR also in progress!";
         				std::cerr << std::endl;
+
 				}
+
+        			std::cerr << "bdConnectManager::callbackConnectRequest() WARNING Switching ALT CR to EXTCONNECT Mode";
+        			std::cerr << std::endl;
+
+				time_t now = time(NULL);
+				it->second.mState = BITDHT_CONNREQUEST_EXTCONNECT;
+				it->second.mStateTS = now;
+
 			}
-			callbackConnect(srcId, proxyId, destId, mode, point, cbtype, errcode);
+			else
+			{
+        			std::cerr << "bdConnectManager::callbackConnectRequest() No ALT CR - Good";
+        			std::cerr << std::endl;
+
+			}
+			callbackConnect(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
 			return;
 		}
 
@@ -1013,10 +1057,11 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 				{
 					if (errsrc == BITDHT_CONNECT_ERROR_SOURCE_END)
 					{
-						recycle = true;
+						fatal = true;
+						//recycle = true;
 
 	        				std::cerr << "bdConnectManager::callbackConnectRequest() ";
-						std::cerr << "END says TEMPUNAVAIL, recycle";
+						std::cerr << "END says TEMPUNAVAIL, fatal (retried at higher level)";
        		 				std::cerr << std::endl;
 					}
 					else 
@@ -1032,10 +1077,11 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 				{
 
 	        			std::cerr << "bdConnectManager::callbackConnectRequest() ";
-					std::cerr << " DUPLICATE, recycle";
+					std::cerr << " DUPLICATE, fatal";
        		 			std::cerr << std::endl;
 
-					recycle = true;
+					fatal = true;
+					//recycle = true;
 				}	
 					break;
 				case BITDHT_CONNECT_ERROR_OVERLOADED: // not more space. PROXY in RELAY mode.
@@ -1104,15 +1150,14 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 
 				/* setup for next one */
 				cr->mState = BITDHT_CONNREQUEST_PAUSED;
-				cr->mPauseTS = now + BITDHT_CR_PAUSE_BASE_PERIOD + 
-					(int) (bdRandom::random_f32() * BITDHT_CR_PAUSE_RND_PERIOD);
+				cr->mPauseTS = now + BITDHT_CR_PAUSE_SHORT_PERIOD;
 			}
 
 			cr->mStateTS = now;
 			cr->mErrCode = errcode;
 
 			/* just pass on the callbackConnect() */
-			callbackConnect(srcId, proxyId, destId, mode, point, cbtype, errcode);
+			callbackConnect(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
 
 			return; // CALLBACK FINISHED for FAILURE CODES.
 
@@ -1124,7 +1169,7 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 			cr->mState = BITDHT_CONNREQUEST_EXTCONNECT;
 			cr->mStateTS = now;
 
-			callbackConnect(srcId, proxyId, destId, mode, point, cbtype, errcode);
+			callbackConnect(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
 
 		}
 			break;
@@ -1153,7 +1198,7 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
  * In all cases, destConnAddr doesn't need to contain a valid address.
  */
 
-int bdConnectManager::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode)
+int bdConnectManager::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay)
 {
 #ifdef DEBUG_NODE_CONNECTION
 	std::cerr << "bdConnectManager::startConnectionAttempt()";
@@ -1182,12 +1227,24 @@ int bdConnectManager::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, b
 		return 0;
 	}
 
+
+	/* Switch the order of peers around to test for "opposite connections" */
+	if (NULL != findSimilarConnection(&(destConnAddr->id), &(srcConnAddr->id)))
+	{
+		std::cerr << "bdConnectManager::startConnectAttempt() WARNING Found Similar Connection. returning 0";
+		std::cerr << std::endl;
+
+		return 0;
+	}
+
+
 	{
 		// DO A CALLBACK to TELL higher levels, we are starting a connection attempt.
 		int point = BD_PROXY_CONNECTION_START_POINT;
 		int cbtype = BITDHT_CONNECT_CB_REQUEST;
 		int errcode = 0;
-		callbackConnect(srcConnAddr, proxyId, destConnAddr, mode, point, cbtype, errcode);
+		int param = 0;
+		callbackConnect(srcConnAddr, proxyId, destConnAddr, mode, point, param, cbtype, errcode);
 	}
 
 	/* INSTALL a NEW CONNECTION */
@@ -1201,14 +1258,14 @@ int bdConnectManager::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, b
 	}
 	else
 	{
-		conn->ConnectionSetup(proxyId, srcConnAddr, destConnAddr, mode);
+		conn->ConnectionSetup(proxyId, srcConnAddr, destConnAddr, mode, delay);
 	}
 
 
 	int msgtype =  BITDHT_MSG_TYPE_CONNECT_REQUEST;
 	int status = BITDHT_CONNECT_ANSWER_OKAY;
 	mPub->send_connect_msg(&(conn->mProxyId), msgtype, 
-		&(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
+		&(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, conn->mMaxDelay, status);
 
 	return 1;
 }
@@ -1226,7 +1283,7 @@ int bdConnectManager::startConnectionAttempt(bdId *proxyId, bdId *srcConnAddr, b
  *
  */
  
-void bdConnectManager::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc)
+void bdConnectManager::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int bandwidth, int delay)
 {
 
 #ifdef DEBUG_NODE_CONNECTION
@@ -1281,13 +1338,13 @@ void bdConnectManager::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId
 			std::cerr << std::endl;
 #endif
 			/*** XXX MUST RECEIVE THE ADDRESS FROM DEST for connection */
-			conn->AuthoriseEndConnection(srcId, proxyId, destId, mode, loc);
+			conn->AuthoriseEndConnection(srcId, proxyId, destId, mode, loc, delay);
 			
 			/* we respond to the proxy which will finalise connection */
 			int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 			int status = BITDHT_CONNECT_ANSWER_OKAY;
 			mPub->send_connect_msg(&(conn->mProxyId), msgtype, 
-				&(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
+				&(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, conn->mMaxDelay, status);
 			
 			return;
 		}
@@ -1311,13 +1368,13 @@ void bdConnectManager::AuthConnectionOk(bdId *srcId, bdId *proxyId, bdId *destId
 #endif
 	
 		/* SEARCH for IP:Port of destination is done before AUTH  */
-	
-		conn->AuthoriseProxyConnection(srcId, proxyId, destId, mode, loc);
+		conn->AuthoriseProxyConnection(srcId, proxyId, destId, mode, loc, bandwidth);
 	
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REQUEST;
 		int status = BITDHT_CONNECT_ANSWER_OKAY;
+		int param = 0;
 		mPub->send_connect_msg(&(conn->mDestId), msgtype, 
-			&(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, status);
+			&(conn->mSrcConnAddr), &(conn->mDestConnAddr), conn->mMode, param, status);
 	}
 	else
 	{
@@ -1366,7 +1423,7 @@ void bdConnectManager::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId
 		std::cerr << std::endl;
 #endif
 		mPub->send_connect_msg(&(conn->mSrcId), msgtype, 
-			  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
+			  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, 0, status);
 		
 		cleanConnection(&(srcId->id), &(proxyId->id), &(destId->id));
 		return;
@@ -1380,7 +1437,7 @@ void bdConnectManager::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId
 		std::cerr << std::endl;
 #endif
 		mPub->send_connect_msg(&(conn->mProxyId), msgtype, 
-			  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
+			  &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, 0, status);
 		
 		cleanConnection(&(srcId->id), &(proxyId->id), &(destId->id));
 
@@ -1393,7 +1450,7 @@ void bdConnectManager::AuthConnectionNo(bdId *srcId, bdId *proxyId, bdId *destId
 	std::cerr << std::endl;
 #endif
 	mPub->send_connect_msg(&(conn->mSrcId), msgtype, 
-		&(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, status);
+		&(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, 0, status);
 
 	cleanConnection(&(srcId->id), &(proxyId->id), &(destId->id));
 
@@ -1423,6 +1480,8 @@ void bdConnectManager::iterateConnections()
 			continue;
 		}
 
+		/* Can I add a Quick Kill for connections that just haven't worked? TODO */
+
 		if ((it->second.mState == BITDHT_CONNECTION_WAITING_ACK) &&
 			(now - it->second.mLastStart > BD_CONNECTION_START_RETRY_PERIOD))
 		{
@@ -1437,8 +1496,9 @@ void bdConnectManager::iterateConnections()
 				{
 					uint32_t errCode = createConnectionErrorCode(0, 
 						BITDHT_CONNECT_ERROR_TIMEOUT,it->second.mPoint);
+					int param = 0;
 					callbackConnect(&(it->second.mSrcId),&(it->second.mProxyId),
-						&(it->second.mDestId), it->second.mMode, it->second.mPoint, 
+						&(it->second.mDestId), it->second.mMode, it->second.mPoint, param,
 						BITDHT_CONNECT_CB_FAILED, errCode);
 				}
 
@@ -1453,19 +1513,41 @@ void bdConnectManager::iterateConnections()
 #endif
 				it->second.mLastStart = now;
 				it->second.mRetryCount++;
+				
+				int bandwidth = it->second.mBandwidth;
+				int delay = it->second.mMaxDelay;
+				time_t elapsedTime =  (time(NULL) - it->second.mConnectionStartTS);
+				int remainingDelay = delay - elapsedTime;
+				if (remainingDelay < 0)
+				{
+					remainingDelay = 0;
+				}
+				
+				std::cerr << "bdConnectManager::iterateConnections() Start/ACK cycle: remaining Delay: " << remainingDelay;
+				std::cerr << std::endl;
+				std::cerr << "bdConnectManager::iterateConnections() Start/ACK cycle: Bandwidth: " << bandwidth;
+				std::cerr << std::endl;
+
+				// Must calculate the correct delay's here!!!!
+				int delayOrBandwidth = remainingDelay;
+				if (it->second.mMode == BITDHT_CONNECT_MODE_RELAY)
+				{
+					delayOrBandwidth = bandwidth;
+				}
+
 				if (!it->second.mSrcAck)
 				{
 					int msgtype = BITDHT_MSG_TYPE_CONNECT_START;
 					mPub->send_connect_msg(&(it->second.mSrcId), msgtype, 
 						&(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
-						it->second.mMode, it->second.mBandwidth);
+						it->second.mMode, delayOrBandwidth, BITDHT_CONNECT_ANSWER_OKAY);
 				}
 				if (!it->second.mDestAck)
 				{
 					int msgtype = BITDHT_MSG_TYPE_CONNECT_START;
 					mPub->send_connect_msg(&(it->second.mDestId), msgtype, 
 						  &(it->second.mSrcConnAddr), &(it->second.mDestConnAddr), 
-						  it->second.mMode, it->second.mBandwidth);
+						  it->second.mMode, delayOrBandwidth, BITDHT_CONNECT_ANSWER_OKAY);
 				}
 			}
 		}
@@ -1491,10 +1573,10 @@ void bdConnectManager::iterateConnections()
 
 
 void bdConnectManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, 
-					int mode, int point, int cbtype, int errcode)
+					int mode, int point, int param, int cbtype, int errcode)
 {
 	/* This is overloaded at a higher level */
-	mPub->callbackConnect(srcId, proxyId, destId, mode, point, cbtype, errcode);
+	mPub->callbackConnect(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
 }
 
 
@@ -1555,8 +1637,8 @@ bdConnection::bdConnection()
 	 */
 
 	/* Connection State, and TimeStamp of Update */
-	int mState = 0;
-	time_t mLastEvent = 0;
+	mState = 0;
+	mLastEvent = 0;
 	//
 	///* Addresses of Start/Proxy/End Nodes */
 	//bdId mSrcId;
@@ -1566,24 +1648,27 @@ bdConnection::bdConnection()
 	///* Where we are in the connection,
 	//* and what connection mode.
 	//*/
-	int mPoint = 0;
-	int mMode = 0;
+	mPoint = 0;
+	mMode = 0;
 	//
 	///* must have ip:ports of connection ends (if proxied) */
 	//bdId mSrcConnAddr;
 	//bdId mDestConnAddr;
 	//
-	int mBandwidth = 0;
+	mBandwidth = 0;
+	mMaxDelay = 0;
+	mConnectionStartTS = 0;
+
 	//
 	///* START/ACK Finishing ****/
-	time_t mLastStart = 0;   /* timer for retries */
-	int mRetryCount = 0;     /* retry counter */
+	mLastStart = 0;   /* timer for retries */
+	mRetryCount = 0;     /* retry counter */
 	//
-	bool mSrcAck = false;
-	bool mDestAck = false;
+	mSrcAck = false;
+	mDestAck = false;
 	//
 	//// Completion TS.
-	time_t mCompletedTS = 0;
+	mCompletedTS = 0;
 }
 
 	/* heavy check, used to check for alternative connections, coming from other direction
@@ -1744,7 +1829,7 @@ int bdConnectManager::cleanConnectionBySender(bdId *sender, bdId *src, bdId *des
 
 
 
-int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode)
+int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay)
 {
 #ifdef DEBUG_NODE_CONNECTION
 	std::cerr << "bdConnectManager::recvedConnectionRequest()";
@@ -1762,8 +1847,9 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 		int pos = determinePosition(&(id->id), &(srcConnAddr->id), &(destConnAddr->id));
 		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_UNSUPPORTED, pos);
 
+		int param = 0;
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, status);
+		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, 0, status);
 
 		return 0;
 	}
@@ -1782,7 +1868,8 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_DUPLICATE, conn->mPoint);
 
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, status);
+		int param = 0;
+		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, param, status);
 
 		return 0;
 	}
@@ -1799,7 +1886,8 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_DUPLICATE, pos);
 
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, status);
+		int param = 0;
+		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, param, status);
 		return 0;
 	}
 
@@ -1825,8 +1913,9 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 		std::cerr << *conn;
 		std::cerr << std::endl;
 #endif
+		int param = 0;
 		callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-					conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH,
+					conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_AUTH,
 					BITDHT_CONNECT_ERROR_NONE);
 	}
 	else
@@ -1876,19 +1965,20 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 				std::cerr << "asking for AUTH to continue";
 				std::cerr << std::endl;
 
-				conn->ConnectionRequestProxy(id, srcConnAddr, &mOwnId, &destId, mode);
+				conn->ConnectionRequestProxy(id, srcConnAddr, &mOwnId, &destId, mode, delay);
 
 				/* ALLOW AUTO AUTH for MID Proxy Connections. */
-				if (mConfigAutoProxy)
+				if ((mConfigAutoProxy) && (mode == BITDHT_CONNECT_MODE_PROXY))
 				{
 				  	AuthConnectionOk(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint);
+							conn->mMode, conn->mPoint, 0, 0);
 				}
 				else
 				{
 
+					int param = 0;
 				  	callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH,
+							conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_AUTH,
 							BITDHT_CONNECT_ERROR_NONE);
 				}
 			}
@@ -1902,7 +1992,8 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 				/* send FAIL message to SRC */
 				int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 				uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_NOADDRESS, point);
-				mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, status);
+				int param = 0;
+				mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, param, status);
 
 				/* remove connection */
 				bdConnectManager::cleanConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -1918,8 +2009,9 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 
 			conn->ConnectionRequestEnd(id, srcConnAddr, destConnAddr, mode);
 
+			int param = 0;
 			callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_AUTH,
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_AUTH,
 						BITDHT_CONNECT_ERROR_NONE);
 		}
 	}
@@ -1933,7 +2025,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
  *
  */
 
-int bdConnectManager::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status)
+int bdConnectManager::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delay, int status)
 {
 	/* retrieve existing connection data */
 	bdConnection *conn = findExistingConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -1986,13 +2078,15 @@ int bdConnectManager::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *d
 			if (conn->mPoint == BD_PROXY_CONNECTION_START_POINT)
 			{
 				/* As we started the connection, callback internally first! */
+				int param = 0;
 				callbackConnectRequest(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED, errCode);
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_FAILED, errCode);
 			}
 			else
 			{
+				int param = 0;
 				callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED, errCode);
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_FAILED, errCode);
 			}
 
 			/* Kill Connection always */
@@ -2014,14 +2108,15 @@ int bdConnectManager::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *d
 				std::cerr << std::endl;
 
 				/* Upgrade Connection to Finishing Mode */
-				conn->upgradeProxyConnectionToFinish(id, srcConnAddr, destConnAddr, mode, status);
+				conn->upgradeProxyConnectionToFinish(id, srcConnAddr, destConnAddr, mode, delay, status);
 
 				/* do Callback for Pending Connection */
 				/* DONT CALLBACK in AutoProxy Mode: (PROXY & mConfigAutoProxy) */
 				if ((conn->mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
 				{
+					int param = 0;
 					callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_PENDING,
+							conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_PENDING,
 							BITDHT_CONNECT_ERROR_NONE);
 				}
 
@@ -2049,14 +2144,16 @@ int bdConnectManager::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *d
 				/* DONT CALLBACK in AutoProxy Mode: (PROXY & mConfigAutoProxy) */
 				if ((conn->mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
 				{
+					int param = 0;
 					callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_FAILED, errCode);
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_FAILED, errCode);
 				}
 
 
 				/* send on message to SRC */
 				int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
-				mPub->send_connect_msg(&(conn->mSrcId), msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, errCode);
+				int param = 0;
+				mPub->send_connect_msg(&(conn->mSrcId), msgtype, &(conn->mSrcConnAddr), &(conn->mDestConnAddr), mode, param, errCode);
 
 				/* connection is killed */
 				cleanConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -2076,7 +2173,7 @@ int bdConnectManager::recvedConnectionReply(bdId *id, bdId *srcConnAddr, bdId *d
  *  Acks are set, and connections completed if possible (including callback!).
  */
 
-int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int bandwidth)
+int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delayOrBandwidth)
 {
 	std::cerr << "bdConnectManager::recvedConnectionStart()";
 	std::cerr << std::endl;
@@ -2117,7 +2214,7 @@ int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *d
 
 	int msgtype = BITDHT_MSG_TYPE_CONNECT_ACK;
 	int status = BITDHT_CONNECT_ANSWER_OKAY;
-	mPub->send_connect_msg(id, msgtype, &(conn->mSrcId), &(conn->mDestId), mode, status);
+	mPub->send_connect_msg(id, msgtype, &(conn->mSrcId), &(conn->mDestId), mode, 0, status);
 
 	/* do complete Callback */
 
@@ -2127,7 +2224,19 @@ int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *d
 		std::cerr << "bdConnectManager::recvedConnectionStart() Switching State to COMPLETED, doing callback";
 		std::cerr << std::endl;
 
-		conn->CompleteConnection(id, srcConnAddr, destConnAddr);
+		int param = delayOrBandwidth;
+		int bandwidth = 0;
+		int delay = 0;
+		if (conn->mMode == BITDHT_CONNECT_MODE_RELAY)
+		{
+			bandwidth = param;
+		}
+		else
+		{
+			delay = param;
+		}
+
+		conn->CompleteConnection(id, srcConnAddr, destConnAddr, bandwidth, delay);
 
 		std::cerr << "bdConnectManager::recvedConnectionStart() Connection State: ";
 		std::cerr << *conn;
@@ -2138,7 +2247,7 @@ int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *d
 		{
 			/* internal callback first */
 			callbackConnectRequest(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestConnAddr),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START,
+							conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_START,
 							BITDHT_CONNECT_ERROR_NONE);
 
 		}
@@ -2146,7 +2255,7 @@ int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *d
 		{
 			/* internal callback first */
 			callbackConnectRequest(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestConnAddr),
-							conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START,
+							conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_START,
 							BITDHT_CONNECT_ERROR_NONE);
 		}
 
@@ -2196,7 +2305,7 @@ int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *des
 	if (conn->mState != BITDHT_CONNECTION_WAITING_ACK)
 	{
 		/* ERROR */
-		std::cerr << "bdConnectManager::recvedConnectionAck() conn->mState != WAITING_ACK, actual State: " << conn->mState;
+		std::cerr << "bdConnectManager::recvedConnectionAck() ERROR conn->mState != WAITING_ACK, actual State: " << conn->mState;
 		std::cerr << std::endl;
 
 		return 0;
@@ -2231,8 +2340,10 @@ int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *des
 			// Slightly different callback, use ConnAddr for start message!
 			// Also callback to ConnectionRequest first.
 			// ACTUALLY we are END, so shouldn't (AT This Point do this).
-			callbackConnect(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_START,
+			// MUST callback via ConnectRequest - to prevent duplicate REQUESTS.
+			int param = 0;
+			callbackConnectRequest(&(conn->mSrcConnAddr),&(conn->mProxyId),&(conn->mDestId),
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_START,
 						BITDHT_CONNECT_ERROR_NONE);
 
 		}
@@ -2241,8 +2352,9 @@ int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *des
 			/* DONT CALLBACK in AutoProxy Mode: (PROXY & mConfigAutoProxy) */
 			if ((conn->mMode != BITDHT_CONNECT_MODE_PROXY) || (!mConfigAutoProxy))
 			{
+				int param = 0;
 				callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, BITDHT_CONNECT_CB_PROXY, 
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_PROXY, 
 						BITDHT_CONNECT_ERROR_NONE);
 			}
 
@@ -2264,7 +2376,7 @@ int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *des
 // Initialise a new Connection (request by User)
 
 // Any Connection initialised at Source (START_POINT), prior to Auth.
-int bdConnection::ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destId, int mode)
+int bdConnection::ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destId, int mode, int delay)
 {
 	mState = BITDHT_CONNECTION_WAITING_START; /* or REPLY, no AUTH required */
 	mLastEvent = time(NULL);
@@ -2277,6 +2389,15 @@ int bdConnection::ConnectionSetup(bdId *proxyId, bdId *srcConnAddr, bdId *destId
 
 	mSrcConnAddr = *srcConnAddr; /* self, full ID/IP */
 	mDestConnAddr = *destId; /* IP unknown */
+
+	mBandwidth = 0;
+	mMaxDelay = delay;
+	mConnectionStartTS = time(NULL);
+
+#ifdef DEBUG_CONNECTION_DELAY
+	std::cerr << "bdConnection::ConnectionSetup(): delay: " << mMaxDelay;
+	std::cerr << std::endl;
+#endif
 
 	/* clear IP Addresses to enforce this */
 	bdsockaddr_clear(&(mSrcId.addr)); 
@@ -2301,6 +2422,10 @@ int bdConnection::ConnectionSetupDirect(bdId *destId, bdId *srcConnAddr)
 
 	mSrcConnAddr = *srcConnAddr; /* self, full ID/IP */
 	mDestConnAddr = *destId; /* IP unknown */
+
+	mBandwidth = 0;
+	mMaxDelay = 0;
+	mConnectionStartTS = time(NULL);
 
 	/* clear IP Addresses to enforce this */
 	bdsockaddr_clear(&(mSrcId.addr)); 
@@ -2329,6 +2454,10 @@ int bdConnection::ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *des
 	mSrcConnAddr = *srcConnAddr; /* connect address ID/IP known */
 	mDestConnAddr = *destId; /* self IP unknown */
 
+	mBandwidth = 0;
+	mMaxDelay = 0;
+	mConnectionStartTS = time(NULL);
+
 	/* clear IP Addresses to enforce this */
 	bdsockaddr_clear(&(mDestId.addr)); 
 	bdsockaddr_clear(&(mDestConnAddr.addr)); 
@@ -2340,7 +2469,7 @@ int bdConnection::ConnectionRequestDirect(bdId *id, bdId *srcConnAddr, bdId *des
 
 
 // Proxy Connection initialised at Proxy (MID_POINT), prior to Auth.
-int bdConnection::ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destId, int mode)
+int bdConnection::ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *ownId, bdId *destId, int mode, int delay)
 {
 	mState = BITDHT_CONNECTION_WAITING_AUTH;
 	mLastEvent = time(NULL);
@@ -2353,6 +2482,15 @@ int bdConnection::ConnectionRequestProxy(bdId *id, bdId *srcConnAddr, bdNodeId *
 
 	mSrcConnAddr = *srcConnAddr;
 	mDestConnAddr = *destId; /* other peer, IP unknown */
+
+	mBandwidth = 0;
+	mMaxDelay = delay;
+	mConnectionStartTS = time(NULL);
+
+#ifdef DEBUG_CONNECTION_DELAY
+	std::cerr << "bdConnection::ConnectionRequestProxy(): received Initial delay: " << mMaxDelay;
+	std::cerr << std::endl;
+#endif
 
 	/* clear IP Addresses to enforce this */
 	bdsockaddr_clear(&(mProxyId.addr)); 
@@ -2379,6 +2517,10 @@ int bdConnection::ConnectionRequestEnd(bdId *id, bdId *srcId, bdId *destId, int 
 	mSrcConnAddr = *srcId;   /* ID, not IP */
 	mDestConnAddr = *destId; /* ID, not IP */
 
+	mBandwidth = 0;
+	mMaxDelay = 0;
+	mConnectionStartTS = time(NULL);
+
 	/* clear IP Addresses to enforce this */
 	bdsockaddr_clear(&(mSrcId.addr)); 
 	bdsockaddr_clear(&(mDestId.addr)); 
@@ -2392,7 +2534,7 @@ int bdConnection::ConnectionRequestEnd(bdId *id, bdId *srcId, bdId *destId, int 
 
 // Received AUTH, step up to next stage.
 // Search for dest ID/IP is done before AUTH. so actually nothing to do here, except set the state
-int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc)
+int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int bandwidth)
 {
 	mState = BITDHT_CONNECTION_WAITING_REPLY;
 	mLastEvent = time(NULL);
@@ -2402,6 +2544,15 @@ int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *des
 	//mProxyId (self) (IP unknown)
 
 	// mPoint, mMode should be okay.
+
+	mBandwidth = bandwidth;
+	//mMaxDelay  Already set.
+	//mConnectionStartTS Already Set
+
+#ifdef DEBUG_CONNECTION_DELAY
+	std::cerr << "bdConnection::AuthoriseProxyConnection(): received Bandwidth Limitation: " << mBandwidth;
+	std::cerr << std::endl;
+#endif
 
 	// mSrcConnAddr (ID/IP known)
 	// mDestConnAddr is still pending.
@@ -2417,7 +2568,7 @@ int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *des
 
 
 /* we are end of a Proxy Connection */
-int bdConnection::AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destConnAddr, int mode, int loc)
+int bdConnection::AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destConnAddr, int mode, int loc, int delay)
 {
 	mState = BITDHT_CONNECTION_WAITING_START;
 	mLastEvent = time(NULL);
@@ -2427,6 +2578,17 @@ int bdConnection::AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destC
 	//mProxyId (peer) should be okay. (ID/IP known)
 
 	// mPoint, mMode should be okay.
+
+	//mBandwidth not set by us.
+	time_t elapsedTime =  (time(NULL) - mConnectionStartTS);
+	mMaxDelay = delay + elapsedTime; // relative to mConnectionStartTS.
+	//mConnectionStartTS // Already Set
+
+#ifdef DEBUG_CONNECTION_DELAY
+	std::cerr << "bdConnection::AuthoriseEndConnection(): adjusting delay: " << delay << " by elapsedTime: " << elapsedTime;
+	std::cerr << " for MaxDelay: " << mMaxDelay;
+	std::cerr << std::endl;
+#endif
 
 	// mSrcConnAddr should be okay. (IP unknown)
 	// Install the correct destConnAddr. (just received)
@@ -2463,6 +2625,10 @@ int bdConnection::AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *de
 
 	// mPoint, mMode should be okay.
 
+	//mBandwidth doesn't matter
+	//mMaxDelay doesn't matter
+	//mConnectionStartTS // Already Set
+
 	// mSrcConnAddr should be okay.  (ID/IP known)
 	// Install the correct destConnAddr. (just received)
 	mDestConnAddr = *destConnAddr; 
@@ -2484,7 +2650,7 @@ int bdConnection::AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *de
 }
 
 // Proxy Connection => at Proxy, Ready to send out Start and get back ACKs!!
-int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int status)
+int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int secondDelay, int status)
 {
 	mState = BITDHT_CONNECTION_WAITING_ACK;
 	mLastEvent = time(NULL);
@@ -2493,6 +2659,32 @@ int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bd
 	//mProxyId, not set, doesn't matter. (IP Unknown)
 
 	// mPoint, mMode should be okay.
+
+	//mBandwidth already set.
+	time_t elapsedTime =  (time(NULL) - mConnectionStartTS);
+	int remainingDelayOne = mMaxDelay - elapsedTime;
+	if (secondDelay > remainingDelayOne)
+	{
+		/* maxDelay provided by Peer 2.... update calculations */
+		mMaxDelay = secondDelay + elapsedTime; // relative to mConnectionStartTS.
+	}
+	//mConnectionStartTS // Already Set
+
+#ifdef DEBUG_CONNECTION_DELAY
+	std::cerr << "bdConnection::upgradeProxyConnectionToFinish(): elapsedTime: " << elapsedTime << " remainingDelayOne: ";
+	std::cerr << remainingDelayOne << " secondDelay: " << secondDelay << " => maxDelay: " << mMaxDelay;
+	std::cerr << std::endl;
+#endif
+
+
+#ifdef DEBUG_CONNECTION_DELAY
+	if ((secondDelay > 100 || mMaxDelay > 100) || (mBandwidth > 1050))
+	{
+		std::cerr << "bdConnection::upgradeProxyConnectionToFinish(): ERROR Bandwidth or Delay rather large";
+		std::cerr << std::endl;
+	}
+#endif
+
 
 	// mSrcConnAddr should be okay. (ID/IP known)
 	// Install the correct destConnAddr. (just received)
@@ -2515,7 +2707,9 @@ int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bd
 
 
 // Final Sorting out of Addresses.
-int bdConnection::CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr)
+// This is called at the Connection Ends, on receiving the START message.
+// This will contain either Bandwidth or Delay.
+int bdConnection::CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int bandwidth, int delay)
 {
 	/* Store Final Addresses */
 	time_t now = time(NULL);
@@ -2523,6 +2717,40 @@ int bdConnection::CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConn
 	mState = BITDHT_CONNECTION_COMPLETED;
 	mCompletedTS = now;
 	mLastEvent = now;
+
+	mBandwidth = bandwidth; // Received from the Proxy (in the case of a Relay).
+	time_t elapsedTime =  (time(NULL) - mConnectionStartTS);
+	int remainingOrigDelay = mMaxDelay - elapsedTime;
+	if (delay > remainingOrigDelay)
+	{
+		/* maxDelay provided by Peer 2.... update calculations */
+		mMaxDelay = delay + elapsedTime; // relative to mConnectionStartTS.
+	}
+
+
+#ifdef DEBUG_CONNECTION_DELAY
+	if ((delay > 100 || mMaxDelay > 100) || (mBandwidth > 1050))
+	{
+		std::cerr << "bdConnection::CompleteConnection(): ERROR Bandwidth or Delay rather large";
+		std::cerr << std::endl;
+	}
+#endif
+
+#ifdef DEBUG_CONNECTION_DELAY
+	std::cerr << "bdConnection::CompleteConnection(): Bandwidth: " << mBandwidth;
+	std::cerr << std::endl;
+	std::cerr << "bdConnection::CompleteConnection(): elapsedTime: " << elapsedTime << " remainingOrigDelay: ";
+	std::cerr << remainingOrigDelay << " newDelay: " << delay << " => maxDelay: " << mMaxDelay;
+	std::cerr << std::endl;
+#endif
+
+	if (delay < remainingOrigDelay)
+	{
+		// ERROR 
+		std::cerr << "bdConnection::CompleteConnection(): ERROR delay: " << delay << " is smaller than remainingOrigDelay: ";
+		std::cerr << remainingOrigDelay;
+		std::cerr << std::endl;
+	}
 
 	// Received Definitive Final Addresses from Proxy.
 	// These have to be done by proxy, as its the only one who know both our addresses.
@@ -2575,10 +2803,13 @@ int bdConnectionRequest::setupDirectConnection(struct sockaddr_in *laddr, bdNode
 	mRecycled = 0;
 	mErrCode = 0;
 
+	mDelay = 0;
+	mRequestTS = time(NULL);
+
 	return 1;
 }
 
-int bdConnectionRequest::setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
+int bdConnectionRequest::setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay)
 {
 	mState = BITDHT_CONNREQUEST_READY;
 	mStateTS = time(NULL);
@@ -2589,6 +2820,9 @@ int bdConnectionRequest::setupProxyConnection(struct sockaddr_in *laddr, bdNodeI
 	mRecycled = 0;
 	mErrCode = 0;
 
+	mDelay = delay;
+	mRequestTS = time(NULL);
+	
 	return 1;
 }
 
@@ -2681,6 +2915,9 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 	out << std::endl;
 	out << "\tMode: " << req.mMode;
 	out << std::endl;
+	out << "\tDelay: " << req.mDelay;
+	out << " RequestTS: " << now - req.mRequestTS;
+	out << std::endl;
 
 	out << "CurrentAttempt:";
 	bdStdPrintId(out, &(req.mCurrentAttempt));
@@ -2752,6 +2989,11 @@ std::ostream &operator<<(std::ostream &out, const bdConnection &conn)
 	out << " srcAck: " << conn.mSrcAck;
 	out << " destAck: " << conn.mDestAck;
 	out << " completedTS: " << now - conn.mCompletedTS;
+
+	out << "\tBandwidth: " << conn.mBandwidth;
+	out << " maxDelay: " << conn.mMaxDelay;
+	out << " startTS: " << now - conn.mConnectionStartTS;
+
 	out << std::endl;
 
 	return out;
@@ -2845,7 +3087,7 @@ std::string decodeConnectionErrorType(uint32_t errcode)
 std::string decodeConnectionErrorSource(uint32_t errcode)
 {
 	uint32_t errsrc = errcode & BITDHT_CONNECT_ERROR_MASK_SOURCE;
-	std::string namedtype = "UNKNOWN";
+	std::string namedtype = "ERROR SRC UNKNOWN";
 	switch(errsrc)
 	{
 		default:

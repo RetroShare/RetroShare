@@ -37,9 +37,6 @@
 #include <map>
 
 #include "pqi/pqi_base.h"
-
-#include "pqi/p3connmgr.h"
-
 #include "pqi/authssl.h"
 
 #define WAITING_NOT            0
@@ -85,12 +82,13 @@ class pqissl;
 class cert;
 
 class pqissllistener;
+class p3LinkMgr;
 
 class pqissl: public NetBinInterface
 {
 public:
 	pqissl(pqissllistener *l, PQInterface *parent, 
-                p3ConnectMgr *cm);
+                p3LinkMgr *lm);
 virtual ~pqissl();
 
 	// NetInterface
@@ -200,7 +198,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	uint32_t mConnectTimeout;
 	time_t   mTimeoutTS;
 
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 
 private:
 	// ssl only fns.

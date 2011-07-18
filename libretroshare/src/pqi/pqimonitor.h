@@ -65,14 +65,33 @@ const uint32_t RS_STUN_FRIEND 		= 0x0020;
 const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 
 
-
+// for the old p3dhtmgr - amazed it still compiles ;)
 #define RS_CONNECT_PASSIVE 	1
 #define RS_CONNECT_ACTIVE 	2
 
-#define RS_CB_DHT 		1   /* from dht */
-#define RS_CB_DISC 		2   /* from peers */
-#define RS_CB_PERSON 		3   /* from connection */
-#define RS_CB_PROXY 		4   /* via proxy */
+#define RS_CB_DHT 		0x0001   /* from dht */
+#define RS_CB_DISC 		0x0002   /* from peers */
+#define RS_CB_PERSON 		0x0003   /* from connection */
+#define RS_CB_PROXY 		0x0004   /* via proxy */
+
+
+#define RS_CB_FLAG_MASK_MODE		0x00ff
+#define RS_CB_FLAG_MASK_ORDER		0xff00
+
+#define RS_CB_FLAG_MODE_TCP		0x0001
+#define RS_CB_FLAG_MODE_UDP_DIRECT	0x0002
+#define RS_CB_FLAG_MODE_UDP_PROXY	0x0004
+#define RS_CB_FLAG_MODE_UDP_RELAY	0x0008
+
+#define RS_CB_FLAG_ORDER_UNSPEC		0x0100
+#define RS_CB_FLAG_ORDER_PASSIVE	0x0200
+#define RS_CB_FLAG_ORDER_ACTIVE		0x0400
+
+#define RSUDP_NUM_TOU_RECVERS		3
+
+#define RSUDP_TOU_RECVER_DIRECT_IDX        0
+#define RSUDP_TOU_RECVER_PROXY_IDX         1
+#define RSUDP_TOU_RECVER_RELAY_IDX         2
 
 
 class pqipeer
@@ -84,7 +103,7 @@ uint32_t    state;
 uint32_t    actions;
 };
 
-class p3ConnectMgr;
+class p3LinkMgr;
 
 /*!
  * This class should be implemented
@@ -96,13 +115,13 @@ class p3ConnectMgr;
 class pqiMonitor
 {
 	public:
-	pqiMonitor() :mConnMgr(NULL) { return; }
+	pqiMonitor() :mLinkMgr(NULL) { return; }
 virtual ~pqiMonitor() { return; }
 
 	/*!
 	 * passes a handle the retroshare connection manager
 	 */
-	void setConnectionMgr(p3ConnectMgr *cm) { mConnMgr = cm; }
+	void setLinkMgr(p3LinkMgr *lm) { mLinkMgr = lm; }
 
 	/*!
 	 * this serves as a call back function for server which has
@@ -124,7 +143,7 @@ virtual void	statusChanged() {};
 //virtual void	peerStatus(std::string id, uint32_t mode) = 0;
 
 	protected:
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 };
 
 
@@ -137,8 +156,9 @@ virtual ~pqiConnectCb() { return; }
 virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
-virtual void    peerConnectRequest(std::string id,              
-                        struct sockaddr_in raddr, uint32_t source) = 0;
+virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,  
+			struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr,  
+                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
 
 //virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
 };

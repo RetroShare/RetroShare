@@ -75,10 +75,17 @@ UdpLayer *UdpStack::getUdpLayer() /* for testing only */
 	return udpLayer;
 }
 
+bool    UdpStack::getLocalAddress(struct sockaddr_in &local)
+{
+	local = laddr;
+	return true;
+}
+
 bool    UdpStack::resetAddress(struct sockaddr_in &local)
 {
 	std::cerr << "UdpStack::resetAddress(" << local << ")";
 	std::cerr << std::endl;
+	laddr = local;
 
 	return udpLayer->reset(local);
 }

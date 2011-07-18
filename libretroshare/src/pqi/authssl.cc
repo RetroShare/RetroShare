@@ -34,7 +34,6 @@
 
 #include "pqinetwork.h"
 #include "authgpg.h"
-#include "pqi/p3connmgr.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
 
@@ -54,7 +53,7 @@
  * #define AUTHSSL_DEBUG 1
  ***/
 
-// initialisation du pointeur de singleton � z�ro
+// initialisation du pointeur de singleton
 static AuthSSL *instance_ssl = NULL;
 
 /* hidden function - for testing purposes() */
@@ -824,8 +823,15 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
         std::cerr << "static verify_x509_callback called.";
         std::cerr << std::endl;
 #endif
-        return AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
+        int verify = AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
+	if (!verify)
+	{
+		/* Process as FAILED Certificate */
+		/* Start as INCOMING, as outgoing is already captured */
+		AuthSSL::getAuthSSL()->FailedCertificate(X509_STORE_CTX_get_current_cert(ctx), true); 
+	}
 
+        return verify;
 }
 
 int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
@@ -1136,14 +1142,67 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /* store for discovery */
 bool    AuthSSLimpl::FailedCertificate(X509 *x509, bool incoming)
 {
-	(void) incoming; /* remove unused parameter warning */
+        std::string peerId = "UnknownSSLID";
+	if(!getX509id(x509, peerId)) 
+	{
+		std::cerr << "AuthSSLimpl::FailedCertificate() ERROR cannot extract X509id from certificate";
+		std::cerr << std::endl;
+	}
+
+        std::string gpgid = getX509CNString(x509->cert_info->issuer);
+        std::string sslcn = getX509CNString(x509->cert_info->subject);
+
+	std::cerr << "AuthSSLimpl::FailedCertificate() ";
+	if (incoming)
+	{
+		std::cerr << " Incoming from: ";
+	}
+	else
+	{
+		std::cerr << " Outgoing to: ";
+	}
+
+	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << peerId;
+	std::cerr << std::endl;
+
+	uint32_t notifyType = 0;
 
 	/* if auths -> store */
 	if (AuthX509WithGPG(x509))
 	{
+		std::cerr << "AuthSSLimpl::FailedCertificate() Cert Checked Out, so passing to Notify";
+		std::cerr << std::endl;
+
+		if (incoming)
+		{
+			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
+		}
+		else
+		{
+			notifyType = RS_FEED_ITEM_SEC_AUTH_DENIED;
+		}
+
+		getPqiNotify()->AddFeedItem(notifyType, gpgid, peerId, sslcn);
+
 		LocalStoreCert(x509);
 		return true;
 	}
+	else
+	{
+		/* unknown peer! */
+		if (incoming)
+		{
+			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_IN;
+		}
+		else
+		{
+			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_OUT;
+		}
+
+		getPqiNotify()->AddFeedItem(notifyType, gpgid, peerId, sslcn);
+
+	}
+
 	return false;
 }
 

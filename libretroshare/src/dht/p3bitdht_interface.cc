@@ -69,10 +69,10 @@ int      p3BitDht::getDhtPeers(int lvl, std::list<RsDhtPeer> &peers)
 int      p3BitDht::getNetPeerList(std::list<std::string> &peerIds)
 {
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
-	std::map<std::string, DhtPeerDetails>::iterator it;
+	std::map<bdNodeId, DhtPeerDetails>::iterator it;
 	for(it = mPeers.begin(); it != mPeers.end(); it++)
 	{
-		peerIds.push_back(it->first);
+		peerIds.push_back(it->second.mRsId);
 	}
 
 	return 1;
@@ -83,14 +83,13 @@ int      p3BitDht::getNetPeerStatus(std::string peerId, RsDhtNetPeer &status)
 
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
 
-	std::map<std::string, DhtPeerDetails>::iterator it;
-	it = mPeers.find(peerId);
-	if (it == mPeers.end())
+	DhtPeerDetails *dpd = findInternalRsPeer_locked(peerId);
+	if (!dpd)
 	{
 		return 0;
 	}
 
-	convertDhtPeerDetailsToRsDhtNetPeer(status, it->second);
+	convertDhtPeerDetailsToRsDhtNetPeer(status, *dpd);
 	return 1;
 }
 
@@ -180,23 +179,59 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 	status.mDhtId = out.str();
 	status.mRsId = details.mRsId;
 
+	status.mDhtState = details.mDhtState;
+
+	status.mConnectState = details.mConnectLogic.connectState();
+
+	status.mPeerReqState = details.mPeerReqState;
+
+	status.mExclusiveProxyLock = details.mExclusiveProxyLock;
+
+	status.mPeerConnectState = details.mPeerConnectState;
+
+	switch(details.mPeerConnectMode)
+	{
+		default:
+		case BITDHT_CONNECT_MODE_DIRECT:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_DIRECT;
+			break;
+		case BITDHT_CONNECT_MODE_PROXY:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_PROXY;
+			break;
+		case BITDHT_CONNECT_MODE_RELAY:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_RELAY;
+			break;
+	}
+
+	//status.mPeerConnectProxyId = details.mPeerConnectProxyId;
+	std::ostringstream out2;
+	bdStdPrintId(out2, &(details.mPeerConnectProxyId));
+	status.mPeerConnectProxyId = out2.str();
+
+	status.mCbPeerMsg = details.mPeerCbMsg;
+
 	return;
 }
 
 void	convertUdpRelayEndtoRsDhtRelayEnd(RsDhtRelayEnd &end, const UdpRelayEnd &int_end)
 {
-	std::ostringstream addr;
-	addr << rs_inet_ntoa(int_end.mLocalAddr.sin_addr) << ":" << ntohs(int_end.mLocalAddr.sin_port);
-	end.mLocalAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_end.mLocalAddr.sin_addr) << ":" << ntohs(int_end.mLocalAddr.sin_port);
+		end.mLocalAddr = addr.str();
+	}
 
-	addr.clear();
-	addr << rs_inet_ntoa(int_end.mProxyAddr.sin_addr) << ":" << ntohs(int_end.mProxyAddr.sin_port);
-	end.mProxyAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_end.mProxyAddr.sin_addr) << ":" << ntohs(int_end.mProxyAddr.sin_port);
+		end.mProxyAddr = addr.str();
+	}
 
-
-	addr.clear();
-	addr << rs_inet_ntoa(int_end.mRemoteAddr.sin_addr) << ":" << ntohs(int_end.mRemoteAddr.sin_port);
-	end.mRemoteAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_end.mRemoteAddr.sin_addr) << ":" << ntohs(int_end.mRemoteAddr.sin_port);
+		end.mRemoteAddr = addr.str();
+	}
 
 	end.mCreateTS = 0;
 	return;
@@ -204,13 +239,17 @@ void	convertUdpRelayEndtoRsDhtRelayEnd(RsDhtRelayEnd &end, const UdpRelayEnd &in
 	
 void	convertUdpRelayProxytoRsDhtRelayProxy(RsDhtRelayProxy &proxy, const UdpRelayProxy &int_proxy)
 {
-	std::ostringstream addr;
-	addr << rs_inet_ntoa(int_proxy.mAddrs.mSrcAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mSrcAddr.sin_port);
-	proxy.mSrcAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_proxy.mAddrs.mSrcAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mSrcAddr.sin_port);
+		proxy.mSrcAddr = addr.str();
+	}
 
-	addr.clear();
-	addr << rs_inet_ntoa(int_proxy.mAddrs.mDestAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mDestAddr.sin_port);
-	proxy.mDestAddr = addr.str();
+	{
+		std::ostringstream addr;
+		addr << rs_inet_ntoa(int_proxy.mAddrs.mDestAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mDestAddr.sin_port);
+		proxy.mDestAddr = addr.str();
+	}
 
         proxy.mBandwidth = int_proxy.mBandwidth;
         proxy.mRelayClass = int_proxy.mRelayClass;

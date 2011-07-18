@@ -268,7 +268,8 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 					"CONNECT_FAILED->marking so!");
 				active = false;
 				activepqi = NULL;
-                        } else {
+                        } else 
+			{
                                 pqioutput(PQL_WARNING, pqipersonzone,
                                         "CONNECT_FAILED-> from an unactive connection, don't flag the peer as not connected, just try next attempt !");
                         }
@@ -279,7 +280,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 			  "CONNECT_FAILED+NOT active -> try connect again");
 		}
 
-		/* notify up (But not if we are actually active: rtn -1 case above) */
+		/* notify up */
 		if (pqipg)
 		{
                         struct sockaddr_in raddr;
@@ -377,18 +378,23 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout)
+int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, 
+				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth)
 {
 #ifdef PERSON_DEBUG
 	{
 	  std::ostringstream out;
 	  out << "pqiperson::connect() Id: " << PeerId();
 	  out << " type: " << type;
-	  out << " addr: " << rs_inet_ntoa(raddr.sin_addr);
-	  out << ":" << ntohs(raddr.sin_port);
+	  out << " addr: " << rs_inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
+	  out << " proxyaddr: " << rs_inet_ntoa(proxyaddr.sin_addr) << ":" << ntohs(proxyaddr.sin_port);
+	  out << " srcaddr: " << rs_inet_ntoa(srcaddr.sin_addr) << ":" << ntohs(srcaddr.sin_port);
 	  out << " delay: " << delay;
 	  out << " period: " << period;
 	  out << " timeout: " << timeout;
+	  out << " flags: " << flags;
+	  out << " bandwidth: " << bandwidth;
 	  out << std::endl;
 	  std::cerr << out.str();
 	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
@@ -415,6 +421,9 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 		return 0;
 	}
 
+	std::cerr << "pqiperson::connect() WARNING, resetting for new connection attempt" << std::endl;
+#ifdef PERSON_DEBUG
+#endif
 	/* set the parameters */
 	(it->second)->reset();
 
@@ -424,8 +433,13 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
 
-	(it->second)->connect(raddr);	
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, &proxyaddr);
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, &srcaddr);
+
+	(it->second)->connect(raddr);
 		
 	// flag if we started a new connectionAttempt.
 	inConnectAttempt = true;

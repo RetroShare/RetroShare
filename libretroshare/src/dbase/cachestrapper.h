@@ -92,7 +92,7 @@ class CacheData
 	public:
 
 	RsPeerId pid; /// peer id
-	std::string pname; /// peer name (can be used by cachestore)
+	/// REMOVED as a WASTE to look it up everywhere! std::string pname; /// peer name (can be used by cachestore)
 	CacheId  cid;  /// cache id
 	std::string path; /// file system path where physical cache data is located
 	std::string name;
@@ -408,6 +408,9 @@ bool operator<(const CachePair &a, const CachePair &b);
  * CacheStrapper: maintains a set of CacheSources, and CacheStores,
  * queries and updates as new information arrives.
  */
+
+class p3LinkMgr;
+
 class CacheStrapper: public pqiMonitor, public p3Config
 {
 	public:
@@ -416,7 +419,7 @@ class CacheStrapper: public pqiMonitor, public p3Config
 		 * @param cm handle used by strapper for getting peer connection information (online peers, sslids...)
 		 * @return
 		 */
-        CacheStrapper(p3ConnectMgr *cm);
+        CacheStrapper(p3LinkMgr *lm);
 virtual ~CacheStrapper() { return; }
 
 	/************* from pqiMonitor *******************/
@@ -489,7 +492,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 	private:
 
 	/* these are static - so shouldn't need mutex */
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 
 	std::map<uint16_t, CachePair> caches;
 

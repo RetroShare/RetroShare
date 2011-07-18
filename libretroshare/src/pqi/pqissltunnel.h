@@ -36,8 +36,6 @@
 
 #include "pqi/pqi_base.h"
 
-#include "pqi/p3connmgr.h"
-
 #include "services/p3tunnel.h"
 
 #include "pqi/authssl.h"
@@ -66,6 +64,8 @@ class cert;
 
 class pqissltunnellistener;
 
+class p3LinkMgr;
+
 struct data_with_length {
     int length;
     void *data;
@@ -74,7 +74,7 @@ struct data_with_length {
 class pqissltunnel: public NetBinInterface
 {
 public:
-        pqissltunnel(PQInterface *parent, p3ConnectMgr *cm, p3tunnel *p3t);
+        pqissltunnel(PQInterface *parent, p3LinkMgr *cm, p3tunnel *p3t);
 virtual ~pqissltunnel();
 
 	// NetInterface
@@ -129,7 +129,7 @@ private:
 	/* Need Certificate specific functions here! */
 	time_t   mConnectTS;
 
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 
 	p3tunnel *mP3tunnel;
 

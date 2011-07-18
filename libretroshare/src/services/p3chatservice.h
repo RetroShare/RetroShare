@@ -32,8 +32,9 @@
 
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
-#include "pqi/p3connmgr.h"
 #include "retroshare/rsmsgs.h"
+
+class p3LinkMgr;
 
 //!The basic Chat service.
  /**
@@ -45,7 +46,7 @@
 class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
-		p3ChatService(p3ConnectMgr *cm);
+		p3ChatService(p3LinkMgr *cm);
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -199,7 +200,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
-		p3ConnectMgr *mConnMgr;
+		p3LinkMgr *mLinkMgr;
 
 		std::list<RsChatMsgItem *> publicList;
 		std::list<RsChatMsgItem *> privateIncomingList;

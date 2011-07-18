@@ -69,6 +69,9 @@ class p3turtle;
 
 class ftDwlQueue;
 
+class p3PeerMgr;
+class p3LinkMgr;
+
 class ftServer: public RsFiles, public ftDataSend, public RsThread
 {
 
@@ -78,7 +81,7 @@ class ftServer: public RsFiles, public ftDataSend, public RsThread
 	/******************** Setup ************************************/
 	/***************************************************************/
 
-        ftServer(p3ConnectMgr *connMgr);
+        ftServer(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
 
 	/* Assign important variables */
 void	setConfigDirectory(std::string path);
@@ -264,9 +267,11 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 	 * as each component is protected independently.
 	 */
 
-        P3Interface *mP3iface;     /* XXX THIS NEEDS PROTECTION */
-        p3ConnectMgr *mConnMgr;
+	P3Interface *mP3iface;     /* XXX THIS NEEDS PROTECTION */
 
+	p3PeerMgr *mPeerMgr;
+	p3LinkMgr *mLinkMgr;
+	
 	ftCacheStrapper *mCacheStrapper;
         ftFiStore 	*mFiStore;
 	ftFiMonitor   	*mFiMon;

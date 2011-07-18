@@ -79,6 +79,24 @@ virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 };
 
 
+/* this is for the Stunners 
+ *
+ *
+ */
+
+class pqiAddrAssist
+{
+	public:
+
+	pqiAddrAssist() { return; }
+virtual	~pqiAddrAssist() { return; }
+
+virtual bool    getExternalAddr(struct sockaddr_in &remote, uint8_t &stable) = 0;
+virtual void    setRefreshPeriod(int32_t period) = 0;
+virtual int	tick() = 0; /* for internal accounting */
+
+};
+
 
 
 class pqiNetAssistConnect: public pqiNetAssist
@@ -94,9 +112,13 @@ class pqiNetAssistConnect: public pqiNetAssist
 	 * for the DHT, and must be non-blocking and return quickly
 	 */
 
+virtual int	tick() = 0; /* for internal accounting */
+
 	/* add / remove peers */
 virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
+
+virtual void ConnectionFeedback(std::string pid, int mode) = 0;
 
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 

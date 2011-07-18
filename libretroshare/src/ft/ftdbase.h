@@ -33,7 +33,9 @@
  * So they work in the ft world.
  */
 
-class p3ConnectMgr ;
+class p3LinkMgr ;
+class p3PeerMgr ;
+
 
 #include "ft/ftsearch.h"
 #include "pqi/p3cfgmgr.h"
@@ -46,8 +48,7 @@ class p3ConnectMgr ;
 class ftFiStore: public FileIndexStore, public ftSearch
 {
 	public:
-	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
-					p3ConnectMgr *,
+	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in, p3PeerMgr *pm,
                         RsPeerId ownid, std::string cachedir);
 
 	/* overloaded search function */
@@ -89,7 +90,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 class ftCacheStrapper: public CacheStrapper, public ftSearch
 {
 	public:
-        ftCacheStrapper(p3ConnectMgr *cm);
+        ftCacheStrapper(p3LinkMgr *cm);
 
 	/* overloaded search function */
 virtual bool search(const std::string &hash, uint32_t hintflags, FileInfo &info) const;

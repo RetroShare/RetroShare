@@ -39,7 +39,7 @@
 #include "serialiser/rsgameitems.h"
 #include "retroshare/rsgame.h"
 
-class p3ConnectMgr;
+class p3LinkMgr;
 
 
 class gameAvail
@@ -76,7 +76,7 @@ class p3GameService;
 class p3GameLauncher: public p3Service, public RsGameLauncher
 {
 	public:
-	p3GameLauncher(p3ConnectMgr *connMgr);
+	p3GameLauncher(p3LinkMgr *lm);
 
 	/***** EXTERNAL RsGameLauncher Interface *******/
 /* server commands */
@@ -144,7 +144,7 @@ bool 	checkGameProperties(uint16_t serviceId, uint16_t players);
 std::map<uint16_t, p3GameService *> gameList;
 std::map<std::string, gameStatus> gamesCurrent;
 
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 	std::string mOwnId;
 };
 

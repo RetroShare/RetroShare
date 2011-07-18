@@ -102,11 +102,11 @@ class bdNodePublisher
 	virtual void send_ping(bdId *id) = 0; /* message out */
 	virtual void send_query(bdId *id, bdNodeId *targetNodeId) = 0; /* message out */
 	virtual void send_connect_msg(bdId *id, int msgtype, 
-				bdId *srcAddr, bdId *destAddr, int mode, int status) = 0;
+				bdId *srcAddr, bdId *destAddr, int mode, int param, int status) = 0;
 
         // internal Callback -> normally continues to callbackConnect().
         virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
-                                int mode, int point, int cbtype, int errcode) = 0;
+                                int mode, int point, int param, int cbtype, int errcode) = 0;
 
 };
 
@@ -145,11 +145,11 @@ class bdNode: public bdNodePublisher
 	virtual void send_ping(bdId *id); /* message out */
 	virtual void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
 	virtual void send_connect_msg(bdId *id, int msgtype, 
-				bdId *srcAddr, bdId *destAddr, int mode, int status);
+				bdId *srcAddr, bdId *destAddr, int mode, int param, int status);
 
 // This is implemented in bdManager.
 //        virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
-//                                int mode, int point, int cbtype, int errcode);
+//                                int mode, int point, int param, int cbtype, int errcode);
 
 	/* interaction with outside world (Accessed by controller to deliver us msgs) */
 int 	outgoingMsg(struct sockaddr_in *addr, char *msg, int *len);
@@ -200,9 +200,9 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	void msgin_reply_post(bdId *id, bdToken *transId);
 
 	void msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, 
-				bdId *srcAddr, bdId *destAddr, int mode, int status);
+				bdId *srcAddr, bdId *destAddr, int mode, int param, int status);
 	void msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
-                                        bdId *srcAddr, bdId *destAddr, int mode, int status);
+                                        bdId *srcAddr, bdId *destAddr, int mode, int param, int status);
 
 
 

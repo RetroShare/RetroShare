@@ -30,11 +30,13 @@
 
 #include "pqi/pqipersongrp.h"
 
+class p3PeerMgr;
+
 class pqisslpersongrp: public pqipersongrp
 {
 	public:
-	pqisslpersongrp(SecurityPolicy *pol, unsigned long flags)
-	:pqipersongrp(pol, flags) { return; }
+	pqisslpersongrp(SecurityPolicy *pol, unsigned long flags, p3PeerMgr *pm)
+	:pqipersongrp(pol, flags), mPeerMgr(pm) { return; }
 
 	protected:
 
@@ -42,6 +44,10 @@ class pqisslpersongrp: public pqipersongrp
 virtual pqilistener *createListener(struct sockaddr_in laddr);
 virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+
+	private:
+
+	p3PeerMgr *mPeerMgr;
 };
 
 

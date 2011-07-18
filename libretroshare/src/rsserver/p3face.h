@@ -31,7 +31,6 @@
 //#include "pqi/pqissl.h"
 
 #include "pqi/p3cfgmgr.h"
-#include "pqi/p3connmgr.h"
 #include "pqi/pqipersongrp.h"
 
 #include "retroshare/rsiface.h"
@@ -45,6 +44,11 @@
 #include "services/p3statusservice.h"
 #include "services/p3channels.h"
 #include "services/p3forums.h"
+
+class p3PeerMgrIMPL;
+class p3LinkMgrIMPL;
+class p3NetMgrIMPL;
+
 
 /* The Main Interface Class - for controlling the server */
 
@@ -150,7 +154,9 @@ class RsServer: public RsControl, public RsThread
 		//filedexserver *server;
 		ftServer *ftserver;
 
-		p3ConnectMgr *mConnMgr;
+		p3PeerMgrIMPL *mPeerMgr;
+		p3LinkMgrIMPL *mLinkMgr;
+		p3NetMgrIMPL *mNetMgr;
 
 		pqipersongrp *pqih;
 

@@ -44,7 +44,7 @@ const int ftserverzone = 29539;
 #include "ft/ftdbase.h"
 
 #include "pqi/pqi.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 
 #include "serialiser/rsserviceids.h"
 
@@ -57,15 +57,15 @@ const int ftserverzone = 29539;
  ***/
 
 	/* Setup */
-ftServer::ftServer(p3ConnectMgr *connMgr)
+ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
         :       mP3iface(NULL),
-                mConnMgr(connMgr),
+                mLinkMgr(lm), mPeerMgr(pm),
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
 		mFtController(NULL), mFtExtra(NULL),
 		mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
 {
-        mCacheStrapper = new ftCacheStrapper(connMgr);
+        mCacheStrapper = new ftCacheStrapper(lm);
 }
 
 void	ftServer::setConfigDirectory(std::string path)
@@ -101,8 +101,8 @@ void	ftServer::addConfigComponents(p3ConfigMgr *mgr)
 std::string ftServer::OwnId()
 {
 	std::string ownId;
-	if (mConnMgr)
-		ownId = mConnMgr->getOwnId();
+	if (mLinkMgr)
+		ownId = mLinkMgr->getOwnId();
 	return ownId;
 }
 
@@ -113,7 +113,7 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	/* setup FiStore/Monitor */
 	std::string localcachedir = mConfigPath + "/cache/local";
 	std::string remotecachedir = mConfigPath + "/cache/remote";
-	std::string ownId = mConnMgr->getOwnId();
+	std::string ownId = mLinkMgr->getOwnId();
 
 	/* search/extras List */
 	mFtExtra = new ftExtraList();
@@ -131,7 +131,7 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 
 
 	/* Make Cache Source/Store */
-	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb,mConnMgr, ownId, remotecachedir);
+	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, mPeerMgr, ownId, remotecachedir);
 	mFiMon = new ftFiMonitor(mCacheStrapper,cb, localcachedir, ownId,mConfigPath);
 
 	/* now add the set to the cachestrapper */
@@ -144,8 +144,8 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
 	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
 
-	mConnMgr->addMonitor(mFtController);
-	mConnMgr->addMonitor(mCacheStrapper);
+	mLinkMgr->addMonitor(mFtController);
+	mLinkMgr->addMonitor(mCacheStrapper);
 
 	return;
 }
@@ -1052,9 +1052,6 @@ bool     ftServer::handleCacheData()
 		/* these go to the CacheStrapper! */
 		CacheData data;
 		data.pid = ci->PeerId();
-		peerConnectState pca;
-		mConnMgr->getFriendNetStatus(ci->PeerId(), pca);
-		data.pname = pca.name;
 		data.cid = CacheId(ci->cacheType, ci->cacheSubId);
 		data.path = ci->file.path;
 		data.name = ci->file.name;

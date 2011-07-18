@@ -23,19 +23,22 @@
  *
  */
 
-#include "udpstunner.h"
+#include "tcponudp/udpstunner.h"
 #include <iostream>
 #include <sstream>
 
+#include "util/rsrandom.h"
 #include "util/rsprint.h"
 
 static const int STUN_TTL = 64;
 
-#define TOU_STUN_MIN_PEERS 5
+#define TOU_STUN_MIN_PEERS 20
 
 /*
  * #define DEBUG_UDP_STUNNER 1
+ * #define DEBUG_UDP_STUNNER_FILTER 1
  */
+
 //#define DEBUG_UDP_STUNNER 1
 
 const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
@@ -54,6 +57,9 @@ UdpStunner::UdpStunner(UdpPublisher *pub)
 {
 #ifdef UDPSTUN_ALLOW_LOCALNET	
 	mAcceptLocalNet = false;
+	mSimExclusiveNat = false;
+	mSimSymmetricNat = false;
+	mSimUnstableExt = false;
 #endif
 
 
@@ -62,6 +68,10 @@ UdpStunner::UdpStunner(UdpPublisher *pub)
 	mPassiveStunMode = false;
 	mSuccessRate = 0.0; 
 	mTargetStunPeriod = TOU_STUN_DEFAULT_TARGET_RATE;
+
+	mExclusiveMode = false;
+	mExclusiveModeTS = 0;
+	mForceRestun = false;
 
 	return;
 }
@@ -76,21 +86,135 @@ void	UdpStunner::SetAcceptLocalNet()
 	mAcceptLocalNet = true;
 }
 
-#endif
-
-void	UdpStunner::setTargetStunPeriod(uint32_t sec_per_stun)
+	// For Local Testing Only (Releases should have the #define disabled)
+void	UdpStunner::SimExclusiveNat()
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
-	if (sec_per_stun == 0)
+	mSimExclusiveNat = true;
+	mSimUnstableExt = true;
+}
+
+void	UdpStunner::SimSymmetricNat()
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	mSimSymmetricNat = true;
+	mSimUnstableExt = true;
+}
+
+
+
+#endif
+
+
+int	UdpStunner::grabExclusiveMode()		/* returns seconds since last send/recv */
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+#ifdef DEBUG_UDP_STUNNER_FILTER
+	std::cerr << "UdpStunner::setExclusiveMode();
+	std::cerr << std::endl;
+#endif
+	if (mExclusiveMode)
 	{
-		mPassiveStunMode = true;
+#ifdef DEBUG_UDP_STUNNER_FILTER
+		std::cerr << "UdpStunner::setExclusiveMode() FAILED;
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	time_t now = time(NULL);
+	mExclusiveMode = true;
+	mExclusiveModeTS = now;
+
+	int lastcomms = mStunLastRecvAny;
+	if (mStunLastSendAny > lastcomms)
+	{
+		lastcomms = mStunLastSendAny;
+	}
+
+	int commsage = now - lastcomms;
+
+	/* cannot return 0, as this indicates error */
+	if (commsage == 0)
+	{
+		commsage = 1;
+	}
+#ifdef DEBUG_UDP_STUNNER_FILTER
+	std::cerr << "UdpStunner::setExclusiveMode() SUCCESS. last comms: " << commsage;
+	std::cerr << " ago";
+	std::cerr << std::endl;
+#endif
+
+	return commsage;
+}
+
+int	UdpStunner::releaseExclusiveMode(bool forceStun)
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	if (!mExclusiveMode)
+	{
+#ifdef DEBUG_UDP_STUNNER_FILTER
+		std::cerr << "UdpStunner::cancelExclusiveMode() ERROR, not in exclusive Mode";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	time_t now = time(NULL);
+	mExclusiveMode = false;
+	if (forceStun)
+	{
+		mForceRestun = true;
+	}
+
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+	/* if we are simulating an exclusive NAT, then immediately after we release - it'll become unstable. 
+	 * In reality, it will only become unstable if we have tried a UDP connection.
+	 * so we use the forceStun parameter (which is true when a UDP connection has been tried).
+	 */
+
+	if ((mSimExclusiveNat) && (forceStun))
+	{
+		mSimUnstableExt = true;
+	}
+#endif
+
+
+#ifdef DEBUG_UDP_STUNNER_FILTER
+	std::cerr << "UdpStunner::cancelExclusiveMode() Canceled. Was in ExclusiveMode for: " << now - mExclusiveModeTS;
+	std::cerr << " secs";
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
+
+
+void	UdpStunner::setTargetStunPeriod(int32_t sec_per_stun)
+{
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	if (sec_per_stun < 0)
+	{
+		mPassiveStunMode = false;
+		mTargetStunPeriod = TOU_STUN_DEFAULT_TARGET_RATE;
 	}
 	else
 	{
-		mPassiveStunMode = false;
+		if (sec_per_stun == 0)
+		{
+			mPassiveStunMode = true;
+		}
+		else
+		{
+			mPassiveStunMode = false;
+		}
+		mTargetStunPeriod = sec_per_stun;
 	}
-	mTargetStunPeriod = sec_per_stun;
 
 }
 
@@ -98,7 +222,7 @@ void	UdpStunner::setTargetStunPeriod(uint32_t sec_per_stun)
 int UdpStunner::recvPkt(void *data, int size, struct sockaddr_in &from)
 {
 	/* print packet information */
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 	std::cerr << "UdpStunner::recvPkt(" << size << ") from: " << from;
 	std::cerr << std::endl;
 #endif
@@ -109,7 +233,7 @@ int UdpStunner::recvPkt(void *data, int size, struct sockaddr_in &from)
 	if (UdpStun_isStunPacket(data, size))
 	{
 		mStunLastRecvAny = time(NULL);
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::recvPkt() is Stun Packet";
 		std::cerr << std::endl;
 #endif
@@ -153,6 +277,9 @@ int UdpStunner::tick()
 	if (checkStunDesired())
 	{
 		attemptStun();
+#ifdef DEBUG_UDP_STUNNER
+		status(std::cerr);
+#endif
 	}
 
 	return 1;
@@ -225,12 +352,23 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 
 	if (eaddrKnown)
 	{
-		/* address timeout */
-		if (time(NULL) - eaddrTime > (mTargetStunPeriod * 2))
+		/* address timeout
+		 * no timeout if in exclusive mode
+		 */
+		if ((time(NULL) - eaddrTime > (mTargetStunPeriod * 2)) && (!mExclusiveMode))
 		{
 			std::cerr << "UdpStunner::externalAddr() eaddr expired";
 			std::cerr << std::endl;
 
+			eaddrKnown = false;
+			return false;
+		}
+		
+		/* Force Restun is triggered after an Exclusive Mode... as Ext Address is likely to have changed
+		 * Until the Restun has got an address - we act as if we don't have an external address
+		 */
+		if (mForceRestun)
+		{
 			return false;
 		}
 
@@ -246,6 +384,7 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 		std::cerr << ":" << ntohs(external.sin_port) << " stable: " << (int) stable;
 		std::cerr << std::endl;
 #endif
+
 
 		return true;
 	}
@@ -331,7 +470,7 @@ bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr)
 	addr.sin_port = ((uint16_t *) stun_pkt)[11];
 
 
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 	std::ostringstream out;
 	out << "UdpStunner::response() Recvd a Stun Response, ext_addr: ";
 	out << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
@@ -390,14 +529,14 @@ void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 
 bool UdpStun_isStunPacket(void *data, int size)
 {
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 	std::cerr << "UdpStunner::isStunPacket() ?";
 	std::cerr << std::endl;
 #endif
 
 	if (size < 20)
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size < 20) -> false";
 		std::cerr << std::endl;
 #endif
@@ -408,7 +547,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 	uint16_t pktsize = ntohs(((uint16_t *) data)[1]);
 	if (size != pktsize)
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size != pktsize) -> false";
 		std::cerr << std::endl;
 #endif
@@ -417,7 +556,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 
 	if ((size == 20) && (0x0001 == ntohs(((uint16_t *) data)[0])))
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size=20 & data[0]=0x0001) -> true";
 		std::cerr << std::endl;
 #endif
@@ -427,7 +566,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 
 	if ((size == 28) && (0x0101 == ntohs(((uint16_t *) data)[0])))
 	{
-#ifdef DEBUG_UDP_STUNNER
+#ifdef DEBUG_UDP_STUNNER_FILTER
 		std::cerr << "UdpStunner::isStunPacket() (size=28 & data[0]=0x0101) -> true";
 		std::cerr << std::endl;
 #endif
@@ -537,13 +676,28 @@ bool    UdpStunner::checkStunDesired()
 		return false; /* all good */
 	  }
 
+	  if (mExclusiveMode)
+	  {
+		return false; /* no pings in exclusive mode */
+	  }
+		
+	  if (mForceRestun)
+	  {
+			return true;
+	  }
+		
+
 	  if (!eaddrKnown)
 	  {
+		/* check properly! (this will limit it to two successful stuns) */
+		if (!locked_checkExternalAddress())
+		{
 #ifdef DEBUG_UDP_STUNNER
-		std::cerr << "UdpStunner::checkStunDesired() YES, we don't have extAddr Yet";
-		std::cerr << std::endl;
+			std::cerr << "UdpStunner::checkStunDesired() YES, we don't have extAddr Yet";
+			std::cerr << std::endl;
 #endif
-		return true; /* want our external address */
+			return true; /* want our external address */
+		}
 	}
 
 	  /* check if we need to send one now */
@@ -554,8 +708,11 @@ bool    UdpStunner::checkStunDesired()
 	   * if we have 100% success rate, then we can delay until exactly TARGET RATE.
 	   * if we have 0% success rate, then try at double TARGET RATE.
 	   *
+	   * generalised to a rate_scale parameter below...
 	   */
-	  double stunPeriod = (mTargetStunPeriod / 2.0) * (1.0 + mSuccessRate);
+
+#define RATE_SCALE (3.0)
+	  double stunPeriod = (mTargetStunPeriod / (RATE_SCALE)) * (1.0 + mSuccessRate * (RATE_SCALE - 1.0));
 	  time_t nextStun = mStunLastRecvResp + (int) stunPeriod;
 
 #ifdef DEBUG_UDP_STUNNER
@@ -679,6 +836,23 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	std::cerr << out.str() << std::endl;
 #endif
 
+#ifdef UDPSTUN_ALLOW_LOCALNET	
+	struct sockaddr_in fakeExtaddr = extaddr;
+	if (mSimUnstableExt)
+	{
+		std::cerr << "UdpStunner::locked_recvdStun() TEST SIM UNSTABLE EXT: Forcing Port to be wrong to sim an ExclusiveNat";
+		std::cerr << std::endl;
+
+#define UNSTABLE_PORT_RANGE 100
+
+		fakeExtaddr.sin_port = htons(ntohs(fakeExtaddr.sin_port) - (UNSTABLE_PORT_RANGE / 2) + RSRandom::random_u32() % UNSTABLE_PORT_RANGE);
+		if (!mSimSymmetricNat)
+		{
+			mSimUnstableExt = false;
+		}
+	}
+#endif
+
 	bool found = true;
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
@@ -687,7 +861,11 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 		    (remote.sin_port == it->remote.sin_port))
 		{
 			it->failCount = 0;
+#ifdef UDPSTUN_ALLOW_LOCALNET
+			it->eaddr = fakeExtaddr;
+#else			
 			it->eaddr = extaddr;
+#endif
 			it->response = true;
 
 			found = true;
@@ -695,6 +873,12 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 		}
 	}
 
+	/* We've received a Stun, so the ForceStun can be cancelled */
+	if (found)
+	{
+		mForceRestun = false;
+	}
+	
 	/* if not found.. should we add it back in? */
 	
 	/* How do we calculate the success rate?
@@ -722,7 +906,10 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	locked_printStunList();
 #endif
 
-	locked_checkExternalAddress();
+	if (!mExclusiveMode)
+	{
+		locked_checkExternalAddress();
+	}
 
 	return found;
 }

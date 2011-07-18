@@ -93,7 +93,7 @@ int bitdht_reply_announce_msg(bdToken *tid, bdNodeId *id,
 
 
 // Extensions.
-int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bdId *dest, int mode, int status, char *msg, int avail);
+int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bdId *dest, int mode, int param, int status, char *msg, int avail);
 
 
 //int response_peers_message()

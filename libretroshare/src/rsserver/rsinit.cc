@@ -1698,7 +1698,8 @@ RsTurtle *rsTurtle = NULL ;
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
-
+#include "util/rsrandom.h"
+	
 #include "upnp/upnphandler.h"
 //#include "dht/opendhtmgr.h"
 
@@ -1731,15 +1732,25 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
 #include "rsserver/p3status.h"
+#include "rsserver/p3serverconfig.h"
+
 #include "retroshare/rsgame.h"
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
+#include "pqi/p3peermgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3netmgr.h"
+	
+	
 #include "tcponudp/tou.h"
 #include "tcponudp/rsudpstack.h"
 
+	
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
+#include "dht/stunaddrassist.h"
+
 #include "udp/udpstack.h"
 #include "tcponudp/udppeer.h"
 #include "tcponudp/udprelay.h"
@@ -1823,8 +1834,13 @@ int RsServer::StartupRetroShare()
 	/* Setup Notify Early - So we can use it. */
 	rsNotify = new p3Notify();
 
-        mConnMgr = new p3ConnectMgr();
-
+	mPeerMgr = new p3PeerMgrIMPL();
+	mNetMgr = new p3NetMgrIMPL();
+	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
+	
+	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
+	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
+	
         //load all the SSL certs as friends
 //        std::list<std::string> sslIds;
 //        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
@@ -1840,7 +1856,7 @@ int RsServer::StartupRetroShare()
 	struct sockaddr_in tmpladdr;
 	sockaddr_clear(&tmpladdr);
 	tmpladdr.sin_port = htons(RsInitConfig::port);
-	rsUdpStack *mUdpStack = new rsUdpStack(tmpladdr);
+	rsUdpStack *mDhtStack = new rsUdpStack(tmpladdr);
 
 #ifdef RS_USE_BITDHT
 
@@ -1889,59 +1905,58 @@ int RsServer::StartupRetroShare()
 	/* construct the rest of the stack, important to build them in the correct order! */
 	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
 
-	UdpSubReceiver *udpReceivers[3];
-	int udpTypes[3];
+	UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
+	int udpTypes[RSUDP_NUM_TOU_RECVERS];
 
 	// FIRST DHT STUNNER.
-	UdpStunner *mDhtStunner = new UdpStunner(mUdpStack);
-	mDhtStunner->setTargetStunPeriod(0); /* passive */
-	//mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
-	mUdpStack->addReceiver(mDhtStunner);
+	UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
+	mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
+	mDhtStack->addReceiver(mDhtStunner);
 
 	// NEXT BITDHT.
-	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, mUdpStack, bootstrapfile);
+	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile);
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
 	
 	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
-	UdpRelayReceiver *mRelayRecver = new UdpRelayReceiver(mUdpStack); 
-	udpReceivers[2] = mRelayRecver; /* RELAY Connections (DHT Port) */
-	udpTypes[2] = TOU_RECEIVER_TYPE_UDPRELAY;
-	mUdpStack->addReceiver(udpReceivers[2]);
+	UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack); 
+	udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
+	udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
+	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
 	
 	// LAST ON THIS STACK IS STANDARD DIRECT TOU
-	udpReceivers[0] = new UdpPeerReceiver(mUdpStack);  /* standard DIRECT Connections (DHT Port) */
-	udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
-	mUdpStack->addReceiver(udpReceivers[0]);
+	udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
+	udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX]);
 
 	// NOW WE BUILD THE SECOND STACK.
 	// Create the Second UdpStack... Port should be random (but openable!).
-	//struct sockaddr_in sndladdr;
-	//sockaddr_clear(&sndladdr);
-	//sndladdr.sin_port = htons(RsInitConfig::port + 1111);
-	//rsUdpStack *mUdpProxyStack = new rsUdpStack(sndladdr);
+	// XXX TODO
+#define MIN_RANDOM_PORT 10000
+#define MAX_RANDOM_PORT 30000
+	
+	struct sockaddr_in sndladdr;
+	sockaddr_clear(&sndladdr);
+	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+	sndladdr.sin_port = htons(RsInitConfig::port);
+	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
 
 	// FIRSTLY THE PROXY STUNNER.
-	//UdpStunner *mProxyStunner = new UdpStunner(mUdpProxyStack);
-	// USE DEFAULT PERIOD... mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
-        //mUdpStack->addReceiver(mDhtStunner);
-
+	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
+	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
+        mProxyStack->addReceiver(mProxyStunner);
 	
 	// FINALLY THE PROXY UDP CONNECTIONS
-	//udpReceivers[1] = new UdpPeerReceiver(mUdpProxyStack); /* PROXY Connections (Alt UDP Port) */	
-	//udpTypes[1] = TOU_RECEIVER_TYPE_UDPPEER;	
-	//mUdpProxyStack->addReceiver(udpReceivers[1]);
+	udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	
+	udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;	
+	mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
 	
+	// REAL INITIALISATION - WITH THREE MODES
+	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
+
+	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
 	
-	// NOW WE CAN PASS THE RECEIVERS TO TOU.
-	// temp initialisation of only the DIRECT TOU.	
-	tou_init((void **) udpReceivers, udpTypes, 1);
-
-	// REAL INITIALISATION - WITH THREE MODES - FOR LATER.
-	//tou_init((void **) udpReceivers, udpTypes, 3);
-
-	//mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelayRecver);
-	mBitDht->setupConnectBits(mDhtStunner, NULL, mRelayRecver);
+	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #else
 	/* install NULL Pointer for rsDht Interface */
 	rsDht = NULL;
@@ -1952,24 +1967,25 @@ int RsServer::StartupRetroShare()
 
 
 	SecurityPolicy *none = secpolicy_create();
-	pqih = new pqisslpersongrp(none, flags);
+	pqih = new pqisslpersongrp(none, flags, mPeerMgr);
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-        ftserver = new ftServer(mConnMgr);
-        ftserver->setP3Interface(pqih); 
+	ftserver = new ftServer(mPeerMgr, mLinkMgr);
+	ftserver->setP3Interface(pqih); 
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
 	ftserver->SetupFtServer(&(getNotify()));
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
 	CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
-        /* setup any extra bits (Default Paths) */
-        ftserver->setPartialsDirectory(emergencyPartialsDir);
-        ftserver->setDownloadDirectory(emergencySaveDir);
+	/* setup any extra bits (Default Paths) */
+	ftserver->setPartialsDirectory(emergencyPartialsDir);
+	ftserver->setDownloadDirectory(emergencySaveDir);
 
 	/* This should be set by config ... there is no default */
-        //ftserver->setSharedDirectories(fileList);
+	//ftserver->setSharedDirectories(fileList);
+	
 	rsFiles = ftserver;
 
 
@@ -2006,18 +2022,18 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
 	mPluginsManager->setFileServer(ftserver) ;
-	mPluginsManager->setConnectMgr(mConnMgr) ;
+	mPluginsManager->setLinkMgr(mLinkMgr) ;
 
 	// Now load the plugins. This parses the available SO/DLL files for known symbols.
 	//
 	mPluginsManager->loadPlugins(plugins_directories) ;
 
 	/* create Services */
-	ad = new p3disc(mConnMgr, pqih);
+	ad = new p3disc(mPeerMgr, mLinkMgr, pqih);
 #ifndef MINIMAL_LIBRS
-	msgSrv = new p3MsgService(mConnMgr);
-	chatSrv = new p3ChatService(mConnMgr);
-	mStatusSrv = new p3StatusService(mConnMgr);
+	msgSrv = new p3MsgService(mLinkMgr);
+	chatSrv = new p3ChatService(mLinkMgr);
+	mStatusSrv = new p3StatusService(mLinkMgr);
 #endif // MINIMAL_LIBRS
 
 #ifndef PQI_DISABLE_TUNNEL
@@ -2026,7 +2042,7 @@ int RsServer::StartupRetroShare()
 	mConnMgr->setP3tunnel(tn);
 #endif
 
-	p3turtle *tr = new p3turtle(mConnMgr,ftserver) ;
+	p3turtle *tr = new p3turtle(mLinkMgr,ftserver) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
 	ftserver->connectToTurtleRouter(tr) ;
@@ -2064,7 +2080,7 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerCacheServices() ;
 
 #ifndef RS_RELEASE
-	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
+	p3GameLauncher *gameLauncher = new p3GameLauncher(mLinkMgr);
 	pqih -> addService(gameLauncher);
 
 	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
@@ -2079,26 +2095,28 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 #ifdef RS_USE_BITDHT
-        mConnMgr->addNetAssistConnect(1, mBitDht);
-	mConnMgr->addNetListener(mUdpStack); 
+	mNetMgr->addNetAssistConnect(1, mBitDht);
+	mNetMgr->addNetListener(mDhtStack); 
+	mNetMgr->addNetListener(mProxyStack); 
+
 #endif
-	mConnMgr->addNetAssistFirewall(1, mUpnpMgr);
+	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
 
 	/**************************************************************************/
 	/* need to Monitor too! */
-	mConnMgr->addMonitor(pqih);
-	mConnMgr->addMonitor(mCacheStrapper);
-	mConnMgr->addMonitor(ad);
+	mLinkMgr->addMonitor(pqih);
+	mLinkMgr->addMonitor(mCacheStrapper);
+	mLinkMgr->addMonitor(ad);
 #ifndef MINIMAL_LIBRS
-	mConnMgr->addMonitor(msgSrv);
-	mConnMgr->addMonitor(mStatusSrv);
-	mConnMgr->addMonitor(chatSrv);
+	mLinkMgr->addMonitor(msgSrv);
+	mLinkMgr->addMonitor(mStatusSrv);
+	mLinkMgr->addMonitor(chatSrv);
 #endif // MINIMAL_LIBRS
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.
 	 */
-	mConnMgr->addMonitor(((ftController *) mCacheTransfer));
+	mLinkMgr->addMonitor(((ftController *) mCacheTransfer));
 
 
 	/**************************************************************************/
@@ -2108,7 +2126,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
 	mConfigMgr->loadConfiguration();
 
-	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
+	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 #ifndef MINIMAL_LIBRS
@@ -2165,12 +2183,14 @@ int RsServer::StartupRetroShare()
 		// universal
 		laddr.sin_addr.s_addr = inet_addr(RsInitConfig::inet);
 
-		mConnMgr->setLocalAddress(ownId, laddr);
+		mPeerMgr->setLocalAddress(ownId, laddr);
 	}
 
 	if (RsInitConfig::forceExtPort)
 	{
-		mConnMgr->setOwnNetConfig(RS_NET_MODE_EXT, RS_VIS_STATE_STD);
+		mPeerMgr->setOwnNetworkMode(RS_NET_MODE_EXT);
+		mPeerMgr->setOwnVisState(RS_VIS_STATE_STD);
+
 	}
 
 #if 0
@@ -2186,14 +2206,14 @@ int RsServer::StartupRetroShare()
 	}
 #endif
 
-	mConnMgr -> checkNetAddress();
+	mNetMgr -> checkNetAddress();
 
 	/**************************************************************************/
 	/* startup (stuff dependent on Ids/peers is after this point) */
 	/**************************************************************************/
 
 	pqih->init_listener();
-	mConnMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
+	mNetMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
 
 
 
@@ -2280,8 +2300,9 @@ int RsServer::StartupRetroShare()
 
 	/* Setup GUI Interfaces. */
 
-	rsPeers = new p3Peers(mConnMgr);
+	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 	rsDisc  = new p3Discovery(ad);
+	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr);
 
 #ifndef MINIMAL_LIBRS
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);

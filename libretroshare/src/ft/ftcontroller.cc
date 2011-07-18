@@ -52,7 +52,7 @@
 
 #include "util/rsdir.h"
 
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 #include "pqi/pqinotify.h"
 
 #include "retroshare/rsiface.h"
@@ -1150,7 +1150,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 				std::cerr << std::endl;
 #endif
 				(dit->second)->mTransfer->addFileSource(*it);
-				setPeerState(dit->second->mTransfer, *it, rate, mConnMgr->isOnline(*it));
+				setPeerState(dit->second->mTransfer, *it, rate, mLinkMgr->isOnline(*it));
 
 				IndicateConfigChanged(); /* new peer for transfer -> save */
 			}
@@ -1245,7 +1245,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		std::cerr << "ftController::FileRequest() adding peer: " << *it;
 		std::cerr << std::endl;
 #endif
-		setPeerState(tm, *it, rate, mConnMgr->isOnline(*it));
+		setPeerState(tm, *it, rate, mLinkMgr->isOnline(*it));
 	}
 
 	/* add structures into the accessible data. Needs to be locked */
@@ -1273,7 +1273,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 
 bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, uint32_t maxrate, bool online)
 {
-	if (id == mConnMgr->getOwnId())
+	if (id == mLinkMgr->getOwnId())
 	{
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::setPeerState() is Self";

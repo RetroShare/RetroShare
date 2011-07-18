@@ -57,6 +57,9 @@ class UdpRelayProxy
 	time_t mLastBandwidthTS;
 	time_t mLastTS;
 
+	time_t mStartTS;
+	double mBandwidthLimit;
+
 	int mRelayClass;
 };
 
@@ -100,6 +103,15 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure);
 #define UDP_RELAY_CLASS_FOF		2
 #define UDP_RELAY_CLASS_FRIENDS		3
 
+// Just for some testing fun!
+//#define UDP_RELAY_LIFETIME_GENERAL	180	// 3 minutes
+//#define UDP_RELAY_LIFETIME_FOF		360	// 6 minutes.
+//#define UDP_RELAY_LIFETIME_FRIENDS	720 	// 12 minutes.
+
+#define UDP_RELAY_LIFETIME_GENERAL	1800	// 30 minutes
+#define UDP_RELAY_LIFETIME_FOF		3600	// 1 Hour.
+#define UDP_RELAY_LIFETIME_FRIENDS	7200 	// 2 Hour.
+
 #define STD_RELAY_TTL	64
 
 class UdpRelayReceiver: public UdpSubReceiver
@@ -119,7 +131,7 @@ int 	removeUdpPeer(UdpPeer *peer);
 	 * the end-points drop the connections 
 	 */
 
-	int addUdpRelay(UdpRelayAddrSet *addrs, int classIdx);
+	int addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass, uint32_t &bandwidth);
 	int removeUdpRelay(UdpRelayAddrSet *addrs);
 
 	/* Need some stats, to work out how many relays we are supporting */
