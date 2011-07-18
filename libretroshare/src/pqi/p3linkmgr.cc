@@ -56,6 +56,9 @@ const int p3connectzone = 3431;
  * #define LINKMGR_DEBUG_ACTIONS  1
  ***/
 
+/****
+ * #define DISABLE_UDP_CONNECTIONS	1		
+ ***/
 
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
@@ -1283,7 +1286,6 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, struct sockaddr_in &r
 
 {
 
-#define DISABLE_UDP_CONNECTIONS	1
 #ifdef DISABLE_UDP_CONNECTIONS
 
 	std::cerr << "p3LinkMgrIMPL::tryConnectUDP() CONNECTIONS DISABLED FOR NOW... id: " << id << std::endl;
