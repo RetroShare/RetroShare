@@ -109,19 +109,27 @@ int	pqissludp::attach()
 
 	if (mConnectFlags & RS_CB_FLAG_MODE_UDP_DIRECT)
 	{
+		std::cerr << "pqissludp::attach() Opening DIRECT Socket";
+		std::cerr << std::endl;
 		sockfd = tou_socket(RSUDP_TOU_RECVER_DIRECT_IDX,TOU_RECEIVER_TYPE_UDPPEER,0);
 	}
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_PROXY)
 	{
+		std::cerr << "pqissludp::attach() Opening PROXY Socket";
+		std::cerr << std::endl;
 		sockfd = tou_socket(RSUDP_TOU_RECVER_PROXY_IDX,TOU_RECEIVER_TYPE_UDPPEER,0);
 	}
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
 	{
+		std::cerr << "pqissludp::attach() Opening RELAY Socket";
+		std::cerr << std::endl;
 		sockfd = tou_socket(RSUDP_TOU_RECVER_RELAY_IDX,TOU_RECEIVER_TYPE_UDPRELAY,0);
 	}
 	else 
 	{
 		std::cerr << "pqissludp::attach() ERROR unknown Connect Mode" << std::endl;
+		std::cerr << "pqissludp::attach() mConnectFlags: " << std::hex << mConnectFlags << std::dec;
+		std::cerr << std::endl;
 		sockfd = -1;
 	}
 
@@ -479,7 +487,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " BANDWIDTH: " << value;
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
-		mConnectFlags = value;
+		mConnectBandwidth = value;
 		return true;
 	}
 	return pqissl::connect_parameter(type, value);
