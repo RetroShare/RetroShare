@@ -192,8 +192,8 @@ bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 // dummy output check
 int	pqihandler::locked_checkOutgoingRsItem(RsItem *item, int global)
 {
-	pqioutput(PQL_WARNING, pqihandlerzone, 
-	  "pqihandler::checkOutgoingPQItem() NULL fn");
+	//pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "pqihandler::checkOutgoingPQItem() NULL fn");
+
 	return 1;
 }
 

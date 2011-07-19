@@ -75,8 +75,6 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
  * #define NETMGR_DEBUG_STATEBOX 1
  ***/
 
-#define NETMGR_DEBUG_STATEBOX 1
-
 pqiNetStatus::pqiNetStatus()
 	:mLocalAddrOk(false), mExtAddrOk(false), mExtAddrStableOk(false), 
 	mUpnpOk(false), mDhtOk(false), mResetReq(false)

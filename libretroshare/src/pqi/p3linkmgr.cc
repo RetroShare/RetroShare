@@ -67,11 +67,13 @@ const int p3connectzone = 3431;
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
+#define P3CONNMGR_NO_TCP_CONNECTIONS 1
+
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_PERIOD = 10;
-const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 40; 
+const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 30;  // this represents how long it stays at the default TTL (4), before rising.
 
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
 #define MIN_RETRY_PERIOD 140
@@ -1205,8 +1207,12 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in rad
 
 	if (source == RS_CB_DHT)
 	{
+
 		if (flags & RS_CB_FLAG_MODE_TCP)
 		{
+
+#ifndef P3CONNMGR_NO_TCP_CONNECTIONS
+
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::peerConnectRequest() DHT says Online ==> so try TCP";
 			std::cerr << std::endl;
@@ -1235,6 +1241,9 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in rad
 			}
 
 			retryConnect(id);
+
+#endif
+
 		}
 		else
 		{

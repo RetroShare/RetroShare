@@ -20,144 +20,18 @@
 #include "pqi/p3netmgr.h"
 #include "pqi/pqimonitor.h"
 
-#define PEERNET_CONNECT_TIMEOUT 120   // Should be BIGGER than Higher level (but okay if not!)
+#define PEERNET_CONNECT_TIMEOUT 180   // Should be BIGGER than Higher level (but okay if not!)
 
 #define MIN_DETERMINISTIC_SWITCH_PERIOD 	60
 
 /***
  *
  * #define DEBUG_BITDHT_COMMON	1     // These are the things that are called regularly (annoying for debugging specifics)
+ * #define DEBUG_PEERNET	1 
  *
  **/
 
-#if 0
-int p3BitDht::add_peer(std::string id)
-{
-	bdNodeId tmpId;
 
-        if (!bdStdLoadNodeId(&tmpId, id))
-        {
-                std::cerr << "p3BitDht::add_peer() Failed to load own Id";
-                std::cerr << std::endl;
-		return 0;
-        }
-	
-	std::ostringstream str;
-	bdStdPrintNodeId(str, &tmpId);
-	std::string filteredId = str.str();
-
-	std::cerr << "p3BitDht::add_peer()";
-	std::cerr << std::endl;
-
-        std::cerr << "Input Id: " << id;
-        std::cerr << std::endl;
-        std::cerr << "Filtered Id: " << id;
-        std::cerr << std::endl;
-        std::cerr << "Final NodeId: ";
-        bdStdPrintNodeId(std::cerr, &tmpId);
-        std::cerr << std::endl;
-
-	bool addedPeer = false;
-
-	{
-		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-
-	  if (mPeers.end() == mPeers.find(filteredId))
-	  {
-		std::cerr << "Adding New Peer: " << filteredId << std::endl;
-		mPeers[filteredId] = PeerStatus();
-		std::map<std::string, PeerStatus>::iterator it = mPeers.find(filteredId);
-
-		//mUdpBitDht->addFindNode(&tmpId, BITDHT_QFLAGS_DO_IDLE);
-		mUdpBitDht->addFindNode(&tmpId, BITDHT_QFLAGS_DO_IDLE | BITDHT_QFLAGS_UPDATES);
-
-		it->second.mId = filteredId;
-		bdsockaddr_clear(&(it->second.mDhtAddr));
-		it->second.mDhtStatusMsg = "Just Added";	
-		it->second.mDhtState = RSDHT_PEERDHT_SEARCHING;
-		it->second.mDhtUpdateTS = time(NULL);
-
-		// Initialise Everything.
-		it->second.mConnectLogic.mPeerId = filteredId;
-
-		it->second.mPeerReqStatusMsg = "Just Added";
-		it->second.mPeerReqState = RSDHT_PEERREQ_STOPPED;
-		  it->second.mPeerReqMode = 0;
-		  //it->second.mPeerReqProxyId;
-		it->second.mPeerReqTS = time(NULL);
-
-		it->second.mPeerCbMsg = "No CB Yet";
-		it->second.mPeerCbMode = 0;
-		it->second.mPeerCbPoint = 0;
-		  //it->second.mPeerCbProxyId = 0;
-		  //it->second.mPeerCbDestId = 0;
-		  it->second.mPeerCbTS = 0;
-
-		it->second.mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
-		it->second.mPeerConnectMsg = "Disconnected";
-		  it->second.mPeerConnectFd = 0;
-		  it->second.mPeerConnectMode = 0;
-		  //it->second.mPeerConnectProxyId;
-		  it->second.mPeerConnectPoint = 0;
-		  
-		  it->second.mPeerConnectUdpTS = 0;
-		  it->second.mPeerConnectTS = 0;
-		  it->second.mPeerConnectClosedTS = 0;
-
-		bdsockaddr_clear(&(it->second.mPeerConnectAddr));
-
-		addedPeer = true;
-	  }
-
-		/* remove from FailedPeers */
-	  std::map<std::string, PeerStatus>::iterator it = mFailedPeers.find(filteredId);
-	  if (it != mFailedPeers.end())
-	  {
-		mFailedPeers.erase(it);
-	  }
-	}
-
-	if (addedPeer)
-	{
-		// outside of mutex.
-		storePeers(mPeersFile);
-		return 1;
-	}
-
-	std::cerr << "Peer Already Exists, ignoring: " << filteredId << std::endl;
-
-	return 0;
-}
-
-int p3BitDht::remove_peer(std::string id)
-{
-	bdNodeId tmpId;
-
-        if (!bdStdLoadNodeId(&tmpId, id))
-        {
-                std::cerr << "p3BitDht::remove_peer() Failed to load own Id";
-                std::cerr << std::endl;
-		return 0;
-        }
-
-	std::ostringstream str;
-	bdStdPrintNodeId(str, &tmpId);
-	std::string filteredId = str.str();
-
-	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-
-	std::map<std::string, PeerStatus>::iterator it = mPeers.find(filteredId);
-
-	if (mPeers.end() != it)
-	{
-		mUdpBitDht->removeFindNode(&tmpId);
-		mPeers.erase(it);
-		return 1;
-	}
-	return 0;
-}
-
-#endif
 
 /******************************************************************************************
  ************************************* Dht Callback ***************************************
@@ -239,9 +113,9 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 {
-	std::ostringstream str;
-	bdStdPrintNodeId(str, &(id->id));
-	std::string strId = str.str();
+	//std::ostringstream str;
+	//bdStdPrintNodeId(str, &(id->id));
+	//std::string strId = str.str();
 
 	//std::cerr << "p3BitDht::dhtPeerCallback()";
 	//std::cerr << std::endl;
@@ -304,9 +178,11 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
 	{
 
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::OnlinePeerCallback_locked() WARNING Ignoring Callback: connection already underway: ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
+#endif
 
 		return 1;
 	}
@@ -359,9 +235,11 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 
 	if (connectOk)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "dhtPeerCallback. Peer Online, triggering Direct Connection for: ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
+#endif
 
 		/* Push Back PeerAction */
 		PeerAction ca;
@@ -376,9 +254,11 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 	/* might need to make this an ACTION - leave for now */
 	if (doTCPCallback)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "dhtPeerCallback. Peer Online, triggering TCP Connection for: ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
+#endif
 
 		/* Push Back PeerAction */
 		PeerAction ca;
@@ -402,16 +282,20 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
 	{
 
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UnreachablePeerCallback_locked() WARNING Ignoring Callback: connection already underway: ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
+#endif
 
 		return 1;
 	}
 
+#ifdef DEBUG_PEERNET
 	std::cerr << "dhtPeerCallback. Peer Unreachable, triggering Proxy | Relay Connection for: ";
 	bdStdPrintId(std::cerr, id);
 	std::cerr << std::endl;
+#endif
 
 	bool proxyOk = false;
 	bool connectOk = true;
@@ -426,9 +310,11 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 		default:
 		case CSB_ACTION_WAIT:
 		{
+#ifdef DEBUG_PEERNET
 			std::cerr << "dhtPeerCallback. Request to Wait ... so no Connection Attempt for ";
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
+#endif
 			connectOk = false;
 		}
 			break;
@@ -468,13 +354,17 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 		if (proxyOk)
 		{
 			ca.mMode = BITDHT_CONNECT_MODE_PROXY;
+#ifdef DEBUG_PEERNET
 			std::cerr << "dhtPeerCallback. Trying Proxy Connection.";
 			std::cerr << std::endl;
+#endif
 		}
 		else
 		{
+#ifdef DEBUG_PEERNET
 			std::cerr << "dhtPeerCallback. Trying Relay Connection.";
 			std::cerr << std::endl;
+#endif
 			ca.mMode = BITDHT_CONNECT_MODE_RELAY;
 		}
 
@@ -483,9 +373,11 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 	}
 	else
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "dhtPeerCallback. Cancelled Connection Attempt for ";
 		bdStdPrintId(std::cerr, id);
 		std::cerr << std::endl;
+#endif
 	}
 
 	return 1;
@@ -495,7 +387,7 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 
 int p3BitDht::ValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
-	std::cerr << "p3BitDht::ValueCallback() Does nothing!";
+	std::cerr << "p3BitDht::ValueCallback() ERROR Does nothing!";
 	std::cerr << std::endl;
 
 	return 1;
@@ -504,6 +396,8 @@ int p3BitDht::ValueCallback(const bdNodeId *id, std::string key, uint32_t status
 int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
 						uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode)
 {
+#ifdef DEBUG_PEERNET
+#endif
 	std::cerr << "p3BitDht::ConnectCallback()";
 	std::cerr << std::endl;
 	std::cerr << "srcId: ";
@@ -535,7 +429,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 		default:
 		case BD_PROXY_CONNECTION_UNKNOWN_POINT:
 		{
-			std::cerr << "p3BitDht::dhtConnectCallback() UNKNOWN point, ignoring Callback";
+			std::cerr << "p3BitDht::dhtConnectCallback() ERROR UNKNOWN point, ignoring Callback";
 			std::cerr << std::endl;
 			return 0;
 		}
@@ -553,12 +447,14 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			{
 				case BITDHT_CONNECT_CB_AUTH:
 				{
+#ifdef DEBUG_PEERNET
 					std::cerr << "dhtConnectionCallback() Proxy Connection Requested Between:";
 					std::cerr << std::endl;
 					bdStdPrintId(std::cerr, srcId);
 					std::cerr << " and ";
 					bdStdPrintId(std::cerr, destId);
 					std::cerr << std::endl;
+#endif
 					
 					uint32_t bandwidth = 0;
 
@@ -566,14 +462,18 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					if (checkProxyAllowed(srcId, destId, mode, bandwidth))
 					{
 						connectionAllowed = BITDHT_CONNECT_ANSWER_OKAY;
+#ifdef DEBUG_PEERNET
 						std::cerr << "dhtConnectionCallback() Connection Allowed";
 						std::cerr << std::endl;
+#endif
 					}
 					else
 					{
 						connectionAllowed = BITDHT_CONNECT_ERROR_AUTH_DENIED;
+#ifdef DEBUG_PEERNET
 						std::cerr << "dhtConnectionCallback() Connection Denied";
 						std::cerr << std::endl;
+#endif
 					}
 		
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
@@ -594,26 +494,31 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				break;
 				case BITDHT_CONNECT_CB_PENDING:
 				{
+#ifdef DEBUG_PEERNET
 					std::cerr << "dhtConnectionCallback() Proxy Connection Pending:";
 					std::cerr << std::endl;
 					bdStdPrintId(std::cerr, srcId);
 					std::cerr << " and ";
 					bdStdPrintId(std::cerr, destId);
 					std::cerr << std::endl;
+#endif
 				}
 				break;
 				case BITDHT_CONNECT_CB_PROXY:
 				{
+#ifdef DEBUG_PEERNET
 					std::cerr << "dhtConnectionCallback() Proxy Connection Starting:";
 					std::cerr << std::endl;
 					bdStdPrintId(std::cerr, srcId);
 					std::cerr << " and ";
 					bdStdPrintId(std::cerr, destId);
 					std::cerr << std::endl;
+#endif
 				}
 				break;
 				case BITDHT_CONNECT_CB_FAILED:
 				{
+#ifdef DEBUG_PEERNET
 					std::cerr << "dhtConnectionCallback() Proxy Connection Failed:";
 					std::cerr << std::endl;
 					bdStdPrintId(std::cerr, srcId);
@@ -628,6 +533,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					std::cerr << " ErrorType: " << errtype;
 					
 					std::cerr << std::endl;
+#endif
 
 					if (mode == BITDHT_CONNECT_MODE_RELAY)
 					{
@@ -658,22 +564,28 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	{
 		case BITDHT_CONNECT_CB_AUTH:
 		{
+#ifdef DEBUG_PEERNET
 			std::cerr << "dhtConnectionCallback() Connection Requested By: ";
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
+#endif
 
 			int connectionAllowed = BITDHT_CONNECT_ERROR_GENERIC;
 			if (checkConnectionAllowed(&(peerId), mode))
 			{
 				connectionAllowed = BITDHT_CONNECT_ANSWER_OKAY;
+#ifdef DEBUG_PEERNET
 				std::cerr << "dhtConnectionCallback() Connection Allowed";
 				std::cerr << std::endl;
+#endif
 			}
 			else
 			{
 				connectionAllowed = BITDHT_CONNECT_ERROR_AUTH_DENIED;
+#ifdef DEBUG_PEERNET
 				std::cerr << "dhtConnectionCallback() Connection Denied";
 				std::cerr << std::endl;
+#endif
 			}
 	
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
@@ -690,8 +602,10 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			if ((connectionAllowed == BITDHT_CONNECT_ANSWER_OKAY) &&
 			 		 (mode == BITDHT_CONNECT_MODE_PROXY))
 			{
+#ifdef DEBUG_PEERNET
 				std::cerr << "dhtConnectionCallback() Checking Address for Proxy";
 				std::cerr << std::endl;
+#endif
 
 				struct sockaddr_in extaddr;
 				uint8_t extStable = 0;
@@ -700,8 +614,10 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				bool connectOk = false;
 				bool proxyPort = false; 
 				bool exclusivePort = false;
+#ifdef DEBUG_PEERNET
 				std::cerr << "dhtConnectionCallback():  Proxy... deciding which port to use.";
 				std::cerr << std::endl;
+#endif
 	
 				DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
 				if (dpd)
@@ -711,6 +627,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 					dpd->mConnectLogic.storeProxyPortChoice(0, proxyPort);
 
+#ifdef DEBUG_PEERNET
 					std::cerr << "dhtConnectionCallback: Setting ProxyPort: ";
 					std::cerr << " UseProxyPort? " << proxyPort;
 					std::cerr << std::endl;
@@ -718,6 +635,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					std::cerr << "dhtConnectionCallback: Checking ConnectLogic.NetState: ";
 					std::cerr << dpd->mConnectLogic.calcNetState(mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
 					std::cerr << std::endl;
+#endif
 
 					if (proxyPort)
 					{
@@ -727,13 +645,17 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 					if (exclusivePort)
 					{
+#ifdef DEBUG_PEERNET
 						std::cerr << "dhtConnectionCallback: we Require Exclusive Proxy Port for connection";
 						std::cerr << std::endl;
+#endif
 					}
 					else
 					{
+#ifdef DEBUG_PEERNET
 						std::cerr << "dhtConnectionCallback: Dont need Exclusive Proxy Port for connection";
 						std::cerr << std::endl;
+#endif
 					}
 
 					connectOk = true;
@@ -754,10 +676,12 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				{
 					if (extStable)
 					{
+#ifdef DEBUG_PEERNET
 						std::cerr << "dhtConnectionCallback() Proxy Connection Attempt to: ";
 						bdStdPrintId(std::cerr, &(peerId));
 						std::cerr << " is Ok as we have Stable Own External Proxy Address";
 						std::cerr << std::endl;
+#endif
 
 						if (point == BD_PROXY_CONNECTION_END_POINT)
 						{
@@ -773,8 +697,10 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 						/* check if we require exclusive use of the proxy port */
 						if (exclusivePort)
 						{
+#ifdef DEBUG_PEERNET
 							std::cerr << "dhtConnectionCallback: Attempting to Grab ExclusiveLock of UdpStunner";
 							std::cerr << std::endl;
+#endif
 							int stun_age = mProxyStunner->grabExclusiveMode();
 							if (stun_age > 0)
 							{
@@ -787,17 +713,21 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 								/* great we got it! */
 								ca.mDelayOrBandwidth = delay;
 
+#ifdef DEBUG_PEERNET
 								std::cerr << "dhtConnectionCallback: GotExclusiveLock With Delay: " << delay;
 								std::cerr << " for stable port";
 								std::cerr << std::endl;
+#endif
 
 								DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
 								if (dpd)
 								{
 									dpd->mExclusiveProxyLock = true;
 
+#ifdef DEBUG_PEERNET
 									std::cerr << "dhtConnectionCallback: Success at grabbing ExclusiveLock of UdpStunner";
 									std::cerr << std::endl;
+#endif
 
 								}
 								else
@@ -813,8 +743,10 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 								/* failed to get exclusive mode - must wait */
 								connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
 
+#ifdef DEBUG_PEERNET
 								std::cerr << "dhtConnectionCallback: Failed to Grab ExclusiveLock, Returning TEMPUNAVAIL";
 								std::cerr << std::endl;
+#endif
 							}
 						}
 
@@ -825,25 +757,31 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 						if (exclusivePort)
 						{
 							connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
+#ifdef DEBUG_PEERNET
 							std::cerr << "dhtConnectionCallback() Proxy Connection";
 							std::cerr << " is Discarded, as External Proxy Address is Not Stable! (EXCLUSIVE MODE)";
 							std::cerr << std::endl;
+#endif
 						}
 						else
 						{
 							connectionAllowed = BITDHT_CONNECT_ERROR_UNREACHABLE;
+#ifdef DEBUG_PEERNET
 							std::cerr << "dhtConnectionCallback() Proxy Connection";
 							std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
 							std::cerr << std::endl;
+#endif
 						}
 					}
 				}
 				else
 				{
 					connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
+#ifdef DEBUG_PEERNET
 					std::cerr << "dhtConnectionCallback() ERROR Proxy Connection ";
 					std::cerr << " is Discarded, as Failed to get Own External Proxy Address.";
 					std::cerr << std::endl;
+#endif
 				}
 			}
 
@@ -857,9 +795,11 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 		case BITDHT_CONNECT_CB_START:
 		{
+#ifdef DEBUG_PEERNET
 			std::cerr << "dhtConnectionCallback() Connection Starting with: ";
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
+#endif
 
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
@@ -881,6 +821,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 		case BITDHT_CONNECT_CB_FAILED:
 		{
+#ifdef DEBUG_PEERNET
+#endif
 			std::cerr << "dhtConnectionCallback() Connection Attempt Failed with:";
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
@@ -922,6 +864,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 		case BITDHT_CONNECT_CB_REQUEST: 
 		{
+#ifdef DEBUG_PEERNET
 			std::cerr << "dhtConnectionCallback() Local Connection Request Feedback:";
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
@@ -929,6 +872,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			std::cerr << "dhtConnectionCallback() Proxy:";			
 			bdStdPrintId(std::cerr, proxyId);
 			std::cerr << std::endl;
+#endif
 
 			if (point != BD_PROXY_CONNECTION_START_POINT)
 			{
@@ -1061,7 +1005,7 @@ int p3BitDht::tick()
 
 	time_t now = time(NULL);
 
-#ifdef PEERNET_DEBUG
+#ifdef DEBUG_PEERNET_COMMON
 	std::cerr << "p3BitDht::tick() TIME: " << ctime(&now) << std::endl;
 	std::cerr.flush();
 #endif
@@ -1093,7 +1037,7 @@ int p3BitDht::minuteTick()
 
 int p3BitDht::doActions()
 {
-#ifdef PEERNET_DEBUG
+#ifdef DEBUG_PEERNET_COMMON
 	std::cerr << "p3BitDht::doActions()" << std::endl;
 #endif
 
@@ -1120,10 +1064,12 @@ int p3BitDht::doActions()
 			case PEERNET_ACTION_TYPE_CONNECT:
 			{
 				/* connect attempt */
+#ifdef DEBUG_PEERNET
 				std::cerr << "PeerAction. Connection Attempt to: ";
 				bdStdPrintId(std::cerr, &(action.mDestId));
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
+#endif
 
 				bool doConnectionRequest = false;
 				bool connectionReqFailed = false;
@@ -1151,8 +1097,11 @@ int p3BitDht::doActions()
 					bool exclusivePort = false;
 					bool connectOk = false;
 
+#ifdef DEBUG_PEERNET
 					std::cerr << "PeerAction:  Proxy... deciding which port to use.";
 					std::cerr << std::endl;
+#endif
+
 					{
 						RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	
@@ -1163,18 +1112,22 @@ int p3BitDht::doActions()
 							proxyPort = dpd->mConnectLogic.getProxyPortChoice();
 							if (proxyPort)
 							{
+#ifdef DEBUG_PEERNET
 								std::cerr << "PeerAction:  Using ProxyPort. Checking ConnectLogic.NetState: ";
 								std::cerr << dpd->mConnectLogic.calcNetState(mNetMgr->getNetworkMode(), 
 												mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
 								std::cerr << std::endl;
+#endif
 
 								exclusivePort = (CSB_NETSTATE_EXCLUSIVENAT == dpd->mConnectLogic.calcNetState(
 									mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode()));
 
 								if (exclusivePort)
 								{
+#ifdef DEBUG_PEERNET
 									std::cerr << "PeerAction: NetState indicates Exclusive Mode";
 									std::cerr << std::endl;
+#endif
 								}
 							}
 						}
@@ -1194,10 +1147,12 @@ int p3BitDht::doActions()
 					{
 						if (extStable)
 						{
+#ifdef DEBUG_PEERNET
 							std::cerr << "PeerAction: Proxy Connection Attempt to: ";
 							bdStdPrintId(std::cerr, &(action.mDestId));
 							std::cerr << " is OkGo as we have Stable Own External Proxy Address";
 							std::cerr << std::endl;
+#endif
 						
 							/* check if we require exclusive use of the proxy port */
 							if (exclusivePort)
@@ -1211,9 +1166,11 @@ int p3BitDht::doActions()
 										delay = MIN_DETERMINISTIC_SWITCH_PERIOD - stun_age;
 									}
 
+#ifdef DEBUG_PEERNET
 									std::cerr << "PeerAction: Stunner has indicated a Delay of " << delay;
 									std::cerr << " to ensure a stable Port!";
 									std::cerr << std::endl;
+#endif
 									
 									/* great we got it! */
 									connAddr = extaddr;
@@ -1238,33 +1195,41 @@ int p3BitDht::doActions()
 						}
 						else
 						{
+#ifdef DEBUG_PEERNET
 							std::cerr << "PeerAction: WARNING Proxy Connection Attempt to: ";
 							bdStdPrintId(std::cerr, &(action.mDestId));
 							std::cerr << " is Discarded, as Own External Proxy Address is Not Stable!";
 							std::cerr << std::endl;
+#endif
 
 							connectionReqFailed = true;
 							if (exclusivePort)
 							{
 								failReason = CSB_UPDATE_RETRY_ATTEMPT;
+#ifdef DEBUG_PEERNET
 								std::cerr << "PeerAction: As Exclusive Mode, Port Will stabilise => RETRY";
 								std::cerr << std::endl;
+#endif
 
 							}
 							else
 							{
 								failReason = CSB_UPDATE_MODE_UNAVAILABLE;
+#ifdef DEBUG_PEERNET
 								std::cerr << "PeerAction: Not Exclusive Mode, => MODE UNAVAILABLE";
 								std::cerr << std::endl;
+#endif
 							}
 						}
 					}
 					else
 					{
+#ifdef DEBUG_PEERNET
 						std::cerr << "PeerAction: ERROR Proxy Connection Attempt to: ";
 						bdStdPrintId(std::cerr, &(action.mDestId));
 						std::cerr << " is Discarded, as Failed to get Own External Proxy Address.";
 						std::cerr << std::endl;
+#endif
 
 						connectionReqFailed = true;
 						failReason = CSB_UPDATE_RETRY_ATTEMPT;
@@ -1277,10 +1242,12 @@ int p3BitDht::doActions()
 					{
 						RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	
+#ifdef DEBUG_PEERNET
 						std::cerr << "PeerAction: Connection Attempt to: ";
 						bdStdPrintId(std::cerr, &(action.mDestId));
 						std::cerr << " has gone ahead";
 						std::cerr << std::endl;
+#endif
 	
 	
 						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
@@ -1311,10 +1278,12 @@ int p3BitDht::doActions()
 
 				if (connectionReqFailed)
 				{
+#ifdef DEBUG_PEERNET
 					std::cerr << "PeerAction: Connection Attempt to: ";
 					bdStdPrintId(std::cerr, &(action.mDestId));
 					std::cerr << " is Discarded, as Mode is Unavailable";
 					std::cerr << std::endl;
+#endif
 
 					if (grabbedExclusivePort)
 					{
@@ -1340,6 +1309,7 @@ int p3BitDht::doActions()
 			case PEERNET_ACTION_TYPE_AUTHORISE:
 			{
 				/* connect attempt */
+#ifdef DEBUG_PEERNET
 				std::cerr << "PeerAction. Authorise Connection between: ";
 				bdStdPrintId(std::cerr, &(action.mSrcId));
 				std::cerr << " and ";
@@ -1347,6 +1317,7 @@ int p3BitDht::doActions()
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << " delay/bandwidth: " << action.mDelayOrBandwidth;
 				std::cerr << std::endl;
+#endif
 
 				int delay = 0;
 				int bandwidth = 0;
@@ -1388,9 +1359,11 @@ int p3BitDht::doActions()
 					// Not an error if AUTH_DENIED - cos we don't know them! (so won't be in peerList).
 					else if (action.mAnswer | BITDHT_CONNECT_ERROR_AUTH_DENIED)
 					{
+#ifdef DEBUG_PEERNET
 						std::cerr << "PeerAction Authorise Connection ";			
 						std::cerr << "Denied Unknown Peer";
 						std::cerr << std::endl;
+#endif
 					}
 					else 
 					{
@@ -1405,6 +1378,7 @@ int p3BitDht::doActions()
 			case PEERNET_ACTION_TYPE_START:
 			{
 				/* connect attempt */
+#ifdef DEBUG_PEERNET
 				std::cerr << "PeerAction. Start Connection between: ";
 				bdStdPrintId(std::cerr, &(action.mSrcId));
 				std::cerr << " and ";
@@ -1412,6 +1386,7 @@ int p3BitDht::doActions()
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << " delay/bandwidth: " << action.mDelayOrBandwidth;
 				std::cerr << std::endl;
+#endif
 
 				initiateConnection(&(action.mSrcId), &(action.mProxyId), &(action.mDestId), 
 					action.mMode, action.mPoint, action.mDelayOrBandwidth);
@@ -1421,10 +1396,12 @@ int p3BitDht::doActions()
 			case PEERNET_ACTION_TYPE_RESTARTREQ:
 			{
 				/* connect attempt */
+#ifdef DEBUG_PEERNET
 				std::cerr << "PeerAction. Restart Connection Attempt to: ";
 				bdStdPrintId(std::cerr, &(action.mDestId));
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
+#endif
 
 				struct sockaddr_in laddr; 
 				sockaddr_clear(&laddr);
@@ -1438,10 +1415,12 @@ int p3BitDht::doActions()
 			case PEERNET_ACTION_TYPE_KILLREQ:
 			{
 				/* connect attempt */
+#ifdef DEBUG_PEERNET
 				std::cerr << "PeerAction. Kill Connection Attempt to: ";
 				bdStdPrintId(std::cerr, &(action.mDestId));
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
+#endif
 
 				struct sockaddr_in laddr; 
 				sockaddr_clear(&laddr);
@@ -1455,10 +1434,12 @@ int p3BitDht::doActions()
 			case PEERNET_ACTION_TYPE_TCPATTEMPT:
 			{
 				/* connect attempt */
+#ifdef DEBUG_PEERNET
 				std::cerr << "PeerAction. TCP Connection Attempt to: ";
 				bdStdPrintId(std::cerr, &(action.mDestId));
 				std::cerr << " mode: " << action.mMode;
 				std::cerr << std::endl;
+#endif
 
 				std::string peerRsId;
 				bool foundPeerId = false;
@@ -1470,9 +1451,11 @@ int p3BitDht::doActions()
 					{
 						peerRsId = dpd->mRsId;
 						foundPeerId = true;
+#ifdef DEBUG_PEERNET
 						std::cerr << "PeerAction. TCP Connection Attempt. DoingCallback for RsID: ";
 						std::cerr << peerRsId;
 						std::cerr << std::endl;
+#endif
 					}
 					else 
 					{
@@ -1511,8 +1494,10 @@ int p3BitDht::doActions()
 
 int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode, uint32_t &bandwidth)
 {
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::checkProxyAllowed()";
 	std::cerr << std::endl;
+#endif
 
 	// Dont think that a mutex is required here! But might be so just lock to ensure that it is possible.
 	{
@@ -1522,8 +1507,10 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode,
 
 	if (mode == BITDHT_CONNECT_MODE_PROXY) 
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::checkProxyAllowed() Allowing all PROXY connections, OKAY";
 		std::cerr << std::endl;
+#endif
 
 		bandwidth = 0; // unlimited as p2p.
 		return 1;
@@ -1532,8 +1519,10 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode,
 
 	if (mode != BITDHT_CONNECT_MODE_RELAY)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::checkProxyAllowed() unknown Connect Mode DENIED";
 		std::cerr << std::endl;
+#endif
 		return 0;
 	}
 
@@ -1542,16 +1531,20 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode,
 	 */
 	if (installRelayConnection(srcId, destId, bandwidth))
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::checkProxyAllowed() Successfully added Relay, Connection OKAY";
 		std::cerr << std::endl;
+#endif
 
 		return 1;
 		// CONNECT_OKAY.
 	}
 	else
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::checkProxyAllowed() Failed to install Relay, Connection DENIED";
 		std::cerr << std::endl;
+#endif
 
 		return 0;
 		//return CONNECT_MODE_OVERLOADED;
@@ -1565,11 +1558,12 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode,
 
 int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 {
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::checkConnectionAllowed() to: ";
 	bdStdPrintId(std::cerr,peerId);
 	std::cerr << " mode: " << mode;
 	std::cerr << std::endl;
-
+#endif
 
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
@@ -1579,8 +1573,10 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId->id), RSDHT_PEERTYPE_FRIEND);
 	if (!dpd)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::checkConnectionAllowed() Peer Not Friend, DENIED";
 		std::cerr << std::endl;
+#endif
 
 		/* store as failed connection attempt */
 		std::map<bdNodeId, DhtPeerDetails>::iterator it;
@@ -1700,6 +1696,8 @@ void p3BitDht::ConnectCalloutRelay(const std::string &peerId,
 void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
 								  uint32_t mode, uint32_t loc, uint32_t delayOrBandwidth)
 {
+#ifdef DEBUG_PEERNET
+#endif
 	std::cerr << "p3BitDht::initiateConnection()";
 	std::cerr << std::endl;
 	std::cerr << "\t srcId: ";
@@ -1763,9 +1761,11 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 		return;
 	}
 
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::initiateConnection() Connecting to ";
 	bdStdPrintId(std::cerr, &peerConnectId);
 	std::cerr << std::endl;
+#endif
 
 	uint32_t touConnectMode = 0;
 	std::string rsId;
@@ -1807,9 +1807,11 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				time_t now = time(NULL);
 				bool useProxyPort = dpd->mConnectLogic.getProxyPortChoice();
 
+#ifdef DEBUG_PEERNET
 				std::cerr << "p3BitDht::initiateConnection() Peer Mode Proxy... deciding which port to use.";
 				std::cerr << " UseProxyPort? " << useProxyPort;
 				std::cerr << std::endl;
+#endif
 				
 				delay = delayOrBandwidth;
 				if (useProxyPort)
@@ -1876,6 +1878,7 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 	/* work out if either srcId or DestId is a friend */
 	int relayClass = UDP_RELAY_CLASS_GENERAL;
 
+#ifdef DEBUG_PEERNET
 	std::ostringstream str;
 	bdStdPrintNodeId(str, &(srcId->id));
 	std::string strId1 = str.str();
@@ -1883,6 +1886,7 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 	str.clear();
 	bdStdPrintNodeId(str, &(destId->id));
 	std::string strId2 = str.str();
+#endif
 
         /* grab a socket */
 	DhtPeerDetails *dpd_src = findInternalDhtPeer_locked(&(srcId->id), RSDHT_PEERTYPE_ANY);
@@ -1913,16 +1917,20 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 	UdpRelayAddrSet relayAddrs(&(srcId->addr), &(destId->addr));
 	if (mRelay->addUdpRelay(&relayAddrs, relayClass, bandwidth))
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::installRelayConnection() Successfully added Relay, Connection OKAY";
 		std::cerr << std::endl;
+#endif
 
 		return 1;
 		// CONNECT_OKAY.
 	}
 	else
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::installRelayConnection() Failed to install Relay, Connection DENIED";
 		std::cerr << std::endl;
+#endif
 
 		return 0;
 		//return CONNECT_MODE_OVERLOADED;
@@ -1938,8 +1946,10 @@ int p3BitDht::removeRelayConnection(const bdId *srcId, const bdId *destId)
 	UdpRelayAddrSet relayAddrs(&(srcId->addr), &(destId->addr));
 	if (mRelay->removeUdpRelay(&relayAddrs))
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::removeRelayConnection() Successfully removed Relay";
 		std::cerr << std::endl;
+#endif
 
 		return 1;
 	}
@@ -1972,17 +1982,21 @@ void p3BitDht::monitorConnections()
 		
 		if (it->second.mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
 		{
+#ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::monitorConnections() Connection in progress to: ";
 			
 			bdStdPrintNodeId(std::cerr, &(it->second.mDhtId.id));
 			std::cerr << std::endl;
+#endif
 
 			if (now - it->second.mPeerConnectUdpTS > PEERNET_CONNECT_TIMEOUT)
 			{
 				/* This CAN happen ;( */
+#ifdef DEBUG_PEERNET
 				std::cerr << "p3BitDht::monitorConnections() WARNING InProgress Connection Failed: ";
 				bdStdPrintNodeId(std::cerr, &(it->second.mDhtId.id));
 				std::cerr << std::endl;
+#endif
 
 				UdpConnectionFailed_locked(&(it->second));
 			}
@@ -2018,9 +2032,11 @@ void p3BitDht::Feedback_Connected(std::string pid)
 		return;
 	}
 	
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::monitorConnections() InProgress Connection Now Active: ";
 	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 	std::cerr << std::endl;
+#endif
 			
 			/* switch state! */
 	dpd->mPeerConnectState = RSDHT_PEERCONN_CONNECTED;
@@ -2036,8 +2052,10 @@ void p3BitDht::Feedback_Connected(std::string pid)
 	// Remove the Connection Request.
 	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::monitorConnections() Request Active, Stopping Request";
 		std::cerr << std::endl;
+#endif
 				
 		/* Push Back PeerAction */
 		PeerAction ca;
@@ -2081,9 +2099,11 @@ void p3BitDht::Feedback_ConnectionFailed(std::string pid)
 		return;
 	}
 	
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::Feedback_ConnectionFailed() UDP Connection Failed: ";
 	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 	std::cerr << std::endl;
+#endif
 
 	return UdpConnectionFailed_locked(dpd);
 }
@@ -2102,9 +2122,11 @@ void p3BitDht::Feedback_ConnectionClosed(std::string pid)
 		return;
 	}
 	
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::Feedback_ConnectionClosed() Active Connection Closed: ";
 	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 	std::cerr << std::endl;
+#endif
 
 	return UdpConnectionFailed_locked(dpd);
 }
@@ -2114,9 +2136,11 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 {
 	if (dpd->mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UdpConnectionFailed_locked() UDP Connection Failed: ";
 		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 		std::cerr << std::endl;
+#endif
 
 		/* shut it down */
 
@@ -2131,9 +2155,11 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 	}
 	else
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UdpConnectionFailed_locked() Active Connection Closed: ";
 		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 		std::cerr << std::endl;
+#endif
 
 		dpd->mConnectLogic.updateCb(CSB_UPDATE_DISCONNECTED);
 
@@ -2149,8 +2175,10 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 
 	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
 	{
+#ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::monitorConnections() Request Active (Paused)... Killing for next Attempt";
 		std::cerr << std::endl;					
+#endif
 		
 		/* Push Back PeerAction */
 		PeerAction ca;
@@ -2190,9 +2218,11 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 		{
 			dpd->mExclusiveProxyLock = false;
 
+#ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked() Lock released by Connection to peer: ";
 			bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 			std::cerr << std::endl;
+#endif
 		}
 		else 
 		{
@@ -2217,28 +2247,36 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 
 void p3BitDht::ConnectionFeedback(std::string pid, int mode)
 {
+#ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::ConnectionFeedback() peer: " << pid;
 	std::cerr << " mode: " << mode;
 	std::cerr << std::endl;
+#endif
 
 	switch(mode)
 	{
 		case NETMGR_DHT_FEEDBACK_CONNECTED:
+#ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::ConnectionFeedback() HAVE CONNECTED (tcp?/udp) to peer: " << pid;
 			std::cerr << std::endl;
+#endif
 
 			Feedback_Connected(pid);
 			break;
 
 		case NETMGR_DHT_FEEDBACK_CONN_FAILED:
+#ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::ConnectionFeedback() UDP CONNECTION FAILED to peer: " << pid;
 			std::cerr << std::endl;
+#endif
 			Feedback_ConnectionFailed(pid);
 			break;
 
 		case NETMGR_DHT_FEEDBACK_CONN_CLOSED:
+#ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::ConnectionFeedback() CONNECTION (tcp?/udp) CLOSED to peer: " << pid;
 			std::cerr << std::endl;
+#endif
 			Feedback_ConnectionClosed(pid);
 			break;
 	}

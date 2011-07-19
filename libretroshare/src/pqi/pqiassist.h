@@ -114,9 +114,16 @@ class pqiNetAssistConnect: public pqiNetAssist
 
 virtual int	tick() = 0; /* for internal accounting */
 
+
 	/* add / remove peers */
 virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
+
+	/* add non-active peers (can still toggle active/non-active via above) */
+virtual int addFriend(const std::string pid) = 0;
+virtual int addFriendOfFriend(const std::string pid) = 0;
+virtual int addOther(const std::string pid) = 0;
+
 
 virtual void ConnectionFeedback(std::string pid, int mode) = 0;
 

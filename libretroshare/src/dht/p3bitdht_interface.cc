@@ -27,6 +27,7 @@
 #include "dht/p3bitdht.h"
 
 #include "tcponudp/udprelay.h"
+#include "tcponudp/udpstunner.h"
 #include "bitdht/bdstddht.h"
 
 #include <sstream>
@@ -146,6 +147,53 @@ int      p3BitDht::getNetFailedPeer(std::string peerId, PeerStatus &status)
 }
 #endif
 
+std::string p3BitDht::getUdpAddressString()
+{
+	std::ostringstream out;
+		
+	struct sockaddr_in extAddr;
+	uint8_t extStable;
+
+	if (mDhtStunner->externalAddr(extAddr, extStable))
+	{
+		out << " DhtExtAddr: " << inet_ntoa(extAddr.sin_addr);
+		out << ":" << ntohs(extAddr.sin_port);
+		
+		if (extStable)
+		{
+			out << " (Stable) ";
+		}
+		else
+		{
+			out << " (Unstable) ";
+		}
+	}
+	else
+	{
+		out << " DhtExtAddr: Unknown ";
+	}
+	if (mProxyStunner->externalAddr(extAddr, extStable))
+	{
+		out << " ProxyExtAddr: " << inet_ntoa(extAddr.sin_addr);
+		out << ":" << ntohs(extAddr.sin_port);
+		
+		if (extStable)
+		{
+			out << " (Stable) ";
+		}
+		else
+		{
+			out << " (Unstable) ";
+		}
+	}
+	else
+	{
+		out << " ProxyExtAddr: Unknown ";
+	}
+		
+	return out.str();
+}
+
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
@@ -178,6 +226,8 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 
 	status.mDhtId = out.str();
 	status.mRsId = details.mRsId;
+
+	status.mPeerType = details.mPeerType;
 
 	status.mDhtState = details.mDhtState;
 

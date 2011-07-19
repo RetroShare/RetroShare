@@ -95,6 +95,8 @@ class RsDhtNetPeer
         std::string mDhtId;
         std::string mRsId;
 
+        uint32_t mPeerType;
+
 	uint32_t mDhtState;
 
 	//connectLogic.
@@ -164,9 +166,10 @@ virtual int 	getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies) = 0;
 
 //virtual int 	 getNetFailedPeer(std::string peerId, PeerStatus &status);
 
+virtual std::string getUdpAddressString() = 0;
+
 #if 0
 virtual std::string getPeerStatusString();
-virtual std::string getPeerAddressString();
 virtual std::string getDhtStatusString();
 
 virtual int get_dht_queries(std::map<bdNodeId, bdQueryStatus> &queries);

@@ -53,6 +53,7 @@
  */
 #define USE_OLD_DHT_INTERFACE	1
 
+
 bool 	p3BitDht::findPeer(std::string pid)
 {
 #ifdef DEBUG_BITDHT
@@ -76,42 +77,6 @@ bool 	p3BitDht::findPeer(std::string pid)
 
 		/* new entry... what do we need to set? */
 		dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
-
-		/* NEW INIT FROM peernet */
-		
-		//bdsockaddr_clear(&(dpd->mDhtAddr));
-		//dpd->mDhtStatusMsg = "Just Added";
-		dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
-		dpd->mDhtUpdateTS = time(NULL);
-		
-		dpd->mPeerReqStatusMsg = "Just Added";
-		dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
-		dpd->mPeerReqMode = 0;
-		//dpd->mPeerReqProxyId;
-		dpd->mPeerReqTS = time(NULL);
-
- 		dpd->mExclusiveProxyLock = false;
-		
-		dpd->mPeerCbMsg = "No CB Yet";
-		dpd->mPeerCbMode = 0;
-		dpd->mPeerCbPoint = 0;
-		//dpd->mPeerCbProxyId = 0;
-		//dpd->mPeerCbDestId = 0;
-		dpd->mPeerCbTS = 0;
-		
-		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
-		dpd->mPeerConnectMsg = "Disconnected";
-		//dpd->mPeerConnectFd = 0;
-		dpd->mPeerConnectMode = 0;
-		//dpd->mPeerConnectProxyId;
-		dpd->mPeerConnectPoint = 0;
-		
-		dpd->mPeerConnectUdpTS = 0;
-		dpd->mPeerConnectTS = 0;
-		dpd->mPeerConnectClosedTS = 0;
-		
-		bdsockaddr_clear(&(dpd->mPeerConnectAddr));
-
 
 #ifdef DEBUG_BITDHT
 		std::cerr << "p3BitDht::findPeer() Installed new DhtPeer with pid => NodeId: ";
@@ -174,6 +139,10 @@ bool 	p3BitDht::dropPeer(std::string pid)
 	if (!dpd)
 	{
 		/* ERROR */
+		std::cerr << "p3BitDht::dropPeer(" << pid << ") HACK TO INCLUDE FRIEND AS NON-ACTIVE PEER";
+		std::cerr << std::endl;
+
+		addFriend(pid);
 		return false;
 	}
 
@@ -257,12 +226,15 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const std::string pid, int type
 		DhtPeerDetails newdpd;
 		mPeers[id] = newdpd;
 		dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+
+		dpd->mDhtId.id = id;
+		dpd->mRsId = pid;
+        	dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+
 	}
 
 	/* what do we need to reset? */
 	dpd->mPeerType = type;
-	dpd->mDhtId.id = id;
-	dpd->mRsId = pid;
 
 	return dpd;
 }
@@ -541,3 +513,42 @@ int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
 
 	return 1;
 }
+
+
+/******************** Conversion Functions **************************/
+
+DhtPeerDetails::DhtPeerDetails()
+{
+	mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+
+	mDhtState = RSDHT_PEERDHT_SEARCHING;
+	mDhtUpdateTS = time(NULL);
+		
+	mPeerReqStatusMsg = "Just Added";
+	mPeerReqState = RSDHT_PEERREQ_STOPPED;
+	mPeerReqMode = 0;
+	//mPeerReqProxyId;
+	mPeerReqTS = time(NULL);
+
+ 	mExclusiveProxyLock = false;
+		
+	mPeerCbMsg = "No CB Yet";
+	mPeerCbMode = 0;
+	mPeerCbPoint = 0;
+	//mPeerCbProxyId = 0;
+	//mPeerCbDestId = 0;
+	mPeerCbTS = 0;
+		
+	mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+	mPeerConnectMsg = "Disconnected";
+	mPeerConnectMode = 0;
+	//dpd->mPeerConnectProxyId;
+	mPeerConnectPoint = 0;
+		
+	mPeerConnectUdpTS = 0;
+	mPeerConnectTS = 0;
+	mPeerConnectClosedTS = 0;
+		
+	bdsockaddr_clear(&(mPeerConnectAddr));
+}
+

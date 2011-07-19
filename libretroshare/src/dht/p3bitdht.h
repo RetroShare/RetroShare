@@ -46,6 +46,8 @@ class DhtPeerDetails
 {
 	public:
 
+	DhtPeerDetails();
+
 	uint32_t mPeerType;
 
 	bdId    mDhtId;
@@ -145,6 +147,8 @@ virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
 
 //virtual int      getNetFailedPeer(std::string peerId, PeerStatus &status);
 
+virtual std::string getUdpAddressString();
+
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
@@ -172,6 +176,10 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 	/* add / remove peers */
 virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
+
+virtual int 	addFriend(const std::string pid);
+virtual int 	addFriendOfFriend(const std::string pid);
+virtual int 	addOther(const std::string pid);
 
 	/* feedback on success failure of Connections */
 virtual void 	ConnectionFeedback(std::string pid, int state);
@@ -243,9 +251,9 @@ void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
 
 //bool   	findPeer(std::string pid)
 //bool   	dropPeer(std::string pid);
-int 	addFriend(const std::string pid);
-int 	addFriendOfFriend(const std::string pid);
-int 	addOther(const std::string pid);
+//int 	addFriend(const std::string pid);
+//int 	addFriendOfFriend(const std::string pid);
+//int 	addOther(const std::string pid);
 int 	removePeer(const std::string pid);
 
 	private:

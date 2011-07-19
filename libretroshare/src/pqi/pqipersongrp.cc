@@ -587,7 +587,7 @@ int     pqipersongrp::connectPeer(std::string id
 	else if (type & RS_NET_CONN_UDP_ALL)
 	{
 		ptype = PQI_CONNECT_UDP;
-		timeout = period * 2;
+		timeout = period + RS_UDP_STD_TIMEOUT_PERIOD; // Split of UNCERTAINTY + TIME FOR TTL to RISE to Connection.
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with UDP: Timeout :" << timeout;
 		std::cerr << std::endl;
