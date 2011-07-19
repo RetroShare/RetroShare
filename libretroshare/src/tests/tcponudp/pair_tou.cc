@@ -36,6 +36,7 @@
 
 #ifndef USE_TCP_SOCKET
 	#include "tcponudp/tou.h"
+	#include "tcponudp/udppeer.h"
 #endif
 
 #include "util/bdnet.h"
@@ -121,16 +122,29 @@ int main(int argc, char **argv)
 	std::cerr << "Local Address: " << laddr << std::endl;
 	std::cerr << "Remote Address: " << raddr << std::endl;
 
-        UdpStack udps(laddr);
-        tou_init((void *) &udps);
+        UdpStack *udpStack1 = new UdpStack(laddr);
+        UdpStack *udpStack2 = new UdpStack(raddr);
+
+        UdpSubReceiver *udpReceivers[2];
+        int udpTypes[2];
+
+        udpReceivers[0] = new UdpPeerReceiver(udpStack1);
+        udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
+        udpStack1->addReceiver(udpReceivers[0]);
+
+        udpReceivers[1] = new UdpPeerReceiver(udpStack2);
+        udpTypes[1] = TOU_RECEIVER_TYPE_UDPPEER;
+        udpStack2->addReceiver(udpReceivers[1]);
+
+        tou_init((void **) udpReceivers, udpTypes, 2);
 
 
 #ifdef USE_TCP_SOCKET
 	int sockfd = socket(PF_INET, SOCK_STREAM, 0);
 	int sockfd2 = socket(PF_INET, SOCK_STREAM, 0);
 #else
-	int sockfd = tou_socket(PF_INET, SOCK_STREAM, 0);
-	int sockfd2 = tou_socket(PF_INET, SOCK_STREAM, 0);
+	int sockfd = tou_socket(0, TOU_RECEIVER_TYPE_UDPPEER, 0);
+	int sockfd2 = tou_socket(1, TOU_RECEIVER_TYPE_UDPPEER, 0);
 #endif
 	if ((sockfd <= 0) || (sockfd2 <= 0))
 	{
@@ -166,16 +180,17 @@ int main(int argc, char **argv)
 #ifdef USE_TCP_SOCKET
         err = bind(sockfd, (struct sockaddr *) &laddr, sizeof(laddr));
         err2 = bind(sockfd2, (struct sockaddr *) &raddr, sizeof(raddr));
-#else
-        err = tou_bind(sockfd, (struct sockaddr *) &laddr, sizeof(laddr));
-        err2 = tou_bind(sockfd2, (struct sockaddr *) &raddr, sizeof(raddr));
-#endif
 	if ((err < 0) || (err2 < 0))
 	{
 		std::cerr << "Error: Cannot bind socket: ";
 		std::cerr << err << std::endl;
 		return -1;
 	}
+#else
+	// No more Bind in tou.
+        //err = tou_bind(sockfd, (struct sockaddr *) &laddr, sizeof(laddr));
+        //err2 = tou_bind(sockfd2, (struct sockaddr *) &raddr, sizeof(raddr));
+#endif
 
 	std::cerr << "Socket1 Bound to: " << laddr << std::endl;
 	std::cerr << "Socket2 Bound to: " << raddr << std::endl;

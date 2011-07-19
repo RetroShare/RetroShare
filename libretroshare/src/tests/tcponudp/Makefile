@@ -15,20 +15,21 @@ include $(RS_TOP_DIR)/tests/scripts/config.mk
 
 OBJ  = udptestfn.o 
 
-EXECS = udpsock_test udpsort_test udp_server test_tou 
+EXECS = udpsock_test udpsort_test udp_server test_tou pair_tou
 #pair_tou reset_tou internal_tou largefile_tou 
 
-TESTOBJ  = udpsock_test.o udpsort_test.o udp_server.o test_tou.o
+TESTOBJ  = udpsock_test.o udpsort_test.o udp_server.o test_tou.o pair_tou.o udptestfn.o
 #TESTOBJ += pair_tou.o reset_tou.o largefile_tou.o
 #internal_tou.o 
 
 TESTS  = udpsock_test udpsort_test udp_server test_tou 
+#TESTS += pair_tou 
 # Unfortunately the design of tou has changed over time.
 # and these tests cannot be performed at the moment.
-#TESTS += pair_tou reset_tou largefile_tou
+#TESTS += reset_tou largefile_tou
 #internal_tou 
 
-all: tests
+all: tests $(EXECS)
 
 udpsock_test : $(OBJ) udpsock_test.o
 	$(CC) $(CFLAGS) -o udpsock_test udpsock_test.o $(OBJ) $(LIBS)
