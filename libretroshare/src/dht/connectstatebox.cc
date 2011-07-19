@@ -60,7 +60,7 @@
 	#define MAX_RELAY_FAILED_ATTEMPTS	(1)
 #else
 	#define FAILED_WAIT_TIME	(1800) // 30 minutes.
-	#define TCP_WAIT_TIME		(30)   // 1 minutes.
+	#define TCP_WAIT_TIME		(60)   // 1 minutes.
 	#define DIRECT_MAX_WAIT_TIME	(60)   // 1 minutes.
 
 	#define PROXY_BASE_WAIT_TIME	(30)   // 1/2 minutes.
