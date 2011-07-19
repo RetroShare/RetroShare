@@ -38,7 +38,7 @@
 #include "tcppacket.h"
 #include "udppeer.h"
 
-#define MAX_SEG 		1500
+#define MAX_SEG 		1000
 #define TCP_MAX_SEQ 		UINT_MAX
 #define TCP_MAX_WIN		65500
 #define TCP_ALIVE_TIMEOUT	15      /* 15 sec ... < 20 sec UDP state limit on some firewalls */

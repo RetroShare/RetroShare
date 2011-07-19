@@ -311,9 +311,9 @@ int	TcpStream::status(std::ostream &out)
 	out << "TcpStream::status @ (" << time(NULL) << ")" << std::endl;
 	out << "TcpStream::state = " << (int) state << std::endl;
 	out << std::endl;
-	out << "writeBuffer: " << inSize << " + 1500 * " << inQueue.size();
+	out << "writeBuffer: " << inSize << " + MAX_SEG * " << inQueue.size();
 	out << " bytes Queued for transmission" << std::endl;
-	out << "readBuffer: " << outSizeRead << " + 1500 * ";
+	out << "readBuffer: " << outSizeRead << " + MAX_SEG * ";
 	out << outQueue.size() << " + " << outSizeNet;
 	out << " incoming bytes waiting" << std::endl;
 	out << std::endl;
