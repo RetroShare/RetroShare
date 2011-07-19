@@ -29,13 +29,14 @@
 #include <iostream>
 #include <stdlib.h>
 
-//#define USE_TCP_SOCKET
+//#define USE_TCP_SOCKET	1
 
 // for printing sockaddr
 #include "udp/udpstack.h"
 
 #ifndef USE_TCP_SOCKET
 	#include "tcponudp/tou.h"
+	#include "tcponudp/udppeer.h"
 #endif
 
 /* shouldn't do this - but for convenience
@@ -132,13 +133,25 @@ int main(int argc, char **argv)
 	std::cerr << "Local Address: " << laddr << std::endl;
 	std::cerr << "Remote Address: " << raddr << std::endl;
 
-	UdpStack udps(laddr);
-	tou_init((void *) &udps);
+
+
 
 #ifdef USE_TCP_SOCKET
 	int sockfd = socket(PF_INET, SOCK_STREAM, 0);
 #else
-	int sockfd = tou_socket(PF_INET, SOCK_STREAM, 0);
+
+	UdpStack udps(laddr);
+
+        UdpSubReceiver *udpReceivers[1];
+        int udpTypes[1];
+
+        udpReceivers[0] = new UdpPeerReceiver(&udps);
+        udpTypes[0] = TOU_RECEIVER_TYPE_UDPPEER;
+        udps.addReceiver(udpReceivers[0]);
+
+	tou_init((void **) udpReceivers, udpTypes, 1);
+
+	int sockfd = tou_socket(0, TOU_RECEIVER_TYPE_UDPPEER, 0);
 #endif
 	if (sockfd < 0)
 	{
