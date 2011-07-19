@@ -179,6 +179,8 @@ bool    p3LinkMgrIMPL::setLocalAddress(struct sockaddr_in addr)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	mLocalAddress = addr;
+
+	return true ;
 }
 
 struct sockaddr_in p3LinkMgrIMPL::getLocalAddress()

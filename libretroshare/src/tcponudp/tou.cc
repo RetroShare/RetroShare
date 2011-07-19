@@ -63,7 +63,7 @@ static  int tou_inited = 0;
 #include "tcponudp/udprelay.h"
 
 static  UdpSubReceiver *udpSR[MAX_TOU_RECEIVERS] = {NULL};
-static  uint32_t	udpType[MAX_TOU_RECEIVERS] = {NULL};
+static  uint32_t	udpType[MAX_TOU_RECEIVERS] = { 0 };
 static  uint32_t        noUdpSR = 0;
 
 static int	tou_tick_all();
