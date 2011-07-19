@@ -146,21 +146,24 @@ void DhtWindow::update()
 void DhtWindow::updateNetStatus()
 {
 
+        QString status;
+	QString oldstatus;
+
 #if 0
-        QString status = QString::fromStdString(mPeerNet->getPeerStatusString());
-	QString oldstatus = ui->peerLine->text();
+        status = QString::fromStdString(mPeerNet->getPeerStatusString());
+	oldstatus = ui->peerLine->text();
 	if (oldstatus != status)
 	{
 		ui->peerLine->setText(status);
 	}
+#endif
 
-        status = QString::fromStdString(mPeerNet->getPeerAddressString());
+        status = QString::fromStdString(rsDht->getUdpAddressString());
 	oldstatus = ui->peerAddressLabel->text();
 	if (oldstatus != status)
 	{
 		ui->peerAddressLabel->setText(status);
 	}
-#endif
 
 	uint32_t netMode = rsConfig->getNetworkMode();
 
