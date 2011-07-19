@@ -67,7 +67,7 @@ const int p3connectzone = 3431;
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
-#define P3CONNMGR_NO_TCP_CONNECTIONS 1
+//#define P3CONNMGR_NO_TCP_CONNECTIONS 1
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
