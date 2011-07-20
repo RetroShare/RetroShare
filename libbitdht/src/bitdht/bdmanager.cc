@@ -1122,11 +1122,24 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_
 }
 
 
+#define BITDHT_IDENTITY_STRING_V1  	"d1:"
+#define BITDHT_IDENTITY_SIZE_V1    	3
+#define BITDHT_PACKET_MIN_SIZE		4
 
         /******************* Internals *************************/
 int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in & from)
 
 {
+
+	/* use a very simple initial check */
+        if (size < BITDHT_PACKET_MIN_SIZE)
+                return 0;
+
+        return (0 == strncmp(data, BITDHT_IDENTITY_STRING_V1, BITDHT_IDENTITY_SIZE_V1));
+
+	/* Below is the old version! */
+
+
 #ifdef DEBUG_MGR_PKT
 	std::cerr << "bdNodeManager::isBitDhtPacket() *******************************";
         std::cerr << " from " << inet_ntoa(from.sin_addr);

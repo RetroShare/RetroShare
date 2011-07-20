@@ -165,4 +165,22 @@ virtual	int sendUdpPacket(const void *data, int size, const struct sockaddr_in &
 };
 
 
+/* For Testing - drops packets all packets for initial minute (simulates TTL) */
+class TimedUdpLayer: public UdpLayer
+{
+	public:
+  TimedUdpLayer(UdpReceiver *udpr, struct sockaddr_in &local);
+virtual ~TimedUdpLayer();
+
+        protected:
+
+virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
+virtual	int sendUdpPacket(const void *data, int size, const struct sockaddr_in &to);
+
+	time_t mStartTime;
+	bool mActive;
+
+};
+
+
 #endif

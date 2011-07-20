@@ -61,6 +61,11 @@ UdpStack::UdpStack(int testmode, struct sockaddr_in &local)
 		std::cerr << "UdpStack::UdpStack() Installing RestrictedUdpLayer" << std::endl;
 		udpLayer = new RestrictedUdpLayer(this, laddr);
 	}
+	else if (testmode == UDP_TEST_TIMED_LAYER)
+	{
+		std::cerr << "UdpStack::UdpStack() Installing TimedUdpLayer" << std::endl;
+		udpLayer = new TimedUdpLayer(this, laddr);
+	}
 	else
 	{
 		std::cerr << "UdpStack::UdpStack() Installing Standard UdpLayer" << std::endl;

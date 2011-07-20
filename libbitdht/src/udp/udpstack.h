@@ -65,6 +65,7 @@ virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, in
 
 #define UDP_TEST_LOSSY_LAYER		1
 #define UDP_TEST_RESTRICTED_LAYER	2
+#define UDP_TEST_TIMED_LAYER		3
 
 #define UDP_TEST_LOSSY_FRAC		(0.10)
 

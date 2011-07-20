@@ -532,11 +532,11 @@ int LossyUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &f
 		if (prob < lossFraction)
 		{
 			/* discard */
-			std::cerr << "LossyUdpLayer::receiveUdpPacket() Dropping packet!";
-			std::cerr << std::endl;
-			std::cerr << printPkt(data, *size);
-			std::cerr << std::endl;
-			std::cerr << "LossyUdpLayer::receiveUdpPacket() Packet Dropped!";
+			//std::cerr << "LossyUdpLayer::receiveUdpPacket() Dropping packet!";
+			//std::cerr << std::endl;
+			//std::cerr << printPkt(data, *size);
+			//std::cerr << std::endl;
+			std::cerr << "LossyUdpLayer::receiveUdpPacket() Packet (" << *size << ") Dropped!";
 			std::cerr << std::endl;
 
 			*size = 0;
@@ -556,11 +556,11 @@ int LossyUdpLayer::sendUdpPacket(const void *data, int size, const struct sockad
 	{
 		/* discard */
 	
-		std::cerr << "LossyUdpLayer::sendUdpPacket() Dropping packet!";
-		std::cerr << std::endl;
-		std::cerr << printPkt((void *) data, size);
-		std::cerr << std::endl;
-		std::cerr << "LossyUdpLayer::sendUdpPacket() Packet Dropped!";
+		//std::cerr << "LossyUdpLayer::sendUdpPacket() Dropping packet!";
+		//std::cerr << std::endl;
+		//std::cerr << printPkt((void *) data, size);
+		//std::cerr << std::endl;
+		std::cerr << "LossyUdpLayer::sendUdpPacket() Packet (" << size << ") Dropped!";
 		std::cerr << std::endl;
 	
 		return size;
@@ -677,4 +677,73 @@ int RestrictedUdpLayer::sendUdpPacket(const void *data, int size, const struct s
 	// otherwise read normally;
 	return UdpLayer::sendUdpPacket(data, size, to);
 }
+
+
+#define STARTUP_PERIOD	60
+
+TimedUdpLayer::TimedUdpLayer(UdpReceiver *udpr, 
+			struct sockaddr_in &local)
+	:UdpLayer(udpr, local)
+{
+        mStartTime = time(NULL) + STARTUP_PERIOD;
+        mActive = false;
+	return;
+}
+
+TimedUdpLayer::~TimedUdpLayer() { return; }
+
+int TimedUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
+{
+	if (0 < UdpLayer::receiveUdpPacket(data, size, from))
+	{
+		if (!mActive)
+		{
+			if (time(NULL) < mStartTime)
+			{
+#ifdef DEBUG_UDP_LAYER 	
+#endif
+				std::cerr << "TimedUdpLayer::receiveUdpPacket() Dropping packet (Too Early)";
+				std::cerr << std::endl;
+				//std::cerr << printPkt(data, *size);
+				//std::cerr << std::endl;
+
+				*size = 0;
+				return -1;
 	
+			}
+
+			mActive = true;
+	
+		}
+
+		/* acceptable port */
+		return *size;
+	}
+	return -1;
+}
+	
+int TimedUdpLayer::sendUdpPacket(const void *data, int size, const struct sockaddr_in &to)
+{
+	if (!mActive)
+	{
+		if (time(NULL) < mStartTime)
+		{
+			/* drop */
+#ifdef DEBUG_UDP_LAYER 	
+#endif
+			std::cerr << "TimedUdpLayer::sendUdpPacket() Dropping packet (Too Early)";
+			std::cerr << std::endl;
+			return size;
+		}
+		
+		/* else activate */
+		mActive = true;
+	}
+
+	// otherwise read normally;
+	return UdpLayer::sendUdpPacket(data, size, to);
+}
+
+
+
+
