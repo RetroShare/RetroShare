@@ -47,6 +47,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <string.h>
 
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
