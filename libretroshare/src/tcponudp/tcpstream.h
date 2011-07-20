@@ -38,7 +38,13 @@
 #include "tcppacket.h"
 #include "udppeer.h"
 
-#define MAX_SEG 		1500
+// WINDOWS doesn't like UDP packets bigger than 1492 (truncates them). 
+// We have up to 64 bytes of headers: 28(udp) + 16(relay) + 20(tou) = 64 bytes.
+// 64 bytes + 1400 = 1464, leaves a small margin, but close to maximum throughput.
+//#define MAX_SEG 		1400       
+// We are going to start at 1000 (to avoid any fragmentation, and work up).
+#define MAX_SEG 		1000       
+
 #define TCP_MAX_SEQ 		UINT_MAX
 #define TCP_MAX_WIN		65500
 #define TCP_ALIVE_TIMEOUT	15      /* 15 sec ... < 20 sec UDP state limit on some firewalls */

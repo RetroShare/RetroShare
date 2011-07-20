@@ -40,6 +40,9 @@
 
 /* Debugging for STATE change, and Startup SYNs */
 #include "util/rsdebug.h"
+
+#include "util/rsrandom.h"
+
 const int rstcpstreamzone = 28455;
 
 
@@ -62,7 +65,7 @@ int	setupBinaryCheck(std::string fname);
 
 static const uint32 kMaxQueueSize = 100;
 static const uint32 kMaxPktRetransmit = 20;
-static const uint32 kMaxSynPktRetransmit = 1000; // up to 1000 (16 min?) startup
+static const uint32 kMaxSynPktRetransmit = 100; // 100 => 200secs = over 3 minutes startup
 static const int    TCP_STD_TTL = 64;
 static const int    TCP_DEFAULT_FIREWALL_TTL = 4;
 
@@ -1462,6 +1465,13 @@ int TcpStream::incoming_Established(TcpPacket *pkt)
 	 * make sure that the sequence number is within the correct range.
 	 */
 
+#ifdef DEBUG_TCP_STREAM
+	std::cerr << "TcpStream::incoming_Established() ";
+	std::cerr << " Pkt->seqno: " << std::hex << pkt->seqno;
+	std::cerr << " Pkt->datasize: " << std::hex << pkt->datasize;
+	std::cerr << std::dec << std::endl;
+#endif
+
 	if ((!isOldSequence(pkt->seqno, inAckno)) &&           // seq >= inAckno
 		isOldSequence(pkt->seqno, inAckno + maxWinSize))  // seq < inAckno + maxWinSize.
 	{
@@ -1471,11 +1481,16 @@ int TcpStream::incoming_Established(TcpPacket *pkt)
 #endif
 		if (pkt->hasAck())
 		{
-			outAcked = pkt->ackno;
 #ifdef DEBUG_TCP_STREAM
-			std::cerr << "\tUpdating OutAcked to: " << outAcked;
-			std::cerr << std::endl;
+			if (outAcked != pkt->ackno)
+			{
+				std::cerr << "TcpStream::incoming_Established() valid Packet Seqno & new Ackno.";
+				std::cerr << std::endl;
+				std::cerr << "\tUpdating OutAcked to: " << outAcked;
+				std::cerr << std::endl;
+			}
 #endif
+			outAcked = pkt->ackno;
 		}
 
 		outWinSize = pkt->winsize;
@@ -1487,10 +1502,26 @@ int TcpStream::incoming_Established(TcpPacket *pkt)
 	}
 	else
 	{
-		/* what we do! */
+		/* what we do! (This is actually okay - and happens occasionally) */
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream::incoming_Established() ERROR out-of-range Packet Seqno.";
 		std::cerr << std::endl;
+		std::cerr << "\t Pkt->SeqNo: " << std::hex << pkt->seqno;
+		std::cerr << std::endl;
+		std::cerr << "\t inAckno: " << std::hex << inAckno;
+		std::cerr << std::endl;
+		std::cerr << "\t inAckno + maxWinSize: " << std::hex << inAckno + maxWinSize;
+		std::cerr << std::endl;
+		std::cerr << "\t outAcked: " << std::hex << outAcked;
+		std::cerr << std::endl;
+		std::cerr << "\t Pkt->SeqNo: " << std::hex << pkt->seqno;
+		std::cerr << std::dec << std::endl;
+		std::cerr << "\t !isOldSequence(pkt->seqno, inAckno): " << (!isOldSequence(pkt->seqno, inAckno));
+		std::cerr << std::endl;
+		std::cerr << "\t isOldSequence(pkt->seqno, inAckno + maxWinSize): " << isOldSequence(pkt->seqno, inAckno + maxWinSize);
+		std::cerr << std::endl;
+		std::cerr << std::endl;
+
 		std::cerr << "TcpStream::incoming_Established() Sending Ack to update Peer";
 		std::cerr << std::endl;
 #endif
@@ -1530,13 +1561,18 @@ int TcpStream::check_InPkts()
 		for(it = inPkt.begin(); (!found) && (it != inPkt.end());)
 		{
 #ifdef DEBUG_TCP_STREAM
-			std::cerr << "Checking expInAck: " << inAckno << " vs: " << (*it)->seqno << std::endl;
+			std::cerr << "Checking expInAck: " << std::hex << inAckno;
+			std::cerr << " vs: " << std::hex << (*it)->seqno << std::dec << std::endl;
 #endif
+
 			pkt = *it;
 			if ((*it)->seqno == inAckno)
 			{
+				//std::cerr << "\tFOUND MATCH!";
+				//std::cerr << std::endl;
+
 				found = true;
-				inPkt.erase(it);
+				it = inPkt.erase(it);
 
 			}
 
@@ -1545,8 +1581,11 @@ int TcpStream::check_InPkts()
 			else if (isOldSequence((*it)->seqno, inAckno))
 			{
 #ifdef DEBUG_TCP_STREAM
-				std::cerr << "Discarding Old Packet expAck: " << inAckno;
-				std::cerr << " seqno: " << (*it)->seqno << std::endl;
+				std::cerr << "Discarding Old Packet expAck: " << std::hex << inAckno;
+				std::cerr << " seqno: " << std::hex << (*it)->seqno;
+				std::cerr << " pkt->size: " << std::hex << (*it)->datasize;
+				std::cerr << " pkt->seqno+size: " << std::hex << (*it)->seqno + (*it)->datasize;
+				std::cerr << std::dec << std::endl;
 #endif
 
 				/* discard */
@@ -1569,8 +1608,17 @@ int TcpStream::check_InPkts()
 			}
 #endif
 
+#ifdef DEBUG_TCP_STREAM
+			std::cerr << "TcpStream::check_inPkts() Updating inAckno from: " << std::hex << inAckno;
+#endif
+
 			/* update ack number - let it rollover */
 			inAckno = pkt->seqno + pkt->datasize;
+
+#ifdef DEBUG_TCP_STREAM
+			std::cerr << " to:  " << std::hex << inAckno;
+			std::cerr << std::dec << std::endl;
+#endif
 
 			/* XXX This shouldn't be here, as it prevents
 			 * the Ack being used until the packet is.
@@ -1588,7 +1636,19 @@ int TcpStream::check_InPkts()
 #ifdef DEBUG_TCP_STREAM
 					std::cerr << "TcpStream::check_inPkts() ERROR Ack Not Already Used!";
 					std::cerr << std::endl;
+					std::cerr << "\t Pkt->ackno: " << std::hex << pkt->ackno;
+					std::cerr << std::endl;
+					std::cerr << "\t outAcked: " << std::hex << outAcked;
+					std::cerr << std::endl;
+					std::cerr << "\t Pkt->winsize: " << std::hex << pkt->winsize;
+					std::cerr << std::endl;
+					std::cerr << "\t outWinSize: " << std::hex << outWinSize;
+					std::cerr << std::endl;
+					std::cerr << "\t isOldSequence(outAcked, pkt->ackno): " << isOldSequence(outAcked, pkt->ackno);
+					std::cerr << std::endl;
+					std::cerr << std::endl;
 #endif
+
 					outAcked = pkt->ackno;
 					outWinSize = pkt->winsize;
 
@@ -1632,15 +1692,26 @@ int TcpStream::check_InPkts()
 				int remSpace = MAX_SEG - outSizeNet;
 				memcpy((void *) &(db->data[outSizeNet]), (void *) pkt->data, remSpace);
 
-				/* remove any remaining to outDataNet */
-				outSizeNet = pkt->datasize - remSpace;
-				if (outSizeNet > 0)
-				{
-					memcpy((void *) outDataNet, (void *) &(pkt->data[remSpace]), outSizeNet);
-				}
-
 				/* push packet onto queue */
 				outQueue.push_back(db);
+
+				/* any big chunks that will take up a full dataBuffer */
+				int remData = pkt->datasize - remSpace;
+				while(remData >= MAX_SEG)
+				{
+					db = new dataBuffer();
+					memcpy((void *) db->data,  (void *) &(pkt->data[remSpace]), MAX_SEG);
+
+					remData -= MAX_SEG;
+					outQueue.push_back(db);
+				}
+
+				/* remove any remaining to outDataNet */
+				outSizeNet = remData; 
+				if (outSizeNet > 0)
+				{
+					memcpy((void *) outDataNet, (void *) &(pkt->data[pkt->datasize - remData]), outSizeNet);
+				}
 			}
 
 			/* can allow more in! - update inWinSize */
@@ -2035,11 +2106,19 @@ int TcpStream::retrans()
 			/* catch excessive retransmits 
 			 * - Allow Syn case more.... 
 			 * - if not SYN or TTL has reached STD then timeout quickly.
+
+			 * OLD 2nd Logic (below) has been replaced with lower logic.
+                         *   (((!pkt->hasSyn()) || (TCP_STD_TTL == getTTL()))  
+                         *               && (pkt->retrans > kMaxPktRetransmit)))
+			 * Problem was that the retransmit of Syn packet had STD_TTL, and was triggering Close (and SeqNo change).
+			 * It seemed to work anyway.... But might cause coonnection failures. Will reduce the MaxSyn Retransmit
+			 * so something more reasonable as well.
+			 *    ((!pkt->hasSyn()) && (pkt->retrans > kMaxPktRetransmit)))
 			 */
 
 			if ((pkt->hasSyn() && (pkt->retrans > kMaxSynPktRetransmit)) ||
-			    (((!pkt->hasSyn()) || (TCP_STD_TTL == getTTL()))  
-			    		&& (pkt->retrans > kMaxPktRetransmit)))
+			    ((!pkt->hasSyn()) && (pkt->retrans > kMaxPktRetransmit)))
+
 			{
 					/* too many attempts close stream */
 #ifdef DEBUG_TCP_STREAM
@@ -2431,8 +2510,10 @@ int TcpStream::send()
 
 uint32 TcpStream::genSequenceNo()
 {
+	return RSRandom::random_u32();
 	//return 1000; // TCP_MAX_SEQ - 1000; //1000; //(rand() - 100000) + time(NULL) % 100000;
-	return (rand() - 100000) + time(NULL) % 100000;
+	//return (rand() - 100000) + time(NULL) % 100000;
+
 }
 
 
