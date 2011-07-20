@@ -30,6 +30,7 @@ int UdpRecvTest::recvPkt(void *data, int size, struct sockaddr_in &from)
 	/* print packet information */
 	std::cerr << "UdpRecvTest::recvPkt(" << size << ") from: " << from;
 	std::cerr << std::endl;
+	return -1;
 }
 
 UdpPeerTest::UdpPeerTest(struct sockaddr_in &addr)
