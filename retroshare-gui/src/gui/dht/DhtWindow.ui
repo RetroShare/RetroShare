@@ -9,12 +9,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>537</height>
+    <width>665</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dht Details</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
+    <normaloff>:/images/dht16.png</normaloff>:/images/dht16.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -120,7 +124,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="spacing">
-           <number>-1</number>
+           <number>6</number>
           </property>
          </layout>
         </item>
@@ -133,6 +137,9 @@
         </item>
         <item>
          <widget class="QTreeWidget" name="peerTreeWidget">
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <column>
            <property name="text">
             <string>Name</string>
@@ -193,6 +200,9 @@
         </item>
         <item>
          <widget class="QTreeWidget" name="dhtTreeWidget">
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <column>
            <property name="text">
             <string>Bucket</string>
@@ -233,6 +243,9 @@
        </layout>
       </widget>
       <widget class="QTreeWidget" name="relayTreeWidget">
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
        <column>
         <property name="text">
          <string>Relay Mode</string>
@@ -283,8 +296,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>548</width>
-     <height>22</height>
+     <width>665</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -299,6 +312,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
