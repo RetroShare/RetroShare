@@ -319,3 +319,17 @@ bool 	p3BitDht::getExternalInterface(struct sockaddr_in &raddr,
 }
 
 
+bool 	p3BitDht::setAttachMode(bool on)
+{
+
+#ifdef DEBUG_BITDHT
+	std::cerr << "p3BitDht::setAttachMode(" << on << ")";
+	std::cerr << std::endl;
+#endif
+
+	return mUdpBitDht->setAttachMode(on);
+}
+
+
+
+

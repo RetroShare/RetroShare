@@ -254,7 +254,6 @@ bool netAssistConnectActive();
 bool netAssistConnectShutdown();
 bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
 void 		netAssistConnectTick();
-
 /* Assist Firewall */
 bool netAssistExtAddress(struct sockaddr_in &extAddr);
 bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
@@ -264,6 +263,8 @@ bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
 bool netAssistSetAddress( struct sockaddr_in &laddr,
                                         struct sockaddr_in &eaddr,
 					uint32_t mode);
+
+bool netAssistAttach(bool on);
 
 
 	/* Internal Functions */

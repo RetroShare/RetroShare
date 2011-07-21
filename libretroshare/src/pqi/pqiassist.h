@@ -132,6 +132,9 @@ virtual bool 	getPeerStatus(std::string id,
 			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
 			uint32_t &type, uint32_t &mode) = 0;
 
+virtual bool    setAttachMode(bool on) = 0;
+
+
 //virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
 //					uint32_t &mode) = 0;
 

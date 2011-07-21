@@ -192,6 +192,11 @@ virtual bool 	getPeerStatus(std::string id,
 virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
 					uint32_t &mode);
 
+
+virtual bool    setAttachMode(bool on);
+
+
+
 	/* notifyPeer/setExtInterface/Bootstrap/Stun 
 	 * hould all be removed from NetAssist?
 	 */

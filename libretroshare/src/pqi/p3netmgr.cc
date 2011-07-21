@@ -1304,6 +1304,23 @@ bool p3NetMgrIMPL::netAssistFriend(std::string id, bool on)
 }
 
 
+bool p3NetMgrIMPL::netAssistAttach(bool on)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+
+#ifdef NETMGR_DEBUG
+	std::cerr << "p3NetMgrIMPL::netAssistAttach(" << on << ")";
+	std::cerr << std::endl;
+#endif
+
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->setAttachMode(on);
+	}
+	return true;
+}
+
+
 
 bool p3NetMgrIMPL::netAssistStatusUpdate(std::string id, int state)
 {
@@ -1622,11 +1639,44 @@ void p3NetMgrIMPL::updateNatSetting()
 			case RSNET_NATTYPE_NONE:
 			case RSNET_NATTYPE_UNKNOWN:
 			case RSNET_NATTYPE_SYMMETRIC:
+			case RSNET_NATTYPE_DETERM_SYM:
 			case RSNET_NATTYPE_FULL_CONE:
 			case RSNET_NATTYPE_OTHER:
 
 				mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				break;
+		}
+
+
+		/* This controls the Attach mode of the DHT... 
+		 * which effectively makes the DHT "attach" to Open Nodes.
+		 * So that messages can get through.
+		 * We only want to be attached - if we don't have a stable DHT port.
+		 */
+		if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+		{
+			switch(natType)
+			{
+				/* switch to attach mode if we have a bad firewall */
+				case RSNET_NATTYPE_UNKNOWN:
+				case RSNET_NATTYPE_SYMMETRIC:
+				case RSNET_NATTYPE_RESTRICTED_CONE: 
+				case RSNET_NATTYPE_DETERM_SYM:
+				case RSNET_NATTYPE_OTHER:
+					netAssistAttach(true);
+
+				break;
+				/* switch off attach mode if we have a nice firewall */
+				case RSNET_NATTYPE_NONE:
+				case RSNET_NATTYPE_FULL_CONE:
+					netAssistAttach(false);
+				break;
+			}
+		}
+		else
+		{
+			// Switch off Firewall Mode (Attach)
+			netAssistAttach(false);
 		}
 	}
 }

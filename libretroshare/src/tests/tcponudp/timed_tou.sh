@@ -1,8 +1,8 @@
 #/bin/sh 
 # Script to Test the udp_server code.
 
-EXEC=./stacks_tou
-DATAFILE=./stacks_tou
+EXEC=./timed_tou
+DATAFILE=./timed_tou
 
 TMPOUTPUT=tmpoutput$$
 EXPECTEDPERIOD=10
