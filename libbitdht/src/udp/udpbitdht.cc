@@ -150,6 +150,13 @@ void UdpBitDht::ConnectionOptions(uint32_t allowedModes, uint32_t flags)
 	mBitDhtManager->ConnectionOptions(allowedModes, flags);
 }
 
+bool UdpBitDht::setAttachMode(bool on)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->setAttachMode(on);
+}
+
 
 int UdpBitDht::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from)
 {

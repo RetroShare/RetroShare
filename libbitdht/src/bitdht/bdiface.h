@@ -322,6 +322,8 @@ virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId, uint32_t m
 						uint32_t bandwidth, uint32_t delay, uint32_t answer) = 0;
 virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags) = 0;
 
+virtual bool setAttachMode(bool on) = 0;
+
 
         /***** Add / Remove Callback Clients *****/
 virtual void addCallback(BitDhtCallback *cb) = 0;

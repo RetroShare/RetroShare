@@ -144,6 +144,21 @@ uint32_t bdNodeManager::statsBDVersionSize()
         return mBdNetworkSize;
 }
 
+bool bdNodeManager::setAttachMode(bool on)
+{
+	if (on)
+	{
+        	setNodeOptions(BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT);
+	}
+	else
+	{
+        	setNodeOptions(0);
+	}
+        return on;
+}
+
+
+
 
 void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 {

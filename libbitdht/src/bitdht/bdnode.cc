@@ -92,11 +92,11 @@ void bdNode::setNodeOptions(uint32_t optFlags)
 	mNodeOptionFlags = optFlags;	
 	if (optFlags & BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT)
 	{
-		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE, ATTACH_NUMBER);
+		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE | BITDHT_PEER_STATUS_DHT_ENGINE_VERSION, ATTACH_NUMBER);
 	}
 	else
 	{
-		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE, 0);
+		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE | BITDHT_PEER_STATUS_DHT_ENGINE_VERSION, 0);
 	}
 }
 

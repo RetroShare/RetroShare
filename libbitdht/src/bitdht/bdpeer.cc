@@ -547,10 +547,14 @@ int	bdSpace::updateAttachedPeers()
 	bool doAttached = (mAttachedCount > 0);
 	int attachedCount = 0;
 
+	// Must scan through - otherwise we can never remove Attached state.
+	// It is only once every 10 minutes or so!
+#if 0
 	if (!doAttached)
 	{
 		return 0;
 	}
+#endif
 
 	std::map<bdMetric, bdId> closest;
 	std::map<bdMetric, bdId>::iterator mit;

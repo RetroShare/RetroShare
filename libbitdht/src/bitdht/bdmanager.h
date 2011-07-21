@@ -126,6 +126,7 @@ virtual void ConnectionAuth(bdId *srcId, bdId *proxyId, bdId *destId,
 						uint32_t mode, uint32_t loc, uint32_t bandwidth, uint32_t delay, uint32_t answer);
 virtual void ConnectionOptions(uint32_t allowedModes, uint32_t flags);
 
+virtual bool setAttachMode(bool on);
 
 	/* stats and Dht state */
 virtual int startDht();
