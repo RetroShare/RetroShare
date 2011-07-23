@@ -732,8 +732,11 @@ peers still need to trust each other to allow connection. </string>
            </item>
            <item row="0" column="2">
             <widget class="QSpinBox" name="localPort">
+             <property name="toolTip">
+              <string>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</string>
+             </property>
              <property name="minimum">
-              <number>0</number>
+              <number>1024</number>
              </property>
              <property name="maximum">
               <number>65535</number>
@@ -755,8 +758,11 @@ peers still need to trust each other to allow connection. </string>
            </item>
            <item row="1" column="2">
             <widget class="QSpinBox" name="extPort">
+             <property name="toolTip">
+              <string>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</string>
+             </property>
              <property name="minimum">
-              <number>0</number>
+              <number>1024</number>
              </property>
              <property name="maximum">
               <number>65535</number>

@@ -42,7 +42,7 @@
 
 
 #define PQI_MIN_PORT 1024
-#define PQI_MAX_PORT 50000
+#define PQI_MAX_PORT 65535
 #define PQI_DEFAULT_PORT 7812
 
 int getPQIsearchId();
