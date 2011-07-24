@@ -250,6 +250,9 @@ typedef std::pair<std::string, pugi::xml_node > grpNodePair; // (is loaded, iter
 // these make up a cache list
 typedef std::pair<std::string, uint16_t> pCacheId; //(pid, subid)
 typedef std::pair<std::string, pCacheId> grpCachePair; // (grpid, cid)
+
+class RsDistribMsgArchive;
+
 typedef std::map<std::string, RsDistribMsgArchive* > msgArchMap;
 
 /*!

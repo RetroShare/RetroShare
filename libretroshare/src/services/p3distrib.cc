@@ -894,15 +894,15 @@ bool p3GroupDistrib::loadArchive(const std::string& grpId)
 {
 
 	std::string filename;
-	msgArchMap::iterator it;
+	msgArchMap::iterator mit;
 
 	{
 		RsStackMutex stack(distribMtx);
-		it  = mMsgArchive.find(grpId);
+		mit  = mMsgArchive.find(grpId);
 
-		if(it != mMsgArchive.end())
+		if(mit != mMsgArchive.end())
 		{
-			filename = it->second->msgFilePath;
+			filename = mit->second->msgFilePath;
 		}
 		else
 		{
@@ -928,7 +928,7 @@ bool p3GroupDistrib::loadArchive(const std::string& grpId)
 
 	RsStackMutex stack(distribMtx);
 
-	if(it->second->msgFileHash != bio->gethash())
+	if(mit->second->msgFileHash != bio->gethash())
 	{
 #ifdef DISTRIB_ARCH_DEBUG
 		std::cerr << "p3Distrib::loadArchive() Error occurred archived File's Hash invalid" << std::endl;
@@ -942,7 +942,7 @@ bool p3GroupDistrib::loadArchive(const std::string& grpId)
 	for(;it!=load.end(); it++)
 	{
 		if(NULL != (rsdm = dynamic_cast<RsDistribSignedMsg*>(*it))){
-			it->second->msgs.push_back(rsdm);
+			mit->second->msgs.push_back(rsdm);
 		}
 		else
 		{
@@ -951,7 +951,7 @@ bool p3GroupDistrib::loadArchive(const std::string& grpId)
 		}
 	}
 
-	it->second->loaded = true;
+	mit->second->loaded = true;
 
 	return true;
 }
@@ -1013,7 +1013,14 @@ bool p3GroupDistrib::sendArchiveToFile(RsDistribMsgArchive* msgArch)
 	BinEncryptedFileInterface *bio = new BinEncryptedFileInterface(filename.c_str(), bioflags);
 	pqiSSLstore *stream = new pqiSSLstore(setupSerialiser(), "CONFIG", bio, stream_flags);
 
-	bool written = stream->encryptedSendItems(msgArch->msgs);
+	std::list<RsItem*> sendList;
+	std::list<RsDistribSignedMsg*>::iterator it =
+			msgArch->msgs.begin();
+
+	for(; it!=msgArch->msgs.end(); it++)
+		sendList.push_back(*it);
+
+	bool written = stream->encryptedSendItems(sendList);
 
 	msgArch->msgFileHash = bio->gethash();
 
