@@ -68,14 +68,16 @@ RsBlogs *rsBlogs = NULL;
 /* Blogs will be initially stored for 1 year
  * remember 2^16 = 64K max units in store period.
  * PUBPERIOD * 2^16 = max STORE PERIOD */
-#define BLOG_STOREPERIOD (90*24*3600)    /*  30 * 24 * 3600 - secs in a year */
+#define BLOG_STOREPERIOD (60*24*3600)    /*  30 * 24 * 3600 - secs in a year */
 #define BLOG_PUBPERIOD   600              /* 10 minutes ... (max = 455 days) */
+#define BLOG_ARCHIVE_PERIOD (180*24*3600) /*  180 * 24 * 3600 - secs in a year */
 
 p3Blogs::p3Blogs(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft,
                 std::string srcdir, std::string storedir)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, "",
-                        CONFIG_TYPE_QBLOG, BLOG_STOREPERIOD, BLOG_PUBPERIOD)
+                        CONFIG_TYPE_QBLOG, BLOG_STOREPERIOD, BLOG_ARCHIVE_PERIOD,
+                        BLOG_PUBPERIOD)
 { 
 		return;
 }

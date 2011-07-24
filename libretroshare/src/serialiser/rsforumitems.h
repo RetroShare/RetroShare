@@ -81,7 +81,7 @@ public:
 
 	std::string forumId;
 
-	/// a map which contains the read for messages within a forum
+	/// a map (msgId, status bit-field) which contains the read status for messages within a forum
 	std::map<std::string, uint32_t> msgReadStatus;
 
 };

@@ -250,6 +250,7 @@ typedef std::pair<std::string, pugi::xml_node > grpNodePair; // (is loaded, iter
 // these make up a cache list
 typedef std::pair<std::string, uint16_t> pCacheId; //(pid, subid)
 typedef std::pair<std::string, pCacheId> grpCachePair; // (grpid, cid)
+typedef std::map<std::string, RsDistribMsgArchive* > msgArchMap;
 
 /*!
  * grp node content for faster access
@@ -309,15 +310,43 @@ class CacheDataPending
 	bool      mHistorical;
 };
 
+class RsDistribMsgArchive
+{
+public:
+
+	RsDistribMsgArchive();
+
+	std::list<RsDistribSignedMsg*> msgs;
+	std::string grpId;
+	std::string msgFileHash;
+	std::string msgFilePath;
+	bool loaded;
+	bool toArchive;
+
+};
+
 class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public p3ThreadedService
 {
 	public:
 
-		p3GroupDistrib(uint16_t subtype,
+	/*!
+	 *
+	 * @param subtype service type
+	 * @param cs handle to cache strapper
+	 * @param cft handle to cache transfer, required to correctly initialise p3GroupDistrib
+	 * @param sourcedir directory for remote cache files
+	 * @param storedir directory for local cache files
+	 * @param keyBackUpDir when key back function invoked, keys are stored here
+	 * @param configId
+	 * @param storePeriod how long local msgs are kept for
+	 * @param archivePeriod how long archived msgs are kept for
+	 * @param pubPeriod length of time interval before pending msgs/grps are published
+	 */
+	p3GroupDistrib(uint16_t subtype,
 			CacheStrapper *cs, CacheTransfer *cft,
 			std::string sourcedir, std::string storedir, std::string keyBackUpDir,
 			uint32_t configId,
-					uint32_t storePeriod, uint32_t pubPeriod);
+					uint32_t storePeriod, uint32_t archivePeriod, uint32_t pubPeriod);
 
 		virtual ~p3GroupDistrib() ;
 
@@ -394,12 +423,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		bool locked_buildCacheTable(void);
 
-		/*!
-		 * if grp's message is not loaded, load it, and update cache table
-		 * @param grpId group whose messages to load if not cached
-		 */
-		void locked_processHistoryCached(const std::string& grpId);
-
 
 		/*!
 		 * loads cache data which contains location of cache files belonging
@@ -419,6 +442,47 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		bool locked_loadHistoryCacheFile();
 
+		/*!
+		 * this removes the given cache id and associated msgs nodes from
+		 * all grp nodes
+		 * cache table is updated to reflect document
+		 * this costly, and is here to be called once a year has been reached on
+		 * @param pCid the cache id to remove from cache document
+		 */
+		void locked_removeCacheTableEntry(const pCacheId& pCid);
+
+		/*!
+		 *
+		 * @param grpId
+		 * @param msg
+		 * @return
+		 */
+		bool locked_archiveMsg(const std::string& grpId, RsDistribSignedMsg* msg);
+
+		/*!
+		 *
+		 * @param grpId archive msgs to load
+		 * @return false if there are no archived msgs
+		 */
+		bool loadArchive(const std::string& grpId);
+
+
+		/*!
+		 * the hash and path for msgArch is set here
+		 * do not call frequently expensive IO
+		 * @param msgArch the archive to send to file
+		 * @return if archiving to file succeeded
+		 */
+		bool sendArchiveToFile(RsDistribMsgArchive* msgArch);
+
+		/*!
+		 * to be called, preferably in periods, archives flagged
+		 * to be sent to file will be archived and
+		 * IndicateConfigChanged is called to save
+		 * archive file locations
+		 */
+		void archiveRun();
+
 	private:
 
 		/* these lists are filled by the overloaded fns... then cleared by the thread */
@@ -430,8 +494,18 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 			/* load cache files */
 		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical, const pCacheId& cid);
-		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
-		void	locked_loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
+
+		/*!
+		 * @param filename absolute cache file path
+		 * @param cacheSubId cache subid, needed to save cache to history file
+		 * @param src peer src id
+		 * @param ts timestamp
+		 * @param local set to whether it islocal or remote cache
+		 * @param historical set to whether it is an old cache
+		 * @param cacheLoad is a history cache opt load, prevent adding to cache history again
+		 */
+		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts,
+				bool local, bool historical, bool cacheLoad);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -478,6 +552,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
                 bool    loadGroupKey(RsDistribGrpKey *newKey, bool historical);
 
 
+		/*!
+		 * if grp's message is not loaded, load it, and update cache table
+		 * @param grpId group whose messages to load if not cached
+		 */
+		void processHistoryCached(const std::string& grpId);
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -658,6 +737,9 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		void    locked_publishPendingMsgs();
 
 		/*!
+		 * This function is key to determining how long caches permeate
+		 * a distributed network, after mStorePeriod has elapsed for a message
+		 * it is over written since its cache subid is used for the cache file name
 		 * @return cache sub id
 		 */
 		uint16_t locked_determineCacheSubId();
@@ -851,7 +933,7 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::
 
 		std::list<GroupCache> mLocalCaches;
 		std::map<std::string, GroupInfo> mGroups;
-		uint32_t mStorePeriod, mPubPeriod;
+		uint32_t mStorePeriod, mPubPeriod, mArchivePeriod;
 
 		/* Message Publishing */
 		std::list<RsDistribSignedMsg *> mPendingPublish;
@@ -888,11 +970,14 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::
 		time_t mLastCacheDocUpdate;
 		bool mUpdateCacheDoc, mHistoricalCachesLoaded;
 
+
 		std::map<std::string, nodeCache> mCacheTable; // (cid, node)
 
 		/// contains information on cached data
 		pugi::xml_document mCacheDoc;
-	
+
+		/* msg archiving */
+		msgArchMap mMsgArchive;
 };
 
 

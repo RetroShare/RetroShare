@@ -134,6 +134,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     m_bProcessSettings = false;
     subscribeFlags = 0;
+    mFillthreadCount = 0;
+
 
     connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
@@ -465,7 +467,9 @@ void ForumsDialog::updateDisplay()
 {
     std::list<std::string> forumIds;
     std::list<std::string>::iterator it;
-    if (!rsForums)
+
+    // suspend access to forum while thread is running
+    if (!rsForums || (mFillthreadCount != 0))
         return;
 
     if (rsForums->forumsChanged(forumIds))
@@ -770,9 +774,11 @@ void ForumsDialog::fillThreadFinished()
         thread = NULL;
     }
 
+    mFillthreadCount -= 1;
 #ifdef DEBUG_FORUMS
     std::cerr << "ForumsDialog::fillThreadFinished done" << std::endl;
 #endif
+
 }
 
 void ForumsDialog::fillThreadProgress(int current, int count)
@@ -865,6 +871,8 @@ void ForumsDialog::insertThreads()
 #ifdef DEBUG_FORUMS
     std::cerr << "ForumsDialog::insertThreads() Start fill thread" << std::endl;
 #endif
+
+    mFillthreadCount +=1;
 
     // start thread
     fillThread->start();

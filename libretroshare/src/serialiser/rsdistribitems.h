@@ -38,6 +38,7 @@ const uint8_t RS_PKT_SUBTYPE_DISTRIB_GRP      		= 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISTRIB_GRP_KEY   		= 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG  	= 0x03;
 const uint8_t RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA	= 0x04;
+const uint8_t RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY      = 0x10;
 
 /**************************************************************************/
 
@@ -209,6 +210,30 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 	RsTlvSecurityKey key;
 };
 
+/*!
+ * for storing file to archived msgs of a group
+ */
+class RsDistribMsgHstry: public RsItem
+{
+	public:
+
+		RsDistribMsgHstry(uint16_t service_type)
+	:RsItem(RS_PKT_VERSION_SERVICE, service_type, RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY)
+		{ return; }
+
+        RsDistribMsgHstry()
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY)
+        { return; }
+
+virtual ~RsDistribMsgHstry() { return; }
+
+virtual void clear();
+virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+	std::string grpId; /* Grp Id */
+	std::string msgHstryFilePath; // path to where archived msgs are stored
+	std::string msgHstryFileHash; // hash of file at file path
+};
 		
 class RsDistribSerialiser: public RsSerialType
 {
@@ -248,6 +273,10 @@ virtual uint32_t sizeConfigData(RsDistribConfigData *);
 virtual bool serialiseConfigData(RsDistribConfigData *item, void *data, uint32_t *size);
 virtual RsDistribConfigData *deserialiseConfigData(void* data, uint32_t *size);
 
+/* For RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY */
+virtual uint32_t sizeMsgHstry(RsDistribMsgHstry *);
+virtual bool serialiseMsgHstry(RsDistribMsgHstry *item, void *data, uint32_t *size);
+virtual RsDistribMsgHstry*deserialiseMsgHstry(void* data, uint32_t *size);
 
 const uint16_t SERVICE_TYPE;
 

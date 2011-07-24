@@ -41,7 +41,16 @@
 class pqistore: public PQInterface
 {
 public:
+
+	/*!
+	 * bio passed must be valid throughout lifetime of a pqistore instance
+	 * @param rss
+	 * @param srcId
+	 * @param bio_in pqistore deletes bio once constructor called
+	 * @param bio_flagsin
+	 */
 	pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bio_in, int bio_flagsin);
+
 virtual ~pqistore();
 
 // PQInterface
@@ -84,6 +93,13 @@ class pqiSSLstore: public pqistore
 
 public:
 
+	/*!
+	 *
+	 * @param rss
+	 * @param srcId
+	 * @param bio_in deleted once pqiSSLstore call its destructor
+	 * @param bio_flagsin
+	 */
 	pqiSSLstore(RsSerialiser *rss, std::string srcId, BinEncryptedFileInterface *bio_in, int bio_flagsin);
 
 	virtual ~pqiSSLstore();

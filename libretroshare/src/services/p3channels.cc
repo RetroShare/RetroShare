@@ -66,13 +66,15 @@ RsChannels *rsChannels = NULL;
  * PUBPERIOD * 2^16 = max STORE PERIOD */
 #define CHANNEL_STOREPERIOD (30*24*3600)    /*  30 * 24 * 3600 - secs in a 30 day month */
 #define CHANNEL_PUBPERIOD   120            /* 2 minutes ... (max = 455 days) */
+#define CHANNEL_ARCHIVE_PERIOD	(180*24*3600)
 #define MAX_AUTO_DL 1E9 /* auto download of attachment limit; 1 GIG */
 
 p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft, RsFiles *files, 
                 std::string srcdir, std::string storedir, std::string chanDir)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, chanDir,
-                        CONFIG_TYPE_CHANNELS, CHANNEL_STOREPERIOD, CHANNEL_PUBPERIOD),
+                        CONFIG_TYPE_CHANNELS, CHANNEL_STOREPERIOD, CHANNEL_ARCHIVE_PERIOD,
+                        CHANNEL_PUBPERIOD),
 	mRsFiles(files), 
 	mChannelsDir(chanDir)
 { 

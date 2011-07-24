@@ -740,6 +740,7 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
+	// bio is cleaned up after stream goes out of scope
 	BinEncryptedFileInterface *bio = new BinEncryptedFileInterface(cfgFname.c_str(), bioflags);
 	pqiSSLstore stream(setupSerialiser(), "CONFIG", bio, stream_flags);
 

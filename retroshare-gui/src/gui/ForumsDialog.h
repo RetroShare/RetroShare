@@ -136,6 +136,7 @@ private:
     QFont m_ForumNameFont;
     int lastViewType;
     std::string lastForumID;
+    int mFillthreadCount;
 
     ForumsFillThread *fillThread;
 

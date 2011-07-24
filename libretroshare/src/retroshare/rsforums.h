@@ -115,6 +115,11 @@ std::ostream &operator<<(std::ostream &out, const ForumMsgInfo &info);
 class RsForums;
 extern RsForums   *rsForums;
 
+/*!
+ * @brief interface to rs forums, a distributed cache based service
+ * @note avoid requesting available messages until requested by the user, requesting any information
+ * on messages for a grpId is expensive memory wise.
+ */
 class RsForums 
 {
 	public:
@@ -148,6 +153,13 @@ virtual	bool ForumMessageSend(ForumMsgInfo &info) = 0;
 virtual bool forumRestoreKeys(const std::string& fId) = 0;
 virtual bool forumSubscribe(const std::string &fId, bool subscribe)	= 0;
 
+/*!
+ *
+ * @param fId forumId to retrieve msg count for, leave as blank to get msg count for all subscribed forums
+ * @param newCount number new msgs
+ * @param unreadCount number of unread msgs
+ * @return true if successful, false otherwise
+ */
 virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, unsigned int &unreadCount) = 0;
 
 /****************************************/

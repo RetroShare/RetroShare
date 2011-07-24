@@ -1,14 +1,13 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib bitdht
+CONFIG += staticlib bitdht debug
 CONFIG -= qt
 TARGET = retroshare
 
 # Beware: All data of the stripped services are lost
 #CONFIG += minimal
-DEFINES *= PQI_DISABLE_TUNNEL 
-#ENABLE_CACHE_OPT
+DEFINES *= PQI_DISABLE_TUNNEL ENABLE_CACHE_OPT
 
 minimal {
 	CONFIG -= use_blogs

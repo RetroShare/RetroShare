@@ -75,13 +75,15 @@ RsForums *rsForums = NULL;
 /* Forums will be initially stored for 1 year 
  * remember 2^16 = 64K max units in store period.
  * PUBPERIOD * 2^16 = max STORE PERIOD */
-#define FORUM_STOREPERIOD (365*24*3600)    /* 365 * 24 * 3600 - secs in a year */
-#define FORUM_PUBPERIOD   600 		   /* 10 minutes ... (max = 455 days) */
+#define FORUM_STOREPERIOD (60*24*3600)    /* 60 * 24 * 3600 - secs in two months */
+#define FORUM_PUBPERIOD   30 		   /* 10 minutes ... (max = 455 days) */
+#define FORUM_ARCHIVE_PERIOD (365*24*3600) /* 365 * 24 * 3600 - secs in a year */
 
 p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
                         std::string srcdir, std::string storedir, std::string forumDir)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, forumDir,
-                CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_PUBPERIOD),
+                CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_ARCHIVE_PERIOD,
+                FORUM_PUBPERIOD),
 	mForumsDir(forumDir)
 { 
 
@@ -294,6 +296,7 @@ bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &
 
 bool p3Forums::getForumMessage(const std::string &fId, const std::string &mId, ForumMsgInfo &info)
 {
+	processHistoryCached(fId);
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
 	RsDistribMsg *msg = locked_getGroupMsg(fId, mId);
@@ -550,7 +553,7 @@ bool p3Forums::getMessageCount(const std::string &fId, unsigned int &newCount, u
 
 		if (grpFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
 			std::list<std::string> msgIds;
-			if (getAllMsgList(fId, msgIds)) {
+			if (getAllMsgList(fId, msgIds)) { // get msg ids without causing a costly cache load
 
 				RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 

@@ -858,6 +858,134 @@ RsDistribConfigData *RsDistribSerialiser::deserialiseConfigData(void *data, uint
 }
 
 
+uint32_t    RsDistribSerialiser::sizeMsgHstry(RsDistribMsgHstry *item)
+{
+	uint32_t s = 8; /* header */
+
+	/* RsDistribSignedMsg stuff */
+	s += GetTlvStringSize(item->grpId);
+	s += GetTlvStringSize(item->msgHstryFileHash);
+	s += GetTlvStringSize(item->msgHstryFilePath);
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool     RsDistribSerialiser::serialiseMsgHstry(RsDistribMsgHstry *item, void *data, uint32_t *pktsize)
+{
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsDistribSerialiser::serialiseMsgHstry()" << std::endl;
+#endif
+	uint32_t tlvsize = sizeMsgHstry(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::serialiseMsgHstry() FAIL no space" << std::endl;
+#endif
+		return false; /* not enough space */
+	}
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* grpId */
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->msgHstryFileHash);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PATH, item->msgHstryFilePath);
+
+	if (offset != tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::serialiseMsgHstry() FAIL Size Error! " << std::endl;
+#endif
+		ok = false;
+	}
+
+#ifdef RSSERIAL_DEBUG
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseMsgHstry() NOK" << std::endl;
+	}
+#endif
+
+	return ok;
+}
+
+
+RsDistribMsgHstry *RsDistribSerialiser::deserialiseMsgHstry(void *data, uint32_t *pktsize)
+{
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsDistribSerialiser::deserialiseMsgHstry()" << std::endl;
+#endif
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(SERVICE_TYPE != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY != getRsItemSubType(rstype)))
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseMsgHstry() Wrong Type" << std::endl;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseMsgHstry() Wrong Size" << std::endl;
+#endif
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	RsDistribMsgHstry* item = new RsDistribMsgHstry();
+	/* skip the header */
+	offset += 8;
+
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_SHA1, item->msgHstryFileHash);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PATH, item->msgHstryFilePath);
+
+
+	if (offset != rssize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseMsgHstry() size mismatch" << std::endl;
+#endif
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseMsgHstry() NOK" << std::endl;
+#endif
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
 
 
 
@@ -867,6 +995,8 @@ uint32_t    RsDistribSerialiser::size(RsItem *i)
 	RsDistribGrpKey *dgk;
 	RsDistribSignedMsg *dsm;
 	RsDistribConfigData *dsd;
+	RsDistribMsgHstry *dmh;
+
 
 	/* in order of frequency */
 	if (NULL != (dsm = dynamic_cast<RsDistribSignedMsg *>(i)))
@@ -885,6 +1015,10 @@ uint32_t    RsDistribSerialiser::size(RsItem *i)
 	{
 		return sizeConfigData(dsd);
 	}
+	else if(NULL != (dmh = dynamic_cast<RsDistribMsgHstry *>(i)))
+	{
+		return sizeMsgHstry(dmh);
+	}
 
 	return 0;
 }
@@ -898,6 +1032,7 @@ bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 	RsDistribGrpKey *dgk;
 	RsDistribSignedMsg *dsm;
 	RsDistribConfigData *dsd;
+	RsDistribMsgHstry *dmh;
 
 	if (NULL != (dsm = dynamic_cast<RsDistribSignedMsg *>(i)))
 	{
@@ -914,6 +1049,10 @@ bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 	else if(NULL != (dsd = dynamic_cast<RsDistribConfigData *>(i)))
 	{
 		return serialiseConfigData(dsd, data, pktsize);
+	}
+	else if(NULL != (dsd = dynamic_cast<RsDistribConfigData *>(i)))
+	{
+			return serialiseMsgHstry(dmh, data, pktsize);
 	}
 	return false;
 }
@@ -945,6 +1084,9 @@ RsItem *RsDistribSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 		case RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA:
 			return deserialiseConfigData(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY:
+			return deserialiseMsgHstry(data, pktsize);
 			break;
 		default:
 			return NULL;
