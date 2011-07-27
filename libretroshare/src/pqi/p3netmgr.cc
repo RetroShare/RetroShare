@@ -129,6 +129,8 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 		mLastSlowTickTime = 0;
 		mOldNatType = RSNET_NATTYPE_UNKNOWN;
 		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
+		mLocalAddr.sin_port = 0;
+		mLocalAddr.sin_addr.s_addr = 0;
 	}
 	
 #ifdef NETMGR_DEBUG
