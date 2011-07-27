@@ -175,14 +175,14 @@ void pqiNetStateBox::reset()
 	/* Parameters set externally */
 	
 	mStunDhtSet = false;
-	time_t mStunDhtTS = 0;
-	bool mStunDhtStable = false;
+	mStunDhtTS = 0;
+	mStunDhtStable = false;
 	//struct sockaddr_in mStunDhtAddr;
 	
 	mStunProxySet = false;
 	mStunProxySemiStable = false; 
-	time_t mStunProxyTS = 0;
-	bool mStunProxyStable = false;
+	mStunProxyTS = 0;
+	mStunProxyStable = false;
 	//struct sockaddr_in mStunProxyAddr;
 	
 	mUPnPSet = false;
