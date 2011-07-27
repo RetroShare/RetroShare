@@ -548,7 +548,7 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t period;
 	uint32_t timeout;
 	uint32_t type;
-	uint32_t flags;
+	uint32_t flags = 0 ;
 
 	struct sockaddr_in proxyaddr;
 	struct sockaddr_in srcaddr;
