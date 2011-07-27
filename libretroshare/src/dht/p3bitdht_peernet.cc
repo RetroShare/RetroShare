@@ -559,7 +559,12 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	}
 
 	/* if we get here, we are an endpoint (peer specified in peerId) */
-
+	
+	/* translate id into string for exclusive mode */
+	std::ostringstream idstr;
+	bdStdPrintNodeId(idstr, &(peerId.id));
+	std::string pid = idstr.str();
+	
 	switch(cbtype)
 	{
 		case BITDHT_CONNECT_CB_AUTH:
@@ -701,7 +706,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 							std::cerr << "dhtConnectionCallback: Attempting to Grab ExclusiveLock of UdpStunner";
 							std::cerr << std::endl;
 #endif
-							int stun_age = mProxyStunner->grabExclusiveMode();
+							
+							int stun_age = mProxyStunner->grabExclusiveMode(pid);
 							if (stun_age > 0)
 							{
 								int delay = 0;
@@ -735,7 +741,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 									std::cerr << "PeerAction: Connect Proxy: ERROR Cannot find PeerStatus";
 									std::cerr << std::endl;
 									connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
-									mProxyStunner->releaseExclusiveMode(false);
+									mProxyStunner->releaseExclusiveMode(pid,false);
 								}
 							}
 							else
@@ -1075,6 +1081,12 @@ int p3BitDht::doActions()
 				bool connectionReqFailed = false;
 				bool grabbedExclusivePort = false;
 
+				/* translate id into string for exclusive mode */
+				std::ostringstream idstr;
+				bdStdPrintNodeId(idstr, &(action.mDestId.id));
+				std::string pid = idstr.str();
+				
+				
 				// Parameters that will be used for the Connect Request.
 				struct sockaddr_in connAddr; // We zero this address. (DHT Layer handles most cases)
 				sockaddr_clear(&connAddr);
@@ -1143,6 +1155,8 @@ int p3BitDht::doActions()
 						stunner = mDhtStunner;
 					}
 					
+
+					
 					if ((connectOk) && (stunner) && (stunner->externalAddr(extaddr, extStable)))
 					{
 						if (extStable)
@@ -1157,7 +1171,7 @@ int p3BitDht::doActions()
 							/* check if we require exclusive use of the proxy port */
 							if (exclusivePort)
 							{
-								int stun_age = mProxyStunner->grabExclusiveMode();
+								int stun_age = mProxyStunner->grabExclusiveMode(pid);
 								if (stun_age > 0)
 								{
 									int delay = 0;
@@ -1285,10 +1299,10 @@ int p3BitDht::doActions()
 					std::cerr << std::endl;
 #endif
 
-					if (grabbedExclusivePort)
-					{
-						mProxyStunner->releaseExclusiveMode(false);
-					}
+					//if (grabbedExclusivePort)
+					//{
+					//	mProxyStunner->releaseExclusiveMode(pid,false);
+					//}
 
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
@@ -1300,6 +1314,25 @@ int p3BitDht::doActions()
 						dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
 						dpd->mPeerReqMode = action.mMode;
 						dpd->mPeerReqTS = now;
+
+						if (grabbedExclusivePort)
+						{
+							ReleaseProxyExclusiveMode_locked(dpd, false);
+						}
+					}
+					else
+					{
+						std::cerr << "PeerAction: ERROR Connection Attempt to: ";
+						bdStdPrintId(std::cerr, &(action.mDestId));
+						std::cerr << " has no Internal Dht Peer!";
+						std::cerr << std::endl;
+
+						if (grabbedExclusivePort)
+						{
+							std::cerr << "PeerAction: ERROR ERROR, we grabd Exclusive Port to do this, trying emergency release";
+							std::cerr << std::endl;
+							mProxyStunner->releaseExclusiveMode(pid,false);
+						}
 					}
 				}
 
@@ -2176,7 +2209,8 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
 	{
 #ifdef DEBUG_PEERNET
-		std::cerr << "p3BitDht::monitorConnections() Request Active (Paused)... Killing for next Attempt";
+		std::cerr << "p3BitDht::UdpConnectionFailed_locked() ";
+		std::cerr << "Request Active (Paused)... Killing for next Attempt";
 		std::cerr << std::endl;					
 #endif
 		
@@ -2195,7 +2229,8 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 	// only an error if we initiated the connection.
 	else if (dpd->mPeerConnectPoint == BD_PROXY_CONNECTION_START_POINT)
 	{
-		std::cerr << "p3BitDht::monitorConnections() ERROR Request not active, can't stop";
+		std::cerr << "p3BitDht::UdpConnectionFailed_locked() ";
+		std::cerr << "ERROR Request not active, can't stop";
 		std::cerr << std::endl;										
 	}
 
@@ -2207,22 +2242,28 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely)
 {
 #ifdef DEBUG_BITDHT_COMMON
+#endif
 	std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked()";
 	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 	std::cerr << std::endl;
-#endif
-
+	
+	/* translate id into string for exclusive mode */
+	std::ostringstream idstr;
+	bdStdPrintNodeId(idstr, &(dpd->mDhtId.id));
+	std::string pid = idstr.str();
+	
+	
 	if (dpd->mExclusiveProxyLock)
 	{
-		if (mProxyStunner->releaseExclusiveMode(addrChgLikely))
+		if (mProxyStunner->releaseExclusiveMode(pid, addrChgLikely))
 		{
 			dpd->mExclusiveProxyLock = false;
 
 #ifdef DEBUG_PEERNET
+#endif
 			std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked() Lock released by Connection to peer: ";
 			bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 			std::cerr << std::endl;
-#endif
 		}
 		else 
 		{
@@ -2237,9 +2278,9 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 	else
 	{
 #ifdef DEBUG_BITDHT_COMMON
+#endif
 		std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked() Don't Have a Lock";
 		std::cerr << std::endl;
-#endif
 	}
 
 }
