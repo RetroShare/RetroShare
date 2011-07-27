@@ -118,6 +118,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	mCount = 0;
 	mLastCacheDocUpdate  = time(NULL);
 	mHistoricalCachesLoaded = false;
+	mUpdateCacheDoc = true ;
 
 #ifdef RSMUTEX_DEBUG
 	distribMtx.setName("p3GroupDistrib - " + keyBackUpDir.substr(keyBackUpDir.find_last_of('/') + 1));
