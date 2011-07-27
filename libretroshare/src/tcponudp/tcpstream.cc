@@ -63,7 +63,7 @@ int	checkData(uint8 *data, int size, int idx);
 int	setupBinaryCheck(std::string fname);
 #endif
 
-static const uint32 kMaxQueueSize = 100;
+static const uint32 kMaxQueueSize = 300;    // Was 100, which means max packet size of 100k (smaller than max packet size).
 static const uint32 kMaxPktRetransmit = 20;
 static const uint32 kMaxSynPktRetransmit = 100; // 100 => 200secs = over 3 minutes startup
 static const int    TCP_STD_TTL = 64;

@@ -49,6 +49,7 @@ const int32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
 const int32_t TOU_STUN_DEFAULT_TARGET_RATE  = 15; /* 20 secs is minimum to keep a NAT UDP port open */
 const double  TOU_SUCCESS_LPF_FACTOR = 0.90;
 
+#define EXCLUSIVE_MODE_TIMEOUT	300
 
 UdpStunner::UdpStunner(UdpPublisher *pub)
 	:UdpSubReceiver(pub), stunMtx("UdpSubReceiver"), eaddrKnown(false), eaddrStable(false),
@@ -108,26 +109,48 @@ void	UdpStunner::SimSymmetricNat()
 #endif
 
 
-int	UdpStunner::grabExclusiveMode()		/* returns seconds since last send/recv */
+
+int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since last send/recv */
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+	time_t now = time(NULL);
+
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
-	std::cerr << "UdpStunner::setExclusiveMode();
+	std::cerr << "UdpStunner::grabExclusiveMode();"
 	std::cerr << std::endl;
 #endif
+	
 	if (mExclusiveMode)
 	{
 #ifdef DEBUG_UDP_STUNNER_FILTER
-		std::cerr << "UdpStunner::setExclusiveMode() FAILED;
+		std::cerr << "UdpStunner::grabExclusiveMode() FAILED";
 		std::cerr << std::endl;
 #endif
+
+		std::cerr << "UdpStunner::grabExclusiveMode() FAILED, already held by: " << mExclusiveHolder;
+		std::cerr << std::endl;
+		std::cerr << "UdpStunner::grabExclusiveMode() Was Grabbed: " << now - mExclusiveModeTS;
+		std::cerr << " secs ago";
+		std::cerr << std::endl;
+
+		/* This can happen if AUTH, but START never received! (occasionally).
+		 */
+		if (now - mExclusiveModeTS > EXCLUSIVE_MODE_TIMEOUT)
+		{
+			mExclusiveMode = false;
+			mForceRestun = true;
+
+			std::cerr << "UdpStunner::grabExclusiveMode() Held for too Long... TIMEOUT & Stun Forced";
+			std::cerr << std::endl;
+		}
+		
 		return 0;
 	}
 
-	time_t now = time(NULL);
 	mExclusiveMode = true;
 	mExclusiveModeTS = now;
+        mExclusiveHolder = holder;
 
 	int lastcomms = mStunLastRecvAny;
 	if (mStunLastSendAny > lastcomms)
@@ -143,24 +166,26 @@ int	UdpStunner::grabExclusiveMode()		/* returns seconds since last send/recv */
 		commsage = 1;
 	}
 #ifdef DEBUG_UDP_STUNNER_FILTER
-	std::cerr << "UdpStunner::setExclusiveMode() SUCCESS. last comms: " << commsage;
+#endif
+	std::cerr << "UdpStunner::grabExclusiveMode() SUCCESS. last comms: " << commsage;
 	std::cerr << " ago";
 	std::cerr << std::endl;
-#endif
+	std::cerr << "UdpStunner::grabExclusiveMode() Exclusive held by: " << mExclusiveHolder;
+	std::cerr << std::endl;
 
 	return commsage;
 }
 
-int	UdpStunner::releaseExclusiveMode(bool forceStun)
+int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
 	if (!mExclusiveMode)
 	{
 #ifdef DEBUG_UDP_STUNNER_FILTER
+#endif
 		std::cerr << "UdpStunner::cancelExclusiveMode() ERROR, not in exclusive Mode";
 		std::cerr << std::endl;
-#endif
 		return 0;
 	}
 
@@ -183,12 +208,21 @@ int	UdpStunner::releaseExclusiveMode(bool forceStun)
 	}
 #endif
 
+	if (mExclusiveHolder != holder)
+	{
+		std::cerr << "UdpStunner::cancelExclusiveMode() ERROR release MisMatch: ";
+		std::cerr << " Original Grabber: ";
+		std::cerr << mExclusiveHolder;
+		std::cerr << " Releaser: ";
+		std::cerr << holder;
+		std::cerr << std::endl;
+	}
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
+#endif
 	std::cerr << "UdpStunner::cancelExclusiveMode() Canceled. Was in ExclusiveMode for: " << now - mExclusiveModeTS;
 	std::cerr << " secs";
 	std::cerr << std::endl;
-#endif
 
 	return 1;
 }
