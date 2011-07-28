@@ -125,9 +125,13 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 	mUdpBitDht->addCallback(bdcb);
 
 	/* enable all modes */
+	/* Switched to only Proxy Mode - as Direct Connections can be unreliable - as they share the UDP with the DHT....
+	 * We'll get these working properly and then if necessary get Direct further tested.
+	 */
 	mUdpBitDht->ConnectionOptions(
 			// BITDHT_CONNECT_MODE_DIRECT | BITDHT_CONNECT_MODE_PROXY | BITDHT_CONNECT_MODE_RELAY,
-			BITDHT_CONNECT_MODE_DIRECT | BITDHT_CONNECT_MODE_PROXY,
+			//BITDHT_CONNECT_MODE_DIRECT | BITDHT_CONNECT_MODE_PROXY,
+			BITDHT_CONNECT_MODE_PROXY,
                         BITDHT_CONNECT_OPTION_AUTOPROXY);
 
 }
