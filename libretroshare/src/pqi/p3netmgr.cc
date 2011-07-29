@@ -1783,6 +1783,10 @@ void p3NetMgrIMPL::updateNetStateBox_reset()
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
 		mNetStateBox.reset();
+
+		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
+		mOldNatType = RSNET_NATTYPE_UNKNOWN;
+
 	}
 }
 

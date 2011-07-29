@@ -683,7 +683,11 @@ continue_packet:
 							<< (int)(((unsigned char*)block)[0]) << " " 
 							<< (int)(((unsigned char*)block)[1]) << " " 
 							<< (int)(((unsigned char*)block)[2]) << " " 
-							<< (int)(((unsigned char*)block)[3])  << "\n" ;
+							<< (int)(((unsigned char*)block)[3]) << " " 
+							<< (int)(((unsigned char*)block)[4]) << " " 
+							<< (int)(((unsigned char*)block)[5]) << " " 
+							<< (int)(((unsigned char*)block)[6]) << " " 
+							<< (int)(((unsigned char*)block)[7]) << "\n" ;
 				msgout <<  "\n";
 				msgout <<  "Please get your friends to upgrade to the latest version";
 				msgout <<  "\n";
@@ -695,6 +699,11 @@ continue_packet:
 
 				std::string msg = msgout.str();
 				notify->AddLogMessage(0, RS_SYS_WARNING, title, msg);
+
+				std::cerr << "pqistreamer::handle_incoming() ERROR: Read Packet too Big" << std::endl;
+				std::cerr << msgout.str();
+				std::cerr << std::endl;
+
 			}
 			bio->close();	
 			reading_state = reading_state_initial ;	// restart at state 1.
