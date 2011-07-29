@@ -29,8 +29,11 @@
 #include "retroshare/rspeers.h"
 
 /***
-#define RSSERIAL_DEBUG 1
-***/
+ * #define RSSERIAL_DEBUG 		1
+ * #define RSSERIAL_ERROR_DEBUG 	1
+ ***/
+
+#define RSSERIAL_ERROR_DEBUG 		1
 
 #include <iostream>
 
@@ -256,7 +259,7 @@ bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *d
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
 #endif
 	}
@@ -380,7 +383,7 @@ bool     RsFileConfigSerialiser::serialiseFileItem(RsFileConfigItem *item, void 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsFileConfigSerialiser::serialiseFileItem() Size Error! " << std::endl;
 #endif
 	}
@@ -497,7 +500,7 @@ RsItem *RsGeneralConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_GENERAL_CONFIG != getRsItemType(rstype)))
 	{
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialise() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
@@ -576,7 +579,7 @@ bool     RsGeneralConfigSerialiser::serialiseKeyValueSet(RsConfigKeyValueSet *it
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Size Error! " << std::endl;
 #endif
 	}
@@ -598,7 +601,7 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 		(RS_PKT_TYPE_GENERAL_CONFIG != getRsItemType(rstype)) ||
 		(RS_PKT_SUBTYPE_KEY_VALUE != getRsItemSubType(rstype)))
 	{
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
@@ -606,7 +609,7 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 
 	if (*pktsize < rssize)    /* check size */
 	{
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() Not Enough Space" << std::endl;
 #endif
 		return NULL; /* not enough data */
@@ -629,7 +632,7 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 
 	if (offset != rssize)
 	{
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() offset != rssize" << std::endl;
 #endif
 		/* error */
@@ -639,7 +642,7 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 
 	if (!ok)
 	{
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() ok = false" << std::endl;
 #endif
 		delete item;
@@ -724,7 +727,7 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_PEER_CONFIG != getRsItemType(rstype)))
 	{
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::deserialise() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
@@ -845,6 +848,10 @@ bool RsPeerConfigSerialiser::serialiseOldNet(RsPeerOldNetItem *item, void *data,
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeOldNet(item);
 	uint32_t offset = 0;
 
+#ifdef RSSERIAL_ERROR_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseOldNet() ERROR should never use this function" << std::endl;
+#endif
+
 	if(*size < tlvsize)
 		return false; /* not enough space */
 
@@ -857,8 +864,8 @@ bool RsPeerConfigSerialiser::serialiseOldNet(RsPeerOldNetItem *item, void *data,
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << ok << std::endl;
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header test: " << tlvsize << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseOldNet() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseOldNet() Header test: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -885,7 +892,7 @@ bool RsPeerConfigSerialiser::serialiseOldNet(RsPeerOldNetItem *item, void *data,
 	if(offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::serialise() Size Error! " << std::endl;
 #endif
 	}
@@ -902,6 +909,9 @@ RsPeerOldNetItem *RsPeerConfigSerialiser::deserialiseOldNet(void *data, uint32_t
 
 	uint32_t offset = 0;
 
+#ifdef RSSERIAL_ERROR_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseOldNet() ERROR should never use this function" << std::endl;
+#endif
 
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
@@ -1091,8 +1101,17 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeNet(item);
 	uint32_t offset = 0;
 
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() tlvsize: " << tlvsize << std::endl;
+#endif
+
 	if(*size < tlvsize)
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialiseNet() ERROR not enough space" << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	*size = tlvsize;
 
@@ -1127,8 +1146,8 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	if(offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsPeerConfigSerialiser::serialise() Size Error! " << std::endl;
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialiseNet() Size Error! " << std::endl;
 #endif
 	}
 
@@ -1145,16 +1164,28 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	uint32_t offset = 0;
 
 
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() rssize: " << rssize << std::endl;
+#endif
+
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
 		(RS_PKT_SUBTYPE_PEER_NET != getRsItemSubType(rstype)))
 	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
 	if (*size < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR not enough data" << std::endl;
+#endif
 		return NULL; /* not enough data */
+	}
 
 	/* set the packet length */
 	*size = rssize;
@@ -1181,10 +1212,11 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= item->extAddrList.GetTlv(data, rssize, &offset);
 
 
-        //if (offset != rssize)
-        if (false) //use this line for backward compatibility
+        if (offset != rssize)
 	{
-
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR size mismatch" << std::endl;
+#endif
 		/* error */
 		delete item;
 		return NULL;
@@ -1257,7 +1289,7 @@ bool RsPeerConfigSerialiser::serialiseStun(RsPeerStunItem *item, void *data, uin
 	if(offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::serialiseStun() Size Error! " << std::endl;
 #endif
 	}
@@ -1427,7 +1459,7 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, u
 	if(offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::serialiseGroup() Size Error! " << std::endl;
 #endif
 	}
@@ -1607,7 +1639,7 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 	if (offset !=tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsConfigSerialiser::serialisertransfer() Size Error! " << std::endl;
 #endif
 	}

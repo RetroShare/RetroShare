@@ -34,10 +34,15 @@
 #include <iostream>
 
 /***
-#define RSSERIAL_DEBUG 1
+ * #define RSSERIAL_DEBUG 		1
+ * #define RSSERIAL_ERROR_DEBUG		1
 ***/
 
-#ifdef RSSERIAL_DEBUG
+// As these represent SERIOUS ERRORs, this debug should be left one.
+#define RSSERIAL_ERROR_DEBUG		1
+
+
+#if defined(RSSERIAL_DEBUG) || defined(RSSERIAL_ERROR_DEBUG)
 	#include <sstream>
 #endif
 	
@@ -277,11 +282,11 @@ uint32_t    RsSerialiser::size(RsItem *item)
 			if (serialisers.end() == (it = serialisers.find(type)))
 			{
 
-#ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::size() serialiser missing!";
+#ifdef  RSSERIAL_ERROR_DEBUG
+				std::cerr << "RsSerialiser::size() ERROR serialiser missing!";
 			
 				std::ostringstream out;
-				out << std::hex << item->PacketId();
+				out << std::hex << item->PacketId() << std::dec;
 
 				std::cerr << "RsSerialiser::size() PacketId: ";
 				std::cerr << out.str();
@@ -319,10 +324,10 @@ bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 			if (serialisers.end() == (it = serialisers.find(type)))
 			{
 
-#ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::serialise() serialiser missing!";
+#ifdef  RSSERIAL_ERROR_DEBUG
+				std::cerr << "RsSerialiser::serialise() ERROR serialiser missing!";
 				std::ostringstream out;
-				out << std::hex << item->PacketId();
+				out << std::hex << item->PacketId() << std::dec;
 
 				std::cerr << "RsSerialiser::serialise() PacketId: ";
 				std::cerr << out.str();
@@ -350,8 +355,8 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 	/* find the type */
 	if (*size < 8)
 	{
-#ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() Not Enough Data(1)";
+#ifdef  RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsSerialiser::deserialise() ERROR Not Enough Data(1)";
 		std::cerr << std::endl;
 #endif
 		return NULL;
@@ -360,10 +365,13 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 	uint32_t type = (getRsItemId(data) & 0xFFFFFF00);
 	uint32_t pkt_size = getRsItemSize(data);
 
+	//std::cerr << "RsSerialiser::deserialise() RsItem Type: " << std::hex << getRsItemId(data) << " Size: " << pkt_size;
+	//std::cerr << std::endl;
+
 	if (pkt_size < *size)
 	{
-#ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() Not Enough Data(2)";
+#ifdef  RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsSerialiser::deserialise() ERROR Not Enough Data(2)";
 		std::cerr << std::endl;
 #endif
 		return NULL;
@@ -384,10 +392,10 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 			if (serialisers.end() == (it = serialisers.find(type)))
 			{
 
-#ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::deserialise() deserialiser missing!";
+#ifdef  RSSERIAL_ERROR_DEBUG
+				std::cerr << "RsSerialiser::deserialise() ERROR deserialiser missing!";
 				std::ostringstream out;
-				out << std::hex << getRsItemId(data);
+				out << std::hex << getRsItemId(data) << std::dec;
 
 				std::cerr << "RsSerialiser::deserialise() PacketId: ";
 				std::cerr << out.str();
@@ -401,17 +409,43 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 	RsItem *item = (it->second)->deserialise(data, &pkt_size);
 	if (!item)
 	{
-#ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::deserialise() Failed!";
-				std::cerr << std::endl;
+#ifdef  RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsSerialiser::deserialise() ERROR Failed!";
+		std::cerr << std::endl;
+		std::cerr << "RsSerialiser::deserialise() pkt_size: " << pkt_size << " vs *size: " << *size;
+		std::cerr << std::endl;
+
+		uint32_t failedtype = getRsItemId(data);
+		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";
+		std::cerr << getRsItemSize(data) << " ID: ";
+		std::cerr << std::hex << failedtype << std::dec;
+		std::cerr << "RsSerialiser::deserialise() FAILED PACKET: ";
+		std::cerr << " Version: " << std::hex << (uint32_t) getRsItemVersion(failedtype) << std::dec;
+		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
+		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
+		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
+		std::cerr << std::endl;
 #endif
 		return NULL;
 	}
 
 	if (pkt_size != *size)
 	{
-#ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() Warning: size mismatch!";
+#ifdef  RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsSerialiser::deserialise() ERROR: size mismatch!";
+		std::cerr << std::endl;
+		std::cerr << "RsSerialiser::deserialise() pkt_size: " << pkt_size << " vs *size: " << *size;
+		std::cerr << std::endl;
+
+		uint32_t failedtype = getRsItemId(data);
+		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";
+		std::cerr << getRsItemSize(data) << " ID: ";
+		std::cerr << std::hex << failedtype << std::dec;
+		std::cerr << "RsSerialiser::deserialise() FAILED PACKET: ";
+		std::cerr << " Version: " << std::hex << (uint32_t) getRsItemVersion(failedtype) << std::dec;
+		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
+		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
+		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
 		std::cerr << std::endl;
 #endif
 	}

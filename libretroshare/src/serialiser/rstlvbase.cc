@@ -409,14 +409,6 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
 	if (!data)
 		return false;
 
-	// Check if we have a null string (this happens with certs)
-	//
-	if (size == *offset)
-	{
-	   in = "" ;
-	   return true ;
-	}
-
 	if (size < *offset)
 	{
 #ifdef TLV_BASE_DEBUG
