@@ -24,7 +24,8 @@
 
 #include "natstatus.h"
 
-#include <retroshare/rsiface.h>
+#include "retroshare/rsiface.h"
+#include "retroshare/rsconfig.h"
 
 NATStatus::NATStatus(QWidget *parent)
  : QWidget(parent)
@@ -49,6 +50,81 @@ NATStatus::NATStatus(QWidget *parent)
 
 void NATStatus::getNATStatus()
 {
+	uint32_t netState = rsConfig -> getNetState();
+
+	switch(netState)
+	{
+		default:
+		case RSNET_NETSTATE_BAD_UNKNOWN:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/yellowled.png"));
+        		iconLabel->setToolTip(tr("Network Status Unknown"));
+		}
+			break;
+
+		case RSNET_NETSTATE_BAD_OFFLINE:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
+        		iconLabel->setToolTip(tr("Offline"));
+		}
+			break;
+
+// BAD. (RED)
+		case RSNET_NETSTATE_BAD_NATSYM:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/redled.png"));
+        		iconLabel->setToolTip(tr("Nasty Firewall"));
+		}
+			break;
+
+		case RSNET_NETSTATE_BAD_NODHT_NAT:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/redled.png"));
+        		iconLabel->setToolTip(tr("DHT Disabled and Firewalled"));
+		}
+			break;
+
+
+// CAUTION. (ORANGE)
+		case RSNET_NETSTATE_WARNING_RESTART:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/yellowled.png"));
+        		iconLabel->setToolTip(tr("Network Restarting"));
+		}
+			break;
+
+		case RSNET_NETSTATE_WARNING_NATTED:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/yellowled.png"));
+        		iconLabel->setToolTip(tr("Behind Firewall"));
+		}
+			break;
+
+		case RSNET_NETSTATE_WARNING_NODHT:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/yellowled.png"));
+        		iconLabel->setToolTip(tr("DHT Disabled"));
+		}
+			break;
+
+// GOOD (GREEN)
+		case RSNET_NETSTATE_GOOD:
+		{
+        		iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
+        		iconLabel->setToolTip(tr("OK | RetroShare Server"));
+		}
+			break;
+	}
+}
+
+#if 0
+
+void NATStatus::getNATStatus()
+{
+	uint32_t netMode = rsConfig -> getNetworkMode();
+	uint32_t natType = rsConfig -> getNatTypeMode();
+	uint32_t natHole = rsConfig -> getNatHoleMode();
+
     rsiface->lockData(); /* Lock Interface */
 
     /* now the extra bit .... switch on check boxes */
@@ -111,3 +187,5 @@ void NATStatus::getNATStatus()
     rsiface->unlockData(); /* UnLock Interface */
 
 }
+
+#endif

@@ -356,11 +356,13 @@ void TextPage::updateOwnCert()
 
 static void sendMail (std::string sAddress, std::string sSubject, std::string sBody)
 {
+#ifdef Q_WS_WIN
     /* search and replace the end of lines with: "%0D%0A" */
     size_t loc;
     while ((loc = sBody.find("\n")) != sBody.npos) {
         sBody.replace(loc, 1, "%0D%0A");
     }
+#endif
 
     std::string mailstr = "mailto:" + sAddress;
     mailstr += "?subject=" + sSubject;

@@ -33,6 +33,8 @@
 #endif 
 
 #include <retroshare/rsplugin.h>
+#include <retroshare/rsconfig.h>
+
 #include "rshare.h"
 #include "MainWindow.h"
 #include "MessengerWindow.h"
@@ -192,6 +194,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
 
+
+    /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
+    bool advancedMode = false;
+    std::string advsetting;
+    if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
+    {
+	advancedMode = true;
+    }
+
+
+
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "linkActivated");
 
@@ -294,8 +307,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 #ifdef GETSTARTED_GUI
     MainPage *getStartedPage = NULL;
-    ui.stackPages->add(getStartedPage = new GetStartedDialog(ui.stackPages),
+
+    if (!advancedMode)
+    {
+    	ui.stackPages->add(getStartedPage = new GetStartedDialog(ui.stackPages),
                        createPageAction(QIcon(IMG_HELP), tr("Getting Started"), grp));
+    }
 #endif
 
 

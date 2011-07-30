@@ -21,7 +21,9 @@
 
 #include <iostream>
 #include <rshare.h>
-#include <retroshare/rsinit.h>
+#include "retroshare/rsinit.h"
+#include "retroshare/rsconfig.h"
+
 #include "GeneralPage.h"
 #include <util/stringutil.h>
 #include <QSystemTrayIcon>
@@ -66,6 +68,17 @@ bool GeneralPage::save(QString &errmsg)
 
   RsInit::setAutoLogin(ui.autoLogin->isChecked());
 
+  if (ui.checkAdvanced->isChecked())
+  {
+	std::string opt("YES");  
+	rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
+  }
+  else
+  {
+	std::string opt("NO");  
+	rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
+  }
+
   return true;
 }
 
@@ -88,4 +101,13 @@ void GeneralPage::load()
   ui.spinBox->setValue(Settings->getMaxTimeBeforeIdle());
 
   ui.autoLogin->setChecked(RsInit::getAutoLogin());
+
+  bool advancedmode = false;
+  std::string advsetting;
+  if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
+  {
+	advancedmode = true;
+  }
+  ui.checkAdvanced->setChecked(advancedmode);
+
 }

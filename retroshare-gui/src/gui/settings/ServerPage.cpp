@@ -116,7 +116,7 @@ void ServerPage::load()
 
 	/* set net mode */
 	int netIndex = 0;
-	switch(detail.tryNetMode)
+	switch(detail.netMode)
 	{
 		case RS_NETMODE_EXT:
 			netIndex = 2;
@@ -267,7 +267,7 @@ void ServerPage::saveAddresses()
 			break;
 	}
 
-	if (detail.tryNetMode != netMode)
+	if (detail.netMode != netMode)
 		rsPeers->setNetworkMode(ownId, netMode);
 
 	uint32_t visState = 0;

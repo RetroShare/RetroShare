@@ -67,35 +67,72 @@ DHTStatus::DHTStatus(QWidget *parent)
 
 void DHTStatus::getDHTStatus()
 {
-    rsiface->lockData(); /* Lock Interface */
+	rsiface->lockData(); /* Lock Interface */
 
-    /* now the extra bit .... switch on check boxes */
-    const RsConfig &config = rsiface->getConfig();
+	/* now the extra bit .... switch on check boxes */
+	const RsConfig &config = rsiface->getConfig();
 
-    if (config.netDhtOk)
-    {
-        dhtstatusLabel->setPixmap(QPixmap(":/images/greenled.png"));
-        dhtstatusLabel->setToolTip(tr("DHT On"));
+	if (!(config.DHTActive))
+	{
+		// GRAY.
+		dhtstatusLabel->setPixmap(QPixmap(":/images/grayled.png"));
+		dhtstatusLabel->setToolTip(tr("DHT Off"));
+		
+		spaceLabel->setVisible(false);
+		dhtnetworkLabel->setVisible(false);
+		dhtnetworksizeLabel->setVisible(false);
+		
+		dhtnetworksizeLabel->setText("");
+		dhtnetworksizeLabel->setToolTip("");
+	}
+	else
+	{
+		if (config.netDhtOk)
+		{
+#define MIN_RS_NET_SIZE		10
+			// YELLOW or GREEN.
+			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
+			{
+				dhtstatusLabel->setPixmap(QPixmap(":/images/yellowled.png"));
+				dhtstatusLabel->setToolTip(tr("DHT Searching for Retroshare Peers"));
+				
+				spaceLabel->setVisible(true);
+				dhtnetworkLabel->setVisible(true);
+				dhtnetworksizeLabel->setVisible(true);
+				
+				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
+				dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
+			}
+			else
+			{
+				dhtstatusLabel->setPixmap(QPixmap(":/images/greenled.png"));
+				dhtstatusLabel->setToolTip(tr("DHT Good"));
+				
+				spaceLabel->setVisible(true);
+				dhtnetworkLabel->setVisible(true);
+				dhtnetworksizeLabel->setVisible(true);
+				
+				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
+				dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
+			}
+				
+		
 
-        spaceLabel->setVisible(true);
-        dhtnetworkLabel->setVisible(true);
-        dhtnetworksizeLabel->setVisible(true);
+		}
+		else
+		{
+			// RED - some issue.
+			dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
+			dhtstatusLabel->setToolTip(tr("DHT Error"));
+			
+			spaceLabel->setVisible(false);
+			dhtnetworkLabel->setVisible(false);
+			dhtnetworksizeLabel->setVisible(false);
+			
+			dhtnetworksizeLabel->setText("");
+			dhtnetworksizeLabel->setToolTip("");
+		}
+	}
+	rsiface->unlockData(); /* UnLock Interface */
 
-        dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
-        dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
-    }
-    else
-    {
-        dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
-        dhtstatusLabel->setToolTip(tr("DHT Off"));
-
-        spaceLabel->setVisible(false);
-        dhtnetworkLabel->setVisible(false);
-        dhtnetworksizeLabel->setVisible(false);
-
-        dhtnetworksizeLabel->setText("");
-        dhtnetworksizeLabel->setToolTip("");
-    }
-
-    rsiface->unlockData(); /* UnLock Interface */
 }
