@@ -31,12 +31,18 @@
 #include "pqi/p3peermgr.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
+#include "pqi/p3cfgmgr.h"
+
+
+#define RS_CONFIG_ADVANCED_STRING       "AdvMode"
+
+
 
 class p3ServerConfig: public RsServerConfig
 {
 	public:
 
-	p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr);
+	p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3GeneralConfig *genCfg);
 virtual ~p3ServerConfig();
 
 	/* From RsIface::RsConfig */
@@ -70,13 +76,19 @@ virtual uint32_t getNatTypeMode();
 virtual uint32_t getNatHoleMode();
 virtual uint32_t getConnectModes();
 
+virtual bool getConfigurationOption(uint32_t key, std::string &opt);
+virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
+
 /********************* ABOVE is RsConfig Interface *******/
 
 	private:
 
+bool findConfigurationOption(uint32_t key, std::string &keystr);
+
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
 	p3NetMgr  *mNetMgr;
+	p3GeneralConfig *mGeneralConfig;
 
 	RsMutex configMtx;
 	uint32_t mUserLevel; // store last one... will later be a config Item too.

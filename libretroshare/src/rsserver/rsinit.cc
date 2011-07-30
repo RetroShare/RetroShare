@@ -2302,7 +2302,7 @@ int RsServer::StartupRetroShare()
 
 	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 	rsDisc  = new p3Discovery(ad);
-	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr);
+	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, mGeneralConfig);
 
 #ifndef MINIMAL_LIBRS
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);

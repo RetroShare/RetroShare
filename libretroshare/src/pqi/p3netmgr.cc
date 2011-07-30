@@ -1779,6 +1779,13 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 #endif
 			mNetStateBox.setAddressWebIP(false, &tmpip);
 		}
+
+
+		/* finally - if the user has set Forwarded, pass it on */
+		if (mNetMode & RS_NET_MODE_TRY_EXT)
+		{
+			mNetStateBox.setPortForwarded(true, 0); // Port unknown for now.
+		}
 	}
 }
 

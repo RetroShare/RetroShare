@@ -112,7 +112,8 @@ extern RsServerConfig *rsConfig;
 
 
 
-
+// Must Match up with strings internal to Retroshare.
+#define RS_CONFIG_ADVANCED		0x0101
 
 
 class RsConfigStartup
@@ -235,6 +236,9 @@ virtual uint32_t getNetworkMode() = 0;
 virtual uint32_t getNatTypeMode() = 0;
 virtual uint32_t getNatHoleMode() = 0;
 virtual uint32_t getConnectModes() = 0;
+
+virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
+virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;
 
 
 };

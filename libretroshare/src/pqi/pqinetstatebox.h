@@ -28,6 +28,8 @@ class pqiNetStateBox
 	void setAddressNatPMP(bool active, struct sockaddr_in *addr);
 	void setAddressWebIP(bool active, struct sockaddr_in *addr);
 
+	void setPortForwarded(bool active, uint16_t port);
+
 	void setDhtState(bool dhtOn, bool dhtActive);
 
 	uint32_t getNetStateMode();
@@ -89,7 +91,7 @@ class pqiNetStateBox
 	bool mWebIPActive;
 	time_t mWebIPTS;
 
-	bool mPortForwardedSet;
+	bool mPortForwardSet;
 	uint16_t  mPortForwarded;
 };
 

@@ -105,6 +105,19 @@ void pqiNetStateBox::setAddressWebIP(bool active, struct sockaddr_in *addr)
 }
 
 
+void pqiNetStateBox::setPortForwarded(bool active, uint16_t port)
+{
+	if ((!mPortForwardSet) || (mPortForwarded != port))
+
+	{
+		mPortForwardSet = true;
+		mPortForwarded = port;
+
+		mStatusOkay = false;
+	}
+}
+
+
 void pqiNetStateBox::setDhtState(bool on, bool active)
 {
 	if ((!mDhtSet) || (mDhtActive != active) || (mDhtOn != on))
@@ -197,8 +210,8 @@ void pqiNetStateBox::reset()
 	mWebIPActive = false;
 	//struct sockaddr_in mWebIPAddr;
 
-	mPortForwardedSet = false;
-	mPortForwarded = 0;
+	mPortForwardSet = false;
+	mPortForwarded = false;
 	
 	mDhtSet = false;
 	mDhtActive = false;
@@ -412,7 +425,7 @@ void pqiNetStateBox::determineNetworkState()
 	
 					//mExtAddrStable = true;
 				}
-				else if (mPortForwardedSet)
+				else if (mPortForwardSet)
 				{
 					mNetworkMode = RSNET_NETWORK_BEHINDNAT;
 					// Use Fallback Guess.
@@ -476,7 +489,7 @@ void pqiNetStateBox::determineNetworkState()
 				//mExtAddrStable = true;
 				mNetStateMode = RSNET_NETSTATE_WARNING_NODHT;
 			}
-			else if (mPortForwardedSet)
+			else if (mPortForwardSet)
 			{
 				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_UNKNOWN;

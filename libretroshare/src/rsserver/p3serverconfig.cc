@@ -28,12 +28,14 @@
 RsServerConfig *rsConfig = NULL;
 
 
-p3ServerConfig::p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr)
+p3ServerConfig::p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3GeneralConfig *genCfg)
 :configMtx("p3ServerConfig")
 {
 	mPeerMgr = peerMgr;
 	mLinkMgr = linkMgr;
 	mNetMgr = netMgr;
+
+	mGeneralConfig = genCfg;
 
 	mUserLevel = RSCONFIG_USER_LEVEL_NEW; /* START LEVEL */
 
@@ -45,6 +47,53 @@ p3ServerConfig::~p3ServerConfig()
 { 
 	return; 
 }
+
+
+#define RS_CONFIG_ADVANCED_STRING 	"AdvMode"
+
+bool p3ServerConfig::findConfigurationOption(uint32_t key, std::string &keystr)
+{
+	bool found = false;
+	switch(key)
+	{
+		case RS_CONFIG_ADVANCED:
+			keystr = RS_CONFIG_ADVANCED_STRING;
+			found = true;
+			break;
+	}
+	return found;
+}
+
+
+bool p3ServerConfig::getConfigurationOption(uint32_t key, std::string &opt)
+{
+	std::string strkey;
+	if (!findConfigurationOption(key, strkey))
+	{
+		std::cerr << "p3ServerConfig::getConfigurationOption() OPTION NOT VALID: " << key;
+		std::cerr << std::endl;
+		return false;
+	}
+
+	opt = mGeneralConfig->getSetting(strkey);
+	return true;
+}
+
+		
+bool p3ServerConfig::setConfigurationOption(uint32_t key, const std::string &opt)
+{
+	std::string strkey;
+	if (!findConfigurationOption(key, strkey))
+	{
+		std::cerr << "p3ServerConfig::setConfigurationOption() OPTION NOT VALID: " << key;
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mGeneralConfig->setSetting(strkey, opt);
+	return true;
+}
+
 
 	/* From RsIface::RsConfig */
 
