@@ -217,10 +217,6 @@ class RsDistribMsgHstry: public RsItem
 {
 	public:
 
-		RsDistribMsgHstry(uint16_t service_type)
-	:RsItem(RS_PKT_VERSION_SERVICE, service_type, RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY)
-		{ return; }
-
         RsDistribMsgHstry()
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_MSG_HSTRY)
         { return; }

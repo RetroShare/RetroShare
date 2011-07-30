@@ -237,6 +237,17 @@ std::ostream &RsDistribGrpKey::print(std::ostream &out, uint16_t indent)
         return out;
 }
 
+void RsDistribMsgHstry::clear()
+{
+	grpId.clear();
+	msgHstryFileHash.clear();
+	msgHstryFilePath.clear();
+}
+
+std::ostream& RsDistribMsgHstry::print(std::ostream& out, uint16_t indent)
+{
+	return out;
+}
 /*************************************************************************/
 /*************************************************************************/
 
@@ -1050,7 +1061,7 @@ bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 	{
 		return serialiseConfigData(dsd, data, pktsize);
 	}
-	else if(NULL != (dsd = dynamic_cast<RsDistribConfigData *>(i)))
+	else if(NULL != (dmh = dynamic_cast<RsDistribMsgHstry *>(i)))
 	{
 			return serialiseMsgHstry(dmh, data, pktsize);
 	}

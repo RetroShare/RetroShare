@@ -313,13 +313,16 @@ class CacheDataPending
 	bool      mHistorical;
 };
 
+typedef std::pair<std::string, RsDistribSignedMsg*> msgPair;
+typedef std::map<std::string, RsDistribSignedMsg*> msgPairMap;
+
 class RsDistribMsgArchive
 {
 public:
 
 	RsDistribMsgArchive();
 
-	std::list<RsDistribSignedMsg*> msgs;
+	std::map<std::string , RsDistribSignedMsg*> msgs;
 	std::string grpId;
 	std::string msgFileHash;
 	std::string msgFilePath;
@@ -437,11 +440,13 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		/*!
 		 * encrypts and saves cache file
+		 * @return false if cache file does not save
 		 */
 		bool locked_saveHistoryCacheFile();
 
 		/*!
-		 * decrypte and save cache file
+		 * decrypts and loads cache file
+		 * @return false if loading fails
 		 */
 		bool locked_loadHistoryCacheFile();
 
@@ -455,7 +460,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		void locked_removeCacheTableEntry(const pCacheId& pCid);
 
 		/*!
-		 *
+		 * archives a msg for given group Id
 		 * @param grpId
 		 * @param msg
 		 * @return
@@ -463,8 +468,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		bool locked_archiveMsg(const std::string& grpId, RsDistribSignedMsg* msg);
 
 		/*!
-		 *
-		 * @param grpId archive msgs to load
+		 * loads archived msg for a group
+		 * @param grpId the grpId of group to load archive msgs for
 		 * @return false if there are no archived msgs
 		 */
 		bool loadArchive(const std::string& grpId);
@@ -528,8 +533,10 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param msg msg to loaded
 		 * @param src src of msg (peer id)
 		 * @param local is this a local cache msg (your msg)
+		 * @param historical
+		 * @param archive
 		 */
-		bool	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local, bool historical);
+		bool	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local, bool historical, bool archive = false);
 
 		/*!
 		 * msg is loaded to its group and republished,
@@ -538,7 +545,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param src src of msg (peer id)
 		 * @param local is this a local cache msg (your msg)
 		 */
-		bool locked_loadMsg(RsDistribSignedMsg *newMsg, const std::string &src, bool local, bool historical);
+		bool locked_loadMsg(RsDistribSignedMsg *newMsg, const std::string &src, bool local, bool historical, bool archive = false);
 
 		/*!
 		 * adds newgrp to grp set, GroupInfo type created and stored
@@ -936,7 +943,7 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::
 
 		std::list<GroupCache> mLocalCaches;
 		std::map<std::string, GroupInfo> mGroups;
-		uint32_t mStorePeriod, mPubPeriod, mArchivePeriod;
+		uint32_t mStorePeriod, mPubPeriod, mArchivePeriod, mOptPeriod;
 
 		/* Message Publishing */
 		std::list<RsDistribSignedMsg *> mPendingPublish;
@@ -981,6 +988,8 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::
 
 		/* msg archiving */
 		msgArchMap mMsgArchive;
+		uint32_t mLastArchivePeriod;
+		bool mUpdateArchive;
 };
 
 
