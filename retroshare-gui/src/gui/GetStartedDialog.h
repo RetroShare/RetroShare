@@ -26,6 +26,8 @@
 #include "ui_GetStartedDialog.h"
 #include "mainpage.h"
 
+#include <QTimer>
+
 class GetStartedDialog : public MainPage
 {
     Q_OBJECT
@@ -50,14 +52,29 @@ private slots:
   void tickConnectChanged();
   void tickFirewallChanged();
 
+  void addFriends();
+  void inviteFriends();
+
+  void emailFeedback();
+  void emailSupport();
+  void emailSubscribe();
+  void emailUnsubscribe();
+
+  void OpenFAQ();
+  void OpenForums();
+  void OpenWebsite();
 
 private:
 
   void updateFromUserLevel();
 
+
   bool mFirstShow;
 
 	private:
+
+ 	QTimer *mTimer;
+ 	QTimer *mInviteTimer;
 
 /** Qt Designer generated object */
     Ui::GetStartedDialog ui;
