@@ -324,7 +324,7 @@ uint32_t    RsDiscSerialiser::sizeReply(RsDiscReply *item)
 	for (std::list<RsPeerNetItem>::iterator it = item->rsPeerList.begin(); it != item->rsPeerList.end(); it++)
 	{
 		s += rss.size(&(*it)) ;
-#ifdef RSSERIAL_ERROR_DEBUG
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::sizeReply() +RsPeerNetItem Size: " << s << std::endl;
 #endif
 	}
@@ -392,7 +392,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 		// The size has been updated to its exact value.
 		offset += size;
 
-#ifdef RSSERIAL_ERROR_DEBUG
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::serialiseReply() RsPeerNetItem ok?: " << ok << std::endl;
 		std::cerr << "RsDiscSerialiser::serialiseReply() Offset After RsPeerNetItem: " << offset << std::endl;
 #endif

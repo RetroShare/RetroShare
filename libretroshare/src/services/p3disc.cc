@@ -675,11 +675,13 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 						//
 						if (item->PeerId() == pitem->pid) 
 						{
-#ifdef P3DISC_DEBUG
 							std::cerr << "Info sent by the peer itself -> updating self info:" << std::endl;
 							std::cerr << "  -> current local  addr = " << pitem->currentlocaladdr << std::endl;
 							std::cerr << "  -> current remote addr = " << pitem->currentremoteaddr << std::endl;
-							std::cerr << "  -> clearing NODISC flag " << std::endl;
+							//std::cerr << "  -> clearing NODISC flag " << std::endl;
+							std::cerr << "  -> visState            =  " << std::hex << pitem->visState << std::dec;
+							std::cerr << std::endl;
+#ifdef P3DISC_DEBUG
 #endif
 
 							// When the peer sends his own list of IPs, the info replaces the existing info, because the

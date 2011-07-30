@@ -109,9 +109,7 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 		mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 		mOwnState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
 		mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
-		mOwnState.netMode = RS_NET_MODE_UDP;
-		// user decided.
-		//mOwnState.netMode |= RS_NET_MODE_TRY_UPNP;
+		mOwnState.netMode = RS_NET_MODE_UPNP; // Default to UPNP.
 	
 		lastGroupId = 1;
 
@@ -973,17 +971,46 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 		/* "it" points to peer */
 		it->second.visState = visState;
 		dht_state = it->second.visState & RS_VIS_STATE_NODHT ;
+
+		std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", " << std::hex << visState << std::dec << ") ";
+		std::cerr << " NAME: " << it->second.name;
+
+		if (it->second.visState & RS_VIS_STATE_NODHT)
+		{
+			std::cerr << " NO-DHT ";
+		}
+		else
+		{
+			std::cerr << " DHT-OK ";
+		}
+		if (it->second.visState & RS_VIS_STATE_NODISC)
+		{
+			std::cerr << " NO-DISC ";
+		}
+		else
+		{
+			std::cerr << " DISC-OK ";
+		}
+		std::cerr << std::endl;
+
 	}
 	if(isFriend)
 	{
 		/* toggle DHT state */
 		if(dht_state)
 		{
+
+			std::cerr << "p3PeerMgrIMPL::setVisState() setFriendVisibility => false";
+			std::cerr << std::endl;
+
 			/* hidden from DHT world */
 			mLinkMgr->setFriendVisibility(id, false);
 		}
 		else
 		{
+			std::cerr << "p3PeerMgrIMPL::setVisState() setFriendVisibility => true";
+			std::cerr << std::endl;
+
 			mLinkMgr->setFriendVisibility(id, true);
 		}
 	}
@@ -1032,6 +1059,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	item->pid = getOwnId();
         item->gpg_id = mOwnState.gpg_id;
         item->location = mOwnState.location;
+#if 0
 	if (mOwnState.netMode & RS_NET_MODE_TRY_EXT)
 	{
 		item->netMode = RS_NET_MODE_EXT;
@@ -1044,6 +1072,8 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	{
 		item->netMode = RS_NET_MODE_UDP;
 	}
+#endif
+	item->netMode = mOwnState.netMode;
 
 	item->visState = mOwnState.visState;
 	item->lastContact = mOwnState.lastcontact;

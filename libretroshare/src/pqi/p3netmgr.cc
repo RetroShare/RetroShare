@@ -441,6 +441,11 @@ void p3NetMgrIMPL::netTick()
 
 #ifdef NETMGR_DEBUG_TICK
 	std::cerr << "p3NetMgrIMPL::netTick()" << std::endl;
+
+	std::cerr << "p3NetMgrIMPL::netTick() mNetMode: " << std::hex << mNetMode;
+	std::cerr << " ACTUALMODE: " << (mNetMode & RS_NET_MODE_ACTUAL);
+	std::cerr << " TRYMODE: " << (mNetMode & RS_NET_MODE_TRYMODE);
+	std::cerr << std::endl;
 #endif
 
 	// Check whether we are stuck on loopback. This happens if RS starts when
