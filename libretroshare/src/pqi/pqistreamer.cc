@@ -166,7 +166,7 @@ pqistreamer::~pqistreamer()
 
 
 // Get/Send Items.
-int	pqistreamer::SendItem(RsItem *si)
+int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 {
 #ifdef RSITEM_DEBUG 
         {
@@ -178,7 +178,7 @@ int	pqistreamer::SendItem(RsItem *si)
 	}
 #endif
 
-	return queue_outpqi(si);
+	return queue_outpqi(si,out_size);
 }
 
 RsItem *pqistreamer::GetItem()
@@ -302,8 +302,9 @@ int	pqistreamer::status()
 //
 /**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
 
-int	pqistreamer::queue_outpqi(RsItem *pqi)
+int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 {
+	pktsize = 0 ;
 #ifdef DEBUG_PQISTREAMER
         std::cerr << "pqistreamer::queue_outpqi() called." << std::endl;
 #endif
@@ -338,7 +339,7 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 		isCntrl = false ;
 	}
 
-        uint32_t pktsize = rsSerialiser->size(pqi);
+   pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 
 #ifdef DEBUG_PQISTREAMER

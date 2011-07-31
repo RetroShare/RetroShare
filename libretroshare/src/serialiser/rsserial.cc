@@ -49,7 +49,8 @@
 RsItem::RsItem(uint32_t t)
 :type(t) 
 {
-	return;
+	_queue_type = CONTROL_QUEUE ;
+	_priority_level = 5 ;
 }
 	
 #ifdef DO_STATISTICS
@@ -116,13 +117,14 @@ void RsItem::operator delete(void *p,size_t s)
 
 RsItem::RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype)
 {
+	_priority_level = 5 ;
+	_queue_type = CONTROL_QUEUE ;
+
 	type = (ver << 24) + (cls << 16) + (t << 8) + subtype;
-	return;
 }
 
 RsItem::~RsItem()
 {
-	return;
 }
 
 	
@@ -158,6 +160,8 @@ uint8_t    RsItem::PacketSubType()
 	/* For Service Packets */	
 RsItem::RsItem(uint8_t ver, uint16_t service, uint8_t subtype)
 {
+	_queue_type = CONTROL_QUEUE ;
+	_priority_level = 5 ;
 	type = (ver << 24) + (service << 8) + subtype;
 	return;
 }

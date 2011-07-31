@@ -110,38 +110,46 @@ class NetInterface;
  **/
 class PQInterface: public RateInterface
 {
-public:
-	PQInterface(const std::string &id) :peerId(id) { return; }
-virtual	~PQInterface() { return; }
+	public:
+		PQInterface(const std::string &id) :peerId(id) { return; }
+		virtual	~PQInterface() { return; }
 
-/*!
- * allows user to send RsItems to a particular facility  (file, network)
- */
-virtual int	SendItem(RsItem *) = 0;
+		/*!
+		 * allows user to send RsItems to a particular facility  (file, network)
+		 */
+		virtual int	SendItem(RsItem *) = 0;
 
-/*!
- * Retrieve RsItem from a facility
- */
-virtual RsItem *GetItem() = 0;
+		// this function is overloaded in classes that need the serilized size to be returned.
+		virtual int	SendItem(RsItem *item,uint32_t& size) 
+		{
+			size = 0 ;
+			std::cerr << "Warning: PQInterface::SendItem(RsItem*,uint32_t&) calledbut not overloaded! Serialized size will not be returned." << std::endl;
+			return SendItem(item) ;
+		}
 
-/**
- * also there are  tick + person id  functions.
- */
-virtual int     tick() { return 0; }
-virtual int     status() { return 0; }
-virtual std::string PeerId() { return peerId; }
+		/*!
+		 * Retrieve RsItem from a facility
+		 */
+		virtual RsItem *GetItem() = 0;
 
-	// the callback from NetInterface Connection Events.
-virtual int	notifyEvent(NetInterface *ni, int event) 
-	{ 
-		(void) ni; /* remove unused parameter warnings */
-		(void) event; /* remove unused parameter warnings */
-		return 0; 
-	}
+		/**
+		 * also there are  tick + person id  functions.
+		 */
+		virtual int     tick() { return 0; }
+		virtual int     status() { return 0; }
+		virtual std::string PeerId() { return peerId; }
+
+		// the callback from NetInterface Connection Events.
+		virtual int	notifyEvent(NetInterface *ni, int event) 
+		{ 
+			(void) ni; /* remove unused parameter warnings */
+			(void) event; /* remove unused parameter warnings */
+			return 0; 
+		}
 
 	private:
 
-	std::string peerId;
+		std::string peerId;
 };
 
 
