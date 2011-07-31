@@ -59,14 +59,13 @@
 
 #include "serialiser/rsbaseitems.h"
 #include "services/p3service.h"
-
-class p3LinkMgr;
+#include "pqi/p3connmgr.h"
 
 
 class p3PortService: public p3Service
 {
 	public:
-	p3PortService(p3LinkMgr *lm);
+	p3PortService(p3ConnectMgr *cm);
 
 	/* example setup functions */
 bool	enablePortForwarding(uint32_t port, std::string peerId);
@@ -76,7 +75,7 @@ virtual int   tick();
 
 	private:
 
-	p3LinkMgr *mLinkMgr;
+	p3ConnectMgr *mConnMgr;
 
 	bool mEnabled;
 	bool mPeerOnline;
