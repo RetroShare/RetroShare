@@ -412,7 +412,6 @@ HEADERS +=	services/p3channels.h \
 			services/p3gameservice.h \
 			services/p3msgservice.h \
 			services/p3photoservice.h \
-			services/p3portservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3tunnel.h
@@ -538,7 +537,6 @@ SOURCES +=	services/p3channels.cc \
 			services/p3gamelauncher.cc \
 			services/p3msgservice.cc \
 			services/p3photoservice.cc \
-			services/p3portservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
