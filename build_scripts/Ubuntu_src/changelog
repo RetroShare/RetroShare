@@ -1,6 +1,144 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+
+     - Plugin system 
+        * Added configuration saving for plugin manager and serialization methods
+        * added a list of accepted plugin hashes
+        * added plugin widget for each plugin in settings, to allow enabling/disabling plugins
+        * updated LinkCloud plugin to new rsPlugin class
+        * put the addconfiguration for plugin manager in rsinit.cc a bit earlier to allow to load 
+          the list of accepted hashes early enough
+        * added icon for disabled plugins
+        * added missing Q_INIT_RESOURCE call to get the plugins icon loading correctly
+ 
+     - GUI 
+        * updated Dht and Nat Indicators to accurately reflect Network status. Roughly:
+           - DHT. Off:     gray, ERROR:   red, NO RS PEERS:           yellow, GOOD: green.
+           - NAT. Offline: gray, BAD NET: red, NO DHT, or FIREWALLED: yellow, GOOD: green
+        * added Advanced mode to the GUI
+           - Switched ServerPage to use netMode, rather than tryNetMode. This fixes the Network Status.
+           - Added "Advanced Mode" to Settings GeneralPage.
+           - Store / Set Advanced Mode via rsConfig::get/setConfigurationOptions.
+           - removed %0D%0A from Linux / OSX emails - made it Windows Only.
+           - updated GetStartedDialog text.
+           - disable GetStartedDialog is AdvancedMode is set.
+           - Enabled buttons for "Invite Friends" and "Add Friend". Linked to Email Invite, and Connect Friend Wizard.
+           - Switched out FAQ for links to website, and email support buttons.
+        * Added Basic Dht Details Window to Retroshare GUI.
+           - created gui/dht/DhtWindow class.
+           - brought across the basic structure from PeerNetQt... will be a condensed version of that GUI.
+           - added to status Menu.
+           - enabled via #define USE_DHTWINDOW  (which is defined! in MainWindow at the moment).
+           - Dht Details only displays Dht Peers at the moment.
+        * Net, Dht and Configuration changes.
+           - set PortForward in NetStateBox when the Network has been setup.
+           - add GeneralConfig to rsConfig external interface.
+           - enabled ADVANCED configuration option.
+        * Addition of a "Getting Started Guide".
+        * Optimized layout of the SubFileItem.
+        * Optimized layout of the private chat window.
+        * Show the cancel button only when downloading or when used in CreateChannelMsg.
+        * Fixed layout problem (vertical scrollbar) in ChannelFeed.
+        * Added a new image to the private chat window to set the window always on top.
+        * Indent text of the channel message and set it to selectable.
+        * Removed the single notify systray icon (combined icon) and combined it with the 
+          normal RetroShare systray icon. The user can choose, which notify icon is shown as 
+          single icon in systray or with the normal RetroShare icon.
+ 
+     - Key mamagement
+        * added a signature add/remove button in connect wizard, only when gpgme-1.3.1 or greater is used, 
+          based on the availability of the GPGME_EXPORT_MODE_MINIMAL option.
+ 
+     - Connectivity
+        * Simplification of p3ConnectMgr => p3LinkMgr, p3PeerMgr & p3NetMgr.
+           - p3peermgr now uses RS_NET_MODE_XXXX instead of RS_NET_MODE_TRY_XXXX
+           - p3netmgr maintains both TRY and ACTUAL mode (not visible through old interface -- TO FIX)
+           - added default to UPNP mode.
+        * Increased TCP WAIT time to allow external port to stabilize.
+        * Improvements to tcponudp library to allow multiple UdpStacks / ports, with alternative receivers.
+        * Improved a lot UDP Connection Code 
+           - Increased Timeout Periods for UDP connections - this was stopping half of them from succeeding.
+           - Export UDP Addresses to DhtWindow.
+           - disabled DIRECT UDP connections (Not always stable, especially if you are firewalled, and not 
+             needed as a TCP connection can be made!)
+           - Added DropPeers() as NON-ACTIVE (this allows peers which aren't VISIBLE to still try and connect)
+           - Resurrected the UdpStunner code, and improved it.
+           - Added UdpRelay code.
+           - Modified startup code and ssludp code to use the new tcponudp and add a stunner.
+        * Added notifications of Failed Connection Attempts in both ways
+ 
+     - Services
+        * Refactored p3chatservice move avatar declaration to p3chat header and encapsulating config methods
+        * added www.myip.dk, and removed showmyip.org address from extaddrfinder
+ 
+     - Internationalization
+        * Fixed german language.
+        * Changed the generation of the gpg key and location to utf8. 
+ 
+     - DHT
+        * Added Bloom filter to speed up finding RS peers in DHT.
+        * Added External DHT Interface to display Connection Information.
+        * extended p3bitdht to provide RsDht interface. (p3bitdht_interface.cc)
+        * Switched on Dht "Attach" Mode if RS is firewalled. (and not nice firewall).
+        * Added interfaces to enable AttachMode switch.
+        * Updated bdboot file.
+ 
+     - Tests
+        * Restored and improved regression test for tcponudp
+        * Added another Test UdpLayer: TimedUdpLayer, This simulates the firewalled situation, by
+          only accepting packets after 60 seconds.
+        * Added quick and dirty BitDht Packet check. test against "d1:" for the first 3 bytes. This should 
+          not conflict with Stun, Relay or TOU packets.
+ 
+     - packaging
+        * Added win32 build bat for libbitdht
+ 
+  * Bug fixes
+     - Removed popup window for file copy error, and redirected the message to std::cerr, to save users.
+     - Set maximum port value to 65535 instead of old arbitrary value of 50000, and warned about 
+       system-reserved ports in server settings gui enabled sorting and added dht icon for the window
+     - Fixed bug in dnsresolver reset function
+     - Silly Bug, overwritten the mConnectFlag with the Bandwidth parameter.
+     - Added missing mutex protection that caused random SIGSEGV in p3disc
+     - Corrected a bug due to reading uint64_t with wrong format on some systems, which caused the hash cache to sometime fail
+     - Fixed bug for 'copy error' and losing cache data conflict in unix and windows style directory 
+       names led to cleaning of remote and local directories in Cachestrapper::loadlist()
+     - Bugfixes to serialization
+         * print out messages when serialisation fails.
+         * removed BUG in TlvGetString() which allows a zero length TLV 
+     - Fixed startup bug (loops into FAILURE)
+     - Fixed buggy rs_inet_ntoa
+     - Fixed a bunch of apple gcc warnings. mainly for(;;); => for(;;) ;
+     - Stops loading of a cache in p3GroupDistrib::loadFileMsgs on shutdown of RetroShare.
+     - Fixed early initialization of QIcon in LinksCloud plugin
+     - Fixed duplicate msgs found between cachefile being formed (caused by not marking cache opt loaded files as local or not)
+       also missing own-msgs bug caused by not accounting for msgs created by users
+     - Added a name to the RsMutex class, allowing debugging of the waiting time for a lock of RsMutex in 
+       rsthreads.h with #define RSMUTEX_DEBUG 300. That means all locks waiting longer than 300ms are logged into the stderr.
+     - Added missing notify when sending a message to an offline user.
+     - DHT code:
+         * fixed up buggy overloading for the udplayer (for testing).
+         * added processing multiple (5) remote processes per tick 
+         * removed unused variables from query data structure.
+         * #defined out debugging in bdSpace, removed old functions.
+         * More agressive attempts to find proxies for connections.
+         * made "final query attempt" use exact peer address rather than midid.
+         * tweaked bdconnection debugging.
+         * increase CONNECTION_MAX_TIMEOUT from 30 => 45. wasn't enough!
+         * Limited bdQuery::QueryIdlePeriod to 15min (was unlimited).
+         * added bdQuery::PotentialPeer cleanup functions - for more robust reporting.
+         * fixed bdQuery debugging printouts.
+         * Implemented BITDHT_QFLAGS_UPDATES flag.
+      - TcoOnUdp code:
+         * Reduce Maximum Transmission size from 1500 -> 1000. This is the cause of Failed Connections. 
+           It looks like UDP packets are being truncated from 1520 -> 1492 bytes, and this is killing the 
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 31 Jul 2011 14:47:46 +0100
+
+retroshare (0.5.1-0.4350~lucid) lucid; urgency=low
+
+  * Improvements
       - Updated tests for tcponudp. 
 
   * Bug fixes
