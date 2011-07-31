@@ -20,7 +20,7 @@
  ****************************************************************/
 
 
-#define GUI_VERSION "0.5.1"
+#define GUI_VERSION "0.5.2"
 
 #define GUI_REVISION "Revision: "
 
@@ -30,4 +30,5 @@
 QString retroshareVersion();
 
 QString retroshareRevision();
+
 
