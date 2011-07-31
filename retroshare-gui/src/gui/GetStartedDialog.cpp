@@ -451,7 +451,7 @@ void GetStartedDialog::emailSupport()
   		case QSysInfo::WV_VISTA: 
 			out << "Windows Vista";
 			break;
-		case QSysInfo::WV_WINDOWS7
+		case QSysInfo::WV_WINDOWS7:
 			out << "Windows 7";
 			break;
   		default: 
