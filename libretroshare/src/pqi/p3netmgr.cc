@@ -699,6 +699,37 @@ void p3NetMgrIMPL::netExtCheck()
 
 		}
 
+		/* Next ask the DhtStunner */
+		if (!mNetFlags.mExtAddrOk)
+		{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
+#endif
+			uint8_t isstable = 0;
+			struct sockaddr_in tmpaddr;
+			sockaddr_clear(&tmpaddr);
+
+			if (mDhtStunner)
+			{
+        			/* input network bits */
+       				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
+				{
+					// must be stable???
+					isStable = (isstable == 1);
+					mNetFlags.mExtAddr = tmpaddr;
+					mNetFlags.mExtAddrOk = true;
+					mNetFlags.mExtAddrStableOk = isStable;
+			
+#ifdef	NETMGR_DEBUG_STATEBOX
+					std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
+					std::cerr << rs_inet_ntoa(tmpaddr.sin_addr) << ":" << htons(tmpaddr.sin_port);
+					std::cerr << " Stable: " << (uint32_t) isstable;
+					std::cerr << std::endl;
+#endif
+				}
+			}
+		}
+
 		/* otherwise ask ExtAddrFinder */
 		if (!mNetFlags.mExtAddrOk)
 		{
@@ -769,12 +800,16 @@ void p3NetMgrIMPL::netExtCheck()
 				std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
 				std::cerr <<  std::endl;
 #endif
-				mNetMode &= ~(RS_NET_MODE_ACTUAL);
-				mNetMode |= RS_NET_MODE_UNREACHABLE;
+
+				// Due to the new UDP connections - we can still connect some of the time!
+				// So limit warning!
+
+				//mNetMode &= ~(RS_NET_MODE_ACTUAL);
+				//mNetMode |= RS_NET_MODE_UNREACHABLE;
 
 				/* send a system warning message */
-				pqiNotify *notify = getPqiNotify();
-				if (notify)
+				//pqiNotify *notify = getPqiNotify();
+				//if (notify)
 				{
 					std::string title = 
 						"Warning: Bad Firewall Configuration";
@@ -784,14 +819,16 @@ void p3NetMgrIMPL::netExtCheck()
 					msg +=  "Retroshare has detected that you are behind";
 					msg +=  " a restrictive Firewall\n";
 					msg +=  "\n";
-					msg +=  "You cannot connect to other firewalled peers\n";
+					msg +=  "You will have limited connectivity to other firewalled peers\n";
 					msg +=  "\n";
 					msg +=  "You can fix this by:\n";
 					msg +=  "   (1) opening an External Port\n";
 					msg +=  "   (2) enabling UPnP, or\n";
 					msg +=  "   (3) get a new (approved) Firewall/Router\n";
 
-					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+					//notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+
+					std::cerr << msg << std::endl;
 				}
 
 			}
@@ -830,6 +867,9 @@ void p3NetMgrIMPL::netExtCheck()
 	{
 		/* Setup NetStateBox with this info */
 		updateNetStateBox_startup();
+
+		/* update PeerMgr with correct info */
+		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 	}
 
 }
@@ -963,7 +1003,7 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		std::cerr << std::endl;
 #endif
 		
-		//mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 		
 		netReset();
 	}

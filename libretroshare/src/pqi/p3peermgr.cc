@@ -641,6 +641,52 @@ bool p3PeerMgrIMPL::addNeighbour(std::string id)
  **********************************************************************/
 
 
+/* This function should only be called from NetMgr,
+ * as it doesn't call back to there.
+ */
+
+bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const struct sockaddr_in &extAddr)
+{
+	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
+	std::cerr << rs_inet_ntoa(localAddr.sin_addr) << ":" << htons(localAddr.sin_port);
+	std::cerr << ", ";
+	std::cerr << rs_inet_ntoa(extAddr.sin_addr) << ":" << htons(extAddr.sin_port);
+	std::cerr << ")" << std::endl;
+
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		//update ip address list
+		pqiIpAddress ipAddressTimed;
+		ipAddressTimed.mAddr = localAddr;
+		ipAddressTimed.mSeenTime = time(NULL);
+		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+
+		mOwnState.localaddr = localAddr;
+	}
+
+
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		//update ip address list
+		pqiIpAddress ipAddressTimed;
+		ipAddressTimed.mAddr = extAddr;
+		ipAddressTimed.mSeenTime = time(NULL);
+		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
+
+		mOwnState.serveraddr = extAddr;
+	}
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	mLinkMgr->setLocalAddress(localAddr);
+
+	return true;
+}
+
+
+
+
 bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in addr)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())

@@ -161,6 +161,10 @@ virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &
 virtual bool    updateLastContact(const std::string& id) = 0;
 virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs) = 0;
 
+
+		// THIS MUST ONLY BE CALLED BY NETMGR!!!!
+virtual bool    UpdateOwnAddress(const struct sockaddr_in &mLocalAddr, const struct sockaddr_in &mExtAddr) = 0;
+
 	/**************** Net Status Info ****************/
 	/*
 	 * MUST RATIONALISE THE DATA FROM THESE FUNCTIONS
@@ -237,6 +241,9 @@ virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &
 virtual bool    updateLastContact(const std::string& id);
 virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
 
+
+		// THIS MUST ONLY BE CALLED BY NETMGR!!!!
+virtual bool    UpdateOwnAddress(const struct sockaddr_in &mLocalAddr, const struct sockaddr_in &mExtAddr);
 	/**************** Net Status Info ****************/
 	/*
 	 * MUST RATIONALISE THE DATA FROM THESE FUNCTIONS
