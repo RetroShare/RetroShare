@@ -790,9 +790,11 @@ static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
     if (msgFlags & RS_MSG_STAR) {
         item[COLUMN_STAR]->setIcon(QIcon(IMAGE_STAR_ON));
         item[COLUMN_STAR]->setText("1");
+        item[COLUMN_STAR]->setData(1, ROLE_SORT);
     } else {
         item[COLUMN_STAR]->setIcon(QIcon(IMAGE_STAR_OFF));
         item[COLUMN_STAR]->setText("0");
+        item[COLUMN_STAR]->setData(0, ROLE_SORT);
     }
 
     bool isNew = msgFlags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
@@ -801,9 +803,11 @@ static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
     if (isNew) {
         item[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-unread.png"));
         item[COLUMN_UNREAD]->setText("1");
+        item[COLUMN_UNREAD]->setData(1, ROLE_SORT);
     } else {
         item[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-read.png"));
         item[COLUMN_UNREAD]->setText("0");
+        item[COLUMN_UNREAD]->setData(0, ROLE_SORT);
     }
 
     // set font
@@ -1145,6 +1149,7 @@ void MessagesDialog::insertMessages()
                 }
             }
             item[COLUMN_TAGS]->setText(text);
+            item[COLUMN_TAGS]->setData(text, ROLE_SORT);
 
             // set color
             QBrush Brush; // standard
