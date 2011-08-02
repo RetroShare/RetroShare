@@ -222,15 +222,11 @@ int     p3MsgService::checkOutgoingMessages()
 
 			/* find the certificate */
 			std::string pid = mit->second->PeerId();
-			peerConnectState pstate;
 			bool toSend = false;
 
 			if (mLinkMgr->isOnline(pid))
 			{
-				if (pstate.state & RS_PEER_S_CONNECTED)
-				{
-					toSend = true;
-				}
+				toSend = true;
 			}
 			else if (pid == ownId) /* FEEDBACK Msg to Ourselves */
 			{
