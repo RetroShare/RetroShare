@@ -111,7 +111,13 @@ void NATStatus::getNATStatus()
 		case RSNET_NETSTATE_GOOD:
 		{
         		iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
-        		iconLabel->setToolTip(tr("OK | RetroShare Server"));
+        		iconLabel->setToolTip(tr("RetroShare Server"));
+		}
+			
+		case RSNET_NETSTATE_ADV_FORWARD:
+		{
+			iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
+			iconLabel->setToolTip(tr("Forwarded Port"));
 		}
 			break;
 	}
