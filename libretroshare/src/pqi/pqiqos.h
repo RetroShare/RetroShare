@@ -32,6 +32,48 @@
 //   \alpha is a constant that is not necessarily an integer, but strictly > 1.
 // - the set of possible priority levels is finite, and pre-determined.
 //
+// We setup packet priority according to the following table:
+//   - some RsItems are omitted. The priority is the one of the closest parent item.
+//   - I listed only items that are sent to friends.
+//
+//    +-------------------------+--------------------------------------------------+-----------------------------------------------+
+//    |Item type                | low priority <---- --------------> high priority | Comment                                       |
+//    |                         |                                                  |                                               |
+//    +-------------------------+- 0 -- 1 -- 2 -- 3 -- 4 -- 5 -- 6 -- 7 -- 8 -- 9 -+-----------------------------------------------+
+//    |Turtle items             |                                                  |                                               |
+//    |   RsGenericTunnelsItem  |                 X                                | States for all turtle FT except file requests |
+//    |   RsTurtleFileReqItem   |                      X                           |                                               |
+//    |   RsTunnelRequestItem   |                                X                 |                                               |
+//    |   RsTunnelOkItem        |                                X                 |                                               |
+//    |   RsTurtleSearchRequest |                           X                      |                                               |
+//    |   RsTurtleSearchResult  |                 X                                |                                               |
+//    |                         |                                                  |                                               |
+//    |File transfer            |                                                  |                                               |
+//    |   RsFileChunkMapRequest |                           X                      |                                               |
+//    |   RsFileChunkMap        |                      X                           |                                               |
+//    |   RsFileCRC32MapRequest |                           X                      |                                               |
+//    |   RsFileCRC32Map        |                      X                           |                                               |
+//    |   RsFileRequest         |                           X                      |                                               |
+//    |   RsFileData            |                      X                           |                                               |
+//    |   RsCacheRequest        |                      X                           |                                               |
+//    |   RsCacheItem           |                 X                                |                                               |
+//    |                         |                                                  |                                               |
+//    |Discovery                |                                                  |                                               |
+//    |   RsDiscReply           |            X                                     |                                               |
+//    |   RsDiscAskInfo         |                 X                                |                                               |
+//    |   RsDiscVersion         |            X                                     |                                               |
+//    |   RsDiscHeartBeat       |                                          X       |                                               |
+//    |                         |                                                  |                                               |
+//    |Chat                     |                                                  |                                               |
+//    |   RsChatItem            |                                     X            | Parent of all chat messages                   |
+//    |   RsChatAvatarItem      |                 X                                |                                               |
+//    |                         |                                                  |                                               |
+//    |Various                  |                                                  |                                               |
+//    |   RsStatusItem          |                      X                           |                                               |
+//    |   VOIP stream items     |                                               X  |                                               |
+//    |                         |                                                  |                                               |
+//    +-------------------------+--------------------------------------------------+-----------------------------------------------+
+//
 #include <vector>
 #include <list>
 
