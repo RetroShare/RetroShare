@@ -38,6 +38,7 @@
 /****
  * #define DEBUG_VORS		1
  ****/
+#define DEBUG_VORS		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -184,6 +185,7 @@ int	p3VoRS::sendPackets()
 		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 		mSentPingTime = now;
 	}
+	return true ;
 }
 
 
@@ -284,7 +286,8 @@ int	p3VoRS::processIncoming()
 		/* clean up */
 		delete item;
 	}
-}
+	return true ;
+} 
 
 int p3VoRS::handlePing(RsItem *item)
 {
@@ -316,6 +319,7 @@ int p3VoRS::handlePing(RsItem *item)
 #endif
 
 	sendItem(pong);
+	return true ;
 }
 
 
@@ -354,6 +358,7 @@ int p3VoRS::handlePong(RsItem *item)
 #endif
 
 	storePongResult(pong->PeerId(), pong->mSeqNo, pingTS, rtt, offset);
+	return true ;
 }
 
 
@@ -427,6 +432,7 @@ uint32_t p3VoRS::getPongResults(std::string id, int n, std::list<RsVoipPongResul
 		/* reversing order - so its easy to trim later */
 		results.push_back(*it);
 	}
+	return i ;
 }
 
 
