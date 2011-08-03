@@ -110,8 +110,6 @@ int	pqihandler::tick()
 
 bool pqihandler::drawFromQoS_queue()
 {
-	//std::cerr<< "pqihandler: Queue has " << qos_queue_size() << " elements. Treating " << 1+qos_queue_size()/10 << " of them." << std::endl;
-
 	++nb_ticks ;
 	time_t now = time(NULL) ;
 	if(last_m + 3 < now)
@@ -121,8 +119,9 @@ bool pqihandler::drawFromQoS_queue()
 		last_m = now ;
 	}
 	float avail_out = getMaxRate(false) * 1024 / ticks_per_sec ;
-
+#ifdef DEBUG_QOS
 	std::cerr << "ticks per sec: " << ticks_per_sec << ", max rate in bytes/s = " << getMaxRate(false)*1024 << ", avail out per tick= " << avail_out << std::endl;
+#endif
 
 	uint64_t total_bytes_sent = 0 ;
 	for(uint32_t i=0;i<qos_queue_size() && total_bytes_sent < avail_out;++i)
@@ -135,10 +134,18 @@ bool pqihandler::drawFromQoS_queue()
 			uint32_t size ;
 			HandleRsItem(item, 0, size);
 			total_bytes_sent += size ;
+#ifdef DEBUG_QOS
 			std::cerr << "treating item " << (void*)item << ", priority " << (int)item->priority_level() << ", size=" << size << std::endl;
+#endif
 		}
 	} 
-	std::cerr << "total bytes sent = " << total_bytes_sent << std::endl;
+#ifdef DEBUG_QOS
+	std::cerr << "total bytes sent = " << total_bytes_sent << ", " ;
+	if(qos_queue_size() > 0) 
+		std::cerr << "Queue still has elements." << std::endl;
+	else
+		std::cerr << "Queue is empty." << std::endl;
+#endif
 
 	return (qos_queue_size() > 0) ;
 }

@@ -40,36 +40,45 @@
 //    |Item type                | low priority <---- --------------> high priority | Comment                                       |
 //    |                         |                                                  |                                               |
 //    +-------------------------+- 0 -- 1 -- 2 -- 3 -- 4 -- 5 -- 6 -- 7 -- 8 -- 9 -+-----------------------------------------------+
-//    |Turtle items             |                                                  |                                               |
-//    |   RsGenericTunnelsItem  |                 X                                | States for all turtle FT except file requests |
-//    |   RsTurtleFileReqItem   |                      X                           |                                               |
+//    |Turtle items (Direct)    |                                                  |                                               |
 //    |   RsTunnelRequestItem   |                                X                 |                                               |
 //    |   RsTunnelOkItem        |                                X                 |                                               |
+//    |   RsTurtleFileReqItem   |                           X                      |                                               |
 //    |   RsTurtleSearchRequest |                           X                      |                                               |
+//    |   RsTurtleFileDataItem  |                 X                                |                                               |
 //    |   RsTurtleSearchResult  |                 X                                |                                               |
+//    |   RsGenericTunnelsItem  |                 X                                | States for all turtle FT except file requests |
 //    |                         |                                                  |                                               |
-//    |File transfer            |                                                  |                                               |
-//    |   RsFileChunkMapRequest |                           X                      |                                               |
-//    |   RsFileChunkMap        |                      X                           |                                               |
-//    |   RsFileCRC32MapRequest |                           X                      |                                               |
-//    |   RsFileCRC32Map        |                      X                           |                                               |
+//    |Turtle items (Forwarded) |                                                  |                                               |
+//    |   RsTurtleFileReqItem   |                      X                           |                                               |
+//    |   RsTurtleSearchRequest |                      X                           |                                               |
+//    |   RsTurtleFileDataItem  |            X                                     |                                               |
+//    |   RsTurtleSearchResult  |            X                                     |                                               |
+//    |   RsGenericTunnelsItem  |            X                                     | States for all turtle FT except file requests |
+//    |                         |                                                  |                                               |
+//    |Direct file transfer     |                                                  |                                               |
 //    |   RsFileRequest         |                           X                      |                                               |
-//    |   RsFileData            |                      X                           |                                               |
+//    |   RsFileChunkMapRequest |                           X                      |                                               |
+//    |   RsFileCRC32MapRequest |                           X                      |                                               |
+//    |   RsFileChunkMap        |                 X                                |                                               |
+//    |   RsFileCRC32Map        |                 X                                |                                               |
+//    |   RsFileData            |                 X                                |                                               |
 //    |   RsCacheRequest        |                      X                           |                                               |
 //    |   RsCacheItem           |                 X                                |                                               |
 //    |                         |                                                  |                                               |
 //    |Discovery                |                                                  |                                               |
-//    |   RsDiscReply           |            X                                     |                                               |
-//    |   RsDiscAskInfo         |                 X                                |                                               |
-//    |   RsDiscVersion         |            X                                     |                                               |
+//    |   RsDiscReply           |       X                                          |                                               |
+//    |   RsDiscAskInfo         |            X                                     |                                               |
+//    |   RsDiscVersion         |       X                                          |                                               |
 //    |   RsDiscHeartBeat       |                                          X       |                                               |
 //    |                         |                                                  |                                               |
-//    |Chat                     |                                                  |                                               |
+//    |Chat/Msgs                |                                                  |                                               |
 //    |   RsChatItem            |                                     X            | Parent of all chat messages                   |
-//    |   RsChatAvatarItem      |                 X                                |                                               |
+//    |   RsChatAvatarItem      |            X                                     |                                               |
+//    |   RsMsgItem             |            X                                     |                                               |
 //    |                         |                                                  |                                               |
 //    |Various                  |                                                  |                                               |
-//    |   RsStatusItem          |                      X                           |                                               |
+//    |   RsStatusItem          |            X                                     |                                               |
 //    |   VOIP stream items     |                                               X  |                                               |
 //    |                         |                                                  |                                               |
 //    +-------------------------+--------------------------------------------------+-----------------------------------------------+
