@@ -557,6 +557,7 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 RsTurtleFileMapItem::RsTurtleFileMapItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_MAP) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file map item" << std::endl ;
 #endif
@@ -588,6 +589,7 @@ RsTurtleFileMapItem::RsTurtleFileMapItem(void *data,uint32_t pktsize)
 RsTurtleFileMapRequestItem::RsTurtleFileMapRequestItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_MAP_REQUEST) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file map request item" << std::endl ;
 #endif
@@ -611,6 +613,7 @@ RsTurtleFileMapRequestItem::RsTurtleFileMapRequestItem(void *data,uint32_t pktsi
 RsTurtleFileCrcItem::RsTurtleFileCrcItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_CRC) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file map item" << std::endl ;
 #endif
@@ -645,6 +648,7 @@ RsTurtleFileCrcItem::RsTurtleFileCrcItem(void *data,uint32_t pktsize)
 RsTurtleFileCrcRequestItem::RsTurtleFileCrcRequestItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_CRC_REQUEST) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file map request item" << std::endl ;
 #endif
@@ -667,6 +671,7 @@ RsTurtleFileCrcRequestItem::RsTurtleFileCrcRequestItem(void *data,uint32_t pktsi
 RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = search result" << std::endl ;
 #endif
@@ -745,6 +750,7 @@ bool RsTurtleOpenTunnelItem::serialize(void *data,uint32_t& pktsize)
 RsTurtleOpenTunnelItem::RsTurtleOpenTunnelItem(void *data,uint32_t pktsize)
 	: RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = open tunnel" << std::endl ;
 #endif
@@ -808,6 +814,7 @@ bool RsTurtleTunnelOkItem::serialize(void *data,uint32_t& pktsize)
 RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
 	: RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = tunnel ok" << std::endl ;
 #endif
@@ -870,6 +877,7 @@ bool RsTurtleFileRequestItem::serialize(void *data,uint32_t& pktsize)
 RsTurtleFileRequestItem::RsTurtleFileRequestItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file request" << std::endl ;
 #endif
@@ -903,6 +911,7 @@ RsTurtleFileDataItem::~RsTurtleFileDataItem()
 RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA)
 {
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file request" << std::endl ;
 #endif

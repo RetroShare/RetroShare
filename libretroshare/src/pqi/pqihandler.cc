@@ -155,7 +155,11 @@ bool pqihandler::queueOutRsItem(RsItem *item)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	in_rsItem(item) ;
+
 #ifdef DEBUG_QOS
+	if(item->priority_level() == QOS_PRIORITY_UNKNOWN)
+		std::cerr << "Caught an unprioritized item !" << std::endl;
+
 	print() ;
 #endif
 	return true ;

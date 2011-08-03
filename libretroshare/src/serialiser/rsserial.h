@@ -57,6 +57,7 @@
  ******************************************************************/
 
 #include <util/smallobject.h>
+#include "itempriorities.h"
 
 const uint8_t RS_PKT_VERSION1        = 0x01;
 const uint8_t RS_PKT_VERSION_SERVICE = 0x02;

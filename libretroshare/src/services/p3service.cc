@@ -200,6 +200,7 @@ RsRawItem *p3Service::send()
 	{
 		raw->PeerId(si->PeerId());
 		raw->setQueueType(si->queueType()) ;
+		assert(si->priority_level() != QOS_PRIORITY_UNKNOWN) ;
 		raw->setPriorityLevel(si->priority_level()) ;
 	}
 

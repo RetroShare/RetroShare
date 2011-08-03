@@ -3,7 +3,7 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2008 by Cyril Soler
+ * Copyright 2011-2011 by Cyril Soler
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +35,8 @@
 // We setup packet priority according to the following table:
 //   - some RsItems are omitted. The priority is the one of the closest parent item.
 //   - I listed only items that are sent to friends.
+//
+//  Item priorities are all defined in serializer/itempriorities.h
 //
 //    +-------------------------+--------------------------------------------------+-----------------------------------------------+
 //    |Item type                | low priority <---- --------------> high priority | Comment                                       |

@@ -78,7 +78,9 @@ class RsDiscReply: public RsDiscItem
 
 	RsDiscReply()
         :RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_DISC_REPLY); 
+	}
 
 virtual ~RsDiscReply();
 
@@ -107,7 +109,9 @@ class RsDiscAskInfo: public RsDiscItem
 
         RsDiscAskInfo()
         :RsDiscItem(RS_PKT_SUBTYPE_DISC_ASK_INFO)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_DISC_ASK_INFO);
+	}
 
 virtual ~RsDiscAskInfo();
 
@@ -121,7 +125,9 @@ class RsDiscVersion: public RsDiscItem
 {
 public:
     RsDiscVersion() :RsDiscItem(RS_PKT_SUBTYPE_DISC_VERSION)
-    { return; }
+    { 
+		 setPriorityLevel(QOS_PRIORITY_RS_DISC_VERSION); 
+	 }
 
     virtual ~RsDiscVersion();
 
@@ -135,7 +141,9 @@ class RsDiscHeartbeat: public RsDiscItem
 {
 public:
     RsDiscHeartbeat() :RsDiscItem(RS_PKT_SUBTYPE_DISC_HEARTBEAT)
-    { return; }
+    { 
+		 setPriorityLevel(QOS_PRIORITY_RS_DISC_HEART_BEAT) ;
+	 }
 
     virtual ~RsDiscHeartbeat();
 
