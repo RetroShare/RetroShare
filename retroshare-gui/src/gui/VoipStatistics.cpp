@@ -29,6 +29,7 @@
 #include <retroshare/rsvoip.h>
 #include <retroshare/rspeers.h>
 #include "VoipStatistics.h"
+#include "time.h"
 
 #include "gui/settings/rsharesettings.h"
 
