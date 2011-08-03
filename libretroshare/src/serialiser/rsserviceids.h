@@ -47,6 +47,18 @@ const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
 const uint16_t RS_SERVICE_TYPE_TURTLE      = 0x0014;
 const uint16_t RS_SERVICE_TYPE_TUNNEL      = 0x0015;
 
+
+/* Caches based on p3distrib (Cache Only)
+ * Unfortunately, noone changed the DUMMY IDS... so we are stuck with them!
+ */
+const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
+const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
+const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
+const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
+
+ /* Status - Service only */
+const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
+
 /* Combined Cache/Service ids */
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
@@ -71,8 +83,8 @@ const uint16_t RS_SERVICE_TYPE_TUNNEL      = 0x0015;
  /*! for Qblog service (Cache Only) */
 const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
 
- /* Status - Service only */
-const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
+/* TEST VOIP - Service only */
+const uint16_t RS_SERVICE_TYPE_VOIP        = 0xf011;
 
  /* Proxy - Service only */
 const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
@@ -80,13 +92,6 @@ const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
  /* Photo - Cache Only */
 const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf040;
 
-/* Caches based on p3distrib (Cache Only)
- * DUMMY IDS until testing is finished
- */
-const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
-const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
-const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
-const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
 
 /* Games/External Apps - Service Only */
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;

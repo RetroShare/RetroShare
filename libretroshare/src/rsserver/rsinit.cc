@@ -1718,6 +1718,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3tunnel.h"
 #endif
 
+
 #include <list>
 #include <string>
 #include <sstream>
@@ -1757,10 +1758,17 @@ RsTurtle *rsTurtle = NULL ;
 #endif
 
 /****
-#define RS_RELEASE 1
+ * #define RS_RELEASE 		1
+ * #define RS_VOIPTEST		1
 ****/
 
-#define RS_RELEASE 1
+#define RS_RELEASE 	1
+#define RS_VOIPTEST	1
+
+
+#ifdef RS_VOIPTEST
+#include "services/p3vors.h"
+#endif
 
 
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
@@ -2090,6 +2098,13 @@ int RsServer::StartupRetroShare()
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
 #endif
+
+#ifdef RS_VOIPTEST
+	p3VoRS *mVoipTest = new p3VoRS(mLinkMgr);
+	pqih -> addService(mVoipTest);
+	rsVoip = mVoipTest;
+#endif
+
 #endif // MINIMAL_LIBRS
 
 	/**************************************************************************/

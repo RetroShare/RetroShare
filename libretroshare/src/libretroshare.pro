@@ -5,6 +5,8 @@ CONFIG += staticlib bitdht
 CONFIG -= qt
 TARGET = retroshare
 
+CONFIG += test_voip 
+
 # Beware: All data of the stripped services are lost
 #CONFIG += minimal
 DEFINES *= PQI_DISABLE_TUNNEL 
@@ -127,6 +129,8 @@ use_blogs {
 
 	DEFINES *= RS_USE_BLOGS
 }
+
+
 
 PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rschannels.h \
@@ -564,6 +568,17 @@ SOURCES +=	util/folderiterator.cc \
 			util/rswin.cc \
 			util/rsrandom.cc \
 			util/pugixml.cc
+
+
+# VOIP TEST STUFF
+HEADERS +=	retroshare/rsvoip.h 		\
+		serialiser/rsvoipitems.h	\
+		services/p3vors.h
+
+SOURCES +=	serialiser/rsvoipitems.cc 	\
+		services/p3vors.cc 
+
+
 
 minimal {
 	SOURCES -= rsserver/p3msgs.cc \
