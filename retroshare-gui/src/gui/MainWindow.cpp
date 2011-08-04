@@ -143,6 +143,7 @@
 #define IMAGE_ONEONLINE         ":/images/rstray1.png"
 #define IMAGE_TWOONLINE         ":/images/rstray2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
+#define IMAGE_DHT               ":/images/dht16.png"
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -440,7 +441,7 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
 #ifdef USE_DHTWINDOW
-    trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Dht Details"), this, SLOT(showDhtWindow()));
+    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Dht Details"), this, SLOT(showDhtWindow()));
 #endif
 
 #ifdef UNFINISHED
