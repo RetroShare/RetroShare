@@ -255,7 +255,8 @@ int 	pqissl::reset()
 	}
 
 	out << "pqissl::reset() Complete!" << std::endl;
-	rslog(RSL_DEBUG_BASIC, pqisslzone, out.str());
+	//rslog(RSL_DEBUG_BASIC, pqisslzone, out.str());
+	rslog(RSL_WARNING, pqisslzone, out.str());
 
 	// notify people of problem!
 	// but only if we really shut something down.
@@ -1294,14 +1295,14 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	/* shutdown existing - in all cases use the new one */
 	if ((ssl_connection) && (ssl_connection != ssl))
 	{
-  	 	rslog(RSL_DEBUG_BASIC, pqisslzone, 
+  	 	rslog(RSL_ALERT, pqisslzone, 
 		  "pqissl::accept() closing Previous/Existing ssl_connection");
 		SSL_shutdown(ssl_connection);
 	}
 
 	if ((sockfd > -1) && (sockfd != fd))
 	{
-  	 	rslog(RSL_DEBUG_BASIC, pqisslzone, 
+  	 	rslog(RSL_ALERT, pqisslzone, 
 		  "pqissl::accept() closing Previous/Existing sockfd");
 		net_internal_close(sockfd);
 	}

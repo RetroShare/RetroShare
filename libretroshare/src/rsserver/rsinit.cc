@@ -1939,14 +1939,14 @@ int RsServer::StartupRetroShare()
 
 	// NOW WE BUILD THE SECOND STACK.
 	// Create the Second UdpStack... Port should be random (but openable!).
-	// XXX TODO
-#define MIN_RANDOM_PORT 10000
-#define MAX_RANDOM_PORT 30000
+
+#define MIN_RANDOM_PORT 30000
+#define MAX_RANDOM_PORT 50000
 	
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
 	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
-	sndladdr.sin_port = htons(RsInitConfig::port);
+	sndladdr.sin_port = htons(rndport);
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
 
 	// FIRSTLY THE PROXY STUNNER.

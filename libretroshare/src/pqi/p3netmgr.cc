@@ -30,13 +30,14 @@
 
 #include "util/rsnet.h"
 #include "util/rsrandom.h"
+#include "util/rsdebug.h"
 
 #include "util/extaddrfinder.h"
 #include "util/dnsresolver.h"
 
 //#include "util/rsprint.h"
 //#include "util/rsdebug.h"
-//const int p3connectzone = 3431;
+const int p3netmgrzone = 7563;
 
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
@@ -137,6 +138,11 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 	std::cerr << "p3NetMgr() Startup" << std::endl;
 #endif
 
+	{
+		std::ostringstream out;
+		out << "p3NetMgr() Startup, resetting network";
+		rslog(RSL_WARNING, p3netmgrzone, out.str());
+	}
 	netReset();
 
 	return;
@@ -229,6 +235,11 @@ void p3NetMgrIMPL::netReset()
 #ifdef NETMGR_DEBUG_RESET
 	std::cerr << "p3NetMgrIMPL::netReset() Called" << std::endl;
 #endif
+	{
+		std::ostringstream out;
+		out << "p3NetMgr::netReset() Called";
+		rslog(RSL_ALERT, p3netmgrzone, out.str());
+	}
 
 	shutdown(); /* blocking shutdown call */
 
@@ -471,6 +482,12 @@ void p3NetMgrIMPL::netTick()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netTick() STATUS: NEEDS_RESET" << std::endl;
 #endif
+			{
+				std::ostringstream out;
+				out << "p3NetMgr::netTick() RS_NET_NEEDS_RESET, resetting network";
+				rslog(RSL_WARNING, p3netmgrzone, out.str());
+			}
+	
 			netReset();
 			break;
 
@@ -870,6 +887,10 @@ void p3NetMgrIMPL::netExtCheck()
 
 		/* update PeerMgr with correct info */
 		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+
+		std::ostringstream out;
+		out << "p3NetMgr::netExtCheck() Network Setup Complete";
+		rslog(RSL_WARNING, p3netmgrzone, out.str());
 	}
 
 }
@@ -895,6 +916,11 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		std::cerr << "p3NetMgrIMPL::checkNetAddress() no Valid Network Address, resetting network." << std::endl;
 		std::cerr << std::endl;
 #endif
+		{
+			std::ostringstream out;
+			out << "p3NetMgr::checkNetAddress() No Valid Network Address, resetting network";
+			rslog(RSL_WARNING, p3netmgrzone, out.str());
+		}
 		netReset();
 		return false;
 	}
@@ -1005,6 +1031,11 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		
 		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 		
+		{
+			std::ostringstream out;
+			out << "p3NetMgr::checkNetAddress() local address changed, resetting network";
+			rslog(RSL_WARNING, p3netmgrzone, out.str());
+		}
 		netReset();
 	}
 
@@ -1044,6 +1075,11 @@ bool    p3NetMgrIMPL::setLocalAddress(struct sockaddr_in addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setLocalAddress() Calling NetReset" << std::endl;
 #endif
+		{
+			std::ostringstream out;
+			out << "p3NetMgr::setLocalAddress() local address changed, resetting network";
+			rslog(RSL_WARNING, p3netmgrzone, out.str());
+		}
 		netReset();
 	}
 	return true;
@@ -1068,6 +1104,11 @@ bool    p3NetMgrIMPL::setExtAddress(struct sockaddr_in addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setExtAddress() Calling NetReset" << std::endl;
 #endif
+		{
+			std::ostringstream out;
+			out << "p3NetMgr::setExtAddress() ext address changed, resetting network";
+			rslog(RSL_WARNING, p3netmgrzone, out.str());
+		}
 		netReset();
 	}
 	return true;
@@ -1111,6 +1152,11 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setNetworkMode() Calling NetReset" << std::endl;
 #endif
+		{
+			std::ostringstream out;
+			out << "p3NetMgr::setNetworkMode() Net Mode changed, resetting network";
+			rslog(RSL_WARNING, p3netmgrzone, out.str());
+		}
 		netReset();
 	}
 	return true;
