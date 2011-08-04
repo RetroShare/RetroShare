@@ -317,6 +317,13 @@ void pqipersongrp::statusChanged()
 		return;
 	}	
 
+	/* there is no need for a mutex for waitingIds */
+
+	if (waitingIds.empty()) {
+		/* nothing to do */
+		return;
+	}
+
 	/* check for active connections and start waiting id's */
 	long connect_count = 0;
 
@@ -356,8 +363,6 @@ void pqipersongrp::statusChanged()
 #ifdef PGRP_DEBUG
 	std::cerr << "pqipersongrp::connectPeer() There are " << connect_count << " connection attempts and " << waitingIds.size() << " waiting connections. Can start " << (MAX_CONNECT_COUNT - connect_count) << " connection attempts." << std::endl;
 #endif
-
-	/* there is no need for a mutex for waitingIds */
 
 	/* start some waiting id's */
 	for (int i = connect_count; i < MAX_CONNECT_COUNT; i++) {
