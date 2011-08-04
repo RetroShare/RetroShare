@@ -36,11 +36,13 @@
 #define PLOT_HEIGHT	100
 #define PLOT_WIDTH	500
 
+#define MAX_DISPLAY_PERIOD	300
+
 double convertDtToPixels(double refTs, double minTs, double ts)
 {
 	double dt = refTs - ts;
 	double maxdt = refTs - minTs;
-	double pix = dt / maxdt * PLOT_WIDTH;
+	double pix = PLOT_WIDTH - dt / maxdt * PLOT_WIDTH;
 	return pix;
 }
 
@@ -88,9 +90,6 @@ class VoipLagPlot
 				return ;
 
 			double maxdt = mRefTS - mMinTS;
-			
-#define MAX_DISPLAY_PERIOD	300
-			
 			if (maxdt > MAX_DISPLAY_PERIOD)
 			{
 				mMinTS = mRefTS - MAX_DISPLAY_PERIOD;
@@ -143,12 +142,15 @@ class VoipLagPlot
 			}
 
 			painter->setPen(QColor::fromRgb(0,0,0)) ;
-			painter->drawText(ox+PLOT_WIDTH + cellx ,oy + celly / 2, QString::number(mMaxRTT) + " secs") ;
+			painter->drawText(ox+PLOT_WIDTH + cellx ,oy + celly / 2, QString::number(mMaxRTT)+" "+QObject::tr("secs")) ;
 			oy += PLOT_HEIGHT / 2;
-			painter->drawText(ox+PLOT_WIDTH + cellx ,oy + celly / 2, QString::number(mMaxRTT / 2.0) + " secs") ;
+			painter->drawText(ox+PLOT_WIDTH + cellx ,oy + celly / 2, QString::number(mMaxRTT / 2.0)+" "+QObject::tr("secs")) ;
 			oy += PLOT_HEIGHT / 2;
-			painter->drawText(ox+PLOT_WIDTH + cellx ,oy + celly / 2, QString::number(0.0) + " secs") ;
-			oy += 2 * celly;
+			painter->drawText(ox+PLOT_WIDTH + cellx ,oy + celly / 2, QString::number(0.0)+" "+QObject::tr("secs")) ;
+			oy += celly;
+			painter->drawText(ox ,oy, QObject::tr("Old"));
+			painter->drawText(ox + PLOT_WIDTH - cellx ,oy, QObject::tr("Now"));
+			oy += celly;
 
 			// Now do names.
 			i = 0;
@@ -240,7 +242,8 @@ void VoipStatistics::updateDisplay()
 
 	rsPeers->getOnlineList(idList);
 
-	time_t minTS = time(NULL);
+	time_t now = time(NULL);
+	time_t minTS = now;
 	time_t maxTS = 0;
 	double maxRTT = 0;
 	
@@ -254,6 +257,15 @@ void VoipStatistics::updateDisplay()
 
 		for(rit = results.begin(); rit != results.end(); rit++)
 		{
+			/* only want maxRTT to include plotted bit */
+			double dt = now - rit->mTS;
+			if (dt < MAX_DISPLAY_PERIOD)
+			{
+				if (maxRTT < rit->mRTT)
+				{
+					maxRTT = rit->mRTT;
+				}
+			}
 			if (minTS > rit->mTS)
 			{
 				minTS = rit->mTS;
@@ -261,10 +273,6 @@ void VoipStatistics::updateDisplay()
 			if (maxTS < rit->mTS)
 			{
 				maxTS = rit->mTS;
-			}
-			if (maxRTT < rit->mRTT)
-			{
-				maxRTT = rit->mRTT;
 			}
 		}
 

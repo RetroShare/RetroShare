@@ -41,7 +41,6 @@
 #include "FileTransferInfoWidget.h"
 #include "TurtleRouterDialog.h"
 #include "TurtleRouterStatistics.h"
-#include "VoipStatistics.h"
 #include "xprogressbar.h"
 #include "settings/rsharesettings.h"
 
@@ -49,6 +48,14 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
 #include "util/misc.h"
+
+/****
+ * #define SHOW_RTT_STATISTICS		1
+ ****/
+
+#ifdef SHOW_RTT_STATISTICS
+	#include "VoipStatistics.h"
+#endif
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
@@ -268,7 +275,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
 
+#ifdef SHOW_RTT_STATISTICS
 	 ui.tabWidget->addTab( new VoipStatistics(), tr("RTT Statistics")) ;
+#endif
 	 
 
 //    TurtleRouterDialog *trdl = new TurtleRouterDialog();
