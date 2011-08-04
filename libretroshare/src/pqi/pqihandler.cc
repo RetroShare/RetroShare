@@ -97,7 +97,6 @@ int	pqihandler::tick()
 #endif
 			moreToTick = 1;
 		}
-
 	}
 
 	// send items from QoS queue
@@ -110,6 +109,10 @@ int	pqihandler::tick()
 
 bool pqihandler::drawFromQoS_queue()
 {
+	float avail_out = getMaxRate(false) * 1024 / ticks_per_sec ;
+
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	++nb_ticks ;
 	time_t now = time(NULL) ;
 	if(last_m + 3 < now)
@@ -118,31 +121,28 @@ bool pqihandler::drawFromQoS_queue()
 		nb_ticks = 0 ;
 		last_m = now ;
 	}
-	float avail_out = getMaxRate(false) * 1024 / ticks_per_sec ;
 #ifdef DEBUG_QOS
-	std::cerr << "ticks per sec: " << ticks_per_sec << ", max rate in bytes/s = " << getMaxRate(false)*1024 << ", avail out per tick= " << avail_out << std::endl;
+	std::cerr << "ticks per sec: " << ticks_per_sec << ", max rate in bytes/s = " << avail_out*ticks_per_sec << ", avail out per tick= " << avail_out << std::endl;
 #endif
 
 	uint64_t total_bytes_sent = 0 ;
-	for(uint32_t i=0;i<qos_queue_size() && total_bytes_sent < avail_out;++i)
-	{
-		RsItem *item = out_rsItem() ;
+	RsItem *item ;
 
-		if(item != NULL)
-		{
-			//
-			uint32_t size ;
-			HandleRsItem(item, 0, size);
-			total_bytes_sent += size ;
+	while( total_bytes_sent < avail_out && (item = out_rsItem()) != NULL)
+	{
+		//
+		uint32_t size ;
+		locked_HandleRsItem(item, 0, size);
+		total_bytes_sent += size ;
 #ifdef DEBUG_QOS
-			std::cerr << "treating item " << (void*)item << ", priority " << (int)item->priority_level() << ", size=" << size << std::endl;
+		std::cerr << "treating item " << (void*)item << ", priority " << (int)item->priority_level() << ", size=" << size << ", total = " << total_bytes_sent << ", queue size = " << qos_queue_size() << std::endl;
 #endif
-		}
-	} 
+	}
 #ifdef DEBUG_QOS
+	assert(total_bytes_sent >= avail_out || qos_queue_size() == 0) ;
 	std::cerr << "total bytes sent = " << total_bytes_sent << ", " ;
 	if(qos_queue_size() > 0) 
-		std::cerr << "Queue still has elements." << std::endl;
+		std::cerr << "Queue still has " << qos_queue_size() << " elements." << std::endl;
 	else
 		std::cerr << "Queue is empty." << std::endl;
 #endif
@@ -269,10 +269,8 @@ int	pqihandler::locked_checkOutgoingRsItem(RsItem *item, int global)
 
 
 // generalised output
-int	pqihandler::HandleRsItem(RsItem *item, int allowglobal,uint32_t& computed_size)
+int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& computed_size)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-
 	computed_size = 0 ;
 	std::map<std::string, SearchModule *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 

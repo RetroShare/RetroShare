@@ -99,7 +99,7 @@ class pqihandler: public P3Interface, public pqiQoS
 		 * generates warnings otherwise
 		 */
 
-		int	HandleRsItem(RsItem *ns, int allowglobal,uint32_t& size);
+		int	locked_HandleRsItem(RsItem *ns, int allowglobal,uint32_t& size);
 		bool  queueOutRsItem(RsItem *) ;
 
 		virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
