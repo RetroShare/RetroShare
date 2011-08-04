@@ -398,6 +398,7 @@ void p3GroupDistrib::updateCacheDocument()
 	std::vector<grpCachePair> msgHistRestart;
 	pugi::xml_node messages_node;
 	pCacheId pCid;
+	pugi::xml_node cacheNode;
 
 	int count = 0;
 
@@ -419,15 +420,20 @@ void p3GroupDistrib::updateCacheDocument()
 			if(!messages_node)
 				messages_node = nodeIter.append_child("messages");
 
-			messages_node.append_child("msg");
+
+			// local caches at begining so loaded first
+			if(pCid.first == mOwnId)
+				cacheNode = messages_node.prepend_child("msg");
+			else
+				cacheNode = messages_node.append_child("msg");
 
 			// add cache id
-			messages_node.last_child().append_child("pId").append_child(
+			cacheNode.last_child().append_child("pId").append_child(
 								pugi::node_pcdata).set_value(msgIt->second.first
 										.c_str());
 			sprintf(subIdBuffer, "%d", msgIt->second.second);
 			subId = subIdBuffer;
-			messages_node.last_child().append_child("subId").append_child(
+			cacheNode.last_child().append_child("subId").append_child(
 								pugi::node_pcdata).set_value(subId.c_str());
 
 			// add msg to grp set
@@ -1152,8 +1158,8 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 	return;
 }
 
-void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical,
-		bool cacheLoad)
+void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSubId,
+		const std::string &src, uint32_t ts, bool local, bool historical, bool cacheLoad)
 {
 
 #ifdef DISTRIB_DEBUG
@@ -1163,96 +1169,124 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 
 	time_t now = time(NULL);
 	bool cache = false;
+	bool cached = false;
 
-	// if cache id exists in cache table exit
+	/****
+	 * okay here is the logic:
+	 * If this a newly received cache then this loaded and cached-opted granted the
+	 * message doesn't exist already
+	 * If this is a historical load (caches that exist at rs start-up)
+	 * and not a cache-opt load then the cache-opt table is checked to see if it exists
+	 * if it does then nothing is loaded, but the latest cache timestamp is updated
+	 *
+	 * But now if this is a cache-load then load up as usual
+	 * and should ignore fact that it is cache-opted since
+	 */
+
+
 	{
 		RsStackMutex stack(distribMtx);
 		// if this is a cache load proceed if not check
 		// cache id exists in cache table, if so don't load
-
 		if(!cacheLoad)
 		{
+			// if cache id exists and old cache don't load msgs
 			if(historical && locked_historyCached(pCacheId(src, cacheSubId)))
+				cached = true;
+			else
+				cache = true;
+		}
+
+	}
+
+	// don't attempt to load if cached
+	if(!cached)
+	{
+		// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
+		// with same cache id)
+		std::map<std::string, pCacheId> msgCacheMap;
+
+		// if message loaded before check failed cache
+		pCacheId failedCache = pCacheId(src, cacheSubId);
+		/* create the serialiser to load msgs */
+		BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
+		pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << "loading file " << filename << std::endl ;
+#endif
+
+		RsItem *item;
+		RsDistribSignedMsg *newMsg;
+		std::string grpId;
+
+		while(isRunning() && (NULL != (item = store->GetItem())))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadFileMsgs() Got Item:";
+			std::cerr << std::endl;
+			item->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+
+			if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
 			{
-				return;
+				grpId = newMsg->grpId;
+				cached = false;
+				// if grp cache-opted still then delete msg
+				if(locked_historyCached(grpId, cached)){
+
+					if(cached && historical)
+					{
+						delete newMsg;
+						continue;
+					}
+
+				}
+
+				if(loadMsg(newMsg, src, local, historical))
+				{
+					if(cache)
+					{
+						msgCacheMap.insert(grpCachePair(grpId, pCacheId(src, cacheSubId)));
+					}
+				}
 			}
 			else
 			{
-				cache = true;
+#ifdef DISTRIB_DEBUG
+				std::cerr << "p3GroupDistrib::loadFileMsgs() Unexpected Item - deleting";
+				std::cerr << std::endl;
+#endif
+				/* wrong message type */
+				delete item;
 			}
 		}
 
-	}
+		std::map<std::string, pCacheId>::iterator mit;
 
-	// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
-	// with same cache id)
-	std::map<std::string, pCacheId> msgCacheMap;
+		if(cache){
 
-	// if message loaded before check failed cache
-	pCacheId failedCache = pCacheId(src, cacheSubId);
-	/* create the serialiser to load msgs */
-	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
-	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
+			RsStackMutex stack(distribMtx);
 
-#ifdef DISTRIB_DEBUG
-	std::cerr << "loading file " << filename << std::endl ;
-#endif
-
-	RsItem *item;
-	RsDistribSignedMsg *newMsg;
-	std::string grpId;
-
-	while(isRunning() && (NULL != (item = store->GetItem())))
-	{
-#ifdef DISTRIB_DEBUG
-		std::cerr << "p3GroupDistrib::loadFileMsgs() Got Item:";
-		std::cerr << std::endl;
-		item->print(std::cerr, 10);
-		std::cerr << std::endl;
-#endif
-
-		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
-		{
-			grpId = newMsg->grpId;
-			if(loadMsg(newMsg, src, local, historical))
+			mit = msgCacheMap.begin();
+			for(;mit != msgCacheMap.end(); mit++)
 			{
-				if(cache)
-				{
-					msgCacheMap.insert(grpCachePair(grpId, pCacheId(src, cacheSubId)));
-				}
+				mMsgHistPending.push_back(grpCachePair(mit->first, mit->second));
 			}
+			mUpdateCacheDoc = true;
+			if(!msgCacheMap.empty())
+			mCount++;
+
+			std::string failedCacheId = FAILED_CACHE_CONT;
+
+			// if msg cache map is empty then cache id failed
+			if(msgCacheMap.empty())
+				mMsgHistPending.push_back(grpCachePair(failedCacheId, failedCache));
 		}
-		else
-		{
-#ifdef DISTRIB_DEBUG
-			std::cerr << "p3GroupDistrib::loadFileMsgs() Unexpected Item - deleting";
-			std::cerr << std::endl;
-#endif
-			/* wrong message type */
-			delete item;
-		}
-	}
 
-	std::map<std::string, pCacheId>::iterator mit;
 
-	if(cache){
-
-		RsStackMutex stack(distribMtx);
-
-		mit = msgCacheMap.begin();
-		for(;mit != msgCacheMap.end(); mit++)
-		{
-			mMsgHistPending.push_back(grpCachePair(mit->first, mit->second));
-		}
-		mUpdateCacheDoc = true;
-		if(!msgCacheMap.empty())
-		mCount++;
-
-		std::string failedCacheId = FAILED_CACHE_CONT;
-
-		// if msg cache map is empty then cache id failed
-		if(msgCacheMap.empty())
-			mMsgHistPending.push_back(grpCachePair(failedCacheId, failedCache));
+		delete store;
 	}
 
 	if (local)
@@ -1287,7 +1321,6 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 		}
 	}
 
-	delete store;
 	return;
 }
 
@@ -1553,15 +1586,18 @@ bool	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 		return false;
 	}
 
-	/* if unique (new) msg - do validation */
-	if (!locked_validateDistribSignedMsg(git->second, newMsg))
+	/* if not new unique (new) msg - do validation */
+	if(!local)
 	{
+		if (!locked_validateDistribSignedMsg(git->second, newMsg) )
+		{
 #ifdef DISTRIB_DEBUG
-		std::cerr << "p3GroupDistrib::loadMsg() validate failed" << std::endl;
-		std::cerr << std::endl;
+			std::cerr << "p3GroupDistrib::loadMsg() validate failed" << std::endl;
+			std::cerr << std::endl;
 #endif
-		delete newMsg;
-		return false;
+			delete newMsg;
+			return false;
+		}
 	}
 
 	void *temp_ptr = newMsg->packet.bin_data;
@@ -1922,7 +1958,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	newCache.cid.type = CacheSource::getCacheType();
 	newCache.cid.subid = locked_determineCacheSubId();
 
-	// remove old cache entry using this pid
+	// remove old cache entry using this cache id
 	locked_removeCacheTableEntry(pCacheId(newCache.pid, newCache.cid.subid));
 
 	/* create filename */
