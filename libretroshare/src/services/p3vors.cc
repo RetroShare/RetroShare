@@ -38,7 +38,6 @@
 /****
  * #define DEBUG_VORS		1
  ****/
-#define DEBUG_VORS		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -167,7 +166,7 @@ int	p3VoRS::status()
 }
 
 
-#define VORS_PING_PERIOD  5
+#define VORS_PING_PERIOD  10
 
 int	p3VoRS::sendPackets()
 {
