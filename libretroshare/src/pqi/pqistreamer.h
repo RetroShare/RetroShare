@@ -97,7 +97,6 @@ class pqistreamer: public PQInterface
 
 		// Temp Storage for transient data.....
 		std::list<void *> out_pkt; // Cntrl / Search / Results queue
-		std::list<void *> out_data; // FileData - secondary queue.
 		std::list<RsItem *> incoming;
 
 		// data for network stats.

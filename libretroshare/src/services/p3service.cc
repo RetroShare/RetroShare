@@ -199,8 +199,14 @@ RsRawItem *p3Service::send()
 	if (raw)
 	{
 		raw->PeerId(si->PeerId());
-		raw->setQueueType(si->queueType()) ;
-		assert(si->priority_level() != QOS_PRIORITY_UNKNOWN) ;
+
+		if(si->priority_level() == QOS_PRIORITY_UNKNOWN)
+		{
+			std::cerr << "************************************************************" << std::endl;
+			std::cerr << "********** Warning: p3service::send()               ********" << std::endl;
+			std::cerr << "********** Warning: caught a RsItem with undefined  ********" << std::endl;
+			std::cerr << "************************************************************" << std::endl;
+		}
 		raw->setPriorityLevel(si->priority_level()) ;
 	}
 

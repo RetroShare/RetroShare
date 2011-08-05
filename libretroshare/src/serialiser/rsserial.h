@@ -99,17 +99,11 @@ class RsItem: public RsMemoryManagement::SmallObject
 		RsItem(uint8_t ver, uint16_t service, uint8_t subtype);
 		uint16_t  PacketService(); /* combined Packet class/type (mid 16bits) */
 
-		typedef enum { CONTROL_QUEUE, DATA_QUEUE } QueueType ;
-
-		inline RsItem::QueueType queueType() const { return _queue_type ;}
-		inline void setQueueType(const RsItem::QueueType& t) { _queue_type = t ;}
-
 		inline uint8_t priority_level() const { return _priority_level ;}
 		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
 	private:
 		uint32_t type;
 		std::string peerId;
-		RsItem::QueueType _queue_type ;
 		uint8_t _priority_level ;
 };
 
