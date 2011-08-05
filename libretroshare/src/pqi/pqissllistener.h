@@ -47,6 +47,21 @@
 class pqissl;
 class p3PeerMgr;
 
+class AcceptedSSL
+{
+	public:
+	
+	int mFd;
+	SSL *mSSL;
+	std::string mPeerId;
+	
+	struct sockaddr_in mAddr;
+	time_t mAcceptTS;
+};
+
+
+
+
 class pqissllistenbase: public pqilistener
 {
 	public:
@@ -68,14 +83,18 @@ virtual int     resetlisten();
 
 int	acceptconnection();
 int	continueaccepts();
-int	continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool);
+int	finaliseAccepts();
 
+int	continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool);
+int 	closeConnection(int fd, SSL *ssl);
+int 	isSSLActive(int fd, SSL *ssl);
 
 virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr) = 0;
-
+virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &raddr) = 0;
 	protected:
 
 	struct sockaddr_in laddr;
+	std::list<AcceptedSSL> accepted_ssl;
 
 	private:
 
@@ -108,6 +127,7 @@ int	removeListenPort(std::string id);
 virtual int 	status();
 
 virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr);
+virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &raddr);
 
 	private:
 

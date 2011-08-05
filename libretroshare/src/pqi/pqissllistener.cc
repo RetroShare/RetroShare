@@ -83,7 +83,8 @@ int 	pqissllistenbase::tick()
 	status();
 	// check listen port.
 	acceptconnection();
-	return continueaccepts();
+	continueaccepts();
+	return finaliseAccepts();
 }
 
 int 	pqissllistenbase::status()
@@ -440,22 +441,7 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 		/* we have failed -> get certificate if possible */
 		Extract_Failed_SSL_Certificate(ssl, &remote_addr);
 
-		// other wise delete ssl connection.
-		// kill connection....
-		// so it will be removed from cache.
-		SSL_shutdown(ssl);
-
-		// close socket???
-/************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-		shutdown(fd, SHUT_RDWR);	
-		close(fd);
-#else //WINDOWS_SYS 
-		closesocket(fd);
-#endif 
-/************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		// free connection.
-		SSL_free(ssl);
+		closeConnection(fd, ssl);
 
 		std::ostringstream out;
 		out << "Read Error on the SSL Socket";
@@ -477,6 +463,22 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
   	pqioutput(PQL_WARNING, pqissllistenzone, 
 	 	"pqissllistenbase::completeConnection() Failed!");
 
+	closeConnection(fd, ssl);
+
+	std::ostringstream out;
+	out << "Shutting it down!" << std::endl;
+  	pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+
+	// failure -1, pending 0, sucess 1.
+	return -1;
+}
+
+
+int pqissllistenbase::closeConnection(int fd, SSL *ssl)
+{
+	/* else we shut it down! */
+  	pqioutput(PQL_WARNING, pqissllistenzone, "pqissllistenbase::closeConnection() Shutting it Down!");
+
 	// delete ssl connection.
 	SSL_shutdown(ssl);
 
@@ -491,14 +493,9 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 /************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	// free connection.
 	SSL_free(ssl);
-
-	std::ostringstream out;
-	out << "Shutting it down!" << std::endl;
-  	pqioutput(PQL_WARNING, pqissllistenzone, out.str());
-
-	// failure -1, pending 0, sucess 1.
-	return -1;
 }
+
+
 
 
 int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr)
@@ -562,6 +559,124 @@ int	pqissllistenbase::continueaccepts()
 	}
 	return 1;
 }
+
+#define ACCEPT_WAIT_TIME 30	
+
+int	pqissllistenbase::finaliseAccepts()
+{
+
+	// for each of the incoming sockets.... call continue.
+	std::list<AcceptedSSL>::iterator it;
+
+	time_t now = time(NULL);
+	for(it = accepted_ssl.begin(); it != accepted_ssl.end();)
+	{
+  	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
+		  "pqissllistenbase::finalisedAccepts() Continuing SSL Accept");
+
+		/* check that the socket is still active - how? */
+		int active = isSSLActive(it->mFd, it->mSSL);
+		if (active > 0)
+		{
+  	        	pqioutput(PQL_WARNING, pqissllistenzone, 
+		  		"pqissllistenbase::finaliseAccepts() SSL Connection Ok => finaliseConnection");
+
+			if (0 > finaliseConnection(it->mFd, it->mSSL, it->mPeerId, it->mAddr))
+			{
+				closeConnection(it->mFd, it->mSSL);
+			}
+			it = accepted_ssl.erase(it);
+		}
+		else if (active < 0)
+		{
+          		pqioutput(PQL_WARNING, pqissllistenzone, 
+		  		"pqissllistenbase::finaliseAccepts() SSL Connection Dead => closeConnection");
+
+			closeConnection(it->mFd, it->mSSL);
+			it = accepted_ssl.erase(it);
+		}
+		else if (now - it->mAcceptTS > ACCEPT_WAIT_TIME)
+		{
+          		pqioutput(PQL_WARNING, pqissllistenzone, 
+		  		"pqissllistenbase::finaliseAccepts() SSL Connection Timed Out => closeConnection");
+			closeConnection(it->mFd, it->mSSL);
+			it = accepted_ssl.erase(it);
+		}
+		else
+		{
+          		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
+		  		"pqissllistenbase::finaliseAccepts() SSL Connection Status Unknown");
+			it++;
+		}
+	}
+	return 1;
+}
+
+int pqissllistenbase::isSSLActive(int fd, SSL *ssl)
+{
+
+	/* can we just get error? */
+	int bufsize = 8; /* just a little look */
+	uint8_t buf[bufsize];
+	int err = SSL_peek(ssl, buf, bufsize);
+	if (err <= 0)
+	{
+		int ssl_err = SSL_get_error(ssl, err);
+		int err_err = ERR_get_error();
+
+		{
+	  	  std::ostringstream out;
+	  	  out << "pqissllistenbase::isSSLActive() ";
+		  out << "Issues with SSL_Accept(" << err << ")!" << std::endl;
+		  printSSLError(ssl, err, ssl_err, err_err, out);
+	  	  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
+		}
+
+		if (ssl_err == SSL_ERROR_ZERO_RETURN)
+		{
+	  		std::ostringstream out;
+	  	        out << "pqissllistenbase::isSSLActive() SSL_ERROR_ZERO_RETURN ";
+			out << " Connection state unknown";
+			out << std::endl;
+
+	  	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
+
+			// zero means still continuing....
+			return 0;
+		}
+		if ((ssl_err == SSL_ERROR_WANT_READ) || 
+		   (ssl_err == SSL_ERROR_WANT_WRITE))
+		{
+	  		std::ostringstream out;
+	  	        out << "pqissllistenbase::isSSLActive() SSL_ERROR_WANT_READ || SSL_ERROR_WANT_WRITE ";
+			out << " Connection state unknown";
+			out << std::endl;
+
+	  	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
+
+			// zero means still continuing....
+			return 0;
+		}
+		else
+		{
+			std::ostringstream out;
+	  		out << "pqissllistenbase::isSSLActive() ";
+			out << "Issues with SSL Peek(" << err << ") Likely the Connection was killed by Peer" << std::endl;
+			printSSLError(ssl, err, ssl_err, err_err, out);
+	  		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
+
+			return -1;
+		}
+	}
+
+	std::ostringstream out;
+	out << "pqissllistenbase::isSSLActive() Successful Peer -> Connection Okay";
+	pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+
+	return 1;
+}
+
+
 
 
 /************************ PQI SSL LISTENER ****************************
@@ -747,17 +862,65 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		return -1;
 	}
 
-	pqissl *pqis = it -> second;
+	// Cleanup cert.
+	X509_free(peercert);
 
-	// dont remove from the list of certificates.
-	// want to allow a new connection to replace a faulty one!
-	// listenaddr.erase(it);
+	// Pushback into Accepted List.
+	AcceptedSSL as;
+	as.mFd = fd;
+	as.mSSL = ssl;
+	as.mPeerId = newPeerId;
+	as.mAddr = remote_addr;
+	as.mAcceptTS = time(NULL);
 
-	// timestamp
-	// done in sslroot... npc -> lr_timestamp = time(NULL);
+	accepted_ssl.push_back(as);
+
+	std::ostringstream out;
+
+	out << "pqissllistener::completeConnection() Successful Connection with: " << newPeerId;
+	out << " for Connection:" << rs_inet_ntoa(remote_addr.sin_addr) << " Adding to WAIT-ACCEPT Queue";
+	out << std::endl;
+  	pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+
+	return 1;
+}
+
+
+
+
+
+int pqissllistener::finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &remote_addr)
+{ 
+	bool found = false;
+	std::map<std::string, pqissl *>::iterator it;
+
+	std::ostringstream out;
+
+	out << "pqissllistener::finaliseConnection()" << std::endl;
+	out << "checking: " << peerId << std::endl;
+	// check if cert is in the list.....
+
+	it = listenaddr.find(peerId);
+	if (it == listenaddr.end())
+	{
+		out << "No Matching Peer";
+		out << " for Connection:" << rs_inet_ntoa(remote_addr.sin_addr);
+		out << std::endl;
+		out << "pqissllistener => Shutting Down!" << std::endl;
+  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+		return -1;
+	}
+
+	out << "Found Matching Peer";
+	out << " for Connection:" << rs_inet_ntoa(remote_addr.sin_addr);
+	out << std::endl;
+	out << "pqissllistener => Passing to pqissl module!" << std::endl;
+  	pqioutput(PQL_WARNING, pqissllistenzone, out.str());
 
 	// hand off ssl conection.
+	pqissl *pqis = it -> second;
 	pqis -> accept(ssl, fd, remote_addr);
+
 	return 1;
 }
 
