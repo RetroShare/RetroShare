@@ -52,11 +52,7 @@
 //    |   RsGenericTunnelsItem  |                 X                                | States for all turtle FT except file requests |
 //    |                         |                                                  |                                               |
 //    |Turtle items (Forwarded) |                                                  |                                               |
-//    |   RsTurtleFileReqItem   |                      X                           |                                               |
-//    |   RsTurtleSearchRequest |                      X                           |                                               |
 //    |   RsTurtleFileDataItem  |            X                                     |                                               |
-//    |   RsTurtleSearchResult  |            X                                     |                                               |
-//    |   RsGenericTunnelsItem  |            X                                     | States for all turtle FT except file requests |
 //    |                         |                                                  |                                               |
 //    |Direct file transfer     |                                                  |                                               |
 //    |   RsFileRequest         |                           X                      |                                               |
