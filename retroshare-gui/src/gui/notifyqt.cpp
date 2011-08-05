@@ -124,7 +124,7 @@ void NotifyQt::notifyOwnAvatarChanged()
 	emit ownAvatarChanged() ;
 }
 
-std::string NotifyQt::askForPassword(const std::string& key_details,bool prev_is_bad)
+bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
@@ -139,11 +139,12 @@ std::string NotifyQt::askForPassword(const std::string& key_details,bool prev_is
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	if (ret) {
-		return dialog.textValue().toStdString();
+	if (ret == QDialog::Accepted) {
+		 password = dialog.textValue().toStdString();
+		 return true;
 	}
 
-	return "";
+	return false;
 }
 
 void NotifyQt::notifyDiscInfoChanged()

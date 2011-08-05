@@ -1481,10 +1481,17 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	//check if password is already in memory
 	
-	if(RsInitConfig::passwd == "")
-		RsLoginHandler::getSSLPassword(RsInitConfig::preferedId,true,RsInitConfig::passwd) ;
-	else
-		RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(RsInitConfig::preferedId,RsInitConfig::passwd) ;
+	if(RsInitConfig::passwd == "") {
+		if (RsLoginHandler::getSSLPassword(RsInitConfig::preferedId,true,RsInitConfig::passwd) == false) {
+			std::cerr << "RsLoginHandler::getSSLPassword() Failed!";
+			return 0 ;
+		}
+	} else {
+		if (RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(RsInitConfig::preferedId,RsInitConfig::passwd) == false) {
+			std::cerr << "RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile() Failed!";
+			return 0;
+		}
+	}
 
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
 

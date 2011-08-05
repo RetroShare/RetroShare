@@ -203,7 +203,7 @@ class NotifyBase
 	virtual void notifyDownloadComplete(const std::string& /* fileHash */) {};
 	virtual void notifyDownloadCompleteCount(uint32_t /* count */) {};
 
-	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
+	virtual bool askForPassword(const std::string& /* key_details */, bool /* prev_is_bad */, std::string& /* password */ ) { return false ;}
 };
 
 const int NOTIFY_LIST_NEIGHBOURS            = 1;

@@ -52,7 +52,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyDiscInfoChanged() ;
 		virtual void notifyDownloadComplete(const std::string& fileHash);
 		virtual void notifyDownloadCompleteCount(uint32_t count);
-		virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) ;
+		virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password);
 
 		/* Notify from GUI */
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);

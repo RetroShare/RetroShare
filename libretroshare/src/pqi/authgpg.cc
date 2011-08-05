@@ -107,7 +107,10 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 #ifdef GPG_DEBUG2
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
-	std::string text = rsicontrol->getNotify().askForPassword(uid_hint,prev_was_bad);
+	std::string password;
+	if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, password) == false) {
+		return GPG_ERR_CANCELED;
+	}
 
 #ifdef GPG_DEBUG2
 	std::cerr << "pgp_pwd_callback() got GPG passwd from gui." << std::endl;
@@ -116,12 +119,12 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 	if((void*)fd != NULL)
 	{
 #ifndef WINDOWS_SYS
-		write(fd, text.c_str(), text.size());
+		write(fd, password.c_str(), password.size());
 		write(fd, "\n", 1); /* needs a new line? */
 #else
 		DWORD written = 0;
 		HANDLE winFd = (HANDLE) fd;
-		WriteFile(winFd, text.c_str(), text.size(), &written, NULL);
+		WriteFile(winFd, password.c_str(), password.size(), &written, NULL);
 		WriteFile(winFd, "\n", 1, &written, NULL); 
 #endif
 	}
