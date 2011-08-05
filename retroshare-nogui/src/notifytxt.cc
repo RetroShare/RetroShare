@@ -83,10 +83,12 @@ void NotifyTxt::notifyChat()
 	return;
 }
 
-std::string NotifyTxt::askForPassword(const std::string& key_details,bool prev_is_bad)
+bool NotifyTxt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)
 {
-	char *password = getpass(("Please enter GPG password for key "+key_details+": ").c_str()) ;
-	return std::string(password);
+	char *passwd = getpass(("Please enter GPG password for key "+key_details+": ").c_str()) ;
+	password = passwd;
+
+	return !password.empty();
 }
 
 

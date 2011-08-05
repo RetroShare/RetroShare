@@ -40,7 +40,7 @@ class NotifyTxt: public NotifyBase
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChat();
-		virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) ;
+		virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password);
 
 	private:
 
