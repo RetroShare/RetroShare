@@ -42,6 +42,7 @@ const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_DATA      	= 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_CRC         = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_MAP         = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM     = 3 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_FORWARD_FILE_DATA= 2 ;
 
 // File transfer
 //
