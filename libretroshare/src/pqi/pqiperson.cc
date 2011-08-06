@@ -117,7 +117,7 @@ int	pqiperson::tick()
             (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) 
 	{
 		std::ostringstream out;
-		out << "pqiperson::tick() No heartbeat from the peer, assume connection is dead. LastHeartbeat was: ";
+		out << "pqiperson::tick() No heartbeat from the peer, assume connection is dead. calling pqissl::reset(), LastHeartbeat was: ";
 		out << time(NULL) - lastHeartbeatReceived << " secs ago";
             	pqioutput(PQL_WARNING, pqipersonzone, out.str());
             	this->reset();
@@ -307,9 +307,8 @@ int 	pqiperson::reset()
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::reset() Id: " << PeerId();
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+	  out << "pqiperson::reset() resetting all pqiconnect for Id: " << PeerId();
+	  pqioutput(PQL_WARNING, pqipersonzone, out.str());
 	}
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
@@ -387,6 +386,7 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth)
 {
 #ifdef PERSON_DEBUG
+#endif
 	{
 	  std::ostringstream out;
 	  out << "pqiperson::connect() Id: " << PeerId();
@@ -400,10 +400,9 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 	  out << " flags: " << flags;
 	  out << " bandwidth: " << bandwidth;
 	  out << std::endl;
-	  std::cerr << out.str();
-	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+	  //std::cerr << out.str();
+	  pqioutput(PQL_WARNING, pqipersonzone, out.str());
 	}
-#endif
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
 	
@@ -429,6 +428,7 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 #ifdef PERSON_DEBUG
 #endif
 	/* set the parameters */
+	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::connect reset() before connection attempt");
 	(it->second)->reset();
 
 #ifdef PERSON_DEBUG

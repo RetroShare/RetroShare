@@ -219,7 +219,8 @@ void pqiNetStateBox::reset()
 
 }
 
-#define NETSTATE_PARAM_TIMEOUT		600
+//#define NETSTATE_PARAM_TIMEOUT		600
+#define NETSTATE_PARAM_TIMEOUT			900  // Change to 15 minutes -> see if it has effect on reconnect time
 #define NETSTATE_TIMEOUT			60
 
 	/* check/update Net State */

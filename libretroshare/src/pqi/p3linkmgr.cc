@@ -628,7 +628,12 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
                 std::cerr << "p3LinkMgrIMPL::connectAttempt() Already FLAGGED as connected!!!!"  << std::endl;
                 std::cerr << "p3LinkMgrIMPL::connectAttempt() But allowing anyway!!!"  << std::endl;
 #endif
+
+		rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() ERROR ALREADY CONNECTED");
+
          }
+
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id);
 
         it->second.lastattempt = time(NULL); 
         it->second.inConnAttempt = true;
@@ -1237,6 +1242,7 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in rad
 #ifdef LINKMGR_DEBUG
 					std::cerr << "p3LinkMgrIMPL::peerConnectRequest() ERROR Peer Already Connected" << std::endl;
 #endif
+					return;
 				} 
 				/* setup specific attempt for DHT found address. */
 				locked_ConnectAttempt_SpecificAddress(&(it->second), &raddr);
@@ -1932,6 +1938,8 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 
 int p3LinkMgrIMPL::addFriend(const std::string &id, bool isVisible)
 {
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id);
+
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	
@@ -1970,6 +1978,8 @@ int p3LinkMgrIMPL::addFriend(const std::string &id, bool isVisible)
 
 int p3LinkMgrIMPL::removeFriend(const std::string &id)
 {
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::removeFriend() id: " + id);
+
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 		

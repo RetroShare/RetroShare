@@ -509,13 +509,15 @@ void p3disc::sendOwnVersion(std::string to)
 void p3disc::sendHeartbeat(std::string to)
 {
         {
-#ifdef P3DISC_DEBUG
                 std::ostringstream out;
                 out << "p3disc::sendHeartbeat()";
-                out << " Sending tick to : " << to << std::endl;
+                out << " to : " << to;
+#ifdef P3DISC_DEBUG
                 std::cerr << out.str() << std::endl;
 #endif
+		rslog(RSL_WARNING, pqidisczone, out.str());
         }
+
 
         RsDiscHeartbeat *di = new RsDiscHeartbeat();
         di->PeerId(to);

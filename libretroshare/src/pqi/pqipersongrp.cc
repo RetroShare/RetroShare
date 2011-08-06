@@ -415,6 +415,7 @@ int     pqipersongrp::addPeer(std::string id)
 	sm -> sp = secpolicy_create();
 
 	// reset it to start it working.
+	pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::addPeer() => reset() called to initialise new person");
 	pqip -> reset();
 	pqip -> listen();
   } /* UNLOCKED */
@@ -443,6 +444,7 @@ int     pqipersongrp::removePeer(std::string id)
 		secpolicy_delete(mod -> sp);
 		pqiperson *p = (pqiperson *) mod -> pqi;
 		p -> stoplistening();
+		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");
 		p -> reset();
 		delete p;
 		mods.erase(it);

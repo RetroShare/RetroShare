@@ -139,6 +139,8 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
   	rslog(RSL_ALERT, pqisslzone, 
 	    "pqissl::~pqissl -> destroying pqissl");
 	stoplistening(); /* remove from pqissllistener only */
+
+	rslog(RSL_ALERT, pqisslzone, "pqissl::~pqissl() -> calling reset()");
 	reset(); 
 	return;
 }
@@ -177,6 +179,7 @@ int 	pqissl::stoplistening()
 
 int 	pqissl::disconnect()
 {
+	rslog(RSL_ALERT, pqisslzone, "pqissl::disconnect() -> calling reset()");
 	return reset();
 }
 
@@ -188,6 +191,7 @@ int pqissl::getConnectAddress(struct sockaddr_in &raddr) {
 /* BinInterface version of reset() for pqistreamer */
 int 	pqissl::close() 
 {
+	rslog(RSL_ALERT, pqisslzone, "pqissl::close() -> calling reset()");
 	return reset();
 }
 
@@ -441,7 +445,7 @@ int 	pqissl::ConnectAttempt()
 
 		default:
   	  		rslog(RSL_ALERT, pqisslzone, 
-		 "pqissl::ConnectAttempt() STATE = Unknown - Reset");
+		 "pqissl::ConnectAttempt() STATE = Unknown - calling reset()");
 
 			reset();
 			break;
@@ -775,6 +779,7 @@ int 	pqissl::Basic_Connection_Complete()
 		rslog(RSL_WARNING, pqisslzone, out.str());
 		/* as sockfd is valid, this should close it all up */
 		
+		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
 		reset();
 		return -1;
 	}
@@ -791,6 +796,7 @@ int 	pqissl::Basic_Connection_Complete()
         {
                 rslog(RSL_ALERT, pqisslzone,
                         "pqissl::Basic_Connection_Complete() problem with the socket descriptor. Aborting");
+		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
                 reset();
                 return -1;
         }
@@ -1091,6 +1097,7 @@ int 	pqissl::SSL_Connection_Complete()
 		// attempt real error.
 		Extract_Failed_SSL_Certificate();
 
+		rslog(RSL_ALERT, pqisslzone, "pqissl::SSL_Connection_Complete() -> calling reset()");
 		reset();
 		waiting = WAITING_FAIL_INTERFACE;
 
@@ -1156,9 +1163,10 @@ int 	pqissl::Authorise_SSL_Connection()
 
         if (time(NULL) > ssl_connect_timeout)
         {
-		rslog(RSL_DEBUG_BASIC, pqisslzone,
+		rslog(RSL_WARNING, pqisslzone,
 			"pqissl::Authorise_SSL_Connection() Connection Timed Out!");
 	        /* as sockfd is valid, this should close it all up */
+		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
 	        reset();
 	}
 
@@ -1181,6 +1189,7 @@ int 	pqissl::Authorise_SSL_Connection()
   		rslog(RSL_WARNING, pqisslzone, 
 		  "pqissl::Authorise_SSL_Connection() Peer Didnt Give Cert");
 
+		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
 		// Failed completely
 		reset();
 		return -1;
@@ -1192,6 +1201,7 @@ int 	pqissl::Authorise_SSL_Connection()
                 rslog(RSL_WARNING, pqisslzone,
                   "pqissl::Authorise_SSL_Connection() the cert Id doesn't match the Peer id we're trying to connect to.");
 
+		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
                 // Failed completely
                 reset();
                 return -1;
@@ -1229,6 +1239,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	}
 
 	// else shutdown ssl connection.
+	rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
 
 	reset();
 	return 0;
@@ -1284,6 +1295,7 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
   	  		rslog(RSL_ALERT, pqisslzone, 
 		 		"pqissl::accept() STATE = Unknown - ignore?");
 
+			rslog(RSL_ALERT, pqisslzone, "pqissl::accept() -> calling reset()");
 			reset();
 			break;
 		}
@@ -1368,6 +1380,7 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 		active = false;
 		waiting = WAITING_FAIL_INTERFACE;
 		// failed completely.
+		rslog(RSL_ALERT, pqisslzone, "pqissl::accept() -> calling reset()");
 		reset();
 		return -1;
 	}
@@ -1443,6 +1456,7 @@ int 	pqissl::senddata(void *data, int len)
 				rslog(RSL_ALERT, pqisslzone, out2.str());
 			}
 
+			rslog(RSL_ALERT, pqisslzone, "pqissl::senddata() -> calling reset()");
 			reset();
 			return -1;
 		}
@@ -1473,6 +1487,7 @@ int 	pqissl::senddata(void *data, int len)
 			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
 
+			rslog(RSL_ALERT, pqisslzone, "pqissl::senddata() -> calling reset()");
 			reset();
 			return -1;
 		}
@@ -1551,6 +1566,8 @@ int 	pqissl::readdata(void *data, int len)
 				{
 					out << "Count passed Limit, shutting down!";
 					out << " ReadZero Age: " << time(NULL) - mReadZeroTS;
+
+					rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
 					reset();
 				}
 
@@ -1587,6 +1604,7 @@ int 	pqissl::readdata(void *data, int len)
 					rslog(RSL_ALERT, pqisslzone, out2.str());
 				}
 
+				rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
 				reset();
 				std::cerr << out.str() << std::endl ;
 				return -1;
@@ -1613,6 +1631,8 @@ int 	pqissl::readdata(void *data, int len)
 				out << "\tResetting!";
 				rslog(RSL_ALERT, pqisslzone, out.str());
 				std::cerr << out.str() << std::endl ;
+
+				rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
 				reset();
 				return -1;
 			}
@@ -1692,6 +1712,7 @@ bool 	pqissl::moretoread()
 
 		// this is a definite bad socket!.
 		// reset.
+		rslog(RSL_ALERT, pqisslzone, "pqissl::moretoread() -> calling reset()");
 		reset();
 		return 0;
 	}
@@ -1761,6 +1782,7 @@ bool 	pqissl::cansend()
 
 		// this is a definite bad socket!.
 		// reset.
+		rslog(RSL_ALERT, pqisslzone, "pqissl::cansend() -> calling reset()");
 		reset();
 		return 0;
 	}

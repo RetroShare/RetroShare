@@ -37,8 +37,8 @@
 //#include "util/dnsresolver.h"
 
 #include "util/rsprint.h"
-//#include "util/rsdebug.h"
-//const int p3connectzone = 3431;
+#include "util/rsdebug.h"
+const int p3peermgrzone = 9531;
 
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
@@ -177,13 +177,16 @@ void p3PeerMgrIMPL::tick()
 {
 
 	static time_t last_friends_check = time(NULL) ;
-	static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations every 10 minutes.
+	//static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations every 10 minutes.
+	static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 480 ; // Switch to 8 minutes -> see if it changes
 
 	time_t now = time(NULL) ;
 
 	if(now > last_friends_check + INTERVAL_BETWEEN_LOCATION_CLEANING && rsPeers != NULL)
 	{
 		std::cerr << "p3PeerMgrIMPL::tick(): cleaning unused locations." << std::endl ;
+
+        	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::tick() cleanUnusedLocations()");
 
 		rsPeers->cleanUnusedLocations() ;
 		last_friends_check = now ;
@@ -354,6 +357,10 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 bool p3PeerMgrIMPL::addFriend(const std::string &id, const std::string &gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
 	bool notifyLinkMgr = false;
+
+        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id);
+
+
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -471,6 +478,8 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 	std::cerr << "p3PeerMgrIMPL::removeFriend() for id : " << id << std::endl;
 	std::cerr << "p3PeerMgrIMPL::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
+
+        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id);
 
 	std::list<std::string> toRemove; // This is a list of SSLIds.
 
