@@ -393,9 +393,8 @@ void ConfCertDialog::makeFriend()
     std::string gpg_id = rsPeers->getGPGId(mId);
     if (ui.signGPGKeyCheckBox->isChecked()) {
         rsPeers->signGPGCertificate(gpg_id);
-    } else {
-        rsPeers->setAcceptToConnectGPGCertificate(gpg_id, true);
-    }
+    } 
+	
     rsPeers->addFriend(mId, gpg_id);
     loadAll();
 
@@ -405,7 +404,7 @@ void ConfCertDialog::makeFriend()
 void ConfCertDialog::denyFriend()
 {
     std::string gpg_id = rsPeers->getGPGId(mId);
-    rsPeers->setAcceptToConnectGPGCertificate(gpg_id, false);
+    rsPeers->removeFriend(gpg_id);
     loadAll();
 
     emit configChanged();

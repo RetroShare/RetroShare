@@ -449,7 +449,7 @@ void  MessengerWindow::insertPeers()
 
     //add own gpg id, if we have more than on location (ssl client)
     std::list<std::string> ownSslContacts;
-    rsPeers->getSSLChildListOfGPGId(sOwnId, ownSslContacts);
+    rsPeers->getAssociatedSSLIds(sOwnId, ownSslContacts);
     if (ownSslContacts.size() > 0) {
         gpgFriends.push_back(sOwnId);
     }
@@ -530,7 +530,7 @@ void  MessengerWindow::insertPeers()
         std::map<std::string, std::string> sslLocations;
         std::map<std::string, QString> sslCustomStateStrings;
 
-        rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
+        rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
         for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
             QTreeWidgetItem *sslItem = NULL;
 

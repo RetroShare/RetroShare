@@ -694,7 +694,7 @@ bool RetroShareLink::process(int flag)
 					return true;
 				}
 
-				if (rsPeers->setAcceptToConnectGPGCertificate(hash().toStdString(), true)) {
+				if (rsPeers->addFriend("", hash().toStdString())) {
 					ConfCertDialog::loadAll();
 					if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
 						QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend has been added to your list."),QMessageBox::Information,QMessageBox::Ok,0,0);

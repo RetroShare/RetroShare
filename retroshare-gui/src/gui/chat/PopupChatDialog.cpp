@@ -378,7 +378,7 @@ void PopupChatDialog::chatFriend(const std::string &id)
     if (detail.isOnlyGPGdetail) {
         //let's get the ssl child details, and open all the chat boxes
         std::list<std::string> sslIds;
-        rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslIds);
+        rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
         for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
             if (firstId.empty()) {
                 firstId = *it;

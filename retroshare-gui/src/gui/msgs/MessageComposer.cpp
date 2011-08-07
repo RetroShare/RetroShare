@@ -366,7 +366,7 @@ void MessageComposer::processSettings(bool bLoad)
             if (detail.isOnlyGPGdetail) {
                 //put all sslChilds in message list
                 std::list<std::string> sslIds;
-                rsPeers->getSSLChildListOfGPGId(id, sslIds);
+                rsPeers->getAssociatedSSLIds(id, sslIds);
 
                 std::list<std::string>::const_iterator it;
                 for (it = sslIds.begin(); it != sslIds.end(); it++) {
@@ -859,7 +859,7 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
 
             std::map<std::string, std::list<std::string> >::iterator it = gpgToSslIds.find(*peerIt);
             if (it == gpgToSslIds.end()) {
-                rsPeers->getSSLChildListOfGPGId(*peerIt, sslIds);
+                rsPeers->getAssociatedSSLIds(*peerIt, sslIds);
 
                 gpgToSslIds[*peerIt] = sslIds;
             } else {
@@ -896,7 +896,7 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
 
             std::map<std::string, std::list<std::string> >::iterator it = gpgToSslIds.find(*peerIt);
             if (it == gpgToSslIds.end()) {
-                rsPeers->getSSLChildListOfGPGId(*peerIt, sslIds);
+                rsPeers->getAssociatedSSLIds(*peerIt, sslIds);
 
                 gpgToSslIds[*peerIt] = sslIds;
             } else {
@@ -1209,7 +1209,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
                 std::list<std::string>::const_iterator groupIt;
                 for (groupIt = groupInfo.peerIds.begin(); groupIt != groupInfo.peerIds.end(); groupIt++) {
                     std::list<std::string> sslIds;
-                    rsPeers->getSSLChildListOfGPGId(*groupIt, sslIds);
+                    rsPeers->getAssociatedSSLIds(*groupIt, sslIds);
 
                     std::list<std::string>::const_iterator sslIt;
                     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
@@ -1578,7 +1578,7 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
         }
 
         if (detail.isOnlyGPGdetail) {
-            if (!rsPeers->getSSLChildListOfGPGId(id, sslIds)) {
+            if (!rsPeers->getAssociatedSSLIds(id, sslIds)) {
                 return;
             }
         } else {

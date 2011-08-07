@@ -621,7 +621,7 @@ void  FriendsDialog::insertPeers()
     //add own gpg id, if we have more than on location (ssl client)
     std::list<std::string> ownSslContacts;
     std::string ownId = rsPeers->getGPGOwnId();
-    rsPeers->getSSLChildListOfGPGId(ownId, ownSslContacts);
+    rsPeers->getAssociatedSSLIds(ownId, ownSslContacts);
     if (ownSslContacts.size() > 0) {
         gpgFriends.push_back(ownId);
     }
@@ -864,7 +864,7 @@ void  FriendsDialog::insertPeers()
             bool gpg_hasPrivateChat = false;
             std::list<std::string> sslContacts;
 
-            rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
+            rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
             for (std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
                 QTreeWidgetItem *sslItem = NULL;
                 std::string sslId = *sslIt;

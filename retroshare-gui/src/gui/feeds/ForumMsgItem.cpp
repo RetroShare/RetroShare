@@ -402,7 +402,7 @@ void ForumMsgItem::updateAvatar(const QString &peer_id)
 	if (mGpgIdPrev.empty() == false) {
 		/* Is this one of the ssl ids of the gpg id ? */
 		std::list<std::string> sslIds;
-		if (rsPeers->getSSLChildListOfGPGId(mGpgIdPrev, sslIds) == false) {
+		if (rsPeers->getAssociatedSSLIds(mGpgIdPrev, sslIds) == false) {
 			return;
 		}
 
@@ -415,7 +415,7 @@ void ForumMsgItem::updateAvatar(const QString &peer_id)
 	if (mGpgIdNext.empty() == false) {
 		/* Is this one of the ssl ids of the gpg id ? */
 		std::list<std::string> sslIds;
-		if (rsPeers->getSSLChildListOfGPGId(mGpgIdNext, sslIds) == false) {
+		if (rsPeers->getAssociatedSSLIds(mGpgIdNext, sslIds) == false) {
 			return;
 		}
 
@@ -446,7 +446,7 @@ void ForumMsgItem::showAvatar(const std::string &peer_id, bool next)
 		if (peer_id.empty()) {
 			/* Show the first available avatar of one of the ssl ids */
 			std::list<std::string> sslIds;
-			if (rsPeers->getSSLChildListOfGPGId(gpgId, sslIds) == false) {
+			if (rsPeers->getAssociatedSSLIds(gpgId, sslIds) == false) {
 				return;
 			}
 

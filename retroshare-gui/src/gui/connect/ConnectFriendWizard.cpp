@@ -128,7 +128,7 @@ ConnectFriendWizard::accept()
                 rsPeers->signGPGCertificate(gpg_Id); //bye default sign set accept_connection to true;
             } else if (accept_connection) {
                 std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
-                rsPeers->setAcceptToConnectGPGCertificate(gpg_Id, true);
+                rsPeers->addFriend("", gpg_Id);
             }
 
             QString groupId = field(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD).toString();
