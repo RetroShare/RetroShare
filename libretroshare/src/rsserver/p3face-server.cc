@@ -39,10 +39,17 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 
+int rsserverzone = 101;
+
+#include "util/rsdebug.h"
+
 
 /****
 #define DEBUG_TICK 1
 ****/
+
+#define WARN_BIG_CYCLE_TIME	(0.2)
+
 
 RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	:RsControl(i, callback), coreMutex("RsServer")
@@ -245,6 +252,18 @@ void 	RsServer::run()
 			} // end of slow tick.
 
 		} // end of only once a second.
+
+		double endCycleTs = getCurrentTS();
+		double cycleTime = endCycleTs - ts;
+		if (cycleTime > WARN_BIG_CYCLE_TIME)
+		{
+			std::ostringstream out;
+			out << "RsServer::run() WARNING Excessively Long Cycle Time: " << cycleTime;
+			out << " secs => Please DEBUG";
+			std::cerr << out.str() << std::endl;
+
+			rslog(RSL_ALERT, rsserverzone, out.str());
+		}
 	}
 	return;
 }
