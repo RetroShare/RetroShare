@@ -43,7 +43,7 @@
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 #include "util/rsthreads.h"
-#include "retroshare/rspeers.h"
+//#include "retroshare/rspeers.h"
 #include <string>
 #include <list>
 #include <set>
@@ -51,6 +51,8 @@
 #include "pqi/p3cfgmgr.h"
 
 #define MAX_GPG_SIGNATURE_SIZE  4096
+
+class RsPeerDetails;
 
 /*!
  * gpgcert is the identifier for a person.
@@ -225,7 +227,9 @@ virtual std::string SaveCertificateToString(const std::string &id,bool include_s
  * done in gpgroot already.
  *
  ****/
-virtual bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance) = 0; //don't act on the gpg key, use a seperate set
+
+virtual bool AllowConnection(const std::string &gpg_id, bool accept) = 0;
+
 virtual bool SignCertificateLevel0(const std::string &id) = 0;
 virtual bool RevokeCertificate(const std::string &id) = 0;  /* Particularly hard - leave for later */
 //virtual bool TrustCertificateNone(std::string id) = 0;
@@ -345,7 +349,8 @@ virtual std::string SaveCertificateToString(const std::string &id,bool include_s
  * done in gpgroot already.
  *
  ****/
-virtual bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance); //don't act on the gpg key, use a seperate set
+virtual bool AllowConnection(const std::string &gpg_id, bool accept);
+
 virtual bool SignCertificateLevel0(const std::string &id);
 virtual bool RevokeCertificate(const std::string &id);  /* Particularly hard - leave for later */
 

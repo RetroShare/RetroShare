@@ -49,7 +49,6 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
-//#include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 
 typedef std::string SSL_id;

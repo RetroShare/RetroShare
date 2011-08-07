@@ -237,6 +237,12 @@ void    p3LinkMgrIMPL::getFriendList(std::list<std::string> &ssl_peers)
 
 }
 
+bool    p3LinkMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
+{
+	return mPeerMgr->getPeerName(ssl_id, name);
+}
+
+
 int     p3LinkMgrIMPL::getFriendCount()
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/

@@ -169,6 +169,7 @@ virtual ~p3LinkMgr() { return; }
 virtual const 	std::string getOwnId() = 0;
 virtual bool  	isOnline(const std::string &ssl_id) = 0;
 virtual void  	getOnlineList(std::list<std::string> &ssl_peers) = 0;
+virtual bool  	getPeerName(const std::string &ssl_id, std::string &name) = 0;
 
 	/**************** handle monitors *****************/
 virtual void	addMonitor(pqiMonitor *mon) = 0;
@@ -224,6 +225,7 @@ class p3LinkMgrIMPL: public p3LinkMgr
 virtual const 	std::string getOwnId();
 virtual bool  	isOnline(const std::string &ssl_id);
 virtual void  	getOnlineList(std::list<std::string> &ssl_peers);
+virtual bool  	getPeerName(const std::string &ssl_id, std::string &name);
 
 
 	/**************** handle monitors *****************/

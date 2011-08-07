@@ -25,8 +25,9 @@
  */
 
 #include "authgpg.h"
-#include "retroshare/rsiface.h"
-#include "retroshare/rsinit.h"
+#include "retroshare/rsiface.h"		// For rsicontrol.
+#include "retroshare/rspeers.h"		// For RsPeerDetails.
+
 #include <util/rsdir.h>
 #include <iostream>
 #include <sstream>
@@ -64,17 +65,9 @@ AuthGPG *AuthGPG::getAuthGPG()
 }
 
 /* Turn a set of parameters into a string */
-#if 0
-static std::string setKeyPairParams(bool useRsa, unsigned int blen,
-                std::string name, std::string comment, std::string email);
-#endif
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email,
                 std::string inPassphrase);
-
-#ifdef UNUSED_CODE
-static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
-#endif
 
 static gpg_error_t keySignCallback(void *, gpgme_status_code_t, \
 		const char *, int);
@@ -150,15 +143,6 @@ AuthGPGimpl::AuthGPGimpl()
 
             #ifdef LC_MESSAGES
                     gpgme_set_locale(NULL, LC_MESSAGES, setlocale (LC_MESSAGES, NULL));
-            #endif
-
-            #ifndef WINDOWS_SYS
-            /* setup the engine (gpg2) */
-    //        if (GPG_ERR_NO_ERROR != gpgme_set_engine_info(GPGME_PROTOCOL_OpenPGP, "/usr/bin/gpg2", NULL))
-    //        {
-    //               std::cerr << "Error creating Setting engine" << std::endl;
-    //               return;
-    //        }
             #endif
 
             if (GPG_ERR_NO_ERROR != gpgme_engine_check_version(GPGME_PROTOCOL_OpenPGP))
@@ -995,12 +979,6 @@ bool AuthGPGimpl::VerifySignature(const void *data, int datalen, const void *sig
 
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
-//	if(siglen==73)
-//	{
-//                //std::cerr << "Reducing to 72 to overcome an old bug." << std::endl ;
-//		siglen=72 ;
-//	}
-
 	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, (const char *) data, datalen, 1))
 	{
                 std::cerr << "Error create Data" << std::endl;
@@ -1515,25 +1493,24 @@ bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string 
 /*************************************/
 
 /* These take PGP Ids */
-bool AuthGPGimpl::setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance)
+bool AuthGPGimpl::AllowConnection(const std::string &gpg_id, bool accept)
 {
 
 #ifdef GPG_DEBUG
-        std::cerr << "AuthGPGimpl::markGPGCertificateAsFriends(" << gpg_id << ")" << std::endl;
+        std::cerr << "AuthGPGimpl::AllowConnection(" << gpg_id << ")" << std::endl;
 #endif
 
-        /* reload stuff now ... */
-        storeAllKeys();
-		  {
-			  RsStackMutex stack(gpgMtxData);
-			  certmap::iterator it;
-			  if (mKeyList.end() == (it = mKeyList.find(gpg_id))) {
-				  return false;
-			  }
-			  it->second.accept_connection = acceptance;
-			  mAcceptToConnectMap[gpg_id] = acceptance;
-		  }
-        storeAllKeys();
+	/* Was a "Reload Certificates" here -> be shouldn't be needed -> and very expensive, try without. */
+	{
+		RsStackMutex stack(gpgMtxData);
+		certmap::iterator it;
+		if (mKeyList.end() == (it = mKeyList.find(gpg_id))) 
+		{
+			return false;
+		}
+		it->second.accept_connection = accept;
+		mAcceptToConnectMap[gpg_id] = accept;
+	}
 
         IndicateConfigChanged();
 
@@ -1729,69 +1706,6 @@ int	AuthGPGimpl::privateTrustCertificate(const std::string &id, int trustlvl)
 		
 	return 1;
 }
-
-
-/* This function to print Data */
-#if 0
-void showData(gpgme_data_t dh)
-{
-	#define BUF_SIZE 512
-	char buf[BUF_SIZE + 1];
-	int ret;
-  
-	ret = gpgme_data_seek (dh, 0, SEEK_SET);
-	if (ret)
-	{
-                std::cerr << "Fail data seek" << std::endl;
-	//	fail_if_err (gpgme_err_code_from_errno (errno));
-	}
-
-	while ((ret = gpgme_data_read (dh, buf, BUF_SIZE)) > 0)
-    		fwrite (buf, ret, 1, stdout);
-
-	if (ret < 0)
-	{
-                std::cerr << "Fail data seek" << std::endl;
-		//fail_if_err (gpgme_err_code_from_errno (errno));
-	}
-}
-#endif
-
-#if 0
-static std::string setKeyPairParams(bool useRsa, unsigned int blen,
-                std::string name, std::string comment, std::string email)
-{
-	std::ostringstream params;
-	params << "<GnupgKeyParms format=\"internal\">"<< std::endl;
-	if (useRsa)
-	{
-		params << "Key-Type: RSA"<< std::endl;
-		if (blen < 1024)
-		{
-#ifdef GPG_DEBUG
-			std::cerr << "Weak Key... strengthing..."<< std::endl;
-#endif
-			blen = 1024;
-		}
-		blen = ((blen / 512) * 512); /* make multiple of 512 */
-		params << "Key-Length: "<< blen << std::endl;
-	}
-	else
-	{
-		params << "Key-Type: DSA"<< std::endl;
-		params << "Key-Length: 1024"<< std::endl;
-		params << "Subkey-Type: ELG-E"<< std::endl;
-		params << "Subkey-Length: 1024"<< std::endl;
-	}
-	params << "Name-Real: "<< name << std::endl;
-	params << "Name-Comment: "<< comment << std::endl;
-	params << "Name-Email: "<< email << std::endl;
-        params << "Expire-Date: 0"<< std::endl;
-	params << "</GnupgKeyParms>"<< std::endl;
-
-	return params.str();
-}
-#endif
 
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email,
@@ -2357,21 +2271,30 @@ bool AuthGPGimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
         std::map<std::string, bool>::iterator mapIt;
-        for (mapIt = mAcceptToConnectMap.begin(); mapIt != mAcceptToConnectMap.end(); mapIt++) {
-            if (mapIt->first == mOwnGpgId) {
-                continue;
-            }
-            RsTlvKeyValue kv;
-            kv.key = mapIt->first;
-            #ifdef GPG_DEBUG
-            std::cerr << "AuthGPGimpl::saveList() called (mapIt->second) : " << (mapIt->second) << std::endl ;
-            #endif
-            kv.value = (mapIt->second)?"TRUE":"FALSE" ;
-            vitem->tlvkvs.pairs.push_back(kv) ;
+        for (mapIt = mAcceptToConnectMap.begin(); mapIt != mAcceptToConnectMap.end(); mapIt++) 
+	{
+		// skip our own id.
+		if (mapIt->first == mOwnGpgId) 
+		{
+			continue;
+		}
+		// skip if we dont accept them.
+		if (!(mapIt->second))
+		{
+			continue;
+		}
+
+		RsTlvKeyValue kv;
+		kv.key = mapIt->first;
+#ifdef GPG_DEBUG
+		std::cerr << "AuthGPGimpl::saveList() called (mapIt->second) : " << (mapIt->second) << std::endl ;
+#endif
+		kv.value = "TRUE";
+		vitem->tlvkvs.pairs.push_back(kv) ;
         }
         lst.push_back(vitem);
 
-        return true ;
+        return true;
 }
 
 bool AuthGPGimpl::loadList(std::list<RsItem*>& load)
@@ -2385,31 +2308,36 @@ bool AuthGPGimpl::loadList(std::list<RsItem*>& load)
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
         /* load the list of accepted gpg keys */
         std::list<RsItem *>::iterator it;
-        for(it = load.begin(); it != load.end(); it++) {
-                RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+        for(it = load.begin(); it != load.end(); it++) 
+	{
+		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+		if(vitem) 
+		{
+#ifdef GPG_DEBUG
+			std::cerr << "AuthGPGimpl::loadList() General Variable Config Item:" << std::endl;
+			vitem->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
 
-                if(vitem) {
-                        #ifdef GPG_DEBUG
-                        std::cerr << "AuthGPGimpl::loadList() General Variable Config Item:" << std::endl;
-                        vitem->print(std::cerr, 10);
-                        std::cerr << std::endl;
-                        #endif
+			std::list<RsTlvKeyValue>::iterator kit;
+			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
+			{
+				if (kit->key == mOwnGpgId) 
+				{
+					continue;
+				}
 
-                        std::list<RsTlvKeyValue>::iterator kit;
-                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
-                            if (kit->key == mOwnGpgId) {
-                                continue;
-                            }
-                            mAcceptToConnectMap[kit->key] = (kit->value == "TRUE");
-                            //set the gpg key
-                            certmap::iterator it;
-                            if (mKeyList.end() != (it = mKeyList.find(kit->key))) {
-                                    #ifdef GPG_DEBUG
-                                    std::cerr << "AuthGPGimpl::loadList() setting accept to : " << (kit->value == "TRUE");
-                                    std::cerr << " for gpg key id : " << kit->key << std::endl;
-                                    #endif
-                                    it->second.accept_connection = (kit->value == "TRUE");
-                            }
+				/* only allowed in the map if the gpg certificate exists */
+				certmap::iterator it;
+				if (mKeyList.end() != (it = mKeyList.find(kit->key))) 
+				{
+#ifdef GPG_DEBUG
+					std::cerr << "AuthGPGimpl::loadList() setting accept to : " << (kit->value == "TRUE");
+					std::cerr << " for gpg key id : " << kit->key << std::endl;
+#endif
+					mAcceptToConnectMap[kit->key] = (kit->value == "TRUE");
+					it->second.accept_connection = (kit->value == "TRUE");
+				}
                         }
                 }
                 delete (*it);

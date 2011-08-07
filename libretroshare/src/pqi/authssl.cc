@@ -37,6 +37,8 @@
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
 
+#include "retroshare/rspeers.h" // for RsPeerDetails structure 
+
 /******************** notify of new Cert **************************/
 #include "pqinotify.h"
 

@@ -250,6 +250,199 @@ bool    p3Peers::isFriend(const std::string &ssl_id)
 }
 
 
+/* There are too many dependancies of this function
+ * to shift it immeidately
+ */
+
+bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
+{
+        #ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
+        #endif
+
+	// NOW Only for SSL Details.
+
+        std::string sOwnId = AuthSSL::getAuthSSL()->OwnId();
+        peerState ps;
+
+	if (id == sOwnId)
+	{
+                mPeerMgr->getOwnNetStatus(ps);
+                ps.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+	}
+	else
+	{
+        	if (!mPeerMgr->getFriendNetStatus(id, ps))
+		{
+#ifdef P3PEERS_DEBUG
+			std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
+#endif
+        		d.isOnlyGPGdetail = false;
+        		return getGPGDetails(id, d);
+		}
+	}
+
+        /* get from gpg (first), to fill in the sign and trust details */
+        /* don't retrun now, we've got fill in the ssl and connection info */
+        getGPGDetails(ps.gpg_id, d);
+        d.isOnlyGPGdetail = false;
+
+        //get the ssl details
+        d.id 		= id;
+        d.location 	= ps.location;
+
+	/* generate */
+	d.authcode  	= "AUTHCODE";
+
+	/* fill from pcs */
+
+	d.localAddr	= rs_inet_ntoa(ps.localaddr.sin_addr);
+	d.localPort	= ntohs(ps.localaddr.sin_port);
+	d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
+	d.extPort	= ntohs(ps.serveraddr.sin_port);
+        d.dyndns        = ps.dyndns;
+	d.lastConnect	= ps.lastcontact;
+	d.connectPeriod = 0;
+
+
+	std::list<pqiIpAddress>::iterator it;
+	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
+			it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+	{
+	    std::ostringstream toto;
+            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
+            d.ipAddressList.push_back("L:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+	}
+	for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
+			it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+	{
+	    std::ostringstream toto;
+            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
+            d.ipAddressList.push_back("E:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+	}
+
+
+	switch(ps.netMode & RS_NET_MODE_ACTUAL)
+	{
+		case RS_NET_MODE_EXT:
+			d.netMode	= RS_NETMODE_EXT;
+			break;
+		case RS_NET_MODE_UPNP:
+			d.netMode	= RS_NETMODE_UPNP;
+			break;
+		case RS_NET_MODE_UDP:
+			d.netMode	= RS_NETMODE_UDP;
+			break;
+		case RS_NET_MODE_UNREACHABLE:
+		case RS_NET_MODE_UNKNOWN:
+		default:
+			d.netMode	= RS_NETMODE_UNREACHABLE;
+			break;
+	}
+	
+	
+	if (ps.netMode & RS_NET_MODE_TRY_EXT)
+	{
+		d.tryNetMode	= RS_NETMODE_EXT;
+	}
+	else if (ps.netMode & RS_NET_MODE_TRY_UPNP)
+	{
+		d.tryNetMode	= RS_NETMODE_UPNP;
+	}
+	else
+	{
+		d.tryNetMode 	= RS_NETMODE_UDP;
+	}
+	
+	d.visState	= 0;
+	if (!(ps.visState & RS_VIS_STATE_NODISC))
+	{
+		d.visState |= RS_VS_DISC_ON;
+	}
+	
+	if (!(ps.visState & RS_VIS_STATE_NODHT))
+	{
+		d.visState |= RS_VS_DHT_ON;
+	}
+	
+	
+	
+	
+	/* Translate */
+	peerConnectState pcs;
+	if (!mLinkMgr->getFriendNetStatus(id, pcs)) 
+	{
+		std::cerr << "p3Peers::getPeerDetails() ERROR No Link Information : " << id << std::endl;
+		return true;
+	}
+	
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
+#endif
+	
+	
+	d.state		= 0;
+	if (pcs.state & RS_PEER_S_FRIEND)
+		d.state |= RS_PEER_STATE_FRIEND;
+	if (pcs.state & RS_PEER_S_ONLINE)
+		d.state |= RS_PEER_STATE_ONLINE;
+	if (pcs.state & RS_PEER_S_CONNECTED)
+		d.state |= RS_PEER_STATE_CONNECTED;
+	if (pcs.state & RS_PEER_S_UNREACHABLE)
+		d.state |= RS_PEER_STATE_UNREACHABLE;
+
+
+
+	/* Finally determine AutoConnect Status */
+	d.foundDHT = pcs.dht.found;
+
+	d.connectState = 0;
+	d.connectStateString.clear();
+
+
+	if (pcs.inConnAttempt)
+	{
+		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
+			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TUNNEL;
+		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
+			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
+
+			std::ostringstream str;
+			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+			d.connectStateString = str.str();
+		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
+			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
+
+			std::ostringstream str;
+			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+			d.connectStateString = str.str();
+		}
+	}
+	else if (pcs.state & RS_PEER_S_CONNECTED)
+	{
+		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+		{
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
+		}
+		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+		{
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
+		}
+		else if (pcs.connecttype == RS_NET_CONN_TUNNEL)
+		{
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL;
+		}
+		else
+		{
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+		}
+	}
+
+	return true;
+}
+
+
+#if 0
 bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 {
         #ifdef P3PEERS_DEBUG
@@ -433,6 +626,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 	return true;
 }
+#endif
 
 
 std::string p3Peers::getGPGName(const std::string &gpg_id)
@@ -452,20 +646,23 @@ std::string p3Peers::getPeerName(const std::string &ssl_or_gpg_id)
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPeerName() " << ssl_or_gpg_id << std::endl;
 #endif
-        std::string name;
-        if (ssl_or_gpg_id == AuthSSL::getAuthSSL()->OwnId()) {
-            return AuthGPG::getAuthGPG()->getGPGOwnName();
-        }
-        peerState pcs;
-        if (mPeerMgr->getFriendNetStatus(ssl_or_gpg_id, pcs)) {
-    #ifdef P3PEERS_DEBUG
-            std::cerr << "p3Peers::getPeerName() got a ssl id. Name is : " << pcs.name << std::endl;
-    #endif
-           return pcs.name;
-        }
-
-        return AuthGPG::getAuthGPG()->getGPGName(ssl_or_gpg_id);
+	std::string name;
+	if (ssl_or_gpg_id == AuthSSL::getAuthSSL()->OwnId()) 
+	{
+		return AuthGPG::getAuthGPG()->getGPGOwnName();
+	}
+	
+	if (mPeerMgr->getPeerName(ssl_or_gpg_id, name)) 
+	{
+#ifdef P3PEERS_DEBUG
+		std::cerr << "p3Peers::getPeerName() got a ssl id. Name is : " << name << std::endl;
+#endif
+		return name;
+	}
+	
+	return AuthGPG::getAuthGPG()->getGPGName(ssl_or_gpg_id);
 }
+
 
 bool	p3Peers::getGPGAllList(std::list<std::string> &ids)
 {
@@ -509,107 +706,16 @@ bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
         return true;
 }
 
-bool	p3Peers::getSSLChildListOfGPGId(const std::string &gpg_id, std::list<std::string> &ids)
+
+bool	p3Peers::getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id << std::endl;
+	std::cerr << "p3Peers::getAssociatedSSLIds() for id : " << gpg_id << std::endl;
 #endif
-	ids.clear();
-	if (gpg_id == "" ) {
-		return false;
-	}
-	//let's roll throush the friends
-	std::list<std::string> friendsIds;
-	mLinkMgr->getFriendList(friendsIds);
-	peerState pcs;
-	for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) 
-	{
-#ifdef P3PEERS_DEBUG
-		std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << *it << std::endl;
-#endif
-		if (mPeerMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
-#ifdef P3PEERS_DEBUG
-			std::cerr << "p3Peers::getSSLChildListOfGPGId() adding ssl id :  " << pcs.id << std::endl;
-#endif
-			ids.push_back(pcs.id);
-		}
-	}
-	return true;
+
+	return mPeerMgr->getAssociatedPeers(gpg_id, ids);
 }
 
-bool p3Peers::cleanUnusedLocations()
-{
-	// Obtain all current locations of each GPG friend.
-	//
-	std::map<std::string,std::list<peerState> > friends_info ;
-	std::list<std::string> friendSSLIds ;
-
-	mLinkMgr->getFriendList(friendSSLIds);
-
-	for(std::list<std::string>::const_iterator it(friendSSLIds.begin());it!=friendSSLIds.end();++it)
-	{
-		peerState pcs;
-
-		if(mPeerMgr->getFriendNetStatus(*it, pcs))
-			friends_info[pcs.gpg_id].push_back(pcs) ;
-	}
-
-	// Now sort them out
-	//
-	
-	std::cerr << "Examining Old/Unused locations." << std::endl ;
-	time_t now = time(NULL) ;
-
-	std::list<std::string> locations_to_remove ;
-
-	for(std::map<std::string,std::list<peerState> >::iterator it(friends_info.begin());it!=friends_info.end();++it)
-	{
-		std::list<peerState>& locations_list(it->second) ;
-
-		int size = locations_list.size() ;
-
-		std::cerr << "  GPG id: " << it->first << std::endl ;
-
-		for(std::list<peerState>::const_iterator itloc(locations_list.begin());itloc!=locations_list.end();++itloc)
-			std::cerr << "    Location " << (*itloc).id << ", last contact " << now - (*itloc).lastcontact << " seconds ago" << std::endl ;
-
-		// Remove any location that is dummy. Update the list, such that we only look into non dummy friends later.
-		//
-		for(std::list<peerState>::iterator itloc(locations_list.begin());itloc!=locations_list.end();)
-			if(size > 1 && isDummyFriend((*itloc).id)) 
-			{
-				locations_to_remove.push_back((*itloc).id) ;
-				--size ;
-
-				std::cerr << "    Removing dummy location: " << (*itloc).id << std::endl ;
-
-				std::list<peerState>::iterator tmp(itloc) ;
-				++tmp ;
-				locations_list.erase(itloc) ;
-				itloc=tmp ;
-			}
-			else
-				++itloc ;
-
-		for(std::list<peerState>::const_iterator itloc(locations_list.begin());itloc!=locations_list.end();++itloc)
-			if(size > 1 && now > (*itloc).lastcontact + MAX_TIME_KEEP_LOCATION_WITHOUT_CONTACT)
-			{
-				locations_to_remove.push_back((*itloc).id) ;
-				--size ;
-				std::cerr << "    Removing unused location: " << (*itloc).id << std::endl ;
-			}
-	}
-
-	std::cerr << "Now removing unused locations:" << std::endl ;
-
-	for(std::list<std::string>::const_iterator it(locations_to_remove.begin());it!=locations_to_remove.end();++it)
-	{
-		std::cerr << "  Removing unused friend location " << *it << std::endl ;
-		removeFriend(*it) ;
-	}
-
-	return true ;
-}
 
 bool	p3Peers::getGPGDetails(const std::string &id, RsPeerDetails &d)
 {
@@ -656,73 +762,116 @@ std::string p3Peers::getGPGId(const std::string &sslid_or_gpgid)
 }
 
 
+	/* These Functions are now the only way to authorize a new gpg user...
+	 * if we are passed a ssl_id, then use it... otherwise just auth gpg_id
+	 */
 
 	/* Add/Remove Friends */
-bool 	p3Peers::addFriend(const std::string &id, const std::string &gpg_id)
+bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id)
 {
+
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::addFriend() with : id : " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
-        if (id == gpg_id || id == "") {
-            return addDummyFriend(gpg_id);
-        } else {
-            return mPeerMgr->addFriend(id, gpg_id);
-        }
+	if (AuthGPG::getAuthGPG()->isGPGId(gpg_id)) 
+	{
+#ifdef P3PEERS_DEBUG
+        	std::cerr << "p3Peers::addFriend() Authorising GPG Id: " << gpg_id << std::endl;
+#endif
+		if (AuthGPG::getAuthGPG()->AllowConnection(gpg_id, true))
+		{
+#ifdef P3PEERS_DEBUG
+	        	std::cerr << "p3Peers::addFriend() Authorization OK." << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef P3PEERS_DEBUG
+	        	std::cerr << "p3Peers::addFriend() Authorization FAILED." << std::endl;
+#endif
+			return false;
+		}
+	}
+	else
+	{
+#ifdef P3PEERS_DEBUG
+        	std::cerr << "p3Peers::addFriend() Bad gpg_id : " << gpg_id << std::endl;
+#endif
+		return false;
+	}
+
+	if (ssl_id == gpg_id || ssl_id == "") 
+	{
+#ifdef P3PEERS_DEBUG
+		std::cerr << "p3Peers::addFriend() WARNING id is NULL or gpgId" << std::endl;
+#endif
+		return true;
+	} 
+
+	/* otherwise - we install as ssl_id. */
+	return mPeerMgr->addFriend(ssl_id, gpg_id);
 }
 
-bool 	p3Peers::addDummyFriend(const std::string &gpg_id)
+
+
+
+
+
+bool 	p3Peers::removeFriendLocation(const std::string &sslId)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::addDummyFriend() called" << std::endl;
+        std::cerr << "p3Peers::removeFriendLocation() " << sslId << std::endl;
 #endif
-        std::string dummy_ssl_id = "dummy"+ gpg_id;
-        //check if this gpg_id already got a dummy friend
-        if (!mPeerMgr->isFriend(dummy_ssl_id)) {
-            return mPeerMgr->addFriend(dummy_ssl_id, gpg_id);
-        } else {
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::addDummyFriend() dummy friend already exists for gpg_id : " << gpg_id  << std::endl;
-#endif
-            return false;
-        }
-}
-
-bool 	p3Peers::isDummyFriend(const std::string &ssl_id) {
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::isDummyFriend() called" << std::endl;
-#endif
-        RsPeerDetails details;
-        bool ret = false;
-        if (getPeerDetails(ssl_id, details)) {
-            ret = (details.id == ("dummy" + details.gpg_id));
-        } else {
-            ret = (ssl_id.substr(0,5) == "dummy");
-        }
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::isDummyFriend() return : " << ret << std::endl;
-#endif
-        return ret;
-    }
-
-bool 	p3Peers::removeFriend(const std::string &ssl_or_gpgid)
-{
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::removeFriend() " << ssl_or_gpgid << std::endl;
-#endif
-        if (ssl_or_gpgid == AuthGPG::getAuthGPG()->getGPGOwnId()) {
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::removeFriend() fail : we're not going to remove our own GPG id."  << std::endl;
-#endif
-            return false;
-        }
-        //will remove if it's a gpg id
-        AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(ssl_or_gpgid, false);
-
-        //will remove if it's a ssl id
-        mPeerMgr->removeFriend(ssl_or_gpgid);
+		//will remove if it's a ssl id
+        mPeerMgr->removeFriend(sslId);
         return true;
 
 }
+
+bool 	p3Peers::removeFriend(const std::string &gpgId)
+{
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::removeFriend() " << gpgId << std::endl;
+#endif
+	if (gpgId == AuthGPG::getAuthGPG()->getGPGOwnId()) {
+        std::cerr << "p3Peers::removeFriend() ERROR  we're not going to remove our own GPG id."  << std::endl;
+		return false;
+	}
+
+	if (AuthGPG::getAuthGPG()->isGPGId(gpgId)) 
+	{
+#ifdef P3PEERS_DEBUG
+        	std::cerr << "p3Peers::removeFriend() Removing GPG Id: " << gpgId << std::endl;
+#endif
+		if (AuthGPG::getAuthGPG()->AllowConnection(gpgId, false))
+		{
+#ifdef P3PEERS_DEBUG
+	        	std::cerr << "p3Peers::removeFriend() OK." << std::endl;
+#endif
+			mPeerMgr->removeAllFriendLocations(gpgId);	
+			return true;
+		}
+		else
+		{
+#ifdef P3PEERS_DEBUG
+	        	std::cerr << "p3Peers::removeFriend() FAILED." << std::endl;
+#endif
+			mPeerMgr->removeAllFriendLocations(gpgId);
+			return false;
+		}
+	}
+	else
+	{
+#ifdef P3PEERS_DEBUG
+        	std::cerr << "p3Peers::removeFriend() Not GPG Id: " << gpg_id << std::endl;
+#endif
+		return removeFriendLocation(gpgId);
+	}
+
+	return false;
+}
+
+
 
 	/* Network Stuff */
 bool 	p3Peers::connectAttempt(const std::string &id)
@@ -1187,27 +1336,10 @@ bool 	p3Peers::signGPGCertificate(const std::string &id)
 #endif
 
 
-        AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(id, true);
+        AuthGPG::getAuthGPG()->AllowConnection(id, true);
         return AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
 }
 
-bool 	p3Peers::setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance)
-{
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setAcceptToConnectGPGCertificate() called with gpg_id : " << gpg_id << ", acceptance : " << acceptance << std::endl;
-#endif
-
-        if (gpg_id != "" && acceptance == false) {
-            //remove the friends from the connect manager
-            std::list<std::string> sslFriends;
-            this->getSSLChildListOfGPGId(gpg_id, sslFriends);
-            for (std::list<std::string>::iterator it = sslFriends.begin(); it != sslFriends.end(); it++) {
-                mPeerMgr->removeFriend(*it);
-            }
-            return AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(gpg_id, acceptance);
-        }
-        return AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(gpg_id, acceptance);
-}
 
 bool 	p3Peers::trustGPGCertificate(const std::string &id, uint32_t trustlvl)
 {

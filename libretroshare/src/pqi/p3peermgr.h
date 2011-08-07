@@ -127,6 +127,8 @@ virtual bool	removeFriend(const std::string &ssl_id) = 0;
 
 virtual bool	isFriend(const std::string &ssl_id) = 0;
 
+virtual bool 	getAssociatedPeers(const std::string &gpg_id, std::list<std::string> &ids) = 0;
+virtual bool 	removeAllFriendLocations(const std::string &gpgid) = 0;
 
 
 	/******************** Groups **********************/
@@ -178,6 +180,8 @@ virtual bool	getOwnNetStatus(peerState &state) = 0;
 virtual bool	getFriendNetStatus(const std::string &id, peerState &state) = 0;
 virtual bool	getOthersNetStatus(const std::string &id, peerState &state) = 0;
 
+virtual bool    getPeerName(const std::string &ssl_id, std::string &name) = 0;
+
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -207,6 +211,9 @@ virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, ui
 virtual bool	removeFriend(const std::string &ssl_id);
 
 virtual bool	isFriend(const std::string &ssl_id);
+
+virtual bool    getAssociatedPeers(const std::string &gpg_id, std::list<std::string> &ids);
+virtual bool    removeAllFriendLocations(const std::string &gpgid);
 
 
 	/******************** Groups **********************/
@@ -257,6 +264,8 @@ virtual bool	getOwnNetStatus(peerState &state);
 virtual bool	getFriendNetStatus(const std::string &id, peerState &state);
 virtual bool	getOthersNetStatus(const std::string &id, peerState &state);
 
+virtual bool    getPeerName(const std::string &ssl_id, std::string &name);
+
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -282,8 +291,13 @@ int 	getConnectAddresses(const std::string &id,
 				struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
 				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
+
+
 protected:
 	/* Internal Functions */
+
+bool 	removeUnusedLocations();
+
 void    printPeerLists(std::ostream &out);
 
 	protected:

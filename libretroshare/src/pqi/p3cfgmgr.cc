@@ -24,7 +24,7 @@
  */
 
 #include "util/rsdir.h"
-#include "retroshare/rspeers.h"
+//#include "retroshare/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/authssl.h"
 #include "pqi/pqibin.h"

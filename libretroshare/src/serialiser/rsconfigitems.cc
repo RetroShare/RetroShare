@@ -26,7 +26,7 @@
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsconfigitems.h"
-#include "retroshare/rspeers.h"
+#include "retroshare/rspeers.h" // Needed for RsGroupInfo.
 
 /***
  * #define RSSERIAL_DEBUG 		1

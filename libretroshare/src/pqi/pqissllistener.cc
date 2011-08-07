@@ -493,6 +493,8 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 /************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	// free connection.
 	SSL_free(ssl);
+
+	return 1;
 }
 
 

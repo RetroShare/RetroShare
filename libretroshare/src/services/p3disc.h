@@ -129,6 +129,7 @@ void recvPeerDetails(RsDiscReply *item, const std::string &certGpgId);
 //void recvPeerIssuerMsg(RsDiscIssuer *item);
 void recvPeerVersionMsg(RsDiscVersion *item);
 void recvHeartbeatMsg(RsDiscHeartbeat *item);
+void recvDiscReply(RsDiscReply *dri);
 
 void removeFriend(std::string ssl_id); //keep tracks of removed friend so we're not gonna add them again immediately
 
@@ -146,22 +147,27 @@ int 	idServers();
 	p3LinkMgr *mLinkMgr;
 	
 	pqipersongrp *mPqiPersonGrp;
-	time_t lastSentHeartbeatTime;
 
 	/* data */
 	RsMutex mDiscMtx;
 
-        std::map<std::string, time_t> deletedSSLFriendsIds;
+	time_t mLastSentHeartbeatTime;
+	bool   mDiscEnabled;
 
-        std::map<std::string, autoneighbour> neighbours;
-	std::map<std::string, std::string> versions;
+        //std::map<std::string, time_t> deletedSSLFriendsIds;
 
-	std::map<std::string, std::list<std::string> > sendIdList;
-	std::list<RsDiscReply*> pendingDiscReplyInList;
+
+	std::map<std::string, std::list<std::string> > mSendIdList;
+	std::list<RsDiscReply*> mPendingDiscReplyInList;
 
 	// Neighbors at the gpg level.
-	//
 	std::map<std::string,std::set<std::string> > gpg_neighbors ;
+
+	// Original mapping.
+        std::map<std::string, autoneighbour> neighbours;
+
+	// Rs Version.
+	std::map<std::string, std::string> versions;
 };
 
 

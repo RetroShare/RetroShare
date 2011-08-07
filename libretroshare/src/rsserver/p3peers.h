@@ -46,6 +46,8 @@ virtual bool OthersChanged();
 	/* Peer Details (Net & Auth) */
 virtual std::string getOwnId();
 
+
+
 virtual bool	getOnlineList(std::list<std::string> &ids);
 virtual bool	getFriendList(std::list<std::string> &ids);
 //virtual bool	getOthersList(std::list<std::string> &ids);
@@ -56,7 +58,7 @@ virtual bool    isFriend(const std::string &id);
 virtual bool    isGPGAccepted(const std::string &gpg_id_is_friend); //
 virtual std::string getGPGName(const std::string &gpg_id);
 virtual std::string getPeerName(const std::string &ssl_or_gpg_id);
-virtual bool	getPeerDetails(const std::string &id, RsPeerDetails &d);
+virtual bool	getPeerDetails(const std::string &ssl_or_gpg_id, RsPeerDetails &d);
 
                 /* Using PGP Ids */
 virtual std::string getGPGOwnId();
@@ -66,14 +68,12 @@ virtual bool    getGPGSignedList(std::list<std::string> &ids);
 virtual bool    getGPGValidList(std::list<std::string> &ids);
 virtual bool    getGPGAllList(std::list<std::string> &ids);
 virtual bool	getGPGDetails(const std::string &id, RsPeerDetails &d);
-virtual bool    getSSLChildListOfGPGId(const std::string &gpg_id, std::list<std::string> &ids);
+virtual bool	getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids);
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id);
-virtual	bool addDummyFriend(const std::string &gpg_id); //we want to add a empty ssl friend for this gpg id
-virtual	bool isDummyFriend(const std::string &ssl_id);
-virtual	bool removeFriend(const std::string &ssl_id);
-virtual  bool cleanUnusedLocations() ;
+virtual	bool removeFriend(const std::string &ssl_or_gpgid);
+virtual bool removeFriendLocation(const std::string &sslId);
 
 	/* Network Stuff */
 virtual	bool connectAttempt(const std::string &id);
@@ -103,7 +103,6 @@ virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert
 virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname);
 virtual	std::string saveCertificateToString(const std::string &id);
 
-virtual	bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance);
 virtual	bool signGPGCertificate(const std::string &id);
 virtual	bool trustGPGCertificate(const std::string &id, uint32_t trustlvl);
 

@@ -186,14 +186,12 @@ virtual bool    getGPGSignedList(std::list<std::string> &gpg_ids)   = 0;//friend
 virtual bool    getGPGValidList(std::list<std::string> &gpg_ids)   = 0;
 virtual bool    getGPGAllList(std::list<std::string> &gpg_ids) 	= 0;
 virtual bool	getGPGDetails(const std::string &gpg_id, RsPeerDetails &d) = 0;
-virtual bool    getSSLChildListOfGPGId(const std::string &gpg_id, std::list<std::string> &ssl_ids) = 0;
+virtual bool    getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids) = 0;
 
 	/* Add/Remove Friends */
-virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id)        			= 0;
-virtual	bool addDummyFriend(const std::string &gpg_id)        			= 0; //we want to add a empty ssl friend for this gpg id
-virtual	bool isDummyFriend(const std::string &ssl_id)                  = 0;
+virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id)    = 0;
 virtual	bool removeFriend(const std::string &ssl_or_gpg_id)  			= 0;
-virtual bool cleanUnusedLocations() = 0 ;
+virtual bool removeFriendLocation(const std::string &sslId) 			= 0;
 
 	/* Network Stuff */
 virtual	bool connectAttempt(const std::string &ssl_id)			= 0;
@@ -221,7 +219,7 @@ virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert
 virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname)  = 0;
 virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
 
-virtual	bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance) = 0;
+//virtual	bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance) = 0;
 virtual	bool signGPGCertificate(const std::string &gpg_id)                   	= 0;
 virtual	bool trustGPGCertificate(const std::string &gpg_id, uint32_t trustlvl) 	= 0;
 

@@ -33,8 +33,6 @@
 #endif
 
 #include "retroshare/rsiface.h"
-#include "retroshare/rspeers.h"
-#include "retroshare/rsfiles.h"
 
 #include "pqi/authssl.h"
 #include "pqi/p3linkmgr.h"
@@ -2153,15 +2151,14 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 		tunnel.push_back(printNumber(it->first,true)) ;
 
-		RsPeerDetails sslDetails;
-
-		if(rsPeers->getPeerDetails(it->second.local_src,sslDetails)) 
-			tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		std::string name;
+		if(mLinkMgr->getPeerName(it->second.local_src,name)) 
+			tunnel.push_back(name) ;
 		else
 			tunnel.push_back(it->second.local_src) ;
 
-		if(rsPeers->getPeerDetails(it->second.local_dst,sslDetails)) 
-			tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		if(mLinkMgr->getPeerName(it->second.local_dst,name)) 
+			tunnel.push_back(name) ;
 		else
 			tunnel.push_back(it->second.local_dst);
 

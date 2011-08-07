@@ -882,6 +882,8 @@ void p3NetMgrIMPL::netExtCheck()
 
 	if (netSetupDone)
 	{
+		std::cerr << "p3NetMgrIMPL::netExtCheck() netSetupDone" << std::endl;
+
 		/* Setup NetStateBox with this info */
 		updateNetStateBox_startup();
 

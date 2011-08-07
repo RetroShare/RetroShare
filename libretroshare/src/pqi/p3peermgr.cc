@@ -42,7 +42,10 @@ const int p3peermgrzone = 9531;
 
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
-#include "retroshare/rsiface.h"
+
+#include "retroshare/rsiface.h" // Needed for rsicontrol (should remove this dependancy)
+#include "retroshare/rspeers.h" // Needed for Group Parameters.
+
 
 #include <sstream>
 
@@ -110,6 +113,7 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 		mOwnState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
 		mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
 		mOwnState.netMode = RS_NET_MODE_UPNP; // Default to UPNP.
+		mOwnState.visState = 0;
 	
 		lastGroupId = 1;
 
@@ -156,11 +160,14 @@ void p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+		std::ostringstream out;
+		out << "p3PeerMgr::setOwnVisState()";
+		out << "Existing vis: " << mOwnState.visState;
+		out << "Input vis: " << visState;
+        	rslog(RSL_WARNING, p3peermgrzone, out.str());
+
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgrIMPL::setOwnVisState()";
-		std::cerr << "Existing vis: " << mOwnState.visState;
-		std::cerr << "Input vis: " << visState;
-		std::cerr << std::endl;
+		std::cerr << out.str() << std::endl;
 #endif
 
 		mOwnState.visState = visState;
@@ -182,13 +189,13 @@ void p3PeerMgrIMPL::tick()
 
 	time_t now = time(NULL) ;
 
-	if(now > last_friends_check + INTERVAL_BETWEEN_LOCATION_CLEANING && rsPeers != NULL)
+	if(now - last_friends_check > INTERVAL_BETWEEN_LOCATION_CLEANING)
 	{
 		std::cerr << "p3PeerMgrIMPL::tick(): cleaning unused locations." << std::endl ;
 
-        	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::tick() cleanUnusedLocations()");
+        	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::tick() removeUnusedLocations()");
 
-		rsPeers->cleanUnusedLocations() ;
+		removeUnusedLocations() ;
 		last_friends_check = now ;
 	}
 }
@@ -224,6 +231,23 @@ bool p3PeerMgrIMPL::isFriend(const std::string &id)
 #endif
         return ret;
 }
+
+bool    p3PeerMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	name = it->second.name + " (" + it->second.location + ")";
+	return true;
+}
+
 
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const std::string &id, peerState &state)
@@ -998,6 +1022,14 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
 
 bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 {
+	{
+		std::ostringstream out;
+		out << "p3PeerMgr::setVisState(";
+		out << id;
+		out << ", " << visState << ")";
+        	rslog(RSL_WARNING, p3peermgrzone, out.str());
+	}
+
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		setOwnVisState(visState);
@@ -1630,3 +1662,118 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 
 	return changed;
 }
+
+
+/**********************************************************************
+ **********************************************************************
+ ******************** Stuff moved from p3peers ************************
+ **********************************************************************
+ **********************************************************************/
+
+bool p3PeerMgrIMPL::removeAllFriendLocations(const std::string &gpgid)
+{
+	std::list<std::string> sslIds;
+	if (!getAssociatedPeers(gpgid, sslIds))
+	{
+		return false;
+	}
+	
+	std::list<std::string>::iterator it;
+	for(it = sslIds.begin(); it != sslIds.end(); it++)
+	{
+		removeFriend(*it);
+	}
+	
+	return true;
+}
+
+
+bool	p3PeerMgrIMPL::getAssociatedPeers(const std::string &gpg_id, std::list<std::string> &ids)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3PeerMgr::getAssociatedPeers() for id : " << gpg_id << std::endl;
+#endif
+	
+	int count = 0;
+	std::map<std::string, peerState>::iterator it;
+	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	{
+		if (it->second.gpg_id == gpg_id)
+		{
+			count++;
+			ids.push_back(it->first);
+
+#ifdef P3PEERS_DEBUG
+			std::cerr << "p3PeerMgr::getAssociatedPeers() found ssl id :  " << it->first << std::endl;
+#endif
+			
+		}
+	}
+	
+	return (count > 0);
+}
+
+
+
+
+/* This only removes SSL certs, that are old... Can end up with no Certs per GPG Id 
+ * We are removing the concept of a "DummyId" - There is no need for it.
+ */
+
+bool isDummyFriend(std::string id)
+{
+	bool ret = (id.substr(0,5) == "dummy");
+	return ret;
+}
+
+#define VERY_OLD_PEER  (30 * 24 * 3600)      // 30 days.
+
+bool p3PeerMgrIMPL::removeUnusedLocations()
+{
+	std::list<std::string> toRemove;
+	
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	
+#ifdef P3PEERS_DEBUG
+		std::cerr << "p3PeerMgr::removeUnusedLocations()" << std::endl;
+#endif
+		
+		time_t now = time(NULL);
+		
+		std::map<std::string, peerState>::iterator it;
+		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		{
+			if (now - it->second.lastcontact > VERY_OLD_PEER)
+			{
+				toRemove.push_back(it->first);
+
+#ifdef P3PEERS_DEBUG
+				std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
+#endif
+				
+			}
+			
+			if (isDummyFriend(it->first))
+			{
+				toRemove.push_back(it->first);
+				
+#ifdef P3PEERS_DEBUG
+				std::cerr << "p3PeerMgr::removeUnusedLocations() removing Dummy Id: " << it->first << std::endl;
+#endif
+				
+			}
+			
+		}
+	}
+	std::list<std::string>::iterator it;
+	
+	for(it = toRemove.begin(); it != toRemove.end(); it++)
+	{
+		removeFriend(*it);
+	}
+}
+
+	
