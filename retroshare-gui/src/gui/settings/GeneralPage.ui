@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>362</width>
+    <width>373</width>
     <height>400</height>
    </rect>
   </property>
@@ -506,6 +506,9 @@
       <string>Startup</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <property name="verticalSpacing">
+       <number>2</number>
+      </property>
       <item row="0" column="0">
        <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartup">
         <property name="text">
@@ -559,6 +562,9 @@
       <string>For Advanced Users </string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <property name="verticalSpacing">
+       <number>2</number>
+      </property>
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkAdvanced">
         <property name="text">
@@ -575,6 +581,9 @@
       <string>Misc</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="verticalSpacing">
+       <number>2</number>
+      </property>
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkQuit">
         <property name="text">
