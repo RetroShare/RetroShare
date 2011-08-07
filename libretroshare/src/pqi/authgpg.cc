@@ -27,6 +27,9 @@
 #include "authgpg.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
 #include "retroshare/rspeers.h"		// For RsPeerDetails.
+#ifdef WINDOWS_SYS
+#include "retroshare/rsinit.h"
+#endif
 
 #include <util/rsdir.h>
 #include <iostream>
