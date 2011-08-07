@@ -37,7 +37,7 @@ const int pqipersongrpzone = 354;
 // hack for too many connections
 #include "retroshare/rsinit.h"
 static std::list<std::string> waitingIds;
-#define MAX_CONNECT_COUNT 5
+#define MAX_CONNECT_COUNT 3
 ///////////////////////////////////////////////////////////
 #endif
 
@@ -351,7 +351,7 @@ void pqipersongrp::statusChanged()
 				connect_count++;
 				if (connect_count >= MAX_CONNECT_COUNT) {
 #ifdef PGRP_DEBUG
-					std::cerr << "pqipersongrp::connectPeer() Too many connections due to windows limitations. There are " << waitingIds.size() << " waiting connections." << std::endl;
+					std::cerr << "pqipersongrp::statusChanged() Too many connections due to windows limitations. There are " << waitingIds.size() << " waiting connections." << std::endl;
 #endif
 					return;
 				}
@@ -361,7 +361,7 @@ void pqipersongrp::statusChanged()
 	} /* UNLOCKED */
 
 #ifdef PGRP_DEBUG
-	std::cerr << "pqipersongrp::connectPeer() There are " << connect_count << " connection attempts and " << waitingIds.size() << " waiting connections. Can start " << (MAX_CONNECT_COUNT - connect_count) << " connection attempts." << std::endl;
+	std::cerr << "pqipersongrp::statusChanged() There are " << connect_count << " connection attempts and " << waitingIds.size() << " waiting connections. Can start " << (MAX_CONNECT_COUNT - connect_count) << " connection attempts." << std::endl;
 #endif
 
 	/* start some waiting id's */
@@ -371,6 +371,12 @@ void pqipersongrp::statusChanged()
 		}
 		std::string waitingId = waitingIds.front();
 		waitingIds.pop_front();
+
+#ifdef PGRP_DEBUG
+		std::cerr << " pqipersongrp::statusChanged() id: " << waitingId << " connect peer";
+		std::cerr << std::endl;
+#endif
+
 		connectPeer(waitingId, true);
 	}
 }
@@ -499,16 +505,16 @@ int     pqipersongrp::connectPeer(std::string id
 	std::cerr << std::endl;
 #endif
 
-  { 
+{
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-        if (id == mLinkMgr->getOwnId()) 
+	if (id == mLinkMgr->getOwnId())
 	{
-            std::cerr << "pqipersongrp::connectPeer() ERROR Failed, connecting to own id." << std::endl;
-            #ifdef PGRP_DEBUG
-            #endif
-            return 0;
-        }
-        std::map<std::string, SearchModule *>::iterator it;
+#ifdef PGRP_DEBUG
+		std::cerr << "pqipersongrp::connectPeer() ERROR Failed, connecting to own id." << std::endl;
+#endif
+		return 0;
+	}
+	std::map<std::string, SearchModule *>::iterator it;
 	it = mods.find(id);
 	if (it == mods.end())
 	{
@@ -533,14 +539,48 @@ int     pqipersongrp::connectPeer(std::string id
 			/* check for id is waiting */
 			if (std::find(waitingIds.begin(), waitingIds.end(), id) != waitingIds.end()) {
 				/* id is waiting for a connection */
+#ifdef PGRP_DEBUG
+				std::cerr << " pqipersongrp::connectPeer() id: " << id << " is already waiting ";
+				std::cerr << std::endl;
+#endif
 				return 0;
 			}
 
-			/* add id to waiting */
-			waitingIds.push_back(id);
+			/* check for connection type of the next connect attempt */
+			peerConnectState state;
+			if (mLinkMgr->getFriendNetStatus(id, state) == false) {
+#ifdef PGRP_DEBUG
+				std::cerr << " pqipersongrp::connectPeer() id: " << id << " No friend net status";
+				std::cerr << std::endl;
+#endif
+				return 0;
+			}
+			if (state.connAddrs.size() < 1) {
+#ifdef PGRP_DEBUG
+				std::cerr << " pqipersongrp::connectPeer() id: " << id << " No existing connect addresses";
+				std::cerr << std::endl;
+#endif
+				return 0;
+			}
+			const peerConnectAddress &currentConnAddrAttempt = state.connAddrs.front();
+			if (currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
+#ifdef PGRP_DEBUG
+				std::cerr << " pqipersongrp::connectPeer() id: " << id << " added to the waiting list";
+				std::cerr << std::endl;
+#endif
+				/* TCP connect, add id to waiting */
+				waitingIds.push_back(id);
 
-			/* wait for call to connectPeer with empty id */
-			return 0;
+				/* wait for call to connectPeer with empty id */
+				return 0;
+			}
+
+			/* try all other types of connect directly */
+
+#ifdef PGRP_DEBUG
+			std::cerr << " pqipersongrp::connectPeer() id: " << id << " connect directly without wait";
+			std::cerr << std::endl;
+#endif
 		}
 
 		/* remove id from waiting */
