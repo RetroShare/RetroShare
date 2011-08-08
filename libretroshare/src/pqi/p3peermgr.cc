@@ -64,6 +64,8 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
+#define VERY_OLD_PEER  (90 * 24 * 3600)      // 90 days.
+
 /****
  * #define PEER_DEBUG 1
  ***/
@@ -183,9 +185,8 @@ void p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
 void p3PeerMgrIMPL::tick()
 {
 
-	static time_t last_friends_check = time(NULL) ;
-	//static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations every 10 minutes.
-	static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 480 ; // Switch to 8 minutes -> see if it changes
+	static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 1860 ; // Remove unused locations every 31 minutes.
+	static time_t last_friends_check = time(NULL) + INTERVAL_BETWEEN_LOCATION_CLEANING; // first cleaning after 1 hour.
 
 	time_t now = time(NULL) ;
 
@@ -1728,7 +1729,6 @@ bool isDummyFriend(std::string id)
 	return ret;
 }
 
-#define VERY_OLD_PEER  (30 * 24 * 3600)      // 30 days.
 
 bool p3PeerMgrIMPL::removeUnusedLocations()
 {
