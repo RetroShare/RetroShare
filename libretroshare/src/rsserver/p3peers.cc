@@ -808,8 +808,12 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id)
 		return true;
 	} 
 
-	/* otherwise - we install as ssl_id. */
-	return mPeerMgr->addFriend(ssl_id, gpg_id);
+	/* otherwise - we install as ssl_id..... 
+	 * If we are adding an SSL certificate. we flag lastcontact as now. 
+	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
+	 *  */
+	time_t now = time(NULL);
+	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now);
 }
 
 

@@ -1774,6 +1774,8 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	{
 		removeFriend(*it);
 	}
+
+	return true;
 }
 
 	

@@ -44,6 +44,8 @@
 RsVoip *rsVoip = NULL;
 
 
+#define MAX_PONG_RESULTS	150
+#define VORS_PING_PERIOD  	10
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -166,7 +168,6 @@ int	p3VoRS::status()
 }
 
 
-#define VORS_PING_PERIOD  10
 
 int	p3VoRS::sendPackets()
 {
@@ -406,7 +407,6 @@ int	p3VoRS::storePongResult(std::string id, uint32_t counter, double ts, double 
 
 	peerInfo->mPongResults.push_back(RsVoipPongResult(ts, rtt, offset));
 
-#define MAX_PONG_RESULTS	100
 
 	while(peerInfo->mPongResults.size() > MAX_PONG_RESULTS)
 	{
