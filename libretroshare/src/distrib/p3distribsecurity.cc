@@ -38,7 +38,7 @@ p3DistribSecurity::~p3DistribSecurity()
 {
 }
 
-RSA *p3DistribSecurity::extractPublicKey(RsTlvSecurityKey & key)
+RSA *p3DistribSecurity::extractPublicKey(RsTlvSecurityKey& key)
 {
 	const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
 	long keylen = key.keyData.bin_len;

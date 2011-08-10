@@ -29,20 +29,22 @@
 #include <string>
 
 #include "util/pugixml.h"
-
-
+#include "distrib/p3distrib.h"
 
 class p3DistribCacheOpt {
 
 public:
 
-	p3DistribCacheOpt();
+	p3DistribCacheOpt(const std::string& ownId);
 	~p3DistribCacheOpt();
 
 	/*!
 	 * This updates the cache document with pending msg and grp cache data
+	 * @param grpHistPending
+	 * @param caches caches with msgs belonging to grp
 	 */
-	void updateCacheDocument();
+	void updateCacheDocument(std::vector<grpCachePair>& grps,
+			std::vector<grpCachePair>& caches);
 
 
 	/*!
@@ -55,17 +57,19 @@ public:
 	/*!
 	 * encrypts and saves cache file
 	 */
-	bool saveHistoryCacheFile(const std::string&);
+	bool saveCacheOptFile(const std::string& filePath);
 
 	/*!
 	 * decrypte and save cache file
 	 * @return
 	 */
-	bool loadHistoryCacheFile(const std::string&);
+	bool loadCacheOptFile(const std::string& filePath);
 
 private:
 
 	pugi::xml_document mCacheDoc;
+	std::map<std::string, nodeCache> mCacheTable;
+	std::string mOwnId;
 };
 
 #endif /* P3DISTRIBCACHEOPT_H_ */
