@@ -28,7 +28,7 @@
 
 #include "retroshare/rsblogs.h"
 #include "retroshare/rsfiles.h"
-#include "services/p3distrib.h"
+#include "distrib/p3distrib.h"
 
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rsblogitems.h"

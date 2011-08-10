@@ -1,9 +1,9 @@
 /*
- * libretroshare/src/services: p3distrib.h
+ * libretroshare/src/distrib: p3distrib.h
  *
- * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2008 by Robert Fernie.
+ * Copyright 2004-2011 by Robert Fernie.
+ *           2010-2011 Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,7 +38,7 @@
 #include <fstream>
 
 #include "retroshare/rsdistrib.h"
-#include "services/p3distrib.h"
+#include "distrib/p3distrib.h"
 #include "serialiser/rsdistribitems.h"
 #include "serialiser/rstlvkeys.h"
 
@@ -2935,7 +2935,6 @@ RSA *extractPrivateKey(RsTlvSecurityKey &key)
 
 	return rsakey;
 }
-
 
 std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, uint32_t flags,
 		unsigned char* pngImageData, uint32_t imageSize)

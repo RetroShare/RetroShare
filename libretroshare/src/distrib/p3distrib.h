@@ -1,9 +1,9 @@
 /*
- * libretroshare/src/services: p3distrib.h
+ * libretroshare/src/distrib: p3distrib.h
  *
- * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2008 by Robert Fernie.
+ * Copyright 2004-2011 by Robert Fernie.
+ *           2010-2011 Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,42 +55,6 @@
  */
 
 const uint32_t GROUP_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
-
-/************* The Messages that are serialised ****************/
-
-#if 0
-
-class RsConfigDistrib: public RsSerialType
-{
-	public:
-
-	RsConfigDistrib();
-
-};
-
-class RsSerialDistrib: public RsSerialType
-{
-	public:
-
-	RsSerialDistrib();
-
-};
-
-#endif
-
-
-/************* The Messages that are serialised ****************/
-
-#if 0
-const uint32_t GROUP_KEY_TYPE_MASK		= 0x000f;
-const uint32_t GROUP_KEY_DISTRIB_MASK		= 0x00f0;
-
-const uint32_t GROUP_KEY_TYPE_PUBLIC_ONLY	= 0x0001;
-const uint32_t GROUP_KEY_TYPE_FULL		= 0x0002;
-const uint32_t GROUP_KEY_DISTRIB_PUBLIC		= 0x0010;
-const uint32_t GROUP_KEY_DISTRIB_PRIVATE	= 0x0020;
-const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
-#endif
 
 
 /*
