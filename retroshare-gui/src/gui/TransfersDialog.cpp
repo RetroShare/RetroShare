@@ -381,6 +381,9 @@ void TransfersDialog::processSettings(bool bLoad)
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+
+        // selected tab
+        ui.tabWidget->setCurrentIndex(Settings->value("selectedTab").toInt());
     } else {
         // save settings
 
@@ -393,6 +396,9 @@ void TransfersDialog::processSettings(bool bLoad)
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
+
+        // selected tab
+        Settings->setValue("selectedTab", ui.tabWidget->currentIndex());
     }
 
     Settings->endGroup();
@@ -1005,7 +1011,7 @@ void TransfersDialog::insertTransfers()
 			double dlspeed  	= pit->tfRate * 1024.0;
 			qlonglong fileSize 	= info.size;
 			qlonglong completed 	= pit->transfered;
-			double progress 	= (info.size > 0)?(pit->transfered * 100.0 / info.size):0.0;
+//			double progress 	= (info.size > 0)?(pit->transfered * 100.0 / info.size):0.0;
 			qlonglong remaining   = (info.size - pit->transfered) / (pit->tfRate * 1024.0);
 
 			// Estimate the completion. We need something more accurate, meaning that we need to

@@ -678,7 +678,7 @@ void RshareSettings::setExpandNewMessages (bool bValue)
 uint RshareSettings::getMaxTimeBeforeIdle()
 {
     if (m_maxTimeBeforeIdle == -1) {
-        m_maxTimeBeforeIdle = valueFromGroup("General", "maxTimeBeforeIdle", 30).toUInt();
+        m_maxTimeBeforeIdle = value("maxTimeBeforeIdle", 30).toUInt();
     }
 
     return m_maxTimeBeforeIdle;
@@ -687,5 +687,5 @@ uint RshareSettings::getMaxTimeBeforeIdle()
 void RshareSettings::setMaxTimeBeforeIdle(uint nValue)
 {
     m_maxTimeBeforeIdle = nValue;
-    setValueToGroup("General", "maxTimeBeforeIdle", nValue);
+    setValue("maxTimeBeforeIdle", nValue);
 }
