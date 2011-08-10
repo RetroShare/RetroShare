@@ -277,7 +277,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 #ifdef P3PEERS_DEBUG
 			std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
 #endif
-        		d.isOnlyGPGdetail = false;
+        		d.isOnlyGPGdetail = true;
         		return getGPGDetails(id, d);
 		}
 	}
