@@ -44,10 +44,8 @@ class p3DistribSecurity {
 
 public:
 
-
 	p3DistribSecurity();
 	~p3DistribSecurity();
-
 
 	/*!
 	 * extracts the public key from an RsTlvSecurityKey
@@ -78,14 +76,15 @@ public:
 	static void setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
 
 	/*!
-	 *
+	 * extracts signature from RSA key
 	 * @param pubkey
-	 * @return
+	 * @return signature of RSA key in hex format
 	 */
 	static std::string getRsaKeySign(RSA *pubkey);
 
 	/*!
-	 *
+	 * extracts the signature and stores it in a string
+	 * in hex format
 	 * @param data
 	 * @param len
 	 * @return
@@ -106,17 +105,19 @@ public:
 	/**
 	 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
 	 * only full publish key holders can decrypt data for a group
-	 *@param out where decrypted data is written to
-	 *@param outlen
-	 *@param in
-	 *@param inlen
+	 * @param out where decrypted data is written to
+	 * @param outlen
+	 * @param in
+	 * @param inlen
+	 * @return false if encryption failed
 	 */
 	static bool decrypt(void *&out, int &outlen, const void *in, int inlen, EVP_PKEY *privateKey);
 
 	/*!
-	 *
+	 * uses grp signature to check if group has been
+	 * tampered with
 	 * @param newGrp
-	 * @return
+	 * @return true if group valid false otherwise
 	 */
 	static bool validateDistribGrp(RsDistribGrp *newGrp);
 

@@ -39,6 +39,7 @@
 
 #include "retroshare/rsdistrib.h"
 #include "distrib/p3distrib.h"
+#include "distrib/p3distribsecurity.h"
 #include "serialiser/rsdistribitems.h"
 #include "serialiser/rstlvkeys.h"
 
