@@ -523,7 +523,7 @@ bool MessagesDialog::hasMessageStar(int nRow)
     return item->data(ROLE_MSGFLAGS).toInt() & RS_MSG_STAR;
 }
 
-void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
+void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint /*point*/ )
 {
     std::string cid;
     std::string mid;
@@ -621,7 +621,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     contextMnu.exec(QCursor::pos());
 }
 
-void MessagesDialog::folderlistWidgetCostumPopupMenu(QPoint point)
+void MessagesDialog::folderlistWidgetCostumPopupMenu(QPoint /*point*/)
 {
     if (ui.listWidget->currentRow() != ROW_TRASHBOX) {
         /* Context menu only neede for trash box */
@@ -1892,7 +1892,7 @@ void MessagesDialog::emptyTrash()
     // LockUpdate -> insertMessages();
 }
 
-void MessagesDialog::tabChanged(int tab)
+void MessagesDialog::tabChanged(int /*tab*/)
 {
 	connectActions();
 	updateInterface();

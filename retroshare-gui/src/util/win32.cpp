@@ -39,7 +39,7 @@
 /** Finds the location of the "special" Windows folder using the given CSIDL
  * value. If the folder cannot be found, the given default path is used. */
 QString
-win32_get_folder_location(int folder, QString defaultPath)
+win32_get_folder_location(int /*folder*/, QString defaultPath)
 {
 #if 0
   TCHAR path[MAX_PATH+1];
@@ -90,6 +90,9 @@ win32_registry_get_key_value(QString keyLocation, QString keyName)
 
   return QString(data);
 #else
+  Q_UNUSED(keyLocation);
+  Q_UNUSED(keyName);
+
   return QString();
 #endif
 }
@@ -120,6 +123,10 @@ win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyVa
 
   /* Close the key */
   RegCloseKey(key);
+#else
+  Q_UNUSED(keyLocation);
+  Q_UNUSED(keyName);
+  Q_UNUSED(keyValue);
 #endif
 }
 
@@ -141,6 +148,9 @@ win32_registry_remove_key(QString keyLocation, QString keyName)
 
   /* Close anything that was opened */
   RegCloseKey(key);
+#else
+  Q_UNUSED(keyLocation);
+  Q_UNUSED(keyName);
 #endif
 }
 

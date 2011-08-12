@@ -130,7 +130,7 @@ PluginsPage::~PluginsPage()
 }
 
 /** Saves the changes on this page */
-bool PluginsPage::save(QString &errmsg)
+bool PluginsPage::save(QString &/*errmsg*/)
 {
 	// nothing to save for now.
     return true;

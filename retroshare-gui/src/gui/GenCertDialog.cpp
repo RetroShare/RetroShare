@@ -292,7 +292,7 @@ void GenCertDialog::selectFriend()
 }
 
 
-void GenCertDialog::checkChanged(int i)
+void GenCertDialog::checkChanged(int /*i*/)
 {
 
 #if 0

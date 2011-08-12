@@ -157,7 +157,7 @@ void ShareKey::setShareList(){
 
 }
 
-void ShareKey::togglePersonItem( QTreeWidgetItem *item, int col )
+void ShareKey::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
 {
 
         /* extract id */

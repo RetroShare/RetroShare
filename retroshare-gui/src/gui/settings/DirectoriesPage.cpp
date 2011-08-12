@@ -80,7 +80,7 @@ void DirectoriesPage::toggleRememberHashes()
 }
 
 /** Saves the changes on this page */
-bool DirectoriesPage::save(QString &errmsg)
+bool DirectoriesPage::save(QString &/*errmsg*/)
 {
 	rsFiles->setRememberHashFilesDuration(ui.rememberHashesSB->value());
 	rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value());

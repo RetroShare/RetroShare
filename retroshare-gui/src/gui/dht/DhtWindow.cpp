@@ -364,7 +364,6 @@ void DhtWindow::updateNetPeers()
 #endif
 	peerTreeWidget->clear();
 
-	time_t now = time(NULL);
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
 	{
 		/* find the entry */

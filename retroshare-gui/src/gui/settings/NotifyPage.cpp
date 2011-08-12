@@ -54,7 +54,7 @@ NotifyPage::~NotifyPage()
 
 /** Saves the changes on this page */
 bool
-NotifyPage::save(QString &errmsg)
+NotifyPage::save(QString &/*errmsg*/)
 {
     /* extract from rsNotify the flags */
 

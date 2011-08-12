@@ -197,7 +197,7 @@ void NetworkDialog::updateNewDiscoveryInfo()
 	networkview->updateDisplay();
 }
 
-void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
+void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
     //std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
     QTreeWidgetItem *wi = getCurrentNeighbour();

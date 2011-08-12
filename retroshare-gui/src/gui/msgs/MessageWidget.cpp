@@ -226,7 +226,7 @@ QString MessageWidget::subject(bool noEmpty)
 	return subject;
 }
 
-void MessageWidget::msgfilelistWidgetCostumPopupMenu( QPoint point )
+void MessageWidget::msgfilelistWidgetCostumPopupMenu( QPoint /*point*/ )
 {
 	QMenu contextMnu(this);
 

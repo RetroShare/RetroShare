@@ -124,8 +124,6 @@ void  NetworkView::updateDisplay()
 	std::cerr << "NetworkView::updateDisplay()" << std::endl;
 #endif
 
-	int i = 0;
-
 	std::deque<NodeInfo> nodes_to_treat ;						// list of nodes to be treated. Used as a queue. The int is the level of friendness
 	std::set<std::string> nodes_considered ;					// list of nodes already considered. Eases lookup.
 

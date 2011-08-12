@@ -84,7 +84,7 @@ void GetStartedDialog::changeEvent(QEvent *e)
 
 }
 
-void GetStartedDialog::showEvent ( QShowEvent * event ) 
+void GetStartedDialog::showEvent ( QShowEvent * /*event*/ )
 {
         /* do nothing if locked, or not visible */
         if (RsAutoUpdatePage::eventsLocked() == true)

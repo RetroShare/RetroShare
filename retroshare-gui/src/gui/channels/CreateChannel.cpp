@@ -208,7 +208,7 @@ void  CreateChannel::createChannel()
 }
 
 
-void CreateChannel::togglePersonItem( QTreeWidgetItem *item, int col )
+void CreateChannel::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
 {
 
         /* extract id */

@@ -380,7 +380,7 @@ void NotifyQt::notifyListChange(int list, int type)
 }
 
 
-void NotifyQt::notifyListPreChange(int list, int type)
+void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {
 #ifdef NOTIFY_DEBUG
 	std::cerr << "NotifyQt::notifyListPreChange()" << std::endl;

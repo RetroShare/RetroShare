@@ -694,7 +694,7 @@ void MainWindow::updateForums()
     updateTrayCombine();
 }
 
-void MainWindow::updateChannels(int type)
+void MainWindow::updateChannels(int /*type*/)
 {
     unsigned int newMessageCount = 0;
     unsigned int unreadMessageCount = 0;
@@ -1174,7 +1174,7 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
-void MainWindow::displayErrorMessage(int a,int b,const QString& error_msg)
+void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
 {
 	QMessageBox::critical(NULL, tr("Internal Error"),error_msg) ;
 }

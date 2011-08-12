@@ -126,7 +126,7 @@ void ChannelFeed::processSettings(bool load)
     Settings->endGroup();
 }
 
-void ChannelFeed::channelListCustomPopupMenu( QPoint point )
+void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 {
     ChannelInfo ci;
     if (!rsChannels->getChannelInfo(mChannelId, ci)) {
@@ -197,11 +197,11 @@ void ChannelFeed::createChannel()
 /*************************************************************************************/
 /*************************************************************************************/
 
-void ChannelFeed::deleteFeedItem(QWidget *item, uint32_t type)
+void ChannelFeed::deleteFeedItem(QWidget */*item*/, uint32_t /*type*/)
 {
 }
 
-void ChannelFeed::openChat(std::string peerId)
+void ChannelFeed::openChat(std::string /*peerId*/)
 {
 }
 
@@ -377,7 +377,7 @@ void ChannelFeed::updateChannelList()
 }
 
 
-void ChannelFeed::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
+void ChannelFeed::channelMsgReadSatusChanged(const QString& channelId, const QString& /*msgId*/, int /*status*/)
 {
     updateMessageSummaryList(channelId.toStdString());
 }

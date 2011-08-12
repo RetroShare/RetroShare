@@ -181,7 +181,7 @@ void StartDialog::loadCertificates()
 
 
 
-void StartDialog::on_labelProfile_linkActivated(QString link)
+void StartDialog::on_labelProfile_linkActivated(QString /*link*/)
 {
 
 //    if ((QMessageBox::question(this, tr("Create a New Profile"),tr("This will generate a new Profile\n Are you sure you want to continue?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
@@ -194,7 +194,7 @@ void StartDialog::on_labelProfile_linkActivated(QString link)
 
 }
 
-void StartDialog::on_labelInfo_linkActivated(QString link)
+void StartDialog::on_labelInfo_linkActivated(QString /*link*/)
 {
     InfoDialog infodialog (this);
     infodialog.exec ();

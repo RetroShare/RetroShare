@@ -39,7 +39,7 @@ ForumPage::~ForumPage()
 
 /** Saves the changes on this page */
 bool
-ForumPage::save(QString &errmsg)
+ForumPage::save(QString &/*errmsg*/)
 {
     Settings->setForumMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
     Settings->setExpandNewMessages(ui.expandNewMessages->isChecked());

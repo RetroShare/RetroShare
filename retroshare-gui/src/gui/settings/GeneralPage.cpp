@@ -50,7 +50,7 @@ GeneralPage::~GeneralPage()
 }
 
 /** Saves the changes on this page */
-bool GeneralPage::save(QString &errmsg)
+bool GeneralPage::save(QString &/*errmsg*/)
 {
   Settings->setStartMinimized(ui.checkStartMinimized->isChecked());
   Settings->setValue("doQuit", ui.checkQuit->isChecked());

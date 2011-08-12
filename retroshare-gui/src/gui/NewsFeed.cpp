@@ -471,6 +471,8 @@ void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 
 	/* add to layout */
 	addFeedItem(bni);
+#else
+	Q_UNUSED(fi);
 #endif
 
 #ifdef NEWS_DEBUG
@@ -489,6 +491,8 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 
 	/* add to layout */
 	addFeedItem(bm);
+#else
+	Q_UNUSED(fi);
 #endif
 
 #ifdef NEWS_DEBUG
@@ -535,7 +539,7 @@ void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemFilesNew(RsFeedItem &fi)
+void	NewsFeed::addFeedItemFilesNew(RsFeedItem &/*fi*/)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemFilesNew()";
@@ -544,7 +548,7 @@ void	NewsFeed::addFeedItemFilesNew(RsFeedItem &fi)
 }
 
 /* FeedHolder Functions (for FeedItem functionality) */
-void NewsFeed::deleteFeedItem(QWidget *item, uint32_t type)
+void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::deleteFeedItem()";

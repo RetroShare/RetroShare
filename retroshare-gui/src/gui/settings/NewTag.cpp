@@ -134,6 +134,6 @@ void NewTag::setTagColor()
 void NewTag::showColor(QRgb color)
 {
     QPixmap pxm(16,16);
-    pxm.fill(QColor(m_Color));
+    pxm.fill(QColor(color));
     ui.colorButton->setIcon(pxm);
 }

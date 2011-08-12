@@ -417,7 +417,7 @@ void TransfersDialog::processSettings(bool bLoad)
 //		RsAutoUpdatePage::keyPressEvent(e) ;
 //}
 
-void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
+void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 {
 	std::set<std::string> items;
 	std::set<std::string>::iterator it;

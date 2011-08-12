@@ -49,7 +49,7 @@ ProfileEdit::ProfileEdit(QWidget *parent)
 #endif
 }
 
-void ProfileEdit::profileCustomPopupMenu( QPoint point )
+void ProfileEdit::profileCustomPopupMenu( QPoint /*point*/ )
 {
       QMenu contextMnu( this );
 

@@ -429,7 +429,7 @@ void PopupChatDialog::pasteLink()
 	ui.chattextEdit->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
-void PopupChatDialog::contextMenu( QPoint point )
+void PopupChatDialog::contextMenu( QPoint /*point*/ )
 {
     std::cerr << "In context menu" << std::endl ;
 
@@ -489,7 +489,7 @@ void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
-void PopupChatDialog::resizeEvent(QResizeEvent *event)
+void PopupChatDialog::resizeEvent(QResizeEvent */*event*/)
 {
     // Workaround: now the scroll position is correct calculated
     QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();

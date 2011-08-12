@@ -21,7 +21,7 @@
 
 #include "PluginItem.h"
 
-PluginItem::PluginItem(int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon)
+PluginItem::PluginItem(int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& /*error_string*/, const QIcon& icon)
 	:QWidget(NULL)
 {
 	setupUi(this) ;

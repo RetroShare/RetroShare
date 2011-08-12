@@ -24,7 +24,7 @@ RsAutoUpdatePage::~RsAutoUpdatePage()
 	_timer = NULL ;
 }
 
-void RsAutoUpdatePage::showEvent(QShowEvent *event)
+void RsAutoUpdatePage::showEvent(QShowEvent */*event*/)
 {
         //std::cout << "RsAutoUpdatePage::showEvent() In show event !!" << std::endl ;
 	if(!_locked)

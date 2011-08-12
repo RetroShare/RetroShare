@@ -40,7 +40,7 @@ QSize IMHistoryItemPainter::sizeHint() const
     return size;
 }
 
-void IMHistoryItemPainter::paint(QPainter *painter, const QStyleOptionViewItem &option, EditMode mode) const
+void IMHistoryItemPainter::paint(QPainter *painter, const QStyleOptionViewItem &option, EditMode /*mode*/) const
 {
 //    if (mode == Editable) {
 //        painter->setBrush(option.palette.highlight());

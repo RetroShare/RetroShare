@@ -312,8 +312,8 @@ VoipStatisticsWidget::VoipStatisticsWidget(QWidget *parent)
 void VoipStatisticsWidget::updateVoipStatistics(const std::map<std::string, std::list<RsVoipPongResult> >& info, 
 		double maxRTT, double minTS, double maxTS)
 {
-	static const int cellx = 6 ;
-	static const int celly = 10+4 ;
+	//static const int cellx = 6 ;
+	//static const int celly = 10+4 ;
 
 	QPixmap tmppixmap(maxWidth, maxHeight);
 	tmppixmap.fill(this, 0, 0);
@@ -375,7 +375,7 @@ QString VoipStatisticsWidget::speedString(float f)
 	return QString::number(f/1024.0,'f',2) + " KB/s";
 }
 
-void VoipStatisticsWidget::paintEvent(QPaintEvent *event)
+void VoipStatisticsWidget::paintEvent(QPaintEvent */*event*/)
 {
     QStylePainter(this).drawPixmap(0, 0, pixmap);
 }

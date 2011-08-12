@@ -89,7 +89,7 @@ ShareManager::~ShareManager()
     Settings->saveWidgetInformation(this);
 }
 
-void ShareManager::shareddirListCostumPopupMenu( QPoint point )
+void ShareManager::shareddirListCostumPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 

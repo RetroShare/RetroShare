@@ -58,7 +58,7 @@ MessagePage::~MessagePage()
 
 /** Saves the changes on this page */
 bool
-MessagePage::save(QString &errmsg)
+MessagePage::save(QString &/*errmsg*/)
 {
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
     Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());

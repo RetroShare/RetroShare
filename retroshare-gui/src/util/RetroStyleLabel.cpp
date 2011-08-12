@@ -42,7 +42,7 @@ RetroStyleLabel::RetroStyleLabel(QWidget * parent, Mode mode, Qt::AlignmentFlag 
 RetroStyleLabel::~RetroStyleLabel() {
 }
 
-void RetroStyleLabel::paintEvent(QPaintEvent * event) {
+void RetroStyleLabel::paintEvent(QPaintEvent * /*event*/) {
 /*
 	qDebug() << "Paint event";
 	QLabel::paintEvent( event );

@@ -256,7 +256,7 @@ void GraphWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-static void convolveWithGaussian(double *forceMap,int S,int s) 
+static void convolveWithGaussian(double *forceMap,int S,int /*s*/)
 {
 	static double *bf = NULL ;
 
@@ -269,7 +269,7 @@ static void convolveWithGaussian(double *forceMap,int S,int s)
 			{
 				int x = (i<S/2)?i:(S-i) ;
 				int y = (j<S/2)?j:(S-j) ;
-				int l=2*(x*x+y*y);
+//				int l=2*(x*x+y*y);
 				bf[2*(i+S*j)] = log(sqrtf(0.1 + x*x+y*y)); // linear -> derivative is constant
 				bf[2*(i+S*j)+1] = 0 ;
 			}
@@ -334,7 +334,6 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 	 // compute convolution with 1/omega kernel.
 	 convolveWithGaussian(forceMap,S,20) ;
 	 
-	 static int toto=0 ;
 	 static float speedf=1.0f;
 
     foreach (Node *node, _nodes)

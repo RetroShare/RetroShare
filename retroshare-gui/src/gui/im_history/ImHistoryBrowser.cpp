@@ -376,7 +376,7 @@ void ImHistoryBrowser::itemSelectionChanged()
     }
 }
 
-void ImHistoryBrowser::customContextMenuRequested(QPoint pos)
+void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
 {
     QList<int> hiids;
     getSelectedItems(hiids);

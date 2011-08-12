@@ -390,7 +390,7 @@ void ChanMsgItem::readToggled(bool checked)
     rsChannels->setMessageStatus(mChanId, mMsgId, statusNew, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
 }
 
-void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
+void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int /*status*/)
 {
     if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
         updateItemStatic();

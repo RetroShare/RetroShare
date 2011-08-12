@@ -278,7 +278,7 @@ void SearchDialog::initialiseFileTypeMappings()
 	SearchDialog::initialised = true;
 }
 
-void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
+void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint /*point*/ )
 {
     // block the popup if no results available
     if ((ui.searchResultWidget->selectedItems()).size() == 0) return;
@@ -416,7 +416,7 @@ void SearchDialog::recommendtofriends()
 
 
 /** context menu searchTablewidget2 **/
-void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
+void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint /*point*/ )
 {
     // block the popup if no results available
     if ((ui.searchSummaryWidget->selectedItems()).size() == 0) return;

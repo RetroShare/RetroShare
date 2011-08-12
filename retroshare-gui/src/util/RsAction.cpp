@@ -42,7 +42,7 @@ RsAction::RsAction(const QIcon & icon, const QString & text, QObject * parent , 
 }
 
 
-void	RsAction::triggerEvent( bool checked )
+void	RsAction::triggerEvent( bool /*checked*/ )
 {
 	triggeredId(RsId);
 }

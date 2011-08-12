@@ -789,7 +789,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 //============================================================================
 
 QAction*
-SharedFilesDialog::fileAssotiationAction(const QString fileName)
+SharedFilesDialog::fileAssotiationAction(const QString /*fileName*/)
 {
     QAction* result = 0;
 
@@ -974,7 +974,7 @@ void SharedFilesDialog::FilterItems()
     setCursor(Qt::ArrowCursor);
 }
 
-bool SharedFilesDialog::flat_FilterItem(const QModelIndex &index, const QString &text, int level)
+bool SharedFilesDialog::flat_FilterItem(const QModelIndex &index, const QString &text, int /*level*/)
 {
 	if(index.data(RetroshareDirModel::FileNameRole).toString().contains(text, Qt::CaseInsensitive)) 
 	{

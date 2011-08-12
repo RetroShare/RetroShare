@@ -267,8 +267,8 @@ TurtleRouterStatisticsWidget::TurtleRouterStatisticsWidget(QWidget *parent)
 	maxHeight = 0 ;
 }
 
-void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std::vector<std::string> >& hashes_info, 
-																const std::vector<std::vector<std::string> >& tunnels_info, 
+void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std::vector<std::string> >& /*hashes_info*/,
+																const std::vector<std::vector<std::string> >& /*tunnels_info*/,
 																const std::vector<TurtleRequestDisplayInfo >& search_reqs_info, 
 																const std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info)
 
@@ -329,7 +329,7 @@ QString TurtleRouterStatisticsWidget::speedString(float f)
 	return QString::number(f/1024.0,'f',2) + " KB/s";
 }
 
-void TurtleRouterStatisticsWidget::paintEvent(QPaintEvent *event)
+void TurtleRouterStatisticsWidget::paintEvent(QPaintEvent */*event*/)
 {
     QStylePainter(this).drawPixmap(0, 0, pixmap);
 }

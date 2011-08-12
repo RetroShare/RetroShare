@@ -54,7 +54,7 @@ SoundPage::~SoundPage()
 
 /** Saves the changes on this page */
 bool
-SoundPage::save(QString &errmsg)
+SoundPage::save(QString &/*errmsg*/)
 {
   Settings->beginGroup("Sound");
                 Settings->beginGroup("Enable");

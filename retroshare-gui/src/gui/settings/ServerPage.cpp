@@ -88,7 +88,7 @@ void ServerPage::toggleTunnelConnection(bool b)
 
 /** Saves the changes on this page */
 bool
-ServerPage::save(QString &errmsg)
+ServerPage::save(QString &/*errmsg*/)
 {
     Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked());
 

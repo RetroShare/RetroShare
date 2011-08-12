@@ -93,7 +93,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
 
 /** Saves the changes on this page */
 bool
-ChatPage::save(QString &errmsg)
+ChatPage::save(QString &/*errmsg*/)
 {
     Settings->beginGroup(QString("Chat"));
 
@@ -331,17 +331,17 @@ void ChatPage::on_historyList_currentRowChanged(int currentRow)
     fillPreview(ui.historyList, ui.historyComboBoxVariant, ui.historyPreview);
 }
 
-void ChatPage::on_publicComboBoxVariant_currentIndexChanged(int index)
+void ChatPage::on_publicComboBoxVariant_currentIndexChanged(int /*index*/)
 {
     fillPreview(ui.publicList, ui.publicComboBoxVariant, ui.publicPreview);
 }
 
-void ChatPage::on_privateComboBoxVariant_currentIndexChanged(int index)
+void ChatPage::on_privateComboBoxVariant_currentIndexChanged(int /*index*/)
 {
     fillPreview(ui.privateList, ui.privateComboBoxVariant, ui.privatePreview);
 }
 
-void ChatPage::on_historyComboBoxVariant_currentIndexChanged(int index)
+void ChatPage::on_historyComboBoxVariant_currentIndexChanged(int /*index*/)
 {
     fillPreview(ui.historyList, ui.historyComboBoxVariant, ui.historyPreview);
 }

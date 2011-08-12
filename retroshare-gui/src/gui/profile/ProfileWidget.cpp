@@ -59,7 +59,7 @@ void ProfileWidget::closeEvent (QCloseEvent * event)
     QWidget::closeEvent(event);
 }
 
-void ProfileWidget::showEvent ( QShowEvent * event )
+void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
 {
 
 	RsPeerDetails detail;

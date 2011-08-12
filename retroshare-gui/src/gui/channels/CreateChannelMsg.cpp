@@ -402,7 +402,9 @@ bool CreateChannelMsg::setThumbNail(const std::string& path, int frame){
 	thumbnail_label->setPixmap(img);
 
 	delete[] imageBuffer;
-
+#else
+	Q_UNUSED(path);
+	Q_UNUSED(frame);
 #endif
 
 	return true;

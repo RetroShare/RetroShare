@@ -368,7 +368,7 @@ void FriendsDialog::pasteLink()
     ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
-void FriendsDialog::contextMenu(QPoint point)
+void FriendsDialog::contextMenu(QPoint /*point*/)
 {
     QMenu *contextMnu = ui.lineEdit->createStandardContextMenu();
 
@@ -380,7 +380,7 @@ void FriendsDialog::contextMenu(QPoint point)
     delete(contextMnu);
 }
 
-void FriendsDialog::peertreeWidgetCostumPopupMenu( QPoint point )
+void FriendsDialog::peertreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
     QTreeWidgetItem *c = getCurrentPeer();
 
@@ -1691,7 +1691,7 @@ void FriendsDialog::setColor()
 void FriendsDialog::colorChanged(const QColor &c)
 {
     QPixmap pxm(16,16);
-    pxm.fill(mCurrentColor);
+    pxm.fill(c);
     ui.colorChatButton->setIcon(pxm);
 }
 

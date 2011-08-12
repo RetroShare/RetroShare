@@ -65,7 +65,7 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 }
 
 /** context menu searchTablewidget2 **/
-void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
+void CreateForumMsg::forumMessageCostumPopupMenu( QPoint /*point*/ )
 {
     QMenu *contextMnu = ui.forumMessage->createStandardContextMenu();
 
@@ -179,7 +179,7 @@ void  CreateForumMsg::createMsg()
     }
 }
 
-void CreateForumMsg::closeEvent (QCloseEvent * event)
+void CreateForumMsg::closeEvent (QCloseEvent * /*event*/)
 {
     Settings->saveWidgetInformation(this);
 }

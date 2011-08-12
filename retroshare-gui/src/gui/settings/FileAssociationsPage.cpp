@@ -134,7 +134,7 @@ FileAssociationsPage::~FileAssociationsPage()
 //============================================================================
 
 bool
-FileAssociationsPage::save (QString &errmsg)
+FileAssociationsPage::save (QString &/*errmsg*/)
 {
 //    RshareSettings settings;
 
@@ -218,7 +218,6 @@ FileAssociationsPage::addnew()
 {
     AddFileAssociationDialog afad(false, this);//'add file assotiations' dialog
 
-    int currentRow = table->currentRow() ;
     QTableWidgetItem* titem;
 
     int ti = afad.exec();
@@ -290,7 +289,7 @@ FileAssociationsPage::edit()
 //============================================================================
 
 void
-FileAssociationsPage::tableCellActivated ( int row, int column )
+FileAssociationsPage::tableCellActivated ( int row, int /*column*/ )
 {
     table->selectRow(row);
 }

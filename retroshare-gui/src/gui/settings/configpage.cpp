@@ -26,7 +26,7 @@ ConfigPage::ConfigPage(QWidget *parent, Qt::WFlags flags) : QWidget(parent, flag
 	loaded = false;
 }
 
-void ConfigPage::showEvent(QShowEvent *event)
+void ConfigPage::showEvent(QShowEvent */*event*/)
 {
 	if (loaded) {
 		return;

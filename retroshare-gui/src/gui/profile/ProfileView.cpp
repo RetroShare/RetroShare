@@ -58,7 +58,7 @@ ProfileView::ProfileView(QWidget *parent)
 }
 
 /** context popup menus */
-void ProfileView::imageCustomPopupMenu( QPoint point )
+void ProfileView::imageCustomPopupMenu( QPoint /*point*/ )
 {
       if (!mIsOwnId)
       {
@@ -80,7 +80,7 @@ void ProfileView::imageCustomPopupMenu( QPoint point )
 }
 
 
-void ProfileView::profileCustomPopupMenu( QPoint point )
+void ProfileView::profileCustomPopupMenu( QPoint /*point*/ )
 {
       if (!mIsOwnId)
       {
@@ -97,7 +97,7 @@ void ProfileView::profileCustomPopupMenu( QPoint point )
       contextMnu.exec(QCursor::pos());
 }
 
-void ProfileView::fileCustomPopupMenu( QPoint point )
+void ProfileView::fileCustomPopupMenu( QPoint /*point*/ )
 {
       QMenu contextMnu( this );
 

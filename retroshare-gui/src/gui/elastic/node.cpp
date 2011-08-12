@@ -92,23 +92,23 @@ const QList<Edge *>& Node::edges() const
     return edgeList;
 }
 
-static double interpolate(const double *map,int W,int H,float x,float y) 
-{
-	if(x>W-2) x=W-2 ;
-	if(y>H-2) y=H-2 ;
-	if(x<0  ) x=0   ;
-	if(y<0  ) y=0   ;
+//static double interpolate(const double *map,int W,int H,float x,float y)
+//{
+//	if(x>W-2) x=W-2 ;
+//	if(y>H-2) y=H-2 ;
+//	if(x<0  ) x=0   ;
+//	if(y<0  ) y=0   ;
+//
+//	int i=(int)floor(x) ;
+//	int j=(int)floor(y) ;
+//	double di = x-i ;
+//	double dj = y-j ;
+//
+//	return (1-di)*( (1-dj)*map[2*(i+W*j)] + dj*map[2*(i+W*(j+1))])
+//				+di *( (1-dj)*map[2*(i+1+W*j)] + dj*map[2*(i+1+W*(j+1))]) ;
+//}
 
-	int i=(int)floor(x) ;
-	int j=(int)floor(y) ;
-	double di = x-i ;
-	double dj = y-j ;
-
-	return (1-di)*( (1-dj)*map[2*(i+W*j)] + dj*map[2*(i+W*(j+1))])
-				+di *( (1-dj)*map[2*(i+1+W*j)] + dj*map[2*(i+1+W*(j+1))]) ;
-}
-
-void Node::calculateForces(const double *map,int width,int height,int W,int H,float x,float y,float speedf)
+void Node::calculateForces(const double *map,int width,int height,int W,int H,float x,float y,float /*speedf*/)
 {
 	if (!scene() || scene()->mouseGrabberItem() == this) 
 	{

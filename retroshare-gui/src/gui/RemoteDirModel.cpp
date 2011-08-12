@@ -183,6 +183,8 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 
 int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 {
+	Q_UNUSED(parent);
+
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::rowCount(): " << parent.internalPointer();
 	std::cerr << ": ";
@@ -190,11 +192,11 @@ int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 
 	return _ref_entries.size() ;
 }
-int TreeStyle_RDM::columnCount(const QModelIndex &parent) const
+int TreeStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 {
 	return 5;
 }
-int FlatStyle_RDM::columnCount(const QModelIndex &parent) const
+int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 {
 	return 5;
 }
@@ -419,7 +421,7 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 	return QVariant();
 } /* end of DisplayRole */
-QVariant TreeStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& details,int coln) const
+QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
 	/*
 	 * Person:  name,  id, 0, 0;
@@ -750,6 +752,7 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 }
 QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent) const
 {
+	Q_UNUSED(parent);
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::index(): " << parent.internalPointer();
 	std::cerr << ": row:" << row << " col:" << column << " ";
@@ -817,6 +820,8 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 }
 QModelIndex FlatStyle_RDM::parent( const QModelIndex & index ) const
 {
+	Q_UNUSED(index);
+
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::parent(): " << index.internalPointer();
 	std::cerr << ": ";

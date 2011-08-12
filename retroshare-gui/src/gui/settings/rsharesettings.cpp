@@ -477,10 +477,12 @@ RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 #endif
 }
 
+#if defined(Q_WS_WIN)
 static QString getAppPathForProtocol()
 {
 	return "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
 }
+#endif
 
 /** Returns true if retroshare:// is registered as protocol */
 bool RshareSettings::getRetroShareProtocol()

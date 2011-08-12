@@ -275,7 +275,7 @@ void ForumsDialog::processSettings(bool bLoad)
     m_bProcessSettings = false;
 }
 
-void ForumsDialog::forumListCustomPopupMenu( QPoint point )
+void ForumsDialog::forumListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 
@@ -321,7 +321,7 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     contextMnu.exec(QCursor::pos());
 }
 
-void ForumsDialog::threadListCustomPopupMenu( QPoint point )
+void ForumsDialog::threadListCustomPopupMenu( QPoint /*point*/ )
 {
     if (fillThread) {
         return;

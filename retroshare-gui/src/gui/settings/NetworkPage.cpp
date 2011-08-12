@@ -32,7 +32,7 @@ NetworkPage::NetworkPage(QWidget * parent, Qt::WFlags flags)
 
 /** Saves the changes on this page */
 bool
-NetworkPage::save(QString &errmsg)
+NetworkPage::save(QString &/*errmsg*/)
 {
 	return true;
 }

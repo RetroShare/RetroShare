@@ -124,7 +124,7 @@ void PopupChatWindow::saveSettings()
     }
 }
 
-void PopupChatWindow::showEvent(QShowEvent *event)
+void PopupChatWindow::showEvent(QShowEvent */*event*/)
 {
     if (firstShow) {
         firstShow = false;
@@ -214,7 +214,7 @@ void PopupChatWindow::showDialog(PopupChatDialog *dialog, uint chatflags)
     }
 }
 
-void PopupChatWindow::alertDialog(PopupChatDialog *dialog)
+void PopupChatWindow::alertDialog(PopupChatDialog */*dialog*/)
 {
     QApplication::alert(this);
 }

@@ -285,7 +285,7 @@ void MessengerWindow::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
+void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
       QTreeWidgetItem *c = getCurrentPeer();
 
@@ -1045,7 +1045,7 @@ void MessengerWindow::pastePerson()
 //============================================================================
 
 
-void MessengerWindow::closeEvent (QCloseEvent * event)
+void MessengerWindow::closeEvent (QCloseEvent * /*event*/)
 {
     /* save the expanded peers */
     if (expandedPeers == NULL) {

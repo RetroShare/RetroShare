@@ -39,7 +39,7 @@ static const int availability_map_size_X = 400 ;// length of availability bar
 static const int availability_map_size_Y = 20 ;	// height of availability bar
 static const int tab_size                = 200 ;// size between tabulated entries
 
-FileTransferInfoWidget::FileTransferInfoWidget(QWidget * parent, Qt::WFlags f )
+FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WFlags /*f*/ )
 {
 	QRect TaskGraphRect = geometry();
 	maxWidth = TaskGraphRect.width();
@@ -54,7 +54,7 @@ FileTransferInfoWidget::FileTransferInfoWidget(QWidget * parent, Qt::WFlags f )
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-void FileTransferInfoWidget::resizeEvent(QResizeEvent *event)
+void FileTransferInfoWidget::resizeEvent(QResizeEvent */*event*/)
 {
     QRect TaskGraphRect = geometry();
     maxWidth = TaskGraphRect.width();
@@ -97,7 +97,7 @@ void FileTransferInfoWidget::updateDisplay()
 	pixmap2 = pixmap;
 }
 
-void FileTransferInfoWidget::paintEvent(QPaintEvent *event)
+void FileTransferInfoWidget::paintEvent(QPaintEvent */*event*/)
 {
     //std::cout << "In paint event" << std::endl ;
     QStylePainter painter(this);
