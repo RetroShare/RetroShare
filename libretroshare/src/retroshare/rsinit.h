@@ -72,11 +72,9 @@ class RsInit
 		 *  Account Details (Combined GPG+SSL Setup)
 		 */
 		static bool 	getPreferedAccountId(std::string &id);
-                static bool     getPGPEngineFileName(std::string &fileName);
+		static bool     getPGPEngineFileName(std::string &fileName);
 		static bool 	getAccountIds(std::list<std::string> &ids);
-		static bool 	getAccountDetails(std::string id, 
-					std::string &gpgId, std::string &gpgName, 
-					std::string &gpgEmail, std::string &sslName);
+		static bool 	getAccountDetails(std::string id, std::string &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &sslName);
 
 		static bool	ValidateCertificate(std::string &userName) ;
 
@@ -85,24 +83,24 @@ class RsInit
 		 *  Generating GPGme Account
 		 */
 		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
-		static int 	GetPGPLoginDetails(std::string id, std::string &name, std::string &email);
-                static bool	GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
+		static int 	GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
+		static bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
 
 		/*!
 		 * Login GGP
 		 */
 		static bool 	SelectGPGAccount(const std::string& gpgId);
-		static bool 	LoadGPGPassword(std::string passwd);
+		static bool 	LoadGPGPassword(const std::string& passwd);
 
 		/*!
 		 * Create SSL Certificates
 		 */
-		static bool	GenerateSSLCertificate(std::string name, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString);
+		static bool	GenerateSSLCertificate(const std::string& name, const std::string& org, const std::string& loc, const std::string& country, const std::string& passwd, std::string &sslId, std::string &errString);
 
 		/*!
 		 * intialises directories for passwords and ssl keys
 		 */
-		static bool	LoadPassword(std::string id, std::string passwd) ;
+		static bool	LoadPassword(const std::string& id, const std::string& passwd) ;
 
 		/*!
 		 * Final Certificate load. This can be called if:
@@ -112,8 +110,7 @@ class RsInit
 		 * This wrapper is used to lock the profile first before
 		 * finalising the login
 		 */
-                static int 	LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath);
-
+		static int 	LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath);
 
 		/*!
 		 * Post Login Options
@@ -140,10 +137,10 @@ class RsInit
 		static void setupBaseDir();
 
 		/* Account Details */
-		static bool    get_configinit(std::string dir, std::string &id);
-		static bool    create_configinit(std::string dir, std::string id);
+		static bool    get_configinit(const std::string& dir, std::string &id);
+		static bool    create_configinit(const std::string& dir, const std::string& id);
 
-		static bool setupAccount(std::string accountdir);
+		static bool setupAccount(const std::string& accountdir);
 
 		/* Auto Login */
 		static bool RsStoreAutoLogin() ;
@@ -157,7 +154,5 @@ class RsInit
 		static int 	LoadCertificates(bool autoLoginNT) ;
 
 };
-
-
 
 #endif

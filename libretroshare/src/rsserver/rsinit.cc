@@ -1047,7 +1047,7 @@ int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
 	return 1;
 }
 
-int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
+int      RsInit::GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email)
 {
         #ifdef GPG_DEBUG
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
@@ -1076,7 +1076,7 @@ int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lock
 {
 	const std::string lockFile = accountDir + "/" + "lock";
 
-        lockFilePath = lockFile;
+	lockFilePath = lockFile;
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 	if(RsInitConfig::lockHandle != -1)
@@ -1191,13 +1191,14 @@ bool RsInit::SelectGPGAccount(const std::string& gpgId)
 }
 
 
-bool     RsInit::GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) {
-        return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
+bool     RsInit::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString)
+{
+    return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
 
 
                 /* Create SSL Certificates */
-bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString)
+bool     RsInit::GenerateSSLCertificate(const std::string& gpg_id, const std::string& org, const std::string& loc, const std::string& country, const std::string& passwd, std::string &sslId, std::string &errString)
 {
 	// generate the private_key / certificate.
 	// save to file.
@@ -1213,7 +1214,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 
 	int nbits = 2048;
 
-        std::string name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
+	std::string name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 
 	// Create the filename .....
 	// Temporary Directory for creating files....
@@ -1248,7 +1249,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 			nbits, errString);
 
 	long days = 3000;
-        X509 *x509 = AuthSSL::getAuthSSL()->SignX509ReqWithGPG(req, days);
+	X509 *x509 = AuthSSL::getAuthSSL()->SignX509ReqWithGPG(req, days);
 
 	X509_REQ_free(req);
 	if (x509 == NULL) {
@@ -1262,43 +1263,43 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 		gen_ok = true;
 
 		/* Print the signed Certificate! */
-       		BIO *bio_out = NULL;
-        	bio_out = BIO_new(BIO_s_file());
-        	BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
+		BIO *bio_out = NULL;
+		bio_out = BIO_new(BIO_s_file());
+		BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
 
-        	/* Print it out */
-        	int nmflag = 0;
-        	int reqflag = 0;
+		/* Print it out */
+		int nmflag = 0;
+		int reqflag = 0;
 
-        	X509_print_ex(bio_out, x509, nmflag, reqflag);
+		X509_print_ex(bio_out, x509, nmflag, reqflag);
 
-        	BIO_flush(bio_out);
-        	BIO_free(bio_out);
+		BIO_flush(bio_out);
+		BIO_free(bio_out);
 
 	}
 	else
-        {
+	{
 		gen_ok = false;
-        }
+	}
 
 	if (gen_ok)
 	{
 		/* Save cert to file */
-        	// open the file.
-        	FILE *out = NULL;
-        	if (NULL == (out = RsDirUtil::rs_fopen(cert_name.c_str(), "w")))
-        	{
-               		fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
-                	fprintf(stderr," : %s\n", cert_name.c_str());
+		// open the file.
+		FILE *out = NULL;
+		if (NULL == (out = RsDirUtil::rs_fopen(cert_name.c_str(), "w")))
+		{
+			fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
+			fprintf(stderr," : %s\n", cert_name.c_str());
 			gen_ok = false;
-        	}
-	
-	        if (!PEM_write_X509(out,x509))
-	        {
-	                fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
-	                fprintf(stderr," : %s\n", cert_name.c_str());
+		}
+
+		if (!PEM_write_X509(out,x509))
+		{
+			fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
+			fprintf(stderr," : %s\n", cert_name.c_str());
 			gen_ok = false;
-	        }
+		}
 	
 		fclose(out);
 		X509_free(x509);
@@ -1312,14 +1313,14 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 
 	/* try to load it, and get Id */
 
-        std::string location;
-        std::string gpgid;
-        if (LoadCheckX509(cert_name.c_str(), gpgid, location, sslId) == 0) {
-            std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
-            return false;
-        }
+	std::string location;
+	std::string gpgid;
+	if (LoadCheckX509(cert_name.c_str(), gpgid, location, sslId) == 0) {
+		std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
+		return false;
+	}
 
-        /* Move directory to correct id */
+	/* Move directory to correct id */
 	std::string finalbase = RsInitConfig::basedir + "/" + sslId + "/";
 	/* Rename Directory */
 
@@ -1347,7 +1348,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 
 
 /******************* PRIVATE FNS TO HELP with GEN **************/
-bool RsInit::setupAccount(std::string accountdir)
+bool RsInit::setupAccount(const std::string& accountdir)
 {
 	/* actual config directory isd */
 
@@ -1407,7 +1408,7 @@ bool RsInit::setupAccount(std::string accountdir)
 
 /***************************** FINAL LOADING OF SETUP *************************/
                 /* Login SSL */
-bool     RsInit::LoadPassword(std::string id, std::string inPwd)
+bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 {
 	/* select configDir */
 
@@ -1441,7 +1442,7 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
  */
 int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
 {
-        int retVal = LockConfigDirectory(RsInitConfig::configDir, lockFilePath);
+	int retVal = LockConfigDirectory(RsInitConfig::configDir, lockFilePath);
 	if(retVal != 0)
 		return retVal;
 
@@ -1466,7 +1467,6 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
  */
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
-
 	if (RsInitConfig::load_cert == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
@@ -1516,11 +1516,13 @@ int RsInit::LoadCertificates(bool autoLoginNT)
       
 	return 1;
 }
+
 bool RsInit::RsClearAutoLogin()
 {
 	return	RsLoginHandler::clearAutoLogin(RsInitConfig::preferedId);
 }
-bool	RsInit::get_configinit(std::string dir, std::string &id)
+
+bool	RsInit::get_configinit(const std::string& dir, std::string &id)
 {
 	// have a config directories.
 
@@ -1551,8 +1553,7 @@ bool	RsInit::get_configinit(std::string dir, std::string &id)
 	return false;
 }
 
-
-bool	RsInit::create_configinit(std::string dir, std::string id)
+bool	RsInit::create_configinit(const std::string& dir, const std::string& id)
 {
 	// Check for config file.
 	std::string initfile = dir + "/";

@@ -96,29 +96,6 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
     newGPGKeyGenUiSetup();
 }
 
-/** Destructor. */
-//GenCertDialog::~GenCertDialog()
-//{
-//}
-
-
-/** 
- Overloads the default show() slot so we can set opacity*/
-
-void GenCertDialog::show()
-{
-  //loadSettings();
-  if(!this->isVisible()) {
-    QWidget::show();
-
-  }
-}
-
-void GenCertDialog::closeinfodlg()
-{
-	close();
-}
-
 void GenCertDialog::newGPGKeyGenUiSetup() {
 
     QString titleStr("<span style=\"font-size:17pt; font-weight:500;"
@@ -152,9 +129,9 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.label_3->setText( titleStr.arg( tr("Create a new Location") ) ) ;
     }
 }
+
 void GenCertDialog::genPerson()
 {
-
 	/* Check the data from the GUI. */
 		std::string genLoc  = ui.location_input->text().toUtf8().constData();
         std::string PGPId;
@@ -241,12 +218,12 @@ void GenCertDialog::genPerson()
 
 	/* Initialise the PGP user first */
 	RsInit::SelectGPGAccount(PGPId);
-        //RsInit::LoadGPGPassword(PGPpasswd);
+	//RsInit::LoadGPGPassword(PGPpasswd);
 
 	std::string sslId;
-        std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
-        std::string err;
-        bool okGen = RsInit::GenerateSSLCertificate(PGPId, "", genLoc, "", sslPasswd, sslId, err);
+	std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
+	std::string err;
+	bool okGen = RsInit::GenerateSSLCertificate(PGPId, "", genLoc, "", sslPasswd, sslId, err);
 
 	if (okGen)
 	{
@@ -257,20 +234,15 @@ void GenCertDialog::genPerson()
 	else
 	{
 		/* Message Dialog */
-                QMessageBox::warning ( NULL,
-	                        "Generate ID Failure",
+		QMessageBox::warning( NULL,
+				"Generate ID Failure",
 				"Failed to Generate your new Certificate, maybe PGP password is wrong !",
-			          QMessageBox::Ok);
+				QMessageBox::Ok);
 	}
 }
 
-
-
-
-
 void GenCertDialog::selectFriend()
 {
-
 #if 0
 	/* still need to find home (first) */
 
@@ -288,13 +260,10 @@ void GenCertDialog::selectFriend()
 		ui.genFriend -> setText("<Invalid Selected>");
 	}
 #endif
-
 }
-
 
 void GenCertDialog::checkChanged(int /*i*/)
 {
-
 #if 0
 	if (i)
 	{
@@ -309,14 +278,12 @@ void GenCertDialog::checkChanged(int /*i*/)
 		ui.genFriend -> setText("<None Selected>");
 	}
 #endif
-
 }
-
 
 void GenCertDialog::loadCertificates()
 {
     std::string lockFile;
-        int retVal = RsInit::LockAndLoadCertificates(false, lockFile);
+    int retVal = RsInit::LockAndLoadCertificates(false, lockFile);
 	switch(retVal)
 	{
 		case 0: close();

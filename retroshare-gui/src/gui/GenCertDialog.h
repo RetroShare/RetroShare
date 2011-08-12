@@ -38,15 +38,7 @@ public:
   GenCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
 
-  //~GenCertDialog();
-  
-public slots:
-  /** Overloaded QWidget.show */
-  void show();
-
 private slots:
-
-	void closeinfodlg();
 	void genPerson();
 	//void loadPerson();
 	void selectFriend();
