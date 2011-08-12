@@ -21,7 +21,6 @@
  ****************************************************************/
 
 #include <QPixmap>
-#include <QBuffer>
 
 #include "PopupChatWindow.h"
 #include "PopupChatDialog.h"
@@ -291,20 +290,10 @@ void PopupChatWindow::calculateTitle(PopupChatDialog *dialog)
 
 void PopupChatWindow::getAvatar()
 {
-    QString fileName;
-    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
+    QByteArray ba;
+    if (misc::getOpenAvatarPicture(this, ba))
     {
-        QPixmap picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-
-        std::cerr << "Sending avatar image down the pipe" << std::endl;
-
-        // send avatar down the pipe for other peers to get it.
-        QByteArray ba;
-        QBuffer buffer(&ba);
-        buffer.open(QIODevice::WriteOnly);
-        picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-
-        std::cerr << "Image size = " << ba.size() << std::endl;
+        std::cerr << "Avatar image size = " << ba.size() << std::endl ;
 
         rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size());	// last char 0 included.
     }

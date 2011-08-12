@@ -23,6 +23,8 @@
 #include <QString>
 #include <QDir>
 #include <QFileDialog>
+#include <QByteArray>
+#include <QBuffer>
 
 #include "misc.h"
 
@@ -241,6 +243,43 @@ QString misc::removeNewLine(const std::string &text)
 QString misc::removeNewLine(const std::wstring &text)
 {
     return QString::fromStdWString(text).replace("\n", " ");
+}
+
+/*!
+* Let's the user choose an avatar picture file, which is returned as a PNG thumbnail
+* in a byte array
+*
+* return false, if the user canceled the dialog, otherwise true
+*/
+bool misc::getOpenAvatarPicture(QWidget *parent, QByteArray &image_data)
+{
+	QPixmap picture = getOpenThumbnailedPicture(parent, tr("Load avatar image"), 96, 96);
+
+	if (picture.isNull())
+		return false;
+
+	// save image in QByteArray
+	QBuffer buffer(&image_data);
+	buffer.open(QIODevice::WriteOnly);
+	picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+	return true;
+}
+
+/*!
+ * Open a QFileDialog to let the user choose a picture file.
+ * This picture is converted to a thumbnail and returned as a QPixmap.
+ *
+ * \return a null pixmap, if the user canceled the dialog, otherwise the chosen picture
+ */
+QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption, int width, int height)
+{
+	// Let the user choose an picture file
+	QString fileName;
+	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
+		return QPixmap();
+
+	return QPixmap(fileName).scaled(width, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 }
 
 bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file)

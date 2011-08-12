@@ -1810,37 +1810,15 @@ void FriendsDialog::updateAvatar()
 
 void FriendsDialog::getAvatar()
 {
-	QString fileName;
-	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
+	QByteArray ba;
+	if (misc::getOpenAvatarPicture(this, ba))
 	{
-		QPixmap picture;
-		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-
 #ifdef FRIENDS_DEBUG
-		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+		std::cerr << "Avatar image size = " << ba.size() << std::endl ;
 #endif
 
-		// send avatar down the pipe for other peers to get it.
-		QByteArray ba;
-		QBuffer buffer(&ba);
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-
-#ifdef FRIENDS_DEBUG
-		std::cerr << "Image size = " << ba.size() << std::endl ;
-#endif
-
-		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
-
-		// I suppressed this because it gets called already by rsMsgs->setOwnAvatarData() through a Qt notification signal
-		//updateAvatar() ;
+		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
 	}
-}
-
-void FriendsDialog::changeAvatarClicked() 
-{
-
-	updateAvatar();
 }
 
 void FriendsDialog::on_actionCreate_New_Forum_activated()

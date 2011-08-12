@@ -145,7 +145,6 @@ private slots:
     void setFont();
     void getFont();
 
-    void changeAvatarClicked();
     void getAvatar();
 	void updateOwnStatus(const QString &peer_id, int status);
 

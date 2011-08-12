@@ -571,24 +571,13 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 
 void CreateChannelMsg::addThumbnail()
 {
-        QString fileName;
-	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg)"), fileName))
-	{
-		picture = QPixmap(fileName).scaled(156,107, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-		
-		// to show the selected 
-		thumbnail_label->setPixmap(picture);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 156, 107);
 
-		std::cerr << "Sending Thumbnail image down the pipe" << std::endl ;
+	if (img.isNull())
+		return;
 
-		// send Thumbnail down the pipe for other peers to get it.
-		QByteArray ba;
-		QBuffer buffer(&ba);
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+	picture = img;
 
-		std::cerr << "Image size = " << ba.size() << std::endl ;
-
-		//updateThumbnail() ;
-	}
+	// to show the selected
+	thumbnail_label->setPixmap(picture);
 }

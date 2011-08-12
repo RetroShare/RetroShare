@@ -135,15 +135,16 @@ void EditChanDetails::applyDialog()
 }
 
 
-void EditChanDetails::addChannelLogo()
+void EditChanDetails::addChannelLogo() // the same function as in CreateChannel
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Load File"), QDir::homePath(), tr("Pictures (*.png *.xpm *.jpg)"));
-	if(!fileName.isEmpty())
-	{
-            picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load channel logo"), 64, 64);
 
-            // to show the selected
-            ui.ChannelLogoButton->setIcon(picture);
-	}
+	if (img.isNull())
+		return;
+
+	picture = img;
+
+	// to show the selected
+	ui.ChannelLogoButton->setIcon(picture);
 }
 

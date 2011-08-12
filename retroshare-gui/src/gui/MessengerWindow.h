@@ -91,7 +91,6 @@ private slots:
     /** get own last stored Avatar**/
     void getAvatar();
 
-    void changeAvatarClicked();
     void updateOwnStatus(const QString &peer_id, int status);
 
     void savestatusmessage();

@@ -23,7 +23,6 @@
 #include <QFileInfo>
 #include <QWidgetAction>
 #include <QTimer>
-#include <QBuffer>
 
 #include "common/vmessagebox.h"
 #include "common/StatusDefs.h"
@@ -51,6 +50,7 @@
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
+#include "util/misc.h"
 #include "settings/rsharesettings.h"
 #include "common/RSTreeWidgetItem.h"
 
@@ -1085,11 +1085,6 @@ void MessengerWindow::sendMessage()
     MessageComposer::msgFriend(id, false);
 }
 
-void MessengerWindow::changeAvatarClicked()
-{
-	updateAvatar();
-}
-
 void MessengerWindow::updateAvatar()
 {
 	unsigned char *data = NULL;
@@ -1112,24 +1107,13 @@ void MessengerWindow::updateAvatar()
 
 void MessengerWindow::getAvatar()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
-	if(!fileName.isEmpty())
+	QByteArray ba;
+	if (misc::getOpenAvatarPicture(this, ba))
 	{
-		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-
-		std::cerr << "Sending avatar image down the pipe" << std::endl ;
-
-		// send avatar down the pipe for other peers to get it.
-		QByteArray ba;
-		QBuffer buffer(&ba);
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-
-		std::cerr << "Image size = " << ba.size() << std::endl ;
-
-		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
-
-		updateAvatar() ;
+#ifdef MSG_DEBUG
+		std::cerr << "Avatar image size = " << ba.size() << std::endl ;
+#endif
+		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
 	}
 }
 

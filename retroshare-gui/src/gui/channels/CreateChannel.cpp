@@ -241,14 +241,15 @@ void  CreateChannel::cancelChannel()
 	return;
 }
 
-void CreateChannel::addChannelLogo()
+void CreateChannel::addChannelLogo() // the same function as in EditChanDetails
 {
-        QString fileName;
-	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg)"), fileName))
-	{
-            picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load channel logo"), 64, 64);
 
-            // to show the selected
-            ui.ChannelLogoButton->setIcon(picture);
-	}
+	if (img.isNull())
+		return;
+
+	picture = img;
+
+	// to show the selected
+	ui.ChannelLogoButton->setIcon(picture);
 }

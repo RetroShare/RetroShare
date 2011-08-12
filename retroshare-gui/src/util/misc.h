@@ -156,6 +156,8 @@ class misc : public QObject
     static QString removeNewLine(const std::string &text);
     static QString removeNewLine(const std::wstring &text);
 
+    static bool getOpenAvatarPicture(QWidget *parent, QByteArray &image_data);
+    static QPixmap getOpenThumbnailedPicture(QWidget *parent, const QString &caption, int width, int height);
     static bool getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file);
     static bool getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QStringList &files);
 
