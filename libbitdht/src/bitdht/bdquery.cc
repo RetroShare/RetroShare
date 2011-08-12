@@ -504,7 +504,6 @@ int bdQuery::worthyPotentialPeer(const bdId *id)
 	 * if it is already in mClosest -> false. old peer.
 	 * if it is > mClosest.rbegin() -> false. too far way.
 	 */
-	int retval = 1;
 
 	std::multimap<bdMetric, bdPeer>::iterator it, sit, eit;
 	sit = mClosest.lower_bound(dist);

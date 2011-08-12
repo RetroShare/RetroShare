@@ -44,7 +44,6 @@ bdFilter::bdFilter(const bdNodeId *ownId, std::list<bdFilteredPeer> &startList,
 	mOwnId = *ownId;
 	mFns = fns;
 
-	time_t now = time(NULL);
 	std::list<bdFilteredPeer>::iterator it;
 
 	for(it = startList.begin(); it != startList.end(); it++)

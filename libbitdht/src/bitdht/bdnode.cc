@@ -66,8 +66,7 @@
 
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns),
-	mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL)
+	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns)
 {
 
 	init(); /* (uses this pointers) stuff it - do it here! */
@@ -194,12 +193,6 @@ void bdNode::iteration()
 	mFns->bdPrintNodeId(std::cerr, &mOwnId);
 	std::cerr << std::endl;
 #endif
-	/* iterate through queries */
-
-	bdId id;
-	bdNodeId targetNodeId;
-	std::list<bdQuery>::iterator it;
-	std::list<bdId>::iterator bit;
 
 	/* process incoming msgs */
 	while(mIncomingMsgs.size() > 0)
@@ -418,7 +411,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 }
 
 
-void bdNode::addPotentialPeer(bdId *id, bdId *src)
+void bdNode::addPotentialPeer(bdId *id, bdId */*src*/)
 {
 	mPotentialPeers.push_back(*id);
 }

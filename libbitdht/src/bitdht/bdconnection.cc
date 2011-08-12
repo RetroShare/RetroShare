@@ -212,6 +212,10 @@ int bdConnectManager::checkExistingConnectionAttempt(bdNodeId *target)
 
 int bdConnectManager::killConnectionRequest(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode)
 {
+	/* remove unused parameter warnings */
+	(void) laddr;
+	(void) mode;
+
 	/* check if connection obj already exists */
 #ifdef DEBUG_NODE_CONNECTION
 	std::cerr << "bdConnectManager::killConnectionRequest() Mode: " << mode;
@@ -266,7 +270,6 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 	std::cerr << std::endl;
 #endif
 	/* create a bdConnect, and put into the queue */
-	int mode = BITDHT_CONNECT_MODE_DIRECT;
 	bdConnectionRequest connreq;
 	
 	if (checkExistingConnectionAttempt(target))
@@ -830,7 +833,6 @@ int bdConnectManager::startConnectionAttempt(bdConnectionRequest *req)
 	req->mState = BITDHT_CONNREQUEST_INPROGRESS;
 	req->mStateTS = time(NULL);
 
-	bool failProxy = false;
 	if (mode == BITDHT_CONNECT_MODE_DIRECT)	
 	{
 		// ONE BUG I HAVE SEEN.
@@ -1191,7 +1193,6 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 			} // end of error code switch.
 
 			// Now act on the decision.
-			int newerrcode = errcode;
 			if (fatal)
 			{
 				/* kill connection request, do callback */
@@ -1818,7 +1819,7 @@ int bdConnectManager::cleanConnection(bdNodeId *srcId, bdNodeId *proxyId, bdNode
 }
 
 
-int bdConnectManager::determinePosition(bdNodeId *sender, bdNodeId *src, bdNodeId *dest)
+int bdConnectManager::determinePosition(bdNodeId */*sender*/, bdNodeId *src, bdNodeId *dest)
 {
 	int pos =  BD_PROXY_CONNECTION_UNKNOWN_POINT;
 	if (mOwnId == *src)
@@ -1924,7 +1925,6 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 		int pos = determinePosition(&(id->id), &(srcConnAddr->id), &(destConnAddr->id));
 		uint32_t status = createConnectionErrorCode(0, BITDHT_CONNECT_ERROR_UNSUPPORTED, pos);
 
-		int param = 0;
 		int msgtype = BITDHT_MSG_TYPE_CONNECT_REPLY;
 		mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, 0, status);
 
@@ -2383,7 +2383,7 @@ int bdConnectManager::recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *d
  *  Acks are set, and connections completed if possible (including callback!).
  */
 
-int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode)
+int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int /*mode*/)
 {
 	/* retrieve existing connection data */
 	bdConnection *conn = findExistingConnectionBySender(id, srcConnAddr, destConnAddr);
@@ -2446,7 +2446,7 @@ int bdConnectManager::recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *des
 		/* connection complete! cleanup */
 		if (conn->mMode == BITDHT_CONNECT_MODE_DIRECT)
 		{
-			int mode = conn->mMode | BITDHT_CONNECT_ANSWER_OKAY;
+//			int mode = conn->mMode | BITDHT_CONNECT_ANSWER_OKAY;
 			/* callback to connect to Src address! */
 			// Slightly different callback, use ConnAddr for start message!
 			// Also callback to ConnectionRequest first.
@@ -2645,7 +2645,7 @@ int bdConnection::ConnectionRequestEnd(bdId *id, bdId *srcId, bdId *destId, int 
 
 // Received AUTH, step up to next stage.
 // Search for dest ID/IP is done before AUTH. so actually nothing to do here, except set the state
-int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *destId, int mode, int loc, int bandwidth)
+int bdConnection::AuthoriseProxyConnection(bdId */*srcId*/, bdId */*proxyId*/, bdId */*destId*/, int /*mode*/, int /*loc*/, int bandwidth)
 {
 	mState = BITDHT_CONNECTION_WAITING_REPLY;
 	mLastEvent = time(NULL);
@@ -2679,7 +2679,7 @@ int bdConnection::AuthoriseProxyConnection(bdId *srcId, bdId *proxyId, bdId *des
 
 
 /* we are end of a Proxy Connection */
-int bdConnection::AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destConnAddr, int mode, int loc, int delay)
+int bdConnection::AuthoriseEndConnection(bdId */*srcId*/, bdId */*proxyId*/, bdId *destConnAddr, int /*mode*/, int /*loc*/, int delay)
 {
 	mState = BITDHT_CONNECTION_WAITING_START;
 	mLastEvent = time(NULL);
@@ -2725,7 +2725,7 @@ int bdConnection::AuthoriseEndConnection(bdId *srcId, bdId *proxyId, bdId *destC
 
 
 // Auth of the Direct Connection, means we move straight to WAITING_ACK mode.
-int bdConnection::AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *destConnAddr, int mode, int loc)
+int bdConnection::AuthoriseDirectConnection(bdId */*srcId*/, bdId */*proxyId*/, bdId *destConnAddr, int /*mode*/, int /*loc*/)
 {
 	mState = BITDHT_CONNECTION_WAITING_ACK;
 	mLastEvent = time(NULL);
@@ -2761,7 +2761,7 @@ int bdConnection::AuthoriseDirectConnection(bdId *srcId, bdId *proxyId, bdId *de
 }
 
 // Proxy Connection => at Proxy, Ready to send out Start and get back ACKs!!
-int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int secondDelay, int status)
+int bdConnection::upgradeProxyConnectionToFinish(bdId */*id*/, bdId */*srcConnAddr*/, bdId *destConnAddr, int /*mode*/, int secondDelay, int /*status*/)
 {
 	mState = BITDHT_CONNECTION_WAITING_ACK;
 	mLastEvent = time(NULL);
@@ -2820,7 +2820,7 @@ int bdConnection::upgradeProxyConnectionToFinish(bdId *id, bdId *srcConnAddr, bd
 // Final Sorting out of Addresses.
 // This is called at the Connection Ends, on receiving the START message.
 // This will contain either Bandwidth or Delay.
-int bdConnection::CompleteConnection(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int bandwidth, int delay)
+int bdConnection::CompleteConnection(bdId */*id*/, bdId *srcConnAddr, bdId *destConnAddr, int bandwidth, int delay)
 {
 	/* Store Final Addresses */
 	time_t now = time(NULL);

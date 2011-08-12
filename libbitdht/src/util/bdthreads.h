@@ -39,6 +39,9 @@ class bdMutex
 
 		bdMutex(bool recursive = false) 
 		{
+			/* remove unused parameter warnings */
+			(void) recursive;
+
 #if 0 // TESTING WITHOUT RECURSIVE
 			if(recursive)
 			{

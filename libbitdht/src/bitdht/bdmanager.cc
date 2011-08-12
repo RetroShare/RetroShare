@@ -1260,6 +1260,9 @@ bdDebugCallback::~bdDebugCallback()
 
 int bdDebugCallback::dhtPeerCallback(const bdId *id, uint32_t status)
 {
+	/* remove unused parameter warnings */
+	(void) status;
+
 #ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtPeerCallback() Id: ";
 #endif
@@ -1272,6 +1275,10 @@ int bdDebugCallback::dhtPeerCallback(const bdId *id, uint32_t status)
 
 int bdDebugCallback::dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
+	/* remove unused parameter warnings */
+	(void) key;
+	(void) status;
+
 #ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtValueCallback() Id: ";
 #endif
@@ -1343,6 +1350,16 @@ void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, in
 int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
 		uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode)
 {
+	/* remove unused parameter warnings */
+	(void) srcId;
+	(void) proxyId;
+	(void) destId;
+	(void) mode;
+	(void) point;
+	(void) param;
+	(void) cbtype;
+	(void) errcode;
+
 #ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtConnectCallback() Type: " << cbtype;
 	std::cerr << " errCode: " << errcode;

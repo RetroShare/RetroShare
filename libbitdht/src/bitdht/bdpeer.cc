@@ -412,7 +412,6 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	bdBucket &buck = buckets[buckno];
 
 	std::list<bdPeer>::iterator eit;
-	int matchCount = 0;
 	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
 	{
 		if (*id == eit->mPeerId)
@@ -576,7 +575,6 @@ int	bdSpace::updateAttachedPeers()
 		/* start from the back, as these are the most recently seen (and more likely to be the old ATTACHED) */
 		for(eit = it->entries.rbegin(); eit != it->entries.rend(); eit++) 
 		{
-			bool added = false;
 			if (doAttached)
 			{
 				if ((eit->mPeerFlags & mAttachedFlags) == mAttachedFlags)
