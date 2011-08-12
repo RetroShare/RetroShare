@@ -173,7 +173,7 @@ int test_TlvSet(std::vector<RsTlvItem *> items, int maxsize)
 	void *data = malloc(totalsize);
 	uint32_t size = totalsize;
 
-	int bytes = test_CreateTlvStack(std::cerr, items, data, &size);
+	test_CreateTlvStack(std::cerr, items, data, &size);
 	test_StepThroughTlvStack(std::cerr, data, size);
 
 	return 1;

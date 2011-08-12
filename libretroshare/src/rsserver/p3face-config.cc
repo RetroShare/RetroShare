@@ -89,7 +89,7 @@ int     RsServer::ConfigGetDataRates( float &inKb, float &outKb ) /* in kbrates 
 }
 
 
-int     RsServer::ConfigSetBootPrompt( bool on )
+int     RsServer::ConfigSetBootPrompt( bool /*on*/ )
 {
 
 	return 1;

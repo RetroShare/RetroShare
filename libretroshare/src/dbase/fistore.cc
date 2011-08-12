@@ -161,7 +161,7 @@ int FileIndexStore::loadCache(const CacheData &data)
 
 
 	/* Search Interface - For Directory Access */
-int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDetails &details) const
+int FileIndexStore::RequestDirDetails(std::string uid, std::string /*path*/, DirDetails &/*details*/) const
 {
 	/* lock it up */
 	lockData();
@@ -187,6 +187,9 @@ int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDeta
 
 int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
 {
+	/* remove unused parameter warnings */
+	(void) flags;
+
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::RequestDirDetails() ref=" << ref << " flags: " << flags << std::endl;
 #endif

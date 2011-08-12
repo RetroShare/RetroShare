@@ -545,6 +545,9 @@ int     UdpRelayReceiver::status(std::ostream &out)
 /* higher level interface */
 int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 {
+	/* remove unused parameter warnings */
+	(void) from;
+
 	/* print packet information */
 #ifdef DEBUG_UDP_RELAY
 	std::cerr << "UdpRelayReceiver::recvPkt(" << size << ") from: " << from;
@@ -640,7 +643,7 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 /* the address here must be the end point!, 
  * it cannot be proxy, as we could be using the same proxy for multiple connections. 
  */
-int UdpRelayReceiver::sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl)
+int UdpRelayReceiver::sendPkt(const void *data, int size, const struct sockaddr_in &to, int /*ttl*/)
 {
 	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
 	

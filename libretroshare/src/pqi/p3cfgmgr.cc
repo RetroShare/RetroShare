@@ -821,7 +821,6 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 	std::list<RsItem *>::iterator it;
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
-	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
 	BinInterface *bio = new BinFileInterface(cfg_fname.c_str(), bioflags);
 	PQInterface *stream = NULL;

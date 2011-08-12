@@ -480,6 +480,9 @@ bool    p3GameLauncher::playGame(std::string gameId)
 
 bool    p3GameLauncher::quitGame(std::string gameId)
 {
+	/* remove unused parameter warnings */
+	(void) gameId;
+
 #ifdef GAME_DEBUG
 	std::cerr << "p3GameLauncher::checkGameProperties()";
 	std::cerr << " gameId: " << gameId;
@@ -1231,7 +1234,7 @@ int p3GameLauncher::handleClientReady(RsGameItem *gi)
 }
 
 	/* PAUSE / QUIT msg */
-int p3GameLauncher::handleClientActive(RsGameItem *gi)   
+int p3GameLauncher::handleClientActive(RsGameItem */*gi*/)
 {
 #ifdef GAME_DEBUG
 	std::cerr << "p3GameLauncher::handleClientActive()";
@@ -1282,7 +1285,7 @@ int p3GameLauncher::handleServerSetup(RsGameItem *gi)
 /* This is a setup update from server
  * only updates the players...
  */
-int p3GameLauncher::handleServerActive(RsGameItem *gi)   
+int p3GameLauncher::handleServerActive(RsGameItem */*gi*/)
 {
 #ifdef GAME_DEBUG
 	std::cerr << "p3GameLauncher::handleServerActive()";

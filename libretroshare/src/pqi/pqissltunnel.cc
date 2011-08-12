@@ -127,7 +127,7 @@ pqissltunnel::~pqissltunnel() {
 
 /********** Implementation of NetInterface *************************/
 
-int	pqissltunnel::connect(struct sockaddr_in raddr) {
+int	pqissltunnel::connect(struct sockaddr_in /*raddr*/) {
 #ifdef DEBUG_PQISSL_TUNNEL
 	std::cerr << "pqissltunnel::connect() called : " << PeerId() << std::endl;
 #endif

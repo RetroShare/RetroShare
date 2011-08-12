@@ -1029,9 +1029,9 @@ bool PeerConnectStateBox::storeProxyPortChoice(uint32_t flags, bool useProxyPort
 
 bool PeerConnectStateBox::getProxyPortChoice()
 {
+#ifdef 	DEBUG_CONNECTBOX
 	time_t now = time(NULL);
 
-#ifdef 	DEBUG_CONNECTBOX
 	std::cerr << "PeerConnectStateBox::getProxyPortChoice() Using ConnectLogic Info from: ";
 	std::cerr << now-mProxyPortTS << " ago. Flags: " << mProxyPortFlags;
 	std::cerr << " UseProxyPort? " << mProxyPortChoice;

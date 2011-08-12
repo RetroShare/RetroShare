@@ -1167,17 +1167,15 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 
 bool    p3NetMgrIMPL::setVisState(uint32_t visState)
 {
-	uint32_t netMode;
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		mVisState = visState;
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	mVisState = visState;
 
-		/* if we've started up - then tweak Dht On/Off */
-		if (mNetStatus != RS_NET_UNKNOWN)
-		{
-			enableNetAssistConnect(!(mVisState & RS_VIS_STATE_NODHT));
-		}
+	/* if we've started up - then tweak Dht On/Off */
+	if (mNetStatus != RS_NET_UNKNOWN)
+	{
+		enableNetAssistConnect(!(mVisState & RS_VIS_STATE_NODHT));
 	}
+
 	return true;
 }
 
@@ -1434,9 +1432,9 @@ bool p3NetMgrIMPL::netAssistStatusUpdate(std::string id, int state)
 }
 
 
-bool p3NetMgrIMPL::netAssistSetAddress( struct sockaddr_in &laddr,
-					struct sockaddr_in &eaddr,
-					uint32_t mode)
+bool p3NetMgrIMPL::netAssistSetAddress( struct sockaddr_in &/*laddr*/,
+					struct sockaddr_in &/*eaddr*/,
+					uint32_t /*mode*/)
 {
 #if 0
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;

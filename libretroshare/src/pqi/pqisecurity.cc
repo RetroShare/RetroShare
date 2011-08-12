@@ -54,14 +54,14 @@ int	secpolicy_delete(SecurityPolicy *p)
 }
 
 
-int 			secpolicy_limit(SecurityPolicy *limiter,
-				SecurityPolicy *alter)
+int 			secpolicy_limit(SecurityPolicy */*limiter*/,
+				SecurityPolicy */*alter*/)
 {
 	return 1;
 }
 
-int 			secpolicy_check(SecurityPolicy *, int type_transaction, 
-						int direction)
+int 			secpolicy_check(SecurityPolicy *, int /*type_transaction*/,
+						int /*direction*/)
 {
 	return 1;
 }

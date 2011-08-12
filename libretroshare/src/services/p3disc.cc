@@ -843,7 +843,7 @@ void p3disc::recvDiscReply(RsDiscReply *dri)
 
 
 
-void p3disc::removeFriend(std::string ssl_id) 
+void p3disc::removeFriend(std::string /*ssl_id*/)
 {
 
 // DON'T KNOW WHY SSL IDS were saved -> the results are never used
@@ -1229,7 +1229,7 @@ RsSerialiser *p3disc::setupSerialiser()
         return rss ;
 }
 
-bool p3disc::saveList(bool& cleanup, std::list<RsItem*>& lst)
+bool p3disc::saveList(bool& cleanup, std::list<RsItem*>& /*lst*/)
 {
         #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::saveList() called" << std::endl;
@@ -1272,10 +1272,10 @@ bool p3disc::loadList(std::list<RsItem*>& load)
         std::list<RsItem *>::iterator it;
         for(it = load.begin(); it != load.end(); it++) 
 		{
-                RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
-
 // DON'T KNOW WHY SSL IDS were saved -> the results are never used
 #if 0
+                RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+
                 if(vitem) 
 				{
                         #ifdef P3DISC_DEBUG

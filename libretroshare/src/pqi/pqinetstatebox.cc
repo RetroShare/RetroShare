@@ -105,7 +105,7 @@ void pqiNetStateBox::setAddressWebIP(bool active, struct sockaddr_in *addr)
 }
 
 
-void pqiNetStateBox::setPortForwarded(bool active, uint16_t port)
+void pqiNetStateBox::setPortForwarded(bool /*active*/, uint16_t port)
 {
 	if ((!mPortForwardSet) || (mPortForwarded != port))
 

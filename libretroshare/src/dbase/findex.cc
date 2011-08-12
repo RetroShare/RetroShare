@@ -717,7 +717,7 @@ int     FileIndex::printFileIndex(std::ostream &out)
 	return 1;
 }
 
-int FileIndex::loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size)
+int FileIndex::loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t /*size*/)
 {
 	std::ifstream file (filename.c_str(), std::ifstream::binary);
 	if (!file)

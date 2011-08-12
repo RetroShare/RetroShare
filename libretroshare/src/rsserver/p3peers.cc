@@ -207,7 +207,7 @@ bool	p3Peers::getFriendList(std::list<std::string> &ids)
 //	return true;
 //}
 
-bool p3Peers::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool ssl)
+bool p3Peers::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool /*ssl*/)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPeerCount()" << std::endl;
@@ -1079,7 +1079,7 @@ p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
 
 //===========================================================================
 
-bool 	p3Peers::loadCertificateFromFile(const std::string &fname, std::string &id, std::string &gpg_id)
+bool 	p3Peers::loadCertificateFromFile(const std::string &/*fname*/, std::string &/*id*/, std::string &/*gpg_id*/)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::LoadCertificateFromFile() not implemented yet";
@@ -1306,8 +1306,11 @@ bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCer
 	return false;
 }
 
-bool 	p3Peers::saveCertificateToFile(const std::string &id, const std::string &fname)
+bool 	p3Peers::saveCertificateToFile(const std::string &id, const std::string &/*fname*/)
 {
+	/* remove unused parameter warnings */
+	(void) id;
+
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::SaveCertificateToFile() not implemented yet " << id;
 	std::cerr << std::endl;

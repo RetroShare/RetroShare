@@ -60,7 +60,7 @@ std::ostream &RsStatusItem::print(std::ostream &out, uint16_t indent)
         return out;
 }
 
-uint32_t    RsStatusSerialiser::sizeItem(RsStatusItem *item)
+uint32_t    RsStatusSerialiser::sizeItem(RsStatusItem */*item*/)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* sendTime  */

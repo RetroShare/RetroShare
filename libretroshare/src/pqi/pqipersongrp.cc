@@ -694,14 +694,14 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 
 #include "pqi/pqibin.h"
 
-pqilistener * pqipersongrpDummy::createListener(struct sockaddr_in laddr)
+pqilistener * pqipersongrpDummy::createListener(struct sockaddr_in /*laddr*/)
 {
 	pqilistener *listener = new pqilistener();
 	return listener;
 }
 
 
-pqiperson * pqipersongrpDummy::createPerson(std::string id, pqilistener *listener)
+pqiperson * pqipersongrpDummy::createPerson(std::string id, pqilistener */*listener*/)
 {
 	{
 		std::ostringstream out;

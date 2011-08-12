@@ -725,6 +725,10 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
         getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + sFilename + " to " + sStream.str ());
         return false;
     }
+#else
+    /* remove unused parameter warnings */
+    (void) sFilename;
+    (void) nCount;
 #endif
     return true;
 }

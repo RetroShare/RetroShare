@@ -110,8 +110,8 @@ virtual     ~RsPhotoSerialiser()
 	{ return; }
 	
 virtual	uint32_t    size(RsItem *) { return 0; }
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size) { return false; }
-virtual	RsItem *    deserialise(void *data, uint32_t *size) { return NULL; }
+virtual	bool        serialise  (RsItem */*item*/, void */*data*/, uint32_t */*size*/) { return false; }
+virtual	RsItem *    deserialise(void */*data*/, uint32_t */*size*/) { return NULL; }
 
 	private:
 

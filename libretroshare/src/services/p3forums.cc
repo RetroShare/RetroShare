@@ -48,7 +48,7 @@ std::ostream &operator<<(std::ostream &out, const ForumInfo &info)
 	return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const ThreadInfoSummary &info)
+std::ostream &operator<<(std::ostream &out, const ThreadInfoSummary &/*info*/)
 {
 	out << "ThreadInfoSummary:";
 	out << std::endl;
@@ -58,7 +58,7 @@ std::ostream &operator<<(std::ostream &out, const ThreadInfoSummary &info)
 	return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const ForumMsgInfo &info)
+std::ostream &operator<<(std::ostream &out, const ForumMsgInfo &/*info*/)
 {
 	out << "ForumMsgInfo:";
 	out << std::endl;
@@ -482,20 +482,20 @@ RsSerialType *p3Forums::createSerialiser()
         return new RsForumSerialiser();
 }
 
-bool    p3Forums::locked_checkDistribMsg(RsDistribMsg *msg)
+bool    p3Forums::locked_checkDistribMsg(RsDistribMsg */*msg*/)
 {
 	return true;
 }
 
 
-RsDistribGrp *p3Forums::locked_createPublicDistribGrp(GroupInfo &info)
+RsDistribGrp *p3Forums::locked_createPublicDistribGrp(GroupInfo &/*info*/)
 {
 	RsDistribGrp *grp = NULL; //new RsForumGrp();
 
 	return grp;
 }
 
-RsDistribGrp *p3Forums::locked_createPrivateDistribGrp(GroupInfo &info)
+RsDistribGrp *p3Forums::locked_createPrivateDistribGrp(GroupInfo &/*info*/)
 {
 	RsDistribGrp *grp = NULL; //new RsForumGrp();
 
@@ -634,12 +634,12 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags, bool h
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags, historical);
 }
 
-bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
+bool p3Forums::locked_eventDuplicateMsg(GroupInfo */*grp*/, RsDistribMsg */*msg*/, const std::string& /*id*/, bool /*historical*/)
 {
 	return true;
 }
 
-bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
+bool p3Forums::locked_eventNewMsg(GroupInfo */*grp*/, RsDistribMsg *msg, const std::string& /*id*/, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;

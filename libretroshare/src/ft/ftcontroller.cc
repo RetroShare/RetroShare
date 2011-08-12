@@ -94,7 +94,7 @@ ftFileControl::ftFileControl(std::string fname,
 	return;
 }
 
-ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
+ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string /*configDir*/)
 	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), 
 	last_save_time(0),
 	last_clean_time(0),

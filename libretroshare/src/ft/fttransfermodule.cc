@@ -979,6 +979,9 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset, 
 			uint32_t chunk_size, void *data)
 {
+	/* remove unused parameter warnings */
+	(void) data;
+
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::locked_recvPeerData()";
 	std::cerr << " peerId: " << info.peerId;

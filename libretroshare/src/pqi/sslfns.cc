@@ -681,7 +681,7 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 }
 
 /* XXX FIX */
-bool CheckX509Certificate(X509 *x509)
+bool CheckX509Certificate(X509 */*x509*/)
 {
 
 	return true;

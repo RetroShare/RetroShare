@@ -1257,7 +1257,7 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 	return realroot;
 }
 
-int FileIndexMonitor::RequestDirDetails(std::string uid, std::string path, DirDetails &details) const
+int FileIndexMonitor::RequestDirDetails(std::string uid, std::string /*path*/, DirDetails &/*details*/) const
 {
 	/* lock it up */
 	RsStackMutex mutex(fiMutex) ;
@@ -1273,6 +1273,9 @@ uint32_t FileIndexMonitor::getType(void *ref) const
 }
 int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
 {
+	/* remove unused parameter warnings */
+	(void) flags;
+
 	RsStackMutex mutex(fiMutex) ;
 
 #ifdef FIM_DEBUG2

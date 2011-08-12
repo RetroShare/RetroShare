@@ -460,7 +460,7 @@ bool p3Channels::getMessageCount(const std::string cId, unsigned int &newCount, 
 	return true;
 }
 
-bool p3Channels::channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo){
+bool p3Channels::channelExtraFileHash(std::string path, std::string /*chId*/, FileInfo& fInfo){
 
 	// get file name
 	std::string fname, fnameBuff;
@@ -533,7 +533,7 @@ RsSerialType *p3Channels::createSerialiser()
         return new RsChannelSerialiser();
 }
 
-bool    p3Channels::locked_checkDistribMsg(RsDistribMsg *msg)
+bool    p3Channels::locked_checkDistribMsg(RsDistribMsg */*msg*/)
 {
 	return true;
 }
@@ -727,7 +727,7 @@ const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600;
  * on a subscription to a channel..
  */
 
-bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
+bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool /*historical*/)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;

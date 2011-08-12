@@ -631,7 +631,7 @@ int     NetBinDummy::tick()
 	return 0;
 }
 
-int     NetBinDummy::senddata(void *data, int len)
+int     NetBinDummy::senddata(void */*data*/, int len)
 {
 	std::cerr << "NetBinDummy::senddata() ";
 	printNetBinID(std::cerr, PeerId(), type);
@@ -642,7 +642,7 @@ int     NetBinDummy::senddata(void *data, int len)
 	return 0;
 }
 
-int     NetBinDummy::readdata(void *data, int len)
+int     NetBinDummy::readdata(void */*data*/, int /*len*/)
 {
 	std::cerr << "NetBinDummy::readdata() ";
 	printNetBinID(std::cerr, PeerId(), type);

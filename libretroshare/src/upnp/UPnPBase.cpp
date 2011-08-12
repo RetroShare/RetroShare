@@ -117,11 +117,17 @@ std::string CUPnPLib::GetUPnPErrorMessage(int code) const
 
 
 std::string CUPnPLib::processUPnPErrorMessage(
-	const std::string &messsage,
+	const std::string &message,
 	int errorCode,
 	const DOMString errorString,
 	IXML_Document *doc) const
 {
+	/* remove unused parameter warnings */
+	(void) message;
+	(void) errorCode;
+	(void) errorString;
+	(void) doc;
+
 	std::ostringstream msg;
 #ifdef UPNP_DEBUG
 	if (errorString == NULL || *errorString == 0) {
@@ -129,7 +135,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 	}
 	if (errorCode > 0) {
 		std::cerr << "CUPnPLib::processUPnPErrorMessage() Error: " <<
-			messsage <<
+			message <<
 			": Error code :'";
 		if (doc) {
 			CUPnPError e(*this, doc);
@@ -146,7 +152,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 		std::cerr << std::endl;
 	} else {
 		std::cerr << "CUPnPLib::processUPnPErrorMessage() Error: " <<
-			messsage <<
+			message <<
 			": UPnP SDK error: " <<
 			GetUPnPErrorMessage(errorCode) << 
 			" (" << errorCode << ").";
@@ -161,6 +167,9 @@ void CUPnPLib::ProcessActionResponse(
 	IXML_Document *RespDoc,
 	const std::string &actionName) const
 {
+	/* remove unused parameter warnings */
+	(void) actionName;
+
 	std::ostringstream msg;
 	msg << "Response: ";
 	IXML_Element *root = Element_GetRootElement(RespDoc);
@@ -356,7 +365,7 @@ CUPnPArgument::CUPnPArgument(
 	const CUPnPControlPoint &upnpControlPoint,
 	CUPnPLib &upnpLib,
 	IXML_Element *argument,
-	const std::string &SCPDURL)
+	const std::string &/*SCPDURL*/)
 :
 m_UPnPControlPoint(upnpControlPoint),
 m_name                (upnpLib.Element_GetChildValueByTag(argument, "name")),
@@ -398,7 +407,7 @@ CUPnPAllowedValue::CUPnPAllowedValue(
 	const CUPnPControlPoint &upnpControlPoint,
 	CUPnPLib &upnpLib,
 	IXML_Element *allowedValue,
-	const std::string &SCPDURL)
+	const std::string &/*SCPDURL*/)
 :
 m_UPnPControlPoint(upnpControlPoint),
 m_allowedValue(upnpLib.Element_GetTextValue(allowedValue))
@@ -1593,6 +1602,9 @@ void CUPnPControlPoint::OnEventReceived(
 		int EventKey,
 		IXML_Document *ChangedVariablesDoc)
 {
+	/* remove unused parameter warnings */
+	(void) EventKey;
+
 #ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::OnEventReceived() UPNP_EVENT_RECEIVED:" <<
 		"\n    SID: " << Sid <<

@@ -117,7 +117,7 @@ class ftFileCreator: public ftFileProvider
 		// This is overloads ftFileProvider, but returns false, because we can't ensure that unchecked chunks
 		// will provide a CRC32 that is faithful to the original hash.
 		//
-		virtual bool getCRC32Map(CRC32Map& crc_map) { return false ; }
+		virtual bool getCRC32Map(CRC32Map& /*crc_map*/) { return false ; }
 
 		// This is called when receiving the availability map from a source peer, for the file being handled.
 		//

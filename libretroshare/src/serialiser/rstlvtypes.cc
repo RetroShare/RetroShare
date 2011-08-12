@@ -817,7 +817,6 @@ bool  RsTlvKeyValueSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 std::ostream &RsTlvKeyValueSet::print(std::ostream &out, uint16_t indent)
 {
 	printBase(out, "RsTlvKeyValue", indent);
-	uint16_t int_Indent = indent + 2;
 
 	std::list<RsTlvKeyValue>::iterator it;
 

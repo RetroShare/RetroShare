@@ -166,6 +166,9 @@ int    p3PhotoService::loadCache(const CacheData &data)
 
 void p3PhotoService::loadPhotoIndex(std::string filename, std::string hash, std::string src)
 {
+	/* remove unused parameter warnings */
+	(void) hash;
+
 	/* create the serialiser to load info */
 	RsSerialiser *rsSerialiser = new RsSerialiser();
 	rsSerialiser->addSerialType(new RsPhotoSerialiser());
@@ -283,7 +286,7 @@ bool p3PhotoService::loadPhotoShowItem(RsPhotoShowItem *item)
 	return true;
 }
 	
-void p3PhotoService::availablePhoto(std::string filename, std::string hash, std::string src)
+void p3PhotoService::availablePhoto(std::string /*filename*/, std::string /*hash*/, std::string /*src*/)
 {
 	/* TODO */
 	return;
@@ -467,7 +470,7 @@ bool p3PhotoService::getShowList(std::string id, std::list<std::string> &showIds
 	return true;
 }
 
-bool p3PhotoService::getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail)
+bool p3PhotoService::getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &/*detail*/)
 {
 #ifdef PHOTO_DEBUG
 	std::cerr << "p3PhotoService::getShowDetails() pid: " << id;
@@ -572,7 +575,7 @@ bool p3PhotoService::deleteShow(std::string showId)
 }
 
 
-bool p3PhotoService::addPhotoToShow(std::string showId, std::string photoId, int16_t index)
+bool p3PhotoService::addPhotoToShow(std::string showId, std::string photoId, int16_t /*index*/)
 {
 
 #ifdef PHOTO_DEBUG
@@ -612,12 +615,12 @@ bool p3PhotoService::addPhotoToShow(std::string showId, std::string photoId, int
 	return true;
 }
 
-bool p3PhotoService::movePhotoInShow(std::string showId, std::string photoId, int16_t index)
+bool p3PhotoService::movePhotoInShow(std::string /*showId*/, std::string /*photoId*/, int16_t /*index*/)
 {
 	return false;
 }
 
-bool p3PhotoService::removePhotoFromShow(std::string showId, std::string photoId)
+bool p3PhotoService::removePhotoFromShow(std::string /*showId*/, std::string /*photoId*/)
 {
 	return false;
 }
@@ -667,29 +670,29 @@ std::string p3PhotoService::addPhoto(std::string path) /* add from file */
 
 
 
-bool p3PhotoService::addPhoto(std::string srcId, std::string photoId) /* add from peers photos */
+bool p3PhotoService::addPhoto(std::string /*srcId*/, std::string /*photoId*/) /* add from peers photos */
 {
 	return false;
 }
 
-bool p3PhotoService::deletePhoto(std::string photoId)
+bool p3PhotoService::deletePhoto(std::string /*photoId*/)
 {
 	return false;
 }
 
 
 /* modify properties (TODO) */
-bool p3PhotoService::modifyShow(std::string showId, std::wstring name, std::wstring comment)
+bool p3PhotoService::modifyShow(std::string /*showId*/, std::wstring /*name*/, std::wstring /*comment*/)
 {
 	return false;
 }
 
-bool p3PhotoService::modifyPhoto(std::string photoId, std::wstring name, std::wstring comment)
+bool p3PhotoService::modifyPhoto(std::string /*photoId*/, std::wstring /*name*/, std::wstring /*comment*/)
 {
 	return false;
 }
 
-bool p3PhotoService::modifyShowComment(std::string showId, std::string photoId, std::wstring comment)
+bool p3PhotoService::modifyShowComment(std::string /*showId*/, std::string /*photoId*/, std::wstring /*comment*/)
 {
 	return false;
 }

@@ -97,17 +97,17 @@ bool p3ServerConfig::setConfigurationOption(uint32_t key, const std::string &opt
 
 	/* From RsIface::RsConfig */
 
-int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
+int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &/*status*/)
 {
 	return 0;
 }
 
-int 	p3ServerConfig::getConfigStartup(RsConfigStartup &params)
+int 	p3ServerConfig::getConfigStartup(RsConfigStartup &/*params*/)
 {
 	return 0;
 }
 
-int 	p3ServerConfig::getConfigDataRates(RsConfigDataRates &params) 
+int 	p3ServerConfig::getConfigDataRates(RsConfigDataRates &/*params*/)
 {
 	return 0;
 }
@@ -147,7 +147,7 @@ bool p3ServerConfig::getAutoLogin()
 	return 0;
 }
 
-void p3ServerConfig::setAutoLogin(bool autoLogin)
+void p3ServerConfig::setAutoLogin(bool /*autoLogin*/)
 {
 	return;
 }
@@ -170,7 +170,7 @@ uint32_t p3ServerConfig::getUserLevel()
 	uint32_t userLevel = RSCONFIG_USER_LEVEL_NEW;
 	{
 		RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
-		uint32_t userLevel = mUserLevel;
+		userLevel = mUserLevel;
 	}
 
 	switch(userLevel)

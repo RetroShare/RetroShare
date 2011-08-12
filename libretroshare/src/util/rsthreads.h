@@ -44,9 +44,12 @@ class RsMutex
 {
 	public:
 
-	RsMutex(const std::string &name)
+	RsMutex(const std::string& name)
 	{
-		pthread_mutex_init(&realMutex, NULL); 
+		/* remove unused parameter warnings */
+		(void) name;
+
+		pthread_mutex_init(&realMutex, NULL);
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 		_thread_id = 0 ;
 #endif

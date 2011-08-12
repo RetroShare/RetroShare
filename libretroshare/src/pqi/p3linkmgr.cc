@@ -294,9 +294,7 @@ void    p3LinkMgrIMPL::setFriendVisibility(const std::string &id, bool isVisible
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	
-		int count = 0;
-	
-	        std::map<std::string, peerConnectState>::iterator it;
+		std::map<std::string, peerConnectState>::iterator it;
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{

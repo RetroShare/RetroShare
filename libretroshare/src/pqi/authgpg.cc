@@ -98,7 +98,7 @@ gpgcert::~gpgcert()
 }
 
 #define GPG_DEBUG2
-gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
+gpg_error_t pgp_pwd_callback(void */*hook*/, const char *uid_hint, const char */*passphrase_info*/, int prev_was_bad, int fd)
 {
 #ifdef GPG_DEBUG2
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
@@ -1072,7 +1072,7 @@ bool   AuthGPGimpl::active()
         return ((gpgmeInit) && (gpgmeKeySelected));
 }
 
-bool    AuthGPGimpl::GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) {
+bool    AuthGPGimpl::GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &/*errString*/) {
 
         RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
@@ -1355,6 +1355,9 @@ std::string AuthGPGimpl::SaveCertificateToString(const std::string &id,bool incl
 #ifdef GPGME_EXPORT_MODE_MINIMAL
 	gpgme_export_mode_t export_mode = include_signatures?0:GPGME_EXPORT_MODE_MINIMAL ;
 #else
+	/* remove unused parameter warnings */
+	(void) include_signatures;
+
 	unsigned int export_mode = 0 ;
 #endif
 
@@ -1523,28 +1526,33 @@ bool AuthGPGimpl::AllowConnection(const std::string &gpg_id, bool accept)
 /* These take PGP Ids */
 bool AuthGPGimpl::SignCertificateLevel0(const std::string &id)
 {
+	/* remove unused parameter warnings */
+	(void) id;
 
 #ifdef GPG_DEBUG
-        std::cerr << "AuthGPGimpl::SignCertificat(" << id << ")" << std::endl;
+	std::cerr << "AuthGPGimpl::SignCertificat(" << id << ")" << std::endl;
 #endif
 
-        if (1 != privateSignCertificate(id))
+	if (1 != privateSignCertificate(id))
 	{
-                storeAllKeys();
+		storeAllKeys();
 		return false;
 	}
 
-        /* reload stuff now ... */
+	/* reload stuff now ... */
 	storeAllKeys();
 	return true;
 }
 
 bool AuthGPGimpl::RevokeCertificate(const std::string &id)
 {
-        //RsStackMutex stack(gpgMtx); /******* LOCKED ******/
+	//RsStackMutex stack(gpgMtx); /******* LOCKED ******/
+
+	/* remove unused parameter warnings */
+	(void) id;
 
 #ifdef GPG_DEBUG
-        std::cerr << "AuthGPGimpl::RevokeCertificate(" << id << ") not implemented yet" << std::endl;
+	std::cerr << "AuthGPGimpl::RevokeCertificate(" << id << ") not implemented yet" << std::endl;
 #endif
 
 	return false;
@@ -1656,9 +1664,9 @@ int	AuthGPGimpl::privateSignCertificate(const std::string &id)
 }
 
 /* revoke the signature on Certificate */
-int	AuthGPGimpl::privateRevokeCertificate(const std::string &id)
+int	AuthGPGimpl::privateRevokeCertificate(const std::string &/*id*/)
 {
-        //RsStackMutex stack(gpgMtx); /******* LOCKED ******/
+	//RsStackMutex stack(gpgMtx); /******* LOCKED ******/
 
 	return 0;
 }
@@ -2401,7 +2409,9 @@ void cleanupZombies(int numkill)
 
 	//std::cerr << "cleanupZombies() Killed " << i << " zombies";
 	//std::cerr << std::endl;
-
+#else
+	/* remove unused parameter warnings */
+	(void) numkill;
 #endif
 
 	return;

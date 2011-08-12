@@ -178,6 +178,9 @@ bool	ftExtraList::addExtraFile(std::string path, std::string hash,
 
 bool ftExtraList::removeExtraFile(std::string hash, uint32_t flags)
 {
+	/* remove unused parameter warnings */
+	(void) flags;
+
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::removeExtraFile()";
 	std::cerr << " hash: " << hash;
@@ -202,7 +205,7 @@ bool ftExtraList::removeExtraFile(std::string hash, uint32_t flags)
 	return true;
 }
 
-bool ftExtraList::moveExtraFile(std::string fname, std::string hash, uint64_t size,
+bool ftExtraList::moveExtraFile(std::string fname, std::string hash, uint64_t /*size*/,
                                 std::string destpath)
 {
 	RsStackMutex stack(extMutex);
@@ -269,7 +272,7 @@ bool	ftExtraList::cleanupOldFiles()
 }
 
 
-bool	ftExtraList::cleanupEntry(std::string path, uint32_t flags)
+bool	ftExtraList::cleanupEntry(std::string /*path*/, uint32_t flags)
 {
 	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
 	{
@@ -329,7 +332,7 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 	 * Search Function - used by File Transfer 
 	 *
 	 **/
-bool    ftExtraList::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
+bool    ftExtraList::search(const std::string &hash, uint32_t /*hintflags*/, FileInfo &info) const
 {
 
 #ifdef  DEBUG_ELIST

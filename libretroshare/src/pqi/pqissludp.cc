@@ -421,7 +421,7 @@ int pqissludp::net_internal_SSL_set_fd(SSL *ssl, int fd)
 	return 1;
 }
 
-int pqissludp::net_internal_fcntl_nonblock(int fd)
+int pqissludp::net_internal_fcntl_nonblock(int /*fd*/)
 {
   	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  	  "pqissludp::net_internal_fcntl_nonblock()");

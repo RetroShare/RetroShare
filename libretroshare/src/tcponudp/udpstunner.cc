@@ -455,10 +455,14 @@ int     UdpStunner::doStun(struct sockaddr_in stun_addr)
 	}
 
 	/* send it off */
-	int sentlen = sendPkt(stundata, tmplen, stun_addr, STUN_TTL);
+#ifdef DEBUG_UDP_STUNNER
+	int sentlen =
+#endif
+	sendPkt(stundata, tmplen, stun_addr, STUN_TTL);
 
 	{
-        	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+		RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
 		time_t now = time(NULL);
 		mStunLastSendStun = now;
 		mStunLastSendAny = now;

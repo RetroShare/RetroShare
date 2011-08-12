@@ -4470,7 +4470,7 @@ void p3GroupDistrib::getGrpListPubKeyAvailable(std::list<std::string>& grpList)
 }
 
 bool	p3GroupDistrib::locked_checkDistribMsg(
-				GroupInfo &gi, RsDistribMsg *msg)
+				GroupInfo &/*gi*/, RsDistribMsg *msg)
 {
 
 	/* check timestamp */
@@ -4804,7 +4804,7 @@ std::ostream &operator<<(std::ostream &out, const GroupInfo &info)
 	return out;
 }
 
-void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info, uint32_t flags, bool historical)
+void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info, uint32_t /*flags*/, bool /*historical*/)
 {
 	mGroupsChanged = true;
 	info.grpChanged = true;
@@ -4876,7 +4876,7 @@ std::ostream &operator<<(std::ostream &out, const RsDistribDummyMsg &msg)
 
 
 
-bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg, std::string id, bool historical)
+bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg, std::string /*id*/, bool /*historical*/)
 {
 	std::string threadId = msg->threadId;
 	std::string parentId = msg->parentId;

@@ -280,13 +280,13 @@ bool	CacheStore::getStoredCache(CacheData &data)
 	return ok;
 }
 
-bool CacheStore::cached(const std::string cacheId)
+bool CacheStore::cached(const std::string /*cacheId*/)
 {
 
 	return false;
 }
 
-void CacheStore::updateCacheDocument(pugi::xml_document& cacheDoc)
+void CacheStore::updateCacheDocument(pugi::xml_document& /*cacheDoc*/)
 {
 	return;
 }

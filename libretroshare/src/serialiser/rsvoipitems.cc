@@ -100,7 +100,7 @@ std::ostream& RsVoipPongItem::print(std::ostream &out, uint16_t indent)
 /*************************************************************************/
 
 
-uint32_t    RsVoipSerialiser::sizeVoipPingItem(RsVoipPingItem *item)
+uint32_t    RsVoipSerialiser::sizeVoipPingItem(RsVoipPingItem */*item*/)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* seqno */
@@ -200,7 +200,7 @@ RsVoipPingItem *RsVoipSerialiser::deserialiseVoipPingItem(void *data, uint32_t *
 /*************************************************************************/
 
 
-uint32_t    RsVoipSerialiser::sizeVoipPongItem(RsVoipPongItem *item)
+uint32_t    RsVoipSerialiser::sizeVoipPongItem(RsVoipPongItem */*item*/)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* seqno */

@@ -500,7 +500,7 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 
 
 
-int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr)
+int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in */*inaddr*/)
 {
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate()");
@@ -614,7 +614,7 @@ int	pqissllistenbase::finaliseAccepts()
 	return 1;
 }
 
-int pqissllistenbase::isSSLActive(int fd, SSL *ssl)
+int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
 {
 
 	/* can we just get error? */
@@ -893,7 +893,6 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 
 int pqissllistener::finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &remote_addr)
 { 
-	bool found = false;
 	std::map<std::string, pqissl *>::iterator it;
 
 	std::ostringstream out;

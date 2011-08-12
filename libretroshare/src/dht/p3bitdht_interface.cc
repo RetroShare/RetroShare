@@ -42,7 +42,7 @@ void convertUdpRelayProxytoRsDhtRelayProxy(RsDhtRelayProxy &proxy, const UdpRela
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
 
-uint32_t p3BitDht::getNetState(uint32_t type)
+uint32_t p3BitDht::getNetState(uint32_t /*type*/)
 {
 
 	return 1;

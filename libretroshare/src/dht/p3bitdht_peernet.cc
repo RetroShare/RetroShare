@@ -171,8 +171,10 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 
 
-int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd)
+int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, DhtPeerDetails *dpd)
 {
+	/* remove unused parameter warnings */
+	(void) id;
 
 	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
 			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
@@ -193,7 +195,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 	/* work out network state */
 	uint32_t connectFlags = dpd->mConnectLogic.connectCb(CSB_CONNECT_DIRECT,
 					mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
-	bool useProxyPort = (connectFlags & CSB_ACTION_PROXY_PORT);
+//	bool useProxyPort = (connectFlags & CSB_ACTION_PROXY_PORT);
 
 	switch(connectFlags & CSB_ACTION_MASK_MODE)
 	{
@@ -275,7 +277,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeer
 
 
 
-int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd)
+int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t /*status*/, DhtPeerDetails *dpd)
 {
 
 	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
@@ -343,7 +345,6 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 
 	if (connectOk)
 	{
-		time_t now = time(NULL);
 		/* Push Back PeerAction */
 		PeerAction ca;
 		ca.mType = PEERNET_ACTION_TYPE_CONNECT;
@@ -385,7 +386,7 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t status, Dh
 
 
 
-int p3BitDht::ValueCallback(const bdNodeId *id, std::string key, uint32_t status)
+int p3BitDht::ValueCallback(const bdNodeId */*id*/, std::string /*key*/, uint32_t /*status*/)
 {
 	std::cerr << "p3BitDht::ValueCallback() ERROR Does nothing!";
 	std::cerr << std::endl;
@@ -1009,9 +1010,8 @@ int p3BitDht::tick()
 
 	minuteTick();
 
-	time_t now = time(NULL);
-
 #ifdef DEBUG_PEERNET_COMMON
+	time_t now = time(NULL);
 	std::cerr << "p3BitDht::tick() TIME: " << ctime(&now) << std::endl;
 	std::cerr.flush();
 #endif
@@ -1591,6 +1591,8 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode,
 
 int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 {
+	(void) mode;
+
 #ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::checkConnectionAllowed() to: ";
 	bdStdPrintId(std::cerr,peerId);
@@ -1837,7 +1839,6 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 
 			case BITDHT_CONNECT_MODE_PROXY:
 			{
-				time_t now = time(NULL);
 				bool useProxyPort = dpd->mConnectLogic.getProxyPortChoice();
 
 #ifdef DEBUG_PEERNET

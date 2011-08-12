@@ -69,78 +69,78 @@ bool    ftDataSendPair::sendCRC32Map(const std::string& peer_id,const std::strin
 	return mDataRecv->recvCRC32Map(peer_id,hash,crcmap) ;
 }
 	/* Client Send */
-bool	ftDataSendDummy::sendDataRequest(const std::string &peerId, const std::string &hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataSendDummy::sendDataRequest(const std::string &/*peerId*/, const std::string &/*hash*/,
+			uint64_t /*size*/, uint64_t /*offset*/, uint32_t /*chunksize*/)
 {
 	return true;
 }
 
 	/* Server Send */
-bool	ftDataSendDummy::sendData(const std::string &peerId, const std::string &hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataSendDummy::sendData(const std::string &/*peerId*/, const std::string &/*hash*/,
+			uint64_t /*size*/, uint64_t /*offset*/, uint32_t /*chunksize*/, void */*data*/)
 {
 	return true;
 }
 
 
         /* Send a request for a chunk map */
-bool	ftDataSendDummy::sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client)
+bool	ftDataSendDummy::sendChunkMapRequest(const std::string& /*peer_id*/,const std::string& /*hash*/,bool /*is_client*/)
 {
 	return true;
 }
 
         /* Send a chunk map */
-bool    ftDataSendDummy::sendChunkMap(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap,bool is_client)
+bool    ftDataSendDummy::sendChunkMap(const std::string& /*peer_id*/,const std::string& /*hash*/, const CompressedChunkMap& /*cmap*/,bool /*is_client*/)
 {
 	return true;
 }
-bool	ftDataSendDummy::sendCRC32MapRequest(const std::string& peer_id,const std::string& hash)
+bool	ftDataSendDummy::sendCRC32MapRequest(const std::string& /*peer_id*/,const std::string& /*hash*/)
 {
 	return true;
 }
 
         /* Send a chunk map */
-bool    ftDataSendDummy::sendCRC32Map(const std::string& peer_id,const std::string& hash, const CRC32Map& cmap)
+bool    ftDataSendDummy::sendCRC32Map(const std::string& /*peer_id*/,const std::string& /*hash*/, const CRC32Map& /*cmap*/)
 {
 	return true;
 }
 
 	/* Client Recv */
-bool	ftDataRecvDummy::recvData(const std::string &peerId, const std::string &hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataRecvDummy::recvData(const std::string &/*peerId*/, const std::string &/*hash*/,
+			uint64_t /*size*/, uint64_t /*offset*/, uint32_t /*chunksize*/, void */*data*/)
 {
 	return true;
 }
 
 
 	/* Server Recv */
-bool	ftDataRecvDummy::recvDataRequest(const std::string &peerId, const std::string &hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataRecvDummy::recvDataRequest(const std::string &/*peerId*/, const std::string &/*hash*/,
+			uint64_t /*size*/, uint64_t /*offset*/, uint32_t /*chunksize*/)
 {
 	return true;
 }
 
         /* Send a request for a chunk map */
-bool 	ftDataRecvDummy::recvChunkMapRequest(const std::string& peer_id,const std::string& hash,
-                bool is_client)
+bool 	ftDataRecvDummy::recvChunkMapRequest(const std::string& /*peer_id*/,const std::string& /*hash*/,
+                bool /*is_client*/)
 {
 	return true;
 }
 
         /* Send a chunk map */
-bool 	ftDataRecvDummy::recvChunkMap(const std::string& peer_id,const std::string& hash,
-                const CompressedChunkMap& cmap,bool is_client)
+bool 	ftDataRecvDummy::recvChunkMap(const std::string& /*peer_id*/,const std::string& /*hash*/,
+                const CompressedChunkMap& /*cmap*/,bool /*is_client*/)
 {
 	return true;
 }
 
-bool 	ftDataRecvDummy::sendCRC32MapRequest(const std::string& peer_id,const std::string& hash)
+bool 	ftDataRecvDummy::sendCRC32MapRequest(const std::string& /*peer_id*/,const std::string& /*hash*/)
 {
 	return true ;
 }
 
 	/* Send a chunk map */
-bool 	ftDataRecvDummy::sendCRC32Map(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap)
+bool 	ftDataRecvDummy::sendCRC32Map(const std::string& /*peer_id*/,const std::string& /*hash*/, const CompressedChunkMap& /*cmap*/)
 {
 	return true ; 
 }

@@ -398,7 +398,7 @@ bool 	ftDataMultiplex::doWork()
 	return true;
 }
 
-bool ftDataMultiplex::recvCRC32Map(const std::string& peerId, const std::string& hash,const CRC32Map& crc_map)
+bool ftDataMultiplex::recvCRC32Map(const std::string& /*peerId*/, const std::string& hash,const CRC32Map& crc_map)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -595,7 +595,7 @@ bool ftDataMultiplex::handleRecvServerChunkMapRequest(const std::string& peerId,
 }
 
 bool	ftDataMultiplex::handleRecvData(const std::string& peerId, 
-			const std::string& hash, uint64_t size, 
+			const std::string& hash, uint64_t /*size*/,
 			uint64_t offset, uint32_t chunksize, void *data)
 {
 	ftTransferModule *transfer_module = NULL ;

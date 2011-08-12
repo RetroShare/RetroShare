@@ -191,7 +191,7 @@ int p3MsgService::incomingMsgs()
 	return 1;
 }
 
-void    p3MsgService::statusChange(const std::list<pqipeer> &plist)
+void    p3MsgService::statusChange(const std::list<pqipeer> &/*plist*/)
 {
 	/* should do it properly! */
 	checkOutgoingMessages();

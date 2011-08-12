@@ -58,8 +58,8 @@ const int ftserverzone = 29539;
 
 	/* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
-        :       mP3iface(NULL),
-                mLinkMgr(lm), mPeerMgr(pm),
+        :       mP3iface(NULL), mPeerMgr(pm),
+                mLinkMgr(lm),
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
 		mFtController(NULL), mFtExtra(NULL),
@@ -93,7 +93,7 @@ void	ftServer::setP3Interface(P3Interface *pqi)
 	/* Control Interface */
 
 	/* add Config Items (Extra, Controller) */
-void	ftServer::addConfigComponents(p3ConfigMgr *mgr)
+void	ftServer::addConfigComponents(p3ConfigMgr */*mgr*/)
 {
 	/* NOT SURE ABOUT THIS ONE */
 }
@@ -361,7 +361,7 @@ bool ftServer::getDownloadSpeed(const std::string hash, int & speed)
 
 	return ret;
 }
-bool ftServer::clearDownload(const std::string hash)
+bool ftServer::clearDownload(const std::string /*hash*/)
 {
    return true ;
 }
@@ -742,18 +742,18 @@ RsSerialiser *ftServer::setupSerialiser()
 	return NULL;
 }
 
-bool ftServer::saveList(bool &cleanup, std::list<RsItem *>& list)
+bool ftServer::saveList(bool &/*cleanup*/, std::list<RsItem *>& /*list*/)
 {
 
 	return true;
 }
 
-bool    ftServer::loadList(std::list<RsItem *>& load)
+bool    ftServer::loadList(std::list<RsItem *>& /*load*/)
 {
 	return true;
 }
 
-bool  ftServer::loadConfigMap(std::map<std::string, std::string> &configMap)
+bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
 {
 	return true;
 }

@@ -50,12 +50,12 @@ int     RsServer::ClearInSubscribe()
 	return 1;
 }
 
-int     RsServer::SetInBroadcast(std::string id, bool in)        /* channel : channel broadcast */
+int     RsServer::SetInBroadcast(std::string /*id*/, bool /*in*/)        /* channel : channel broadcast */
 {
 	return 1;
 }
 
-int     RsServer::SetInSubscribe(std::string id, bool in)        /* channel : subscribed channels */
+int     RsServer::SetInSubscribe(std::string /*id*/, bool /*in*/)        /* channel : subscribed channels */
 {
 	return 1;
 }

@@ -297,20 +297,22 @@ bool 	p3BitDht::dropPeer(std::string pid)
 
 	/* extract current peer status */
 bool 	p3BitDht::getPeerStatus(std::string id, 
-				struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
-				uint32_t &type, uint32_t &mode)
+				struct sockaddr_in &/*laddr*/, struct sockaddr_in &/*raddr*/,
+				uint32_t &/*type*/, uint32_t &/*mode*/)
 {
+	/* remove unused parameter warnings */
+	(void) id;
+
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::getPeerStatus(" << id << ")";
 	std::cerr << std::endl;
 #endif
 
-
 	return false;
 }
 
-bool 	p3BitDht::getExternalInterface(struct sockaddr_in &raddr, 
-					uint32_t &mode)
+bool 	p3BitDht::getExternalInterface(struct sockaddr_in &/*raddr*/,
+					uint32_t &/*mode*/)
 {
 
 #ifdef DEBUG_BITDHT

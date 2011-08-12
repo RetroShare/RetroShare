@@ -1328,13 +1328,13 @@ bool p3DhtMgr::dhtActive()
 	return true;	
 }
 
-bool p3DhtMgr::publishDHT(std::string key, std::string value, uint32_t ttl)
+bool p3DhtMgr::publishDHT(std::string /*key*/, std::string /*value*/, uint32_t /*ttl*/)
 {
 	std::cerr << "p3DhtMgr::publishDHT() DUMMY FN" << std::endl;
 	return false;
 }
 
-bool p3DhtMgr::searchDHT(std::string idhash)
+bool p3DhtMgr::searchDHT(std::string /*idhash*/)
 {
 	std::cerr << "p3DhtMgr::searchDHT() DUMMY FN" << std::endl;
 	return false;
@@ -1354,6 +1354,9 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 		struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
 		uint32_t type, std::string sign)
 {
+	/* remove unused parameter warnings */
+	(void) sign;
+
 	/* ... goes and searches */
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
@@ -1404,7 +1407,7 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 	return publishDHT(idhash, value, DHT_TTL_PUBLISH);
 }
 
-bool p3DhtMgr::dhtNotify(std::string idhash, std::string ownIdHash, std::string sign)
+bool p3DhtMgr::dhtNotify(std::string idhash, std::string ownIdHash, std::string /*sign*/)
 {
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtNotify()" << std::endl;
@@ -1418,7 +1421,7 @@ bool p3DhtMgr::dhtNotify(std::string idhash, std::string ownIdHash, std::string 
 	return publishDHT(idhash, value.str(), DHT_TTL_NOTIFY);
 }
 
-bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t mode)
+bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t /*mode*/)
 {
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtSearch()" << std::endl;
@@ -1429,7 +1432,7 @@ bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t mode)
 }
 
 
-bool p3DhtMgr::dhtBootstrap(std::string storehash, std::string ownIdHash, std::string sign)
+bool p3DhtMgr::dhtBootstrap(std::string storehash, std::string ownIdHash, std::string /*sign*/)
 {
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtBootstrap()" << std::endl;
@@ -1681,7 +1684,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 
 bool p3DhtMgr::dhtResultSearch(std::string idhash, 
 		struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
-		uint32_t type, std::string sign)
+		uint32_t type, std::string /*sign*/)
 {
 	dhtMtx.lock(); /* LOCK MUTEX */
 

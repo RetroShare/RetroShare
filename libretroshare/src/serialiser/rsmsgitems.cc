@@ -372,7 +372,7 @@ bool RsChatAvatarItem::serialise(void *data, uint32_t& pktsize)
 
 	return ok;
 }
-RsChatMsgItem::RsChatMsgItem(void *data,uint32_t size)
+RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/)
 	: RsChatItem(RS_PKT_SUBTYPE_DEFAULT)
 {
 	uint32_t offset = 8; // skip the header 
@@ -393,7 +393,7 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t size)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
-RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t size)
+RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t /*size*/)
 	: RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG)
 {
 	uint32_t offset = 8; // skip the header 
@@ -420,7 +420,7 @@ RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t size)
 }
 
 /* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
-void RsPrivateChatMsgConfigItem::set(RsChatMsgItem *ci, const std::string &peerId, uint32_t confFlags)
+void RsPrivateChatMsgConfigItem::set(RsChatMsgItem *ci, const std::string &/*peerId*/, uint32_t confFlags)
 {
 	PeerId(ci->PeerId());
 	configPeerId = ci->PeerId();
@@ -442,7 +442,7 @@ void RsPrivateChatMsgConfigItem::get(RsChatMsgItem *ci)
 	ci->recvTime = recvTime;
 }
 
-RsChatStatusItem::RsChatStatusItem(void *data,uint32_t size)
+RsChatStatusItem::RsChatStatusItem(void *data,uint32_t /*size*/)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS)
 {
 	uint32_t offset = 8; // skip the header 
@@ -462,7 +462,7 @@ RsChatStatusItem::RsChatStatusItem(void *data,uint32_t size)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
-RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t size)
+RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t /*size*/)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS)
 {
 	uint32_t offset = 8; // skip the header 
@@ -1144,7 +1144,7 @@ void RsMsgParentId::clear()
 	return;
 }
 
-uint32_t RsMsgSerialiser::sizeMsgParentIdItem(RsMsgParentId* item)
+uint32_t RsMsgSerialiser::sizeMsgParentIdItem(RsMsgParentId* /*item*/)
 {
 	uint32_t s = 8; /* header */
 

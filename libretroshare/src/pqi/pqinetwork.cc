@@ -788,7 +788,7 @@ int unix_close(int fd)
 	return ret;
 }
 
-int unix_socket(int domain, int type, int protocol)
+int unix_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 {
 	int osock = socket(PF_INET, SOCK_STREAM, 0);
 

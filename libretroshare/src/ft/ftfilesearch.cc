@@ -180,14 +180,17 @@ bool	ftFileSearch::search(const std::string &hash, uint32_t hintflags, FileInfo 
 }
 
 
-bool 	ftSearchDummy::search(std::string hash, uint32_t hintflags, FileInfo &info) const
+bool 	ftSearchDummy::search(std::string /*hash*/, uint32_t hintflags, FileInfo &/*info*/) const
 {
+	/* remove unused parameter warnings */
+	(void) hintflags;
+
 #ifdef DEBUG_SEARCH
 	std::cerr << "ftSearchDummy::search(" << hash ;
 	std::cerr << ", " << hintflags << ");";
 	std::cerr << std::endl;
 #endif
-        return false;
+	return false;
 }
 
 

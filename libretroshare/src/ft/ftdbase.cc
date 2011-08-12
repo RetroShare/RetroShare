@@ -46,6 +46,9 @@ bool ftFiStore::search(const std::string &hash, uint32_t hintflags, FileInfo &in
 	 * Still to see if concept is worthwhle
 	 */
 
+	/* remove unused parameter warnings */
+	(void) hintflags;
+
 #ifdef DB_DEBUG
 	std::cerr << "ftFiStore::search(" << hash << "," << hintflags;
 	std::cerr << ")";
@@ -375,6 +378,9 @@ ftCacheStrapper::ftCacheStrapper(p3LinkMgr *lm)
 	/* overloaded search function */
 bool ftCacheStrapper::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
+	/* remove unused parameter warnings */
+	(void) hintflags;
+
 #ifdef DB_DEBUG
 	std::cerr << "ftCacheStrapper::search(" << hash << "," << hintflags;
 	std::cerr << ")";

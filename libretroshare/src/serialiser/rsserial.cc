@@ -202,7 +202,7 @@ uint32_t    RsSerialType::size(RsItem *)
 	return 8; 
 }
 
-bool        RsSerialType::serialise(RsItem *item, void *data, uint32_t *size)
+bool        RsSerialType::serialise(RsItem */*item*/, void */*data*/, uint32_t */*size*/)
 {
 #ifdef  RSSERIAL_DEBUG
 	std::cerr << "RsSerialType::serialise()" << std::endl;
@@ -210,7 +210,7 @@ bool        RsSerialType::serialise(RsItem *item, void *data, uint32_t *size)
 	return false;
 }
 
-RsItem *    RsSerialType::deserialise(void *data, uint32_t *size)
+RsItem *    RsSerialType::deserialise(void */*data*/, uint32_t */*size*/)
 {
 #ifdef  RSSERIAL_DEBUG
 	std::cerr << "RsSerialType::deserialise()" << std::endl;

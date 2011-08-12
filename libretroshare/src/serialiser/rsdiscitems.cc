@@ -662,7 +662,7 @@ std::ostream &RsDiscHeartbeat::print(std::ostream &out, uint16_t indent)
     return out;
 }
 
-uint32_t RsDiscSerialiser::sizeHeartbeat(RsDiscHeartbeat *item)
+uint32_t RsDiscSerialiser::sizeHeartbeat(RsDiscHeartbeat */*item*/)
 {
     uint32_t s = 8; /* header */
 
