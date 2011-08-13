@@ -37,7 +37,7 @@ border-radius: 10px}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout">
       <property name="verticalSpacing">
        <number>0</number>
       </property>
@@ -67,7 +67,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
        </widget>
       </item>
       <item row="0" column="1" colspan="4">
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="titleLabel">
           <property name="sizePolicy">

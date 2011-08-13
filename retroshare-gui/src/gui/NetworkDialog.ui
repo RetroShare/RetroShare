@@ -355,7 +355,7 @@ subcontrol-position: bottom right;
           <attribute name="title">
            <string>Network Status</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout">
            <item row="0" column="0">
             <layout class="QGridLayout">
              <property name="leftMargin">

@@ -505,7 +505,7 @@
   <property name="contextMenuPolicy">
    <enum>Qt::DefaultContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout">
    <property name="leftMargin">
     <number>9</number>
    </property>
@@ -533,7 +533,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout">
        <property name="margin">
         <number>0</number>
        </property>
@@ -557,12 +557,12 @@ border: 1px solid #CCCCCC;}
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6">
+         <layout class="QGridLayout">
           <property name="margin">
            <number>2</number>
           </property>
           <item row="0" column="0">
-           <layout class="QGridLayout" name="_2">
+           <layout class="QGridLayout">
             <property name="verticalSpacing">
              <number>0</number>
             </property>
@@ -697,7 +697,7 @@ p, li { white-space: pre-wrap; }
        <enum>Qt::Vertical</enum>
       </property>
       <widget class="QWidget" name="layoutWidget">
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout">
         <item row="1" column="0">
          <layout class="QHBoxLayout">
           <item>
@@ -840,7 +840,7 @@ background: white;
          </widget>
         </item>
         <item row="5" column="0">
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout">
           <item row="0" column="1">
            <widget class="QLabel" name="threadlabel">
             <property name="sizePolicy">
@@ -1019,7 +1019,7 @@ border: 1px solid #CCCCCC;}</string>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_5">
+          <layout class="QGridLayout">
            <property name="margin">
             <number>2</number>
            </property>

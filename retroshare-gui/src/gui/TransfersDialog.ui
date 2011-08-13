@@ -502,14 +502,14 @@
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout_8">
+  <layout class="QGridLayout">
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -678,7 +678,7 @@ p, li { white-space: pre-wrap; }
        <attribute name="title">
         <string>Uploads</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout">
         <property name="margin">
          <number>0</number>
         </property>
@@ -708,7 +708,7 @@ p, li { white-space: pre-wrap; }
        <attribute name="title">
         <string>Selected transfer</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_7">
+       <layout class="QGridLayout">
         <property name="margin">
          <number>0</number>
         </property>
@@ -739,12 +739,12 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item row="1" column="0">
-         <layout class="QGridLayout" name="gridLayout_6">
+         <layout class="QGridLayout">
           <property name="margin">
            <number>6</number>
           </property>
           <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_5">
+           <layout class="QGridLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="label">
               <property name="text">
@@ -765,7 +765,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item row="0" column="1">
-           <layout class="QGridLayout" name="gridLayout_4">
+           <layout class="QGridLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="label_5">
               <property name="text">
@@ -786,7 +786,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item row="0" column="2">
-           <layout class="QGridLayout" name="gridLayout_3">
+           <layout class="QGridLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="label_7">
               <property name="text">

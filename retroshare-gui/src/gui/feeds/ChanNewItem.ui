@@ -37,9 +37,9 @@ border-radius: 10px;}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout">
       <item row="0" column="0" rowspan="2">
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout">
         <item row="0" column="0" rowspan="2">
          <widget class="QLabel" name="logo_label">
           <property name="minimumSize">
@@ -218,7 +218,7 @@ border-radius: 2px;}</string>
            <property name="title">
             <string>Channel Decscription</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_5">
+           <layout class="QGridLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="iconLabel">
               <property name="text">

@@ -169,14 +169,14 @@ DEPENDPATH += . \
             gui \
             lang \
             util \
-            gui\bwgraph \
-            gui\chat \
-            gui\connect \
-            gui\images \
-            gui\common \
-            gui\toaster \
-            gui\help\browser \
-            gui\elastic
+            gui/bwgraph \
+            gui/chat \
+            gui/connect \
+            gui/images \
+            gui/common \
+            gui/toaster \
+            gui/help/browser \
+            gui/elastic
 
 INCLUDEPATH += ../../libretroshare/src/
 

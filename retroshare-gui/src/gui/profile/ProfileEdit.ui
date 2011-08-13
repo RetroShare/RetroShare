@@ -21,7 +21,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget" >
+     <widget class="QWidget">
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QLabel" name="label_6" >
@@ -58,7 +58,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget" >
+     <widget class="QWidget">
       <layout class="QGridLayout" >
        <item row="0" column="0" colspan="2" >
         <widget class="QLabel" name="label_7" >

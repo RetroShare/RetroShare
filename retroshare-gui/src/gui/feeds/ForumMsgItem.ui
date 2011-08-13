@@ -37,9 +37,9 @@ border-radius: 10px}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_6">
+     <layout class="QGridLayout">
       <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="minimumSize">
@@ -101,7 +101,7 @@ border-radius: 10px}</string>
        </layout>
       </item>
       <item row="0" column="1">
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout">
         <item row="0" column="0">
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -288,7 +288,7 @@ border-radius: 10px}</string>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_4">
+        <layout class="QGridLayout">
          <item row="0" column="0" rowspan="2">
           <widget class="QLabel" name="avatarlabel">
            <property name="minimumSize">
@@ -455,7 +455,7 @@ border-radius: 10px}</string>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_5">
+        <layout class="QGridLayout">
          <item row="0" column="0" rowspan="3">
           <widget class="QLabel" name="nextavatarlabel">
            <property name="minimumSize">
@@ -589,7 +589,7 @@ border-radius: 10px}</string>
        </widget>
       </item>
       <item row="5" column="0" colspan="2">
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout">
         <item row="0" column="0">
          <spacer name="horizontalSpacer_3">
           <property name="orientation">

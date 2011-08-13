@@ -17,7 +17,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout">
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
@@ -37,7 +37,7 @@
          <property name="title">
           <string>Forum Info</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout">
           <item row="0" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
@@ -91,7 +91,7 @@
             <property name="title">
              <string>Forum Description</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout">
+            <layout class="QGridLayout">
              <item row="0" column="0">
               <widget class="QTextEdit" name="DescriptiontextEdit"/>
              </item>
@@ -111,13 +111,13 @@
       <attribute name="title">
        <string>Security</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_5">
+      <layout class="QGridLayout">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
           <string>Allowed Messages</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout">
           <item row="0" column="0">
            <widget class="QRadioButton" name="radioButton_authd">
             <property name="text">
@@ -156,7 +156,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <layout class="QGridLayout" name="_2">
+    <layout class="QGridLayout">
      <item row="0" column="0">
       <spacer>
        <property name="orientation">
