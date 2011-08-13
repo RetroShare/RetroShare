@@ -1,4 +1,4 @@
-retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
 
@@ -13,6 +13,10 @@ retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
         * added missing Q_INIT_RESOURCE call to get the plugins icon loading correctly
  
      - GUI 
+        * Fixed an error when cancel the login password dialog at startup, the password dialog can be canceled. 
+        * Fixed layout in GeneralPage under Windows (there are three additional checkboxes).
+        * Applied patch to enable the sort of the columns star and unread in messages (from AsamK)
+        * Added missing "FORWARDED_PORT" case to natstatus
         * updated Dht and Nat Indicators to accurately reflect Network status. Roughly:
            - DHT. Off:     gray, ERROR:   red, NO RS PEERS:           yellow, GOOD: green.
            - NAT. Offline: gray, BAD NET: red, NO DHT, or FIREWALLED: yellow, GOOD: green
@@ -51,6 +55,10 @@ retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
           based on the availability of the GPGME_EXPORT_MODE_MINIMAL option.
  
      - Connectivity
+        * Added Second Queue, to check if connections are actually valid before installing.
+        * Added Check of Time for main Core Cycle.
+        * Fixed Bug in choosing port for Proxy UDP. Chooses a Random one between 30000-50000.
+        * Added Address update from p3NetMgr => p3PeerMgr, when external address has been determined.
         * Simplification of p3ConnectMgr => p3LinkMgr, p3PeerMgr & p3NetMgr.
            - p3peermgr now uses RS_NET_MODE_XXXX instead of RS_NET_MODE_TRY_XXXX
            - p3netmgr maintains both TRY and ACTUAL mode (not visible through old interface -- TO FIX)
@@ -95,6 +103,8 @@ retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
         * Added win32 build bat for libbitdht
  
   * Bug fixes
+     - Fixed "double-click" chat startup bug, the gpgOnly flag was incorrectly set false.
+     - Fixed the sending of outgoing messages
      - Removed popup window for file copy error, and redirected the message to std::cerr, to save users.
      - Set maximum port value to 65535 instead of old arbitrary value of 50000, and warned about 
        system-reserved ports in server settings gui enabled sorting and added dht icon for the window
@@ -134,7 +144,7 @@ retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          * Reduce Maximum Transmission size from 1500 -> 1000. This is the cause of Failed Connections. 
            It looks like UDP packets are being truncated from 1520 -> 1492 bytes, and this is killing the 
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 31 Jul 2011 14:47:46 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 13 Aug 2011 20:30:00 +0100
 
 retroshare (0.5.1-0.4350~lucid) lucid; urgency=low
 
