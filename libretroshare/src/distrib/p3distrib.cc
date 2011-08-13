@@ -69,17 +69,6 @@
 //#define DISTRIB_THREAD_DEBUG 1
 //#define DISTRIB_DUMMYMSG_DEBUG 1
 
-// add one set to another while not replacing elements unique to left operand
-void operator+=(std::set<pCacheId>& left, const std::set<pCacheId>& right){
-
-	std::set<pCacheId>::const_iterator sit = right.begin();
-
-	for(; sit != right.end(); sit++)
-		left.insert(*sit);
-
-	return;
-}
-
 
 GroupInfo::~GroupInfo()
 {
@@ -224,6 +213,7 @@ int    p3GroupDistrib::loadCache(const CacheData &data)
 	std::cerr << std::endl;
 #endif
 
+	/* store the cache file for later processing */
 	mPendingCaches.push_back(CacheDataPending(data, false, mHistoricalCaches));
 
 	if (data.size > 0)
@@ -374,7 +364,7 @@ int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local, bool his
 	}
 	else
 	{
-		loadFileMsgs(file, data.cid.subid, data.pid, data.recvd, local, historical);
+		loadFileMsgs(file, data, local, historical);
 	}
 
 	return true;
@@ -449,13 +439,17 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 	return;
 }
 
-void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical)
+void	p3GroupDistrib::loadFileMsgs(const std::string &filename, const CacheData& data, bool local, bool historical)
 {
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadFileMsgs()";
 	std::cerr << std::endl;
 #endif
+
+	uint16_t cacheSubId = data.cid.subid;
+	const std::string& src = data.pid;
+	uint32_t ts = data.recvd;
 
 	time_t now = time(NULL);
 
@@ -469,6 +463,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 
 	RsItem *item;
 	RsDistribSignedMsg *newMsg;
+	std::set<std::string> grpAddedTo;
 
 	while(isRunning() && (NULL != (item = store->GetItem())))
 	{
@@ -481,9 +476,34 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 
 		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
 		{
+			std::string& grpId = newMsg->grpId;
 
-			loadMsg(newMsg, src, local, historical);
+			bool ok;
+			{
+				RsStackMutex stack(distribMtx);
+				std::set<std::string>::iterator it = mSubscribedGrp.find(grpId);
+				ok = it != mSubscribedGrp.end();
+			}
 
+			/*
+			 * load msg if this is a subscribed group
+			 * if not then add the grp cache map
+			 */
+			if(ok)
+			{
+				loadMsg(newMsg, src, local, historical);
+			}else
+			{
+				// add grp to set so cache not added to grp again
+				if(grpAddedTo.find(newMsg->grpId) == grpAddedTo.end())
+				{
+					RsStackMutex stack(distribMtx);
+					mGrpCacheMap[grpId].push_back(data);
+					grpAddedTo.insert(grpId);
+				}
+
+				delete item;
+			}
 		}
 		else
 		{
@@ -509,7 +529,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 		std::cerr << std::endl;
 #endif
 
-		mLocalCacheTs[ts] = cacheSubId;
+		mLocalCacheTs[data.recvd] = cacheSubId;
 		if (cacheSubId > mMaxCacheSubId)
 		{
 #ifdef DISTRIB_DEBUG
@@ -532,6 +552,92 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	delete store;
 	return;
 }
+
+
+bool p3GroupDistrib::processCacheOptReq(std::string  grpId)
+{
+	if(mSubscribedGrp.find(grpId) != mSubscribedGrp.end())
+		return false;
+
+	// grp already loaded
+	if(mCacheOptLoaded.find(grpId) != mCacheOptLoaded.end())
+		return false;
+
+	bool ok;
+	std::list<CacheData> cList;
+
+	{
+		RsStackMutex stack(distribMtx);
+		CacheOptData::iterator mit = mGrpCacheMap.find(grpId);
+		ok = (mit != mGrpCacheMap.end());
+		if(ok) cList = mit->second;
+	}
+
+	if(ok)
+	{
+		std::list<CacheData>::iterator sit = cList.begin();
+
+		for(;sit != cList.end(); sit++)
+			loadCacheOptMsgs(*sit, grpId);
+	}
+	else
+	{
+		return false;
+	}
+
+	mCacheOptLoaded.insert(grpId);
+
+	return true;
+}
+
+void p3GroupDistrib::loadCacheOptMsgs(const CacheData& data, const std::string& grpId)
+{
+	std::string filename = data.path;
+	filename += "/";
+	filename += data.name;
+
+	/* create the serialiser to load msgs */
+	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
+	pqistore *store = createStore(bio, data.pid, BIN_FLAGS_READABLE);
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "loading file " << filename << std::endl ;
+#endif
+
+	RsItem *item;
+	RsDistribSignedMsg *newMsg;
+
+	while(isRunning() && (NULL != (item = store->GetItem())))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadFileMsgs() Got Item:";
+		std::cerr << std::endl;
+		item->print(std::cerr, 10);
+		std::cerr << std::endl;
+#endif
+
+		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
+		{
+			if(newMsg->grpId == grpId)
+				loadMsg(newMsg, data.pid, false, true);
+			else
+				delete item;
+		}
+		else
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadFileMsgs() Unexpected Item - deleting";
+			std::cerr << std::endl;
+#endif
+			/* wrong message type */
+			delete item;
+		}
+	}
+
+	delete store;
+	return;
+}
+
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -1328,7 +1434,9 @@ void p3GroupDistrib::getPopularGroupList(uint32_t popMin, uint32_t popMax, std::
 bool p3GroupDistrib::getAllMsgList(const std::string& grpId, std::list<std::string> &msgIds)
 {
 
+	processCacheOptReq(grpId);
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+
 
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
@@ -1349,6 +1457,8 @@ bool p3GroupDistrib::getAllMsgList(const std::string& grpId, std::list<std::stri
 bool p3GroupDistrib::getParentMsgList(const std::string& grpId, const std::string& pId,
 						std::list<std::string> &msgIds)
 {
+	processCacheOptReq(grpId);
+
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 
 	std::map<std::string, GroupInfo>::iterator git;
@@ -1744,8 +1854,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 	/* for child config data */
 	std::list<RsItem* > childLoadL;
 	RsSerialType* childSer = createSerialiser();
-	grpCachePair gcPair;
-	pCacheId cId;
+
 	for(lit = load.begin(); lit != load.end(); lit++)
 	{
 		/* decide what type it is */
@@ -1762,6 +1871,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 
 			loadGroup(newGrp, false);
 			subscribeToGroup(gid, true);
+			mSubscribedGrp.insert(gid);
 		}
 		else if ((newKey = dynamic_cast<RsDistribGrpKey *>(*lit)))
 		{
@@ -3611,6 +3721,9 @@ bool p3GroupDistrib::getDummyParentMsgList(const std::string& grpId, const std::
 	std::cerr << "p3GroupDistrib::getDummyParentMsgList(grpId:" << grpId << "," << pId << ")";
 	std::cerr << std::endl;
 #endif
+
+	processCacheOptReq(grpId);
+
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 
 
@@ -3672,8 +3785,4 @@ RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(const std::string& gr
 
 	return &(dit->second);
 }
-
-
-	
-
 

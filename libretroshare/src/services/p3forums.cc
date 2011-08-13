@@ -294,6 +294,8 @@ bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &
 
 bool p3Forums::getForumMessage(const std::string &fId, const std::string &mId, ForumMsgInfo &info)
 {
+	processCacheOptReq(fId);
+
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
 	RsDistribMsg *msg = locked_getGroupMsg(fId, mId);
@@ -437,6 +439,7 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 	RsForumMsg *fmsg = new RsForumMsg();
 	fmsg->grpId = fId;
 	fmsg->parentId = pId;
+	processCacheOptReq(fId);
 
       {
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/

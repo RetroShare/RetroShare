@@ -207,25 +207,8 @@ const uint32_t GRP_SUBSCRIBED   = 0x0005;
 const uint32_t GRP_UNSUBSCRIBED = 0x0006;
 
 
+typedef std::map<std::string, std::list<CacheData> > CacheOptData;
 
-
-typedef std::pair<std::string, pugi::xml_node > grpNodePair; // (is loaded, iterator pointing to node)
-
-// these make up a cache list
-typedef std::pair<std::string, uint16_t> pCacheId; //(pid, subid)
-typedef std::pair<std::string, pCacheId> grpCachePair; // (grpid, cid)
-
-/*!
- * grp node content for faster access
- */
-struct nodeCache
-{
-	bool cached;
-	pugi::xml_node_iterator it;
-	pCacheId cid;
-	std::set<pCacheId> cIdSet;
-	pugi::xml_node node;
-};
 
 //! Cache based service to implement group messaging
 /*!
@@ -313,7 +296,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 			/* load cache files */
 		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical);
-		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
+		void	loadFileMsgs(const std::string &filename, const CacheData& , bool local, bool historical);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -323,9 +306,25 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
          bool	attemptPublishKeysRecvd();
 
+
+
+
+         /*!
+          * Simply load cache opt messages
+          * @param data
+          */
+         void loadCacheOptMsgs(const CacheData& data, const std::string& grpId);
+
 	protected:
 
 			/* load cache msgs */
+
+         /*!
+          * processes cache opt request by loading data for group
+          * @param grpId the group to process request for
+          * @return false if group does not exist
+          */
+         bool processCacheOptReq(std::string  grpId);
 
 		/*!
 		 * msg is loaded to its group and republished,
@@ -717,6 +716,31 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::
 		std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
                 std::set<std::string> mPubKeyAvailableGrpId; // groups id for which public keys are available
 		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
+
+
+		/**** cache opt ****/
+
+		/*
+		 * 1. when rs starts it loads only subscribed groups
+		 * 2. and for unsubscribed groups these are store with their grp to cache mappings
+		 * 3. when user clicks on a group this activates process cache which loads cache for only that group
+		 *
+		 */
+
+		/// stores map of grp to cache mapping
+		CacheOptData mGrpCacheMap;
+
+		/// group subscribed to at start of rs
+		std::set<std::string> mSubscribedGrp;
+
+		/// unsubscribed groups that are already loaded
+		std::set<std::string> mCacheOptLoaded;
+
+		/// current exception group
+		std::string mCurrGrpException;
+
+
+
 
 };
 
