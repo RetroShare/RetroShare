@@ -221,7 +221,7 @@ bool p3DistribSecurity::encrypt(void *& out, int & outlen, const void *in, int i
 
 
 #ifdef DISTRIB_DEBUG
-	std::cerr << "p3DistribSecurity::decrypt() " << std::endl;
+	std::cerr << "p3DistribSecurity::encrypt() " << std::endl;
 #endif
 
 	RSA *rsa_publish_pub = NULL;

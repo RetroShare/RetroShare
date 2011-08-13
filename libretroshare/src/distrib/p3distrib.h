@@ -302,87 +302,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		void 	HistoricalCachesDone(); // called when Stored Caches have been added to Pending List.
 
 
-
-	private:
-
-		/*!
-		 * called when all historical caches have been loaded
-		 */
-		void HistoricalCachesLoaded();
-
-		/*!
-		 * This updates the cache document with pending msg and grp cache data
-		 */
-		void updateCacheDocument();
-
-		/*!
-		 * @param grpIter this is a list of iterators point to newly added grp nodes
-		 */
-		void locked_updateCacheTableGrp(const std::vector<grpNodePair>& grpNodes, bool historical);
-
-		/*!
-		 * @param msgCacheMap each entry a set of cache ids that are to be loaded if grpId(entry) is requested to be cached
-		 */
-		void locked_updateCacheTableMsg(const std::map<std::string, std::set<pCacheId> >& msgCacheMap);
-
-		/*!
-		 * @param grpId indicates which grp entry to update
-		 * @param cached pass as true to update entry as true and vice versa
-		 */
-		void locked_updateCacheTableEntry(const std::string& grpId, bool cached);
-
-
-		/*!
-		 * TODO: will be used to unpack cache doc from config load
-		 * @param cacheBinDoc contains cache document as binary
-		 */
-		bool loadCacheDoc(RsDistribConfigData& cacheBinDoc);
-
-
-		/*!
-		 * to find if grps messages have been loaded (assumes grps have been loaded first)
-		 * @param cached true if grp has been loaded, false if not
-		 * @return true is grp entry does not exist in table, false if not
-		 */
-		bool locked_historyCached(const std::string& grpId, bool& cached);
-
-		/*!
-		 * @param cache cache data id
-		 * @return false if cache entry does not exist in table
- 		 */
-		bool locked_historyCached(const pCacheId& cId);
-
-		/*!
-		 * builds cache table from loaded cached document
-		 * @return false if cache document is empty
-		 */
-		bool locked_buildCacheTable(void);
-
-		/*!
-		 * if grp's message is not loaded, load it, and update cache table
-		 * @param grpId group whose messages to load if not cached
-		 */
-		void locked_processHistoryCached(const std::string& grpId);
-
-
-		/*!
-		 * loads cache data which contains location of cache files belonging
-		 * to group
-		 * @param grpId grp for which to get list of cache data
-		 * @param cDataSet cache data belonging to grp is loaded into this list
-		 */
-		void locked_getHistoryCacheData(const std::string& grpId, std::list<CacheData>& cDataSet);
-
-		/*!
-		 * encrypts and saves cache file
-		 */
-		bool locked_saveHistoryCacheFile();
-
-		/*!
-		 * decrypte and save cache file
-		 */
-		bool locked_loadHistoryCacheFile();
-
 	private:
 
 		/* these lists are filled by the overloaded fns... then cleared by the thread */
@@ -393,9 +312,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		int  	loadAnyCache(const CacheData &data, bool local, bool historical);
 
 			/* load cache files */
-		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical, const pCacheId& cid);
+		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical);
 		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
-		void	locked_loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -403,7 +321,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * Attempt to load public key from recvd list if it exists for grpId
 		 * @param grpId the id for the group for which private publish key is wanted
 		 */
-                bool	attemptPublishKeysRecvd();
+         bool	attemptPublishKeysRecvd();
 
 	protected:
 
@@ -652,26 +570,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		virtual bool locked_editGroup(std::string grpId, GroupInfo& gi);
 
-		/*!
-		 * Encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
-		 * only full publish key holders can encrypt data for given group
-		 *@param out
-		 *@param outlen
-		 *@param in
-		 *@param inlen
-		 */
-		virtual bool encrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
-
-
-		/**
-		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
-		 * only full publish key holders can decrypt data for a group
-		 *@param out where decrypted data is written to
-		 *@param outlen
-		 *@param in
-		 *@param inlen
-		 */
-		virtual bool decrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
 
 	/***************************************************************************************/
 	/***************************************************************************************/
@@ -694,12 +592,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		virtual pqistore *createStore(BinInterface *bio, const std::string &src, uint32_t bioflags);
 
-		/*!
-		 * checks to see if admin signature is valid
-		 * @param newGrp grp to validate
-		 * @return true if group's signature is valid
-		 */
-		virtual bool    validateDistribGrp(RsDistribGrp *newGrp);
 		virtual bool    locked_checkGroupInfo(GroupInfo  &info, RsDistribGrp *newGrp);
 		virtual bool    locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newGrp);
 		virtual bool    locked_checkGroupKeys(GroupInfo &info);
@@ -718,15 +610,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @return true if publish key successfully added
 		 */
 		virtual bool    locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrpKey *newKey);
-
-
-		/*!
-		 * uses groupinfo public key to verify signature of signed message
-		 * @param info groupinfo for which msg is meant for
-		 * @param msg
-		 * @return false if verfication of signature is not passed
-		 */
-		virtual bool    locked_validateDistribSignedMsg(GroupInfo &info, RsDistribSignedMsg *msg);
 
 		/*!
 		 * Use this to retrieve packed message from a signed message
@@ -835,28 +718,6 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(const std::string& grpId, const std::
                 std::set<std::string> mPubKeyAvailableGrpId; // groups id for which public keys are available
 		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
 
-		////////////// cache optimisation ////////////////
-		int mCount;
-		/// table containing new msg cache data to be added to xml doc ( grpid, (cid,pid) )
-		std::vector<grpCachePair> mGrpHistPending;
-
-		/// table containing new grp cache data to be added to xml doc (grpid, (cid,pid) )
-		std::vector<grpCachePair> mMsgHistPending;
-
-		std::set<pCacheId> mCachePairsInTable, mCacheFailedTable;
-
-		std::list<CacheDataPending> mPendingHistCaches;
-
-		std::map<CacheId, CacheData> mLocalHistCachesAvail;
-
-		time_t mLastCacheDocUpdate;
-		bool mUpdateCacheDoc, mHistoricalCachesLoaded;
-
-		std::map<std::string, nodeCache> mCacheTable; // (cid, node)
-
-		/// contains information on cached data
-		pugi::xml_document mCacheDoc;
-	
 };
 
 
