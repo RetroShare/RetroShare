@@ -9,7 +9,7 @@
 
 #include "gui/settings/rsharesettings.h"
 
-static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+static const uint MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 
 TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)

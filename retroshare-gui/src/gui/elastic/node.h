@@ -42,7 +42,7 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QList>
 
 #include "graphwidget.h"
@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
-class Node : public QObject, public QGraphicsItem
+class Node : public QGraphicsObject
 {
 	Q_OBJECT
 

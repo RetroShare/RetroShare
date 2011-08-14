@@ -128,7 +128,7 @@ RWindow::setVisible(bool visible)
      * window visible. */
     if (isVisible()) {
       activateWindow();
-      setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+      setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
       raise();
     } else {
       restoreWindowState();

@@ -57,7 +57,7 @@ class NetworkView : public RsAutoUpdatePage
 
 		/** Qt Designer generated object */
 		Ui::NetworkView ui;
-		int _max_friend_level ;
+		uint _max_friend_level ;
 		std::map<std::string,GraphWidget::NodeId> _node_ids ;
 
 		bool _should_update ;

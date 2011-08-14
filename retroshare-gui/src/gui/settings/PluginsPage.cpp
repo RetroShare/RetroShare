@@ -103,7 +103,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 	 const std::vector<std::string>& dirs(rsPlugins->getPluginDirectories()) ;
 	 text = "" ;
 
-	 for(int i=0;i<dirs.size();++i)
+	 for(uint i=0;i<dirs.size();++i)
 		 text += "<b>"+QString::fromStdString(dirs[i]) + "</b><br/>" ;
 
 	 ui._lookupDirectories_TB->setHtml(text) ;

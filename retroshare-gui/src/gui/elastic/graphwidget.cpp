@@ -60,7 +60,7 @@ void fourn(double data[],unsigned long nn[],unsigned long ndim,int isign)
 	double theta,wi,wpi,wpr,wr,wtemp;
 
 	ntot=1;
-	for (idim=1;idim<=ndim;idim++)
+	for (idim=1;idim<=(long)ndim;idim++)
 		ntot *= nn[idim];
 	nprev=1;
 	for (idim=ndim;idim>=1;idim--) {

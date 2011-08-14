@@ -761,7 +761,7 @@ QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent
 	if(row < 0)
 		return QModelIndex() ;
 
-	if(row < _ref_entries.size())
+	if(row < (int) _ref_entries.size())
 	{
 		void *ref = _ref_entries[row].first ;
 

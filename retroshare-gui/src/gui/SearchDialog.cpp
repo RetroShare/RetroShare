@@ -630,7 +630,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 			req_id = rsTurtle->turtleSearch(lin_exp) ;
 	}
 	else
-		req_id = (((uint32_t)rand()) << 16)^0x1e2fd5e4 + ((uint32_t)rand())^0x1b19acfe ; // generate a random 32 bits request id
+		req_id = ((((uint32_t)rand()) << 16)^0x1e2fd5e4) + (((uint32_t)rand())^0x1b19acfe) ; // generate a random 32 bits request id
 
 	initSearchResult(txt,req_id) ;	// this will act before turtle results come to the interface, thanks to the signals scheduling policy.
 
@@ -928,7 +928,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	if(nb_results.find(searchId) == nb_results.end())
 		nb_results[searchId] = 0 ;
 
-	if(nb_results[searchId] >= ui._max_results_SB->value())
+	if((int) nb_results[searchId] >= ui._max_results_SB->value())
 		return ;
 
 	// 1 - look in result window whether the file already exists.
