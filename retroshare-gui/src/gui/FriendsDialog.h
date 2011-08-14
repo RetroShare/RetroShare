@@ -131,7 +131,9 @@ private slots:
     void removeGroup();
 
     void configurefriend();
+#ifdef UNFINISHED
     void viewprofile();
+#endif
 
     /** RsServer Friend Calls */
     void connectfriend();

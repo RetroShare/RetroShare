@@ -47,7 +47,9 @@
 #include "chat/PopupChatDialog.h"
 #include "msgs/MessageComposer.h"
 #include "connect/ConfCertDialog.h"
-#include "profile/ProfileView.h"
+#ifdef UNFINISHED
+#include "unfinished/profile/ProfileView.h"
+#endif
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
 
@@ -912,7 +914,7 @@ void  FriendsDialog::insertPeers()
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                     customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(sslDetail.id).c_str());
                 }
-                sText = tr("location") + " : " + QString::fromUtf8(sslDetail.location.c_str());
+                sText = QString::fromUtf8(sslDetail.location.c_str());
                 if (customStateString.isEmpty() == false) {
                     sText += " - " + customStateString;
                 }
@@ -1763,6 +1765,7 @@ void FriendsDialog::addSmileys()
     ui.lineEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
+#ifdef UNFINISHED
 /* GUI stuff -> don't do anything directly with Control */
 void FriendsDialog::viewprofile()
 {
@@ -1771,7 +1774,7 @@ void FriendsDialog::viewprofile()
 	QTreeWidgetItem *c = getCurrentPeer();
 
 
-	static ProfileView *profileview = new ProfileView();
+//	static ProfileView *profileview = new ProfileView();
 
 
 	if (!c)
@@ -1783,6 +1786,7 @@ void FriendsDialog::viewprofile()
 	profileview -> setPeerId(id);
 	profileview -> show();
 }
+#endif
 
 void FriendsDialog::updateAvatar()
 {

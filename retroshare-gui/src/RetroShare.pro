@@ -257,8 +257,6 @@ HEADERS +=  rshare.h \
             util/log.h \
             util/misc.h \
             gui/bwgraph/bwgraph.h \
-            gui/profile/ProfileView.h \
-            gui/profile/ProfileEdit.h \
             gui/profile/ProfileWidget.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatWindow.h \
@@ -383,8 +381,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/InfoDialog.ui \
             gui/DetailsDialog.ui \
             gui/bwgraph/bwgraph.ui \
-            gui/profile/ProfileView.ui \
-            gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/channels/CreateChannel.ui \
@@ -508,8 +504,6 @@ SOURCES +=  main.cpp \
             util/log.cpp \
             util/misc.cpp \
             gui/bwgraph/bwgraph.cpp \
-            gui/profile/ProfileView.cpp \
-            gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/channels/CreateChannel.cpp \
@@ -701,8 +695,9 @@ HEADERS += gui/unfinished/ApplicationWindow.h \
            gui/unfinished/GamesDialog.h \
            gui/unfinished/PhotoDialog.h \
            gui/unfinished/PhotoShow.h \
-           gui/unfinished/StatisticDialog.h
-
+           gui/unfinished/StatisticDialog.h \
+           gui/unfinished/profile/ProfileView.h \
+           gui/unfinished/profile/ProfileEdit.h
 
 FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/CalDialog.ui \
@@ -710,7 +705,9 @@ FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/GamesDialog.ui \
          gui/unfinished/PhotoDialog.ui \
          gui/unfinished/PhotoShow.ui \
-         gui/unfinished/StatisticDialog.ui
+         gui/unfinished/StatisticDialog.ui \
+         gui/unfinished/profile/ProfileView.ui \
+         gui/unfinished/profile/ProfileEdit.ui
 
 SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/CalDialog.cpp \
@@ -718,7 +715,9 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/GamesDialog.cpp \
            gui/unfinished/PhotoDialog.cpp \
            gui/unfinished/PhotoShow.cpp \
-           gui/unfinished/StatisticDialog.cpp
+           gui/unfinished/StatisticDialog.cpp \
+           gui/unfinished/profile/ProfileView.cpp \
+           gui/unfinished/profile/ProfileEdit.cpp
 
           DEFINES *= UNFINISHED
 }

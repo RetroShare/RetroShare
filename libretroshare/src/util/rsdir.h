@@ -46,7 +46,7 @@ std::string 	removeRootDirs(const std::string& path, const std::string& root);
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
 bool		renameFile(const std::string& from,const std::string& to) ;
-bool		createBackup (const std::string& sFilename, unsigned int nCount = 5);
+//bool		createBackup (const std::string& sFilename, unsigned int nCount = 5);
 
 // returns the CRC32 of the data of length len
 //

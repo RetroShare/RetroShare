@@ -675,6 +675,8 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	return true ;
 }
 
+#ifdef UNUSED_CODE
+// not used
 bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
 {
 #ifdef WINDOWS_SYS
@@ -732,6 +734,7 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
 #endif
     return true;
 }
+#endif
 
 FILE *RsDirUtil::rs_fopen(const char* filename, const char* mode)
 {
