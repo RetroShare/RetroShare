@@ -713,7 +713,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>toolButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../../retroshare-v0.5.0/retroshare-gui/src/gui/images.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

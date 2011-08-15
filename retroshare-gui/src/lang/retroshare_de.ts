@@ -2349,17 +2349,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location line="+196"/>
+        <location line="+198"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-195"/>
+        <location line="-197"/>
         <source>File already Added and Hashed</source>
         <translation>Datei wurde schon hinzugefügt und gehasht</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+198"/>
         <source>Please add a Subject</source>
         <translation>Bitte Subjekt nicht vergessen</translation>
     </message>
@@ -3470,7 +3470,7 @@ p, li { white-space: pre-wrap; }
         <translation>Dateityp</translation>
     </message>
     <message>
-        <location line="+221"/>
+        <location line="+220"/>
         <source> Friend Help</source>
         <translation></translation>
     </message>
@@ -3574,7 +3574,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FlatStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+668"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+670"/>
         <source>Friends Directories</source>
         <translation>Dateien von Freunden</translation>
     </message>
@@ -4214,7 +4214,7 @@ p, li { white-space: pre-wrap; }
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+111"/>
         <source>Friends</source>
         <translation>Freunde</translation>
     </message>
@@ -4243,12 +4243,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Nachrichten, die Du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+465"/>
         <source>Messages entered here are sent to all connected friends</source>
         <translation>Nachrichten, die Du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="-378"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
@@ -4283,13 +4283,13 @@ p, li { white-space: pre-wrap; }
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+113"/>
         <source>Clear Chat History</source>
         <translation>Nachrichtenverlauf leeren</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/FriendsDialog.cpp" line="+443"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+450"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -4406,7 +4406,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="-291"/>
+        <location filename="../gui/FriendsDialog.cpp" line="-296"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -4421,7 +4421,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+69"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
@@ -4542,12 +4542,11 @@ p, li { white-space: pre-wrap; }
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+350"/>
         <source>location</source>
-        <translation>Standort</translation>
+        <translation type="obsolete">Standort</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+504"/>
         <location line="+2"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
@@ -4592,7 +4591,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+111"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -4791,7 +4790,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+166"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+143"/>
         <location line="+22"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -4807,7 +4806,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+83"/>
         <source>Select Trusted Friend</source>
         <translation>Wähle vertrauten Freund</translation>
     </message>
@@ -4849,8 +4848,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-192"/>
-        <location filename="../gui/GenCertDialog.cpp" line="-187"/>
-        <location line="+46"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-159"/>
+        <location line="+23"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -4935,32 +4934,32 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Standorten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-55"/>
-        <location line="+68"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-32"/>
+        <location line="+45"/>
         <source>Create new Location</source>
         <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
-        <location line="-67"/>
-        <location line="+68"/>
+        <location line="-44"/>
+        <location line="+45"/>
         <source>Generate new Location</source>
         <translation>Erstelle neues Ort</translation>
     </message>
     <message>
-        <location line="-67"/>
-        <location line="+68"/>
+        <location line="-44"/>
+        <location line="+45"/>
         <source>Create a new Location</source>
         <translation>Erstelle einen neuen Ort</translation>
     </message>
     <message>
-        <location line="-60"/>
-        <location line="+46"/>
+        <location line="-37"/>
+        <location line="+23"/>
         <source>Generate new Profile</source>
         <translation>Generiere neues Profil</translation>
     </message>
     <message>
-        <location line="-45"/>
-        <location line="+46"/>
+        <location line="-22"/>
+        <location line="+23"/>
         <source>Create a new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -4974,7 +4973,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
 Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu unterzeichnen.</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+120"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -5020,12 +5019,12 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
     <message>
         <location line="+12"/>
         <source>For Advanced Users </source>
-        <translation type="unfinished"></translation>
+        <translation>Für erfahrene Anwender</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweiterter Modus</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -5076,7 +5075,7 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
 <context>
     <name>GetStartedDialog</name>
     <message>
-        <location filename="../gui/GetStartedDialog.ui" line="+513"/>
+        <location filename="../gui/GetStartedDialog.ui" line="+499"/>
         <source>Getting Started</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5310,7 +5309,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GraphWidget</name>
     <message>
-        <location filename="../gui/elastic/graphwidget.cpp" line="+405"/>
+        <location filename="../gui/elastic/graphwidget.cpp" line="+404"/>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7930,10 +7929,8 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="+244"/>
-        <location line="+1"/>
-        <location line="+2"/>
-        <location line="+1"/>
+        <location filename="../gui/MessengerWindow.cpp" line="+245"/>
+        <location line="+3"/>
         <source>location</source>
         <translation>Standort</translation>
     </message>
@@ -8629,7 +8626,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="+293"/>
+        <location line="+288"/>
         <source>Status:</source>
         <translation>Status:</translation>
     </message>
@@ -8639,12 +8636,12 @@ p, li { white-space: pre-wrap; }
         <translation>Vertrauen:</translation>
     </message>
     <message>
-        <location line="-154"/>
+        <location line="-149"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+117"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
@@ -8674,7 +8671,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location line="-314"/>
+        <location line="-309"/>
         <source>Start Chat</source>
         <translation>Chat starten</translation>
     </message>
@@ -8684,7 +8681,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnelle Nachricht schreiben</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+79"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
@@ -9786,7 +9783,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileEdit</name>
     <message>
-        <location filename="../gui/profile/ProfileEdit.cpp" line="+56"/>
+        <location filename="../gui/unfinished/profile/ProfileEdit.cpp" line="+56"/>
         <source>Remove Profile Entry</source>
         <translation>Profil-Eintrag entfernen</translation>
     </message>
@@ -9801,7 +9798,7 @@ Do you want to send them a Message instead</source>
         <translation>Profil-Eintrag nach unten</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileEdit.ui" line="+35"/>
+        <location filename="../gui/unfinished/profile/ProfileEdit.ui" line="+35"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -9885,7 +9882,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
+        <location filename="../gui/unfinished/profile/ProfileView.cpp" line="+70"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -9895,13 +9892,13 @@ Do you want to send them a Message instead</source>
         <translation>Photo ändern</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.ui" line="+183"/>
-        <location filename="../gui/profile/ProfileView.cpp" line="+21"/>
+        <location filename="../gui/unfinished/profile/ProfileView.ui" line="+183"/>
+        <location filename="../gui/unfinished/profile/ProfileView.cpp" line="+21"/>
         <source>Edit Profile</source>
         <translation>Profil bearbeiten</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+19"/>
+        <location filename="../gui/unfinished/profile/ProfileView.cpp" line="+19"/>
         <source>Remove Favourite</source>
         <translation>Favoriten entfernen</translation>
     </message>
@@ -9921,7 +9918,7 @@ Do you want to send them a Message instead</source>
         <translation>Alle herunterladen</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.ui" line="-119"/>
+        <location filename="../gui/unfinished/profile/ProfileView.ui" line="-119"/>
         <location line="+183"/>
         <source>Name</source>
         <translation>Name</translation>
@@ -9981,7 +9978,7 @@ p, li { white-space: pre-wrap; }
         <translation>Peer ID</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+62"/>
+        <location filename="../gui/unfinished/profile/ProfileView.cpp" line="+62"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -10403,7 +10400,7 @@ Lockdatei:
         <translation type="obsolete">Kein laufendes RetroShare gefunden.</translation>
     </message>
     <message>
-        <location filename="../util/EventReceiver.cpp" line="+120"/>
+        <location filename="../util/EventReceiver.cpp" line="+122"/>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
     </message>
@@ -11032,23 +11029,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+1161"/>
+        <location filename="../gui/SearchDialog.ui" line="+1380"/>
         <source>Sources</source>
         <translation>Quellen</translation>
     </message>
     <message>
-        <location line="-170"/>
+        <location line="-164"/>
         <source>Results</source>
         <translation>Ergebnisse</translation>
     </message>
     <message>
-        <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+288"/>
+        <location line="-145"/>
+        <location filename="../gui/SearchDialog.cpp" line="+291"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-183"/>
+        <location filename="../gui/SearchDialog.cpp" line="-186"/>
         <source>Enter a keyword here (at least 3 char long)</source>
         <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
     </message>
@@ -11069,7 +11066,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Freunden empfehlen</translation>
     </message>
     <message>
-        <location line="+185"/>
+        <location line="+188"/>
         <location line="+139"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
@@ -11101,7 +11098,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="-718"/>
+        <location filename="../gui/SearchDialog.ui" line="-479"/>
         <source>Any</source>
         <translation>Alle</translation>
     </message>
@@ -11121,12 +11118,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gib einen Suchbegriff ein</translation>
     </message>
     <message>
-        <location line="+285"/>
+        <location line="+510"/>
         <source>Filter Search Result</source>
         <translation>Filter Suchergebnis</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+111"/>
         <source>Filename</source>
         <translation>Dateiname</translation>
     </message>
@@ -11141,7 +11138,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-190"/>
+        <location line="-184"/>
         <source>KeyWords</source>
         <translation>Schlüsselwörter</translation>
     </message>
@@ -11173,7 +11170,7 @@ p, li { white-space: pre-wrap; }
         <translation>Diese Funktion ist noch nicht eingebaut.</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+160"/>
+        <location filename="../gui/SearchDialog.ui" line="+154"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
@@ -11183,7 +11180,7 @@ p, li { white-space: pre-wrap; }
         <translation>Typ</translation>
     </message>
     <message>
-        <location line="-565"/>
+        <location line="-784"/>
         <source>Archive</source>
         <translation>Archiv</translation>
     </message>
@@ -11223,7 +11220,7 @@ p, li { white-space: pre-wrap; }
         <translation>Suchen</translation>
     </message>
     <message>
-        <location line="+192"/>
+        <location line="+417"/>
         <source>Clear Filter</source>
         <translation>Filter leeren</translation>
     </message>
@@ -11238,7 +11235,7 @@ p, li { white-space: pre-wrap; }
         <translation>Dateigröße</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="-393"/>
         <source>Close all Search Resullts</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -11285,7 +11282,7 @@ p, li { white-space: pre-wrap; }
         <translation>Begrenze Anzahl der Resultate auf :</translation>
     </message>
     <message>
-        <location line="-613"/>
+        <location line="-374"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
@@ -11300,7 +11297,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitert</translation>
     </message>
     <message>
-        <location line="+294"/>
+        <location line="+55"/>
         <source>Close All Search Results</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -11334,7 +11331,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Chat starten</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+43"/>
         <source>Cancel</source>
         <translation type="unfinished">Abbrechen</translation>
     </message>
@@ -11800,7 +11797,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.ui" line="+235"/>
+        <location filename="../gui/ShareManager.ui" line="+205"/>
         <source>Add a Share Directory</source>
         <translation>Freigabe hinzufügen</translation>
     </message>
@@ -11810,7 +11807,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freigabe entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+127"/>
+        <location filename="../gui/ShareManager.cpp" line="+130"/>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation>Wenn aktiviert, dann ist dieser Ordner anonym feigegeben.</translation>
     </message>
@@ -11820,9 +11817,9 @@ p, li { white-space: pre-wrap; }
         <translation>Wenn aktiviert, dann ist dieser Ordner von Deinen Freunden durchsuchbar.</translation>
     </message>
     <message>
-        <location line="+147"/>
+        <location line="+160"/>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation>Möchtes Du die Freigabe dieses Ordners wirklich aufheben ?</translation>
+        <translation>Möchtest Du die Freigabe dieses Ordners wirklich aufheben ?</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -11842,17 +11839,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="+3"/>
-        <location filename="../gui/ShareManager.cpp" line="-256"/>
+        <location filename="../gui/ShareManager.cpp" line="-269"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+176"/>
+        <location filename="../gui/ShareManager.cpp" line="+189"/>
         <source>Warning!</source>
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.ui" line="-249"/>
+        <location filename="../gui/ShareManager.ui" line="-219"/>
         <source>RetroShare Share Manager</source>
         <translation>RetroShare Freigabe Manager</translation>
     </message>
@@ -11891,7 +11888,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Netzwerkweit&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien können von jedem über anoynme Tunnel heruntergeladen werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+37"/>
         <source>Directory</source>
         <translation>Ordner</translation>
     </message>
@@ -11922,7 +11919,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+3"/>
-        <location filename="../gui/ShareManager.cpp" line="-179"/>
+        <location filename="../gui/ShareManager.cpp" line="-192"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
@@ -11932,7 +11929,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-93"/>
         <source>Shared Folder Manager</source>
         <translation>Freigabe Manager</translation>
     </message>

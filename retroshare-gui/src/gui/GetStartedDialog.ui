@@ -7,14 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>715</width>
-    <height>556</height>
+    <height>582</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-    <horstretch>1</horstretch>
-    <verstretch>1</verstretch>
-   </sizepolicy>
   </property>
   <property name="palette">
    <palette>
@@ -489,18 +483,10 @@
    <font>
     <family>Arial</family>
     <pointsize>14</pointsize>
-    <weight>50</weight>
-    <italic>false</italic>
-    <bold>false</bold>
-    <underline>false</underline>
-    <strikeout>false</strikeout>
    </font>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
-  </property>
-  <property name="styleSheet">
-   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -529,8 +515,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>666</width>
-            <height>746</height>
+            <width>672</width>
+            <height>740</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -958,8 +944,6 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../../../rs-netupgrade/retroshare-gui/src/gui/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

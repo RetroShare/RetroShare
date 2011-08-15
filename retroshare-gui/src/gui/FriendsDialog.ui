@@ -528,7 +528,7 @@ border: 1px solid #CCCCCC;}
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap>:/images/user/friends24.png</pixmap>
+               <pixmap resource="images.qrc">:/images/user/friends24.png</pixmap>
               </property>
              </widget>
             </item>
@@ -578,7 +578,7 @@ p, li { white-space: pre-wrap; }
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="images.qrc">
               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
             </property>
             <property name="iconSize">
@@ -632,7 +632,7 @@ p, li { white-space: pre-wrap; }
  }</string>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="images.qrc">
               <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
             </property>
             <property name="iconSize">
@@ -720,9 +720,6 @@ background: white;}</string>
          <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
-         <attribute name="headerDefaultSectionSize">
-          <number>200</number>
-         </attribute>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
          </attribute>
@@ -904,119 +901,6 @@ p, li { white-space: pre-wrap; }
            <string>Group Chat</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
-            <widget class="QSplitter" name="splitter_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="sizeIncrement">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="handleWidth">
-              <number>5</number>
-             </property>
-             <widget class="QTextBrowser" name="msgText">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>60</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QTextEdit#msgText{border: 1px solid #CCCCCC;
-background: white;}</string>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-              <property name="openLinks">
-               <bool>true</bool>
-              </property>
-             </widget>
-             <widget class="QWidget" name="layoutWidget_2">
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-               <property name="spacing">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="statusStringLabel">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QTextEdit" name="lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>30</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="sizeIncrement">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="baseSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::CustomContextMenu</enum>
-                 </property>
-                 <property name="toolTip">
-                  <string>Messages entered here are sent to all connected friends</string>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QTextEdit#lineEdit{border: 1px solid #CCCCCC;
-}</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QFrame" name="buttonframe">
              <property name="maximumSize">
@@ -1063,7 +947,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -1107,7 +991,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/edit-bold.png</normaloff>:/images/edit-bold.png</iconset>
                 </property>
                 <property name="checkable">
@@ -1148,7 +1032,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/edit-underline.png</normaloff>:/images/edit-underline.png</iconset>
                 </property>
                 <property name="checkable">
@@ -1189,7 +1073,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/edit-italic.png</normaloff>:/images/edit-italic.png</iconset>
                 </property>
                 <property name="checkable">
@@ -1230,7 +1114,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/fonts.png</normaloff>:/images/fonts.png</iconset>
                 </property>
                 <property name="autoRaise">
@@ -1314,7 +1198,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -1358,7 +1242,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="images.qrc">
                   <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -1405,6 +1289,92 @@ border: 1px solid #CCCCCC;}</string>
            <item row="2" column="0">
             <layout class="QVBoxLayout" name="verticalLayout"/>
            </item>
+           <item row="0" column="0">
+            <widget class="QSplitter" name="splitter_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="handleWidth">
+              <number>5</number>
+             </property>
+             <property name="childrenCollapsible">
+              <bool>false</bool>
+             </property>
+             <widget class="QTextBrowser" name="msgText">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QTextEdit#msgText{border: 1px solid #CCCCCC;
+background: white;}</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+              <property name="openLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QWidget" name="layoutWidget_2">
+              <layout class="QVBoxLayout" name="verticalLayoutEdit">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="statusStringLabel">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="lineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::CustomContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>Messages entered here are sent to all connected friends</string>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QTextEdit#lineEdit{border: 1px solid #CCCCCC;
+}</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
           </layout>
          </widget>
         </widget>
@@ -1416,7 +1386,7 @@ border: 1px solid #CCCCCC;}</string>
   </layout>
   <action name="actionClear_Chat_History">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
    </property>
    <property name="text">
@@ -1425,7 +1395,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionAdd_Friend">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/user/add_user16.png</normaloff>:/images/user/add_user16.png</iconset>
    </property>
    <property name="text">
@@ -1434,7 +1404,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionCreate_new_Profile">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
    </property>
    <property name="text">
@@ -1443,7 +1413,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionCreate_New_Forum">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/new_forum16.png</normaloff>:/images/new_forum16.png</iconset>
    </property>
    <property name="text">
@@ -1458,7 +1428,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionCreate_New_Channel">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
    </property>
    <property name="text">
@@ -1473,7 +1443,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSet_your_Avatar">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
    </property>
    <property name="text">
@@ -1485,7 +1455,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSet_your_Personal_Message">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/message-news.png</normaloff>:/images/message-news.png</iconset>
    </property>
    <property name="text">
@@ -1548,7 +1518,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionAdd_Group">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/user/add_group22.png</normaloff>:/images/user/add_group22.png</iconset>
    </property>
    <property name="text">
@@ -1560,7 +1530,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSort_Peers_Descending_Order">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
    </property>
    <property name="text">
@@ -1572,7 +1542,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSort_Peers_Ascending_Order">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
    </property>
    <property name="text">
@@ -1584,7 +1554,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionDelete_Chat_History">
    <property name="icon">
-    <iconset>
+    <iconset resource="images.qrc">
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
    </property>
    <property name="text">
@@ -1603,6 +1573,8 @@ border: 1px solid #CCCCCC;}</string>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

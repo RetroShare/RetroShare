@@ -22,8 +22,6 @@
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QCheckBox>
-#include <QCursor>
-#include <QPoint>
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QUrl>
@@ -69,11 +67,13 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
     ui.editButton->setEnabled(false);
     ui.removeButton->setEnabled(false);
 
-    ui.shareddirList->horizontalHeader()->setResizeMode( COLUMN_PATH, QHeaderView::Stretch);
-    ui.shareddirList->horizontalHeader()->setResizeMode( COLUMN_BROWSABLE, QHeaderView::Interactive);
+    QHeaderView* header = ui.shareddirList->horizontalHeader();
+    header->setResizeMode( COLUMN_PATH, QHeaderView::Stretch);
 
-    ui.shareddirList->horizontalHeader()->resizeSection( COLUMN_PATH, 360 );
-    ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
+    header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
+    header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);
+
+    header->setHighlightSections(false);
 
     ui.shareddirList->setRangeSelected(QTableWidgetSelectionRange(0, 0, 0, COLUMN_COUNT), true);
 
@@ -168,11 +168,24 @@ void ShareManager::load()
         int col;
         for (col = 0; col <= 1; col++) {
             QModelIndex index = listWidget->model()->index(row, col + COLUMN_NETWORKWIDE, QModelIndex());
-            QCheckBox *cb = (QCheckBox*) listWidget->indexWidget(index);
+            QWidget* widget = dynamic_cast<QWidget*>(listWidget->indexWidget(index));
+            QCheckBox* cb = NULL;
+            if (widget) {
+                cb = dynamic_cast<QCheckBox*>(widget->children().front());
+            }
             if (cb == NULL) {
-                cb = new QCheckBox;
+                QWidget* widget = new QWidget;
+
+                cb = new QCheckBox(widget);
                 cb->setToolTip(ToolTips [col]);
-                listWidget->setCellWidget(row, col + COLUMN_NETWORKWIDE, cb);
+
+                QHBoxLayout* layout = new QHBoxLayout(widget);
+                layout->addWidget(cb, 0, Qt::AlignCenter);
+                layout->setSpacing(0);
+                layout->setContentsMargins(0, 0, 0, 0);
+                widget->setLayout(layout);
+
+                listWidget->setCellWidget(row, col + COLUMN_NETWORKWIDE, widget);
 
                 QObject::connect(cb, SIGNAL(toggled(bool)), this, SLOT(updateFlags(bool))) ;
             }
@@ -225,8 +238,8 @@ void ShareManager::updateFlags(bool b)
     {
         std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
         uint32_t current_flags = 0 ;
-        current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,COLUMN_NETWORKWIDE)))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:0 ;
-        current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,COLUMN_BROWSABLE)))->isChecked()? RS_FILE_HINTS_BROWSABLE:0 ;
+        current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,COLUMN_NETWORKWIDE)->children().front()))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:0 ;
+        current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,COLUMN_BROWSABLE)->children().front()))->isChecked()? RS_FILE_HINTS_BROWSABLE:0 ;
 
         if( (*it).shareflags ^ current_flags )
         {

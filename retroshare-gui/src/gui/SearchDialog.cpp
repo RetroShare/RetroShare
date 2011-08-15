@@ -150,7 +150,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     /* make it extended selection */
     ui.searchResultWidget -> setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-
     /* Set header resize modes and initial section sizes */
     ui.searchSummaryWidget->setColumnCount(3);
     ui.searchSummaryWidget->setColumnHidden ( 2, true);
@@ -175,7 +174,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( 4, 90 );
     _smheader->resizeSection ( 5, 240 );
 
-
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
     headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
@@ -185,8 +183,13 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     ui.resetButton->hide();
 	ui.clearButton->hide();
-	
-	// load settings
+
+    /* Set initial size the splitter */
+    QList<int> sizes;
+    sizes << 250 << width(); // Qt calculates the right sizes
+    ui.splitter->setSizes(sizes);
+
+    // load settings
     processSettings(true);
   
   	ui._ownFiles_CB->setMinimumWidth(20);

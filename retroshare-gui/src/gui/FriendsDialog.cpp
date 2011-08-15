@@ -162,7 +162,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
 
-    ui.peertreeWidget->setColumnCount(COLUMN_COUNT);
+    ui.peertreeWidget->setColumnWidth(COLUMN_NAME, 150);
     ui.peertreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 
     // set header text aligment
@@ -232,6 +232,11 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
+
+    /* Set initial size the splitter */
+    QList<int> sizes;
+    sizes << height() << 100; // Qt calculates the right sizes
+    ui.splitter_2->setSizes(sizes);
 
     updateAvatar();
     loadmypersonalstatus();
