@@ -27,7 +27,6 @@
 #include "pqi/authgpg.h"
 #include "retroshare/rsdistrib.h"
 #include "retroshare/rspeers.h"
-#include "regex.h"
 
 
 p3DistribSecurity::p3DistribSecurity()
