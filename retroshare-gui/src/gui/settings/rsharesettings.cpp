@@ -506,25 +506,51 @@ bool RshareSettings::getRetroShareProtocol()
 	return false;
 }
 
+/** Returns true if the user can set retroshare as protocol */
+bool RshareSettings::canSetRetroShareProtocol()
+{
+#if defined(Q_WS_WIN)
+	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+	return retroshare.isWritable();
+#else
+	return false;
+#endif
+}
+
 /** Register retroshare:// as protocl */
-void RshareSettings::setRetroShareProtocol(bool value)
+bool RshareSettings::setRetroShareProtocol(bool value)
 {
 #if defined(Q_WS_WIN)
 	if (value) {
 		QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
 		retroshare.setValue("Default", "URL: RetroShare protocol");
+
+		QSettings::Status state = retroshare.status();
+		if (state == QSettings::AccessError) {
+			return false;
+		}
 		retroshare.setValue("URL Protocol", "");
 		retroshare.setValue("Profile", QString::fromStdString(rsPeers->getOwnId()));
 
 		QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 		command.setValue("Default", getAppPathForProtocol());
+		state = command.status();
 	} else {
 		QSettings retroshare("HKEY_CLASSES_ROOT", QSettings::NativeFormat);
 		retroshare.remove("retroshare");
+
+		QSettings::Status state = retroshare.status();
+		if (state == QSettings::AccessError) {
+			return false;
+		}
 	}
+
+	return true;
 #else
-	/* Platforms othe rthan windows aren't supported yet */
+	/* Platforms other than windows aren't supported yet */
 	Q_UNUSED(value);
+
+	return false;
 #endif
 }
 

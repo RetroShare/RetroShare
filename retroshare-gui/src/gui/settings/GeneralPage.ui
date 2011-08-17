@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
+    <width>397</width>
     <height>400</height>
    </rect>
   </property>
@@ -609,11 +609,37 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QCheckBox" name="enableRetroShareProtocol">
-        <property name="text">
-         <string>Register retroshare:// as url protocol (Restart required)</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="enableRetroShareProtocol">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Register retroshare:// as url protocol (Restart required)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="adminLabel">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>You need administrator rights to change this option.</string>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/admin-16.png</pixmap>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -662,6 +688,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

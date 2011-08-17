@@ -5042,12 +5042,16 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
         <translation>Nicht in den Systemabschnitt minimieren</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <source>You need administrator rights to set this option.</source>
+        <translation type="obsolete">Du benötigst Administratorrechte zum aktivieren der Einstellung.</translation>
+    </message>
+    <message>
+        <location line="+66"/>
         <source> seconds</source>
         <translation>Sekunden</translation>
     </message>
     <message>
-        <location line="-115"/>
+        <location line="-141"/>
         <source>Start minimized</source>
         <translation>Minimiert starten</translation>
     </message>
@@ -5057,12 +5061,17 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
         <translation>Starte RetroShare mit dem System</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+107"/>
         <source>Register retroshare:// as url protocol (Restart required)</source>
         <translation>Registriere retroshare:// als Protokoll (Neustart erforderlich)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+13"/>
+        <source>You need administrator rights to change this option.</source>
+        <translation>Du benötigst Administratorrechte zum ändern dieser Einstellung.</translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Idle</source>
         <translation>Untätig</translation>
     </message>
@@ -5070,6 +5079,22 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
         <location line="+6"/>
         <source>Idle Time</source>
         <translation>Zeit bis zur Untätigkeit</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/GeneralPage.cpp" line="+74"/>
+        <location line="+2"/>
+        <source>Error</source>
+        <translation>Fehler</translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source>Could not add retroshare:// as protocol.</source>
+        <translation>Konnte retroshare:// nicht als Protokoll hinzufügen.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Could not remove retroshare:// protocol.</source>
+        <translation>Konnte retroshare:// Protokoll nicht entfernen.</translation>
     </message>
 </context>
 <context>
@@ -11029,17 +11054,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+1380"/>
+        <location filename="../gui/SearchDialog.ui" line="+1161"/>
         <source>Sources</source>
         <translation>Quellen</translation>
     </message>
     <message>
-        <location line="-164"/>
+        <location line="-170"/>
         <source>Results</source>
         <translation>Ergebnisse</translation>
     </message>
     <message>
-        <location line="-145"/>
+        <location line="+319"/>
         <location filename="../gui/SearchDialog.cpp" line="+291"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
@@ -11098,7 +11123,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="-479"/>
+        <location filename="../gui/SearchDialog.ui" line="-718"/>
         <source>Any</source>
         <translation>Alle</translation>
     </message>
@@ -11118,12 +11143,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gib einen Suchbegriff ein</translation>
     </message>
     <message>
-        <location line="+510"/>
+        <location line="+285"/>
         <source>Filter Search Result</source>
         <translation>Filter Suchergebnis</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+117"/>
         <source>Filename</source>
         <translation>Dateiname</translation>
     </message>
@@ -11138,7 +11163,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-184"/>
+        <location line="-190"/>
         <source>KeyWords</source>
         <translation>Schlüsselwörter</translation>
     </message>
@@ -11170,7 +11195,7 @@ p, li { white-space: pre-wrap; }
         <translation>Diese Funktion ist noch nicht eingebaut.</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+154"/>
+        <location filename="../gui/SearchDialog.ui" line="+160"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
@@ -11180,7 +11205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Typ</translation>
     </message>
     <message>
-        <location line="-784"/>
+        <location line="-565"/>
         <source>Archive</source>
         <translation>Archiv</translation>
     </message>
@@ -11220,7 +11245,7 @@ p, li { white-space: pre-wrap; }
         <translation>Suchen</translation>
     </message>
     <message>
-        <location line="+417"/>
+        <location line="+192"/>
         <source>Clear Filter</source>
         <translation>Filter leeren</translation>
     </message>
@@ -11235,7 +11260,7 @@ p, li { white-space: pre-wrap; }
         <translation>Dateigröße</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="+71"/>
         <source>Close all Search Resullts</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -11282,7 +11307,7 @@ p, li { white-space: pre-wrap; }
         <translation>Begrenze Anzahl der Resultate auf :</translation>
     </message>
     <message>
-        <location line="-374"/>
+        <location line="-613"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
@@ -11297,7 +11322,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitert</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+294"/>
         <source>Close All Search Results</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -11807,7 +11832,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freigabe entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+130"/>
+        <location filename="../gui/ShareManager.cpp" line="+127"/>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation>Wenn aktiviert, dann ist dieser Ordner anonym feigegeben.</translation>
     </message>

@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMessageBox>
 #include <iostream>
 #include <rshare.h>
 #include "retroshare/rsinit.h"
@@ -33,14 +34,22 @@
 GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
 : ConfigPage(parent, flags)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
 
-  /* Hide platform specific features */
-#ifndef Q_WS_WIN
-  ui.chkRunRetroshareAtSystemStartup->setVisible(false);
-  ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
-  ui.enableRetroShareProtocol->setVisible(false);
+    /* Hide platform specific features */
+#ifdef Q_WS_WIN
+    if (Settings->canSetRetroShareProtocol() == false) {
+        ui.enableRetroShareProtocol->setEnabled(false);
+    } else {
+        ui.adminLabel->setEnabled(false);
+        ui.adminLabel->setToolTip("");
+    }
+#else
+    ui.chkRunRetroshareAtSystemStartup->setVisible(false);
+    ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
+    ui.enableRetroShareProtocol->setVisible(false);
+    ui.adminLabel->setVisible(false);
 #endif
 }
 
@@ -60,7 +69,13 @@ bool GeneralPage::save(QString &/*errmsg*/)
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
 
   if (ui.enableRetroShareProtocol->isChecked() != Settings->getRetroShareProtocol()) {
-    Settings->setRetroShareProtocol(ui.enableRetroShareProtocol->isChecked());
+    if (Settings->setRetroShareProtocol(ui.enableRetroShareProtocol->isChecked()) == false) {
+        if (ui.enableRetroShareProtocol->isChecked()) {
+            QMessageBox::critical(this, tr("Error"), tr("Could not add retroshare:// as protocol."));
+        } else {
+            QMessageBox::critical(this, tr("Error"), tr("Could not remove retroshare:// protocol."));
+        }
+    }
   }
 #endif
 
