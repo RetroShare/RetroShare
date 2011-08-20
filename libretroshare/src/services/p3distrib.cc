@@ -3850,6 +3850,8 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
     gi_curr->distribGroup->grpFlags |= RS_DISTRIB_UPDATE;
 
     delete[] data;
+    delete serialType;
+    EVP_MD_CTX_destroy(mdctx);
 
     return true;
 }
