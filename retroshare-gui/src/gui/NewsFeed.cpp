@@ -77,17 +77,12 @@ NewsFeed::NewsFeed(QWidget *parent)
 	timer->start(1000);
 }
 
-
-
 void NewsFeed::updateFeed()
 {
 	if (!rsNotify)
 		return;
 
 	uint flags = Settings->getNewsFeedFlags();
-
-	/* HACK until SECURITY is in feeds */
-	flags |= RS_FEED_TYPE_SECURITY;
 
 	/* check for new messages */
 	RsFeedItem fi;
@@ -238,7 +233,6 @@ void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 
 }
 
-
 void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -254,7 +248,6 @@ void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-
 
 void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 {
@@ -272,7 +265,6 @@ void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 #endif
 }
 
-
 void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -289,8 +281,6 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 #endif
 }
 
-
-
 void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -306,7 +296,6 @@ void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-
 
 void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 {
@@ -356,8 +345,6 @@ void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 #endif
 }
 
-
-
 void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -373,7 +360,6 @@ void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-
 
 void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 {
@@ -391,7 +377,6 @@ void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 #endif
 }
 
-
 void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -407,7 +392,6 @@ void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-
 
 void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 {
@@ -426,7 +410,6 @@ void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 #endif
 }
 
-
 void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -443,7 +426,6 @@ void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-
 
 void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 {
@@ -501,7 +483,6 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 #endif
 }
 
-
 void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 {
 #ifdef NEWS_DEBUG
@@ -555,9 +536,9 @@ void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 	std::cerr << std::endl;
 #endif
 
-        if (item) {
-            item->close ();
-        }
+	if (item) {
+		item->close ();
+	}
 }
 
 void NewsFeed::openChat(std::string peerId)

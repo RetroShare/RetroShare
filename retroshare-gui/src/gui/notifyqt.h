@@ -66,7 +66,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void filesPostModChanged(bool) const ;
 		void transfersChanged() const ;
 		void friendsChanged() const ;
-		void neighborsChanged() const ;
+		void neighboursChanged() const ;
 		void messagesChanged() const ;
 		void messagesTagsChanged() const;
 		void forumsChanged() const ; // use connect with Qt::QueuedConnection

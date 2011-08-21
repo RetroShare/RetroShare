@@ -130,7 +130,7 @@ void RshareSettings::initSettings()
   uint defNewsFeed = (RS_FEED_TYPE_PEER | RS_FEED_TYPE_CHAN |
                 RS_FEED_TYPE_FORUM | RS_FEED_TYPE_BLOG |
                 RS_FEED_TYPE_CHAT | RS_FEED_TYPE_MSG |
-                RS_FEED_TYPE_FILES);
+                RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY);
 
   setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
   setDefault(SETTING_CHAT_FLAGS, defChat);
@@ -309,7 +309,7 @@ void RshareSettings::setNotifyFlags(uint flags)
 
 uint RshareSettings::getTrayNotifyFlags()
 {
-  return value(SETTING_TRAYNOTIFY_FLAGS, TRAYNOTIFY_PRIVATECHAT | TRAYNOTIFY_MESSAGES | TRAYNOTIFY_CHANNELS | TRAYNOTIFY_FORUMS | TRAYNOTIFY_TRANSFERS).toUInt();
+  return value(SETTING_TRAYNOTIFY_FLAGS, TRAYNOTIFY_PRIVATECHAT | TRAYNOTIFY_MESSAGES | TRAYNOTIFY_CHANNELS | TRAYNOTIFY_FORUMS ).toUInt();
 }
 
 void RshareSettings::setTrayNotifyFlags(uint flags)

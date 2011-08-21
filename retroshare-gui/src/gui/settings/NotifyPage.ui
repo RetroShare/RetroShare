@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>427</width>
+    <width>516</width>
     <height>425</height>
    </rect>
   </property>
@@ -555,6 +555,13 @@
            <widget class="QCheckBox" name="notify_Chat">
             <property name="text">
              <string>Chat</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Security">
+            <property name="text">
+             <string>Security</string>
             </property>
            </widget>
           </item>

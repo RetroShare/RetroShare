@@ -421,7 +421,7 @@ border-radius: 10px}</string>
                 </font>
                </property>
                <property name="text">
-                <string>Location</string>
+                <string>Location:</string>
                </property>
               </widget>
              </item>
@@ -434,7 +434,7 @@ border-radius: 10px}</string>
                 </font>
                </property>
                <property name="text">
-                <string>IP Address</string>
+                <string>IP Address:</string>
                </property>
               </widget>
              </item>
@@ -447,7 +447,7 @@ border-radius: 10px}</string>
                 </font>
                </property>
                <property name="text">
-                <string>Connection Method</string>
+                <string>Connection Method:</string>
                </property>
               </widget>
              </item>

@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
 	QObject::connect(notify,SIGNAL(groupsChanged(int))                ,w->friendsDialog      		,SLOT(groupsChanged(int)               ));
 	QObject::connect(notify,SIGNAL(privateChatChanged(int, int))      ,w                   		,SLOT(privateChatChanged(int, int)     ));
-	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
+	QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
 	QObject::connect(notify,SIGNAL(messagesTagsChanged())             ,w->messagesDialog   		,SLOT(messagesTagsChanged()            )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w                   		,SLOT(updateMessages()                 )) ;

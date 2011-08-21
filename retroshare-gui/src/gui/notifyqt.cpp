@@ -292,9 +292,9 @@ void NotifyQt::notifyListChange(int list, int type)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
 #ifdef NOTIFY_DEBUG
-			std::cerr << "received neighbrs changed" << std::endl ;
+			std::cerr << "received neighbours changed" << std::endl ;
 #endif
-			emit neighborsChanged();
+			emit neighboursChanged();
 			break;
 		case NOTIFY_LIST_FRIENDS:
 #ifdef NOTIFY_DEBUG
@@ -433,7 +433,7 @@ void NotifyQt::UpdateGUI()
 	if(!already_updated)
 	{
 		emit messagesChanged() ;
-		emit neighborsChanged();
+		emit neighboursChanged();
 		emit configChanged();
 
 		already_updated = true ;

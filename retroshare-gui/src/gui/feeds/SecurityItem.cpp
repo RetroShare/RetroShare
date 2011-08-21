@@ -21,12 +21,14 @@
 
 #include <QDateTime>
 #include <QTimer>
+#include <QMessageBox>
 
 #include "SecurityItem.h"
 #include "FeedHolder.h"
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
+#include "gui/connect/ConfCertDialog.h"
 
 #include "gui/notifyqt.h"
 
@@ -49,6 +51,12 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgI
   
     messageframe->setVisible(false);
     sendmsgButton->setEnabled(false);
+    quickmsgButton->setEnabled(false);
+    chatButton->setEnabled(false);
+    addFriendButton->setEnabled(false);
+    removeFriendButton->setEnabled(false);
+    removeFriendButton->hide();
+    peerDetailsButton->setEnabled(false);
 
     /* general ones */
     connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
@@ -62,9 +70,13 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgI
     connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
 
     connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
+    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
+    connect(removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
+    connect(peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-    
+    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+
     QMenu *msgmenu = new QMenu();
     msgmenu->addAction(actionNew_Message);
 
@@ -73,7 +85,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgI
     small();
     updateItemStatic();
     updateItem();
-    updateAvatar(QString::fromStdString(mGpgId));
+    updateAvatar(QString::fromStdString(mSslId));
 }
 
 
@@ -91,7 +103,6 @@ void SecurityItem::updateItemStatic()
 {
 	if (!rsPeers)
 		return;
-
 
 	/* fill in */
 #ifdef DEBUG_ITEM
@@ -121,62 +132,15 @@ void SecurityItem::updateItemStatic()
 
 	titleLabel->setText(title);
 
-
-	RsPeerDetails details;
-	if (rsPeers->getPeerDetails(mGpgId, details))
-	{
-		
-		/* set textcolor for peername  */
-    		QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#990033;\">%1</span>");
-	
-    		/* set Blog name */
-    		QString peername =  QString::fromStdString(details.name);
-    		peernameLabel->setText(nameStr.arg(peername));
-
-		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
-		QString stime = date.toString(Qt::LocalDate);
-		lastLabel-> setText(stime);
-
-		/* expanded Info */
-		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
-		idLabel->setText(QString::fromStdString(details.id));
-		locLabel->setText(QString::fromUtf8(details.location.c_str()));
-	}
-	else
-	{
-		/* it is very likely that we will end up here for some of the
-		 * Unknown peer cases.... so allow them here
-	 	 */
-
-		QDateTime date = QDateTime::currentDateTime();
-		QString stime = date.toString(Qt::LocalDate);
-		lastLabel-> setText(stime);
-		nameLabel->setText(QString::fromStdString(mGpgId));
-		idLabel->setText(QString::fromStdString(mSslId));
-
-                statusLabel->setText(tr("Unknown Peer"));
-                trustLabel->setText(tr("Unknown Peer"));
-                locLabel->setText(tr("Unknown Peer"));
-                ipLabel->setText(tr("Unknown Peer"));
-                connLabel->setText(tr("Unknown Peer"));
-
-		chatButton->setEnabled(false);
-
-	}
-
 	if (mIsHome)
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		//gotoButton->setEnabled(false);
 
-		/* disable buttons */
+		/* hide buttons */
 		clearButton->hide();
 	}
-
 }
-
 
 void SecurityItem::updateItem()
 {
@@ -188,12 +152,57 @@ void SecurityItem::updateItem()
 	std::cerr << "SecurityItem::updateItem()";
 	std::cerr << std::endl;
 #endif
+	QDateTime currentTime = QDateTime::currentDateTime();
+	timeLabel->setText(currentTime.toString(Qt::LocalDate));
+
 	if(!RsAutoUpdatePage::eventsLocked()) {
+		/* set textcolor for peer name  */
+		QString nameStr("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
+
 		RsPeerDetails details;
-		if (!rsPeers->getPeerDetails(mGpgId, details))
+		/* first try sslid */
+		if (!rsPeers->getPeerDetails(mSslId, details))
 		{
-			return;
+			/* then gpgid */
+			if (!rsPeers->getPeerDetails(mGpgId, details))
+			{
+				/* it is very likely that we will end up here for some of the
+				 * Unknown peer cases.... so allow them here
+				 */
+
+				/* set peer name */
+				peernameLabel->setText(nameStr.arg(tr("Unknown Peer")));
+
+				nameLabel->setText(QString::fromStdString(mGpgId));
+				idLabel->setText(QString::fromStdString(mSslId));
+
+				statusLabel->setText(tr("Unknown Peer"));
+				trustLabel->setText(tr("Unknown Peer"));
+				locLabel->setText(tr("Unknown Peer"));
+				ipLabel->setText(tr("Unknown Peer"));
+				connLabel->setText(tr("Unknown Peer"));
+
+				chatButton->setEnabled(false);
+				quickmsgButton->setEnabled(false);
+
+                addFriendButton->setEnabled(false);
+                addFriendButton->show();
+                removeFriendButton->setEnabled(false);
+                removeFriendButton->hide();
+                peerDetailsButton->setEnabled(false);
+
+				return;
+			}
 		}
+
+		/* set peer name */
+		QString peername =  QString::fromUtf8(details.name.c_str());
+		peernameLabel->setText(nameStr.arg(peername));
+
+		/* expanded Info */
+		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
+		idLabel->setText(QString::fromStdString(details.id));
+		locLabel->setText(QString::fromUtf8(details.location.c_str()));
 
 		/* top Level info */
 		QString status = StatusDefs::peerStateString(details.state);
@@ -207,8 +216,7 @@ void SecurityItem::updateItem()
 		}
 #endif
 		statusLabel->setText(status);
-		trustLabel->setText(QString::fromStdString(
-			RsPeerTrustString(details.trustLvl)));
+		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
 		{
 			std::ostringstream out;
@@ -223,23 +231,36 @@ void SecurityItem::updateItem()
 
 		/* do buttons */
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
+		peerDetailsButton->setEnabled(true);
+
+		if (details.accept_connection)
+		{
+			addFriendButton->setEnabled(false);
+			addFriendButton->hide();
+			removeFriendButton->setEnabled(true);
+			removeFriendButton->show();
+		}
+		else
+		{
+			addFriendButton->setEnabled(true);
+			addFriendButton->show();
+			removeFriendButton->setEnabled(false);
+			removeFriendButton->hide();
+		}
+
 		if (details.state & RS_PEER_STATE_FRIEND)
 		{
-			//addButton->setEnabled(false);
-			//removeButton->setEnabled(true);
 			quickmsgButton->setEnabled(true);
 		}
 		else
 		{
-			//addButton->setEnabled(true);
-			//removeButton->setEnabled(false);
 			quickmsgButton->setEnabled(false);
 		}
 	}
 
 	/* slow Tick  */
 	int msec_rate = 10129;
-	
+
 	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
 }
@@ -255,16 +276,15 @@ void SecurityItem::toggle()
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-            expandButton->setToolTip(tr("Hide"));
+		expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-            expandButton->setToolTip(tr("Expand"));
+		expandButton->setToolTip(tr("Expand"));
 	}
 }
-
 
 void SecurityItem::removeItem()
 {
@@ -279,15 +299,6 @@ void SecurityItem::removeItem()
 	}
 }
 
-
-void SecurityItem::gotoHome()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "SecurityItem::gotoHome()";
-	std::cerr << std::endl;
-#endif
-}
-
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
 void SecurityItem::addFriend()
@@ -296,9 +307,9 @@ void SecurityItem::addFriend()
 	std::cerr << "SecurityItem::addFriend()";
 	std::cerr << std::endl;
 #endif
+
+	ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageTrust);
 }
-
-
 
 void SecurityItem::removeFriend()
 {
@@ -306,9 +317,34 @@ void SecurityItem::removeFriend()
 	std::cerr << "SecurityItem::removeFriend()";
 	std::cerr << std::endl;
 #endif
+
+	if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+	{
+		rsPeers->removeFriend(mGpgId);
+	}
 }
 
+void SecurityItem::peerDetails()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "SecurityItem::peerDetails()";
+	std::cerr << std::endl;
+#endif
 
+	RsPeerDetails details;
+	/* first try sslid */
+	if (rsPeers->getPeerDetails(mSslId, details))
+	{
+		ConfCertDialog::showIt(mSslId, ConfCertDialog::PageDetails);
+		return;
+	}
+
+	/* then gpgid */
+	if (rsPeers->getPeerDetails(mGpgId, details))
+	{
+		ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageDetails);
+	}
+}
 
 void SecurityItem::sendMsg()
 {
@@ -317,23 +353,17 @@ void SecurityItem::sendMsg()
 	std::cerr << std::endl;
 #endif
 
-	if (mParent)
-	{
-		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
-
-    MessageComposer *nMsgDialog = MessageComposer::newMsg();
-    if (nMsgDialog == NULL) {
-        return;
-    }
-
-    nMsgDialog->addRecipient(MessageComposer::TO, mGpgId, false);
-    nMsgDialog->show();
-    nMsgDialog->activateWindow();
-
-    /* window will destroy itself! */
+	MessageComposer *nMsgDialog = MessageComposer::newMsg();
+	if (nMsgDialog == NULL) {
+		return;
 	}
-}
 
+	nMsgDialog->addRecipient(MessageComposer::TO, mGpgId, false);
+	nMsgDialog->show();
+	nMsgDialog->activateWindow();
+
+	/* window will destroy itself! */
+}
 
 void SecurityItem::openChat()
 {
@@ -349,70 +379,65 @@ void SecurityItem::openChat()
 
 void SecurityItem::updateAvatar(const QString &peer_id)
 {
-   if (peer_id.toStdString() != mGpgId) {
-       /* it 's not me */
-       return;
-   }
+	if (peer_id.toStdString() != mSslId) {
+		/* it 's not me */
+		return;
+	}
 
-   unsigned char *data = NULL;
-   int size = 0 ;
+	unsigned char *data = NULL;
+	int size = 0 ;
 
-   rsMsgs->getAvatarData(mGpgId,data,size); 
+	rsMsgs->getAvatarData(mSslId, data, size);
 
-
-   if(size != 0)
-   {   
-    // set the image
-    QPixmap pix ;
-    pix.loadFromData(data,size,"PNG") ;
-    avatar_label->setPixmap(pix);   
-    delete[] data ;
-
-   }
-   else
-   {
-     avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
-   }
-
-
+	if(size != 0)
+	{
+		// set the image
+		QPixmap pix ;
+		pix.loadFromData(data,size,"PNG") ;
+		avatar_label->setPixmap(pix);
+		delete[] data ;
+	}
+	else
+	{
+		avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
+	}
 }  
 
 void SecurityItem::togglequickmessage()
 {
 	if (messageframe->isHidden())
 	{
-        messageframe->setVisible(true);
-    }
+		messageframe->setVisible(true);
+	}
 	else
 	{
-        messageframe->setVisible(false);
-    }	
-
+		messageframe->setVisible(false);
+	}
 }
 
 void SecurityItem::sendMessage()
 {
-    /* construct a message */
-    MessageInfo mi;
-    
-    mi.title = tr("Quick Message").toStdWString();
-    mi.msg =   quickmsgText->toHtml().toStdWString();
-    mi.msgto.push_back(mGpgId);       
-    
-    rsMsgs->MessageSend(mi);
+	/* construct a message */
+	MessageInfo mi;
 
-    quickmsgText->clear();
-    messageframe->setVisible(false);
+	mi.title = tr("Quick Message").toStdWString();
+	mi.msg =   quickmsgText->toHtml().toStdWString();
+	mi.msgto.push_back(mGpgId);
+
+	rsMsgs->MessageSend(mi);
+
+	quickmsgText->clear();
+	messageframe->setVisible(false);
 }
 
 void SecurityItem::on_quickmsgText_textChanged()
 {
-    if (quickmsgText->toPlainText().isEmpty())
-    {
-        sendmsgButton->setEnabled(false);
-    }
-    else
-    {
-        sendmsgButton->setEnabled(true);
-    }
+	if (quickmsgText->toPlainText().isEmpty())
+	{
+		sendmsgButton->setEnabled(false);
+	}
+	else
+	{
+		sendmsgButton->setEnabled(true);
+	}
 }

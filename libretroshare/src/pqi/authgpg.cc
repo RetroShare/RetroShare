@@ -30,6 +30,7 @@
 #ifdef WINDOWS_SYS
 #include "retroshare/rsinit.h"
 #endif
+#include "pqi/pqinotify.h"
 
 #include <util/rsdir.h>
 #include <iostream>
@@ -1520,9 +1521,11 @@ bool AuthGPGimpl::AllowConnection(const std::string &gpg_id, bool accept)
 		mAcceptToConnectMap[gpg_id] = accept;
 	}
 
-        IndicateConfigChanged();
+	IndicateConfigChanged();
 
-        return true;
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FRIENDS, accept ? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL);
+
+	return true;
 }
 
 /* These take PGP Ids */

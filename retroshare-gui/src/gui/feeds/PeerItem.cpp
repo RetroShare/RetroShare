@@ -64,7 +64,8 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
     connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-    
+    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+
     QMenu *msgmenu = new QMenu();
     msgmenu->addAction(actionNew_Message);
 
@@ -82,46 +83,44 @@ void PeerItem::updateItemStatic()
 	if (!rsPeers)
 		return;
 
-
 	/* fill in */
 #ifdef DEBUG_ITEM
 	std::cerr << "PeerItem::updateItemStatic()";
 	std::cerr << std::endl;
 #endif
 
+	QString title;
+
+	switch(mType)
+	{
+		case PEER_TYPE_STD:
+							title = tr("Friend");
+			break;
+		case PEER_TYPE_CONNECT:
+							title = tr("Friend Connected");
+			break;
+		case PEER_TYPE_HELLO:
+							title = tr("Connect Attempt");
+			break;
+		case PEER_TYPE_NEW_FOF:
+							title = tr("Friend of Friend");
+			break;
+		default:
+							title = tr("Peer");
+			break;
+	}
+
+	titleLabel->setText(title);
+
+	/* set textcolor for peer name  */
+	QString nameStr("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
+
 	RsPeerDetails details;
 	if (rsPeers->getPeerDetails(mPeerId, details))
 	{
-		QString title;
-
-		switch(mType)
-		{
-			case PEER_TYPE_STD:
-                                title = tr("Friend");
-				break;
-			case PEER_TYPE_CONNECT:
-                                title = tr("Friend Connected");
-				break;
-			case PEER_TYPE_HELLO:
-                                title = tr("Connect Attempt");
-				break;
-			case PEER_TYPE_NEW_FOF:
-                                title = tr("Friend of Friend");
-				break;
-			default:
-                                title = tr("Peer");
-				break;
-		}
-
-		titleLabel->setText(title);
-		
-		/* set textcolor for peername  */
-    QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#990033;\">%1</span>");
-	
-    /* set Blog name */
-    QString peername =  QString::fromUtf8(details.name.c_str());
-    peernameLabel->setText(nameStr.arg(peername));
+		/* set peer name */
+		QString peername =  QString::fromUtf8(details.name.c_str());
+		peernameLabel->setText(nameStr.arg(peername));
 
 		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
 		QString stime = date.toString(Qt::LocalDate);
@@ -134,32 +133,28 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
-                statusLabel->setText(tr("Unknown Peer"));
-                titleLabel->setText(tr("Unknown Peer"));
-                trustLabel->setText(tr("Unknown Peer"));
-                nameLabel->setText(tr("Unknown Peer"));
-                idLabel->setText(tr("Unknown Peer"));
-                locLabel->setText(tr("Unknown Peer"));
-                ipLabel->setText(tr("Unknown Peer"));
-                connLabel->setText(tr("Unknown Peer"));
-                lastLabel->setText(tr("Unknown Peer"));
+		statusLabel->setText(tr("Unknown Peer"));
+		titleLabel->setText(tr("Unknown Peer"));
+		trustLabel->setText(tr("Unknown Peer"));
+		nameLabel->setText(tr("Unknown Peer"));
+		idLabel->setText(tr("Unknown Peer"));
+		locLabel->setText(tr("Unknown Peer"));
+		ipLabel->setText(tr("Unknown Peer"));
+		connLabel->setText(tr("Unknown Peer"));
+		lastLabel->setText(tr("Unknown Peer"));
 
 		chatButton->setEnabled(false);
-
 	}
 
 	if (mIsHome)
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		//gotoButton->setEnabled(false);
 
-		/* disable buttons */
+		/* hide buttons */
 		clearButton->hide();
 	}
-
 }
-
 
 void PeerItem::updateItem()
 {
@@ -172,9 +167,15 @@ void PeerItem::updateItem()
 	std::cerr << std::endl;
 #endif
 	if(!RsAutoUpdatePage::eventsLocked()) {
+		/* set textcolor for peer name  */
+		QString nameStr("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
+
 		RsPeerDetails details;
 		if (!rsPeers->getPeerDetails(mPeerId, details))
 		{
+			chatButton->setEnabled(false);
+			quickmsgButton->setEnabled(false);
+
 			return;
 		}
 
@@ -190,8 +191,7 @@ void PeerItem::updateItem()
 		}
 #endif
 		statusLabel->setText(status);
-		trustLabel->setText(QString::fromStdString(
-			RsPeerTrustString(details.trustLvl)));
+		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
 		{
 			std::ostringstream out;
@@ -208,14 +208,10 @@ void PeerItem::updateItem()
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
 		if (details.state & RS_PEER_STATE_FRIEND)
 		{
-			//addButton->setEnabled(false);
-			//removeButton->setEnabled(true);
 			quickmsgButton->setEnabled(true);
 		}
 		else
 		{
-			//addButton->setEnabled(true);
-			//removeButton->setEnabled(false);
 			quickmsgButton->setEnabled(false);
 		}
 	}
@@ -238,13 +234,13 @@ void PeerItem::toggle()
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-            expandButton->setToolTip(tr("Hide"));
+		expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-            expandButton->setToolTip(tr("Expand"));
+		expandButton->setToolTip(tr("Expand"));
 	}
 }
 
@@ -262,15 +258,6 @@ void PeerItem::removeItem()
 	}
 }
 
-
-void PeerItem::gotoHome()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::gotoHome()";
-	std::cerr << std::endl;
-#endif
-}
-
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
 void PeerItem::addFriend()
@@ -281,8 +268,6 @@ void PeerItem::addFriend()
 #endif
 }
 
-
-
 void PeerItem::removeFriend()
 {
 #ifdef DEBUG_ITEM
@@ -291,18 +276,12 @@ void PeerItem::removeFriend()
 #endif
 }
 
-
-
 void PeerItem::sendMsg()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "PeerItem::sendMsg()";
 	std::cerr << std::endl;
 #endif
-
-	if (mParent)
-	{
-		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
 
     MessageComposer *nMsgDialog = MessageComposer::newMsg();
     if (nMsgDialog == NULL) {
@@ -314,7 +293,6 @@ void PeerItem::sendMsg()
     nMsgDialog->activateWindow();
 
     /* window will destroy itself! */
-	}
 }
 
 
@@ -332,32 +310,28 @@ void PeerItem::openChat()
 
 void PeerItem::updateAvatar(const QString &peer_id)
 {
-   if (peer_id.toStdString() != mPeerId) {
-       /* it 's not me */
-       return;
-   }
+	if (peer_id.toStdString() != mPeerId) {
+		/* it 's not me */
+		return;
+	}
 
-   unsigned char *data = NULL;
-   int size = 0 ;
+	unsigned char *data = NULL;
+	int size = 0 ;
 
-   rsMsgs->getAvatarData(mPeerId,data,size); 
+	rsMsgs->getAvatarData(mPeerId,data,size);
 
-
-   if(size != 0)
-   {   
-    // set the image
-    QPixmap pix ;
-    pix.loadFromData(data,size,"PNG") ;
-    avatar_label->setPixmap(pix);   
-    delete[] data ;
-
-   }
-   else
-   {
-     avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
-   }
-
-
+	if(size != 0)
+	{
+		// set the image
+		QPixmap pix ;
+		pix.loadFromData(data,size,"PNG") ;
+		avatar_label->setPixmap(pix);
+		delete[] data ;
+	}
+	else
+	{
+		avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
+	}
 }  
 
 void PeerItem::togglequickmessage()
@@ -370,7 +344,6 @@ void PeerItem::togglequickmessage()
 	{
         messageframe->setVisible(false);
     }	
-
 }
 
 void PeerItem::sendMessage()

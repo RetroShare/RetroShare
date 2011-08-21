@@ -84,6 +84,8 @@ NotifyPage::save(QString &/*errmsg*/)
         newsflags |= RS_FEED_TYPE_MSG;
     if (ui.notify_Chat->isChecked())
         newsflags |= RS_FEED_TYPE_CHAT;
+    if (ui.notify_Security->isChecked())
+        newsflags |= RS_FEED_TYPE_SECURITY;
 
     if (ui.chat_NewWindow->isChecked())
         chatflags |= RS_CHAT_OPEN;
@@ -157,6 +159,7 @@ void NotifyPage::load()
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
     ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
+    ui.notify_Security->setChecked(newsflags & RS_FEED_TYPE_SECURITY);
 
     ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
     ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);

@@ -55,14 +55,14 @@ const uint32_t RS_CHAT_OPEN			= 0x0001;
 const uint32_t RS_CHAT_FOCUS		= 0x0004;
 const uint32_t RS_CHAT_TABBED_WINDOW	= 0x0008;
 
-const uint32_t RS_FEED_TYPE_PEER 	= 0x0010;
-const uint32_t RS_FEED_TYPE_CHAN 	= 0x0020;
-const uint32_t RS_FEED_TYPE_FORUM 	= 0x0040;
-const uint32_t RS_FEED_TYPE_BLOG 	= 0x0080;
-const uint32_t RS_FEED_TYPE_CHAT 	= 0x0100;
-const uint32_t RS_FEED_TYPE_MSG 	= 0x0200;
-const uint32_t RS_FEED_TYPE_FILES 	= 0x0400;
-const uint32_t RS_FEED_TYPE_SECURITY 	= 0x0800;
+const uint32_t RS_FEED_TYPE_PEER     = 0x0010;
+const uint32_t RS_FEED_TYPE_CHAN     = 0x0020;
+const uint32_t RS_FEED_TYPE_FORUM    = 0x0040;
+const uint32_t RS_FEED_TYPE_BLOG     = 0x0080;
+const uint32_t RS_FEED_TYPE_CHAT     = 0x0100;
+const uint32_t RS_FEED_TYPE_MSG      = 0x0200;
+const uint32_t RS_FEED_TYPE_FILES    = 0x0400;
+const uint32_t RS_FEED_TYPE_SECURITY = 0x0800;
 
 const uint32_t RS_FEED_ITEM_PEER_CONNECT	 = RS_FEED_TYPE_PEER  | 0x0001;
 const uint32_t RS_FEED_ITEM_PEER_DISCONNECT	 = RS_FEED_TYPE_PEER  | 0x0002;

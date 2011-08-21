@@ -6,12 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>476</width>
+    <width>675</width>
     <height>382</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string/>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
@@ -149,7 +146,7 @@ border-radius: 10px}</string>
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="lastLabel">
+            <widget class="QLabel" name="timeLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -229,6 +226,57 @@ border-radius: 10px}</string>
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="peerDetailsButton">
+             <property name="text">
+              <string>Peer details</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/peerdetails_16x16.png</normaloff>:/images/peerdetails_16x16.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="removeFriendButton">
+             <property name="text">
+              <string>Deny friend</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/denied16.png</normaloff>:/images/denied16.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="addFriendButton">
+             <property name="text">
+              <string>Make friend</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/user/add_user16.png</normaloff>:/images/user/add_user16.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QToolButton" name="quickmsgButton">
@@ -421,7 +469,7 @@ border-radius: 10px}</string>
                 </font>
                </property>
                <property name="text">
-                <string>Location</string>
+                <string>Location:</string>
                </property>
               </widget>
              </item>
@@ -434,7 +482,7 @@ border-radius: 10px}</string>
                 </font>
                </property>
                <property name="text">
-                <string>IP Address</string>
+                <string>IP Address:</string>
                </property>
               </widget>
              </item>
@@ -447,7 +495,7 @@ border-radius: 10px}</string>
                 </font>
                </property>
                <property name="text">
-                <string>Connection Method</string>
+                <string>Connection Method:</string>
                </property>
               </widget>
              </item>
