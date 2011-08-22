@@ -132,6 +132,9 @@ void SecurityItem::updateItemStatic()
 
 	titleLabel->setText(title);
 
+	QDateTime currentTime = QDateTime::currentDateTime();
+	timeLabel->setText(currentTime.toString(Qt::LocalDate));
+
 	if (mIsHome)
 	{
 		/* disable buttons */
@@ -152,8 +155,6 @@ void SecurityItem::updateItem()
 	std::cerr << "SecurityItem::updateItem()";
 	std::cerr << std::endl;
 #endif
-	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(currentTime.toString(Qt::LocalDate));
 
 	if(!RsAutoUpdatePage::eventsLocked()) {
 		/* set textcolor for peer name  */
