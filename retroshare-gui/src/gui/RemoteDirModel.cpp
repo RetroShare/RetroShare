@@ -965,7 +965,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 	else if (dirDetails.type & DIR_TYPE_DIR)
 	{
 		std::list<DirStub>::const_iterator it;
-		QDir dwlDir(rsFiles->getDownloadDirectory().c_str());
+		QDir dwlDir(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
 		QString cleanPath = QDir::cleanPath(QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		if (!dwlDir.mkpath(cleanPath)) return;
