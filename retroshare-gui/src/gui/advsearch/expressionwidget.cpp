@@ -158,7 +158,7 @@ Expression* ExpressionWidget::getRsExpression()
         QString txt = exprParamElem->getStrSearchValue();
         QStringList words = txt.split(" ", QString::SkipEmptyParts);
         for (int i = 0; i < words.size(); ++i)
-            wordList.push_back(words.at(i).toStdString());
+            wordList.push_back(words.at(i).toUtf8().constData());
     } else if (inRangedConfig){
         // correct for reversed ranges to be nice to the user
         lowVal = exprParamElem->getIntLowValue();

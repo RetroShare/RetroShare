@@ -557,7 +557,7 @@ void SearchDialog::initSearchResult(const std::string& txt,qulonglong searchId)
 	QString sid_hexa = QString::number(searchId,16) ;
 
 	QTreeWidgetItem *item2 = new QTreeWidgetItem();
-	item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
+	item2->setText(SS_TEXT_COL, QString::fromUtf8(txt.c_str()));
 	item2->setText(SS_COUNT_COL, QString::number(0));
 	item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
@@ -567,7 +567,7 @@ void SearchDialog::initSearchResult(const std::string& txt,qulonglong searchId)
 
 void SearchDialog::advancedSearch(Expression* expression)
 {
-        advSearchDialog->hide();
+	advSearchDialog->hide();
 
 	/* call to core */
 	std::list<DirDetails> results;
@@ -601,7 +601,7 @@ void SearchDialog::searchKeywords()
 
 void SearchDialog::searchKeywords(const QString& keywords)
 {
-	std::string txt = keywords.toStdString();
+	std::string txt = keywords.toUtf8().constData();
 
 	if(txt.length() < 3)
 		return ;
@@ -612,7 +612,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	std::list<std::string> words;
 	QStringListIterator qWordsIter(qWords);
 	while (qWordsIter.hasNext())
-		words.push_back(qWordsIter.next().toStdString());
+		words.push_back(qWordsIter.next().toUtf8().constData());
 
 	int n = words.size() ;
 
@@ -962,7 +962,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 				anonymousSource = modifiedResultCount.at(1).toInt() + 1;
 			}
 			anonymousSource = anonymousSource + friendSource;
-                        modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
+			modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
 			(*it)->setText(SR_ID_COL,modifiedResult);
 			QTreeWidgetItem *item = (*it);
 			found = true ;
@@ -1170,8 +1170,8 @@ void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std:
 
 			insertFile(txt,searchId,fd, FRIEND_SEARCH);
 		} else if (it->type == DIR_TYPE_DIR) {
-//                        insertDirectory(txt, searchId, *it, NULL);
-                        insertDirectory(txt, searchId, *it);
+//			insertDirectory(txt, searchId, *it, NULL);
+			insertDirectory(txt, searchId, *it);
 		}
 
 	ui.searchResultWidget->setSortingEnabled(true);
