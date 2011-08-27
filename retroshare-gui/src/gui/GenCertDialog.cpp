@@ -196,7 +196,7 @@ void GenCertDialog::genPerson()
 				QCoreApplication::processEvents();
 				while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ; 
 
-			RsInit::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), ui.email_input->text().toUtf8().constData(), ui.password_input->text().toStdString(), PGPId, err_string);
+			RsInit::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), ui.email_input->text().toUtf8().constData(), ui.password_input->text().toUtf8().constData(), PGPId, err_string);
 
 				setCursor(Qt::ArrowCursor) ;
         }

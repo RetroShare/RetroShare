@@ -140,7 +140,7 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
 	if (ret == QDialog::Accepted) {
-		 password = dialog.textValue().toStdString();
+		 password = dialog.textValue().toUtf8().constData();
 		 return true;
 	}
 

@@ -154,7 +154,7 @@ ConnectFriendWizard::accept()
             }
             if (!this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).isNull()) {
                 std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
-                rsPeers->setLocation(ssl_Id, this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString());
+                rsPeers->setLocation(ssl_Id, this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toUtf8().constData());
             }
         }
 
