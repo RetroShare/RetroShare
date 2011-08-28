@@ -1051,7 +1051,7 @@ void ConclusionPage::initializePage() {
     //set the radio button to sign the GPG key
     if (detail.accept_connection && !detail.ownsign) {
         //gpg key connection is already accepted, don't propose to accept it again
-        signGPGCheckBox->setChecked(true);
+        signGPGCheckBox->setChecked(false);
         acceptNoSignGPGCheckBox->hide();
         acceptNoSignGPGCheckBox->setChecked(false);
     }
@@ -1064,7 +1064,7 @@ void ConclusionPage::initializePage() {
     if (!detail.accept_connection && !detail.ownsign) {
         acceptNoSignGPGCheckBox->setChecked(true);
         signGPGCheckBox->show();
-        signGPGCheckBox->setChecked(true);
+        signGPGCheckBox->setChecked(false);
         acceptNoSignGPGCheckBox->show();
     }
     if (detail.accept_connection && detail.ownsign) {

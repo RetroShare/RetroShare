@@ -717,7 +717,7 @@ bool ftServer::shareDownloadDirectory(bool share)
 		/* Share */
 		SharedDirInfo inf ;
 		inf.filename = mFtController->getDownloadDirectory();
-		inf.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+		inf.shareflags = RS_FILE_HINTS_NETWORK_WIDE ;
 
 		return addSharedDirectory(inf);
 	}

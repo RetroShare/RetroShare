@@ -40,7 +40,9 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 
     ui.okButton->setEnabled(false);
 
-    if (filename.empty() == false) {
+    if (filename.empty()) {
+        ui.networkwideCheckBox->setChecked(true);
+    } else {
         /* edit exisiting share */
         std::list<SharedDirInfo> dirs;
         rsFiles->getSharedDirectories(dirs);
