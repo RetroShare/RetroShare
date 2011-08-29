@@ -25,12 +25,14 @@
 #include <algorithm>
 
 #include <retroshare/rschannels.h>
+#include <retroshare/rsforums.h>
 #include <retroshare/rspeers.h>
 
 #include "gui/common/PeerDefs.h"
 
-ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string chanId) :
-        QDialog(parent, flags), mChannelId(chanId)
+ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string grpId,
+		int grpType) :
+        QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
 {
     ui = new Ui::ShareKey();
     ui->setupUi(this);
@@ -72,8 +74,7 @@ void ShareKey::changeEvent(QEvent *e)
 void ShareKey::shareKey()
 {
 
-    if(!rsChannels)
-        return;
+
 
     if(mShareList.empty())
     {
@@ -83,12 +84,37 @@ void ShareKey::shareKey()
         return;
     }
 
-    if(!rsChannels->channelShareKeys(mChannelId, mShareList)){
+	if(mGrpType & CHANNEL_KEY_SHARE)
+	{
+		if(!rsChannels)
+			return;
 
-        std::cerr << "Failed to share keys!" << std::endl;
+	    if(!rsChannels->channelShareKeys(mGrpId, mShareList)){
 
-        return;
-    }
+	        std::cerr << "Failed to share keys!" << std::endl;
+
+	        return;
+	    }
+
+	}else if(mGrpType & FORUM_KEY_SHARE)
+	{
+		if(!rsForums)
+			return;
+
+	    if(!rsForums->forumShareKeys(mGrpId, mShareList)){
+
+	        std::cerr << "Failed to share keys!" << std::endl;
+
+	        return;
+	    }
+
+	}else{
+
+		// incorrect type
+		return;
+	}
+
+
 
     close();
     return;

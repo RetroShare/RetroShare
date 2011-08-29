@@ -213,7 +213,7 @@ void ChannelFeed::editChannelDetail(){
 
 void ChannelFeed::shareKey()
 {
-    ShareKey shareUi(this, 0, mChannelId);
+    ShareKey shareUi(this, 0, mChannelId, CHANNEL_KEY_SHARE);
     shareUi.exec();
 }
 

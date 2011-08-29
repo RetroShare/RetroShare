@@ -639,6 +639,16 @@ bool p3Forums::locked_eventDuplicateMsg(GroupInfo */*grp*/, RsDistribMsg */*msg*
 	return true;
 }
 
+bool p3Forums::forumShareKeys(std::string fId, std::list<std::string>& peers)
+{
+
+#ifdef FORUM_DEBUG
+	std::cerr << "p3Forums::forumShareKeys() " << fId << std::endl;
+#endif
+
+	return sharePubKey(fId, peers);
+}
+
 bool p3Forums::locked_eventNewMsg(GroupInfo */*grp*/, RsDistribMsg *msg, const std::string& /*id*/, bool historical)
 {
 	std::string grpId = msg->grpId;

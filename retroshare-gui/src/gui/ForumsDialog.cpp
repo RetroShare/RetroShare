@@ -37,6 +37,7 @@
 #include "common/RSItemDelegate.h"
 #include "common/PopularityDefs.h"
 #include "RetroShareLink.h"
+#include "channels/ShareKey.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -295,9 +296,13 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint /*point*/ )
     action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
     action->setEnabled (!mCurrForumId.empty () && IS_FORUM_ADMIN(subscribeFlags));
 
+    QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
+    connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
+    shareKeyAct->setEnabled(!mCurrForumId.empty() && IS_FORUM_ADMIN(subscribeFlags));
+    contextMnu.addAction( shareKeyAct);
+
     QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
     connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
-
     restoreKeysAct->setEnabled(!mCurrForumId.empty() && !IS_FORUM_ADMIN(subscribeFlags));
     contextMnu.addAction( restoreKeysAct);
 
@@ -1506,6 +1511,12 @@ void ForumsDialog::FilterItems()
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
         FilterItem(ui.threadTreeWidget->topLevelItem(nIndex), sPattern, filterColumn);
     }
+}
+
+void ForumsDialog::shareKey()
+{
+    ShareKey shareUi(this, 0, mCurrForumId, FORUM_KEY_SHARE);
+    shareUi.exec();
 }
 
 bool ForumsDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn)

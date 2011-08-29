@@ -148,6 +148,14 @@ virtual	bool ForumMessageSend(ForumMsgInfo &info) = 0;
 virtual bool forumRestoreKeys(const std::string& fId) = 0;
 virtual bool forumSubscribe(const std::string &fId, bool subscribe)	= 0;
 
+/*!
+ * shares keys with peers
+ *@param fId the forum for which private publish keys will be shared
+ *@param peers  list of peers to be sent keys
+ *
+ */
+virtual bool forumShareKeys(std::string fId, std::list<std::string>& peers) = 0;
+
 virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, unsigned int &unreadCount) = 0;
 
 /****************************************/

@@ -59,7 +59,7 @@ virtual	bool ForumMessageSend(ForumMsgInfo &info);
 virtual bool setMessageStatus(const std::string& fId, const std::string& mId, const uint32_t status, const uint32_t statusMask);
 virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status);
 virtual bool forumRestoreKeys(const std::string& fId);
-
+virtual bool forumShareKeys(std::string fId, std::list<std::string>& peers);
 virtual bool forumSubscribe(const std::string &fId, bool subscribe);
 
 virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, unsigned int &unreadCount);

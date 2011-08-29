@@ -22,10 +22,13 @@
 #include <QMessageBox>
 
 #include "util/misc.h"
-
 #include "CreateForum.h"
+#include "gui/common/PeerDefs.h"
+
+#include <algorithm>
 
 #include <retroshare/rsforums.h>
+#include <retroshare/rspeers.h>
 
 /** Constructor */
 CreateForum::CreateForum(QWidget *parent)
@@ -37,6 +40,16 @@ CreateForum::CreateForum(QWidget *parent)
   // connect up the buttons.
   connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelForum( ) ) );
   connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );
+  connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
+  connect( ui.keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
+  	        this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
+
+	if(!ui.pubKeyShare_cb->isChecked()){
+
+		ui.contactsdockWidget->hide();
+		this->resize(this->size().width() - ui.contactsdockWidget->size().width(),
+				this->size().height());
+	}
 
   newForum();
 }
@@ -47,11 +60,11 @@ void  CreateForum::newForum()
 	ui.typePublic->setChecked(true);
 
 	ui.typePrivate->setEnabled(false);
-	ui.typeEncrypted->setEnabled(false);
+	ui.typeEncrypted->setEnabled(true);
 
 #ifdef RS_RELEASE_VERSION
 	ui.typePrivate->setVisible(false);
-	ui.typeEncrypted->setVisible(false);
+	ui.typeEncrypted->setVisible(true);
 #endif
 
 	ui.msgAnon->setChecked(true);
@@ -59,6 +72,33 @@ void  CreateForum::newForum()
 
 	ui.forumName->clear();
 	ui.forumDesc->clear();
+}
+
+void CreateForum::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
+{
+
+        /* extract id */
+        std::string id = (item -> text(1)).toStdString();
+
+        /* get state */
+        bool checked = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
+
+        /* call control fns */
+        std::list<std::string>::iterator lit = std::find(mShareList.begin(), mShareList.end(), id);
+
+        if(checked && (lit == mShareList.end())){
+
+        	// make sure ids not added already
+        	mShareList.push_back(id);
+
+        }else
+			if(lit != mShareList.end()){
+
+        	mShareList.erase(lit);
+
+        }
+
+        return;
 }
 
 void  CreateForum::createForum()
@@ -100,10 +140,84 @@ void  CreateForum::createForum()
 
 	if (rsForums)
 	{
-		rsForums->createForum(name.toStdWString(), desc.toStdWString(), flags);
+		std::string forumId = rsForums->createForum(name.toStdWString(),
+				desc.toStdWString(), flags);
+
+		if(ui.pubKeyShare_cb->isChecked())
+			rsForums->forumShareKeys(forumId, mShareList);
 	}
 
 	close();
+}
+
+void CreateForum::setShareList(){
+
+	if(ui.pubKeyShare_cb->isChecked()){
+		this->resize(this->size().width() + ui.contactsdockWidget->size().width(),
+				this->size().height());
+		ui.contactsdockWidget->show();
+
+
+		if (!rsPeers)
+		{
+			/* not ready yet! */
+			return;
+		}
+
+		std::list<std::string> peers;
+		std::list<std::string>::iterator it;
+
+		rsPeers->getFriendList(peers);
+
+	    /* get a link to the table */
+	    QTreeWidget *shareWidget = ui.keyShareList;
+
+	    QList<QTreeWidgetItem *> items;
+
+		for(it = peers.begin(); it != peers.end(); it++)
+		{
+
+			RsPeerDetails detail;
+			if (!rsPeers->getPeerDetails(*it, detail))
+			{
+				continue; /* BAD */
+			}
+
+			/* make a widget per friend */
+	        QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+
+			item -> setText(0, PeerDefs::nameWithLocation(detail));
+			if (detail.state & RS_PEER_STATE_CONNECTED) {
+				item -> setTextColor(0,(Qt::darkBlue));
+			}
+            item -> setSizeHint(0,  QSize( 17,17 ) );
+
+			item -> setText(1, QString::fromStdString(detail.id));
+
+			item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+			item -> setCheckState(0, Qt::Unchecked);
+
+
+			/* add to the list */
+			items.append(item);
+		}
+
+	    /* remove old items */
+		shareWidget->clear();
+		shareWidget->setColumnCount(1);
+
+		/* add the items in! */
+		shareWidget->insertTopLevelItems(0, items);
+
+		shareWidget->update(); /* update display */
+
+	}else{  // hide share widget
+		ui.contactsdockWidget->hide();
+		this->resize(this->size().width() - ui.contactsdockWidget->size().width(),
+				this->size().height());
+		mShareList.clear();
+	}
+
 }
 
 

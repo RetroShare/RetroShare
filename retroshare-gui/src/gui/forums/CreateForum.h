@@ -45,6 +45,16 @@ private slots:
 void  createForum();
 void  cancelForum();
 
+// set private forum key share list
+void setShareList();
+
+// when user checks a person in share list checkboxes
+void togglePersonItem(QTreeWidgetItem* item, int col);
+
+private:
+
+std::list<std::string> mShareList;
+
 };
 
 #endif

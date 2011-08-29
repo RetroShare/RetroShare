@@ -2134,7 +2134,6 @@ void 	p3GroupDistrib::publishDistribGroups()
 				store->SendItem(grp); /* no delete */
 				grp->PeerId(tempPeerId);
 
-				grp->grpFlags &= (~RS_DISTRIB_UPDATE); // if this is an update, ensure flag is removed after publication
 			}
 
 			/* if they have public keys, publish these too */
@@ -2521,6 +2520,7 @@ bool p3GroupDistrib::attemptPublishKeysRecvd()
         mRecvdPubKeys.erase(*sit);
 
 
+    if(!toDelete.empty()) IndicateConfigChanged();
 
 
 	return true;
@@ -3703,8 +3703,7 @@ bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGr
 		return false;
 	}
 
-	if ((info.distribGroup) && 
-		((info.distribGroup->timestamp <= newGrp->timestamp) && !(newGrp->grpFlags & RS_DISTRIB_UPDATE)))
+	if ((info.distribGroup) && (newGrp->timestamp <= info.distribGroup->timestamp))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_checkGroupInfo() Group Data Old/Same";
@@ -3845,9 +3844,6 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
     mGroupsChanged = true;
     gi_curr->grpChanged = true;
     mGroupsRepublish = true;
-
-    // this is removed afterwards
-    gi_curr->distribGroup->grpFlags |= RS_DISTRIB_UPDATE;
 
     delete[] data;
     delete serialType;

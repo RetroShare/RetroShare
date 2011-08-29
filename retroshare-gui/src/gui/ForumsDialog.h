@@ -99,6 +99,8 @@ private slots:
     void fillThreadFinished();
     void fillThreadProgress(int current, int count);
 
+    void shareKey();
+
 private:
     void insertForums();
     void insertThreads();
