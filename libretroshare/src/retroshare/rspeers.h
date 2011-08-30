@@ -70,6 +70,13 @@ const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL  = 6;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
 
+/* Error codes for certificate cleaning */
+const int RS_PEER_CERT_CLEANING_CODE_NO_ERROR      = 0x00 ;
+const int RS_PEER_CERT_CLEANING_CODE_UNKOWN_ERROR  = 0x01 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG  = 0x02 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_END_TAG    = 0x03 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM   = 0x04 ;
+
 /* Groups */
 #define RS_GROUP_ID_FRIENDS    "Friends"
 #define RS_GROUP_ID_FAMILY     "Family"
@@ -215,7 +222,7 @@ virtual  bool hasExportMinimal() = 0 ;
 
 virtual	bool loadCertificateFromFile(const std::string &fname, std::string &ssl_id, std::string &gpg_id)  = 0;
 virtual	bool loadDetailsFromStringCert(const std::string &certGPG, RsPeerDetails &pd,std::string& error_string) = 0;
-virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert) = 0;
+virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
 virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname)  = 0;
 virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
 

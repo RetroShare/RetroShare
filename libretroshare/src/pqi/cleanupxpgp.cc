@@ -27,7 +27,7 @@
 #include <iostream>
 #include <string.h>  //strlen
 #include <list>
-
+#include <retroshare/rspeers.h>
 /*
 Method for cleaning up the certificate. This method removes any unnecessay white spaces and unnecessary
 new line characters in the certificate. Also it makes sure that there are 64 characters per line in 
@@ -41,8 +41,10 @@ end tag we take care of cases like -----   END  XPGP . Here extra empty spaces h
 introduced and the actual tag should have been -----END XPGP
 */
 
-std::string cleanUpCertificate(const std::string& badCertificate)
+
+std::string cleanUpCertificate(const std::string& badCertificate,int& error_code)
 {
+	error_code = RS_PEER_CERT_CLEANING_CODE_UNKOWN_ERROR ; // default
 	/*
 	Buffer for storing the cleaned certificate. In certain cases the 
 	cleanCertificate can be larger than the badCertificate
@@ -79,11 +81,14 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 	//Boolean flag showing if the begin tag or the end tag has been found
 	bool found=false;
 	/*
-	Calculating the value of the beginCertStartIdx1 and beginCertStartIdx2. Here we first locate the occurance of ----- and then 
-	the location of BEGIN. Next we check if there are any non space or non new-line characters between their occureance. If there are any other
-	characters between the two(----- and BEGIN), other than space and new line then it means that it is the certificate begin tag. 
-	Here we take care of the fact that we may have introduced some spaces and newlines in the begin tag by mistake. This
-	takes care of the spaces and newlines between ----- and BEGIN.
+	Calculating the value of the beginCertStartIdx1 and beginCertStartIdx2. Here
+	we first locate the occurance of ----- and then the location of BEGIN. Next
+	we check if there are any non space or non new-line characters between their
+	occureance. If there are any other characters between the two(----- and
+	BEGIN), other than space and new line then it means that it is the
+	certificate begin tag.  Here we take care of the fact that we may have
+	introduced some spaces and newlines in the begin tag by mistake. This takes
+	care of the spaces and newlines between ----- and BEGIN.
 	*/
 
 	while(found==false && (beginCertStartIdx1=badCertificate.find(commonTag,tmpIdx))!=std::string::npos)
@@ -114,12 +119,14 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 	if(!found)
 	{
 		std::cerr<<"Certificate corrupted beyond repair: No <------BEGIN > tag"<<std::endl;		
+		error_code = RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG ;
 		return badCertificate;	
 	}
 	beginCertEndIdx=badCertificate.find(commonTag,beginCertStartIdx2);
 	if(beginCertEndIdx==std::string::npos)
 	{	
 		std::cerr<<"Certificate corrupted beyond repair: No <------BEGIN > tag"<<std::endl;		
+		error_code = RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG ;
 		return badCertificate;	
 	}
 	tmpIdx=beginCertEndIdx+strlen(commonTag);
@@ -159,12 +166,14 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 	if(!found)
 	{
 		std::cerr<<"Certificate corrupted beyond repair: No <------END > tag"<<std::endl;		
+		error_code = RS_PEER_CERT_CLEANING_CODE_NO_END_TAG ;
 		return badCertificate;
 	}	
 	endCertEndIdx=badCertificate.find(commonTag,endCertStartIdx2);
 	if(endCertEndIdx==std::string::npos || endCertEndIdx>=lengthOfCert)
 	{	
 		std::cerr<<"Certificate corrupted beyond repair: No <------END > tag"<<std::endl;		
+		error_code = RS_PEER_CERT_CLEANING_CODE_NO_END_TAG ;
 		return badCertificate;
 	}
 	/*
@@ -228,7 +237,7 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 		{
 			cleanCertificate += badCertificate.substr(currBadCertIdx, (*headerIt).length());
 			currBadCertIdx += (*headerIt).length();
-			while(badCertificate[currBadCertIdx]!='\n')
+			while(currBadCertIdx<endCertStartIdx1 && badCertificate[currBadCertIdx]!='\n')
 			{
 				cleanCertificate += badCertificate[currBadCertIdx];
 				currBadCertIdx++;
@@ -250,35 +259,39 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 		{
 			cleanCertificate += "\n";
 			cntPerLine=0;
-			continue;
 		}
-		else if(badCertificate[currBadCertIdx]=='=')
+
+		if(badCertificate[currBadCertIdx]=='=') /* checksum */
 		{
-			/* checksum */
+			cntPerLine=0 ;
 			break;
 		}
 		else if(badCertificate[currBadCertIdx]==' ')
-		{
 			currBadCertIdx++;
-			continue;
-		}
 		else if(badCertificate[currBadCertIdx]=='\n')
-		{
 			currBadCertIdx++;
-			continue;
+		else
+		{
+			cleanCertificate += badCertificate[currBadCertIdx];
+			cntPerLine++;
+			currBadCertIdx++;
 		}
-		cleanCertificate += badCertificate[currBadCertIdx];
-		cntPerLine++;
-		currBadCertIdx++;
+	}
+	if(currBadCertIdx>=endCertStartIdx1)
+	{
+		std::cerr<<"Certificate corrupted beyond repair: No checksum, or no newline after first tag"<<std::endl;		
+		error_code = RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM ;
+		return badCertificate;
 	}
 
-	if (badCertificate[currBadCertIdx] == '=')
-	{
+	while(currBadCertIdx < endCertStartIdx1 && (badCertificate[currBadCertIdx] == '=' || badCertificate[currBadCertIdx] == ' ' || badCertificate[currBadCertIdx] == '\n' ))
+		currBadCertIdx++ ;
+
+	cleanCertificate += "==\n=";
+
+//	if (badCertificate[currBadCertIdx] == '=')
+//	{
 		/* checksum */
-		if (*cleanCertificate.rbegin() != '\n')
-		{
-			cleanCertificate += "\n";
-		}
 
 		while(currBadCertIdx<endCertStartIdx1)
 		{
@@ -296,7 +309,7 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 			cntPerLine++;
 			currBadCertIdx++;
 		}
-	}
+//	}
 
 	if(cleanCertificate.substr(cleanCertificate.length()-1,1)!="\n")
 	{
@@ -347,6 +360,7 @@ std::string cleanUpCertificate(const std::string& badCertificate)
 	cleanCertificate += commonTag;
 	cleanCertificate += "\n";
 
+	error_code = RS_PEER_CERT_CLEANING_CODE_NO_ERROR ;
 	return cleanCertificate;
 }
 

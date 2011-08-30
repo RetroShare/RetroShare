@@ -99,7 +99,7 @@ virtual bool hasExportMinimal() ;
 
 virtual	bool loadCertificateFromFile(const std::string &fname, std::string &id, std::string &gpg_id);
 virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, std::string& error_string);
-virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert);
+virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code);
 virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname);
 virtual	std::string saveCertificateToString(const std::string &id);
 

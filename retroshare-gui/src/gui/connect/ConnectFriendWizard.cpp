@@ -384,10 +384,34 @@ void TextPage::cleanFriendCert()
 {
     std::string cert = friendCertEdit->toPlainText().toUtf8().constData();
     std::string cleanCert;
+	 int error_code ;
 
-    if (rsPeers->cleanCertificate(cert, cleanCert)) {
+    if (rsPeers->cleanCertificate(cert, cleanCert,error_code)) {
         friendCertEdit->setText(QString::fromStdString(cleanCert));
+
+		  if(error_code > 0)
+		  {
+			  QString msg ;
+
+			  switch(error_code)
+			  {
+				  case RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG: msg = tr("No or misspelled BEGIN tag found") ;
+																				break ;
+				  case RS_PEER_CERT_CLEANING_CODE_NO_END_TAG: 	msg = tr("No or misspelled END tag found") ;
+																				break ;
+				  case RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM: 	msg = tr("No checksum found (the last 5 chars should be separated by a '=' char), or no newline after tag line (e.g. line beginning with Version:)") ;
+																				break ;
+				  default:
+																				msg = tr("Unknown error. Your cert is probably not even a certificate.") ;
+																				break ;
+			  }
+			  QMessageBox::information(NULL,tr("Certificate cleaning error"),msg) ;
+		  }
     }
+    QFont font("Courier New",10,50,false);
+    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+    font.setStyle(QFont::StyleNormal);
+    friendCertEdit->setFont(font);
 }
 
 //

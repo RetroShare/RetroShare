@@ -1285,13 +1285,13 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
         }
 }
 
-bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert)
+bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code)
 {
 	std::string cert;
 	std::string peerInfo;
 
 	if (splitCert(certstr, cert, peerInfo)) {
-		cleanCert = cleanUpCertificate(cert);
+		cleanCert = cleanUpCertificate(cert,error_code);
 		if (!cleanCert.empty()) {
 			if (!peerInfo.empty()) {
 				if (*cleanCert.rbegin() != '\n') {

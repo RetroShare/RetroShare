@@ -48,6 +48,10 @@
 //!  
 //! In the newer gui version, users send each other almost clean certificates,
 //! so this functon is used only to avoid possible bugs with line endings
-std::string cleanUpCertificate(const std::string& badCertificate);
+
+// Error codes (need appropriate message andtranslation in GUI) are listed in rspeers.h
+//
+std::string cleanUpCertificate(const std::string& badCertificate,int& error_code);
 
 #endif
+
