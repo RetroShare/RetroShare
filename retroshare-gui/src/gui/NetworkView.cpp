@@ -158,7 +158,7 @@ void  NetworkView::updateDisplay()
 		if(!rsPeers->getPeerDetails(info.gpg_id, detail))
 			continue ;
 
-		switch(detail.validLvl)
+		switch(detail.trustLvl)
 		{
 			case GPGME_VALIDITY_MARGINAL: auth = GraphWidget::ELASTIC_NODE_AUTH_MARGINAL ; break;
 			case GPGME_VALIDITY_FULL:

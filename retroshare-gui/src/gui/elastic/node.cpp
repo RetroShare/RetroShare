@@ -79,6 +79,9 @@ Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget
 
 	 _speedx=_speedy=0;
 	 _steps=0;
+
+	if(_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)
+		_auth = GraphWidget::ELASTIC_NODE_AUTH_FULL ;
 }
 
 void Node::addEdge(Edge *edge)
@@ -239,6 +242,19 @@ QPainterPath Node::shape() const
     return path;
 }
 
+#if QT_VERSION >= 0x040700
+static QColor lightdark(const QColor& col,int l,int d)
+{
+	int h,s,v ;
+
+   col.getHsv(&h,&s,&v) ;
+
+	v = (int)floor(v * l/(float)d ) ;
+
+	return QColor::fromHsv(h,s,v) ;
+}
+#endif
+
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
 	static QColor type_color[4] = { QColor(Qt::yellow), QColor(Qt::green), QColor(Qt::cyan), QColor(Qt::black) } ;
@@ -254,13 +270,23 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	{
 		gradient.setCenter(3, 3);
 		gradient.setFocalPoint(3, 3);
+#if QT_VERSION >= 0x040700
+		gradient.setColorAt(1, lightdark(col0,120, 100+_auth*50));
+		gradient.setColorAt(0, lightdark(col0, 70, 100+_auth*50));
+#else
 		gradient.setColorAt(1, col0.light(120).dark(100+_auth*100));
 		gradient.setColorAt(0, col0.light(70).dark(100+_auth*100));
+#endif
 	} 
 	else 
 	{
+#if QT_VERSION >= 0x040700
+		gradient.setColorAt(1, lightdark(col0, 50,100+_auth*50));
+		gradient.setColorAt(0, lightdark(col0,100,100+_auth*50));
+#else
 		gradient.setColorAt(1, col0.light(50).dark(100+_auth*100));
 		gradient.setColorAt(0, col0.dark(100+_auth*100));
+#endif
 	}
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
