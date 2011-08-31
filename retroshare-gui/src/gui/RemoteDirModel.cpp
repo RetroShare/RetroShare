@@ -324,7 +324,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 		switch(coln)
 		{
 			case 0:
-				return QString::fromUtf8(details.name.c_str());
+				return (RemoteMode)?(QString::fromUtf8(details.name.c_str())):tr("My files") ;
 			case 1:
 				return QString() ;
 			case 2:
