@@ -1,6 +1,31 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - changed local root directory to be "My files" instead of SSLid
+     - set default of the signature checkbox in ConnectFriendWizard to disabled
+     - set the initial option for the download directory to network wide only
+     - set the default of a new shared directory to network wide
+     - added private groups option to forums
+     - Added a new checbox in the settings (NotifyPage) to enable/disable the
+       new SecurityItem. It is enabled by default, but all existing users need to enable it.
+     - Added new buttons to SecurityItem to add/remove the peer and view peer details.
+     - Added new call to notifyListChange with NOTIFY_LIST_FRIENDS in AuthGPGimpl::AllowConnection.
+     - Fixed german language.
+     - Removed "location:" before the ssl name in FriendsDialog and MessengerWindow.
+
+  * Bug fixes
+     - fixed up color codes for qt 4.7 in NetworkGraph (bug in qt::lighter())
+     - corrected a few bugs in the cert cleaning method.
+     - corrected several utf8 issues (for peer names, in private chat and file list, and search)
+     - fixed time display in security item
+     - removed potential mem leak with p3distrib group edit
+     - Added check for administrator rights to add/remove the retroshare:// protocol.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 13 Aug 2011 20:30:00 +0100
+
+retroshare (0.5.2-0.4550~lucid) lucid; urgency=low
+
+  * Improvements
 
      - Plugin system 
         * Added configuration saving for plugin manager and serialization methods
