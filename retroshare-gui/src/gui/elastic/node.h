@@ -42,7 +42,12 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <QApplication>
+#if QT_VERSION >= 0x040600
 #include <QGraphicsObject>
+#else
+#include <QGraphicsItem>
+#endif
 #include <QList>
 
 #include "graphwidget.h"
@@ -52,7 +57,11 @@ QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
+#if QT_VERSION >= 0x040600
 class Node : public QGraphicsObject
+#else
+class Node : public QObject, public QGraphicsItem
+#endif
 {
 	Q_OBJECT
 
