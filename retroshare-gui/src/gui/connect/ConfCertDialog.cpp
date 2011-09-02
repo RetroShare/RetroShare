@@ -32,11 +32,14 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
+#include <retroshare/rsmsgs.h>
 
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/RetroShareLink.h"
+#include "gui/notifyqt.h"
+#include "gui/common/AvatarDefs.h"
 
 #ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
@@ -75,6 +78,10 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
+
+    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updatePeersAvatar(const QString&)));
+
+    isOnlyGpg = false;
 
 #ifndef MINIMAL_RSGUI
     MainWindow *w = MainWindow::getInstance();
@@ -135,6 +142,8 @@ void ConfCertDialog::load()
         close();
         return;
     }
+
+    isOnlyGpg = detail.isOnlyGPGdetail;
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));
@@ -326,6 +335,8 @@ void ConfCertDialog::load()
     font.setStyle(QFont::StyleNormal);
     ui.userCertificateText->setFont(font);
     ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
+
+    updatePeersAvatar(QString::fromStdString(mId));
 }
 
 
@@ -438,4 +449,21 @@ void ConfCertDialog::showHelpDialog(const QString &topic)
     if (!helpBrowser)
     helpBrowser = new HelpBrowser(this);
     helpBrowser->showWindow(topic);
+}
+
+void ConfCertDialog::updatePeersAvatar(const QString& peer_id)
+{
+    if (isOnlyGpg) {
+        QPixmap avatar;
+        AvatarDefs::getAvatarFromGpgId(mId, avatar);
+        ui.AvatarLabel->setPixmap(avatar);
+
+        return;
+    }
+
+    if (mId == peer_id.toStdString()) {
+        QPixmap avatar;
+        AvatarDefs::getAvatarFromSslId(mId, avatar);
+        ui.AvatarLabel->setPixmap(avatar);
+    }
 }

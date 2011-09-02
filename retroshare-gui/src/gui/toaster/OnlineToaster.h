@@ -32,7 +32,7 @@ class OnlineToaster : public QWidget
 	Q_OBJECT
 
 public:
-	OnlineToaster(const std::string &peerId, const QString &name, const QPixmap &avatar);
+	OnlineToaster(const std::string &peerId, const QString &name);
 
 private slots:
 	void chatButtonSlot();

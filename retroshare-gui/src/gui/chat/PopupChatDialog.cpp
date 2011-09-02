@@ -51,6 +51,7 @@
 #include "gui/notifyqt.h"
 #include "../RsAutoUpdatePage.h"
 #include "gui/common/StatusDefs.h"
+#include "gui/common/AvatarDefs.h"
 #include "gui/common/Emoticons.h"
 #include "gui/im_history/ImHistoryBrowser.h"
 
@@ -163,7 +164,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   colorChanged(mCurrentColor);
   fontChanged(mCurrentFont);
 
-  updateAvatar() ;
+  updateOwnAvatar() ;
   updatePeerAvatar(id) ;
 
   // load settings
@@ -415,7 +416,7 @@ void PopupChatDialog::chatFriend(const std::string &id)
 /*static*/ void PopupChatDialog::updateAllAvatars()
 {
     for(std::map<std::string, PopupChatDialog *>::const_iterator it(chatDialogs.begin());it!=chatDialogs.end();++it)
-        it->second->updateAvatar() ;
+        it->second->updateOwnAvatar() ;
 }
 
 void PopupChatDialog::focusDialog()
@@ -846,59 +847,21 @@ void PopupChatDialog::on_actionDelete_Chat_History_triggered()
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
 {
-        #ifdef CHAT_DEBUG
-        std::cerr << "popupchatDialog::updatePeerAvatar() updating avatar for peer " << peer_id << std::endl ;
-        std::cerr << "Requesting avatar image for peer " << peer_id << std::endl ;
-        #endif
+#ifdef CHAT_DEBUG
+    std::cerr << "popupchatDialog::updatePeerAvatar() updating avatar for peer " << peer_id << std::endl ;
+    std::cerr << "Requesting avatar image for peer " << peer_id << std::endl ;
+#endif
 
-	unsigned char *data = NULL;
-	int size = 0 ;
-
-	rsMsgs->getAvatarData(peer_id,data,size); 
-
-        #ifdef CHAT_DEBUG
-        std::cerr << "Image size = " << size << std::endl;
-        #endif
-
-        if(size == 0) {
-           #ifdef CHAT_DEBUG
-	   std::cerr << "Got no image" << std::endl ;
-           #endif
-	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar_background.png"));
-		return ;
-	}
-
-	// set the image
-	QPixmap pix ;
-	pix.loadFromData(data,size,"PNG") ;
-	ui.avatarlabel->setPixmap(pix); // writes image into ba in JPG format
-
-	delete[] data ;
+    QPixmap avatar;
+    AvatarDefs::getAvatarFromSslId(peer_id, avatar);
+    ui.avatarlabel->setPixmap(avatar);
 }
 
-void PopupChatDialog::updateAvatar()
+void PopupChatDialog::updateOwnAvatar()
 {
-	unsigned char *data = NULL;
-	int size = 0 ;
-
-	rsMsgs->getOwnAvatarData(data,size); 
-
-        #ifdef CHAT_DEBUG
-	std::cerr << "Image size = " << size << std::endl ;
-        #endif
-
-        if(size == 0) {
-            #ifdef CHAT_DEBUG
-            std::cerr << "Got no image" << std::endl ;
-            #endif
-        }
-
-	// set the image
-	QPixmap pix ;
-	pix.loadFromData(data,size,"PNG") ;
-	ui.myavatarlabel->setPixmap(pix); // writes image into ba in PNGformat
-
-	delete[] data ;
+    QPixmap avatar;
+    AvatarDefs::getOwnAvatar(avatar);
+    ui.myavatarlabel->setPixmap(avatar);
 }
 
 void PopupChatDialog::addExtraFile()

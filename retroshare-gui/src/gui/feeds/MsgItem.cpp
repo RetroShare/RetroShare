@@ -27,6 +27,7 @@
 #include "SubFileItem.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/chat/HandleRichText.h"
+#include "gui/common/AvatarDefs.h"
 #include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
@@ -283,23 +284,8 @@ void MsgItem::updateAvatar(const QString &peer_id)
         return;
     }
 
-    unsigned char *data = NULL;
-    int size = 0 ;
-
-    rsMsgs->getAvatarData(mPeerId,data,size);
-
-    if(size != 0)
-    {
-        // set the image
-        QPixmap pix ;
-        pix.loadFromData(data,size,"PNG") ;
-        avatarlabel->setPixmap(pix);
-        delete[] data ;
-
-    }
-    else
-    {
-        avatarlabel->setPixmap(QPixmap(":/images/user/personal64.png"));
-    }
-}  
+    QPixmap avatar;
+    AvatarDefs::getAvatarFromSslId(mPeerId, avatar, ":/images/user/personal64.png");
+    avatarlabel->setPixmap(avatar);
+}
 

@@ -81,7 +81,7 @@ protected:
     void insertChatMsgs();
     void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
 
-    void updateAvatar();
+    void updateOwnAvatar();
 
 private slots:
     void pasteLink() ;

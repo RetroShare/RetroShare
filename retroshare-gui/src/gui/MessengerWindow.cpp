@@ -53,6 +53,7 @@
 #include "util/misc.h"
 #include "settings/rsharesettings.h"
 #include "common/RSTreeWidgetItem.h"
+#include "common/AvatarDefs.h"
 
 #include "RetroShareLink.h"
 
@@ -681,20 +682,10 @@ void  MessengerWindow::insertPeers()
 
                         gpg_item -> setText(COLUMN_STATE, StatusDefs::name(it->status));
 
-                        unsigned char *data = NULL;
-                        int size = 0 ;
-                        rsMsgs->getAvatarData(it->id ,data,size);
-
-                        if(size != 0){
-                            QPixmap avatar ;
-                            avatar.loadFromData(data,size,"PNG") ;
-                            QIcon avatar_icon(avatar);
-                            gpg_item-> setIcon(COLUMN_STATE, avatar_icon);
-                            delete[] data;
-
-                        } else {
-                            gpg_item -> setIcon(COLUMN_STATE,(QIcon(":/images/no_avatar_70.png")));
-                        }
+                        QPixmap avatar;
+                        AvatarDefs::getAvatarFromSslId(it->id, avatar, ":/images/no_avatar_70.png");
+                        QIcon avatar_icon(avatar);
+                        gpg_item->setIcon(COLUMN_STATE, avatar_icon);
 
                         switch (it->status) {
                         case RS_STATUS_INACTIVE:
@@ -1087,22 +1078,9 @@ void MessengerWindow::sendMessage()
 
 void MessengerWindow::updateAvatar()
 {
-	unsigned char *data = NULL;
-	int size = 0 ;
-
-	rsMsgs->getOwnAvatarData(data,size); 
-
-	std::cerr << "Image size = " << size << std::endl ;
-
-	if(size == 0)
-	   std::cerr << "Got no image" << std::endl ;
-
-	// set the image
-	QPixmap pix ;
-	pix.loadFromData(data,size,"PNG") ;
-	ui.avatarButton->setIcon(pix); // writes image into ba in PNG format
-
-	delete[] data ;
+	QPixmap avatar;
+	AvatarDefs::getOwnAvatar(avatar);
+	ui.avatarButton->setIcon(avatar);
 }
 
 void MessengerWindow::getAvatar()

@@ -34,6 +34,7 @@
 
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/chat/HandleRichText.h"
+#include "gui/common/AvatarDefs.h"
 
 #include <algorithm>
 
@@ -429,46 +430,26 @@ void ForumMsgItem::updateAvatar(const QString &peer_id)
 void ForumMsgItem::showAvatar(const std::string &peer_id, bool next)
 {
 	std::string gpgId = next ? mGpgIdNext : mGpgIdPrev;
-	QLabel *avatar = next ? nextavatarlabel : avatarlabel;
+	QLabel *avatarLabel = next ? nextavatarlabel : avatarlabel;
 
 	if (gpgId.empty()) {
-		avatar->setPixmap(QPixmap(":/images/user/personal64.png"));
+		avatarLabel->setPixmap(QPixmap(":/images/user/personal64.png"));
 		return;
 	}
 
-	unsigned char *data = NULL;
-	int size = 0 ;
+	QPixmap avatar;
 
 	if (gpgId == rsPeers->getGPGOwnId()) {
 		/* Its me */
-		rsMsgs->getOwnAvatarData(data,size);
+		AvatarDefs::getOwnAvatar(avatar, ":/images/user/personal64.png");
 	} else {
 		if (peer_id.empty()) {
 			/* Show the first available avatar of one of the ssl ids */
-			std::list<std::string> sslIds;
-			if (rsPeers->getAssociatedSSLIds(gpgId, sslIds) == false) {
-				return;
-			}
-
-			std::list<std::string>::iterator sslId;
-			for (sslId = sslIds.begin(); sslId != sslIds.end(); sslId++) {
-				rsMsgs->getAvatarData(*sslId,data,size);
-				if (size) {
-					break;
-				}
-			}
+			AvatarDefs::getAvatarFromGpgId(gpgId, avatar, ":/images/user/personal64.png");
 		} else {
-			rsMsgs->getAvatarData(peer_id,data,size);
+			AvatarDefs::getAvatarFromSslId(peer_id, avatar, ":/images/user/personal64.png");
 		}
 	}
 
-	if(size != 0) {
-		// set the image
-		QPixmap pix ;
-		pix.loadFromData(data,size,"PNG") ;
-		avatar->setPixmap(pix);
-		delete[] data ;
-	} else {
-		avatar->setPixmap(QPixmap(":/images/user/personal64.png"));
-	}
+	avatarLabel->setPixmap(avatar);
 }

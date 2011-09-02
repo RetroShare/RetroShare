@@ -21,6 +21,7 @@
 
 #include "gui/profile/ProfileView.h"
 #include "gui/profile/ProfileEdit.h"
+#include "gui/common/AvatarDefs.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -286,26 +287,9 @@ void ProfileView::filesClear()
 void ProfileView::loadAvatar()
 {
 
-   unsigned char *data = NULL;
-   int size = 0 ;
-
-   rsMsgs->getAvatarData(pId,data,size); 
-
-
-   if(size != 0)
-   {   
-    // set the image
-    QPixmap pix ;
-    pix.loadFromData(data,size,"PNG") ;
-    ui.photoLabel->setPixmap(pix);   
-    delete[] data ;
-
-   }
-   else
-   {
-     ui.photoLabel->setPixmap(QPixmap(":/images/user/personal64.png"));
-   }
-
-
+	QPixmap avatar;
+	AvatarDefs::getAvatarFromSslId(pId, avatar, ":/images/user/personal64.png");
+	ui.avatarlabel->setPixmap(avatar);
+	ui.photoLabel->setPixmap(avatar);
 }  
 

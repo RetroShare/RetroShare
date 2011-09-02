@@ -60,6 +60,7 @@
 #include "feeds/AttachFileItem.h"
 #include "im_history/ImHistoryBrowser.h"
 #include "common/RSTreeWidgetItem.h"
+#include "gui/common/AvatarDefs.h"
 
 #include "RetroShareLink.h"
 
@@ -1795,26 +1796,11 @@ void FriendsDialog::viewprofile()
 
 void FriendsDialog::updateAvatar()
 {
-	unsigned char *data = NULL;
-	int size = 0 ;
-
-	rsMsgs->getOwnAvatarData(data,size); 
-
-#ifdef FRIENDS_DEBUG
-	std::cerr << "Image size = " << size << std::endl ;
-#endif
-
-	if(size == 0)
-	   std::cerr << "Got no image" << std::endl ;
-
-	// set the image
-	QPixmap pix ;
-	pix.loadFromData(data,size,"PNG") ;
-	ui.avatartoolButton->setIcon(pix); // writes image into ba in PNG format
+	QPixmap avatar;
+	AvatarDefs::getOwnAvatar(avatar, "");
+	ui.avatartoolButton->setIcon(avatar);
 
 	PopupChatDialog::updateAllAvatars();
-
-	delete[] data ;
 }
 
 void FriendsDialog::getAvatar()

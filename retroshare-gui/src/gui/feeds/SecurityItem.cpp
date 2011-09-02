@@ -29,6 +29,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/common/AvatarDefs.h"
 
 #include "gui/notifyqt.h"
 
@@ -385,23 +386,9 @@ void SecurityItem::updateAvatar(const QString &peer_id)
 		return;
 	}
 
-	unsigned char *data = NULL;
-	int size = 0 ;
-
-	rsMsgs->getAvatarData(mSslId, data, size);
-
-	if(size != 0)
-	{
-		// set the image
-		QPixmap pix ;
-		pix.loadFromData(data,size,"PNG") ;
-		avatar_label->setPixmap(pix);
-		delete[] data ;
-	}
-	else
-	{
-		avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
-	}
+	QPixmap avatar;
+	AvatarDefs::getAvatarFromSslId(mSslId, avatar, ":/images/user/personal64.png");
+	avatar_label->setPixmap(avatar);
 }  
 
 void SecurityItem::togglequickmessage()

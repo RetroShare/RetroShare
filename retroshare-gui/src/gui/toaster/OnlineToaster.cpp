@@ -23,8 +23,9 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/chat/PopupChatDialog.h"
 #include "util/WidgetBackgroundImage.h"
+#include "gui/common/AvatarDefs.h"
 
-OnlineToaster::OnlineToaster(const std::string &peerId, const QString &name, const QPixmap &avatar) : QWidget(NULL)
+OnlineToaster::OnlineToaster(const std::string &peerId, const QString &name) : QWidget(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -37,6 +38,9 @@ OnlineToaster::OnlineToaster(const std::string &peerId, const QString &name, con
 
 	/* set informations */
 	ui.messageLabel->setText(name);
+
+	QPixmap avatar;
+	AvatarDefs::getAvatarFromSslId(peerId, avatar, ":/images/user/personal64.png");
 	ui.pixmaplabel->setPixmap(avatar);
 
 	WidgetBackgroundImage::setBackgroundImage(ui.windowFrame, ":images/toaster/backgroundtoaster.png", WidgetBackgroundImage::AdjustNone);

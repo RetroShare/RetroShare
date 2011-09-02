@@ -456,15 +456,11 @@ void NotifyQt::UpdateGUI()
 
 			/* id the name */
 			QString name;
-			unsigned char *data = NULL;
-			int size = 0 ;
 
 			if (type == RS_POPUP_DOWNLOAD) {
 				/* id = file hash */
 			} else {
 				name = QString::fromUtf8(rsPeers->getPeerName(id).c_str());
-
-				rsMsgs->getAvatarData(id,data,size);
 			}
 
 			switch(type)
@@ -478,18 +474,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CONNECT:
 					if (popupflags & RS_POPUP_CONNECT)
 					{
-						QPixmap avatar;
-						if(size != 0)
-						{
-							// set the image
-							avatar.loadFromData(data,size,"PNG");
-						}
-						else
-						{
-							avatar = QPixmap(":/images/user/personal64.png");
-						}
-
-						toaster = new Toaster(new OnlineToaster(id, name, avatar));
+						toaster = new Toaster(new OnlineToaster(id, name));
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
@@ -498,10 +483,6 @@ void NotifyQt::UpdateGUI()
 						toaster = new Toaster(new DownloadToaster(id, QString::fromUtf8(title.c_str())));
 					}
 					break;
-			}
-
-			if (data) {
-				delete[] data;
 			}
 
 			if (toaster) {

@@ -60,8 +60,11 @@ private slots:
     /** Called when a child window requests the given help <b>topic</b>. */
     void showHelpDialog(const QString &topic);
 
+    void updatePeersAvatar(const QString& peer_id);
+
 private:
     std::string mId;
+    bool isOnlyGpg;
     
     /** Qt Designer generated object */
     Ui::ConfCertDialog ui;
