@@ -716,7 +716,8 @@ bool p3Config::loadConfig()
 			}
 			pass = false;
 		}
-		pass = true;
+		else
+			pass = true;
 	}
 
 
