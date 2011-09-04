@@ -55,7 +55,9 @@ class RsFileRequest: public RsItem
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
 		RS_PKT_TYPE_FILE,
 		RS_PKT_SUBTYPE_FI_REQUEST)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_FILE_REQUEST) ;
+	}
 virtual ~RsFileRequest();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
@@ -74,7 +76,9 @@ class RsFileData: public RsItem
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
 		RS_PKT_TYPE_FILE, 
 		RS_PKT_SUBTYPE_FI_DATA)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_FILE_DATA) ;	
+	}
 virtual ~RsFileData();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
@@ -87,7 +91,9 @@ class RsFileChunkMapRequest: public RsItem
 	public:
 		RsFileChunkMapRequest() 
 			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST)
-		{}
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_FILE_MAP_REQUEST) ;
+		}
 		virtual ~RsFileChunkMapRequest() {}
 		virtual void clear() {}
 
@@ -102,7 +108,9 @@ class RsFileChunkMap: public RsItem
 	public:
 		RsFileChunkMap() 
 			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CHUNK_MAP)
-		{}
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_FILE_MAP) ;
+		}
 		virtual ~RsFileChunkMap() {}
 		virtual void clear() {}
 
@@ -118,7 +126,9 @@ class RsFileCRC32MapRequest: public RsItem
 	public:
 		RsFileCRC32MapRequest() 
 			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CRC32_MAP_REQUEST)
-		{}
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_FILE_CRC_REQUEST) ;
+		}
 		virtual ~RsFileCRC32MapRequest() {}
 		virtual void clear() {}
 
@@ -132,7 +142,9 @@ class RsFileCRC32Map: public RsItem
 	public:
 		RsFileCRC32Map() 
 			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CRC32_MAP)
-		{}
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_FILE_CRC) ;
+		}
 		virtual ~RsFileCRC32Map() {}
 		virtual void clear() {}
 
@@ -190,7 +202,9 @@ class RsCacheRequest: public RsItem
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
 		RS_PKT_TYPE_CACHE,
 		RS_PKT_SUBTYPE_CACHE_REQUEST)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_CACHE_REQUEST); 
+	}
 virtual ~RsCacheRequest();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
@@ -209,7 +223,9 @@ class RsCacheItem: public RsItem
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
 		RS_PKT_TYPE_CACHE,
 		RS_PKT_SUBTYPE_CACHE_ITEM)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_CACHE_ITEM); 
+	}
 virtual ~RsCacheItem();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);

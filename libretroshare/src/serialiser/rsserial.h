@@ -57,6 +57,7 @@
  ******************************************************************/
 
 #include <util/smallobject.h>
+#include "itempriorities.h"
 
 const uint8_t RS_PKT_VERSION1        = 0x01;
 const uint8_t RS_PKT_VERSION_SERVICE = 0x02;
@@ -70,40 +71,40 @@ const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 class RsItem: public RsMemoryManagement::SmallObject
 {
 	public:
-	RsItem(uint32_t t);
-	RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype);
+		RsItem(uint32_t t);
+		RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype);
 #ifdef DO_STATISTICS
-	void *operator new(size_t s) ;
-	void operator delete(void *,size_t s) ;
+		void *operator new(size_t s) ;
+		void operator delete(void *,size_t s) ;
 #endif
 
-virtual ~RsItem();
-virtual void clear() = 0;
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
+		virtual ~RsItem();
+		virtual void clear() = 0;
+		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
 
-	/* source / destination id */
-const std::string& PeerId() const { return peerId; }
-void        PeerId(const std::string& id) { peerId = id; }
+		/* source / destination id */
+		const std::string& PeerId() const { return peerId; }
+		void        PeerId(const std::string& id) { peerId = id; }
 
-	/* complete id */
-uint32_t PacketId();
+		/* complete id */
+		uint32_t PacketId();
 
-	/* id parts */
-uint8_t  PacketVersion();
-uint8_t  PacketClass();
-uint8_t  PacketType();
-uint8_t  PacketSubType();
+		/* id parts */
+		uint8_t  PacketVersion();
+		uint8_t  PacketClass();
+		uint8_t  PacketType();
+		uint8_t  PacketSubType();
 
-	/* For Service Packets */
-	RsItem(uint8_t ver, uint16_t service, uint8_t subtype);
-uint16_t  PacketService(); /* combined Packet class/type (mid 16bits) */
+		/* For Service Packets */
+		RsItem(uint8_t ver, uint16_t service, uint8_t subtype);
+		uint16_t  PacketService(); /* combined Packet class/type (mid 16bits) */
 
-typedef enum { CONTROL_QUEUE, DATA_QUEUE } QueueType ;
-virtual QueueType queueType() const { return CONTROL_QUEUE ; }
-
+		inline uint8_t priority_level() const { return _priority_level ;}
+		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
 	private:
-uint32_t type;
-std::string peerId;
+		uint32_t type;
+		std::string peerId;
+		uint8_t _priority_level ;
 };
 
 
@@ -172,31 +173,29 @@ std::ostream &printIndent(std::ostream &out, uint16_t indent);
 class RsRawItem: public RsItem
 {
 	public:
-	RsRawItem(uint32_t t, uint32_t size)
-        :RsItem(t), len(size), _queue_type(RsItem::CONTROL_QUEUE) 
-	{ data = malloc(len);}
+		RsRawItem(uint32_t t, uint32_t size)
+			:RsItem(t), len(size)
+		{ 
+			data = malloc(len);
+		}
 
-virtual ~RsRawItem()
-	{
-		if (data)
-			free(data);
-		data = NULL;
-		len = 0;
-	}
+		virtual ~RsRawItem()
+		{
+			if (data)
+				free(data);
+			data = NULL;
+			len = 0;
+		}
 
-uint32_t	getRawLength() { return len; }
-void  *		getRawData()   { return data; }
+		uint32_t	getRawLength() { return len; }
+		void  *getRawData() { return data; }
 
-virtual void clear() { return; } /* what can it do? */
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-virtual RsItem::QueueType queueType() const { return _queue_type ;}
-void setQueueType(const RsItem::QueueType& t) { _queue_type = t ;}
+		virtual void clear() { return; } /* what can it do? */
+		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	private:
-	void *data;
-	uint32_t len;
-	RsItem::QueueType _queue_type ;
+		void *data;
+		uint32_t len;
 };
 
 

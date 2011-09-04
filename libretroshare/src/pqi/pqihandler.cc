@@ -33,12 +33,16 @@
 #include <stdlib.h>
 const int pqihandlerzone = 34283;
 
+static const int PQI_HANDLER_NB_PRIORITY_LEVELS = 10 ;
+static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
+
 /****
 #define DEBUG_TICK 1
 #define RSITEM_DEBUG 1
 ****/
+//#define DEBUG_QOS 1
 
-pqihandler::pqihandler(SecurityPolicy *Global) : coreMtx("pqihandler")
+pqihandler::pqihandler(SecurityPolicy *Global) : pqiQoS(PQI_HANDLER_NB_PRIORITY_LEVELS,PQI_HANDLER_NB_PRIORITY_RATIO),coreMtx("pqihandler")
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
@@ -60,6 +64,9 @@ pqihandler::pqihandler(SecurityPolicy *Global) : coreMtx("pqihandler")
 	rateIndiv_in = 0.01;
 	rateMax_out = 0.01;
 	rateMax_in = 0.01;
+	last_m = time(NULL) ;
+	nb_ticks = 0 ;
+	ticks_per_sec = 5 ; // initial guess
 	return;
 }
 
@@ -67,34 +74,96 @@ int	pqihandler::tick()
 {
 	int moreToTick = 0;
 
-  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+	{ 
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	// tick all interfaces...
-	std::map<std::string, SearchModule *>::iterator it;
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		if (0 < ((it -> second) -> pqi) -> tick())
+		// tick all interfaces...
+		std::map<std::string, SearchModule *>::iterator it;
+		for(it = mods.begin(); it != mods.end(); it++)
+		{
+			if (0 < ((it -> second) -> pqi) -> tick())
+			{
+#ifdef DEBUG_TICK
+				std::cerr << "pqihandler::tick() moreToTick from mod()" << std::endl;
+#endif
+				moreToTick = 1;
+			}
+		}
+		// get the items, and queue them correctly
+		if (0 < locked_GetItems())
 		{
 #ifdef DEBUG_TICK
-                	std::cerr << "pqihandler::tick() moreToTick from mod()" << std::endl;
+			std::cerr << "pqihandler::tick() moreToTick from GetItems()" << std::endl;
 #endif
 			moreToTick = 1;
 		}
 	}
-	// get the items, and queue them correctly
-	if (0 < locked_GetItems())
-	{
-#ifdef DEBUG_TICK
-               	std::cerr << "pqihandler::tick() moreToTick from GetItems()" << std::endl;
-#endif
-		moreToTick = 1;
-	}
-  } /****** UNLOCK ******/
+
+	// send items from QoS queue
+
+	moreToTick |= drawFromQoS_queue() ;
 
 	UpdateRates();
 	return moreToTick;
 }
 
+bool pqihandler::drawFromQoS_queue()
+{
+	float avail_out = getMaxRate(false) * 1024 / ticks_per_sec ;
+
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	++nb_ticks ;
+	time_t now = time(NULL) ;
+	if(last_m + 3 < now)
+	{
+		ticks_per_sec = nb_ticks / (float)(now - last_m) ;
+		nb_ticks = 0 ;
+		last_m = now ;
+	}
+#ifdef DEBUG_QOS
+	std::cerr << "ticks per sec: " << ticks_per_sec << ", max rate in bytes/s = " << avail_out*ticks_per_sec << ", avail out per tick= " << avail_out << std::endl;
+#endif
+
+	uint64_t total_bytes_sent = 0 ;
+	RsItem *item ;
+
+	while( total_bytes_sent < avail_out && (item = out_rsItem()) != NULL)
+	{
+		//
+		uint32_t size ;
+		locked_HandleRsItem(item, 0, size);
+		total_bytes_sent += size ;
+#ifdef DEBUG_QOS
+		std::cerr << "treating item " << (void*)item << ", priority " << (int)item->priority_level() << ", size=" << size << ", total = " << total_bytes_sent << ", queue size = " << qos_queue_size() << std::endl;
+#endif
+	}
+#ifdef DEBUG_QOS
+	assert(total_bytes_sent >= avail_out || qos_queue_size() == 0) ;
+	std::cerr << "total bytes sent = " << total_bytes_sent << ", " ;
+	if(qos_queue_size() > 0) 
+		std::cerr << "Queue still has " << qos_queue_size() << " elements." << std::endl;
+	else
+		std::cerr << "Queue is empty." << std::endl;
+#endif
+
+	return (qos_queue_size() > 0) ;
+}
+
+
+bool pqihandler::queueOutRsItem(RsItem *item)
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+	in_rsItem(item) ;
+
+#ifdef DEBUG_QOS
+	if(item->priority_level() == QOS_PRIORITY_UNKNOWN)
+		std::cerr << "Caught an unprioritized item !" << std::endl;
+
+	print() ;
+#endif
+	return true ;
+}
 
 int	pqihandler::status()
 {
@@ -200,10 +269,9 @@ int	pqihandler::locked_checkOutgoingRsItem(RsItem */*item*/, int /*global*/)
 
 
 // generalised output
-int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
+int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& computed_size)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-
+	computed_size = 0 ;
 	std::map<std::string, SearchModule *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  "pqihandler::HandleRsItem()");
@@ -217,7 +285,7 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		out << " Cannot send out Global RsItem";
 		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
 #ifdef DEBUG_TICK
-                std::cerr << out.str();
+		std::cerr << out.str();
 #endif
 		delete item;
 		return -1;
@@ -271,7 +339,7 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 #endif
 
 		// if yes send on item.
-		((it -> second) -> pqi) -> SendItem(item);
+		((it -> second) -> pqi) -> SendItem(item,computed_size);
 		return 1;
 	}
 	else
@@ -294,48 +362,49 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 
 int	pqihandler::SearchSpecific(RsCacheRequest *ns) 
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 
 int	pqihandler::SendSearchResult(RsCacheItem *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 
 int     pqihandler::SendFileRequest(RsFileRequest *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 
 int     pqihandler::SendFileData(RsFileData *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 int     pqihandler::SendFileChunkMapRequest(RsFileChunkMapRequest *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 int     pqihandler::SendFileChunkMap(RsFileChunkMap *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 int     pqihandler::SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
 int     pqihandler::SendFileCRC32Map(RsFileCRC32Map *ns)
 {
-	return HandleRsItem(ns, 0);
+	return queueOutRsItem(ns) ;
 }
+
 int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
-	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	  	"pqihandler::SendRsRawItem()");
-#ifdef DEBUG_TICK
-        std::cerr << "pqihandler::SendRsRawItem()" << std ::endl;
-#endif
-	return HandleRsItem(ns, 0);
+	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "pqihandler::SendRsRawItem()");
+
+	// queue the item into the QoS 
+	
+	return queueOutRsItem(ns) ;
 }
+
 
 
 // inputs. This is a very basic
@@ -695,12 +764,14 @@ int     pqihandler::UpdateRates()
 		used_bw_in += crate_in;
 		used_bw_out += crate_out;
 	}
+#ifdef DEBUG_QOS
 //	std::cerr << "Totals (In) Used B/W " << used_bw_in;
 //	std::cerr << " Available B/W " << avail_in;
 //	std::cerr << " Effective transfers " << effectiveDownloadsSm << std::endl;
 //	std::cerr << "Totals (Out) Used B/W " << used_bw_out;
 //	std::cerr << " Available B/W " << avail_out;
 //	std::cerr << " Effective transfers " << effectiveUploadsSm << std::endl;
+#endif
 
 	locked_StoreCurrentRates(used_bw_in, used_bw_out);
 

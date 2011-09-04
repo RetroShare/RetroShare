@@ -46,7 +46,7 @@ class RsTurtleItem: public RsItem
 class RsTurtleSearchResultItem: public RsTurtleItem
 {
 	public:
-		RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) {}
+		RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
 		RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleSearchRequestId request_id ;	// Randomly generated request id.
@@ -67,7 +67,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
-		RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype) {}
+		RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
 
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;						// used for cloning in routing methods
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
@@ -117,7 +117,7 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 class RsTurtleOpenTunnelItem: public RsTurtleItem
 {
 	public:
-		RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL) {}
+		RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;}
 		RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleFileHash file_hash ;	  // hash to match
@@ -135,7 +135,7 @@ class RsTurtleOpenTunnelItem: public RsTurtleItem
 class RsTurtleTunnelOkItem: public RsTurtleItem
 {
 	public:
-		RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK) {}
+		RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;}
 		RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
 
 		uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
@@ -155,7 +155,7 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 class RsTurtleGenericTunnelItem: public RsTurtleItem
 {
 	public:
-		RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id) {}
+		RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
 
 		typedef uint32_t Direction ;
 		static const Direction DIRECTION_CLIENT = 0x001 ;
@@ -176,9 +176,6 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 		/// requests are server packets, whereas file data are client packets.
 		
 		virtual Direction travelingDirection() const = 0 ;
-
-		/// Generic tunnel items (such as file data) are added into the data queue
-		virtual RsItem::QueueType queueType() const { return RsItem::DATA_QUEUE ; }
 };
 
 /***********************************************************************************/
@@ -188,7 +185,7 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) {}
+		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
 		RsTurtleFileRequestItem(void *data,uint32_t size) ;		// deserialization
 
 		virtual bool shouldStampTunnel() const { return false ; }
@@ -208,7 +205,7 @@ class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA) {}
+		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;}
 		~RsTurtleFileDataItem() ;
 		RsTurtleFileDataItem(void *data,uint32_t size) ;		// deserialization
 
@@ -230,7 +227,7 @@ class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleFileMapRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST) {}
+		RsTurtleFileMapRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_MAP_REQUEST) ;}
 		RsTurtleFileMapRequestItem(void *data,uint32_t size) ;		// deserialization
 
 		virtual bool shouldStampTunnel() const { return false ; }
@@ -250,7 +247,7 @@ class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleFileMapItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP) {}
+		RsTurtleFileMapItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_MAP) ;}
 		RsTurtleFileMapItem(void *data,uint32_t size) ;		// deserialization
 
 		virtual bool shouldStampTunnel() const { return false ; }
@@ -274,7 +271,7 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileCrcRequestItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleFileCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST) {}
+		RsTurtleFileCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_FILE_CRC_REQUEST);}
 		RsTurtleFileCrcRequestItem(void *data,uint32_t size) ;		// deserialization
 
 		virtual bool shouldStampTunnel() const { return false ; }
@@ -296,7 +293,7 @@ class RsTurtleFileCrcRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileCrcItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleFileCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC) {}
+		RsTurtleFileCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC) { setPriorityLevel(QOS_PRIORITY_RS_FILE_CRC);}
 		RsTurtleFileCrcItem(void *data,uint32_t size) ;		// deserialization
 
 		virtual bool shouldStampTunnel() const { return true ; }

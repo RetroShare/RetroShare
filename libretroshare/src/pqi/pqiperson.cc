@@ -61,7 +61,7 @@ pqiperson::~pqiperson()
 
 
 	// The PQInterface interface.
-int     pqiperson::SendItem(RsItem *i)
+int     pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 {
 	std::ostringstream out;
 	out << "pqiperson::SendItem()";
@@ -72,7 +72,7 @@ int     pqiperson::SendItem(RsItem *i)
 #ifdef PERSON_DEBUG
                 std::cerr << out.str() << std::endl;
 #endif
-		return activepqi -> SendItem(i);
+		return activepqi -> SendItem(i,serialized_size);
 	}
 	else
 	{

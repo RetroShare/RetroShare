@@ -41,75 +41,80 @@
 
 class pqistreamer: public PQInterface
 {
-public:
-	pqistreamer(RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin);
-virtual ~pqistreamer();
+	public:
+		pqistreamer(RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin);
+		virtual ~pqistreamer();
 
-// PQInterface
-virtual int     SendItem(RsItem *);
-virtual RsItem *GetItem();
+		// PQInterface
+		virtual int     SendItem(RsItem *item)
+		{
+			std::cerr << "Warning pqistreamer::sendItem(RsItem*) should not be called. Plz call SendItem(RsItem *,uint32_t& serialized_size) instead." << std::endl;
+			uint32_t serialized_size ;
+			return SendItem(item,serialized_size) ;
+		}
+		virtual int     SendItem(RsItem *,uint32_t& serialized_size);
+		virtual RsItem *GetItem();
 
-virtual int     tick();
-virtual int     status();
+		virtual int     tick();
+		virtual int     status();
 
 	private:
-	/* Implementation */
+		/* Implementation */
 
-	// to filter functions - detect filecancel/data and act!
-int	queue_outpqi(      RsItem *i);
-int 	handleincomingitem(RsItem *i);
+		// to filter functions - detect filecancel/data and act!
+		int	queue_outpqi(      RsItem *i,uint32_t& serialized_size);
+		int 	handleincomingitem(RsItem *i);
 
-	// ticked regularly (manages out queues and sending
-	// via above interfaces.
-int	handleoutgoing();
-int	handleincoming();
+		// ticked regularly (manages out queues and sending
+		// via above interfaces.
+		int	handleoutgoing();
+		int	handleincoming();
 
-	// Bandwidth/Streaming Management.
-float	outTimeSlice();
+		// Bandwidth/Streaming Management.
+		float	outTimeSlice();
 
-int	outAllowedBytes();
-void	outSentBytes(int );
+		int	outAllowedBytes();
+		void	outSentBytes(int );
 
-int	inAllowedBytes();
-void	inReadBytes(int );
+		int	inAllowedBytes();
+		void	inReadBytes(int );
 
-	// RsSerialiser - determines which packets can be serialised.
-	RsSerialiser *rsSerialiser;
-	// Binary Interface for IO, initialisated at startup.
-	BinInterface *bio;
-	unsigned int  bio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
+		// RsSerialiser - determines which packets can be serialised.
+		RsSerialiser *rsSerialiser;
+		// Binary Interface for IO, initialisated at startup.
+		BinInterface *bio;
+		unsigned int  bio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
-	void *pkt_wpending; // storage for pending packet to write.
-	int   pkt_rpend_size; // size of pkt_rpending.
-	void *pkt_rpending; // storage for read in pending packets.
+		void *pkt_wpending; // storage for pending packet to write.
+		int   pkt_rpend_size; // size of pkt_rpending.
+		void *pkt_rpending; // storage for read in pending packets.
 
-	enum {reading_state_packet_started=1,
+		enum {reading_state_packet_started=1,
 			reading_state_initial=0 } ;
 
-	int   reading_state ;
-	int   failed_read_attempts ;
+		int   reading_state ;
+		int   failed_read_attempts ;
 
-	// Temp Storage for transient data.....
-	std::list<void *> out_pkt; // Cntrl / Search / Results queue
-	std::list<void *> out_data; // FileData - secondary queue.
-	std::list<RsItem *> incoming;
+		// Temp Storage for transient data.....
+		std::list<void *> out_pkt; // Cntrl / Search / Results queue
+		std::list<RsItem *> incoming;
 
-	// data for network stats.
-	int totalRead;
-	int totalSent;
+		// data for network stats.
+		int totalRead;
+		int totalSent;
 
-	// these are representative (but not exact)
-	int currRead;
-	int currSent;
-	int currReadTS; // TS from which these are measured.
-	int currSentTS;
+		// these are representative (but not exact)
+		int currRead;
+		int currSent;
+		int currReadTS; // TS from which these are measured.
+		int currSentTS;
 
-	int avgLastUpdate; // TS from which these are measured.
-	float avgReadCount;
-	float avgSentCount;
+		int avgLastUpdate; // TS from which these are measured.
+		float avgReadCount;
+		float avgSentCount;
 
-	RsMutex streamerMtx ;
-//	pthread_t thread_id;
+		RsMutex streamerMtx ;
+		//	pthread_t thread_id;
 };
 
 

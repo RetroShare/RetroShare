@@ -120,7 +120,13 @@ int     receiveHeartbeat();
 int	addChildInterface(uint32_t type, pqiconnect *pqi);
 
 	// The PQInterface interface.
-virtual int     SendItem(RsItem *);
+virtual int     SendItem(RsItem *,uint32_t& serialized_size);
+virtual int     SendItem(RsItem *item)
+{
+	std::cerr << "Warning pqiperson::sendItem(RsItem*) should not be called. Plz call SendItem(RsItem *,uint32_t& serialized_size) instead." << std::endl;
+	uint32_t serialized_size ;
+	return SendItem(item,serialized_size) ;
+}
 virtual RsItem *GetItem();
 	
 virtual int 	status();

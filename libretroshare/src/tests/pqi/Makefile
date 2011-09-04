@@ -1,5 +1,7 @@
 
 RS_TOP_DIR = ../..
+DHT_TOP_DIR = ../../../../libbitdht/src/
+
 ##### Define any flags that are needed for this section #######
 ###############################################################
 
@@ -10,6 +12,7 @@ include $(RS_TOP_DIR)/tests/scripts/config.mk
 # Generic Test Harnesses.
 TESTOBJ  = conn_harness.o ppg_harness.o
 
+TESTOBJ  += pqiqos_test.o 
 TESTOBJ  += net_test.o dht_test.o net_test1.o netiface_test.o dht_test.o 
 TESTOBJ  += pkt_test.o pqiarchive_test.o pqiperson_test.o
 TESTOBJ  += extaddrfinder_test.o dnsresolver_test.o pqiipset_test.o
@@ -17,7 +20,8 @@ TESTOBJ  += p3connmgr_reset_test.o p3connmgr_connect_test.o
 #conn_test.o 
 
 TESTS  = net_test net_test1 netiface_test pqiarchive_test pqiperson_test dnsresolver_test extaddrfinder_test
-TESTS  += pqiipset_test
+TESTS  += pqiipset_test 
+TESTS  += pqiqos_test 
 TESTS  += p3connmgr_reset_test p3connmgr_connect_test
 #TESTS  = p3connmgr_test1
 
@@ -51,10 +55,13 @@ pqiarchive_test: pqiarchive_test.o pkt_test.o
 	$(CC) $(CFLAGS) -o pqiarchive_test pkt_test.o pqiarchive_test.o $(LIBS)
 
 pqiperson_test: pqiperson_test.o testconnect.o
-	$(CC) $(CFLAGS) -o pqiperson_test pqiperson_test.o testconnect.o $(LIBS)
+	$(CC) $(CFLAGS) -o pqiperson_test pqiperson_test.o testconnect.o $(LIBS) -lstdc++
 
 extaddrfinder_test: extaddrfinder_test.o 
-	$(CC) $(CFLAGS) -o extaddrfinder_test extaddrfinder_test.o $(LIBS)
+	$(CC) $(CFLAGS) -DEXTADDRSEARCH_DEBUG=1 -o extaddrfinder_test extaddrfinder_test.o $(LIBS)
+
+pqiqos_test: pqiqos_test.o 
+	$(CC) $(CFLAGS) -o pqiqos_test pqiqos_test.o $(LIBS)
 
 dnsresolver_test: dnsresolver_test.o 
 	$(CC) $(CFLAGS) -o dnsresolver_test dnsresolver_test.o $(LIBS)

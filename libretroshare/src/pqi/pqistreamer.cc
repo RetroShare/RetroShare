@@ -138,14 +138,6 @@ pqistreamer::~pqistreamer()
 		free(pkt);
 	}
 
-	// clean up outgoing (data packets)
-	while(out_data.size() > 0)
-	{
-		void *pkt = out_data.front();
-		out_data.pop_front();
-		free(pkt);
-	}
-
 	if (pkt_wpending)
 	{
 		free(pkt_wpending);
@@ -166,7 +158,7 @@ pqistreamer::~pqistreamer()
 
 
 // Get/Send Items.
-int	pqistreamer::SendItem(RsItem *si)
+int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 {
 #ifdef RSITEM_DEBUG 
         {
@@ -178,7 +170,7 @@ int	pqistreamer::SendItem(RsItem *si)
 	}
 #endif
 
-	return queue_outpqi(si);
+	return queue_outpqi(si,out_size);
 }
 
 RsItem *pqistreamer::GetItem()
@@ -201,15 +193,17 @@ RsItem *pqistreamer::GetItem()
 // // PQInterface
 int	pqistreamer::tick()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::tick()";
-	  out << std::endl;
-	  out << PeerId() << ": currRead/Sent: " << currRead << "/" << currSent;
-	  out << std::endl;
+#ifdef DEBUG_PQISTREAMER
+	{
+		std::ostringstream out;
+		out << "pqistreamer::tick()";
+		out << std::endl;
+		out << PeerId() << ": currRead/Sent: " << currRead << "/" << currSent;
+		out << std::endl;
 
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
+#endif
 
 	bio->tick();
 
@@ -227,13 +221,14 @@ int	pqistreamer::tick()
 	handleincoming();
 	handleoutgoing();
 
+#ifdef DEBUG_PQISTREAMER
 	/* give details of the packets */
 	{
-        	std::list<void *>::iterator it;
+		std::list<void *>::iterator it;
 
 		std::ostringstream out;
 		out << "pqistreamer::tick() Queued Data:";
-	    	out << " for " << PeerId();
+		out << " for " << PeerId();
 
 		if (bio->isactive())
 		{
@@ -270,11 +265,12 @@ int	pqistreamer::tick()
 			out << std::endl;
 		}
 
-	  	pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 	}
+#endif
 
 	/* if there is more stuff in the queues */
-	if ((incoming.size() > 0) || (out_pkt.size() > 0) || (out_data.size() > 0))
+	if ((incoming.size() > 0) || (out_pkt.size() > 0))
 	{
 		return 1;
 	}
@@ -302,8 +298,9 @@ int	pqistreamer::status()
 //
 /**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
 
-int	pqistreamer::queue_outpqi(RsItem *pqi)
+int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 {
+	pktsize = 0 ;
 #ifdef DEBUG_PQISTREAMER
         std::cerr << "pqistreamer::queue_outpqi() called." << std::endl;
 #endif
@@ -316,44 +313,28 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 	if(dynamic_cast<RsFileData*>(pqi)!=NULL && (bio_flags & BIN_FLAGS_NO_DELETE))
 	{
 		std::cerr << "Having file data with flags = " << bio_flags << std::endl ;
-		*(int*)0x0=1 ;
+	}
+
+	{
+		std::ostringstream out;
+		out << "pqistreamer::queue_outpqi()";
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 #endif
-
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::queue_outpqi()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
 
 	/* decide which type of packet it is */
 	RsFileData *dta = dynamic_cast<RsFileData *>(pqi);		// This is the old test method
-	bool isCntrl = (dta == NULL);
 
-	if(pqi->queueType() == RsItem::DATA_QUEUE)				// this is the new test method. More general.
-	{
-#ifdef DEBUG_PQISTREAMER
-		std::cerr << "PQISTREAMER:: got a data queue packet !!" << std::endl ;
-#endif
-		isCntrl = false ;
-	}
-
-        uint32_t pktsize = rsSerialiser->size(pqi);
+   pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 
 #ifdef DEBUG_PQISTREAMER
-        std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
+	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
 #endif
-        if (rsSerialiser->serialise(pqi, ptr, &pktsize))
+	if (rsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
-		if (isCntrl)
-		{
-			out_pkt.push_back(ptr);
-		}
-		else
-		{
-			out_data.push_back(ptr);
-		}
+		out_pkt.push_back(ptr);
+
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 		{
 			delete pqi;
@@ -382,11 +363,13 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 
 int 	pqistreamer::handleincomingitem(RsItem *pqi)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::handleincomingitem()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+#ifdef DEBUG_PQISTREAMER
+	{
+		std::ostringstream out;
+		out << "pqistreamer::handleincomingitem()";
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
+#endif
 
 	// Use overloaded Contact function 
 	pqi -> PeerId(PeerId());
@@ -398,11 +381,13 @@ int	pqistreamer::handleoutgoing()
 {
 	RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
 
+#ifdef DEBUG_PQISTREAMER
 	{
 		std::ostringstream out;
 		out << "pqistreamer::handleoutgoing()";
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
+#endif
 
 	int maxbytes = outAllowedBytes();
 	int sentbytes = 0;
@@ -420,21 +405,12 @@ int	pqistreamer::handleoutgoing()
 		{
 			free(*it);
 			it = out_pkt.erase(it);
-
+#ifdef DEBUG_PQISTREAMER
 			std::ostringstream out;
 			out << "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
 			//			std::cerr << out.str() ;
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
-		}
-		for(it = out_data.begin(); it != out_data.end(); )
-		{
-			free(*it);
-			it = out_data.erase(it);
-
-			std::ostringstream out;
-			out << "pqistreamer::handleoutgoing() Not active -> Clearing DPkt!";
-			//			std::cerr << out.str() ;
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+#endif
 		}
 
 		/* also remove the pending packets */
@@ -478,7 +454,6 @@ int	pqistreamer::handleoutgoing()
 		// send a out_pkt., else send out_data. unless
 		// there is a pending packet.
 		if (!pkt_wpending)
-		{
 			if (out_pkt.size() > 0)
 			{
 				pkt_wpending = *(out_pkt.begin()); 
@@ -487,22 +462,10 @@ int	pqistreamer::handleoutgoing()
 				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_pkt queue";
 				std::cerr << std::endl;
 #endif
-
 			}
-			else if (out_data.size() > 0)
-			{
-				pkt_wpending = *(out_data.begin()); 
-				out_data.pop_front();
-#ifdef DEBUG_TRANSFERS
-				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_data queue";
-				std::cerr << std::endl;
-#endif
-			}
-		}
 
 		if (pkt_wpending)
 		{
-			std::ostringstream out;
 			// write packet.
 			len = getRsItemSize(pkt_wpending);
 
@@ -512,6 +475,7 @@ int	pqistreamer::handleoutgoing()
 
 			if (len != (ss = bio->senddata(pkt_wpending, len)))
 			{
+				std::ostringstream out;
 				out << "Problems with Send Data! (only " << ss << " bytes sent" << ", total pkt size=" << len ;
 				out << std::endl;
 //				std::cerr << out.str() ;
@@ -527,10 +491,6 @@ int	pqistreamer::handleoutgoing()
 			std::cerr << "pqistreamer::handleoutgoing() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
 			std::cerr << std::endl;
 #endif
-
-//			out << " Success!" << ", sent " << len << " bytes" << std::endl;
-			//			std::cerr << out.str() ;
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
 			free(pkt_wpending);
 			pkt_wpending = NULL;
@@ -551,11 +511,13 @@ int pqistreamer::handleincoming()
 	int readbytes = 0;
 	static const int max_failed_read_attempts = 2000 ;
 
+#ifdef DEBUG_PQISTREAMER
 	{
 		std::ostringstream out;
 		out << "pqistreamer::handleincoming()";
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
+#endif
 
 	if(!(bio->isactive()))
 	{

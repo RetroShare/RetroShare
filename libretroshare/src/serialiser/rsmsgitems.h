@@ -61,7 +61,10 @@ const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG = 0x06;
 class RsChatItem: public RsItem
 {
 	public:
-		RsChatItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_CHAT,chat_subtype) {}
+		RsChatItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_CHAT,chat_subtype) 
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;
+		}
 
 		virtual ~RsChatItem() {}
 		virtual void clear() {}
@@ -78,7 +81,9 @@ class RsChatItem: public RsItem
 class RsChatMsgItem: public RsChatItem
 {
 	public:
-		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
+		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) 
+		{
+		}
 		RsChatMsgItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsChatMsgItem() {}
@@ -148,7 +153,7 @@ class RsChatStatusItem: public RsChatItem
 class RsChatAvatarItem: public RsChatItem
 {
 	public:
-		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {}
+		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
 		RsChatAvatarItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsChatAvatarItem() ;
@@ -196,12 +201,12 @@ class RsMsgItem: public RsItem
 	RsMsgItem() 
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG, 
 		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
+	{ setPriorityLevel(QOS_PRIORITY_RS_MSG_ITEM) ; }
 	
 	RsMsgItem(uint16_t type) 
 	:RsItem(RS_PKT_VERSION_SERVICE, type, 
 		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
+	{ setPriorityLevel(QOS_PRIORITY_RS_MSG_ITEM) ; }
 	
 virtual ~RsMsgItem(); 
 virtual void clear();

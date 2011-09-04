@@ -28,6 +28,7 @@
 
 #include "pqi/pqi.h"
 #include "pqi/pqisecurity.h"
+#include "pqi/pqiqos.h"
 
 #include "util/rsthreads.h"
 
@@ -45,85 +46,91 @@ class SearchModule
 // Presents a P3 Face to the world!
 // and funnels data through to a PQInterface.
 //
-class pqihandler: public P3Interface
+class pqihandler: public P3Interface, public pqiQoS
 {
 	public:
-	pqihandler(SecurityPolicy *Global);
-bool	AddSearchModule(SearchModule *mod);
-bool	RemoveSearchModule(SearchModule *mod);
+		pqihandler(SecurityPolicy *Global);
+		bool	AddSearchModule(SearchModule *mod);
+		bool	RemoveSearchModule(SearchModule *mod);
 
-// P3Interface.
-virtual int	SearchSpecific(RsCacheRequest *ns); 
-virtual int	SendSearchResult(RsCacheItem *);
+		// P3Interface.
+		virtual int	SearchSpecific(RsCacheRequest *ns); 
+		virtual int	SendSearchResult(RsCacheItem *);
 
-// inputs.
-virtual RsCacheRequest *	RequestedSearch();
-virtual RsCacheItem    * 	GetSearchResult();
+		// inputs.
+		virtual RsCacheRequest *	RequestedSearch();
+		virtual RsCacheItem    * 	GetSearchResult();
 
-// file i/o
-virtual int     SendFileRequest(RsFileRequest *ns);
-virtual int     SendFileData(RsFileData *ns);
-virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *ns);
-virtual int     SendFileChunkMap(RsFileChunkMap *ns);
-virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns);
-virtual int     SendFileCRC32Map(RsFileCRC32Map *ns);
-virtual RsFileRequest         *GetFileRequest();
-virtual RsFileData            *GetFileData();
-virtual RsFileChunkMapRequest *GetFileChunkMapRequest();
-virtual RsFileChunkMap        *GetFileChunkMap();
-virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest();
-virtual RsFileCRC32Map        *GetFileCRC32Map();
+		// file i/o
+		virtual int     SendFileRequest(RsFileRequest *ns);
+		virtual int     SendFileData(RsFileData *ns);
+		virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *ns);
+		virtual int     SendFileChunkMap(RsFileChunkMap *ns);
+		virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns);
+		virtual int     SendFileCRC32Map(RsFileCRC32Map *ns);
+		virtual RsFileRequest         *GetFileRequest();
+		virtual RsFileData            *GetFileData();
+		virtual RsFileChunkMapRequest *GetFileChunkMapRequest();
+		virtual RsFileChunkMap        *GetFileChunkMap();
+		virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest();
+		virtual RsFileCRC32Map        *GetFileCRC32Map();
 
-// Rest of P3Interface
-virtual int 	tick();
-virtual int 	status();
+		// Rest of P3Interface
+		virtual int 	tick();
+		virtual int 	status();
 
-// Service Data Interface
-virtual int     SendRsRawItem(RsRawItem *);
-virtual RsRawItem *GetRsRawItem();
+		// Service Data Interface
+		virtual int     SendRsRawItem(RsRawItem *);
+		virtual RsRawItem *GetRsRawItem();
 
-	// rate control.
-//indiv rate is deprecated
-//void	setMaxIndivRate(bool in, float val);
-//float	getMaxIndivRate(bool in);
-void	setMaxRate(bool in, float val);
-float	getMaxRate(bool in);
+		// rate control.
+		//indiv rate is deprecated
+		//void	setMaxIndivRate(bool in, float val);
+		//float	getMaxIndivRate(bool in);
+		void	setMaxRate(bool in, float val);
+		float	getMaxRate(bool in);
 
-void	getCurrentRates(float &in, float &out);
+		void	getCurrentRates(float &in, float &out);
 
+		bool drawFromQoS_queue() ;
 
 	protected:
-	/* check to be overloaded by those that can
-	 * generates warnings otherwise
-	 */
+		/* check to be overloaded by those that can
+		 * generates warnings otherwise
+		 */
 
-int	HandleRsItem(RsItem *ns, int allowglobal);
+		int	locked_HandleRsItem(RsItem *ns, int allowglobal,uint32_t& size);
+		bool  queueOutRsItem(RsItem *) ;
 
-virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
-int	locked_GetItems();
-void	locked_SortnStoreItem(RsItem *item);
+		virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
+		int	locked_GetItems();
+		void	locked_SortnStoreItem(RsItem *item);
 
-	RsMutex coreMtx; /* MUTEX */
+		RsMutex coreMtx; /* MUTEX */
 
-	std::map<std::string, SearchModule *> mods;
-	SecurityPolicy *globsec;
+		std::map<std::string, SearchModule *> mods;
+		SecurityPolicy *globsec;
 
-	// Temporary storage...
-	std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request,in_crc32map_request,in_crc32map;
+		// Temporary storage...
+		std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request,in_crc32map_request,in_crc32map;
 
 	private:
 
-	// rate control.
-int	UpdateRates();
-void	locked_StoreCurrentRates(float in, float out);
+		// rate control.
+		int	UpdateRates();
+		void	locked_StoreCurrentRates(float in, float out);
 
-	float rateIndiv_in;
-	float rateIndiv_out;
-	float rateMax_in;
-	float rateMax_out;
+		float rateIndiv_in;
+		float rateIndiv_out;
+		float rateMax_in;
+		float rateMax_out;
 
-	float rateTotal_in;
-	float rateTotal_out;
+		float rateTotal_in;
+		float rateTotal_out;
+
+		uint32_t nb_ticks ;
+		time_t last_m ;
+		float ticks_per_sec ;
 };
 
 //inline void pqihandler::setMaxIndivRate(bool in, float val)

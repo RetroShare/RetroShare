@@ -40,7 +40,8 @@ const uint8_t RS_PKT_SUBTYPE_VOIP_PONG = 0x02;
 class RsVoipItem: public RsItem
 {
 	public:
-		RsVoipItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP,chat_subtype) {}
+		RsVoipItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP,chat_subtype) 
+	{ setPriorityLevel(QOS_PRIORITY_RS_VOIP_PING) ;}	// should be refined later.
 
 		virtual ~RsVoipItem() {};
 		virtual void clear() {};

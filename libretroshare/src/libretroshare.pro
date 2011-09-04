@@ -348,6 +348,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/p3dhtmgr.h \
 			pqi/p3notify.h \
 			pqi/p3upnpmgr.h \
+			pqi/pqiqos.h \
 			pqi/pqi.h \
 			pqi/pqi_base.h \
 			pqi/pqiarchive.h \
@@ -471,6 +472,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/p3netmgr.cc \
 			pqi/p3dhtmgr.cc \
 			pqi/p3notify.cc \
+			pqi/pqiqos.cc \
 			pqi/pqiarchive.cc \
 			pqi/pqibin.cc \
 			pqi/pqihandler.cc \

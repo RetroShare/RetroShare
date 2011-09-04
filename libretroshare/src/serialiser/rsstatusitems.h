@@ -37,7 +37,9 @@ class RsStatusItem: public RsItem
 	RsStatusItem() 
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS, 
 		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_STATUS_ITEM); 
+	}
 virtual ~RsStatusItem();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);

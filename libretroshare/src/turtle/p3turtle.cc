@@ -870,6 +870,8 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 // Routing of turtle tunnel items in a generic manner. Most tunnel packets will use this function, except packets designed for 
 // contructing the tunnels and searching, namely TurtleSearchRequests/Results and OpenTunnel/TunnelOkItems
 //
+// Only packets coming from handleIncoming() end up here, so this function is able to catch the transiting traffic.
+//
 void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 {
 #ifdef P3TURTLE_DEBUG
@@ -912,6 +914,9 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 			item->PeerId(tunnel.local_src) ;
 
 			_traffic_info_buffer.unknown_updn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
+
+			if(dynamic_cast<RsTurtleFileDataItem*>(item) != NULL)
+				item->setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FORWARD_FILE_DATA) ;
 
 			sendItem(item) ;
 			return ;

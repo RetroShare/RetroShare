@@ -33,6 +33,7 @@
 #define RSSERIAL_DEBUG 1
 #define CHAT_DEBUG 1
 ***/
+#define CHAT_DEBUG 1
 
 #include <iostream>
 
@@ -244,6 +245,10 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
 #endif
 
+	std::cerr << "Serialization result: " ;
+	for(int i=0;i<20;++i)
+		std::cerr << (int)((uint8_t*)data)[i] << " " ;
+	std::cerr << std::endl ;
 	return ok;
 }
 
@@ -378,6 +383,11 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/)
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
+
+		std::cerr << "Received packet result: " ;
+	for(int i=0;i<20;++i)
+		std::cerr << (int)((uint8_t*)data)[i] << " " ;
+	std::cerr << std::endl ;
 
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
