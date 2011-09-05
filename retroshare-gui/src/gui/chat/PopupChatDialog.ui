@@ -139,7 +139,7 @@
          <number>9</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="avatarlabel">
+         <widget class="AvatarWidget" name="avatarWidget" native="true">
           <property name="minimumSize">
            <size>
             <width>116</width>
@@ -151,18 +151,6 @@
             <width>116</width>
             <height>116</height>
            </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QLabel{
-border-image: url(:/images/avatarstatus_bg.png);
-
-}</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -180,7 +168,7 @@ border-image: url(:/images/avatarstatus_bg.png);
          </spacer>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="myavatarlabel">
+         <widget class="AvatarWidget" name="ownAvatarWidget" native="true">
           <property name="minimumSize">
            <size>
             <width>116</width>
@@ -192,18 +180,6 @@ border-image: url(:/images/avatarstatus_bg.png);
             <width>116</width>
             <height>116</height>
            </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QLabel{
-border-image: url(:/images/avatarstatus_bg.png);
-
-}</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -929,6 +905,14 @@ background: white;}</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

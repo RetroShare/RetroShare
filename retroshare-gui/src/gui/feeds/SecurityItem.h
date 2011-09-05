@@ -57,7 +57,6 @@ private slots:
 	void openChat();
 
 	void updateItem();
-	void updateAvatar(const QString &peer_id);
 
 	void togglequickmessage();
 	void sendMessage();

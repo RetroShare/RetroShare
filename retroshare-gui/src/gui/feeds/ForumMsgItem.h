@@ -50,21 +50,15 @@ private slots:
 	void replyToPost();
 	void sendMsg();
 
-
 	void updateItem();
-	void updateAvatar(const QString &peer_id);
 
 private:
-	void showAvatar(const std::string &peer_id, bool next);
-
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 	bool canReply;
 
 	std::string mForumId;
 	std::string mPostId;
-	std::string mGpgIdPrev;
-	std::string mGpgIdNext;
 	bool mIsHome;
 	bool mIsTop;
 };

@@ -60,8 +60,6 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
   connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
-  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-  
   subjectLabel->setMinimumWidth(20);
 
   small();
@@ -142,8 +140,8 @@ void ForumMsgItem::updateItemStatic()
 		link.createForum(msg.forumId, msg.msgId);
 
 		if (mIsTop)
-		{		
-			mGpgIdPrev = msg.srcId;
+		{
+			avatar->setId(msg.srcId, true);
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
@@ -168,7 +166,7 @@ void ForumMsgItem::updateItemStatic()
 		}
 		else
 		{
-			mGpgIdNext = msg.srcId;
+			nextavatar->setId(msg.srcId, true);
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
@@ -194,7 +192,7 @@ void ForumMsgItem::updateItemStatic()
 			ForumMsgInfo msgParent;
 			if (rsForums->getForumMessage(mForumId, msg.parentId, msgParent))
 			{
-				mGpgIdPrev = msgParent.srcId;
+				avatar->setId(msgParent.srcId, true);
 
 				RetroShareLink linkParent;
 				linkParent.createForum(msgParent.forumId, msgParent.msgId);
@@ -234,9 +232,6 @@ void ForumMsgItem::updateItemStatic()
 	}
 
 	unsubscribeButton->hide();
-
-	showAvatar("", true);
-	showAvatar("", false);
 }
 
 
@@ -396,60 +391,4 @@ void ForumMsgItem::sendMsg()
 			textEdit->clear();
 		}
 	}
-}
-
-void ForumMsgItem::updateAvatar(const QString &peer_id)
-{
-	if (mGpgIdPrev.empty() == false) {
-		/* Is this one of the ssl ids of the gpg id ? */
-		std::list<std::string> sslIds;
-		if (rsPeers->getAssociatedSSLIds(mGpgIdPrev, sslIds) == false) {
-			return;
-		}
-
-		if (std::find(sslIds.begin(), sslIds.end(), peer_id.toStdString()) != sslIds.end()) {
-			/* One of the ssl ids of the gpg id */
-			showAvatar(peer_id.toStdString(), false);
-		}
-	}
-
-	if (mGpgIdNext.empty() == false) {
-		/* Is this one of the ssl ids of the gpg id ? */
-		std::list<std::string> sslIds;
-		if (rsPeers->getAssociatedSSLIds(mGpgIdNext, sslIds) == false) {
-			return;
-		}
-
-		if (std::find(sslIds.begin(), sslIds.end(), peer_id.toStdString()) != sslIds.end()) {
-			/* One of the ssl ids of the gpg id */
-			showAvatar(peer_id.toStdString(), true);
-		}
-	}
-}
-
-void ForumMsgItem::showAvatar(const std::string &peer_id, bool next)
-{
-	std::string gpgId = next ? mGpgIdNext : mGpgIdPrev;
-	QLabel *avatarLabel = next ? nextavatarlabel : avatarlabel;
-
-	if (gpgId.empty()) {
-		avatarLabel->setPixmap(QPixmap(":/images/user/personal64.png"));
-		return;
-	}
-
-	QPixmap avatar;
-
-	if (gpgId == rsPeers->getGPGOwnId()) {
-		/* Its me */
-		AvatarDefs::getOwnAvatar(avatar, ":/images/user/personal64.png");
-	} else {
-		if (peer_id.empty()) {
-			/* Show the first available avatar of one of the ssl ids */
-			AvatarDefs::getAvatarFromGpgId(gpgId, avatar, ":/images/user/personal64.png");
-		} else {
-			AvatarDefs::getAvatarFromSslId(peer_id, avatar, ":/images/user/personal64.png");
-		}
-	}
-
-	avatarLabel->setPixmap(avatar);
 }

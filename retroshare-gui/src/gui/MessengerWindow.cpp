@@ -132,11 +132,13 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     m_compareRole = new RSTreeWidgetItemCompareRole;
     m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
 
+    ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
+    ui.avatar->setOwnId();
+
     connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 #ifndef MINIMAL_RSGUI
     connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
 
-    connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getAvatar()));
     connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
     connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
 #endif // MINIMAL_RSGUI
@@ -214,7 +216,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
         ui.statusButton->setMenu(pStatusMenu);
     }
 
-    updateAvatar();
     loadmystatusmessage();
 #endif // MINIMAL_RSGUI
 
@@ -683,7 +684,7 @@ void  MessengerWindow::insertPeers()
                         gpg_item -> setText(COLUMN_STATE, StatusDefs::name(it->status));
 
                         QPixmap avatar;
-                        AvatarDefs::getAvatarFromSslId(it->id, avatar, ":/images/no_avatar_70.png");
+                        AvatarDefs::getAvatarFromSslId(it->id, avatar);
                         QIcon avatar_icon(avatar);
                         gpg_item->setIcon(COLUMN_STATE, avatar_icon);
 
@@ -1076,25 +1077,6 @@ void MessengerWindow::sendMessage()
     MessageComposer::msgFriend(id, false);
 }
 
-void MessengerWindow::updateAvatar()
-{
-	QPixmap avatar;
-	AvatarDefs::getOwnAvatar(avatar);
-	ui.avatarButton->setIcon(avatar);
-}
-
-void MessengerWindow::getAvatar()
-{
-	QByteArray ba;
-	if (misc::getOpenAvatarPicture(this, ba))
-	{
-#ifdef MSG_DEBUG
-		std::cerr << "Avatar image size = " << ba.size() << std::endl ;
-#endif
-		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
-	}
-}
-
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
 { 
@@ -1115,28 +1097,6 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
         // my status has changed
 
         ui.statusButton->setText(m_nickName + " (" + StatusDefs::name(status) + ")");
-
-        switch (status) {
-        case RS_STATUS_OFFLINE:
-            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_offline.png); }");
-            break;
-
-        case RS_STATUS_INACTIVE:
-            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_idle.png); }");
-            break;
-
-        case RS_STATUS_ONLINE:
-            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_online.png); }");
-            break;
-
-        case RS_STATUS_AWAY:
-            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_idle.png); }");
-            break;
-
-        case RS_STATUS_BUSY:
-            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_busy.png); }");
-            break;
-        }
 
         return;
     }

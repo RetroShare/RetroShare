@@ -779,7 +779,7 @@ background: white;}</string>
            <number>1</number>
           </property>
           <item row="0" column="0" rowspan="2">
-           <widget class="QToolButton" name="avatartoolButton">
+           <widget class="AvatarWidget" name="avatar" native="true">
             <property name="minimumSize">
              <size>
               <width>61</width>
@@ -791,24 +791,6 @@ background: white;}</string>
               <width>61</width>
               <height>61</height>
              </size>
-            </property>
-            <property name="toolTip">
-             <string>Add or Change your Avatar</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QToolButton#avatartoolButton{border-image: url(:/images/mystatus_bg.png);}</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>43</width>
-              <height>43</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -1566,6 +1548,12 @@ background: white;}</string>
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>RSTabWidget</class>
    <extends>QTabWidget</extends>

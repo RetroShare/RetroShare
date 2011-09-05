@@ -85,9 +85,6 @@ public slots:
     // called by notifyQt when another peer is typing (in group chant and private chat)
     void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
-    void updatePeersAvatar(const QString& peer_id);
-    void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
-
     void groupsChanged(int type);
 
 protected:
@@ -148,7 +145,6 @@ private slots:
     void getFont();
 
     void getAvatar();
-	void updateOwnStatus(const QString &peer_id, int status);
 
     void on_actionAdd_Group_activated();
     void on_actionCreate_New_Forum_activated();

@@ -63,7 +63,7 @@ border-radius: 10px}</string>
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="2">
-          <widget class="QLabel" name="avatar_label">
+          <widget class="AvatarWidget" name="avatar" native="true">
            <property name="minimumSize">
             <size>
              <width>70</width>
@@ -77,19 +77,9 @@ border-radius: 10px}</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">QLabel#avatar_label{border: 2px solid green;
-         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+            <string notr="true">QWidget#avatar{border: 2px solid green;
+         background-color: #BDDF7D;
 }</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-           <property name="margin">
-            <number>0</number>
            </property>
           </widget>
          </item>
@@ -575,6 +565,14 @@ border-radius: 10px}</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

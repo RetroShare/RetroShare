@@ -315,6 +315,7 @@ HEADERS +=  rshare.h \
             gui/common/PopularityDefs.h \
             gui/common/GroupTreeWidget.h \
             gui/common/RSTreeView.h \
+            gui/common/AvatarWidget.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -432,6 +433,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/im_history/ImHistoryBrowser.ui \
             gui/groups/CreateGroup.ui \
             gui/common/GroupTreeWidget.ui \
+            gui/common/AvatarWidget.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/GetStartedDialog.ui
@@ -536,6 +538,7 @@ SOURCES +=  main.cpp \
             gui/common/PopularityDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
             gui/common/RSTreeView.cpp \
+            gui/common/AvatarWidget.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/configpage.cpp \

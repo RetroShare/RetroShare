@@ -47,7 +47,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QToolButton" name="avatarButton">
+        <widget class="AvatarWidget" name="avatar" native="true">
          <property name="minimumSize">
           <size>
            <width>70</width>
@@ -59,25 +59,6 @@
            <width>70</width>
            <height>70</height>
           </size>
-         </property>
-         <property name="toolTip">
-          <string>Click to Change your Avatar</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QToolButton#avatarButton{border-image: url(:/images/mystatus_bg.png);}</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/user/personal64.png</normaloff>:/images/user/personal64.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -401,9 +382,6 @@ border: 1px solid #CCCCCC;
          <attribute name="headerShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
-         <attribute name="headerShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
         </widget>
        </item>
       </layout>
@@ -473,6 +451,14 @@ border: 1px solid #CCCCCC;
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="images.qrc"/>
  </resources>

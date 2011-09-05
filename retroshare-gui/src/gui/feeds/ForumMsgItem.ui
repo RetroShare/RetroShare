@@ -64,7 +64,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/images/konversation.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -209,7 +209,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
@@ -229,7 +229,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
           </property>
          </widget>
@@ -249,7 +249,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -269,7 +269,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -290,7 +290,7 @@ border-radius: 10px}</string>
         </property>
         <layout class="QGridLayout">
          <item row="0" column="0" rowspan="2">
-          <widget class="QLabel" name="avatarlabel">
+          <widget class="AvatarWidget" name="avatar" native="true">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -302,12 +302,6 @@ border-radius: 10px}</string>
              <width>32</width>
              <height>32</height>
             </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -457,7 +451,7 @@ border-radius: 10px}</string>
         </property>
         <layout class="QGridLayout">
          <item row="0" column="0" rowspan="3">
-          <widget class="QLabel" name="nextavatarlabel">
+          <widget class="AvatarWidget" name="nextavatar" native="true">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -469,12 +463,6 @@ border-radius: 10px}</string>
              <width>32</width>
              <height>32</height>
             </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -624,6 +612,16 @@ border-radius: 10px}</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

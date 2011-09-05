@@ -45,7 +45,6 @@ class MessengerWindow : public RWindow
 public slots:
     void updateMessengerDisplay() ;
 #ifndef MINIMAL_RSGUI
-    void updateAvatar();
     void loadmystatusmessage();
 #endif // MINIMAL_RSGUI
 
@@ -87,9 +86,6 @@ private slots:
 
     /** Open Shared Manager **/
     void openShareManager();
-
-    /** get own last stored Avatar**/
-    void getAvatar();
 
     void updateOwnStatus(const QString &peer_id, int status);
 

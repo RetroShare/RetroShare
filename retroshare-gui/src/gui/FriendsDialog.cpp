@@ -136,9 +136,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
     connect( ui.peertreeWidget->header(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(peerSortIndicatorChanged(int,Qt::SortOrder)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
-    connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
     connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
@@ -150,6 +148,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect(ui.action_Sort_by_State, SIGNAL(triggered()), this, SLOT(setStateColumn()));
     connect(ui.actionSort_Peers_Ascending_Order, SIGNAL(triggered()), this, SLOT(sortPeersAscendingOrder()));
     connect(ui.actionSort_Peers_Descending_Order, SIGNAL(triggered()), this, SLOT(sortPeersDescendingOrder()));
+
+    ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
+    ui.avatar->setOwnId();
 
     ui.peertabWidget->setTabPosition(QTabWidget::North);
     ui.peertabWidget->addTab(new ProfileWidget(), tr("Profile"));
@@ -239,7 +240,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     sizes << height() << 100; // Qt calculates the right sizes
     ui.splitter_2->setSizes(sizes);
 
-    updateAvatar();
     loadmypersonalstatus();
     displayMenu();
 
@@ -1411,18 +1411,6 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
-void FriendsDialog::updatePeersAvatar(const QString& peer_id)
-{
-#ifdef FRIENDS_DEBUG
-    std::cerr << "FriendsDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
-#endif
-
-    PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(), 0);
-    if (pcd) {
-        pcd->updatePeerAvatar(peer_id.toStdString());
-    }
-}
-
 void FriendsDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
     if(is_private_chat)
@@ -1793,15 +1781,6 @@ void FriendsDialog::viewprofile()
 	profileview -> show();
 }
 #endif
-
-void FriendsDialog::updateAvatar()
-{
-	QPixmap avatar;
-	AvatarDefs::getOwnAvatar(avatar, "");
-	ui.avatartoolButton->setIcon(avatar);
-
-	PopupChatDialog::updateAllAvatars();
-}
 
 void FriendsDialog::getAvatar()
 {
@@ -2237,38 +2216,5 @@ void FriendsDialog::newsFeedChanged(int count)
         ui.peertabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
         ui.peertabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
         ui.peertabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
-    }
-}
-
-void FriendsDialog::updateOwnStatus(const QString &peer_id, int status)
-{
-    // add self nick + own status
-    if (peer_id.toStdString() == rsPeers->getOwnId())
-    {
-        // my status has changed
-
-        switch (status) {
-        case RS_STATUS_OFFLINE:
-            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_offline.png); }");
-            break;
-
-        case RS_STATUS_INACTIVE:
-            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_idle.png); }");
-            break;
-
-        case RS_STATUS_ONLINE:
-            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_online.png); }");
-            break;
-
-        case RS_STATUS_AWAY:
-            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_idle.png); }");
-            break;
-
-        case RS_STATUS_BUSY:
-            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_busy.png); }");
-            break;
-        }
-
-        return;
     }
 }

@@ -56,12 +56,9 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool is
   connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
 
-  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-
   small();
   updateItemStatic();
   updateItem();
-  updateAvatar(QString::fromStdString(mPeerId));
 }
 
 
@@ -83,6 +80,8 @@ void MsgItem::updateItemStatic()
 
 	/* get peer Id */
 	mPeerId = mi.srcId;
+
+	avatar->setId(mPeerId, false);
 
 	QString title;
 	QString timestamp;
@@ -276,16 +275,3 @@ void MsgItem::playMedia()
 	std::cerr << std::endl;
 #endif
 }
-
-void MsgItem::updateAvatar(const QString &peer_id)
-{
-    if (peer_id.toStdString() != mPeerId) {
-        /* it 's not me */
-        return;
-    }
-
-    QPixmap avatar;
-    AvatarDefs::getAvatarFromSslId(mPeerId, avatar, ":/images/user/personal64.png");
-    avatarlabel->setPixmap(avatar);
-}
-

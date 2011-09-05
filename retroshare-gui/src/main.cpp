@@ -285,8 +285,6 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(downloadCompleteCountChanged(int)) ,w                   		,SLOT(updateTransfers(int)             ));
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
-	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->friendsDialog,SLOT(updatePeersAvatar(const QString&)));
-	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->friendsDialog,SLOT(updateAvatar()));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
 
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->networkDialog,SLOT(setLogInfo(QString))) ;

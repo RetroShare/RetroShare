@@ -52,7 +52,6 @@ private slots:
 	void replyMsg();
 
 	void updateItem();
-    void updateAvatar(const QString &peer_id);
 
 private:
 	FeedHolder *mParent;

@@ -75,7 +75,6 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgI
     connect(removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
     connect(peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
     QMenu *msgmenu = new QMenu();
@@ -83,10 +82,11 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, std::string gpgI
 
     quickmsgButton->setMenu(msgmenu);
 
+    avatar->setId(mSslId, false);
+
     small();
     updateItemStatic();
     updateItem();
-    updateAvatar(QString::fromStdString(mSslId));
 }
 
 
@@ -378,18 +378,6 @@ void SecurityItem::openChat()
 		mParent->openChat(mGpgId);
 	}
 }
-
-void SecurityItem::updateAvatar(const QString &peer_id)
-{
-	if (peer_id.toStdString() != mSslId) {
-		/* it 's not me */
-		return;
-	}
-
-	QPixmap avatar;
-	AvatarDefs::getAvatarFromSslId(mSslId, avatar, ":/images/user/personal64.png");
-	avatar_label->setPixmap(avatar);
-}  
 
 void SecurityItem::togglequickmessage()
 {

@@ -64,7 +64,6 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
 
     connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
     QMenu *msgmenu = new QMenu();
@@ -72,10 +71,11 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
 
     quickmsgButton->setMenu(msgmenu);
 
+    avatar->setId(mPeerId, false);
+
     small();
     updateItemStatic();
     updateItem();
-    updateAvatar(QString::fromStdString(mPeerId));
 }
 
 
@@ -307,18 +307,6 @@ void PeerItem::openChat()
 	{
 		mParent->openChat(mPeerId);
 	}
-}
-
-void PeerItem::updateAvatar(const QString &peer_id)
-{
-	if (peer_id.toStdString() != mPeerId) {
-		/* it 's not me */
-		return;
-	}
-
-	QPixmap avatar;
-	AvatarDefs::getAvatarFromSslId(mPeerId, avatar, ":/images/user/personal64.png");
-	avatar_label->setPixmap(avatar);
 }
 
 void PeerItem::togglequickmessage()

@@ -48,11 +48,9 @@ public:
     static PopupChatDialog *getPrivateChat(const std::string &id, uint chatflags);
     static void cleanupChat();
     static void chatFriend(const std::string &id);
-    static void updateAllAvatars();
     static void privateChatChanged(int list, int type);
 
     void updateStatusString(const QString& peer_id, const QString& statusString);
-    void updatePeerAvatar(const std::string&);
     std::string getPeerId() { return dialogId; }
     QString getTitle() { return dialogName; }
     bool hasNewMessages() { return newMessages; }
@@ -80,8 +78,6 @@ protected:
 
     void insertChatMsgs();
     void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
-
-    void updateOwnAvatar();
 
 private slots:
     void pasteLink() ;

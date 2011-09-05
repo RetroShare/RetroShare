@@ -127,11 +127,16 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
   connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
 
-
   connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
   connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
+
+  ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
+  ui.avatarWidget->setId(dialogId, false);
+
+  ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
+  ui.ownAvatarWidget->setOwnId();
 
   // Create the status bar
   resetStatusBar();
@@ -164,9 +169,6 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   colorChanged(mCurrentColor);
   fontChanged(mCurrentFont);
 
-  updateOwnAvatar() ;
-  updatePeerAvatar(id) ;
-
   // load settings
   processSettings(true);
 
@@ -178,11 +180,6 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   // No check of return value. Non existing status info is handled as offline.
   rsStatus->getStatus(dialogId, peerStatusInfo);
   updateStatus(QString::fromStdString(dialogId), peerStatusInfo.status);
-
-  StatusInfo ownStatusInfo;
-  if (rsStatus->getOwnStatus(ownStatusInfo)) {
-    updateStatus(QString::fromStdString(ownStatusInfo.id), ownStatusInfo.status);
-  }
 
   // initialize first custom state string
   QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(dialogId).c_str());
@@ -411,12 +408,6 @@ void PopupChatDialog::chatFriend(const std::string &id)
             getPrivateChat(firstId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
         }
     }
-}
-
-/*static*/ void PopupChatDialog::updateAllAvatars()
-{
-    for(std::map<std::string, PopupChatDialog *>::const_iterator it(chatDialogs.begin());it!=chatDialogs.end();++it)
-        it->second->updateOwnAvatar() ;
 }
 
 void PopupChatDialog::focusDialog()
@@ -845,25 +836,6 @@ void PopupChatDialog::on_actionDelete_Chat_History_triggered()
     }
 }
 
-void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
-{
-#ifdef CHAT_DEBUG
-    std::cerr << "popupchatDialog::updatePeerAvatar() updating avatar for peer " << peer_id << std::endl ;
-    std::cerr << "Requesting avatar image for peer " << peer_id << std::endl ;
-#endif
-
-    QPixmap avatar;
-    AvatarDefs::getAvatarFromSslId(peer_id, avatar);
-    ui.avatarlabel->setPixmap(avatar);
-}
-
-void PopupChatDialog::updateOwnAvatar()
-{
-    QPixmap avatar;
-    AvatarDefs::getOwnAvatar(avatar);
-    ui.myavatarlabel->setPixmap(avatar);
-}
-
 void PopupChatDialog::addExtraFile()
 {
     QString file;
@@ -1119,35 +1091,25 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 
         switch (status) {
         case RS_STATUS_OFFLINE:
-            ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_offline.png); }");
-            ui.avatarlabel->setEnabled(false);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText(dialogName + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
             break;
 
         case RS_STATUS_INACTIVE:
-            ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_away.png); }");
-            ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText(dialogName + " " + tr("is Idle and may not reply"));
             break;
 
         case RS_STATUS_ONLINE:
-            ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_online.png); }");
-            ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(false);
             break;
 
         case RS_STATUS_AWAY:
-            ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_away.png); }");
-            ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText(dialogName + " " + tr("is Away and may not reply"));
             ui.infoframe->setVisible(true);
             break;
 
         case RS_STATUS_BUSY:
-            ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_busy.png); }");
-            ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText(dialogName + " " + tr("is Busy and may not reply"));
             ui.infoframe->setVisible(true);
             break;
@@ -1163,34 +1125,6 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             window->calculateTitle(this);
         }
 
-        return;
-    }
-
-    if (stdPeerId == rsPeers->getOwnId()) {
-        // my status has changed
-        
-        switch (status) {
-        case RS_STATUS_OFFLINE:
-            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_offline.png); }");
-            break;
-
-        case RS_STATUS_INACTIVE:
-            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_away.png); }");
-            break;
-
-        case RS_STATUS_ONLINE:
-            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_online.png); }");
-            break;
-
-        case RS_STATUS_AWAY:
-            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_away.png); }");
-            break;
-
-        case RS_STATUS_BUSY:
-            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_busy.png); }");
-            break;
-        }
-        
         return;
     }
 

@@ -66,9 +66,10 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
+    avatar->setId(mPeerId, false);
+
     updateItemStatic();
     updateItem();
-    updateAvatar(QString::fromStdString(mPeerId));
     insertChat(message);
 }
 
@@ -220,18 +221,6 @@ void ChatMsgItem::openChat()
 	{
 		mParent->openChat(mPeerId);
 	}
-}
-
-void ChatMsgItem::updateAvatar(const QString &peer_id)
-{
-    if (peer_id.toStdString() != mPeerId) {
-        /* it 's not me */
-        return;
-    }
-
-    QPixmap avatar;
-    AvatarDefs::getAvatarFromSslId(mPeerId, avatar, ":/images/user/personal64.png");
-    avatar_label->setPixmap(avatar);
 }
 
 void ChatMsgItem::togglequickmessage()
