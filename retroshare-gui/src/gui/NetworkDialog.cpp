@@ -85,15 +85,16 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   
     connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
+    connect( ui.connecttreeWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
     connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
-  
+    connect( ui.unvalidGPGkeyWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
+
     connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
     connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
-
 
     /* hide the Tree +/- */
     ui.connecttreeWidget -> setRootIsDecorated( false );
@@ -182,7 +183,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     loadtabsettings();
     
     ui.clearButton->hide();
-    
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -206,7 +206,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 	QMenu contextMnu( this );
 
-	std::string peer_id = wi->text(4).toStdString() ;
+	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
 
     // That's what context menus are made for
 		RsPeerDetails detail;
@@ -258,7 +258,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 void NetworkDialog::denyFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-        std::string peer_id = wi->text(4).toStdString() ;
+	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
 	rsPeers->removeFriend(peer_id) ;
 
 	insertConnect() ;
@@ -280,13 +280,17 @@ void NetworkDialog::deleteCert()
 
 void NetworkDialog::makeFriend()
 {
-    ConfCertDialog::showIt(getCurrentNeighbour()->text(4).toStdString(), ConfCertDialog::PageTrust);
+	ConfCertDialog::showIt(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString(), ConfCertDialog::PageTrust);
 }
 
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
-    ConfCertDialog::showIt(getCurrentNeighbour()->text(4).toStdString(), ConfCertDialog::PageDetails);
+	QTreeWidgetItem* item = getCurrentNeighbour();
+	if (item == NULL) {
+		return;
+	}
+	ConfCertDialog::showIt(item->text(COLUMN_PEERID).toStdString(), ConfCertDialog::PageDetails);
 }
 
 void NetworkDialog::copyLink()
@@ -296,7 +300,7 @@ void NetworkDialog::copyLink()
 		return;
 	}
 
-	std::string peer_id = wi->text(4).toStdString() ;
+	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
 
 	std::vector<RetroShareLink> urls;
 	RetroShareLink link;
@@ -387,7 +391,7 @@ void NetworkDialog::insertConnect()
 	//remove items
 	int index = 0;
 	while (index < connectWidget->topLevelItemCount()) {
-		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
+		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
 		RsPeerDetails detail;
 		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < GPGME_VALIDITY_MARGINAL && !detail.accept_connection)) {
 			delete (connectWidget->takeTopLevelItem(index));
@@ -397,7 +401,7 @@ void NetworkDialog::insertConnect()
 	}
 	index = 0;
 	while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
-		std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
+		std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
 		RsPeerDetails detail;
 		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= GPGME_VALIDITY_MARGINAL || detail.accept_connection) {
 			delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
@@ -580,8 +584,8 @@ QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 /* Utility Fns */
 RsCertId getNeighRsCertId(QTreeWidgetItem *i)
 {
-        RsCertId id = (i -> text(4)).toStdString();
-        return id;
+	RsCertId id = (i -> text(COLUMN_PEERID)).toStdString();
+	return id;
 }   
   
 /* So from the Neighbours Dialog we can call the following control Functions:
