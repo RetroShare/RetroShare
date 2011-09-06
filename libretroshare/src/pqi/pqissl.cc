@@ -1677,12 +1677,14 @@ int 	pqissl::isactive()
 
 bool 	pqissl::moretoread()
 {
+#ifdef PQISSL_DEBUG
 	{
 		std::ostringstream out;
 		out << "pqissl::moretoread()";
 		out << "  polling socket (" << sockfd << ")";
 		rslog(RSL_DEBUG_ALL, pqisslzone, out.str());
 	}
+#endif
 
 	fd_set ReadFDs, WriteFDs, ExceptFDs;
 	FD_ZERO(&ReadFDs);
@@ -1747,8 +1749,10 @@ bool 	pqissl::moretoread()
 
 bool 	pqissl::cansend()
 {
+#ifdef PQISSL_DEBUG
 	rslog(RSL_DEBUG_ALL, pqisslzone, 
 		"pqissl::cansend() polling socket!");
+#endif
 
 	// Interestingly - This code might be portable....
 
