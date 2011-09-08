@@ -150,10 +150,10 @@ void AvatarWidget::refreshStatus()
 		{
 			StatusInfo statusInfo;
 
-			// No check of return value. Non existing status info is handled as offline.
 			if (mFlag.isOwnId) {
 				rsStatus->getOwnStatus(statusInfo);
 			} else {
+				// No check of return value. Non existing status info is handled as offline.
 				rsStatus->getStatus(mId, statusInfo);
 			}
 			updateStatus(QString::fromStdString(statusInfo.id), statusInfo.status);
