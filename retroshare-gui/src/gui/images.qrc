@@ -50,12 +50,14 @@
         <file>images/user/add_group256.png</file>
         <file>images/avatarstatus-bg-116.png</file>
         <file>images/avatarstatus-bg-online-116.png</file>
-        <file>images/avatarstatus-bg-away-116.png</file>    
+        <file>images/avatarstatus-bg-idle-116.png</file>
+        <file>images/avatarstatus-bg-away-116.png</file>
         <file>images/avatarstatus-bg-busy-116.png</file>
         <file>images/avatarstatus-bg-offline-116.png</file>
         <file>images/avatarstatus-bg-70.png</file>
         <file>images/avatarstatus-bg-online-70.png</file>
-        <file>images/avatarstatus-bg-away-70.png</file>    
+        <file>images/avatarstatus-bg-idle-70.png</file>
+        <file>images/avatarstatus-bg-away-70.png</file>
         <file>images/avatarstatus-bg-busy-70.png</file>
         <file>images/avatarstatus-bg-offline-70.png</file>
         <file>images/browse-looking.gif</file>

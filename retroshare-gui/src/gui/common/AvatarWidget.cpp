@@ -184,7 +184,7 @@ static QString getStatusFrame(bool small, int status)
 		case RS_STATUS_OFFLINE:
 			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-offline-116.png); }";
 		case RS_STATUS_INACTIVE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-away-116.png); }";
+			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-idle-116.png); }";
 		case RS_STATUS_ONLINE:
 			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-online-116.png); }";
 		case RS_STATUS_AWAY:
