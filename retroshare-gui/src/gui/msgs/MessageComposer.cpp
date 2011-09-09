@@ -1164,6 +1164,13 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
     mi.msg =   ui.msgText->toHtml().toStdWString();
 
+	if(ui.msgText->toHtml() == QTextDocument(ui.msgText->toPlainText()).toHtml())
+	 {
+		 mi.msg = ui.msgText->toPlainText().toStdWString() ;
+		 std::cerr << "Optimized forum message to " << mi.msg.length() << " bytes , instead of " << ui.msgText->toHtml().length() << std::endl;
+	 }
+
+
     /* check for existing title */
     if (bDraftbox == false && mi.title.empty()) {
         if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
