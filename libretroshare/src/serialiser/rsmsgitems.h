@@ -194,6 +194,7 @@ const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER = 0x0040;
 const uint32_t RS_MSG_FLAGS_REPLIED        = 0x0080;
 const uint32_t RS_MSG_FLAGS_FORWARDED      = 0x0100;
 const uint32_t RS_MSG_FLAGS_STAR           = 0x0200;
+const uint32_t RS_MSG_FLAGS_PARTIAL        = 0x0400;
 
 class RsMsgItem: public RsItem
 {

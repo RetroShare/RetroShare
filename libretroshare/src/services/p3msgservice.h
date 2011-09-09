@@ -104,8 +104,11 @@ int     checkOutgoingMessages();
 
 uint32_t getNewUniqueMsgId();
 int     sendMessage(RsMsgItem *item);
+void    checkSizeAndSendMessage(RsMsgItem *msg);
+
 int 	incomingMsgs();
 void    processMsg(RsMsgItem *mi);
+bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
 void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
@@ -123,6 +126,8 @@ void    initStandardTagTypes();
 	std::map<uint32_t, RsMsgItem *> imsg;
 		/* ones that haven't made it out yet! */
 	std::map<uint32_t, RsMsgItem *> msgOutgoing; 
+
+	std::map<std::string, RsMsgItem *> _pendingPartialMessages ;
 
 		/* List of notifications to post via Toaster */
 	std::list<MsgInfoSummary> msgNotifications;

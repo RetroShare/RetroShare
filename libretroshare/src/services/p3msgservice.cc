@@ -56,7 +56,7 @@ const int msgservicezone = 54319;
 
 p3MsgService::p3MsgService(p3LinkMgr *lm)
 	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
-	mLinkMgr(lm), mMsgMtx("p3MsgService"), msgChanged(1), mMsgUniqueId(1)
+	mLinkMgr(lm), mMsgMtx("p3MsgService"), msgChanged(1), mMsgUniqueId(time(NULL))
 {
 	addSerialType(new RsMsgSerialiser());
 
@@ -171,6 +171,48 @@ void p3MsgService::processMsg(RsMsgItem *mi)
 
 	/**** STACK UNLOCKED ***/
 }
+bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
+{
+	// Check is the item is ending an incomplete item.
+	//
+	std::map<std::string,RsMsgItem*>::iterator it = _pendingPartialMessages.find(ci->PeerId()) ;
+
+	bool ci_is_partial = ci->msgFlags & RS_MSG_FLAGS_PARTIAL ;
+
+	if(it != _pendingPartialMessages.end())
+	{
+//#ifdef CHAT_DEBUG
+		std::cerr << "Pending message found. Happending it." << std::endl;
+//#endif
+		// Yes, there is. Append the item to ci.
+
+		ci->message = it->second->message + ci->message ;
+		ci->msgFlags |= it->second->msgFlags ;
+
+		delete it->second ;
+
+		if(!ci_is_partial)
+			_pendingPartialMessages.erase(it) ;
+	}
+
+	if(ci_is_partial)
+	{
+//#ifdef CHAT_DEBUG
+		std::cerr << "Message is partial, storing for later." << std::endl;
+//#endif
+		// The item is a partial message. Push it, and wait for the rest.
+		//
+		_pendingPartialMessages[ci->PeerId()] = ci ;
+		return false ;
+	}
+	else
+	{
+//#ifdef CHAT_DEBUG
+		std::cerr << "Message is complete, using it now." << std::endl;
+//#endif
+		return true ;
+	}
+}
 
 int p3MsgService::incomingMsgs()
 {
@@ -183,7 +225,8 @@ int p3MsgService::incomingMsgs()
 		changed = true ;
 		++i;
 
-		processMsg(mi);
+		if(checkAndRebuildPartialMessage(mi))	// only returns true when a msg is complete.
+			processMsg(mi);
 	}
 	if(changed)
 		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
@@ -195,6 +238,34 @@ void    p3MsgService::statusChange(const std::list<pqipeer> &/*plist*/)
 {
 	/* should do it properly! */
 	checkOutgoingMessages();
+}
+
+void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
+{
+	// We check the message item, and possibly split it into multiple messages, if the message is too big.
+
+	static const uint32_t MAX_STRING_SIZE = 15000 ;
+
+	std::cerr << "Msg is size " << msg->message.size() << std::endl;
+
+	while(msg->message.size() > MAX_STRING_SIZE)
+	{
+		// chop off the first 15000 wchars
+
+		RsMsgItem *item = new RsMsgItem(*msg) ;
+
+		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
+		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
+
+		std::cerr << "  Chopped off msg of size " << item->message.size() << std::endl;
+
+		// Indicate that the message is to be continued.
+		//
+		item->msgFlags |= RS_MSG_FLAGS_PARTIAL ;
+		sendItem(item) ;
+	}
+	std::cerr << "  Chopped off msg of size " << msg->message.size() << std::endl;
+	sendItem(msg) ;
 }
 
 int     p3MsgService::checkOutgoingMessages()
@@ -241,7 +312,7 @@ int     p3MsgService::checkOutgoingMessages()
 				/* remove the pending flag */
 				(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 
-				sendItem(mit->second);
+				checkSizeAndSendMessage(mit->second) ;
 				toErase.push_back(mit->first);
 
 				changed = true ;
