@@ -186,6 +186,8 @@ bool p3Channels::getChannelMessage(std::string cId, std::string mId, ChannelMsgI
 	std::list<std::string> msgIds;
 	std::list<std::string>::iterator it;
 
+	processCacheOptReq(cId);
+
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
 	RsDistribMsg *msg = locked_getGroupMsg(cId, mId);

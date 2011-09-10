@@ -411,7 +411,6 @@ HEADERS +=	serialiser/rsbaseitems.h \
 HEADERS +=	services/p3channels.h \
 			services/p3chatservice.h \
 			services/p3disc.h \
-			services/p3distrib.h \
 			services/p3forums.h \
 			services/p3gamelauncher.h \
 			services/p3gameservice.h \
@@ -420,6 +419,9 @@ HEADERS +=	services/p3channels.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3tunnel.h
+		
+HEADERS +=	distrib/p3distrib.h \
+			distrib/p3distribsecurity.h 
 #	services/p3blogs.h \
 
 HEADERS +=	turtle/p3turtle.h \
@@ -538,7 +540,6 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 SOURCES +=	services/p3channels.cc \
 			services/p3chatservice.cc \
 			services/p3disc.cc \
-			services/p3distrib.cc \
 			services/p3forums.cc \
 			services/p3gamelauncher.cc \
 			services/p3msgservice.cc \
@@ -547,7 +548,9 @@ SOURCES +=	services/p3channels.cc \
 			services/p3statusservice.cc
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
 
-
+SOURCES += distrib/p3distrib.cc \
+		   distrib/p3distribsecurity.cc 
+ 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 
 #				turtle/turtlerouting.cc \

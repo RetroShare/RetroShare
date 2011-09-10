@@ -27,7 +27,7 @@
  */
 
 #include "retroshare/rsforums.h"
-#include "services/p3distrib.h"
+#include "distrib/p3distrib.h"
 #include "serialiser/rsforumitems.h"
 
 
