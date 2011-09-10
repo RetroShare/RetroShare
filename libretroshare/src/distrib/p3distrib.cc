@@ -1261,7 +1261,6 @@ void 	p3GroupDistrib::publishDistribGroups()
 				store->SendItem(grp); /* no delete */
 				grp->PeerId(tempPeerId);
 
-				grp->grpFlags &= (~RS_DISTRIB_UPDATE); // if this is an update, ensure flag is removed after publication
 			}
 
 			/* if they have public keys, publish these too */
@@ -1642,7 +1641,7 @@ bool p3GroupDistrib::attemptPublishKeysRecvd()
     for(; sit != toDelete.end(); sit++)
         mRecvdPubKeys.erase(*sit);
 
-
+    if(!toDelete.empty()) IndicateConfigChanged();
 
 
 	return true;
@@ -2663,8 +2662,7 @@ bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGr
 		return false;
 	}
 
-	if ((info.distribGroup) && 
-		((info.distribGroup->timestamp <= newGrp->timestamp) && !(newGrp->grpFlags & RS_DISTRIB_UPDATE)))
+	if ((info.distribGroup) && (newGrp->timestamp <= info.distribGroup->timestamp))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_checkGroupInfo() Group Data Old/Same";
@@ -2806,10 +2804,11 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
     gi_curr->grpChanged = true;
     mGroupsRepublish = true;
 
-    // this is removed afterwards
-    gi_curr->distribGroup->grpFlags |= RS_DISTRIB_UPDATE;
+
 
     delete[] data;
+    delete serialType;
+    EVP_MD_CTX_destroy(mdctx);
 
     return true;
 }
@@ -3286,7 +3285,7 @@ void p3GroupDistrib::getGrpListPubKeyAvailable(std::list<std::string>& grpList)
 }
 
 bool	p3GroupDistrib::locked_checkDistribMsg(
-				GroupInfo &gi, RsDistribMsg *msg)
+				GroupInfo &/*gi*/, RsDistribMsg *msg)
 {
 
 	/* check timestamp */
@@ -3421,7 +3420,7 @@ std::ostream &operator<<(std::ostream &out, const GroupInfo &info)
 	return out;
 }
 
-void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info, uint32_t flags, bool historical)
+void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info, uint32_t /*flags*/, bool /*historical*/)
 {
 	mGroupsChanged = true;
 	info.grpChanged = true;
@@ -3493,7 +3492,7 @@ std::ostream &operator<<(std::ostream &out, const RsDistribDummyMsg &msg)
 
 
 
-bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg, std::string id, bool historical)
+bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg, std::string /*id*/, bool /*historical*/)
 {
 	std::string threadId = msg->threadId;
 	std::string parentId = msg->parentId;
