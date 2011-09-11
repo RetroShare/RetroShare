@@ -302,7 +302,7 @@ void NetworkDialog::copyLink()
 
 	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
 
-	std::vector<RetroShareLink> urls;
+	QList<RetroShareLink> urls;
 	RetroShareLink link;
 	if (link.createPerson(peer_id)) {
 		urls.push_back(link);

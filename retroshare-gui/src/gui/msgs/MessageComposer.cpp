@@ -515,10 +515,10 @@ void MessageComposer::contextMenuMsgSendList(QPoint)
 
 void MessageComposer::pasteRecommended()
 {
-    std::vector<RetroShareLink> links;
+    QList<RetroShareLink> links;
     RSLinkClipboard::pasteLinks(links);
 
-    for (uint32_t i = 0; i < links.size(); i++) {
+    for (int i = 0; i < links.size(); i++) {
         if (links[i].valid() && links[i].type() == RetroShareLink::TYPE_FILE) {
             FileInfo fileInfo;
             fileInfo.fname = links[i].name().toStdString();

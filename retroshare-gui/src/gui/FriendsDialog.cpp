@@ -1227,7 +1227,7 @@ void FriendsDialog::recommendfriend()
 
 void FriendsDialog::pastePerson()
 {
-    RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
+    RSLinkClipboard::process(RetroShareLink::TYPE_PERSON);
 }
 
 void FriendsDialog::copyLink()
@@ -1238,7 +1238,7 @@ void FriendsDialog::copyLink()
         return;
     }
 
-    std::vector<RetroShareLink> urls;
+    QList<RetroShareLink> urls;
     RetroShareLink link;
     if (link.createPerson(c->data(COLUMN_DATA, ROLE_ID).toString().toStdString())) {
         urls.push_back(link);

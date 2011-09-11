@@ -167,6 +167,7 @@ public:
     bool fillComplete;
     int viewType;
     bool expandNewMessages;
+    std::string focusMsgId;
 
     QList<QTreeWidgetItem*> items;
     QList<QTreeWidgetItem*> itemToExpand;

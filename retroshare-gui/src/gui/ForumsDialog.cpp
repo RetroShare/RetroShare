@@ -749,6 +749,21 @@ void ForumsDialog::fillThreadFinished()
                 CleanupItems (thread->items);
             }
 
+            if (thread->focusMsgId.empty() == false) {
+                /* Search exisiting item */
+                QTreeWidgetItemIterator itemIterator(ui.threadTreeWidget);
+                QTreeWidgetItem *item = NULL;
+                while ((item = *itemIterator) != NULL) {
+                    itemIterator++;
+
+                    if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == thread->focusMsgId) {
+                        ui.threadTreeWidget->setCurrentItem(item);
+                        ui.threadTreeWidget->setFocus();
+                        break;
+                    }
+                }
+            }
+
             QList<QTreeWidgetItem*>::iterator Item;
             for (Item = thread->itemToExpand.begin(); Item != thread->itemToExpand.end(); Item++) {
                 if ((*Item)->isHidden() == false) {
@@ -1141,7 +1156,7 @@ void ForumsDialog::downloadAllFiles()
 		return;
 	}
 
-	RetroShareLink::process(urls, RetroShareLink::TYPE_FILE, true);
+	RetroShareLink::process(urls, RetroShareLink::TYPE_FILE/*, true*/);
 }
 
 // TODO
@@ -1319,7 +1334,7 @@ void ForumsDialog::copyForumLink()
     if (rsForums->getForumInfo(mCurrForumId, fi)) {
         RetroShareLink link;
         if (link.createForum(fi.forumId, "")) {
-            std::vector<RetroShareLink> urls;
+            QList<RetroShareLink> urls;
             urls.push_back(link);
             RSLinkClipboard::copyLinks(urls);
         }
@@ -1336,7 +1351,7 @@ void ForumsDialog::copyMessageLink()
     if (rsForums->getForumInfo(mCurrForumId, fi)) {
         RetroShareLink link;
         if (link.createForum(mCurrForumId, mCurrThreadId)) {
-            std::vector<RetroShareLink> urls;
+            QList<RetroShareLink> urls;
             urls.push_back(link);
             RSLinkClipboard::copyLinks(urls);
         }
@@ -1593,6 +1608,11 @@ bool ForumsDialog::navigate(const std::string& forumId, const std::string& msgId
     }
 
     if (msgId.empty()) {
+        return true;
+    }
+
+    if (fillThread && fillThread->isRunning()) {
+        fillThread->focusMsgId = msgId;
         return true;
     }
 

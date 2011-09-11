@@ -1131,7 +1131,7 @@ void TransfersDialog::cancel()
 
 void TransfersDialog::copyLink ()
 {
-	std::vector<RetroShareLink> links ;
+	QList<RetroShareLink> links ;
 
 	std::set<std::string> items;
 	std::set<std::string>::iterator it;
@@ -1274,7 +1274,7 @@ void TransfersDialog::updateDetailsDialog()
 
 void TransfersDialog::pasteLink()
 {
-    RSLinkClipboard::process(RetroShareLink::TYPE_FILE, RSLINK_PROCESS_NOTIFY_ERROR);
+	RSLinkClipboard::process(RetroShareLink::TYPE_FILE);
 }
 
 void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int> *rows)

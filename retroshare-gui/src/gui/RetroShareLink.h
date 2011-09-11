@@ -39,6 +39,7 @@
 
 #define RSLINK_PROCESS_NOTIFY_SUCCESS	1 // notify on success
 #define RSLINK_PROCESS_NOTIFY_ERROR		2 // notify on error
+#define RSLINK_PROCESS_NOTIFY_ASK		4 // ask for add the links
 
 #define RSLINK_PROCESS_NOTIFY_ALL      -1
 
@@ -91,9 +92,8 @@ class RetroShareLink
 
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
 
-		bool process(int flag);
-
-		static int process(QStringList &urls, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, bool notify = true);
+		static int process(QStringList &urls, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
+		static int process(QList<RetroShareLink> &links, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
 	private:
 		void fromString(const QString &url);
@@ -125,12 +125,12 @@ class RSLinkClipboard
 	public:
 		// Copy these links to the RS clipboard. Also copy them to the system clipboard
 		//
-		static void copyLinks(const std::vector<RetroShareLink>& links) ;
+		static void copyLinks(const QList<RetroShareLink>& links) ;
 
 		// Get the liste of pasted links, either from the internal RS links, or by default
 		// from the clipboard.
 		//
-		static void pasteLinks(std::vector<RetroShareLink> &links) ;
+		static void pasteLinks(QList<RetroShareLink> &links) ;
 
 		// Produces a list of links with no html structure.
 		static QString toString() ;
@@ -155,10 +155,10 @@ class RSLinkClipboard
 		// Returns the count of processed links
 		// Useful for menus.
 		//
-		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, int flag = RSLINK_PROCESS_NOTIFY_ALL);
+		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
 	private:
-		static void parseClipboard(std::vector<RetroShareLink> &links) ;
+		static void parseClipboard(QList<RetroShareLink> &links) ;
 };
 
 #endif

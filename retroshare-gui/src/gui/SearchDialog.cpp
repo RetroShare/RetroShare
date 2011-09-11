@@ -507,7 +507,7 @@ void SearchDialog::copySearchLink()
 
     RetroShareLink link;
     if (link.createSearch(keywords)) {
-        std::vector<RetroShareLink> urls;
+        QList<RetroShareLink> urls;
         urls.push_back(link);
         RSLinkClipboard::copyLinks(urls);
     }
@@ -1305,7 +1305,7 @@ void SearchDialog::copyResultLink()
     int numdls = itemsForCopy.size();
     QTreeWidgetItem * item;
 
-	 std::vector<RetroShareLink> urls ;
+	QList<RetroShareLink> urls ;
 
     for (int i = 0; i < numdls; ++i) 
 	 {

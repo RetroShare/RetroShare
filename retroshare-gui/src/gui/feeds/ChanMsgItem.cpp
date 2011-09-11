@@ -407,7 +407,7 @@ void ChanMsgItem::copyLink()
 	if (rsChannels->getChannelMessage(mChanId, mMsgId, cmi)) {
 		RetroShareLink link;
 		if (link.createChannel(cmi.channelId, cmi.msgId)) {
-			std::vector<RetroShareLink> urls;
+			QList<RetroShareLink> urls;
 			urls.push_back(link);
 			RSLinkClipboard::copyLinks(urls);
 		}

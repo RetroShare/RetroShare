@@ -227,7 +227,7 @@ void ChannelFeed::copyChannelLink()
     if (rsChannels->getChannelInfo(mChannelId, ci)) {
         RetroShareLink link;
         if (link.createChannel(ci.channelId, "")) {
-            std::vector<RetroShareLink> urls;
+            QList<RetroShareLink> urls;
             urls.push_back(link);
             RSLinkClipboard::copyLinks(urls);
         }

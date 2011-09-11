@@ -1030,7 +1030,7 @@ void MessengerWindow::recommendfriend()
 
 void MessengerWindow::pastePerson()
 {
-    RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
+    RSLinkClipboard::process(RetroShareLink::TYPE_PERSON);
 }
 #endif // MINIMAL_RSGUI
 

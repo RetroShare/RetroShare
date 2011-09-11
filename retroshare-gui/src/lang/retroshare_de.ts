@@ -6314,7 +6314,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+1087"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+1094"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -6399,7 +6399,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1176"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1183"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -6420,12 +6420,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+218"/>
-        <location line="+1653"/>
+        <location line="+1660"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-1652"/>
+        <location line="-1659"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Nachricht wurde noch nicht gesendet.
@@ -6473,7 +6473,7 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>Fwd:</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+82"/>
         <location line="+119"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -6668,7 +6668,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-2128"/>
+        <location line="-2135"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
@@ -7650,7 +7650,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+457"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+461"/>
         <source>Personal signature</source>
         <translation>Persönliche Unterschrift</translation>
     </message>
@@ -7795,7 +7795,7 @@ p, li { white-space: pre-wrap; }
         <translation>Leeren</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-288"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-292"/>
         <source>Deny friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -7825,12 +7825,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+219"/>
+        <location line="+223"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-323"/>
+        <location line="-326"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
     </message>
@@ -7840,7 +7840,7 @@ p, li { white-space: pre-wrap; }
         <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
-        <location line="+399"/>
+        <location line="+402"/>
         <source>yourself</source>
         <translation>selbst</translation>
     </message>
@@ -9475,132 +9475,280 @@ Lockdatei:
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+659"/>
         <source>File Request Confirmation</source>
-        <translation>Bestätigung der Dateianforderung</translation>
+        <translation type="obsolete">Bestätigung der Dateianforderung</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>The file has been added to your download list.</source>
-        <translation>Die Datei wurde zur Downloadliste hinzugefügt.</translation>
+        <translation type="obsolete">Die Datei wurde zur Downloadliste hinzugefügt.</translation>
     </message>
     <message>
-        <location line="+8"/>
         <location filename="../gui/msgs/MessageWidget.cpp" line="-295"/>
         <source>File Request canceled</source>
         <translation>Dateianforderung abgebrochen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageWidget.cpp" line="+0"/>
+        <location line="+0"/>
         <source>The following has not been added to your download list, because you already have it:
     </source>
         <translation>Die folgende Datei wurde nicht zur Downloadliste hinzugefügt, da Du diese schon hast:
 </translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+0"/>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation>Die Datei wurde nicht zur Downloadliste hinzugefügt, da Du sie schon hast.</translation>
+        <translation type="obsolete">Die Datei wurde nicht zur Downloadliste hinzugefügt, da Du sie schon hast.</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+10"/>
         <source>Friend Request Confirmation</source>
-        <translation>Freundanfrage bestätigen</translation>
+        <translation type="obsolete">Freundanfrage bestätigen</translation>
     </message>
     <message>
-        <location line="-10"/>
         <source>The friend is already in your list.</source>
-        <translation>Der Freund ist schon in Deiner Liste.</translation>
+        <translation type="obsolete">Der Freund ist schon in Deiner Liste.</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>The friend has been added to your list.</source>
-        <translation>Der Freund wurde zu Deiner Liste hinzugefügt.</translation>
+        <translation type="obsolete">Der Freund wurde zu Deiner Liste hinzugefügt.</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location line="+8"/>
         <source>Friend Request canceled</source>
-        <translation>Freundanfrage abgebrochen</translation>
+        <translation type="obsolete">Freundanfrage abgebrochen</translation>
     </message>
     <message>
-        <location line="-8"/>
         <source>The friend could not be added to your list.</source>
-        <translation>Der Freund konnte nicht zu Deiner Liste hinzugefügt werden.</translation>
+        <translation type="obsolete">Der Freund konnte nicht zu Deiner Liste hinzugefügt werden.</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>The friend could not be found.</source>
-        <translation>Der Freund konnte nicht gefunden werden.</translation>
+        <translation type="obsolete">Der Freund konnte nicht gefunden werden.</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <location line="+11"/>
         <source>Forum Request canceled</source>
-        <translation>Forumanfrage abgebrochen</translation>
+        <translation type="obsolete">Forumanfrage abgebrochen</translation>
     </message>
     <message>
-        <location line="-11"/>
         <source>The forum &quot;%1&quot; could not be found.</source>
-        <translation>Das Forum &quot;%1&quot; konnte nicht gefunden werden.</translation>
+        <translation type="obsolete">Das Forum &quot;%1&quot; konnte nicht gefunden werden.</translation>
     </message>
     <message>
-        <location line="+11"/>
         <source>The forum message in forum &quot;%1&quot; could not be found.</source>
-        <translation>Der Forumbeitrag im Forum &quot;%1&quot; konnte nicht gefunden werden.</translation>
+        <translation type="obsolete">Der Forumbeitrag im Forum &quot;%1&quot; konnte nicht gefunden werden.</translation>
     </message>
     <message>
-        <location line="+37"/>
         <source>The channel message in channel &quot;%1&quot; could not be found.</source>
-        <translation>Der Kanalbeitrag im Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
+        <translation type="obsolete">Der Kanalbeitrag im Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
     </message>
     <message>
-        <location line="+58"/>
         <source>The receipient of the message is unknown.</source>
-        <translation>Der Empfänger der Nachricht ist unbekannt.</translation>
+        <translation type="obsolete">Der Empfänger der Nachricht ist unbekannt.</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+695"/>
+        <source>Add file</source>
+        <translation>Datei hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Add files</source>
+        <translation>Dateien hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Add friend</source>
+        <translation>Freund hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Add friends</source>
+        <translation>Freunde hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Do you want to process the link ?</source>
+        <translation>Möchtest du den Link verarbeiten ?</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Do you want to process %1 links ?</source>
+        <translation>Möchtest du %1 Links verarbeiten ?</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Confirmation</source>
+        <translation>Bestätigung</translation>
+    </message>
+    <message>
+        <location line="+291"/>
         <source>%1 of %2 RetroShare links processed.</source>
         <translation>%1 von %2 RetroShare Links verarbeitet.</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Request Confirmation</source>
-        <translation>Anfrage bestätigen</translation>
+        <location line="+0"/>
+        <source>%1 of %2 RetroShare link processed.</source>
+        <translation>%1 von %2 RetroShare Link verarbeitet.</translation>
     </message>
     <message>
-        <location line="-104"/>
-        <location line="+11"/>
-        <source>Channel Request canceled</source>
-        <translation>Kanalanfrage abgebrochen</translation>
-    </message>
-    <message>
-        <location line="-11"/>
-        <source>The channel &quot;%1&quot; could not be found.</source>
-        <translation>Der Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
-    </message>
-    <message>
-        <location line="+62"/>
-        <source>Cannot send a message to a not accepted receipient &quot;%1&quot;.</source>
-        <translation>Nachricht kann nicht an den nicht akzeptierten Empfänger &quot;%1&quot; senden.</translation>
+        <location line="+6"/>
+        <source>File added</source>
+        <translation>Datei hinzugefügt</translation>
     </message>
     <message>
         <location line="+0"/>
+        <source>Files added</source>
+        <translation>Dateien hinzugefügt</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>File exist</source>
+        <translation>Datei vorhanden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Files exist</source>
+        <translation>Dateien vorhanden</translation>
+    </message>
+    <message>
         <location line="+7"/>
-        <source>Message Request canceled</source>
-        <translation>Nachrichtenanfrage abgebrochen</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>File Request Error</source>
-        <translation>Fehler bei der Dateianforderung</translation>
+        <source>Friend added</source>
+        <translation>Freund hinzugefügt</translation>
     </message>
     <message>
         <location line="+0"/>
+        <source>Friends added</source>
+        <translation>Freunde hinzugefügt</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Friend exist</source>
+        <translation>Freund vorhanden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Friends exist</source>
+        <translation>Freunde vorhanden</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Friend not added</source>
+        <translation>Freund nicht hinzugefügt</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Friends not added</source>
+        <translation>Freunde nicht hinzugefügt</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Friend not found</source>
+        <translation>Freund nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Friends not found</source>
+        <translation>Freunde nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Forum not found</source>
+        <translation>Forum nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Forums not found</source>
+        <translation>Foren nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Forum message not found</source>
+        <translation>Forumbeitrag nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Forum messages not found</source>
+        <translation>Forenbeiträge nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Channel not found</source>
+        <translation>Kanal nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Channels not found</source>
+        <translation>Kanäle nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Channel message not found</source>
+        <translation>Kanalbeitrag nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Channel messages not found</source>
+        <translation>Kanalbeiträge nicht gefunden</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Receipient not accepted</source>
+        <translation>Empfänger nicht akzeptiert</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Receipients not accepted</source>
+        <translation>Empfänger nicht akzeptiert</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unkown receipient</source>
+        <translation>Unbekannter Empfänger</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Unkown receipients</source>
+        <translation>Unbekannte Empfänger</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Malformed links</source>
+        <translation>Unbekannte Links</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid links</source>
+        <translation>Ungültige Links</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Result</source>
+        <translation>Ergebnis</translation>
+    </message>
+    <message>
+        <source>Request Confirmation</source>
+        <translation type="obsolete">Anfrage bestätigen</translation>
+    </message>
+    <message>
+        <source>Channel Request canceled</source>
+        <translation type="obsolete">Kanalanfrage abgebrochen</translation>
+    </message>
+    <message>
+        <source>The channel &quot;%1&quot; could not be found.</source>
+        <translation type="obsolete">Der Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
+    </message>
+    <message>
+        <source>Cannot send a message to a not accepted receipient &quot;%1&quot;.</source>
+        <translation type="obsolete">Nachricht kann nicht an den nicht akzeptierten Empfänger &quot;%1&quot; senden.</translation>
+    </message>
+    <message>
+        <source>Message Request canceled</source>
+        <translation type="obsolete">Nachrichtenanfrage abgebrochen</translation>
+    </message>
+    <message>
+        <source>File Request Error</source>
+        <translation type="obsolete">Fehler bei der Dateianforderung</translation>
+    </message>
+    <message>
         <source>The file link is malformed.</source>
-        <translation>Link ist fehlerhaft.</translation>
+        <translation type="obsolete">Link ist fehlerhaft.</translation>
     </message>
     <message>
         <location filename="../gui/elastic/node.cpp" line="+346"/>

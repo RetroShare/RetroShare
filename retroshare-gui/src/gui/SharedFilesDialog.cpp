@@ -446,7 +446,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
     else
         localModel->getDirDetailsFromSelect(lst, dirVec);
 
-	 std::vector<RetroShareLink> urls ;
+    QList<RetroShareLink> urls ;
 
     for (int i = 0, n = dirVec.size(); i < n; ++i)
     {

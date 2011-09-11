@@ -1549,5 +1549,7 @@ void MainWindow::linkActivated(const QUrl &url)
         return;
     }
 
-    link.process(RSLINK_PROCESS_NOTIFY_ERROR | RSLINK_PROCESS_NOTIFY_SUCCESS);
+    QList<RetroShareLink> links;
+    links.append(link);
+    RetroShareLink::process(links);
 }
