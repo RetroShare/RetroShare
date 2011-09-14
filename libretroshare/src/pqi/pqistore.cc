@@ -602,14 +602,14 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 	RsItem *item = rsSerialiser->deserialise(block, &readbytes);
 	free(block);
 
-#ifdef PQISTORE_DEBUG
 	if (item == NULL)
 	{
-	  	pqioutput(PQL_ALERT, pqistorezone,
+#ifdef PQISTORE_DEBUG
+		pqioutput(PQL_ALERT, pqistorezone,
 		  "pqistore::readPkt() Failed to create Item from store!");
+#endif
 		return 0;
 	}
-#endif
 
 	item->PeerId(mSrcId);
 	*item_out = item;
