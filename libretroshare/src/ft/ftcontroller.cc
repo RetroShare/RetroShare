@@ -800,6 +800,11 @@ bool ftController::completeFile(std::string hash)
 		// (csoler) I'm copying this because "delete fc->mTransfer" deletes the hash string!
 		std::string hash_to_suppress(fc->mTransfer->hash());
 
+		// This should be done that early, because once the file creator is
+		// deleted, it should not be accessed by the data multiplex anymore!
+		//
+		mDataplex->removeTransferModule(hash_to_suppress) ;
+
 		if (fc->mTransfer)
 		{
 			delete fc->mTransfer;
@@ -836,7 +841,6 @@ bool ftController::completeFile(std::string hash)
 		std::cerr << "CompleteFile(): size = " << size << std::endl ;
 #endif
 
-		mDataplex->removeTransferModule(hash_to_suppress) ;
 		flags = fc->mFlags ;
 
 		locked_queueRemove(it->second->mQueuePosition) ;
