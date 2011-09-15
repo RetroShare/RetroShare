@@ -880,6 +880,31 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 	for(uint32_t i=0;running && i<to_hash.size();++i)
 		for(uint32_t j=0;running && j<to_hash[i].fentries.size();++j,++cnt)
 		{
+#ifdef FIM_DEBUG
+			std::cerr << "Hashing file " << to_hash[i].fentries[j].name << " in dirpath=" << to_hash[i].dirpath << std::endl;
+#endif
+
+			// Before hashign each file, we test if the directory list has changed. If yes, we trigger 
+			// to update directoryMap, so that we can properly test if the current file 
+			// still is in a shared directory. If not, we skip it.
+			//
+			if(pendingDirs)
+			{
+				std::cerr << "Pending dir list changed. Updating!" << std::endl;
+				internal_setSharedDirectories() ;
+			}
+
+			{
+				RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
+
+				if(directoryMap.end() == directoryMap.find(RsDirUtil::getRootDir(to_hash[i].dirpath)))
+				{
+					std::cerr << "Early suppression of root directory. Hash cancelled" << std::endl;
+					total_size -= to_hash[i].fentries[j].size ;
+					continue ;
+				}
+			}
+
 			// This is a very basic progress notification. To be more complete and user friendly, one would
 			// rather send a completion ratio based on the size of files vs/ total size.
 			//
