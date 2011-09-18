@@ -24,8 +24,10 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QBuffer>
+#include <QMenu>
 #include <QDir>
 
+#include <gui/RetroShareLink.h>
 #include "CreateChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/misc.h"
@@ -45,12 +47,14 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(sendMsg()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));	
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
+	connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+
 	thumbNailCb->setVisible(false);
 	thumbNailCb->setEnabled(false);
 #ifdef CHANNELS_FRAME_CATCHER
@@ -63,6 +67,63 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	setAcceptDrops(true);
 	
 	newChannelMsg();
+}
+
+void CreateChannelMsg::contextMenu(QPoint /*point*/)
+{
+	QList<RetroShareLink> links ;
+	RSLinkClipboard::pasteLinks(links) ;
+
+	int n_file = 0 ;
+
+	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
+		if((*it).type() == RetroShareLink::TYPE_FILE)
+			n_file++ ;
+
+    QMenu contextMnu(this) ;
+
+    QAction *action ;
+	 
+	 if(n_file > 1)
+		 action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
+	 else
+		 action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+
+    action->setDisabled(n_file < 1) ;
+    contextMnu.exec(QCursor::pos());
+}
+
+void CreateChannelMsg::pasteLink()
+{
+	std::cerr << "Pasting links: " << std::endl;
+
+	QList<RetroShareLink> links,not_have ;
+	RSLinkClipboard::pasteLinks(links) ;
+
+	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
+		if((*it).type() == RetroShareLink::TYPE_FILE)
+		{
+			// 0 - check that we actually have the file!
+			//
+
+			std::cerr << "Pasting " << (*it).toString().toStdString() << std::endl;
+
+			FileInfo info ;
+			if(rsFiles->alreadyHaveFile( (*it).hash().toStdString(),info ) )
+				addAttachment((*it).hash().toStdString(), (*it).name().toStdString(), (*it).size(), true, "") ;
+			else
+				not_have.push_back( *it ) ;
+		}
+
+	if(!not_have.empty())
+	{
+		QString msg = tr("Channel security policy prevents you from posting files that you don't have. If you have these files, you need to share them before, or attach them explicitly:")+"<br/><br/>" ;
+
+		for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
+			msg += (*it).toString() + "<br/>" ;
+
+		QMessageBox::warning(NULL,tr("You can only post files that you do have"),msg) ;
+	}
 }
 
 CreateChannelMsg::~CreateChannelMsg(){

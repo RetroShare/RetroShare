@@ -61,6 +61,8 @@ private slots:
 
 	void cancelMsg();
 	void sendMsg();
+	void pasteLink() ;
+	void contextMenu(QPoint) ;
 	
 	void addThumbnail();
 	void allowAutoMediaThumbNail(bool);
