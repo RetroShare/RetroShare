@@ -34,7 +34,7 @@ class ftChunk
 	public:
 		typedef uint64_t ChunkId ;
 
-		ftChunk():offset(0), size(0), ts(0) {}
+		ftChunk():offset(0), size(0), ts(0),ref_cnt(NULL) {}
 
 		friend std::ostream& operator<<(std::ostream& o,const ftChunk& f) ;
 
@@ -42,6 +42,7 @@ class ftChunk
 		uint64_t size;		// size remaining to download
 		ChunkId  id ;		// id of the chunk. Equal to the starting offset of the chunk
 		time_t   ts;		// time of last data received
+		int	  *ref_cnt; // shared counter of number of sub-blocks. Used when a slice gets split.
 		std::string peer_id ;
 };
 
