@@ -91,7 +91,10 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 }
 
 ftTransferModule::~ftTransferModule()
-{}
+{
+	// Prevents deletion while called from another thread.
+  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+}
 
 
 bool ftTransferModule::setFileSources(const std::list<std::string>& peerIds)
@@ -278,6 +281,7 @@ uint32_t ftTransferModule::getDataRate(const std::string& peerId)
   //interface to client module
 bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data)
 {
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::recvFileData()";
 	std::cerr << " peerId: " << peerId;
@@ -287,35 +291,29 @@ bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, 
 	std::cerr << std::endl;
 #endif
 
-  bool ok = false;
+	bool ok = false;
 
-  {
-  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	std::map<std::string,peerInfo>::iterator mit;
+	mit = mFileSources.find(peerId);
 
-  	std::map<std::string,peerInfo>::iterator mit;
-  	mit = mFileSources.find(peerId);
-
-  	if (mit == mFileSources.end())
-  	{
+	if (mit == mFileSources.end())
+	{
 #ifdef FT_DEBUG
 		std::cerr << "ftTransferModule::recvFileData()";
 		std::cerr << " peer not found in sources";
 		std::cerr << std::endl;
 #endif
-    		return false;
-  	}
+		return false;
+	}
 	ok = locked_recvPeerData(mit->second, offset, chunk_size, data);
 
-  } /***** STACK MUTEX END ****/
+	locked_storeData(offset, chunk_size, data);
 
-  if (ok)
-  	storeData(offset, chunk_size, data);
-
-  free(data) ;
-  return ok;
+	free(data) ;
+	return ok;
 }
 
-void ftTransferModule::requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size)
+void ftTransferModule::locked_requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::requestData()";
@@ -330,10 +328,10 @@ void ftTransferModule::requestData(const std::string& peerId, uint64_t offset, u
   mMultiplexor->sendDataRequest(peerId, mHash, mSize, offset,chunk_size);
 }
 
-bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size)
+bool ftTransferModule::locked_getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size)
 {
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::getChunk()";
+	std::cerr << "ftTransferModule::locked_getChunk()";
 	std::cerr << " hash: " << mHash;
 	std::cerr << " size: " << mSize;
 	std::cerr << " offset: " << offset;
@@ -352,7 +350,7 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 #ifdef FT_DEBUG
 	if (val)
 	{
-		std::cerr << "ftTransferModule::getChunk()";
+		std::cerr << "ftTransferModule::locked_getChunk()";
 		std::cerr << " Answer: Chunk Available";
 	        std::cerr << " hash: " << mHash;
 	        std::cerr << " size: " << mSize;
@@ -363,7 +361,7 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 	}
 	else
 	{
-		std::cerr << "ftTransferModule::getChunk()";
+		std::cerr << "ftTransferModule::locked_getChunk()";
 		std::cerr << " Answer: No Chunk Available";
 		std::cerr << " peer map needed = " << source_peer_map_needed << std::endl ;
 		std::cerr << std::endl;
@@ -373,7 +371,7 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 	return val;
 }
 
-bool ftTransferModule::storeData(uint64_t offset, uint32_t chunk_size,void *data)
+bool ftTransferModule::locked_storeData(uint64_t offset, uint32_t chunk_size,void *data)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::storeData()";
@@ -391,36 +389,34 @@ bool ftTransferModule::queryInactive()
 {
 	/* NB: Not sure about this lock... might cause deadlock.
 	 */
-	{
-		RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
 #ifdef FT_DEBUG
-		std::cerr << "ftTransferModule::queryInactive()" << std::endl;
+	std::cerr << "ftTransferModule::queryInactive()" << std::endl;
 #endif
 
-		if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
-			mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
+	if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
+		mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 
-		if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
-		{
-			if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
-				mFlag = FT_TM_FLAG_COMPLETE; //file canceled by user
-			return false;
-		}
+	if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
+	{
+		if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
+			mFlag = FT_TM_FLAG_COMPLETE; //file canceled by user
+		return false;
+	}
 
-		if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
-			return false ;
+	if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
+		return false ;
 
-		std::map<std::string,peerInfo>::iterator mit;
-		for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
-		{
-			locked_tickPeerTransfer(mit->second);
-		}
-		if(mFileCreator->finished())	// transfer is complete
-		{
-			mFileStatus.stat = ftFileStatus::PQIFILE_CHECKING ;
-			mFlag = FT_TM_FLAG_CHECKING;      
-		}
+	std::map<std::string,peerInfo>::iterator mit;
+	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+	{
+		locked_tickPeerTransfer(mit->second);
+	}
+	if(mFileCreator->finished())	// transfer is complete
+	{
+		mFileStatus.stat = ftFileStatus::PQIFILE_CHECKING ;
+		mFlag = FT_TM_FLAG_CHECKING;      
 	}
 
 	return true; 
@@ -948,12 +944,12 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	uint64_t req_offset = 0;
 	uint32_t req_size =0 ;
 
-	if (getChunk(info.peerId,next_req,req_offset,req_size))
+	if (locked_getChunk(info.peerId,next_req,req_offset,req_size))
 	{
 		if (req_size > 0)
 		{
 			info.state = PQIPEER_DOWNLOADING;
-			requestData(info.peerId,req_offset,req_size);
+			locked_requestData(info.peerId,req_offset,req_size);
 
 			/* start next rtt measurement */
 			if (!info.rttActive)

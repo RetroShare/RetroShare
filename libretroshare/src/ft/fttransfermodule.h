@@ -148,13 +148,12 @@ public:
   void addCRC32Map(const CRC32Map& map) ;
 
   //interface to multiplex module
-  bool recvFileData(const std::string& peerId, uint64_t offset,
-			uint32_t chunk_size, void *data);
-  void requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size);
+  bool recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data);
+  void locked_requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size);
 
   //interface to file creator
-  bool getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size);
-  bool storeData(uint64_t offset, uint32_t chunk_size, void *data);
+  bool locked_getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size);
+  bool locked_storeData(uint64_t offset, uint32_t chunk_size, void *data);
 
   int tick();
 

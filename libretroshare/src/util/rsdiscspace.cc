@@ -44,6 +44,8 @@ uint32_t RsDiscSpace::_size_limit_mb 	= 100 ;
 uint32_t RsDiscSpace::_current_size[3] = { 10000,10000,10000 } ;
 bool		RsDiscSpace::_last_res[3] = { true,true,true };
 RsMutex 	RsDiscSpace::_mtx("RsDiscSpace") ;
+std::string RsDiscSpace::_partials_path = "" ;
+std::string RsDiscSpace::_download_path = "" ;
 
 bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, uint64_t& block_size)
 {
@@ -111,6 +113,18 @@ bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, 
 	return true ;
 }
 
+void RsDiscSpace::setDownloadPath(const std::string& path)
+{
+	RsStackMutex m(_mtx) ; // Locked
+	_download_path = path ;
+}
+
+void RsDiscSpace::setPartialsPath(const std::string& path)
+{
+	RsStackMutex m(_mtx) ; // Locked
+	_partials_path = path ;
+}
+
 bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 {
 	RsStackMutex m(_mtx) ; // Locked
@@ -133,15 +147,15 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 #endif
 		switch(loc)
 		{
-			case RS_DOWNLOAD_DIRECTORY: 	rs = crossSystemDiskStats(rsFiles->getDownloadDirectory().c_str(),free_blocks,block_size) ;
+			case RS_DOWNLOAD_DIRECTORY: 	rs = crossSystemDiskStats(_download_path.c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
-													std::cerr << "  path = " << rsFiles->getDownloadDirectory() << std::endl ;
+													std::cerr << "  path = " << _download_path << std::endl ;
 #endif
 													break ;
 
-			case RS_PARTIALS_DIRECTORY: 	rs = crossSystemDiskStats(rsFiles->getPartialsDirectory().c_str(),free_blocks,block_size) ;
+			case RS_PARTIALS_DIRECTORY: 	rs = crossSystemDiskStats(_partials_path.c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
-													std::cerr << "  path = " << rsFiles->getPartialsDirectory() << std::endl ;
+													std::cerr << "  path = " << _partials_path << std::endl ;
 #endif
 													break ;
 

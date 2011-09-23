@@ -46,6 +46,8 @@ class RsDiscSpace
 		static void setFreeSpaceLimit(uint32_t mega_bytes) ;
 		static uint32_t freeSpaceLimit() ;
 
+		static void setPartialsPath(const std::string& path) ;
+		static void setDownloadPath(const std::string& path) ;
 	private:
 		static bool crossSystemDiskStats(const char *file, uint64_t& free_blocks, uint64_t& block_size) ;
 
@@ -55,5 +57,8 @@ class RsDiscSpace
 		static uint32_t _size_limit_mb ;
 		static uint32_t _current_size[3] ;
 		static bool		_last_res[3] ;
+
+		static std::string _partials_path ;
+		static std::string _download_path ;
 };
 

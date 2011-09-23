@@ -1499,6 +1499,8 @@ bool 	ftController::setDownloadDirectory(std::string path)
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		mDownloadPath = RsDirUtil::convertPathToUnix(path);
+
+		RsDiscSpace::setDownloadPath(mDownloadPath) ;
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::setDownloadDirectory() Okay!";
 		std::cerr << std::endl;
@@ -1546,6 +1548,8 @@ bool 	ftController::setPartialsDirectory(std::string path)
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		mPartialsPath = path;
+
+		RsDiscSpace::setPartialsPath(path) ;
 
 #if 0 /*** FIX ME !!!**************/
 		/* move all existing files! */
