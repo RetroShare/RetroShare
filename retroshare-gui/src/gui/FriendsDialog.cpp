@@ -870,6 +870,8 @@ void  FriendsDialog::insertPeers()
             bool gpg_connected = false;
             bool gpg_online = false;
             bool gpg_hasPrivateChat = false;
+            int bestPeerState = 0;        // for gpg item
+            unsigned int bestRSState = 0; // for gpg item
             std::list<std::string> sslContacts;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
@@ -948,13 +950,55 @@ void  FriendsDialog::insertPeers()
                 QFont sslFont;
                 QColor sslColor;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                    // get the status info for this ssl id
+                    int peerState = 0;
+                    int rsState = 0;
+                    std::list<StatusInfo>::iterator it;
+                    for(it = statusInfo.begin(); it != statusInfo.end(); it++) {
+                        if(it->id == sslId){
+                            rsState = it->status;
+                            switch (rsState) {
+                            case RS_STATUS_INACTIVE:
+                                peerState = PEER_STATE_INACTIVE;
+                                break;
+
+                            case RS_STATUS_ONLINE:
+                                peerState = PEER_STATE_ONLINE;
+                                break;
+
+                            case RS_STATUS_AWAY:
+                                peerState = PEER_STATE_AWAY;
+                                break;
+
+                            case RS_STATUS_BUSY:
+                                peerState = PEER_STATE_BUSY;
+                                break;
+                            }
+
+                            /* find the best ssl contact for the gpg item */
+                            if (bestPeerState == 0 || peerState < bestPeerState) {
+                                /* first ssl contact or higher state */
+                                bestPeerState = peerState;
+                                bestRSState = rsState;
+                            } else if (peerState == bestPeerState) {
+                                /* equal state ... use first */
+                            }
+                            break;
+                        }
+                    }
+
                     sslItem->setHidden(false);
                     gpg_connected = true;
 
                     sslIcon = QIcon(":/images/connect_established.png");
 
-                    sslFont.setBold(true);
-                    sslColor = Qt::darkBlue;
+                    if (rsState == 0) {
+                        sslFont.setBold(true);
+                        sslColor = Qt::darkBlue;
+                    } else {
+                        sslFont = StatusDefs::font(rsState);
+                        sslColor = StatusDefs::textColor(rsState);
+                    }
                 } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
                     sslItem->setHidden(hideUnconnected);
                     gpg_online = true;
@@ -992,63 +1036,11 @@ void  FriendsDialog::insertPeers()
                 }
             }
 
-            int bestPeerState = 0;        // for gpg item
-            int i = 0;
             QIcon gpgIcon;
             if (gpg_connected) {
                 gpgItem->setHidden(false);
 
                 onlineCount++;
-
-                std::string bestSslId;        // for gpg item
-                unsigned int bestRSState = 0; // for gpg item
-
-                std::list<StatusInfo>::iterator it;
-                for(it = statusInfo.begin(); it != statusInfo.end() ; it++) {
-
-                    // don't forget the kids
-                    std::list<std::string>::iterator cont_it;
-                    for (cont_it = sslContacts.begin(); cont_it != sslContacts.end(); cont_it++) {
-
-                        if((it->id == *cont_it) && (rsPeers->isOnline(*cont_it))){
-
-                            int peerState = 0;
-
-                            switch (it->status) {
-                            case RS_STATUS_INACTIVE:
-                                peerState = PEER_STATE_INACTIVE;
-                                break;
-
-                            case RS_STATUS_ONLINE:
-                                peerState = PEER_STATE_ONLINE;
-                                break;
-
-                            case RS_STATUS_AWAY:
-                                peerState = PEER_STATE_AWAY;
-                                break;
-
-                            case RS_STATUS_BUSY:
-                                peerState = PEER_STATE_BUSY;
-                                break;
-                            }
-
-                            /* find the best ssl contact for the gpg item */
-                            if (bestPeerState == 0) {
-                                /* first ssl contact */
-                                bestPeerState = peerState;
-                                bestSslId = *cont_it;
-                                bestRSState = it->status;
-                            } else if (peerState < bestPeerState) {
-                                /* higher state */
-                                bestPeerState = peerState;
-                                bestSslId = *cont_it;
-                                bestRSState = it->status;
-                            } else if (peerState == bestPeerState) {
-                                /* equal state ... use first */
-                            }
-                        }
-                    }
-                }
 
                 if (bestPeerState == 0) {
                     // show as online
@@ -1058,7 +1050,7 @@ void  FriendsDialog::insertPeers()
 
                 QColor textColor = StatusDefs::textColor(bestRSState);
                 QFont font = StatusDefs::font(bestRSState);
-                for(i = 0; i < COLUMN_COUNT; i++) {
+                for(int i = 0; i < COLUMN_COUNT; i++) {
                     gpgItem->setTextColor(i, textColor);
                     gpgItem->setFont(i, font);
                 }
@@ -1086,7 +1078,7 @@ void  FriendsDialog::insertPeers()
 
                 QFont font;
                 font.setBold(true);
-                for(i = 0; i < COLUMN_COUNT; i++) {
+                for(int i = 0; i < COLUMN_COUNT; i++) {
                     gpgItem->setTextColor(i,(Qt::black));
                     gpgItem->setFont(i,font);
                 }
@@ -1103,7 +1095,7 @@ void  FriendsDialog::insertPeers()
 
                 QColor textColor = StatusDefs::textColor(RS_STATUS_OFFLINE);
                 QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
-                for(i = 0; i < COLUMN_COUNT; i++) {
+                for(int i = 0; i < COLUMN_COUNT; i++) {
                     gpgItem->setTextColor(i, textColor);
                     gpgItem->setFont(i, font);
                 }
