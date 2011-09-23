@@ -129,12 +129,6 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 {
 	RsStackMutex m(_mtx) ; // Locked
 
-	if(!rsFiles)			// 
-	{
-		std::cerr << "checkForDiscSpace(): ERROR: rsFiles is 0x0" << std::endl ;
-		return true ;
-	}
-
 	time_t now = time(NULL) ;
 
 	if(_last_check[loc]+DELAY_BETWEEN_CHECKS < now)
