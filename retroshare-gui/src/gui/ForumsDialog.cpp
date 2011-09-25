@@ -152,6 +152,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
     connect(ui.previousButton, SIGNAL(clicked()), this, SLOT(previousMessage()));
     connect(ui.nextButton, SIGNAL(clicked()), this, SLOT(nextMessage()));
+	 connect(ui.nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
+
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
@@ -1157,6 +1159,27 @@ void ForumsDialog::downloadAllFiles()
 	}
 
 	RetroShareLink::process(urls, RetroShareLink::TYPE_FILE/*, true*/);
+}
+
+void ForumsDialog::nextUnreadMessage()
+{
+    QTreeWidgetItem* currentItem = ui.threadTreeWidget->currentItem();
+    if( !currentItem )
+    {
+        currentItem = ui.threadTreeWidget->topLevelItem(0);
+        if( !currentItem )
+            return;
+    }
+
+    do
+    {
+        uint32_t status = currentItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+        if( IS_UNREAD(status) )
+        {
+            ui.threadTreeWidget->setCurrentItem(currentItem);
+            return;
+        }
+    } while( currentItem = ui.threadTreeWidget->itemBelow(currentItem) );
 }
 
 // TODO

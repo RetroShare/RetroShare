@@ -950,7 +950,7 @@ background: white;}</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
+          <item row="0" column="7">
            <widget class="QPushButton" name="expandButton">
             <property name="maximumSize">
              <size>
@@ -976,7 +976,7 @@ background: white;}</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="5">
+          <item row="0" column="6">
            <widget class="QPushButton" name="downloadButton">
             <property name="maximumSize">
              <size>
@@ -993,6 +993,25 @@ background: white;}</string>
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QPushButton" name="nextUnreadButton">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Next unread</string>
             </property>
            </widget>
           </item>

@@ -86,6 +86,7 @@ private slots:
 
     void previousMessage ();
     void nextMessage ();
+	 void nextUnreadMessage();
     void downloadAllFiles();
 
     void changedViewBox();
