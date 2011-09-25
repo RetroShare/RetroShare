@@ -354,7 +354,7 @@ void TextPage::updateOwnCert()
 //============================================================================
 //
 
-static void sendMail (std::string sAddress, std::string sSubject, std::string sBody)
+static void sendMail (QString sAddress, QString sSubject, QString sBody)
 {
 #ifdef Q_WS_WIN
     /* search and replace the end of lines with: "%0D%0A" */
@@ -364,20 +364,20 @@ static void sendMail (std::string sAddress, std::string sSubject, std::string sB
     }
 #endif
 
-    std::string mailstr = "mailto:" + sAddress;
-    mailstr += "?subject=" + sSubject;
-    mailstr += "&body=" + sBody;
+    QUrl url = QUrl("mailto:" + sAddress);
+    url.addEncodedQueryItem("subject", QUrl::toPercentEncoding(sSubject));
+    url.addEncodedQueryItem("body", QUrl::toPercentEncoding(sBody));
 
-    std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
+    std::cerr << "MAIL STRING:" << (std::string)url.toEncoded().constData() << std::endl;
 
     /* pass the url directly to QDesktopServices::openUrl */
-    QDesktopServices::openUrl (QUrl (QString::fromUtf8(mailstr.c_str())));
+    QDesktopServices::openUrl (url);
 }
 
 void 
 TextPage::runEmailClient()
 {
-    sendMail ("", tr("RetroShare Invite").toStdString(), userCertEdit->toPlainText().toStdString());
+    sendMail ("", tr("RetroShare Invite"), userCertEdit->toPlainText());
 }
 
 void TextPage::cleanFriendCert()
@@ -1300,10 +1300,10 @@ bool EmailPage::validatePage()
 
     if (mailaddresses.isEmpty() == false)
     {
-        std::string body = inviteTextEdit->toPlainText().toStdString();
-        body += "\n\n" + rsPeers->GetRetroshareInvite(false);
+        QString body = inviteTextEdit->toPlainText();
+        body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
 
-        sendMail (mailaddresses.toStdString(), subjectEdit->text().toStdString(), body);
+        sendMail (mailaddresses, subjectEdit->text(), body);
         return true;
     }
 
