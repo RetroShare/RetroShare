@@ -141,6 +141,32 @@ public:
 	}
 };
 
+class PriorityItem : public SortByNameItem
+{
+	public:
+		PriorityItem(QHeaderView *header) : SortByNameItem(header) {}
+
+		virtual bool operator<(const QStandardItem &other) const
+		{
+			const int role = model() ? model()->sortRole() : Qt::DisplayRole;
+
+			QString l = data(role).value<QString>();
+			QString r = other.data(role).value<QString>();
+
+			bool bl,br ;
+			int nl = l.toInt(&bl) ;
+			int nr = r.toInt(&br) ;
+
+			if(bl && br)
+				return nl < nr ;
+
+			if(bl ^ br)
+				return br ;
+
+			return SortByNameItem::operator<(other);
+		}
+};
+
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
@@ -580,6 +606,7 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
 
 		// change progress column to own class for sorting
 		DLListModel->setItem(row, PROGRESS, new ProgressItem (NULL));
+		DLListModel->setItem(row, PRIORITY, new PriorityItem (NULL));
 	}
 
 	DLListModel->setData(DLListModel->index(row, NAME), QVariant(name));
