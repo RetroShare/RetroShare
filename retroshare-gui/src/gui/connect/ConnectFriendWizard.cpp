@@ -358,10 +358,7 @@ static void sendMail (QString sAddress, QString sSubject, QString sBody)
 {
 #ifdef Q_WS_WIN
     /* search and replace the end of lines with: "%0D%0A" */
-    size_t loc;
-    while ((loc = sBody.find("\n")) != sBody.npos) {
-        sBody.replace(loc, 1, "%0D%0A");
-    }
+    sBody.replace("\n", "%0D%0A");
 #endif
 
     QUrl url = QUrl("mailto:" + sAddress);
