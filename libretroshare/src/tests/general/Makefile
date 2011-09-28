@@ -1,5 +1,6 @@
 
 RS_TOP_DIR = ../..
+DHT_TOP_DIR = ../../../../libbitdht/src
 ##### Define any flags that are needed for this section #######
 ###############################################################
 

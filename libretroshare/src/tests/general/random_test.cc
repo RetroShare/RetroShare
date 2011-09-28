@@ -2,6 +2,7 @@
 #include <fenv.h>
 #endif
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <stdlib.h>
 #include <math.h>
@@ -87,7 +88,7 @@ class myThread: public RsThread
 		{
 			// test that random numbers are regularly disposed
 			//
-			int N = 500 ;
+			int N = 5000 ;
 			int B = 8 ;
 
 			std::vector<int> buckets(B,0) ;
@@ -133,6 +134,11 @@ int main(int argc, char **argv)
 	feenableexcept(FE_DIVBYZERO) ;
 #endif
 	std::cerr << "Generating random 64 chars string (run that again to test that it's changing): " << RSRandom::random_alphaNumericString(64) << std::endl;
+	std::cerr << "Generating 10 random uint64_t:" << std::endl; 
+
+	for(int i=0;i<10;++i)
+	   std::cerr << std::hex << RSRandom::random_u64() << std::endl;
+
 	int nt = 10 ;	// number of threads.
 	std::vector<myThread *> threads(nt,(myThread*)NULL) ;
 

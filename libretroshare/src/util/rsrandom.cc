@@ -3,13 +3,26 @@
 #include <unistd.h>
 #include "rsrandom.h"
 
-uint32_t RSRandom::index = 0 ;
+#define RSRANDOM_USE_SSL
+
+#ifdef RSRANDOM_USE_SSL
+#include <openssl/rand.h>
+#endif
+uint32_t RSRandom::index = RSRandom::N ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx("RSRandom") ;
 
+// Random seed is called according to the following rules:
+// 	OpenSSL random bytes:
+// 			- on systems that only have /dev/urandom (linux, BSD, MacOS), we don't need to call the seed
+// 			- on windows, we need to
+// 	MT19937 pseudo random
+// 			- always seed.
+//
 #ifdef WINDOWS_SYS
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;
 #else
+#ifndef RSRANDOM_USE_SSL
   #ifdef __APPLE__
 	static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_mach_thread_np(pthread_self())*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
   #elif defined(__FreeBSD__)
@@ -19,6 +32,8 @@ static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self()
     static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
   #endif
 #endif
+#endif
+
 bool RSRandom::seed(uint32_t s) 
 {
 	RsStackMutex mtx(rndMtx) ;
@@ -30,11 +45,17 @@ bool RSRandom::seed(uint32_t s)
 	for (j=1; j<N; j++) 
 		MT[j] = (1812433253UL * (MT[j-1] ^ (MT[j-1] >> 30)) + j) & 0xffffffffUL ;
 
+#ifdef RSRANDOM_USE_SSL
+	RAND_seed((unsigned char *)&MT[0],N*sizeof(uint32_t)) ;
+#endif
 	return true ;
 }
 
 void RSRandom::locked_next_state() 
 {
+#ifdef RSRANDOM_USE_SSL
+	RAND_bytes((unsigned char *)&MT[0],N*sizeof(uint32_t)) ;
+#else
 	for(uint32_t i=0;i<N;++i)
 	{
 		uint32_t y = ((MT[i]) & UMASK) | ((MT[(i+1)%(int)N]) & LMASK) ;
@@ -44,6 +65,7 @@ void RSRandom::locked_next_state()
 		if((y & 1) == 1) 
 			MT[i] = MT[i] ^ 0x9908b0df ;
 	}
+#endif
 	index = 0 ;
 }
 
@@ -54,10 +76,12 @@ uint32_t RSRandom::random_u32()
 	{
 		RsStackMutex mtx(rndMtx) ;
 
-		y = MT[index++] ;
+		index++ ;
 
-		if(index == N)
+		if(index >= N)
 			locked_next_state();
+
+		y = MT[index] ;
 	}
 
 	// Tempering
