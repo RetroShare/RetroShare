@@ -12,6 +12,9 @@ static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self()
 #else
   #ifdef __APPLE__
 	static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_mach_thread_np(pthread_self())*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
+  #elif defined(__FreeBSD__)
+    // since this is completely insecure anyway, just kludge for now
+    static bool auto_seed = RSRandom::seed(time(NULL));
   #else
     static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
   #endif

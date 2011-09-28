@@ -146,6 +146,15 @@ macx {
 
 }
 
+freebsd-* {
+	INCLUDEPATH *= /usr/local/include/gpgme
+	LIBS *= ../../libretroshare/src/libretroshare.a
+        LIBS *= -lssl
+        LIBS *= -lgpgme
+        LIBS *= -lupnp
+        LIBS *= -lgnome-keyring
+}
+
 ############################## Common stuff ######################################
 
 # On Linux systems that alredy have libssl and libcrypto it is advisable
@@ -156,6 +165,10 @@ macx {
 bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
 	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+
+	#For FreeBSD to need to use these ones.
+	#LIBS += ../../libbitdht/src/libbitdht.a
+	#PRE_TARGETDEPS *= ../../libbitdht/src/libbitdht.a
 }
 
 win32 {

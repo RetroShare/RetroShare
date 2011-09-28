@@ -316,6 +316,18 @@ mac {
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
+freebsd-* {
+	INCLUDEPATH *= /usr/local/include/gpgme
+	INCLUDEPATH *= /usr/local/include/glib-2.0
+
+	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
+
+	#libupnp implementation files
+	HEADERS += upnp/UPnPBase.h
+	SOURCES += upnp/UPnPBase.cpp
+
+}
+
 ################################### COMMON stuff ##################################
 
 HEADERS +=	dbase/cachestrapper.h \

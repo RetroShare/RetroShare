@@ -32,11 +32,14 @@
 // - thread safe
 // - system independant
 // - fast
-// - cryptographically safe
+// - NOT CRYPTOGRAPHICALLY SAFE
+// - DO NOT USE FOR ANYTHING REQUIRING STRONG RANDOMNESS
 //
 // The implementation is adapted from the Mersenne Twister page of Wikipedia.
 //
 // 		http://en.wikipedia.org/wiki/Mersenne_twister
+
+// FIXME(ben): MT is not cryptographically safe.
 
 #include <vector>
 #include "util/bdthreads.h"

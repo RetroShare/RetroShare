@@ -19,8 +19,6 @@
 	#include <iomanip>
 #endif
 
-
-
 static const time_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
 ftFileProvider::ftFileProvider(const std::string& path, uint64_t size, const std::string& hash)

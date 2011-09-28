@@ -653,8 +653,6 @@ void DhtWindow::updateRelays()
 
 
 
-
-
 /****************************/
 
 
@@ -665,6 +663,25 @@ void DhtWindow::updateRelays()
 #define DTW_COL_FOUND	4
 #define DTW_COL_SEND	5
 #define DTW_COL_RECV	6
+
+class DhtTreeWidgetItem : public QTreeWidgetItem
+    {
+public:
+    virtual bool operator<(const QTreeWidgetItem &other) const
+	{
+	  int column = treeWidget()->sortColumn();
+	  if (column == DTW_COL_RECV || column == DTW_COL_SEND
+	      || column == DTW_COL_BUCKET)
+	      {
+	      QString t1 = text(column);
+	      QString t2 = other.text(column);
+	      t1 = t1.left(t1.indexOf(' '));
+	      t2 = t2.left(t2.indexOf(' '));
+	      return t1.toLong() < t2.toLong();
+	      }
+	  return text(column) < other.text(column);
+	}
+    };
 
 void DhtWindow::updateDhtPeers()
 {
@@ -698,7 +715,7 @@ void DhtWindow::updateDhtPeers()
 		QTreeWidgetItem *dht_item = NULL;
 
 		/* insert */
-		dht_item = new QTreeWidgetItem();
+		dht_item = new DhtTreeWidgetItem();
 
 		int dist = it->mBucket;
 		std::ostringstream buckstr;
