@@ -135,6 +135,8 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 		return 0;
 	}
 
+	sockaddr_clear(&(dpd->mDhtId.addr)); 
+
 	switch(status)
 	{
 		default:
@@ -151,12 +153,14 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 		case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
 			dpd->mDhtState = RSDHT_PEERDHT_UNREACHABLE;
+			dpd->mDhtId = *id; // set the IP:Port of the unreachable peer.
 			UnreachablePeerCallback_locked(id, status, dpd);
 
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_ONLINE:
 			dpd->mDhtState = RSDHT_PEERDHT_ONLINE;
+			dpd->mDhtId = *id; // set the IP:Port of the Online peer.
 			OnlinePeerCallback_locked(id, status, dpd);
 
 			break;
@@ -269,6 +273,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 		ca.mDestId = *id;
 		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
 
+		mActions.push_back(ca);
 		//ConnectCalloutTCPAttempt(dpd->mRsId, id->addr);
 	}
 

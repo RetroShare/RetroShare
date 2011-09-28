@@ -222,7 +222,7 @@ void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer)
 void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDetails &details)
 {
 	std::ostringstream out;
-	bdStdPrintNodeId(out, &(details.mDhtId.id));
+	bdStdPrintId(out, &(details.mDhtId));
 
 	status.mDhtId = out.str();
 	status.mRsId = details.mRsId;
