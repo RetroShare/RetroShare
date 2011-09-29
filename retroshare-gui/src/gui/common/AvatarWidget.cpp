@@ -61,7 +61,7 @@ static bool isSmall(const QSize &size)
 	return false;
 }
 
-void AvatarWidget::resizeEvent(QResizeEvent *event)
+void AvatarWidget::resizeEvent(QResizeEvent */*event*/)
 {
 	if (mFrameType == NO_FRAME) {
 		return;
@@ -81,7 +81,7 @@ void AvatarWidget::resizeEvent(QResizeEvent *event)
 	refreshStatus();
 }
 
-void AvatarWidget::mouseReleaseEvent(QMouseEvent *event)
+void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 {
 	if (mFlag.isOwnId) {
 		QByteArray ba;

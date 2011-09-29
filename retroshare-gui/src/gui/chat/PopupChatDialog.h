@@ -119,7 +119,7 @@ private:
     void addAttachment(std::string,int flag);
     void processSettings(bool bLoad);
 
-    void onPrivateChatChanged(int list, int type, bool initial = false);
+    void onPrivateChatChanged(int list, int type);
 
     QAction *actionTextBold;
     QAction *actionTextUnderline;

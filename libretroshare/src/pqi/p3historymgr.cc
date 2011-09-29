@@ -202,12 +202,12 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet*>(*it))) {
 			for (std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++) {
 				if (kit->key == "PUBLIC_ENABLE") {
-					mPublicEnable = (kit->value == "TRUE") ? TRUE : FALSE;
+					mPublicEnable = (kit->value == "TRUE") ? true : false;
 					continue;
 				}
 
 				if (kit->key == "PRIVATE_ENABLE") {
-					mPrivateEnable = (kit->value == "TRUE") ? TRUE : FALSE;
+					mPrivateEnable = (kit->value == "TRUE") ? true : false;
 					continue;
 				}
 

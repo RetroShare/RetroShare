@@ -204,7 +204,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
     ui.chattextEdit->installEventFilter(this);
 
     // add offline chat messages
-    onPrivateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD, true);
+    onPrivateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
 
 #ifdef RS_RELEASE_VERSION
     ui.attachPictureButton->setVisible(false);
@@ -482,7 +482,7 @@ void PopupChatDialog::activate()
     }
 }
 
-void PopupChatDialog::onPrivateChatChanged(int list, int type, bool initial /*= false*/)
+void PopupChatDialog::onPrivateChatChanged(int list, int type)
 {
     if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {
         switch (type) {
