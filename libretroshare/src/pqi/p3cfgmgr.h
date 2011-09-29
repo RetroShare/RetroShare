@@ -81,6 +81,7 @@ const uint32_t CONFIG_TYPE_AUTHSSL	 	 = 0x000C;
 const uint32_t CONFIG_TYPE_CHAT 	       = 0x0012;
 const uint32_t CONFIG_TYPE_STATUS 		 = 0x0013;
 const uint32_t CONFIG_TYPE_PLUGINS	 	 = 0x0014;
+const uint32_t CONFIG_TYPE_HISTORY 		 = 0x0015;
 
 /// turtle router
 const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;

@@ -27,8 +27,6 @@
 
 #include "mainpage.h"
 
-#include "im_history/IMHistoryKeeper.h"
-
 // states for sorting (equal values are possible)
 // used in BuildSortString - state + name
 #define PEER_STATE_ONLINE       1
@@ -173,7 +171,7 @@ signals:
 
 private:
     void processSettings(bool bLoad);
-    void addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message);
+    void addChatMsg(bool incoming, bool history, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message);
 
     void colorChanged(const QColor &c);
     void fontChanged(const QFont &font);
@@ -199,7 +197,6 @@ private:
     /* (2) Utility Fns */
     QTreeWidgetItem *getCurrentPeer();
 
-    IMHistoryKeeper historyKeeper;
     ChatStyle style;
 
     QColor mCurrentColor;

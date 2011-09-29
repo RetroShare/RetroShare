@@ -139,6 +139,7 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
 					retroshare/rsforums.h \
+					retroshare/rshistory.h \
 					retroshare/rsiface.h \
 					retroshare/rsinit.h \
 					retroshare/rsplugin.h \
@@ -368,6 +369,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqibin.h \
 			pqi/pqihandler.h \
 			pqi/pqihash.h \
+			pqi/p3historymgr.h \
 			pqi/pqiindic.h \
 			pqi/pqiipset.h \
 			pqi/pqilistener.h \
@@ -391,6 +393,7 @@ HEADERS +=	pqi/authssl.h \
 
 HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3face.h \
+			rsserver/p3history.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
 			rsserver/p3photo.h \
@@ -406,6 +409,7 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsdistribitems.h \
 			serialiser/rsforumitems.h \
 			serialiser/rsgameitems.h \
+			serialiser/rshistoryitems.h \
 			serialiser/rsmsgitems.h \
 			serialiser/rsphotoitems.h \
 			serialiser/rsserial.h \
@@ -490,6 +494,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqiarchive.cc \
 			pqi/pqibin.cc \
 			pqi/pqihandler.cc \
+			pqi/p3historymgr.cc \
 			pqi/pqiipset.cc \
 			pqi/pqiloopback.cc \
 			pqi/pqimonitor.cc \
@@ -512,6 +517,7 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3face-config.cc \
 			rsserver/p3face-msgs.cc \
 			rsserver/p3face-server.cc \
+			rsserver/p3history.cc \
 			rsserver/p3msgs.cc \
 			rsserver/p3peers.cc \
 			rsserver/p3photo.cc \
@@ -535,6 +541,7 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsdistribitems.cc \
 			serialiser/rsforumitems.cc \
 			serialiser/rsgameitems.cc \
+			serialiser/rshistoryitems.cc \
 			serialiser/rsmsgitems.cc \
 			serialiser/rsphotoitems.cc \
 			serialiser/rsserial.cc \

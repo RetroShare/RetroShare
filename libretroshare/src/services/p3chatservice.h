@@ -35,6 +35,7 @@
 #include "retroshare/rsmsgs.h"
 
 class p3LinkMgr;
+class p3HistoryMgr;
 
 //!The basic Chat service.
  /**
@@ -46,7 +47,7 @@ class p3LinkMgr;
 class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
-		p3ChatService(p3LinkMgr *cm);
+		p3ChatService(p3LinkMgr *cm, p3HistoryMgr *historyMgr);
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -65,14 +66,14 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		/*!
 		 * public chat sent to all peers
 		 */
-		int	sendPublicChat(std::wstring &msg);
+		int	sendPublicChat(const std::wstring &msg);
 
 		/********* RsMsgs ***********/
 		/*!
 		 * chat is sent to specifc peer
 		 * @param id peer to send chat msg to
 		 */
-		bool	sendPrivateChat(std::string &id, std::wstring &msg);
+		bool	sendPrivateChat(const std::string &id, const std::wstring &msg);
 
 		/*!
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
@@ -201,6 +202,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
 		p3LinkMgr *mLinkMgr;
+		p3HistoryMgr *mHistoryMgr;
 
 		std::list<RsChatMsgItem *> publicList;
 		std::list<RsChatMsgItem *> privateIncomingList;

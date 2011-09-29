@@ -277,11 +277,10 @@ void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
 	emit hashingInfoChanged(info);
 }
 
-//void NotifyQt::notifyChat()
-//{
-//	std::cerr << "Received chat notification" << std::endl ;
-//	return;
-//}
+void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
+{
+	emit historyChanged(msgId, type);
+}
 
 void NotifyQt::notifyListChange(int list, int type)
 {

@@ -37,6 +37,8 @@
 #define RSHTML_FORMATTEXT_EMBED_SMILEYS  1
 #define RSHTML_FORMATTEXT_EMBED_LINKS    2
 
+class QTextEdit;
+
 namespace RsHtml {
 
 
@@ -110,6 +112,8 @@ extern EmbedInHtmlImg defEmbedImg;
 
 QString formatText(const QString &text, unsigned int flag);
 bool    findAnchors(const QString &text, QStringList& urls);
+
+void optimizeHtml(QTextEdit *textEdit, QString &text);
 
 } // namespace RsHtml
 

@@ -1131,7 +1131,7 @@ p, li { white-space: pre-wrap; }
         <translation>Emoticons für privaten Chat</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+36"/>
         <source>Chat Font</source>
         <translation>Chat Schriftart</translation>
     </message>
@@ -1146,32 +1146,38 @@ p, li { white-space: pre-wrap; }
         <translation>Chat Schriftart:</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-60"/>
         <source>Enable Emoticons Group Chat</source>
         <translation>Emoticons für Gruppenchat</translation>
     </message>
     <message>
-        <location line="+34"/>
         <source>Chat History</source>
-        <translation>Chat History</translation>
+        <translation type="obsolete">Chat History</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+154"/>
+        <location line="+66"/>
         <source>Load number of messages (0 = off)</source>
         <translation>Lade Anzahl von Nachrichten (0 = aus)</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-120"/>
         <source>Group Chat</source>
         <translation>Gruppenchat</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+15"/>
+        <location line="+66"/>
+        <source>Number of saved messages (0 = unlimited)</source>
+        <translation>Anzahl der gespeicherten Nachrichten (0 = unbegrenzt)</translation>
+    </message>
+    <message>
+        <location line="-15"/>
         <source>Private Chat</source>
         <translation>Privater Chat</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+93"/>
         <source>Group chat</source>
         <translation>Gruppenchat</translation>
     </message>
@@ -1181,27 +1187,31 @@ p, li { white-space: pre-wrap; }
         <translation>Privater Chat</translation>
     </message>
     <message>
-        <location line="-354"/>
+        <location line="-422"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location line="+118"/>
         <source>Enable Group Chat History</source>
-        <translation>Chat Verlauf für Gruppenchat</translation>
+        <translation type="obsolete">Chat Verlauf für Gruppenchat</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+38"/>
         <source>Send message with Ctrl+Return</source>
         <translation>Sende Nachricht mit Strg+Enter</translation>
     </message>
     <message>
-        <location line="-17"/>
         <source>Enable Private Chat History</source>
-        <translation>Chat Verlauf für privaten Chat</translation>
+        <translation type="obsolete">Chat Verlauf für privaten Chat</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+96"/>
+        <location line="+66"/>
+        <source>Enable</source>
+        <translation>Aktiviert</translation>
+    </message>
+    <message>
+        <location line="+74"/>
         <source>Style</source>
         <translation>Stil</translation>
     </message>
@@ -1227,12 +1237,13 @@ p, li { white-space: pre-wrap; }
         <translation>Beschreibung:</translation>
     </message>
     <message>
-        <location line="-93"/>
+        <location line="-528"/>
+        <location line="+435"/>
         <source>History</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+197"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+204"/>
         <source>Incoming message in history</source>
         <translation>Eingehehende Nachricht aus dem Verlauf</translation>
     </message>
@@ -2166,7 +2177,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;Neuer Kanalbeitrag&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+36"/>
         <source>Channel Post</source>
         <translation>Kanalbeitrag</translation>
     </message>
@@ -2236,7 +2247,27 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+162"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+88"/>
+        <source>Paste RetroShare Links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished">RetroShare Link einfügen</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>You can only post files that you do have</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+98"/>
         <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -3862,7 +3893,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+872"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3878,7 +3909,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1257"/>
+        <location line="-1272"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4021,7 +4052,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+146"/>
-        <location line="+1032"/>
+        <location line="+1047"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -4049,7 +4080,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1019"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1034"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4070,7 +4101,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1399"/>
+        <location line="+1419"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -4184,7 +4215,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/FriendsDialog.cpp" line="+451"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+452"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -4455,7 +4486,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+131"/>
         <source>Do you want to remove this Friend?</source>
-        <translation>Willst du diesen Freund entfernen?</translation>
+        <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -4469,9 +4500,9 @@ p, li { white-space: pre-wrap; }
         <translation>Neuer Gruppenchat</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+230"/>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Willst Du wirklich den Nachrichtenverlauf physisch löschen?</translation>
+        <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -5710,7 +5741,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+32"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+389"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+383"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -6116,7 +6147,7 @@ Die folgenden Wege sind möglich:</translation>
     <message>
         <location line="+859"/>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation>Willst Du RetroShare wirklich beenden?</translation>
+        <translation>Möchtest du RetroShare wirklich beenden?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6161,7 +6192,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+833"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+832"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
@@ -6314,7 +6345,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+1094"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+1091"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -6399,7 +6430,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1183"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1180"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -6420,12 +6451,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+218"/>
-        <location line="+1660"/>
+        <location line="+1657"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-1659"/>
+        <location line="-1656"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Nachricht wurde noch nicht gesendet.
@@ -6473,7 +6504,7 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>Fwd:</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+79"/>
         <location line="+119"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -6634,7 +6665,7 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
         <translation>Nachricht noch nicht versandt.
-Willst Du die Nachricht speichern ?</translation>
+Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -6647,7 +6678,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+111"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -6668,7 +6699,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-2135"/>
+        <location line="-2124"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
@@ -8751,7 +8782,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+740"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+709"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -8763,7 +8794,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+88"/>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Willst Du wirklich den Nachrichtenverlauf physisch löschen?</translation>
+        <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -8891,10 +8922,10 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-659"/>
+        <location line="-647"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
+        <translation>Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="-445"/>
@@ -8902,7 +8933,7 @@ Do you want to send them a Message instead</source>
         <translation>Bild anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+698"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+686"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -8922,7 +8953,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-664"/>
+        <location line="-652"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -10729,7 +10760,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+42"/>
         <source>Do you want to remove this Friend?</source>
-        <translation>Willst du diesen Freund entfernen?</translation>
+        <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
         <location line="+76"/>

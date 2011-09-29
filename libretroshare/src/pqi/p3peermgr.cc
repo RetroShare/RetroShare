@@ -30,6 +30,7 @@
 #include "pqi/p3peermgr.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
+#include "pqi/p3historymgr.h"
 
 //#include "pqi/p3dhtmgr.h" // Only need it for constants.
 //#include "tcponudp/tou.h"
@@ -109,6 +110,10 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+		mLinkMgr = NULL;
+		mNetMgr = NULL;
+		mHistoryMgr = NULL;
+
 		/* setup basics of own state */
 		mOwnState.id = AuthSSL::getAuthSSL()->OwnId();
 		mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
@@ -130,10 +135,11 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 	return;
 }
 
-void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL  *netMgr)
+void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr, p3HistoryMgr *historyMgr)
 {
 	mLinkMgr = linkMgr;
 	mNetMgr = netMgr;
+	mHistoryMgr = historyMgr;
 }
 
 void p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
@@ -537,6 +543,7 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 		{
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
 			{
+				mHistoryMgr->clear(it->second.id);
 				mFriendList.erase(it);
 			}
 		}

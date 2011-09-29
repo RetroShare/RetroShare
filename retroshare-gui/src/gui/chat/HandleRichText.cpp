@@ -23,6 +23,8 @@
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
 
+#include <iostream>
+
 namespace RsHtml {
 
 EmbedInHtmlImg defEmbedImg;
@@ -213,6 +215,58 @@ bool findAnchors(const QString &text, QStringList& urls)
 	findElements(doc, body, "a", "href", urls);
 
 	return true;
+}
+
+static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
+{
+	QDomNodeList children = currentElement.childNodes();
+	for (uint index = 0; index < children.length(); ) {
+		QDomNode node = children.item(index);
+		if (node.isElement()) {
+			QDomElement element = node.toElement();
+			if (element.tagName().toLower() == "head") {
+				// remove head
+				currentElement.removeChild(node);
+				continue;
+			}
+			QDomNode style = element.attributes().namedItem("style");
+			if (style.isAttr()) {
+				QDomAttr attr = style.toAttr();
+				// compress style attribute
+				QString value = attr.value().simplified();
+				value.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+				value.replace("; ", ";");
+				attr.setValue(value);
+			}
+			optimizeHtml(doc, element);
+		}
+		++index;
+	}
+}
+
+void optimizeHtml(QTextEdit *textEdit, QString &text)
+{
+	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
+		text = textEdit->toPlainText();
+		std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
+		return;
+	}
+
+	text = textEdit->toHtml();
+
+	// remove doctype
+	text.remove(QRegExp("<!DOCTYPE[^>]*>"));
+
+	QDomDocument doc;
+	if (doc.setContent(text) == false) {
+		return;
+	}
+
+	QDomElement body = doc.documentElement();
+	optimizeHtml(doc, body);
+	text = doc.toString(-1);
+
+	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
 }
 
 } // namespace RsHtml

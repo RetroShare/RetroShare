@@ -27,13 +27,13 @@
 #include <QThread>
 
 #include <retroshare/rsmsgs.h>
-#include "IMHistoryKeeper.h"
 #include "gui/chat/ChatStyle.h"
 
 #include "ui_ImHistoryBrowser.h"
 
 class QTextEdit;
 class ImHistoryBrowserCreateItemsThread;
+class HistoryMsg;
 
 class ImHistoryBrowser : public QDialog
 {
@@ -43,7 +43,7 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent = 0, Qt::WFlags flags = 0);
+    ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 
@@ -54,9 +54,7 @@ private slots:
     void createThreadFinished();
     void createThreadProgress(int current, int count);
 
-    void historyAdd(IMHistoryItem item);
-    void historyRemove(IMHistoryItem item);
-    void historyClear();
+    void historyChanged(uint msgId, int type);
 
     void filterRegExpChanged();
     void clearFilter();
@@ -69,14 +67,15 @@ private slots:
     void clearHistory();
     void sendMessage();
 
-    void privateChatChanged(int list, int type);
 
 private:
-    QListWidgetItem *createItem(IMHistoryItem &item);
-    void fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item);
+    void historyAdd(HistoryMsg& msg);
+
+    QListWidgetItem *createItem(HistoryMsg& msg);
+    void fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg);
     void filterItems(QListWidgetItem *item = NULL);
 
-    void getSelectedItems(QList<int> &items);
+    void getSelectedItems(std::list<uint32_t> &items);
 
     ImHistoryBrowserCreateItemsThread *m_createThread;
 
@@ -84,11 +83,9 @@ private:
     bool m_isPrivateChat;
     QTextEdit *textEdit;
     bool embedSmileys;
-    IMHistoryKeeper &historyKeeper;
     ChatStyle style;
 
-    std::list<ChatInfo> m_savedOfflineChat;
-    QList<IMHistoryItem> m_itemsAddedOnLoad;
+    QList<HistoryMsg> itemsAddedOnLoad;
 
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;
@@ -99,7 +96,7 @@ class ImHistoryBrowserCreateItemsThread : public QThread
     Q_OBJECT
 
 public:
-    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, IMHistoryKeeper &histKeeper);
+    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const std::string& peerId);
     ~ImHistoryBrowserCreateItemsThread();
 
     void run();
@@ -113,8 +110,8 @@ public:
     QList<QListWidgetItem*> m_items;
 
 private:
-    IMHistoryKeeper &m_historyKeeper;
     ImHistoryBrowser *m_historyBrowser;
+    std::string m_peerId;
     volatile bool stopped;
 };
 

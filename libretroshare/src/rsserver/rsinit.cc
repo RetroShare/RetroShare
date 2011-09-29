@@ -1703,6 +1703,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "pqi/pqisslpersongrp.h"
 #include "pqi/pqiloopback.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/p3historymgr.h"
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -1741,6 +1742,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
 #include "rsserver/p3status.h"
+#include "rsserver/p3history.h"
 #include "rsserver/p3serverconfig.h"
 
 #include "retroshare/rsgame.h"
@@ -1850,11 +1852,14 @@ int RsServer::StartupRetroShare()
 	/* Setup Notify Early - So we can use it. */
 	rsNotify = new p3Notify();
 
+	/* History Manager */
+	mHistoryMgr = new p3HistoryMgr();
+
 	mPeerMgr = new p3PeerMgrIMPL();
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 	
-	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
+	mPeerMgr->setManagers(mLinkMgr, mNetMgr, mHistoryMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 	
         //load all the SSL certs as friends
@@ -2048,7 +2053,7 @@ int RsServer::StartupRetroShare()
 	ad = new p3disc(mPeerMgr, mLinkMgr, pqih);
 #ifndef MINIMAL_LIBRS
 	msgSrv = new p3MsgService(mLinkMgr);
-	chatSrv = new p3ChatService(mLinkMgr);
+	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
 	mStatusSrv = new p3StatusService(mLinkMgr);
 #endif // MINIMAL_LIBRS
 
@@ -2155,7 +2160,8 @@ int RsServer::StartupRetroShare()
 #ifndef MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
-#ifdef RS_USE_BLOGS	
+	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
+#ifdef RS_USE_BLOGS
 	mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
 #endif
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
@@ -2335,6 +2341,7 @@ int RsServer::StartupRetroShare()
 	rsBlogs = mBlogs;
 #endif
 	rsStatus = new p3Status(mStatusSrv);
+	rsHistory = new p3History(mHistoryMgr);
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;

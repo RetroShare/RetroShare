@@ -29,6 +29,7 @@
 #include "pqi/pqinotify.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
+#include "pqi/p3historymgr.h"
 
 #include "services/p3chatservice.h"
 
@@ -42,8 +43,8 @@
  *
  */
 
-p3ChatService::p3ChatService(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) 
+p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
+	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	addSerialType(new RsChatSerialiser());
 
@@ -67,7 +68,7 @@ int	p3ChatService::status()
 
 /***************** Chat Stuff **********************/
 
-int     p3ChatService::sendPublicChat(std::wstring &msg)
+int     p3ChatService::sendPublicChat(const std::wstring &msg)
 {
 	/* go through all the peers */
 
@@ -76,7 +77,8 @@ int     p3ChatService::sendPublicChat(std::wstring &msg)
 	mLinkMgr->getOnlineList(ids);
 
 	/* add in own id -> so get reflection */
-	ids.push_back(mLinkMgr->getOwnId());
+	std::string ownId = mLinkMgr->getOwnId();
+	ids.push_back(ownId);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sendChat()";
@@ -92,7 +94,7 @@ int     p3ChatService::sendPublicChat(std::wstring &msg)
 		ci->sendTime = time(NULL);
 		ci->recvTime = ci->sendTime;
 		ci->message = msg;
-	
+
 #ifdef CHAT_DEBUG
 		std::cerr << "p3ChatService::sendChat() Item:";
 		std::cerr << std::endl;
@@ -100,6 +102,9 @@ int     p3ChatService::sendPublicChat(std::wstring &msg)
 		std::cerr << std::endl;
 #endif
 
+		if (*it == ownId) {
+			mHistoryMgr->addMessage(false, "", ownId, ci);
+		}
 		sendItem(ci);
 	}
 
@@ -220,7 +225,7 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 	sendItem(msg) ;
 }
 
-bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
+bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)
 {
 	// make chat item....
 #ifdef CHAT_DEBUG
@@ -277,6 +282,8 @@ bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
 	ci->print(std::cerr);
 	std::cerr << std::endl;
 #endif
+
+	mHistoryMgr->addMessage(false, id, mLinkMgr->getOwnId(), ci);
 
 	checkSizeAndSendMessage(ci);
 
@@ -428,9 +435,16 @@ void p3ChatService::receiveChatQueue()
 					if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
 						privateChanged = true;
 						privateIncomingList.push_back(ci);	// don't delete the item !!
+
+						mHistoryMgr->addMessage(true, ci->PeerId(), ci->PeerId(), ci);
 					} else {
 						publicChanged = true;
 						publicList.push_back(ci);	// don't delete the item !!
+
+						if (ci->PeerId() != mLinkMgr->getOwnId()) {
+							/* not from loop back */
+							mHistoryMgr->addMessage(true, "", ci->PeerId(), ci);
+						}
 					}
 				} /* UNLOCK */
 			}
@@ -1088,12 +1102,16 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 				if (privateOutgoingList.size()) {
 					RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+					std::string ownId = mLinkMgr->getOwnId();
+
 					std::list<RsChatMsgItem *>::iterator cit = privateOutgoingList.begin();
 					while (cit != privateOutgoingList.end()) {
 						RsChatMsgItem *c = *cit;
 
 						if (c->PeerId() == it->id) {
-							sendItem(c); // delete item
+							mHistoryMgr->addMessage(false, c->PeerId(), ownId, c);
+
+							checkSizeAndSendMessage(c); // delete item
 
 							changed = true;
 

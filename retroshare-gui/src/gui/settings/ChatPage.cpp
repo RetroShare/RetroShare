@@ -27,6 +27,8 @@
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
 
+#include <retroshare/rshistory.h>
+
 #define VARIANT_STANDARD    "Standard"
 
 static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWidget, QComboBox *comboBox, QString &styleVariant)
@@ -96,19 +98,22 @@ bool
 ChatPage::save(QString &/*errmsg*/)
 {
     Settings->beginGroup(QString("Chat"));
-
     Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), ui.checkBox_emoteprivchat->isChecked());
     Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), ui.checkBox_emotegroupchat->isChecked());
-    Settings->setValue(QString::fromUtf8("GroupChat_History"), ui.checkBox_groupchathistory->isChecked());
-    Settings->setValue(QString::fromUtf8("PrivateChat_History"), ui.checkBox_privatechathistory->isChecked());
     Settings->endGroup();
 
     Settings->setChatScreenFont(fontTempChat.toString());
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 
-    Settings->setPublicChatHistoryCount(ui.groupchatspinBox->value());
-    Settings->setPrivateChatHistoryCount(ui.privatchatspinBox->value());
+    Settings->setPublicChatHistoryCount(ui.publicChatLoadCount->value());
+    Settings->setPrivateChatHistoryCount(ui.privateChatLoadCount->value());
+
+    rsHistory->setEnable(true, ui.publicChatEnable->isChecked());
+    rsHistory->setEnable(false, ui.privateChatEnable->isChecked());
+
+    rsHistory->setSaveCount(true, ui.publicChatSaveCount->value());
+    rsHistory->setSaveCount(false, ui.privateChatSaveCount->value());
 
     ChatStyleInfo info;
     QListWidgetItem *item = ui.publicList->currentItem();
@@ -146,20 +151,22 @@ void
 ChatPage::load()
 {
     Settings->beginGroup(QString("Chat"));
-
     ui.checkBox_emoteprivchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
     ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
-    ui.checkBox_groupchathistory->setChecked(Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
-    ui.checkBox_privatechathistory->setChecked(Settings->value(QString::fromUtf8("PrivateChat_History"), true).toBool());
-
     Settings->endGroup();
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
 
-    ui.groupchatspinBox->setValue(Settings->getPublicChatHistoryCount());
-    ui.privatchatspinBox->setValue(Settings->getPrivateChatHistoryCount());
+    ui.publicChatLoadCount->setValue(Settings->getPublicChatHistoryCount());
+    ui.privateChatLoadCount->setValue(Settings->getPrivateChatHistoryCount());
+
+    ui.publicChatEnable->setChecked(rsHistory->getEnable(true));
+    ui.privateChatEnable->setChecked(rsHistory->getEnable(false));
+
+    ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(true));
+    ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(false));
 
     ui.labelChatFontPreview->setText(fontTempChat.rawName());
     ui.labelChatFontPreview->setFont(fontTempChat);

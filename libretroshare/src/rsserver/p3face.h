@@ -48,7 +48,7 @@
 class p3PeerMgrIMPL;
 class p3LinkMgrIMPL;
 class p3NetMgrIMPL;
-
+class p3HistoryMgr;
 
 /* The Main Interface Class - for controlling the server */
 
@@ -157,6 +157,7 @@ class RsServer: public RsControl, public RsThread
 		p3PeerMgrIMPL *mPeerMgr;
 		p3LinkMgrIMPL *mLinkMgr;
 		p3NetMgrIMPL *mNetMgr;
+		p3HistoryMgr *mHistoryMgr;
 
 		pqipersongrp *pqih;
 

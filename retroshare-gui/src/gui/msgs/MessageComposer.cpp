@@ -56,6 +56,7 @@
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/chat/HandleRichText.h"
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
@@ -1164,12 +1165,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
     mi.msg =   ui.msgText->toHtml().toStdWString();
 
-	if(ui.msgText->toHtml() == QTextDocument(ui.msgText->toPlainText()).toHtml())
-	 {
-		 mi.msg = ui.msgText->toPlainText().toStdWString() ;
-		 std::cerr << "Optimized forum message to " << mi.msg.length() << " bytes , instead of " << ui.msgText->toHtml().length() << std::endl;
-	 }
-
+    QString text;
+    RsHtml::optimizeHtml(ui.msgText, text);
+    mi.msg = text.toStdWString() ;
 
     /* check for existing title */
     if (bDraftbox == false && mi.title.empty()) {

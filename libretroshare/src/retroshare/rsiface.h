@@ -185,7 +185,6 @@ class NotifyBase
 	virtual void notifyListPreChange(int list, int type) { (void) list; (void) type; return; }
 	virtual void notifyListChange(int list, int type) { (void) list; (void) type; return; }
 	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
-	virtual void notifyChat() { return; }
 	virtual void notifyChatStatus(const std::string& /* peer_id */, const std::string& /* status_string */ ,bool /* is_private */) {}
 	virtual void notifyCustomState(const std::string& /* peer_id */, const std::string& /* status_string */) {}
 	virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo) { (void) type; (void)fileinfo; }
@@ -202,6 +201,7 @@ class NotifyBase
 	virtual void notifyDiscInfoChanged() {}
 	virtual void notifyDownloadComplete(const std::string& /* fileHash */) {};
 	virtual void notifyDownloadCompleteCount(uint32_t /* count */) {};
+	virtual void notifyHistoryChanged(uint32_t /* msgId */, int /* type */) {}
 
 	virtual bool askForPassword(const std::string& /* key_details */, bool /* prev_is_bad */, std::string& /* password */ ) { return false ;}
 };

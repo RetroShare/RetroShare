@@ -40,6 +40,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rshistory.h>
 #include <retroshare/rsnotify.h>
 #include "settings/rsharesettings.h"
 #include "notifyqt.h"
@@ -198,15 +199,15 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
 
-    if (Settings->valueFromGroup("Chat", QString::fromUtf8("GroupChat_History"), true).toBool()) {
-        historyKeeper.init(QString::fromStdString(RsInit::RsProfileConfigDirectory()) + "/chatPublic.xml");
-
+    if (rsHistory->getEnable(true)) {
         int messageCount = Settings->getPublicChatHistoryCount();
         if (messageCount > 0) {
-            QList<IMHistoryItem> historyItems;
-            historyKeeper.getMessages(historyItems, messageCount);
-            foreach(IMHistoryItem item, historyItems) {
-                addChatMsg(item.incoming, true, item.name, item.recvTime, item.messageText);
+            std::list<HistoryMsg> historyMsgs;
+            rsHistory->getMessages("", historyMsgs, messageCount);
+
+            std::list<HistoryMsg>::iterator it;
+            for (it = historyMsgs.begin(); it != historyMsgs.end(); it++) {
+                addChatMsg(it->incoming, true, QString::fromUtf8(it->peerName.c_str()), QDateTime::fromTime_t(it->sendTime), QDateTime::fromTime_t(it->recvTime), QString::fromUtf8(it->message.c_str()));
             }
         }
     }
@@ -1429,12 +1430,12 @@ void FriendsDialog::publicChatChanged(int type)
     }
 }
 
-void FriendsDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message)
+void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message)
 {
     unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
 
     // embed smileys ?
-    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool()) {
+    if (Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool()) {
         formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
     }
 
@@ -1452,7 +1453,7 @@ void FriendsDialog::addChatMsg(bool incoming, bool history, QString &name, QDate
             type = ChatStyle::FORMATMSG_OUTGOING;
         }
     }
-    QString formatMsg = style.formatMessage(type, name, recvTime, message, formatFlag);
+    QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, message, formatFlag);
 
     ui.msgText->append(formatMsg);
 }
@@ -1509,8 +1510,7 @@ void FriendsDialog::insertChat()
                 emit notifyGroupChat(tr("New group chat"), notifyMsg);
         }
 
-        historyKeeper.addMessage(incoming, it->rsid, name, sendTime, recvTime, msg);
-        addChatMsg(incoming, false, name, recvTime, msg);
+        addChatMsg(incoming, false, name, sendTime, recvTime, msg);
     }
 }
 
@@ -1555,7 +1555,9 @@ void FriendsDialog::sendMsg()
         return;
     }
 
-    std::wstring message = lineWidget->toHtml().toStdWString();
+    QString text;
+    RsHtml::optimizeHtml(lineWidget, text);
+    std::wstring message = text.toStdWString();
 
 #ifdef FRIENDS_DEBUG
     std::string msg(message.begin(), message.end());
@@ -1737,7 +1739,7 @@ void FriendsDialog::on_actionDelete_Chat_History_triggered()
 {
     if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
         on_actionClear_Chat_History_triggered();
-        historyKeeper.clear();
+        rsHistory->clear("");
     }
 }
 
@@ -2066,7 +2068,7 @@ void FriendsDialog::peerSortIndicatorChanged(int column, Qt::SortOrder)
 
 void FriendsDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser("", historyKeeper, ui.lineEdit, this);
+    ImHistoryBrowser imBrowser("", ui.lineEdit, this);
     imBrowser.exec();
 }
 

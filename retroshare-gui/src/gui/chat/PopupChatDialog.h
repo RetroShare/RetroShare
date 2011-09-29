@@ -32,7 +32,6 @@ class AttachFileItem;
 class ChatInfo;
 
 #include <retroshare/rsmsgs.h>
-#include "gui/im_history/IMHistoryKeeper.h"
 #include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
 
@@ -77,7 +76,7 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 
     void insertChatMsgs();
-    void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
+    void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
 
 private slots:
     void pasteLink() ;
@@ -135,16 +134,15 @@ private:
     QColor mCurrentColor;
     QFont  mCurrentFont;
 
-    std::list<ChatInfo> m_savedOfflineChat;
+    std::list<ChatInfo> savedOfflineChat;
     QString wholeChat;
     QString fileName;
 
     bool newMessages;
     bool typing;
     int peerStatus;
-    IMHistoryKeeper historyKeeper;
     ChatStyle chatStyle;
-    bool m_manualDelete;
+    bool manualDelete;
 
     RSStyle style;
 

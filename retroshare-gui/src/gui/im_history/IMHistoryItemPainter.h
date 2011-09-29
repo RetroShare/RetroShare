@@ -26,8 +26,6 @@
 #include <QString>
 #include <QStyleOption>
 
-#include "IMHistoryItem.h"
-
 class QPainter;
 
 class IMHistoryItemPainter

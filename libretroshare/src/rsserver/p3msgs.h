@@ -80,7 +80,7 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
 	   */
-	  virtual void getAvatarData(std::string pid,unsigned char *& data,int& size);
+	  virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& size);
 
 	  /*!
 	   * sets clients avatar, image data should be in jpeg format
@@ -111,13 +111,13 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * public chat sent to all peers
 	   */
-	  virtual	bool	sendPublicChat(std::wstring msg);
+	  virtual	bool	sendPublicChat(const std::wstring& msg);
 
 	  /*!
 	   * chat is sent to specifc peer
 	   * @param id peer to send chat msg to
 	   */
-	  virtual	bool	sendPrivateChat(std::string id, std::wstring msg);
+	  virtual	bool	sendPrivateChat(const std::string& id, const std::wstring& msg);
 
 	  /*!
 	   * returns the count of messages in public or private queue
@@ -145,19 +145,19 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * @param chats ref to list of received private chats is stored here
 	   */
-	  virtual	bool	getPrivateChatQueue(bool incoming, std::string id, std::list<ChatInfo> &chats);
+	  virtual	bool	getPrivateChatQueue(bool incoming, const std::string& id, std::list<ChatInfo> &chats);
 
 	  /*!
 	   * @param clear private chat queue
 	   */
-	  virtual	bool	clearPrivateChatQueue(bool incoming, std::string id);
+	  virtual	bool	clearPrivateChatQueue(bool incoming, const std::string& id);
 
 	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat
 	   * @param peer_id peer to send status string to
 	   * @param status_string immediate status to send
 	   */
-	  virtual void    sendStatusString(const std::string& peer_id,const std::string& status_string) ;
+	  virtual void    sendStatusString(const std::string& peer_id, const std::string& status_string) ;
 
 	  /*!
 	   * sends immediate status to all peers

@@ -125,7 +125,7 @@ public:
 #define RS_CHAT_PRIVATE 			0x0002
 #define RS_CHAT_AVATAR_AVAILABLE 	0x0004
 
-class ChatInfo 
+class ChatInfo
 {
 	public:
 	std::string rsid;
@@ -140,6 +140,7 @@ std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
 //std::ostream &operator<<(std::ostream &out, const MsgTagInfo);
 //std::ostream &operator<<(std::ostream &out, const MsgTagType);
 
+bool operator==(const ChatInfo&, const ChatInfo&);
 
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
@@ -183,14 +184,14 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
 /****************************************/
 	/* Chat */
-virtual	bool   sendPublicChat(std::wstring msg) = 0;
-virtual	bool   sendPrivateChat(std::string id, std::wstring msg) = 0;
+virtual	bool   sendPublicChat(const std::wstring& msg) = 0;
+virtual	bool   sendPrivateChat(const std::string& id, const std::wstring& msg) = 0;
 virtual int    getPublicChatQueueCount() = 0;
 virtual	bool   getPublicChatQueue(std::list<ChatInfo> &chats) = 0;
 virtual int    getPrivateChatQueueCount(bool incoming) = 0;
 virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids) = 0;
-virtual	bool   getPrivateChatQueue(bool incoming, std::string id, std::list<ChatInfo> &chats) = 0;
-virtual	bool   clearPrivateChatQueue(bool incoming, std::string id) = 0;
+virtual	bool   getPrivateChatQueue(bool incoming, const std::string& id, std::list<ChatInfo> &chats) = 0;
+virtual	bool   clearPrivateChatQueue(bool incoming, const std::string& id) = 0;
 virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
 
@@ -199,7 +200,7 @@ virtual std::string getCustomStateString() = 0 ;
 virtual std::string getCustomStateString(const std::string& peer_id) = 0 ;
 
 // get avatar data for peer pid
-virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;
+virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& size) = 0 ;
 // set own avatar data 
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;

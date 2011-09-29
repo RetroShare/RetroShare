@@ -34,16 +34,18 @@
 #include "IMHistoryItemPainter.h"
 
 #include "rshare.h"
+#include <retroshare/rshistory.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 
-#define ROLE_HIID      Qt::UserRole
+#define ROLE_MSGID     Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
 #define ROLE_OFFLINE   Qt::UserRole + 2
 
-ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, IMHistoryKeeper &histKeeper)
-    : QThread(parent), m_historyKeeper(histKeeper)
+ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const std::string& peerId)
+    : QThread(parent)
 {
+    m_peerId = peerId;
     m_historyBrowser = parent;
     stopped = false;
 }
@@ -68,17 +70,18 @@ void ImHistoryBrowserCreateItemsThread::stop()
 
 void ImHistoryBrowserCreateItemsThread::run()
 {
-    QList<IMHistoryItem> historyItems;
-    m_historyKeeper.getMessages(historyItems, 0);
+    std::list<HistoryMsg> historyMsgs;
+    rsHistory->getMessages(m_peerId, historyMsgs, 0);
 
-    int count = historyItems.count();
+    int count = historyMsgs.size();
     int current = 0;
 
-    foreach(IMHistoryItem item, historyItems) {
+    std::list<HistoryMsg>::iterator it;
+    for (it = historyMsgs.begin(); it != historyMsgs.end(); it++) {
         if (stopped) {
             break;
         }
-        QListWidgetItem *itemWidget = m_historyBrowser->createItem(item);
+        QListWidgetItem *itemWidget = m_historyBrowser->createItem(*it);
         if (itemWidget) {
             m_items.push_back(itemWidget);
             emit progress(++current, count);
@@ -87,8 +90,8 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags), historyKeeper(histKeeper)
+ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent, Qt::WFlags flags)
+  : QDialog(parent, flags)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
@@ -97,9 +100,7 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &h
     m_isPrivateChat = !m_peerId.empty();
     textEdit = edit;
 
-    connect(&historyKeeper, SIGNAL(historyAdd(IMHistoryItem)), this, SLOT(historyAdd(IMHistoryItem)));
-    connect(&historyKeeper, SIGNAL(historyRemove(IMHistoryItem)), this, SLOT(historyRemove(IMHistoryItem)));
-    connect(&historyKeeper, SIGNAL(historyClear()), this, SLOT(historyClear()));
+    connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
 
     connect(ui.clearFilterButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
@@ -109,8 +110,6 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &h
 
     connect(ui.listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
-
-    connect(NotifyQt::getInstance(), SIGNAL(privateChatChanged(int,int)), this, SLOT(privateChatChanged(int,int)));
 
     ui.clearFilterButton->hide();
 
@@ -125,9 +124,6 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &h
 
     ui.listWidget->setItemDelegate(new IMHistoryItemDelegate);
 
-    // call once
-    privateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
-
     QByteArray geometry = Settings->valueFromGroup("HistorieBrowser", "Geometry", QByteArray()).toByteArray();
     if (geometry.isEmpty() == false) {
         restoreGeometry(geometry);
@@ -138,7 +134,7 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &h
 
     ui.listWidget->installEventFilter(this);
 
-    m_createThread = new ImHistoryBrowserCreateItemsThread(this, historyKeeper);
+    m_createThread = new ImHistoryBrowserCreateItemsThread(this, m_peerId);
     connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
     connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
     m_createThread->start();
@@ -178,11 +174,11 @@ void ImHistoryBrowser::createThreadFinished()
             m_createThread->deleteLater();
             m_createThread = NULL;
 
-            QList<IMHistoryItem>::iterator histIt;
-            for (histIt = m_itemsAddedOnLoad.begin(); histIt != m_itemsAddedOnLoad.end(); histIt++) {
+            QList<HistoryMsg>::iterator histIt;
+            for (histIt = itemsAddedOnLoad.begin(); histIt != itemsAddedOnLoad.end(); histIt++) {
                 historyAdd(*histIt);
             }
-            m_itemsAddedOnLoad.clear();
+            itemsAddedOnLoad.clear();
         }
     }
 }
@@ -210,39 +206,56 @@ bool ImHistoryBrowser::eventFilter(QObject *obj, QEvent *event)
     return QDialog::eventFilter(obj, event);
 }
 
-void ImHistoryBrowser::historyAdd(IMHistoryItem item)
+void ImHistoryBrowser::historyAdd(HistoryMsg& msg)
 {
     if (m_createThread) {
         // create later
-        m_itemsAddedOnLoad.push_back(item);
+        itemsAddedOnLoad.push_back(msg);
         return;
     }
 
-    QListWidgetItem *itemWidget = createItem(item);
+    QListWidgetItem *itemWidget = createItem(msg);
     if (itemWidget) {
         ui.listWidget->addItem(itemWidget);
         filterItems(itemWidget);
     }
 }
 
-void ImHistoryBrowser::historyRemove(IMHistoryItem item)
+void ImHistoryBrowser::historyChanged(uint msgId, int type)
 {
-    int count = ui.listWidget->count();
-    for (int i = 0; i < count; i++) {
-        QListWidgetItem *itemWidget = ui.listWidget->item(i);
-        if (itemWidget->data(ROLE_HIID).toString().toInt() == item.hiid) {
-            delete(ui.listWidget->takeItem(i));
-            break;
+    if (type == NOTIFY_TYPE_ADD) {
+        /* history message added */
+        HistoryMsg msg;
+        if (rsHistory->getMessage(msgId, msg) == false) {
+            return;
         }
+
+        historyAdd(msg);
+
+        return;
+    }
+
+    if (type == NOTIFY_TYPE_DEL) {
+        /* history message removed */
+        int count = ui.listWidget->count();
+        for (int i = 0; i < count; i++) {
+            QListWidgetItem *itemWidget = ui.listWidget->item(i);
+            if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
+                delete(ui.listWidget->takeItem(i));
+                break;
+            }
+        }
+        return;
+    }
+
+    if (type == NOTIFY_TYPE_MOD) {
+        /* clear history */
+        ui.listWidget->clear();
+        return;
     }
 }
 
-void ImHistoryBrowser::historyClear()
-{
-    ui.listWidget->clear();
-}
-
-void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item)
+void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
 {
     unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
 
@@ -250,49 +263,30 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item
         formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
     }
 
-    std::list<ChatInfo>::iterator offineChatIt;
-    for(offineChatIt = m_savedOfflineChat.begin(); offineChatIt != m_savedOfflineChat.end(); offineChatIt++) {
-        /* are they public? */
-        if ((offineChatIt->chatflags & RS_CHAT_PRIVATE) == 0) {
-            /* this should not happen */
-            continue;
-        }
-
-        QDateTime sendTime = QDateTime::fromTime_t(offineChatIt->sendTime);
-        QString message = QString::fromStdWString(offineChatIt->msg);
-
-        if (IMHistoryKeeper::compareItem(item, false, offineChatIt->rsid, sendTime, message)) {
-            break;
-        }
-    }
-
     ChatStyle::enumFormatMessage type;
-    if (offineChatIt == m_savedOfflineChat.end()) {
-        if (item.incoming) {
-            type = ChatStyle::FORMATMSG_INCOMING;
-        } else {
-            type = ChatStyle::FORMATMSG_OUTGOING;
-        }
+    if (msg.incoming) {
+        type = ChatStyle::FORMATMSG_INCOMING;
     } else {
-        type = ChatStyle::FORMATMSG_OOUTGOING;
+        type = ChatStyle::FORMATMSG_OUTGOING;
     }
 
-    QString formatMsg = style.formatMessage(type, item.name, item.sendTime, item.messageText, formatFlag);
+    QString messageText = QString::fromUtf8(msg.message.c_str());
+    QString formatMsg = style.formatMessage(type, QString::fromUtf8(msg.peerName.c_str()), QDateTime::fromTime_t(msg.sendTime), messageText, formatFlag);
 
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
-    itemWidget->setData(ROLE_HIID, item.hiid);
+    itemWidget->setData(ROLE_MSGID, msg.msgId);
     itemWidget->setData(ROLE_OFFLINE, (type == ChatStyle::FORMATMSG_OOUTGOING) ? true : false);
 
     /* calculate plain text */
     QTextDocument doc;
-    doc.setHtml(item.messageText);
+    doc.setHtml(messageText);
     itemWidget->setData(ROLE_PLAINTEXT, doc.toPlainText());
 }
 
-QListWidgetItem *ImHistoryBrowser::createItem(IMHistoryItem &item)
+QListWidgetItem *ImHistoryBrowser::createItem(HistoryMsg& msg)
 {
     QListWidgetItem *itemWidget = new QListWidgetItem;
-    fillItem(itemWidget, item);
+    fillItem(itemWidget, msg);
     return itemWidget;
 }
 
@@ -346,7 +340,7 @@ void ImHistoryBrowser::filterItems(QListWidgetItem *item)
     }
 }
 
-void ImHistoryBrowser::getSelectedItems(QList<int> &items)
+void ImHistoryBrowser::getSelectedItems(std::list<uint32_t> &items)
 {
     QList<QListWidgetItem*> itemWidgets = ui.listWidget->selectedItems();
 
@@ -356,16 +350,16 @@ void ImHistoryBrowser::getSelectedItems(QList<int> &items)
         if (item->isHidden()) {
             continue;
         }
-        items.append(item->data(ROLE_HIID).toString().toInt());
+        items.push_back(item->data(ROLE_MSGID).toString().toInt());
     }
 }
 
 void ImHistoryBrowser::itemSelectionChanged()
 {
-    QList<int> hiids;
-    getSelectedItems(hiids);
+    std::list<uint32_t> msgIds;
+    getSelectedItems(msgIds);
 
-    if (hiids.size()) {
+    if (msgIds.size()) {
         // activate buttons
         ui.copyButton->setEnabled(true);
         ui.removeButton->setEnabled(true);
@@ -378,8 +372,8 @@ void ImHistoryBrowser::itemSelectionChanged()
 
 void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
 {
-    QList<int> hiids;
-    getSelectedItems(hiids);
+    std::list<uint32_t> msgIds;
+    getSelectedItems(msgIds);
 
     QListWidgetItem *currentItem = ui.listWidget->currentItem();
 
@@ -400,7 +394,7 @@ void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
         }
     }
 
-    if (hiids.size()) {
+    if (msgIds.size()) {
         connect(selectAll, SIGNAL(triggered()), ui.listWidget, SLOT(selectAll()));
         connect(copyMessage, SIGNAL(triggered()), this, SLOT(copyMessage()));
         connect(removeMessages, SIGNAL(triggered()), this, SLOT(removeMessages()));
@@ -429,11 +423,11 @@ void ImHistoryBrowser::copyMessage()
 {
     QListWidgetItem *currentItem = ui.listWidget->currentItem();
     if (currentItem) {
-        int hiid = currentItem->data(ROLE_HIID).toString().toInt();
-        IMHistoryItem item;
-        if (historyKeeper.getMessage(hiid, item)) {
+        uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
+        HistoryMsg msg;
+        if (rsHistory->getMessage(msgId, msg)) {
             QTextDocument doc;
-            doc.setHtml(item.messageText);
+            doc.setHtml(QString::fromUtf8(msg.message.c_str()));
             QApplication::clipboard()->setText(doc.toPlainText());
         }
     }
@@ -441,15 +435,15 @@ void ImHistoryBrowser::copyMessage()
 
 void ImHistoryBrowser::removeMessages()
 {
-    QList<int> hiids;
-    getSelectedItems(hiids);
+    std::list<uint32_t> msgIds;
+    getSelectedItems(msgIds);
 
-    historyKeeper.removeMessages(hiids);
+    rsHistory->removeMessages(msgIds);
 }
 
 void ImHistoryBrowser::clearHistory()
 {
-    historyKeeper.clear();
+    rsHistory->clear(m_peerId);
 }
 
 void ImHistoryBrowser::sendMessage()
@@ -457,11 +451,11 @@ void ImHistoryBrowser::sendMessage()
     if (textEdit) {
         QListWidgetItem *currentItem = ui.listWidget->currentItem();
         if (currentItem) {
-            int hiid = currentItem->data(ROLE_HIID).toString().toInt();
-            IMHistoryItem item;
-            if (historyKeeper.getMessage(hiid, item)) {
+            uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
+            HistoryMsg msg;
+            if (rsHistory->getMessage(msgId, msg)) {
                 textEdit->clear();
-                textEdit->setText(item.messageText);
+                textEdit->setText(QString::fromUtf8(msg.message.c_str()));
                 textEdit->setFocus();
                 QTextCursor cursor = textEdit->textCursor();
                 cursor.movePosition(QTextCursor::End);
@@ -469,47 +463,5 @@ void ImHistoryBrowser::sendMessage()
                 close();
             }
         }
-    }
-}
-
-void ImHistoryBrowser::privateChatChanged(int list, int type)
-{
-    if (m_isPrivateChat == false) {
-        return;
-    }
-
-    if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {
-        switch (type) {
-        case NOTIFY_TYPE_ADD:
-            {
-                m_savedOfflineChat.clear();
-                rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, m_peerId, m_savedOfflineChat);
-            }
-            break;
-        case NOTIFY_TYPE_DEL:
-            {
-                m_savedOfflineChat.clear();
-            }
-            break;
-        }
-
-        // recalculate items in history
-        int count = ui.listWidget->count();
-        for (int i = 0; i < count; i++) {
-            QListWidgetItem *itemWidget = ui.listWidget->item(i);
-
-            if (itemWidget->data(ROLE_OFFLINE).toBool()) {
-                int hiid = itemWidget->data(ROLE_HIID).toInt();
-
-                IMHistoryItem item;
-                if (historyKeeper.getMessage(hiid, item) == false) {
-                    continue;
-                }
-
-                fillItem(itemWidget, item);
-            }
-        }
-
-        filterRegExpChanged();
     }
 }
