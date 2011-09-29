@@ -1,10 +1,43 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+     - Changed default random number generator to use RAND_bytes from openssl. 
+     - Updated random testing code and fixed compilation
+     - Fixed compilation on FreeBSD, and improved sorting on DHT window
+       (Patch from Ben Laurie)
+     - Added next unread button to forums (patch from devnewton #3401840)
+     - Fixed inaccurate text in transfer page
+     - Removed calls to rsfiles->get{Download,Partials}Directory() in RsDiscSpace 
+       class, since it would trigger a call to ftController
+     - Changed names of functions in ftTransferModules to locked_* when appropriate 
+       (helps debugging)
+     - Show the availability status of peers at the level of locations instead of GPG
+       keys (patch from AsamK)
+     - Added paste of RS links to post on channels, and additional check that the file 
+       is actually shared.
+
+  * Bug fixes
+     - fixed missing TCP connection call - when peer is found on the DHT.
+        * save IP address for DHT display.
+        * store Action in action Queue (the BUG).
+     - fixed sorting of transfer by priority
+     - fixed utf8 issues in sending cert by email (patch from asamK #3393826)
+     - added a lock into ftTransferModule::recvFileData() (Crash reported by Costa 
+       of data race due to storing data in a deleted transfer module)
+     - Added chunk splitting in case part of the file transfer data does not come. 
+       Added strategy to ask again for missing data. The combination of these two cannot 
+       result into an infinite loop (as before)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 29 Sep 2011 20:30:00 +0100
+
+retroshare (0.5.2-0.4608~lucid) lucid; urgency=low
+
   * Improvements
      - Stopping hash when a shared directory containing the file was removed
      - Reworked the process of the RetroShare links. Now RetroShare asks when 
        adding a file or a person link and shows a detailed result.
      - Merging distrib split into trunk, suppressed p3distrib in services 
-   	 - Send msg in plain text when the html encoding does not change anything
+     - Send msg in plain text when the html encoding does not change anything
        into the message. This drastically reduces message s size
      - Added missing status frame for idle.
      - Merged QoS branch into trunk.
@@ -24,6 +57,8 @@ retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
        client side. Corrects the bug causing disconnection when sending messages of side 
        larger than the maximum packet size
      - Patch from AsamK to fix up crash at startup due to a missing else in config load
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 16 Sep 2011 20:30:00 +0100
 
 retroshare (0.5.2-0.4584~lucid) lucid; urgency=low
 
