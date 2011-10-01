@@ -422,7 +422,17 @@ bool ftServer::FileDetails(const std::string &hash, uint32_t hintflags, FileInfo
 
 	if(hintflags & RS_FILE_HINTS_UPLOAD)
 		if(mFtDataplex->FileDetails(hash, hintflags, info))
+		{
+			// We also check if the file is a DL as well. In such a case we use
+			// the DL as the file name, to replace the hash. If the file is a cache
+			// file, we skip the call to fileDetails() for efficiency reasons.
+			//
+			FileInfo info2 ;
+			if( (!(info.flags & RS_FILE_HINTS_CACHE)) && mFtController->FileDetails(hash, info2))
+				info.fname = info2.fname ;
+
 			return true ;
+		}
 
 	if(hintflags & ~(RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_DOWNLOAD)) 
 		if(mFtSearch->search(hash, hintflags, info))
