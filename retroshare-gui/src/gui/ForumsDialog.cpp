@@ -163,7 +163,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     /* Set initial size the splitter */
     QList<int> sizes;
     sizes << 300 << width(); // Qt calculates the right sizes
-    ui.splitter->setSizes(sizes);
+    //ui.splitter->setSizes(sizes);
 
     /* Set own item delegate */
     RSItemDelegate *itemDelegate = new RSItemDelegate(this);
@@ -207,7 +207,12 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ttheader->setResizeMode (COLUMN_THREAD_READ, QHeaderView::Fixed);
     ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
+    ui.progressBar->setTextVisible(true);
     ui.progressBar->hide();
+    ui.progLayOutTxt->hide();
+    ui.progressBarLayOut->setEnabled(false);
+
+
     fillThread = NULL;
 
     insertThreads();
@@ -723,6 +728,8 @@ void ForumsDialog::fillThreadFinished()
         if (thread == fillThread) {
             // current thread has finished, hide progressbar and release thread
             ui.progressBar->hide();
+            ui.progLayOutTxt->hide();
+            ui.progressBarLayOut->setEnabled(false);
             fillThread = NULL;
         }
 
@@ -803,6 +810,7 @@ void ForumsDialog::fillThreadProgress(int current, int count)
     if (count) {
         ui.progressBar->setValue(current * ui.progressBar->maximum() / count);
     }
+
 }
 
 void ForumsDialog::insertThreads()
@@ -860,6 +868,12 @@ void ForumsDialog::insertThreads()
     subscribeFlags = fi.subscribeFlags;
     ui.forumName->setText(QString::fromStdWString(fi.forumName));
 
+
+
+
+    ui.progressBarLayOut->setEnabled(true);
+
+    ui.progLayOutTxt->show();
     ui.progressBar->show();
 
     // create fill thread
