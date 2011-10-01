@@ -1,0 +1,203 @@
+/****************************************************************
+ * This file is distributed under the following license:
+ *
+ * Copyright (c) 2010, Thomas Kister
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
+#include "rsstring.h"
+
+#ifdef WINDOWS_SYS
+#include <windows.h>
+#else
+#include <vector>
+#endif
+
+namespace librs { namespace util {
+
+bool ConvertUtf8ToUtf16(const std::string& source, std::wstring& dest)
+{
+	if (source.empty()) {
+		dest.clear();
+		return true;
+	}
+
+#ifdef WINDOWS_SYS
+	int nbChars = MultiByteToWideChar(CP_UTF8, 0, source.c_str(), -1, 0, 0);
+	if(nbChars == 0) {
+		return false;
+	}
+
+	wchar_t* utf16Name = new wchar_t[nbChars];
+	if( MultiByteToWideChar(CP_UTF8, 0, source.c_str(), -1, utf16Name, nbChars) == 0) {
+		delete[] utf16Name;
+		return false;
+	}
+
+	dest = utf16Name;
+	delete[] utf16Name;
+#else
+	std::vector<wchar_t> res;
+	std::string::size_type len = source.length();
+
+	unsigned int i = 0;
+	unsigned long temp;
+
+	while (i < len) {
+		char src = source[i];
+		if ((src & 0x80) == 0) { // ASCII : 0000 0000-0000 007F 0xxxxxxx
+			temp = src;
+			++i;
+		} else if ((src & 0xE0) == 0xC0) { // 0000 0080-0000 07FF 110xxxxx 10xxxxxx
+			temp = (src & 0x1F);
+			temp <<= 6;
+			temp += (source[i + 1] & 0x3F);
+			i += 2;
+		} else if ((src & 0xF0) == 0xE0) { // 0000 0800-0000 FFFF 1110xxxx 10xxxxxx 10xxxxxx
+			temp = (src & 0x0F);
+			temp <<= 6;
+			temp += (source[i + 1] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 2] & 0x3F);
+			i += 3;
+		} else if ((src & 0xF8) == 0xF0) { // 0001 0000-001F FFFF 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+			temp = (src & 0x07);
+			temp <<= 6;
+			temp += (source[i + 1] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 2] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 3] & 0x3F);
+			i += 4;
+		} else if ((src & 0xFC) == 0xF8) { // 0020 0000-03FF FFFF 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+			temp = (src & 0x03);
+			temp <<= 6;
+			temp += (source[i + 1] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 2] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 3] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 4] & 0x3F);
+			i += 5;
+		} else if ((src & 0xFE) == 0xFC) { // 0400 0000-7FFF FFFF 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+			temp = (src & 0x01);
+			temp <<= 6;
+			temp += (source[i + 1] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 2] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 3] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 4] & 0x3F);
+			temp <<= 6;
+			temp += (source[i + 5] & 0x3F);
+			i += 6;
+		} else {
+			temp = '?';
+		}
+		// Need to transform to UTF-16 > handle surrogates
+		if (temp > 0xFFFF) {
+			// First high surrogate
+			res.push_back(0xD800 + wchar_t(temp >> 10));
+			// Now low surrogate
+			res.push_back(0xDC00 + wchar_t(temp & 0x3FF));
+		} else {
+			res.push_back(wchar_t(temp));
+		}
+	}
+	// Check whether first wchar_t is the BOM 0xFEFF
+	if (res[0] == 0xFEFF) {
+		dest.append(&res[1], res.size() - 1);
+	} else {
+		dest.append(&res[0], res.size());
+	}
+#endif
+
+	return true;
+}
+
+bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest)
+{
+#ifdef WINDOWS_SYS
+	int nbChars = WideCharToMultiByte(CP_UTF8, 0, source.c_str(), -1, 0, 0, 0, 0);
+	if(nbChars == 0) {
+		return false;
+	}
+
+	char* utf8Name = new char[nbChars];
+	if( WideCharToMultiByte(CP_UTF8, 0, source.c_str(), -1, utf8Name, nbChars, 0, 0) == 0) {
+		delete[] utf8Name;
+		return false;
+	}
+
+	dest = utf8Name;
+	delete[] utf8Name;
+#else
+	std::vector<char> res;
+
+	std::wstring::size_type len = source.length();
+	unsigned int i = 0;
+	unsigned long temp;
+
+	while (i < len) {
+		if ((source[i] & 0xD800) == 0xD800) { // surrogate
+			temp = (source[i] - 0xD800);
+			temp <<= 10;
+			temp += (source[i + 1] - 0xDC00);
+			i += 2;
+		} else {
+			temp = source[i];
+			++i;
+		}
+		if (temp < 0x00000080) { // ASCII : 0000 0000-0000 007F 0xxxxxxx
+			res.push_back(char(temp));
+		} else if (temp < 0x00000800) { // 0000 0080-0000 07FF 110xxxxx 10xxxxxx
+			res.push_back(char(0xC0 | (temp >> 6)));
+			res.push_back(char(0x80 | (temp & 0x3F)));
+		} else if (temp < 0x00010000) { // 0000 0800-0000 FFFF 1110xxxx 10xxxxxx 10xxxxxx
+			res.push_back(char(0xE0 | (temp >> 12)));
+			res.push_back(char(0x80 | ((temp >> 6) & 0x3F)));
+			res.push_back(char(0x80 | (temp & 0x3F)));
+		} else if (temp < 0x00200000) { // 0001 0000-001F FFFF 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+			res.push_back(char(0xF0 | (temp >> 18)));
+			res.push_back(char(0x80 | ((temp >> 12) & 0x3F)));
+			res.push_back(char(0x80 | ((temp >> 6) & 0x3F)));
+			res.push_back(char(0x80 | (temp & 0x3F)));
+		} else if (temp < 0x04000000) { // 0020 0000-03FF FFFF 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+			res.push_back(char(0xF8 | (temp >> 24)));
+			res.push_back(char(0x80 | ((temp >> 18) & 0x3F)));
+			res.push_back(char(0x80 | ((temp >> 12) & 0x3F)));
+			res.push_back(char(0x80 | ((temp >> 6) & 0x3F)));
+			res.push_back(char(0x80 | (temp & 0x3F)));
+		} else if (temp < 0x80000000) { // 0400 0000-7FFF FFFF 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+			res.push_back(char(0xFC | (temp >> 30)));
+			res.push_back(char(0x80 | ((temp >> 24) & 0x3F)));
+			res.push_back(char(0x80 | ((temp >> 18) & 0x3F)));
+			res.push_back(char(0x80 | ((temp >> 12) & 0x3F)));
+			res.push_back(char(0x80 | ((temp >> 6) & 0x3F)));
+			res.push_back(char(0x80 | (temp & 0x3F)));
+		}
+	}
+
+	dest.append(&res[0], res.size());
+#endif
+
+	return true;
+}
+
+} } // librs::util

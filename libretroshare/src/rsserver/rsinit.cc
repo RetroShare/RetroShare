@@ -37,6 +37,7 @@
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
 #include "util/folderiterator.h"
+#include "util/rsstring.h"
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
 #include "rsserver/rsloginhandler.h"

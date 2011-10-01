@@ -1,5 +1,5 @@
 #include "folderiterator.h"
-#include "rswin.h"
+#include "rsstring.h"
 
 
 namespace librs { namespace util {

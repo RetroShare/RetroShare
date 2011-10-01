@@ -29,6 +29,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "serialiser/rsmsgitems.h"
+#include "util/rsstring.h"
 
 RsHistory *rsHistory = NULL;
 
@@ -71,7 +72,8 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 	item->peerName = rsPeers->getPeerName(item->peerId);
 	item->sendTime = chatItem->sendTime;
 	item->recvTime = chatItem->recvTime;
-	item->message.assign(chatItem->message.begin(), chatItem->message.end());
+
+	librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
 	std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
 	if (mit != mMessages.end()) {

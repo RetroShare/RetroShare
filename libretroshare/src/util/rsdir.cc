@@ -45,7 +45,7 @@
 #include <fstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-#include "util/rswin.h"
+#include "util/rsstring.h"
 #include "wtypes.h"
 #include <winioctl.h>
 #else

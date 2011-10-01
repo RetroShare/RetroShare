@@ -22,7 +22,7 @@
  */
 
 #ifdef WINDOWS_SYS
-#include "util/rswin.h"
+#include "util/rsstring.h"
 #endif
 
 #include "dbase/fimonitor.h"

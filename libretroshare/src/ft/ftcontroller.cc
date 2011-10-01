@@ -36,7 +36,7 @@
  */
 
 #ifdef WINDOWS_SYS
-#include "util/rswin.h"
+#include "util/rsstring.h"
 #endif
 #include "util/rsdiscspace.h"
 
