@@ -313,6 +313,15 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
 
+	QString prob_string ;
+
+	for(uint i=0;i<info.forward_probabilities.size();++i)
+		prob_string += QString::number(info.forward_probabilities[i],'g',2) + " (" + QString::number(i) + ") " ;
+
+	painter.drawText(ox+2*cellx,oy+celly,tr("TR Forward probabilities")+"\t: " + prob_string ) ; 
+	oy += celly ;
+	oy += celly ;
+
 	// update the pixmap
 	//
 	pixmap = tmppixmap;

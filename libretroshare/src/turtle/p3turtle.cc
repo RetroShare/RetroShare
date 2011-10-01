@@ -85,6 +85,11 @@ static const time_t TUNNEL_CLEANING_LAPS_TIME  	=  10 ;		/// clean tunnels every
 static const uint32_t MAX_TUNNEL_REQS_PER_SECOND=   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
 static const uint32_t MAX_ALLOWED_SR_IN_CACHE   = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
 
+static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.4f,0.15f,0.1f } ;
+static const int TUNNEL_REQUEST_PACKET_SIZE 	= 50 ;
+static const int MAX_TR_FORWARD_PER_SEC 		= 20 ;
+static const int DISTANCE_SQUEEZING_POWER 	= 8 ;
+
 p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
 	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mLinkMgr(lm), mTurtleMtx("p3turtle")
 {
@@ -1562,10 +1567,6 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	//
 	// When the number of peers increases, the speed limit is reached faster, but the behavior per peer is the same.
 	//
-	static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.4f,0.15f,0.1f } ;
-	static const int TUNNEL_REQUEST_PACKET_SIZE 	= 50 ;
-	static const int MAX_TR_FORWARD_PER_SEC 		= 20 ;
-	static const int DISTANCE_SQUEEZING_POWER 	= 8 ;
 
 	float forward_probability ;
 
@@ -1579,13 +1580,13 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Forwarding probability: depth=" << item->depth << ", distance to max speed=" << distance_to_maximum << ", corrected=" << corrected_distance << ", prob.=" << forward_probability << std::endl;
 #endif
-		if(forward_probability < 0.1)
-		{
-#ifdef P3TURTLE_DEBUG
-			std::cerr << "Dropped packet!" << std::endl;
-#endif
-			return ;
-		}
+//		if(forward_probability < 0.1)
+//		{
+//#ifdef P3TURTLE_DEBUG
+//			std::cerr << "Dropped packet!" << std::endl;
+//#endif
+//			return ;
+//		}
 	}
 
 	// If the item contains an already handled tunnel request, give up.  This
@@ -2122,6 +2123,17 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	info = _traffic_info ;
+
+	float distance_to_maximum	= std::min(100.0f,info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*MAX_TR_FORWARD_PER_SEC)) ;
+	info.forward_probabilities.clear() ;
+
+	for(int i=0;i<=6;++i)
+	{
+		float corrected_distance 	= pow(distance_to_maximum,DISTANCE_SQUEEZING_POWER) ;
+		float forward_probability	= pow(depth_peer_probability[i],corrected_distance) ;
+
+		info.forward_probabilities.push_back(forward_probability) ;
+	}
 }
 
 void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,

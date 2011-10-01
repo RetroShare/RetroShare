@@ -68,6 +68,8 @@ class TurtleTrafficStatisticsInfo
 		float tr_dn_Bps ;				// tunnel requests dnload bitrate (in Bytes per sec.)
 		float total_up_Bps ;			// turtle network management bitrate (in Bytes per sec.)
 		float total_dn_Bps ;			// turtle network management bitrate (in Bytes per sec.)
+
+		std::vector<float> forward_probabilities ;	// probability to forward a TR as a function of depth.
 };
 
 // Interface class for turtle hopping.
