@@ -435,8 +435,6 @@ void p3ChatService::receiveChatQueue()
 					if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
 						privateChanged = true;
 						privateIncomingList.push_back(ci);	// don't delete the item !!
-
-						mHistoryMgr->addMessage(true, ci->PeerId(), ci->PeerId(), ci);
 					} else {
 						publicChanged = true;
 						publicList.push_back(ci);	// don't delete the item !!
@@ -648,6 +646,10 @@ bool p3ChatService::clearPrivateChatQueue(bool incoming, const std::string &id)
 			RsChatMsgItem *c = *it;
 
 			if (c->PeerId() == id) {
+				if (incoming) {
+					mHistoryMgr->addMessage(true, c->PeerId(), c->PeerId(), c);
+				}
+
 				delete c;
 				changed = true;
 
