@@ -51,11 +51,17 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		virtual void addConfigurations(p3ConfigMgr *cfgMgr) ;
 		virtual void loadConfiguration() ;
 
+                /*!
+                 * sets interfaces for all loaded plugins
+                 * @param interfaces
+                 */
+                void setInterfaces(RsPlugInInterfaces& interfaces);
 		static void setPluginEntrySymbol(const std::string& s) { _plugin_entry_symbol = s ; }
 		static bool acceptablePluginName(const std::string& s) ;
 		static void setCacheDirectories(const std::string& local,const std::string& remote) ;
 		static void setFileServer(ftServer *ft) { _ftserver = ft ; }
 		static void setLinkMgr(p3LinkMgr *cm) { _linkmgr = cm ; }
+
 
 		void loadPlugins(const std::vector<std::string>& plugin_directories) ;
 

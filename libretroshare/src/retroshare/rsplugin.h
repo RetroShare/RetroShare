@@ -29,6 +29,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include "retroshare/rspeers.h"
+#include "retroshare/rsfiles.h"
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
@@ -52,6 +54,23 @@ class pqiService ;
 #define PLUGIN_STATUS_NULL_PLUGIN    0x0004
 #define PLUGIN_STATUS_LOADED         0x0005
 
+class RsPluginHandler;
+
+/*!
+ *
+ * convenience class to store gui interfaces
+ *
+ */
+class RsPlugInInterfaces {
+
+public:
+
+    RsPlugInInterfaces() { mPeers = NULL; mFiles = NULL; }
+    RsPeers* mPeers;
+    RsFiles* mFiles;
+
+};
+
 class RsPlugin
 {
 	public:
@@ -67,6 +86,8 @@ class RsPlugin
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
+                virtual void setPlugInHandler(RsPluginHandler* pgHandler) = 0;
+                virtual void setInterfaces(RsPlugInInterfaces& interfaces) = 0;
 };
 
 class RsPluginHandler

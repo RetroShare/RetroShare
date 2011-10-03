@@ -23,6 +23,8 @@
 #define _LINKS_DIALOG_H
 
 #include <gui/mainpage.h>
+#include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
 #include "ui_LinksDialog.h"
 
 
@@ -32,7 +34,7 @@ class LinksDialog : public MainPage
 
 public:
   /** Default Constructor */
-  LinksDialog(QWidget *parent = 0);
+  LinksDialog(RsPeers* peers, RsFiles* files, QWidget *parent = 0);
   /** Default Destructor */
 
   void  insertExample();
@@ -83,6 +85,11 @@ void  updateComments(std::string rid, std::string pid);
   QTreeWidgetItem *getCurrentLine();
 
   QTreeWidget *exampletreeWidget;
+
+  // gui interface
+  RsPeers* mPeers;
+  RsFiles* mFiles;
+
 
   /** Qt Designer generated object */
   Ui::LinksDialog ui;

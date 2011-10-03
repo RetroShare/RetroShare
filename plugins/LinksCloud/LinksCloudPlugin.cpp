@@ -27,13 +27,22 @@ LinksCloudPlugin::LinksCloudPlugin()
 {
 	mRanking = NULL ;
 	mainpage = NULL ;
-	mIcon		= NULL ;
+        mIcon = NULL ;
+        mPlugInHandler = NULL;
+        mPeers = NULL;
+        mFiles = NULL;
+}
+
+void LinksCloudPlugin::setInterfaces(RsPlugInInterfaces &interfaces){
+
+    mPeers = interfaces.mPeers;
+    mFiles = interfaces.mFiles;
 }
 
 MainPage *LinksCloudPlugin::qt_page() const
 {
 	if(mainpage == NULL)
-		mainpage = new LinksDialog ;
+                mainpage = new LinksDialog(mPeers, mFiles) ;
 
 	return mainpage ;
 }
@@ -42,11 +51,16 @@ RsCacheService *LinksCloudPlugin::rs_cache_service() const
 {
 	if(mRanking == NULL)
 	{
-		mRanking = new p3Ranking ; // , 3600 * 24 * 30 * 6); // 6 Months
+                mRanking = new p3Ranking(mPlugInHandler) ; // , 3600 * 24 * 30 * 6); // 6 Months
 		rsRanks = mRanking ;
 	}
 
 	return mRanking ;
+}
+
+void LinksCloudPlugin::setPlugInHandler(RsPluginHandler *pgHandler){
+    mPlugInHandler = pgHandler;
+
 }
 
 QIcon *LinksCloudPlugin::qt_icon() const

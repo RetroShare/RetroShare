@@ -65,7 +65,7 @@ class p3Ranking: public RsCacheService, public RsRanks
 {
 	public:
 
-		p3Ranking() ;
+                p3Ranking(RsPluginHandler* pgHandler) ;
 
 
 		/******************************* CACHE SOURCE / STORE Interface *********************/
@@ -130,7 +130,7 @@ class p3Ranking: public RsCacheService, public RsRanks
 		void	createDummyData();
 
 		uint32_t storePeriod;
-		p3ConnectMgr *mConnMgr;
+                p3LinkMgr *mConnMgr;
 
 		RsMutex mRankMtx;
 

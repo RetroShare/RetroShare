@@ -28,7 +28,7 @@
 #include <retroshare/rsplugin.h>
 #include <iomanip>
 
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 #include "pqi/pqibin.h"
 #include "pqi/authssl.h"
 #include "pqi/pqistore.h"
@@ -55,13 +55,13 @@ std::string generateRandomLinkId();
  *********/
 #define RANK_DEBUG 1
 
-p3Ranking::p3Ranking()
-		: RsCacheService(RS_SERVICE_TYPE_RANK,CONFIG_TYPE_RANK_LINK,5), 
+p3Ranking::p3Ranking(RsPluginHandler* pgHandler)
+                : RsCacheService(RS_SERVICE_TYPE_RANK,CONFIG_TYPE_RANK_LINK,5, pgHandler),
 		  mRepublish(false), mRepublishFriends(false), mRepublishFriendTS(0), mStorePeriod(RANK_STORE_PERIOD), mUpdated(true),mRankMtx(std::string("p3Ranking"))
 {
 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
-	mOwnId = rsPlugins->getConnectMgr()->getOwnId();
+        mOwnId = pgHandler->getLinkMgr()->getOwnId();
 	mViewPeriod = 60 * 60 * 24 * 30; /* one Month */
 	mSortType = RS_RANK_ALG;
 }
