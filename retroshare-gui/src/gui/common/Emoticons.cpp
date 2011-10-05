@@ -204,7 +204,7 @@ void Emoticons::formatText(QString &text)
     while(i.hasNext()) {
         i.next();
         foreach (QString code, i.key().split("|")) {
-            text.replace(code, "<img src=\"" + i.value() + "\" />");
+            text.replace(code, "<img src=\"" + i.value() + "\">");
         }
     }
 }

@@ -32,7 +32,7 @@
 #include <QString>
 
 
-/** Wraps a string in "<p>" tags, converts "\n" to "<br/>" and converts "\n\n"
+/** Wraps a string in "<p>" tags, converts "\n" to "<br>" and converts "\n\n"
  * to a new paragraph. */
 QString p(QString str);
 

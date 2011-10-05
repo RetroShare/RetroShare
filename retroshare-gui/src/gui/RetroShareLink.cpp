@@ -1173,7 +1173,7 @@ QString RSLinkClipboard::toHtml()
 
     QString res ;
     for(int i = 0; i < links.size(); ++i)
-        res += links[i].toHtml() + "<br/>" ;
+        res += links[i].toHtml() + "<br>" ;
 
     return res ;
 }
@@ -1185,7 +1185,7 @@ QString RSLinkClipboard::toHtmlFull()
 
     QString res ;
     for(int i = 0; i < links.size(); ++i)
-        res += links[i].toHtmlFull() + "<br/>" ;
+        res += links[i].toHtmlFull() + "<br>" ;
 
     return res ;
 }

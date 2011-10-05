@@ -1102,9 +1102,9 @@ void  MessageComposer::insertTitleText(const QString &title, enumMessageType typ
 
 void  MessageComposer::insertPastedText(QString msg)
 {
-    msg.replace("\n", "\n<BR/>> ");
+    msg.replace("\n", "\n<BR>> ");
 
-    ui.msgText->setHtml("<HTML><font color=\"blue\"> > " + msg + "</font><br/><br/></HTML>");
+    ui.msgText->setHtml("<HTML><font color=\"blue\"> > " + msg + "</font><br><br></HTML>");
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
 
@@ -1117,9 +1117,9 @@ void  MessageComposer::insertPastedText(QString msg)
 
 void  MessageComposer::insertForwardPastedText(QString msg)
 {
-    msg.replace("\n", "\n<BR/>> ");
+    msg.replace("\n", "\n<BR>> ");
 
-    ui.msgText->setHtml("<HTML><blockquote [type=cite]><font color=\"blue\">> " + msg + "</font><br/><br/></blockquote></HTML>");
+    ui.msgText->setHtml("<HTML><blockquote [type=cite]><font color=\"blue\">> " + msg + "</font><br><br></blockquote></HTML>");
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
 
@@ -2132,8 +2132,8 @@ void  MessageComposer::addImage()
 void  MessageComposer::Create_New_Image_Tag( const QString urlremoteorlocal )
 {
    /*if (image_extension(urlremoteorlocal)) {*/
-       QString subtext = QString("<p><img src=\"%1\" />").arg(urlremoteorlocal);
-               ///////////subtext.append("<br/><br/>Description on image.</p>");
+       QString subtext = QString("<p><img src=\"%1\">").arg(urlremoteorlocal);
+               ///////////subtext.append("<br><br>Description on image.</p>");
        QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(subtext);
        ui.msgText->textCursor().insertFragment(fragment);
        //emit statusMessage(QString("Image new :").arg(urlremoteorlocal));

@@ -914,8 +914,8 @@ void CreateBlogMsg::addImage()
 void  CreateBlogMsg::Create_New_Image_Tag( const QString urlremoteorlocal )
 {
    /*if (image_extension(urlremoteorlocal)) {*/
-       QString subtext = QString("<p><img src=\"%1\" />").arg(urlremoteorlocal);
-               ///////////subtext.append("<br/><br/>Description on image.</p>");
+       QString subtext = QString("<p><img src=\"%1\">").arg(urlremoteorlocal);
+               ///////////subtext.append("<br><br>Description on image.</p>");
        QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(subtext);
        ui.msgEdit->textCursor().insertFragment(fragment);
        //emit statusMessage(QString("Image new :").arg(urlremoteorlocal));

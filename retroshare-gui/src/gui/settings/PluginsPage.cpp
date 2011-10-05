@@ -104,7 +104,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 	 text = "" ;
 
 	 for(uint i=0;i<dirs.size();++i)
-		 text += "<b>"+QString::fromStdString(dirs[i]) + "</b><br/>" ;
+		 text += "<b>"+QString::fromStdString(dirs[i]) + "</b><br>" ;
 
 	 ui._lookupDirectories_TB->setHtml(text) ;
 }

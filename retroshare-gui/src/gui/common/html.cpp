@@ -29,14 +29,14 @@
 #include "html.h"
 
 
-/** Wraps a string in "<p>" tags, converts "\n" to "<br/>" and converts "\n\n"
+/** Wraps a string in "<p>" tags, converts "\n" to "<br>" and converts "\n\n"
  * to a new paragraph. */
 QString
 p(QString str)
 {
   str = "<p>" + str + "</p>";
   str.replace("\n\n", "</p><p>");
-  str.replace("\n", "<br/>");
+  str.replace("\n", "<br>");
   return str;
 }
 

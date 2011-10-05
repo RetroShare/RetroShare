@@ -301,7 +301,7 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 //	{
 //            i.next();
 //            foreach(QString code, i.key().split("|"))
-//                message.replace(code, "<img src=\"" + i.value() + "\" />");
+//                message.replace(code, "<img src=\"" + i.value() + "\">");
 //	}
 //    }
 
