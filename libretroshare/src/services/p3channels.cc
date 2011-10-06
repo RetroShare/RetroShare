@@ -827,8 +827,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 
 	/* Iterate through files */
 	std::list<RsTlvFileItem>::iterator fit;
-	for(fit = chanMsg->attachment.items.begin(); 
-		fit != chanMsg->attachment.items.end(); fit++)
+	for(fit = chanMsg->attachment.items.begin(); fit != chanMsg->attachment.items.end(); fit++)
 	{
 		std::string fname = fit->name;
 		std::string hash  = fit->hash;
@@ -839,20 +838,23 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 		uint32_t flags;
 
 		// send to download directory if file is private
-		if(chanPrivate){
-                localpath = mChannelsDir;
-		flags = RS_FILE_HINTS_BACKGROUND | RS_FILE_HINTS_EXTRA;
-
-		}else{
-
-			localpath = ""; // forces dl to default directory
-			flags = RS_FILE_HINTS_BACKGROUND |
-					RS_FILE_HINTS_NETWORK_WIDE;
-
-		}
-
+		// We also add explicit sources only if the channel is private. Otherwise we DL in network wide mode
+		// using anonymous tunnels.
+		//
 		std::list<std::string> srcIds;
-		srcIds.push_back(id);
+
+		if(chanPrivate)
+		{
+			localpath = mChannelsDir;
+			flags = RS_FILE_HINTS_BACKGROUND | RS_FILE_HINTS_EXTRA;
+
+			srcIds.push_back(id);
+		}
+		else
+		{
+			localpath = ""; // forces dl to default directory
+			flags = RS_FILE_HINTS_BACKGROUND | RS_FILE_HINTS_NETWORK_WIDE;
+		}
 
 		/* download it ... and flag for ExtraList 
 		 * don't do pre-search check as FileRequest does it better
@@ -866,8 +868,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 #endif
 
         if(size < MAX_AUTO_DL)
-        	mRsFiles->FileRequest(fname, hash, size,
-        			localpath, flags, srcIds);
+        	mRsFiles->FileRequest(fname, hash, size, localpath, flags, srcIds);
 	}
 
 	if(lit != mReadStatus.end()){

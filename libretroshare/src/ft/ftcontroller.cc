@@ -1176,7 +1176,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		/* do a source search - for any extra sources */
 		// add sources only in direct mode
 		//
-		if ((!(flags & RS_FILE_HINTS_NETWORK_WIDE)) && mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
+		if((flags & RS_FILE_HINTS_BROWSABLE) && mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
 #ifdef CONTROL_DEBUG
