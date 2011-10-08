@@ -105,7 +105,7 @@ bool EventReceiver::sendRetroShareLink(const QString& link)
 		if (info) {
 #ifdef WINDOWS_SYS
 			if (info->wid) {
-				QByteArray linkData = link.toAscii();
+				QByteArray linkData(link.toUtf8());
 
 				COPYDATASTRUCT send;
 				send.dwData = OP_RETROSHARELINK;
@@ -149,7 +149,7 @@ bool EventReceiver::winEvent(MSG* message, long* result)
 		COPYDATASTRUCT *data = (COPYDATASTRUCT*) message->lParam;
 
 		if (data && data->dwData == OP_RETROSHARELINK) {
-			received(QString::fromAscii((const char*) data->lpData, data->cbData));
+			received(QString::fromUtf8((const char*) data->lpData, data->cbData));
 
 			/* Keep the event from Qt */
 			*result = 0;

@@ -130,7 +130,7 @@ void RetroShareLink::fromString(const QString& url)
     }
 
     /* Now try QUrl */
-    fromUrl(QUrl::fromEncoded(url.toAscii()));
+    fromUrl(QUrl::fromEncoded(url.toUtf8().constData()));
 }
 
 void RetroShareLink::fromUrl(const QUrl& url)
@@ -444,7 +444,7 @@ QString RetroShareLink::title() const
 	return "";
 }
 
-QString RetroShareLink::toString(bool encoded /*= true*/) const
+QString RetroShareLink::toString() const
 {
     switch (_type) {
     case TYPE_UNKNOWN:
@@ -458,10 +458,6 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.addQueryItem(FILE_SIZE, QString::number(_size));
             url.addQueryItem(FILE_HASH, _hash);
 
-            if (encoded) {
-                return url.toEncoded();
-            }
-
             return url.toString();
         }
     case TYPE_PERSON:
@@ -471,10 +467,6 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.setHost(HOST_PERSON);
             url.addQueryItem(PERSON_NAME, _name);
             url.addQueryItem(PERSON_HASH, _hash);
-
-            if (encoded) {
-                return url.toEncoded();
-            }
 
             return url.toString();
         }
@@ -487,10 +479,6 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.addQueryItem(FORUM_ID, _hash);
             if (!_msgId.isEmpty()) {
                 url.addQueryItem(FORUM_MSGID, _msgId);
-            }
-
-            if (encoded) {
-                return url.toEncoded();
             }
 
             return url.toString();
@@ -506,10 +494,6 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
                 url.addQueryItem(CHANNEL_MSGID, _msgId);
             }
 
-            if (encoded) {
-                return url.toEncoded();
-            }
-
             return url.toString();
         }
     case TYPE_SEARCH:
@@ -518,10 +502,6 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_SEARCH);
             url.addQueryItem(SEARCH_KEYWORDS, _name);
-
-            if (encoded) {
-                return url.toEncoded();
-            }
 
             return url.toString();
         }
@@ -533,10 +513,6 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.addQueryItem(MESSAGE_ID, _hash);
             if (_subject.isEmpty() == false) {
                url.addQueryItem(MESSAGE_SUBJECT, _subject);
-            }
-
-            if (encoded) {
-                return url.toEncoded();
             }
 
             return url.toString();
@@ -557,7 +533,7 @@ QString RetroShareLink::niceName() const
 
 QString RetroShareLink::toHtml() const
 {
-	QString html = "<a href=\"" + toString(true) + "\"";
+	QString html = "<a href=\"" + toString() + "\"";
 
 	QString linkTitle = title();
 	if (!linkTitle.isEmpty()) {
@@ -570,12 +546,12 @@ QString RetroShareLink::toHtml() const
 
 QString RetroShareLink::toHtmlFull() const
 {
-    return QString("<a href=\"") + toString(true) + "\">" + toString(false) + "</a>" ;
+	return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlSize() const
 {
-    return QString("<a href=\"") + toString(true) + "\">" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
+	return QString("<a href=\"") + toString() + "\">" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
 }
 
 bool RetroShareLink::checkName(const QString& name)
@@ -603,7 +579,7 @@ bool RetroShareLink::checkName(const QString& name)
 
 QUrl RetroShareLink::toUrl() const
 {
-    return QUrl(toString()) ;
+    return QUrl::fromEncoded(toString().toUtf8().constData());
 }
 
 bool RetroShareLink::checkHash(const QString& hash)
