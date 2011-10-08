@@ -128,9 +128,9 @@ void 	RsServer::run()
 	while(isRunning())
 	{
 #ifndef WINDOWS_SYS
-		usleep((int) (timeDelta * 1000000));
+                usleep((int) (timeDelta * 1000000));
 #else
-		Sleep((int) (timeDelta * 1000));
+                Sleep((int) (timeDelta * 1000));
 #endif
 
 		ts = getCurrentTS();

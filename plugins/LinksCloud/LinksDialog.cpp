@@ -24,12 +24,9 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDesktopServices>
-
 #include "LinksDialog.h"
 #include <gui/RetroShareLink.h>
 #include "AddLinksDialog.h"
-#include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
 #include "rsrank.h"
 
 #include <sstream>
@@ -50,8 +47,8 @@
  *****/
 
 /** Constructor */
-LinksDialog::LinksDialog(QWidget *parent)
-: MainPage(parent)
+LinksDialog::LinksDialog(RsPeers *peers, RsFiles *files, QWidget *parent)
+: MainPage(parent), mPeers(peers), mFiles(files)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -247,7 +244,7 @@ void LinksDialog::changedSortFrom( int index )
 		case 0:
 			break;
 		case 1:
-			peers.push_back(rsPeers->getOwnId());
+                        peers.push_back(mPeers->getOwnId());
 			break;
 	}
 
@@ -467,7 +464,7 @@ void  LinksDialog::updateLinks()
 				qtime.setTime_t(cit->timestamp);
 				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
 
-				QString peerLabel = QString::fromStdString(rsPeers->getPeerName(cit->id));
+                                QString peerLabel = QString::fromStdString(mPeers->getPeerName(cit->id));
 				if (peerLabel == "")
 				{
 					peerLabel = "<";
@@ -673,7 +670,7 @@ void  LinksDialog::updateComments(std::string rid, std::string )
 	mLinkId = rid;
 
 	/* Add your text to the comment */
-	std::string ownId = rsPeers->getOwnId();
+        std::string ownId = mPeers->getOwnId();
 
 	for(cit = detail.comments.begin(); cit != detail.comments.end(); cit++)
 	{
@@ -913,7 +910,7 @@ void LinksDialog::voteup_score(int score)
 
 	std::list<RsRankComment>::iterator cit;
 	/* Add your text to the comment */
-	std::string ownId = rsPeers->getOwnId();
+        std::string ownId = mPeers->getOwnId();
 
 	for(cit = detail.comments.begin(); cit != detail.comments.end(); cit++)
 	{
@@ -975,24 +972,24 @@ void LinksDialog::downloadSelected()
 	std::cerr << "LinksDialog::downloadSelected() : " << link.toStdString() << std::endl;
 #endif
 
-	RetroShareLink rslink(QString::fromStdWString(detail.link));
+        //RetroShareLink rslink(QString::fromStdWString(detail.link));
 
-	if(!rslink.valid() || rslink.type() != RetroShareLink::TYPE_FILE)
-	{
-		QMessageBox::critical(NULL,"Badly formed link","This link is badly formed. Can't parse/use it. This is a bug. Please contact the developers.") ;
-		return ;
-	}
+        //if(!rslink.valid() || rslink.type() != RetroShareLink::TYPE_FILE)
+        //{
+//		QMessageBox::critical(NULL,"Badly formed link","This link is badly formed. Can't parse/use it. This is a bug. Please contact the developers.") ;
+//		return ;
+//	}
 
 	/* retrieve all peers id for this file */
-	FileInfo info;
-	rsFiles->FileDetails(rslink.hash().toStdString(), 0, info);
+//	FileInfo info;
+//	rsFiles->FileDetails(rslink.hash().toStdString(), 0, info);
 
-	std::list<std::string> srcIds;
-	std::list<TransferInfo>::iterator pit;
-	for (pit = info.peers.begin(); pit != info.peers.end(); pit ++)
-		srcIds.push_back(pit->peerId);
+//	std::list<std::string> srcIds;
+//	std::list<TransferInfo>::iterator pit;
+//	for (pit = info.peers.begin(); pit != info.peers.end(); pit ++)
+//		srcIds.push_back(pit->peerId);
 
-	rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", 0, srcIds);
+//	rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", 0, srcIds);
 }
 
 void LinksDialog::anchorClicked (const QUrl& link ) 
@@ -1017,7 +1014,7 @@ void LinksDialog::anchorClicked (const QUrl& link )
 		{
 			std::list<std::string> srcIds;
 
-			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+                        if(mFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 			{
 				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));

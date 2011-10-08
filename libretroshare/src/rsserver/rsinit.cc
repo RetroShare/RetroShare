@@ -1850,16 +1850,18 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
         std::cerr << "setup classes / structures" << std::endl;
 
-	/* Setup Notify Early - So we can use it. */
-	rsNotify = new p3Notify();
+
 
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
-
 	mPeerMgr = new p3PeerMgrIMPL();
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
-	
+
+        /* Setup Notify Early - So we can use it. */
+        rsNotify = new p3Notify();
+        rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
+
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr, mHistoryMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 	
@@ -2044,11 +2046,17 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
 	mPluginsManager->setFileServer(ftserver) ;
-	mPluginsManager->setLinkMgr(mLinkMgr) ;
+        mPluginsManager->setLinkMgr(mLinkMgr) ;
 
 	// Now load the plugins. This parses the available SO/DLL files for known symbols.
 	//
 	mPluginsManager->loadPlugins(plugins_directories) ;
+
+        // set interfaces for plugins
+        RsPlugInInterfaces interfaces;
+        interfaces.mFiles = rsFiles;
+        interfaces.mPeers = rsPeers;
+        mPluginsManager->setInterfaces(interfaces);
 
 	/* create Services */
 	ad = new p3disc(mPeerMgr, mLinkMgr, pqih);
@@ -2330,7 +2338,7 @@ int RsServer::StartupRetroShare()
 
 	/* Setup GUI Interfaces. */
 
-	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
+
 	rsDisc  = new p3Discovery(ad);
 	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, mGeneralConfig);
 

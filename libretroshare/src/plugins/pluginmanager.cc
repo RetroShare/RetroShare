@@ -43,6 +43,19 @@ void RsPluginManager::loadConfiguration()
 	p3Config::loadConfiguration(dummyHash);
 }
 
+void RsPluginManager::setInterfaces(RsPlugInInterfaces &interfaces)
+{
+    std::cerr << "RsPluginManager::setInterfaces()  " << std::endl;
+
+    for(uint32_t i=0;i<_plugins.size();++i)
+
+        if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL)
+        {
+            _plugins[i].plugin->setInterfaces(interfaces);
+            std::cerr << " setting iterface for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
+        }
+}
+
 void RsPluginManager::setCacheDirectories(const std::string& local_cache, const std::string& remote_cache)
 {
 	_local_cache_dir = local_cache ;
@@ -134,7 +147,7 @@ void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_n
 RsSerialiser *RsPluginManager::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser ;
-	rss->addSerialType(new RsPluginSerialiser()) ;
+        rss->addSerialType(new RsPluginSerialiser()) ;
 
 	return rss ;
 }
@@ -209,6 +222,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 
 		pinfo.status = PLUGIN_STATUS_LOADED ;
 		pinfo.plugin = p ;
+                p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
 		pinfo.info_string = "" ;
 
 		return true;
@@ -220,6 +234,8 @@ p3LinkMgr *RsPluginManager::getLinkMgr() const
 	assert(_linkmgr != NULL) ;
 	return _linkmgr ;
 }
+
+
 ftServer *RsPluginManager::getFileServer() const
 {
 	assert(_ftserver != NULL) ;
@@ -318,9 +334,9 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 	return true;
 }
 
-RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32_t tick_delay)
-	: CacheSource(service_type, true, rsPlugins->getFileServer()->getCacheStrapper(), rsPlugins->getLocalCacheDir()), 
-	  CacheStore (service_type, true, rsPlugins->getFileServer()->getCacheStrapper(), rsPlugins->getFileServer()->getCacheTransfer(), rsPlugins->getRemoteCacheDir()), 
+RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
+        : CacheSource(service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getLocalCacheDir()),
+          CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
 	  p3Config(config_type), // CONFIG_TYPE_RANK_LINK
 	  _tick_delay_in_seconds(tick_delay)
 {
