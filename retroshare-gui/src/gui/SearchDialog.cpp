@@ -338,7 +338,7 @@ void SearchDialog::download()
 			 std::string hash = item->text(SR_HASH_COL).toStdString();
 			 getSourceFriendsForHash(hash,srcIds) ;
 
-			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toUtf8().constData(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
@@ -366,10 +366,10 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 
 		getSourceFriendsForHash(hash,srcIds) ;
 
-		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
+		rsFiles->FileRequest(item->text(SR_NAME_COL).toUtf8().constData(),
 				hash,
 				item->text(SR_SIZE_COL).toULongLong(),
-				cleanPath.toStdString(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
+				cleanPath.toUtf8().constData(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"

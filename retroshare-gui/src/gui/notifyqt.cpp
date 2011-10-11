@@ -192,9 +192,9 @@ void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t stat
 /* one or more peers has changed the states */
 void NotifyQt::notifyPeerStatusChangedSummary()
 {
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that one peer has changed the state" << std::endl;
-        #endif
+#endif
 
 	emit peerStatusChangedSummary();
 }
@@ -206,41 +206,41 @@ void NotifyQt::notifyChannelMsgReadSatusChanged(const std::string& channelId, co
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
-        #endif
+#endif
 	emit ownStatusMessageChanged() ;
 }
 
 void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 {
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: notification of new avatar." << std::endl ;
-        #endif
+#endif
 	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
 }
 
 void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
 {
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received custom status string notification" << std::endl ;
-        #endif
-	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromStdString(status_string)) ;
+#endif
+	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
 }
 
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
 {
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
-        #endif
-	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromStdString(status_string),is_private) ;
+#endif
+	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromUtf8(status_string.c_str()),is_private) ;
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
 {
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "in notify search result..." << std::endl ;
-        #endif
+#endif
 
 	for(std::list<TurtleFileInfo>::const_iterator it(files.begin());it!=files.end();++it)
 	{

@@ -271,7 +271,7 @@ void MessageWidget::getcurrentrecommended()
 
 		switch (it->column()) {
 		case COLUMN_FILE_NAME:
-			fi.fname = it->data().toString().toStdString() ;
+			fi.fname = it->data().toString().toUtf8().constData();
 			break ;
 		case COLUMN_FILE_SIZE:
 			fi.size = it->data().toULongLong() ;
@@ -287,7 +287,7 @@ void MessageWidget::getcurrentrecommended()
 		std::cout << "Requesting file " << fi.fname << ", size=" << fi.size << ", hash=" << fi.hash << std::endl ;
 
 		if (rsFiles->FileRequest(fi.fname, fi.hash, fi.size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds) == false) {
-			QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:\n    ") + QString::fromStdString(fi.fname), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+			QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:\n    ") + QString::fromUtf8(fi.fname.c_str()), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
 			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 			mb.exec();
 		}
@@ -436,7 +436,7 @@ void MessageWidget::fill(const std::string &msgId)
 	QList<QTreeWidgetItem*> items;
 	for (it = recList.begin(); it != recList.end(); it++) {
 		QTreeWidgetItem *item = new QTreeWidgetItem;
-		item->setText(COLUMN_FILE_NAME, QString::fromStdString(it->fname));
+		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
 		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash));
 
