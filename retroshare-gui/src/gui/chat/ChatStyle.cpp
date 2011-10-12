@@ -411,8 +411,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
 static QString getBaseDir()
 {
     // application path
-    std::string configDir = RsInit::RsConfigDirectory();
-    QString baseDir = QString::fromStdString(configDir);
+    QString baseDir = QString::fromUtf8(RsInit::RsConfigDirectory().c_str());
 
 #ifdef WIN32
     if (RsInit::isPortable ()) {

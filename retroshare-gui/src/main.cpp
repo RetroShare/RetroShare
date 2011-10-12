@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
-		QString::fromStdString(RsInit::RsConfigDirectory()));
+		QString::fromUtf8(RsInit::RsConfigDirectory().c_str()));
 
 	std::string url = RsInit::getRetroShareLink();
 	if (!url.empty()) {

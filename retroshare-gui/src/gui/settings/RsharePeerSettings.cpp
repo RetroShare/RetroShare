@@ -34,7 +34,7 @@
 #include "gui/style/RSStyle.h"
 
 /** The file in which all settings of he peers will read and written. */
-#define SETTINGS_FILE   (RsInit::RsProfileConfigDirectory() + "/RSPeers.conf")
+#define SETTINGS_FILE   (QString::fromUtf8(RsInit::RsProfileConfigDirectory().c_str()) + "/RSPeers.conf")
 
 /* clean dead gpg id's after these days */
 #define DAYS_TO_CLEAN   7
@@ -54,7 +54,7 @@ RsharePeerSettings *PeerSettings = NULL;
 
 /** Default Constructor */
 RsharePeerSettings::RsharePeerSettings()
-    : QSettings(QString::fromStdString(SETTINGS_FILE), QSettings::IniFormat)
+    : QSettings(SETTINGS_FILE, QSettings::IniFormat)
 {
     cleanDeadGpgIds();
 }
