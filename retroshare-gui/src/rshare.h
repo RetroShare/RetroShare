@@ -78,6 +78,12 @@ public:
     /** Sets the current GUI stylesheet. */
   static bool setSheet(QString sheet = QString());
 
+  /**
+   * Update Language, Style and StyleSheet.
+   * First args are cheked for a style then the settings.
+   */
+  static void resetLanguageAndStyle();
+
 
   /** Returns the current language. */
   static QString language() { return _language; }

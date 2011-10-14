@@ -123,6 +123,15 @@ LanguageSupport::translate(const QString &languageCode)
 {
   if (!isValidLanguageCode(languageCode))
     return false;
+
+  static QTranslator *retroshareTranslator = NULL;
+  if (retroshareTranslator) {
+    // remove the previous translator, is needed, when switching to en
+    QApplication::removeTranslator(retroshareTranslator);
+    delete(retroshareTranslator);
+    retroshareTranslator = NULL;
+  }
+
   if (languageCode == "en")
     return true;
 
@@ -144,7 +153,7 @@ LanguageSupport::translate(const QString &languageCode)
   }
 
   /* Install a translator for RetroShare's UI widgets */
-  QTranslator *retroshareTranslator = new QTranslator(rApp);
+  retroshareTranslator = new QTranslator(rApp);
   Q_CHECK_PTR(retroshareTranslator);
 
   if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
@@ -152,5 +161,6 @@ LanguageSupport::translate(const QString &languageCode)
     return true;
   }
   delete retroshareTranslator;
+  retroshareTranslator = NULL;
   return false;
 }

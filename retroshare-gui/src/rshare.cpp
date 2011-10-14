@@ -122,14 +122,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
   /** Initialize support for language translations. */
   //LanguageSupport::initialize();
 
-  /** Translate the GUI to the appropriate language. */
-  setLanguage(_args.value(ARG_LANGUAGE));
-
-  /** Set the GUI style appropriately. */
-  setStyle(_args.value(ARG_GUISTYLE));
-  
-  /** Set the GUI stylesheet appropriately. */
-  setSheet(_args.value(ARG_GUISTYLESHEET));
+  resetLanguageAndStyle();
 
   /* Switch off auto shutdown */
   setQuitOnLastWindowClosed ( false );
@@ -353,6 +346,18 @@ Rshare::setSheet(QString sheet)
     _stylesheet = sheet;
     return true;
  
+}
+
+void Rshare::resetLanguageAndStyle()
+{
+    /** Translate the GUI to the appropriate language. */
+    setLanguage(_args.value(ARG_LANGUAGE));
+
+    /** Set the GUI style appropriately. */
+    setStyle(_args.value(ARG_GUISTYLE));
+
+    /** Set the GUI stylesheet appropriately. */
+    setSheet(_args.value(ARG_GUISTYLESHEET));
 }
 
 /** Returns the directory RetroShare uses for its data files. */

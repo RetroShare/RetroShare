@@ -76,9 +76,9 @@
 // the one and only global settings object
 RshareSettings *Settings = NULL;
 
-/*static*/ void RshareSettings::Create ()
+/*static*/ void RshareSettings::Create(bool forceCreateNew)
 {
-    if (Settings && Settings->m_bValid == false) {
+    if (Settings && (forceCreateNew || Settings->m_bValid == false)) {
         // recreate with correct path
         delete (Settings);
         Settings = NULL;

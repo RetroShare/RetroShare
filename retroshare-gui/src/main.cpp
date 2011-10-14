@@ -212,14 +212,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+        /* recreate global settings object, now with correct path */
+	RshareSettings::Create(true);
+	Rshare::resetLanguageAndStyle();
+
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
 	rsicontrol->StartupRetroShare();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
 
-	/* recreate global settings object, now with correct path */
-	RshareSettings::Create ();
 	RsharePeerSettings::Create();
 
 #ifdef MINIMAL_RSGUI
@@ -272,9 +274,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->friendsDialog      		,SLOT(insertPeers()                    )) ;
 	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
-	QObject::connect(notify,SIGNAL(groupsChanged(int))                ,w->friendsDialog      		,SLOT(groupsChanged(int)               ));
 	QObject::connect(notify,SIGNAL(privateChatChanged(int, int))      ,w                   		,SLOT(privateChatChanged(int, int)     ));
 	QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
@@ -290,8 +290,6 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->networkDialog,SLOT(setLogInfo(QString))) ;
 	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->networkDialog,SLOT(updateNewDiscoveryInfo()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
-
-	QObject::connect(w->friendsDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
 
 	w->installGroupChatNotifier();
 

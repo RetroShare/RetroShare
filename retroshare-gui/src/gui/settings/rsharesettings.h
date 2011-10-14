@@ -86,7 +86,7 @@ public:
 
 public:
   /* create settings object */
-  static void Create ();
+  static void Create(bool forceCreateNew = false);
 
   /** Gets the currently preferred language code for RShare. */
   QString getLanguageCode();
