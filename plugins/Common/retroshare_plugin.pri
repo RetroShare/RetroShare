@@ -13,6 +13,9 @@ win32 {
         QMAKE_CC = g++
         OBJECTS_DIR = temp/obj
         MOC_DIR = temp/moc
+		RCC_DIR = temp/qrc
+		UI_DIR  = temp/ui
+		
         DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
         DEFINES *= MINIUPNPC_VERSION=13
         DESTDIR = lib
@@ -40,18 +43,18 @@ win32 {
 
         PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
         ZLIB_DIR = ../../../lib/zlib-1.2.3
-        SSL_DIR = ../../../OpenSSL
+        SSL_DIR = ../../../../OpenSSL
 
 
         INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 
-        PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
-        LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+        PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+        LIBS += ../../libretroshare/src/lib/libretroshare.a
 
-        LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
-        PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        LIBS += ../../libbitdht/src/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
-        LIBS += -L"../../../lib"
+        LIBS += -L"../../../../lib"
         LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
         LIBS += -lws2_32
