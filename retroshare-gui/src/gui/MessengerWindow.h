@@ -27,23 +27,17 @@
 #include <gui/common/rwindow.h>
 
 class LogoBar;
-class FriendsDialog;
-class PopupChatDialog;
-class RSTreeWidgetItemCompareRole;
 
 class MessengerWindow : public RWindow
 {
     Q_OBJECT
 
- public:
-    QPixmap picture;
-
+public:
     static void showYourself ();
     static MessengerWindow* getInstance();
     static void releaseInstance();
 
 public slots:
-    void updateMessengerDisplay() ;
 #ifndef MINIMAL_RSGUI
     void loadmystatusmessage();
 #endif // MINIMAL_RSGUI
@@ -59,30 +53,9 @@ protected:
     void closeEvent (QCloseEvent * event);
 
 private slots:
-    /** Create the context popup menu and it's submenus */
-    void messengertreeWidgetCostumPopupMenu( QPoint point );
-
 #ifndef MINIMAL_RSGUI
     /** Add a new friend */
     void addFriend();
-    /** Export friend  */
-    void exportfriend();
-    /** Remove friend  */
-    void removefriend();
-#endif // MINIMAL_RSGUI
-    /** start to connect to a friend **/
-    void connectfriend();
-#ifndef MINIMAL_RSGUI
-    /** start a chat with a friend **/
-    void chatfriend(QTreeWidgetItem *pPeer);
-    void chatfriendproxy();
-    /** start Messages Composer **/
-    void sendMessage();
-    /** show peers details for each friend **/
-    void configurefriend();
-
-    void recommendfriend();
-    void pastePerson();
 
     /** Open Shared Manager **/
     void openShareManager();
@@ -92,15 +65,10 @@ private slots:
     void savestatusmessage();
 #endif // MINIMAL_RSGUI
 
-    void on_actionSort_Peers_Descending_Order_activated();
-    void on_actionSort_Peers_Ascending_Order_activated();
-    void on_actionRoot_is_decorated_activated();
-
     void filterRegExpChanged();
     void clearFilter();
 
 signals:
-    void friendsUpdated() ;
 
 private:
     static MessengerWindow *_instance;
@@ -109,25 +77,10 @@ private:
 
     void displayMenu();
 
-    /* Worker Functions */
-    /* (1) Update Display */
-    QTimer *timer;
-
-    /* (2) Utility Fns */
-    QTreeWidgetItem *getCurrentPeer();
-    void  insertPeers();
-
-    void FilterItems();
-    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
-
-    QTreeView *messengertreeWidget;
 
     LogoBar * _rsLogoBarmessenger;
 
-    QFont itemFont;
     QString m_nickName;
-
-    RSTreeWidgetItemCompareRole *m_compareRole;
 
     /** Qt Designer generated object */
     Ui::MessengerWindow ui;

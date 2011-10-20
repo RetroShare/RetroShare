@@ -355,33 +355,13 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="1" column="0">
-        <widget class="QTreeWidget" name="messengertreeWidget">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
+        <widget class="FriendList" name="friendList" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="styleSheet">
-          <string notr="true">QTreeWidget#messengertreeWidget{
-border: 1px solid #CCCCCC;
-}</string>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>38</width>
-           <height>38</height>
-          </size>
-         </property>
-         <property name="indentation">
-          <number>22</number>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="columnCount">
-          <number>0</number>
-         </property>
-         <attribute name="headerShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
         </widget>
        </item>
       </layout>
@@ -456,6 +436,12 @@ border: 1px solid #CCCCCC;
    <class>AvatarWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FriendList</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendList.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

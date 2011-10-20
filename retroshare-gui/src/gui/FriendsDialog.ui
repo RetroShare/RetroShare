@@ -653,7 +653,10 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QTreeWidget" name="peertreeWidget">
+         <widget class="FriendList" name="friendList" native="true">
+         <property name="styleSheet">
+          <string notr="true">b{}</string>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -666,73 +669,6 @@ p, li { white-space: pre-wrap; }
            <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-           <stylestrategy>PreferAntialias</stylestrategy>
-           <kerning>true</kerning>
-          </font>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="acceptDrops">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QTreeWidget#peertreeWidget{border: 1px solid #CCCCCC;
-background: white;}</string>
-         </property>
-         <property name="autoScroll">
-          <bool>false</bool>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="autoExpandDelay">
-          <number>1</number>
-         </property>
-         <property name="indentation">
-          <number>20</number>
-         </property>
-         <property name="itemsExpandable">
-          <bool>true</bool>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="allColumnsShowFocus">
-          <bool>true</bool>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-         <property name="expandsOnDoubleClick">
-          <bool>false</bool>
-         </property>
-         <attribute name="headerDefaultSectionSize">
-          <number>200</number>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>Friends</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Status</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -1463,6 +1399,30 @@ background: white;}</string>
     <string>Save Chat History</string>
    </property>
   </action>
+  <action name="actionAdd_Group">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/user/add_group22.png</normaloff>:/images/user/add_group22.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add a new Group</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a new Group</string>
+   </property>
+  </action>
+  <action name="actionDelete_Chat_History">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Chat History</string>
+   </property>
+   <property name="toolTip">
+    <string>Deletes all stored and displayed chat history</string>
+   </property>
+  </action>
   <action name="action_Hide_Offline_Friends">
    <property name="checkable">
     <bool>true</bool>
@@ -1494,20 +1454,11 @@ background: white;}</string>
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="text">
-    <string>Hide State</string>
-   </property>
-  </action>
-  <action name="actionAdd_Group">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/user/add_group22.png</normaloff>:/images/user/add_group22.png</iconset>
+   <property name="enabled">
+    <bool>false</bool>
    </property>
    <property name="text">
-    <string>Add a new Group</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a new Group</string>
+    <string>Hide State </string>
    </property>
   </action>
   <action name="actionSort_Peers_Descending_Order">
@@ -1534,16 +1485,15 @@ background: white;}</string>
     <string>Sort Ascending Order</string>
    </property>
   </action>
-  <action name="actionDelete_Chat_History">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
+  <action name="action_Hide_Avatar_Column">
+   <property name="checkable">
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Delete Chat History</string>
+    <string>Hide Avatar Column</string>
    </property>
    <property name="toolTip">
-    <string>Deletes all stored and displayed chat history</string>
+    <string>Hide Avatar Column</string>
    </property>
   </action>
  </widget>
@@ -1560,6 +1510,13 @@ background: white;}</string>
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>FriendList</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendList.h</header>
+   <container>1</container>
+  </customwidget>
+
  </customwidgets>
  <resources>
   <include location="images.qrc"/>

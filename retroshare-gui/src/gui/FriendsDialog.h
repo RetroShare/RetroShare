@@ -27,16 +27,6 @@
 
 #include "mainpage.h"
 
-// states for sorting (equal values are possible)
-// used in BuildSortString - state + name
-#define PEER_STATE_ONLINE       1
-#define PEER_STATE_BUSY         2
-#define PEER_STATE_AWAY         3
-#define PEER_STATE_AVAILABLE    4
-#define PEER_STATE_INACTIVE     5
-#define PEER_STATE_OFFLINE      6
-
-#define BuildStateSortString(bEnabled,sName,nState) bEnabled ? (QString ("%1").arg(nState) + " " + sName) : sName
 
 #ifndef MINIMAL_RSGUI
 #include "ui_FriendsDialog.h"
@@ -47,9 +37,8 @@ class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
 class AttachFileItem;
-class RSTreeWidgetItemCompareRole;
 
-class FriendsDialog : public RsAutoUpdatePage 
+class FriendsDialog : public RsAutoUpdatePage
 {
     Q_OBJECT
 
@@ -59,15 +48,10 @@ public:
     /** Default Destructor */
     ~FriendsDialog ();
 
-    //  void setChatDialog(ChatDialog *cd);
-
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
-    // replaced by shortcut
-    //		virtual void keyPressEvent(QKeyEvent *) ;
 
 public slots:
 
-    void  insertPeers();
     void publicChatChanged(int type);
 //    void toggleSendItem( QTreeWidgetItem *item, int col );
 
@@ -83,8 +67,6 @@ public slots:
     // called by notifyQt when another peer is typing (in group chant and private chat)
     void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
-    void groupsChanged(int type);
-
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
@@ -99,39 +81,12 @@ private slots:
     void on_actionDelete_Chat_History_triggered();
     void on_actionMessageHistory_triggered();
 
-    /** Create the context popup menu and it's submenus */
-    void peertreeWidgetCostumPopupMenu( QPoint point );
-
     void updateStatusString(const QString& peer_id, const QString& statusString) ;	// called when a peer is typing in group chat
     void updateStatusTyping() ;										// called each time a key is hit
 
     //void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
 
-    /** Export friend in Friends Dialog */
-    void exportfriend();
-    /** Remove friend  */
-    void removefriend();
-    /** start a chat with a friend **/
     void addFriend();
-    void chatfriend(QTreeWidgetItem* );
-    void chatfriendproxy();
-    void msgfriend();
-    void recommendfriend();
-    void pastePerson();
-    void copyLink();
-    void addToGroup();
-    void moveToGroup();
-    void removeFromGroup();
-    void editGroup();
-    void removeGroup();
-
-    void configurefriend();
-#ifdef UNFINISHED
-    void viewprofile();
-#endif
-
-    /** RsServer Friend Calls */
-    void connectfriend();
 
     void setColor();
     void insertSendList();
@@ -158,15 +113,11 @@ private slots:
 
     void setCurrentFileName(const QString &fileName);
 
-    void setStateColumn();
-    void sortPeersAscendingOrder();
-    void sortPeersDescendingOrder();
-    void peerSortIndicatorChanged(int,Qt::SortOrder);
-
     void newsFeedChanged(int count);
 
+    void peerSortColumnChanged(bool sortedByState);
+
 signals:
-    void friendsUpdated() ;
     void notifyGroupChat(const QString&,const QString&) ;
 
 private:
@@ -176,26 +127,11 @@ private:
     void colorChanged(const QColor &c);
     void fontChanged(const QFont &font);
 
-    class QLabel *iconLabel, *textLabel;
-    class QWidget *widget;
-    class QWidgetAction *widgetAction;
-    class QSpacerItem *spacerItem;
-
-    RSTreeWidgetItemCompareRole *m_compareRole;
-
     void displayMenu();
     ///play the sound when recv a message
     void playsound();
 
     QString fileName;
-    bool groupsHasChanged;
-    std::list<std::string> openGroups;
-
-    /* Worker Functions */
-    /* (1) Update Display */
-
-    /* (2) Utility Fns */
-    QTreeWidgetItem *getCurrentPeer();
 
     ChatStyle style;
 
@@ -207,8 +143,6 @@ private:
     int newsFeedTabIndex;
     QColor newsFeedTabColor;
     QString newsFeedText;
-    bool wasStatusColumnHidden;
-    bool correctColumnStatusSize;
 
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;
