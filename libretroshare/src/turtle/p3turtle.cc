@@ -796,6 +796,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	// to scramble a possible search-by-depth attack.
 	//
 	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->request_id)&0x7)==2)) ;
+	bool random_dshift = (item->depth == 1                       && (((_random_bias ^ item->request_id)&0x7)==6)) ;
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
@@ -814,7 +815,15 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 				// Copy current item and modify it.
 				RsTurtleSearchRequestItem *fwd_item = item->clone() ;
 
-				++(fwd_item->depth) ;		// increase search depth
+				// increase search depth, except in some rare cases, to prevent correlation between 
+				// TR sniffing and friend names. The strategy is to not increase depth if the depth
+				// is 1:
+				// 	If B receives a TR of depth 1 from A, B cannot deduice that A is downloading the
+				// 	file, since A might have shifted the depth.
+				//
+				if(!random_dshift)
+					++(fwd_item->depth) ;		
+
 				fwd_item->PeerId(*it) ;
 
 				sendItem(fwd_item) ;
@@ -1712,6 +1721,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	// If search depth not too large, also forward this search request to all other peers.
 	//
 	bool random_bypass = (item->depth >= TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->partial_tunnel_id)&0x7)==2)) ;
+	bool random_dshift = (item->depth == 1                       && (((_random_bias ^ item->partial_tunnel_id)&0x7)==6)) ;
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
@@ -1730,7 +1740,15 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 				// Copy current item and modify it.
 				RsTurtleOpenTunnelItem *fwd_item = new RsTurtleOpenTunnelItem(*item) ;
 
-				++(fwd_item->depth) ;		// increase tunnel depth
+				// increase search depth, except in some rare cases, to prevent correlation between 
+				// TR sniffing and friend names. The strategy is to not increase depth if the depth
+				// is 1:
+				// 	If B receives a TR of depth 1 from A, B cannot deduice that A is downloading the
+				// 	file, since A might have shifted the depth.
+				//
+				if(!random_dshift)
+					++(fwd_item->depth) ;		// increase tunnel depth
+
 				fwd_item->PeerId(*it) ;
 
 				{
