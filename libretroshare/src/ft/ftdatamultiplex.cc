@@ -34,6 +34,7 @@
 #include "ft/ftfilecreator.h"
 #include "ft/ftfileprovider.h"
 #include "ft/ftsearch.h"
+#include <retroshare/rsturtle.h>
 
 /* For Thread Behaviour */
 const uint32_t DMULTIPLEX_MIN	= 10; /* 1ms sleep */
@@ -790,26 +791,6 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	std::cerr << std::endl;
 #endif
 
-//	{
-//		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-//
-//		/* Check for bad requests */
-//		std::map<std::string, time_t>::iterator bit;
-//		if (mUnknownHashs.end() != (bit = mUnknownHashs.find(hash)))
-//		{
-//
-//#ifdef MPLEX_DEBUG
-//		std::cerr << "ftDataMultiplex::handleSearchRequest(";
-//		std::cerr << " Found Ignore Hash ... done";
-//		std::cerr << std::endl;
-//#endif
-//
-//			/* We've previously rejected this one, so ignore */
-//			return false;
-//		}
-//	}
-
-
 	/* 
 	 * Do Actual search 
 	 * Could be Cache File, Local or Extra
@@ -822,12 +803,12 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	 */
 
 	FileInfo info;
-	uint32_t hintflags = ( RS_FILE_HINTS_NETWORK_WIDE 
-								| RS_FILE_HINTS_BROWSABLE 
-								| RS_FILE_HINTS_CACHE 
-								| RS_FILE_HINTS_EXTRA 
-								| RS_FILE_HINTS_LOCAL 
-								| RS_FILE_HINTS_SPEC_ONLY);
+	uint32_t hintflags =   RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY ;
+
+	if(rsTurtle->isTurtlePeer(peerId))
+		hintflags |= RS_FILE_HINTS_NETWORK_WIDE ;
+	else
+		hintflags |= RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_CACHE ;
 
 	if (mSearch->search(hash, hintflags, info))
 	{
