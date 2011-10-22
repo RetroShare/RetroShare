@@ -444,6 +444,11 @@ QString RetroShareLink::title() const
 	return "";
 }
 
+static QString encodeItem(QString item)
+{
+	return item.replace(" ", "%20");
+}
+
 QString RetroShareLink::toString() const
 {
     switch (_type) {
@@ -454,7 +459,7 @@ QString RetroShareLink::toString() const
             QUrl url;
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_FILE);
-            url.addQueryItem(FILE_NAME, _name);
+            url.addQueryItem(FILE_NAME, encodeItem(_name));
             url.addQueryItem(FILE_SIZE, QString::number(_size));
             url.addQueryItem(FILE_HASH, _hash);
 
@@ -465,7 +470,7 @@ QString RetroShareLink::toString() const
             QUrl url;
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_PERSON);
-            url.addQueryItem(PERSON_NAME, _name);
+            url.addQueryItem(PERSON_NAME, encodeItem(_name));
             url.addQueryItem(PERSON_HASH, _hash);
 
             return url.toString();
@@ -475,7 +480,7 @@ QString RetroShareLink::toString() const
             QUrl url;
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_FORUM);
-            url.addQueryItem(FORUM_NAME, _name);
+            url.addQueryItem(FORUM_NAME, encodeItem(_name));
             url.addQueryItem(FORUM_ID, _hash);
             if (!_msgId.isEmpty()) {
                 url.addQueryItem(FORUM_MSGID, _msgId);
@@ -488,7 +493,7 @@ QString RetroShareLink::toString() const
             QUrl url;
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_CHANNEL);
-            url.addQueryItem(CHANNEL_NAME, _name);
+            url.addQueryItem(CHANNEL_NAME, encodeItem(_name));
             url.addQueryItem(CHANNEL_ID, _hash);
             if (!_msgId.isEmpty()) {
                 url.addQueryItem(CHANNEL_MSGID, _msgId);
@@ -501,7 +506,7 @@ QString RetroShareLink::toString() const
             QUrl url;
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_SEARCH);
-            url.addQueryItem(SEARCH_KEYWORDS, _name);
+            url.addQueryItem(SEARCH_KEYWORDS, encodeItem(_name));
 
             return url.toString();
         }
@@ -512,7 +517,7 @@ QString RetroShareLink::toString() const
             url.setHost(HOST_MESSAGE);
             url.addQueryItem(MESSAGE_ID, _hash);
             if (_subject.isEmpty() == false) {
-               url.addQueryItem(MESSAGE_SUBJECT, _subject);
+               url.addQueryItem(MESSAGE_SUBJECT, encodeItem(_subject));
             }
 
             return url.toString();
