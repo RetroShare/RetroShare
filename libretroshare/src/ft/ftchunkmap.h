@@ -157,6 +157,11 @@ class ChunkMap
 		//
 		void setPeerAvailabilityMap(const std::string& peer_id,const CompressedChunkMap& peer_map) ;
 
+		/// Returns a pointer to the availability chunk map of the given source, and possibly
+		/// allocates it if necessary.
+		//
+		SourceChunksInfo *getSourceChunksInfo(const std::string& peer_id) ;
+
 		/// Returns the total size of downloaded data in the file.
 		uint64_t getTotalReceived() const { return _total_downloaded ; }
 

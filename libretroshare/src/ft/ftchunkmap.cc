@@ -84,7 +84,7 @@ ChunkMap::ChunkMap(uint64_t s,bool availability)
 	std::cerr << "   ChunkSize: " << _chunk_size << std::endl ;
 	std::cerr << "   Number of Chunks: " << n << std::endl ;
 	std::cerr << "   Data: " ;
-	for(int i=0;i<_map.size();++i)
+	for(uint32_t i=0;i<_map.size();++i)
 		std::cerr << _map[i] ;
 	std::cerr << std::endl ;
 #endif
@@ -190,22 +190,42 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 
 	if(it == _active_chunks_feed.end())		
 	{
-		// 1 - select an available chunk id for this peer.
+		// 0 - Look into other pending chunks and slice from here.
 		//
-		uint32_t c = getAvailableChunk(peer_id,source_chunk_map_needed) ;	
+		for(std::map<std::string,Chunk>::iterator pit(_active_chunks_feed.begin());pit!=_active_chunks_feed.end();++pit)
+		{
+			SourceChunksInfo *sci = getSourceChunksInfo(pit->first) ;
 
-		if(c >= _map.size()) 
-			return false ;
-
-		// 2 - add the chunk in the list of active chunks, and mark it as being downloaded
-		//
-		uint32_t soc = sizeOfChunk(c) ;
-		_active_chunks_feed[peer_id] = Chunk( c*(uint64_t)_chunk_size, soc ) ;
-		_map[c] = FileChunksInfo::CHUNK_ACTIVE ;
-		_slices_to_download[c]._remains = soc ;			// init the list of slices to download
+			if(sci->is_full || sci->cmap[pit->second._start / _chunk_size])
+			{
+				it = pit ;
 #ifdef DEBUG_FTCHUNK
-		std::cout << "*** ChunkMap::getDataChunk: Allocating new chunk " << c << " for peer " << peer_id << std::endl ;
+				std::cerr << "*** ChunkMap::getDataChunk: Sharing slice " << pit->second._start << " of peer " << pit->first << " for peer " << peer_id << std::endl;
 #endif
+				break ;
+			}
+		}
+
+		if(it == _active_chunks_feed.end())	// nor found. Find a new chunk.
+		{
+			// 1 - select an available chunk id for this peer.
+			//
+			uint32_t c = getAvailableChunk(peer_id,source_chunk_map_needed) ;	
+
+			if(c >= _map.size()) 
+				return false ;
+
+			// 2 - add the chunk in the list of active chunks, and mark it as being downloaded
+			//
+			uint32_t soc = sizeOfChunk(c) ;
+			_active_chunks_feed[peer_id] = Chunk( c*(uint64_t)_chunk_size, soc ) ;
+			_map[c] = FileChunksInfo::CHUNK_ACTIVE ;
+			_slices_to_download[c]._remains = soc ;			// init the list of slices to download
+			it = _active_chunks_feed.find(peer_id) ;
+#ifdef DEBUG_FTCHUNK
+			std::cout << "*** ChunkMap::getDataChunk: Allocating new chunk " << c << " for peer " << peer_id << std::endl ;
+#endif
+		}
 	}
 #ifdef DEBUG_FTCHUNK
 	else
@@ -214,16 +234,17 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 
 	// Get the first slice of the chunk, that is at most of length size
 	//
-	_active_chunks_feed[peer_id].getSlice(size_hint,chunk) ;
+	it->second.getSlice(size_hint,chunk) ;
 	_slices_to_download[chunk.offset/_chunk_size]._slices[chunk.id] = chunk.size ;
 	_slices_to_download[chunk.offset/_chunk_size]._last_data_received = time(NULL) ;
 
-	if(_active_chunks_feed[peer_id].empty())
-		_active_chunks_feed.erase(_active_chunks_feed.find(peer_id)) ;
-	
 	chunk.peer_id = peer_id ;
+
+	if(it->second.empty())
+		_active_chunks_feed.erase(it) ;
+
 #ifdef DEBUG_FTCHUNK
-	std::cout << "*** ChunkMap::getDataChunk: returning slice " << chunk << " for peer " << peer_id << std::endl ;
+	std::cout << "*** ChunkMap::getDataChunk: returning slice " << chunk << " for peer " << it->first << std::endl ;
 #endif
 	return true ;
 }
@@ -336,12 +357,9 @@ uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 		return _chunk_size ;
 }
 
-uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too_old) 
+SourceChunksInfo *ChunkMap::getSourceChunksInfo(const std::string& peer_id)
 {
-	// Quite simple strategy: Check for 1st availabe chunk for this peer starting from the given start location.
-	//
 	std::map<std::string,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
-	SourceChunksInfo *peer_chunks = NULL;
 
 	// Do we have a chunk map for this file source ?
 	//  - if yes, we use it
@@ -375,7 +393,14 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 
 		it = _peers_chunks_availability.find(peer_id) ;
 	}
-	peer_chunks = &(it->second) ;
+	return &(it->second) ;
+}
+
+uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too_old) 
+{
+	// Quite simple strategy: Check for 1st availabe chunk for this peer starting from the given start location.
+	//
+	SourceChunksInfo *peer_chunks = getSourceChunksInfo(peer_id) ;
 
 	// If the info is too old, we ask for a new one. When the map is full, we ask 10 times less, as it's probably not 
 	// useful to get a new map that will also be full, but because we need to be careful not to mislead information,
