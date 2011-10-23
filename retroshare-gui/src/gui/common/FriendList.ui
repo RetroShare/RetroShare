@@ -11,6 +11,9 @@
    </rect>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QTreeWidget" name="peerTreeWidget">
      <property name="font">
@@ -60,6 +63,9 @@
      <property name="columnCount">
       <number>3</number>
      </property>
+     <attribute name="headerDefaultSectionSize">
+      <number>200</number>
+     </attribute>
      <attribute name="headerDefaultSectionSize">
       <number>200</number>
      </attribute>
