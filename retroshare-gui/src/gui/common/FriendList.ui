@@ -66,9 +66,6 @@
      <attribute name="headerDefaultSectionSize">
       <number>200</number>
      </attribute>
-     <attribute name="headerDefaultSectionSize">
-      <number>200</number>
-     </attribute>
      <column>
       <property name="text">
        <string>Friends</string>

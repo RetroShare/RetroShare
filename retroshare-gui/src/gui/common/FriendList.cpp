@@ -1425,22 +1425,28 @@ void FriendList::setHideStatusColumn(bool hidden)
 
 void FriendList::setHideAvatarColumn(bool hidden)
 {
-    if (mHideAvatarColumn != hidden) {
-        QHeaderView *header = ui->peerTreeWidget->header();
-        ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, hidden);
-        if (mHideAvatarColumn) { // if column was hidden
-            if (header->sectionSize(COLUMN_NAME) > COLUMN_AVATAR_WIDTH) {
-                // resize name column to make room for avatar column, but only if it doesn't result in negative width
-                header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) - COLUMN_AVATAR_WIDTH);
-            }
-        } else {
-            header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) + COLUMN_AVATAR_WIDTH);
-        }
+    if (mHideAvatarColumn == hidden)
+        return;
 
-        mHideAvatarColumn = hidden;
-        updateHeaderSizes();
-        insertPeers();
+    bool columnWasHidden = mHideAvatarColumn;
+    mHideAvatarColumn = hidden;
+    ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, hidden);
+
+    if (RsAutoUpdatePage::eventsLocked()) // don't change header sizes
+        return;
+
+    QHeaderView *header = ui->peerTreeWidget->header();
+    if (columnWasHidden) {
+        if (header->sectionSize(COLUMN_NAME) > COLUMN_AVATAR_WIDTH) {
+            // resize name column to make room for avatar column, but only if it doesn't result in negative width
+            header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) - COLUMN_AVATAR_WIDTH);
+        }
+    } else {
+        header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) + COLUMN_AVATAR_WIDTH);
     }
+
+    updateHeaderSizes();
+    insertPeers();
 }
 
 void FriendList::setHideState(bool hidden)
