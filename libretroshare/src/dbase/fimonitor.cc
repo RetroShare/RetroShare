@@ -555,11 +555,14 @@ void 	FileIndexMonitor::updateCycle()
 	{
 		/* sleep a bit for each loop */
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-		usleep(100000); /* 1/10 sec */
-#else
-		Sleep(100);
-#endif
+// csoler: I'm disabling this since it causes a very long update cycle when the number
+// 		 of directories to go through is very large.
+//
+// #ifndef WINDOWS_SYS
+// 		usleep(100000); /* 1/10 sec */
+// #else
+// 		Sleep(100);
+// #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		/* check if directories have been updated */
