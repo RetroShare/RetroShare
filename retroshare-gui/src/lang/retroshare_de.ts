@@ -686,7 +686,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+706"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+703"/>
         <source>Certificate files</source>
         <translation>Zertifikat-Dateien</translation>
     </message>
@@ -1082,7 +1082,7 @@ p, li { white-space: pre-wrap; }
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+105"/>
         <source>Send Mail</source>
         <translation>Nachricht senden</translation>
     </message>
@@ -1271,7 +1271,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+440"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+439"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -1613,7 +1613,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-860"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-857"/>
         <source>Connect Friend Wizard</source>
         <translation>Assistent um sich zu einem Freund zu verbinden</translation>
     </message>
@@ -2254,7 +2254,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">RetroShare Link einfügen</translation>
+        <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -2337,17 +2337,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+39"/>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished">Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
+        <translation>Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Share Key With</source>
-        <translation type="unfinished">Schlüssel verteilen an</translation>
+        <translation>Schlüssel verteilen an</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Contacts:</source>
-        <translation type="unfinished">Kontakte:</translation>
+        <translation>Kontakte:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2377,7 +2377,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+10"/>
         <source>Key Sharing</source>
-        <translation type="unfinished">Schlüsselverteilung</translation>
+        <translation>Schlüsselverteilung</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2387,7 +2387,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished">Verteile privaten Schlüssel</translation>
+        <translation>Verteile privaten Schlüssel</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -3198,7 +3198,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1142"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1139"/>
         <source>Invite Friends by Email</source>
         <translation>Lade Freunde per Email ein</translation>
     </message>
@@ -3807,7 +3807,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+283"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+290"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3893,7 +3893,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+872"/>
+        <location line="+902"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3909,7 +3909,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1272"/>
+        <location line="-1307"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3942,12 +3942,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Foren&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+591"/>
+        <location line="+610"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
     <message>
-        <location line="-562"/>
+        <location line="-581"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
@@ -3981,24 +3981,24 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+39"/>
-        <location line="+290"/>
+        <location line="+309"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location line="-304"/>
-        <location line="+309"/>
+        <location line="-323"/>
+        <location line="+328"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location line="-290"/>
-        <location line="+295"/>
+        <location line="-309"/>
+        <location line="+314"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location line="-290"/>
+        <location line="-309"/>
         <source>Signed</source>
         <translation>Unterzeichnet</translation>
     </message>
@@ -4031,17 +4031,31 @@ p, li { white-space: pre-wrap; }
         <translation>Alle Dateien runterladen</translation>
     </message>
     <message>
-        <location line="+158"/>
+        <location line="+23"/>
+        <source>Next unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+154"/>
         <source>Reply Message</source>
         <translation>Auf Beitrag antworten</translation>
     </message>
     <message>
-        <location line="-491"/>
+        <location line="-510"/>
         <source>Create Forum</source>
         <translation>Forum erstellen</translation>
     </message>
     <message>
-        <location line="+590"/>
+        <location line="+568"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;LOADING&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -4051,13 +4065,13 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+146"/>
-        <location line="+1047"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+151"/>
+        <location line="+1077"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="-209"/>
+        <location filename="../gui/ForumsDialog.ui" line="-224"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4080,7 +4094,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1034"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1064"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4101,7 +4115,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1419"/>
+        <location line="+1449"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -4117,6 +4131,151 @@ p, li { white-space: pre-wrap; }
         <location line="+114"/>
         <source>none</source>
         <translation>keine</translation>
+    </message>
+</context>
+<context>
+    <name>FriendList</name>
+    <message>
+        <location filename="../gui/common/FriendList.ui" line="+71"/>
+        <source>Friends</source>
+        <translation>Freunde</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Avatar</source>
+        <translation>Avatar</translation>
+    </message>
+    <message>
+        <location filename="../gui/common/FriendList.cpp" line="+207"/>
+        <source>Group</source>
+        <translation>Gruppe</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Friend</source>
+        <translation>Freund</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Location</source>
+        <translation>Standort</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Message Group</source>
+        <translation>Gruppe anschreiben</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Add Friend</source>
+        <translation>Freund hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Edit Group</source>
+        <translation>Gruppe ändern</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Remove Group</source>
+        <translation>Gruppe entfernen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Message Friend</source>
+        <translation>Freund anschreiben</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Friend Details</source>
+        <translation>Freund-Details</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Recommend this Friend to...</source>
+        <translation>Freund weiterempfehlen...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connect To Friend</source>
+        <translation>Zum Freund verbinden</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopiere RetroShare Link</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+79"/>
+        <source>Paste Friend Link</source>
+        <translation>RetroShare Link einfügen</translation>
+    </message>
+    <message>
+        <location line="-73"/>
+        <source>Deny Friend</source>
+        <translation>Blockiere Freund</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Remove Friend Location</source>
+        <translation>Freund entfernen</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Add to group</source>
+        <translation>Hinzufügen zur Gruppe</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Move to group</source>
+        <translation>Verschiebe in Gruppe</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Groups</source>
+        <translation>Gruppen</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Remove from group</source>
+        <translation>Aus Gruppe entfernen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Remove from all groups</source>
+        <translation>Aus allen Gruppen entfernen</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Expand all</source>
+        <translation>Alle erweitern</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Collapse all</source>
+        <translation>Alle reduzieren</translation>
+    </message>
+    <message>
+        <location line="+551"/>
+        <location line="+2"/>
+        <source>Available</source>
+        <translation>Verfügbar</translation>
+    </message>
+    <message>
+        <location line="+329"/>
+        <source>Do you want to remove this Friend?</source>
+        <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
 </context>
 <context>
@@ -4145,21 +4304,19 @@ p, li { white-space: pre-wrap; }
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location line="+111"/>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="obsolete">Freunde</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Status</source>
-        <translation>Status</translation>
+        <translation type="obsolete">Status</translation>
     </message>
     <message>
         <source>Add or Change your Avatar</source>
         <translation type="obsolete">Wähle oder ändere dein Avatar Bild</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+164"/>
         <source>Edit Personal message</source>
         <translation>Statusnachricht ändern</translation>
     </message>
@@ -4215,7 +4372,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/FriendsDialog.cpp" line="+452"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -4283,7 +4439,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf speichern</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+32"/>
         <source>Hide Offline Friends</source>
         <translation>Verstecke offline Freunde</translation>
     </message>
@@ -4299,15 +4455,25 @@ p, li { white-space: pre-wrap; }
         <translation>Sortiere nach Status</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Hide State</source>
-        <translation>Status ausblenden</translation>
+        <location line="+43"/>
+        <location line="+3"/>
+        <source>Hide Avatar Column</source>
+        <translation>Avatar ausblenden</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <source>Hide State</source>
+        <translation type="obsolete">Status ausblenden</translation>
+    </message>
+    <message>
+        <location line="-88"/>
         <location line="+3"/>
         <source>Add a new Group</source>
         <translation>Neue Gruppe hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Hide State </source>
+        <translation>Status ausblenden</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4322,7 +4488,7 @@ p, li { white-space: pre-wrap; }
         <translation>Aufsteigend sortieren</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-65"/>
         <source>Delete Chat History</source>
         <translation>Nachrichtenverlauf löschen</translation>
     </message>
@@ -4332,7 +4498,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="-295"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+102"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -4342,154 +4508,126 @@ p, li { white-space: pre-wrap; }
         <translation>Neuigkeiten</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+31"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+59"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+108"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+49"/>
         <source>Group</source>
-        <translation>Gruppe</translation>
+        <translation type="obsolete">Gruppe</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="obsolete">Freund</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Location</source>
-        <translation>Standort</translation>
+        <translation type="obsolete">Standort</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Message Group</source>
-        <translation>Gruppe anschreiben</translation>
+        <translation type="obsolete">Gruppe anschreiben</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Edit Group</source>
-        <translation>Gruppe ändern</translation>
+        <translation type="obsolete">Gruppe ändern</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Remove Group</source>
-        <translation>Gruppe entfernen</translation>
+        <translation type="obsolete">Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation type="obsolete">Chat</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Message Friend</source>
-        <translation>Freund anschreiben</translation>
+        <translation type="obsolete">Freund anschreiben</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Friend Details</source>
-        <translation>Freund-Details</translation>
+        <translation type="obsolete">Freund-Details</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Recommend this Friend to...</source>
-        <translation>Freund weiterempfehlen...</translation>
+        <translation type="obsolete">Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Connect To Friend</source>
-        <translation>Zum Freund verbinden</translation>
+        <translation type="obsolete">Zum Freund verbinden</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Copy RetroShare Link</source>
-        <translation>Kopiere RetroShare Link</translation>
+        <translation type="obsolete">Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <location line="+80"/>
         <source>Paste Friend Link</source>
-        <translation>RetroShare Link einfügen</translation>
+        <translation type="obsolete">RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="-74"/>
         <source>Deny Friend</source>
-        <translation>Blockiere Freund</translation>
+        <translation type="obsolete">Blockiere Freund</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Remove Friend Location</source>
-        <translation>Freund entfernen</translation>
+        <translation type="obsolete">Freund entfernen</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Add to group</source>
-        <translation>Hinzufügen zur Gruppe</translation>
+        <translation type="obsolete">Hinzufügen zur Gruppe</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Move to group</source>
-        <translation>Verschiebe in Gruppe</translation>
+        <translation type="obsolete">Verschiebe in Gruppe</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Groups</source>
-        <translation>Gruppen</translation>
+        <translation type="obsolete">Gruppen</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Remove from group</source>
-        <translation>Aus Gruppe entfernen</translation>
+        <translation type="obsolete">Aus Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Remove from all groups</source>
-        <translation>Aus allen Gruppen entfernen</translation>
+        <translation type="obsolete">Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Expand all</source>
-        <translation>Alle erweitern</translation>
+        <translation type="obsolete">Alle erweitern</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Collapse all</source>
-        <translation>Alle reduzieren</translation>
+        <translation type="obsolete">Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+504"/>
-        <location line="+2"/>
         <source>Available</source>
-        <translation>Verfügbar</translation>
+        <translation type="obsolete">Verfügbar</translation>
     </message>
     <message>
-        <location line="+98"/>
         <source>Save Certificate</source>
-        <translation>Zertifikat speichern</translation>
+        <translation type="obsolete">Zertifikat speichern</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Certificates (*.pqi)</source>
-        <translation>Zertifikate (*.pqi)</translation>
+        <translation type="obsolete">Zertifikate (*.pqi)</translation>
     </message>
     <message>
-        <location line="+131"/>
         <source>Do you want to remove this Friend?</source>
-        <translation>Möchtest du diesen Freund entfernen?</translation>
+        <translation type="obsolete">Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+42"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -4505,7 +4643,7 @@ p, li { white-space: pre-wrap; }
         <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+64"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -5827,7 +5965,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IntroPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-463"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-460"/>
         <source>&amp;Make friend with selected friends of my friends</source>
         <translation>&amp;Füge ausgewählte Freunde Deiner Freunde hinzu</translation>
     </message>
@@ -7404,74 +7542,60 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessengerWindow</name>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="+296"/>
         <source>Expand all</source>
-        <translation>Alle erweitern</translation>
+        <translation type="obsolete">Alle erweitern</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Collapse all</source>
-        <translation>Alle reduzieren</translation>
+        <translation type="obsolete">Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Chat</source>
-        <translation>Unterhaltung</translation>
+        <translation type="obsolete">Unterhaltung</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Message Friend</source>
-        <translation>Freund anschreiben</translation>
+        <translation type="obsolete">Freund anschreiben</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Connect To Friend</source>
-        <translation>Zum Freund verbinden</translation>
+        <translation type="obsolete">Zum Freund verbinden</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Peer Details</source>
-        <translation>Peer-Details</translation>
+        <translation type="obsolete">Peer-Details</translation>
     </message>
     <message>
-        <location line="+14"/>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare Link einfügen</translation>
+        <translation type="obsolete">RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Export Friend</source>
-        <translation>Zertifikat des Freundes exportieren</translation>
+        <translation type="obsolete">Zertifikat des Freundes exportieren</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Deny Friend</source>
-        <translation>Blockiere Freund</translation>
+        <translation type="obsolete">Blockiere Freund</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Remove Friend Location</source>
-        <translation>Freund entfernen</translation>
+        <translation type="obsolete">Freund entfernen</translation>
     </message>
     <message>
-        <location line="+24"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;GPG Schlüssel&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;GPG Schlüssel&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location line="-3"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;RetroShare Instanz&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;RetroShare Instanz&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location line="+499"/>
         <source>Save Certificate</source>
-        <translation>Zertifikat speichern</translation>
+        <translation type="obsolete">Zertifikat speichern</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Certificates (*.pqi)</source>
-        <translation>Zertifikate (*.pqi)</translation>
+        <translation type="obsolete">Zertifikate (*.pqi)</translation>
     </message>
     <message>
         <source>Click to Change your Avatar</source>
@@ -7493,7 +7617,7 @@ p, li { white-space: pre-wrap; }
         <translation>Suche Freunde</translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+108"/>
         <location line="+3"/>
         <source>Sort Descending Order</source>
         <translation>Absteigend sortieren</translation>
@@ -7520,30 +7644,27 @@ p, li { white-space: pre-wrap; }
         <translation>Verstecke offline Freunde</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-118"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+126"/>
         <source>Sort by State</source>
         <translation>Sortiere nach Status</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="-549"/>
         <source>Recomend this Friend to...</source>
-        <translation>Freund weiterempfehlen...</translation>
+        <translation type="obsolete">Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.ui" line="-436"/>
+        <location line="-416"/>
         <source>RetroShare Messenger</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="+245"/>
-        <location line="+3"/>
         <source>location</source>
-        <translation>Standort</translation>
+        <translation type="obsolete">Standort</translation>
     </message>
 </context>
 <context>
@@ -8648,12 +8769,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Formular</translation>
     </message>
     <message>
-        <location line="+55"/>
-        <source>PushButton</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+31"/>
+        <location line="+115"/>
         <source>Status: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -8782,7 +8898,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+709"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+708"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -9574,7 +9690,7 @@ Lockdatei:
         <translation type="obsolete">Der Empfänger der Nachricht ist unbekannt.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+695"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+676"/>
         <source>Add file</source>
         <translation>Datei hinzufügen</translation>
     </message>
@@ -10166,7 +10282,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+12"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugins</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10248,7 +10364,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="+281"/>
+        <location filename="../rshare.cpp" line="+274"/>
         <source>Invalid language code specified: </source>
         <translation>Ungültige Sprach-Codierung ausgewählt: </translation>
     </message>
@@ -10311,7 +10427,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsidPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+982"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+979"/>
         <source>RetroShare ID</source>
         <translation>RetroShare ID</translation>
     </message>
@@ -11537,7 +11653,7 @@ p, li { white-space: pre-wrap; }
         <translation>Lade Profil</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+48"/>
         <source>Load configuration</source>
         <translation>Lade Konfiguration</translation>
     </message>
@@ -12261,7 +12377,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TextPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-994"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-991"/>
         <source>Use text representation of the PGP certificates.</source>
         <translation>Verwende diesen Text als PGP Zertifikat.</translation>
     </message>
@@ -12291,7 +12407,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bereinige Zertifikat</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+75"/>
         <source>No or misspelled BEGIN tag found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12336,7 +12452,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-205"/>
+        <location line="-202"/>
         <source>Text certificate</source>
         <translation>Text-Zertifikat</translation>
     </message>
@@ -12351,7 +12467,7 @@ p, li { white-space: pre-wrap; }
         <translation>Starte das Standard-Emailprogramm</translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+135"/>
         <source>Connect Friend Help</source>
         <translation>Verbindungshilfe</translation>
     </message>
@@ -12379,9 +12495,13 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragungsoptionen</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Queue Size:</source>
-        <translation>Warteschlangengröße:</translation>
+        <translation type="obsolete">Warteschlangengröße:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Maximum simultaneous downloads:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12403,7 +12523,7 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
@@ -12425,7 +12545,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+309"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+335"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12618,7 +12738,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+398"/>
+        <location line="+399"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -12668,7 +12788,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-933"/>
+        <location line="-934"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -12721,30 +12841,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
-        <location line="+538"/>
+        <location line="+539"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-536"/>
-        <location line="+537"/>
+        <location line="-537"/>
+        <location line="+538"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-537"/>
-        <location line="+536"/>
+        <location line="-538"/>
+        <location line="+537"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-426"/>
+        <location line="-427"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+262"/>
+        <location line="+263"/>
         <location line="+144"/>
         <location line="+135"/>
         <source>Failed</source>
@@ -12797,7 +12917,7 @@ p, li { white-space: pre-wrap; }
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-563"/>
+        <location line="-564"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>
@@ -12807,7 +12927,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="+109"/>
         <source>My files</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Dateien</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -13013,6 +13133,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Forwarded data    </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>TR Forward probabilities</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
