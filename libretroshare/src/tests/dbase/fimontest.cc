@@ -21,7 +21,7 @@
  *
  */
 
-#include "pqi/p3connmgr.h"
+//#include "pqi/p3connmgr.h"
 #include "retroshare/rsiface.h"
 #include "dbase/cachestrapper.h"
 #include "dbase/findex.h"
