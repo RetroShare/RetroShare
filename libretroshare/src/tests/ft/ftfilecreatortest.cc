@@ -5,7 +5,6 @@
 
 #include "util/rswin.h"
 #include "pqi/p3cfgmgr.h"
-#include "pqi/p3connmgr.h"
 #include "ft/ftserver.h"
 #include "turtle/p3turtle.h"
 
