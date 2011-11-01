@@ -8,12 +8,15 @@ DHT_TOP_DIR = ../../../../libbitdht/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o
+TESTOBJ  = ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o
 
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
+TESTS  = ftfilemappertest ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
 
 all: tests
 
+ftfilemappertest : ftfilemappertest.o 
+	$(CC) $(CFLAGS) -o ftfilemappertest ftfilemappertest.o $(LIBS)
+	
 ftcontrollertest : ftcontrollertest.o 
 	$(CC) $(CFLAGS) -o ftcontrollertest ftcontrollertest.o $(LIBS)
 	
