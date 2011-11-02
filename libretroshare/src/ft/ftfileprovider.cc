@@ -162,20 +162,11 @@ bool ftFileProvider::getFileData(const std::string& peer_id,uint64_t offset, uin
 		std::cerr <<"Chunk Size greater than total file size, adjusting chunk size " << data_size << std::endl;
 	}
 
-	if (data_size > 0)
+	if(data_size > 0 && data != NULL)
 	{	
-		if(data == NULL)
-		{
-			std::cerr << "ftFileProvider: Warning ! Re-allocating data, which probably could not be allocated because of weird chunk size." << std::endl ;
-			if(NULL == (data = malloc(data_size))) 
-			{
-				std::cerr << "ftFileProvider: Could not malloc a size of " << data_size << std::endl ;
-				return false;
-			}
-		}	
 		/*
-                 * seek for base_loc 
-                 */
+		 * seek for base_loc 
+		 */
 		fseeko64(fd, base_loc, SEEK_SET);
 
 		// Data space allocated by caller.
@@ -221,7 +212,7 @@ bool ftFileProvider::getFileData(const std::string& peer_id,uint64_t offset, uin
 	}
 	else 
 	{
-		std::cerr << "No data to read" << std::endl;
+		std::cerr << "No data to read, or NULL buffer used" << std::endl;
 		return 0;
 	}
 	return 1;
