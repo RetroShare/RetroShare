@@ -34,6 +34,7 @@
 #include "ft/ftfilecreator.h"
 #include "ft/ftfileprovider.h"
 #include "ft/ftsearch.h"
+#include "util/rsdir.h"
 #include <retroshare/rsturtle.h>
 
 /* For Thread Behaviour */
@@ -281,6 +282,28 @@ bool	ftDataMultiplex::recvCRC32MapRequest(const std::string& peerId, const std::
 	return true;
 }
 
+class CRC32Thread: public RsThread
+{
+	public:
+		CRC32Thread(ftDataMultiplex *dataplex,const std::string& peerId,const std::string& hash) 
+			: _plex(dataplex),_finished(false),_peerId(peerId),_hash(hash) {}
+
+		virtual void run()
+		{
+#ifdef MPLEX_DEBUG
+			std::cerr << "CRC32Thread is running for file " << _hash << std::endl;
+#endif
+			_plex->computeAndSendCRC32Map(_peerId,_hash) ;
+			_finished = true ;
+		}
+		bool finished() { return _finished ; }
+	private:
+		ftDataMultiplex *_plex ;
+		bool _finished ;
+		std::string _peerId ;
+		std::string _hash ;
+};
+
 /*********** BACKGROUND THREAD OPERATIONS ***********/
 bool 	ftDataMultiplex::workQueued()
 {
@@ -301,6 +324,7 @@ bool 	ftDataMultiplex::workQueued()
 bool 	ftDataMultiplex::doWork()
 {
 	bool doRequests = true;
+	time_t now = time(NULL) ;
 
 	/* Handle All the current Requests */		
 	while(doRequests)
@@ -372,8 +396,49 @@ bool 	ftDataMultiplex::doWork()
 		}
 	}
 
+	// Look for potentially finished CRC32Map threads, and destroys them.
+
+	{
+		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
+		for(std::list<CRC32Thread*>::iterator lit(_crc32map_threads.begin());lit!=_crc32map_threads.end();)
+			if((*lit)->finished())
+			{
+				std::cerr << "ftDataMultiplex::doWork: thread " << *lit << " ended. Deleting it." << std::endl;
+				(*lit)->join() ;
+				delete (*lit) ;
+				std::list<CRC32Thread*>::iterator tmp(lit) ;
+				++lit ;
+				_crc32map_threads.erase(tmp) ;
+			}
+			else
+			{
+				std::cerr << "ftDataMultiplex::doWork: thread " << *lit << " still working. Not quitting it." << std::endl;
+				++lit ;
+			}
+
+		// Take the opportunity to cleanup the list, so that it cannot grow indefinitely
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::doWork: Cleaning up list of cached maps." << std::endl ;
+#endif
+
+		// Keep CRC32 maps in cache for 30 mins max.
+		//
+		for(std::map<std::string,std::pair<time_t,CRC32Map> >::iterator it = _cached_crc32maps.begin();it!=_cached_crc32maps.end();)
+			if(it->second.first + 30*60 < now)
+			{
+				std::cerr << "Removing cached map for file " << it->first << " that was kept for too long now." << std::endl;
+
+				std::map<std::string,std::pair<time_t,CRC32Map> >::iterator tmp(it) ;
+				++it ;
+				_cached_crc32maps.erase(tmp) ;
+			}
+			else
+				++it ;
+	}
+
 	/* Only Handle One Search Per Period.... 
-   	 * Lower Priority
+	 * Lower Priority
 	 */
 	ftRequest req;
 
@@ -395,6 +460,7 @@ bool 	ftDataMultiplex::doWork()
 #endif
 	if(handleSearchRequest(req.mPeerId, req.mHash))
 		handleRecvDataRequest(req.mPeerId, req.mHash, req.mSize, req.mOffset, req.mChunk) ;
+
 
 	return true;
 }
@@ -470,11 +536,72 @@ bool ftDataMultiplex::recvChunkMap(const std::string& peerId, const std::string&
 	return false;
 }
 
+
 bool ftDataMultiplex::handleRecvCRC32MapRequest(const std::string& peerId, const std::string& hash)
 {
-	std::map<std::string, ftFileProvider *>::iterator it ;
-	bool found = true ;
+	bool found = false ;
+	CRC32Map cmap ;
 
+	// 1 - look into cache
+
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() : source " << peerId << " asked for CRC32 map for file " << hash << std::endl;
+#endif
+	{
+		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+		std::map<std::string,std::pair<time_t,CRC32Map> >::iterator it = _cached_crc32maps.find(hash) ;
+
+		if(it != _cached_crc32maps.end())
+		{
+			cmap = it->second.second ;
+			it->second.first = time(NULL) ; // update time stamp
+			found = true ;
+#ifdef MPLEX_DEBUG
+			std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() : CRC32 map found in cache !!" << std::endl;
+#endif
+
+		}
+	}
+
+	if(found)
+	{
+		std::cerr << "File CRC32 map was obtained successfully. Sending it." << std::endl ;
+
+		mDataSend->sendCRC32Map(peerId,hash,cmap);
+		return true ;
+	}
+	else
+	{
+		std::cerr << "File CRC32 Not found. Computing it." << std::endl ;
+
+		{
+			RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+			if(_crc32map_threads.size() > 1)
+			{
+				std::cerr << "Too many threads already computing CRC32Maps (2 is the current maximum)! Giving up." << std::endl;
+				return false ;
+			}
+		}
+
+		CRC32Thread *thread = new CRC32Thread(this,peerId,hash);
+
+		{
+			RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+			_crc32map_threads.push_back(thread) ;
+		}
+		thread->start() ;
+		return true ;
+	}
+}
+
+bool ftDataMultiplex::computeAndSendCRC32Map(const std::string& peerId, const std::string& hash)
+{
+	bool found ;
+	std::map<std::string, ftFileProvider *>::iterator it ;
+	std::string filename ;
+	uint64_t filesize =0;
+
+	// 1 - look into the list of servers
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -484,6 +611,8 @@ bool ftDataMultiplex::handleRecvCRC32MapRequest(const std::string& peerId, const
 			found = false ;
 	}
 
+	// 2 - if not found, create a server.
+	//
 	if(!found)
 	{
 #ifdef MPLEX_DEBUG
@@ -499,21 +628,51 @@ bool ftDataMultiplex::handleRecvCRC32MapRequest(const std::string& peerId, const
 #endif
 	}
 
-	CRC32Map cmap ;
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-
 		it = mServers.find(hash) ;
 
 		if(it == mServers.end())	// handleSearchRequest should have filled mServers[hash], but we have been off-mutex since,
-			return false ;				// so it's safer to check again.
-		else if(!it->second->getCRC32Map(cmap))
-			return false ;
+		{
+				std::cerr << "Could definitely not find a provider for file " << hash << ". Maybe the file does not exist?" << std::endl;
+				return false ;				// so it's safer to check again.
+		}
+		else
+		{
+			filesize = it->second->fileSize() ;
+			filename = it->second->fileName() ;
+		}
 	}
 
-	std::cerr << "File CRC32 map was successfully computed. Sending it." << std::endl ;
+	std::cerr << "Computing CRC32Map for file " << filename << ", hash=" << hash << ", size=" << filesize << std::endl;
 
+	FILE *fd = fopen(filename.c_str(),"r") ;
+
+	if(fd == NULL)
+	{
+		std::cerr << "Could not open file " << filename << " for read!! CRC32Map computation cancelled." << std::endl ;
+		return false ;
+	}
+
+	CRC32Map cmap ;
+	if(!RsDirUtil::crc32File(fd,filesize,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE,cmap))
+	{
+		std::cerr << "CRC32Map computation failed." << std::endl ;
+		fclose(fd) ;
+		return false ;
+	}
+	fclose(fd) ;
+
+	{
+		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+		std::cerr << "File CRC32 was successfully computed. Storing it into cache." << std::endl ;
+
+		_cached_crc32maps[hash] = std::pair<time_t,CRC32Map>(time(NULL),cmap) ;
+	}
+
+	std::cerr << "File CRC32 was successfully computed. Sending it." << std::endl ;
 	mDataSend->sendCRC32Map(peerId,hash,cmap);
+
 	return true ;
 }
 

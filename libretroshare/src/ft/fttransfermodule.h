@@ -193,6 +193,8 @@ private:
   CRC32Map _crcmap ;
   uint32_t _crcmap_state ;
   time_t   _crcmap_last_asked_time ;
+  time_t   _crcmap_last_tunnel_keepup ;
+  std::string _crcreq_source ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 

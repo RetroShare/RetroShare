@@ -36,6 +36,7 @@ class ftTransferModule;
 class ftFileProvider;
 class ftFileCreator;
 class ftSearch;
+class CRC32Thread;
 
 #include <string>
 #include <list>
@@ -113,6 +114,9 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/* Client Send */
 		bool	sendCRC32MapRequest(const std::string& peerId, const std::string& hash) ;
 
+		/* called from a separate thread */
+		bool computeAndSendCRC32Map(const std::string& peerId, const std::string& hash) ;
+
 		/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 		/* Client Recv */
@@ -162,6 +166,8 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		std::list<ftRequest> mSearchQueue;
 //		std::map<std::string, time_t> mUnknownHashs;
 
+		std::list<CRC32Thread *> _crc32map_threads ;
+		std::map<std::string,std::pair<time_t,CRC32Map> > _cached_crc32maps ;
 		ftDataSend *mDataSend;
 		ftSearch   *mSearch;
 		std::string mOwnId;

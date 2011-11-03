@@ -26,6 +26,7 @@
 /******
  * #define FT_DEBUG 1
  *****/
+#define FT_DEBUG 1
 
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
@@ -88,6 +89,8 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 	actualRate = 0;
 	_crcmap_state = FT_TM_CRC_MAP_STATE_NOCHECK ;
 	_crcmap_last_asked_time = 0 ;
+	_crcmap_last_tunnel_keepup = 0 ;
+	_crcreq_source = "";
 }
 
 ftTransferModule::~ftTransferModule()
@@ -643,6 +646,7 @@ bool ftTransferModule::checkCRC()
 	switch(_crcmap_state)
 	{
 		case FT_TM_CRC_MAP_STATE_NOCHECK:
+			_crcreq_source = "" ;
 #ifdef FT_DEBUG
 			std::cerr << "ftTransferModule::checkCRC(): state is NOCHECK. Doing nothing." << std::endl ;
 #endif
@@ -659,6 +663,16 @@ bool ftTransferModule::checkCRC()
 
 				std::cerr << "Threshold is " << threshold << std::endl;
 				std::cerr << "Limit is " << (uint64_t)_crcmap_last_asked_time + threshold  << std::endl ;
+				std::cerr << "Requested source is \"" << _crcreq_source << "\"" << std::endl;
+
+				if( _crcreq_source != "" && (uint64_t)_crcmap_last_tunnel_keepup + 10 <=  (uint64_t)now)
+				{
+#ifdef FT_DEBUG
+					std::cerr << "ftTransferModule::checkCRC(): sending keepup to source " << _crcreq_source << std::endl ;
+#endif
+					locked_requestData(_crcreq_source,0,(uint32_t)std::min((uint64_t)512,mSize));
+					_crcmap_last_tunnel_keepup = now ;
+				}
 
 				if( (uint64_t)_crcmap_last_asked_time + threshold >  (uint64_t)now)
 				{
@@ -690,6 +704,8 @@ bool ftTransferModule::checkCRC()
 				std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;
 #endif
 				_crcmap_last_asked_time = now ;
+				_crcreq_source = mit->first ;
+
 				mMultiplexor->sendCRC32MapRequest(mit->first,mHash);
 			}
 			break ;
@@ -735,6 +751,7 @@ bool ftTransferModule::checkCRC()
 				}
 
 				_crcmap_state = FT_TM_CRC_MAP_STATE_NOCHECK ;
+				_crcreq_source = "" ;
 			}
 	}
 

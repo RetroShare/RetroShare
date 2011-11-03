@@ -113,12 +113,6 @@ class ftFileCreator: public ftFileProvider
 		virtual void getAvailabilityMap(CompressedChunkMap& cmap) ;
 		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
 
-		// Provides a complete per-chunk CRC32 map to client who want to check their data.
-		// This is overloads ftFileProvider, but returns false, because we can't ensure that unchecked chunks
-		// will provide a CRC32 that is faithful to the original hash.
-		//
-		virtual bool getCRC32Map(CRC32Map& /*crc_map*/) { return false ; }
-
 		// This is called when receiving the availability map from a source peer, for the file being handled.
 		//
 		void setSourceMap(const std::string& peer_id,const CompressedChunkMap& map) ;
