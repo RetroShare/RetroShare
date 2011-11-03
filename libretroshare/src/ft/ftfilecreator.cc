@@ -133,7 +133,7 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 		if (offset + chunk_size > mSize)
 		{
 			chunk_size = mSize - offset;
-			std::cerr <<"Chunk Size greater than total file size, adjusting chunk "	<< "size " << chunk_size << std::endl;
+			std::cerr <<"Chunk Size greater than total file size, adjusting chunk size " << chunk_size << std::endl;
 
 		}
 
@@ -608,7 +608,9 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 		CompressedChunkMap map ;
-		chunkMap.getAvailabilityMap(map) ;
+
+		// Start with a full map.
+		ChunkMap::buildPlainMap(mSize,map) ;
 		uint32_t nb_chunks = ref.size() ;
 		static const uint32_t chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
 
@@ -625,36 +627,27 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 		for(uint32_t i=0;i<nb_chunks;++i)
 		{
 			printf("  Chunk %05d/%05d:",i,nb_chunks) ;
-			if(map[i])
+
+			if(fseeko64(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
 			{
-				if(fseeko64(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
-				{
-					uint32_t crc = RsDirUtil::rs_CRC32(buff,len) ;
+				uint32_t crc = RsDirUtil::rs_CRC32(buff,len) ;
 
-					printf(" crc: %08x, ref: %08x : ",crc,ref[i]) ;
+				printf(" crc: %08x, ref: %08x : ",crc,ref[i]) ;
 
-					if(crc != ref[i])
-					{
-						printf(" CRC ERROR!!\n") ;
-						++bad_chunks ;
-						++incomplete_chunks ;
-						map.reset(i) ;
-					}
-					else
-						printf(" matched\n") ;
-				}
-				else
+				if(crc != ref[i])
 				{
-					printf(" cannot fseek!\n") ;
+					printf(" CRC ERROR!!\n") ;
 					++bad_chunks ;
-					++incomplete_chunks ;
 					map.reset(i) ;
 				}
+				else
+					printf(" matched\n") ;
 			}
 			else
 			{
-				printf(" incomplete.\n") ;
-				++incomplete_chunks ;
+				printf(" cannot fseek!\n") ;
+				++bad_chunks ;
+				map.reset(i) ;
 			}
 		}
 
