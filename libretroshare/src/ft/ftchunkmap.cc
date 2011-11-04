@@ -352,7 +352,7 @@ void ChunkMap::setPeerAvailabilityMap(const std::string& peer_id,const Compresse
 uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 {
 	if(cid == _map.size()-1)
-		return _file_size - (_map.size()-1)*_chunk_size ;
+		return _file_size - cid*_chunk_size ;
 	else
 		return _chunk_size ;
 }

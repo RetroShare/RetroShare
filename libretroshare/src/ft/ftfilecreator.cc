@@ -653,8 +653,7 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 
 		delete[] buff ;
 
-		if(bad_chunks > 0)
-			chunkMap.setAvailabilityMap(map) ;
+		chunkMap.setAvailabilityMap(map) ;
 	}
 	closeFile() ;
 	return true ;

@@ -744,7 +744,10 @@ bool ftTransferModule::checkCRC()
 				}
 				else
 				{
-					mFlag = FT_TM_FLAG_COMPLETE ;
+					// We do as if the file is not complete. This way, it finishes properly.
+					//
+					mFlag = FT_TM_FLAG_DOWNLOADING ;
+					mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 #ifdef FT_DEBUG
 					std::cerr << "ftTransferModule::checkCRC(): Done. CRC check is ok, file is complete." << std::endl ;
 #endif
