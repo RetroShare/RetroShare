@@ -85,7 +85,6 @@ void	FileIndexMonitor::setRememberHashFilesDuration(uint32_t days)
 	std::cerr << "Setting HashCache duration to " << days << std::endl;
 #endif
 	hashCache.setRememberHashFilesDuration(days) ;
-	hashCache.clean() ;
 }
 
 uint32_t FileIndexMonitor::rememberHashFilesDuration() const 
@@ -254,6 +253,7 @@ void HashCache::clean()
 			++tmp ;
 			_files.erase(it) ;
 			it=tmp ;
+			_changed = true ;
 		}
 		else
 			++it ;
@@ -823,7 +823,10 @@ void 	FileIndexMonitor::updateCycle()
 		mInCheck = false;
 
 		if(useHashCache)
+		{
+			hashCache.clean() ;
 			hashCache.save() ;
+		}
 	}
 }
 
