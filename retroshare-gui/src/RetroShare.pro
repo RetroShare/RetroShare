@@ -310,6 +310,8 @@ HEADERS +=  rshare.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/DownloadToaster.h \
             gui/common/vmessagebox.h \
+            gui/common/RsUrlHandler.h \
+            gui/common/RsCollectionFile.h \
             gui/common/rwindow.h \
             gui/common/html.h \
             gui/common/AvatarDefs.h \
@@ -531,6 +533,8 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageWindow.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/common/vmessagebox.cpp \
+            gui/common/RsCollectionFile.cpp \
+            gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
             gui/common/html.cpp \
             gui/common/AvatarDefs.cpp \

@@ -21,12 +21,14 @@
 
 #include <QFileInfo>
 #include <QDir>
-#include <QDesktopServices>
 #include <QUrl>
 #include <QMimeData>
 #include <QTimer>
+#include <QFileDialog>
 
 #include <gui/RsAutoUpdatePage.h>
+#include <gui/common/RsCollectionFile.h>
+#include <gui/common/RsUrlHandler.h>
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -904,6 +906,26 @@ bool RetroshareDirModel::requestDirDetails(void *ref,DirDetails& details,uint32_
 	return rsFiles->RequestDirDetails(ref, details, flags) ;
 }
 
+void RetroshareDirModel::createCollectionFile(const QModelIndexList &list)
+{
+	if(RemoteMode)
+	{
+		std::cerr << "Cannot create a collection file from remote" << std::endl;
+		return ;
+	}
+
+	QString filename = QFileDialog::getSaveFileName(NULL,tr("Create selection file"),".",tr("Collection files")+" (*.rsCollection)") ;
+
+	if(filename.isNull())
+		return ;
+
+	std::cerr << "Got file name: "<< filename.toStdString() << std::endl;
+	std::vector <DirDetails> dirVec;
+	getDirDetailsFromSelect(list, dirVec);
+
+	RsCollectionFile(dirVec).save(filename) ;
+}
+
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
 {
 	if (!RemoteMode)
@@ -911,6 +933,7 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
 #ifdef RDM_DEBUG
 		std::cerr << "Cannot download from local" << std::endl;
 #endif
+		return ;
 	}
 
 	/* so for all the selected .... get the name out,
@@ -1119,7 +1142,7 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 
 		std::cerr << "Opening this file: " << dest.toStdString() << std::endl ;
 
-		QDesktopServices::openUrl(QUrl::fromLocalFile(dest));
+		RsUrlHandler::openUrl(QUrl::fromLocalFile(dest));
 	}
 
 #ifdef RDM_DEBUG

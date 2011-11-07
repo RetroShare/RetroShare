@@ -229,6 +229,8 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
   connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
 #endif
+  createcollectionfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Create collection file"), this);
+  connect(createcollectionfileAct, SIGNAL(triggered()), this, SLOT(createCollectionFile()));
   openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
   openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
@@ -426,6 +428,14 @@ QModelIndexList SharedFilesDialog::getRemoteSelected()
     return proxyList;
 }
 
+void SharedFilesDialog::createCollectionFile()
+{
+	/* call back to the model (which does all the interfacing? */
+
+	std::cerr << "Creating a collection file!" << std::endl;
+	QModelIndexList lst = getLocalSelected();
+	localModel->createCollectionFile(lst);
+}
 void SharedFilesDialog::downloadRemoteSelected()
 {
   /* call back to the model (which does all the interfacing? */
@@ -762,6 +772,8 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
     switch (type) {
     case DIR_TYPE_DIR:
         contextMnu.addAction(openfolderAct);
+        contextMnu.addSeparator();
+		  contextMnu.addAction(createcollectionfileAct) ;
         break;
     case DIR_TYPE_FILE:
         contextMnu.addAction(openfileAct);
@@ -770,6 +782,8 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 //        contextMnu.addAction(copylinklocalhtmlAct);
         contextMnu.addAction(sendlinkAct);
 //        contextMnu.addAction(sendhtmllinkAct);
+        contextMnu.addSeparator();
+		  contextMnu.addAction(createcollectionfileAct) ;
         contextMnu.addSeparator();
 #ifdef RS_USE_LINKS
         contextMnu.addAction(sendlinkCloudAct);

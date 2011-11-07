@@ -58,6 +58,7 @@ private slots:
   void sharedDirTreeWidgetContextMenu( QPoint point );
 
   void downloadRemoteSelected();
+  void createCollectionFile();
   void addMsgRemoteSelected();
 
   void copyLinkRemote();
@@ -115,6 +116,7 @@ private:
 
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* openfileAct;
+  QAction* createcollectionfileAct;
   QAction* openfolderAct;
   QAction* copyremotelinkAct;
   QAction* copylinklocalAct;

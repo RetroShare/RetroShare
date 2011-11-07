@@ -29,7 +29,7 @@
 #include <QShortcut>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <QDesktopServices>
+#include <gui/common/RsUrlHandler.h>
 
 #include <algorithm>
 
@@ -1402,7 +1402,7 @@ void TransfersDialog::openFolderTransfer()
 	/* open folder with a suitable application */
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists() && qinfo.isDir()) {
-		if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 			std::cerr << "openFolderTransfer(): can't open folder " << path << std::endl;
 		}
 	}
@@ -1438,7 +1438,7 @@ void TransfersDialog::previewTransfer()
 	}
 
 #ifndef WIN32
-	if (!QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromUtf8(path.c_str())))) 
+	if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(QString::fromUtf8(path.c_str())))) 
 		QMessageBox::warning(this, tr("File preview"), tr("File %1 preview failed.").arg(QString::fromUtf8(path.c_str())));
 #else
 	/* open or preview them with a suitable application */
@@ -1446,7 +1446,7 @@ void TransfersDialog::previewTransfer()
 	if (complete) {
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
-			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 				std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
 			}
 		}
@@ -1456,7 +1456,7 @@ void TransfersDialog::previewTransfer()
 		if (QFile::link(QString::fromUtf8(path.c_str()), linkName)) {
 			qinfo.setFile(linkName);
 			if (qinfo.exists()) {
-				if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+				if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 					std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
 				}
 			}
@@ -1495,7 +1495,7 @@ void TransfersDialog::openTransfer()
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
-			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 				std::cerr << "openTransfer(): can't open file " << path << std::endl;
 			}
 		}
