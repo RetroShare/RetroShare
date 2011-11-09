@@ -303,6 +303,8 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 			return QIcon(":/images/FileTypeDocument.png");
 		else if (ext == "html" || ext == "htm" || ext == "php")
 			return QIcon(":/images/FileTypeDocument.png");
+		else if (ext == "rscollection")
+			return QIcon(":/images/mimetypes/rscollection-16.png");
 		else
 			return QIcon(":/images/FileTypeAny.png");
 	}
@@ -914,7 +916,7 @@ void RetroshareDirModel::createCollectionFile(const QModelIndexList &list)
 		return ;
 	}
 
-	QString filename = QFileDialog::getSaveFileName(NULL,tr("Create selection file"),".",tr("Collection files")+" (*.rsCollection)") ;
+	QString filename = QFileDialog::getSaveFileName(NULL,tr("Create selection file"),".",tr("Collection files")+" (*.rscollection)") ;
 
 	if(filename.isNull())
 		return ;

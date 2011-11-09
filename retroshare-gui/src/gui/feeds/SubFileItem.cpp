@@ -22,11 +22,11 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QDesktopServices>
 #include <QUrl>
 
 #include "SubFileItem.h"
 
+#include <gui/common/RsUrlHandler.h>
 #include <retroshare/rsfiles.h>
 #include "util/misc.h"
 
@@ -571,7 +571,7 @@ void SubFileItem::play()
 		QFileInfo qinfo;
 		qinfo.setFile(info.path.c_str());
 		if (qinfo.exists()) {
-			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 				std::cerr << "openTransfer(): can't open file " << info.path << std::endl;
 			}
 		}else{

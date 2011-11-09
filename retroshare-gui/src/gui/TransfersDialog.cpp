@@ -655,6 +655,8 @@ QIcon TransfersDialog::getIconFromExtension(QString ext)
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
 	else if (ext == "html" || ext == "htm" || ext == "php")
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
+	else if (ext == "rscollection")
+		return QIcon(QString::fromUtf8(":/images/mimetypes/rscollection-16.png")) ;
 	else 
 		return QIcon(QString::fromUtf8(":/images/FileTypeAny.png")) ;
 }

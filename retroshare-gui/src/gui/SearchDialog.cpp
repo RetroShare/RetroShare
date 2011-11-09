@@ -1282,6 +1282,11 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
+	else if (ext == "rscollection")
+	{
+		item->setIcon(SR_NAME_COL, QIcon(":/images/library.png"));
+		item->setText(SR_TYPE_COL, QString::fromUtf8("RetroShare collection file"));
+	}
 	else if (ext == "sub" || ext == "srt")
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
