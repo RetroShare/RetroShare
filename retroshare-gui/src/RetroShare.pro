@@ -312,6 +312,7 @@ HEADERS +=  rshare.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
             gui/common/RsCollectionFile.h \
+            gui/common/RsCollectionDialog.h \
             gui/common/rwindow.h \
             gui/common/html.h \
             gui/common/AvatarDefs.h \
@@ -447,6 +448,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/GroupTreeWidget.ui \
             gui/common/AvatarWidget.ui \
             gui/common/FriendList.ui \
+            gui/common/RsCollectionDialog.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/GetStartedDialog.ui
@@ -534,6 +536,7 @@ SOURCES +=  main.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionFile.cpp \
+            gui/common/RsCollectionDialog.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
             gui/common/html.cpp \

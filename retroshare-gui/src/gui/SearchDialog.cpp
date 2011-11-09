@@ -29,6 +29,7 @@
 #include "msgs/MessageComposer.h"
 #include "gui/RSHumanReadableDelegate.h"
 #include "gui/RsAutoUpdatePage.h"
+#include "gui/common/RsCollectionFile.h"
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
 
@@ -1282,7 +1283,7 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
-	else if (ext == "rscollection")
+	else if (ext == RsCollectionFile::ExtensionString)
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/library.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("RetroShare collection file"));

@@ -30,6 +30,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <gui/common/RsUrlHandler.h>
+#include <gui/common/RsCollectionFile.h>
 
 #include <algorithm>
 
@@ -655,7 +656,7 @@ QIcon TransfersDialog::getIconFromExtension(QString ext)
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
 	else if (ext == "html" || ext == "htm" || ext == "php")
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
-	else if (ext == "rscollection")
+	else if (ext == RsCollectionFile::ExtensionString)
 		return QIcon(QString::fromUtf8(":/images/mimetypes/rscollection-16.png")) ;
 	else 
 		return QIcon(QString::fromUtf8(":/images/FileTypeAny.png")) ;

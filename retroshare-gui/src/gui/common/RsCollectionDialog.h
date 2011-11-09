@@ -21,52 +21,28 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-// Implements a RetroShare collection file. Such a file contains
-//
-// - a directory structure
-// - retroshare links to put files in
-//
+#include "ui_RsCollectionDialog.h"
+#include "RsCollectionFile.h"
 
-#pragma once
+class QCheckBox ;
 
-#include <QString>
-#include <QDomDocument>
-#include <retroshare/rsfiles.h>
-
-class QDomElement ;
-
-class RsCollectionFile
+class RsCollectionDialog: public QDialog, public Ui::rsCollectionDialog
 {
+	Q_OBJECT
+
 	public:
-		static const QString ExtensionString ;
+		RsCollectionDialog(const QString& filename,const std::vector<RsCollectionFile::DLinfo>& dlinfos) ;
 
-		// Loads file from disk.
-		RsCollectionFile(const QString& filename) ;
-
-		// create from list of files and directories
-		RsCollectionFile(const std::vector<DirDetails>& file_entries) ;
-
-		// Save to disk
-		void save(const QString& filename) const ;
-
-		// Download the content.
-		void downloadFiles() const ;
+	public slots:
+		void download() ;
+		void selectAll() const ;
+		void deselectAll() const ;
+		void cancel() ;
+		void updateSizes() ;
 
 	private:
-		struct DLinfo
-		{
-			QString name ;
-			qulonglong size ;
-			QString path ;
-			QString hash ;
-		};
-
-		void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
-		void recursCollectDLinfos(const QDomElement&,std::vector<DLinfo>& dlinfos,const QString& current_dir) const ;
-
-		QDomDocument _xml_doc ;
+		const std::vector<RsCollectionFile::DLinfo>& _dlinfos ;
+		std::vector<QCheckBox*> _cboxes ;
 		QString _filename ;
-
-		friend class RsCollectionDialog ;
 };
 

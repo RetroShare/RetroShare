@@ -25,6 +25,7 @@
 #include <retroshare/rsfiles.h>
 
 #include "RsCollectionFile.h"
+#include "RsCollectionDialog.h"
 
 #include <QFile>
 #include <QDir>
@@ -37,7 +38,7 @@
 const QString RsCollectionFile::ExtensionString = QString("rscollection") ;
 
 RsCollectionFile::RsCollectionFile(const QString& filename)
-	: _xml_doc("RsCollection")
+	: _xml_doc("RsCollection"),_filename(filename)
 {
 	QFile file(filename);
 
@@ -54,7 +55,6 @@ RsCollectionFile::RsCollectionFile(const QString& filename)
 		throw std::runtime_error("Error parsing xml file") ;
 }
 
-
 void RsCollectionFile::downloadFiles() const
 {
 	// print out the element names of all elements that are direct children
@@ -64,29 +64,7 @@ void RsCollectionFile::downloadFiles() const
 	std::vector<DLinfo> dlinfos ;
 	recursCollectDLinfos(docElem,dlinfos,QString()) ;
 
-	QString msg(QObject::tr("About to download the following files:")+"<br><br>") ;
-
-	for(uint32_t i=0;i<dlinfos.size();++i)
-		msg += "   "+dlinfos[i].path + "/" + dlinfos[i].name + "<br>" ;
-
-	QString dldir = QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) ;
-
-	if(QMessageBox::Ok == QMessageBox::critical(NULL,QObject::tr("About to download these files"),msg) )
-	{
-		std::cerr << "downloading all these files:" << std::endl;
-
-		for(uint32_t i=0;i<dlinfos.size();++i)
-		{
-			std::cerr << dlinfos[i].name.toStdString() << " " << dlinfos[i].hash.toStdString() << " " << dlinfos[i].size << " " << dlinfos[i].path.toStdString() << std::endl;
-			QString cleanPath = dldir + dlinfos[i].path ;
-			std::cerr << "making directory " << cleanPath.toStdString() << std::endl;
-
-			if(!QDir(cleanPath).mkpath(cleanPath))
-				QMessageBox::warning(NULL,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
-
-			rsFiles->FileRequest(dlinfos[i].name.toUtf8().constData(), dlinfos[i].hash.toUtf8().constData(), dlinfos[i].size, cleanPath.toUtf8().constData(), RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
-		}
-	}
+	RsCollectionDialog(_filename, dlinfos).exec() ;
 }
 
 void RsCollectionFile::recursCollectDLinfos(const QDomElement& e,std::vector<DLinfo>& dlinfos,const QString& current_path) const

@@ -303,7 +303,7 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 			return QIcon(":/images/FileTypeDocument.png");
 		else if (ext == "html" || ext == "htm" || ext == "php")
 			return QIcon(":/images/FileTypeDocument.png");
-		else if (ext == "rscollection")
+		else if (ext == RsCollectionFile::ExtensionString)
 			return QIcon(":/images/mimetypes/rscollection-16.png");
 		else
 			return QIcon(":/images/FileTypeAny.png");
