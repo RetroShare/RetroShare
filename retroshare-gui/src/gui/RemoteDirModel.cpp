@@ -916,10 +916,13 @@ void RetroshareDirModel::createCollectionFile(const QModelIndexList &list)
 		return ;
 	}
 
-	QString filename = QFileDialog::getSaveFileName(NULL,tr("Create selection file"),".",tr("Collection files")+" (*.rscollection)") ;
-
-	if(filename.isNull())
+	QString filename ;
+		
+	if(!misc::getSaveFileName(NULL,RshareSettings::LASTDIR_EXTRAFILE,tr("Create selection file"),tr("Collection files")+" (*."+RsCollectionFile::ExtensionString+")",filename)) 
 		return ;
+
+	if(!filename.endsWith("."+RsCollectionFile::ExtensionString))
+		filename += "."+RsCollectionFile::ExtensionString ;
 
 	std::cerr << "Got file name: "<< filename.toStdString() << std::endl;
 	std::vector <DirDetails> dirVec;

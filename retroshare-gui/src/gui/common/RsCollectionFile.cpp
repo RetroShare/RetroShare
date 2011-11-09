@@ -34,7 +34,7 @@
 #include <QDomElement>
 #include <QDomDocument>
 
-const QString RsCollectionFile::ExtensionString = QString(".rscollection") ;
+const QString RsCollectionFile::ExtensionString = QString("rscollection") ;
 
 RsCollectionFile::RsCollectionFile(const QString& filename)
 	: _xml_doc("RsCollection")
