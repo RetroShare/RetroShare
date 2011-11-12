@@ -60,6 +60,7 @@
 
 MessengerWindow* MessengerWindow::_instance = NULL;
 static std::set<std::string> *expandedPeers = NULL;
+static std::set<std::string> *expandedGroups = NULL;
 
 /*static*/ void MessengerWindow::showYourself ()
 {
@@ -86,6 +87,11 @@ void MessengerWindow::releaseInstance()
         delete(expandedPeers);
         expandedPeers = NULL;
     }
+    if (expandedGroups) {
+        /* delete saved expanded groups */
+        delete(expandedGroups);
+        expandedGroups = NULL;
+    }
 }
 
 /** Constructor */
@@ -107,9 +113,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
     connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
 #endif // MINIMAL_RSGUI
-    connect(ui.actionHide_Offline_Friends, SIGNAL(toggled(bool)), ui.friendList, SLOT(setHideUnconnected(bool)));
-    connect(ui.actionSort_by_State, SIGNAL(toggled(bool)), ui.friendList, SLOT(setSortByState(bool)));
-    connect(ui.actionRoot_is_decorated, SIGNAL(toggled(bool)), ui.friendList, SLOT(setRootIsDecorated(bool)));
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
@@ -129,20 +132,30 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
         expandedPeers = NULL;
     }
 
+    if (expandedGroups != NULL) {
+        for (std::set<std::string>::iterator groupIt = expandedGroups->begin(); groupIt != expandedGroups->end(); groupIt++) {
+            ui.friendList->addGroupToExpand(*groupIt);
+        }
+        delete expandedGroups;
+        expandedGroups = NULL;
+    }
+
     //LogoBar
     _rsLogoBarmessenger = new LogoBar(ui.logoframe);
     Widget::createLayout(ui.logoframe)->addWidget(_rsLogoBarmessenger);
 
     ui.messagelineEdit->setMinimumWidth(20);
 
-    displayMenu();
+    ui.displaypushButton->setMenu(ui.friendList->createDisplayMenu());
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
+    ui.friendList->setShowStatusColumn(false);
+    ui.friendList->setShowLastContactColumn(false);
+    ui.friendList->setShowAvatarColumn(true);
+    ui.friendList->setRootIsDecorated(true);
+    ui.friendList->setShowGroups(false);
     processSettings(true);
-    ui.friendList->setHideHeader(true);
-    ui.friendList->setHideStatusColumn(true);
-    ui.friendList->setHideGroups(true);
     ui.friendList->setBigName(true);
     RsAutoUpdatePage::unlockAllEvents();
 
@@ -198,39 +211,7 @@ MessengerWindow::~MessengerWindow ()
 void MessengerWindow::processSettings(bool bLoad)
 {
     Settings->beginGroup(_name);
-
-    if (bLoad) {
-        // load settings
-
-        // state of messenger tree
-        ui.friendList->restoreHeaderState(Settings->value("MessengerTree").toByteArray());
-
-        // state of actionHide_Offline_Friends
-        ui.actionHide_Offline_Friends->setChecked(Settings->value("hideOfflineFriends", false).toBool());
-
-        // state of actionSort_by_State
-        ui.actionSort_by_State->setChecked(Settings->value("sortByState", false).toBool());
-
-        // state of actionRoot_is_decorated
-        bool decorated = Settings->value("rootIsDecorated", true).toBool();
-        ui.actionRoot_is_decorated->setChecked(decorated);
-        ui.friendList->setRootIsDecorated(decorated);
-    } else {
-        // save settings
-
-        // state of messenger tree
-        Settings->setValue("MessengerTree", ui.friendList->saveHeaderState());
-
-        // state of actionSort_by_State
-        Settings->setValue("sortByState", ui.actionSort_by_State->isChecked());
-
-        // state of actionHide_Offline_Friends
-        Settings->setValue("hideOfflineFriends", ui.actionHide_Offline_Friends->isChecked());
-
-        // state of actionRoot_is_decorated
-        Settings->setValue("rootIsDecorated", ui.actionRoot_is_decorated->isChecked());
-    }
-
+    ui.friendList->processSettings(bLoad);
     Settings->endGroup();
 }
 
@@ -256,6 +237,15 @@ void MessengerWindow::closeEvent (QCloseEvent * /*event*/)
     }
 
     ui.friendList->getExpandedPeers(*expandedPeers);
+
+    /* save the expanded groups */
+    if (expandedGroups == NULL) {
+        expandedGroups = new std::set<std::string>;
+    } else {
+        expandedGroups->clear();
+    }
+
+    ui.friendList->getExpandedGroups(*expandedGroups);
 }
 
 LogoBar & MessengerWindow::getLogoBar() const {
@@ -295,18 +285,6 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
 }
 
 #endif // MINIMAL_RSGUI
-
-void MessengerWindow::displayMenu()
-{
-    QMenu *lookmenu = new QMenu();
-    lookmenu->addAction(ui.actionSort_Peers_Descending_Order);
-    lookmenu->addAction(ui.actionSort_Peers_Ascending_Order);
-    lookmenu->addAction(ui.actionSort_by_State);
-    lookmenu->addAction(ui.actionHide_Offline_Friends);
-    lookmenu->addAction(ui.actionRoot_is_decorated);
-
-    ui.displaypushButton->setMenu(lookmenu);
-}
 
 /* clear Filter */
 void MessengerWindow::clearFilter()

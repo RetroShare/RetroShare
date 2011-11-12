@@ -379,57 +379,6 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
     </rect>
    </property>
   </widget>
-  <action name="actionSort_Peers_Descending_Order">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sort Descending Order</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort Descending Order</string>
-   </property>
-  </action>
-  <action name="actionSort_Peers_Ascending_Order">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sort Ascending Order</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort Ascending Order</string>
-   </property>
-  </action>
-  <action name="actionRoot_is_decorated">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Set root is Decorated</string>
-   </property>
-   <property name="toolTip">
-    <string>Set Root Decorated</string>
-   </property>
-  </action>
-  <action name="actionHide_Offline_Friends">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Hide Offline Friends</string>
-   </property>
-  </action>
-  <action name="actionSort_by_State">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Sort by State</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>

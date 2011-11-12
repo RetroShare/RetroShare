@@ -34,6 +34,7 @@ namespace Ui {
 
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
+class QMenu;
 
 class FriendList : public RsAutoUpdatePage
 {
@@ -43,6 +44,8 @@ public:
     explicit FriendList(QWidget *parent = 0);
     ~FriendList();
 
+    QMenu *createDisplayMenu();
+    void processSettings(bool bLoad);
     void addGroupToExpand(const std::string &groupId);
     bool getExpandedGroups(std::set<std::string> &groups) const;
     void addPeerToExpand(const std::string &gpgId);
@@ -50,31 +53,24 @@ public:
 
     std::string getSelectedGroupId() const;
 
-    void restoreHeaderState(const QByteArray &state);
-    QByteArray saveHeaderState() const;
-
     virtual void updateDisplay();
-
-signals:
-    void peerSortColumnChanged(bool sortedByState);
 
 public slots:
     void filterItems(const QString &sPattern);
 
     void setBigName(bool bigName); // show customStateString in second line of the name cell
-    void setHideAvatarColumn(bool hidden);
-    void setHideGroups(bool hidden);
+    void setShowGroups(bool show);
     void setHideUnconnected(bool hidden);
     void setHideState(bool hidden);
-    void setHideStatusColumn(bool hidden);
-    void setHideHeader(bool hidden);
+    void setShowStatusColumn(bool show);
+    void setShowLastContactColumn(bool show);
+    void setShowAvatarColumn(bool show);
     void setRootIsDecorated(bool show);
-    void setSortByState(bool sortByState);
+    void setSortByName();
+    void setSortByState();
+    void setSortByLastContact();
     void sortPeersAscendingOrder();
     void sortPeersDescendingOrder();
-
-protected:
-    void showEvent(QShowEvent *event);
 
 private:
     Ui::FriendList *ui;
@@ -82,10 +78,8 @@ private:
 
     // Settings for peer list display
     bool mBigName;
-    bool mHideAvatarColumn;
-    bool mHideGroups;
+    bool mShowGroups;
     bool mHideState;
-    bool mHideStatusColumn;
     bool mHideUnconnected;
 
     QString filterText;
@@ -96,20 +90,15 @@ private:
 
     QTreeWidgetItem *getCurrentPeer() const;
     static bool filterItem(QTreeWidgetItem *pItem, const QString &sPattern);
-    void updateHeaderSizes();
-
-    bool correctColumnStatusSize;
-    bool firstTimeShown;
-
-
-//    QString fileName;
+    void updateHeader();
+    void initializeHeader(bool afterLoadSettings);
 
 private slots:
     void groupsChanged();
     void insertPeers();
-    void peerSortIndicatorChanged(int,Qt::SortOrder);
     void peerTreeWidgetCostumPopupMenu();
     void updateAvatar(const QString &);
+    void updateMenu();
 
     void pastePerson();
 

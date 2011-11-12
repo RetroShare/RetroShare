@@ -115,8 +115,6 @@ private slots:
 
     void newsFeedChanged(int count);
 
-    void peerSortColumnChanged(bool sortedByState);
-
 signals:
     void notifyGroupChat(const QString&,const QString&) ;
 
@@ -127,7 +125,6 @@ private:
     void colorChanged(const QColor &c);
     void fontChanged(const QFont &font);
 
-    void displayMenu();
     ///play the sound when recv a message
     void playsound();
 

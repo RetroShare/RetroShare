@@ -75,9 +75,6 @@ private:
 
     void processSettings(bool bLoad);
 
-    void displayMenu();
-
-
     LogoBar * _rsLogoBarmessenger;
 
     QString m_nickName;

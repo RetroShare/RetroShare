@@ -82,19 +82,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect(ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
 
-    connect(ui.action_Hide_Offline_Friends, SIGNAL(toggled(bool)), ui.friendList, SLOT(setHideUnconnected(bool)));
-    connect(ui.action_Hide_Status_Column, SIGNAL(toggled(bool)), ui.friendList, SLOT(setHideStatusColumn(bool)));
-    connect(ui.action_Hide_Status_Column, SIGNAL(toggled(bool)), ui.friendList, SLOT(setHideHeader(bool)));
-    connect(ui.action_Hide_Status_Column, SIGNAL(toggled(bool)), ui.action_Hide_State, SLOT(setEnabled(bool)));
-    connect(ui.action_Hide_Avatar_Column, SIGNAL(toggled(bool)), ui.friendList, SLOT(setHideAvatarColumn(bool)));
-    connect(ui.action_Hide_State, SIGNAL(toggled(bool)), ui.friendList, SLOT(setHideState(bool)));
-
-    connect(ui.action_Sort_by_State, SIGNAL(toggled(bool)), ui.friendList, SLOT(setSortByState(bool)));
-    connect(ui.actionSort_Peers_Ascending_Order, SIGNAL(triggered()), ui.friendList, SLOT(sortPeersAscendingOrder()));
-    connect(ui.actionSort_Peers_Descending_Order, SIGNAL(triggered()), ui.friendList, SLOT(sortPeersDescendingOrder()));
-
-    connect(ui.friendList, SIGNAL(peerSortColumnChanged(bool)), this, SLOT(peerSortColumnChanged(bool)));
-
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
 
@@ -177,10 +164,15 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.splitter_2->setSizes(sizes);
 
     loadmypersonalstatus();
-    displayMenu();
+    ui.displayButton->setMenu(ui.friendList->createDisplayMenu());
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
+    ui.friendList->setShowStatusColumn(true);
+    ui.friendList->setShowLastContactColumn(false);
+    ui.friendList->setShowAvatarColumn(false);
+    ui.friendList->setRootIsDecorated(true);
+    ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();
 
@@ -213,65 +205,18 @@ void FriendsDialog::processSettings(bool bLoad)
     if (bLoad) {
         // load settings
 
-        // state of peer tree
-        ui.friendList->restoreHeaderState(Settings->value("PeerTree").toByteArray());
-
-        // state of hideUnconnected
-        ui.action_Hide_Offline_Friends->setChecked(Settings->value("hideUnconnected", false).toBool());
-        
-        // state of the status
-        ui.action_Hide_State->setChecked(Settings->value("hideState", false).toBool());
-
-        // state of hideStatusColumn
-        ui.action_Hide_Status_Column->setChecked(Settings->value("hideStatusColumn", false).toBool());
-
-        // state of hideAvatar
-        ui.action_Hide_Avatar_Column->setChecked(Settings->value("hideAvatar", true).toBool());
-
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
         ui.splitter_2->restoreState(Settings->value("GroupChatSplitter").toByteArray());
-
-        // open groups
-        int arrayIndex = Settings->beginReadArray("Groups");
-        for (int index = 0; index < arrayIndex; index++) {
-            Settings->setArrayIndex(index);
-            ui.friendList->addGroupToExpand(Settings->value("open").toString().toStdString());
-        }
-        Settings->endArray();
     } else {
         // save settings
-
-        // state of peer tree
-        Settings->setValue("PeerTree", ui.friendList->saveHeaderState());
-
-        // state of hideUnconnected
-        Settings->setValue("hideUnconnected", ui.action_Hide_Offline_Friends->isChecked());
-        
-        // state of the status
-        Settings->setValue("hideState", ui.action_Hide_State->isChecked());
-
-        // state of hideStatusColumn
-        Settings->setValue("hideStatusColumn", ui.action_Hide_Status_Column->isChecked());
-
-        // state of hideAvatar
-        Settings->setValue("hideAvatar", ui.action_Hide_Avatar_Column->isChecked());
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
         Settings->setValue("GroupChatSplitter", ui.splitter_2->saveState());
-
-        // open groups
-        Settings->beginWriteArray("Groups");
-        int arrayIndex = 0;
-        std::set<std::string> expandedPeers;
-        ui.friendList->getExpandedGroups(expandedPeers);
-        foreach (std::string groupId, expandedPeers) {
-            Settings->setArrayIndex(arrayIndex++);
-            Settings->setValue("open", QString::fromStdString(groupId));
-        }
-        Settings->endArray();
     }
+
+    ui.friendList->processSettings(bLoad);
 
     Settings->endGroup();
 }
@@ -945,21 +890,6 @@ void FriendsDialog::playsound(){
             QSound::play(OnlineSound);
 }
 
-void FriendsDialog::displayMenu()
-{
-    QMenu *displaymenu = new QMenu();
-
-    displaymenu->addAction(ui.actionSort_Peers_Descending_Order);
-    displaymenu->addAction(ui.actionSort_Peers_Ascending_Order);
-    displaymenu->addAction(ui.action_Hide_Offline_Friends);
-    displaymenu->addAction(ui.action_Sort_by_State);
-    displaymenu->addAction(ui.action_Hide_Avatar_Column);
-    displaymenu->addAction(ui.action_Hide_Status_Column);
-    displaymenu->addAction(ui.action_Hide_State);
-
-    ui.displayButton->setMenu(displaymenu);
-}
-
 void FriendsDialog::on_actionMessageHistory_triggered()
 {
     ImHistoryBrowser imBrowser("", ui.lineEdit, this);
@@ -983,9 +913,4 @@ void FriendsDialog::newsFeedChanged(int count)
         ui.peertabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
         ui.peertabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
     }
-}
-
-void FriendsDialog::peerSortColumnChanged(bool sortedByState)
-{
-    ui.action_Sort_by_State->setChecked(sortedByState);
 }

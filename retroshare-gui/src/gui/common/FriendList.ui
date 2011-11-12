@@ -27,12 +27,6 @@
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
-     <property name="acceptDrops">
-      <bool>false</bool>
-     </property>
-     <property name="autoScroll">
-      <bool>false</bool>
-     </property>
      <property name="iconSize">
       <size>
        <width>38</width>
@@ -54,17 +48,14 @@
      <property name="allColumnsShowFocus">
       <bool>true</bool>
      </property>
-     <property name="wordWrap">
-      <bool>false</bool>
-     </property>
      <property name="expandsOnDoubleClick">
       <bool>false</bool>
      </property>
      <property name="columnCount">
-      <number>3</number>
+      <number>4</number>
      </property>
-     <attribute name="headerDefaultSectionSize">
-      <number>200</number>
+     <attribute name="headerStretchLastSection">
+      <bool>false</bool>
      </attribute>
      <column>
       <property name="text">
@@ -78,13 +69,148 @@
      </column>
      <column>
       <property name="text">
+       <string>Last Contact</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Avatar</string>
       </property>
      </column>
     </widget>
    </item>
   </layout>
+  <action name="actionHideOfflineFriends">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Offline Friends</string>
+   </property>
+  </action>
+  <action name="actionShowStatusColumn">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Status</string>
+   </property>
+  </action>
+  <action name="actionSortByState">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>State</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by State</string>
+   </property>
+  </action>
+  <action name="actionHideState">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Hide State</string>
+   </property>
+  </action>
+  <action name="actionSortPeersDescendingOrder">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort Descending Order</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort Descending Order</string>
+   </property>
+  </action>
+  <action name="actionSortPeersAscendingOrder">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort Ascending Order</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort Ascending Order</string>
+   </property>
+  </action>
+  <action name="actionShowAvatarColumn">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Avatar</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Avatar Column</string>
+   </property>
+  </action>
+  <action name="actionSortByName">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Name</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by Name</string>
+   </property>
+  </action>
+  <action name="actionSortByLastContact">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Last Contact</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by last contact</string>
+   </property>
+  </action>
+  <action name="actionShowLastContactColumn">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Last Contact</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Last Contact Column</string>
+   </property>
+  </action>
+  <action name="actionRootIsDecorated">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Set root is Decorated</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Root Decorated</string>
+   </property>
+  </action>
+  <action name="actionShowGroups">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Groups</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Groups</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

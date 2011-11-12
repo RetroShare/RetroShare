@@ -653,10 +653,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="3" column="0">
-         <widget class="FriendList" name="friendList" native="true">
-         <property name="styleSheet">
-          <string notr="true">b{}</string>
-         </property>
+        <widget class="FriendList" name="friendList" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -668,6 +665,9 @@ p, li { white-space: pre-wrap; }
            <width>150</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">b{}</string>
          </property>
         </widget>
        </item>
@@ -1423,79 +1423,6 @@ background: white;}</string>
     <string>Deletes all stored and displayed chat history</string>
    </property>
   </action>
-  <action name="action_Hide_Offline_Friends">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Hide Offline Friends</string>
-   </property>
-  </action>
-  <action name="action_Hide_Status_Column">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Hide Status Column</string>
-   </property>
-  </action>
-  <action name="action_Sort_by_State">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Sort by State</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by State</string>
-   </property>
-  </action>
-  <action name="action_Hide_State">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Hide State </string>
-   </property>
-  </action>
-  <action name="actionSort_Peers_Descending_Order">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sort Descending Order</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort Descending Order</string>
-   </property>
-  </action>
-  <action name="actionSort_Peers_Ascending_Order">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sort Ascending Order</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort Ascending Order</string>
-   </property>
-  </action>
-  <action name="action_Hide_Avatar_Column">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Hide Avatar Column</string>
-   </property>
-   <property name="toolTip">
-    <string>Hide Avatar Column</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1516,7 +1443,6 @@ background: white;}</string>
    <header>gui/common/FriendList.h</header>
    <container>1</container>
   </customwidget>
-
  </customwidgets>
  <resources>
   <include location="images.qrc"/>

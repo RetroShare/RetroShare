@@ -3524,7 +3524,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FlatStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+670"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+674"/>
         <source>Friends Directories</source>
         <translation>Dateien von Freunden</translation>
     </message>
@@ -4033,7 +4033,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+23"/>
         <source>Next unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächste ungelesene</translation>
     </message>
     <message>
         <location line="+154"/>
@@ -4136,22 +4136,112 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FriendList</name>
     <message>
-        <location filename="../gui/common/FriendList.ui" line="+71"/>
+        <location filename="../gui/common/FriendList.ui" line="+62"/>
         <source>Friends</source>
         <translation>Freunde</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+26"/>
+        <source>Hide Offline Friends</source>
+        <translation>Verstecke offline Freunde</translation>
+    </message>
+    <message>
+        <location line="-21"/>
+        <location line="+29"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
+        <source>State</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Sort by State</source>
+        <translation>Sortiere nach Status</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Hide State</source>
+        <translation>Status ausblenden</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+3"/>
+        <source>Sort Descending Order</source>
+        <translation>Absteigend sortieren</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+3"/>
+        <source>Sort Ascending Order</source>
+        <translation>Aufsteigend sortieren</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Show Last Contact Column</source>
+        <translation>Zeige die Spalte letzer Kontakt</translation>
+    </message>
+    <message>
+        <location line="-109"/>
+        <location line="+73"/>
         <source>Avatar</source>
         <translation>Avatar</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="+207"/>
+        <source>Hide Avatar Column</source>
+        <translation type="obsolete">Avatar ausblenden</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Sort by Name</source>
+        <translation>Sortiere nach Name</translation>
+    </message>
+    <message>
+        <location line="-92"/>
+        <location line="+100"/>
+        <location line="+11"/>
+        <source>Last Contact</source>
+        <translation>Letzter Kontakt</translation>
+    </message>
+    <message>
+        <location line="-30"/>
+        <source>Show Avatar Column</source>
+        <translation>Zeige Avatar Spalte</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Sort by last contact</source>
+        <translation>Sortiere nach letztem Kontakt</translation>
+    </message>
+    <message>
+        <source>Hide Last Contact Column</source>
+        <translation type="obsolete">Verstecke </translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Set root is Decorated</source>
+        <translation>Zeige Baumstruktur</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set Root Decorated</source>
+        <translation>Zeige Baumstruktur</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+3"/>
+        <source>Show Groups</source>
+        <translation>Zeige Gruppen</translation>
+    </message>
+    <message>
+        <location filename="../gui/common/FriendList.cpp" line="+302"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
@@ -4267,15 +4357,25 @@ p, li { white-space: pre-wrap; }
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+551"/>
+        <location line="+554"/>
         <location line="+2"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+329"/>
+        <location line="+331"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Möchtest du diesen Freund entfernen?</translation>
+    </message>
+    <message>
+        <location line="+396"/>
+        <source>Sort by</source>
+        <translation>Sortiere nach</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <source>Columns</source>
+        <translation>Spalten</translation>
     </message>
 </context>
 <context>
@@ -4439,56 +4539,45 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf speichern</translation>
     </message>
     <message>
-        <location line="+32"/>
         <source>Hide Offline Friends</source>
-        <translation>Verstecke offline Freunde</translation>
+        <translation type="obsolete">Verstecke offline Freunde</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Hide Status Column</source>
-        <translation>Status Spalte ausblenden</translation>
+        <translation type="obsolete">Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location line="+3"/>
         <source>Sort by State</source>
-        <translation>Sortiere nach Status</translation>
+        <translation type="obsolete">Sortiere nach Status</translation>
     </message>
     <message>
-        <location line="+43"/>
-        <location line="+3"/>
         <source>Hide Avatar Column</source>
-        <translation>Avatar ausblenden</translation>
+        <translation type="obsolete">Avatar ausblenden</translation>
     </message>
     <message>
         <source>Hide State</source>
         <translation type="obsolete">Status ausblenden</translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="+9"/>
         <location line="+3"/>
         <source>Add a new Group</source>
         <translation>Neue Gruppe hinzufügen</translation>
     </message>
     <message>
-        <location line="+50"/>
         <source>Hide State </source>
-        <translation>Status ausblenden</translation>
+        <translation type="obsolete">Status ausblenden</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+3"/>
         <source>Sort Descending Order</source>
-        <translation>Absteigend sortieren</translation>
+        <translation type="obsolete">Absteigend sortieren</translation>
+    </message>
+    <message>
+        <source>Sort Ascending Order</source>
+        <translation type="obsolete">Aufsteigend sortieren</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location line="+3"/>
-        <source>Sort Ascending Order</source>
-        <translation>Aufsteigend sortieren</translation>
-    </message>
-    <message>
-        <location line="-65"/>
         <source>Delete Chat History</source>
         <translation>Nachrichtenverlauf löschen</translation>
     </message>
@@ -4498,7 +4587,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+102"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+89"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -4513,12 +4602,12 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+64"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+61"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -7617,48 +7706,40 @@ p, li { white-space: pre-wrap; }
         <translation>Suche Freunde</translation>
     </message>
     <message>
-        <location line="+108"/>
-        <location line="+3"/>
         <source>Sort Descending Order</source>
-        <translation>Absteigend sortieren</translation>
+        <translation type="obsolete">Absteigend sortieren</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+3"/>
         <source>Sort Ascending Order</source>
-        <translation>Aufsteigend sortieren</translation>
+        <translation type="obsolete">Aufsteigend sortieren</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Set root is Decorated</source>
-        <translation>Zeige Baumstruktur</translation>
+        <translation type="obsolete">Zeige Baumstruktur</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Set Root Decorated</source>
-        <translation>Zeige Baumstruktur</translation>
+        <translation type="obsolete">Zeige Baumstruktur</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Hide Offline Friends</source>
-        <translation>Verstecke offline Freunde</translation>
+        <translation type="obsolete">Verstecke offline Freunde</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="+24"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+126"/>
         <source>Sort by State</source>
-        <translation>Sortiere nach Status</translation>
+        <translation type="obsolete">Sortiere nach Status</translation>
     </message>
     <message>
         <source>Recomend this Friend to...</source>
         <translation type="obsolete">Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location line="-416"/>
+        <location line="-290"/>
         <source>RetroShare Messenger</source>
         <translation></translation>
     </message>
@@ -9964,6 +10045,31 @@ Lockdatei:
         <source>Round Trip Time:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="+137"/>
+        <source>Unable to make path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Unable to make path:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/common/RsUrlHandler.cpp" line="+39"/>
+        <source>Treatment of collection file has failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>The collection file </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source> could not be openned. Reported error is: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -10341,7 +10447,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RetroshareDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="-476"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="-478"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
@@ -10359,6 +10465,34 @@ p, li { white-space: pre-wrap; }
         <location line="+9"/>
         <source>NEW</source>
         <translation>NEU</translation>
+    </message>
+    <message>
+        <location line="+701"/>
+        <source>Create selection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Collection files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RsCollectionDialog</name>
+    <message>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-95"/>
+        <source>File</source>
+        <translation type="unfinished">Datei</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Size</source>
+        <translation type="unfinished">Grösse</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hash</source>
+        <translation type="unfinished">Prüfsumme</translation>
     </message>
 </context>
 <context>
@@ -10494,7 +10628,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+291"/>
+        <location filename="../gui/SearchDialog.cpp" line="+292"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -10531,7 +10665,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+466"/>
+        <location line="+471"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
@@ -10586,7 +10720,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-992"/>
+        <location filename="../gui/SearchDialog.cpp" line="-997"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -11040,7 +11174,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
     <message>
         <location line="+18"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plugins</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11397,7 +11531,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="+984"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+386"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="+388"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -11481,22 +11615,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="-154"/>
-        <location line="+569"/>
+        <location line="+581"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location line="-567"/>
+        <location line="-579"/>
         <source>Open Folder</source>
         <translation>Ordner öffnen</translation>
     </message>
     <message>
-        <location line="+576"/>
+        <location line="+588"/>
         <source>Set command for opening this file</source>
         <translation>Setze eine Regel zum Öffnen dieser Datei</translation>
     </message>
     <message>
-        <location line="-419"/>
+        <location line="-431"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -11516,7 +11650,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sende RetroShare Link</translation>
     </message>
     <message>
-        <location line="-176"/>
+        <location line="-178"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Kopiere RetroShare Links in die Zwischenablage</translation>
     </message>
@@ -11546,13 +11680,18 @@ p, li { white-space: pre-wrap; }
         <translation>Füge die Links zur Verknüpfungs-Wolke hinzu</translation>
     </message>
     <message>
-        <location line="+172"/>
-        <location line="+379"/>
+        <location line="+3"/>
+        <source>Create collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+171"/>
+        <location line="+391"/>
         <source>Recommend in a message to</source>
         <translation>Empfehle in einer Nachricht an</translation>
     </message>
     <message>
-        <location line="-253"/>
+        <location line="-257"/>
         <location line="+23"/>
         <location line="+24"/>
         <source>RetroShare Link</source>
@@ -11567,7 +11706,7 @@ p, li { white-space: pre-wrap; }
         <translation>Empfehlung(en)</translation>
     </message>
     <message>
-        <location line="+191"/>
+        <location line="+195"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Meine Dateien&lt;/strong&gt;</translation>
     </message>
@@ -12545,7 +12684,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+335"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+336"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12738,7 +12877,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+399"/>
+        <location line="+401"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -12788,7 +12927,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-934"/>
+        <location line="-936"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -12841,30 +12980,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
-        <location line="+539"/>
+        <location line="+541"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-537"/>
-        <location line="+538"/>
+        <location line="-539"/>
+        <location line="+540"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-538"/>
-        <location line="+537"/>
+        <location line="-540"/>
+        <location line="+539"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-427"/>
+        <location line="-429"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+263"/>
+        <location line="+265"/>
         <location line="+144"/>
         <location line="+135"/>
         <source>Failed</source>
@@ -12917,7 +13056,7 @@ p, li { white-space: pre-wrap; }
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-564"/>
+        <location line="-566"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>
@@ -12925,7 +13064,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TreeStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+109"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="-590"/>
         <source>My files</source>
         <translation>Meine Dateien</translation>
     </message>
@@ -13336,6 +13475,56 @@ p, li { white-space: pre-wrap; }
         <location line="+23"/>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
         <translation>Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+    </message>
+</context>
+<context>
+    <name>rsCollectionDialog</name>
+    <message>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="+14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>File name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Total size :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Selected files:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <location line="+7"/>
+        <location line="+7"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+58"/>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Deselect all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Download!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -71,10 +71,11 @@
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
 #define IMAGE_GROUP24            ":/images/user/group24.png"
 
-#define COLUMN_COUNT    3
-#define COLUMN_NAME     0
-#define COLUMN_STATE    1
-#define COLUMN_AVATAR   2
+#define COLUMN_COUNT        4
+#define COLUMN_NAME         0
+#define COLUMN_STATE        1
+#define COLUMN_LAST_CONTACT 2
+#define COLUMN_AVATAR       3
 
 #define COLUMN_DATA     0 // column for storing the userdata id
 
@@ -109,36 +110,47 @@ FriendList::FriendList(QWidget *parent) :
     ui(new Ui::FriendList),
     m_compareRole(new RSTreeWidgetItemCompareRole),
     mBigName(false),
-    mHideAvatarColumn(false),
-    mHideGroups(false),
+    mShowGroups(true),
     mHideState(false),
-    mHideStatusColumn(false),
     mHideUnconnected(false),
     groupsHasChanged(false),
     openGroups(NULL),
-    openPeers(NULL),
-    correctColumnStatusSize(false),
-    firstTimeShown(true)
+    openPeers(NULL)
 {
     ui->setupUi(this);
 
     m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
     m_compareRole->setRole(COLUMN_STATE, ROLE_SORT);
+    m_compareRole->setRole(COLUMN_LAST_CONTACT, ROLE_SORT);
     m_compareRole->setRole(COLUMN_AVATAR, ROLE_STANDARD);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCostumPopupMenu()));
     connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
-    connect(ui->peerTreeWidget->header(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(peerSortIndicatorChanged(int, Qt::SortOrder)));
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
-    ui->peerTreeWidget->setColumnWidth(COLUMN_NAME, 150);
+    connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
+    connect(ui->actionShowStatusColumn, SIGNAL(triggered(bool)), this, SLOT(setShowStatusColumn(bool)));
+    connect(ui->actionShowAvatarColumn, SIGNAL(triggered(bool)), this, SLOT(setShowAvatarColumn(bool)));
+    connect(ui->actionShowLastContactColumn, SIGNAL(triggered(bool)), this, SLOT(setShowLastContactColumn(bool)));
+    connect(ui->actionHideState, SIGNAL(triggered(bool)), this, SLOT(setHideState(bool)));
+    connect(ui->actionRootIsDecorated, SIGNAL(triggered(bool)), this, SLOT(setRootIsDecorated(bool)));
+    connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
+
+    connect(ui->actionSortByName, SIGNAL(triggered()), this, SLOT(setSortByName()));
+    connect(ui->actionSortByState, SIGNAL(triggered()), this, SLOT(setSortByState()));
+    connect(ui->actionSortByLastContact, SIGNAL(triggered()), this, SLOT(setSortByLastContact()));
+    connect(ui->actionSortPeersAscendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersAscendingOrder()));
+    connect(ui->actionSortPeersDescendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersDescendingOrder()));
+
+    initializeHeader(false);
+
     ui->peerTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 
     // set header text aligment
-    QTreeWidgetItem * headerItem = ui->peerTreeWidget->headerItem();
+    QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
     headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(COLUMN_STATE, Qt::AlignLeft | Qt::AlignVCenter);
     headerItem->setTextAlignment(COLUMN_AVATAR, Qt::AlignLeft | Qt::AlignVCenter);
@@ -153,6 +165,89 @@ FriendList::~FriendList()
 {
     delete ui;
     delete(m_compareRole);
+}
+
+void FriendList::processSettings(bool bLoad)
+{
+    int peerTreeVersion = 2; // version number for the settings to solve problems when modifying the column count
+
+    if (bLoad) {
+        // load settings
+
+        // state of peer tree
+        if (Settings->value("peerTreeVersion").toInt() == peerTreeVersion) {
+            ui->peerTreeWidget->header()->restoreState(Settings->value("peerTree").toByteArray());
+        }
+//        ui->peerTreeWidget->header()->doItemsLayout(); // is needed because I added a third column
+                                                       // restoreState would corrupt the internal sectionCount
+
+        // state of the columns
+        setShowStatusColumn(Settings->value("showStatusColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE)).toBool());
+        setShowLastContactColumn(Settings->value("showLastContactColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT)).toBool());
+        setShowAvatarColumn(Settings->value("showAvatarColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR)).toBool());
+
+        // states
+        setHideUnconnected(Settings->value("hideUnconnected", mHideUnconnected).toBool());
+        setHideState(Settings->value("hideState", mHideState).toBool());
+        setRootIsDecorated(Settings->value("rootIsDecorated", ui->peerTreeWidget->rootIsDecorated()).toBool());
+        setShowGroups(Settings->value("showGroups", mShowGroups).toBool());
+
+        // open groups
+        int arrayIndex = Settings->beginReadArray("Groups");
+        for (int index = 0; index < arrayIndex; index++) {
+            Settings->setArrayIndex(index);
+            addGroupToExpand(Settings->value("open").toString().toStdString());
+        }
+        Settings->endArray();
+
+        initializeHeader(true);
+        updateHeader();
+    } else {
+        // save settings
+
+        // state of peer tree
+        Settings->setValue("peerTree", ui->peerTreeWidget->header()->saveState());
+        Settings->setValue("peerTreeVersion", peerTreeVersion);
+
+        // state of the columns
+        Settings->setValue("showStatusColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE));
+        Settings->setValue("showLastContactColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT));
+        Settings->setValue("showAvatarColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR));
+
+        // states
+        Settings->setValue("hideUnconnected", mHideUnconnected);
+        Settings->setValue("hideState", mHideState);
+        Settings->setValue("rootIsDecorated", ui->peerTreeWidget->rootIsDecorated());
+        Settings->setValue("showGroups", mShowGroups);
+
+        // open groups
+        Settings->beginWriteArray("Groups");
+        int arrayIndex = 0;
+        std::set<std::string> expandedPeers;
+        getExpandedGroups(expandedPeers);
+        foreach (std::string groupId, expandedPeers) {
+            Settings->setArrayIndex(arrayIndex++);
+            Settings->setValue("open", QString::fromStdString(groupId));
+        }
+        Settings->endArray();
+    }
+}
+
+void FriendList::initializeHeader(bool afterLoadSettings)
+{
+    // set column size
+    QHeaderView *header = ui->peerTreeWidget->header();
+    header->setMovable(false);
+    header->setResizeMode(COLUMN_NAME, QHeaderView::Stretch);
+    header->setResizeMode(COLUMN_STATE, QHeaderView::Interactive);
+    header->setResizeMode(COLUMN_LAST_CONTACT, QHeaderView::Interactive);
+    header->setResizeMode(COLUMN_AVATAR, QHeaderView::Fixed);
+
+    if (!afterLoadSettings) {
+        header->resizeSection(COLUMN_NAME, 150);
+        header->resizeSection(COLUMN_LAST_CONTACT, 120);
+    }
+    header->resizeSection(COLUMN_AVATAR, COLUMN_AVATAR_WIDTH);
 }
 
 /* Utility Fns */
@@ -267,7 +362,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                 contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Location"), this, SLOT(removefriend()));
             }
 
-            if (mHideGroups == false && type == TYPE_GPG) {
+            if (mShowGroups && type == TYPE_GPG) {
                 QMenu* addToGroupMenu = NULL;
                 QMenu* moveToGroupMenu = NULL;
 
@@ -361,7 +456,7 @@ void FriendList::groupsChanged()
 
 void FriendList::updateAvatar(const QString& id)
 {
-    if (mHideAvatarColumn)
+    if (ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR))
         return;
 
     QTreeWidgetItemIterator it(ui->peerTreeWidget);
@@ -378,16 +473,6 @@ void FriendList::updateAvatar(const QString& id)
     }
 }
 
-void FriendList::showEvent(QShowEvent *event)
-{
-    if (firstTimeShown) {
-        firstTimeShown = false;
-        updateHeaderSizes();
-    }
-
-    RsAutoUpdatePage::showEvent(event);
-}
-
 /**
  * Get the list of peers from the RsIface.
  * Adds all friend gpg ids, with their locations as children to the peerTreeWidget.
@@ -402,6 +487,9 @@ void  FriendList::insertPeers()
 #ifdef FRIENDS_DEBUG
     std::cerr << "FriendList::insertPeers() called." << std::endl;
 #endif
+
+    bool isStatusColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_STATE);
+    bool isAvatarColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
 
     std::list<StatusInfo> statusInfo;
     rsStatus->getStatusList(statusInfo);
@@ -457,7 +545,7 @@ void  FriendList::insertPeers()
                 break;
             }
 
-            if (mHideGroups == false && groupsHasChanged) {
+            if (mShowGroups && groupsHasChanged) {
                 if (parent) {
                     if (parent->type() == TYPE_GROUP) {
                         std::string groupId = getRsId(parent);
@@ -486,7 +574,7 @@ void  FriendList::insertPeers()
             break;
         case TYPE_GROUP:
         {
-            if (mHideGroups) {
+            if (!mShowGroups) {
                 if (item->parent()) {
                     delete(item->parent()->takeChild(item->parent()->indexOfChild(item)));
                 } else {
@@ -522,7 +610,7 @@ void  FriendList::insertPeers()
         RsGroupInfo *groupInfo = NULL;
         int onlineCount = 0;
         int availableCount = 0;
-        if (!mHideGroups && groupIt != groupInfoList.end()) {
+        if (mShowGroups && groupIt != groupInfoList.end()) {
             groupInfo = &(*groupIt);
 
             if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupInfo->peerIds.size() == 0) {
@@ -586,7 +674,7 @@ void  FriendList::insertPeers()
         for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); gpgIt++) {
             std::string gpgId = *gpgIt;
 
-            if (!mHideGroups) {
+            if (mShowGroups) {
                 if (groupInfo) {
                     // we fill a group, check if gpg id is assigned
                     if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), gpgId) == groupInfo->peerIds.end()) {
@@ -647,15 +735,16 @@ void  FriendList::insertPeers()
                 }
 
                 gpgItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-                if (!mBigName) {
-                    gpgItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
-                } else {
-                    gpgItem->setSizeHint(COLUMN_NAME, QSize(40, 40));
-                }
                 gpgItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
 
                 /* not displayed, used to find back the item */
                 gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
+            }
+
+            if (mBigName && !mHideState && isStatusColumnHidden) {
+                gpgItem->setSizeHint(COLUMN_NAME, QSize(40, 40));
+            } else {
+                gpgItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
             }
 
             availableCount++;
@@ -685,6 +774,7 @@ void  FriendList::insertPeers()
             std::string bestSslId;        // for gpg item
             QString bestCustomStateString;// for gpg item
             std::list<std::string> sslContacts;
+            QDateTime lastContact;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
             for (std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
@@ -740,14 +830,14 @@ void  FriendList::insertPeers()
                 }
 
                 QString connectStateString = StatusDefs::connectStateString(sslDetail);
-                if (!mHideStatusColumn) {
+                if (!isStatusColumnHidden) {
                     sslItem->setText(COLUMN_STATE, connectStateString);
                 } else if (!mHideState && connectStateString.isEmpty() == false) {
                     sText += " [" + StatusDefs::connectStateString(sslDetail) + "]";
                 }
                 sslItem->setText( COLUMN_NAME, sText);
 
-                if (mHideStatusColumn == true && mHideState == true) {
+                if (isStatusColumnHidden == true && mHideState == true) {
                     /* Show the state as tooltip */
                     sslItem->setToolTip(COLUMN_NAME, connectStateString);
                 } else {
@@ -756,6 +846,14 @@ void  FriendList::insertPeers()
 
                 // sort location
                 sslItem->setData(COLUMN_STATE, ROLE_SORT, sText);
+
+                /* last contact */
+                QDateTime sslLastContact = QDateTime::fromTime_t(sslDetail.lastConnect);
+                sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
+                sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT, sslLastContact);
+                if (sslLastContact > lastContact) {
+                    lastContact = sslLastContact;
+                }
 
                 /* change color and icon */
                 QIcon sslIcon;
@@ -879,21 +977,21 @@ void  FriendList::insertPeers()
 
                 gpgIcon = QIcon(StatusDefs::imageUser(bestRSState));
 
-                if (!mHideStatusColumn) {
+                if (!isStatusColumnHidden) {
                     gpgItem->setText(COLUMN_STATE, StatusDefs::name(bestRSState));
                 }
 
-                if (mBigName) {
+                if (isStatusColumnHidden && mBigName && !mHideState) {
                     if (bestCustomStateString.isEmpty()) {
                         gpgItemText += "\n" + StatusDefs::name(bestRSState);
                     } else {
                         gpgItemText += "\n" + bestCustomStateString;
                     }
-                } else if (mHideStatusColumn && !mHideState){
+                } else if (isStatusColumnHidden && !mHideState){
                     gpgItemText += " [" + StatusDefs::name(bestRSState) + "]";
                 }
             } else if (gpg_online) {
-                if (!mHideStatusColumn) {
+                if (!isStatusColumnHidden) {
                     gpgItem->setText(COLUMN_STATE, tr("Available"));
                 } else if (!mHideState && !mBigName) {
                     gpgItemText += " [" + tr("Available") + "]";
@@ -911,7 +1009,7 @@ void  FriendList::insertPeers()
                     gpgItem->setFont(i,font);
                 }
             } else {
-                if (!mHideStatusColumn) {
+                if (!isStatusColumnHidden) {
                     gpgItem->setText(COLUMN_STATE, StatusDefs::name(RS_STATUS_OFFLINE));
                 } else if (!mHideState && !mBigName) {
                     gpgItemText += " [" + StatusDefs::name(RS_STATUS_OFFLINE) + "]";
@@ -933,7 +1031,7 @@ void  FriendList::insertPeers()
                 gpgIcon = QIcon(":/images/chat.png");
             }
 
-            if (!mHideAvatarColumn && gpgItem->icon(COLUMN_AVATAR).isNull()) {
+            if (!isAvatarColumnHidden && gpgItem->icon(COLUMN_AVATAR).isNull()) {
                 // only set the avatar image the first time, or when it changed
                 // otherwise getAvatarFromSslId sends request packages to peers.
                 QPixmap avatar;
@@ -946,6 +1044,8 @@ void  FriendList::insertPeers()
             gpgItem->setData(COLUMN_NAME, ROLE_SORT, "2 " + gpgItemText);
             gpgItem->setData(COLUMN_STATE, ROLE_SORT, "2 " + BuildStateSortString(true, gpgItemText, bestPeerState));
             gpgItem->setIcon(COLUMN_NAME, gpgIcon);
+            gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(lastContact));
+            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT, "2 " + lastContact.toString("yyyyMMdd_hhmmss"));
 
             if (openPeers != NULL && openPeers->find(gpgId) != openPeers->end()) {
                 gpgItem->setExpanded(true);
@@ -965,7 +1065,7 @@ void  FriendList::insertPeers()
             }
         }
 
-        if (!mHideGroups && groupIt != groupInfoList.end()) {
+        if (mShowGroups && groupIt != groupInfoList.end()) {
             groupIt++;
         } else {
             // all done
@@ -1392,60 +1492,48 @@ void FriendList::removeGroup()
     rsPeers->removeGroup(groupId);
 }
 
-void FriendList::setHideUnconnected(bool hidden) {
+void FriendList::setHideUnconnected(bool hidden)
+{
     if (mHideUnconnected != hidden) {
         mHideUnconnected = hidden;
         insertPeers();
     }
 }
 
-void FriendList::setHideStatusColumn(bool hidden)
+void FriendList::setShowStatusColumn(bool show)
 {
-    if (mHideStatusColumn != hidden) {
-        ui->peerTreeWidget->setColumnHidden(COLUMN_STATE, hidden);
+    ui->actionHideState->setEnabled(!show);
+    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE);
 
-        QHeaderView *header = ui->peerTreeWidget->header();
-        if (mHideStatusColumn) { // if column was hidden
-            if (correctColumnStatusSize) {
-                correctColumnStatusSize = false;
-                header->resizeSection(COLUMN_STATE, 100);
-            }
+    if (isColumnVisible != show) {
+        ui->peerTreeWidget->setColumnHidden(COLUMN_STATE, !show);
 
-            if (header->sectionSize(COLUMN_STATE) < header->sectionSize(COLUMN_NAME)) {
-                // resize name column to make room for status column, but only if it doesn't result in negative width
-                header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) - header->sectionSize(COLUMN_STATE));
-            }
-        }
-
-        mHideStatusColumn = hidden;
-        updateHeaderSizes();
+        updateHeader();
         insertPeers();
     }
 }
 
-void FriendList::setHideAvatarColumn(bool hidden)
+void FriendList::setShowLastContactColumn(bool show)
 {
-    if (mHideAvatarColumn == hidden)
-        return;
+    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT);
 
-    bool columnWasHidden = mHideAvatarColumn;
-    mHideAvatarColumn = hidden;
-    ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, hidden);
+    if (isColumnVisible != show) {
+        ui->peerTreeWidget->setColumnHidden(COLUMN_LAST_CONTACT, !show);
 
-    if (RsAutoUpdatePage::eventsLocked()) // don't change header sizes
-        return;
-
-    QHeaderView *header = ui->peerTreeWidget->header();
-    if (columnWasHidden) {
-        if (header->sectionSize(COLUMN_NAME) > COLUMN_AVATAR_WIDTH) {
-            // resize name column to make room for avatar column, but only if it doesn't result in negative width
-            header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) - COLUMN_AVATAR_WIDTH);
-        }
-    } else {
-        header->resizeSection(COLUMN_NAME, header->sectionSize(COLUMN_NAME) + COLUMN_AVATAR_WIDTH);
+        updateHeader();
+        insertPeers();
     }
+}
 
-    updateHeaderSizes();
+void FriendList::setShowAvatarColumn(bool show)
+{
+    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
+    if (isColumnVisible == show)
+        return;
+
+    ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, !show);
+
+    updateHeader();
     insertPeers();
 }
 
@@ -1458,43 +1546,33 @@ void FriendList::setHideState(bool hidden)
 }
 
 /**
- * Set the correct header resize modes.
+ * Set the header visible.
  */
-void FriendList::updateHeaderSizes()
+void FriendList::updateHeader()
 {
-    if (RsAutoUpdatePage::eventsLocked())
-        return;
-
-    QHeaderView *header = ui->peerTreeWidget->header();
-    if (mHideAvatarColumn) {
-        /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-        if (!this->isVisible() && ui->peerTreeWidget->isColumnHidden(COLUMN_STATE)) {
-            // Workaround
-            correctColumnStatusSize = true;
-        }
-        header->setStretchLastSection(true);
-        header->setResizeMode(COLUMN_NAME, QHeaderView::Interactive);
-        header->setResizeMode(COLUMN_STATE, QHeaderView::Interactive);
+    if (ui->peerTreeWidget->isColumnHidden(COLUMN_STATE) && ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT)) {
+        ui->peerTreeWidget->setHeaderHidden(true);
     } else {
-        header->setStretchLastSection(false);
-        if (mHideStatusColumn) {
-            header->setResizeMode(COLUMN_NAME, QHeaderView::Stretch);
-        } else {
-            header->setResizeMode(COLUMN_NAME, QHeaderView::Interactive);
-        }
-        header->setResizeMode(COLUMN_AVATAR, QHeaderView::Fixed);
-
-        header->resizeSection(COLUMN_AVATAR, COLUMN_AVATAR_WIDTH);
+        ui->peerTreeWidget->setHeaderHidden(false);
     }
 }
 
-void FriendList::setSortByState(bool sortByState)
+void FriendList::setSortByName()
 {
-    if (sortByState) {
-        ui->peerTreeWidget->sortByColumn(COLUMN_STATE);
-    } else {
-        ui->peerTreeWidget->sortByColumn(COLUMN_NAME);
-    }
+    ui->peerTreeWidget->sortByColumn(COLUMN_NAME);
+    sortPeersAscendingOrder();
+}
+
+void FriendList::setSortByState()
+{
+    ui->peerTreeWidget->sortByColumn(COLUMN_STATE);
+    sortPeersAscendingOrder();
+}
+
+void FriendList::setSortByLastContact()
+{
+    ui->peerTreeWidget->sortByColumn(COLUMN_LAST_CONTACT);
+    sortPeersDescendingOrder();
 }
 
 void FriendList::sortPeersAscendingOrder()
@@ -1507,25 +1585,29 @@ void FriendList::sortPeersDescendingOrder()
     ui->peerTreeWidget->sortByColumn(ui->peerTreeWidget->sortColumn(), Qt::DescendingOrder);
 }
 
-void FriendList::peerSortIndicatorChanged(int column, Qt::SortOrder)
-{
-    emit peerSortColumnChanged(column == COLUMN_STATE);
-}
-
 void FriendList::setRootIsDecorated(bool show)
 {
     ui->peerTreeWidget->setRootIsDecorated(show);
 }
 
-void FriendList::setHideHeader(bool hidden)
+void FriendList::setShowGroups(bool show)
 {
-    ui->peerTreeWidget->setHeaderHidden(hidden);
-}
-
-void FriendList::setHideGroups(bool hidden)
-{
-    if (mHideGroups != hidden) {
-        mHideGroups = hidden;
+    if (mShowGroups != show) {
+        mShowGroups = show;
+        if (mShowGroups) {
+            // remove all not assigned gpg ids
+            int childCount = ui->peerTreeWidget->topLevelItemCount();
+            int childIndex = 0;
+            while (childIndex < childCount) {
+                QTreeWidgetItem *item = ui->peerTreeWidget->topLevelItem(childIndex);
+                if (item->type() == TYPE_GPG) {
+                    delete(ui->peerTreeWidget->takeTopLevelItem(childIndex));
+                    childCount = ui->peerTreeWidget->topLevelItemCount();
+                    continue;
+                }
+                childIndex++;
+            }
+        }
         insertPeers();
     }
 }
@@ -1557,20 +1639,6 @@ void FriendList::setBigName(bool bigName)
             it++;
         }
     }
-}
-
-void FriendList::restoreHeaderState(const QByteArray &state)
-{
-    ui->peerTreeWidget->header()->restoreState(state);
-    ui->peerTreeWidget->header()->doItemsLayout(); // is needed because I added a third column
-                                                   // restoreState would corrupt the internal sectionCount
-    ui->peerTreeWidget->setColumnHidden(COLUMN_STATE, mHideStatusColumn);
-    ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, mHideAvatarColumn);
-}
-
-QByteArray FriendList::saveHeaderState() const
-{
-    return ui->peerTreeWidget->header()->saveState();
 }
 
 /**
@@ -1640,4 +1708,56 @@ void FriendList::addPeerToExpand(const std::string &gpgId)
         openPeers = new std::set<std::string>;
     }
     openPeers->insert(gpgId);
+}
+
+QMenu *FriendList::createDisplayMenu()
+{
+    QMenu *displayMenu = new QMenu(this);
+    connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
+
+    displayMenu->addAction(ui->actionSortPeersDescendingOrder);
+    displayMenu->addAction(ui->actionSortPeersAscendingOrder);
+    QMenu *menu = displayMenu->addMenu(tr("Columns"));
+    menu->addAction(ui->actionShowAvatarColumn);
+    menu->addAction(ui->actionShowLastContactColumn);
+    menu->addAction(ui->actionShowStatusColumn);
+    menu = displayMenu->addMenu(tr("Sort by"));
+    menu->addAction(ui->actionSortByName);
+    menu->addAction(ui->actionSortByState);
+    menu->addAction(ui->actionSortByLastContact);
+    displayMenu->addAction(ui->actionHideOfflineFriends);
+    displayMenu->addAction(ui->actionHideState);
+    displayMenu->addAction(ui->actionRootIsDecorated);
+    displayMenu->addAction(ui->actionShowGroups);
+
+    QActionGroup *group = new QActionGroup(this);
+    group->addAction(ui->actionSortByName);
+    group->addAction(ui->actionSortByState);
+    group->addAction(ui->actionSortByLastContact);
+
+    return displayMenu;
+}
+
+void FriendList::updateMenu()
+{
+    switch (ui->peerTreeWidget->sortColumn()) {
+    case COLUMN_NAME:
+        ui->actionSortByName->setChecked(true);
+        break;
+    case COLUMN_STATE:
+        ui->actionSortByState->setChecked(true);
+        break;
+    case COLUMN_LAST_CONTACT:
+        ui->actionSortByLastContact->setChecked(true);
+        break;
+    case COLUMN_AVATAR:
+        break;
+    }
+    ui->actionShowStatusColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_STATE));
+    ui->actionShowLastContactColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT));
+    ui->actionShowAvatarColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR));
+    ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
+    ui->actionHideState->setChecked(mHideState);
+    ui->actionRootIsDecorated->setChecked(ui->peerTreeWidget->rootIsDecorated());
+    ui->actionShowGroups->setChecked(mShowGroups);
 }
