@@ -1193,7 +1193,7 @@ void ForumsDialog::nextUnreadMessage()
             ui.threadTreeWidget->setCurrentItem(currentItem);
             return;
         }
-    } while( currentItem = ui.threadTreeWidget->itemBelow(currentItem) );
+    } while( (currentItem = ui.threadTreeWidget->itemBelow(currentItem)) != NULL );
 }
 
 // TODO

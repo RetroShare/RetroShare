@@ -3942,30 +3942,34 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Foren&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+610"/>
+        <location line="+259"/>
+        <source>Thread:</source>
+        <translation>Thema:</translation>
+    </message>
+    <message>
+        <location line="+344"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
     <message>
-        <location line="-581"/>
+        <location line="-574"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location line="+105"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Forum:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Forum:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+148"/>
         <source>Last Post</source>
         <translation>Letzter Beitrag</translation>
     </message>
@@ -3981,42 +3985,46 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+39"/>
-        <location line="+309"/>
+        <location line="+306"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location line="-323"/>
-        <location line="+328"/>
+        <location line="-320"/>
+        <location line="+325"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location line="-309"/>
-        <location line="+314"/>
+        <location line="-403"/>
+        <source>Forum:</source>
+        <translation>Forum:</translation>
+    </message>
+    <message>
+        <location line="+97"/>
+        <location line="+311"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location line="-309"/>
+        <location line="-306"/>
         <source>Signed</source>
         <translation>Unterzeichnet</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Thread:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Thema:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+70"/>
         <source>Previous Thread</source>
         <translation>Vorheriger Beitrag</translation>
     </message>
@@ -4031,7 +4039,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle Dateien runterladen</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+17"/>
         <source>Next unread</source>
         <translation>Nächste ungelesene</translation>
     </message>
@@ -4041,21 +4049,17 @@ p, li { white-space: pre-wrap; }
         <translation>Auf Beitrag antworten</translation>
     </message>
     <message>
-        <location line="-510"/>
+        <location line="+65"/>
+        <source>Loading</source>
+        <translation>Lade</translation>
+    </message>
+    <message>
+        <location line="-568"/>
         <source>Create Forum</source>
         <translation>Forum erstellen</translation>
     </message>
     <message>
-        <location line="+568"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;LOADING&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+56"/>
+        <location line="+620"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -4071,7 +4075,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle neues Thema</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="-224"/>
+        <location filename="../gui/ForumsDialog.ui" line="-227"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10046,7 +10050,7 @@ Lockdatei:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="+137"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="+136"/>
         <source>Unable to make path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10469,12 +10473,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+701"/>
         <source>Create selection file</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstelle Kollektion</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Collection files</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollektion</translation>
     </message>
 </context>
 <context>
@@ -10482,17 +10486,57 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/RsCollectionDialog.cpp" line="-95"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size</source>
-        <translation type="unfinished">Grösse</translation>
+        <translation>Grösse</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hash</source>
-        <translation type="unfinished">Prüfsumme</translation>
+        <translation>Prüfsumme</translation>
+    </message>
+    <message>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="+14"/>
+        <source>Collection</source>
+        <translation>Kollektion</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>File name :</source>
+        <translation>Dateiname:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Total size :</source>
+        <translation>Größe:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Selected files:</source>
+        <translation>Ausgewählt:</translation>
+    </message>
+    <message>
+        <location line="+86"/>
+        <source>Select all</source>
+        <translation>Alle auswählen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Deselect all</source>
+        <translation>Keine auswählen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Download!</source>
+        <translation>Herunterladen</translation>
     </message>
 </context>
 <context>
@@ -11174,7 +11218,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
     <message>
         <location line="+18"/>
         <source>Plugins</source>
-        <translation type="unfinished">Plugins</translation>
+        <translation>Plugins</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11531,7 +11575,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="+984"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+388"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="+389"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -11682,7 +11726,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Create collection file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollektion erstellen</translation>
     </message>
     <message>
         <location line="+171"/>
@@ -13480,51 +13524,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>rsCollectionDialog</name>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="+14"/>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>File name :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Total size :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Selected files:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location line="+7"/>
-        <location line="+7"/>
-        <source>TextLabel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+58"/>
-        <source>Select all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Deselect all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Download!</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Abbrechen</translation>
     </message>
 </context>
 </TS>

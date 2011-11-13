@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>rsCollectionDialog</class>
- <widget class="QDialog" name="rsCollectionDialog">
+ <class>RsCollectionDialog</class>
+ <widget class="QDialog" name="RsCollectionDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Collection</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
+    <normaloff>:/images/mimetypes/rscollection-16.png</normaloff>:/images/mimetypes/rscollection-16.png</iconset>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -55,21 +62,21 @@
        <item>
         <widget class="QLabel" name="_filename_TL">
          <property name="text">
-          <string>TextLabel</string>
+          <string notr="true">TextLabel</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="_totalSize_TL">
          <property name="text">
-          <string>TextLabel</string>
+          <string notr="true">TextLabel</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="_selectedFiles_TL">
          <property name="text">
-          <string>TextLabel</string>
+          <string notr="true">TextLabel</string>
          </property>
         </widget>
        </item>
@@ -92,6 +99,12 @@
    </item>
    <item>
     <widget class="QTableWidget" name="_fileEntriesTW">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
      <property name="gridStyle">
       <enum>Qt::DotLine</enum>
      </property>
@@ -104,8 +117,8 @@
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
-     <attribute name="verticalHeaderStretchLastSection">
-      <bool>false</bool>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>22</number>
      </attribute>
     </widget>
    </item>
@@ -156,6 +169,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

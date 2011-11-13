@@ -182,7 +182,7 @@ void ShareManager::load()
                 QHBoxLayout* layout = new QHBoxLayout(widget);
                 layout->addWidget(cb, 0, Qt::AlignCenter);
                 layout->setSpacing(0);
-                layout->setContentsMargins(0, 0, 0, 0);
+                layout->setContentsMargins(10, 0, 0, 0); // to be centered
                 widget->setLayout(layout);
 
                 listWidget->setCellWidget(row, col + COLUMN_NETWORKWIDE, widget);

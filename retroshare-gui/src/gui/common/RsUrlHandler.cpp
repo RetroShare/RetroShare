@@ -39,10 +39,7 @@ bool RsUrlHandler::openUrl(const QUrl& url)
 			QMessageBox::warning(NULL,QObject::tr("Treatment of collection file has failed."),QObject::tr("The collection file ") + url.toLocalFile() + QObject::tr(" could not be openned. Reported error is: ") + QString::fromStdString(e.what())) ;
 			return false ;
 		}
+		return true;
 	}
-	else
-		return QDesktopServices::openUrl(url) ;
+	return QDesktopServices::openUrl(url) ;
 }
-
-
-

@@ -26,7 +26,7 @@
 
 class QCheckBox ;
 
-class RsCollectionDialog: public QDialog, public Ui::rsCollectionDialog
+class RsCollectionDialog: public QDialog, public Ui::RsCollectionDialog
 {
 	Q_OBJECT
 
@@ -39,6 +39,9 @@ class RsCollectionDialog: public QDialog, public Ui::rsCollectionDialog
 		void deselectAll() const ;
 		void cancel() ;
 		void updateSizes() ;
+
+	protected:
+		bool eventFilter(QObject *obj, QEvent *ev);
 
 	private:
 		const std::vector<RsCollectionFile::DLinfo>& _dlinfos ;

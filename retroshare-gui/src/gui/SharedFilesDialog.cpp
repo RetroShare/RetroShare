@@ -54,6 +54,7 @@
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_OPENFOLDER        ":/images/folderopen.png"
 #define IMAGE_OPENFILE		 ":/images/fileopen.png"
+#define IMAGE_COLLECTION     ":/images/mimetypes/rscollection-16.png"
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
@@ -229,7 +230,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
   connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
 #endif
-  createcollectionfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Create collection file"), this);
+  createcollectionfileAct = new QAction(QIcon(IMAGE_COLLECTION), tr("Create collection file"), this);
   connect(createcollectionfileAct, SIGNAL(triggered()), this, SLOT(createCollectionFile()));
   openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
