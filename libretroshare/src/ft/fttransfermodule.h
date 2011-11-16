@@ -57,7 +57,6 @@ class peerInfo
 {
 public:
 	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
-//		offset(0),chunkSize(0),receivedSize(0),
 		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
 		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
@@ -67,7 +66,6 @@ public:
 	}
 	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
 		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
-//		offset(0),chunkSize(0),receivedSize(0),
 		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
 		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
@@ -79,13 +77,6 @@ public:
   	uint32_t state;
   	double desiredRate;
   	double actualRate;
-
-  	//current file data request
-//  	uint64_t offset;
-//  	uint32_t chunkSize;
-
-  	//already received data size for current request
-//  	uint32_t receivedSize;
 
   	time_t lastTS; /* last Request */
 	time_t recvTS; /* last Recv */
@@ -164,6 +155,9 @@ public:
   bool queryInactive();
   void adjustSpeed();
 
+  DwlSpeed downloadPriority() const { return mPriority ; }
+  void setDownloadPriority(DwlSpeed p) { mPriority =p ; }
+
 private:
 
   bool locked_tickPeerTransfer(peerInfo &info);
@@ -199,6 +193,7 @@ private:
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 
   HashThread *_hash_thread ;
+  DwlSpeed mPriority ;	// transfer speed priority
 };
 
 #endif  //FT_TRANSFER_MODULE_HEADER

@@ -76,8 +76,7 @@ static const uint32_t FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE 	= 1 ;
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
-	 mState(DOWNLOADING), mSize(0), mFlags(0),
-	 mPriority(SPEED_NORMAL)
+	 mState(DOWNLOADING), mSize(0), mFlags(0)
 {
 	return;
 }
@@ -88,8 +87,7 @@ ftFileControl::ftFileControl(std::string fname,
 		ftFileCreator *fc, ftTransferModule *tm)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags), 
-	 mPriority(SPEED_NORMAL)	// default priority to normal
+	 mSize(size), mFlags(flags)
 {
 	return;
 }
@@ -287,39 +285,11 @@ void ftController::tickTransfers()
 #ifdef CONTROL_DEBUG
 	std::cerr << "ticking transfers." << std::endl ;
 #endif
-	std::vector<std::vector<ftTransferModule*> >priority_tab (3,std::vector<ftTransferModule*>()) ;
-
 	// Collect all non queued files.
 	//
 	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
-			priority_tab[it->second->mPriority].push_back(it->second->mTransfer) ;
-
-	// 2 - tick arrays with a probability proportional to priority
-	
-	// 2.1 - decide based on probability, which category of files we handle.
-	
-#ifdef CONTROL_DEBUG
-	std::cerr << "Priority tabs: " ;
-	std::cerr << "Low ("    << priority_tab[SPEED_LOW   ].size() << ") " ;
-	std::cerr << "Normal (" << priority_tab[SPEED_NORMAL].size() << ") " ;
-	std::cerr << "High ("   << priority_tab[SPEED_HIGH  ].size() << ") " ;
-	std::cerr << std::endl ;
-#endif
-
-	/* tick the transferModules */
-
-	// start anywhere in the chosen list of transfers, so that not to favor any special transfer
-	//
-
-	for(int chosen=2;chosen>=0;--chosen)
-		if(!priority_tab[chosen].empty())
-		{
-			int start = rand() % priority_tab[chosen].size() ;
-
-			for(int i=0;i<(int)priority_tab[chosen].size();++i)
-				priority_tab[chosen][(i+start)%(int)priority_tab[chosen].size()]->tick() ;
-		}
+			it->second->mTransfer->tick() ;
 }
 
 bool ftController::getPriority(const std::string& hash,DwlSpeed& p)
@@ -330,12 +300,13 @@ bool ftController::getPriority(const std::string& hash,DwlSpeed& p)
 
 	if(it != mDownloads.end())
 	{
-		p = it->second->mPriority ;
+		p = it->second->mTransfer->downloadPriority() ;
 		return true ;
 	}
 	else
 		return false ;
 }
+
 void ftController::setPriority(const std::string& hash,DwlSpeed p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
@@ -343,7 +314,7 @@ void ftController::setPriority(const std::string& hash,DwlSpeed p)
 	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
 
 	if(it != mDownloads.end())
-		it->second->mPriority = p ;
+		it->second->mTransfer->setDownloadPriority(p) ;
 }
 
 void ftController::cleanCacheDownloads()
@@ -1605,7 +1576,7 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	info.fname = it->second->mName;
 	info.flags = it->second->mFlags;
 	info.path = RsDirUtil::removeTopDir(it->second->mDestination); /* remove fname */
-	info.priority = it->second->mPriority ;
+	info.priority = it->second->mTransfer->downloadPriority() ;
 	info.queue_position = it->second->mQueuePosition ;
 
 	/* get list of sources from transferModule */

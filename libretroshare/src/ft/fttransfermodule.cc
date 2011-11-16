@@ -26,7 +26,6 @@
 /******
  * #define FT_DEBUG 1
  *****/
-#define FT_DEBUG 1
 
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
@@ -47,19 +46,24 @@
  *
  */
 
-const double FT_TM_MAX_PEER_RATE = 10 * 1024 * 1024; /* 10MB/s */
-const uint32_t FT_TM_MAX_RESETS  = 5;
+const double 	FT_TM_MAX_PEER_RATE 		= 10 * 1024 * 1024; /* 10MB/s */
+const uint32_t FT_TM_MAX_RESETS  		= 5;
 
-const uint32_t FT_TM_MINIMUM_CHUNK = 1024; /* ie 1Kb / sec */
-const uint32_t FT_TM_RESTART_DOWNLOAD = 20; /* 20 seconds */
-const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 10; /* 10 seconds */
+const uint32_t FT_TM_MINIMUM_CHUNK 		= 1024; /* ie 1Kb / sec */
+const uint32_t FT_TM_RESTART_DOWNLOAD 	= 20; /* 20 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	= 10; /* 10 seconds */
 const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
 
-const double FT_TM_MAX_INCREASE = 1.00;
-const double FT_TM_MIN_INCREASE = -0.10;
+// const double FT_TM_MAX_INCREASE = 1.00;
+// const double FT_TM_MIN_INCREASE = -0.10;
+
+const double FT_TM_RATE_INCREASE_SLOWER  = 0.05 ;
+const double FT_TM_RATE_INCREASE_AVERAGE = 0.3 ;
+const double FT_TM_RATE_INCREASE_FASTER  = 1.0 ;
+
 const int32_t FT_TM_FAST_RTT    = 1.0;
 const int32_t FT_TM_STD_RTT     = 5.0;
-const int32_t FT_TM_SLOW_RTT    = 9.0;
+const int32_t FT_TM_SLOW_RTT    = 20.0;
 
 const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 0 ;
 const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 1 ;
@@ -72,7 +76,7 @@ const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 2 ;
 #define FT_TM_FLAG_CHUNK_CRC 		4
 
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
-	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), tfMtx("ftTransferModule"), mFlag(FT_TM_FLAG_DOWNLOADING)
+	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), tfMtx("ftTransferModule"), mFlag(FT_TM_FLAG_DOWNLOADING),mPriority(SPEED_NORMAL)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
@@ -916,7 +920,6 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	uint32_t next_req = info.actualRate * (1.0 + info.mRateIncrease);
 #ifdef FT_DEBUG
 	std::cerr << "locked_tickPeerTransfer() actual rate (after): " << actualRate 
-				<< " increase factor=" << 1.0 + info.mRateIncrease 
 				<< " info.desiredRate=" << info.desiredRate 
 				<< " info.actualRate=" << info.actualRate 
 				<< ", next_req=" << next_req ;
@@ -992,12 +995,8 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	
 	
   //interface to client module
-bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset, 
-			uint32_t chunk_size, void *data)
+bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset, uint32_t chunk_size, void *)
 {
-	/* remove unused parameter warnings */
-	(void) data;
-
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::locked_recvPeerData()";
 	std::cerr << " peerId: " << info.peerId;
@@ -1005,7 +1004,6 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset,
 	std::cerr << " lastTransfers: " << info.lastTransfers;
 	std::cerr << " offset: " << offset;
 	std::cerr << " chunksize: " << chunk_size;
-	std::cerr << " data: " << data;
 	std::cerr << std::endl;
 #endif
 
@@ -1015,37 +1013,43 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset,
   info.state = PQIPEER_DOWNLOADING;
   info.lastTransfers += chunk_size;
 
-  if ((info.rttActive) && (info.rttOffset == offset + chunk_size))
-  {
-	  /* update tip */
-	  int32_t rtt = time(NULL) - info.rttStart;
-
-	  /* 
-		* FT_TM_FAST_RTT = 1 sec. mRateIncrease =  1.00
-		* FT_TM_SLOW_RTT = 9 sec. mRateIncrease =  0
-		* 		   11 sec. mRateIncrease = -0.25
-		* if it is slower than this allow fast data increase.
-		* initial guess - linear with rtt.
-		* change if this leads to wild oscillations 
-		*
-		*/
-
-	  info.mRateIncrease = (FT_TM_SLOW_RTT - rtt) * 
-		  (FT_TM_MAX_INCREASE / (FT_TM_SLOW_RTT - FT_TM_FAST_RTT));
-
-	  if (info.mRateIncrease > FT_TM_MAX_INCREASE)
-		  info.mRateIncrease = FT_TM_MAX_INCREASE;
-
-	  if (info.mRateIncrease < FT_TM_MIN_INCREASE)
-		  info.mRateIncrease = FT_TM_MIN_INCREASE;
-
-	  info.rtt = rtt;
-	  info.rttActive = false;
+   if ((info.rttActive) && (info.rttOffset == offset + chunk_size))
+   {
+ 	  /* update tip */
+ 	  int32_t rtt = time(NULL) - info.rttStart;
+ 
+ 	  /* 
+ 		* FT_TM_FAST_RTT = 1 sec. mRateIncrease =  1.00
+ 		* FT_TM_SLOW_RTT =20 sec. mRateIncrease =  0
+ 		* 		   11 sec. mRateIncrease = -0.25
+ 		* if it is slower than this allow fast data increase.
+ 		* initial guess - linear with rtt.
+ 		* change if this leads to wild oscillations 
+ 		*
+ 		*/
+ 
+// 	  info.mRateIncrease = (FT_TM_SLOW_RTT - rtt) * 
+// 		  (FT_TM_MAX_INCREASE / (FT_TM_SLOW_RTT - FT_TM_FAST_RTT));
+// 
+// 	  if (info.mRateIncrease > FT_TM_MAX_INCREASE)
+// 		  info.mRateIncrease = FT_TM_MAX_INCREASE;
+// 
+// 	  if (info.mRateIncrease < FT_TM_MIN_INCREASE)
+// 		  info.mRateIncrease = FT_TM_MIN_INCREASE;
+ 
+	  switch(mPriority)
+	  {
+		  case SPEED_LOW  	: info.mRateIncrease = FT_TM_RATE_INCREASE_SLOWER ; break ;
+		  case SPEED_NORMAL	: info.mRateIncrease = FT_TM_RATE_INCREASE_AVERAGE; break ;
+		  case SPEED_HIGH  	: info.mRateIncrease = FT_TM_RATE_INCREASE_FASTER ; break ;
+	  }
+ 	  info.rtt = rtt;
+ 	  info.rttActive = false;
 
 #ifdef FT_DEBUG
 	  std::cerr << "ftTransferModule::locked_recvPeerData()";
 	  std::cerr << "Updated Rate based on RTT: " << rtt;
-	  std::cerr << " Rate: " << info.mRateIncrease;
+	  std::cerr << " Rate increase: " << 1.0+info.mRateIncrease;
 	  std::cerr << std::endl;
 #endif
 

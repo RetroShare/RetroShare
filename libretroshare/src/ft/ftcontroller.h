@@ -86,7 +86,6 @@ class ftFileControl
 		uint64_t	   mSize;
 		uint32_t	   mFlags;
 		time_t		mCreateTime;
-		DwlSpeed 	mPriority ;
 		uint32_t		mQueuePriority ;
 		uint32_t		mQueuePosition ;
 };
