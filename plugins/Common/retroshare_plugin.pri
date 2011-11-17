@@ -15,10 +15,10 @@ win32 {
         MOC_DIR = temp/moc
 		RCC_DIR = temp/qrc
 		UI_DIR  = temp/ui
-		
+
         DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
         DEFINES *= MINIUPNPC_VERSION=13
-        DESTDIR = lib
+#        DESTDIR = lib
 
         # Switch off optimization for release version
         QMAKE_CXXFLAGS_RELEASE -= -O2

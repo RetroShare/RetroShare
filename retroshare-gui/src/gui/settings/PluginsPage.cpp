@@ -78,8 +78,8 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 				 if(plugin->qt_icon() != NULL)
 					 plugin_icon = *plugin->qt_icon() ;
 
-				 pluginTitle = QString::fromStdString(plugin->getPluginName()) ;
-				 pluginDescription = QString::fromStdString(plugin->getShortPluginDescription()) ;
+				 pluginTitle = QString::fromUtf8(plugin->getPluginName().c_str()) ;
+				 pluginDescription = QString::fromUtf8(plugin->getShortPluginDescription().c_str()) ;
 			 }
 
 			 PluginItem *item = new PluginItem(i,pluginTitle,pluginDescription,status_string,
@@ -107,6 +107,9 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 		 text += "<b>"+QString::fromStdString(dirs[i]) + "</b><br>" ;
 
 	 ui._lookupDirectories_TB->setHtml(text) ;
+
+	// todo
+	ui.enableAll->setEnabled(false);
 }
 void PluginsPage::configurePlugin(int i)
 {

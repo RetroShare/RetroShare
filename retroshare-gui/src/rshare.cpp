@@ -308,7 +308,7 @@ Rshare::setLanguage(QString languageCode)
   if (languageCode.isEmpty()) {
     languageCode = Settings->getLanguageCode();
   }
-  /* Translate into the desired langauge */
+  /* Translate into the desired language */
   if (LanguageSupport::translate(languageCode)) {
     _language = languageCode;
     return true;
@@ -345,7 +345,6 @@ Rshare::setSheet(QString sheet)
   /* Apply the specified GUI stylesheet */
     _stylesheet = sheet;
     return true;
- 
 }
 
 void Rshare::resetLanguageAndStyle()
@@ -358,6 +357,12 @@ void Rshare::resetLanguageAndStyle()
 
     /** Set the GUI stylesheet appropriately. */
     setSheet(_args.value(ARG_GUISTYLESHEET));
+}
+
+/** Initialize plugins. */
+void Rshare::initPlugins()
+{
+    LanguageSupport::translatePlugins(_language);
 }
 
 /** Returns the directory RetroShare uses for its data files. */

@@ -20,16 +20,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-
 #ifndef _LANGUAGESUPPORT_H
 #define _LANGUAGESUPPORT_H
 
 #include <QApplication>
 #include <QStringList>
 #include <QMap>
-
-
 
 class LanguageSupport
 {
@@ -52,7 +48,8 @@ public:
   static bool isRightToLeft(const QString &languageCode);
   /** Sets the application's translator to the specified language. */
   static bool translate(const QString &languageCode);
+  /** Sets the application's translator to the specified language for the plugins. */
+  static bool translatePlugins(const QString &languageCode);
 };
 
 #endif
-

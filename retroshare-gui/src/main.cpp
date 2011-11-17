@@ -219,6 +219,7 @@ int main(int argc, char *argv[])
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
 	rsicontrol->StartupRetroShare();
+	Rshare::initPlugins();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
 

@@ -1,4 +1,5 @@
 #include <retroshare/rsplugin.h>
+#include <QTranslator>
 
 #include "LinksCloudPlugin.h"
 #include "LinksDialog.h"
@@ -77,7 +78,25 @@ QIcon *LinksCloudPlugin::qt_icon() const
 
 std::string LinksCloudPlugin::getShortPluginDescription() const
 {
-	return "This plugin provides a set of cached links, and a voting system to promote them." ;
+	return QApplication::translate("LinksCloudPlugin", "This plugin provides a set of cached links, and a voting system to promote them.").toUtf8().constData();
 }
 
+std::string LinksCloudPlugin::getPluginName() const
+{
+	return QApplication::translate("LinksCloudPlugin", "LinksCloud").toUtf8().constData();
+}
 
+QTranslator* LinksCloudPlugin::qt_translator(QApplication *app, const QString& languageCode) const
+{
+	if (languageCode == "en") {
+		return NULL;
+	}
+
+	QTranslator* translator = new QTranslator(app);
+	if (translator->load(":/lang/LinksCloud_" + languageCode + ".qm")) {
+		return translator;
+	}
+
+	delete(translator);
+	return NULL;
+}

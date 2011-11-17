@@ -290,7 +290,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 				 icon = QIcon(":images/extension_48.png") ;
 
 			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
-			 ui.stackPages->add(rsPlugins->plugin(i)->qt_page(), createPageAction(icon, QString::fromStdString(rsPlugins->plugin(i)->getPluginName()), grp));
+			 ui.stackPages->add(rsPlugins->plugin(i)->qt_page(), createPageAction(icon, QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()), grp));
 		 }
 		 else if(rsPlugins->plugin(i) == NULL)
 			 std::cerr << "  No plugin object !" << std::endl;

@@ -84,6 +84,8 @@ public:
    */
   static void resetLanguageAndStyle();
 
+  /** Initialize plugins. */
+  static void initPlugins();
 
   /** Returns the current language. */
   static QString language() { return _language; }

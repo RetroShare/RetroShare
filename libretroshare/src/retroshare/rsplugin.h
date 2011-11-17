@@ -41,6 +41,8 @@ class MainPage ;
 class QIcon ;
 class QString ;
 class QWidget ;
+class QTranslator;
+class QApplication;
 class RsCacheService ;
 class ftServer ;
 class pqiService ;
@@ -81,13 +83,14 @@ class RsPlugin
 		virtual MainPage       *qt_page()       		const	{ return NULL ; }
 		virtual QWidget        *qt_config_panel()		const	{ return NULL ; }
 		virtual QIcon          *qt_icon()       		const	{ return NULL ; }
+		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode) const	{ return NULL ; }
 
 		virtual std::string configurationFileName() const { return std::string() ; }
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
-                virtual void setPlugInHandler(RsPluginHandler* pgHandler) = 0;
-                virtual void setInterfaces(RsPlugInInterfaces& interfaces) = 0;
+		virtual void setPlugInHandler(RsPluginHandler* pgHandler) = 0;
+		virtual void setInterfaces(RsPlugInInterfaces& interfaces) = 0;
 };
 
 class RsPluginHandler

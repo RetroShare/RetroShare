@@ -8849,51 +8849,43 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PluginItem</name>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+14"/>
         <source>Form</source>
-        <translation type="unfinished">Formular</translation>
+        <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+126"/>
         <source>Status: </source>
-        <translation type="unfinished"></translation>
+        <translation>Status:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>File hash:</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>File name: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dateiname:</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <location line="+13"/>
-        <location line="+13"/>
-        <source>TextLabel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+107"/>
         <source>Launch configuration panel, if provided by the plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte Einstellungen, wenn vom Plugin unterstützt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellung</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fügt das Plugin als vertrauenswürdig hinzu. Das wirkt sich nach dem Neustart von RetroShare aus, da die Plugins beim Start geladen werden.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivieren</translation>
     </message>
 </context>
 <context>
@@ -8919,57 +8911,57 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/PluginsPage.ui" line="+519"/>
         <source>Loaded plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Geladene Plugins</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Authorize all plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Erlaube alle Plugins</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Plugin look-up directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin Verzeichnis</translation>
     </message>
     <message>
         <location filename="../gui/settings/PluginsPage.cpp" line="+57"/>
         <source>Hash rejected. Add to white list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hash abgelehnt. Füge das Plugin als vertrauenswürdig hinzu.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Laden.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Missing symbol. Wrong version?</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlendes Symbol. Falsche Version?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No plugin object</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Plugin Objekt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plugins is loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin ist geladen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Status.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Title unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel nicht verfügbar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Description unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung nicht verfügbar</translation>
     </message>
 </context>
 <context>
@@ -10050,7 +10042,7 @@ Lockdatei:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="+136"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="+179"/>
         <source>Unable to make path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10484,7 +10476,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsCollectionDialog</name>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-95"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-135"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
@@ -10504,7 +10496,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kollektion</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
         <source>File name :</source>
         <translation>Dateiname:</translation>
     </message>
@@ -10519,7 +10511,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ausgewählt:</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+92"/>
         <source>Select all</source>
         <translation>Alle auswählen</translation>
     </message>

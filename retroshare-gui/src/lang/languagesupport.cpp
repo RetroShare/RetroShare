@@ -24,9 +24,11 @@
 #include <QLocale>
 #include <QLibraryInfo>
 #include <rshare.h>
+#include <retroshare/rsplugin.h>
 
 #include "languagesupport.h"
 
+static QMap<RsPlugin*, QTranslator*> translatorPlugins;
 
 /** Initializes the list of available languages. */
 QMap<QString, QString>
@@ -117,6 +119,19 @@ LanguageSupport::isRightToLeft(const QString &languageCode)
             || !languageCode.compare("fa", Qt::CaseInsensitive)
             || !languageCode.compare("he", Qt::CaseInsensitive));
 }
+
+static void removePluginTranslation()
+{
+    QMap<RsPlugin*, QTranslator*>::iterator it;
+    for (it = translatorPlugins.begin(); it != translatorPlugins.end(); ++it) {
+      if (it.value()) {
+        QApplication::removeTranslator(it.value());
+        delete(it.value());
+      }
+    }
+    translatorPlugins.clear();
+}
+
 /** Sets the application's translator to the specified language. */
 bool
 LanguageSupport::translate(const QString &languageCode)
@@ -130,6 +145,8 @@ LanguageSupport::translate(const QString &languageCode)
     QApplication::removeTranslator(retroshareTranslator);
     delete(retroshareTranslator);
     retroshareTranslator = NULL;
+
+    removePluginTranslation();
   }
 
   if (languageCode == "en")
@@ -156,11 +173,40 @@ LanguageSupport::translate(const QString &languageCode)
   retroshareTranslator = new QTranslator(rApp);
   Q_CHECK_PTR(retroshareTranslator);
 
+  bool result = true;
+
   if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
     QApplication::installTranslator(retroshareTranslator);
-    return true;
+  } else {
+    delete retroshareTranslator;
+    retroshareTranslator = NULL;
+    result = false;
   }
-  delete retroshareTranslator;
-  retroshareTranslator = NULL;
-  return false;
+
+  result = translatePlugins(languageCode) && result;
+
+  return result;
+}
+
+/** Sets the application's translator to the specified language for the plugins. */
+bool LanguageSupport::translatePlugins(const QString &languageCode)
+{
+	removePluginTranslation();
+
+	if (rsPlugins == NULL) {
+		return true;
+	}
+
+	int count = rsPlugins->nbPlugins();
+	for (int i = 0; i < count; ++i) {
+		RsPlugin* plugin = rsPlugins->plugin(i);
+		if (plugin) {
+			QTranslator* translator = plugin->qt_translator(rApp, languageCode);
+			if (translator) {
+				QApplication::installTranslator(translator);
+				translatorPlugins[plugin] = translator;
+			}
+		}
+	}
+	return true;
 }
