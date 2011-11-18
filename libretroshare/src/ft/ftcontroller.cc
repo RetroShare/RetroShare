@@ -1575,8 +1575,8 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	info.hash = hash;
 	info.fname = it->second->mName;
 	info.flags = it->second->mFlags;
+	info.priority = SPEED_NORMAL ;
 	info.path = RsDirUtil::removeTopDir(it->second->mDestination); /* remove fname */
-	info.priority = it->second->mTransfer->downloadPriority() ;
 	info.queue_position = it->second->mQueuePosition ;
 
 	/* get list of sources from transferModule */
@@ -1584,7 +1584,10 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	std::list<std::string>::iterator pit;
 
 	if (!completed)
+	{
 		it->second->mTransfer->getFileSources(peerIds);
+		info.priority = it->second->mTransfer->downloadPriority() ;
+	}
 
 	double totalRate = 0;
 	uint32_t tfRate = 0;
