@@ -92,6 +92,8 @@ const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
  /* Photo - Cache Only */
 const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf040;
 
+/* DSDV Testing at the moment - Service Only */
+const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
 
 /* Games/External Apps - Service Only */
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
