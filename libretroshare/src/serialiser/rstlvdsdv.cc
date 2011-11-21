@@ -36,30 +36,146 @@
 #include <iostream>
 
 
+/************************************* RsTlvDsdvEndPoint ************************************/
+
+RsTlvDsdvEndPoint::RsTlvDsdvEndPoint()
+	:RsTlvItem(), idType(0)
+{
+	return;
+}
+
+void RsTlvDsdvEndPoint::TlvClear()
+{
+	idType = 0;
+	anonChunk.clear();
+	serviceId.clear();
+}
+
+uint32_t RsTlvDsdvEndPoint::TlvSize()
+{
+	uint32_t s = TLV_HEADER_SIZE; /* header + 4 + str + str */
+
+	s += 4; // idType;
+	s += GetTlvStringSize(anonChunk);
+	s += GetTlvStringSize(serviceId);
+
+	return s;
+
+}
+
+bool  RsTlvDsdvEndPoint::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{
+	/* must check sizes */
+	uint32_t tlvsize = TlvSize();
+	uint32_t tlvend  = *offset + tlvsize;
+
+	if (size < tlvend)
+		return false; /* not enough space */
+
+	bool ok = true;
+
+	/* start at data[offset] */
+        /* add mandatory parts first */
+
+	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_DSDV_ENDPOINT, tlvsize);
+
+	ok &= setRawUInt32(data, tlvend, offset, idType);
+        ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, anonChunk);
+        ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH_SHA1, serviceId);
+	return ok;
+
+}
+
+
+bool  RsTlvDsdvEndPoint::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{
+	if (size < *offset + TLV_HEADER_SIZE)
+		return false;	
+	
+	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvend = *offset + tlvsize;
+
+	if (size < tlvend)    /* check size */
+		return false; /* not enough space */
+
+	if (tlvtype != TLV_TYPE_DSDV_ENDPOINT) /* check type */
+		return false;
+
+	bool ok = true;
+
+	/* ready to load */
+	TlvClear();
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
+
+	ok &= getRawUInt32(data, tlvend, offset, &(idType));
+	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, anonChunk);
+	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH_SHA1, serviceId);
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvDsdvEndPoint::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
+	return ok;
+	
+}
+
+
+std::ostream &RsTlvDsdvEndPoint::print(std::ostream &out, uint16_t indent)
+{ 
+	printBase(out, "RsTlvDsdvEndPoint", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "idType:" << idType;
+	out << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "AnonChunk:" << anonChunk;
+	out << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "ServiceId:" << serviceId;
+	out << std::endl;
+
+	printEnd(out, "RsTlvDsdvEndPoint", indent);
+	return out;
+}
+
+
 /************************************* RsTlvDsdvEntry ************************************/
 
 RsTlvDsdvEntry::RsTlvDsdvEntry()
-	:RsTlvItem(), idType(0), sequence(0), distance(0)
+	:RsTlvItem(), sequence(0), distance(0)
 {
 	return;
 }
 
 void RsTlvDsdvEntry::TlvClear()
 {
-	idType = 0;
-	anonChunk.clear();
-	serviceId.clear();
+	endPoint.TlvClear();
 	sequence = 0;
 	distance = 0;
 }
 
 uint32_t RsTlvDsdvEntry::TlvSize()
 {
-	uint32_t s = TLV_HEADER_SIZE; /* header + 4 + str + str + 4 + 4 */
+	uint32_t s = TLV_HEADER_SIZE; /* header + EndPoint.Size + 4 + 4 */
 
-	s += 4; // idType;
-	s += GetTlvStringSize(anonChunk);
-	s += GetTlvStringSize(serviceId);
+	s += endPoint.TlvSize();
 	s += 4; // sequence;
 	s += 4; // distance;
 
@@ -81,11 +197,9 @@ bool  RsTlvDsdvEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 	/* start at data[offset] */
         /* add mandatory parts first */
 
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_ADDRESS_INFO, tlvsize);
+	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_DSDV_ENTRY, tlvsize);
 
-	ok &= setRawUInt32(data, tlvend, offset, idType);
-        ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, anonChunk);
-        ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH_SHA1, serviceId);
+	ok &= endPoint.SetTlv(data, size, offset);
 	ok &= setRawUInt32(data, tlvend, offset, sequence);
 	ok &= setRawUInt32(data, tlvend, offset, distance);
 
@@ -117,9 +231,7 @@ bool  RsTlvDsdvEntry::GetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 	/* skip the header */
 	(*offset) += TLV_HEADER_SIZE;
 
-	ok &= getRawUInt32(data, tlvend, offset, &(idType));
-	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, anonChunk);
-	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH_SHA1, serviceId);
+	ok &= endPoint.GetTlv(data, size, offset);
 	ok &= getRawUInt32(data, tlvend, offset, &(sequence));
 	ok &= getRawUInt32(data, tlvend, offset, &(distance));
    
@@ -149,17 +261,7 @@ std::ostream &RsTlvDsdvEntry::print(std::ostream &out, uint16_t indent)
 	printBase(out, "RsTlvDsdvEntry", indent);
 	uint16_t int_Indent = indent + 2;
 
-	printIndent(out, int_Indent);
-	out << "idType:" << idType;
-	out << std::endl;
-
-	printIndent(out, int_Indent);
-	out << "AnonChunk:" << anonChunk;
-	out << std::endl;
-
-	printIndent(out, int_Indent);
-	out << "ServiceId:" << serviceId;
-	out << std::endl;
+	endPoint.print(out, int_Indent);
 
 	printIndent(out, int_Indent);
 	out << "Sequence:" << sequence;

@@ -30,11 +30,14 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
+#include "serialiser/rstlvbase.h"
+#include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvdsdv.h"
 
 /**************************************************************************/
 
 #define	RS_PKT_SUBTYPE_DSDV_ROUTE	0x01
+#define	RS_PKT_SUBTYPE_DSDV_DATA	0x02
 
 class RsDsdvRouteItem: public RsItem
 {
@@ -48,6 +51,24 @@ virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsTlvDsdvEntrySet routes;
+};
+
+
+class RsDsdvDataItem: public RsItem
+{
+	public:
+	RsDsdvDataItem() 
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DSDV, 
+		RS_PKT_SUBTYPE_DSDV_DATA), data(TLV_TYPE_BIN_GENERIC)
+	{ return; }
+virtual ~RsDsdvDataItem();
+virtual void clear();  
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	RsTlvDsdvEndPoint src;
+	RsTlvDsdvEndPoint dest;
+	uint32_t ttl;
+	RsTlvBinaryData data;
 };
 
 class RsDsdvSerialiser: public RsSerialType
@@ -65,9 +86,13 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-virtual	uint32_t    sizeItem(RsDsdvRouteItem *);
-virtual	bool        serialiseItem  (RsDsdvRouteItem *item, void *data, uint32_t *size);
-virtual	RsDsdvRouteItem *deserialiseItem(void *data, uint32_t *size);
+virtual	uint32_t    sizeRoute(RsDsdvRouteItem *);
+virtual	bool        serialiseRoute(RsDsdvRouteItem *item, void *data, uint32_t *size);
+virtual	RsDsdvRouteItem *deserialiseRoute(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeData(RsDsdvDataItem *);
+virtual	bool        serialiseData(RsDsdvDataItem *item, void *data, uint32_t *size);
+virtual	RsDsdvDataItem *deserialiseData(void *data, uint32_t *size);
 
 
 };

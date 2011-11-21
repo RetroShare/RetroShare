@@ -36,6 +36,22 @@
 
 #define RSDSDV_MAX_ROUTE_TABLE	1000
 
+class RsTlvDsdvEndPoint: public RsTlvItem
+{
+	public:
+	 RsTlvDsdvEndPoint();
+virtual ~RsTlvDsdvEndPoint() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	uint32_t idType;
+	std::string anonChunk;
+	std::string serviceId;
+};
+
 class RsTlvDsdvEntry: public RsTlvItem
 {
 	public:
@@ -47,9 +63,7 @@ virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* seriali
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	uint32_t idType;
-	std::string anonChunk;
-	std::string serviceId;
+	RsTlvDsdvEndPoint endPoint;
 	uint32_t sequence;
 	uint32_t distance;
 };

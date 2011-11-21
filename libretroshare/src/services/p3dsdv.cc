@@ -224,9 +224,9 @@ int p3Dsdv::generateRoutingTable(const std::string &peerId, bool incremental)
 
 		RsTlvDsdvEntry entry;
 
-		entry.idType = v.mDest.mIdType;
-		entry.anonChunk = v.mDest.mAnonChunk;
-		entry.serviceId = v.mDest.mHash;
+		entry.endPoint.idType = v.mDest.mIdType;
+		entry.endPoint.anonChunk = v.mDest.mAnonChunk;
+		entry.endPoint.serviceId = v.mDest.mHash;
 		entry.sequence = v.mStableRoute.mSequence;
 		entry.distance = v.mStableRoute.mDistance;
 
@@ -286,14 +286,14 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 
 		/* find the entry */
 		std::map<std::string, RsDsdvTableEntry>::iterator tit;
-		tit = mTable.find(entry.serviceId);
+		tit = mTable.find(entry.endPoint.serviceId);
 		if (tit == mTable.end())
 		{
 			/* new entry! */
 			RsDsdvTableEntry v;
-			v.mDest.mIdType = entry.idType;
-			v.mDest.mAnonChunk = entry.anonChunk;
-			v.mDest.mHash = entry.serviceId;
+			v.mDest.mIdType = entry.endPoint.idType;
+			v.mDest.mAnonChunk = entry.endPoint.anonChunk;
+			v.mDest.mHash = entry.endPoint.serviceId;
 
 			v.mBestRoute.mNextHop = dsdv->PeerId();
 			v.mBestRoute.mReceived = now;

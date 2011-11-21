@@ -184,6 +184,8 @@ const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE! */
 
 const uint16_t TLV_TYPE_BIN_SERIALISE = 0x0150; /* Used (Generic - Distrib) */
 
+const uint16_t TLV_TYPE_BIN_GENERIC   = 0x0160; /* Used (DSDV Data) */
+
 
 	/**** Compound Types ****/
 const uint16_t TLV_TYPE_FILEITEM      = 0x1000;
@@ -210,8 +212,9 @@ const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 const uint16_t TLV_TYPE_ADDRESS_INFO  = 0x1070;
 const uint16_t TLV_TYPE_ADDRESS_SET   = 0x1071;
 
-const uint16_t TLV_TYPE_DSDV_ENTRY    = 0x1080;
-const uint16_t TLV_TYPE_DSDV_ENTRY_SET= 0x1081;
+const uint16_t TLV_TYPE_DSDV_ENDPOINT = 0x1080;
+const uint16_t TLV_TYPE_DSDV_ENTRY    = 0x1081;
+const uint16_t TLV_TYPE_DSDV_ENTRY_SET= 0x1082;
 
 
 
