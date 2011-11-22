@@ -444,7 +444,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 	 * 
 	 */
 	bool doAttached = (mAttachedCount > 0);
-	int attachedCount = 0;
+	uint32_t attachedCount = 0;
 
 	std::map<bdMetric, bdId> closest;
 	std::map<bdMetric, bdId>::iterator mit;
@@ -538,13 +538,20 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 }
 
 
+/* Attached should be changed to preferentially choose the ones we want 
+ * If we have RELAYS enabled - then we want them to attach to the RELAYS
+ * Not sure about this yet!
+ *
+ * Have to think about it a bit more. (and redesign code to handle multiple passes)
+ */
+
 int	bdSpace::updateAttachedPeers()
 {
 	/* 
 	 * 
 	 */
 	bool doAttached = (mAttachedCount > 0);
-	int attachedCount = 0;
+	uint32_t attachedCount = 0;
 
 	// Must scan through - otherwise we can never remove Attached state.
 	// It is only once every 10 minutes or so!
@@ -762,7 +769,48 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 	return add;
 }
 
+        /* flag peer */
+bool    bdSpace::flagpeer(const bdId *id, uint32_t flags, uint32_t ex_flags)
+{
+#ifdef DEBUG_BD_SPACE
+	fprintf(stderr, "bdSpace::flagpeer()\n");
+#endif
 
+	/* calculate metric */
+	bdMetric met;
+	mFns->bdDistance(&(mOwnId), &(id->id), &met);
+	int bucket = mFns->bdBucketDistance(&met);
+
+
+	/* select correct bucket */
+	bdBucket &buck =  buckets[bucket];
+
+	/* loop through ids, to find it */
+	std::list<bdPeer>::iterator it;
+	for(it = buck.entries.begin(); it != buck.entries.end(); it++)
+	{
+                /* similar id check */
+		if (mFns->bdSimilarId(id, &(it->mPeerId)))
+		{
+#ifdef DEBUG_BD_SPACE
+			fprintf(stderr, "peer:");
+			mFns->bdPrintId(std::cerr, id);	
+			fprintf(stderr, " bucket: %d", bucket);
+			fprintf(stderr, "\n");
+			fprintf(stderr, "Original Flags: %x Extra: %x\n", 
+				it->mPeerFlags, it->mExtraFlags);
+#endif
+			it->mPeerFlags |= flags;
+			it->mExtraFlags |= ex_flags;
+
+#ifdef DEBUG_BD_SPACE
+			fprintf(stderr, "Updated Flags: %x Extra: %x\n",
+				it->mPeerFlags, it->mExtraFlags);
+#endif
+		}
+	}
+	return true;
+}
 
 /* print tables.
  */

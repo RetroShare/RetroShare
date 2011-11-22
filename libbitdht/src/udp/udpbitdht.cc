@@ -88,6 +88,14 @@ UdpBitDht::~UdpBitDht()
         /*********** External Interface to the World ************/
 
         /***** Functions to Call down to bdNodeManager ****/
+        /* Friend Tracking */
+void UdpBitDht::updateKnownPeer(const bdId *id, uint32_t type, uint32_t flags)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->updateKnownPeer(id, type, flags);
+}
+
         /* Request DHT Peer Lookup */
         /* Request Keyword Lookup */
 void UdpBitDht::addFindNode(bdNodeId *id, uint32_t mode)

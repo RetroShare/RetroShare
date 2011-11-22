@@ -670,7 +670,7 @@ void bdConnectManager::iterateConnectionRequests()
 					it->second.mState = BITDHT_CONNREQUEST_DONE;
 					it->second.mStateTS = now;
 				}
-				else if (it->second.mRecycled > it->second.mGoodProxies.size() * MAX_NUM_RETRIES)
+				else if ((unsigned) it->second.mRecycled > it->second.mGoodProxies.size() * MAX_NUM_RETRIES)
 				{
 #ifdef DEBUG_NODE_CONNECTION
 					std::cerr << "bdConnectManager::iterateConnectionAttempt() to many retries => DONE";

@@ -66,7 +66,7 @@
 
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns)
+	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns), mFriendList(ownId)
 {
 
 	init(); /* (uses this pointers) stuff it - do it here! */
@@ -88,7 +88,7 @@ void bdNode::init()
 #define ATTACH_NUMBER 5
 void bdNode::setNodeOptions(uint32_t optFlags)
 {
-	mNodeOptionFlags = optFlags;	
+	mNodeOptionFlags = optFlags;
 	if (optFlags & BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT)
 	{
 		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE | BITDHT_PEER_STATUS_DHT_ENGINE_VERSION, ATTACH_NUMBER);
@@ -392,9 +392,61 @@ void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAd
 
 
 
+#define TEST_BAD_PEER	1
 
 void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {
+	/* Check BadPeer Filters for Potential Peers too */
+
+	/* first check the filters */
+        if (!mFilterPeers->addrOkay(&(id->addr)))
+	{
+		std::cerr << "bdNode::checkPotentialPeer(";
+		mFns->bdPrintId(std::cerr, id);
+		std::cerr << ") BAD ADDRESS!!!! SHOULD DISCARD POTENTIAL PEER";
+		std::cerr << std::endl;
+
+#ifdef TEST_BAD_PEER
+		std::cerr << "IN TEST MODE... so letting it through.";
+		std::cerr << std::endl;
+#else
+		return;
+#endif
+	}
+
+	/* is it masquarading? */
+	bdFriendEntry entry;
+	if (mFriendList.findPeerEntry(&(id->id), entry))
+	{
+		struct sockaddr_in knownAddr;
+		if (entry.addrKnown(&knownAddr))
+		{
+			if (knownAddr.sin_addr.s_addr != id->addr.sin_addr.s_addr)
+			{
+				std::cerr << "bdNode::checkPotentialPeer(";
+				mFns->bdPrintId(std::cerr, id);
+				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
+				std::cerr << std::endl;
+
+#ifdef TEST_BAD_PEER
+				std::cerr << "IN TEST MODE... so letting it through.";
+				std::cerr << std::endl;
+#else
+				
+	        		mFilterPeers->addBadPeer(id, 0);
+				// Stores in queue for later callback and desemination around the network.
+	        		mBadPeerList->queuePeer(id, 0);
+
+				std::list<struct sockaddr_in> filteredIPs;
+				mFilterPeers->filteredIPs(filteredIPs);
+				mStore.filterIpList(filteredIPs);
+
+				return;
+#endif
+			}
+		}
+	}
+
 	bool isWorthyPeer = mQueryMgr->checkPotentialPeer(id, src);
 
 	if (isWorthyPeer)
@@ -445,8 +497,65 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 		return;
 	}
 
+// NB: TODO CLEANUP THIS CODE - ONCE LOGIC IS TESTED!
+
+	/* next we check if it is a friend, whitelist etc, and adjust flags */
+	bdFriendEntry entry;
+
+#ifdef TEST_BAD_PEER
+	bool peerBad = false;
+#endif
+	if (mFriendList.findPeerEntry(&(id->id), entry))
+	{
+		/* found! */
+		peerflags |= entry.getPeerFlags(); // translates internal into general ones.
+
+		struct sockaddr_in knownAddr;
+		if (entry.addrKnown(&knownAddr))
+		{
+			if (knownAddr.sin_addr.s_addr != id->addr.sin_addr.s_addr)
+			{
+				std::cerr << "bdNode::addPeer(";
+				mFns->bdPrintId(std::cerr, id);
+				std::cerr << ", " << std::hex << peerflags << std::dec;
+				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
+				std::cerr << std::endl;
+				
+#ifdef TEST_BAD_PEER
+				peerBad = true;
+#else
+	        		mFilterPeers->addBadPeer(id, peerflags);
+				// Stores in queue for later callback and desemination around the network.
+	        		mBadPeerList->queuePeer(id, peerflags);
+
+				std::list<struct sockaddr_in> filteredIPs;
+				mFilterPeers->filteredIPs(filteredIPs);
+				mStore.filterIpList(filteredIPs);
+
+				// DO WE EXPLICITLY NEED TO DO THIS, OR WILL THEY JUST BE DROPPED?
+				//mNodeSpace.remove_badpeer(id);
+				//mQueryMgr->remove_badpeer(id);
+
+				return;		
+#endif
+			}
+		}
+	}
+
 	mQueryMgr->addPeer(id, peerflags);
 	mNodeSpace.add_peer(id, peerflags);
+
+#ifdef TEST_BAD_PEER
+	// NOTE: We will push bad peers to Query in the testing case.
+	// This allows us to test the multiple solutions... as well.
+	// In normal behaviour - they will just get stripped and never added.
+	if (peerBad)
+	{
+		mNodeSpace.flagpeer(id, 0, BITDHT_PEER_EXFLAG_BADPEER);
+		//mQueryMgr->flag_badpeer(id);
+	}
+#endif
+
 
 	bdPeer peer;
 	peer.mPeerId = *id;
@@ -1529,7 +1638,7 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 		{
 			sameDhtVersion = false;
 			std::cerr << "bdNode::msgin_pong() STRANGE Peer Version: ";
-			for(int i = 0; i < versionId->len; i++)
+			for(uint32_t i = 0; i < versionId->len; i++)
 			{
 				std::cerr << versionId->data[i];
 			}

@@ -141,7 +141,7 @@ void bdStdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *m
 int  bdStdLoadNodeId(bdNodeId *id, std::string input)
 {
 	uint8_t *a_data = (uint8_t *) id->data;
-	int reqlen = BITDHT_KEY_LEN * 2;
+	uint32_t reqlen = BITDHT_KEY_LEN * 2;
 	if (input.size() < reqlen)
 	{
 		return 0;

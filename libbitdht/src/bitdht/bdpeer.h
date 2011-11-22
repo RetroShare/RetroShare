@@ -193,6 +193,9 @@ bool 	findRandomPeerWithFlag(bdId &id, uint32_t withFlag);
 	/* to add later */
 int	updateOwnId(bdNodeId *newOwnId);
 
+	/* flag peer */
+bool	flagpeer(const bdId *id, uint32_t flags, uint32_t ex_flags);
+
 	private:
 
 	std::vector<bdBucket> buckets;

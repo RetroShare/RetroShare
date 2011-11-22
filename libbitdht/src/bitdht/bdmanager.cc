@@ -157,8 +157,11 @@ bool bdNodeManager::setAttachMode(bool on)
         return on;
 }
 
-
-
+        /* Friend Tracking */
+void bdNodeManager::updateKnownPeer(const bdId *id, uint32_t /* type */, uint32_t flags)
+{
+	mFriendList.updatePeer(id, flags);
+}
 
 void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 {

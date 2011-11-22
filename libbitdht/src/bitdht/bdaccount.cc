@@ -64,7 +64,7 @@ bdAccount::bdAccount()
 
 void bdAccount::incCounter(uint32_t idx, bool out)
 {
-	if (idx > mNoStats-1)
+	if ((signed) idx > mNoStats-1)
 	{
 		std::cerr << "bdAccount::incCounter() Invalid Index";
 		std::cerr << std::endl;

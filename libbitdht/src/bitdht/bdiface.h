@@ -109,7 +109,7 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 /* NODE OPTIONS */
 #define BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT		0x00000001
-
+#define BITDHT_OPTIONS_ENABLE_RELAYS			0x00000002
 
 
 /* peer flags
@@ -143,13 +143,15 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_PEER_STATUS_DHT_WHITELIST	0x00010000
 #define 	BITDHT_PEER_STATUS_DHT_FOF		0x00020000
 #define 	BITDHT_PEER_STATUS_DHT_FRIEND		0x00040000
+#define 	BITDHT_PEER_STATUS_DHT_RELAY_SERVER	0x00080000	// (Flag must be enabled)
+#define 	BITDHT_PEER_STATUS_DHT_SELF		0x00100000	
 
 
 // EXTRA FLAGS are our internal thoughts about the peer.
 #define 	BITDHT_PEER_EXFLAG_MASK_BASIC		0x000000ff
 #define 	BITDHT_PEER_EXFLAG_UNSTABLE		0x00000001	// Port changes.
 #define 	BITDHT_PEER_EXFLAG_ATTACHED		0x00000002 	// We will ping in heavily. (if unstable)
-
+#define 	BITDHT_PEER_EXFLAG_BADPEER		0x00000004 	// For testing, we flag rather than discard.
 
 
 
@@ -198,6 +200,20 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 #define 	BITDHT_CONNECT_ERROR_USER		0x0000000d
 
 
+/*************/
+// FRIEND_ENTRY_FLAGS... used by updateKnownPeers().
+
+#define BD_FRIEND_ENTRY_ONLINE          0x0001
+#define BD_FRIEND_ENTRY_ADDR_OK         0x0002
+
+#define BD_FRIEND_ENTRY_WHITELIST       BITDHT_PEER_STATUS_DHT_WHITELIST
+#define BD_FRIEND_ENTRY_FOF             BITDHT_PEER_STATUS_DHT_FOF
+#define BD_FRIEND_ENTRY_FRIEND          BITDHT_PEER_STATUS_DHT_FRIEND
+#define BD_FRIEND_ENTRY_RELAY_SERVER    BITDHT_PEER_STATUS_DHT_RELAY_SERVER
+
+#define BD_FRIEND_ENTRY_SELF            BITDHT_PEER_STATUS_DHT_SELF
+
+#define BD_FRIEND_ENTRY_MASK_KNOWN      BITDHT_PEER_STATUS_MASK_KNOWN
 
 
 
@@ -310,6 +326,9 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 class BitDhtInterface
 {
 	public:
+
+	/* Friend Tracking */
+virtual void updateKnownPeer(const bdId *id, uint32_t type, uint32_t flags) = 0;
 
         /***** Request Lookup (DHT Peer & Keyword) *****/
 virtual void addFindNode(bdNodeId *id, uint32_t mode) = 0;
