@@ -177,9 +177,10 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
 
-virtual int 	addFriend(const std::string pid);
-virtual int 	addFriendOfFriend(const std::string pid);
-virtual int 	addOther(const std::string pid);
+virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags);
+//virtual int 	addFriend(const std::string pid);
+//virtual int 	addFriendOfFriend(const std::string pid);
+//virtual int 	addOther(const std::string pid);
 
 	/* feedback on success failure of Connections */
 virtual void 	ConnectionFeedback(std::string pid, int state);

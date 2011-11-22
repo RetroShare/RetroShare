@@ -60,66 +60,72 @@ bool 	p3BitDht::findPeer(std::string pid)
 	std::cerr << "p3BitDht::findPeer(" << pid << ")";
 	std::cerr << std::endl;
 #endif
+	bdNodeId nid;
 
-	DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
-	if (!dpd)
 	{
-		dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FRIEND);
+		RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+	
+		DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
 		if (!dpd)
 		{
-			/* ERROR */
+			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FRIEND);
+			if (!dpd)
+			{
+				/* ERROR */
 #ifdef DEBUG_BITDHT
-			std::cerr << "p3BitDht::findPeer() ERROR installing InternalPeer";
-			std::cerr << std::endl;
+				std::cerr << "p3BitDht::findPeer() ERROR installing InternalPeer";
+				std::cerr << std::endl;
 #endif
-			return false;
-		}
-
-		/* new entry... what do we need to set? */
-		dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
-
+				return false;
+			}
+	
+			/* new entry... what do we need to set? */
+			dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+	
 #ifdef DEBUG_BITDHT
-		std::cerr << "p3BitDht::findPeer() Installed new DhtPeer with pid => NodeId: ";
-		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
-		std::cerr << std::endl;
-#endif
-	}
-	else
-	{
-		/* old entry */
-#ifdef DEBUG_BITDHT
-		std::cerr << "p3BitDht::findPeer() Reactivating DhtPeer with pid => NodeId: ";
-		bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
-		std::cerr << std::endl;
-#endif
-
-		if (dpd->mDhtState != RSDHT_PEERDHT_NOT_ACTIVE)
-		{
-#ifdef DEBUG_BITDHT
-			std::cerr << "p3BitDht::findPeer() WARNING DhtState is Already Active!";
+			std::cerr << "p3BitDht::findPeer() Installed new DhtPeer with pid => NodeId: ";
 			bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 			std::cerr << std::endl;
 #endif
 		}
 		else
 		{
-			/* flag as searching */
-			dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+			/* old entry */
 #ifdef DEBUG_BITDHT
-			std::cerr << "p3BitDht::findPeer() Marking Old Peer as SEARCHING";
+			std::cerr << "p3BitDht::findPeer() Reactivating DhtPeer with pid => NodeId: ";
+			bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 			std::cerr << std::endl;
 #endif
+	
+			if (dpd->mDhtState != RSDHT_PEERDHT_NOT_ACTIVE)
+			{
+#ifdef DEBUG_BITDHT
+				std::cerr << "p3BitDht::findPeer() WARNING DhtState is Already Active!";
+				bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
+				std::cerr << std::endl;
+#endif
+			}
+			else
+			{
+				/* flag as searching */
+				dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+#ifdef DEBUG_BITDHT
+				std::cerr << "p3BitDht::findPeer() Marking Old Peer as SEARCHING";
+				std::cerr << std::endl;
+#endif
+			}
+	
 		}
-
-	}
-
-	bdNodeId nid = dpd->mDhtId.id;
+	
+		nid = dpd->mDhtId.id;
 
 #ifdef DEBUG_BITDHT
-	std::cerr << "p3BitDht::findPeer() calling AddFindNode() with pid => NodeId: ";
-	bdStdPrintNodeId(std::cerr, &nid);
-	std::cerr << std::endl;
+		std::cerr << "p3BitDht::findPeer() calling AddFindNode() with pid => NodeId: ";
+		bdStdPrintNodeId(std::cerr, &nid);
+		std::cerr << std::endl;
 #endif
+
+	}
 
 	/* add in peer */
 	mUdpBitDht->addFindNode(&nid, BITDHT_QFLAGS_DO_IDLE | BITDHT_QFLAGS_UPDATES);
@@ -134,29 +140,36 @@ bool 	p3BitDht::dropPeer(std::string pid)
 	std::cerr << std::endl;
 #endif
 
+	bdNodeId nid;
 
-	DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
-	if (!dpd)
 	{
-		/* ERROR */
-		std::cerr << "p3BitDht::dropPeer(" << pid << ") HACK TO INCLUDE FRIEND AS NON-ACTIVE PEER";
-		std::cerr << std::endl;
-
-		addFriend(pid);
-		return false;
-	}
-
-	/* flag as searching */
-	dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
-
-	bdNodeId nid = dpd->mDhtId.id;
-
+		RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+	
+		DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
+		if (!dpd)
+		{
+			/* ERROR */
+			std::cerr << "p3BitDht::dropPeer(" << pid << ") HACK TO INCLUDE FRIEND AS NON-ACTIVE PEER";
+			std::cerr << std::endl;
+	
+			//addFriend(pid);
+			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF);
+			
+			return false;
+		}
+	
+		/* flag as searching */
+		dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+	
+		nid = dpd->mDhtId.id;
+	
 #ifdef DEBUG_BITDHT
-	std::cerr << "p3BitDht::dropPeer() calling removeFindNode() with pid => NodeId: ";
-	bdStdPrintNodeId(std::cerr, &nid);
-	std::cerr << std::endl;
+		std::cerr << "p3BitDht::dropPeer() calling removeFindNode() with pid => NodeId: ";
+		bdStdPrintNodeId(std::cerr, &nid);
+		std::cerr << std::endl;
 #endif
-
+	}
+	
 	/* remove in peer */
 	mUdpBitDht->removeFindNode(&nid);
 
@@ -170,6 +183,84 @@ bool 	p3BitDht::dropPeer(std::string pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
+int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) 
+{
+
+	int p3type = 0;
+	int bdflags = 0;
+	bdId id;
+	bool isOwnId = false;
+
+	switch(flags & NETASSIST_KNOWN_PEER_TYPE_MASK)
+	{
+		default:
+			return 0;
+			break;
+		case NETASSIST_KNOWN_PEER_WHITELIST:
+			p3type = RSDHT_PEERTYPE_OTHER;
+			bdflags = BITDHT_PEER_STATUS_DHT_WHITELIST;
+
+			break;
+		case NETASSIST_KNOWN_PEER_FOF:
+			p3type = RSDHT_PEERTYPE_FOF;
+			bdflags = BITDHT_PEER_STATUS_DHT_FOF;
+
+			break;
+		case NETASSIST_KNOWN_PEER_FRIEND:
+			p3type = RSDHT_PEERTYPE_FRIEND;
+			bdflags = BITDHT_PEER_STATUS_DHT_FRIEND;
+
+			break;
+		case NETASSIST_KNOWN_PEER_RELAY:
+			p3type = RSDHT_PEERTYPE_OTHER;
+			bdflags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
+
+			break;
+		case NETASSIST_KNOWN_PEER_SELF:
+			p3type = RSDHT_PEERTYPE_OTHER;
+			bdflags = BITDHT_PEER_STATUS_DHT_SELF;
+			isOwnId = true;
+
+
+			break;
+	}
+
+	if (flags & NETASSIST_KNOWN_PEER_ONLINE)
+	{
+		bdflags |= BD_FRIEND_ENTRY_ONLINE;
+	}
+
+	if (!isOwnId)
+	{
+		RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+		DhtPeerDetails *dpd = addInternalPeer_locked(pid, p3type);
+	
+	
+		if (bdflags & BD_FRIEND_ENTRY_ONLINE)
+		{
+			/* can we update the address? */
+			//dpd->mDhtId.addr = addr;
+		}
+	
+	
+		id.id = dpd->mDhtId.id;
+		id.addr = addr;
+	}
+	else
+	{
+		// shouldn't use own id without mutex - but it is static!
+		id.id = mOwnDhtId;
+		id.addr = addr;
+	}
+
+	mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
+
+	return 1;
+}
+
+	
+
+#if 0
 int p3BitDht::addFriend(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
@@ -192,6 +283,7 @@ int p3BitDht::addOther(const std::string pid)
 
 	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_OTHER));
 }
+#endif
 
 
 int p3BitDht::removePeer(const std::string pid)

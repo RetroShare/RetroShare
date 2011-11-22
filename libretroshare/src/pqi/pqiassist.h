@@ -98,6 +98,16 @@ virtual int	tick() = 0; /* for internal accounting */
 };
 
 
+#define NETASSIST_KNOWN_PEER_OFFLINE        0x0001
+#define NETASSIST_KNOWN_PEER_ONLINE         0x0002
+
+#define NETASSIST_KNOWN_PEER_WHITELIST      0x0100
+#define NETASSIST_KNOWN_PEER_FRIEND         0x0200
+#define NETASSIST_KNOWN_PEER_FOF            0x0400
+#define NETASSIST_KNOWN_PEER_RELAY          0x0800
+#define NETASSIST_KNOWN_PEER_SELF           0x1000
+
+#define NETASSIST_KNOWN_PEER_TYPE_MASK      0xff00
 
 class pqiNetAssistConnect: public pqiNetAssist
 {
@@ -120,9 +130,11 @@ virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
 
 	/* add non-active peers (can still toggle active/non-active via above) */
-virtual int addFriend(const std::string pid) = 0;
-virtual int addFriendOfFriend(const std::string pid) = 0;
-virtual int addOther(const std::string pid) = 0;
+virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) = 0;
+
+//virtual int addFriend(const std::string pid) = 0;
+//virtual int addFriendOfFriend(const std::string pid) = 0;
+//virtual int addOther(const std::string pid) = 0;
 
 
 virtual void ConnectionFeedback(std::string pid, int mode) = 0;

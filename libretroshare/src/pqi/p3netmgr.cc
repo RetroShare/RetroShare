@@ -888,7 +888,14 @@ void p3NetMgrIMPL::netExtCheck()
 		updateNetStateBox_startup();
 
 		/* update PeerMgr with correct info */
-		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		if (mPeerMgr)
+		{
+			mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		}
+
+		/* inform DHT about our external address */
+		std::string fakeId;
+		netAssistKnownPeer(fakeId, mExtAddr, NETASSIST_KNOWN_PEER_SELF | NETASSIST_KNOWN_PEER_ONLINE);
 
 		std::ostringstream out;
 		out << "p3NetMgr::netExtCheck() Network Setup Complete";
@@ -1031,7 +1038,10 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		std::cerr << std::endl;
 #endif
 		
-		mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		if (mPeerMgr)
+		{
+			mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		}
 		
 		{
 			std::ostringstream out;
@@ -1392,6 +1402,23 @@ bool p3NetMgrIMPL::netAssistFriend(std::string id, bool on)
 			(it->second)->findPeer(id);
 		else
 			(it->second)->dropPeer(id);
+	}
+	return true;
+}
+
+
+bool p3NetMgrIMPL::netAssistKnownPeer(std::string id, const struct sockaddr_in &addr, uint32_t flags)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+
+#ifdef NETMGR_DEBUG
+	std::cerr << "p3NetMgrIMPL::netAssistKnownPeer(" << id << ")";
+	std::cerr << std::endl;
+#endif
+
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->addKnownPeer(id, addr, flags);
 	}
 	return true;
 }

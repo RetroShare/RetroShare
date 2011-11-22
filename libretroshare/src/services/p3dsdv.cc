@@ -187,6 +187,7 @@ int 	p3Dsdv::generateRoutingTables(bool incremental)
 
 	/* now clear significant flag */
 	clearSignificantChangesFlags();
+	return 1;
 }
 
 
@@ -240,6 +241,7 @@ int p3Dsdv::generateRoutingTable(const std::string &peerId, bool incremental)
 		}
 	}
 	sendItem(dsdv);
+	return 1;
 }
 
 
@@ -334,6 +336,7 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 			}
 		}
 	}
+	return 1;
 }
 
 
@@ -447,6 +450,7 @@ int p3Dsdv::printDsdvTable(std::ostream &out)
 		}
 		out << std::endl;
 	}
+	return 1;
 }
 
 /*****************************************/

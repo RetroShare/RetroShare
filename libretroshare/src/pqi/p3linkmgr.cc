@@ -877,7 +877,10 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		std::cerr << std::endl;
 #endif
 		/* always switch it off now */
-		mNetMgr->netAssistFriend(id,false) ;
+		mNetMgr->netAssistFriend(id,false);
+
+		/* inform NetMgr that we know this peers address */
+		mNetMgr->netAssistKnownPeer(id,remote_peer_address, NETASSIST_KNOWN_PEER_FRIEND | NETASSIST_KNOWN_PEER_ONLINE);
 	}
 	else
 	{
@@ -896,6 +899,9 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 			std::cerr << std::endl;
 #endif
 		}
+
+		/* inform NetMgr that this peer is offline */
+		mNetMgr->netAssistKnownPeer(id,remote_peer_address, NETASSIST_KNOWN_PEER_FRIEND | NETASSIST_KNOWN_PEER_OFFLINE);
 	}
 
 	return success;

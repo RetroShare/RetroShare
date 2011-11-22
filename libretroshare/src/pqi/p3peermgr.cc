@@ -716,7 +716,28 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 		ipAddressTimed.mSeenTime = time(NULL);
 		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
 
-		mOwnState.serveraddr = extAddr;
+		/* Attempted Fix to MANUAL FORWARD Mode....
+		 * don't update the server address - if we are in this mode
+		 *
+		 * It is okay - if they get it wrong, as we put the address in the address list anyway.
+		 * This should keep people happy, and allow for misconfiguration!
+		 */
+
+        	if (mOwnState.netMode & RS_NET_MODE_TRY_EXT)
+		{
+			mOwnState.serveraddr.sin_addr.s_addr = extAddr.sin_addr.s_addr;
+			std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
+			std::cerr << " as MANUAL FORWARD Mode";
+			std::cerr << std::endl;
+			std::cerr << "Address is Now: ";
+			std::cerr << rs_inet_ntoa(mOwnState.serveraddr.sin_addr);
+			std::cerr << ":" << htons(mOwnState.serveraddr.sin_port);
+			std::cerr << std::endl;
+		}
+		else
+		{
+			mOwnState.serveraddr = extAddr;
+		}
 	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/

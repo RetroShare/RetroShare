@@ -30,6 +30,7 @@
 
 #include "pqi/p3peermgr.h"
 #include "pqi/p3linkmgr.h"
+#include "pqi/p3netmgr.h"
 
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
@@ -78,10 +79,10 @@ const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
  ******************************************************************************************
  *****************************************************************************************/
 
-p3disc::p3disc(p3PeerMgr *pm, p3LinkMgr *lm, pqipersongrp *pqih)
+p3disc::p3disc(p3PeerMgr *pm, p3LinkMgr *lm, p3NetMgr *nm, pqipersongrp *pqih)
         :p3Service(RS_SERVICE_TYPE_DISC),
 				 p3Config(CONFIG_TYPE_P3DISC),
-		  mPeerMgr(pm), mLinkMgr(lm), 
+		  mPeerMgr(pm), mLinkMgr(lm), mNetMgr(nm), 
 		  mPqiPersonGrp(pqih), mDiscMtx("p3disc")
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -711,6 +712,17 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 			/* skip if not one of our peers */
 			if (!mPeerMgr->isFriend(pit->pid))
 			{
+				/* THESE ARE OUR FRIEND OF FRIENDS ... pass this information along to NetMgr & DHT...
+				 * as we can track FOF and use them as potential Proxies / Relays
+				 */
+
+				/* add into NetMgr and non-search, so we can detect connect attempts */
+				mNetMgr->netAssistFriend(pit->pid,false);
+				
+				/* inform NetMgr that we know this peer */
+				mNetMgr->netAssistKnownPeer(pit->pid, pit->currentremoteaddr, 
+							NETASSIST_KNOWN_PEER_FOF | NETASSIST_KNOWN_PEER_OFFLINE);
+
 				continue;
 			}
 

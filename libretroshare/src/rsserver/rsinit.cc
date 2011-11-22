@@ -2059,7 +2059,7 @@ int RsServer::StartupRetroShare()
         mPluginsManager->setInterfaces(interfaces);
 
 	/* create Services */
-	ad = new p3disc(mPeerMgr, mLinkMgr, pqih);
+	ad = new p3disc(mPeerMgr, mLinkMgr, mNetMgr, pqih);
 #ifndef MINIMAL_LIBRS
 	msgSrv = new p3MsgService(mLinkMgr);
 	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
