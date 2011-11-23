@@ -122,6 +122,8 @@ private slots:
 
     void editGroup();
     void removeGroup();
+
+	 void inviteToLobby();
 };
 
 #endif // FRIENDLIST_H

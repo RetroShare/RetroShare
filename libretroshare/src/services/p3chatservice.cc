@@ -1135,3 +1135,33 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 		}
 	}
 }
+
+//********************** Chat Lobby Stuff ***********************//
+
+bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id) 
+{
+	std::cerr << "Sending chat lobby message to lobby " << lobby_id << std::endl;
+	std::cerr << "msg:" << std::endl;
+	std::cerr << msg.c_str() << std::endl;
+	return true ;
+}
+void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
+{
+	// fill up a dummy list for now.
+
+	linfos.clear() ;
+
+	ChatLobbyInfo info ;
+	info.lobby_id = 0x38484fe ;
+	info.display_name = "lobby 1" ;
+	info.participating_friends.push_back("friend 1") ;
+	info.participating_friends.push_back("friend 2") ;
+	info.additional_peers.push_back("peer 1") ;
+
+	linfos.push_back(info) ;
+}
+void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
+{
+	std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< lobby_id << std::endl;
+}
+

@@ -292,143 +292,162 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
     contextMnu.addAction(widgetAction);
 
     // create menu entries
-    if (c) { // if a peer is selected
-        int type = c->type();
+    if (c) 
+	 { // if a peer is selected
+		 int type = c->type();
 
-        // define header
-        switch (type) {
-        case TYPE_GROUP:
-            //this is a GPG key
-            textLabel->setText("<strong>" + tr("Group") + "</strong>");
-            break;
-        case TYPE_GPG:
-            //this is a GPG key
-            textLabel->setText("<strong>" + tr("Friend") + "</strong>");
-            break;
-        case TYPE_SSL:
-            //this is a SSL key
-            textLabel->setText("<strong>" + tr("Location") + "</strong>");
-            break;
-        }
+		 // define header
+		 switch (type) {
+			 case TYPE_GROUP:
+				 //this is a GPG key
+				 textLabel->setText("<strong>" + tr("Group") + "</strong>");
+				 break;
+			 case TYPE_GPG:
+				 //this is a GPG key
+				 textLabel->setText("<strong>" + tr("Friend") + "</strong>");
+				 break;
+			 case TYPE_SSL:
+				 //this is a SSL key
+				 textLabel->setText("<strong>" + tr("Location") + "</strong>");
+				 break;
+		 }
 
-        switch (type) {
-        case TYPE_GROUP:
-        {
-            bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
+		 switch (type) {
+			 case TYPE_GROUP:
+				 {
+					 bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
-            contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Group"), this, SLOT(msgfriend()));
-            contextMnu.addAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), this, SLOT(addFriend()));
+					 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Group"), this, SLOT(msgfriend()));
+					 contextMnu.addAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), this, SLOT(addFriend()));
 
-            contextMnu.addSeparator();
+					 contextMnu.addSeparator();
 
-            QAction *action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
-            action->setDisabled(standard);
+					 QAction *action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
+					 action->setDisabled(standard);
 
-            action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
-            action->setDisabled(standard);
-        }
-            break;
-        case TYPE_GPG:
-        case TYPE_SSL:
-        {
-            contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-            contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
+					 action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
+					 action->setDisabled(standard);
 
-            contextMnu.addSeparator();
+					 contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Create chat lobby"), this, SLOT(createchatlobby()));
+				 }
+				 break;
+			 case TYPE_GPG:
+			 case TYPE_SSL:
+				 {
+					 contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+					 QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Invite to chat lobby")) ;
 
-            contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(configurefriend()));
-//            contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Profile View"), this, SLOT(viewprofile()));
-//            action = contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Export Friend"), this, SLOT(exportfriend()));
+					 std::list<ChatLobbyInfo> cl_infos ;
 
-            if (type == TYPE_GPG) {
-                contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
-            }
+					 rsMsgs->getChatLobbyList(cl_infos) ;
 
-            contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Connect To Friend"), this, SLOT(connectfriend()));
+					 for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
+					 {
+						 QAction* inviteToLobbyAction = new QAction(QString::fromUtf8((*it).display_name.c_str()), mnu);
+						 inviteToLobbyAction->setData(QString::fromStdString((*it).lobby_id.c_str()));
+						 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
+						 mnu->addAction(inviteToLobbyAction);
+					 }
 
-            if (type == TYPE_GPG) {
-                contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
-            }
+					 mnu->addAction(QIcon(IMAGE_CHAT),tr("create new")) ;
 
-            QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
-            if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
-                action->setDisabled(true);
-            }
+					 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
 
-            if (type == TYPE_GPG) {
-                contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
-            } else {
-                //this is a SSL key
-                contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Location"), this, SLOT(removefriend()));
-            }
+					 contextMnu.addSeparator();
 
-            if (mShowGroups && type == TYPE_GPG) {
-                QMenu* addToGroupMenu = NULL;
-                QMenu* moveToGroupMenu = NULL;
+					 contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(configurefriend()));
+					 //            contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Profile View"), this, SLOT(viewprofile()));
+					 //            action = contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Export Friend"), this, SLOT(exportfriend()));
 
-                std::list<RsGroupInfo> groupInfoList;
-                rsPeers->getGroupInfoList(groupInfoList);
+					 if (type == TYPE_GPG) {
+						 contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
+					 }
 
-                GroupDefs::sortByName(groupInfoList);
+					 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Connect To Friend"), this, SLOT(connectfriend()));
 
-                std::string gpgId = getRsId(c);
+					 if (type == TYPE_GPG) {
+						 contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+					 }
 
-                QTreeWidgetItem *parent = c->parent();
+					 QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
+					 if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
+						 action->setDisabled(true);
+					 }
 
-                bool foundGroup = false;
-                // add action for all groups, except the own group
-                for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-                    if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpgId) == groupIt->peerIds.end()) {
-                        if (parent) {
-                            if (addToGroupMenu == NULL) {
-                                addToGroupMenu = new QMenu(tr("Add to group"), &contextMnu);
-                            }
-                            QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
-                            addToGroupAction->setData(QString::fromStdString(groupIt->id));
-                            connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
-                            addToGroupMenu->addAction(addToGroupAction);
-                        }
+					 if (type == TYPE_GPG) {
+						 contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
+					 } else {
+						 //this is a SSL key
+						 contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Location"), this, SLOT(removefriend()));
+					 }
 
-                        if (moveToGroupMenu == NULL) {
-                            moveToGroupMenu = new QMenu(tr("Move to group"), &contextMnu);
-                        }
-                        QAction* moveToGroupAction = new QAction(GroupDefs::name(*groupIt), moveToGroupMenu);
-                        moveToGroupAction->setData(QString::fromStdString(groupIt->id));
-                        connect(moveToGroupAction, SIGNAL(triggered()), this, SLOT(moveToGroup()));
-                        moveToGroupMenu->addAction(moveToGroupAction);
-                    } else {
-                        foundGroup = true;
-                    }
-                }
+					 if (mShowGroups && type == TYPE_GPG) {
+						 QMenu* addToGroupMenu = NULL;
+						 QMenu* moveToGroupMenu = NULL;
 
-                if (addToGroupMenu || moveToGroupMenu || foundGroup) {
-                    QMenu *groupsMenu = contextMnu.addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
+						 std::list<RsGroupInfo> groupInfoList;
+						 rsPeers->getGroupInfoList(groupInfoList);
 
-                    if (addToGroupMenu) {
-                        groupsMenu->addMenu(addToGroupMenu);
-                    }
+						 GroupDefs::sortByName(groupInfoList);
 
-                    if (moveToGroupMenu) {
-                        groupsMenu->addMenu(moveToGroupMenu);
-                    }
+						 std::string gpgId = getRsId(c);
 
-                    if (foundGroup) {
-                        // add remove from group
-                        if (parent && parent->type() == TYPE_GROUP) {
-                            QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group"));
-                            removeFromGroup->setData(parent->data(COLUMN_DATA, ROLE_ID));
-                            connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
-                        }
+						 QTreeWidgetItem *parent = c->parent();
 
-                        QAction *removeFromAllGroups = groupsMenu->addAction(tr("Remove from all groups"));
-                        removeFromAllGroups->setData("");
-                        connect(removeFromAllGroups, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
-                    }
-                }
-            }
-        }
-        }
-    } else {
+						 bool foundGroup = false;
+						 // add action for all groups, except the own group
+						 for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+							 if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpgId) == groupIt->peerIds.end()) {
+								 if (parent) {
+									 if (addToGroupMenu == NULL) {
+										 addToGroupMenu = new QMenu(tr("Add to group"), &contextMnu);
+									 }
+									 QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
+									 addToGroupAction->setData(QString::fromStdString(groupIt->id));
+									 connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
+									 addToGroupMenu->addAction(addToGroupAction);
+								 }
+
+								 if (moveToGroupMenu == NULL) {
+									 moveToGroupMenu = new QMenu(tr("Move to group"), &contextMnu);
+								 }
+								 QAction* moveToGroupAction = new QAction(GroupDefs::name(*groupIt), moveToGroupMenu);
+								 moveToGroupAction->setData(QString::fromStdString(groupIt->id));
+								 connect(moveToGroupAction, SIGNAL(triggered()), this, SLOT(moveToGroup()));
+								 moveToGroupMenu->addAction(moveToGroupAction);
+							 } else {
+								 foundGroup = true;
+							 }
+						 }
+
+						 if (addToGroupMenu || moveToGroupMenu || foundGroup) {
+							 QMenu *groupsMenu = contextMnu.addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
+
+							 if (addToGroupMenu) {
+								 groupsMenu->addMenu(addToGroupMenu);
+							 }
+
+							 if (moveToGroupMenu) {
+								 groupsMenu->addMenu(moveToGroupMenu);
+							 }
+
+							 if (foundGroup) {
+								 // add remove from group
+								 if (parent && parent->type() == TYPE_GROUP) {
+									 QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group"));
+									 removeFromGroup->setData(parent->data(COLUMN_DATA, ROLE_ID));
+									 connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
+								 }
+
+								 QAction *removeFromAllGroups = groupsMenu->addAction(tr("Remove from all groups"));
+								 removeFromAllGroups->setData("");
+								 connect(removeFromAllGroups, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
+							 }
+						 }
+					 }
+				 }
+		 }
+	 } else {
         QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
         if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
             action->setDisabled(true);
@@ -1369,6 +1388,30 @@ void FriendList::connectfriend()
 void FriendList::configurefriend()
 {
     ConfCertDialog::showIt(getRsId(getCurrentPeer()), ConfCertDialog::PageDetails);
+}
+
+void FriendList::inviteToLobby()
+{
+    QTreeWidgetItem *c = getCurrentPeer();
+
+    if (c == NULL) {
+        return;
+    }
+
+    if (c->type() != TYPE_SSL) {
+        // wrong type
+        return;
+    }
+
+	 std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+
+    if(lobby_id.empty())
+        return;
+
+	 std::string peer_id = getRsId(c) ;
+
+    // add to group
+    rsMsgs->invitePeerToLobby(ChatLobbyId(lobby_id), peer_id);
 }
 
 void FriendList::addToGroup()

@@ -167,6 +167,9 @@ class p3Msgs: public RsMsgs
 
 	  /****************************************/
 
+		virtual bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
+		virtual void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
+		virtual void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
 
    private:
 

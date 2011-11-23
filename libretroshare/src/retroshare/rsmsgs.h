@@ -61,6 +61,8 @@
 #define RS_MSGTAGTYPE_LATER      5
 #define RS_MSGTAGTYPE_USER       100
 
+typedef uint64_t ChatLobbyId ;
+
 class MessageInfo 
 {
 	public:
@@ -135,10 +137,17 @@ class ChatInfo
 	std::wstring msg;
 };
 
+class ChatLobbyInfo
+{
+	public:
+		ChatLobbyId lobby_id ;
+		std::string display_name ;
+		std::list<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
+		std::list<std::string> additional_peers ;			// list of non direct friend who participate. Used to display only.
+};
+
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
-//std::ostream &operator<<(std::ostream &out, const MsgTagInfo);
-//std::ostream &operator<<(std::ostream &out, const MsgTagType);
 
 bool operator==(const ChatInfo&, const ChatInfo&);
 
@@ -185,13 +194,15 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 /****************************************/
 	/* Chat */
 virtual	bool   sendPublicChat(const std::wstring& msg) = 0;
+virtual	bool   sendLobbyChat(const std::wstring& msg,const ChatLobbyId& lid) = 0;
 virtual	bool   sendPrivateChat(const std::string& id, const std::wstring& msg) = 0;
-virtual int    getPublicChatQueueCount() = 0;
+virtual int     getPublicChatQueueCount() = 0;
 virtual	bool   getPublicChatQueue(std::list<ChatInfo> &chats) = 0;
-virtual int    getPrivateChatQueueCount(bool incoming) = 0;
+virtual int     getPrivateChatQueueCount(bool incoming) = 0;
 virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids) = 0;
 virtual	bool   getPrivateChatQueue(bool incoming, const std::string& id, std::list<ChatInfo> &chats) = 0;
 virtual	bool   clearPrivateChatQueue(bool incoming, const std::string& id) = 0;
+
 virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
 
@@ -204,6 +215,9 @@ virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& siz
 // set own avatar data 
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
+
+virtual void getChatLobbyList(std::list<ChatLobbyInfo>& cl_info) = 0;
+virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const std::string& peer_id) = 0;
 
 /****************************************/
 

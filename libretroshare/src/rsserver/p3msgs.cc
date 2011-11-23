@@ -260,3 +260,17 @@ void p3Msgs::setCustomStateString(const std::string& state_string)
 	mChatSrv->setOwnCustomStateString(state_string) ;
 }
 
+bool p3Msgs::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& id) 
+{
+	return mChatSrv->sendLobbyChat(msg,id) ;
+}
+void p3Msgs::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
+{
+	mChatSrv->getChatLobbyList(linfos) ;
+}
+void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
+{
+	mChatSrv->invitePeerToLobby(lobby_id,peer_id) ;
+}
+
+

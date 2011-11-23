@@ -153,6 +153,11 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		 */
 		bool clearPrivateChatQueue(bool incoming, const std::string &id);
 
+		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
+		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
+		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
+
+
 	protected:
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
