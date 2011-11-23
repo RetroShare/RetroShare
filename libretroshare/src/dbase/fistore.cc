@@ -161,7 +161,7 @@ int FileIndexStore::loadCache(const CacheData &data)
 
 
 	/* Search Interface - For Directory Access */
-int FileIndexStore::RequestDirDetails(std::string uid, std::string /*path*/, DirDetails &/*details*/) const
+int FileIndexStore::RequestDirDetails(std::string uid, std::string /*path*/, DirDetails& details) const
 {
 	/* lock it up */
 	lockData();
@@ -169,17 +169,18 @@ int FileIndexStore::RequestDirDetails(std::string uid, std::string /*path*/, Dir
 	std::map<RsPeerId, FileIndex *>::const_iterator it;
 	it = indices.find(uid);
 	bool found = true;
-	if (it == indices.end())
+
+	if (it != indices.end())
 	{
 		//DirEntry *fdir = (it->second).lookupDirectory(path);
 		/* translate it
 		 */
-		found = false;
+		bool b = FileIndex::extractData((it->second)->root,details) ;
+
+		found = found && b ;
 	}
 	else
-	{
 		found = false;
-	}
 
 	unlockData();
 	return found;
