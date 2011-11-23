@@ -425,6 +425,8 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rstlvutil.h \
 			serialiser/rstlvdsdv.h \
 			serialiser/rsdsdvitems.h \
+			serialiser/rstlvbanlist.h \
+			serialiser/rsbanlistitems.h \
 			serialiser/rstunnelitems.h
 
 HEADERS +=	services/p3channels.h \
@@ -438,6 +440,7 @@ HEADERS +=	services/p3channels.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3dsdv.h \
+			services/p3banlist.h \
 			services/p3tunnel.h
 		
 HEADERS +=	distrib/p3distrib.h \
@@ -561,6 +564,8 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rstlvutil.cc \
 			serialiser/rstlvdsdv.cc \
 			serialiser/rsdsdvitems.cc \
+			serialiser/rstlvbanlist.cc \
+			serialiser/rsbanlistitems.cc \
 			serialiser/rstunnelitems.cc
 
 SOURCES +=	services/p3channels.cc \
@@ -572,7 +577,8 @@ SOURCES +=	services/p3channels.cc \
 			services/p3photoservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
-			services/p3dsdv.cc
+			services/p3dsdv.cc \
+			services/p3banlist.cc
 
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
 
