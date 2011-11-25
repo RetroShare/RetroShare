@@ -156,6 +156,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
 		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
 		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
+		void setLobbyNickName(const ChatLobbyNickName&) ;
+		const ChatLobbyNickName& lobbyNickName() const ;
 
 
 	protected:
@@ -203,6 +205,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
 		bool checkAndRebuildPartialMessage(RsChatMsgItem*) ;
 
+		/// receive and handle chat lobby item
+		bool recvLobbyChat(RsChatLobbyMsgItem*) ;
+
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
@@ -219,6 +224,17 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		std::string _custom_status_string ;
 		std::map<std::string,StateStringInfo> _state_strings ;
+
+		class ChatLobbyEntry: public ChatLobbyInfo
+		{
+			public:
+				std::map<ChatLobbyMsgId,time_t> msg_cache ;
+
+				static const time_t MAX_KEEP_MSG_RECORD = 240 ; // keep msg record for 240 secs max.
+				void cleanCache() ;
+		};
+
+		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 };
 
 class p3ChatService::StateStringInfo

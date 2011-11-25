@@ -24,6 +24,7 @@
  */
 
 #include "util/rsdir.h"
+#include "util/rsrandom.h"
 #include "retroshare/rsiface.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqinotify.h"
@@ -1138,27 +1139,113 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 
 //********************** Chat Lobby Stuff ***********************//
 
+bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::cerr << "Handling ChatLobbyMsg " << std::hex << item->msg_id << ", lobby id " << item->lobby_id << ", from peer id " << item->PeerId() << std::endl;
+
+	// send upward for display
+	
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it(_chat_lobbys.find(item->lobby_id)) ;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
+		return false ;
+	}
+	ChatLobbyEntry& lobby(it->second) ;
+
+	// Adds the peer id to the list of friend participants, even if it's not original msg source
+	
+	lobby.participating_friends.insert(item->PeerId()) ;
+	lobby.nick_names.insert(item->nick) ;
+
+	// Checks wether the msg is already recorded or not
+	
+	std::map<ChatLobbyMsgId,time_t>::const_iterator it2(lobby.msg_cache.find(item->msg_id)) ;
+
+	if(it2 != lobby.msg_cache.end()) // found!
+	{
+		std::cerr << "  Msg already received at time " << it2->second << ". Dropping!" << std::endl ;
+		return false ;
+	}
+	std::cerr << "  Msg already not received already. Adding in cache, and forwarding!" << std::endl ;
+
+	lobby.msg_cache[item->msg_id] = time(NULL) ;
+	
+	// Forward to allparticipating friends, except this peer.
+
+	for(std::set<std::string>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
+		if((*it)!=item->PeerId() && mLinkMgr->isOnline(*it)) 
+		{
+			RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem(*item) ;	// copy almost everything
+
+			item->PeerId(*it) ;
+
+			sendItem(item);
+		}
+	return true ;
+}
+
 bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id) 
 {
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
 	std::cerr << "Sending chat lobby message to lobby " << lobby_id << std::endl;
 	std::cerr << "msg:" << std::endl;
 	std::cerr << msg.c_str() << std::endl;
+
+	// get a pointer to the info for that chat lobby.
+	//
+	std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.find(lobby_id)) ;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << "Chatlobby for id " << std::hex << lobby_id << " has no record. This is a serious error!!" << std::dec << std::endl;
+		return false ;
+	}
+	const ChatLobbyEntry& lobby(it->second) ;
+
+	RsChatLobbyMsgItem item ;
+
+	// chat lobby stuff
+	//
+	do { item.msg_id	= RSRandom::random_u64(); } while( lobby.msg_cache.find(item.msg_id) != lobby.msg_cache.end() ) ;
+
+	item.lobby_id = lobby_id ;
+	item.nick	  = lobby.nick_name ;
+
+	// chat msg stuff
+	//
+	item.chatFlags = RS_CHAT_FLAG_LOBBY;
+	item.sendTime = time(NULL);
+	item.recvTime = item.sendTime;
+	item.message = msg;
+
+	for(std::set<std::string>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
+		if(mLinkMgr->isOnline(*it)) 
+		{
+			RsChatLobbyMsgItem *sitem = new RsChatLobbyMsgItem(item) ;	// copies almost everything
+
+			sitem->PeerId(*it) ;
+
+			sendItem(sitem);
+		}
+
 	return true ;
 }
+
 void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
 {
 	// fill up a dummy list for now.
 
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
 	linfos.clear() ;
 
-	ChatLobbyInfo info ;
-	info.lobby_id = 0x38484fe ;
-	info.display_name = "lobby 1" ;
-	info.participating_friends.push_back("friend 1") ;
-	info.participating_friends.push_back("friend 2") ;
-	info.additional_peers.push_back("peer 1") ;
-
-	linfos.push_back(info) ;
+	for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
+		linfos.push_back(it->second) ;
 }
 void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
 {

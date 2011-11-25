@@ -44,12 +44,14 @@ const uint32_t RS_CHAT_FLAG_PUBLIC                 = 0x0020;
 const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE   = 0x0040;
 const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0080;
 const uint32_t RS_CHAT_FLAG_PARTIAL_MESSAGE        = 0x0100;
+const uint32_t RS_CHAT_FLAG_LOBBY                  = 0x0200;
 
 const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING = 0x0001;
 
-const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           = 0x03 ;	// default is 0x01
-const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           = 0x04 ;	// default is 0x01
-const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	// default is 0x01 
+const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           = 0x03 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           = 0x04 ;	
+const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        = 0x06 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE = 0x03;
@@ -57,6 +59,9 @@ const uint8_t RS_PKT_SUBTYPE_MSG_TAGS = 0x04;
 const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG = 0x05;
 const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG = 0x06;
 
+typedef uint64_t 		ChatLobbyId ;
+typedef uint64_t 		ChatLobbyMsgId ;
+typedef std::string 	ChatLobbyNickName ;
 
 class RsChatItem: public RsItem
 {
@@ -81,9 +86,9 @@ class RsChatItem: public RsItem
 class RsChatMsgItem: public RsChatItem
 {
 	public:
-		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) 
-		{
-		}
+		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
+		RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype) {}
+
 		RsChatMsgItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsChatMsgItem() {}
@@ -98,6 +103,24 @@ class RsChatMsgItem: public RsChatItem
 		std::wstring message;
 		/* not serialised */
 		uint32_t recvTime;
+};
+
+class RsChatLobbyMsgItem: public RsChatMsgItem
+{
+	public:
+		RsChatLobbyMsgItem() :RsChatMsgItem(RS_PKT_SUBTYPE_CHAT_LOBBY_MSG) {}
+
+		RsChatLobbyMsgItem(void *data,uint32_t size) {} // deserialization /// TODO!!!
+
+		virtual ~RsChatLobbyMsgItem() {}
+
+		ChatLobbyId lobby_id ;
+		ChatLobbyMsgId msg_id ;
+		ChatLobbyNickName nick ;
+
+		/// TODO !!!
+		virtual bool serialise(void *data,uint32_t& size) { return true ; }	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() { return 0;} 							// deserialise is handled using a constructor
 };
 
 /*!

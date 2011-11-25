@@ -30,6 +30,7 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <set>
 
 #include "rstypes.h"
 
@@ -61,7 +62,9 @@
 #define RS_MSGTAGTYPE_LATER      5
 #define RS_MSGTAGTYPE_USER       100
 
-typedef uint64_t ChatLobbyId ;
+typedef uint64_t 		ChatLobbyId ;
+typedef uint64_t 		ChatLobbyMsgId ;
+typedef std::string 	ChatLobbyNickName ;
 
 class MessageInfo 
 {
@@ -140,10 +143,11 @@ class ChatInfo
 class ChatLobbyInfo
 {
 	public:
-		ChatLobbyId lobby_id ;
-		std::string display_name ;
-		std::list<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
-		std::list<std::string> additional_peers ;			// list of non direct friend who participate. Used to display only.
+		ChatLobbyId lobby_id ;									// unique id of the lobby
+		std::string nick_name ;									// nickname to use for this lobby
+
+		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
+		std::set<std::string> nick_names ;					// list of non direct friend who participate. Used to display only.
 };
 
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);

@@ -343,8 +343,8 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
 					 for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
 					 {
-						 QAction* inviteToLobbyAction = new QAction(QString::fromUtf8((*it).display_name.c_str()), mnu);
-						 inviteToLobbyAction->setData(QString::fromStdString((*it).lobby_id.c_str()));
+						 QAction* inviteToLobbyAction = new QAction(QString::fromUtf8((*it).nick_name.c_str()), mnu);
+						 inviteToLobbyAction->setData(QString::number((*it).lobby_id,16));
 						 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
 						 mnu->addAction(inviteToLobbyAction);
 					 }
@@ -1411,7 +1411,7 @@ void FriendList::inviteToLobby()
 	 std::string peer_id = getRsId(c) ;
 
     // add to group
-    rsMsgs->invitePeerToLobby(ChatLobbyId(lobby_id), peer_id);
+    rsMsgs->invitePeerToLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), peer_id);
 }
 
 void FriendList::addToGroup()
