@@ -429,13 +429,15 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 				std::cerr << std::endl;
 
 #ifdef TEST_BAD_PEER
-				std::cerr << "IN TEST MODE... so letting it through.";
+				std::cerr << "IN TEST MODE... Notifying, but letting it through.";
 				std::cerr << std::endl;
+
+	        		mBadPeerQueue.queuePeer(id, 0);
 #else
 				
 	        		mFilterPeers->addBadPeer(id, 0);
 				// Stores in queue for later callback and desemination around the network.
-	        		mBadPeerList->queuePeer(id, 0);
+	        		mBadPeerQueue.queuePeer(id, 0);
 
 				std::list<struct sockaddr_in> filteredIPs;
 				mFilterPeers->filteredIPs(filteredIPs);

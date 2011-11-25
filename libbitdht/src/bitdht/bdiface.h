@@ -304,6 +304,8 @@ class bdQuerySummary
 #define BD_PROXY_CONNECTION_MID_POINT           2
 #define BD_PROXY_CONNECTION_END_POINT           3
 
+#define BITDHT_INFO_CB_TYPE_BADPEER	1
+
 class BitDhtCallback
 {
 	public:
@@ -320,12 +322,18 @@ virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t statu
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
 			uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
 
+		// Generic Info callback - initially will be used to provide bad peers.	
+virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info) = 0;
+
 };
 
 
 class BitDhtInterface
 {
 	public:
+
+	/* bad peer notification */
+virtual void addBadPeer(const struct sockaddr_in &addr, uint32_t source, uint32_t reason, uint32_t age) = 0;
 
 	/* Friend Tracking */
 virtual void updateKnownPeer(const bdId *id, uint32_t type, uint32_t flags) = 0;

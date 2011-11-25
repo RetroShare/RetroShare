@@ -244,6 +244,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	bdHashSpace mHashSpace;
 
 	bdFriendList mFriendList;
+	bdPeerQueue  mBadPeerQueue;
 
 	private:
 

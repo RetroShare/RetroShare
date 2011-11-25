@@ -89,6 +89,14 @@ UdpBitDht::~UdpBitDht()
 
         /***** Functions to Call down to bdNodeManager ****/
         /* Friend Tracking */
+void UdpBitDht::addBadPeer(const struct sockaddr_in &addr, uint32_t source, uint32_t reason, uint32_t age)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mBitDhtManager->addBadPeer(addr, source, reason, age);
+}
+
+
 void UdpBitDht::updateKnownPeer(const bdId *id, uint32_t type, uint32_t flags)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/

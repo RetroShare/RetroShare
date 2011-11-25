@@ -30,6 +30,9 @@
 
 #include <iostream>
 
+/*****
+ * #define DEBUG_FRIENDLIST	1
+ ****/
 
 bdFriendEntry::bdFriendEntry()
 {
@@ -139,10 +142,12 @@ bool	bdFriendList::findPeerEntry(const bdNodeId *id, bdFriendEntry &entry)
 	it = mPeers.find(*id);
 	if (it == mPeers.end())
 	{
+#ifdef DEBUG_FRIENDLIST
 		std::cerr << "bdFriendList::getPeerEntry() Peer(";
 		bdStdPrintNodeId(std::cerr, id);
 		std::cerr << ") is unknown!";
 		std::cerr << std::endl;
+#endif
 
 		return false;
 	}
@@ -171,6 +176,40 @@ bool	bdFriendList::print(std::ostream &out)
 	}
 
 	return true;
+}
+
+
+
+
+bdPeerQueue::bdPeerQueue()
+{
+	return;
+}
+
+bool bdPeerQueue::queuePeer(const bdId *id, uint32_t flags)
+{
+	bdFriendEntry entry;
+	entry.mPeerId = *id;
+	entry.mFlags = flags;
+	entry.mLastSeen = time(NULL);
+
+	mPeerQueue.push_back(entry);
+	return true;
+}
+
+bool bdPeerQueue::popPeer(bdId *id, uint32_t &flags)
+{
+	if (mPeerQueue.size() > 0)
+	{
+		bdFriendEntry entry = mPeerQueue.front();
+		mPeerQueue.pop_front();
+		*id = entry.mPeerId;
+		flags = entry.mFlags;
+
+		return true;
+	}
+
+	return false;
 }
 
 

@@ -84,6 +84,20 @@ bool    print(std::ostream &out);
 	std::map<bdNodeId, bdFriendEntry> mPeers;
 };
 
+class bdPeerQueue
+{
+
+	public:
+	bdPeerQueue();
+
+bool	queuePeer(const bdId *id, uint32_t flags);
+bool	popPeer(bdId *id, uint32_t &flags);
+
+	private:
+
+	std::list<bdFriendEntry> mPeerQueue;
+};
+
 	
 #endif
 
