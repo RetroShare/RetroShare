@@ -1423,6 +1423,22 @@ bool p3NetMgrIMPL::netAssistKnownPeer(std::string id, const struct sockaddr_in &
 	return true;
 }
 
+bool p3NetMgrIMPL::netAssistBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+
+#ifdef NETMGR_DEBUG
+	std::cerr << "p3NetMgrIMPL::netAssistBadPeer(" << rs_inet_ntoa(addr.sin_addr) << ")";
+	std::cerr << std::endl;
+#endif
+
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->addBadPeer(addr, reason, flags, age);
+	}
+	return true;
+}
+
 
 bool p3NetMgrIMPL::netAssistAttach(bool on)
 {

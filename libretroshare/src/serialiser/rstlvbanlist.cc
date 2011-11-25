@@ -166,6 +166,11 @@ std::ostream &RsTlvBanListEntry::print(std::ostream &out, uint16_t indent)
 
 /************************************* RsTlvBanList ************************************/
 
+RsTlvBanList::RsTlvBanList()
+{
+
+}
+
 void RsTlvBanList::TlvClear()
 {
 	entries.clear();

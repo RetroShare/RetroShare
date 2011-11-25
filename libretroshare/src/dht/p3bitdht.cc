@@ -70,6 +70,11 @@ virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdI
 	return mParent->ConnectCallback(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
 }  
 
+virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
+{ 
+	return mParent->InfoCallback(id, type, flags, info);
+}  
+
 	private:
 
 	p3BitDht *mParent;
@@ -83,6 +88,8 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 	mDhtStunner = NULL;
 	mProxyStunner = NULL;
 	mRelay = NULL;
+
+        mPeerSharer = NULL;
 
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
         mOwnRsId = id;
@@ -150,6 +157,10 @@ void    p3BitDht::setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStun
 	mRelay = relay;
 }
 
+void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
+{
+	mPeerSharer = sharer;
+}
 
 void    p3BitDht::start()
 {

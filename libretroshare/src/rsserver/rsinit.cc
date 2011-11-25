@@ -1781,6 +1781,9 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3vors.h"
 #endif
 
+#include "services/p3banlist.h"
+#include "services/p3dsdv.h"
+
 
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
 {
@@ -2126,6 +2129,16 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mVoipTest);
 	rsVoip = mVoipTest;
 #endif
+
+	// new services to test.
+	p3BanList *mBanList = new p3BanList(mLinkMgr, mNetMgr);
+	pqih -> addService(mBanList);
+	mBitDht->setupPeerSharer(mBanList);
+
+	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);
+	pqih -> addService(mDsdv);
+	rsDsdv = mDsdv;
+	mDsdv->addTestService();
 
 #endif // MINIMAL_LIBRS
 

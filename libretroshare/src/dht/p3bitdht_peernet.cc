@@ -37,6 +37,50 @@
  ************************************* Dht Callback ***************************************
  ******************************************************************************************/
 
+/**** dht NodeCallback ****
+ *
+ *
+ * In the old version, we used this to callback mConnCb->peerStatus()
+ * We might want to drop this, and concentrate on the connection stuff.
+ * 
+ * -> if an new dht peer, then pass to Stunners.
+ * -> do we care if we know them? not really!
+ */
+
+int p3BitDht::InfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
+{
+	/* translate info */
+	std::string rsid;
+	struct sockaddr_in addr = id->addr;
+	int outtype = PNASS_TYPE_BADPEER;
+	int outreason = PNASS_REASON_UNKNOWN;
+	int outage = 0;
+
+#ifdef DEBUG_BITDHT_COMMON
+	std::cerr << "p3BitDht::InfoCallback() likely BAD_PEER: ";
+	bdStdPrintId(std::cerr, id);
+	std::cerr << std::endl;
+#endif
+	{
+		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
+
+		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RSDHT_PEERTYPE_ANY);
+
+		if (dpd)
+		{
+			rsid = dpd->mRsId;
+		}
+	}
+
+	if (mPeerSharer)
+	{
+		mPeerSharer->updatePeer(rsid, addr, outtype, outreason, outage);
+	}
+
+	return 1;
+}
+
+
 
 /**** dht NodeCallback ****
  *

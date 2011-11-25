@@ -183,6 +183,13 @@ bool 	p3BitDht::dropPeer(std::string pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
+int p3BitDht::addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age)
+{
+	//mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
+	return 1;
+}
+
+
 int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) 
 {
 

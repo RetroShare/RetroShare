@@ -65,12 +65,17 @@ class BanList
   * Exchange list of Banned IP addresses with peers.
   */
 
-class p3BanList: /* public RsBanList, */ public p3Service /* , public p3Config, public pqiMonitor */
+class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
 {
 	public:
 		p3BanList(p3LinkMgr *lm, p3NetMgr *nm);
 
 		/***** overloaded from RsBanList *****/
+
+		/***** overloaded from pqiNetAssistPeerShare *****/
+
+		virtual void    updatePeer(std::string id, struct sockaddr_in addr, int type, int reason, int age);
+
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -93,8 +98,6 @@ class p3BanList: /* public RsBanList, */ public p3Service /* , public p3Config, 
 		void sendBanLists();
 		int sendBanSet(std::string peerid);
 
-		int printBanSources(std::ostream &out);
-		int printBanSet(std::ostream &out);
 
 		/*!
 		 * Interface stuff.
@@ -115,6 +118,8 @@ class p3BanList: /* public RsBanList, */ public p3Service /* , public p3Config, 
 		RsMutex mBanMtx;
 
 		int condenseBanSources_locked();
+		int printBanSources_locked(std::ostream &out);
+		int printBanSet_locked(std::ostream &out);
 
 		time_t mSentListTime;
 		std::map<std::string, BanList> mBanSources;

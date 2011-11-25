@@ -278,6 +278,11 @@ std::ostream &RsTlvDsdvEntry::print(std::ostream &out, uint16_t indent)
 
 /************************************* RsTlvDsdvEntrySet ************************************/
 
+RsTlvDsdvEntrySet::RsTlvDsdvEntrySet()
+{
+
+}
+
 void RsTlvDsdvEntrySet::TlvClear()
 {
 	entries.clear();

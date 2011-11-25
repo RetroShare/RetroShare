@@ -29,11 +29,14 @@
 //#include "serialiser/rsdsdvitems.h"
 #include "services/p3dsdv.h"
 #include "pqi/p3linkmgr.h"
+#include "util/rsrandom.h"
 
+#include <openssl/sha.h>
 
 /****
  * #define DEBUG_DSDV		1
  ****/
+#define DEBUG_DSDV		1
 
 /* DEFINE INTERFACE POINTER! */
 RsDsdv *rsDsdv = NULL;
@@ -98,7 +101,15 @@ int	p3Dsdv::sendTables()
 
 	if (now - tt > DSDV_BROADCAST_PERIOD)
 	{
+
+#ifdef DEBUG_DSDV
+		std::cerr << "p3Dsdv::sendTables() Broadcast Time";
+		std::cerr << std::endl;
+#endif
+
 		generateRoutingTables(false);
+
+		printDsdvTable(std::cerr);
 
 		RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 		mSentTablesTime = now;
@@ -359,10 +370,67 @@ void p3Dsdv::statusChange(const std::list<pqipeer> &plist)
 	}
 }
 
+int p3Dsdv::addTestService()
+{
+	RsDsdvId testId;
+
+	int rndhash1[SHA_DIGEST_LENGTH / 4];
+	int rndhash2[SHA_DIGEST_LENGTH / 4];
+	std::ostringstream rh, sh;
+	std::string realHash;
+	std::string seedHash;
+
+	int i;
+	for(i = 0; i < SHA_DIGEST_LENGTH / 4; i++)
+	{
+		rndhash1[i] = RSRandom::random_u32();
+		rndhash2[i] = RSRandom::random_u32();
+	}
+
+        for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+        {
+                rh << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) ((uint8_t *) rndhash1)[i];
+                sh << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) ((uint8_t *) rndhash2)[i];
+        }
+
+	realHash = rh.str();
+	seedHash = sh.str();
+
+        uint8_t sha_hash[SHA_DIGEST_LENGTH];
+        memset(sha_hash,0,SHA_DIGEST_LENGTH*sizeof(uint8_t)) ;
+        SHA_CTX *sha_ctx = new SHA_CTX;
+        SHA1_Init(sha_ctx);
+
+        SHA1_Update(sha_ctx, realHash.c_str(), realHash.length());
+        SHA1_Update(sha_ctx, seedHash.c_str(), seedHash.length());
+        SHA1_Final(sha_hash, sha_ctx);
+        delete sha_ctx;
+
+	std::ostringstream keystr;
+        for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+        {
+                keystr << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) (sha_hash)[i];
+	}
+	
+
+	testId.mIdType = RSDSDV_IDTYPE_TEST;
+	testId.mAnonChunk = seedHash;
+	testId.mHash = keystr.str();
+
+	addDsdvId(&testId, realHash);
+	return 1;
+}
+
 
 int p3Dsdv::addDsdvId(RsDsdvId *id, std::string realHash)
 {
+
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
+
+#ifdef	DEBUG_DSDV
+	std::cerr << "p3Dsdv::addDsdvId() ID: " << *id << " RealHash: " << realHash;
+	std::cerr << std::endl;
+#endif
 
 	time_t now = time(NULL);
 	
@@ -407,6 +475,11 @@ int p3Dsdv::dropDsdvId(RsDsdvId *id)
 {
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 
+#ifdef	DEBUG_DSDV
+	std::cerr << "p3Dsdv::dropDsdvId() ID: " << *id;
+	std::cerr << std::endl;
+#endif
+
 	/* This should send out an infinity packet... and flag for deletion */
 
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
@@ -436,9 +509,12 @@ int p3Dsdv::printDsdvTable(std::ostream &out)
 	{
 		RsDsdvTableEntry &v = it->second;
 		out << v.mDest;
-		out << " BR: " << v.mBestRoute;
-		out << " SR: " << v.mBestRoute;
-		out << " Flags: " << v.mFlags;
+		out << std::endl;
+		out << "\tBR: " << v.mBestRoute;
+		out << std::endl;
+		out << "\tSR: " << v.mBestRoute;
+		out << std::endl;
+		out << "\tFlags: " << v.mFlags;
 		out << " Own: " << v.mOwnSource;
 		if (v.mMatched)
 		{

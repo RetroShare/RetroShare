@@ -155,8 +155,7 @@ virtual std::string getUdpAddressString();
 
 
 	void	setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay);
-
-
+	void	setupPeerSharer(pqiNetAssistPeerShare *sharer);
 
 
 void	start(); /* starts up the bitdht thread */
@@ -177,6 +176,7 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
 
+virtual int addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age);
 virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags);
 //virtual int 	addFriend(const std::string pid);
 //virtual int 	addFriendOfFriend(const std::string pid);
@@ -219,6 +219,8 @@ int 	PeerCallback(const bdId *id, uint32_t status);
 int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 int 	ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
 				uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode);
+int 	InfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info);
+
 
 int 	OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
 int 	UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
@@ -282,6 +284,8 @@ int 	calculateNodeId(const std::string pid, bdNodeId *id);
 	UdpRelayReceiver   *mRelay;
 
 	p3NetMgr *mNetMgr;
+
+	pqiNetAssistPeerShare *mPeerSharer;
 
 	RsMutex dhtMtx;
 

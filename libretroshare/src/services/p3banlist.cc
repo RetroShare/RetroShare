@@ -37,6 +37,8 @@
  * #define DEBUG_BANLIST		1
  ****/
 
+#define DEBUG_BANLIST		1
+
 
 /* DEFINE INTERFACE POINTER! */
 //RsBanList *rsBanList = NULL;
@@ -89,6 +91,12 @@ bool p3BanList::processIncoming()
 	bool updated = false;
 	while(NULL != (item = recvItem()))
 	{
+#ifdef DEBUG_BANLIST
+		std::cerr << "p3BanList::processingIncoming() Received Item:";
+		std::cerr << std::endl;
+		item->print(std::cerr);
+		std::cerr << std::endl;
+#endif
 		switch(item->PacketSubType())
 		{
 			default:
@@ -134,6 +142,24 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 	return updated;
 }
 
+/* overloaded from pqiNetAssistSharePeer */
+void p3BanList::updatePeer(std::string id, struct sockaddr_in addr, int type, int reason, int age)
+{
+	std::string ownId = mLinkMgr->getOwnId();
+
+	int int_reason = 0;
+	addBanEntry(ownId, addr, RSBANLIST_SOURCE_SELF, int_reason, age);
+
+	/* process */
+	{
+		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+
+		mBanSet.clear();
+		condenseBanSources_locked();
+	}
+}
+
+
 bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in &addr, uint32_t level, uint32_t reason, uint32_t age)
 {
 	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
@@ -141,13 +167,19 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 	time_t now = time(NULL);
 	bool updated = false;
 
+#ifdef DEBUG_BANLIST
+	std::cerr << "p3BanList::addBanEntry() Addr: " << rs_inet_ntoa(addr.sin_addr) << " Level: " << level;
+	std::cerr << " Reason: " << reason << " Age: " << age;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, BanList>::iterator it;
 	it = mBanSources.find(peerId);
 	if (it == mBanSources.end())
 	{
 		BanList bl;
 		bl.mPeerId = peerId;
-		bl.mLastUpdate = 0;
+		bl.mLastUpdate = now;
 		mBanSources[peerId] = bl;
 
 		it = mBanSources.find(peerId);
@@ -164,6 +196,9 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 		blp.reason = reason;
 		blp.level = level;
 		blp.mTs = now - age;
+
+		it->second.mBanPeers[addr.sin_addr.s_addr] = blp;
+		it->second.mLastUpdate = now;
 		updated = true;
 	}
 	else
@@ -178,6 +213,8 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 			mit->second.reason = reason;
 			mit->second.level = level;
 			mit->second.mTs = now - age;
+
+			it->second.mLastUpdate = now;
 			updated = true;
 		}
 	}
@@ -190,13 +227,29 @@ int p3BanList::condenseBanSources_locked()
 	time_t now = time(NULL);
 	std::string ownId = mLinkMgr->getOwnId();
 	
+#ifdef DEBUG_BANLIST
+	std::cerr << "p3BanList::condenseBanSources_locked()";
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); it++)
 	{
 		if (now - it->second.mLastUpdate > RSBANLIST_ENTRY_MAX_AGE)
 		{
+#ifdef DEBUG_BANLIST
+			std::cerr << "p3BanList::condenseBanSources_locked()";
+			std::cerr << " Ignoring Out-Of-Date peer: " << it->first;
+			std::cerr << std::endl;
+#endif
 			continue;
 		}
+
+#ifdef DEBUG_BANLIST
+		std::cerr << "p3BanList::condenseBanSources_locked()";
+		std::cerr << " Condensing Info from peer: " << it->first;
+		std::cerr << std::endl;
+#endif
 		
 		std::map<uint32_t, BanListPeer>::const_iterator lit;
 		for(lit = it->second.mBanPeers.begin();
@@ -205,6 +258,12 @@ int p3BanList::condenseBanSources_locked()
 			/* check timestamp */
 			if (now - lit->second.mTs > RSBANLIST_ENTRY_MAX_AGE)
 			{
+#ifdef DEBUG_BANLIST
+				std::cerr << "p3BanList::condenseBanSources_locked()";
+				std::cerr << " Ignoring Out-Of-Date Entry for: ";
+				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
+				std::cerr << std::endl;
+#endif
 				continue;
 			}
 
@@ -224,9 +283,21 @@ int p3BanList::condenseBanSources_locked()
 				bp.level = lvl;
 				bp.addr.sin_port = 0;
 				mBanSet[lit->second.addr.sin_addr.s_addr] = bp;
+#ifdef DEBUG_BANLIST
+				std::cerr << "p3BanList::condenseBanSources_locked()";
+				std::cerr << " Added New Entry for: ";
+				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
+				std::cerr << std::endl;
+#endif
 			}
 			else
 			{
+#ifdef DEBUG_BANLIST
+				std::cerr << "p3BanList::condenseBanSources_locked()";
+				std::cerr << " Merging Info for: ";
+				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
+				std::cerr << std::endl;
+#endif
 				/* update if necessary */
 				if (lvl == sit->second.level)
 				{
@@ -239,6 +310,15 @@ int p3BanList::condenseBanSources_locked()
 			}
 		}
 	}
+
+	
+#ifdef DEBUG_BANLIST
+	std::cerr << "p3BanList::condenseBanSources_locked() Printing New Set:";
+	std::cerr << std::endl;
+#endif
+
+	printBanSet_locked(std::cerr);
+
 }
 
 
@@ -255,10 +335,15 @@ int	p3BanList::sendPackets()
 	if (now - pt > RSBANLIST_SEND_PERIOD)
 	{
 		sendBanLists();
-		printBanSources(std::cerr);
-		printBanSet(std::cerr);
 
 		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+
+		std::cerr << "p3BanList::sendPackets() Regular Broadcast";
+		std::cerr << std::endl;
+
+		printBanSources_locked(std::cerr);
+		printBanSet_locked(std::cerr);
+
 		mSentListTime = now;
 	}
 	return true ;
@@ -325,11 +410,9 @@ int p3BanList::sendBanSet(std::string peerid)
 }
 
 
-int p3BanList::printBanSet(std::ostream &out)
+int p3BanList::printBanSet_locked(std::ostream &out)
 {
-	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
-
-	out << "p3BanList::printBanSet";
+	out << "p3BanList::printBanSet_locked()";
 	out << std::endl;
 	
 	time_t now = time(NULL);
@@ -352,10 +435,8 @@ int p3BanList::printBanSet(std::ostream &out)
 
 
 
-int p3BanList::printBanSources(std::ostream &out)
+int p3BanList::printBanSources_locked(std::ostream &out)
 {
-	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
-
 	time_t now = time(NULL);
 	
 	std::map<std::string, BanList>::const_iterator it;

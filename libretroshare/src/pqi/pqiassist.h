@@ -79,6 +79,19 @@ virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 };
 
 
+#define PNASS_TYPE_BADPEER	0x0001
+#define PNASS_REASON_UNKNOWN	0x0001
+
+class pqiNetAssistPeerShare
+{
+	public:
+
+	/* share Addresses for various reasons (bad peers, etc) */
+virtual void 	updatePeer(std::string id, struct sockaddr_in addr, int type, int reason, int age) = 0;
+
+};
+
+
 /* this is for the Stunners 
  *
  *
@@ -130,6 +143,7 @@ virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
 
 	/* add non-active peers (can still toggle active/non-active via above) */
+virtual int addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
 virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) = 0;
 
 //virtual int addFriend(const std::string pid) = 0;

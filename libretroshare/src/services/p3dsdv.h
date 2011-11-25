@@ -60,6 +60,8 @@ int 	addDsdvId(RsDsdvId *id, std::string realHash);
 int 	dropDsdvId(RsDsdvId *id);
 int 	printDsdvTable(std::ostream &out);
 
+int	addTestService();
+
 	private:
 
 int     sendTables();
