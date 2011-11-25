@@ -6135,7 +6135,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+122"/>
         <source>Notify</source>
         <translation>Meldungen</translation>
     </message>
@@ -6265,7 +6265,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-205"/>
+        <location filename="../gui/MainWindow.cpp" line="-206"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -6280,7 +6280,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+165"/>
+        <location filename="../gui/MainWindow.cpp" line="+166"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -6331,7 +6331,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Maximieren</translation>
     </message>
     <message>
-        <location line="-127"/>
+        <location line="-128"/>
         <source>Unfinished</source>
         <translation>unfertig</translation>
     </message>
@@ -6341,7 +6341,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+124"/>
+        <location filename="../gui/MainWindow.cpp" line="+125"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -6351,7 +6351,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-173"/>
+        <location filename="../gui/MainWindow.cpp" line="-174"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
@@ -6361,7 +6361,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+246"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -6371,12 +6371,12 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-143"/>
+        <location line="-144"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+859"/>
+        <location line="+860"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Möchtest du RetroShare wirklich beenden?</translation>
     </message>
@@ -10052,18 +10052,14 @@ Lockdatei:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/common/RsUrlHandler.cpp" line="+39"/>
-        <source>Treatment of collection file has failed.</source>
+        <location filename="../gui/common/RsCollectionFile.cpp" line="+137"/>
+        <source>Treatment of collection file has failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>The collection file </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source> could not be openned. Reported error is: </source>
+        <source>The collection file %1 could not be openned.
+Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10463,14 +10459,12 @@ p, li { white-space: pre-wrap; }
         <translation>NEU</translation>
     </message>
     <message>
-        <location line="+701"/>
         <source>Create selection file</source>
-        <translation>Erstelle Kollektion</translation>
+        <translation type="obsolete">Erstelle Kollektion</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Collection files</source>
-        <translation>Kollektion</translation>
+        <translation type="obsolete">Kollektion</translation>
     </message>
 </context>
 <context>
@@ -10529,6 +10523,35 @@ p, li { white-space: pre-wrap; }
         <location line="+7"/>
         <source>Download!</source>
         <translation>Herunterladen</translation>
+    </message>
+</context>
+<context>
+    <name>RsCollectionFile</name>
+    <message>
+        <location filename="../gui/common/RsCollectionFile.cpp" line="+12"/>
+        <source>Cannot open file %1</source>
+        <translation>Kann Datei %1 nicht öffnen</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Error parsing xml file</source>
+        <translation>Fehler beim Parsen des XML</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Open collection file</source>
+        <translation>Öffne Kollektion</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <location line="+30"/>
+        <source>Collection files</source>
+        <translation>Kollektion</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Create collection file</source>
+        <translation>Kollektion erstellen</translation>
     </message>
 </context>
 <context>
@@ -11833,7 +11856,7 @@ p, li { white-space: pre-wrap; }
         <translation>Lade Konfiguration</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Create interface</source>
         <translation>Erstelle Oberfläche</translation>
     </message>
@@ -12720,7 +12743,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+336"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+338"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12730,7 +12753,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-161"/>
+        <location line="-162"/>
         <location line="+59"/>
         <source>Status</source>
         <translation>Status</translation>
@@ -12754,7 +12777,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Downloads:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+29"/>
+        <source>Open Collection</source>
+        <translation>Öffne Kollektion</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Show cache transfers</source>
         <translation>Zeige Cache Übertragungen</translation>
     </message>
@@ -12838,7 +12866,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+128"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -12963,7 +12991,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-936"/>
+        <location line="-937"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -13005,7 +13033,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -13100,7 +13128,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TreeStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="-590"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+111"/>
         <source>My files</source>
         <translation>Meine Dateien</translation>
     </message>

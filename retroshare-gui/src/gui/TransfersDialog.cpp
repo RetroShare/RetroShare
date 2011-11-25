@@ -44,11 +44,12 @@
 #include "TurtleRouterStatistics.h"
 #include "xprogressbar.h"
 #include "settings/rsharesettings.h"
+#include "util/misc.h"
+#include "common/RsCollectionFile.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include "util/misc.h"
 
 /****
  * #define SHOW_RTT_STATISTICS		1
@@ -322,6 +323,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 #endif
 
 	 QObject::connect(ui._showCacheTransfers_CB,SIGNAL(toggled(bool)),this,SLOT(insertTransfers())) ;
+	 QObject::connect(ui.openCollection, SIGNAL(clicked()), this, SLOT(openCollection()));
 
 	 // Actions. Only need to be defined once.
    pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
@@ -1689,4 +1691,12 @@ qlonglong TransfersDialog::getDownloadTime(int row, QStandardItemModel *model)
 QString TransfersDialog::getSources(int row, QStandardItemModel *model)
 {
 	return model->data(model->index(row, SOURCES), Qt::DisplayRole).toString();
+}
+
+void TransfersDialog::openCollection()
+{
+	RsCollectionFile Collection;
+	if (Collection.load()) {
+		Collection.downloadFiles();
+	}
 }

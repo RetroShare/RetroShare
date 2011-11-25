@@ -594,7 +594,20 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
+           <widget class="QPushButton" name="openCollection">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string>Open Collection</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="_showCacheTransfers_CB">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="text">
              <string>Show cache transfers</string>
             </property>
@@ -731,8 +744,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>598</width>
-             <height>99</height>
+             <width>596</width>
+             <height>101</height>
             </rect>
            </property>
           </widget>

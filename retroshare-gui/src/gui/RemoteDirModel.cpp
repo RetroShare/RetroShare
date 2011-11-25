@@ -916,19 +916,10 @@ void RetroshareDirModel::createCollectionFile(const QModelIndexList &list)
 		return ;
 	}
 
-	QString filename ;
-		
-	if(!misc::getSaveFileName(NULL,RshareSettings::LASTDIR_EXTRAFILE,tr("Create selection file"),tr("Collection files")+" (*."+RsCollectionFile::ExtensionString+")",filename)) 
-		return ;
-
-	if(!filename.endsWith("."+RsCollectionFile::ExtensionString))
-		filename += "."+RsCollectionFile::ExtensionString ;
-
-	std::cerr << "Got file name: "<< filename.toStdString() << std::endl;
 	std::vector <DirDetails> dirVec;
 	getDirDetailsFromSelect(list, dirVec);
 
-	RsCollectionFile(dirVec).save(filename) ;
+	RsCollectionFile(dirVec).save();
 }
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)

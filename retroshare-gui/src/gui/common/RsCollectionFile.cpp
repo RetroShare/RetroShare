@@ -26,33 +26,22 @@
 
 #include "RsCollectionFile.h"
 #include "RsCollectionDialog.h"
+#include "util/misc.h"
 
 #include <QFile>
 #include <QDir>
 #include <QObject>
-#include <QMessageBox>
 #include <QTextStream>
 #include <QDomElement>
 #include <QDomDocument>
+#include <QMessageBox>
+#include <QIcon>
 
 const QString RsCollectionFile::ExtensionString = QString("rscollection") ;
 
-RsCollectionFile::RsCollectionFile(const QString& filename)
-	: _xml_doc("RsCollection"),_filename(filename)
+RsCollectionFile::RsCollectionFile()
+	: _xml_doc("RsCollection")
 {
-	QFile file(filename);
-
-	if (!file.open(QIODevice::ReadOnly))
-	{
-		std::cerr << "Cannot open file " << filename.toStdString() << " !!" << std::endl;
-		return;
-	}
-
-	bool ok = _xml_doc.setContent(&file) ;
-	file.close();
-
-	if(!ok)
-		throw std::runtime_error("Error parsing xml file") ;
 }
 
 void RsCollectionFile::downloadFiles() const
@@ -143,14 +132,55 @@ RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos)
 		recursAddElements(_xml_doc,file_infos[i],root) ;
 }
 
-void RsCollectionFile::save(const QString& filename) const
+static void showError(const QString& filename, const QString& error)
+{
+	QMessageBox mb(QMessageBox::Warning, QObject::tr("Treatment of collection file has failed"), QObject::tr("The collection file %1 could not be openned.\nReported error is: %2").arg(filename).arg(error), QMessageBox::Ok);
+	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
+	mb.exec();
+}
+
+bool RsCollectionFile::load(const QString& filename)
+{
+	QFile file(filename);
+
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		std::cerr << "Cannot open file " << filename.toStdString() << " !!" << std::endl;
+		showError(filename, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(filename));
+		return false;
+	}
+
+	bool ok = _xml_doc.setContent(&file) ;
+	file.close();
+
+	if (ok) {
+		_filename = filename;
+	} else {
+		showError(filename, QApplication::translate("RsCollectionFile", "Error parsing xml file"));
+	}
+
+	return ok;
+}
+
+bool RsCollectionFile::load()
+{
+	QString filename;
+	if (!misc::getOpenFileName(NULL, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", filename))
+		return false;
+
+	std::cerr << "Got file name: " << filename.toStdString() << std::endl;
+
+	return load(filename);
+}
+
+bool RsCollectionFile::save(const QString& filename) const
 {
 	QFile file(filename);
 
 	if (!file.open(QIODevice::WriteOnly))
 	{
 		std::cerr << "Cannot write to file " << filename.toStdString() << " !!" << std::endl;
-		return;
+		return false;
 	}
 
 	QTextStream stream(&file) ;
@@ -158,5 +188,20 @@ void RsCollectionFile::save(const QString& filename) const
 	stream << _xml_doc.toString() ;
 
 	file.close();
+
+	return true;
 }
 
+bool RsCollectionFile::save() const
+{
+	QString filename;
+	if(!misc::getSaveFileName(NULL, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Create collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", filename))
+		return false;
+
+	if (!filename.endsWith("." + RsCollectionFile::ExtensionString))
+		filename += "." + RsCollectionFile::ExtensionString ;
+
+	std::cerr << "Got file name: " << filename.toStdString() << std::endl;
+
+	return save(filename);
+}

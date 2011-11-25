@@ -335,6 +335,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /** StatusBar section ********/
     /* initialize combobox in status bar */
     statusComboBox = new QComboBox(statusBar());
+    statusComboBox->setFocusPolicy(Qt::ClickFocus);
     initializeStatusObject(statusComboBox, true);
 
     QWidget *widget = new QWidget();

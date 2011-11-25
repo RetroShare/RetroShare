@@ -21,7 +21,6 @@
 
 #include <stdexcept>
 #include <QDesktopServices>
-#include <QMessageBox>
 #include <QUrl>
 #include "RsCollectionFile.h"
 #include "RsUrlHandler.h"
@@ -30,14 +29,9 @@ bool RsUrlHandler::openUrl(const QUrl& url)
 {
 	if(url.scheme() == QString("file") && url.toLocalFile().endsWith("."+RsCollectionFile::ExtensionString))
 	{
-		try
-		{
-			RsCollectionFile(url.toLocalFile().toUtf8().constData()).downloadFiles() ;
-		}
-		catch(std::runtime_error& e)
-		{
-			QMessageBox::warning(NULL,QObject::tr("Treatment of collection file has failed."),QObject::tr("The collection file ") + url.toLocalFile() + QObject::tr(" could not be openned. Reported error is: ") + QString::fromStdString(e.what())) ;
-			return false ;
+		RsCollectionFile Collection;
+		if (Collection.load(url.toLocalFile().toUtf8().constData())) {
+			Collection.downloadFiles() ;
 		}
 		return true;
 	}

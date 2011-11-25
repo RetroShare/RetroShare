@@ -101,6 +101,8 @@ private slots:
     void showDetailsDialog();
     void updateDetailsDialog();
 
+    void openCollection();
+
 signals:
     void playFiles(QStringList files);
 

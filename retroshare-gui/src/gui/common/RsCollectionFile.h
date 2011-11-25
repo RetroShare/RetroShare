@@ -40,14 +40,18 @@ class RsCollectionFile
 	public:
 		static const QString ExtensionString ;
 
-		// Loads file from disk.
-		RsCollectionFile(const QString& filename) ;
+		RsCollectionFile() ;
 
 		// create from list of files and directories
 		RsCollectionFile(const std::vector<DirDetails>& file_entries) ;
 
+		// Loads file from disk.
+		bool load();
+		bool load(const QString& filename);
+
 		// Save to disk
-		void save(const QString& filename) const ;
+		bool save() const ;
+		bool save(const QString& filename) const ;
 
 		// Download the content.
 		void downloadFiles() const ;
