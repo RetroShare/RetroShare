@@ -323,9 +323,8 @@ int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 #endif
 
 	/* decide which type of packet it is */
-	RsFileData *dta = dynamic_cast<RsFileData *>(pqi);		// This is the old test method
 
-   pktsize = rsSerialiser->size(pqi);
+	pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 
 #ifdef DEBUG_PQISTREAMER

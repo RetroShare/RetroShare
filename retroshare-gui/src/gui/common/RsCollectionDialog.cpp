@@ -130,7 +130,7 @@ void RsCollectionDialog::updateSizes()
 	uint64_t total_size = 0 ;
 	uint32_t total_files = 0 ;
 
-	for(int i=0;i<_dlinfos.size();++i)
+	for(size_t i=0;i<_dlinfos.size();++i)
 		if(_cboxes[i]->isChecked())
 		{
 			total_size += _dlinfos[i].size ;
@@ -143,14 +143,14 @@ void RsCollectionDialog::updateSizes()
 void RsCollectionDialog::selectAll() const
 {
 	std::cerr << "Selecting all !" << std::endl;
-	for(int i=0;i<_dlinfos.size();++i)
+	for(size_t i=0;i<_dlinfos.size();++i)
 		_cboxes[i]->setChecked(true) ;
 }
 
 void RsCollectionDialog::deselectAll() const
 {
 	std::cerr << "Deselecting all !" << std::endl;
-	for(int i=0;i<_dlinfos.size();++i)
+	for(size_t i=0;i<_dlinfos.size();++i)
 		_cboxes[i]->setChecked(false) ;
 }
 
