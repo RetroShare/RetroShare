@@ -1209,16 +1209,16 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
 void MainWindow::updateMenu()
 {
-    toggleVisibilityAction->setText(isVisible() ? tr("Hide") : tr("Show"));
+    toggleVisibilityAction->setText(isVisible() && !isMinimized() ? tr("Hide") : tr("Show"));
 }
 
 void MainWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
 {
-    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick){
-        if(isHidden()){
+    if (e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+        if (isHidden() || isMinimized()) {
             show();
-            if(isMinimized()){
-                if(isMaximized()){
+            if (isMinimized()) {
+                if (isMaximized()) {
                     showMaximized();
                 }else{
                     showNormal();
@@ -1226,7 +1226,7 @@ void MainWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
             }
             raise();
             activateWindow();
-        }else{
+        } else {
             hide();
         }
     }
@@ -1277,7 +1277,7 @@ void MainWindow::trayIconTransfersClicked(QSystemTrayIcon::ActivationReason e)
 
 void MainWindow::toggleVisibilitycontextmenu()
 {
-    if (isVisible())
+    if (isVisible() && !isMinimized())
         hide();
     else
         show();
