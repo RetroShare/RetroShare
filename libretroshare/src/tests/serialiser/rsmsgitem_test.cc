@@ -25,6 +25,7 @@
 
 #include <iostream>
 
+#include "util/rsrandom.h"
 #include "serialiser/rsmsgitems.h"
 #include "serialiser/rstlvutil.h"
 #include "util/utest.h"
@@ -38,6 +39,24 @@ RsSerialType* init_item(RsChatMsgItem& cmi)
 	cmi.chatFlags = rand()%34;
 	cmi.sendTime = rand()%422224;
 	randString(LARGE_STR, cmi.message);
+
+	return new RsChatSerialiser();
+}
+RsSerialType* init_item(RsChatLobbyMsgItem& cmi)
+{
+	RsSerialType *serial = init_item( *dynamic_cast<RsChatMsgItem*>(&cmi)) ;
+
+	cmi.msg_id = RSRandom::random_u64() ;
+	cmi.lobby_id = RSRandom::random_u64() ;
+	cmi.nick = "My nickname" ;
+
+	return serial ;
+}
+
+RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
+{
+	cmi.lobby_id = RSRandom::random_u64() ;
+	cmi.lobby_name = "Name of the lobby" ;
 
 	return new RsChatSerialiser();
 }
@@ -162,8 +181,25 @@ bool operator ==(const RsChatStatusItem& csiLeft, const RsChatStatusItem& csiRig
 
 	return true;
 }
+bool operator ==(const RsChatLobbyMsgItem& csiLeft, const RsChatLobbyMsgItem& csiRight)
+{
+	if(! ( (RsChatMsgItem&)csiLeft == (RsChatMsgItem&)csiRight))
+		return false ;
 
+	if(csiLeft.lobby_id != csiRight.lobby_id) return false ;
+	if(csiLeft.msg_id != csiRight.msg_id) return false ;
+	if(csiLeft.nick != csiRight.nick) return false ;
 
+	return true;
+}
+
+bool operator ==(const RsChatLobbyInviteItem& csiLeft, const RsChatLobbyInviteItem& csiRight)
+{
+	if(csiLeft.lobby_id != csiRight.lobby_id) return false ;
+	if(csiLeft.lobby_name != csiRight.lobby_name) return false ;
+
+	return true;
+}
 
 bool operator ==(const RsChatAvatarItem& caiLeft, const RsChatAvatarItem& caiRight)
 {
@@ -241,7 +277,8 @@ bool operator ==(const RsMsgParentId& msLeft, const RsMsgParentId& msRight)
 int main()
 {
 	test_RsItem<RsChatMsgItem >(); REPORT("Serialise/Deserialise RsChatMsgItem");
-	test_RsItem<RsChatMsgItem >(); REPORT("Serialise/Deserialise RsPrivateChatMsgConfigItem");
+	test_RsItem<RsChatLobbyMsgItem >(); REPORT("Serialise/Deserialise RsChatLobbyMsgItem");
+	test_RsItem<RsChatLobbyInviteItem >(); REPORT("Serialise/Deserialise RsChatLobbyInviteItem");
 	test_RsItem<RsChatStatusItem >(); REPORT("Serialise/Deserialise RsChatStatusItem");
 	test_RsItem<RsChatAvatarItem >(); REPORT("Serialise/Deserialise RsChatAvatarItem");
 	test_RsItem<RsMsgItem >(); REPORT("Serialise/Deserialise RsMsgItem");
