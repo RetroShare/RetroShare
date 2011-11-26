@@ -207,6 +207,10 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*) ;
+		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
+		bool acceptLobbyInvite(const ChatLobbyId&) ;
+		void denyLobbyInvite(const ChatLobbyId&) ;
+		void createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
 
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
@@ -229,12 +233,14 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		{
 			public:
 				std::map<ChatLobbyMsgId,time_t> msg_cache ;
+				std::map<std::string,time_t> invitations_sent ;
 
 				static const time_t MAX_KEEP_MSG_RECORD = 240 ; // keep msg record for 240 secs max.
 				void cleanCache() ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
+		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
 };
 
 class p3ChatService::StateStringInfo

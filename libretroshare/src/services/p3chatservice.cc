@@ -1250,5 +1250,131 @@ void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos)
 void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
 {
 	std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< lobby_id << std::endl;
+
+	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
+
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << "  invitation send: canceled. Lobby " << lobby_id << " not found!" << std::endl;
+		return ;
+	}
+	item->lobby_id = lobby_id ;
+	item->lobby_name = it->second.lobby_name ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+
+	// Adds the invitation into the invitation cache.
+	//
+	it->second.invitations_sent[peer_id] = time(NULL) ;
+}
+void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
+{
+	std::cerr << "Received invite to lobby from " << item->PeerId() << " to lobby " << item->lobby_id << ", named " << item->lobby_name << std::endl;
+
+	// 1 - store invite in a cache
+	//
+	// 1.1 - if the lobby is already setup, add the peer to the communicating peers.
+	//
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it = _chat_lobbys.find(item->lobby_id) ;
+
+		if(it != _chat_lobbys.end())
+		{
+			std::cerr << "  Lobby already exists. Addign new friend " << item->PeerId() << " to it" << std::endl;
+			return ;
+		}
+		// no, then create a new invitation entry in the cache.
+		
+		ChatLobbyInvite invite ;
+		invite.lobby_id = item->lobby_id ;
+		invite.peer_id = item->PeerId() ;
+		invite.lobby_name = item->lobby_name ;
+
+		_lobby_invites_queue[item->lobby_id] = invite ;
+	}
+	// 2 - notify the gui to ask the user.
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_INVITATION, NOTIFY_TYPE_ADD);
+}
+
+
+bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id) 
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::cerr << "Accepting chat lobby "<< lobby_id << std::endl;
+
+	std::map<ChatLobbyId,ChatLobbyInvite>::iterator it = _lobby_invites_queue.find(lobby_id) ;
+
+	if(it == _lobby_invites_queue.end())
+	{
+		std::cerr << " (EE) lobby invite not in cache!!" << std::endl;
+		return false;
+	}
+
+	if(_chat_lobbys.find(lobby_id) != _chat_lobbys.end())
+	{
+		std::cerr << "  (II) Lobby already exists. Weird." << std::endl;
+		return true ;
+	}
+
+	std::cerr << "  Creating new Lobby entry." << std::endl;
+
+	ChatLobbyEntry entry ;
+	entry.participating_friends.insert(it->second.peer_id) ;
+	entry.nick_name = mLinkMgr->getOwnId() ;	// to be changed. For debug only!!
+	entry.lobby_id = lobby_id ;
+	entry.lobby_name = it->second.lobby_name ;
+
+	_chat_lobbys[lobby_id] = entry ;
+
+	_lobby_invites_queue.erase(it) ;		// remove the invite from cache.
+	return true ;
+}
+void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id) 
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::cerr << "Denying chat lobby invite to "<< lobby_id << std::endl;
+	std::map<ChatLobbyId,ChatLobbyInvite>::iterator it = _lobby_invites_queue.find(lobby_id) ;
+
+	if(it == _lobby_invites_queue.end())
+	{
+		std::cerr << " (EE) lobby invite not in cache!!" << std::endl;
+		return ;
+	}
+
+	_lobby_invites_queue.erase(it) ;
+}
+
+void p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends)
+{
+	std::cerr << "Creating a new Chat lobby !!" << std::endl;
+	ChatLobbyId lobby_id ;
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		// create a unique id.
+		//
+		do { lobby_id = RSRandom::random_u64() ; } while(_chat_lobbys.find(lobby_id) != _chat_lobbys.end()) ;
+
+		std::cerr << "  New (unique) ID: " << std::hex << lobby_id << std::dec << std::endl;
+
+		ChatLobbyEntry entry ;
+		entry.participating_friends.clear() ;
+		entry.nick_name = mLinkMgr->getOwnId() ;	// to be changed. For debug only!!
+		entry.lobby_id = lobby_id ;
+		entry.lobby_name = lobby_name ;
+
+		_chat_lobbys[lobby_id] = entry ;
+	}
+
+	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
+		invitePeerToLobby(lobby_id,*it) ;
 }
 

@@ -140,11 +140,19 @@ class ChatInfo
 	std::wstring msg;
 };
 
+class ChatLobbyInvite
+{
+	public:
+		ChatLobbyId lobby_id ;
+		std::string peer_id ;
+		std::string lobby_name ;
+};
 class ChatLobbyInfo
 {
 	public:
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string nick_name ;									// nickname to use for this lobby
+		std::string lobby_name ;								// name to use for this lobby
 
 		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
 		std::set<std::string> nick_names ;					// list of non direct friend who participate. Used to display only.
