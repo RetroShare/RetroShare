@@ -1352,7 +1352,7 @@ void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 	_lobby_invites_queue.erase(it) ;
 }
 
-void p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends)
+ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends)
 {
 	std::cerr << "Creating a new Chat lobby !!" << std::endl;
 	ChatLobbyId lobby_id ;
@@ -1376,6 +1376,8 @@ void p3ChatService::createChatLobby(const std::string& lobby_name,const std::lis
 
 	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
+
+	return lobby_id ;
 }
 
 void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)

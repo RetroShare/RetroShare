@@ -233,6 +233,7 @@ virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const std::string& pe
 virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) = 0;
 virtual bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) = 0;
 virtual bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) = 0 ;
+virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) = 0 ;
 
 /****************************************/
 

@@ -159,6 +159,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
 		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
 		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
+		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
 
 	protected:
 		/************* from p3Config *******************/
@@ -210,7 +211,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		bool acceptLobbyInvite(const ChatLobbyId&) ;
 		void denyLobbyInvite(const ChatLobbyId&) ;
-		void createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
 
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;

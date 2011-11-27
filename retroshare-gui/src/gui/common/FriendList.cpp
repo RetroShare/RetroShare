@@ -349,7 +349,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 						 mnu->addAction(inviteToLobbyAction);
 					 }
 
-					 mnu->addAction(QIcon(IMAGE_CHAT),tr("create new")) ;
+					 mnu->addAction(QIcon(IMAGE_CHAT),tr("create new"),this,SLOT(createchatlobby())) ;
 
 					 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
 
@@ -1412,6 +1412,26 @@ void FriendList::inviteToLobby()
 
     // add to group
     rsMsgs->invitePeerToLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), peer_id);
+}
+
+void FriendList::createchatlobby()
+{
+    QTreeWidgetItem *c = getCurrentPeer();
+
+    if (c == NULL) 
+        return;
+
+	 std::list<std::string> friend_list ;
+
+	 std::string peer_id = getRsId(c) ;
+	 friend_list.push_back(peer_id) ;
+
+	 std::string lobby_name = "New lobby (Plz add the code to select this name at creation time)" ;
+
+    // add to group
+    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, friend_list);
+
+	 std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
 }
 
 void FriendList::addToGroup()

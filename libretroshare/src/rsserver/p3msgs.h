@@ -173,7 +173,7 @@ class p3Msgs: public RsMsgs
 		virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
 		virtual bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string&) ;
 		virtual bool getNickNameForChatLobby(const ChatLobbyId&,std::string& nick) ;
-
+		virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
 
    private:
 
