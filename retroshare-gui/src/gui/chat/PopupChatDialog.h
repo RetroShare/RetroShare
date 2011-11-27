@@ -146,6 +146,9 @@ private:
 
     RSStyle style;
 
+protected:
+	 virtual bool sendPrivateChat(const std::wstring& msg) ;	// can be derived to send chat to e.g. a chat lobby
+
     /** Qt Designer generated object */
     Ui::PopupChatDialog ui;
 };

@@ -684,7 +684,8 @@ void PopupChatDialog::sendChat()
     std::cout << "PopupChatDialog:sendChat " << std::endl;
 #endif
 
-    if (rsMsgs->sendPrivateChat(dialogId, msg)) {
+    if (sendPrivateChat(msg))
+	 {
         QDateTime currentTime = QDateTime::currentDateTime();
         addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
     }
@@ -695,6 +696,11 @@ void PopupChatDialog::sendChat()
     chatWidget->setCurrentCharFormat(QTextCharFormat ());
 
     setFont();
+}
+
+bool PopupChatDialog::sendPrivateChat(const std::wstring& msg)
+{
+	return rsMsgs->sendPrivateChat(dialogId, msg) ;
 }
 
 /**

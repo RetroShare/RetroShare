@@ -406,7 +406,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/channels/ShareKey.ui \
             gui/chat/PopupChatWindow.ui \
             gui/chat/PopupChatDialog.ui \
-            gui/chat/ChatLobbyDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
@@ -529,7 +528,7 @@ SOURCES +=  main.cpp \
             gui/channels/ShareKey.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
-#            gui/chat/ChatLobbyDialog.cpp \
+            gui/chat/ChatLobbyDialog.cpp \
             gui/chat/HandleRichText.cpp \
             gui/chat/ChatStyle.cpp \
             gui/connect/ConfCertDialog.cpp \

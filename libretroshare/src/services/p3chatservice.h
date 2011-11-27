@@ -156,9 +156,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
 		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
 		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
-		void setLobbyNickName(const ChatLobbyNickName&) ;
-		const ChatLobbyNickName& lobbyNickName() const ;
-
+		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
+		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
+		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
 
 	protected:
 		/************* from p3Config *******************/

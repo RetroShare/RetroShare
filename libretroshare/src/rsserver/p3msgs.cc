@@ -272,5 +272,17 @@ void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& p
 {
 	mChatSrv->invitePeerToLobby(lobby_id,peer_id) ;
 }
+void p3Msgs::unsubscribeChatLobby(const ChatLobbyId& lobby_id)
+{
+	mChatSrv->unsubscribeChatLobby(lobby_id) ;
+}
+bool p3Msgs::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick)
+{
+	return mChatSrv->setNickNameForChatLobby(lobby_id,nick) ;
+}
+bool p3Msgs::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick_name)
+{
+	return mChatSrv->getNickNameForChatLobby(lobby_id,nick_name) ;
+}
 
 

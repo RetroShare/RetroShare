@@ -1378,3 +1378,43 @@ void p3ChatService::createChatLobby(const std::string& lobby_name,const std::lis
 		invitePeerToLobby(lobby_id,*it) ;
 }
 
+void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	
+	// send a lobby leaving packet. To be implemented.
+}
+bool p3ChatService::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	
+	std::cerr << "getting nickname for chat lobby "<< std::hex << lobby_id << std::dec << std::endl;
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << " (EE) lobby does not exist!!" << std::endl;
+		return false ;
+	}
+
+	nick = it->second.nick_name ;
+	return true ;
+}
+
+bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	
+	std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << " (EE) lobby does not exist!!" << std::endl;
+		return false;
+	}
+
+	it->second.nick_name = nick ;
+	return true ;
+}
+
