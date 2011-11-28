@@ -58,6 +58,7 @@ public slots:
     void insertChat();
     void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
     void resetStatusBar() ;
+	 void readChatLobbyInvites() ;
 
     void fileHashingFinished(AttachFileItem* file);
 

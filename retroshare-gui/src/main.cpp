@@ -281,6 +281,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
 	QObject::connect(notify,SIGNAL(messagesTagsChanged())             ,w->messagesDialog   		,SLOT(messagesTagsChanged()            )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w                   		,SLOT(updateMessages()                 )) ;
+	QObject::connect(notify,SIGNAL(chatLobbyInviteReceived())         ,w->friendsDialog      		,SLOT(readChatLobbyInvites()           )) ;
 	QObject::connect(notify,SIGNAL(forumsChanged())                   ,w                   		,SLOT(updateForums()                   ), Qt::QueuedConnection);
 	QObject::connect(notify,SIGNAL(channelsChanged(int))              ,w                   		,SLOT(updateChannels(int)              ), Qt::QueuedConnection);
 	QObject::connect(notify,SIGNAL(downloadCompleteCountChanged(int)) ,w                   		,SLOT(updateTransfers(int)             ));

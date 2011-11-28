@@ -155,6 +155,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
 		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
+		bool acceptLobbyInvite(const ChatLobbyId& id) ;
+		void denyLobbyInvite(const ChatLobbyId& id) ;
+		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
 		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
 		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
@@ -209,8 +212,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*) ;
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
-		bool acceptLobbyInvite(const ChatLobbyId&) ;
-		void denyLobbyInvite(const ChatLobbyId&) ;
 
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;

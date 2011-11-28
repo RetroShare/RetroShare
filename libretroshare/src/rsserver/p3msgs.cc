@@ -290,4 +290,17 @@ ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::lis
 	return mChatSrv->createChatLobby(lobby_name,invited_friends) ;
 }
 
+bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 
+{
+	return mChatSrv->acceptLobbyInvite(id) ;
+}
+void p3Msgs::denyLobbyInvite(const ChatLobbyId& id) 
+{
+	mChatSrv->denyLobbyInvite(id) ;
+}
+void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) 
+{
+	mChatSrv->getPendingChatLobbyInvites(invites) ;
+}
+
 

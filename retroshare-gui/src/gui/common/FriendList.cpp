@@ -343,8 +343,10 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
 					 for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
 					 {
-						 QAction* inviteToLobbyAction = new QAction(QString::fromUtf8((*it).nick_name.c_str()), mnu);
-						 inviteToLobbyAction->setData(QString::number((*it).lobby_id,16));
+						 std::cerr << "Adding meny entry with lobby id " << std::hex << (*it).lobby_id << std::dec << std::endl;
+
+						 QAction* inviteToLobbyAction = new QAction(QString::fromUtf8((*it).lobby_name.c_str()), mnu);
+						 inviteToLobbyAction->setData(QString::number((*it).lobby_id));
 						 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
 						 mnu->addAction(inviteToLobbyAction);
 					 }
@@ -1426,7 +1428,10 @@ void FriendList::createchatlobby()
 	 std::string peer_id = getRsId(c) ;
 	 friend_list.push_back(peer_id) ;
 
-	 std::string lobby_name = "New lobby (Plz add the code to select this name at creation time)" ;
+	 static int number=0 ;
+
+	 ++number ;
+	 std::string lobby_name = "my cool lobby #"+QString::number(number).toStdString()+" (Plz add proper code to dynamically set this name in FriendList::createChatLobby())" ;
 
     // add to group
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, friend_list);

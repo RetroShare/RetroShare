@@ -496,6 +496,19 @@ void p3ChatService::receiveChatQueue()
 			delete item ;
 			continue ;
 		}
+
+		RsChatLobbyInviteItem *cl = dynamic_cast<RsChatLobbyInviteItem*>(item) ;
+
+		if(cl != NULL)
+		{
+			handleRecvLobbyInvite(cl) ;
+			delete item ;
+			continue ;
+		}
+
+		std::cerr << "Received ChatItem of unhandled type: " << std::endl;
+		item->print(std::cerr,0) ;
+		delete item ;
 	}
 
 	if (publicChanged) {
@@ -1249,7 +1262,7 @@ void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos)
 }
 void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
 {
-	std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< lobby_id << std::endl;
+	std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< std::hex << lobby_id << std::dec << std::endl;
 
 	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
 
@@ -1302,6 +1315,15 @@ void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_INVITATION, NOTIFY_TYPE_ADD);
 }
 
+void p3ChatService::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
+{
+	invites.clear() ;
+
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	for(std::map<ChatLobbyId,ChatLobbyInvite>::const_iterator it(_lobby_invites_queue.begin());it!=_lobby_invites_queue.end();++it)
+		invites.push_back(it->second) ;
+}
 
 bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id) 
 {
@@ -1334,6 +1356,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 	_chat_lobbys[lobby_id] = entry ;
 
 	_lobby_invites_queue.erase(it) ;		// remove the invite from cache.
+
+	// we should also send a message to the lobby to tell we're here.
+	
 	return true ;
 }
 void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id) 

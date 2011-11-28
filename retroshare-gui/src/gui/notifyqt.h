@@ -92,6 +92,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void downloadCompleteCountChanged(int /* count */);
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 		void historyChanged(uint msgId, int type);
+		void chatLobbyInviteReceived() ;
 
 		/* Notify from GUI */
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);

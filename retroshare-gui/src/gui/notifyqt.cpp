@@ -307,6 +307,12 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit filesPostModChanged(true) ;  /* Local */
 			break;
+		case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
+#ifdef NOTIFY_DEBUG
+			std::cerr << "received files changed" << std::endl ;
+#endif
+			emit chatLobbyInviteReceived() ;  /* Local */
+			break;
 		case NOTIFY_LIST_DIRLIST_FRIENDS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received files changed" << std::endl ;
