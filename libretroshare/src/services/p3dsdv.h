@@ -40,7 +40,7 @@
 class p3LinkMgr;
 
 
-#define RSDSDV_MAX_DISTANCE	3
+#define RSDSDV_MAX_DISTANCE	5
 #define RSDSDV_MAX_SEND_TABLE 100
 
 //!The RS DSDV service.
@@ -68,7 +68,7 @@ int     sendTables();
 void    advanceLocalSequenceNumbers();
 void    clearSignificantChangesFlags();
 
-int 	selectStableRoutes();
+
 int 	generateRoutingTables(bool incremental);
 int 	generateRoutingTable(const std::string &peerId, bool incremental);
 
@@ -76,6 +76,8 @@ int     processIncoming();
 
 int 	handleDSDV(RsDsdvRouteItem *dsdv);
 
+int 	selectStableRoutes();
+int 	clearOldRoutes();
 
 	public:
 

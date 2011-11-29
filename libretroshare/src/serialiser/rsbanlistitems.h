@@ -43,7 +43,11 @@ class RsBanListItem: public RsItem
 	RsBanListItem() 
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST, 
 		RS_PKT_SUBTYPE_BANLIST_ITEM)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_BANLIST_ITEM);
+		return; 
+	}
+
 virtual ~RsBanListItem();
 virtual void clear();  
 std::ostream &print(std::ostream &out, uint16_t indent = 0);

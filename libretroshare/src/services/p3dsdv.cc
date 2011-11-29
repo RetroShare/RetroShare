@@ -108,6 +108,7 @@ int	p3Dsdv::sendTables()
 		std::cerr << std::endl;
 #endif
 		selectStableRoutes();
+		clearOldRoutes();
 
 		generateRoutingTables(false);
 
@@ -140,6 +141,8 @@ void 	p3Dsdv::advanceLocalSequenceNumbers()
 {
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 
+	time_t now = time(NULL);
+
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
 	for(it = mTable.begin(); it != mTable.end(); it++)
 	{
@@ -147,6 +150,7 @@ void 	p3Dsdv::advanceLocalSequenceNumbers()
 		if (v.mOwnSource)
 		{
 			v.mStableRoute.mSequence += RSDSDV_SEQ_INCREMENT;
+			v.mStableRoute.mReceived = now;
 		}
 	}
 }
@@ -298,6 +302,13 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 
 	time_t now = time(NULL);
 	
+#ifdef	DEBUG_DSDV
+	std::cerr << "p3Dsdv::handleDSDV() Received Pkt from: " << dsdv->PeerId();
+	std::cerr << std::endl;
+	dsdv->print(std::cerr);
+	std::cerr << std::endl;
+#endif
+
 	std::list<RsTlvDsdvEntry>::iterator it;
 	for(it = dsdv->routes.entries.begin(); it != dsdv->routes.entries.end(); it++)
 	{
@@ -305,11 +316,17 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 		RsTlvDsdvEntry &entry = *it;
 		uint32_t realDistance = entry.distance + 1; // metric.
 
+	
 		/* find the entry */
 		std::map<std::string, RsDsdvTableEntry>::iterator tit;
 		tit = mTable.find(entry.endPoint.serviceId);
 		if (tit == mTable.end())
 		{
+#ifdef	DEBUG_DSDV
+			std::cerr << "p3Dsdv::handleDSDV() Adding Entry for New ServiceId: ";
+			std::cerr << entry.endPoint.serviceId;
+			std::cerr << std::endl;
+#endif
 			/* new entry! */
 			RsDsdvTableEntry v;
 			v.mDest.mIdType = entry.endPoint.idType;
@@ -340,6 +357,11 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 			RsDsdvTableEntry &v = tit->second;
 			if (v.mOwnSource)
 			{
+#ifdef	DEBUG_DSDV
+				std::cerr << "p3Dsdv::handleDSDV() Ignoring OwnSource Entry:";
+				std::cerr << entry.endPoint.serviceId;
+				std::cerr << std::endl;
+#endif
 				continue; // Ignore if we are source.
 			}
 			
@@ -360,14 +382,29 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 				v.mAllRoutes[dsdv->PeerId()] = newRoute;
 
 				/* if we've just added it in - can't be stable one */
+#ifdef	DEBUG_DSDV
+				std::cerr << "p3Dsdv::handleDSDV() Adding NewRoute Entry:";
+				std::cerr << entry.endPoint.serviceId;
+				std::cerr << std::endl;
+#endif
 			}
 			else
 			{
 				if (rit->second.mSequence >= entry.sequence)
 				{
+#ifdef	DEBUG_DSDV
+				std::cerr << "p3Dsdv::handleDSDV() Ignoring OLDSEQ Entry:";
+				std::cerr << entry.endPoint.serviceId;
+				std::cerr << std::endl;
+#endif
 					/* ignore same/old sequence number??? */
 					continue;
 				}
+#ifdef	DEBUG_DSDV
+				std::cerr << "p3Dsdv::handleDSDV() Updating Entry:";
+				std::cerr << entry.endPoint.serviceId;
+				std::cerr << std::endl;
+#endif
 
 				/* update seq,dist,etc */
 				if (rit->second.mSequence + 2 < entry.sequence)
@@ -416,11 +453,16 @@ int p3Dsdv::selectStableRoutes()
 	{
 	
 #ifdef	DEBUG_DSDV
-		std::cerr << "p3Dsdv::selectStableRoutes() For Entry: " << tit->second;
+		std::cerr << "p3Dsdv::selectStableRoutes() For Entry: ";
+		std::cerr << tit->second;
 		std::cerr << std::endl;
 #endif
 		if (tit->second.mOwnSource)
 		{
+#ifdef	DEBUG_DSDV
+			std::cerr << "p3Dsdv::selectStableRoutes() OwnSource... Ignoring";
+			std::cerr << std::endl;
+#endif
 			continue; // Ignore if we are source.
 		}		
 		
@@ -435,7 +477,8 @@ int p3Dsdv::selectStableRoutes()
 		for(rit = tit->second.mAllRoutes.begin(); 
 			rit != tit->second.mAllRoutes.end(); rit++)
 		{
-			if (rit->second.mSequence >= newest)
+			if ((now - rit->second.mReceived <= DSDV_DISCARD_PERIOD) &&
+					(rit->second.mSequence >= newest))
 			{
 				newest = rit->second.mSequence;
 				newestId = rit->first;
@@ -445,6 +488,16 @@ int p3Dsdv::selectStableRoutes()
 				closestId = rit->first;
 				closestAge = now - rit->second.mValidSince;
 			}
+		}
+
+		if (closest == RSDSDV_MAX_DISTANCE)
+		{
+#ifdef	DEBUG_DSDV
+			std::cerr << "\tNo Suitable Route";
+			std::cerr << std::endl;
+#endif
+			tit->second.mIsStable = false;
+			continue;
 		}
 
 		uint32_t currseq = newest - (newest % 2); // remove 'kill'=ODD Seq.
@@ -514,24 +567,60 @@ int p3Dsdv::selectStableRoutes()
 
 		}
 
-		if (closest == RSDSDV_MAX_DISTANCE)
-		{
+		tit->second.mIsStable = true;
+		rit = tit->second.mAllRoutes.find(closestId);
+		tit->second.mStableRoute = rit->second;
+		tit->second.mFlags &= ~RSDSDV_FLAGS_NEW_ROUTE; 
+
 #ifdef	DEBUG_DSDV
-			std::cerr << "\tNo Suitable Route";
-			std::cerr << std::endl;
+		std::cerr << "\tStable Route: " << tit->second.mStableRoute;
+		std::cerr << std::endl;
 #endif
-			tit->second.mIsStable = false;
-		}
-		else
-		{
-			tit->second.mIsStable = true;
-			rit = tit->second.mAllRoutes.find(closestId);
-			tit->second.mStableRoute = rit->second;
+	}
+	return 1;
+}
+
+
+
+
+int p3Dsdv::clearOldRoutes()
+{
+	/* iterate over the entries */
+	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
+
 #ifdef	DEBUG_DSDV
-			std::cerr << "\tStable Route: " << tit->second.mStableRoute;
-			std::cerr << std::endl;
+	std::cerr << "p3Dsdv::clearOldRoutes()";
+	std::cerr << std::endl;
 #endif
+
+	/* find the entry */
+	std::map<std::string, RsDsdvTableEntry>::iterator it, it2;
+	for(it = mTable.begin(); it != mTable.end(); it++)
+	{
+		if (it->second.mOwnSource)	
+		{
+			continue;
 		}
+
+		if (it->second.mIsStable)
+		{
+			continue;
+		}
+
+		if (it->second.mFlags & RSDSDV_FLAGS_NEW_ROUTE)
+		{
+			continue;
+		}
+
+		/* backstep iterator for loop, and delete original */
+		it2 = it;
+		it--;
+
+#ifdef	DEBUG_DSDV
+		std::cerr << "p3Dsdv::clearOldRoutes() Deleting OLD ServiceId: " << it2->first;
+		std::cerr << std::endl;
+#endif
+		mTable.erase(it2);
 	}
 	return 1;
 }
@@ -641,6 +730,7 @@ int p3Dsdv::addDsdvId(RsDsdvId *id, std::string realHash)
 	v.mStableRoute.mValidSince = now;
 	v.mStableRoute.mSequence = 0;
 	v.mStableRoute.mDistance = 0;
+	v.mIsStable = true;
 
 	v.mFlags = RSDSDV_FLAGS_OWN_SERVICE;
 	v.mOwnSource = true;
@@ -760,8 +850,11 @@ std::ostream &operator<<(std::ostream &out, const RsDsdvId &id)
 
 std::ostream &operator<<(std::ostream &out, const RsDsdvRoute &route)
 {
+	time_t now = time(NULL);
 	out << "< Seq: " << route.mSequence << " Dist: " << route.mDistance;
-	out << " NextHop: " << route.mNextHop << " recvd: " << route.mReceived;
+	out << " NextHop: " << route.mNextHop;
+	out << " recvd: " << now-route.mReceived;
+	out << " validSince: " << now-route.mValidSince;
 	out << " >";
 
 	return out;
@@ -770,19 +863,30 @@ std::ostream &operator<<(std::ostream &out, const RsDsdvRoute &route)
 std::ostream &operator<<(std::ostream &out, const RsDsdvTableEntry &entry)
 {
 	out << "DSDV Route for: " << entry.mDest << std::endl;
-	out << "\tStable: " << entry.mStableRoute << std::endl;
-	out << "\tOwnSource: " << entry.mOwnSource;
-	out << " Flags: " << entry.mFlags << std::endl;
-	if (entry.mMatched)
+	if (entry.mIsStable)
 	{
-		out << "Matched: " << entry.mMatchedHash;
+		out << "\tStable: " << entry.mStableRoute << std::endl;
 	}
 	else
 	{
-		out << "Non Matched";
+		out << "\tNo Stable Route" << std::endl;
+	}
+
+	out << "\tOwnSource: " << entry.mOwnSource;
+	out << " Flags: " << entry.mFlags; 
+	if (entry.mMatched)
+	{
+		out << " Matched: " << entry.mMatchedHash;
+	}
+	else
+	{
+		out << " Non Matched";
 	}
 	out  << std::endl;
-	out << "\tAll Routes:" << std::endl;
+	if (entry.mAllRoutes.size() > 0)
+	{
+		out << "\tAll Routes:" << std::endl;
+	}
 
 	std::map<std::string, RsDsdvRoute>::const_iterator it;
 	for(it = entry.mAllRoutes.begin(); it != entry.mAllRoutes.end(); it++)

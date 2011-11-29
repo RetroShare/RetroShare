@@ -45,7 +45,10 @@ class RsDsdvRouteItem: public RsItem
 	RsDsdvRouteItem() 
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DSDV, 
 		RS_PKT_SUBTYPE_DSDV_ROUTE)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_DSDV_ROUTE);
+		return; 
+	}
 virtual ~RsDsdvRouteItem();
 virtual void clear();  
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
@@ -53,14 +56,16 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvDsdvEntrySet routes;
 };
 
-
 class RsDsdvDataItem: public RsItem
 {
 	public:
 	RsDsdvDataItem() 
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DSDV, 
 		RS_PKT_SUBTYPE_DSDV_DATA), data(TLV_TYPE_BIN_GENERIC)
-	{ return; }
+	{ 
+		setPriorityLevel(QOS_PRIORITY_RS_DSDV_DATA);
+		return; 
+	}
 virtual ~RsDsdvDataItem();
 virtual void clear();  
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
