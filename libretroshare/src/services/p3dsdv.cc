@@ -84,7 +84,7 @@ int	p3Dsdv::status()
 	return 1;
 }
 
-#define DSDV_BROADCAST_PERIOD		60
+#define DSDV_BROADCAST_PERIOD		(60*10) // 10 Minutes.
 #define DSDV_MIN_INCREMENT_PERIOD	5
 #define DSDV_DISCARD_PERIOD			(DSDV_BROADCAST_PERIOD * 2)
 
@@ -305,8 +305,8 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 #ifdef	DEBUG_DSDV
 	std::cerr << "p3Dsdv::handleDSDV() Received Pkt from: " << dsdv->PeerId();
 	std::cerr << std::endl;
-	dsdv->print(std::cerr);
-	std::cerr << std::endl;
+	//dsdv->print(std::cerr);
+	//std::cerr << std::endl;
 #endif
 
 	std::list<RsTlvDsdvEntry>::iterator it;
@@ -469,7 +469,7 @@ int p3Dsdv::selectStableRoutes()
 		std::map<std::string, RsDsdvRoute>::iterator rit;
 		uint32_t newest = 0;
 		std::string newestId;
-		uint32_t closest = RSDSDV_MAX_DISTANCE;
+		uint32_t closest = RSDSDV_MAX_DISTANCE + 1;
 		std::string closestId;
 		time_t closestAge = 0;
 
@@ -490,7 +490,7 @@ int p3Dsdv::selectStableRoutes()
 			}
 		}
 
-		if (closest == RSDSDV_MAX_DISTANCE)
+		if (closest >= RSDSDV_MAX_DISTANCE + 1)
 		{
 #ifdef	DEBUG_DSDV
 			std::cerr << "\tNo Suitable Route";

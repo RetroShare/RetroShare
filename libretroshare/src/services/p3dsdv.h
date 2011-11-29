@@ -40,7 +40,7 @@
 class p3LinkMgr;
 
 
-#define RSDSDV_MAX_DISTANCE	5
+#define RSDSDV_MAX_DISTANCE	3
 #define RSDSDV_MAX_SEND_TABLE 100
 
 //!The RS DSDV service.
