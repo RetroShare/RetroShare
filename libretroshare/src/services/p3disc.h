@@ -74,6 +74,7 @@ class autoneighbour: public autoserver
 
 class p3PeerMgr;
 class p3LinkMgr;
+class p3NetMgr;
 
 
 class p3disc: public p3Service, public pqiMonitor, public p3Config, public AuthGPGService
@@ -81,7 +82,7 @@ class p3disc: public p3Service, public pqiMonitor, public p3Config, public AuthG
 	public:
 
 
-        p3disc(p3PeerMgr *pm, p3LinkMgr *lm, pqipersongrp *persGrp);
+        p3disc(p3PeerMgr *pm, p3LinkMgr *lm, p3NetMgr *nm, pqipersongrp *persGrp);
 
 	/************* from pqiMonitor *******************/
 virtual void statusChange(const std::list<pqipeer> &plist);
@@ -145,6 +146,7 @@ int 	idServers();
 
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
+	p3NetMgr  *mNetMgr;
 	
 	pqipersongrp *mPqiPersonGrp;
 

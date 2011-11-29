@@ -83,7 +83,7 @@ class RsPlugin
 		virtual MainPage       *qt_page()       		const	{ return NULL ; }
 		virtual QWidget        *qt_config_panel()		const	{ return NULL ; }
 		virtual QIcon          *qt_icon()       		const	{ return NULL ; }
-		virtual QTranslator    *qt_translator(QApplication */*app*/, const QString& /*languageCode*/) const	{ return NULL ; }
+		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */ ) const	{ return NULL ; }
 
 		virtual std::string configurationFileName() const { return std::string() ; }
 		virtual std::string getShortPluginDescription() const = 0 ;

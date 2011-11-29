@@ -109,6 +109,7 @@ HEADERS += \
 	bitdht/bdaccount.h	\
 	bitdht/bdquerymgr.h	\
 	util/bdbloom.h		\
+	bitdht/bdfriendlist.h	\
 
 SOURCES += \
 	bitdht/bencode.c	\
@@ -133,5 +134,6 @@ SOURCES += \
 	bitdht/bdaccount.cc	\
 	bitdht/bdquerymgr.cc	\
 	util/bdbloom.cc		\
+	bitdht/bdfriendlist.cc	\
 
 

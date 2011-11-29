@@ -87,7 +87,7 @@ uint8_t convertCharToUint8(char ch1, char ch2)
 
 int bloomFilter::setFilterBits(const std::string &hex)
 {
-	int bytes = (mFilterBits / BITS_PER_BYTE);
+	uint32_t bytes = (mFilterBits / BITS_PER_BYTE);
 	if (mFilterBits % BITS_PER_BYTE)
 	{
 		bytes++;
@@ -100,7 +100,7 @@ int bloomFilter::setFilterBits(const std::string &hex)
 
 	// convert to binary array.
 	uint8_t *tmparray = (uint8_t *) malloc(bytes);
-	int i = 0;
+	uint32_t i = 0;
 
 	for(i = 0; i < bytes; i++)
 	{
@@ -186,7 +186,7 @@ uint32_t bloomFilter::filterBits()
 uint32_t bloomFilter::countBits()
 {
 	int count = 0;
-	int i;
+	uint32_t i;
 	for(i = 0; i < mFilterBits; i++)
 	{
 		if (mBits[i])
@@ -206,7 +206,7 @@ void bloomFilter::printFilter(std::ostream &out)
 	out << std::endl;
 
 	out << "BITS: ";
-	int i;
+	uint32_t i;
 	for(i = 0; i < mFilterBits; i++)
 	{
 		if ((i > 0) && (i % 32 == 0))
@@ -236,7 +236,7 @@ void bloomFilter::setHashFunction(int idx,  uint32_t (*hashfn)(const std::string
 void bloomFilter::add(const std::string &hex)
 {
 	uint32_t (*hashfn)(const std::string &);
-	int i;
+	uint32_t i;
 	for(i = 0; i < mNoHashs; i++)
 	{
 		hashfn = mHashFns[i];
@@ -253,7 +253,7 @@ void bloomFilter::add(const std::string &hex)
 bool bloomFilter::test(const std::string &hex)
 {
 	uint32_t (*hashfn)(const std::string &);
-	int i;
+	uint32_t i;
 	for(i = 0; i < mNoHashs; i++)
 	{
 		hashfn = mHashFns[i];

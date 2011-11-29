@@ -57,6 +57,11 @@ virtual ~UdpBitDht();
 	/*********** External Interface to the World (BitDhtInterface) ************/
 
 	/***** Functions to Call down to bdNodeManager ****/
+
+        /* Friend Tracking */
+virtual void addBadPeer(const struct sockaddr_in &addr, uint32_t source, uint32_t reason, uint32_t age);
+virtual void updateKnownPeer(const bdId *id, uint32_t type, uint32_t flags);
+
 	/* Request DHT Peer Lookup */
 	/* Request Keyword Lookup */
 virtual	void addFindNode(bdNodeId *id, uint32_t mode);

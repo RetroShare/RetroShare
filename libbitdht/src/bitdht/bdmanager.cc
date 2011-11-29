@@ -157,8 +157,17 @@ bool bdNodeManager::setAttachMode(bool on)
         return on;
 }
 
+        /* Friend Tracking */
+void bdNodeManager::addBadPeer(const struct sockaddr_in &addr, uint32_t source, uint32_t reason, uint32_t age)
+{
+	std::cerr << "bdNodeManager::addBadPeer() not implemented yet!";
+	std::cerr << std::endl;
+}
 
-
+void bdNodeManager::updateKnownPeer(const bdId *id, uint32_t /* type */, uint32_t flags)
+{
+	mFriendList.updatePeer(id, flags);
+}
 
 void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 {
@@ -621,6 +630,7 @@ int bdNodeManager::status()
 #endif
 
 	checkStatus();
+	checkBadPeerStatus();
 
 	/* update the network numbers */
 	mNetworkSize = mNodeSpace.calcNetworkSize();
@@ -924,6 +934,18 @@ bdNodeManager::checkPingStatus()
 }
 #endif
 
+int bdNodeManager::checkBadPeerStatus()
+{
+	bdId id;
+	uint32_t flags;
+	std::string nullstr;
+
+	while(mBadPeerQueue.popPeer(&id, flags))
+	{
+		doInfoCallback(&id, BITDHT_INFO_CB_TYPE_BADPEER, flags, nullstr);
+	}
+	return 1;
+}
 
 int bdNodeManager::SearchOutOfDate()
 {
@@ -1133,6 +1155,23 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_
         for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
         {
                 (*it)->dhtValueCallback(id, key, status);
+        }
+        return;
+}
+
+
+void bdNodeManager::doInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
+{
+	std::cerr << "bdNodeManager::doInfoCallback()";
+	std::cerr << std::endl;
+
+#ifdef DEBUG_MGR
+#endif
+        /* search list */
+        std::list<BitDhtCallback *>::iterator it;
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        {
+                (*it)->dhtInfoCallback(id, type, flags, info);
         }
         return;
 }

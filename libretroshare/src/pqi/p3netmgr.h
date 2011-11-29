@@ -97,6 +97,7 @@ class UdpRelayReceiver;
 #define NETMGR_DHT_FEEDBACK_CONN_FAILED 0x0002
 #define NETMGR_DHT_FEEDBACK_CONN_CLOSED	0x0003
 
+
 /**********
  * p3NetMgr Interface....
  * This allows a drop-in replacement for testing.
@@ -118,6 +119,8 @@ virtual bool 	setVisState(uint32_t visState) = 0;
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(std::string id, bool on) = 0;
+virtual bool netAssistKnownPeer(std::string id, const struct sockaddr_in &addr, uint32_t flags) = 0;
+virtual bool netAssistBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
 virtual bool netAssistStatusUpdate(std::string id, int mode) = 0;
 
 	/* Get Network State */
@@ -172,6 +175,8 @@ virtual bool 	setVisState(uint32_t visState);
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(std::string id, bool on);
+virtual bool netAssistKnownPeer(std::string id, const struct sockaddr_in &addr, uint32_t flags);
+virtual bool netAssistBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age);
 virtual bool netAssistStatusUpdate(std::string id, int mode);
 
 	/* Get Network State */

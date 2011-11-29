@@ -102,6 +102,12 @@ class bdNodeManager: public bdNode, public BitDhtInterface
 void 	iteration();
 
         /***** Functions to Call down to bdNodeManager ****/
+
+
+        /* Friend Tracking */
+virtual void addBadPeer(const struct sockaddr_in &addr, uint32_t source, uint32_t reason, uint32_t age);
+virtual void updateKnownPeer(const bdId *id, uint32_t type, uint32_t flags);
+
         /* Request DHT Peer Lookup */
         /* Request Keyword Lookup */
 virtual void addFindNode(bdNodeId *id, uint32_t mode);
@@ -149,10 +155,12 @@ int 	isBitDhtPacket(char *data, int size, struct sockaddr_in &from);
 void 	doNodeCallback(const bdId *id, uint32_t peerflags);
 void 	doPeerCallback(const bdId *id, uint32_t status);
 void 	doValueCallback(const bdNodeId *id, std::string key, uint32_t status);
+void    doInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info);
 
 int	status();
 int	checkStatus();
 int 	checkPingStatus();
+int	checkBadPeerStatus();
 int 	SearchOutOfDate();
 void	startQueries();
 

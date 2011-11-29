@@ -37,6 +37,8 @@
 #include "bitdht/bdconnection.h"
 #include "bitdht/bdaccount.h"
 
+#include "bitdht/bdfriendlist.h"
+
 class bdFilter;
 
 
@@ -240,6 +242,9 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	bdDhtFunctions *mFns;
 	bdHashSpace mHashSpace;
+
+	bdFriendList mFriendList;
+	bdPeerQueue  mBadPeerQueue;
 
 	private:
 

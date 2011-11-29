@@ -73,3 +73,12 @@ const uint8_t QOS_PRIORITY_RS_STATUS_ITEM     			= 2 ;
 //
 const uint8_t QOS_PRIORITY_RS_VOIP_PING               = 9 ;
 
+// BanList
+//
+const uint8_t QOS_PRIORITY_RS_BANLIST_ITEM     			= 2 ;
+
+// Dsdv Routing
+//
+const uint8_t QOS_PRIORITY_RS_DSDV_ROUTE     			= 4 ;
+const uint8_t QOS_PRIORITY_RS_DSDV_DATA     			= 2 ;
+
