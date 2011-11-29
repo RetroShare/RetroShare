@@ -68,6 +68,7 @@ int     sendTables();
 void    advanceLocalSequenceNumbers();
 void    clearSignificantChangesFlags();
 
+int 	selectStableRoutes();
 int 	generateRoutingTables(bool incremental);
 int 	generateRoutingTable(const std::string &peerId, bool incremental);
 

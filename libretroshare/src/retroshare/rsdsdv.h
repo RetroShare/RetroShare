@@ -62,6 +62,7 @@ class RsDsdvRoute
 	uint32_t 	mSequence;
 	uint32_t 	mDistance;
 	time_t   	mReceived;
+	time_t   	mValidSince;
 
 };
 
@@ -70,8 +71,11 @@ class RsDsdvTableEntry
 	public:
 
 	RsDsdvId	mDest;
+	bool		mIsStable;
 	RsDsdvRoute	mStableRoute;
-	RsDsdvRoute	mBestRoute;
+	//RsDsdvRoute	mFreshestRoute;
+
+	std::map<std::string, RsDsdvRoute> mAllRoutes;
 
 	uint32_t	mFlags;
 
