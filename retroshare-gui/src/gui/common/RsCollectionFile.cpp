@@ -184,6 +184,7 @@ bool RsCollectionFile::save(const QString& filename) const
 	}
 
 	QTextStream stream(&file) ;
+	stream.setCodec("UTF-8") ;
 
 	stream << _xml_doc.toString() ;
 

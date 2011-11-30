@@ -29,9 +29,9 @@ bool RsUrlHandler::openUrl(const QUrl& url)
 {
 	if(url.scheme() == QString("file") && url.toLocalFile().endsWith("."+RsCollectionFile::ExtensionString))
 	{
-		RsCollectionFile Collection;
-		if (Collection.load(url.toLocalFile().toUtf8().constData())) {
-			Collection.downloadFiles() ;
+		try
+		{
+			RsCollectionFile(url.toLocalFile()).downloadFiles() ;
 		}
 		return true;
 	}
