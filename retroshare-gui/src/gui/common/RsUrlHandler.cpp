@@ -29,11 +29,12 @@ bool RsUrlHandler::openUrl(const QUrl& url)
 {
 	if(url.scheme() == QString("file") && url.toLocalFile().endsWith("."+RsCollectionFile::ExtensionString))
 	{
-		try
+		RsCollectionFile collection ;
+		if(collection.load(url.toLocalFile()))
 		{
-			RsCollectionFile(url.toLocalFile()).downloadFiles() ;
+			collection.downloadFiles() ;
+			return true;
 		}
-		return true;
 	}
 	return QDesktopServices::openUrl(url) ;
 }
