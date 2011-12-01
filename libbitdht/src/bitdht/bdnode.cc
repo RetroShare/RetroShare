@@ -83,7 +83,14 @@ void bdNode::init()
 	//setNodeOptions(BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT);
 	setNodeOptions(0);
 
+	mNodeDhtMode = 0;
+	setNodeDhtMode(BITDHT_MODE_TRAFFIC_DEFAULT);
+
 }
+
+/* Unfortunately I've ended up with 2 calls down through the heirarchy...
+ * not ideal - must clean this up one day.
+ */
 
 #define ATTACH_NUMBER 5
 void bdNode::setNodeOptions(uint32_t optFlags)
@@ -97,6 +104,55 @@ void bdNode::setNodeOptions(uint32_t optFlags)
 	{
 		mNodeSpace.setAttachedFlag(BITDHT_PEER_STATUS_DHT_ENGINE | BITDHT_PEER_STATUS_DHT_ENGINE_VERSION, 0);
 	}
+}
+
+#define BDNODE_HIGH_MSG_RATE	50
+#define BDNODE_MED_MSG_RATE	10
+#define BDNODE_LOW_MSG_RATE	5
+#define BDNODE_TRICKLE_MSG_RATE	3
+
+uint32_t bdNode::setNodeDhtMode(uint32_t dhtFlags)
+{
+	uint32_t origFlags = mNodeDhtMode;
+	mNodeDhtMode = dhtFlags;
+
+	uint32_t traffic = dhtFlags &  BITDHT_MODE_TRAFFIC_MASK;
+
+	switch(traffic)
+	{
+		default:
+		case BITDHT_MODE_TRAFFIC_DEFAULT:	
+		case BITDHT_MODE_TRAFFIC_LOW:
+			mMaxAllowedMsgs = BDNODE_HIGH_MSG_RATE;
+			break;
+		case BITDHT_MODE_TRAFFIC_HIGH:
+			mMaxAllowedMsgs = BDNODE_LOW_MSG_RATE;
+			break;
+		case BITDHT_MODE_TRAFFIC_MED:
+			mMaxAllowedMsgs = BDNODE_MED_MSG_RATE;
+			break;
+		case BITDHT_MODE_TRAFFIC_TRICKLE:
+			mMaxAllowedMsgs = BDNODE_TRICKLE_MSG_RATE;
+			break;
+	}
+
+	uint32_t relay = dhtFlags & BITDHT_MODE_RELAY_MASK;
+	if (relay != (origFlags & BITDHT_MODE_RELAY_MASK))
+	{
+		/* changed */
+		switch(relay)
+		{
+			default:
+			case BITDHT_MODE_RELAYS_IGNORED:
+				break;
+			case BITDHT_MODE_RELAYS_FLAGGED:
+				break;
+			case BITDHT_MODE_RELAYS_ONLY:
+				break;
+		}
+	}
+	
+	return dhtFlags;
 }
 
 
@@ -169,7 +225,12 @@ void bdNode::printState()
 #ifdef USE_HISTORY
 	mHistory.printMsgs();
 #endif
+	std::cerr << "Outstanding Potential Peers: " << mPotentialPeers.size();
+	std::cerr << std::endl;
 	
+	std::cerr << "Outstanding Query Requests: " << mRemoteQueries.size();
+	std::cerr << std::endl;
+
 	mAccount.printStats(std::cerr);
 }
 
@@ -214,49 +275,24 @@ void bdNode::iteration()
 	 * so allow up to 90% of messages to be pings.
 	 *
 	 * ignore responses to other peers... as the number is very small generally
+	 *
+	 * The Rate IS NOW DEFINED IN NodeDhtMode.
 	 */
 	
-#define BDNODE_MESSAGE_RATE_HIGH 	1
-#define BDNODE_MESSAGE_RATE_MED 	2
-#define BDNODE_MESSAGE_RATE_LOW 	3
-#define BDNODE_MESSAGE_RATE_TRICKLE 	4
-	
-#define BDNODE_HIGH_MSG_RATE	100
-#define BDNODE_MED_MSG_RATE	50
-#define BDNODE_LOW_MSG_RATE	20
-#define BDNODE_TRICKLE_MSG_RATE	5
-
-	int maxMsgs = BDNODE_MED_MSG_RATE;
-	int mAllowedMsgRate = BDNODE_MESSAGE_RATE_MED;
-	
-	switch(mAllowedMsgRate)
-	{
-		case BDNODE_MESSAGE_RATE_HIGH:
-			maxMsgs = BDNODE_HIGH_MSG_RATE;
-			break;
-
-		case BDNODE_MESSAGE_RATE_MED:
-			maxMsgs = BDNODE_MED_MSG_RATE;
-			break;
-
-		case BDNODE_MESSAGE_RATE_LOW:
-			maxMsgs = BDNODE_LOW_MSG_RATE;
-			break;
-
-		case BDNODE_MESSAGE_RATE_TRICKLE:
-			maxMsgs = BDNODE_TRICKLE_MSG_RATE;
-			break;
-
-		default:
-			break;
-
-	}
-
-
-
-	int allowedPings = 0.9 * maxMsgs;
+	int allowedPings = 0.9 * mMaxAllowedMsgs;
 	int sentMsgs = 0;
 	int sentPings = 0;
+
+#define BDNODE_MAX_POTENTIAL_PEERS_MULTIPLIER 	5
+
+	/* Disable Queries if our Ping Queue is too long */
+	if (mPotentialPeers.size() > mMaxAllowedMsgs * BDNODE_MAX_POTENTIAL_PEERS_MULTIPLIER)
+	{
+		std::cerr << "bdNode::iteration() Disabling Queries until PotentialPeer Queue reduced";
+		std::cerr << std::endl;
+		allowedPings = mMaxAllowedMsgs;
+	}
+	
 
 	while((mPotentialPeers.size() > 0) && (sentMsgs < allowedPings))
 	{
@@ -301,10 +337,11 @@ void bdNode::iteration()
 		}
 
 	}
-	
+
 	/* allow each query to send up to one query... until maxMsgs has been reached */
-	int sentQueries = mQueryMgr->iterateQueries(maxMsgs-sentMsgs);
+	int sentQueries = mQueryMgr->iterateQueries(mMaxAllowedMsgs-sentMsgs);
 	sentMsgs += sentQueries;
+
 	
 #ifdef DEBUG_NODE_ACTIONS 
 	std::cerr << "bdNode::iteration() maxMsgs: " << maxMsgs << " sentPings: " << sentPings;

@@ -103,7 +103,8 @@ bool p3BanList::processIncoming()
 				break;
 			case RS_PKT_SUBTYPE_BANLIST_ITEM:
 			{
-				updated = (updated || recvBanItem((RsBanListItem *) item));
+				// Order is important!.	
+				updated = (recvBanItem((RsBanListItem *) item) || updated);
 			}
 				break;
 		}
@@ -136,8 +137,9 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 	std::list<RsTlvBanListEntry>::const_iterator it;
 	for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); it++)
 	{
-		updated = (updated || addBanEntry(item->PeerId(), 
-				it->addr, it->level, it->reason, it->age));		
+		// Order is important!.	
+		updated = (addBanEntry(item->PeerId(), it->addr, it->level, 
+			it->reason, it->age) || updated);
 	}
 	return updated;
 }
@@ -172,6 +174,17 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 	std::cerr << " Reason: " << reason << " Age: " << age;
 	std::cerr << std::endl;
 #endif
+
+	/* Only Accept it - if external address */
+	if (!isExternalNet(&(addr.sin_addr)))
+	{
+#ifdef DEBUG_BANLIST
+		std::cerr << "p3BanList::addBanEntry() Ignoring Non External Addr: " << rs_inet_ntoa(addr.sin_addr);
+		std::cerr << std::endl;
+#endif
+		return false;
+        }
+
 
 	std::map<std::string, BanList>::iterator it;
 	it = mBanSources.find(peerId);

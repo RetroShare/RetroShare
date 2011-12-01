@@ -107,6 +107,23 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 
 
+// DHT MODES
+#define BITDHT_MODE_TRAFFIC_MASK	0x00000f00
+#define BITDHT_MODE_RELAY_MASK  	0x0000f000
+
+// These are not ORd - only one can apply.
+#define BITDHT_MODE_TRAFFIC_DEFAULT	0x00000000
+#define BITDHT_MODE_TRAFFIC_HIGH	0x00000100
+#define BITDHT_MODE_TRAFFIC_MED		0x00000200
+#define BITDHT_MODE_TRAFFIC_LOW		0x00000300
+#define BITDHT_MODE_TRAFFIC_TRICKLE	0x00000400
+
+// These are not ORd - only one can apply.
+#define BITDHT_MODE_RELAYS_IGNORED	0x00000000
+#define BITDHT_MODE_RELAYS_FLAGGED	0x00001000
+#define BITDHT_MODE_RELAYS_ONLY		0x00002000
+
+
 /* NODE OPTIONS */
 #define BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT		0x00000001
 #define BITDHT_OPTIONS_ENABLE_RELAYS			0x00000002
@@ -306,6 +323,7 @@ class bdQuerySummary
 
 #define BITDHT_INFO_CB_TYPE_BADPEER	1
 
+
 class BitDhtCallback
 {
 	public:
@@ -370,6 +388,8 @@ virtual int stopDht() = 0;
 virtual int stateDht() = 0; /* STOPPED, STARTING, ACTIVE, FAILED */
 virtual uint32_t statsNetworkSize() = 0;
 virtual uint32_t statsBDVersionSize() = 0; /* same version as us! */
+
+virtual uint32_t setDhtMode(uint32_t dhtFlags) = 0;
 };
 
 
