@@ -144,6 +144,15 @@ uint32_t bdNodeManager::statsBDVersionSize()
         return mBdNetworkSize;
 }
 
+uint32_t bdNodeManager::setDhtMode(uint32_t dhtFlags)
+{
+	/* handle options here? */
+	setNodeDhtMode(dhtFlags);
+
+	return dhtFlags;
+}
+
+
 bool bdNodeManager::setAttachMode(bool on)
 {
 	if (on)

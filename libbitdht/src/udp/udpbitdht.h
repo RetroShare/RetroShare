@@ -93,6 +93,7 @@ virtual int stopDht();
 virtual int stateDht(); 
 virtual uint32_t statsNetworkSize();
 virtual uint32_t statsBDVersionSize(); 
+virtual uint32_t setDhtMode(uint32_t dhtFlags);
 
 	/******************* Internals *************************/
 	/***** Iteration / Loop Management *****/

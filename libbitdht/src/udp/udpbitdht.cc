@@ -249,6 +249,14 @@ uint32_t UdpBitDht::statsBDVersionSize()
 	return mBitDhtManager->statsBDVersionSize();
 }
 
+uint32_t UdpBitDht::setDhtMode(uint32_t dhtFlags)
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->setDhtMode(dhtFlags);
+}
+
+
         /******************* Internals *************************/
 
         /***** Iteration / Loop Management *****/

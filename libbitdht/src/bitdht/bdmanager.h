@@ -140,6 +140,9 @@ virtual int stopDht();
 virtual int stateDht(); /* STOPPED, STARTING, ACTIVE, FAILED */
 virtual uint32_t statsNetworkSize();
 virtual uint32_t statsBDVersionSize(); /* same version as us! */
+
+virtual uint32_t setDhtMode(uint32_t dhtFlags);
+
         /******************* Internals *************************/
 
 	// Overloaded from bdnode for external node callback.

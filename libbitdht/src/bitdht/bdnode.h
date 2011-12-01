@@ -123,6 +123,7 @@ class bdNode: public bdNodePublisher
 	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
 
 	void setNodeOptions(uint32_t optFlags);
+	uint32_t setNodeDhtMode(uint32_t dhtFlags);
 
 	/* startup / shutdown node */
 	void restartNode();
@@ -249,6 +250,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	private:
 
 	uint32_t mNodeOptionFlags;	
+	uint32_t mNodeDhtMode;
+	uint32_t mMaxAllowedMsgs;
 
 	bdHistory mHistory; /* for understanding the DHT */
 
@@ -258,6 +261,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	std::list<bdNodeNetMsg *> mOutgoingMsgs;
 	std::list<bdNodeNetMsg *> mIncomingMsgs;
+
 };
 
 
