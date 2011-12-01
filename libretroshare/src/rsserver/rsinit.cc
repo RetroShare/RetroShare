@@ -2135,10 +2135,12 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mBanList);
 	mBitDht->setupPeerSharer(mBanList);
 
+#ifdef RS_DSDVTEST
 	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);
 	pqih -> addService(mDsdv);
 	rsDsdv = mDsdv;
 	mDsdv->addTestService();
+#endif
 
 #endif // MINIMAL_LIBRS
 

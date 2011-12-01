@@ -879,8 +879,12 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		/* always switch it off now */
 		mNetMgr->netAssistFriend(id,false);
 
-		/* inform NetMgr that we know this peers address */
-		mNetMgr->netAssistKnownPeer(id,remote_peer_address, NETASSIST_KNOWN_PEER_FRIEND | NETASSIST_KNOWN_PEER_ONLINE);
+		/* inform NetMgr that we know this peers address: but only if external address */
+		if (isExternalNet(&(remote_peer_address.sin_addr)))
+		{
+			mNetMgr->netAssistKnownPeer(id,remote_peer_address, 
+				NETASSIST_KNOWN_PEER_FRIEND | NETASSIST_KNOWN_PEER_ONLINE);
+		}
 	}
 	else
 	{
