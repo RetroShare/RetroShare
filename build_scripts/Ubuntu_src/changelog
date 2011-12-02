@@ -1,6 +1,50 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - DHT:
+        * Reduced Default DHT Message rate from 50msg/sec to 5msg/sec
+           (Searches now take longer, but it should make crappy firewalls happy.)
+        * Added Interface to allow this rate to be dynamically changed (no GUI yet).
+        * Bugfixes for p3BanList: removed internal IPs from Lists, fixed AddBanPeer() logic bug.
+        * Disabled p3Dsdv, after brief test.
+        * Added knowledge of Friends / FoFs and Relays to DHT.
+        * Added bdFriendList class to store this information.
+        * Added Checks against known Peer:IP information to detect bad peers.
+        * Bad Peer Checking is in Test Mode Only for the moment,
+        * New Interfaces to exchange above information with libretroshare
+        * Cleaned up various compiler warnings.
+     - GUI
+        * Added new button "Open Collection" in TransfersDialog.
+        * Show main window with click on system icon when the main window is minimized.
+        * Beautified RsCollectionDialog.
+        * Fixed german language.
+        * Added new column "Last Contact" to the FriendsDialog and MessengerWindow. 
+          Moved some more basic functions to FriendsList and optimized the exisiting code.
+        * Added translation for plugins and added german language to LinksCloud. Recompile needed.
+        * Changed the name and the description of the plugin to utf8.
+        * fixed download priority handling. Proof-tested on multiple DL from the same peer.
+
+     - libretroshare Improvements:
+        * corrected disabled RequestdirDetails in FileIndexStore to be able to retrieve root directory of a user ID
+        * removed dependency of mRateIncrease into measured rtt -> would cause very slow transfers through long tunnels
+        * Removed compiler warnings.
+        * Added p3BanList Service and DataTypes to exchange Bad Peer information.
+        * Added Plumbing to get info from network to DHT and back.
+        * Supply Friend List from p3LinkMgr
+        * Supply Friend of Friend List from p3Disc.
+        * Added p3Dsdv Service and DataTypes for NetworkWide Routing (Testing Mode).
+        * Various BugFixes.
+        * Patch Manual Forward mode to preserve user selected Port.
+
+  * Bug fixes
+     - 2 bug fixes (by AsamK) to make rscollection files compatible with utf8
+     - fixed bug asking data to deleted mTransfer
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 02 Dec 2011 20:30:00 +0100
+
+retroshare (0.5.2-0.4653~lucid) lucid; urgency=low
+
+  * Improvements
      - implemented handling and creation of collection files
      - improved computation of CRC32 maps (separate thread, cache keeping, sending of keep-alive packets)
      - fixed compilation of some tests in libretroshare/src/tests/ft/
