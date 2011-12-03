@@ -51,7 +51,7 @@ const uint32_t FT_TM_MAX_RESETS  		= 5;
 
 const uint32_t FT_TM_MINIMUM_CHUNK 		= 1024; /* ie 1Kb / sec */
 const uint32_t FT_TM_RESTART_DOWNLOAD 	= 20; /* 20 seconds */
-const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	= 10; /* 10 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	= 20; /* 10 seconds */
 const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
 
 // const double FT_TM_MAX_INCREASE = 1.00;
