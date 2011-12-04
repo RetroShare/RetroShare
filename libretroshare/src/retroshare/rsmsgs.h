@@ -134,6 +134,7 @@ class ChatInfo
 {
 	public:
 	std::string rsid;
+	std::string peer_nickname;
 	unsigned int chatflags;
 	uint32_t sendTime;
 	uint32_t recvTime;
@@ -206,7 +207,6 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 /****************************************/
 	/* Chat */
 virtual	bool   sendPublicChat(const std::wstring& msg) = 0;
-virtual	bool   sendLobbyChat(const std::wstring& msg,const ChatLobbyId& lid) = 0;
 virtual	bool   sendPrivateChat(const std::string& id, const std::wstring& msg) = 0;
 virtual int     getPublicChatQueueCount() = 0;
 virtual	bool   getPublicChatQueue(std::list<ChatInfo> &chats) = 0;
@@ -228,6 +228,7 @@ virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& siz
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
+virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual void getChatLobbyList(std::list<ChatLobbyInfo>& cl_info) = 0;
 virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const std::string& peer_id) = 0;
 virtual bool acceptLobbyInvite(const ChatLobbyId& id) = 0 ;

@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 
 #include "PopupChatDialog.h"
+#include "ChatLobbyDialog.h"
 #include "PopupChatWindow.h"
 #include "gui/RetroShareLink.h"
 #include "util/misc.h"
@@ -129,7 +130,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
     connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus_slot(const QString&, int)));
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
     connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
@@ -263,11 +264,23 @@ void PopupChatDialog::processSettings(bool bLoad)
 {
     /* see if it exists already */
     PopupChatDialog *popupchatdialog = getExistingInstance(id);
+
     if (popupchatdialog == NULL) {
         if (chatflags & RS_CHAT_OPEN) {
             RsPeerDetails sslDetails;
-            if (rsPeers->getPeerDetails(id, sslDetails)) {
+				ChatLobbyId lobby_id ;
+
+            if (rsPeers->getPeerDetails(id, sslDetails)) 
+				{
                 popupchatdialog = new PopupChatDialog(id, PeerDefs::nameWithLocation(sslDetails));
+                chatDialogs[id] = popupchatdialog;
+
+                PopupChatWindow *window = PopupChatWindow::getWindow(false);
+                window->addDialog(popupchatdialog);
+            }
+				else if (rsMsgs->isLobbyId(id, lobby_id)) 
+				{
+                popupchatdialog = new ChatLobbyDialog(id,lobby_id,QString::fromStdString(id));
                 chatDialogs[id] = popupchatdialog;
 
                 PopupChatWindow *window = PopupChatWindow::getWindow(false);
@@ -1053,6 +1066,11 @@ void PopupChatDialog::clearOfflineMessages()
     manualDelete = true;
     rsMsgs->clearPrivateChatQueue(false, dialogId);
     manualDelete = false;
+}
+
+void PopupChatDialog::updateStatus_slot(const QString &peer_id, int status)
+{
+	updateStatus(peer_id,status) ;
 }
 
 void PopupChatDialog::updateStatus(const QString &peer_id, int status)

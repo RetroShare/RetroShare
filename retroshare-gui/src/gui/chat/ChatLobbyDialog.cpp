@@ -38,6 +38,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsstatus.h>
 
 #include <time.h>
 #include <algorithm>
@@ -45,12 +46,13 @@
 #include "ChatLobbyDialog.h"
 
 /** Default constructor */
-ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, const QString &name, QWidget *parent, Qt::WFlags flags)
-	: PopupChatDialog(("Chat lobby 0x"+QString::number(lobby_id,16)).toStdString(),name,parent,flags),lobby_id(lid)
+ChatLobbyDialog::ChatLobbyDialog(const std::string& dialog_id,const ChatLobbyId& lid, const QString &name, QWidget *parent, Qt::WFlags flags)
+	: PopupChatDialog(dialog_id,name,parent,flags),lobby_id(lid)
 {
 	// remove the avatar widget. Replace it with a friends list.
 	
 	ui.avatarWidget->hide() ;
+	PopupChatDialog::updateStatus(QString::fromStdString(getPeerId()),RS_STATUS_ONLINE) ;
 }
 
 /** Destructor. */
@@ -66,8 +68,9 @@ void ChatLobbyDialog::setNickName(const QString& nick)
 	rsMsgs->setNickNameForChatLobby(lobby_id,nick.toStdString()) ;
 }
 
-bool ChatLobbyDialog::sendPrivateChat(const std::wstring& msg)
+void ChatLobbyDialog::updateStatus(const QString &peer_id, int status)
 {
-	return rsMsgs->sendLobbyChat(msg,lobby_id) ;
+	// For now. We need something more efficient to tell when the lobby is disconnected.
+	//
 }
 

@@ -153,7 +153,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		 */
 		bool clearPrivateChatQueue(bool incoming, const std::string &id);
 
-		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
+		bool isLobbyId(const std::string&, ChatLobbyId&) ;
 		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
 		bool acceptLobbyInvite(const ChatLobbyId& id) ;
 		void denyLobbyInvite(const ChatLobbyId& id) ;
@@ -211,7 +211,11 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*) ;
+		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
+		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
+		static std::string makeVirtualPeerId(ChatLobbyId) ;
+		void locked_printDebugInfo() const ;
 
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
@@ -235,6 +239,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 			public:
 				std::map<ChatLobbyMsgId,time_t> msg_cache ;
 				std::map<std::string,time_t> invitations_sent ;
+				std::string virtual_peer_id ;
 
 				static const time_t MAX_KEEP_MSG_RECORD = 240 ; // keep msg record for 240 secs max.
 				void cleanCache() ;
@@ -242,6 +247,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
+		std::map<std::string,ChatLobbyId> _lobby_ids ;
 };
 
 class p3ChatService::StateStringInfo

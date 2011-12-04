@@ -97,6 +97,8 @@ class RsChatMsgItem: public RsChatItem
 		virtual void clear() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
+		virtual RsChatMsgItem *duplicate() const { return new RsChatMsgItem(*this) ; }
+
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
@@ -116,6 +118,7 @@ class RsChatLobbyMsgItem: public RsChatMsgItem
 
 		virtual ~RsChatLobbyMsgItem() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+		virtual RsChatMsgItem *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
 
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ;				 				// deserialise is handled using a constructor

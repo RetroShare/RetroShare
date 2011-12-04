@@ -59,9 +59,10 @@ public:
     void activate();
     bool setStyle();
     const RSStyle &getStyle();
+    virtual void updateStatus(const QString &peer_id, int status);
 
 public slots:
-    void updateStatus(const QString &peer_id, int status);
+    void updateStatus_slot(const QString &peer_id, int status);
 
 protected:
     /** Default constructor */

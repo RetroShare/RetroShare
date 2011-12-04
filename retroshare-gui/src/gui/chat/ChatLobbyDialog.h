@@ -42,7 +42,7 @@ class ChatLobbyDialog: public PopupChatDialog
 
 	protected:
 		/** Default constructor */
-		ChatLobbyDialog(const ChatLobbyId& lobbyid, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
+		ChatLobbyDialog(const std::string& id,const ChatLobbyId& lid, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
 
 		/** Default destructor */
 		virtual ~ChatLobbyDialog();
@@ -50,7 +50,11 @@ class ChatLobbyDialog: public PopupChatDialog
 //		virtual void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
 //		virtual void sendChat();
 
-		virtual bool sendPrivateChat(const std::wstring& msg) ;	// derived to send chat to the chat lobby
+		friend class PopupChatDialog ;
+
+		// The following methods are differentfrom those of the parent:
+		//
+		virtual void updateStatus(const QString &peer_id, int status) ;	// needs grouped status. Not yet implemented.
 
 	protected slots:
 		void setNickName(const QString&) ;
