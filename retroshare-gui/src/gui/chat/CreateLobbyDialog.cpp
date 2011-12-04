@@ -39,7 +39,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWi
 	 ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
 	 ui->nickName_LE->setPlaceholderText(tr("Your nickname")) ;
 
-    connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( shareKey( ) ) );
+    connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
     connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
     connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
     connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
@@ -48,6 +48,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWi
             this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
 
     setShareList(peer_list);
+	 checkTextFields() ;
 }
 
 
@@ -123,6 +124,7 @@ void CreateLobbyDialog::setShareList(const std::list<std::string>& friend_list)
     std::list<std::string> peers;
     std::list<std::string>::iterator it;
 
+	 mShareList.clear() ;
     rsPeers->getFriendList(peers);
 
     /* get a link to the table */
@@ -155,6 +157,7 @@ void CreateLobbyDialog::setShareList(const std::list<std::string>& friend_list)
 			 if(*it == *it2)
 			 {
 				 item -> setCheckState(0, Qt::Checked);
+				 mShareList.push_back(*it) ;
 				 break ;
 			 }
 

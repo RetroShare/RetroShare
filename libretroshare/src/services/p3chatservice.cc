@@ -230,12 +230,17 @@ bool p3ChatService::getVirtualPeerId(const ChatLobbyId& id,std::string& vpid)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+	std::cerr << "Was asked for virtual peer name of " << std::hex << id << std::dec<< std::endl;
 	std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.find(id)) ;
 
 	if(it == _chat_lobbys.end())
+	{
+		std::cerr << "   not found!! " << std::endl;
 		return false ;
+	}
 
 	vpid = it->second.virtual_peer_id ;
+	std::cerr << "   returning " << vpid << std::endl;
 	return true ;
 }
 
