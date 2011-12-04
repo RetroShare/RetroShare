@@ -226,6 +226,19 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 	sendItem(msg) ;
 }
 
+bool p3ChatService::getVirtualPeerId(const ChatLobbyId& id,std::string& vpid) 
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.find(id)) ;
+
+	if(it == _chat_lobbys.end())
+		return false ;
+
+	vpid = it->second.virtual_peer_id ;
+	return true ;
+}
+
 void p3ChatService::locked_printDebugInfo() const
 {
 	std::cerr << "Recorded lobbies: " << std::endl;
@@ -259,9 +272,6 @@ bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id)
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 	locked_printDebugInfo() ; // debug
-
-	for( std::map<std::string,ChatLobbyId>::const_iterator it(_lobby_ids.begin()) ;it!=_lobby_ids.end();++it)
-		std::cerr << "Testing \"" << id << "\" against \"" << it->first << "\"  result=" << (it->first == id) << std::endl;
 
 	std::map<std::string,ChatLobbyId>::const_iterator it(_lobby_ids.find(id)) ;
 

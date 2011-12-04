@@ -271,6 +271,7 @@ HEADERS +=  rshare.h \
             gui/chat/PopupChatWindow.h \
             gui/chat/PopupChatDialog.h \
             gui/chat/ChatLobbyDialog.h \
+            gui/chat/CreateLobbyDialog.h \
             gui/chat/HandleRichText.h \
             gui/chat/ChatStyle.h \
             gui/channels/CreateChannel.h \
@@ -406,6 +407,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/channels/ShareKey.ui \
             gui/chat/PopupChatWindow.ui \
             gui/chat/PopupChatDialog.ui \
+            gui/chat/CreateLobbyDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
@@ -529,6 +531,7 @@ SOURCES +=  main.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/ChatLobbyDialog.cpp \
+            gui/chat/CreateLobbyDialog.cpp \
             gui/chat/HandleRichText.cpp \
             gui/chat/ChatStyle.cpp \
             gui/connect/ConfCertDialog.cpp \

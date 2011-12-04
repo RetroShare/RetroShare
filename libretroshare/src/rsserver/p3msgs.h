@@ -168,6 +168,7 @@ class p3Msgs: public RsMsgs
 	  /****************************************/
 
 
+	   virtual bool getVirtualPeerId(const ChatLobbyId& id,std::string& vpid) ;
 	  	virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) ;
 		virtual void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
 		virtual void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;

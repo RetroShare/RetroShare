@@ -31,6 +31,7 @@
 
 #include "GroupDefs.h"
 #include "gui/chat/PopupChatDialog.h"
+#include "gui/chat/CreateLobbyDialog.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
@@ -1414,6 +1415,10 @@ void FriendList::inviteToLobby()
 
     // add to group
     rsMsgs->invitePeerToLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), peer_id);
+
+	 std::string vpeer_id ;
+	 if(rsMsgs->getVirtualPeerId( ChatLobbyId(QString::fromStdString(lobby_id).toULongLong() ),vpeer_id) )
+			 PopupChatDialog::chatFriend(vpeer_id) ;
 }
 
 void FriendList::createchatlobby()
@@ -1428,15 +1433,7 @@ void FriendList::createchatlobby()
 	 std::string peer_id = getRsId(c) ;
 	 friend_list.push_back(peer_id) ;
 
-	 static int number=0 ;
-
-	 ++number ;
-	 std::string lobby_name = "my cool lobby #"+QString::number(number).toStdString()+" (Plz add proper code to dynamically set this name in FriendList::createChatLobby())" ;
-
-    // add to group
-    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, friend_list);
-
-	 std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
+	 CreateLobbyDialog(friend_list).exec() ;
 }
 
 void FriendList::addToGroup()

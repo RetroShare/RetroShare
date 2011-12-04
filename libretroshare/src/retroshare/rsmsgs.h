@@ -229,6 +229,7 @@ virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
 virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
+virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,std::string& vpid) = 0;
 virtual void getChatLobbyList(std::list<ChatLobbyInfo>& cl_info) = 0;
 virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const std::string& peer_id) = 0;
 virtual bool acceptLobbyInvite(const ChatLobbyId& id) = 0 ;
