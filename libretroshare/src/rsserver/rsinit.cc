@@ -583,7 +583,9 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
         AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
-	setupBaseDir();
+	if(!setupBaseDir())
+		return RS_INIT_BASE_DIR_ERROR ; 
+
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
 
 	/* Initialize AuthGPG */
@@ -617,7 +619,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 		}
 		if(!pgpNameFound){
 			std::cerr << "Invalid User name/GPG id/SSL id: not found in list" << std::endl;
-			exit(1);
+			return RS_INIT_AUTH_FAILED ;
 		}
 	}
 
@@ -720,7 +722,7 @@ bool     RsInit::getAccountDetails(std::string id,
 /**************************** Private Functions for InitRetroshare ********************/
 
 
-void RsInit::setupBaseDir()
+bool RsInit::setupBaseDir()
 {
 	// get the default configuration location.
 
@@ -739,7 +741,7 @@ void RsInit::setupBaseDir()
 			std::cerr << "load_check_basedir() Fatal Error --";
 		  	std::cerr << std::endl;
 			std::cerr << "\tcannot determine $HOME dir" <<std::endl;
-			exit(1);
+			return false ;
 		}
 		RsInitConfig::basedir = h;
 		RsInitConfig::basedir += "/.retroshare";
@@ -778,7 +780,7 @@ void RsInit::setupBaseDir()
 			if (!RsDirUtil::checkCreateDirectory(RsInitConfig::basedir))
 			{
 				std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
-				exit(1);
+				return false ;
 			}
 			RsInitConfig::basedir += "\\RetroShare";
 		}
@@ -791,8 +793,9 @@ void RsInit::setupBaseDir()
 	if (!RsDirUtil::checkCreateDirectory(RsInitConfig::basedir))
 	{
 		std::cerr << "Cannot Create BaseConfig Dir:" << RsInitConfig::basedir << std::endl;
-		exit(1);
+		return false ;
 	}
+	return true ;
 }
 
 
@@ -911,7 +914,7 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 	if (!dirIt.isValid())
 	{
 		std::cerr << "Cannot Open Base Dir - No Available Accounts" << std::endl;
-		exit(1);
+		return false ;
 	}
 
 	struct stat64 buf;
@@ -1222,7 +1225,9 @@ bool     RsInit::GenerateSSLCertificate(const std::string& gpg_id, const std::st
 	std::string tmpdir = "TMPCFG";
 
 	std::string tmpbase = RsInitConfig::basedir + "/" + tmpdir + "/";
-	RsInit::setupAccount(tmpbase);
+	
+	if(!RsInit::setupAccount(tmpbase))
+		return false ;
 
 	/* create directory structure */
 
@@ -1371,32 +1376,32 @@ bool RsInit::setupAccount(const std::string& accountdir)
 	if (!RsDirUtil::checkCreateDirectory(accountdir))
 	{
 		std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
-		exit(1);
+		return false ;
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir1))
 	{
 		std::cerr << "Cannot Create Config/Key Dir" << std::endl;
-		exit(1);
+		return false ;
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir2))
 	{
 		std::cerr << "Cannot Create Config/Cert Dir" << std::endl;
-		exit(1);
+		return false ;
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir3))
 	{
 		std::cerr << "Cannot Create Config/Cache Dir" << std::endl;
-		exit(1);
+		return false ;
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir4))
 	{
 		std::cerr << "Cannot Create Config/Cache/local Dir" << std::endl;
-		exit(1);
+		return false ;
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir5))
 	{
 		std::cerr << "Cannot Create Config/Cache/remote Dir" << std::endl;
-		exit(1);
+		return false ;
 	}
 
 	return true;
@@ -1810,7 +1815,7 @@ int RsServer::StartupRetroShare()
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
 		std::cerr << std::endl;
-		exit(1);
+		return false ;
 	}
 
         std::string ownId = AuthSSL::getAuthSSL()->OwnId();

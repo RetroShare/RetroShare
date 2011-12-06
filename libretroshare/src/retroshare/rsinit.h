@@ -31,6 +31,7 @@
 #define RS_INIT_HAVE_ACCOUNT    1 // Initialize ok, have account
 // Initialize failed, result < 0
 #define RS_INIT_AUTH_FAILED    -1 // AuthGPG::InitAuth failed
+#define RS_INIT_BASE_DIR_ERROR -2 // AuthGPG::InitAuth failed
 
 
 /****
@@ -134,7 +135,7 @@ class RsInit
 
 		/* PreLogin */
 		static std::string getHomePath() ;
-		static void setupBaseDir();
+		static bool setupBaseDir();
 
 		/* Account Details */
 		static bool    get_configinit(const std::string& dir, std::string &id);
