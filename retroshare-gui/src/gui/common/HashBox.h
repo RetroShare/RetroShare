@@ -23,6 +23,7 @@
 #define HASHBOX_H
 
 #include <QScrollArea>
+#include <stdint.h>
 
 namespace Ui {
 	class HashBox;
