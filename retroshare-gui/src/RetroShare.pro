@@ -324,11 +324,13 @@ HEADERS +=  rshare.h \
             gui/common/RSTabWidget.h \
             gui/common/RSItemDelegate.h \
             gui/common/PeerDefs.h \
+            gui/common/FilesDefs.h \
             gui/common/PopularityDefs.h \
             gui/common/GroupTreeWidget.h \
             gui/common/RSTreeView.h \
             gui/common/AvatarWidget.h \
             gui/common/FriendList.h \
+            gui/common/HashBox.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -448,6 +450,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/GroupTreeWidget.ui \
             gui/common/AvatarWidget.ui \
             gui/common/FriendList.ui \
+            gui/common/HashBox.ui \
             gui/common/RsCollectionDialog.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
@@ -549,11 +552,13 @@ SOURCES +=  main.cpp \
             gui/common/RSTabWidget.cpp \
             gui/common/RSItemDelegate.cpp \
             gui/common/PeerDefs.cpp \
+            gui/common/FilesDefs.cpp \
             gui/common/PopularityDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
             gui/common/RSTreeView.cpp \
             gui/common/AvatarWidget.cpp \
             gui/common/FriendList.cpp \
+            gui/common/HashBox.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/configpage.cpp \

@@ -26,13 +26,12 @@
 #include <QFile>
 #include <QDesktopWidget>
 #include <QDropEvent>
+#include <QPushButton>
 
 #include <retroshare/rsforums.h>
-#include <retroshare/rsfiles.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
-#include "gui/feeds/AttachFileItem.h"
 #include "gui/common/Emoticons.h"
 
 #include "util/misc.h"
@@ -52,6 +51,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 
     connect( ui.forumMessage, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumMessageCostumPopupMenu( QPoint ) ) );
 
+    connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
+
     // connect up the buttons.
     connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
     connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
@@ -60,6 +61,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
     connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
 
     setAcceptDrops(true);
+    ui.hashBox->setDropWidget(this);
+    ui.hashBox->setAutoHide(false);
 
     newMsg();
 }
@@ -203,130 +206,34 @@ void CreateForumMsg::addFile()
 {
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-            addAttachment((*fileIt).toUtf8().constData());
-        }
+        ui.hashBox->addAttachments(files);
     }
 }
 
-void CreateForumMsg::addAttachment(std::string filePath) {
-	    /* add a AttachFileItem to the attachment section */
-	    std::cerr << "CreateForumMsg::addFile() hashing file.";
-	    std::cerr << std::endl;
+void CreateForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
+{
+    std::cerr << "CreateForumMsg::fileHashingFinished() started." << std::endl;
 
-	    /* add widget in for new destination */
-	    AttachFileItem *file = new AttachFileItem(filePath);
-	    //file->
+    QString mesgString;
 
-	    ui.verticalLayout->addWidget(file, 1, 0);
-
-	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a forum message
-	    if (file->getState() == AFI_STATE_LOCAL) {
-		fileHashingFinished(file);
-	    } else {
-		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)),this, SLOT(fileHashingFinished(AttachFileItem *))) ;
-	    }
-}
-
-void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
-	std::cerr << "CreateForumMsg::fileHashingFinished() started.";
-	std::cerr << std::endl;
-
-	//check that the file is ok tos end
-	if (file->getState() == AFI_STATE_ERROR) {
-	#ifdef CHAT_DEBUG
-		    std::cerr << "CreateForumMsg::fileHashingFinished error file is not hashed.";
-	#endif
-	    return;
-	}
-
-	RetroShareLink link;
-	if (link.createFile(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()))) {
-		QString mesgString = link.toHtmlSize() + "<br>";
+    QList<HashedFile>::iterator it;
+    for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
+        HashedFile& hashedFile = *it;
+        RetroShareLink link;
+        if (link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash))) {
+            mesgString += link.toHtmlSize() + "<br>";
+        }
+    }
 
 #ifdef CHAT_DEBUG
-		std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString.toStdString() << std::endl;
+    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString.toStdString() << std::endl;
 #endif
 
-		ui.forumMessage->textCursor().insertHtml(mesgString);
+    if (!mesgString.isEmpty()) {
+        ui.forumMessage->textCursor().insertHtml(mesgString);
+    }
 
-		ui.forumMessage->setFocus( Qt::OtherFocusReason );
-	}
-}
-
-void CreateForumMsg::dropEvent(QDropEvent *event)
-{
-	if (!(Qt::CopyAction & event->possibleActions()))
-	{
-		std::cerr << "CreateForumMsg::dropEvent() Rejecting uncopyable DropAction" << std::endl;
-
-		/* can't do it */
-		return;
-	}
-
-	std::cerr << "CreateForumMsg::dropEvent() Formats" << std::endl;
-	QStringList formats = event->mimeData()->formats();
-	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
-	{
-		std::cerr << "Format: " << (*it).toStdString() << std::endl;
-	}
-
-	if (event->mimeData()->hasUrls())
-	{
-		std::cerr << "CreateForumMsg::dropEvent() Urls:" << std::endl;
-
-		QList<QUrl> urls = event->mimeData()->urls();
-		QList<QUrl>::iterator uit;
-		for(uit = urls.begin(); uit != urls.end(); uit++)
-		{
-			QString localpath = uit->toLocalFile();
-			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
-			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
-
-			if (localpath.isEmpty() == false)
-			{
-				// Check that the file does exist and is not a directory
-				QDir dir(localpath);
-				if (dir.exists()) {
-					std::cerr << "CreateForumMsg::dropEvent() directory not accepted."<< std::endl;
-					QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-					mb.exec();
-				} else if (QFile::exists(localpath)) {
-					addAttachment(localpath.toUtf8().constData());
-				} else {
-					std::cerr << "CreateForumMsg::dropEvent() file does not exists."<< std::endl;
-					QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-					mb.exec();
-				}
-			}
-		}
-	}
-
-	event->setDropAction(Qt::CopyAction);
-	event->accept();
-}
-
-void CreateForumMsg::dragEnterEvent(QDragEnterEvent *event)
-{
-	/* print out mimeType */
-        std::cerr << "CreateForumMsg::dragEnterEvent() Formats" << std::endl;
-	QStringList formats = event->mimeData()->formats();
-	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
-	{
-                std::cerr << "Format: " << (*it).toStdString() << std::endl;
-	}
-
-	if (event->mimeData()->hasUrls())
-	{
-                std::cerr << "CreateForumMsg::dragEnterEvent() Accepting Urls" << std::endl;
-		event->acceptProposedAction();
-	}
-	else
-	{
-                std::cerr << "CreateForumMsg::dragEnterEvent() No Urls" << std::endl;
-	}
+    ui.forumMessage->setFocus( Qt::OtherFocusReason );
 }
 
 void CreateForumMsg::pasteLink()
@@ -338,4 +245,3 @@ void CreateForumMsg::pasteLinkFull()
 {
 	ui.forumMessage->insertHtml(RSLinkClipboard::toHtmlFull()) ;
 }
-

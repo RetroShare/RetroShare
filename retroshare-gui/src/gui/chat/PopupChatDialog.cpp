@@ -27,7 +27,6 @@
 #include <QColorDialog>
 #include <QDateTime>
 #include <QFontDialog>
-#include <QDir>
 #include <QBuffer>
 #include <QTextCodec>
 #include <QSound>
@@ -40,13 +39,9 @@
 #include "rshare.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rsfiles.h>
-#include "retroshare/rsinit.h"
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rshistory.h>
-#include <retroshare/rsiface.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
@@ -54,11 +49,10 @@
 #include "gui/common/StatusDefs.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/Emoticons.h"
-#include "gui/im_history/ImHistoryBrowser.h"
-
-#include "gui/feeds/AttachFileItem.h"
-#include "gui/msgs/MessageComposer.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/common/FilesDefs.h"
+#include "gui/im_history/ImHistoryBrowser.h"
+#include "gui/msgs/MessageComposer.h"
 
 #include <time.h>
 #include <algorithm>
@@ -129,6 +123,8 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
     connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
 
+    connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
+
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
@@ -155,6 +151,8 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
     setAcceptDrops(true);
     ui.chattextEdit->setAcceptDrops(false);
+    ui.hashBox->setDropWidget(this);
+    ui.hashBox->setAutoHide(true);
 
     QMenu * toolmenu = new QMenu();
     toolmenu->addAction(ui.actionClear_Chat_History);
@@ -806,9 +804,9 @@ void PopupChatDialog::on_actionDelete_Chat_History_triggered()
 
 void PopupChatDialog::addExtraFile()
 {
-    QString file;
-    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", file)) {
-        addAttachment(file.toUtf8().constData(), 0);
+    QStringList files;
+    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
+        ui.hashBox->addAttachments(files/*, 0*/);
     }
 }
 
@@ -817,98 +815,38 @@ void PopupChatDialog::addExtraPicture()
     // select a picture file
     QString file;
     if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
-        addAttachment(file.toUtf8().constData(), 1);
+        ui.hashBox->addAttachments(QStringList(file), HashedFile::Picture);
     }
 }
 
-void PopupChatDialog::addAttachment(std::string filePath,int flag) 
+void PopupChatDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
-    /* add a AttachFileItem to the attachment section */
-    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
-    std::cerr << std::endl;
-
-    /* add widget in for new destination */
-    AttachFileItem *file = new AttachFileItem(filePath);
-    //file->
-
-    if(flag==1)
-        file->setPicFlag(1);
-
-    ui.vboxLayout->addWidget(file, 1, 0);
-
-    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
-    if (file->getState() == AFI_STATE_LOCAL) {
-		fileHashingFinished(file);
-    } else {
-		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
-    }
-}
-
-void PopupChatDialog::fileHashingFinished(AttachFileItem* file) 
-{
-    std::cerr << "PopupChatDialog::fileHashingFinished() started.";
-    std::cerr << std::endl;
-
-    //check that the file is ok tos end
-    if (file->getState() == AFI_STATE_ERROR) {
-#ifdef CHAT_DEBUG
-        std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
-#endif
-        return;
-    }
-
-    std::string ownId;
-
-    {
-        rsiface->lockData(); /* Lock Interface */
-        const RsConfig &conf = rsiface->getConfig();
-
-        ownId = conf.ownId;
-
-        rsiface->unlockData(); /* Unlock Interface */
-    }
+    std::cerr << "PopupChatDialog::fileHashingFinished() started." << std::endl;
 
     QString message;
-    QString ext = QFileInfo(QString::fromStdString(file->FileName())).suffix();
 
-    if(file->getPicFlag()==1){
-        message+="<img src=\"file:///";
-        message+=file->FilePath().c_str();
-        message+="\" width=\"100\" height=\"100\">";
-        message+="<br>";
-    }    
-	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") 
-	{
-        message+="<img src=\":/images/audio-x-monkey.png";
-        message+="\" width=\"48\" height=\"48\">";
-        message+="<br>";
-	}
-    else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
-    || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
-    || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
-    {
-        message+="<img src=\":/images/video-x-generic.png";
-        message+="\" width=\"48\" height=\"48\">";
-        message+="<br>";
-	}
-    else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
-    || ext == "rar" || ext == "rpm" || ext == "deb")
-    {
-        message+="<img src=\":/images/application-x-rar.png";
-        message+="\" width=\"48\" height=\"48\">";
-        message+="<br>";
-	}
-	else if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" 
-	|| ext == "svg" || ext == "tif" || ext == "tiff" || ext == "JPG")
-	{
-        message+="<img src=\":/images/application-draw.png";
-        message+="\" width=\"48\" height=\"48\">";
-        message+="<br>";
-	}
+    QList<HashedFile>::iterator it;
+    for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
+        HashedFile& hashedFile = *it;
+        QString ext = QFileInfo(hashedFile.filename).suffix();
 
-    RetroShareLink link;
-    link.createFile(QString::fromUtf8(file->FileName().c_str()),file->FileSize(),QString::fromStdString(file->FileHash()));
-    message += link.toHtmlSize();
+        RetroShareLink link;
+        link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash));
+
+        if (hashedFile.flag & HashedFile::Picture) {
+            message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
+            message+="<br>";
+        } else {
+            QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
+            if (!image.isEmpty()) {
+                message += QString("<img src=\"%1\">").arg(image);
+            }
+        }
+        message += link.toHtmlSize();
+        if (it != hashedFiles.end()) {
+            message += "<BR>";
+        }
+    }
 
 #ifdef CHAT_DEBUG
     std::cerr << "PopupChatDialog::fileHashingFinished message : " << message.toStdString() << std::endl;
@@ -920,92 +858,10 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
     std::wstring msg = textBrowser.toHtml().toStdWString();
 
     if (rsMsgs->sendPrivateChat(dialogId, msg)) {
+        std::string ownId = rsPeers->getOwnId();
         QDateTime currentTime = QDateTime::currentDateTime();
         addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
     }
-}
-
-void PopupChatDialog::dropEvent(QDropEvent *event)
-{
-    if (!(Qt::CopyAction & event->possibleActions()))
-    {
-        std::cerr << "PopupChatDialog::dropEvent() Rejecting uncopyable DropAction";
-        std::cerr << std::endl;
-
-        /* can't do it */
-        return;
-    }
-
-    std::cerr << "PopupChatDialog::dropEvent() Formats";
-    std::cerr << std::endl;
-    QStringList formats = event->mimeData()->formats();
-    QStringList::iterator it;
-    for(it = formats.begin(); it != formats.end(); it++)
-    {
-        std::cerr << "Format: " << (*it).toStdString();
-        std::cerr << std::endl;
-    }
-
-    if (event->mimeData()->hasUrls())
-    {
-        std::cerr << "PopupChatDialog::dropEvent() Urls:";
-        std::cerr << std::endl;
-
-        QList<QUrl> urls = event->mimeData()->urls();
-        QList<QUrl>::iterator uit;
-        for(uit = urls.begin(); uit != urls.end(); uit++)
-        {
-            QString localpath = uit->toLocalFile();
-            std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
-            std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
-
-            if (localpath.isEmpty() == false)
-            {
-                //Check that the file does exist and is not a directory
-                QDir dir(localpath);
-                if (dir.exists()) {
-                    std::cerr << "PopupChatDialog::dropEvent() directory not accepted."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-                    mb.exec();
-                } else if (QFile::exists(localpath)) {
-                    PopupChatDialog::addAttachment(localpath.toUtf8().constData(), false);
-                } else {
-                    std::cerr << "PopupChatDialog::dropEvent() file does not exists."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-                    mb.exec();
-                }
-            }
-        }
-    }
-
-    event->setDropAction(Qt::CopyAction);
-    event->accept();
-}
-
-void PopupChatDialog::dragEnterEvent(QDragEnterEvent *event)
-{
-	/* print out mimeType */
-	std::cerr << "PopupChatDialog::dragEnterEvent() Formats";
-	std::cerr << std::endl;
-	QStringList formats = event->mimeData()->formats();
-	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
-	{
-		std::cerr << "Format: " << (*it).toStdString();
-		std::cerr << std::endl;
-	}
-
-	if (event->mimeData()->hasUrls())
-	{
-		std::cerr << "PopupChatDialog::dragEnterEvent() Accepting Urls";
-		std::cerr << std::endl;
-		event->acceptProposedAction();
-	}
-	else
-	{
-		std::cerr << "PopupChatDialog::dragEnterEvent() No Urls";
-		std::cerr << std::endl;
-	}
 }
 
 bool PopupChatDialog::fileSave()

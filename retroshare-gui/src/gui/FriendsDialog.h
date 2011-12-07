@@ -36,7 +36,6 @@ class QAction;
 class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
-class AttachFileItem;
 
 class FriendsDialog : public RsAutoUpdatePage
 {
@@ -59,7 +58,7 @@ public slots:
     void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
     void resetStatusBar() ;
 
-    void fileHashingFinished(AttachFileItem* file);
+    void fileHashingFinished(QList<HashedFile> hashedFiles);
 
     void smileyWidgetgroupchat();
     void addSmileys();
@@ -68,8 +67,6 @@ public slots:
     void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
 protected:
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);
     bool eventFilter(QObject *obj, QEvent *ev);
     void showEvent (QShowEvent *event);
 
@@ -106,7 +103,6 @@ private slots:
     void loadmypersonalstatus();
 
     void addExtraFile();
-    void addAttachment(std::string);
 
     bool fileSave();
     bool fileSaveAs();

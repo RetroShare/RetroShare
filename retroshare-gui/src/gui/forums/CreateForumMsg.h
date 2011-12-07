@@ -25,8 +25,6 @@
 
 #include "ui_CreateForumMsg.h"
 
-class AttachFileItem;
-
 class CreateForumMsg : public QMainWindow
 {
   Q_OBJECT
@@ -40,8 +38,8 @@ private slots:
     /** Create the context popup menu and it's submenus */
     void forumMessageCostumPopupMenu( QPoint point );
 
-    void fileHashingFinished(AttachFileItem* file);
-	/* actions to take.... */
+    void fileHashingFinished(QList<HashedFile> hashedFiles);
+    /* actions to take.... */
     void createMsg();
     void cancelMsg();
     void pasteLink();
@@ -50,13 +48,9 @@ private slots:
     void smileyWidgetForums();
     void addSmileys();
     void addFile();
-    void addAttachment(std::string);
 
 protected:
     void closeEvent (QCloseEvent * event);
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);
-
 
 private:
     std::string mForumId;

@@ -61,8 +61,7 @@
 const uint32_t AFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
-AttachFileItem::AttachFileItem(std::string hash, std::string name, uint64_t size, 
-						uint32_t flags, std::string srcId)
+AttachFileItem::AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags, const std::string& srcId)
 :QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
 {
   	/* Invoke the Qt Designer generated object setup routine */
@@ -72,7 +71,6 @@ AttachFileItem::AttachFileItem(std::string hash, std::string name, uint64_t size
 
 	mMode = flags & AFI_MASK_STATE;
 	mType = flags & AFI_MASK_TYPE;
-	mPicFlag=0;
 
 	if (mMode == AFI_STATE_EXTRA)
 	{
@@ -92,7 +90,7 @@ AttachFileItem::AttachFileItem(std::string hash, std::string name, uint64_t size
 }
 
 /** Constructor */
-AttachFileItem::AttachFileItem(std::string path)
+AttachFileItem::AttachFileItem(const QString& path)
 :QWidget(NULL), mPath(path), mFileSize(0)
 {
   	/* Invoke the Qt Designer generated object setup routine */
@@ -100,10 +98,9 @@ AttachFileItem::AttachFileItem(std::string path)
 
 	mMode = AFI_STATE_EXTRA;
 	mType = AFI_TYPE_ATTACH;
-	mPicFlag=0;
 
 	/* ask for Files to hash/prepare it for us */
-	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path, AFI_DEFAULT_PERIOD, 0)))
+	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path.toUtf8().constData(), AFI_DEFAULT_PERIOD, 0)))
 	{
 		mMode = AFI_STATE_ERROR;
 	}
@@ -113,7 +110,6 @@ AttachFileItem::AttachFileItem(std::string path)
 
 void AttachFileItem::Setup()
 {
-
   connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
 
   /* once off check - if remote, check if we have it 
@@ -127,8 +123,7 @@ void AttachFileItem::Setup()
   if (mMode == AFI_STATE_REMOTE)
   {
 	FileInfo fi;
-	uint32_t hintflags = RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
-					| RS_FILE_HINTS_SPEC_ONLY;
+	uint32_t hintflags = RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY;
 
 	/* look up path */
 	if (rsFiles->FileDetails(mFileHash, hintflags, fi))
@@ -140,14 +135,12 @@ void AttachFileItem::Setup()
 		std::cerr << std::endl;
 #endif
 		mMode = AFI_STATE_LOCAL;
-		mPath = fi.path;
+		mPath = QString::fromUtf8(fi.path.c_str());
 	}
   }
 
   updateItemStatic();
   updateItem();
-
-
 }
 
 
@@ -169,7 +162,7 @@ void AttachFileItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-        QString filename = QString::fromUtf8(mFileName.c_str());
+	QString filename = mFileName;
 	mDivisor = 1;
 
 	if (mFileSize > 10000000) /* 10 Mb */
@@ -219,7 +212,7 @@ void AttachFileItem::updateItemStatic()
 			std::cerr << "AttachFileItem::updateItemStatic() Updated Path";
 			std::cerr << std::endl;
 #endif
-				mPath = fi.path;
+				mPath = QString::fromUtf8(fi.path.c_str());
 			}
 		}
 	}
@@ -234,12 +227,12 @@ void AttachFileItem::updateItemStatic()
 			cancelButton->setEnabled(false);
 		
 			progressBar->setValue(0);
-			filename = "[ERROR] " + filename;
+			filename = tr("[ERROR])") + " " + filename;
 
 			break;
 
 		case AFI_STATE_EXTRA:
-                        filename = QString::fromUtf8(mPath.c_str());
+			filename = mPath;
 
 			progressBar->setRange(0, 100);
 			progressBar->setFormat("HASHING");
@@ -303,10 +296,8 @@ void AttachFileItem::updateItemStatic()
 			break;
 	}
 
-
 	fileLabel->setText(filename);
 	fileLabel->setToolTip(filename);
-
 }
 
 void AttachFileItem::updateItem()
@@ -339,7 +330,7 @@ void AttachFileItem::updateItem()
 		std::cerr << std::endl;
 #endif
 		/* check for file status */
-		if (rsFiles->ExtraFileStatus(mPath, fi))
+		if (rsFiles->ExtraFileStatus(mPath.toUtf8().constData(), fi))
 		{
 #ifdef DEBUG_ITEM
 			std::cerr << "AttachFileItem::updateItem() STATE=>Local";
@@ -348,7 +339,7 @@ void AttachFileItem::updateItem()
 			mMode = AFI_STATE_LOCAL;
 
 			/* fill in file details */
-			mFileName = fi.fname;
+			mFileName = QString::fromUtf8(fi.fname.c_str());
 			mFileSize = fi.size;
 			mFileHash = fi.hash;
 
@@ -422,7 +413,7 @@ void AttachFileItem::updateItem()
 						/* save path */
 						/* update progress */
 						mMode = AFI_STATE_LOCAL;
-						mPath = fi.path;
+						mPath = QString::fromUtf8(fi.path.c_str());
 						stateChanged = true;
 					}
 					progressBar->setValue(fi.avail / mDivisor);
@@ -442,7 +433,6 @@ void AttachFileItem::updateItem()
 				/* update progress */
 				break;
 		}
-
 	}
 
 	/****** update based on new state ******/
@@ -485,7 +475,6 @@ void AttachFileItem::updateItem()
 			msec_rate = 2000; /* should be download rate dependent */
 			break;
 	}
-
 	
 	if (repeat)
 	{
@@ -495,9 +484,7 @@ void AttachFileItem::updateItem()
 #endif
 	  	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	}
-
 }
-
 
 void AttachFileItem::cancel()
 {
@@ -519,7 +506,7 @@ void AttachFileItem::cancel()
 	}
 }
 
-
-uint32_t AttachFileItem::getState() {
+uint32_t AttachFileItem::getState()
+{
     return mMode;
 }

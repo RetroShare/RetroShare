@@ -162,7 +162,7 @@ void PopupChatWindow::addDialog(PopupChatDialog *dialog)
         ui.tabWidget->addTab(dialog, dialog->getTitle());
     } else {
         ui.horizontalLayout->addWidget(dialog);
-        ui.horizontalLayout->setContentsMargins(0, 0, 5, 0);
+        ui.horizontalLayout->setContentsMargins(0, 0, 0, 0);
         peerId = dialog->getPeerId();
         chatDialog = dialog;
         calculateStyle(dialog);

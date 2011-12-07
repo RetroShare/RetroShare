@@ -41,49 +41,39 @@ const uint32_t AFI_TYPE_ATTACH 		= 0x0020;
 
 class AttachFileItem : public QWidget, private Ui::AttachFileItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  	/** Default Constructor */
-  	AttachFileItem(std::string localpath);
-    AttachFileItem(std::string hash, std::string name, uint64_t size,
-					uint32_t flags, std::string srcId);
+	/** Default Constructor */
+	AttachFileItem(const QString& localpath);
+	AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags, const std::string& srcId);
 
-  	/** Default Destructor */
+	/** Default Destructor */
 
-	std::string FileHash() { return mFileHash; }
-	std::string FileName() { return mFileName; }
-	uint64_t    FileSize() { return mFileSize; }
-	std::string FilePath() { return mPath; }
-	int 	    getPicFlag()  { return mPicFlag;}
-	void	    setPicFlag(int flag)  { mPicFlag=flag;}	
+	const std::string& FileHash() { return mFileHash; }
+	const QString& FileName() { return mFileName; }
+	uint64_t       FileSize() { return mFileSize; }
+	const QString& FilePath() { return mPath; }
 
 	void updateItemStatic();
 
-  bool done();
+	bool done();
 	bool ready();
 	uint32_t getState();
 
-public  slots:
-
 private slots:
-
-  void cancel();
-
+	void cancel();
 	void updateItem();
 
 private:
-
 	void Setup();
 
-
-	std::string mPath;
+	QString    mPath;
 	std::string mFileHash;
-	std::string mFileName;
+	QString     mFileName;
 	uint64_t    mFileSize;
 	std::string mSrcId;
 
-	uint32_t    mPicFlag;
 	uint32_t    mMode;
 	uint32_t    mType;
 	uint64_t    mDivisor;
@@ -92,11 +82,8 @@ private:
 	float amountDone;
 
 signals:
-		void fileFinished(AttachFileItem * AttachFileItem);
-
+	void fileFinished(AttachFileItem * AttachFileItem);
 };
-
-
 
 #endif
 

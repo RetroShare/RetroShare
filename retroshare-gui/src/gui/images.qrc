@@ -2,14 +2,10 @@
     <qresource prefix="/" >
         <file>images/splash.png</file>
         <file>images/attach.png</file>
-        <file>images/audio-x-monkey.png</file>
-        <file>images/video-x-generic.png</file>
-        <file>images/application-x-rar.png</file>
-        <file>images/application-draw.png</file>
         <file>images/pgp.png</file>
         <file>images/rs_wizard.png</file>
         <file>images/about.png</file>
-		<file>images/backblue.png</file>
+        <file>images/backblue.png</file>
         <file>images/backchat.png</file>
         <file>images/buttonframe.png</file>
         <file>images/btn1.png</file>
@@ -166,7 +162,7 @@
         <file>images/filerating5.png</file>
         <file>images/fileshare16.png</file>
         <file>images/fileshare24.png</file>
-		<file>images/fileshare32.png</file>
+        <file>images/fileshare32.png</file>
         <file>images/fileshare48.png</file>
         <file>images/find.png</file>
         <file>images/find-16.png</file>
@@ -439,7 +435,7 @@
         <file>images/user/friends24.png</file>
         <file>images/user/identity16.png</file>
         <file>images/user/identity24.png</file>
-		<file>images/user/identity32.png</file>
+        <file>images/user/identity32.png</file>
         <file>images/user/identity48.png</file>
         <file>images/user/identityoffline24.png</file>
         <file>images/user/identity24away.png</file>

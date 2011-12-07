@@ -31,7 +31,6 @@ class QComboBox;
 class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
-class AttachFileItem;
 class RSTreeWidgetItemCompareRole;
 
 class MessageComposer : public QMainWindow 
@@ -80,9 +79,6 @@ protected:
     void closeEvent (QCloseEvent * event);
     bool eventFilter(QObject *obj, QEvent *ev);
 
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);
-
 private slots:
     /* toggle Contacts DockWidget */
     void contextMenu(QPoint);
@@ -119,11 +115,10 @@ private slots:
 
     void clipboardDataChanged();
 
-    void fileHashingFinished(AttachFileItem* file);
+    void fileHashingStarted();
+    void fileHashingFinished(QList<HashedFile> hashedFiles);
 
     void attachFile();
-    void addAttachment(std::string);
-    void checkAttachmentReady();
 
     void fontSizeIncrease();
     void fontSizeDecrease();
@@ -215,11 +210,6 @@ private:
     enumMessageType m_msgType;
     std::list<uint32_t> m_tagIds;
     QList<QLabel*> tagLabels;
-
-    /* maps of files  */
-    std::list<AttachFileItem *> mAttachments;
-
-    bool mCheckAttachment;
 
     RSTreeWidgetItemCompareRole *m_compareRole;
     QCompleter *m_completer;

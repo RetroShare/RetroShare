@@ -49,7 +49,6 @@
 #include "gui/common/PeerDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/feeds/AttachFileItem.h"
 #include "gui/common/Emoticons.h"
 #include "textformat.h"
 #include "util/misc.h"
@@ -109,7 +108,7 @@ public:
 
 /** Constructor */
 MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
-: QMainWindow(parent, flags), mCheckAttachment(true)
+: QMainWindow(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -167,6 +166,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     connect(ui.msgFileList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuFileList(QPoint)));
     connect(ui.msgSendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuMsgSendList(QPoint)));
+
+    connect(ui.hashBox, SIGNAL(fileHashingStarted()), this, SLOT(fileHashingStarted()));
+    connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
     setWindowModified(ui.msgText->document()->isModified());
     actionSave->setEnabled(ui.msgText->document()->isModified());
@@ -304,6 +306,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     ui.tagButton->setMenu(menu);
 
     setAcceptDrops(true);
+    ui.hashBox->setDropWidget(this);
+    ui.hashBox->setAutoHide(true);
 
 #ifdef RS_RELEASE_VERSION
     ui.imagebtn->setVisible(false);
@@ -2231,88 +2235,35 @@ void MessageComposer::attachFile()
     // select a file
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-            addAttachment((*fileIt).toUtf8().constData());
-        }
+        ui.hashBox->addAttachments(files);
     }
 }
 
-void MessageComposer::addAttachment(std::string filePath)
+void MessageComposer::fileHashingStarted()
 {
-    /* add a AttachFileItem to the attachment section */
-    std::cerr << "MessageComposer::addFile() hashing file.";
-    std::cerr << std::endl;
+    std::cerr << "MessageComposer::fileHashingStarted() started." << std::endl;
 
     /* add widget in for new destination */
-    AttachFileItem *file = new AttachFileItem(filePath);
-
-    ui.hashBox->show();
     ui.msgFileList->hide();
-    ui.verticalLayout->addWidget(file, 1, 0);
-
-    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
-    if (file->getState() == AFI_STATE_LOCAL) {
-        fileHashingFinished(file);
-    } else {
-        QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)),this, SLOT(fileHashingFinished(AttachFileItem *))) ;
-    }
-    mAttachments.push_back(file);
-
-    if (mCheckAttachment)
-    {
-        checkAttachmentReady();
-    }
+    ui.hashBox->show();
 }
 
-void MessageComposer::fileHashingFinished(AttachFileItem* file)
+void MessageComposer::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
-    std::cerr << "MessageComposer::fileHashingFinished() started.";
-    std::cerr << std::endl;
+    std::cerr << "MessageComposer::fileHashingFinished() started." << std::endl;
 
-    //check that the file is ok tos end
-    if (file->getState() == AFI_STATE_ERROR) {
-#ifdef CHAT_DEBUG
-        std::cerr << "MessageComposer::fileHashingFinished error file is not hashed.";
-#endif
-        return;
+    QList<HashedFile>::iterator it;
+    for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
+        FileInfo info;
+        info.fname = it->filename.toUtf8().constData();
+        info.hash = it->hash;
+        info.size = it->size;
+        addFile(info);
     }
 
-    FileInfo fileInfo;
-    fileInfo.fname = file->FileName();
-    fileInfo.hash = file->FileHash();
-    fileInfo.size = file->FileSize();
-
-    addFile(fileInfo);
-}
-
-void MessageComposer::checkAttachmentReady()
-{
-    std::list<AttachFileItem *>::iterator fit;
-
-    mCheckAttachment = false;
-
-    for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
-    {
-        if (!(*fit)->isHidden())
-        {
-            if (!(*fit)->ready())
-            {
-                ui.actionSend->setEnabled(false);
-                break;
-            }
-        }
-    }
-
-    if (fit == mAttachments.end())
-    {
-        ui.actionSend->setEnabled(true);
-        ui.hashBox->hide();
-        ui.msgFileList->show();
-    }
-
-    /* repeat... */
-    int msec_rate = 1000;
-    QTimer::singleShot( msec_rate, this, SLOT(checkAttachmentReady(void)));
+    ui.actionSend->setEnabled(true);
+    ui.hashBox->hide();
+    ui.msgFileList->show();
 }
 
 /* clear Filter */
@@ -2470,82 +2421,6 @@ void MessageComposer::friendDetails()
     ConfCertDialog::showIt(id, ConfCertDialog::PageDetails);
 }
 
-void MessageComposer::dragEnterEvent(QDragEnterEvent *event)
-{
-    /* print out mimeType */
-    std::cerr << "PopupChatDialog::dragEnterEvent() Formats";
-    std::cerr << std::endl;
-
-    QStringList formats = event->mimeData()->formats();
-    QStringList::iterator it;
-    for(it = formats.begin(); it != formats.end(); it++) {
-        std::cerr << "Format: " << (*it).toStdString();
-        std::cerr << std::endl;
-    }
-
-    if (event->mimeData()->hasUrls()) {
-        std::cerr << "PopupChatDialog::dragEnterEvent() Accepting Urls";
-        std::cerr << std::endl;
-        event->acceptProposedAction();
-    } else {
-        std::cerr << "PopupChatDialog::dragEnterEvent() No Urls";
-        std::cerr << std::endl;
-    }
-}
-
-void MessageComposer::dropEvent(QDropEvent *event)
-{
-    if (!(Qt::CopyAction & event->possibleActions())) {
-        std::cerr << "PopupChatDialog::dropEvent() Rejecting uncopyable DropAction";
-        std::cerr << std::endl;
-
-        /* can't do it */
-        return;
-    }
-
-    std::cerr << "PopupChatDialog::dropEvent() Formats";
-    std::cerr << std::endl;
-
-    QStringList formats = event->mimeData()->formats();
-    QStringList::iterator it;
-    for(it = formats.begin(); it != formats.end(); it++) {
-        std::cerr << "Format: " << (*it).toStdString();
-        std::cerr << std::endl;
-    }
-
-    if (event->mimeData()->hasUrls()) {
-        std::cerr << "PopupChatDialog::dropEvent() Urls:";
-        std::cerr << std::endl;
-
-        QList<QUrl> urls = event->mimeData()->urls();
-        QList<QUrl>::iterator uit;
-        for(uit = urls.begin(); uit != urls.end(); uit++) {
-            QString localpath = uit->toLocalFile();
-            std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
-            std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
-
-            if (localpath.isEmpty() == false) {
-                //Check that the file does exist and is not a directory
-                QDir dir(localpath);
-                if (dir.exists()) {
-                    std::cerr << "PopupChatDialog::dropEvent() directory not accepted."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-                    mb.exec();
-                } else if (QFile::exists(localpath)) {
-                    addAttachment(localpath.toUtf8().constData());
-                } else {
-                    std::cerr << "PopupChatDialog::dropEvent() file does not exists."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-                    mb.exec();
-                }
-            }
-        }
-    }
-
-    event->setDropAction(Qt::CopyAction);
-    event->accept();
-}
-
 void MessageComposer::tagAboutToShow()
 {
 	TagsMenu *menu = dynamic_cast<TagsMenu*>(ui.tagButton->menu());
@@ -2575,7 +2450,7 @@ void MessageComposer::tagSet(int tagId, bool set)
 			m_tagIds.push_back(tagId);
 			/* Keep the list sorted */
 			m_tagIds.sort();
-        }
+		}
 	} else {
 		if (set == false) {
 			m_tagIds.remove(tagId);

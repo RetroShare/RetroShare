@@ -1204,17 +1204,8 @@ border: 1px solid #CCCCCC;}</string>
              </layout>
             </widget>
            </item>
-           <item row="2" column="0">
-            <layout class="QVBoxLayout" name="verticalLayout"/>
-           </item>
            <item row="0" column="0">
             <widget class="QSplitter" name="splitter_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -1291,6 +1282,19 @@ background: white;}</string>
                </item>
               </layout>
              </widget>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="HashBox" name="hashBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -1429,6 +1433,12 @@ background: white;}</string>
    <class>AvatarWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HashBox</class>
+   <extends>QScrollArea</extends>
+   <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

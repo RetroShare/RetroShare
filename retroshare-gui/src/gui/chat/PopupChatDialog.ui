@@ -25,19 +25,22 @@
    </property>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>5</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <property name="horizontalSpacing">
       <number>0</number>
      </property>
      <property name="verticalSpacing">
       <number>1</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item row="0" column="0" rowspan="6">
+     <item row="0" column="0" rowspan="7">
       <widget class="QFrame" name="leftsideframe">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -108,7 +111,7 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="1" rowspan="6">
+     <item row="0" column="1" rowspan="7">
       <widget class="QFrame" name="avatarframe">
        <property name="maximumSize">
         <size>
@@ -711,9 +714,6 @@ border: 1px solid #CCCCCC;
        </layout>
       </widget>
      </item>
-     <item row="6" column="0" colspan="3">
-      <layout class="QVBoxLayout" name="vboxLayout"/>
-     </item>
      <item row="4" column="2">
       <widget class="QSplitter" name="chatsplitter">
        <property name="lineWidth">
@@ -724,6 +724,9 @@ border: 1px solid #CCCCCC;
        </property>
        <property name="handleWidth">
         <number>2</number>
+       </property>
+       <property name="childrenCollapsible">
+        <bool>false</bool>
        </property>
        <widget class="QWidget" name="verticalLayoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -738,7 +741,7 @@ border: 1px solid #CCCCCC;
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>100</height>
+             <height>30</height>
             </size>
            </property>
            <property name="styleSheet">
@@ -831,6 +834,13 @@ background: white;}</string>
        </widget>
       </widget>
      </item>
+     <item row="6" column="2">
+      <widget class="HashBox" name="hashBox">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -910,6 +920,12 @@ background: white;}</string>
    <class>AvatarWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HashBox</class>
+   <extends>QScrollArea</extends>
+   <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

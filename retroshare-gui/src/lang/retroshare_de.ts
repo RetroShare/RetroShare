@@ -219,6 +219,11 @@ p, li { white-space: pre-wrap; }
         <source>Cancel Download</source>
         <translation>Download abbrechen</translation>
     </message>
+    <message>
+        <location filename="../gui/feeds/AttachFileItem.cpp" line="+230"/>
+        <source>[ERROR])</source>
+        <translation>[Fehler]</translation>
+    </message>
 </context>
 <context>
     <name>AvatarWidget</name>
@@ -2423,12 +2428,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateForumMsg</name>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="+333"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="+308"/>
         <source>Post Forum Msg</source>
         <translation>Forumbeitrag schreiben</translation>
     </message>
     <message>
-        <location line="-274"/>
+        <location line="-249"/>
         <source>Forum</source>
         <translation>Forum</translation>
     </message>
@@ -2448,18 +2453,18 @@ p, li { white-space: pre-wrap; }
         <translation>Betreff</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+240"/>
         <source>Close</source>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location line="-325"/>
+        <location line="-300"/>
         <source>Post Forum Message</source>
         <translation>Erstelle Forumbeitrag</translation>
     </message>
     <message>
         <location line="+185"/>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="+73"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="+76"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -2499,25 +2504,21 @@ p, li { white-space: pre-wrap; }
         <translation>Hänge Dateien mit Drag&apos;n&apos;Drop an</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+12"/>
         <source>You can attach files via drag and drop here in this window</source>
         <translation>Du kannst Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="+88"/>
-        <location line="+6"/>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="obsolete">Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>File not found or file name not accepted.</source>
-        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation type="obsolete">Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
 </context>
 <context>
@@ -3522,9 +3523,63 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FilesDefs</name>
+    <message>
+        <location filename="../gui/common/FilesDefs.cpp" line="+33"/>
+        <source>Picture</source>
+        <translation>Bild</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Video</source>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Audio</source>
+        <translation>Audio</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Archive</source>
+        <translation>Archiv</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Program</source>
+        <translation>Programm</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>CD/DVD-Image</source>
+        <translation>CD/DVD-Abbild</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+2"/>
+        <source>Document</source>
+        <translation>Dokument</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>RetroShare collection file</source>
+        <translation>Kollektion</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Subtitles</source>
+        <translation>Untertitel</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Nintendo DS Rom</source>
+        <translation>Nintendo DS Rom</translation>
+    </message>
+</context>
+<context>
     <name>FlatStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+674"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+646"/>
         <source>Friends Directories</source>
         <translation>Dateien von Freunden</translation>
     </message>
@@ -4430,12 +4485,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppenchat</translation>
     </message>
     <message>
-        <location line="+465"/>
+        <location line="+456"/>
         <source>Messages entered here are sent to all connected friends</source>
         <translation>Nachrichten, die Du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
     <message>
-        <location line="-378"/>
+        <location line="-369"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
@@ -4470,7 +4525,7 @@ p, li { white-space: pre-wrap; }
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+117"/>
         <source>Clear Chat History</source>
         <translation>Nachrichtenverlauf leeren</translation>
     </message>
@@ -4591,7 +4646,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+89"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+88"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -4601,12 +4656,12 @@ p, li { white-space: pre-wrap; }
         <translation>Neuigkeiten</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+33"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+66"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
@@ -4741,23 +4796,19 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+97"/>
-        <location line="+6"/>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="obsolete">Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation type="obsolete">Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>File not found or file name not accepted.</source>
-        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+57"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -5650,6 +5701,25 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>HashBox</name>
+    <message>
+        <location filename="../gui/common/HashBox.cpp" line="+126"/>
+        <location line="+6"/>
+        <source>Drop file error.</source>
+        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>File not found or file name not accepted.</source>
+        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+    </message>
+</context>
+<context>
     <name>HelpBrowser</name>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="+127"/>
@@ -6423,18 +6493,18 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+832"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+836"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
     <message>
         <location line="+49"/>
-        <location line="+968"/>
+        <location line="+928"/>
         <source>Contacts</source>
         <translation>Kontakte</translation>
     </message>
     <message>
-        <location line="-953"/>
+        <location line="-913"/>
         <source>Search for Name:</source>
         <translation>Suche Name:</translation>
     </message>
@@ -6464,12 +6534,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>&gt;&gt; Bcc</translation>
     </message>
     <message>
-        <location line="+573"/>
+        <location line="+564"/>
         <source>Subject:</source>
         <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="-493"/>
+        <location line="-484"/>
         <source>Paragraph</source>
         <translation>Absatz</translation>
     </message>
@@ -6540,18 +6610,18 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+102"/>
         <source>Tags:</source>
         <translation>Schlagwörter:</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-533"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-535"/>
         <source>Tags</source>
         <translation>Schlagwörter</translation>
     </message>
     <message>
-        <location line="-330"/>
+        <location line="-321"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
@@ -6576,7 +6646,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+1091"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+1093"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -6591,7 +6661,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Bcc</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.ui" line="+253"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="+244"/>
         <source>Recommended Files</source>
         <translation>Empfohlene Dateien</translation>
     </message>
@@ -6611,7 +6681,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+62"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
@@ -6661,7 +6731,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1180"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1182"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -6681,7 +6751,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>&amp;Blocksatz</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+220"/>
         <location line="+1657"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
@@ -6914,23 +6984,19 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+299"/>
-        <location line="+6"/>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="obsolete">Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation type="obsolete">Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>File not found or file name not accepted.</source>
-        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-2124"/>
+        <location line="-1819"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
@@ -8975,7 +9041,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+708"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+706"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -8995,40 +9061,39 @@ p, li { white-space: pre-wrap; }
         <translation>Lade Bilddatei</translation>
     </message>
     <message>
-        <location line="+155"/>
         <source>File not found or file name not accepted.</source>
-        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+102"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="+561"/>
-        <location line="+278"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="+564"/>
+        <location line="+285"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="-243"/>
-        <location line="+253"/>
+        <location line="-250"/>
+        <location line="+260"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-218"/>
-        <location line="+213"/>
+        <location line="-225"/>
+        <location line="+220"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="-143"/>
+        <location line="-150"/>
         <source>Text Color</source>
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+183"/>
+        <location line="+190"/>
         <source>Clear offline messages</source>
         <translation>Entferne offline Nachrichten</translation>
     </message>
@@ -9048,12 +9113,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf leeren</translation>
     </message>
     <message>
-        <location line="-197"/>
+        <location line="-204"/>
         <source>Font</source>
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="+235"/>
+        <location line="+242"/>
         <source>Delete Chat History</source>
         <translation>Nachrichtenverlauf löschen</translation>
     </message>
@@ -9063,12 +9128,12 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location line="-402"/>
+        <location line="-409"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+369"/>
+        <location line="+376"/>
         <source>Disable Emoticons</source>
         <translation>Deaktiviere Emoticons</translation>
     </message>
@@ -9078,34 +9143,31 @@ p, li { white-space: pre-wrap; }
         <translation>Durchgestrichen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-253"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-111"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+158"/>
-        <location line="+6"/>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="obsolete">Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation type="obsolete">Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-388"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-395"/>
         <source>Add a File for your Friend</source>
         <translation>Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+410"/>
+        <location line="+417"/>
         <location line="+3"/>
         <source>Save Chat History</source>
         <translation>Nachrichtenverlauf speichern</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+61"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+77"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -9115,18 +9177,18 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-505"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-445"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-452"/>
         <source>Attach a Picture</source>
         <translation>Bild anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+686"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+544"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -9146,7 +9208,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-652"/>
+        <location line="-510"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -10439,7 +10501,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RetroshareDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="-478"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="-449"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
@@ -10544,7 +10606,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+0"/>
-        <location line="+30"/>
+        <location line="+31"/>
         <source>Collection files</source>
         <translation>Kollektion</translation>
     </message>
@@ -10687,7 +10749,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+292"/>
+        <location filename="../gui/SearchDialog.cpp" line="+293"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -10718,13 +10780,13 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+379"/>
         <location line="+68"/>
         <source>Folder</source>
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+471"/>
+        <location line="+396"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
@@ -10779,7 +10841,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-997"/>
+        <location filename="../gui/SearchDialog.cpp" line="-921"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -12743,7 +12805,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+338"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+339"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12941,7 +13003,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+365"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -12951,12 +13013,12 @@ p, li { white-space: pre-wrap; }
         <translation>Pausiert</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-137"/>
         <source>Transferring</source>
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+369"/>
+        <location line="+368"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -12991,7 +13053,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-937"/>
+        <location line="-901"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -13044,38 +13106,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
-        <location line="+541"/>
+        <location line="+505"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-539"/>
-        <location line="+540"/>
+        <location line="-503"/>
+        <location line="+504"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-540"/>
-        <location line="+539"/>
+        <location line="-504"/>
+        <location line="+503"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-429"/>
+        <location line="-393"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+265"/>
-        <location line="+144"/>
+        <location line="+230"/>
+        <location line="+143"/>
         <location line="+135"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-275"/>
-        <location line="+141"/>
+        <location line="-274"/>
+        <location line="+140"/>
         <location line="+135"/>
         <source>Okay</source>
         <translation>OK</translation>
@@ -13092,8 +13154,8 @@ p, li { white-space: pre-wrap; }
         <translation>Ladend</translation>
     </message>
     <message>
-        <location line="-131"/>
-        <location line="+132"/>
+        <location line="-130"/>
+        <location line="+131"/>
         <location line="+135"/>
         <location line="+1"/>
         <source>Complete</source>
@@ -13120,7 +13182,7 @@ p, li { white-space: pre-wrap; }
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-566"/>
+        <location line="-530"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>
@@ -13128,7 +13190,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TreeStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+111"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+82"/>
         <source>My files</source>
         <translation>Meine Dateien</translation>
     </message>

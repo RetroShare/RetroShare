@@ -29,6 +29,7 @@
 #include <gui/RsAutoUpdatePage.h>
 #include <gui/common/RsCollectionFile.h>
 #include <gui/common/RsUrlHandler.h>
+#include <gui/common/FilesDefs.h>
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -277,36 +278,7 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 	else if (details.type == DIR_TYPE_FILE) /* File */
 	{
 		// extensions predefined
-		QString ext = QFileInfo(QString::fromUtf8(details.name.c_str())).suffix();
-		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
-				|| ext == "bmp" || ext == "ico" || ext == "svg")
-			return QIcon(":/images/FileTypePicture.png");
-		else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
-				|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
-				|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
-			return QIcon(":/images/FileTypeVideo.png");
-		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
-			return QIcon(":/images/FileTypeAudio.png");
-		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
-				|| ext == "rar" || ext == "rpm" || ext == "deb")
-			return QIcon(":/images/FileTypeArchive.png");
-		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-				|| ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
-				|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
-			return QIcon(":/images/FileTypeProgram.png");
-		else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
-			return QIcon(":/images/FileTypeCDImage.png");
-		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
-			return QIcon(":/images/FileTypeDocument.png");
-		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
-				|| ext == "sxc" || ext == "odt" || ext == "ods")
-			return QIcon(":/images/FileTypeDocument.png");
-		else if (ext == "html" || ext == "htm" || ext == "php")
-			return QIcon(":/images/FileTypeDocument.png");
-		else if (ext == RsCollectionFile::ExtensionString)
-			return QIcon(":/images/mimetypes/rscollection-16.png");
-		else
-			return QIcon(":/images/FileTypeAny.png");
+		return FilesDefs::getIconFromFilename(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 		return QVariant();

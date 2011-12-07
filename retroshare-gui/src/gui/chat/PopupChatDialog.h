@@ -28,7 +28,6 @@
 class QAction;
 class QTextEdit;
 class QTextCharFormat;
-class AttachFileItem;
 class ChatInfo;
 
 #include <retroshare/rsmsgs.h>
@@ -70,8 +69,6 @@ protected:
     ~PopupChatDialog();
 
     virtual void resizeEvent(QResizeEvent *event);
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);
 
     bool eventFilter(QObject *obj, QEvent *ev);
 
@@ -82,7 +79,7 @@ private slots:
     void pasteLink() ;
     void contextMenu(QPoint) ;
 
-    void fileHashingFinished(AttachFileItem* file);
+    void fileHashingFinished(QList<HashedFile> hashedFiles);
 
     void smileyWidget();
     void addSmiley();
@@ -116,7 +113,6 @@ private:
 
     void colorChanged(const QColor &c);
     void fontChanged(const QFont &font);
-    void addAttachment(std::string,int flag);
     void processSettings(bool bLoad);
 
     void onPrivateChatChanged(int list, int type);

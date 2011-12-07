@@ -42,7 +42,6 @@
 #include "common/vmessagebox.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
-#include "feeds/AttachFileItem.h"
 #include "forums/CreateForum.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/mainpagestack.h"
@@ -109,6 +108,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
     connect(ui.actionSave_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
+    connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
+
     ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
     mCurrentColor = Qt::black;
@@ -157,6 +158,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
+    ui.hashBox->setDropWidget(this);
+    ui.hashBox->setAutoHide(true);
 
     /* Set initial size the splitter */
     QList<int> sizes;
@@ -704,141 +707,44 @@ void FriendsDialog::statusmessage()
 
 void FriendsDialog::addExtraFile()
 {
-    QString file;
-    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", file)) {
-        addAttachment(file.toUtf8().constData());
+    QStringList files;
+    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
+        ui.hashBox->addAttachments(files);
     }
 }
 
-void FriendsDialog::addAttachment(std::string filePath) {
-	    /* add a AttachFileItem to the attachment section */
-            std::cerr << "PopupChatDialog::addExtraFile() hashing file." << std::endl;
-
-	    /* add widget in for new destination */
-	    AttachFileItem *file = new AttachFileItem(filePath);
-	    //file->
-
-	    ui.verticalLayout->addWidget(file, 1, 0);
-
-	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
-	    if (file->getState() == AFI_STATE_LOCAL) {
-		fileHashingFinished(file);
-	    } else {
-		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
-	    }
-}
-
-void FriendsDialog::fileHashingFinished(AttachFileItem* file)
+void FriendsDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
     std::cerr << "FriendsDialog::fileHashingFinished() started." << std::endl;
 
-    //check that the file is ok tos end
-    if (file->getState() == AFI_STATE_ERROR) {
-#ifdef FRIENDS_DEBUG
-        std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed." << std::endl;
-#endif
-        return;
+    QString mesgString;
+
+    QList<HashedFile>::iterator it;
+    for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
+        HashedFile& hashedFile = *it;
+        RetroShareLink link;
+        if (!link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash))) {
+            continue;
+        }
+        mesgString += link.toHtmlSize();
+        if (it!= hashedFiles.end()) {
+            mesgString += "<BR>";
+        }
     }
 
-    //convert fileSize from uint_64 to string for html link
-    //	char fileSizeChar [100];
-    //	sprintf(fileSizeChar, "%lld", file->FileSize());
-    //	std::string fileSize = *(&fileSizeChar);
-
-    RetroShareLink link;
-    if (!link.createFile(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()))) {
-        return;
-    }
-    QString mesgString = link.toHtmlSize();
-
-    //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
-    //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
 #ifdef FRIENDS_DEBUG
     std::cerr << "FriendsDialog::fileHashingFinished mesgString : " << mesgString.toStdString() << std::endl;
 #endif
 
-    /* convert to real html document */
-    QTextBrowser textBrowser;
-    textBrowser.setHtml(mesgString);
-    std::wstring msg = textBrowser.toHtml().toStdWString();
+    if (!mesgString.isEmpty()) {
+        /* convert to real html document */
+        QTextBrowser textBrowser;
+        textBrowser.setHtml(mesgString);
+        std::wstring msg = textBrowser.toHtml().toStdWString();
 
-    rsMsgs->sendPublicChat(msg);
-    setFont();
-}
-
-void FriendsDialog::dropEvent(QDropEvent *event)
-{
-    if (!(Qt::CopyAction & event->possibleActions()))
-    {
-        std::cerr << "FriendsDialog::dropEvent() Rejecting uncopyable DropAction" << std::endl;
-
-        /* can't do it */
-        return;
+        rsMsgs->sendPublicChat(msg);
+        setFont();
     }
-
-    std::cerr << "FriendsDialog::dropEvent() Formats" << std::endl;
-    QStringList formats = event->mimeData()->formats();
-    QStringList::iterator it;
-    for(it = formats.begin(); it != formats.end(); it++)
-    {
-        std::cerr << "Format: " << (*it).toStdString() << std::endl;
-    }
-
-    if (event->mimeData()->hasUrls())
-    {
-        std::cerr << "FriendsDialog::dropEvent() Urls:" << std::endl;
-
-        QList<QUrl> urls = event->mimeData()->urls();
-        QList<QUrl>::iterator uit;
-        for(uit = urls.begin(); uit != urls.end(); uit++)
-        {
-            QString localpath = uit->toLocalFile();
-            std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
-            std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
-
-            if (localpath.isEmpty() == false)
-            {
-                //Check that the file does exist and is not a directory
-                QDir dir(localpath);
-                if (dir.exists()) {
-                    std::cerr << "FriendsDialog::dropEvent() directory not accepted."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-                    mb.exec();
-                } else if (QFile::exists(localpath)) {
-                    FriendsDialog::addAttachment(localpath.toUtf8().constData());
-                } else {
-                    std::cerr << "FriendsDialog::dropEvent() file does not exists."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-                    mb.exec();
-                }
-            }
-        }
-    }
-
-    event->setDropAction(Qt::CopyAction);
-    event->accept();
-}
-
-void FriendsDialog::dragEnterEvent(QDragEnterEvent *event)
-{
-	/* print out mimeType */
-        std::cerr << "FriendsDialog::dragEnterEvent() Formats" << std::endl;
-	QStringList formats = event->mimeData()->formats();
-	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
-	{
-                std::cerr << "Format: " << (*it).toStdString() << std::endl;
-	}
-
-	if (event->mimeData()->hasUrls())
-	{
-                std::cerr << "FriendsDialog::dragEnterEvent() Accepting Urls" << std::endl;
-		event->acceptProposedAction();
-	}
-	else
-	{
-                std::cerr << "FriendsDialog::dragEnterEvent() No Urls" << std::endl;
-	}
 }
 
 bool FriendsDialog::fileSave()

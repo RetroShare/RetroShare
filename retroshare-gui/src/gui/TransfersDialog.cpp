@@ -31,6 +31,7 @@
 #include <QMessageBox>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/RsCollectionFile.h>
+#include <gui/common/FilesDefs.h>
 
 #include <algorithm>
 
@@ -624,44 +625,9 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
 	DLListModel->setData(DLListModel->index(row, DOWNLOADTIME), QVariant((qlonglong)downloadtime));
 	DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
-	QString ext = QFileInfo(name).suffix();
-	DLListModel->setData(DLListModel->index(row,NAME), getIconFromExtension(ext), Qt::DecorationRole);
+	DLListModel->setData(DLListModel->index(row,NAME), FilesDefs::getIconFromFilename(name), Qt::DecorationRole);
 
 	return row ;
-}
-
-QIcon TransfersDialog::getIconFromExtension(QString ext)
-{
-	ext = ext.toLower();
-	if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg")
-		return QIcon(QString::fromUtf8(":/images/FileTypePicture.png")) ;
-	else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
-			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
-			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "ogm")
-		return QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")) ;
-	else if (ext == "ogg" || ext == "mp3" || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma" || ext == "m4a" || ext == "flac")
-		return QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")) ;
-	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
-			|| ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
-			|| ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb")
-		return QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")) ;
-	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-			|| ext == "exe" || ext == "js" || ext == "pif"
-			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
-		return QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")) ;
-	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" )
-		return QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")) ;
-	else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
-		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
-	else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
-			|| ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  )
-		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
-	else if (ext == "html" || ext == "htm" || ext == "php")
-		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
-	else if (ext == RsCollectionFile::ExtensionString)
-		return QIcon(QString::fromUtf8(":/images/mimetypes/rscollection-16.png")) ;
-	else 
-		return QIcon(QString::fromUtf8(":/images/FileTypeAny.png")) ;
 }
 
 int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
@@ -808,8 +774,7 @@ int TransfersDialog::addUploadItem(	const QString&, const QString& name, const Q
 	ULListModel->setData(ULListModel->index(row, UHASH),        QVariant((QString)coreID));
 	ULListModel->setData(ULListModel->index(row, UUSERID),      QVariant((QString)peer_id));
 
-	QString ext = QFileInfo(name).suffix();
-	ULListModel->setData(ULListModel->index(row,UNAME), getIconFromExtension(ext), Qt::DecorationRole);
+	ULListModel->setData(ULListModel->index(row,UNAME), FilesDefs::getIconFromFilename(name), Qt::DecorationRole);
 
 	return row;
 }

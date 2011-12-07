@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>796</width>
-    <height>588</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -17,7 +17,7 @@
    <string>Compose</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../images.qrc">
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
   <property name="styleSheet">
@@ -397,7 +397,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -429,7 +429,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -467,7 +467,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -508,7 +508,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -614,7 +614,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -640,7 +640,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -673,7 +673,7 @@ border: 1px solid #CCCCCC;}</string>
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -711,7 +711,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -784,15 +784,6 @@ border: 1px solid #CCCCCC;}</string>
            <attribute name="verticalHeaderDefaultSectionSize">
             <number>22</number>
            </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderDefaultSectionSize">
-            <number>22</number>
-           </attribute>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
           </widget>
          </item>
          <item row="2" column="0" rowspan="2">
@@ -835,7 +826,7 @@ border: 1px solid #CCCCCC;}</string>
               <string>Tags</string>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="../images.qrc">
                <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
              </property>
              <property name="flat">
@@ -923,41 +914,10 @@ border: 1px solid #CCCCCC;}</string>
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QScrollArea" name="hashBox">
+          <widget class="HashBox" name="hashBox">
            <property name="widgetResizable">
             <bool>true</bool>
            </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>560</width>
-              <height>57</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <property name="margin">
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout"/>
-             </item>
-             <item>
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>46</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
           </widget>
          </item>
         </layout>
@@ -1006,7 +966,7 @@ border: 1px solid #CCCCCC;}</string>
   </widget>
   <action name="actionSend">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/send24.png</normaloff>:/images/send24.png</iconset>
    </property>
    <property name="text">
@@ -1018,7 +978,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionReply">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
    </property>
    <property name="text">
@@ -1027,7 +987,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionContactsView">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
    </property>
    <property name="text">
@@ -1039,7 +999,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSaveas">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/save24.png</normaloff>:/images/save24.png</iconset>
    </property>
    <property name="text">
@@ -1051,7 +1011,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionAttach">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
    </property>
    <property name="text">
@@ -1066,7 +1026,7 @@ border: 1px solid #CCCCCC;}</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/quote_24.png</normaloff>:/images/quote_24.png</iconset>
    </property>
    <property name="text">
@@ -1077,6 +1037,14 @@ border: 1px solid #CCCCCC;}</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HashBox</class>
+   <extends>QScrollArea</extends>
+   <header location="global">gui/common/HashBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>recipientWidget</tabstop>
   <tabstop>titleEdit</tabstop>
@@ -1093,6 +1061,8 @@ border: 1px solid #CCCCCC;}</string>
   <tabstop>comboFont</tabstop>
   <tabstop>hashBox</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

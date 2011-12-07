@@ -30,6 +30,7 @@
 #include "gui/RSHumanReadableDelegate.h"
 #include "gui/RsAutoUpdatePage.h"
 #include "gui/common/RsCollectionFile.h"
+#include "gui/common/FilesDefs.h"
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
 
@@ -772,7 +773,6 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-		QString ext = QFileInfo(QString::fromStdString(dir.name)).suffix();
 		child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));	// very important for sorting
 		child->setText(SR_AGE_COL, QString("%1").arg(dir.age,15,10));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -781,7 +781,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
-		setIconAndType(child, ext);
+		setIconAndType(child, QString::fromUtf8(dir.name.c_str()));
 
 		if (item == NULL) {
 			ui.searchResultWidget->addTopLevelItem(child);
@@ -1072,8 +1072,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
 		item->setText(SR_HASH_COL, QString::fromStdString(file.hash));
 
-		QString ext = QFileInfo(QString::fromStdString(file.name)).suffix();
-		setIconAndType(item, ext);
+		setIconAndType(item, QString::fromUtf8(file.name.c_str()));
 
 		/*
 		 * to facilitate downlaods we need to save the file size too
@@ -1224,84 +1223,10 @@ void SearchDialog::selectSearchResults(int index)
 	ui.filterPatternLineEdit->clear();
 }
 
-void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
+void SearchDialog::setIconAndType(QTreeWidgetItem *item, const QString& filename)
 {
-	ext = ext.toLower();
-	if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" 
-	|| ext == "svg" || ext == "tif" || ext == "tiff")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypePicture.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Picture"));
-	}
-	else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "mkv" || ext == "mp4" 
-	|| ext == "flv" || ext == "mov" || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" 
-	|| ext == "dvx" || ext == "divx")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeVideo.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Video"));
-	}
-	else if (ext == "flac" || ext == "ogg" || ext == "mp3" || ext == "m4a" || ext == "mp1" || ext == "mp2"  || ext == "wav" || ext == "wma")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAudio.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Audio"));
-	}
-	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "tgz" || ext == "gz" || ext == "rar"
-	 || ext == "rpm" || ext == "7z" || ext == "ace" || ext == "jar" || ext == "cab" || ext == "deb")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeArchive.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
-	}
-	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "bin" || ext == "exe" || ext == "js" 
-	|| ext == "msi" ||ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeProgram.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
-	}
-	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" || ext == "uif" )
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeCDImage.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("CD-Image"));
-	}
-	else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
-	}
-	else if (ext == "pdf" )
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/mimetypes/pdf.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
-	}
-  else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml" || ext == "nfo" 
-  || ext == "reg" || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css" || ext == "crt" )
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
-	}
-	else if (ext == "html" || ext == "htm" || ext == "php")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
-	}
-	else if (ext == RsCollectionFile::ExtensionString)
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/library.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("RetroShare collection file"));
-	}
-	else if (ext == "sub" || ext == "srt")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Subtitles"));
-	}
-	else if (ext == "nds")
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
-		item->setText(SR_TYPE_COL, QString::fromUtf8("Nintendo DS Rom"));
-	}
-	else
-	{
-		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
-	}
+	item->setIcon(SR_NAME_COL, FilesDefs::getIconFromFilename(filename));
+	item->setText(SR_TYPE_COL, FilesDefs::getNameFromFilename(filename));
 }
 
 void SearchDialog::copyResultLink()
