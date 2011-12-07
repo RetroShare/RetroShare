@@ -1303,11 +1303,11 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 	for(std::set<std::string>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
 		if((*it)!=item->PeerId() && mLinkMgr->isOnline(*it)) 
 		{
-			RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem(*item) ;	// copy almost everything
+			RsChatLobbyMsgItem *item2 = new RsChatLobbyMsgItem(*item) ;	// copy almost everything
 
-			item->PeerId(*it) ;
+			item2->PeerId(*it) ;
 
-			sendItem(item);
+			sendItem(item2);
 		}
 	return true ;
 }
@@ -1318,7 +1318,7 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 
 	std::cerr << "Sending chat lobby message to lobby " << lobby_id << std::endl;
 	std::cerr << "msg:" << std::endl;
-	std::cerr << msg.c_str() << std::endl;
+	std::wcerr << msg << std::endl;
 
 	// get a pointer to the info for that chat lobby.
 	//
@@ -1489,6 +1489,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 
+	// send AKN item
+	
+	sendLobbyChat(L"[...] joined the lobby",lobby_id) ;
 	return true ;
 }
 

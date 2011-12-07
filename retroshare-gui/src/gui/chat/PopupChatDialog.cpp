@@ -359,10 +359,16 @@ void PopupChatDialog::chatFriend(const std::string &id)
     }
     std::cerr<<" popup dialog chat friend 1"<<std::endl;
 
+		 ChatLobbyId lid ;
+	 if(rsMsgs->isLobbyId(id,lid))
+	 {
+		 getPrivateChat(id, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+		 return ;
+	 }
+
     RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail)) {
+    if (!rsPeers->getPeerDetails(id, detail)) 
         return;
-    }
 
     std::string firstId;
 

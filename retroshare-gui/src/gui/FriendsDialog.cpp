@@ -319,6 +319,12 @@ void FriendsDialog::readChatLobbyInvites()
 			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
 
 			rsMsgs->acceptLobbyInvite( (*it).lobby_id ) ;
+
+			std::string vpid ;
+			if(rsMsgs->getVirtualPeerId( (*it).lobby_id,vpid ) )
+				PopupChatDialog::chatFriend(vpid) ;
+			else
+				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 		}
 		else
 			rsMsgs->denyLobbyInvite( (*it).lobby_id ) ;
