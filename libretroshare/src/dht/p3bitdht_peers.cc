@@ -186,6 +186,16 @@ bool 	p3BitDht::dropPeer(std::string pid)
 int p3BitDht::addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age)
 {
 	//mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
+
+	if (mDhtStunner)
+	{
+		mDhtStunner->dropStunPeer(addr);
+	}
+	if (mProxyStunner)
+	{
+		mProxyStunner->dropStunPeer(addr);
+	}
+
 	return 1;
 }
 

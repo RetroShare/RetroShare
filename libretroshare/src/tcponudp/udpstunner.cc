@@ -290,13 +290,8 @@ int     UdpStunner::status(std::ostream &out)
 	out << std::endl;
 
 	out << "UdpStunner::status()" << std::endl;
-	out << "UdpStunner::potentialpeers:" << std::endl;
-        std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
-	{
-		out << "\t" << it->id << std::endl;
-	}
-	out << std::endl;
+
+	locked_printStunList();
 
 	return 1;
 }
@@ -693,6 +688,55 @@ bool    UdpStunner::storeStunPeer(const struct sockaddr_in &remote, const char *
 }
 
 
+bool    UdpStunner::dropStunPeer(const struct sockaddr_in &remote)
+{
+
+#ifdef DEBUG_UDP_STUNNER
+	std::cerr << "UdpStunner::dropStunPeer() : ";
+	std::cerr << std::endl;
+#endif
+
+        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+
+	std::list<TouStunPeer>::iterator it;
+	int count = 0;
+	for(it = mStunList.begin(); it != mStunList.end();)
+	{
+		if ((remote.sin_addr.s_addr == it->remote.sin_addr.s_addr) &&
+		    (remote.sin_port == it->remote.sin_port))
+		{
+#ifdef DEBUG_UDP_STUNNER
+			std::cerr << "UdpStunner::dropStunPeer() Found Entry";
+			std::cerr << std::endl;
+#endif
+
+			it = mStunList.erase(it);
+			count++;
+		}
+		else
+		{
+			it++;
+		}
+	}
+
+	if (count)
+	{
+#ifdef DEBUG_UDP_STUNNER
+		std::cerr << "UdpStunner::dropStunPeer() Dropped " << count << " Instances";
+		std::cerr << std::endl;
+#endif
+		return true;
+	}
+
+#ifdef DEBUG_UDP_STUNNER
+	std::cerr << "UdpStunner::dropStunPeer() Peer Not Here";
+	std::cerr << std::endl;
+#endif
+
+	return false;
+}
+
+
 bool    UdpStunner::checkStunDesired()
 {
 
@@ -891,6 +935,23 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	}
 #endif
 
+	/* sanoty checks on the address 
+	 * have nasty peer that is returning its own address....
+	 */
+
+#ifndef UDPSTUN_ALLOW_LOCALNET // CANNOT HAVE THIS CHECK IN TESTING MODE!
+
+	if (remote.sin_addr.s_addr == extaddr.sin_addr.s_addr)
+	{
+#ifdef DEBUG_UDP_STUNNER
+#endif
+		std::cerr << "UdpStunner::locked_recvdStun() WARNING, BAD PEER: ";
+		std::cerr << "Stun Peer Returned its own address: " << rs_inet_ntoa(remote.sin_addr);
+		std::cerr << std::endl;
+		return false;
+	}
+#endif
+
 	bool found = true;
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
@@ -964,6 +1025,15 @@ bool    UdpStunner::locked_checkExternalAddress()
 	bool found2 = false;
 	time_t now = time(NULL);
 	/* iterator backwards - as these are the most recent */
+
+	/********
+	 *  DUE TO PEERS SENDING BACK FAKE STUN PACKETS... we are increasing.
+	 *  requirements to three peers...they all need matching IP addresses to have a known ExtAddr
+	 *
+	 * Wanted to compare 3 peer addresses... but this will mean that the UDP connections
+	 * will take much longer... have to think of a better solution.
+	 *
+	 */
 	std::list<TouStunPeer>::reverse_iterator it;
 	std::list<TouStunPeer>::reverse_iterator p1;
 	std::list<TouStunPeer>::reverse_iterator p2;
@@ -983,7 +1053,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 #else
 			(isExternalNet(&(it->eaddr.sin_addr))) &&
 #endif
-			(it->failCount == 0) && (age < (mTargetStunPeriod * 2)))
+			(it->failCount == 0) && (age < (mTargetStunPeriod * 2))) 
 		{
 			if (!found1)
 			{
@@ -1001,7 +1071,30 @@ bool    UdpStunner::locked_checkExternalAddress()
 
 	if (found1 && found2)
 	{
-		if ((p1->eaddr.sin_addr.s_addr == p2->eaddr.sin_addr.s_addr) &&
+		/* If any of the addresses are different - two possibilities...
+		 * 1) We have changed IP address.
+		 * 2) Someone has sent us a fake STUN Packet. (Wrong Address).
+		 *
+		 */
+		if (p1->eaddr.sin_addr.s_addr == p2->eaddr.sin_addr.s_addr)
+		{
+			eaddrKnown = true;
+		}
+		else
+		{
+#ifdef DEBUG_UDP_STUNNER
+			std::cerr << "UdpStunner::locked_checkExternalAddress() Found Address mismatch:";
+			std::cerr << std::endl;
+			std::cerr << "  " << inet_ntoa(p1->eaddr.sin_addr);
+			std::cerr << "  " << inet_ntoa(p2->eaddr.sin_addr);
+			std::cerr << std::endl;
+			std::cerr << "UdpStunner::locked_checkExternalAddress() Flagging Ext Addr as Unknown";
+			std::cerr << std::endl;
+#endif
+			eaddrKnown = false;
+		}
+
+		if ((eaddrKnown) &&	
 		    (p1->eaddr.sin_port == p2->eaddr.sin_port))
 		{
 			eaddrStable = true;
@@ -1010,7 +1103,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 		{
 			eaddrStable = false;
 		}
-		eaddrKnown = true;
+
 		eaddr = p1->eaddr;
 		eaddrTime = now;
 
@@ -1019,7 +1112,8 @@ bool    UdpStunner::locked_checkExternalAddress()
 		if (eaddrStable)
 			std::cerr << " Stable NAT translation (GOOD!) ";
 		else
-			std::cerr << " unStable (symmetric NAT translation (BAD!) ";
+			std::cerr << " unStable (symmetric NAT translation (BAD!) or Address Unknown";
+
 		std::cerr << std::endl;
 #endif
 

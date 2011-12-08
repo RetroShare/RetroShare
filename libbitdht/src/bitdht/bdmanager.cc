@@ -43,6 +43,7 @@
 #include "bitdht/bdmsgs.h"
 #include "bitdht/bencode.h"
 #include "bitdht/bdquerymgr.h"
+#include "bitdht/bdfilter.h"
 
 #include <algorithm>
 #include <sstream>
@@ -385,6 +386,14 @@ void bdNodeManager::iteration()
 #endif
 
 				updateStore();
+
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): Cleaning up Filter (should do less frequently)";
+				std::cerr << std::endl;
+#endif
+
+				mFilterPeers->cleanupFilter();
+
 
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): Do App Search";

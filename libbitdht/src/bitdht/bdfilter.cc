@@ -36,6 +36,8 @@
  * #define DEBUG_FILTER 1
 **/
 
+#define BDFILTER_ENTRY_DROP_PERIOD	(6 * 3600)
+
 
 bdFilter::bdFilter(const bdNodeId *ownId, std::list<bdFilteredPeer> &startList, 
 		uint32_t filterFlags, bdDhtFunctions *fns)
@@ -129,6 +131,7 @@ int bdFilter::addPeerToFilter(const bdId *id, uint32_t flags)
 
 		return true;
 	}
+
 	return false;
 }
 
@@ -168,6 +171,58 @@ bool bdFilter::isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags)
 		}
 	}
 	return false;
+}
+
+
+/* periodically we want to cleanup the filter....
+ * if we haven't had an IP address reported as filtered for several hours.
+ * remove it from the list.
+ */
+
+bool bdFilter::cleanupFilter()
+{
+	std::cerr << "bdFilter::cleanupFilter() Current BanList" << std::endl;
+	struct in_addr inaddr;
+
+	std::set<uint32_t>::iterator sit;
+	for(sit = mIpsBanned.begin(); sit != mIpsBanned.end(); sit++)
+	{
+		inaddr.s_addr = *sit;
+		std::cerr << "\tBanned: " << inet_ntoa(inaddr) << std::endl;
+	}
+
+	mIpsBanned.clear();
+	
+	std::cerr << "Filter List:" << std::endl;
+
+	time_t now = time(NULL);
+	time_t dropTime = now - BDFILTER_ENTRY_DROP_PERIOD;
+
+	std::list<bdFilteredPeer>::iterator it;
+	for(it = mFiltered.begin(); it != mFiltered.end();)
+	{
+		std::cerr << "\t" << inet_ntoa(it->mAddr.sin_addr);
+		std::cerr << " Flags: " << it->mFilterFlags;
+		std::cerr << " FilterTS: " << now - it->mFilterTS;
+		std::cerr << " LastSeen: " << now - it->mLastSeen;
+
+		if (it->mLastSeen < dropTime)
+		{
+			/* remove from filter */
+			std::cerr << " OLD DROPPING" << std::endl;
+			it = mFiltered.erase(it);
+		}
+		else
+		{
+			std::cerr << " OK" << std::endl;
+			uint32_t saddr = it->mAddr.sin_addr.s_addr;
+			mIpsBanned.insert(saddr);
+
+			it++;
+		}
+	}
+
+	return true;
 }
 
 

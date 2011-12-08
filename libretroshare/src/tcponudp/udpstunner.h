@@ -94,6 +94,8 @@ int     releaseExclusiveMode(std::string holder, bool forceStun);
 
 void 	setTargetStunPeriod(int32_t sec_per_stun);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
+bool    dropStunPeer(const struct sockaddr_in &remote);
+
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
                 uint32_t &failCount, time_t &lastSend);

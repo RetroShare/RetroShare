@@ -3,7 +3,7 @@
  *
  * BitDHT: An Flexible DHT library.
  *
- * Copyright 2010 by Robert Fernie
+ * Copyright 2010-2011 by Robert Fernie
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -428,8 +428,7 @@ void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAd
 
 
 
-
-#define TEST_BAD_PEER	1
+//#define DISABLE_BAD_PEER_FILTER		1
 
 void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {
@@ -443,12 +442,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 		std::cerr << ") BAD ADDRESS!!!! SHOULD DISCARD POTENTIAL PEER";
 		std::cerr << std::endl;
 
-#ifdef TEST_BAD_PEER
-		std::cerr << "IN TEST MODE... so letting it through.";
-		std::cerr << std::endl;
-#else
 		return;
-#endif
 	}
 
 	/* is it masquarading? */
@@ -465,16 +459,11 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
 				std::cerr << std::endl;
 
-#ifdef TEST_BAD_PEER
-				std::cerr << "IN TEST MODE... Notifying, but letting it through.";
-				std::cerr << std::endl;
-
-	        		mBadPeerQueue.queuePeer(id, 0);
-#else
-				
-	        		mFilterPeers->addBadPeer(id, 0);
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, 0);
+
+#ifndef DISABLE_BAD_PEER_FILTER	
+	        		mFilterPeers->addPeerToFilter(id, 0);
 
 				std::list<struct sockaddr_in> filteredIPs;
 				mFilterPeers->filteredIPs(filteredIPs);
@@ -533,17 +522,14 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 		mFilterPeers->filteredIPs(filteredIPs);
 		mStore.filterIpList(filteredIPs);
 
+	        mBadPeerQueue.queuePeer(id, peerflags);
+
 		return;
 	}
-
-// NB: TODO CLEANUP THIS CODE - ONCE LOGIC IS TESTED!
 
 	/* next we check if it is a friend, whitelist etc, and adjust flags */
 	bdFriendEntry entry;
 
-#ifdef TEST_BAD_PEER
-	bool peerBad = false;
-#endif
 	if (mFriendList.findPeerEntry(&(id->id), entry))
 	{
 		/* found! */
@@ -560,21 +546,26 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
 				std::cerr << std::endl;
 				
-#ifdef TEST_BAD_PEER
-				peerBad = true;
-#else
-	        		mFilterPeers->addBadPeer(id, peerflags);
+
 				// Stores in queue for later callback and desemination around the network.
-	        		mBadPeerList->queuePeer(id, peerflags);
+	        		mBadPeerQueue.queuePeer(id, peerflags);
+
+#ifndef DISABLE_BAD_PEER_FILTER	
+	        		mFilterPeers->addPeerToFilter(id, peerflags);
 
 				std::list<struct sockaddr_in> filteredIPs;
 				mFilterPeers->filteredIPs(filteredIPs);
 				mStore.filterIpList(filteredIPs);
+#endif
 
 				// DO WE EXPLICITLY NEED TO DO THIS, OR WILL THEY JUST BE DROPPED?
 				//mNodeSpace.remove_badpeer(id);
 				//mQueryMgr->remove_badpeer(id);
+	
+				// FLAG in NodeSpace (Should be dropped very quickly anyway)
+				mNodeSpace.flagpeer(id, 0, BITDHT_PEER_EXFLAG_BADPEER);
 
+#ifndef DISABLE_BAD_PEER_FILTER	
 				return;		
 #endif
 			}
@@ -583,18 +574,6 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 
 	mQueryMgr->addPeer(id, peerflags);
 	mNodeSpace.add_peer(id, peerflags);
-
-#ifdef TEST_BAD_PEER
-	// NOTE: We will push bad peers to Query in the testing case.
-	// This allows us to test the multiple solutions... as well.
-	// In normal behaviour - they will just get stripped and never added.
-	if (peerBad)
-	{
-		mNodeSpace.flagpeer(id, 0, BITDHT_PEER_EXFLAG_BADPEER);
-		//mQueryMgr->flag_badpeer(id);
-	}
-#endif
-
 
 	bdPeer peer;
 	peer.mPeerId = *id;
