@@ -33,7 +33,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& CollectionFileName,const s
 {
 	setupUi(this) ;
 
-	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_filename).baseName()));
+	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_filename).completeBaseName()));
 
 	// 1 - add all elements to the list.
 
@@ -175,7 +175,7 @@ void RsCollectionDialog::download()
 			QString cleanPath = dldir + _dlinfos[i].path ;
 			std::cerr << "making directory " << cleanPath.toStdString() << std::endl;
 
-			if(!QDir(cleanPath).mkpath(cleanPath))
+			if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
 				QMessageBox::warning(NULL,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
 
 			rsFiles->FileRequest(_dlinfos[i].name.toUtf8().constData(), _dlinfos[i].hash.toUtf8().constData(), _dlinfos[i].size, cleanPath.toUtf8().constData(), RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
