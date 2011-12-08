@@ -234,6 +234,10 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 	return updated;
 }
 
+/***
+ * EXTRA DEBUGGING.
+ * #define DEBUG_BANLIST_CONDENSE		1
+ ***/
 
 int p3BanList::condenseBanSources_locked()
 {
@@ -250,7 +254,7 @@ int p3BanList::condenseBanSources_locked()
 	{
 		if (now - it->second.mLastUpdate > RSBANLIST_ENTRY_MAX_AGE)
 		{
-#ifdef DEBUG_BANLIST
+#ifdef DEBUG_BANLIST_CONDENSE
 			std::cerr << "p3BanList::condenseBanSources_locked()";
 			std::cerr << " Ignoring Out-Of-Date peer: " << it->first;
 			std::cerr << std::endl;
@@ -258,7 +262,7 @@ int p3BanList::condenseBanSources_locked()
 			continue;
 		}
 
-#ifdef DEBUG_BANLIST
+#ifdef DEBUG_BANLIST_CONDENSE
 		std::cerr << "p3BanList::condenseBanSources_locked()";
 		std::cerr << " Condensing Info from peer: " << it->first;
 		std::cerr << std::endl;
@@ -271,7 +275,7 @@ int p3BanList::condenseBanSources_locked()
 			/* check timestamp */
 			if (now - lit->second.mTs > RSBANLIST_ENTRY_MAX_AGE)
 			{
-#ifdef DEBUG_BANLIST
+#ifdef DEBUG_BANLIST_CONDENSE
 				std::cerr << "p3BanList::condenseBanSources_locked()";
 				std::cerr << " Ignoring Out-Of-Date Entry for: ";
 				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
@@ -296,7 +300,7 @@ int p3BanList::condenseBanSources_locked()
 				bp.level = lvl;
 				bp.addr.sin_port = 0;
 				mBanSet[lit->second.addr.sin_addr.s_addr] = bp;
-#ifdef DEBUG_BANLIST
+#ifdef DEBUG_BANLIST_CONDENSE
 				std::cerr << "p3BanList::condenseBanSources_locked()";
 				std::cerr << " Added New Entry for: ";
 				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
@@ -305,7 +309,7 @@ int p3BanList::condenseBanSources_locked()
 			}
 			else
 			{
-#ifdef DEBUG_BANLIST
+#ifdef DEBUG_BANLIST_CONDENSE
 				std::cerr << "p3BanList::condenseBanSources_locked()";
 				std::cerr << " Merging Info for: ";
 				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);

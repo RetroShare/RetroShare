@@ -77,6 +77,17 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::s
 		mPeerSharer->updatePeer(rsid, addr, outtype, outreason, outage);
 	}
 
+	/* call to the Stunners to drop the address as well */
+	/* IDEALLY these addresses should all be filtered at UdpLayer level instead! */
+	if (mDhtStunner)
+	{
+		mDhtStunner->dropStunPeer(addr);
+	}
+	if (mProxyStunner)
+	{
+		mProxyStunner->dropStunPeer(addr);
+	}
+
 	return 1;
 }
 
