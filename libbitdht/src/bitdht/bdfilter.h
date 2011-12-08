@@ -60,10 +60,12 @@ bool	filteredIPs(std::list<struct sockaddr_in> &answer);
 int 	checkPeer(const bdId *id, uint32_t peerFlags);
 
 int 	addrOkay(struct sockaddr_in *addr);
+int 	addPeerToFilter(const bdId *id, uint32_t flags);
+
+bool 	cleanupFilter();
 
 	private:
 
-int 	addPeerToFilter(const bdId *id, uint32_t flags);
 bool	isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags);
 
 	// searching for
