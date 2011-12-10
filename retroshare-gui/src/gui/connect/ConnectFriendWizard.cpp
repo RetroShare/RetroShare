@@ -429,12 +429,12 @@ TextPage::showHelpUserCert()
 void
 TextPage::copyCert()
 {
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(userCertEdit->toPlainText());
     QMessageBox::information(this,
                              tr("RetroShare"),
                              tr("Your Cert is copied to Clipboard, paste and send it to your "
                                 "friend via email or some other way"));
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(userCertEdit->toPlainText());                            
 
 }
 //
