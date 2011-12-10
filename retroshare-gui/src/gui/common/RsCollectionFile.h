@@ -47,7 +47,7 @@ class RsCollectionFile
 
 		// Loads file from disk.
 		bool load();
-		bool load(const QString& filename);
+		bool load(const QString& filename, bool showError = true);
 
 		// Save to disk
 		bool save() const ;
@@ -55,6 +55,10 @@ class RsCollectionFile
 
 		// Download the content.
 		void downloadFiles() const ;
+
+		qulonglong size();
+
+		static bool isCollectionFile(const QString& filename);
 
 	private:
 		struct DLinfo

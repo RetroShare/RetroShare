@@ -36,6 +36,7 @@
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
+#include "common/RsCollectionFile.h"
 #include "gui/connect/ConfCertDialog.h"
 
 #include <retroshare/rsfiles.h>
@@ -556,7 +557,18 @@ QString RetroShareLink::toHtmlFull() const
 
 QString RetroShareLink::toHtmlSize() const
 {
-	return QString("<a href=\"") + toString() + "\">" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
+	QString size = QString("(%1)").arg(misc::friendlyUnit(_size));
+	if (RsCollectionFile::isCollectionFile(name())) {
+		FileInfo finfo;
+		if (rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
+			RsCollectionFile collection;
+			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
+				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
+			}
+		}
+	}
+	QString link = QString("<a href=\"%1\">%2</a> <font color=\"blue\">%3</font>").arg(toString()).arg(name()).arg(size);
+	return link;
 }
 
 bool RetroShareLink::checkName(const QString& name)

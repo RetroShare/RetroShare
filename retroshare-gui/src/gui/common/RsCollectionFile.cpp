@@ -132,21 +132,23 @@ RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos)
 		recursAddElements(_xml_doc,file_infos[i],root) ;
 }
 
-static void showError(const QString& filename, const QString& error)
+static void showErrorBox(const QString& filename, const QString& error)
 {
 	QMessageBox mb(QMessageBox::Warning, QObject::tr("Treatment of collection file has failed"), QObject::tr("The collection file %1 could not be openned.\nReported error is: %2").arg(filename).arg(error), QMessageBox::Ok);
 	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 	mb.exec();
 }
 
-bool RsCollectionFile::load(const QString& filename)
+bool RsCollectionFile::load(const QString& filename, bool showError /*= true*/)
 {
 	QFile file(filename);
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
 		std::cerr << "Cannot open file " << filename.toStdString() << " !!" << std::endl;
-		showError(filename, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(filename));
+		if (showError) {
+			showErrorBox(filename, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(filename));
+		}
 		return false;
 	}
 
@@ -156,7 +158,9 @@ bool RsCollectionFile::load(const QString& filename)
 	if (ok) {
 		_filename = filename;
 	} else {
-		showError(filename, QApplication::translate("RsCollectionFile", "Error parsing xml file"));
+		if (showError) {
+			showErrorBox(filename, QApplication::translate("RsCollectionFile", "Error parsing xml file"));
+		}
 	}
 
 	return ok;
@@ -170,7 +174,7 @@ bool RsCollectionFile::load()
 
 	std::cerr << "Got file name: " << filename.toStdString() << std::endl;
 
-	return load(filename);
+	return load(filename, true);
 }
 
 bool RsCollectionFile::save(const QString& filename) const
@@ -205,4 +209,27 @@ bool RsCollectionFile::save() const
 	std::cerr << "Got file name: " << filename.toStdString() << std::endl;
 
 	return save(filename);
+}
+
+qulonglong RsCollectionFile::size()
+{
+	QDomElement docElem = _xml_doc.documentElement();
+
+	std::vector<DLinfo> dlinfos;
+	recursCollectDLinfos(docElem, dlinfos, QString());
+
+	uint64_t size = 0;
+
+	for (uint32_t i = 0; i < dlinfos.size(); ++i) {
+		size += dlinfos[i].size;
+	}
+
+	return size;
+}
+
+bool RsCollectionFile::isCollectionFile(const QString &filename)
+{
+	QString ext = QFileInfo(filename).suffix().toLower();
+
+	return (ext == RsCollectionFile::ExtensionString);
 }
