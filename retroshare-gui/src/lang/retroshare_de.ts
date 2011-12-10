@@ -9829,7 +9829,7 @@ Lockdatei:
         <translation type="obsolete">Der Empfänger der Nachricht ist unbekannt.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+676"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+688"/>
         <source>Add file</source>
         <translation>Datei hinzufügen</translation>
     </message>
@@ -10590,17 +10590,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsCollectionFile</name>
     <message>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="+12"/>
+        <location filename="../gui/common/RsCollectionFile.cpp" line="+13"/>
         <source>Cannot open file %1</source>
         <translation>Kann Datei %1 nicht öffnen</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+12"/>
         <source>Error parsing xml file</source>
         <translation>Fehler beim Parsen des XML</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Open collection file</source>
         <translation>Öffne Kollektion</translation>
     </message>
@@ -10749,7 +10749,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+293"/>
+        <location filename="../gui/SearchDialog.cpp" line="+296"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -10760,17 +10760,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+188"/>
-        <location line="+139"/>
+        <location line="+143"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-142"/>
         <source>Send RetroShare Link</source>
         <translation>Sende RetroShare Link</translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+137"/>
+        <source>Search again</source>
+        <translation>Erneut suchen</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -10780,7 +10785,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+379"/>
+        <location line="+394"/>
         <location line="+68"/>
         <source>Folder</source>
         <translation>Ordner</translation>
@@ -10841,7 +10846,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-921"/>
+        <location filename="../gui/SearchDialog.cpp" line="-940"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -12707,12 +12712,12 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst diesen Text kopieren und an deinen Freund per Email senden oder über einen anderen Weg zukommen lassen</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-202"/>
+        <location line="-204"/>
         <source>Text certificate</source>
         <translation>Text-Zertifikat</translation>
     </message>
@@ -12737,12 +12742,12 @@ p, li { white-space: pre-wrap; }
         <translation>Das Zertifikat konnte nicht geladen werden</translation>
     </message>
     <message>
-        <location line="-77"/>
+        <location line="-75"/>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>Dein Zertiifkat ist in in die Zwischenablage kopiert worden</translation>
     </message>
     <message>
-        <location line="-57"/>
+        <location line="-59"/>
         <source>RetroShare Invite</source>
         <translation>RetroShare Einladung</translation>
     </message>

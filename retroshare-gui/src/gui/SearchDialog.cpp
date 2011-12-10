@@ -62,6 +62,9 @@
 #define SS_TEXT_COL         0
 #define SS_COUNT_COL        1
 #define SS_SEARCH_ID_COL    2
+#define SS_DATA_COL         SS_TEXT_COL
+
+#define ROLE_ADVANCED       Qt::UserRole
 
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
 
@@ -428,10 +431,18 @@ void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint /*point*/ )
 
     QMenu contextMnu(this);
 
+    QTreeWidgetItem* ci = ui.searchSummaryWidget->currentItem();
+    QAction* action = contextMnu.addAction(tr("Search again"), this, SLOT(searchAgain()));
+    if (!ci || ci->data(SS_DATA_COL, ROLE_ADVANCED).toBool()) {
+        action->setDisabled(true);
+    }
     contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
     contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove All"), this, SLOT(searchRemoveAll()));
     contextMnu.addSeparator();
-    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
+    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
+    if (!ci || ci->data(SS_DATA_COL, ROLE_ADVANCED).toBool()) {
+        action->setDisabled(true);
+    }
 
     contextMnu.exec(QCursor::pos());
 }
@@ -554,7 +565,7 @@ void SearchDialog::showAdvSearchDialog(bool show)
 
 // Creates a new entry in the search summary, not to leave it blank whatever happens.
 //
-void SearchDialog::initSearchResult(const std::string& txt,qulonglong searchId)
+void SearchDialog::initSearchResult(const std::string& txt,qulonglong searchId, bool advanced)
 {
 	QString sid_hexa = QString::number(searchId,16) ;
 
@@ -562,6 +573,8 @@ void SearchDialog::initSearchResult(const std::string& txt,qulonglong searchId)
 	item2->setText(SS_TEXT_COL, QString::fromUtf8(txt.c_str()));
 	item2->setText(SS_COUNT_COL, QString::number(0));
 	item2->setText(SS_SEARCH_ID_COL, sid_hexa);
+
+	item2->setData(SS_DATA_COL, ROLE_ADVANCED, advanced);
 
 	ui.searchSummaryWidget->addTopLevelItem(item2);
 	ui.searchSummaryWidget->setCurrentItem(item2);
@@ -582,7 +595,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
 	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
-	initSearchResult(std::string("bool exp"),req_id) ;
+	initSearchResult(std::string("bool exp"),req_id, true) ;
 
 	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
@@ -599,6 +612,19 @@ void SearchDialog::advancedSearch(Expression* expression)
 void SearchDialog::searchKeywords()
 {
 	searchKeywords(ui.lineEdit->text());
+}
+
+void SearchDialog::searchAgain()
+{
+	/* get the current search text from the summary window */
+	QTreeWidgetItem* ci = ui.searchSummaryWidget->currentItem();
+	if (!ci || ci->data(SS_DATA_COL, ROLE_ADVANCED).toBool())
+		return;
+
+	/* get the search text */
+	QString txt = ci->text(SS_TEXT_COL);
+	searchRemove();
+	searchKeywords(txt);
 }
 
 void SearchDialog::searchKeywords(const QString& keywords)
@@ -637,7 +663,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	else
 		req_id = ((((uint32_t)rand()) << 16)^0x1e2fd5e4) + (((uint32_t)rand())^0x1b19acfe) ; // generate a random 32 bits request id
 
-	initSearchResult(txt,req_id) ;	// this will act before turtle results come to the interface, thanks to the signals scheduling policy.
+	initSearchResult(txt,req_id, false) ;	// this will act before turtle results come to the interface, thanks to the signals scheduling policy.
 
 	if(ui._friendListsearch_SB->isChecked() || ui._ownFiles_CB->isChecked())
 	{

@@ -64,6 +64,7 @@ private slots:
     void copyResultLink();
     void copySearchLink();
 
+    void searchAgain();
     void searchRemove();
     void searchRemoveAll();
     void searchKeywords();
@@ -96,7 +97,7 @@ private slots:
 
 private:
 /** render the results to the tree widget display */
-	 void initSearchResult(const std::string& txt,qulonglong searchId) ;
+	 void initSearchResult(const std::string& txt,qulonglong searchId, bool advanced) ;
    void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
 	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType = ANONYMOUS_SEARCH) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
