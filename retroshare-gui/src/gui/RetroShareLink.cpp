@@ -558,7 +558,7 @@ QString RetroShareLink::toHtmlFull() const
 QString RetroShareLink::toHtmlSize() const
 {
 	QString size = QString("(%1)").arg(misc::friendlyUnit(_size));
-	if (RsCollectionFile::isCollectionFile(name())) {
+	if (type() == TYPE_FILE && RsCollectionFile::isCollectionFile(name())) {
 		FileInfo finfo;
 		if (rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
 			RsCollectionFile collection;
