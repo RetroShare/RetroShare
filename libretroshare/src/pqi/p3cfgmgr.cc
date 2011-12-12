@@ -362,35 +362,19 @@ void p3ConfigMgr::loadConfig()
 {
 	std::map<uint32_t, pqiConfig *>::iterator cit;
 	std::string dummyHash = "dummyHash";
-
-	// step 0 -> load CONFIG_TYPE_AUTHGPG
-	// step 1 -> load all other
-	for (int step = 0; step < 2; ++step) {
-		for (cit = configs.begin(); cit != configs.end(); cit++)
-		{
-			if ((step == 0 && cit->first != CONFIG_TYPE_AUTHGPG) ||
-				(step == 1 && cit->first == CONFIG_TYPE_AUTHGPG)) {
-				// don't load configuration
-				continue;
-			}
-
+	for (cit = configs.begin(); cit != configs.end(); cit++)
+	{
 #ifdef CONFIG_DEBUG
-			std::cerr << "p3ConfigMgr::loadConfig() Element: ";
-			std::cerr << cit->first <<"Dummy Hash: " << dummyHash;
-			std::cerr << std::endl;
+		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
+		std::cerr << cit->first <<"Dummy Hash: " << dummyHash;
+		std::cerr << std::endl;
 #endif
 
-			cit->second->loadConfiguration(dummyHash);
+		cit->second->loadConfiguration(dummyHash);
 
-			/* force config to NOT CHANGED */
-			cit->second->HasConfigChanged(0);
-			cit->second->HasConfigChanged(1);
-
-			if (step == 0) {
-				// CONFIG_TYPE_AUTHGPG loaded
-				break;
-			}
-		}
+		/* force config to NOT CHANGED */
+		cit->second->HasConfigChanged(0);
+		cit->second->HasConfigChanged(1);
 	}
 
 	return;

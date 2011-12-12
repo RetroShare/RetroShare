@@ -73,17 +73,17 @@ int     RsServer::ConfigSetDataRates( int totalDownload, int totalUpload ) /* in
 int     RsServer::ConfigGetDataRates( float &inKb, float &outKb ) /* in kbrates */
 {
 	/* fill the rsiface class */
-//	RsIface &iface = getIface();
+	RsIface &iface = getIface();
 
 	/* lock Mutexes */
-//	lockRsCore();     /* LOCK */
-//	iface.lockData(); /* LOCK */
+	lockRsCore();     /* LOCK */
+	iface.lockData(); /* LOCK */
 
 	pqih -> getCurrentRates(inKb, outKb);
 
 	/* unlock Mutexes */
-//	iface.unlockData(); /* UNLOCK */
-//	unlockRsCore();     /* UNLOCK */
+	iface.unlockData(); /* UNLOCK */
+	unlockRsCore();     /* UNLOCK */
 
 	return 1;
 }

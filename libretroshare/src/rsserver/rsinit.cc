@@ -2181,6 +2181,7 @@ int RsServer::StartupRetroShare()
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
 	mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
+	mConfigMgr->loadConfiguration();
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
