@@ -146,7 +146,7 @@ const std::string& Hash();
  * Checks if configuration has changed
  */
 void	IndicateConfigChanged();
-void	setHash(std::string h);
+void	setHash(const std::string& h);
 
 	RsMutex cfgMtx;
 
@@ -157,7 +157,7 @@ void	setHash(std::string h);
 	/**
 	 * This sets the name of the pqi configuation file
 	 */
-	void    setFilename(std::string name);
+	void    setFilename(const std::string& name);
 
 	/**
 	 * @param an index for the Confind which contains list of configuarations that can be tracked

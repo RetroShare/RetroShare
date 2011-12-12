@@ -315,9 +315,24 @@ int	AuthGPGimpl::GPGInit(const std::string &ownId)
             }
 
             mOwnGpgId = ownId;
-        }
 
-        storeAllKeys();
+            // clear old cert
+            gpgme_key_unref(mOwnGpgCert.key);
+            mOwnGpgCert = gpgcert();
+
+            // search own key
+            certmap::iterator it = mKeyList.find(mOwnGpgId);
+            if (it != mKeyList.end()) {
+                it->second.ownsign = true;
+
+                // store own key, grab a reference, so the key remains
+                gpgme_key_ref(it->second.key);
+
+                mOwnGpgCert = it->second;
+            }
+        }
+// already stored in AuthGPGimpl::InitAuth
+//        storeAllKeys();
 
         int lvl = 0;
 
@@ -2319,7 +2334,8 @@ bool AuthGPGimpl::loadList(std::list<RsItem*>& load)
         std::cerr << "AuthGPGimpl::loadList() Item Count: " << load.size() << std::endl;
         #endif
 
-        storeAllKeys();
+// already stored in AuthGPGimpl::InitAuth
+//         storeAllKeys();
 
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
         /* load the list of accepted gpg keys */
