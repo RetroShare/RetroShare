@@ -108,6 +108,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 }
 
 
+
 test_bitdht {
 	# DISABLE TCP CONNECTIONS...
 	DEFINES *= P3CONNMGR_NO_TCP_CONNECTIONS 
@@ -117,7 +118,6 @@ test_bitdht {
 
 	# ENABLED UDP NOW.
 }
-
 
 
 
@@ -306,6 +306,8 @@ mac {
                 #miniupnp implementation files
                 HEADERS += upnp/upnputil.h
                 SOURCES += upnp/upnputil.c
+
+		CONFIG += zeroconf
 
 		# Beautiful Hack to fix 64bit file access.
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
@@ -638,3 +640,14 @@ minimal {
 			services/p3gamelauncher.cc \
 			services/p3photoservice.cc
 }
+
+zeroconf {
+
+HEADERS +=	zeroconf/p3zeroconf.h \
+
+SOURCES +=	zeroconf/p3zeroconf.cc  \
+
+	DEFINES *= RS_ENABLE_ZEROCONF
+
+}
+

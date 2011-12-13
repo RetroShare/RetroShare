@@ -146,26 +146,17 @@ virtual bool 	dropPeer(std::string id) = 0;
 virtual int addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
 virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) = 0;
 
-//virtual int addFriend(const std::string pid) = 0;
-//virtual int addFriendOfFriend(const std::string pid) = 0;
-//virtual int addOther(const std::string pid) = 0;
-
-
 virtual void ConnectionFeedback(std::string pid, int mode) = 0;
 
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 
 			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
-			uint32_t &type, uint32_t &mode) = 0;
+			uint32_t &type, uint32_t &mode) = 0; // DEPRECIATE.
 
-virtual bool    setAttachMode(bool on) = 0;
-
-
-//virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
-//					uint32_t &mode) = 0;
+virtual bool    setAttachMode(bool on) = 0;		// FIXUP.
 
 	/***** Stats for Network / DHT *****/
-virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize) = 0;
+virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize) = 0; // DEPRECIATE.
 
 	protected:
 	std::string  mPeerId;

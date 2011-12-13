@@ -118,6 +118,21 @@ class PeerAction
 
 
 
+/****** 
+ * Adding the ability to install alternative Handler
+ * for monitoring/controlling Relay Connections outside of p3bitdht.
+ ***/
+
+class p3BitDhtRelayHandler
+{
+	public:
+
+	int (*mInstallRelay)(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t &bandwidth);
+	int (*mLogFailedConnection)(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode);
+};
+
+
+
 
 class UdpRelayReceiver;
 class UdpStunner;
@@ -251,6 +266,14 @@ void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
 void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
 
 
+	/*** RELAY HANDLER CODE ***/
+void 	installRelayHandler(p3BitDhtRelayHandler *);
+UdpRelayReceiver *getRelayReceiver();
+
+int 	RelayHandler_InstallRelayConnection(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t &bandwidth);
+int 	RelayHandler_LogFailedProxyAttempt(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode);
+
+
 /***********************************************************************************************
  ************************** Internal Accounting (p3bitdht_peers.cc) ****************************
 ************************************************************************************************/
@@ -264,6 +287,9 @@ void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
 //int 	addOther(const std::string pid);
 int 	removePeer(const std::string pid);
 
+	// Can be used externally too.
+int 	calculateNodeId(const std::string pid, bdNodeId *id);
+
 	private:
 
 DhtPeerDetails *addInternalPeer_locked(const std::string pid, int type);
@@ -276,7 +302,6 @@ int 	lookupNodeId_locked(const std::string pid, bdNodeId *id);
 int 	lookupRsId_locked(const bdNodeId *id, std::string &pid);
 int 	storeTranslation_locked(const std::string pid);
 int 	removeTranslation_locked(const std::string pid);
-int 	calculateNodeId(const std::string pid, bdNodeId *id);
 
 	UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
 	UdpStunner *mDhtStunner;
@@ -288,6 +313,9 @@ int 	calculateNodeId(const std::string pid, bdNodeId *id);
 	pqiNetAssistPeerShare *mPeerSharer;
 
 	RsMutex dhtMtx;
+
+
+	p3BitDhtRelayHandler *mRelayHandler;
 
 	std::string mOwnRsId;
 	bdNodeId    mOwnDhtId;

@@ -91,6 +91,8 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 
         mPeerSharer = NULL;
 
+	mRelayHandler = NULL;
+
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
         mOwnRsId = id;
 
@@ -161,6 +163,23 @@ void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
 {
 	mPeerSharer = sharer;
 }
+
+
+/* Support for Outsourced Relay Handling */
+
+void    p3BitDht::installRelayHandler(p3BitDhtRelayHandler *handler)
+{
+	/* The Handler is mutex protected, as its installation can occur when the dht is already running */
+	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+	mRelayHandler = handler;
+}
+
+UdpRelayReceiver *p3BitDht::getRelayReceiver()
+{
+	return mRelay;
+}
+
 
 void    p3BitDht::start()
 {

@@ -1709,9 +1709,13 @@ RsTurtle *rsTurtle = NULL ;
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
-	
-#include "upnp/upnphandler.h"
-//#include "dht/opendhtmgr.h"
+
+#ifdef RS_ENABLE_ZEROCONF
+	#include "zeroconf/p3zeroconf.h"
+	//#include "zeroconf/p3zcnatassist.h"
+#else
+	#include "upnp/upnphandler.h"
+#endif
 
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
@@ -1874,7 +1878,6 @@ int RsServer::StartupRetroShare()
 //        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
 //            mConnMgr->addFriend(*sslIdsIt);
 //        }
-	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
         //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
 /**************************** BITDHT ***********************************/
 
@@ -2152,7 +2155,21 @@ int RsServer::StartupRetroShare()
 	mNetMgr->addNetListener(mProxyStack); 
 
 #endif
+
+#ifdef RS_ENABLE_ZEROCONF
+	p3ZeroConf *mZeroConf = new p3ZeroConf(ownId, ownId, mLinkMgr, mNetMgr);
+	mNetMgr->addNetAssistConnect(2, mZeroConf);
+	mNetMgr->addNetListener(mZeroConf); 
+
+	// Apple's UPnP & NAT-PMP assistance.
+	//p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
+	//mNetMgr->addNetAssistFirewall(2, mZcNatAssist);
+#else
+
+	// Original UPnP Interface.
+	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
+#endif
 
 	/**************************************************************************/
 	/* need to Monitor too! */
