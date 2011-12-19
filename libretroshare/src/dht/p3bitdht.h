@@ -164,6 +164,13 @@ virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
 
 virtual std::string getUdpAddressString();
 
+        // Interface for controlling Relays & DHT Relay Mode
+virtual uint32_t getRelayMode();
+virtual int      setRelayMode(uint32_t mode);
+
+virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
+virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
+
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/

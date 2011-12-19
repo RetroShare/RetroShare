@@ -197,6 +197,53 @@ std::string p3BitDht::getUdpAddressString()
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
+/***********************************************************************************************
+ ********** External RsDHT Interface for Dht-Relay Control *************************************
+************************************************************************************************/
+
+uint32_t p3BitDht::getRelayMode()
+{
+
+	return 1;
+}
+
+int p3BitDht::setRelayMode(uint32_t mode)
+{
+
+	return 1;
+}
+
+int p3BitDht::getRelayAllowance(int classIdx, uint32_t &count, uint32_t &bandwidth)
+{
+	std::cerr << "p3BitDht::getRelayAllowance(" << classIdx << "): ";
+	if ((classIdx >= 0) && (classIdx < RSDHT_RELAY_NUM_CLASS))
+	{
+		count = mRelay->getRelayClassMax(classIdx);
+		bandwidth = mRelay->getRelayClassBandwidth(classIdx);
+
+		std::cerr << " count: " << count << " bandwidth: " << bandwidth;
+		std::cerr << std::endl;
+		return 1;
+	}
+	std::cerr << " Invalid classIdx";
+	std::cerr << std::endl;
+
+	return 0;
+}
+
+int p3BitDht::setRelayAllowance(int classIdx, uint32_t count, uint32_t bandwidth)
+{
+	std::cerr << "p3BitDht::getRelayAllowance(" << classIdx << ", ";
+	std::cerr << ", " << count << ", " << bandwidth << ")";
+	std::cerr << std::endl;
+
+	return mRelay->setRelayClassMax(classIdx, count, bandwidth);
+}
+
+
+/***********************************************************************************************
+ ********** External RsDHT Interface for Dht-Relay Control *************************************
+************************************************************************************************/
 
 
 void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer)

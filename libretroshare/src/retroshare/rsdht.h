@@ -71,6 +71,13 @@ extern RsDht *rsDht;
 #define RSDHT_TOU_MODE_RELAY		3
 
 
+#define RSDHT_RELAY_NUM_CLASS             4
+
+#define RSDHT_RELAY_CLASS_ALL             0
+#define RSDHT_RELAY_CLASS_GENERAL         1
+#define RSDHT_RELAY_CLASS_FOF             2
+#define RSDHT_RELAY_CLASS_FRIENDS         3
+
 
 class RsDhtPeer
 {
@@ -96,26 +103,18 @@ class RsDhtNetPeer
         std::string mRsId;
 
         uint32_t mPeerType;
-
 	uint32_t mDhtState;
 
-	//connectLogic.
-	std::string mConnectState;
+	std::string mConnectState; 	// connectLogic.
 
-	// connect Status
-	uint32_t mPeerConnectState;
-	// connect mode
-	uint32_t mPeerConnectMode;
-
+	uint32_t mPeerConnectState; 	// connect Status
+	uint32_t mPeerConnectMode; 	// connect mode
 	bool  mExclusiveProxyLock;
 
 	std::string mPeerConnectProxyId;
 
-	// Req Status.
-	uint32_t mPeerReqState;
-
-	// Peer Cb Mgs.
-	std::string mCbPeerMsg;
+	uint32_t mPeerReqState; 	// Req Status.
+	std::string mCbPeerMsg; 	// Peer Cb Mgs.
 
 };
 
@@ -167,6 +166,15 @@ virtual int 	getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies) = 0;
 //virtual int 	 getNetFailedPeer(std::string peerId, PeerStatus &status);
 
 virtual std::string getUdpAddressString() = 0;
+
+
+	// Interface for controlling Relays & DHT Relay Mode 
+virtual	uint32_t getRelayMode() = 0;
+virtual	int	 setRelayMode(uint32_t mode) = 0;
+
+virtual int	getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
+virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth) = 0;
+
 
 #if 0
 virtual std::string getPeerStatusString();
