@@ -86,10 +86,15 @@ const uint32_t CONFIG_TYPE_HISTORY 		 = 0x0015;
 /// turtle router
 const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
 
+/// dht (relay stuff mainly)
+const uint32_t CONFIG_TYPE_BITDHT	 	 = 0x0030;
+
 /* standard services */
 const uint32_t CONFIG_TYPE_QBLOG 	    = 0x0101;
 const uint32_t CONFIG_TYPE_FORUMS 	    = 0x0102;
 const uint32_t CONFIG_TYPE_CHANNELS 	 = 0x0103;
+
+
 
 /* CACHE ID Must be at the END so that other configurations
  * are loaded First (Cache Config --> Cache Loading)

@@ -74,6 +74,7 @@ SOURCES +=	dht/p3bitdht.cc  \
 		dht/p3bitdht_interface.cc \
 		dht/p3bitdht_peers.cc \
 		dht/p3bitdht_peernet.cc \
+		dht/p3bitdht_relay.cc \
 		dht/connectstatebox.cc
 
 HEADERS +=	tcponudp/udppeer.h \

@@ -79,6 +79,15 @@ extern RsDht *rsDht;
 #define RSDHT_RELAY_CLASS_FRIENDS         3
 
 
+#define RSDHT_RELAY_MODE_MASK		0x00f0
+
+#define RSDHT_RELAY_ENABLED		0x0001
+
+#define RSDHT_RELAY_MODE_OFF		0x0010
+#define RSDHT_RELAY_MODE_ON		0x0020
+#define RSDHT_RELAY_MODE_SERVER		0x0040
+
+
 class RsDhtPeer
 {
 	public:
@@ -169,6 +178,10 @@ virtual std::string getUdpAddressString() = 0;
 
 
 	// Interface for controlling Relays & DHT Relay Mode 
+virtual int 	getRelayServerList(std::list<std::string> &ids) = 0;
+virtual int 	addRelayServer(std::string ids) = 0;
+virtual int 	removeRelayServer(std::string ids) = 0;
+
 virtual	uint32_t getRelayMode() = 0;
 virtual	int	 setRelayMode(uint32_t mode) = 0;
 

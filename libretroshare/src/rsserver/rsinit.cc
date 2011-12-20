@@ -2212,6 +2212,10 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
 	mConfigMgr->addConfiguration("p3disc.cfg", ad);
 
+#ifdef RS_USE_BITDHT
+	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+#endif
+
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
 	ftserver->addConfiguration(mConfigMgr);
