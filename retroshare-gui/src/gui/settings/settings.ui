@@ -109,6 +109,15 @@
      </item>
      <item>
       <property name="text">
+       <string>Relays</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/server_24x24.png</normaloff>:/images/server_24x24.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Directories</string>
       </property>
       <property name="icon">

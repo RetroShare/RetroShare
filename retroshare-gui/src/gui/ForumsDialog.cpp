@@ -566,7 +566,7 @@ void ForumsDialog::insertForums()
 	uint32_t i = 0;
 	uint32_t popLimit = 0;
     std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++);
+	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
     if (rit != popMap.rend()) {
         popLimit = rit->first;
     }

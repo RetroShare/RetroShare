@@ -31,7 +31,7 @@ class RSettingsWin: public QDialog, private Ui::Settings
     Q_OBJECT
 
     public:
-        enum PageType { LastPage = -1, General = 0, Server, Transfer,
+        enum PageType { LastPage = -1, General = 0, Server, Transfer,Relay,
                         Directories, Plugins, Notify, Security, Message, Forum, Chat, Appearance, Sound, Fileassociations };
 
         static void showYourself(QWidget *parent, PageType page = LastPage);
