@@ -255,6 +255,9 @@ class bdConnectManager
 	int recvedConnectionStart(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode, int delayOrBandwidth);
 	int recvedConnectionAck(bdId *id, bdId *srcConnAddr, bdId *destConnAddr, int mode);
 
+	/* setup Relay Mode */
+	void setRelayMode(uint32_t mode);
+
 	private:
 
 	std::map<bdProxyTuple, bdConnection> mConnections;
@@ -262,6 +265,8 @@ class bdConnectManager
 
         uint32_t mConfigAllowedModes;
         bool mConfigAutoProxy;
+
+	uint32_t mRelayMode;
 
 	/****************************** Connection Code (in bdconnection.cc) ****************************/
 

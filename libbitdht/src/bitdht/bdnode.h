@@ -158,6 +158,9 @@ class bdNode: public bdNodePublisher
 int 	outgoingMsg(struct sockaddr_in *addr, char *msg, int *len);
 void 	incomingMsg(struct sockaddr_in *addr, char *msg, int len);
 
+	// For Relay Mode switching.
+void	dropRelayServers();
+void	pingRelayServers();
 
 	// Below is internal Management of incoming / outgoing messages.
 	private:
@@ -251,7 +254,9 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	uint32_t mNodeOptionFlags;	
 	uint32_t mNodeDhtMode;
+
 	uint32_t mMaxAllowedMsgs;
+	uint32_t mRelayMode;
 
 	bdHistory mHistory; /* for understanding the DHT */
 

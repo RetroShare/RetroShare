@@ -159,6 +159,33 @@ bool	bdFriendList::findPeerEntry(const bdNodeId *id, bdFriendEntry &entry)
 }
 
 
+bool    bdFriendList::findPeersWithFlags(uint32_t flags, std::list<bdNodeId> &peerList)
+{
+#ifdef DEBUG_FRIENDLIST
+	std::cerr << "bdFriendList::findPeersWithFlags(" << flags << ")";
+	std::cerr << std::endl;
+#endif
+
+	/* see if it exists... */
+	std::map<bdNodeId, bdFriendEntry>::iterator it;
+	for(it = mPeers.begin(); it != mPeers.end(); it++)
+	{
+		/* if they have ALL of the flags we specified */
+		if ((it->second.getPeerFlags() & flags) == flags)
+		{
+#ifdef DEBUG_FRIENDLIST
+			std::cerr << "bdFriendList::findPeersWithFlags() Found: ";
+			bdStdPrintNodeId(std::cerr, id);
+			std::cerr << std::endl;
+#endif
+			peerList.push_back(it->second.mPeerId.id);
+		}
+	}
+	return (peerList.size() > 0);
+}
+
+
+
 bool	bdFriendList::print(std::ostream &out)
 {
 	time_t now = time(NULL);

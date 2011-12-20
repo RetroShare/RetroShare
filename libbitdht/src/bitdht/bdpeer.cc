@@ -436,6 +436,39 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 }
 
 
+
+int bdSpace::clean_node_flags(uint32_t flags)
+{
+	std::cerr << "bdSpace::clean_node_flags(" << flags << ")";
+	std::cerr << std::endl;
+
+	int count = 0;
+	std::vector<bdBucket>::iterator bit;
+	for(bit = buckets.begin(); bit != buckets.end(); bit++)
+	{
+		std::list<bdPeer>::iterator eit;
+		for(eit = bit->entries.begin(); eit != bit->entries.end(); eit++) 
+		{
+			if (flags & eit->mPeerFlags)
+			{	
+				std::cerr << "bdSpace::clean_node_flags() Found Match: ";
+		  		mFns->bdPrintId(std::cerr, &(eit->mPeerId));
+				std::cerr << " withFlags: " << eit->mPeerFlags;
+				std::cerr << std::endl;
+
+				count++;
+				eit->mPeerFlags &= ~flags;
+			}
+		}
+	}
+	std::cerr << "bdSpace::clean_node_flags() Cleaned " << count << " Matching Peers";
+	std::cerr << std::endl;
+
+	return count;
+}
+
+
+
 #define BITDHT_ATTACHED_SEND_PERIOD 	17
 
 int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)

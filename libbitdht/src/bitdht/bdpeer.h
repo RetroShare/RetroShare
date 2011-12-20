@@ -190,6 +190,9 @@ uint32_t calcSpaceSizeWithFlag(uint32_t withFlag);
         /* special function to enable DHT localisation (i.e find peers from own network) */
 bool 	findRandomPeerWithFlag(bdId &id, uint32_t withFlag);
 
+	/* strip out flags - to switch in/out of relay mode */
+int 	clean_node_flags(uint32_t flags);
+
 	/* to add later */
 int	updateOwnId(bdNodeId *newOwnId);
 

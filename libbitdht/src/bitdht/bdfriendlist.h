@@ -77,6 +77,7 @@ bool	updatePeer(const bdId *id, uint32_t flags);
 bool	removePeer(const bdNodeId *id);
 
 bool	findPeerEntry(const bdNodeId *id, bdFriendEntry &entry);
+bool    findPeersWithFlags(uint32_t flags, std::list<bdNodeId> &peerList);
 
 bool    print(std::ostream &out);
 	private:
