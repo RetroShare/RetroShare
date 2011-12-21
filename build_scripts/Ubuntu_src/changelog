@@ -1,6 +1,42 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - Added the real size of all files of a collection to the link when added with drag and drop.
+     - ConnectionFriendWizard: Show the messagebox "Your Cert is copied to Clipboard" after copying the cert into the clipboard.
+     - Removed "release" from the win32 build in retroshare-nogui.pro.
+     - Added retroshare-nogui to the subdir project.
+
+     - DHT (Merging r4705 through r4717 from retroshare/branches/v0.5-dhtmods)
+       * Switched on Local BadPeer DHT Filter.
+          - This will remove any peer detected to be spoofing yourself or your friends.
+          - This list is also shared with you friends. (in Test Mode).
+       * Added Cleanup of BadPeer Filter.
+          - Instead of permanent ban, peers are be banned for 6 hours.
+          - bdManager periodically calls this - which prints out ban list too.
+       * Added Checks against spoofing to UdpStunner.
+          - Throw away Stun Results where remote_addr = reported ext_addr.
+          - Added extra checks to ensure that the same Ext IP is returned, before reporting.
+          - accept BadPeer List from DHT BadPeer Detection.
+       * Changed BanList Service Id from Test ID to Real ID.
+
+     - Added new widget for hashing files.
+     - Added new common class FilesDefs to handle informations of file types like icons and names.
+     - Removed calls to exit() in rsinit. Replaced them by proper return false
+     - Adjustment of some values for file transfer: some delays can be larger, now that chunks are shared between sources. This makes file transfer more stable:
+        FT_TM_DOWNLOAD_TIMEOUT: 10 -> 20 secs (RTT limit of 10 secs is too low -> transfers in long tunnels kept switching between active and inactive)
+        INACTIVE_CHUNKS_CHECK_DELAY: 60 -> 240 secs (Chunks are kept longer before beign cancelled, which is now affordable)
+        MAX_TIME_INACTIVE_REQUEUED: 60 -> 120 secs.(Transfers a kept longer before being re-prioritized in queue)
+
+  * Bug fixes
+     - Added the size of the collection to the link only for files (missing test)
+     - Show the correct name in the title of the RsCollectionDialog when the filename contains ".".
+     - Fixed creating of the download path of the collection when running as portable version.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 21 Dec 2011 20:30:00 +0100
+
+retroshare (0.5.2-0.4706~lucid) lucid; urgency=low
+
+  * Improvements
      - DHT:
         * Reduced Default DHT Message rate from 50msg/sec to 5msg/sec
            (Searches now take longer, but it should make crappy firewalls happy.)
