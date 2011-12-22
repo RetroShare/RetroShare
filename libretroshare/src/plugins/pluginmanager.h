@@ -62,12 +62,23 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		static void setFileServer(ftServer *ft) { _ftserver = ft ; }
 		static void setLinkMgr(p3LinkMgr *cm) { _linkmgr = cm ; }
 
-
+		// Normal plugin loading system. Parses through the plugin directories and loads
+		// dso libraries, checks for the hash, and loads/rejects plugins according to
+		// the user's choice.
+		//
 		void loadPlugins(const std::vector<std::string>& plugin_directories) ;
+
+		// Explicit function to load a plugin programatically. 
+		// No hash-checking is performed (there's no DSO file to hash!)
+		// Mostly convenient for insering plugins in development.
+		//
+		void loadPlugins(const std::vector<RsPlugin*>& explicit_plugin_entries) ;
 
 		void registerCacheServices() ;
 		void registerClientServices(p3ServiceServer *pqih) ;
+
 	private:
+		bool loadPlugin(RsPlugin *) ;
 		bool loadPlugin(const std::string& shared_library_name) ;
 		std::string hashPlugin(const std::string& shared_library_name) ;
 

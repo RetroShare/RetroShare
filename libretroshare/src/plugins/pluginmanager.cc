@@ -152,6 +152,33 @@ RsSerialiser *RsPluginManager::setupSerialiser()
 	return rss ;
 }
 
+void RsPluginManager::loadPlugins(const std::vector<RsPlugin *>& plugins)
+{
+	for(uint32_t i=0;i<plugins.size();++i)
+		loadPlugin(plugins[i]) ;
+}
+
+bool RsPluginManager::loadPlugin(RsPlugin *p)
+{
+	std::cerr << "  Loading programmatically inserted plugin " << std::endl;
+
+	PluginInfo pinfo ;
+	pinfo.plugin = p ;
+	pinfo.file_name = "No file" ;
+	pinfo.file_hash = "No hash" ;
+	pinfo.info_string = "" ;
+
+	p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
+
+	// The following choice is conservative by forcing RS to resolve all dependencies at
+	// the time of loading the plugin. 
+
+	pinfo.status = PLUGIN_STATUS_LOADED ;
+
+	_plugins.push_back(pinfo) ;
+	return true;
+}
+
 bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 {
 	std::cerr << "  Loading plugin " << plugin_name << std::endl;

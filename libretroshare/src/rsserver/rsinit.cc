@@ -2060,11 +2060,22 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->loadPlugins(plugins_directories) ;
 
-        // set interfaces for plugins
-        RsPlugInInterfaces interfaces;
-        interfaces.mFiles = rsFiles;
-        interfaces.mPeers = rsPeers;
-        mPluginsManager->setInterfaces(interfaces);
+	// Also load some plugins explicitly. This is helpful for
+	// - developping plugins 
+	//
+	std::vector<RsPlugin *> programatically_inserted_plugins ;		
+	
+	// Push your own plugins into this list, before the call:
+	//
+	// 	programatically_inserted_plugins.push_back(myCoolPlugin) ;
+	//
+	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
+
+	// set interfaces for plugins
+	RsPlugInInterfaces interfaces;
+	interfaces.mFiles = rsFiles;
+	interfaces.mPeers = rsPeers;
+	mPluginsManager->setInterfaces(interfaces);
 
 	/* create Services */
 	ad = new p3disc(mPeerMgr, mLinkMgr, mNetMgr, pqih);
