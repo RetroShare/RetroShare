@@ -254,10 +254,16 @@ void p3ChatService::locked_printDebugInfo() const
 
 	for( std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin()) ;it!=_chat_lobbys.end();++it)
 	{
-		std::cerr << "   Lobby id\t: " << it->first << std::endl;
-		std::cerr << "   Lobby name\t: " << it->second.lobby_name << std::endl;
-		std::cerr << "   nick name\t: " << it->second.nick_name << std::endl;
+		std::cerr << "   Lobby id\t\t: " << std::hex << it->first << std::dec << std::endl;
+		std::cerr << "   Lobby name\t\t: " << it->second.lobby_name << std::endl;
+		std::cerr << "   nick name\t\t: " << it->second.nick_name << std::endl;
 		std::cerr << "   Lobby peer id\t: " << it->second.virtual_peer_id << std::endl;
+		std::cerr << "   Challenge count\t: " << it->second.connexion_challenge_count << std::endl;
+		std::cerr << "   Cached messages\t: " << it->second.msg_cache.size() << std::endl;
+
+		for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
+			std::cerr << "       " << std::hex << it2->first << std::dec << "  time=" << it2->second << std::endl;
+
 		std::cerr << "   Participating friends: " << std::endl;
 
 		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
@@ -273,14 +279,12 @@ void p3ChatService::locked_printDebugInfo() const
 	std::cerr << "Recorded lobby names: " << std::endl;
 
 	for( std::map<std::string,ChatLobbyId>::const_iterator it(_lobby_ids.begin()) ;it!=_lobby_ids.end();++it)
-		std::cerr << "   \"" << it->first << "\" id = " << it->second << std::endl;
+		std::cerr << "   \"" << it->first << "\" id = " << std::hex << it->second << std::dec << std::endl;
 }
 
 bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id) 
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	locked_printDebugInfo() ; // debug
 
 	std::map<std::string,ChatLobbyId>::const_iterator it(_lobby_ids.find(id)) ;
 
@@ -464,6 +468,7 @@ void p3ChatService::checkAndRedirectMsgToLobby(RsChatMsgItem *ci)
 		if(it == _chat_lobbys.end())
 		{
 			std::cerr << "(EE) p3ChatService::checkAndRedirectMsgToLobby(): RsItem is a lobby item, but the id is not known!!" << std::endl;
+			ci->PeerId(std::string()) ;
 			return ;
 		}
 		vpeer_id = it->second.virtual_peer_id ;
@@ -1285,6 +1290,7 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+		locked_printDebugInfo() ; // debug
 		std::cerr << "Handling ChatLobbyMsg " << std::hex << item->msg_id << ", lobby id " << item->lobby_id << ", from peer id " << item->PeerId() << std::endl;
 
 		// send upward for display
@@ -1346,26 +1352,28 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	std::cerr << "Sending chat lobby message to lobby " << lobby_id << std::endl;
+	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
 	std::cerr << "msg:" << std::endl;
 	std::wcerr << msg << std::endl;
 
 	// get a pointer to the info for that chat lobby.
 	//
-	std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.find(lobby_id)) ;
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it(_chat_lobbys.find(lobby_id)) ;
 
 	if(it == _chat_lobbys.end())
 	{
 		std::cerr << "Chatlobby for id " << std::hex << lobby_id << " has no record. This is a serious error!!" << std::dec << std::endl;
 		return false ;
 	}
-	const ChatLobbyEntry& lobby(it->second) ;
+	ChatLobbyEntry& lobby(it->second) ;
 
 	RsChatLobbyMsgItem item ;
 
 	// chat lobby stuff
 	//
 	do { item.msg_id	= RSRandom::random_u64(); } while( lobby.msg_cache.find(item.msg_id) != lobby.msg_cache.end() ) ;
+
+	lobby.msg_cache[item.msg_id] = time(NULL) ;	// put the msg in cache!
 
 	item.lobby_id = lobby_id ;
 	item.nick	  = lobby.nick_name ;
@@ -1387,6 +1395,7 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 			sendItem(sitem);
 		}
 
+	locked_printDebugInfo() ; // debug
 	return true ;
 }
 
@@ -1403,9 +1412,13 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
-			for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
-				if(makeConnexionChallengeCode(it->first,it2->first) == item->challenge_code)
+		for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end() && !found;++it)
+			for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end() && !found;++it2)
+			{
+				uint64_t code = makeConnexionChallengeCode(it->first,it2->first) ;
+				std::cerr << "    Lobby_id = 0x" << std::hex << it->first << ", msg_id = 0x" << it2->first << ": code = 0x" << code << std::dec << std::endl ;
+
+				if(code == item->challenge_code)
 				{
 					std::cerr << "    Challenge accepted for lobby " << std::hex << it->first << ", for chat msg " << it2->first << std::dec << std::endl ;
 					std::cerr << "    Sending connection request to peer " << item->PeerId() << std::endl;
@@ -1413,6 +1426,7 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 					lobby_id = it->first ;
 					found = true ;
 				}
+			}
 	}
 
 	if(found)
@@ -1441,10 +1455,11 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 	uint64_t code = 0 ;
 
 	for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
-		if(it2->second + 20 < now)  // any msg not older than 20 seconds is fine.
+		if(it2->second + 20 > now)  // any msg not older than 20 seconds is fine.
 		{
-			std::cerr << "  Using msg id 0x" << std::hex << it2->first << ", challenge code = " << code << std::dec << std::endl; 
 			code = makeConnexionChallengeCode(lobby_id,it2->first) ;
+			std::cerr << "  Using msg id 0x" << std::hex << it2->first << ", challenge code = " << code << std::dec << std::endl; 
+			break ;
 		}
 
 	if(code == 0)
@@ -1471,18 +1486,7 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 
 uint64_t p3ChatService::makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id)
 {
-	uint64_t a = lobby_id ;
-	uint64_t b = msg_id ;
-
-	for(int i=0;i<10;++i)
-	{
-		a = ((a+0x3eb57bac44980ab2) ^ (b+0x11278ea3b205aa4e)) + 0x928eeba8 ;
-		b = ((~b) << 4) + (a & 0xffff) ;
-	}
-
-	std::cerr << "Making connection challenge id: lobby_id=0x" << std::hex << lobby_id << ", msg=0x" << msg_id << ", code = " << a << std::dec << std::endl ;
-
-	return a ;
+	return ((uint64_t)lobby_id) ^ (uint64_t)msg_id ;
 }
 
 void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 

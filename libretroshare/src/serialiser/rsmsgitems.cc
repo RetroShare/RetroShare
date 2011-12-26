@@ -183,6 +183,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_CHAT_AVATAR:					return new RsChatAvatarItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_MSG:				return new RsChatLobbyMsgItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:			return new RsChatLobbyInviteItem(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:		return new RsChatLobbyConnectChallengeItem(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -332,15 +333,6 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRawUInt64(data, tlvsize, &offset, lobby_id);
 	ok &= setRawUInt64(data, tlvsize, &offset, msg_id);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, nick);
-
-#ifdef CHAT_DEBUG
-	std::cerr << "Serialized the following message:" << std::endl;
-	std::cerr << "========== BEGIN MESSAGE =========" << std::endl;
-	for(uint32_t i=0;i<message.length();++i)
-		std::cerr << (char)message[i] ;
-	std::cerr << std::endl;
-	std::cerr << "=========== END MESSAGE ==========" << std::endl;
-#endif
 
 	if (offset != tlvsize)
 	{
