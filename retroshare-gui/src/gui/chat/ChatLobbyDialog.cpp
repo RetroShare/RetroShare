@@ -53,6 +53,8 @@ ChatLobbyDialog::ChatLobbyDialog(const std::string& dialog_id,const ChatLobbyId&
 	
 	ui.avatarWidget->hide() ;
 	PopupChatDialog::updateStatus(QString::fromStdString(getPeerId()),RS_STATUS_ONLINE) ;
+
+	QObject::connect(this,SIGNAL(close()),this,SLOT(closeAndAsk())) ;
 }
 
 /** Destructor. */
@@ -61,6 +63,15 @@ ChatLobbyDialog::~ChatLobbyDialog()
 	// announce leaving of lobby
 	
 	rsMsgs->unsubscribeChatLobby(lobby_id) ;
+}
+
+void ChatLobbyDialog::closeEvent(QCloseEvent* e)
+{
+	std::cerr << "In close event!" << std::endl;
+	if(QMessageBox::Yes == QMessageBox::question(NULL,tr("Unsubsribe to lobby?"),tr("Do you want to unsubscribe to this chat lobby?"),QMessageBox::Yes, QMessageBox::No))
+		rsMsgs->unsubscribeChatLobby(lobby_id) ;
+
+	PopupChatDialog::closeEvent(e) ;
 }
 
 void ChatLobbyDialog::setNickName(const QString& nick)

@@ -160,9 +160,11 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void denyLobbyInvite(const ChatLobbyId& id) ;
 		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
-		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
 		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
+		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
 		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
+		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
+		bool getDefaultNickNameForChatLobby(std::string& nick) ;
 		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
 
 	protected:
@@ -217,6 +219,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
 		void sendConnectionChallenge(ChatLobbyId id) ;
+		void cleanLobbyCaches() ;
 
 		static std::string makeVirtualPeerId(ChatLobbyId) ;
 		static uint64_t makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
@@ -243,11 +246,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		{
 			public:
 				std::map<ChatLobbyMsgId,time_t> msg_cache ;
-				std::map<std::string,time_t> invitations_sent ;
 				std::string virtual_peer_id ;
-
-				static const time_t MAX_KEEP_MSG_RECORD = 240 ; // keep msg record for 240 secs max.
-				void cleanCache() ;
 				int connexion_challenge_count ;
 		};
 

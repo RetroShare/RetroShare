@@ -281,6 +281,15 @@ void p3Msgs::unsubscribeChatLobby(const ChatLobbyId& lobby_id)
 {
 	mChatSrv->unsubscribeChatLobby(lobby_id) ;
 }
+bool p3Msgs::setDefaultNickNameForChatLobby(const std::string& nick)
+{
+	return mChatSrv->setDefaultNickNameForChatLobby(nick) ;
+}
+bool p3Msgs::getDefaultNickNameForChatLobby(std::string& nick_name)
+{
+	return mChatSrv->getDefaultNickNameForChatLobby(nick_name) ;
+}
+
 bool p3Msgs::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick)
 {
 	return mChatSrv->setNickNameForChatLobby(lobby_id,nick) ;

@@ -34,18 +34,16 @@
 #include "pqi/p3historymgr.h"
 
 #include "services/p3chatservice.h"
+#include "serialiser/rsconfigitems.h"
 
 /****
  * #define CHAT_DEBUG 1
  ****/
 
-/************ NOTE *********************************
- * This Service is so simple that there is no
- * mutex protection required!
- *
- */
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	= 15  ;	// sends a connexion challenge every 15 messages
+static const int 		LOBBY_CACHE_CLEANING_PERIOD    	= 10  ;	// sends a connexion challenge every 15 messages
+static const time_t 	MAX_KEEP_MSG_RECORD 					= 240 ;  // keep msg record for 240 secs max.
 
-static const int CONNECTION_CHALLENGE_MAX_COUNT = 10 ;	// sends a connexion challenge every 10 messages
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
@@ -61,6 +59,15 @@ int	p3ChatService::tick()
 {
 	if (receivedItems()) {
 		receiveChatQueue();
+	}
+
+	static time_t last_clean_time = 0 ;
+	time_t now = time(NULL) ;
+
+	if(last_clean_time + LOBBY_CACHE_CLEANING_PERIOD < now)
+	{
+		cleanLobbyCaches() ;
+		last_clean_time = now ;
 	}
 
 	return 0;
@@ -1168,6 +1175,16 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			continue;
 		}
 
+		RsConfigKeyValueSet *vitem = NULL ;
+
+		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
+			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+				if(kit->key == "DEFAULT_NICK_NAME")
+				{
+					std::cerr << "Loaded config default nick name for chat: " << kit->value << std::endl ;
+					_default_nick_name = kit->value ;
+				}
+
 		// delete unknown items
 		delete *it;
 	}
@@ -1217,6 +1234,14 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 		list.push_back(ci);
 	}
 
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+	kv.key = "DEFAULT_NICK_NAME" ;
+	kv.value = _default_nick_name ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	list.push_back(vitem) ;
+
 	return true;
 }
 
@@ -1230,6 +1255,7 @@ RsSerialiser *p3ChatService::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser ;
 	rss->addSerialType(new RsChatSerialiser) ;
+	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss ;
 }
@@ -1412,7 +1438,7 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end() && !found;++it)
+		for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end() && !found;++it)
 			for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end() && !found;++it2)
 			{
 				uint64_t code = makeConnexionChallengeCode(it->first,it2->first) ;
@@ -1425,11 +1451,14 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 
 					lobby_id = it->first ;
 					found = true ;
+
+					// also add the peer to the list of participating friends
+					it->second.participating_friends.insert(item->PeerId()) ; 
 				}
 			}
 	}
 
-	if(found)
+	if(found) // send invitation. As the peer already has the lobby, the invitation will most likely be accepted.
 		invitePeerToLobby(lobby_id, item->PeerId()) ;
 	else
 		std::cerr << "    Challenge denied: no existing cached msg has matching Id." << std::endl;
@@ -1520,10 +1549,6 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 	item->PeerId(peer_id) ;
 
 	sendItem(item) ;
-
-	// Adds the invitation into the invitation cache.
-	//
-	it->second.invitations_sent[peer_id] = time(NULL) ;
 }
 void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
 {
@@ -1692,6 +1717,17 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 	
 	// send a lobby leaving packet. To be implemented.
 }
+bool p3ChatService::setDefaultNickNameForChatLobby(const std::string& nick)
+{
+	_default_nick_name = nick;
+	IndicateConfigChanged() ;
+	return true ;
+}
+bool p3ChatService::getDefaultNickNameForChatLobby(std::string& nick)
+{
+	nick = _default_nick_name ;
+	return true ;
+}
 bool p3ChatService::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -1725,4 +1761,28 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 	it->second.nick_name = nick ;
 	return true ;
 }
+
+void p3ChatService::cleanLobbyCaches()
+{
+	std::cerr << "Cleaning chat lobby caches." << std::endl;
+
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	time_t now = time(NULL) ;
+
+	for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.begin();it!=_chat_lobbys.end();++it)
+		for(std::map<ChatLobbyMsgId,time_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
+			if(it2->second + MAX_KEEP_MSG_RECORD < now)
+			{
+				std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << it2->second << std::endl;
+
+				std::map<ChatLobbyMsgId,time_t>::iterator tmp(it2) ;
+				++tmp ;
+				it->second.msg_cache.erase(it2) ;
+				it2 = tmp ;
+			}
+			else
+				++it2 ;
+}
+
 

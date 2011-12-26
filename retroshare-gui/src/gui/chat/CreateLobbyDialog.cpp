@@ -36,8 +36,12 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWi
 	ui = new Ui::CreateLobbyDialog() ;
     ui->setupUi(this);
 
+	 std::string default_nick ;
+	 rsMsgs->getDefaultNickNameForChatLobby(default_nick) ;
+
 	 ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
-	 ui->nickName_LE->setPlaceholderText(tr("Your nickname")) ;
+	 ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby")) ;
+	 ui->nickName_LE->setText(QString::fromStdString(default_nick)) ;
 
     connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
     connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
@@ -98,6 +102,10 @@ void CreateLobbyDialog::createLobby()
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList);
 
 	 std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
+
+	 // set nick name !
+
+	 rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toStdString()) ;
 
 	 // open chat window !!
 	 std::string vpid ;

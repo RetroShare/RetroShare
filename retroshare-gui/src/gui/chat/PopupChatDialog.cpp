@@ -280,12 +280,19 @@ void PopupChatDialog::processSettings(bool bLoad)
             }
 				else if (rsMsgs->isLobbyId(id, lobby_id)) 
 				{
-                popupchatdialog = new ChatLobbyDialog(id,lobby_id,QString::fromStdString(id));
-                chatDialogs[id] = popupchatdialog;
+					std::list<ChatLobbyInfo> linfos; 
+					rsMsgs->getChatLobbyList(linfos) ;
 
-                PopupChatWindow *window = PopupChatWindow::getWindow(false);
-                window->addDialog(popupchatdialog);
-            }
+					for(std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());it!=linfos.end();++it)
+						if( (*it).lobby_id == lobby_id)
+						{
+							popupchatdialog = new ChatLobbyDialog(id,lobby_id,QString::fromStdString((*it).lobby_name));
+							chatDialogs[id] = popupchatdialog;
+
+							PopupChatWindow *window = PopupChatWindow::getWindow(false);
+							window->addDialog(popupchatdialog);
+						}
+				}
         }
     }
 
