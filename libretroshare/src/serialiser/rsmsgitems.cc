@@ -57,6 +57,15 @@ std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 	printRsItemEnd(out, "RsChatMsgItem", indent);
 	return out;
 }
+
+std::ostream& RsChatLobbyConnectChallengeItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsChatLobbyConnectChallengeItem", indent);
+	printIndent(out, indent);
+	out << "Challenge Code: " << std::hex << challenge_code << std::endl;
+	printRsItemEnd(out, "RsChatLobbyConnectChallengeItem", indent);
+	return out;
+}
 std::ostream& RsChatLobbyMsgItem::print(std::ostream &out, uint16_t indent)
 {
 	RsChatMsgItem::print(out,indent) ;
@@ -188,6 +197,13 @@ uint32_t RsChatMsgItem::serial_size()
 	s += GetTlvWideStringSize(message);
 
 	return s;
+}
+
+uint32_t RsChatLobbyConnectChallengeItem::serial_size()
+{
+	uint32_t s = 8; /* header */
+	s += 8;			// challenge code
+	return s ;
 }
 
 uint32_t RsChatLobbyMsgItem::serial_size()
@@ -336,6 +352,33 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
 #endif
+	return ok ;
+}
+
+bool RsChatLobbyConnectChallengeItem::serialise(void *data, uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size() ;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	bool ok = true ;
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
+	uint32_t offset = 8 ;
+
+	ok &= setRawUInt64(data, tlvsize, &offset, challenge_code);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef CHAT_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+#ifdef CHAT_DEBUG
+	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
+#endif
+	pktsize = tlvsize ;
 	return ok ;
 }
 
@@ -540,6 +583,23 @@ RsChatLobbyMsgItem::RsChatLobbyMsgItem(void *data,uint32_t /*size*/)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
+RsChatLobbyConnectChallengeItem::RsChatLobbyConnectChallengeItem(void *data,uint32_t /*size*/)
+	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE)
+{
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	std::cerr << "RsChatLobbyConnectChallengeItem: rsitem size is " << rssize << std::endl;
+	uint32_t offset = 8 ;
+
+	/* get mandatory parts first */
+	ok &= getRawUInt64(data, rssize, &offset, &challenge_code);
+
+	if (offset != rssize)
+		std::cerr << "Size error while deserializing." << std::endl ;
+	if (!ok)
+		std::cerr << "Unknown error while deserializing." << std::endl ;
+}
 RsChatLobbyInviteItem::RsChatLobbyInviteItem(void *data,uint32_t /*size*/)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE)
 {

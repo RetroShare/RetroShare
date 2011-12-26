@@ -215,9 +215,13 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
-		static std::string makeVirtualPeerId(ChatLobbyId) ;
-		void locked_printDebugInfo() const ;
+		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
+		void sendConnectionChallenge(ChatLobbyId id) ;
 
+		static std::string makeVirtualPeerId(ChatLobbyId) ;
+		static uint64_t makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
+
+		void locked_printDebugInfo() const ;
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
@@ -244,11 +248,14 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 				static const time_t MAX_KEEP_MSG_RECORD = 240 ; // keep msg record for 240 secs max.
 				void cleanCache() ;
+				int connexion_challenge_count ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
 		std::map<std::string,ChatLobbyId> _lobby_ids ;
+		std::string _default_nick_name ;
+		time_t last_lobby_challenge_time ; // prevents bruteforce attack
 };
 
 class p3ChatService::StateStringInfo
