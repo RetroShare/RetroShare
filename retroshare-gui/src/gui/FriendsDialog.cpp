@@ -311,6 +311,28 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
+void FriendsDialog::readChatLobbyInvites()
+{
+	std::list<ChatLobbyInvite> invites ;
+	rsMsgs->getPendingChatLobbyInvites(invites) ;
+
+	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
+		if(QMessageBox::Ok == QMessageBox::question(NULL,tr("Invitation to chat lobby"),QString::fromStdString((*it).peer_id)+QString(" invites you to chat lobby named ")+QString::fromUtf8((*it).lobby_name.c_str()),QMessageBox::Ok,QMessageBox::Ignore))
+		{
+			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
+
+			rsMsgs->acceptLobbyInvite( (*it).lobby_id ) ;
+
+			std::string vpid ;
+			if(rsMsgs->getVirtualPeerId( (*it).lobby_id,vpid ) )
+				PopupChatDialog::chatFriend(vpid) ;
+			else
+				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
+		}
+		else
+			rsMsgs->denyLobbyInvite( (*it).lobby_id ) ;
+}
+
 void FriendsDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
     if(is_private_chat)

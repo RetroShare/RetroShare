@@ -222,6 +222,7 @@ const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT = 14;
 const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT = 15;
 const int NOTIFY_LIST_GROUPLIST             = 16;
 const int NOTIFY_LIST_CHANNELLIST_LOCKED    = 17; // use connect with Qt::QueuedConnection
+const int NOTIFY_LIST_CHAT_LOBBY_INVITATION = 18;
 
 const int NOTIFY_TYPE_SAME   = 0x01;
 const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */

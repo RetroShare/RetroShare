@@ -153,6 +153,20 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		 */
 		bool clearPrivateChatQueue(bool incoming, const std::string &id);
 
+		bool getVirtualPeerId(const ChatLobbyId&, std::string& virtual_peer_id) ;
+		bool isLobbyId(const std::string&, ChatLobbyId&) ;
+		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
+		bool acceptLobbyInvite(const ChatLobbyId& id) ;
+		void denyLobbyInvite(const ChatLobbyId& id) ;
+		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
+		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
+		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
+		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
+		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
+		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
+		bool getDefaultNickNameForChatLobby(std::string& nick) ;
+		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
+
 	protected:
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -198,6 +212,20 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
 		bool checkAndRebuildPartialMessage(RsChatMsgItem*) ;
 
+		/// receive and handle chat lobby item
+		bool recvLobbyChat(RsChatLobbyMsgItem*) ;
+		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
+		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
+		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
+		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
+		void sendConnectionChallenge(ChatLobbyId id) ;
+		void handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem*) ;
+		void cleanLobbyCaches() ;
+
+		static std::string makeVirtualPeerId(ChatLobbyId) ;
+		static uint64_t makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
+
+		void locked_printDebugInfo() const ;
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
@@ -214,6 +242,20 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		std::string _custom_status_string ;
 		std::map<std::string,StateStringInfo> _state_strings ;
+
+		class ChatLobbyEntry: public ChatLobbyInfo
+		{
+			public:
+				std::map<ChatLobbyMsgId,time_t> msg_cache ;
+				std::string virtual_peer_id ;
+				int connexion_challenge_count ;
+		};
+
+		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
+		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
+		std::map<std::string,ChatLobbyId> _lobby_ids ;
+		std::string _default_nick_name ;
+		time_t last_lobby_challenge_time ; // prevents bruteforce attack
 };
 
 class p3ChatService::StateStringInfo

@@ -44,19 +44,28 @@ const uint32_t RS_CHAT_FLAG_PUBLIC                 = 0x0020;
 const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE   = 0x0040;
 const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0080;
 const uint32_t RS_CHAT_FLAG_PARTIAL_MESSAGE        = 0x0100;
+const uint32_t RS_CHAT_FLAG_LOBBY                  = 0x0200;
 
-const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING = 0x0001;
+const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING 		= 0x0001;
 
-const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           = 0x03 ;	// default is 0x01
-const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           = 0x04 ;	// default is 0x01
-const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	// default is 0x01 
+const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           = 0x03 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           = 0x04 ;	
+const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        = 0x06 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE     = 0x07 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     = 0x08 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  = 0x09 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE= 0x0A ;
 
 // for defining tags themselves and msg tags
-const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE = 0x03;
-const uint8_t RS_PKT_SUBTYPE_MSG_TAGS = 0x04;
-const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG = 0x05;
-const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG = 0x06;
+const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
+const uint8_t RS_PKT_SUBTYPE_MSG_TAGS 			= 0x04;
+const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG 		= 0x05;
+const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG 	= 0x06;
 
+typedef uint64_t 		ChatLobbyId ;
+typedef uint64_t 		ChatLobbyMsgId ;
+typedef std::string 	ChatLobbyNickName ;
 
 class RsChatItem: public RsItem
 {
@@ -81,14 +90,16 @@ class RsChatItem: public RsItem
 class RsChatMsgItem: public RsChatItem
 {
 	public:
-		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) 
-		{
-		}
-		RsChatMsgItem(void *data,uint32_t size) ; // deserialization
+		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
+		RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype) {}
+
+		RsChatMsgItem(void *data,uint32_t size,uint8_t subtype = RS_PKT_SUBTYPE_DEFAULT) ; // deserialization
 
 		virtual ~RsChatMsgItem() {}
 		virtual void clear() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual RsChatMsgItem *duplicate() const { return new RsChatMsgItem(*this) ; }
 
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
@@ -98,6 +109,72 @@ class RsChatMsgItem: public RsChatItem
 		std::wstring message;
 		/* not serialised */
 		uint32_t recvTime;
+};
+
+class RsChatLobbyMsgItem: public RsChatMsgItem
+{
+	public:
+		RsChatLobbyMsgItem() :RsChatMsgItem(RS_PKT_SUBTYPE_CHAT_LOBBY_MSG) {}
+
+		RsChatLobbyMsgItem(void *data,uint32_t size) ; // deserialization /// TODO!!!
+
+		virtual ~RsChatLobbyMsgItem() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+		virtual RsChatMsgItem *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ;				 				// deserialise is handled using a constructor
+
+		ChatLobbyId lobby_id ;
+		ChatLobbyMsgId msg_id ;
+		ChatLobbyNickName nick ;
+};
+
+class RsChatLobbyUnsubscribeItem: public RsChatItem
+{
+	public:
+		RsChatLobbyUnsubscribeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE) {}
+		RsChatLobbyUnsubscribeItem(void *data,uint32_t size) ; // deserialization 
+
+		virtual ~RsChatLobbyUnsubscribeItem() {} 
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		uint64_t lobby_id ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+};
+
+
+class RsChatLobbyConnectChallengeItem: public RsChatItem
+{
+	public:
+		RsChatLobbyConnectChallengeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE) {}
+		RsChatLobbyConnectChallengeItem(void *data,uint32_t size) ; // deserialization 
+
+		virtual ~RsChatLobbyConnectChallengeItem() {} 
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		uint64_t challenge_code ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+};
+
+class RsChatLobbyInviteItem: public RsChatItem
+{
+	public:
+		RsChatLobbyInviteItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE) {}
+		RsChatLobbyInviteItem(void *data,uint32_t size) ; // deserialization 
+
+		virtual ~RsChatLobbyInviteItem() {} 
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		ChatLobbyId lobby_id ;
+		std::string lobby_name ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 };
 
 /*!

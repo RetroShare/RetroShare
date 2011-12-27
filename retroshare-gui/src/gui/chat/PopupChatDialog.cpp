@@ -33,6 +33,7 @@
 #include <sys/stat.h>
 
 #include "PopupChatDialog.h"
+#include "ChatLobbyDialog.h"
 #include "PopupChatWindow.h"
 #include "gui/RetroShareLink.h"
 #include "util/misc.h"
@@ -125,7 +126,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
     connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus_slot(const QString&, int)));
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
     connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
@@ -261,16 +262,35 @@ void PopupChatDialog::processSettings(bool bLoad)
 {
     /* see if it exists already */
     PopupChatDialog *popupchatdialog = getExistingInstance(id);
+
     if (popupchatdialog == NULL) {
         if (chatflags & RS_CHAT_OPEN) {
             RsPeerDetails sslDetails;
-            if (rsPeers->getPeerDetails(id, sslDetails)) {
+				ChatLobbyId lobby_id ;
+
+            if (rsPeers->getPeerDetails(id, sslDetails)) 
+				{
                 popupchatdialog = new PopupChatDialog(id, PeerDefs::nameWithLocation(sslDetails));
                 chatDialogs[id] = popupchatdialog;
 
                 PopupChatWindow *window = PopupChatWindow::getWindow(false);
                 window->addDialog(popupchatdialog);
             }
+				else if (rsMsgs->isLobbyId(id, lobby_id)) 
+				{
+					std::list<ChatLobbyInfo> linfos; 
+					rsMsgs->getChatLobbyList(linfos) ;
+
+					for(std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());it!=linfos.end();++it)
+						if( (*it).lobby_id == lobby_id)
+						{
+							popupchatdialog = new ChatLobbyDialog(id,lobby_id,QString::fromStdString((*it).lobby_name));
+							chatDialogs[id] = popupchatdialog;
+
+							PopupChatWindow *window = PopupChatWindow::getWindow(false);
+							window->addDialog(popupchatdialog);
+						}
+				}
         }
     }
 
@@ -337,6 +357,14 @@ void PopupChatDialog::processSettings(bool bLoad)
     }
 }
 
+void PopupChatDialog::closeChat(const std::string& id)
+{
+	PopupChatDialog *popupchatdialog = getExistingInstance(id);
+
+	if(popupchatdialog != NULL)
+		popupchatdialog->hide() ;
+}
+
 void PopupChatDialog::chatFriend(const std::string &id)
 {
     if (id.empty()){
@@ -344,10 +372,16 @@ void PopupChatDialog::chatFriend(const std::string &id)
     }
     std::cerr<<" popup dialog chat friend 1"<<std::endl;
 
+		 ChatLobbyId lid ;
+	 if(rsMsgs->isLobbyId(id,lid))
+	 {
+		 getPrivateChat(id, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+		 return ;
+	 }
+
     RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail)) {
+    if (!rsPeers->getPeerDetails(id, detail)) 
         return;
-    }
 
     std::string firstId;
 
@@ -682,7 +716,8 @@ void PopupChatDialog::sendChat()
     std::cout << "PopupChatDialog:sendChat " << std::endl;
 #endif
 
-    if (rsMsgs->sendPrivateChat(dialogId, msg)) {
+    if (sendPrivateChat(msg))
+	 {
         QDateTime currentTime = QDateTime::currentDateTime();
         addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
     }
@@ -693,6 +728,11 @@ void PopupChatDialog::sendChat()
     chatWidget->setCurrentCharFormat(QTextCharFormat ());
 
     setFont();
+}
+
+bool PopupChatDialog::sendPrivateChat(const std::wstring& msg)
+{
+	return rsMsgs->sendPrivateChat(dialogId, msg) ;
 }
 
 /**
@@ -903,6 +943,11 @@ void PopupChatDialog::clearOfflineMessages()
     manualDelete = true;
     rsMsgs->clearPrivateChatQueue(false, dialogId);
     manualDelete = false;
+}
+
+void PopupChatDialog::updateStatus_slot(const QString &peer_id, int status)
+{
+	updateStatus(peer_id,status) ;
 }
 
 void PopupChatDialog::updateStatus(const QString &peer_id, int status)

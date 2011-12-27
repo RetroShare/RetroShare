@@ -260,3 +260,61 @@ void p3Msgs::setCustomStateString(const std::string& state_string)
 	mChatSrv->setOwnCustomStateString(state_string) ;
 }
 
+bool p3Msgs::getVirtualPeerId(const ChatLobbyId& id,std::string& peer_id)
+{
+	return mChatSrv->getVirtualPeerId(id,peer_id) ;
+}
+bool p3Msgs::isLobbyId(const std::string& peer_id,ChatLobbyId& id)
+{
+	return mChatSrv->isLobbyId(peer_id,id) ;
+}
+
+void p3Msgs::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
+{
+	mChatSrv->getChatLobbyList(linfos) ;
+}
+void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
+{
+	mChatSrv->invitePeerToLobby(lobby_id,peer_id) ;
+}
+void p3Msgs::unsubscribeChatLobby(const ChatLobbyId& lobby_id)
+{
+	mChatSrv->unsubscribeChatLobby(lobby_id) ;
+}
+bool p3Msgs::setDefaultNickNameForChatLobby(const std::string& nick)
+{
+	return mChatSrv->setDefaultNickNameForChatLobby(nick) ;
+}
+bool p3Msgs::getDefaultNickNameForChatLobby(std::string& nick_name)
+{
+	return mChatSrv->getDefaultNickNameForChatLobby(nick_name) ;
+}
+
+bool p3Msgs::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick)
+{
+	return mChatSrv->setNickNameForChatLobby(lobby_id,nick) ;
+}
+bool p3Msgs::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick_name)
+{
+	return mChatSrv->getNickNameForChatLobby(lobby_id,nick_name) ;
+}
+
+ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) 
+{
+	return mChatSrv->createChatLobby(lobby_name,invited_friends) ;
+}
+
+bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 
+{
+	return mChatSrv->acceptLobbyInvite(id) ;
+}
+void p3Msgs::denyLobbyInvite(const ChatLobbyId& id) 
+{
+	mChatSrv->denyLobbyInvite(id) ;
+}
+void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) 
+{
+	mChatSrv->getPendingChatLobbyInvites(invites) ;
+}
+
+

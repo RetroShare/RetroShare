@@ -46,6 +46,7 @@ public:
     static PopupChatDialog *getPrivateChat(const std::string &id, uint chatflags);
     static void cleanupChat();
     static void chatFriend(const std::string &id);
+    static void closeChat(const std::string &id);
     static void privateChatChanged(int list, int type);
 
     void updateStatusString(const QString& peer_id, const QString& statusString);
@@ -58,9 +59,10 @@ public:
     void activate();
     bool setStyle();
     const RSStyle &getStyle();
+    virtual void updateStatus(const QString &peer_id, int status);
 
 public slots:
-    void updateStatus(const QString &peer_id, int status);
+    void updateStatus_slot(const QString &peer_id, int status);
 
 protected:
     /** Default constructor */
@@ -141,6 +143,9 @@ private:
     bool manualDelete;
 
     RSStyle style;
+
+protected:
+	 virtual bool sendPrivateChat(const std::wstring& msg) ;	// can be derived to send chat to e.g. a chat lobby
 
     /** Qt Designer generated object */
     Ui::PopupChatDialog ui;
