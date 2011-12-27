@@ -47,6 +47,7 @@ public:
     static PopupChatDialog *getPrivateChat(const std::string &id, uint chatflags);
     static void cleanupChat();
     static void chatFriend(const std::string &id);
+    static void closeChat(const std::string &id);
     static void privateChatChanged(int list, int type);
 
     void updateStatusString(const QString& peer_id, const QString& statusString);

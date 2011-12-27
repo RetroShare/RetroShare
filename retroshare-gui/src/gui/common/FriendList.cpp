@@ -336,23 +336,36 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 			 case TYPE_SSL:
 				 {
 					 contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-					 QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Invite to chat lobby")) ;
+					 QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
 
+					 mnu->addAction(QIcon(IMAGE_ADDFRIEND),tr("create new"),this,SLOT(createchatlobby())) ;
+
+					 // Get existing lobbies
+					 //
 					 std::list<ChatLobbyInfo> cl_infos ;
-
 					 rsMsgs->getChatLobbyList(cl_infos) ;
 
 					 for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
 					 {
 						 std::cerr << "Adding meny entry with lobby id " << std::hex << (*it).lobby_id << std::dec << std::endl;
 
-						 QAction* inviteToLobbyAction = new QAction(QString::fromUtf8((*it).lobby_name.c_str()), mnu);
+						 QMenu *mnu2 = mnu->addMenu(QIcon(IMAGE_CHAT), QString::fromUtf8((*it).lobby_name.c_str())) ;
+
+						 QAction* inviteToLobbyAction = new QAction(tr("Invite this friend"), mnu2);
 						 inviteToLobbyAction->setData(QString::number((*it).lobby_id));
 						 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
-						 mnu->addAction(inviteToLobbyAction);
-					 }
+						 mnu2->addAction(inviteToLobbyAction);
 
-					 mnu->addAction(QIcon(IMAGE_CHAT),tr("create new"),this,SLOT(createchatlobby())) ;
+						 QAction* showLobbyAction = new QAction(tr("Show"), mnu2);
+						 showLobbyAction->setData(QString::number((*it).lobby_id));
+						 connect(showLobbyAction, SIGNAL(triggered()), this, SLOT(showLobby()));
+						 mnu2->addAction(showLobbyAction);
+
+						 QAction* unsubscribeToLobbyAction = new QAction(tr("Unsubscribe"), mnu2);
+						 unsubscribeToLobbyAction->setData(QString::number((*it).lobby_id));
+						 connect(unsubscribeToLobbyAction, SIGNAL(triggered()), this, SLOT(unsubscribeToLobby()));
+						 mnu2->addAction(unsubscribeToLobbyAction);
+					 }
 
 					 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
 
@@ -1392,6 +1405,37 @@ void FriendList::configurefriend()
 {
     ConfCertDialog::showIt(getRsId(getCurrentPeer()), ConfCertDialog::PageDetails);
 }
+
+void FriendList::showLobby()
+{
+	 std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+
+    if(lobby_id.empty())
+        return;
+
+	 std::string vpeer_id ;
+
+	 if(rsMsgs->getVirtualPeerId( ChatLobbyId(QString::fromStdString(lobby_id).toULongLong() ),vpeer_id)) 
+		 PopupChatDialog::chatFriend(vpeer_id) ;
+}
+void FriendList::unsubscribeToLobby()
+{
+	 std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+
+    if(lobby_id.empty())
+        return;
+
+	 std::string vpeer_id ;
+	 rsMsgs->getVirtualPeerId( ChatLobbyId(QString::fromStdString(lobby_id).toULongLong() ),vpeer_id) ;
+
+	 if(QMessageBox::Ok == QMessageBox::question(this,tr("Unsubscribe to lobby"),tr("You are about to unsubscribe a chat lobby<br>You can only re-enter if your friends invite you again."),QMessageBox::Ok | QMessageBox::Cancel))
+		 rsMsgs->unsubscribeChatLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong())) ;
+
+	 // we should also close existing windows.
+
+	 PopupChatDialog::closeChat(vpeer_id) ;
+}
+
 
 void FriendList::inviteToLobby()
 {

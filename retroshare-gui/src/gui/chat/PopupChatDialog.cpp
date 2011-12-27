@@ -359,6 +359,14 @@ void PopupChatDialog::processSettings(bool bLoad)
     }
 }
 
+void PopupChatDialog::closeChat(const std::string& id)
+{
+	PopupChatDialog *popupchatdialog = getExistingInstance(id);
+
+	if(popupchatdialog != NULL)
+		popupchatdialog->hide() ;
+}
+
 void PopupChatDialog::chatFriend(const std::string &id)
 {
     if (id.empty()){

@@ -55,6 +55,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        = 0x06 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE     = 0x07 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     = 0x08 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  = 0x09 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE= 0x0A ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -128,6 +129,22 @@ class RsChatLobbyMsgItem: public RsChatMsgItem
 		ChatLobbyMsgId msg_id ;
 		ChatLobbyNickName nick ;
 };
+
+class RsChatLobbyUnsubscribeItem: public RsChatItem
+{
+	public:
+		RsChatLobbyUnsubscribeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE) {}
+		RsChatLobbyUnsubscribeItem(void *data,uint32_t size) ; // deserialization 
+
+		virtual ~RsChatLobbyUnsubscribeItem() {} 
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		uint64_t lobby_id ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+};
+
 
 class RsChatLobbyConnectChallengeItem: public RsChatItem
 {

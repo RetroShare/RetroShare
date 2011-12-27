@@ -219,6 +219,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
 		void sendConnectionChallenge(ChatLobbyId id) ;
+		void handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem*) ;
 		void cleanLobbyCaches() ;
 
 		static std::string makeVirtualPeerId(ChatLobbyId) ;

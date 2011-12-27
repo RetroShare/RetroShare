@@ -644,6 +644,15 @@ void p3ChatService::receiveChatQueue()
 			continue ;
 		}
 
+		RsChatLobbyUnsubscribeItem *cu = dynamic_cast<RsChatLobbyUnsubscribeItem*>(item) ;
+
+		if(cu != NULL)
+		{
+			handleFriendUnsubscribeLobby(cu) ;
+			delete item ;
+			continue ;
+		}
+
 
 		std::cerr << "Received ChatItem of unhandled type: " << std::endl;
 		item->print(std::cerr,0) ;
@@ -1711,11 +1720,63 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 	return lobby_id ;
 }
 
+void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *item)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+
+	std::cerr << "Received unsubscribed to lobby " << item->lobby_id << ", from friend " << item->PeerId() << std::endl;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << "Chat lobby " << item->lobby_id << " does not exist ! Can't unsubscribe!" << std::endl;
+		return ;
+	}
+
+	for(std::set<std::string>::iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+		if(*it2 == item->PeerId())
+		{
+			std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << item->lobby_id << std::endl;
+			it->second.participating_friends.erase(it2) ;
+			break ;
+		}
+}
+
 void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	
-	// send a lobby leaving packet. To be implemented.
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(id) ;
+
+	if(it == _chat_lobbys.end())
+	{
+		std::cerr << "Chat lobby " << id << " does not exist ! Can't unsubscribe!" << std::endl;
+		return ;
+	}
+	// send a lobby leaving packet to all friends
+	
+	for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+	{
+		RsChatLobbyUnsubscribeItem *item = new RsChatLobbyUnsubscribeItem ;
+
+		item->lobby_id = id ;
+		item->PeerId(*it2) ;
+
+		sendItem(item) ;
+	}
+
+	// remove lobby information
+
+	_chat_lobbys.erase(it) ;
+
+	for(std::map<std::string,ChatLobbyId>::iterator it2(_lobby_ids.begin());it2!=_lobby_ids.end();++it2)
+		if(it2->second == id)
+		{
+			_lobby_ids.erase(it2) ;
+			break ;
+		}
+
+	// done!
 }
 bool p3ChatService::setDefaultNickNameForChatLobby(const std::string& nick)
 {
