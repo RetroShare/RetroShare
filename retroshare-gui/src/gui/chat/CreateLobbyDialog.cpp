@@ -39,8 +39,10 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWi
 	 std::string default_nick ;
 	 rsMsgs->getDefaultNickNameForChatLobby(default_nick) ;
 
+#if QT_VERSION >= 0x040700
 	 ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
 	 ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
+#endif
 	 ui->nickName_LE->setText(QString::fromStdString(default_nick)) ;
 
     connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
