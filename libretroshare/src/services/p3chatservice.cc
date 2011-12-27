@@ -241,17 +241,23 @@ bool p3ChatService::getVirtualPeerId(const ChatLobbyId& id,std::string& vpid)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Was asked for virtual peer name of " << std::hex << id << std::dec<< std::endl;
+#endif
 	std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.find(id)) ;
 
 	if(it == _chat_lobbys.end())
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "   not found!! " << std::endl;
+#endif
 		return false ;
 	}
 
 	vpid = it->second.virtual_peer_id ;
+#ifdef CHAT_DEBUG
 	std::cerr << "   returning " << vpid << std::endl;
+#endif
 	return true ;
 }
 
@@ -451,15 +457,21 @@ bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 
 void p3ChatService::checkAndRedirectMsgToLobby(RsChatMsgItem *ci)
 {
+#ifdef CHAT_DEBUG
 	std::cerr << "Checking msg..." << std::endl;
+#endif
 
 	if(!(ci->chatFlags & RS_CHAT_FLAG_LOBBY))
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "  normal chat!" << std::endl;
+#endif
 		return ;
 	}
+#ifdef CHAT_DEBUG
 	else
 		std::cerr << "  lobby  chat!" << std::endl;
+#endif
 
 	RsChatLobbyMsgItem *lobbyItem = dynamic_cast<RsChatLobbyMsgItem*>(ci) ;
 
@@ -1326,7 +1338,9 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 		locked_printDebugInfo() ; // debug
+#ifdef CHAT_DEBUG
 		std::cerr << "Handling ChatLobbyMsg " << std::hex << item->msg_id << ", lobby id " << item->lobby_id << ", from peer id " << item->PeerId() << std::endl;
+#endif
 
 		// send upward for display
 
@@ -1353,7 +1367,9 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 			std::cerr << "  Msg already received at time " << it2->second << ". Dropping!" << std::endl ;
 			return false ;
 		}
+#ifdef CHAT_DEBUG
 		std::cerr << "  Msg already not received already. Adding in cache, and forwarding!" << std::endl ;
+#endif
 
 		lobby.msg_cache[item->msg_id] = time(NULL) ;
 
@@ -1387,9 +1403,11 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
 	std::cerr << "msg:" << std::endl;
 	std::wcerr << msg << std::endl;
+#endif
 
 	// get a pointer to the info for that chat lobby.
 	//
@@ -1438,9 +1456,11 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 {
 	// Look into message cache of all lobbys to handle the challenge.
 	//
+#ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::handleConnectionChallenge(): received connexion challenge:" << std::endl;
 	std::cerr << "    Challenge code = 0x" << std::hex << item->challenge_code << std::dec << std::endl;
 	std::cerr << "    Peer Id        =   " << item->PeerId() << std::endl;
+#endif
 
 	ChatLobbyId lobby_id ;
 	bool found = false ;
@@ -1451,12 +1471,16 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 			for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end() && !found;++it2)
 			{
 				uint64_t code = makeConnexionChallengeCode(it->first,it2->first) ;
+#ifdef CHAT_DEBUG
 				std::cerr << "    Lobby_id = 0x" << std::hex << it->first << ", msg_id = 0x" << it2->first << ": code = 0x" << code << std::dec << std::endl ;
+#endif
 
 				if(code == item->challenge_code)
 				{
+#ifdef CHAT_DEBUG
 					std::cerr << "    Challenge accepted for lobby " << std::hex << it->first << ", for chat msg " << it2->first << std::dec << std::endl ;
 					std::cerr << "    Sending connection request to peer " << item->PeerId() << std::endl;
+#endif
 
 					lobby_id = it->first ;
 					found = true ;
@@ -1477,7 +1501,9 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Sending connection challenge to friends for lobby 0x" << std::hex << lobby_id << std::dec << std::endl ;
+#endif
 
 	// look for a msg in cache. Any recent msg is fine.
 	
@@ -1496,7 +1522,9 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 		if(it2->second + 20 > now)  // any msg not older than 20 seconds is fine.
 		{
 			code = makeConnexionChallengeCode(lobby_id,it2->first) ;
+#ifdef CHAT_DEBUG
 			std::cerr << "  Using msg id 0x" << std::hex << it2->first << ", challenge code = " << code << std::dec << std::endl; 
+#endif
 			break ;
 		}
 
@@ -1540,7 +1568,9 @@ void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos)
 }
 void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::string& peer_id) 
 {
+#ifdef CHAT_DEBUG
 	std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< std::hex << lobby_id << std::dec << std::endl;
+#endif
 
 	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
 
@@ -1561,7 +1591,9 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 }
 void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
 {
+#ifdef CHAT_DEBUG
 	std::cerr << "Received invite to lobby from " << item->PeerId() << " to lobby " << item->lobby_id << ", named " << item->lobby_name << std::endl;
+#endif
 
 	// 1 - store invite in a cache
 	//
@@ -1606,7 +1638,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef CHAT_DEBUG
 		std::cerr << "Accepting chat lobby "<< lobby_id << std::endl;
+#endif
 
 		std::map<ChatLobbyId,ChatLobbyInvite>::iterator it = _lobby_invites_queue.find(lobby_id) ;
 
@@ -1622,7 +1656,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 			return true ;
 		}
 
+#ifdef CHAT_DEBUG
 		std::cerr << "  Creating new Lobby entry." << std::endl;
+#endif
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
@@ -1639,7 +1675,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 		// we should also send a message to the lobby to tell we're here.
 
+#ifdef CHAT_DEBUG
 		std::cerr << "  Pushing new msg item to incoming msgs." << std::endl;
+#endif
 
 		RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem;
 		item->lobby_id = entry.lobby_id ;
@@ -1651,7 +1689,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 		privateIncomingList.push_back(item) ;
 	}
+#ifdef CHAT_DEBUG
 	std::cerr << "  Notifying of new recvd msg." << std::endl ;
+#endif
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 
@@ -1677,7 +1717,9 @@ void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Denying chat lobby invite to "<< lobby_id << std::endl;
+#endif
 	std::map<ChatLobbyId,ChatLobbyInvite>::iterator it = _lobby_invites_queue.find(lobby_id) ;
 
 	if(it == _lobby_invites_queue.end())
@@ -1691,7 +1733,9 @@ void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 
 ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends)
 {
+#ifdef CHAT_DEBUG
 	std::cerr << "Creating a new Chat lobby !!" << std::endl;
+#endif
 	ChatLobbyId lobby_id ;
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -1700,7 +1744,9 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 		//
 		do { lobby_id = RSRandom::random_u64() ; } while(_chat_lobbys.find(lobby_id) != _chat_lobbys.end()) ;
 
+#ifdef CHAT_DEBUG
 		std::cerr << "  New (unique) ID: " << std::hex << lobby_id << std::dec << std::endl;
+#endif
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.clear() ;
@@ -1725,7 +1771,9 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Received unsubscribed to lobby " << item->lobby_id << ", from friend " << item->PeerId() << std::endl;
+#endif
 
 	if(it == _chat_lobbys.end())
 	{
@@ -1736,7 +1784,9 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 	for(std::set<std::string>::iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
 		if(*it2 == item->PeerId())
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << item->lobby_id << std::endl;
+#endif
 			it->second.participating_friends.erase(it2) ;
 			break ;
 		}
@@ -1793,7 +1843,9 @@ bool p3ChatService::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::str
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	
+#ifdef CHAT_DEBUG
 	std::cerr << "getting nickname for chat lobby "<< std::hex << lobby_id << std::dec << std::endl;
+#endif
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
 
 	if(it == _chat_lobbys.end())
@@ -1810,7 +1862,9 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	
+#ifdef CHAT_DEBUG
 	std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
+#endif
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
 
 	if(it == _chat_lobbys.end())
@@ -1825,7 +1879,9 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 
 void p3ChatService::cleanLobbyCaches()
 {
+#ifdef CHAT_DEBUG
 	std::cerr << "Cleaning chat lobby caches." << std::endl;
+#endif
 
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -1835,7 +1891,9 @@ void p3ChatService::cleanLobbyCaches()
 		for(std::map<ChatLobbyMsgId,time_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
 			if(it2->second + MAX_KEEP_MSG_RECORD < now)
 			{
+#ifdef CHAT_DEBUG
 				std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << it2->second << std::endl;
+#endif
 
 				std::map<ChatLobbyMsgId,time_t>::iterator tmp(it2) ;
 				++tmp ;
