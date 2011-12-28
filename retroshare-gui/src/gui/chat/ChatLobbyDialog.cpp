@@ -77,3 +77,13 @@ void ChatLobbyDialog::updateStatus(const QString &peer_id, int status)
 	//
 }
 
+void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
+{
+	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
+	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
+	QString message = QString::fromStdWString(info.msg);
+	QString name = QString::fromUtf8(info.peer_nickname.c_str()) ;
+
+	addChatMsg(true, name, sendTime, recvTime, message, TYPE_NORMAL);
+}
+

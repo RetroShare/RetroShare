@@ -578,6 +578,16 @@ void PopupChatDialog::onPrivateChatChanged(int list, int type)
     }
 }
 
+void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
+{
+	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
+	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
+	QString message = QString::fromStdWString(info.msg);
+	QString name = QString::fromUtf8(rsPeers->getPeerName(info.rsid).c_str()) ;
+
+	addChatMsg(true, name, sendTime, recvTime, message, TYPE_NORMAL);
+}
+
 void PopupChatDialog::insertChatMsgs()
 {
     std::list<ChatInfo> newchat;
@@ -590,14 +600,15 @@ void PopupChatDialog::insertChatMsgs()
     }
 
     std::list<ChatInfo>::iterator it;
-    for(it = newchat.begin(); it != newchat.end(); it++) {
+    for(it = newchat.begin(); it != newchat.end(); it++) 
+	 {
         /* are they public? */
         if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
             /* this should not happen */
             continue;
         }
 
-        addChatMsg(true, QString::fromUtf8(rsPeers->getPeerName(it->rsid).c_str()), QDateTime::fromTime_t(it->sendTime), QDateTime::fromTime_t(it->recvTime), QString::fromStdWString(it->msg), TYPE_NORMAL);
+		  addIncomingChatMsg(*it) ;
     }
 
     rsMsgs->clearPrivateChatQueue(true, dialogId);

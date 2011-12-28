@@ -55,6 +55,7 @@ class ChatLobbyDialog: public PopupChatDialog
 		// The following methods are differentfrom those of the parent:
 		//
 		virtual void updateStatus(const QString &peer_id, int status) ;	// needs grouped status. Not yet implemented.
+		virtual void addIncomingChatMsg(const ChatInfo& info) ;				// 
 
 	protected slots:
 		void setNickName(const QString&) ;
