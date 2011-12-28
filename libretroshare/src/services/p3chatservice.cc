@@ -1399,7 +1399,7 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 	return true ;
 }
 
-bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id) 
+bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id,bool management) 
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -1429,7 +1429,11 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 	lobby.msg_cache[item.msg_id] = time(NULL) ;	// put the msg in cache!
 
 	item.lobby_id = lobby_id ;
-	item.nick	  = lobby.nick_name ;
+
+	if(management)
+		item.nick = "Lobby management" ;
+	else
+		item.nick = lobby.nick_name ;
 
 	// chat msg stuff
 	//
@@ -1700,7 +1704,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 	// Copy string to wstring.
 	std::copy(_default_nick_name.begin(), _default_nick_name.end(), wmsg.begin());
 
-	sendLobbyChat(wmsg + L" joined the lobby",lobby_id) ;
+	sendLobbyChat(wmsg + L" joined the lobby",lobby_id,true) ;
 	return true ;
 }
 
@@ -1794,38 +1798,47 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 
 void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-	
-	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(id) ;
+	// send AKN item
+	std::string nick ;
+	getNickNameForChatLobby(id,nick) ;
+	std::wstring wmsg(nick.length(), L' '); // Make room for characters
+	std::copy(nick.begin(), nick.end(), wmsg.begin());
+	sendLobbyChat(wmsg + L" has left the lobby",id,true) ;
 
-	if(it == _chat_lobbys.end())
 	{
-		std::cerr << "Chat lobby " << id << " does not exist ! Can't unsubscribe!" << std::endl;
-		return ;
-	}
-	// send a lobby leaving packet to all friends
-	
-	for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
-	{
-		RsChatLobbyUnsubscribeItem *item = new RsChatLobbyUnsubscribeItem ;
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		item->lobby_id = id ;
-		item->PeerId(*it2) ;
+		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(id) ;
 
-		sendItem(item) ;
-	}
-
-	// remove lobby information
-
-	_chat_lobbys.erase(it) ;
-
-	for(std::map<std::string,ChatLobbyId>::iterator it2(_lobby_ids.begin());it2!=_lobby_ids.end();++it2)
-		if(it2->second == id)
+		if(it == _chat_lobbys.end())
 		{
-			_lobby_ids.erase(it2) ;
-			break ;
+			std::cerr << "Chat lobby " << id << " does not exist ! Can't unsubscribe!" << std::endl;
+			return ;
 		}
 
+		// send a lobby leaving packet to all friends
+
+		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+		{
+			RsChatLobbyUnsubscribeItem *item = new RsChatLobbyUnsubscribeItem ;
+
+			item->lobby_id = id ;
+			item->PeerId(*it2) ;
+
+			sendItem(item) ;
+		}
+
+		// remove lobby information
+
+		_chat_lobbys.erase(it) ;
+
+		for(std::map<std::string,ChatLobbyId>::iterator it2(_lobby_ids.begin());it2!=_lobby_ids.end();++it2)
+			if(it2->second == id)
+			{
+				_lobby_ids.erase(it2) ;
+				break ;
+			}
+	}
 	// done!
 }
 bool p3ChatService::setDefaultNickNameForChatLobby(const std::string& nick)

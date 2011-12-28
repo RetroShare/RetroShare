@@ -214,7 +214,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*) ;
-		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
+		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&,bool management = false) ;
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
