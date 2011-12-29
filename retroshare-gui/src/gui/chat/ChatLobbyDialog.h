@@ -30,6 +30,7 @@ class QTextEdit;
 class QTextCharFormat;
 class AttachFileItem;
 class ChatInfo;
+class QListWidget ;
 
 #include <retroshare/rsmsgs.h>
 #include "ChatStyle.h"
@@ -61,7 +62,10 @@ class ChatLobbyDialog: public PopupChatDialog
 		void setNickName(const QString&) ;
 
 	private:
+		void updateFriendsList() ;
+
 		ChatLobbyId lobby_id ;
+		QListWidget *friendsListWidget ;
 };
 
 #endif

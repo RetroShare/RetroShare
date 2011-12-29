@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QBuffer>
 #include <QTextCodec>
+#include <QListWidget>
 #include <QSound>
 #include <sys/stat.h>
 
@@ -55,6 +56,11 @@ ChatLobbyDialog::ChatLobbyDialog(const std::string& dialog_id,const ChatLobbyId&
 	PopupChatDialog::updateStatus(QString::fromStdString(getPeerId()),RS_STATUS_ONLINE) ;
 
 	QObject::connect(this,SIGNAL(close()),this,SLOT(closeAndAsk())) ;
+
+	ui.avatarframe->layout()->addWidget(new QLabel(tr("Participants:"))) ;
+	friendsListWidget = new QListWidget ;
+	ui.avatarframe->layout()->addWidget(friendsListWidget) ;
+	ui.avatarframe->layout()->addItem(new QSpacerItem(12, 335, QSizePolicy::Minimum, QSizePolicy::Expanding)) ;
 }
 
 /** Destructor. */
@@ -74,7 +80,6 @@ void ChatLobbyDialog::setNickName(const QString& nick)
 void ChatLobbyDialog::updateStatus(const QString &peer_id, int status)
 {
 	// For now. We need something more efficient to tell when the lobby is disconnected.
-	//
 }
 
 void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
@@ -85,5 +90,31 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	QString name = QString::fromUtf8(info.peer_nickname.c_str()) ;
 
 	addChatMsg(true, name, sendTime, recvTime, message, TYPE_NORMAL);
+
+	// also update peer list.
+
+	static time_t last = 0 ;
+	time_t now = time(NULL) ;
+
+	if(now > last)
+	{
+		last = now ;
+		updateFriendsList() ;
+	}
+}
+
+void ChatLobbyDialog::updateFriendsList()
+{
+	friendsListWidget->clear() ;
+
+	std::list<ChatLobbyInfo> linfos ;
+	rsMsgs->getChatLobbyList(linfos);
+
+	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
+	for(;it!=linfos.end() && (*it).lobby_id != lobby_id;++it) ;
+
+	if(it!=linfos.end())
+		for(std::set<std::string>::const_iterator it2( (*it).nick_names.begin());it2!=(*it).nick_names.end();++it2)
+			friendsListWidget->addItem(QString::fromUtf8((*it2).c_str())) ;
 }
 

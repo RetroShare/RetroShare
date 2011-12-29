@@ -423,7 +423,7 @@ bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 	if(it != _pendingPartialMessages.end())
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "Pending messahe found. Happending it." << std::endl;
+		std::cerr << "Pending message found. Happending it." << std::endl;
 #endif
 		// Yes, there is. Append the item to ci.
 
@@ -455,52 +455,6 @@ bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 	}
 }
 
-void p3ChatService::checkAndRedirectMsgToLobby(RsChatMsgItem *ci)
-{
-#ifdef CHAT_DEBUG
-	std::cerr << "Checking msg..." << std::endl;
-#endif
-
-	if(!(ci->chatFlags & RS_CHAT_FLAG_LOBBY))
-	{
-#ifdef CHAT_DEBUG
-		std::cerr << "  normal chat!" << std::endl;
-#endif
-		return ;
-	}
-#ifdef CHAT_DEBUG
-	else
-		std::cerr << "  lobby  chat!" << std::endl;
-#endif
-
-	RsChatLobbyMsgItem *lobbyItem = dynamic_cast<RsChatLobbyMsgItem*>(ci) ;
-
-	if(ci == NULL)
-		std::cerr << "Warning: chat message has lobby flag, but is not a chat lobby item!!" << std::endl;
-
-	std::string vpeer_id ;
-	{
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-		std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it = _chat_lobbys.find(lobbyItem->lobby_id) ;
-
-		if(it == _chat_lobbys.end())
-		{
-			std::cerr << "(EE) p3ChatService::checkAndRedirectMsgToLobby(): RsItem is a lobby item, but the id is not known!!" << std::endl;
-			ci->PeerId(std::string()) ;
-			return ;
-		}
-		vpeer_id = it->second.virtual_peer_id ;
-	}
-
-	if(recvLobbyChat(lobbyItem))
-		ci->PeerId(vpeer_id) ;			// the peer Id is changed to the lobby id (virtual peer id).
-	else
-		ci->PeerId(std::string()) ;	// reset the peer id to prevent display of message.
-}
-
-
-
 void p3ChatService::receiveChatQueue()
 {
 	bool publicChanged = false;
@@ -520,7 +474,18 @@ void p3ChatService::receiveChatQueue()
 		{
 			// check if it's a lobby msg, in which case we replace the peer id by the lobby's virtual peer id.
 			//
-			checkAndRedirectMsgToLobby(ci) ;
+			RsChatLobbyMsgItem *cli = dynamic_cast<RsChatLobbyMsgItem*>(ci) ;
+
+			if(cli != NULL)
+			{
+				if(!recvLobbyChat(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
+				{
+					delete ci ;
+					continue ;
+				}
+			}	
+			else if(!checkAndRebuildPartialMessage(ci)) 	// Don't delete ! This function is not handled propoerly for chat lobby msgs, so
+				continue ;											// we don't use it in this case.
 
 #ifdef CHAT_DEBUG
 			std::cerr << "p3ChatService::receiveChatQueue() Item:";
@@ -529,8 +494,6 @@ void p3ChatService::receiveChatQueue()
 			std::cerr << std::endl;
 			std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
 #endif
-			if(!checkAndRebuildPartialMessage(ci))
-				continue ;
 
 			if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
 			{
@@ -1331,9 +1294,14 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 
 //********************** Chat Lobby Stuff ***********************//
 
-bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
+// returns:
+// 	true: the message is not a duplicate and should be shown
+// 	false: the message is a duplicate or there is an error, and should be destroyed.
+//
+bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item,const std::string& peer_id)
 {
 	bool send_challenge = false ;
+	std::string lobby_virtual_peer_id ;
 	ChatLobbyId send_challenge_lobby ;
 
 	{
@@ -1357,8 +1325,12 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 
 		// Adds the peer id to the list of friend participants, even if it's not original msg source
 
-		lobby.participating_friends.insert(item->PeerId()) ;
-		lobby.nick_names.insert(item->nick) ;
+		lobby.participating_friends.insert(peer_id) ;
+
+		if(item->nick != "Lobby management")		// not nice ! We need a lobby management flag.
+			lobby.nick_names.insert(item->nick) ;
+
+		lobby_virtual_peer_id = lobby.virtual_peer_id ;
 
 		// Checks wether the msg is already recorded or not
 
@@ -1378,11 +1350,11 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 		// Forward to allparticipating friends, except this peer.
 
 		for(std::set<std::string>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
-			if((*it)!=item->PeerId() && mLinkMgr->isOnline(*it)) 
+			if((*it)!=peer_id && mLinkMgr->isOnline(*it)) 
 			{
 				RsChatLobbyMsgItem *item2 = new RsChatLobbyMsgItem(*item) ;	// copy almost everything
 
-				item2->PeerId(*it) ;
+				item2->PeerId(*it) ;	// replaces the virtual peer id with the actual destination.
 
 				sendItem(item2);
 			}
@@ -1398,6 +1370,7 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item)
 	if(send_challenge)
 		sendConnectionChallenge(send_challenge_lobby) ;
 
+	item->PeerId(lobby_virtual_peer_id) ;	// updates the peer id for proper display
 	return true ;
 }
 
