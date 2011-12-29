@@ -493,8 +493,10 @@ void p3ChatService::checkAndRedirectMsgToLobby(RsChatMsgItem *ci)
 		vpeer_id = it->second.virtual_peer_id ;
 	}
 
-	recvLobbyChat(lobbyItem) ;		// needs the proper peerId
-	ci->PeerId(vpeer_id) ;	// thenthe peer Id is changed to the lobby id (virtual peer id).
+	if(recvLobbyChat(lobbyItem))
+		ci->PeerId(vpeer_id) ;			// the peer Id is changed to the lobby id (virtual peer id).
+	else
+		ci->PeerId(std::string()) ;	// reset the peer id to prevent display of message.
 }
 
 
