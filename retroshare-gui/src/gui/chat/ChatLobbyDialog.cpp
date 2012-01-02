@@ -74,7 +74,7 @@ ChatLobbyDialog::~ChatLobbyDialog()
 
 void ChatLobbyDialog::setNickName(const QString& nick)
 {
-	rsMsgs->setNickNameForChatLobby(lobby_id,nick.toStdString()) ;
+	rsMsgs->setNickNameForChatLobby(lobby_id,nick.toUtf8().constData()) ;
 }
 
 void ChatLobbyDialog::updateStatus(const QString &peer_id, int status)

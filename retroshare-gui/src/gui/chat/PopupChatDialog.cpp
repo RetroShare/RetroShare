@@ -284,7 +284,7 @@ void PopupChatDialog::processSettings(bool bLoad)
 					for(std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());it!=linfos.end();++it)
 						if( (*it).lobby_id == lobby_id)
 						{
-							popupchatdialog = new ChatLobbyDialog(id,lobby_id,QString::fromStdString((*it).lobby_name));
+							popupchatdialog = new ChatLobbyDialog(id,lobby_id,QString::fromUtf8((*it).lobby_name.c_str()));
 							chatDialogs[id] = popupchatdialog;
 
 							PopupChatWindow *window = PopupChatWindow::getWindow(false);

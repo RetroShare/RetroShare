@@ -98,7 +98,7 @@ void CreateLobbyDialog::createLobby()
     }
 
 	 // create chat lobby !!
-	 std::string lobby_name = ui->lobbyName_LE->text().toStdString() ;
+	 std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
 
     // add to group
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList);
