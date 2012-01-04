@@ -38,8 +38,12 @@ class PluginItem: public QWidget, public Ui::PluginItem
 		void pluginEnabled(bool,const QString&) ;
 		void pluginConfigure(int) ;
 
+  private slots:
+		void on_moreinfo_label_linkActivated(QString link);
+
 	private:
 		int _id ;
+
 };
 
 
