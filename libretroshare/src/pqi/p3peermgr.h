@@ -182,6 +182,7 @@ virtual bool	getFriendNetStatus(const std::string &id, peerState &state) = 0;
 virtual bool	getOthersNetStatus(const std::string &id, peerState &state) = 0;
 
 virtual bool    getPeerName(const std::string &ssl_id, std::string &name) = 0;
+virtual bool	getGpgId(const std::string &sslId, std::string &gpgId) = 0;
 
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
@@ -266,6 +267,7 @@ virtual bool	getFriendNetStatus(const std::string &id, peerState &state);
 virtual bool	getOthersNetStatus(const std::string &id, peerState &state);
 
 virtual bool    getPeerName(const std::string &ssl_id, std::string &name);
+virtual bool	getGpgId(const std::string &sslId, std::string &gpgId);
 
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/

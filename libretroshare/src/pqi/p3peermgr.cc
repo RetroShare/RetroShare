@@ -255,6 +255,22 @@ bool    p3PeerMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
 	return true;
 }
 
+bool    p3PeerMgrIMPL::getGpgId(const std::string &ssl_id, std::string &gpgId)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	gpgId = it->second.gpg_id;
+	return true;
+}
+
 
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const std::string &id, peerState &state)
