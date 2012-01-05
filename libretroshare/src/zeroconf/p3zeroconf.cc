@@ -29,6 +29,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "pqi/authgpg.h"
+
 /* TODO
  *
  * - Get Local Port when it changes.... (need second interface?)
@@ -46,8 +48,8 @@
 #define ZC_SERVICE_ACTIVE	1
 
 
-p3ZeroConf::p3ZeroConf(std::string gpgid, std::string sslid, pqiConnectCb *cb, p3NetMgr *nm)
-	:pqiNetAssistConnect(sslid, cb), mNetMgr(nm), mZcMtx("p3ZeroConf")
+p3ZeroConf::p3ZeroConf(std::string gpgid, std::string sslid, pqiConnectCb *cb, p3NetMgr *nm, p3PeerMgr *pm)
+	:pqiNetAssistConnect(sslid, cb), mNetMgr(nm), mPeerMgr(pm), mZcMtx("p3ZeroConf")
 {
 	mRegistered = false;
 	mTextOkay = false;
@@ -146,6 +148,41 @@ void 	p3ZeroConf::createTxtRecord()
 
 	mTextOkay = true;
 }
+
+int procPeerTxtRecord(int txtLen, const unsigned char *txtRecord, std::string peerGpgId, std::string peerSslId)
+{
+	int txtRemaining = txtLen;
+	int idx = 0;
+	bool setGpg = false;
+	bool setSsl = false;
+
+	while(txtRemaining > 0)
+	{
+		uint8_t len = txtRecord[idx];
+		idx++;
+		txtRemaining -= 1;
+
+		std::string record(txtRecord, idx, len);
+		if (0 == strncmp(record.c_str(), "gpgid=", 6))
+		{
+			peerGpgId = record.substr(6, -1);
+			setGpg = true;
+		}
+		else if (0 == strncmp(record.c_str(), "sslid=", 6))
+		{
+			peerSslId = record.substr(6, -1);
+			setSsl = true;
+		}
+		else
+		{
+			std::cerr << "Unknown Record";
+		}
+		idx += len;
+		txtRemaining -= len;
+	}
+	return (setGpg && setSsl);
+}
+
 
         /*** OVERLOADED from pqiNetListener ***/
 bool 	p3ZeroConf::resetListener(struct sockaddr_in &local)
@@ -284,7 +321,6 @@ int p3ZeroConf::tick()
 	{
 		RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
 
-		
 		locked_startRegister();
 		locked_startBrowse();
 	}
@@ -293,6 +329,7 @@ int p3ZeroConf::tick()
 	checkServiceFDs(); // will cause callbacks - if data is ready.
 
 	checkResolveAction();
+	checkLocationResults();
 	checkQueryAction();
 	checkQueryResults();
 	
@@ -405,6 +442,44 @@ int p3ZeroConf::checkResolveAction()
 }
 
 
+int p3ZeroConf::checkLocationResults()
+{
+	zcLocationResult lr;
+
+	{
+		RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
+
+		/* check the results Queue  */
+		if (mLocationResults.size() == 0)
+		{
+			return 0;
+		}
+
+		std::cerr << "p3ZeroConf::checkLocationResults() Getting Item from LocationResults";
+		std::cerr << std::endl;
+
+		lr = mLocationResults.front();
+		mLocationResults.pop_front();
+
+	}
+
+	/* now callback to mPeerMgr to add new location... This will eventually get back here
+	 * via some magic!
+	 */
+
+	std::cerr << "p3ZeroConf::checkLocationResults() adding new location.";
+	std::cerr << std::endl;
+	std::cerr << "gpgid = " << lr.gpgId;
+	std::cerr << std::endl;
+	std::cerr << "sslid = " << lr.sslId;
+	std::cerr << std::endl;
+
+	time_t now = time(NULL);
+	mPeerMgr->addFriend(lr.gpgId, lr.sslId, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now);
+	return 1;
+}
+
+
 int p3ZeroConf::checkQueryAction()
 {
 	RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
@@ -425,7 +500,7 @@ int p3ZeroConf::checkQueryAction()
 		zcResolveResult rr = mResolveResults.front();
 		mResolveResults.pop_front();
 
-		locked_startQueryIp(rr.interfaceIndex, rr.fullname);
+		locked_startQueryIp(rr.interfaceIndex, rr.fullname, rr.gpgId, rr.sslId);
 	}
 	return 1;
 }
@@ -433,18 +508,40 @@ int p3ZeroConf::checkQueryAction()
 
 int p3ZeroConf::checkQueryResults()
 {
-	RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
-
-	/* check the new results Queue first */
-	if (mQueryResults.size() > 0)
+	zcQueryResult qr;
 	{
+		RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
+
+		/* check the results Queue  */
+		if (mQueryResults.size() == 0)
+		{
+			return 0;
+		}
+
 		std::cerr << "p3ZeroConf::checkQueryResults() Getting Item from QueryResults";
 		std::cerr << std::endl;
 
-		zcQueryResult br = mQueryResults.front();
+		qr = mQueryResults.front();
 		mQueryResults.pop_front();
 
 	}
+
+	/* now callback to mLinkMgr to say we can connect */
+
+	std::cerr << "p3ZeroConf::checkQueryResults() linkMgr->peerConnectRequest() to start link";
+	std::cerr << std::endl;
+	std::cerr << "to gpgid = " << qr.gpgId;
+	std::cerr << std::endl;
+	std::cerr << "sslid = " << qr.sslId;
+	std::cerr << std::endl;
+
+	time_t now = time(NULL);
+	uint32_t flags = RS_CB_FLAG_MODE_TCP;
+	uint32_t source = RS_CB_DHT; // SHOULD ADD NEW SOURCE ZC???
+	struct sockaddr_in dummyProxyAddr, dummySrcAddr;
+	mConnCb->peerConnectRequest(qr.sslId, qr.addr, dummyProxyAddr, dummySrcAddr, 
+						source, flags, 0, 0); 
+
 	return 1;
 }
 
@@ -744,7 +841,6 @@ void p3ZeroConf::callbackResolve( DNSServiceRef /* sdRef */, DNSServiceFlags fla
 	//memcpy(rr.txtRecord, txtRecord, txtLen);
 	// We must consume the txtRecord and translate into strings...
 
-
 	std::cerr << "p3ZeroConf::callbackResolve() ";
 	std::cerr << " flags: " << flags;
 	std::cerr << " interfaceIndex: " << interfaceIndex;
@@ -754,7 +850,20 @@ void p3ZeroConf::callbackResolve( DNSServiceRef /* sdRef */, DNSServiceFlags fla
 	std::cerr << " txtLen: " << txtLen;
 	std::cerr << std::endl;
 
-	mResolveResults.push_back(rr);
+	std::string peerGpgId;
+	std::string peerSslId;
+	if (procPeerTxtRecord(txtLen, txtRecord, peerGpgId, peerSslId))
+	{
+		rr.gpgId = peerGpgId;
+		rr.sslId = peerSslId;
+
+		/* check if we care - install ssl record */
+		int resolve = locked_checkResolvedPeer(rr);
+		if (resolve)
+		{
+			mResolveResults.push_back(rr);
+		}
+	}
 
 	if (flags & kDNSServiceFlagsMoreComing)
 	{
@@ -768,6 +877,77 @@ void p3ZeroConf::callbackResolve( DNSServiceRef /* sdRef */, DNSServiceFlags fla
 
 		locked_stopResolve();
 	}
+}
+
+
+/* returns if we are interested in the peer */
+int p3ZeroConf::locked_checkResolvedPeer(const zcResolveResult &rr)
+{
+	/* check if peerGpgId is in structure already */
+	std::map<std::string, zcPeerDetails>::iterator it;
+	it = mPeerDetails.find(rr.gpgId);
+	if (it == mPeerDetails.end())
+	{
+		/* possibility we don't have any SSL ID's for this person 
+		 * check against AuthGPG()
+	 	 */
+		if (AuthGPG::getAuthGPG()->isGPGAccepted(rr.gpgId))
+		{
+			zcPeerDetails newFriend;
+			newFriend.gpgId = rr.gpgId;
+			mPeerDetails[rr.gpgId] = newFriend;
+
+			it = mPeerDetails.find(rr.gpgId);
+		}
+		else
+		{
+			std::cerr << "p3ZeroConf::locked_checkpeer() Found Unknown peer on LAN:";
+			std::cerr << std::endl;
+			std::cerr << "gpgid = " << rr.gpgId;
+			std::cerr << std::endl;
+			std::cerr << "sslid = " << rr.sslId;
+			std::cerr << std::endl;
+
+			return 0;
+		}
+	}
+
+	/* now see if we have an sslId */
+	std::map<std::string, zcLocationDetails>::iterator lit;
+	lit = it->second.mLocations.find(rr.sslId);
+	if (lit == it->second.mLocations.end())
+	{
+		/* install a new location -> flag it as this */
+		zcLocationDetails loc;
+		loc.mSslId = rr.sslId;
+		loc.mStatus = ZC_STATUS_FOUND | ZC_STATUS_NEW_LOCATION;
+		loc.mPort = rr.port;
+		loc.mFullName = rr.fullname;
+		loc.mHostTarget = rr.hosttarget;
+		loc.mFoundTs = time(NULL);
+
+		it->second.mLocations[rr.sslId] = loc;
+
+		/* install item in ADD Queue */
+		zcLocationResult locResult(rr.gpgId, rr.sslId);
+		mLocationResults.push_back(locResult);
+
+		/* return 1, to resolve fully */
+		return 1;
+	}
+
+	lit->second.mStatus |= ZC_STATUS_FOUND;
+	lit->second.mPort = rr.port;
+	lit->second.mFullName = rr.fullname;
+	lit->second.mHostTarget = rr.hosttarget;
+	lit->second.mFoundTs = time(NULL);
+
+	/* otherwise we get here - and we see if we are already connected */
+	if (lit->second.mStatus & ZC_STATUS_CONNECTED)
+	{
+		return 0;
+	}
+	return 1;
 }
 
 
@@ -799,7 +979,7 @@ void p3ZeroConf_CallbackQueryIp( DNSServiceRef sdRef, DNSServiceFlags flags,
 
 }
 
-void p3ZeroConf::locked_startQueryIp(uint32_t idx, std::string fullname)
+void p3ZeroConf::locked_startQueryIp(uint32_t idx, std::string fullname, std::string gpgId, std::string sslId)
 {
 	if (mQueryStatus == ZC_SERVICE_ACTIVE)
 	{
@@ -829,6 +1009,8 @@ void p3ZeroConf::locked_startQueryIp(uint32_t idx, std::string fullname)
 	else
 	{
 		mQueryStatus = ZC_SERVICE_ACTIVE;
+		mQueryGpgId = gpgId;
+		mQuerySslId = sslId;
 	}
 }
 
@@ -872,7 +1054,24 @@ void p3ZeroConf::callbackQueryIp( DNSServiceRef /* sdRef */, DNSServiceFlags fla
 	std::cerr << " ttl: " << ttl;
 	std::cerr << std::endl;
 
-	mQueryResults.push_back(qr);
+	/* add in the query Ids, that we saved... */
+	qr.sslId = mQuerySslId;
+	qr.gpgId = mQueryGpgId;
+
+	if ((rrtype == kDNSServiceType_A) && (rdlen == 4))
+	{
+		qr.addr.sin_addr.s_addr = *((uint32_t *) rdata);
+
+		if (locked_completeQueryResult(qr)) // Saves Query Results, and fills in Port details.
+		{
+			mQueryResults.push_back(qr);
+		}
+	}
+	else
+	{
+		std::cerr << "p3ZeroConf::callbackQuery() Unknown rrtype";
+		std::cerr << std::endl;
+	}
 
 	if (flags & kDNSServiceFlagsMoreComing)
 	{
@@ -886,6 +1085,51 @@ void p3ZeroConf::callbackQueryIp( DNSServiceRef /* sdRef */, DNSServiceFlags fla
 
 		locked_stopQueryIp();
 	}
+}
+
+
+/* returns 1 if all is good */
+int p3ZeroConf::locked_completeQueryResult(zcQueryResult &qr)
+{
+	/* check if peerGpgId is in structure already */
+	std::map<std::string, zcPeerDetails>::iterator it;
+	it = mPeerDetails.find(qr.gpgId);
+	if (it == mPeerDetails.end())
+	{
+		/* Should not be possible to get here! */
+		std::cerr << "p3ZeroConf::locked_completeQueryResults() Missing GPGID";
+		std::cerr << std::endl;
+
+		return 0;
+	}
+
+	/* now see if we have an sslId */
+	std::map<std::string, zcLocationDetails>::iterator lit;
+	lit = it->second.mLocations.find(qr.sslId);
+	if (lit == it->second.mLocations.end())
+	{
+		/* Should not be possible to get here! */
+		std::cerr << "p3ZeroConf::locked_completeQueryResults() Missing SSLID";
+		std::cerr << std::endl;
+
+		return 0;
+	}
+
+
+	/*** NOW HAVE FOUND ENTRY, exchange info ****/
+
+	qr.addr.sin_port = htons(lit->second.mPort);
+	lit->second.mAddress = qr.addr;
+	lit->second.mStatus |= ZC_STATUS_IPADDRESS;
+	lit->second.mAddrTs = time(NULL);
+
+	/* if we have connected? */
+	if (lit->second.mStatus & ZC_STATUS_CONNECTED)
+	{
+		std::cerr << "p3ZeroConf::locked_completeQueryResults() Warning Already Connected";
+		std::cerr << std::endl;
+	}
+	return 1;
 }
 
 

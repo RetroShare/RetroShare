@@ -27,6 +27,8 @@
 #ifndef MRK_P3_ZEROCONF_H
 #define MRK_P3_ZEROCONF_H
 
+#include "util/rswin.h"
+
 #include "pqi/pqiassist.h"
 #include "retroshare/rsdht.h"
 
@@ -34,6 +36,7 @@
 #include <map>
 #include "pqi/pqinetwork.h"
 #include "pqi/pqimonitor.h"
+#include "pqi/p3peermgr.h"
 #include "util/rsthreads.h"
 
 #include <dns_sd.h>
@@ -63,6 +66,10 @@ class zcResolveResult
 	uint16_t port;
 	uint16_t txtLen;
 	//unsigned char *txtRecord;
+
+	// extra results.
+	std::string gpgId;
+	std::string sslId;
 };
 
 
@@ -80,13 +87,51 @@ class zcQueryResult
 	uint16_t rdlen;
 	//void *rdata;
 	uint32_t ttl;
+
+	// Extra ones.
+	std::string sslId;
+	std::string gpgId;
+	struct sockaddr_in addr;
 };
 
+
+class zcLocationResult
+{
+	public:
+	zcLocationResult() { return; }
+	zcLocationResult(std::string _gpgId, std::string _sslId)
+	:gpgId(_gpgId), sslId(_sslId) { return; }
+
+	std::string gpgId;
+	std::string sslId;
+};
+
+#define ZC_STATUS_NEW_LOCATION		1
+#define ZC_STATUS_FOUND			2
+#define ZC_STATUS_CONNECTED		4
+#define ZC_STATUS_IPADDRESS		8
+
+class zcLocationDetails
+{
+	public:
+	std::string mSslId;
+	time_t mFoundTs;
+	uint32_t mStatus;
+	std::string mHostTarget;
+	std::string mFullName;
+	uint16_t mPort;
+
+	struct sockaddr_in mAddress;
+	time_t mAddrTs;
+};
 
 
 class zcPeerDetails
 {
 	public:
+
+	std::string gpgId;
+	std::map<std::string, zcLocationDetails> mLocations;	
 
 };
 
@@ -95,14 +140,14 @@ class p3NetMgr;
 class p3ZeroConf: public pqiNetAssistConnect, public pqiNetListener
 {
 	public:
-	p3ZeroConf(std::string gpgid, std::string sslid, pqiConnectCb *cb, p3NetMgr *nm);
+	p3ZeroConf(std::string gpgid, std::string sslid, pqiConnectCb *cb, p3NetMgr *nm, p3PeerMgr *pm);
 virtual	~p3ZeroConf();
 
 	/*** OVERLOADED from pqiNetListener ***/
 
 virtual bool resetListener(struct sockaddr_in &local);
 
-void	start(); /* starts up the bitdht thread */
+void	start(); /* starts up the thread */
 
 	/* pqiNetAssist - external interface functions */
 virtual int     tick();
@@ -165,9 +210,9 @@ virtual bool    setAttachMode(bool on);
 	void checkServiceFDs();
 	void locked_checkFD(DNSServiceRef ref);
 	int checkResolveAction();
+	int checkLocationResults();
 	int checkQueryAction();
 	int checkQueryResults();
-
 
 	/**** THESE ARE MAINLY SEMI LOCKED.... not quite sure when the callback will happen! ***/
 
@@ -180,13 +225,25 @@ virtual bool    setAttachMode(bool on);
 
 	void locked_startResolve(uint32_t idx, std::string name, 
 			std::string regtype, std::string domain);
+	int locked_checkResolvedPeer(const zcResolveResult &rr);
 	int locked_stopResolve();
 
-	void locked_startQueryIp(uint32_t idx, std::string fullname);
+	void locked_startQueryIp(uint32_t idx, std::string fullname, 
+					std::string gpgId, std::string sslId);
+	int locked_completeQueryResult(zcQueryResult &qr);
 	int locked_stopQueryIp();
 
 	std::string displayDNSServiceError(DNSServiceErrorType errcode);
 
+	/**************** DATA ****************/
+
+	p3NetMgr *mNetMgr;
+	p3PeerMgr *mPeerMgr;
+
+	RsMutex mZcMtx;
+
+	std::string mOwnGpgId;
+	std::string mOwnSslId;
 
 	bool mRegistered;
 	bool mTextOkay;
@@ -203,28 +260,21 @@ virtual bool    setAttachMode(bool on);
 	uint32_t mRegisterStatus; 
 	uint32_t mBrowseStatus; 
 	uint32_t mResolveStatus;
-	uint32_t mQueryStatus;
 
+	uint32_t mQueryStatus;
+	std::string mQuerySslId;
+	std::string mQueryGpgId;
 
 std::list<zcBrowseResult> mBrowseResults;
 std::list<zcResolveResult> mResolveResults;
+std::list<zcLocationResult> mLocationResults;
 std::list<zcQueryResult> mQueryResults;
 
 
 
-
-
-	p3NetMgr *mNetMgr;
-
-	RsMutex mZcMtx;
-
-	std::string mOwnGpgId;
-	std::string mOwnSslId;
-
 	time_t mMinuteTS;
 
-	/* translation maps */
-
+	std::map<std::string, zcPeerDetails> mPeerDetails;
 };
 
 #endif /* MRK_P3_ZEROCONF_H */
