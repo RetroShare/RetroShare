@@ -42,6 +42,27 @@ RsSerialType* init_item(RsChatMsgItem& cmi)
 
 	return new RsChatSerialiser();
 }
+RsSerialType* init_item(RsChatLobbyListRequestItem& cmi)
+{
+	return new RsChatSerialiser();
+}
+RsSerialType* init_item(RsChatLobbyListItem& cmi)
+{
+	int n = rand()%20 ;
+
+	cmi.lobby_ids.resize(n) ;
+	cmi.lobby_names.resize(n) ;
+	cmi.lobby_counts.resize(n) ;
+
+	for(int i=0;i<n;++i)
+	{
+		cmi.lobby_ids[i] = RSRandom::random_u64() ;
+		randString(5+(rand()%10), cmi.lobby_names[i]);
+		cmi.lobby_counts[i] = RSRandom::random_u32() ;
+	}
+
+	return new RsChatSerialiser();
+}
 RsSerialType* init_item(RsChatLobbyMsgItem& cmi)
 {
 	RsSerialType *serial = init_item( *dynamic_cast<RsChatMsgItem*>(&cmi)) ;
@@ -49,8 +70,17 @@ RsSerialType* init_item(RsChatLobbyMsgItem& cmi)
 	cmi.msg_id = RSRandom::random_u64() ;
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.nick = "My nickname" ;
+	cmi.subpacket_id = rand()%256 ;
+	cmi.parent_msg_id = RSRandom::random_u64() ;
 
 	return serial ;
+}
+RsSerialType *init_item(RsChatLobbyEventItem& cmi)
+{
+	cmi.event_type = rand()%256 ;
+	randString(20, cmi.string1);
+
+	return new RsChatSerialiser();
 }
 
 RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
@@ -151,6 +181,24 @@ RsSerialType* init_item(RsMsgParentId& ms)
 	return new RsMsgSerialiser();
 }
 
+bool operator ==(const RsChatLobbyListItem& cmiLeft,const  RsChatLobbyListItem& cmiRight)
+{
+	if(cmiLeft.lobby_ids.size() != cmiRight.lobby_ids.size()) return false;
+	if(cmiLeft.lobby_names.size() != cmiRight.lobby_names.size()) return false;
+	if(cmiLeft.lobby_counts.size() != cmiRight.lobby_counts.size()) return false;
+
+	for(uint32_t i=0;i<cmiLeft.lobby_ids.size();++i)
+	{
+		if(cmiLeft.lobby_ids[i] != cmiRight.lobby_ids[i]) return false ;
+		if(cmiLeft.lobby_names[i] != cmiRight.lobby_names[i]) return false ;
+		if(cmiLeft.lobby_counts[i] != cmiRight.lobby_counts[i]) return false ;
+	}
+	return true ;
+}
+bool operator ==(const RsChatLobbyListRequestItem& cmiLeft,const  RsChatLobbyListRequestItem& cmiRight)
+{
+	return true ;
+}
 bool operator ==(const RsChatMsgItem& cmiLeft,const  RsChatMsgItem& cmiRight)
 {
 
@@ -192,7 +240,16 @@ bool operator ==(const RsChatLobbyMsgItem& csiLeft, const RsChatLobbyMsgItem& cs
 
 	return true;
 }
+bool operator ==(const RsChatLobbyEventItem& csiLeft, const RsChatLobbyEventItem& csiRight)
+{
+	if(csiLeft.lobby_id != csiRight.lobby_id) return false ;
+	if(csiLeft.msg_id != csiRight.msg_id) return false ;
+	if(csiLeft.nick != csiRight.nick) return false ;
+	if(csiLeft.event_type != csiRight.event_type) return false ;
+	if(csiLeft.string1 != csiRight.string1) return false ;
 
+	return true;
+}
 bool operator ==(const RsChatLobbyInviteItem& csiLeft, const RsChatLobbyInviteItem& csiRight)
 {
 	if(csiLeft.lobby_id != csiRight.lobby_id) return false ;
@@ -279,6 +336,9 @@ int main()
 	test_RsItem<RsChatMsgItem >(); REPORT("Serialise/Deserialise RsChatMsgItem");
 	test_RsItem<RsChatLobbyMsgItem >(); REPORT("Serialise/Deserialise RsChatLobbyMsgItem");
 	test_RsItem<RsChatLobbyInviteItem >(); REPORT("Serialise/Deserialise RsChatLobbyInviteItem");
+	test_RsItem<RsChatLobbyEventItem >(); REPORT("Serialise/Deserialise RsChatLobbyEventItem");
+	test_RsItem<RsChatLobbyListRequestItem >(); REPORT("Serialise/Deserialise RsChatLobbyListRequestItem");
+	test_RsItem<RsChatLobbyListItem >(); REPORT("Serialise/Deserialise RsChatLobbyListItem");
 	test_RsItem<RsChatStatusItem >(); REPORT("Serialise/Deserialise RsChatStatusItem");
 	test_RsItem<RsChatAvatarItem >(); REPORT("Serialise/Deserialise RsChatAvatarItem");
 	test_RsItem<RsMsgItem >(); REPORT("Serialise/Deserialise RsMsgItem");

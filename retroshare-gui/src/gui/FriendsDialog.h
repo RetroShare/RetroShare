@@ -56,6 +56,7 @@ public slots:
 
     void insertChat();
     void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+	 void displayChatLobbyEvent(qulonglong,int,const QString&,const QString&) ;
     void resetStatusBar() ;
 	 void readChatLobbyInvites() ;
 

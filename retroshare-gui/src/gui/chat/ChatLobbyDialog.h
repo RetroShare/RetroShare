@@ -41,6 +41,9 @@ class ChatLobbyDialog: public PopupChatDialog
 {
 	Q_OBJECT 
 
+	public:
+		void displayLobbyEvent(int event_type,const QString& nickname,const QString& str) ;
+
 	protected:
 		/** Default constructor */
 		ChatLobbyDialog(const std::string& id,const ChatLobbyId& lid, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
@@ -55,8 +58,8 @@ class ChatLobbyDialog: public PopupChatDialog
 
 		// The following methods are differentfrom those of the parent:
 		//
-		virtual void updateStatus(const QString &peer_id, int status) ;	// needs grouped status. Not yet implemented.
 		virtual void addIncomingChatMsg(const ChatInfo& info) ;				// 
+		virtual QString makeStatusString(const QString& peer_id,const QString& status_string) const ;
 
 	protected slots:
 		void setNickName(const QString&) ;

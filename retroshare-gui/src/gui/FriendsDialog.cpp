@@ -38,6 +38,7 @@
 
 #include "channels/CreateChannel.h"
 #include "chat/PopupChatDialog.h"
+#include "chat/ChatLobbyDialog.h"
 #include "common/Emoticons.h"
 #include "common/vmessagebox.h"
 #include "connect/ConfCertDialog.h"
@@ -297,6 +298,16 @@ void FriendsDialog::updateStatusTyping()
     }
 }
 
+void FriendsDialog::displayChatLobbyEvent(qulonglong lobby_id,int event_type,const QString& nickname,const QString& str)
+{
+	std::cerr << "Received displayChatLobbyEvent()!" << std::endl;
+
+	std::string vpid ;
+	if(rsMsgs->getVirtualPeerId(lobby_id,vpid))
+		if( ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(PopupChatDialog::getExistingInstance(vpid)))
+			cld->displayLobbyEvent(event_type,nickname,str) ;
+}
+
 // Called by libretroshare through notifyQt to display the peer's status
 //
 void FriendsDialog::updateStatusString(const QString& peer_id, const QString& status_string)
@@ -317,7 +328,7 @@ void FriendsDialog::readChatLobbyInvites()
 	rsMsgs->getPendingChatLobbyInvites(invites) ;
 
 	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
-		if(QMessageBox::Ok == QMessageBox::question(NULL,tr("Invitation to chat lobby"),QString::fromStdString((*it).peer_id)+QString(" invites you to chat lobby named ")+QString::fromUtf8((*it).lobby_name.c_str()),QMessageBox::Ok,QMessageBox::Ignore))
+		if(QMessageBox::Ok == QMessageBox::question(NULL,tr("Invitation to chat lobby"),QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())+QString(" invites you to chat lobby named ")+QString::fromUtf8((*it).lobby_name.c_str()),QMessageBox::Ok,QMessageBox::Ignore))
 		{
 			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
 

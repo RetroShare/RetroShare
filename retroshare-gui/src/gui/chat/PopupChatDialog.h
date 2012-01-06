@@ -76,7 +76,11 @@ protected:
 
     void insertChatMsgs();
     void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
-	 virtual void addIncomingChatMsg(const ChatInfo& info) ;				// derived in ChatLobbyDialog.
+
+	 // derived in ChatLobbyDialog.
+	 //
+	 virtual void addIncomingChatMsg(const ChatInfo& info) ;				
+	 virtual QString makeStatusString(const QString& peer_id,const QString& status_string) const ;
 
 private slots:
     void pasteLink() ;

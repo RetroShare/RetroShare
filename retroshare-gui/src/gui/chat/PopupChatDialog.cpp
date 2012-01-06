@@ -473,11 +473,15 @@ void PopupChatDialog::updateStatusTyping()
     }
 }
 
+QString PopupChatDialog::makeStatusString(const QString& peer_id,const QString& status_string) const
+{
+	return QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toAscii());
+}
 // Called by libretroshare through notifyQt to display the peer's status
 //
 void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
-    QString status = QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toAscii());
+    QString status = makeStatusString(peer_id,status_string) ;
     ui.statusLabel->setText(status); // displays info for 5 secs.
     ui.typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 

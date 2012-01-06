@@ -41,6 +41,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
+		virtual void notifyChatLobbyEvent(uint64_t /* lobby id */,uint32_t /* event type */,const std::string& /*nickname*/,const std::string& /* any string */) ;
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
 		/* peer has changed the state */
@@ -67,6 +68,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void filesPostModChanged(bool) const ;
 		void transfersChanged() const ;
 		void friendsChanged() const ;
+		void chatLobbyEvent(qulonglong,int,const QString&,const QString&) ;
 		void neighboursChanged() const ;
 		void messagesChanged() const ;
 		void messagesTagsChanged() const;

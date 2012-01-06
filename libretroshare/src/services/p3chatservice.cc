@@ -39,10 +39,13 @@
 /****
  * #define CHAT_DEBUG 1
  ****/
+#define CHAT_DEBUG 1
 
-static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	= 15  ;	// sends a connexion challenge every 15 messages
-static const int 		LOBBY_CACHE_CLEANING_PERIOD    	= 10  ;	// sends a connexion challenge every 15 messages
-static const time_t 	MAX_KEEP_MSG_RECORD 					= 240 ;  // keep msg record for 240 secs max.
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	=   15 ;	// sends a connexion challenge every 15 messages
+static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	=   15 ;	// sends a connexion at most every 15 seconds
+static const int 		LOBBY_CACHE_CLEANING_PERIOD    	=   10 ;	// sends a connexion challenge every 15 messages
+static const time_t 	MAX_KEEP_MSG_RECORD 					=  240 ; // keep msg record for 240 secs max.
+static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			= 3600 ; // keep inactive lobbies for 1h max.
 
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
@@ -196,20 +199,26 @@ void p3ChatService::sendGroupChatStatusString(const std::string& status_string)
 
 void p3ChatService::sendStatusString( const std::string& id , const std::string& status_string)
 {
-	RsChatStatusItem *cs = new RsChatStatusItem ;
+	ChatLobbyId lobby_id ;
+	if(isLobbyId(id,lobby_id))
+		sendLobbyStatusString(lobby_id,status_string) ;
+	else
+	{
+		RsChatStatusItem *cs = new RsChatStatusItem ;
 
-	cs->status_string = status_string ;
-	cs->flags = RS_CHAT_FLAG_PRIVATE ;
-	cs->PeerId(id);
+		cs->status_string = status_string ;
+		cs->flags = RS_CHAT_FLAG_PRIVATE ;
+		cs->PeerId(id);
 
 #ifdef CHAT_DEBUG
-	std::cerr  << "sending chat status packet:" << std::endl ;
-	cs->print(std::cerr) ;
+		std::cerr  << "sending chat status packet:" << std::endl ;
+		cs->print(std::cerr) ;
 #endif
-	sendItem(cs);
+		sendItem(cs);
+	}
 }
 
-void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
+void p3ChatService::checkSizeAndSendMessage_deprecated(RsChatMsgItem *msg)
 {
 	// We check the message item, and possibly split it into multiple messages, if the message is too big.
 
@@ -219,7 +228,7 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 	{
 		// chop off the first 15000 wchars
 
-		RsChatMsgItem *item = msg->duplicate() ;
+		RsChatMsgItem *item = new RsChatMsgItem(*msg) ;
 
 		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
 		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
@@ -234,6 +243,40 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 		item->chatFlags |= RS_CHAT_FLAG_PARTIAL_MESSAGE ;
 		sendItem(item) ;
 	}
+	sendItem(msg) ;
+}
+// This function should be used for all types of chat messages. But this requires a non backward compatible change in 
+// chat protocol. To be done for version 0.6
+//
+void p3ChatService::checkSizeAndSendMessage(RsChatLobbyMsgItem *msg)
+{
+	// We check the message item, and possibly split it into multiple messages, if the message is too big.
+
+	static const uint32_t MAX_STRING_SIZE = 15000 ;
+	int n=0 ;
+
+	while(msg->message.size() > MAX_STRING_SIZE)
+	{
+		// chop off the first 15000 wchars
+
+		RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem(*msg) ;
+
+		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
+		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
+
+		// Clear out any one time flags that should not be copied into multiple objects. This is 
+		// a precaution, in case the receivign peer does not yet handle split messages transparently.
+		//
+		item->chatFlags &= (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_PUBLIC | RS_CHAT_FLAG_LOBBY) ;
+
+		// Indicate that the message is to be continued.
+		//
+		item->chatFlags |= RS_CHAT_FLAG_PARTIAL_MESSAGE ;
+		item->subpacket_id = n++ ;
+
+		sendItem(item) ;
+	}
+	msg->subpacket_id = n ;
 	sendItem(msg) ;
 }
 
@@ -264,6 +307,7 @@ bool p3ChatService::getVirtualPeerId(const ChatLobbyId& id,std::string& vpid)
 void p3ChatService::locked_printDebugInfo() const
 {
 	std::cerr << "Recorded lobbies: " << std::endl;
+	time_t now = time(NULL) ;
 
 	for( std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin()) ;it!=_chat_lobbys.end();++it)
 	{
@@ -272,10 +316,11 @@ void p3ChatService::locked_printDebugInfo() const
 		std::cerr << "   nick name\t\t: " << it->second.nick_name << std::endl;
 		std::cerr << "   Lobby peer id\t: " << it->second.virtual_peer_id << std::endl;
 		std::cerr << "   Challenge count\t: " << it->second.connexion_challenge_count << std::endl;
+		std::cerr << "   Last activity\t: " << now - it->second.last_activity << " seconds ago." << std::endl;
 		std::cerr << "   Cached messages\t: " << it->second.msg_cache.size() << std::endl;
 
 		for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
-			std::cerr << "       " << std::hex << it2->first << std::dec << "  time=" << it2->second << std::endl;
+			std::cerr << "       " << std::hex << it2->first << std::dec << "  time=" << now - it2->second << " secs ago" << std::endl;
 
 		std::cerr << "   Participating friends: " << std::endl;
 
@@ -293,6 +338,15 @@ void p3ChatService::locked_printDebugInfo() const
 
 	for( std::map<std::string,ChatLobbyId>::const_iterator it(_lobby_ids.begin()) ;it!=_lobby_ids.end();++it)
 		std::cerr << "   \"" << it->first << "\" id = " << std::hex << it->second << std::dec << std::endl;
+
+	std::cerr << "Visible public lobbies: " << std::endl;
+
+	for( std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin()) ;it!=_public_lobbies.end();++it)
+	{
+		std::cerr << "   " << std::hex << it->first << " name = " << std::dec << it->second.lobby_name << std::endl;
+		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+			std::cerr << "    With friend: " << *it2 << std::endl;
+	}
 }
 
 bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id) 
@@ -377,7 +431,7 @@ bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstrin
 
 	mHistoryMgr->addMessage(false, id, mLinkMgr->getOwnId(), ci);
 
-	checkSizeAndSendMessage(ci);
+	checkSizeAndSendMessage_deprecated(ci);
 
 	// Check if custom state string has changed, in which case it should be sent to the peer.
 	bool should_send_state_string = false ;
@@ -412,13 +466,13 @@ bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstrin
 	return true;
 }
 
-bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
+bool p3ChatService::locked_checkAndRebuildPartialMessage_deprecated(RsChatMsgItem *ci)
 {
 	// Check is the item is ending an incomplete item.
 	//
 	std::map<std::string,RsChatMsgItem*>::iterator it = _pendingPartialMessages.find(ci->PeerId()) ;
 
-	bool ci_is_partial = ci->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE ;
+	bool ci_is_incomplete = ci->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE ;
 
 	if(it != _pendingPartialMessages.end())
 	{
@@ -432,11 +486,11 @@ bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 
 		delete it->second ;
 
-		if(!ci_is_partial)
+		if(!ci_is_incomplete)
 			_pendingPartialMessages.erase(it) ;
 	}
 
-	if(ci_is_partial)
+	if(ci_is_incomplete)
 	{
 #ifdef CHAT_DEBUG
 		std::cerr << "Message is partial, storing for later." << std::endl;
@@ -454,13 +508,82 @@ bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 		return true ;
 	}
 }
+bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
+{
+	// Check is the item is ending an incomplete item.
+	//
+	std::map<ChatLobbyMsgId,std::vector<RsChatLobbyMsgItem*> >::iterator it = _pendingPartialLobbyMessages.find(ci->msg_id) ;
+
+	std::cerr << "Checking chat message for completeness:" << std::endl;
+	bool ci_is_incomplete = ci->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE ;
+
+	if(it != _pendingPartialLobbyMessages.end())
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "  Pending message found. Happending it." << std::endl;
+#endif
+		// Yes, there is. Add the item to the list of stored sub-items
+
+		if(ci->subpacket_id >= it->second.size() )
+			it->second.resize(ci->subpacket_id+1,NULL) ;
+
+		it->second[ci->subpacket_id] = ci ;
+#ifdef CHAT_DEBUG
+		std::cerr << "  Checking for completeness." << std::endl;
+#endif
+		// Now check wether we have a complete item or not.
+		//
+		bool complete = true ;
+		for(uint32_t i=0;i<it->second.size() && complete;++i)
+			complete = complete && (it->second[i] != NULL) ;
+
+		complete = complete && !(it->second.back()->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE) ;
+
+		if(complete)
+		{
+			std::cerr << "  Message is complete ! Re-forming it and returning true." << std::endl;
+			std::wstring msg ;
+			uint32_t flags = 0 ;
+
+			for(uint32_t i=0;i<it->second.size();++i)
+			{
+				msg += it->second[i]->message ;
+				flags |= it->second[i]->chatFlags ;
+
+				if(i != ci->subpacket_id)	// don't delete ci itself !!
+					delete it->second[i] ;
+			}
+			_pendingPartialLobbyMessages.erase(it) ;
+
+			ci->chatFlags = flags ;
+			ci->message = msg ;
+
+			return true ;
+		}
+		else
+		{
+			std::cerr << "  Not complete: returning" << std::endl ;
+			return false ;
+		}
+	}
+	else if(ci_is_incomplete || ci->subpacket_id > 0)	// the message id might not yet be recorded
+	{
+		std::cerr << "  Message is partial, but not recorded. Adding it. " << std::endl;
+
+		_pendingPartialLobbyMessages[ci->msg_id].resize(ci->subpacket_id+1,NULL) ;
+		_pendingPartialLobbyMessages[ci->msg_id][ci->subpacket_id] = ci ;
+
+		return false ;
+	}
+	else
+	{
+		std::cerr << "  Message is not partial. Returning it as is." << std::endl;
+		return true ;
+	}
+}
 
 void p3ChatService::receiveChatQueue()
 {
-	bool publicChanged = false;
-	bool privateChanged = false;
-
-	time_t now = time(NULL);
 	RsItem *item ;
 
 	while(NULL != (item=recvItem()))
@@ -468,171 +591,165 @@ void p3ChatService::receiveChatQueue()
 #ifdef CHAT_DEBUG
 		std::cerr << "p3ChatService::receiveChatQueue() Item:" << (void*)item << std::endl ;
 #endif
-		RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ;
-
-		if(ci != NULL)	// real chat message
+		// RsChatMsgItems needs dynamic_cast, since they have derived siblings.
+		//
+		RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ; 
+		if(ci != NULL) 
 		{
-			// check if it's a lobby msg, in which case we replace the peer id by the lobby's virtual peer id.
-			//
-			RsChatLobbyMsgItem *cli = dynamic_cast<RsChatLobbyMsgItem*>(ci) ;
+			if(!  handleRecvChatMsgItem(ci))
+				delete ci ;
 
-			if(cli != NULL)
-			{
-				if(!recvLobbyChat(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
-				{
-					delete ci ;
-					continue ;
-				}
-			}	
-			else if(!checkAndRebuildPartialMessage(ci)) 	// Don't delete ! This function is not handled propoerly for chat lobby msgs, so
-				continue ;											// we don't use it in this case.
+			continue ;	// don't delete! It's handled by handleRecvChatMsgItem in some specific cases only.
+		}
+
+		switch(item->PacketSubType())
+		{
+			case RS_PKT_SUBTYPE_CHAT_STATUS:             handleRecvChatStatusItem      (dynamic_cast<RsChatStatusItem               *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_AVATAR:             handleRecvChatAvatarItem      (dynamic_cast<RsChatAvatarItem               *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:       handleRecvLobbyInvite         (dynamic_cast<RsChatLobbyInviteItem          *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:    handleConnectionChallenge     (dynamic_cast<RsChatLobbyConnectChallengeItem*>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT:        handleRecvChatLobbyEventItem  (dynamic_cast<RsChatLobbyEventItem           *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:  handleFriendUnsubscribeLobby  (dynamic_cast<RsChatLobbyUnsubscribeItem     *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: handleRecvChatLobbyListRequest(dynamic_cast<RsChatLobbyListRequestItem     *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:         handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem            *>(item)) ; break ;
+		
+			default:
+				  std::cerr << "Unhandled item subtype " << item->PacketSubType() << " in p3ChatService: " << std::endl;
+		}
+		delete item ;
+	}
+}
+
+void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item)
+{
+	// todo !!
+	std::cerr << "Called to unimplemented method: p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item)" << std::endl;
+}
+void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
+{
+	// todo !!
+	std::cerr << "Called to unimplemented method: p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)" << std::endl;
+}
+
+void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
+{
+	std::cerr << "Received ChatLobbyEvent item of type " << item->event_type << ", and string=" << item->string1 << std::endl;
+
+	if(! bounceLobbyObject(item,item->PeerId()))
+		return ;
+
+	rsicontrol->getNotify().notifyChatLobbyEvent(item->lobby_id,item->event_type,item->nick,item->string1) ;
+}
+
+void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
+{
+	receiveAvatarJpegData(ca) ;
 
 #ifdef CHAT_DEBUG
-			std::cerr << "p3ChatService::receiveChatQueue() Item:";
-			std::cerr << std::endl;
-			ci->print(std::cerr);
-			std::cerr << std::endl;
-			std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
+	std::cerr << "Received avatar data for peer " << ca->PeerId() << ". Notifying." << std::endl ;
+#endif
+	rsicontrol->getNotify().notifyPeerHasNewAvatar(ca->PeerId()) ;
+}
+
+bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
+{
+	bool publicChanged = false;
+	bool privateChanged = false;
+
+	time_t now = time(NULL);
+
+	// check if it's a lobby msg, in which case we replace the peer id by the lobby's virtual peer id.
+	//
+	RsChatLobbyMsgItem *cli = dynamic_cast<RsChatLobbyMsgItem*>(ci) ;
+
+	if(cli != NULL)
+	{
+		{
+			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+			if(!locked_checkAndRebuildPartialMessage(cli))
+				return true ;
+		}
+
+		if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
+			return false;
+
+		// setup the peer id to the virtual peer id of the lobby.
+		//
+		std::string virtual_peer_id ;
+		getVirtualPeerId(cli->lobby_id,virtual_peer_id) ;
+		cli->PeerId(virtual_peer_id) ;		
+	}	
+	else 
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		if(!locked_checkAndRebuildPartialMessage_deprecated(ci)) 	// Don't delete ! This function is not handled propoerly for chat lobby msgs, so
+			return true ;															// we don't use it in this case.
+	}
+
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::receiveChatQueue() Item:";
+	std::cerr << std::endl;
+	ci->print(std::cerr);
+	std::cerr << std::endl;
+	std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
 #endif
 
-			if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
-			{
-				sendAvatarJpegData(ci->PeerId()) ;
-				delete item ;
-				continue ;
+	if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
+	{
+		sendAvatarJpegData(ci->PeerId()) ;
+		return false ;
+	}
+	else														// normal msg. Return it normally.
+	{
+		// Check if new avatar is available at peer's. If so, send a request to get the avatar.
+		if(ci->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE) 
+		{
+			std::cerr << "New avatar is available for peer " << ci->PeerId() << ", sending request" << std::endl ;
+			sendAvatarRequest(ci->PeerId()) ;
+			ci->chatFlags &= ~RS_CHAT_FLAG_AVATAR_AVAILABLE ;
+		}
+
+		std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(ci->PeerId()) ; 
+
+#ifdef CHAT_DEBUG
+		std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
+#endif
+		// has avatar. Return it strait away.
+		//
+		if(it!=_avatars.end() && it->second->_peer_is_new)
+		{
+			std::cerr << "Avatar is new for peer. ending info above" << std::endl ;
+			ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
+		}
+
+		if ((ci->chatFlags & RS_CHAT_FLAG_PRIVATE) == 0) {
+			/* notify public chat message */
+			std::string message;
+			message.assign(ci->message.begin(), ci->message.end());
+			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId(), message, "");
+		}
+
+		{
+			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+			ci->recvTime = now;
+
+			if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
+				std::cerr << "Adding msg 0x" << std::hex << (void*)ci << std::dec << " to private chat incoming list." << std::endl;
+				privateChanged = true;
+				privateIncomingList.push_back(ci);	// don't delete the item !!
+			} else {
+				std::cerr << "Adding msg 0x" << std::hex << (void*)ci << std::dec << " to public chat incoming list." << std::endl;
+				publicChanged = true;
+				publicList.push_back(ci);	// don't delete the item !!
+
+				if (ci->PeerId() != mLinkMgr->getOwnId()) {
+					/* not from loop back */
+					mHistoryMgr->addMessage(true, "", ci->PeerId(), ci);
+				}
 			}
-			else														// normal msg. Return it normally.
-			{
-				// Check if new avatar is available at peer's. If so, send a request to get the avatar.
-				if(ci->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE) 
-				{
-					std::cerr << "New avatar is available for peer " << ci->PeerId() << ", sending request" << std::endl ;
-					sendAvatarRequest(ci->PeerId()) ;
-					ci->chatFlags &= ~RS_CHAT_FLAG_AVATAR_AVAILABLE ;
-				}
-
-				std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(ci->PeerId()) ; 
-
-#ifdef CHAT_DEBUG
-				std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
-#endif
-				// has avatar. Return it strait away.
-				//
-				if(it!=_avatars.end() && it->second->_peer_is_new)
-				{
-					std::cerr << "Avatar is new for peer. ending info above" << std::endl ;
-					ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
-				}
-
-				if ((ci->chatFlags & RS_CHAT_FLAG_PRIVATE) == 0) {
-					/* notify public chat message */
-					std::string message;
-					message.assign(ci->message.begin(), ci->message.end());
-					getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId(), message, "");
-				}
-
-				{
-					RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-					ci->recvTime = now;
-
-					if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
-						std::cerr << "Adding msg 0x" << std::hex << (void*)ci << std::dec << " to private chat incoming list." << std::endl;
-						privateChanged = true;
-						privateIncomingList.push_back(ci);	// don't delete the item !!
-					} else {
-						std::cerr << "Adding msg 0x" << std::hex << (void*)ci << std::dec << " to public chat incoming list." << std::endl;
-						publicChanged = true;
-						publicList.push_back(ci);	// don't delete the item !!
-
-						if (ci->PeerId() != mLinkMgr->getOwnId()) {
-							/* not from loop back */
-							mHistoryMgr->addMessage(true, "", ci->PeerId(), ci);
-						}
-					}
-				} /* UNLOCK */
-			}
-			continue ;
-		}
-
-		RsChatStatusItem *cs = dynamic_cast<RsChatStatusItem*>(item) ;
-
-		if(cs != NULL)
-		{
-#ifdef CHAT_DEBUG
-			std::cerr << "Received status string \"" << cs->status_string << "\"" << std::endl ;
-#endif
-
-			if(cs->flags & RS_CHAT_FLAG_REQUEST_CUSTOM_STATE){ // no state here just a request.
-				sendCustomState(cs->PeerId()) ;
-
-			}
-			else // Check if new custom string is available at peer's. If so, send a request to get the custom string.
-				if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE)
-				{
-					receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
-					rsicontrol->getNotify().notifyCustomState(cs->PeerId(), cs->status_string) ;
-				}else
-					if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE){
-
-					std::cerr << "New custom state is available for peer " << cs->PeerId() << ", sending request" << std::endl ;
-					sendCustomStateRequest(cs->PeerId()) ;
-					}else
-						if(cs->flags & RS_CHAT_FLAG_PRIVATE)
-							rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
-						else
-							if(cs->flags & RS_CHAT_FLAG_PUBLIC)
-								rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
-
-			delete item;
-			continue ;
-		}
-
-		RsChatAvatarItem *ca = dynamic_cast<RsChatAvatarItem*>(item) ;
-
-		if(ca != NULL)
-		{
-			receiveAvatarJpegData(ca) ;
-
-#ifdef CHAT_DEBUG
-			std::cerr << "Received avatar data for peer " << ca->PeerId() << ". Notifying." << std::endl ;
-#endif
-			rsicontrol->getNotify().notifyPeerHasNewAvatar(ca->PeerId()) ;
-
-			delete item ;
-			continue ;
-		}
-
-		RsChatLobbyInviteItem *cl = dynamic_cast<RsChatLobbyInviteItem*>(item) ;
-
-		if(cl != NULL)
-		{
-			handleRecvLobbyInvite(cl) ;
-			delete item ;
-			continue ;
-		}
-
-		RsChatLobbyConnectChallengeItem *cn = dynamic_cast<RsChatLobbyConnectChallengeItem*>(item) ;
-
-		if(cn != NULL)
-		{
-			handleConnectionChallenge(cn) ;
-			delete item ;
-			continue ;
-		}
-
-		RsChatLobbyUnsubscribeItem *cu = dynamic_cast<RsChatLobbyUnsubscribeItem*>(item) ;
-
-		if(cu != NULL)
-		{
-			handleFriendUnsubscribeLobby(cu) ;
-			delete item ;
-			continue ;
-		}
-
-
-		std::cerr << "Received ChatItem of unhandled type: " << std::endl;
-		item->print(std::cerr,0) ;
+		} /* UNLOCK */
 	}
 
 	if (publicChanged) {
@@ -643,6 +760,41 @@ void p3ChatService::receiveChatQueue()
 
 		IndicateConfigChanged(); // only private chat messages are saved
 	}
+	return true ;
+}
+
+void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
+{
+#ifdef CHAT_DEBUG
+	std::cerr << "Received status string \"" << cs->status_string << "\"" << std::endl ;
+#endif
+
+	if(cs->flags & RS_CHAT_FLAG_REQUEST_CUSTOM_STATE) 	// no state here just a request.
+		sendCustomState(cs->PeerId()) ;
+	else if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE)		// Check if new custom string is available at peer's. 
+	{ 																	// If so, send a request to get the custom string.
+		receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
+		rsicontrol->getNotify().notifyCustomState(cs->PeerId(), cs->status_string) ;
+	}
+	else if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE)
+	{
+		std::cerr << "New custom state is available for peer " << cs->PeerId() << ", sending request" << std::endl ;
+		sendCustomStateRequest(cs->PeerId()) ;
+	}
+	else if(cs->flags & RS_CHAT_FLAG_PRIVATE)
+		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
+	else if(cs->flags & RS_CHAT_FLAG_PUBLIC)
+		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
+}
+
+void p3ChatService::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	public_lobbies.clear() ;
+
+	for(std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin());it!=_public_lobbies.end();++it)
+		public_lobbies.push_back(it->second) ;
 }
 
 int p3ChatService::getPublicChatQueueCount()
@@ -1269,7 +1421,7 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 						if (c->PeerId() == it->id) {
 							mHistoryMgr->addMessage(false, c->PeerId(), ownId, c);
 
-							checkSizeAndSendMessage(c); // delete item
+							checkSizeAndSendMessage_deprecated(c); // delete item
 
 							changed = true;
 
@@ -1295,13 +1447,12 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 //********************** Chat Lobby Stuff ***********************//
 
 // returns:
-// 	true: the message is not a duplicate and should be shown
-// 	false: the message is a duplicate or there is an error, and should be destroyed.
+// 	true: the object is not a duplicate and should be used
+// 	false: the object is a duplicate or there is an error, and it should be destroyed.
 //
-bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item,const std::string& peer_id)
+bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std::string& peer_id)
 {
 	bool send_challenge = false ;
-	std::string lobby_virtual_peer_id ;
 	ChatLobbyId send_challenge_lobby ;
 
 	{
@@ -1309,7 +1460,7 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item,const std::string& pe
 
 		locked_printDebugInfo() ; // debug
 #ifdef CHAT_DEBUG
-		std::cerr << "Handling ChatLobbyMsg " << std::hex << item->msg_id << ", lobby id " << item->lobby_id << ", from peer id " << item->PeerId() << std::endl;
+		std::cerr << "Handling ChatLobbyMsg " << std::hex << item->msg_id << ", lobby id " << item->lobby_id << ", from peer id " << peer_id << std::endl;
 #endif
 
 		// send upward for display
@@ -1325,12 +1476,11 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item,const std::string& pe
 
 		// Adds the peer id to the list of friend participants, even if it's not original msg source
 
-		lobby.participating_friends.insert(peer_id) ;
+		if(peer_id != mLinkMgr->getOwnId())
+			lobby.participating_friends.insert(peer_id) ;
 
 		if(item->nick != "Lobby management")		// not nice ! We need a lobby management flag.
 			lobby.nick_names.insert(item->nick) ;
-
-		lobby_virtual_peer_id = lobby.virtual_peer_id ;
 
 		// Checks wether the msg is already recorded or not
 
@@ -1345,45 +1495,80 @@ bool p3ChatService::recvLobbyChat(RsChatLobbyMsgItem *item,const std::string& pe
 		std::cerr << "  Msg already not received already. Adding in cache, and forwarding!" << std::endl ;
 #endif
 
-		lobby.msg_cache[item->msg_id] = time(NULL) ;
+		time_t now = time(NULL) ;
+		lobby.msg_cache[item->msg_id] = now ;
+		lobby.last_activity = now ;
+
+		bool is_message =  (NULL != dynamic_cast<RsChatLobbyMsgItem*>(item)) ;
 
 		// Forward to allparticipating friends, except this peer.
 
 		for(std::set<std::string>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
 			if((*it)!=peer_id && mLinkMgr->isOnline(*it)) 
 			{
-				RsChatLobbyMsgItem *item2 = new RsChatLobbyMsgItem(*item) ;	// copy almost everything
+				RsChatLobbyBouncingObject *obj2 = item->duplicate() ; // makes a copy
+				RsChatItem *item2 = dynamic_cast<RsChatItem*>(obj2) ;
+
+				assert(item2 != NULL) ;
 
 				item2->PeerId(*it) ;	// replaces the virtual peer id with the actual destination.
 
-				sendItem(item2);
+				if(is_message)
+					checkSizeAndSendMessage(static_cast<RsChatLobbyMsgItem*>(item2)) ;
+				else
+					sendItem(item2);
 			}
 
-		if(++lobby.connexion_challenge_count > CONNECTION_CHALLENGE_MAX_COUNT) 
+		if(++lobby.connexion_challenge_count > CONNECTION_CHALLENGE_MAX_COUNT && now > lobby.last_connexion_challenge_time + CONNECTION_CHALLENGE_MIN_DELAY) 
 		{
 			lobby.connexion_challenge_count = 0 ;
 			 send_challenge_lobby = item->lobby_id ;
 			 send_challenge = true ;
+			 lobby.last_connexion_challenge_time = now ;
 		}
 	}
 
 	if(send_challenge)
 		sendConnectionChallenge(send_challenge_lobby) ;
 
-	item->PeerId(lobby_virtual_peer_id) ;	// updates the peer id for proper display
 	return true ;
 }
 
-bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id,bool management) 
+void p3ChatService::sendLobbyStatusString(const ChatLobbyId& lobby_id,const std::string& status_string)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_STATUS,status_string) ; 
+}
+void p3ChatService::sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id)
+{
+	std::string nick ;
+	getNickNameForChatLobby(lobby_id,nick) ;
 
-#ifdef CHAT_DEBUG
-	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
-	std::cerr << "msg:" << std::endl;
-	std::wcerr << msg << std::endl;
-#endif
+	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_LEFT,nick) ; 
+}
+void p3ChatService::sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id)
+{
+	std::string nick ;
+	getNickNameForChatLobby(lobby_id,nick) ;
 
+	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_JOINED,nick) ; 
+}
+void p3ChatService::sendLobbyStatusItem(const ChatLobbyId& lobby_id,int type,const std::string& status_string) 
+{
+	RsChatLobbyEventItem item ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		locked_initLobbyBouncableObject(lobby_id,item) ;
+
+		item.event_type = type ;
+		item.string1 = status_string ;
+	}
+	std::string ownId = mLinkMgr->getOwnId();
+	bounceLobbyObject(&item,ownId) ;
+}
+
+void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,RsChatLobbyBouncingObject& item)
+{
 	// get a pointer to the info for that chat lobby.
 	//
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it(_chat_lobbys.find(lobby_id)) ;
@@ -1391,43 +1576,47 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 	if(it == _chat_lobbys.end())
 	{
 		std::cerr << "Chatlobby for id " << std::hex << lobby_id << " has no record. This is a serious error!!" << std::dec << std::endl;
-		return false ;
+		return ;
 	}
 	ChatLobbyEntry& lobby(it->second) ;
 
-	RsChatLobbyMsgItem item ;
-
 	// chat lobby stuff
 	//
-	do { item.msg_id	= RSRandom::random_u64(); } while( lobby.msg_cache.find(item.msg_id) != lobby.msg_cache.end() ) ;
-
-	lobby.msg_cache[item.msg_id] = time(NULL) ;	// put the msg in cache!
+	do 
+	{ 
+		item.msg_id	= RSRandom::random_u64(); 
+	} 
+	while( lobby.msg_cache.find(item.msg_id) != lobby.msg_cache.end() ) ;
 
 	item.lobby_id = lobby_id ;
+	item.nick = lobby.nick_name ;
+}
 
-	if(management)
-		item.nick = "Lobby management" ;
-	else
-		item.nick = lobby.nick_name ;
+bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id) 
+{
+#ifdef CHAT_DEBUG
+	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
+	std::cerr << "msg:" << std::endl;
+	std::wcerr << msg << std::endl;
+#endif
 
-	// chat msg stuff
-	//
-	item.chatFlags = RS_CHAT_FLAG_LOBBY | RS_CHAT_FLAG_PRIVATE;
-	item.sendTime = time(NULL);
-	item.recvTime = item.sendTime;
-	item.message = msg;
+	RsChatLobbyMsgItem item ;
 
-	for(std::set<std::string>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
-		if(mLinkMgr->isOnline(*it)) 
-		{
-			RsChatLobbyMsgItem *sitem = new RsChatLobbyMsgItem(item) ;	// copies almost everything
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		// gives a random msg id, setup the nickname
+		locked_initLobbyBouncableObject(lobby_id,item) ;
 
-			sitem->PeerId(*it) ;
+		// chat msg stuff
+		//
+		item.chatFlags = RS_CHAT_FLAG_LOBBY | RS_CHAT_FLAG_PRIVATE;
+		item.sendTime = time(NULL);
+		item.recvTime = item.sendTime;
+		item.message = msg;
+	}
 
-			sendItem(sitem);
-		}
+	bounceLobbyObject(&item,rsPeers->getOwnId()) ;
 
-	locked_printDebugInfo() ; // debug
 	return true ;
 }
 
@@ -1641,11 +1830,13 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
-		entry.nick_name = _default_nick_name ;	// to be changed. For debug only!!
+		entry.nick_name = _default_nick_name ;	
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
+		entry.last_activity = time(NULL) ;
+		entry.last_connexion_challenge_time = time(NULL) ;
 
 		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
@@ -1657,7 +1848,6 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 #ifdef CHAT_DEBUG
 		std::cerr << "  Pushing new msg item to incoming msgs." << std::endl;
 #endif
-
 		RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem;
 		item->lobby_id = entry.lobby_id ;
 		item->msg_id = 0 ;
@@ -1675,11 +1865,8 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 
 	// send AKN item
-	std::wstring wmsg(_default_nick_name.length(), L' '); // Make room for characters
-	// Copy string to wstring.
-	std::copy(_default_nick_name.begin(), _default_nick_name.end(), wmsg.begin());
+	sendLobbyStatusNewPeer(lobby_id) ;
 
-	sendLobbyChat(wmsg + L" joined the lobby",lobby_id,true) ;
 	return true ;
 }
 
@@ -1710,7 +1897,7 @@ void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 	_lobby_invites_queue.erase(it) ;
 }
 
-ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends)
+ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_level)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Creating a new Chat lobby !!" << std::endl;
@@ -1728,12 +1915,15 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 #endif
 
 		ChatLobbyEntry entry ;
+		entry.lobby_privacy_level = privacy_level ;
 		entry.participating_friends.clear() ;
 		entry.nick_name = _default_nick_name ;	// to be changed. For debug only!!
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = lobby_name ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
+		entry.last_activity = time(NULL) ;
+		entry.last_connexion_challenge_time = time(NULL) ;
 
 		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
@@ -1751,12 +1941,12 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
 
 #ifdef CHAT_DEBUG
-	std::cerr << "Received unsubscribed to lobby " << item->lobby_id << ", from friend " << item->PeerId() << std::endl;
+	std::cerr << "Received unsubscribed to lobby " << std::hex << item->lobby_id << std::dec << ", from friend " << item->PeerId() << std::endl;
 #endif
 
 	if(it == _chat_lobbys.end())
 	{
-		std::cerr << "Chat lobby " << item->lobby_id << " does not exist ! Can't unsubscribe!" << std::endl;
+		std::cerr << "Chat lobby " << std::hex << item->lobby_id << std::dec << " does not exist ! Can't unsubscribe friend!" << std::endl;
 		return ;
 	}
 
@@ -1764,7 +1954,7 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 		if(*it2 == item->PeerId())
 		{
 #ifdef CHAT_DEBUG
-			std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << item->lobby_id << std::endl;
+			std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
 			it->second.participating_friends.erase(it2) ;
 			break ;
@@ -1774,11 +1964,7 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 {
 	// send AKN item
-	std::string nick ;
-	getNickNameForChatLobby(id,nick) ;
-	std::wstring wmsg(nick.length(), L' '); // Make room for characters
-	std::copy(nick.begin(), nick.end(), wmsg.begin());
-	sendLobbyChat(wmsg + L" has left the lobby",id,true) ;
+	sendLobbyStatusPeerLiving(id) ;
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -1799,6 +1985,8 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 
 			item->lobby_id = id ;
 			item->PeerId(*it2) ;
+
+			std::cerr << "Sending unsubscribe item to friend " << *it2 << std::endl;
 
 			sendItem(item) ;
 		}
@@ -1890,6 +2078,9 @@ void p3ChatService::cleanLobbyCaches()
 			}
 			else
 				++it2 ;
+
+	// also clean inactive lobbies.
+	// [...]
 }
 
 

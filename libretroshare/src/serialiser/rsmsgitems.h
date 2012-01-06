@@ -48,14 +48,18 @@ const uint32_t RS_CHAT_FLAG_LOBBY                  = 0x0200;
 
 const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING 		= 0x0001;
 
-const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           = 0x03 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           = 0x04 ;	
-const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        = 0x06 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE     = 0x07 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     = 0x08 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  = 0x09 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE= 0x0A ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           	= 0x03 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           	= 0x04 ;	
+const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG 	= 0x05 ;	
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG_DEPRECATED= 0x06 ;	// don't use !
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE     	= 0x07 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     	= 0x08 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  	= 0x09 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	= 0x0A ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT      	= 0x0B ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	= 0x0C ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	= 0x0D ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x0E ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -99,8 +103,6 @@ class RsChatMsgItem: public RsChatItem
 		virtual void clear() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual RsChatMsgItem *duplicate() const { return new RsChatMsgItem(*this) ; }
-
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
@@ -111,7 +113,25 @@ class RsChatMsgItem: public RsChatItem
 		uint32_t recvTime;
 };
 
-class RsChatLobbyMsgItem: public RsChatMsgItem
+// This class contains the info to bounce an object throughout a lobby, while
+// maintaining cache info to avoid duplicates.
+//
+class RsChatLobbyBouncingObject
+{
+	public:
+		ChatLobbyId lobby_id ;
+		ChatLobbyMsgId msg_id ;
+		ChatLobbyNickName nick ;	// Nickname of sender
+
+		virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
+		virtual uint32_t serial_size() ;
+		virtual bool serialise(void *data,uint32_t tlvsize,uint32_t& offset) ;
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		bool deserialise(void *data,uint32_t rssize,uint32_t& offset) ;
+};
+
+class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
 {
 	public:
 		RsChatLobbyMsgItem() :RsChatMsgItem(RS_PKT_SUBTYPE_CHAT_LOBBY_MSG) {}
@@ -120,14 +140,61 @@ class RsChatLobbyMsgItem: public RsChatMsgItem
 
 		virtual ~RsChatLobbyMsgItem() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-		virtual RsChatMsgItem *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
+		virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
 
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ;				 				// deserialise is handled using a constructor
 
-		ChatLobbyId lobby_id ;
-		ChatLobbyMsgId msg_id ;
-		ChatLobbyNickName nick ;
+		uint8_t subpacket_id ;											// this is for proper handling of split packets. 
+		ChatLobbyMsgId parent_msg_id ;								// Used for threaded chat.
+};
+
+class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
+{
+	public:
+		RsChatLobbyEventItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT) {}
+		RsChatLobbyEventItem(void *data,uint32_t size) ; // deserialization /// TODO!!!
+
+		virtual ~RsChatLobbyEventItem() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+		virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyEventItem(*this) ; }
+		// 
+		virtual bool serialise(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ;				 			
+
+		// members.
+		//
+		uint8_t event_type ;		// used for defining the type of event.
+		std::string string1;		// used for any string
+};
+
+class RsChatLobbyListRequestItem: public RsChatItem
+{
+	public:
+		RsChatLobbyListRequestItem() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST) {}
+		RsChatLobbyListRequestItem(void *data,uint32_t size) ; 
+		virtual ~RsChatLobbyListRequestItem() {}
+
+		virtual bool serialise(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ;				 			
+
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+};
+class RsChatLobbyListItem: public RsChatItem
+{
+	public:
+		RsChatLobbyListItem() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST) {}
+		RsChatLobbyListItem(void *data,uint32_t size) ; 
+		virtual ~RsChatLobbyListItem() {}
+
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ;				 			
+
+		std::vector<ChatLobbyId> lobby_ids ;
+		std::vector<std::string> lobby_names ;
+		std::vector<uint32_t>    lobby_counts ;
 };
 
 class RsChatLobbyUnsubscribeItem: public RsChatItem

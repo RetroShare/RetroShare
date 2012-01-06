@@ -68,6 +68,11 @@ ChatLobbyDialog::~ChatLobbyDialog()
 {
 	// announce leaving of lobby
 	
+	// check that the lobby still exists.
+	ChatLobbyId lid ;
+	if(!rsMsgs->isLobbyId(getPeerId(),lid))
+		return ;
+
 	if(QMessageBox::Yes == QMessageBox::question(NULL,tr("Unsubscribe to lobby?"),tr("Do you want to unsubscribe to this chat lobby?"),QMessageBox::Yes | QMessageBox::No))
 		rsMsgs->unsubscribeChatLobby(lobby_id) ;
 }
@@ -75,11 +80,6 @@ ChatLobbyDialog::~ChatLobbyDialog()
 void ChatLobbyDialog::setNickName(const QString& nick)
 {
 	rsMsgs->setNickNameForChatLobby(lobby_id,nick.toUtf8().constData()) ;
-}
-
-void ChatLobbyDialog::updateStatus(const QString &peer_id, int status)
-{
-	// For now. We need something more efficient to tell when the lobby is disconnected.
 }
 
 void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
@@ -116,5 +116,27 @@ void ChatLobbyDialog::updateFriendsList()
 	if(it!=linfos.end())
 		for(std::set<std::string>::const_iterator it2( (*it).nick_names.begin());it2!=(*it).nick_names.end();++it2)
 			friendsListWidget->addItem(QString::fromUtf8((*it2).c_str())) ;
+}
+
+void ChatLobbyDialog::displayLobbyEvent(int event_type,const QString& nickname,const QString& str)
+{
+	switch(event_type)
+	{
+		case RS_CHAT_LOBBY_EVENT_PEER_LEFT: addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), str + tr(" has left the lobby."), TYPE_NORMAL);
+														break ;
+		case RS_CHAT_LOBBY_EVENT_PEER_JOINED: 
+														addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), str + tr(" joined the lobby."), TYPE_NORMAL);
+														break ;
+		case RS_CHAT_LOBBY_EVENT_PEER_STATUS: 
+														updateStatusString(nickname,str) ;
+														break ;
+		default:
+														std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
+	}
+}
+
+QString ChatLobbyDialog::makeStatusString(const QString& peer_id, const QString& status_string) const
+{
+	 return QString::fromUtf8(peer_id.toStdString().c_str()) + " " + tr(status_string.toAscii());
 }
 

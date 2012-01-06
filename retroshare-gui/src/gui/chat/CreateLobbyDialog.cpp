@@ -101,7 +101,10 @@ void CreateLobbyDialog::createLobby()
 	 std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
 
     // add to group
-    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList);
+
+	 int lobby_privacy_type = (ui->security_CB->currentIndex() == 0)?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE ;
+
+    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList, lobby_privacy_type);
 
 	 std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
 

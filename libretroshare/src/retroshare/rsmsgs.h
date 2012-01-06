@@ -55,12 +55,20 @@
 #define RS_MSG_FORWARDED       0x0100   /* Message is forwarded */
 #define RS_MSG_STAR            0x0200   /* Message is marked with a star */
 
+#define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
+#define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02
+#define RS_CHAT_LOBBY_EVENT_PEER_JOINED 				0x03
+#define RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME 	0x04
+
 #define RS_MSGTAGTYPE_IMPORTANT  1
 #define RS_MSGTAGTYPE_WORK       2
 #define RS_MSGTAGTYPE_PERSONAL   3
 #define RS_MSGTAGTYPE_TODO       4
 #define RS_MSGTAGTYPE_LATER      5
 #define RS_MSGTAGTYPE_USER       100
+
+#define RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1	/* lobby is visible by friends. Friends can connect.*/
+#define RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2	/* lobby invisible by friends. Peers on invitation only .*/
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -148,15 +156,21 @@ class ChatLobbyInvite
 		std::string peer_id ;
 		std::string lobby_name ;
 };
-class ChatLobbyInfo
+class PublicChatLobbyRecord
 {
 	public:
 		ChatLobbyId lobby_id ;									// unique id of the lobby
-		std::string nick_name ;									// nickname to use for this lobby
 		std::string lobby_name ;								// name to use for this lobby
-
 		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
+};
+class ChatLobbyInfo: public PublicChatLobbyRecord
+{
+	public:
+		std::string nick_name ;									// nickname to use for this lobby
+
+		uint32_t lobby_privacy_level ;						// see RS_CHAT_LOBBY_
 		std::set<std::string> nick_names ;					// list of non direct friend who participate. Used to display only.
+		time_t last_activity ;									// last recorded activity. Useful for removing dead lobbies.
 };
 
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
@@ -240,7 +254,7 @@ virtual bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::stri
 virtual bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) = 0 ;
 virtual bool setDefaultNickNameForChatLobby(const std::string& nick) = 0;
 virtual bool getDefaultNickNameForChatLobby(std::string& nick) = 0 ;
-virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) = 0 ;
+virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t lobby_privacy_type) = 0 ;
 
 /****************************************/
 

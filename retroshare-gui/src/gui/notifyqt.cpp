@@ -228,6 +228,14 @@ void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& 
 	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
 }
 
+void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const std::string& nickname,const std::string& str) 
+{
+#ifdef NOTIFY_DEBUG
+	std::cerr << "notifyQt: Received chat lobby event message: lobby #" << std::hex << lobby_id  << std::dec << ", event=" << event_type << ", str=\"" << str << "\"" << std::endl ;
+#endif
+	emit chatLobbyEvent(lobby_id,event_type,QString::fromUtf8(nickname.c_str()),QString::fromUtf8(str.c_str())) ;
+}
+
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
 {
 #ifdef NOTIFY_DEBUG

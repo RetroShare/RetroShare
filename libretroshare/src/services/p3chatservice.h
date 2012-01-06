@@ -29,6 +29,7 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
@@ -165,7 +166,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
 		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
 		bool getDefaultNickNameForChatLobby(std::string& nick) ;
-		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) ;
+		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
+		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
+		void getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) ;
 
 	protected:
 		/************* from p3Config *******************/
@@ -200,6 +203,14 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void receiveAvatarJpegData(RsChatAvatarItem *ci) ;	// new method
 		void receiveStateString(const std::string& id,const std::string& s) ;
 
+		/// methods for handling various Chat items.
+		bool handleRecvChatMsgItem(RsChatMsgItem *item) ;			// returns false if the item should be deleted.
+		void handleRecvChatStatusItem(RsChatStatusItem *item) ;
+		void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
+		void handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item) ;
+		void handleRecvChatLobbyList(RsChatLobbyListItem *item) ;
+		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
+
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const std::string& peer_id) ;
 
@@ -207,20 +218,29 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void sendCustomStateRequest(const std::string& peer_id);
 
 		/// called as a proxy to sendItem(). Possibly splits item into multiple items of size lower than the maximum item size.
-		void checkSizeAndSendMessage(RsChatMsgItem *item) ;
+		void checkSizeAndSendMessage(RsChatLobbyMsgItem *item) ;
+		void checkSizeAndSendMessage_deprecated(RsChatMsgItem *item) ;	// keep for compatibility for a few weeks.
 
 		/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
-		bool checkAndRebuildPartialMessage(RsChatMsgItem*) ;
+		bool locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem*) ;
+		bool locked_checkAndRebuildPartialMessage_deprecated(RsChatMsgItem*) ;
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*,const std::string& src_peer_id) ;
-		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&,bool management = false) ;
+		bool sendLobbyChat(const std::wstring&, const ChatLobbyId&) ;
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
 		void sendConnectionChallenge(ChatLobbyId id) ;
 		void handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem*) ;
 		void cleanLobbyCaches() ;
+		bool bounceLobbyObject(RsChatLobbyBouncingObject *obj, const std::string& peer_id) ;
+
+		void sendLobbyStatusItem(const ChatLobbyId&, int type, const std::string& status_string) ;
+		void sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id) ;
+		void sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id) ;
+
+		void locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
 
 		static std::string makeVirtualPeerId(ChatLobbyId) ;
 		static uint64_t makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
@@ -238,8 +258,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;
-		std::map<std::string,RsChatMsgItem *> _pendingPartialMessages ;
-
+		std::map<std::string,RsChatMsgItem *> _pendingPartialMessages ;	
+		std::map<ChatLobbyMsgId,std::vector<RsChatLobbyMsgItem*> > _pendingPartialLobbyMessages ;	// should be used for all chat msgs after version updgrade
 		std::string _custom_status_string ;
 		std::map<std::string,StateStringInfo> _state_strings ;
 
@@ -249,10 +269,12 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 				std::map<ChatLobbyMsgId,time_t> msg_cache ;
 				std::string virtual_peer_id ;
 				int connexion_challenge_count ;
+				time_t last_connexion_challenge_time ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
+		std::map<ChatLobbyId,PublicChatLobbyRecord> _public_lobbies ;
 		std::map<std::string,ChatLobbyId> _lobby_ids ;
 		std::string _default_nick_name ;
 		time_t last_lobby_challenge_time ; // prevents bruteforce attack

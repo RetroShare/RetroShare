@@ -299,9 +299,9 @@ bool p3Msgs::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& ni
 	return mChatSrv->getNickNameForChatLobby(lobby_id,nick_name) ;
 }
 
-ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends) 
+ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_type) 
 {
-	return mChatSrv->createChatLobby(lobby_name,invited_friends) ;
+	return mChatSrv->createChatLobby(lobby_name,invited_friends,privacy_type) ;
 }
 
 bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 

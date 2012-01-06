@@ -133,6 +133,16 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Security policy:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -142,6 +152,20 @@ p, li { white-space: pre-wrap; }
              </item>
              <item>
               <widget class="QLineEdit" name="nickName_LE"/>
+             </item>
+             <item>
+              <widget class="QComboBox" name="security_CB">
+               <item>
+                <property name="text">
+                 <string>Public (Visible by friends)</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Private (Works on invitation only)</string>
+                </property>
+               </item>
+              </widget>
              </item>
             </layout>
            </item>
