@@ -260,8 +260,13 @@ virtual bool    setAttachMode(bool on);
 	uint32_t mRegisterStatus; 
 	uint32_t mBrowseStatus; 
 	uint32_t mResolveStatus;
-
 	uint32_t mQueryStatus;
+
+	time_t mRegisterStatusTS; 
+	time_t mBrowseStatusTS; 
+	time_t mResolveStatusTS;
+	time_t mQueryStatusTS;
+
 	std::string mQuerySslId;
 	std::string mQueryGpgId;
 

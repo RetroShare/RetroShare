@@ -2157,7 +2157,9 @@ int RsServer::StartupRetroShare()
 #endif
 
 #ifdef RS_ENABLE_ZEROCONF
-	p3ZeroConf *mZeroConf = new p3ZeroConf(ownId, ownId, mLinkMgr, mNetMgr);
+	p3ZeroConf *mZeroConf = new p3ZeroConf(
+					AuthGPG::getAuthGPG()->getGPGOwnId(), ownId, 
+					mLinkMgr, mNetMgr, mPeerMgr);
 	mNetMgr->addNetAssistConnect(2, mZeroConf);
 	mNetMgr->addNetListener(mZeroConf); 
 
