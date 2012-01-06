@@ -1805,7 +1805,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 			/* check address validity */
 			if (locked_CheckPotentialAddr(&(pca.addr), 0))
 			{
-				addAddressIfUnique(peer->connAddrs, pca, false);
+				addAddressIfUnique(peer->connAddrs, pca, true);
 			}
 		}
 		else
