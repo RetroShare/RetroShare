@@ -198,7 +198,6 @@ std::string p3BitDht::getUdpAddressString()
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
 
-
 void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer)
 {
 	std::ostringstream out;

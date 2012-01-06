@@ -109,19 +109,20 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 // DHT MODES
 #define BITDHT_MODE_TRAFFIC_MASK	0x00000f00
-#define BITDHT_MODE_RELAY_MASK  	0x0000f000
+#define BITDHT_MODE_RELAYSERVER_MASK  	0x0000f000
 
 // These are not ORd - only one can apply.
-#define BITDHT_MODE_TRAFFIC_DEFAULT	0x00000000
 #define BITDHT_MODE_TRAFFIC_HIGH	0x00000100
 #define BITDHT_MODE_TRAFFIC_MED		0x00000200
 #define BITDHT_MODE_TRAFFIC_LOW		0x00000300
 #define BITDHT_MODE_TRAFFIC_TRICKLE	0x00000400
+#define BITDHT_MODE_TRAFFIC_DEFAULT	BITDHT_MODE_TRAFFIC_LOW
 
 // These are not ORd - only one can apply.
-#define BITDHT_MODE_RELAYS_IGNORED	0x00000000
-#define BITDHT_MODE_RELAYS_FLAGGED	0x00001000
-#define BITDHT_MODE_RELAYS_ONLY		0x00002000
+#define BITDHT_MODE_RELAYSERVERS_IGNORED	0x00001000
+#define BITDHT_MODE_RELAYSERVERS_FLAGGED	0x00002000
+#define BITDHT_MODE_RELAYSERVERS_ONLY		0x00003000
+#define BITDHT_MODE_RELAYSERVERS_SERVER		0x00004000
 
 
 /* NODE OPTIONS */
@@ -303,9 +304,9 @@ class bdQuerySummary
 
 /* Query Flags */
 #define BITDHT_QFLAGS_NONE		0x0000
-#define BITDHT_QFLAGS_DISGUISE		0x0001
+#define BITDHT_QFLAGS_DISGUISE		0x0001  // Don't search directly for target.
 #define BITDHT_QFLAGS_DO_IDLE		0x0002
-#define BITDHT_QFLAGS_INTERNAL		0x0004  // runs through startup.
+#define BITDHT_QFLAGS_INTERNAL		0x0004  // runs through startup. (limited callback)
 #define BITDHT_QFLAGS_UPDATES		0x0008  // Do regular updates.
 
 /* Connect Callback Flags */
@@ -322,6 +323,12 @@ class bdQuerySummary
 #define BD_PROXY_CONNECTION_END_POINT           3
 
 #define BITDHT_INFO_CB_TYPE_BADPEER	1
+
+/* Relay Modes */
+#define BITDHT_RELAYS_OFF		0
+#define BITDHT_RELAYS_ON		1
+#define BITDHT_RELAYS_ONLY		2
+#define BITDHT_RELAYS_SERVER		3
 
 
 class BitDhtCallback

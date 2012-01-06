@@ -83,13 +83,15 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 
 p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm, 
 			UdpStack *udpstack, std::string bootstrapfile)
-	:pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
+	:p3Config(CONFIG_TYPE_BITDHT), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
 	mDhtStunner = NULL;
 	mProxyStunner = NULL;
 	mRelay = NULL;
 
         mPeerSharer = NULL;
+
+	mRelayHandler = NULL;
 
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
         mOwnRsId = id;
@@ -131,6 +133,7 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 	p3BdCallback *bdcb = new p3BdCallback(this);
 	mUdpBitDht->addCallback(bdcb);
 
+#if 0
 	/* enable all modes */
 	/* Switched to only Proxy Mode - as Direct Connections can be unreliable - as they share the UDP with the DHT....
 	 * We'll get these working properly and then if necessary get Direct further tested.
@@ -141,6 +144,9 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 			BITDHT_CONNECT_MODE_PROXY,
                         BITDHT_CONNECT_OPTION_AUTOPROXY);
 
+#endif
+
+	setupRelayDefaults();
 }
 
 p3BitDht::~p3BitDht()
@@ -161,6 +167,23 @@ void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
 {
 	mPeerSharer = sharer;
 }
+
+
+/* Support for Outsourced Relay Handling */
+
+void    p3BitDht::installRelayHandler(p3BitDhtRelayHandler *handler)
+{
+	/* The Handler is mutex protected, as its installation can occur when the dht is already running */
+	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+	mRelayHandler = handler;
+}
+
+UdpRelayReceiver *p3BitDht::getRelayReceiver()
+{
+	return mRelay;
+}
+
 
 void    p3BitDht::start()
 {

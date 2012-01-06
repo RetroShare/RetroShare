@@ -31,6 +31,7 @@
 #include "FileAssociationsPage.h"
 #include "SoundPage.h"
 #include "TransferPage.h"
+#include "RelayPage.h"
 #include "ChatPage.h"
 #include "MessagePage.h"
 #include "ForumPage.h"
@@ -107,8 +108,9 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new GeneralPage(0));
     stackedWidget->addWidget(new ServerPage());
     stackedWidget->addWidget(new TransferPage());
+    stackedWidget->addWidget(new RelayPage() );
     stackedWidget->addWidget(new DirectoriesPage());
-	stackedWidget->addWidget(new PluginsPage() );
+    stackedWidget->addWidget(new PluginsPage() );
     stackedWidget->addWidget(new NotifyPage());
     stackedWidget->addWidget(new CryptoPage());
     stackedWidget->addWidget(new MessagePage());
@@ -143,6 +145,10 @@ RSettingsWin::setNewPage(int page)
             text = tr("Transfer");
             pageicon->setPixmap(QPixmap(":/images/ktorrent32.png"));
             break;    
+        case Relay:
+            text = tr("Relay");
+            pageicon->setPixmap(QPixmap(":/images/server_24x24.png"));
+            break;
         case Notify:
             text = tr("Notify");
             pageicon->setPixmap(QPixmap(":/images/status_unknown.png"));

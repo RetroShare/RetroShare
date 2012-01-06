@@ -27,6 +27,7 @@
  */
 
 #include "tcponudp/udppeer.h"
+#include <retroshare/rsdht.h>
 #include <vector>
 
 class UdpRelayAddrSet;
@@ -49,7 +50,7 @@ class UdpRelayProxy
 {
 	public:
 	UdpRelayProxy();
-	UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass);
+	UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t bandwidth);
 
 	UdpRelayAddrSet mAddrs;
 	double mBandwidth;
@@ -94,18 +95,19 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure);
 #define UDP_RELAY_DEFAULT_COUNT_ALL	10 
 #define UDP_RELAY_FRAC_GENERAL		(0.2)
 #define UDP_RELAY_FRAC_FOF		(0.5)
-#define UDP_RELAY_FRAC_FRIENDS		(0.8)
+#define UDP_RELAY_FRAC_FRIENDS		(0.3)
 
-#define UDP_RELAY_NUM_CLASS		4
+/**** DEFINED IN EXTERNAL HEADER FILE ***/
+#define UDP_RELAY_NUM_CLASS		RSDHT_RELAY_NUM_CLASS
 
-#define UDP_RELAY_CLASS_ALL		0
-#define UDP_RELAY_CLASS_GENERAL		1
-#define UDP_RELAY_CLASS_FOF		2
-#define UDP_RELAY_CLASS_FRIENDS		3
+#define UDP_RELAY_CLASS_ALL		RSDHT_RELAY_CLASS_ALL		
+#define UDP_RELAY_CLASS_GENERAL		RSDHT_RELAY_CLASS_GENERAL		
+#define UDP_RELAY_CLASS_FOF		RSDHT_RELAY_CLASS_FOF		
+#define UDP_RELAY_CLASS_FRIENDS		RSDHT_RELAY_CLASS_FRIENDS		
 
 // Just for some testing fun!
 //#define UDP_RELAY_LIFETIME_GENERAL	180	// 3 minutes
-//#define UDP_RELAY_LIFETIME_FOF		360	// 6 minutes.
+//#define UDP_RELAY_LIFETIME_FOF	360	// 6 minutes.
 //#define UDP_RELAY_LIFETIME_FRIENDS	720 	// 12 minutes.
 
 #define UDP_RELAY_LIFETIME_GENERAL	1800	// 30 minutes
@@ -131,15 +133,16 @@ int 	removeUdpPeer(UdpPeer *peer);
 	 * the end-points drop the connections 
 	 */
 
-	int addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass, uint32_t &bandwidth);
+	int addUdpRelay(UdpRelayAddrSet *addrSet, int &relayClass, uint32_t &bandwidth);
 	int removeUdpRelay(UdpRelayAddrSet *addrs);
 
 	/* Need some stats, to work out how many relays we are supporting */
 	int checkRelays();
 
 	int setRelayTotal(int count); /* sets all the Relay Counts (frac based on total) */
-	int setRelayClassMax(int classIdx, int count); /* set a specific class maximum */
+	int setRelayClassMax(int classIdx, int count, int bandwidth); /* set a specific class maximum */
 	int getRelayClassMax(int classIdx);
+	int getRelayClassBandwidth(int classIdx);
 	int getRelayCount(int classIdx); /* how many relays (of this type) do we have */
 	int RelayStatus(std::ostream &out);
 
@@ -158,7 +161,7 @@ int     status(std::ostream &out);
 	private:
 
 	int removeUdpRelay_relayLocked(UdpRelayAddrSet *addrs);
-	int installRelayClass_relayLocked(int classIdx);
+	int installRelayClass_relayLocked(int &classIdx, uint32_t &bandwidth);
 	int removeRelayClass_relayLocked(int classIdx);
 
 	/* Unfortunately, Due the reentrant nature of this classes activities...
@@ -176,7 +179,7 @@ int     status(std::ostream &out);
 
 	RsMutex relayMtx; /* for all class data (below) */
 
-	std::vector<int> mClassLimit, mClassCount;
+	std::vector<int> mClassLimit, mClassCount, mClassBandwidth;
 	std::map<struct sockaddr_in, UdpRelayEnd> mStreams; /* indexed by <dest> */
 	std::map<UdpRelayAddrSet, UdpRelayProxy> mRelays; /* indexed by <src,dest> */
 

@@ -111,47 +111,81 @@ void bdNode::setNodeOptions(uint32_t optFlags)
 #define BDNODE_LOW_MSG_RATE	5
 #define BDNODE_TRICKLE_MSG_RATE	3
 
+/* So we are setting this up so you can independently update each parameter....
+ * if the mask is empty - it'll use the previous parameter.
+ *
+ */
+
+
 uint32_t bdNode::setNodeDhtMode(uint32_t dhtFlags)
 {
+	std::cerr << "bdNode::setNodeDhtMode(" << dhtFlags << "), origFlags: " << mNodeDhtMode;
+	std::cerr << std::endl;
+
 	uint32_t origFlags = mNodeDhtMode;
-	mNodeDhtMode = dhtFlags;
+
 
 	uint32_t traffic = dhtFlags &  BITDHT_MODE_TRAFFIC_MASK;
-
-	switch(traffic)
+	if (traffic)
 	{
-		default:
-		case BITDHT_MODE_TRAFFIC_DEFAULT:	
-		case BITDHT_MODE_TRAFFIC_LOW:
-			mMaxAllowedMsgs = BDNODE_HIGH_MSG_RATE;
-			break;
-		case BITDHT_MODE_TRAFFIC_HIGH:
-			mMaxAllowedMsgs = BDNODE_LOW_MSG_RATE;
-			break;
-		case BITDHT_MODE_TRAFFIC_MED:
-			mMaxAllowedMsgs = BDNODE_MED_MSG_RATE;
-			break;
-		case BITDHT_MODE_TRAFFIC_TRICKLE:
-			mMaxAllowedMsgs = BDNODE_TRICKLE_MSG_RATE;
-			break;
+		switch(traffic)
+		{
+			default:
+			case BITDHT_MODE_TRAFFIC_LOW:
+				mMaxAllowedMsgs = BDNODE_HIGH_MSG_RATE;
+				break;
+			case BITDHT_MODE_TRAFFIC_HIGH:
+				mMaxAllowedMsgs = BDNODE_LOW_MSG_RATE;
+				break;
+			case BITDHT_MODE_TRAFFIC_MED:
+				mMaxAllowedMsgs = BDNODE_MED_MSG_RATE;
+				break;
+			case BITDHT_MODE_TRAFFIC_TRICKLE:
+				mMaxAllowedMsgs = BDNODE_TRICKLE_MSG_RATE;
+				break;
+		}
+	}
+	else
+	{
+		dhtFlags |= (origFlags & BITDHT_MODE_TRAFFIC_MASK);
 	}
 
-	uint32_t relay = dhtFlags & BITDHT_MODE_RELAY_MASK;
-	if (relay != (origFlags & BITDHT_MODE_RELAY_MASK))
+	uint32_t relay = dhtFlags & BITDHT_MODE_RELAYSERVER_MASK;
+	if ((relay) && (relay != (origFlags & BITDHT_MODE_RELAYSERVER_MASK)))
 	{
 		/* changed */
 		switch(relay)
 		{
 			default:
-			case BITDHT_MODE_RELAYS_IGNORED:
+			case BITDHT_MODE_RELAYSERVERS_IGNORED:
+				mRelayMode = BITDHT_RELAYS_OFF;
+				dropRelayServers();
 				break;
-			case BITDHT_MODE_RELAYS_FLAGGED:
+			case BITDHT_MODE_RELAYSERVERS_FLAGGED:
+				mRelayMode = BITDHT_RELAYS_ON;
+				pingRelayServers();
 				break;
-			case BITDHT_MODE_RELAYS_ONLY:
+			case BITDHT_MODE_RELAYSERVERS_ONLY:
+				mRelayMode = BITDHT_RELAYS_ONLY;
+				pingRelayServers();
+				break;
+			case BITDHT_MODE_RELAYSERVERS_SERVER:
+				mRelayMode = BITDHT_RELAYS_SERVER;
+				pingRelayServers();
 				break;
 		}
+		mConnMgr->setRelayMode(mRelayMode);
 	}
-	
+	else
+	{
+		dhtFlags |= (origFlags & BITDHT_MODE_RELAYSERVER_MASK);
+	}
+
+	mNodeDhtMode = dhtFlags;
+
+	std::cerr << "bdNode::setNodeDhtMode() newFlags: " << mNodeDhtMode;
+	std::cerr << std::endl;
+
 	return dhtFlags;
 }
 
@@ -2206,5 +2240,55 @@ bdNodeNetMsg::~bdNodeNetMsg()
 
 
 
+/**************** In/Out of Relay Mode ******************/
+
+void bdNode::dropRelayServers()
+{
+	/* We leave them there... just drop the flags */
+	uint32_t flags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
+	std::list<bdNodeId> peerList;
+	std::list<bdNodeId>::iterator it;
+
+	mFriendList.findPeersWithFlags(flags, peerList);
+	for(it = peerList.begin(); it != peerList.end(); it++)
+	{
+		mFriendList.removePeer(&(*it));
+	}
+
+	mNodeSpace.clean_node_flags(flags);
+}
+
+void bdNode::pingRelayServers()
+{
+	/* if Relay's have been switched on, do search/ping to locate servers */
+	std::cerr << "bdNode::pingRelayServers()";
+	std::cerr << std::endl;
+
+	bool doSearch = true;
+
+	uint32_t flags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
+	std::list<bdNodeId> peerList;
+	std::list<bdNodeId>::iterator it;
+
+	mFriendList.findPeersWithFlags(flags, peerList);
+	for(it = peerList.begin(); it != peerList.end(); it++)
+	{
+		if (doSearch)
+		{
+			uint32_t qflags = BITDHT_QFLAGS_INTERNAL | BITDHT_QFLAGS_DISGUISE;
+			mQueryMgr->addQuery(&(*it), qflags);
+
+			std::cerr << "bdNode::pingRelayServers() Adding Internal Search for Relay Server: ";
+			mFns->bdPrintNodeId(std::cerr, &(*it));
+			std::cerr << std::endl;
+
+		}
+		else
+		{
+			/* try ping - if we have an address??? */
+
+		}
+	}
+}
 
 

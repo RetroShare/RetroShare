@@ -28,6 +28,7 @@
 #define MRK_P3_BITDHT_H
 
 #include "pqi/pqiassist.h"
+#include "pqi/p3cfgmgr.h"
 #include "retroshare/rsdht.h"
 
 #include <string>
@@ -118,12 +119,27 @@ class PeerAction
 
 
 
+/****** 
+ * Adding the ability to install alternative Handler
+ * for monitoring/controlling Relay Connections outside of p3bitdht.
+ ***/
+
+class p3BitDhtRelayHandler
+{
+	public:
+
+	int (*mInstallRelay)(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t &bandwidth);
+	int (*mLogFailedConnection)(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode);
+};
+
+
+
 
 class UdpRelayReceiver;
 class UdpStunner;
 class p3NetMgr;
 
-class p3BitDht: public pqiNetAssistConnect, public RsDht
+class p3BitDht: public p3Config, public pqiNetAssistConnect, public RsDht
 {
 	public:
 	p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
@@ -148,6 +164,7 @@ virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
 //virtual int      getNetFailedPeer(std::string peerId, PeerStatus &status);
 
 virtual std::string getUdpAddressString();
+
 
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
@@ -251,18 +268,60 @@ void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
 void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
 
 
+	/*** RELAY HANDLER CODE ***/
+void 	installRelayHandler(p3BitDhtRelayHandler *);
+UdpRelayReceiver *getRelayReceiver();
+
+int 	RelayHandler_InstallRelayConnection(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t &bandwidth);
+int 	RelayHandler_LogFailedProxyAttempt(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode);
+
+
+
+/***********************************************************************************************
+ ******************** Relay Config Stuff (TEMP - MOSTLY, in p3bitdht_relay.cc) *****************
+ ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
+************************************************************************************************/
+
+        // Interface for controlling Relays & DHT Relay Mode
+virtual int     getRelayServerList(std::list<std::string> &ids);
+virtual int     addRelayServer(std::string ids);
+virtual int     removeRelayServer(std::string ids);
+
+virtual uint32_t getRelayMode();
+virtual int      setRelayMode(uint32_t mode);
+
+virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
+virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
+
+	private:
+
+	// Relay Handling Code / Variables (Mutex Protected).
+int 	setupRelayDefaults();
+int     pushRelayServers();
+
+	std::list<std::string> mRelayServerList;
+	uint32_t mRelayMode;
+
+        protected:
+/*****************************************************************/
+/***********************  p3config  ******************************/
+        /* Key Functions to be overloaded for Full Configuration */
+        virtual RsSerialiser *setupSerialiser();
+        virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+        virtual void saveDone();
+        virtual bool    loadList(std::list<RsItem *>& load);
+/*****************************************************************/
+
 /***********************************************************************************************
  ************************** Internal Accounting (p3bitdht_peers.cc) ****************************
 ************************************************************************************************/
 
 	public:
 
-//bool   	findPeer(std::string pid)
-//bool   	dropPeer(std::string pid);
-//int 	addFriend(const std::string pid);
-//int 	addFriendOfFriend(const std::string pid);
-//int 	addOther(const std::string pid);
 int 	removePeer(const std::string pid);
+
+	// Can be used externally too.
+int 	calculateNodeId(const std::string pid, bdNodeId *id);
 
 	private:
 
@@ -276,7 +335,6 @@ int 	lookupNodeId_locked(const std::string pid, bdNodeId *id);
 int 	lookupRsId_locked(const bdNodeId *id, std::string &pid);
 int 	storeTranslation_locked(const std::string pid);
 int 	removeTranslation_locked(const std::string pid);
-int 	calculateNodeId(const std::string pid, bdNodeId *id);
 
 	UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
 	UdpStunner *mDhtStunner;
@@ -288,6 +346,9 @@ int 	calculateNodeId(const std::string pid, bdNodeId *id);
 	pqiNetAssistPeerShare *mPeerSharer;
 
 	RsMutex dhtMtx;
+
+
+	p3BitDhtRelayHandler *mRelayHandler;
 
 	std::string mOwnRsId;
 	bdNodeId    mOwnDhtId;

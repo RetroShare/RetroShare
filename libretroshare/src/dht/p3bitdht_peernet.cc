@@ -516,6 +516,13 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					bdStdPrintId(std::cerr, destId);
 					std::cerr << std::endl;
 #endif
+					/* if there is an error code - then it is just to inform us of a failed attempt */
+					if (errcode)
+					{
+						RelayHandler_LogFailedProxyAttempt(srcId, destId, mode, errcode);
+						/* END MID FAILED ATTEMPT */
+						return 1;
+					}
 					
 					uint32_t bandwidth = 0;
 
@@ -1622,7 +1629,7 @@ int p3BitDht::checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode,
 	/* will install the Relay Here... so that we reserve the Relay Space for later. 
 	 * decide on relay bandwidth limitation as well
 	 */
-	if (installRelayConnection(srcId, destId, bandwidth))
+	if (RelayHandler_InstallRelayConnection(srcId, destId, mode, bandwidth))
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::checkProxyAllowed() Successfully added Relay, Connection OKAY";
@@ -2383,6 +2390,45 @@ void p3BitDht::ConnectionFeedback(std::string pid, int mode)
 			break;
 	}
 }
+
+
+/***** Check for a RelayHandler... and call its functions preferentially */
+
+int p3BitDht::RelayHandler_LogFailedProxyAttempt(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode)
+{
+
+	{
+        	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+		if ((mRelayHandler) && (mRelayHandler->mLogFailedConnection))
+		{
+			return mRelayHandler->mLogFailedConnection(srcId, destId, mode, errcode);
+		}
+	}
+
+	/* NO standard handler */
+	return 0;
+}
+
+
+int p3BitDht::RelayHandler_InstallRelayConnection(const bdId *srcId, const bdId *destId, 
+							uint32_t mode, uint32_t &bandwidth)
+{
+
+	{
+        	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+		if ((mRelayHandler) && (mRelayHandler->mInstallRelay))
+		{
+			return mRelayHandler->mInstallRelay(srcId, destId, mode, bandwidth);
+		}
+	}
+
+	/* standard handler */
+	return installRelayConnection(srcId, destId, bandwidth);
+}
+
+
 
 
 

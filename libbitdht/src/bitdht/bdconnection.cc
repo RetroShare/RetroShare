@@ -86,6 +86,13 @@ void bdConnectManager::setConnectionOptions(uint32_t allowedModes, uint32_t flag
 
 }
 
+/* Setup Relay Mode */
+void bdConnectManager::setRelayMode(uint32_t mode)
+{
+	mRelayMode = mode;
+}
+
+
 void bdConnectManager::shutdownConnections()
 {
 #ifdef DEBUG_NODE_CONNECTION
@@ -2085,6 +2092,15 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 				/* remove connection */
 				bdConnectManager::cleanConnectionBySender(id, srcConnAddr, destConnAddr);
 
+				/* WILL NEED CALLBACK FOR FAILED PROXY ATTEMPT - TO SUPPORT RELAYS PROPERLY 
+				 * NODE needs to know PEERS to potentially WHITELIST!
+				 */
+				if (mRelayMode == BITDHT_RELAYS_SERVER)
+				{
+					callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
+						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_AUTH,
+						BITDHT_CONNECT_ERROR_NOADDRESS);
+				}
 			}
 		}
 		else

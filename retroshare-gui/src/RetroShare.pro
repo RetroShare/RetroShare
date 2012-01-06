@@ -307,6 +307,7 @@ HEADERS +=  rshare.h \
             gui/settings/SoundPage.h \
             gui/settings/TransferPage.h \
             gui/settings/ChatPage.h \
+            gui/settings/RelayPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
@@ -429,6 +430,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/TransferPage.ui \
             gui/settings/SoundPage.ui \
             gui/settings/ChatPage.ui \
+            gui/settings/RelayPage.ui \
             gui/settings/PluginItem.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
@@ -587,6 +589,7 @@ SOURCES +=  main.cpp \
             gui/settings/SoundPage.cpp \
             gui/settings/TransferPage.cpp \
             gui/settings/ChatPage.cpp \
+            gui/settings/RelayPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \

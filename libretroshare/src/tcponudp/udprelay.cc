@@ -49,13 +49,16 @@ UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
 {
 	mClassLimit.resize(UDP_RELAY_NUM_CLASS);
 	mClassCount.resize(UDP_RELAY_NUM_CLASS);
+	mClassBandwidth.resize(UDP_RELAY_NUM_CLASS);
 
-	setRelayTotal(UDP_RELAY_DEFAULT_COUNT_ALL);
 
 	for(int i = 0; i < UDP_RELAY_NUM_CLASS; i++)
 	{
 		mClassCount[i] = 0;
+		mClassBandwidth[i] = 0;
 	}
+
+	setRelayTotal(UDP_RELAY_DEFAULT_COUNT_ALL);
 
 	/* only allocate this space once */
 	mTmpSendPkt = malloc(MAX_RELAY_UDP_PACKET_SIZE);
@@ -279,7 +282,7 @@ int UdpRelayReceiver::removeUdpRelay(UdpRelayAddrSet *addrSet)
 }
 
 
-int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass, uint32_t &bandwidth)
+int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int &relayClass, uint32_t &bandwidth)
 {
 	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
 
@@ -288,22 +291,22 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass, uint
 	int ok = (rit == mRelays.end());
 	if (!ok)
 	{
-//#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY
 		std::cerr << "UdpRelayReceiver::addUdpRelay() ERROR Peer already exists!" << std::endl;
-//#endif
+#endif
 		return 0;
 	}
 
 	/* will install if there is space! */
-	if (installRelayClass_relayLocked(relayClass))
+	if (installRelayClass_relayLocked(relayClass, bandwidth))
 	{
-//#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY
 		std::cerr << "UdpRelayReceiver::addUdpRelay() adding Relay" << std::endl;
-//#endif
+#endif
 		/* create UdpRelay */
-		UdpRelayProxy udpRelay(addrSet, relayClass);
+		UdpRelayProxy udpRelay(addrSet, relayClass, bandwidth);
 		UdpRelayAddrSet alt = addrSet->flippedSet();
-		UdpRelayProxy altUdpRelay(&alt, relayClass);
+		UdpRelayProxy altUdpRelay(&alt, relayClass, bandwidth);
 
 		/* must install two (A, B) & (B, A) */
 		mRelays[*addrSet] = udpRelay;
@@ -315,9 +318,9 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int relayClass, uint
 		return 1;
 	}
 
-//#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY
 	std::cerr << "UdpRelayReceiver::addUdpRelay() WARNING Too many Relays!" << std::endl;
-//#endif
+#endif
 	return 0;
 }
 
@@ -359,8 +362,11 @@ int UdpRelayReceiver::removeUdpRelay_relayLocked(UdpRelayAddrSet *addrSet)
 	return 1;
 }
 
-        /* Need some stats, to work out how many relays we are supporting */
-int UdpRelayReceiver::installRelayClass_relayLocked(int classIdx)
+        /* Need some stats, to work out how many relays we are supporting 	
+	 * modified the code to allow degrading of class ....
+	 * so if you have too many friends, they will fill a FOF spot
+	 */
+int UdpRelayReceiver::installRelayClass_relayLocked(int &classIdx, uint32_t &bandwidth)
 {
 	/* check for total number of Relays */
 	if (mClassCount[UDP_RELAY_CLASS_ALL] >= mClassLimit[UDP_RELAY_CLASS_ALL])
@@ -379,12 +385,25 @@ int UdpRelayReceiver::installRelayClass_relayLocked(int classIdx)
 	}	
 
 	/* now check the specifics of the class */
-	if (mClassCount[classIdx] >= mClassLimit[classIdx])
+	while(mClassCount[classIdx] >= mClassLimit[classIdx])
 	{
 		std::cerr << "UdpRelayReceiver::installRelayClass() WARNING Relay Class Limit Exceeded";
 		std::cerr << std::endl;
+		std::cerr << "UdpRelayReceiver::installRelayClass() ClassIdx: " << classIdx;
+		std::cerr << std::endl;
+		std::cerr << "UdpRelayReceiver::installRelayClass() ClassLimit: " << mClassLimit[classIdx];
+		std::cerr << std::endl;
+		std::cerr << "UdpRelayReceiver::installRelayClass() Degrading Class =>: " << classIdx;
+		std::cerr << std::endl;
 
-		return 0;
+		classIdx--;
+		if (classIdx == 0)
+		{
+			std::cerr << "UdpRelayReceiver::installRelayClass() No Spaces Left";
+			std::cerr << std::endl;
+
+			return 0;
+		}
 	}
 
 	std::cerr << "UdpRelayReceiver::installRelayClass() Relay Class Ok, Count incremented";
@@ -393,6 +412,7 @@ int UdpRelayReceiver::installRelayClass_relayLocked(int classIdx)
 	/* if we get here we can add one */
 	mClassCount[UDP_RELAY_CLASS_ALL]++;
 	mClassCount[classIdx]++;
+	bandwidth = mClassBandwidth[classIdx];
 
 	return 1;
 }
@@ -448,7 +468,7 @@ int UdpRelayReceiver::setRelayTotal(int count)
 }
 
 
-int UdpRelayReceiver::setRelayClassMax(int classIdx, int count)
+int UdpRelayReceiver::setRelayClassMax(int classIdx, int count, int bandwidth)
 {
 	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
 
@@ -461,6 +481,7 @@ int UdpRelayReceiver::setRelayClassMax(int classIdx, int count)
 	}	
 
 	mClassLimit[classIdx] = count;
+	mClassBandwidth[classIdx] = bandwidth;
 	return 1;
 }
 
@@ -478,6 +499,21 @@ int UdpRelayReceiver::getRelayClassMax(int classIdx)
 	}	
 
 	return mClassLimit[classIdx];
+}
+
+int UdpRelayReceiver::getRelayClassBandwidth(int classIdx)
+{
+	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
+
+	/* check the idx */
+	if ((classIdx < 0) || (classIdx >= UDP_RELAY_NUM_CLASS))
+	{
+		std::cerr << "UdpRelayReceiver::getRelayMaximum() ERROR class Idx invalid";
+		std::cerr << std::endl;
+		return 0;
+	}	
+
+	return mClassBandwidth[classIdx];
 }
 
 int UdpRelayReceiver::getRelayCount(int classIdx)
@@ -840,7 +876,7 @@ UdpRelayProxy::UdpRelayProxy()
         mBandwidthLimit = 0;
 }
 
-UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass)
+UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t bandwidth)
 {
 	mAddrs = *addrSet;
 	mRelayClass = relayClass;
@@ -852,18 +888,23 @@ UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass)
 
 
         mStartTS = time(NULL);
-	switch(relayClass)
+	mBandwidthLimit = bandwidth;
+	/* fallback */
+	if (mBandwidthLimit == 0)
 	{
-		default:
-		case UDP_RELAY_CLASS_GENERAL:
-        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
-			break;
-		case UDP_RELAY_CLASS_FOF:
-        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
-			break;
-		case UDP_RELAY_CLASS_FRIENDS:
-        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
-			break;
+		switch(relayClass)
+		{
+			default:
+			case UDP_RELAY_CLASS_GENERAL:
+	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
+				break;
+			case UDP_RELAY_CLASS_FOF:
+	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
+				break;
+			case UDP_RELAY_CLASS_FRIENDS:
+	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
+				break;
+		}
 	}
 }
 
