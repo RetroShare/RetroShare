@@ -1888,6 +1888,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
+		entry.lobby_privacy_level = ((_public_lobbies.find(lobby_id)!=_public_lobbies.end())?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE) ;	// should be updated later if the lobby is advertized
 		entry.nick_name = _default_nick_name ;	
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;

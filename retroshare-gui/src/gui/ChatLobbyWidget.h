@@ -15,5 +15,8 @@ class ChatLobbyWidget : public RsAutoUpdatePage, public Ui::ChatLobbyWidget
 		~ChatLobbyWidget();
 
 		virtual void updateDisplay() ;
+
+	protected slots:
+		void doubleClickCell(int,int); 
 };
 
