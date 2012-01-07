@@ -270,6 +270,7 @@ HEADERS +=  rshare.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatWindow.h \
             gui/chat/PopupChatDialog.h \
+            gui/ChatLobbyWidget.h \
             gui/chat/ChatLobbyDialog.h \
             gui/chat/CreateLobbyDialog.h \
             gui/chat/HandleRichText.h \
@@ -535,6 +536,7 @@ SOURCES +=  main.cpp \
             gui/channels/ShareKey.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
+            gui/ChatLobbyWidget.cpp \
             gui/chat/ChatLobbyDialog.cpp \
             gui/chat/CreateLobbyDialog.cpp \
             gui/chat/HandleRichText.cpp \

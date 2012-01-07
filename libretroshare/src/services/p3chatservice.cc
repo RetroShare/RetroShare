@@ -1955,6 +1955,62 @@ void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 	_lobby_invites_queue.erase(it) ;
 }
 
+bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
+{
+#ifdef CHAT_DEBUG
+	std::cerr << "Joining public chat lobby " << std::hex << lobby_id << std::dec << std::endl;
+#endif
+	std::list<std::string> invited_friends ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		// create a unique id.
+		//
+		std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.find(lobby_id)) ;
+
+		if(it == _public_lobbies.end())
+		{
+			std::cerr << "  lobby is not a known public chat lobby. Sorry!" << std::endl;
+			return false ;
+		}
+
+#ifdef CHAT_DEBUG
+		std::cerr << "  lobby found. Initiating join sequence..." << std::endl;
+#endif
+
+		if(_chat_lobbys.find(lobby_id) != _chat_lobbys.end())
+		{
+			std::cerr << "  lobby already in participating list. Returning!" << std::endl;
+			return true ;
+		}
+
+		std::cerr << "  Creating new lobby entry." << std::endl;
+
+		ChatLobbyEntry entry ;
+		entry.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
+		entry.participating_friends.clear() ;
+		entry.nick_name = _default_nick_name ;	
+		entry.lobby_id = lobby_id ;
+		entry.lobby_name = it->second.lobby_name ;
+		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
+		entry.connexion_challenge_count = 0 ;
+		entry.last_activity = time(NULL) ;
+		entry.last_connexion_challenge_time = time(NULL) ;
+
+		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
+		_chat_lobbys[lobby_id] = entry ;
+
+		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+			invited_friends.push_back(*it2) ;
+	}
+
+	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
+		invitePeerToLobby(lobby_id,*it) ;
+
+	return true ;
+}
+
 ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_level)
 {
 #ifdef CHAT_DEBUG

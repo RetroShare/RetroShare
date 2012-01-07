@@ -50,6 +50,7 @@
 #include "im_history/ImHistoryBrowser.h"
 #include "MainWindow.h"
 #include "NewsFeed.h"
+#include "ChatLobbyWidget.h"
 #include "notifyqt.h"
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
@@ -85,6 +86,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
 
+    ui.peertabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
     ui.peertabWidget->setTabPosition(QTabWidget::North);
     ui.peertabWidget->addTab(new ProfileWidget(), tr("Profile"));
     NewsFeed *newsFeed = new NewsFeed();
