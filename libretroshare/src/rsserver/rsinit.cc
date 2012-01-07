@@ -2027,7 +2027,9 @@ int RsServer::StartupRetroShare()
 	
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
-	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+	//uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+	// HACK Proxy Port near Dht Port - For Relay Testing.
+	uint16_t rndport = RsInitConfig::port + 3;
 	sndladdr.sin_port = htons(rndport);
 
 #ifdef LOCALNET_TESTING
