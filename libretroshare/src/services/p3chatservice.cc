@@ -41,12 +41,12 @@
  ****/
 #define CHAT_DEBUG 1
 
-static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	=   15 ;	// sends a connexion challenge every 15 messages
-static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	=   15 ;	// sends a connexion at most every 15 seconds
-static const int 		LOBBY_CACHE_CLEANING_PERIOD    	=   10 ;	// sends a connexion challenge every 15 messages
-static const time_t 	MAX_KEEP_MSG_RECORD 					=  240 ; // keep msg record for 240 secs max.
-static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			= 3600 ; // keep inactive lobbies for 1h max.
-
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   15 ; // sends a connexion challenge every 15 messages
+static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
+static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // sends a connexion challenge every 15 messages
+static const time_t 	MAX_KEEP_MSG_RECORD 					  =  240 ; // keep msg record for 240 secs max.
+static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			  = 3600 ; // keep inactive lobbies for 1h max.
+static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   30 ; // don't ask for lobby list more than once every 30 secs.
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
@@ -620,15 +620,53 @@ void p3ChatService::receiveChatQueue()
 	}
 }
 
-void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item)
+void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *clr)
 {
-	// todo !!
-	std::cerr << "Called to unimplemented method: p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item)" << std::endl;
+	// make a lobby list item
+	//
+	RsChatLobbyListItem *item = new RsChatLobbyListItem;
+
+	std::cerr << "Peer " << clr->PeerId() << " requested the list of public chat lobbies." << std::endl;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
+			if(it->second.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)
+			{
+				std::cerr << "  Adding lobby " << std::hex << it->first << std::dec << " \"" << it->second.lobby_name << "\" count=" << it->second.nick_names.size() << std::endl;
+
+				item->lobby_ids.push_back(it->first) ;
+				item->lobby_names.push_back(it->second.lobby_name) ;
+				item->lobby_counts.push_back(it->second.nick_names.size()) ;
+			}
+			else
+				std::cerr << "  Not adding private lobby " << std::hex << it->first << std::dec << std::endl ;
+	}
+
+	item->PeerId(clr->PeerId()) ;
+
+	std::cerr << "  Sending list to " << clr->PeerId() << std::endl;
+	sendItem(item);
 }
+
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 {
-	// todo !!
-	std::cerr << "Called to unimplemented method: p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)" << std::endl;
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		{
+			PublicChatLobbyRecord& rec(_public_lobbies[item->lobby_ids[i]]) ;
+
+			rec.lobby_id = item->lobby_ids[i] ;
+			rec.lobby_name = item->lobby_names[i] ;
+			rec.participating_friends.insert(item->PeerId()) ;
+			rec.total_number_of_peers = item->lobby_counts[i] ;
+		}
+	}
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PUBLIC_CHAT_LOBBY_LIST,0) ;
 }
 
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
@@ -789,12 +827,32 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 
 void p3ChatService::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	public_lobbies.clear() ;
+		public_lobbies.clear() ;
 
-	for(std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin());it!=_public_lobbies.end();++it)
-		public_lobbies.push_back(it->second) ;
+		for(std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin());it!=_public_lobbies.end();++it)
+			public_lobbies.push_back(it->second) ;
+	}
+
+	time_t now = time(NULL) ;
+
+	if(now > MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ + last_public_lobby_info_request_time)
+	{
+		std::list<std::string> ids ;
+		mLinkMgr->getOnlineList(ids);
+
+		for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+		{
+			std::cerr << "  asking list of public lobbies to " << *it << std::endl;
+			RsChatLobbyListRequestItem *item = new RsChatLobbyListRequestItem ;
+			item->PeerId(*it) ;
+
+			sendItem(item);
+		}
+		last_public_lobby_info_request_time = now ;
+	}
 }
 
 int p3ChatService::getPublicChatQueueCount()

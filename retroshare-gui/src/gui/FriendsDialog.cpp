@@ -298,6 +298,11 @@ void FriendsDialog::updateStatusTyping()
     }
 }
 
+void FriendsDialog::updatePublicLobbyList()
+{
+	std::cerr << "Updating public lobby list !!" << std::endl;
+}
+
 void FriendsDialog::displayChatLobbyEvent(qulonglong lobby_id,int event_type,const QString& nickname,const QString& str)
 {
 	std::cerr << "Received displayChatLobbyEvent()!" << std::endl;

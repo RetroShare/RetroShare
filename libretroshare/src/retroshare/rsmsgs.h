@@ -159,13 +159,20 @@ class ChatLobbyInvite
 class PublicChatLobbyRecord
 {
 	public:
+		PublicChatLobbyRecord() { total_number_of_peers = 0 ; }
+
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string lobby_name ;								// name to use for this lobby
 		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
+
+		uint32_t total_number_of_peers ;						// total number of particpating peers. Might not be
 };
-class ChatLobbyInfo: public PublicChatLobbyRecord
+class ChatLobbyInfo
 {
 	public:
+		ChatLobbyId lobby_id ;									// unique id of the lobby
+		std::string lobby_name ;								// name to use for this lobby
+		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
 		std::string nick_name ;									// nickname to use for this lobby
 
 		uint32_t lobby_privacy_level ;						// see RS_CHAT_LOBBY_
