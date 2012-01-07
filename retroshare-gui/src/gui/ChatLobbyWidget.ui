@@ -15,13 +15,38 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QTableWidget" name="_lobby_table_TW">
+    <widget class="QTreeWidget" name="_lobby_table_TW">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Count</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>S</string>
+      </property>
+     </column>
     </widget>
    </item>
    <item>
