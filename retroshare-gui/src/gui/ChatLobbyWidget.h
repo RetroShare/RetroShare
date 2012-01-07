@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ui_ChatLobbyWidget.h"
 #include "RsAutoUpdatePage.h"
 
-class ChatLobbyWidget : public RsAutoUpdatePage
+class ChatLobbyWidget : public RsAutoUpdatePage, public Ui::ChatLobbyWidget 
 {
 	Q_OBJECT
 

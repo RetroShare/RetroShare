@@ -412,6 +412,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/chat/PopupChatWindow.ui \
             gui/chat/PopupChatDialog.ui \
             gui/chat/CreateLobbyDialog.ui \
+            gui/ChatLobbyWidget.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
