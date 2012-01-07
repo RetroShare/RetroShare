@@ -55,7 +55,7 @@ bool	FindNode(bdNodeId *peerId);
 bool	DropNode(bdNodeId *peerId);
 
 virtual int 	NodeCallback(const bdId *id, uint32_t peerflags);			
-virtual int 	PeerCallback(const bdNodeId *id, uint32_t status);
+virtual int 	PeerCallback(const bdId *id, uint32_t status);
 virtual int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 
 	private:

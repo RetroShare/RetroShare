@@ -201,6 +201,7 @@ virtual int dhtPeerCallback(const bdId *id, uint32_t status);
 virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,             
                          uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode);
+virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info);
 
 };
 

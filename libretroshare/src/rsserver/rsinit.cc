@@ -313,6 +313,19 @@ void RsInit::InitRsConfig()
 	//setZoneLevel(PQL_DEBUG_BASIC, 49787); // pqissllistener
 }
 
+/********
+ * LOCALNET_TESTING - allows port restrictions
+ ********/
+
+#define LOCALNET_TESTING	1
+
+#ifdef LOCALNET_TESTING
+
+std::string portRestrictions;
+bool doPortRestrictions = false;
+
+#endif
+
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -395,7 +408,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
+#ifdef LOCALNET_TESTING
+         while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:r:R:")) != -1)
+#else
          while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:r:")) != -1)
+#endif
          {
                  switch (c)
                  {
@@ -470,6 +487,14 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  std::cerr << "Opt for RetroShare link";
                                  std::cerr << std::endl;
                                  break;
+#ifdef LOCALNET_TESTING
+                         case 'R':
+				 portRestrictions = optarg;
+				 doPortRestrictions = true;
+                                 std::cerr << "Opt for Port Restrictions";
+                                 std::cerr << std::endl;
+                                 break;
+#endif
                          case 'h':
                                  std::cerr << "Help: " << std::endl;
                                  std::cerr << "The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT." << std::endl << std::endl;
@@ -486,6 +511,9 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  std::cerr << "-e                Use a forwarded external Port" << std::endl ;
                                  std::cerr << "-U [User Name/GPG id/SSL id]  Sets Account to Use, Useful when Autologin is enabled." << std::endl;
                                  std::cerr << "-r link           Use RetroShare link." << std::endl;
+#ifdef LOCALNET_TESTING
+                                 std::cerr << "-R <lport-uport>  Port Restrictions." << std::endl;
+#endif
                                  exit(1);
                                  break;
                          default:
@@ -1886,7 +1914,35 @@ int RsServer::StartupRetroShare()
 	struct sockaddr_in tmpladdr;
 	sockaddr_clear(&tmpladdr);
 	tmpladdr.sin_port = htons(RsInitConfig::port);
+
+
+#ifdef LOCALNET_TESTING
+
+	rsUdpStack *mDhtStack = new rsUdpStack(UDP_TEST_RESTRICTED_LAYER, tmpladdr);
+
+	/* parse portRestrictions */
+	unsigned int lport, uport;
+
+	if (doPortRestrictions)
+	{
+		if (2 == sscanf(portRestrictions.c_str(), "%u-%u", &lport, &uport))
+		{
+			std::cerr << "Adding Port Restriction (" << lport << "-" << uport << ")";
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "Failed to parse Port Restrictions ... exiting";
+			std::cerr << std::endl;
+			exit(1);
+		}
+
+		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
+		url->addRestrictedPortRange(lport, uport);
+	}
+#else
 	rsUdpStack *mDhtStack = new rsUdpStack(tmpladdr);
+#endif
 
 #ifdef RS_USE_BITDHT
 
@@ -1943,6 +1999,10 @@ int RsServer::StartupRetroShare()
 	mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
 	mDhtStack->addReceiver(mDhtStunner);
 
+#ifdef LOCALNET_TESTING
+	mDhtStunner->SetAcceptLocalNet();
+#endif
+
 	// NEXT BITDHT.
 	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile);
 	/* install external Pointer for Interface */
@@ -1969,12 +2029,30 @@ int RsServer::StartupRetroShare()
 	sockaddr_clear(&sndladdr);
 	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
 	sndladdr.sin_port = htons(rndport);
+
+#ifdef LOCALNET_TESTING
+
+	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
+
+	/* portRestrictions already parsed */
+	if (doPortRestrictions)
+	{
+		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
+		url->addRestrictedPortRange(lport, uport);
+	}
+#else
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
+#endif
 
 	// FIRSTLY THE PROXY STUNNER.
 	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
 	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
         mProxyStack->addReceiver(mProxyStunner);
+
+#ifdef LOCALNET_TESTING
+	mProxyStunner->SetAcceptLocalNet();
+#endif
+
 	
 	// FINALLY THE PROXY UDP CONNECTIONS
 	udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	

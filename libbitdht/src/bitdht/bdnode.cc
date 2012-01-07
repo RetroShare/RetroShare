@@ -462,7 +462,7 @@ void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAd
 
 
 
-//#define DISABLE_BAD_PEER_FILTER		1
+#define DISABLE_BAD_PEER_FILTER		1
 
 void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {
@@ -488,6 +488,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 		{
 			if (knownAddr.sin_addr.s_addr != id->addr.sin_addr.s_addr)
 			{
+#ifndef DISABLE_BAD_PEER_FILTER	
 				std::cerr << "bdNode::checkPotentialPeer(";
 				mFns->bdPrintId(std::cerr, id);
 				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
@@ -496,7 +497,6 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, 0);
 
-#ifndef DISABLE_BAD_PEER_FILTER	
 	        		mFilterPeers->addPeerToFilter(id, 0);
 
 				std::list<struct sockaddr_in> filteredIPs;
@@ -574,6 +574,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 		{
 			if (knownAddr.sin_addr.s_addr != id->addr.sin_addr.s_addr)
 			{
+#ifndef DISABLE_BAD_PEER_FILTER	
 				std::cerr << "bdNode::addPeer(";
 				mFns->bdPrintId(std::cerr, id);
 				std::cerr << ", " << std::hex << peerflags << std::dec;
@@ -584,13 +585,11 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, peerflags);
 
-#ifndef DISABLE_BAD_PEER_FILTER	
 	        		mFilterPeers->addPeerToFilter(id, peerflags);
 
 				std::list<struct sockaddr_in> filteredIPs;
 				mFilterPeers->filteredIPs(filteredIPs);
 				mStore.filterIpList(filteredIPs);
-#endif
 
 				// DO WE EXPLICITLY NEED TO DO THIS, OR WILL THEY JUST BE DROPPED?
 				//mNodeSpace.remove_badpeer(id);
@@ -599,7 +598,6 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				// FLAG in NodeSpace (Should be dropped very quickly anyway)
 				mNodeSpace.flagpeer(id, 0, BITDHT_PEER_EXFLAG_BADPEER);
 
-#ifndef DISABLE_BAD_PEER_FILTER	
 				return;		
 #endif
 			}

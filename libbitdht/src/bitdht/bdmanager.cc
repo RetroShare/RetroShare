@@ -58,7 +58,7 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
-//#define DEBUG_MGR 1
+#define DEBUG_MGR 1
 
 //#define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_APPL)
 #define LOCAL_NET_FLAG		(BITDHT_PEER_STATUS_DHT_ENGINE)
@@ -312,11 +312,11 @@ void bdNodeManager::iteration()
 			 */
 			
 #define TRANSITION_OP_SPACE_SIZE	50 /* 1 query / sec, should take 12-15 secs */
-#define MAX_FINDSELF_TIME		30
-#define MIN_OP_SPACE_SIZE		10
+//#define MAX_FINDSELF_TIME		30
+//#define MIN_OP_SPACE_SIZE		10
 // testing parameters.
-//#define MAX_FINDSELF_TIME		10
-//#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
+#define MAX_FINDSELF_TIME		10
+#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
@@ -403,7 +403,8 @@ void bdNodeManager::iteration()
 				/* run a random search for ourselves, from own App DHT peer */
 				QueryRandomLocalNet();
 
-#define SEARCH_MAX_SIZE 10					
+//#define SEARCH_MAX_SIZE 10					
+#define SEARCH_MAX_SIZE 0
  				if (mBdNetworkSize < SEARCH_MAX_SIZE)
 				{
 #ifdef DEBUG_MGR
@@ -1433,4 +1434,27 @@ int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, 
 
 	return 1;
 }
+
+
+int bdDebugCallback::dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
+{
+	/* remove unused parameter warnings */
+	(void) id;
+	(void) type;
+	(void) flags;
+	(void) info;
+
+#ifdef DEBUG_MGR
+	std::cerr << "bdDebugCallback::dhtInfoCallback() Type: " << type;
+	std::cerr << " Id: ";
+	bdStdPrintId(std::cerr, id);
+	std::cerr << " flags: " << flags;
+	std::cerr << " info: " << info;
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
+
+
 
