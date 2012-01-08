@@ -30,7 +30,7 @@
  * #define DEBUG_UDP_RELAY 1
  */
 
-//#define DEBUG_UDP_RELAY 1
+#define DEBUG_UDP_RELAY 1
 
 
 #ifdef DEBUG_UDP_RELAY
@@ -85,12 +85,15 @@ int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, 
 		bool ok = (it == mStreams.end());
 		if (!ok)
 		{
-	#ifdef DEBUG_UDP_RELAY
-			std::cerr << "UdpPeerReceiver::addUdpPeer() ERROR Peer already exists!" << std::endl;
-	#endif
+#ifdef DEBUG_UDP_RELAY
+			std::cerr << "UdpRelayReceiver::addUdpPeer() ERROR Peer already exists!" << std::endl;
+#endif
 			return 0;
 		}
 		
+#ifdef DEBUG_UDP_RELAY
+		std::cerr << "UdpRelayReceiver::addUdpPeer() Installing UdpRelayEnd (mapping)" << std::endl;
+#endif
 		/* setup a peer */
 		UdpRelayEnd ure(endPoints, proxyaddr);
 		
@@ -102,7 +105,7 @@ int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, 
 		
 
 #ifdef DEBUG_UDP_RELAY
-		std::cerr << "UdpPeerReceiver::addUdpPeer() Just installing UdpPeer!" << std::endl;
+		std::cerr << "UdpRelayReceiver::addUdpPeer() Installing UdpPeer" << std::endl;
 #endif
 		
 		/* just overwrite */
@@ -131,6 +134,9 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 				found = true;
 				realPeerAddr = it->first;
 
+#ifdef DEBUG_UDP_RELAY
+				std::cerr << "UdpRelayReceiver::removeUdpPeer() removing UdpPeer" << std::endl;
+#endif
 				break;
 			}
 		}
@@ -138,6 +144,9 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 
 	if (!found)
 	{
+#ifdef DEBUG_UDP_RELAY
+		std::cerr << "UdpRelayReceiver::removeUdpPeer() Warning: Failed to find UdpPeer" << std::endl;
+#endif
 		return 0;
 	}
 
@@ -154,6 +163,9 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 		else
 		{
 			/* ERROR */	
+#ifdef DEBUG_UDP_RELAY
+			std::cerr << "UdpRelayReceiver::removeUdpPeer() ERROR failed to find Mapping" << std::endl;
+#endif
 		}
 	}
 	return 1;
@@ -197,8 +209,10 @@ int UdpRelayReceiver::checkRelays()
 
 	/* iterate through the Relays */
 
+#ifdef DEBUG_UDP_RELAY
 	std::cerr << "UdpRelayReceiver::checkRelays()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<UdpRelayAddrSet> eraseList;
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
@@ -211,28 +225,34 @@ int UdpRelayReceiver::checkRelays()
 		rit->second.mDataSize = 0;
 		rit->second.mLastBandwidthTS = now;
 
+#ifdef DEBUG_UDP_RELAY
 		std::cerr << "UdpRelayReceiver::checkRelays()";
 		std::cerr << "Relay: " << rit->first;
 		std::cerr << " using bandwidth: " << rit->second.mBandwidth;
 		std::cerr << std::endl;
+#endif
 
 		if (rit->second.mBandwidth > rit->second.mBandwidthLimit)
 		{
+#ifdef DEBUG_UDP_RELAY
 			std::cerr << "UdpRelayReceiver::checkRelays() ";
 			std::cerr << "Dropping Relay due to excessive Bandwidth: " << rit->second.mBandwidth;
 			std::cerr << " Exceeding Limit: " << rit->second.mBandwidthLimit;
 			std::cerr << " Relay: " << rit->first;
 			std::cerr << std::endl;
+#endif
 
 			/* if exceeding bandwidth -> drop */
 			eraseList.push_back(rit->first);
 		}
 		else if (now - rit->second.mLastTS > RELAY_TIMEOUT)
 		{
+#ifdef DEBUG_UDP_RELAY
 			/* if haven't transmitted for ages -> drop */
 			std::cerr << "UdpRelayReceiver::checkRelays() ";
 			std::cerr << "Dropping Relay due to Timeout: " << rit->first;
 			std::cerr << std::endl;
+#endif
 			eraseList.push_back(rit->first);
 		}
 		else
@@ -254,11 +274,13 @@ int UdpRelayReceiver::checkRelays()
 			}
 			if (now - rit->second.mStartTS > lifetime)
 			{
+#ifdef DEBUG_UDP_RELAY
 				std::cerr << "UdpRelayReceiver::checkRelays() ";
 				std::cerr << "Dropping Relay due to Passing Lifetime Limit: " << lifetime;
 				std::cerr << " for class: " << rit->second.mRelayClass;
 				std::cerr << " Relay: " << rit->first;
 				std::cerr << std::endl;
+#endif
 
 				eraseList.push_back(rit->first);
 			}

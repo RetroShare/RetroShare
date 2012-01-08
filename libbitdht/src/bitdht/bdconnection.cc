@@ -40,6 +40,7 @@
  * #define DEBUG_CONNECTION_DELAY		1
  */
 
+#define DEBUG_NODE_CONNECTION		1 
 #define DEBUG_CONNECTION_DELAY		1
 
 
