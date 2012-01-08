@@ -42,7 +42,11 @@ int displayUdpRelayPacketHeader(const void *data, const int size);
 
 /****************** UDP RELAY STUFF **********/
 
-#define MAX_RELAY_UDP_PACKET_SIZE 1024
+// This packet size must be able to handle TcpStream Packets.
+// At the moment, they can be 1000 + 20 for TcpOnUdp ... + 16 => 1036 minimal size.
+// See Notes in tcpstream.h for more info
+#define MAX_RELAY_UDP_PACKET_SIZE (1400 + 20 + 16)
+
 
 UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
 	:UdpSubReceiver(pub), udppeerMtx("UdpSubReceiver"), relayMtx("UdpSubReceiver")
@@ -91,12 +95,13 @@ int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, 
 			return 0;
 		}
 		
-#ifdef DEBUG_UDP_RELAY
-		std::cerr << "UdpRelayReceiver::addUdpPeer() Installing UdpRelayEnd (mapping)" << std::endl;
-#endif
 		/* setup a peer */
 		UdpRelayEnd ure(endPoints, proxyaddr);
-		
+
+#ifdef DEBUG_UDP_RELAY
+		std::cerr << "UdpRelayReceiver::addUdpPeer() Installing UdpRelayEnd: " << ure << std::endl;
+#endif
+
 		mStreams[realPeerAddr] = ure;
 	}
 		
@@ -110,6 +115,7 @@ int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, 
 		
 		/* just overwrite */
 		mPeers[realPeerAddr] = peer;
+
 	}
 		
 	return 1;
@@ -717,6 +723,10 @@ int UdpRelayReceiver::sendPkt(const void *data, int size, const struct sockaddr_
 		return 0;
 	}
 	
+#ifdef DEBUG_UDP_RELAY
+	std::cerr << "UdpRelayReceiver::sendPkt() to Relay: " << it->second;
+	std::cerr << std::endl;
+#endif
 	/* add a header to packet */
 	int finalPktSize = createRelayUdpPacket(data, size, mTmpSendPkt, MAX_RELAY_UDP_PACKET_SIZE, &(it->second));
 
@@ -777,6 +787,7 @@ int displayUdpRelayPacketHeader(const void *data, const int size)
 	std::cerr << out.str();
 	std::cerr << std::endl;
 
+	return 1;
 }
 #endif
 
@@ -821,6 +832,9 @@ int createRelayUdpPacket(const void *data, const int size, void *newpkt, int new
 	if (newsize < pktsize)
 	{
 		std::cerr << "createRelayUdpPacket() ERROR invalid size";
+		std::cerr << std::endl;
+		std::cerr << "Incoming DataSize: " << size << " + Header: " << UDP_RELAY_HEADER_SIZE;
+		std::cerr << " > " << newsize;
 		std::cerr << std::endl;
 		return 0;
 	}
