@@ -342,7 +342,7 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay)
 {
 
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 	std::cerr << "bdConnectManager::requestConnection_proxy()";
 	std::cerr << std::endl;
 #endif
@@ -350,7 +350,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	
 	if (checkExistingConnectionAttempt(target))
 	{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 		std::cerr << "bdConnectManager::requestConnection_proxy() Existing ConnectionRequest... NOOP";
 		std::cerr << std::endl;
 #endif
@@ -361,10 +361,28 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	bdConnectionRequest connreq;
 	connreq.setupProxyConnection(laddr, target, mode, delay);
 
-	/* grab any peers from any existing query */
+	/****
+	 * We want different behaviour here - depending on whether it is a proxy or a relay request
+	 * furthermore if we are in relay server mode - we should only use those.
+	 *
+	 * Try to unify logic.
+	 *
+	 * Proxy - take potential proxies...
+	 *	- if RelayServerMode then relays.
+	 *	- take friends, friends of friends.
+	 *
+	 * Relay - 
+	 *	- if RelayServerMode take relays.
+	 *	- take friends, friends of friends
+	 *	- take potential proxies.
+	 */
+
+
+	/* get the proxy lists from existing query */
 	std::list<bdId>::iterator pit;
+	std::list<bdId> goodProxies;
 	std::list<bdId> potentialProxies;
-	mQueryMgr->proxies(target, connreq.mGoodProxies);
+	mQueryMgr->proxies(target, goodProxies);
 	mQueryMgr->potentialProxies(target, potentialProxies);
 
 	/* check any potential proxies, must be same DHT Type */
@@ -373,12 +391,119 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		/* check the type in bdSpace */
 		if (checkPeerForFlag(&(*pit), BITDHT_PEER_STATUS_DHT_ENGINE_VERSION))
 		{
-			connreq.mGoodProxies.push_back(*pit);
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::requestConnection_proxy() Shifting Pot -> Good: ";
+			mFns->bdPrintId(std::cerr, &(*pit));
+			std::cerr << std::endl;
+#endif
+			goodProxies.push_back(*pit);
 			pit = potentialProxies.erase(pit);
 		}
 		else
 		{
 			pit++;
+		}
+	}
+
+	/* in proxy mode - put Good Proxies First */
+	if (mode == BITDHT_CONNECT_MODE_PROXY)
+	{
+		for(pit = goodProxies.begin(); pit != goodProxies.end(); pit++)
+		{
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Good Proxy: ";
+			mFns->bdPrintId(std::cerr, &(*pit));
+			std::cerr << std::endl;
+#endif
+			connreq.mGoodProxies.push_back(*pit);
+		}
+	}
+
+
+	if (mRelayMode)
+	{
+		/* Add Relay Servers */
+#ifdef DEBUG_PROXY_CONNECTION
+		std::cerr << "bdConnectManager::requestConnection_proxy() In RelayMode... adding Relays";
+#endif
+
+		std::list<bdId> excluding;
+		std::multimap<bdMetric, bdId> nearest;
+	
+		int number = CONNECT_NUM_PROXY_ATTEMPTS;
+	
+		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
+				BITDHT_PEER_STATUS_DHT_RELAY_SERVER);
+
+		std::multimap<bdMetric, bdId>::iterator it;
+		for(it = nearest.begin(); it != nearest.end(); it++)
+		{
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Relay Server: ";
+			mFns->bdPrintId(std::cerr, &(it->second));
+			std::cerr << std::endl;
+#endif
+			connreq.mGoodProxies.push_back(it->second);
+		}
+	}
+
+	{
+		std::list<bdId> excluding;
+		std::multimap<bdMetric, bdId> nearest;
+	
+		int number = CONNECT_NUM_PROXY_ATTEMPTS;
+	
+		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
+				BITDHT_PEER_STATUS_DHT_FRIEND);
+
+		std::multimap<bdMetric, bdId>::iterator it;
+		for(it = nearest.begin(); it != nearest.end(); it++)
+		{
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Friend: ";
+			mFns->bdPrintId(std::cerr, &(it->second));
+			std::cerr << std::endl;
+#endif
+			connreq.mGoodProxies.push_back(it->second);
+		}
+	}
+
+
+	/* in relay mode - Good Proxies are the BackUp */
+	if (mode == BITDHT_CONNECT_MODE_RELAY)
+	{
+		for(pit = goodProxies.begin(); pit != goodProxies.end(); pit++)
+		{
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Good Proxy: ";
+			mFns->bdPrintId(std::cerr, &(*pit));
+			std::cerr << std::endl;
+#endif
+			connreq.mGoodProxies.push_back(*pit);
+		}
+	}
+
+	// Final Desperate Measures!
+	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
+	{
+		std::list<bdId> excluding;
+		std::multimap<bdMetric, bdId> nearest;
+	
+		int number = CONNECT_NUM_PROXY_ATTEMPTS;
+	
+		mNodeSpace->find_nearest_nodes_with_flags(target, number, excluding, nearest, 
+				BITDHT_PEER_STATUS_DHT_FOF);
+
+		std::multimap<bdMetric, bdId>::iterator it;
+		for(it = nearest.begin(); it != nearest.end(); it++)
+		{
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::requestConnection_proxy() Querying FOF: ";
+			mFns->bdPrintId(std::cerr, &(it->second));
+			std::cerr << std::endl;
+#endif
+			//connreq.mGoodProxies.push_back(it->second);
+			mPub->send_query(&(it->second), target);
 		}
 	}
 
@@ -397,7 +522,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 
 			mPub->send_ping(&(*pit));
 
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::requestConnection_proxy() Pinging Potential Proxy";
 			mFns->bdPrintId(std::cerr, &(*pit));
 			std::cerr << std::endl;
@@ -405,6 +530,12 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		}
 	}
 
+	/*** ORIGINAL CODE - TRIES TO PING/SEARCH PEERS - INSTEAD OF JUST TRYING THEM
+	 * NOT SURE WHAT THE BEST PLAN IS.....
+	 * LEAVE THIS CODE HERE FOR REFERENCE....
+	 ***/
+
+#if 0
 	// Final Desperate Measures!
 	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
 	{
@@ -446,6 +577,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 			mPub->send_query(&(it->second), target);
 		}
 	}
+#endif
 
 
 	if (connreq.mGoodProxies.size() < 1)
@@ -456,7 +588,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 
 	if (connreq.mGoodProxies.size() < MIN_START_PROXY_COUNT)
 	{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 		std::cerr << "bdConnectManager::requestConnection_proxy() WARNING initial proxyList.size() == SMALL PAUSING";
 		std::cerr << std::endl;
 #endif
@@ -467,7 +599,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		connreq.mPauseTS = now + BITDHT_CR_PAUSE_START_PERIOD; 
 	}
 
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 	std::cerr << "bdConnectManager::requestConnection_proxy() CRINITSTATE Init Connection State";
 	std::cerr << std::endl;
 	std::cerr << connreq;
@@ -480,6 +612,9 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	
 	return 1;
 }
+
+
+
 
 void bdConnectManager::addPotentialConnectionProxy(const bdId *srcId, const bdId *target)
 {

@@ -655,15 +655,23 @@ void bdNode::processRemoteQuery()
 				case BD_QUERY_NEIGHBOURS:
 				{
 					/* search bdSpace for neighbours */
-						//std::list<bdId> excludeList;
 					
 						std::list<bdId> nearList;
         				std::multimap<bdMetric, bdId> nearest;
         				std::multimap<bdMetric, bdId>::iterator it;
 
-						//mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, excludeList, nearest, 0);
 
+					if (mRelayMode == BITDHT_RELAYS_SERVER)
+					{
+						std::list<bdId> excludeList;
+						mNodeSpace.find_nearest_nodes_with_flags(&(query.mQuery), 
+							BITDHT_QUERY_NEIGHBOUR_PEERS, 
+							excludeList, nearest, BITDHT_PEER_STATUS_DHT_RELAY_SERVER);
+					}
+					else
+					{
 						mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, nearest);
+					}
 
         				for(it = nearest.begin(); it != nearest.end(); it++)
         				{
