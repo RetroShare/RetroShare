@@ -29,8 +29,6 @@
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
 
-//#include "pqi/p3dhtmgr.h"
-//#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
 
 #include "pqi/p3cfgmgr.h"
@@ -40,22 +38,47 @@
 class ExtAddrFinder ;
 class DNSResolver ;
 
-/* order of attempts ... */
-const uint32_t RS_NET_CONN_TCP_ALL 		= 0x000f;
-const uint32_t RS_NET_CONN_UDP_ALL 		= 0x00f0;
-const uint32_t RS_NET_CONN_TUNNEL 		= 0x0f00;
+/******************* FLAGS that are passed to p3LinkMgr *****
+ * TRANSPORT: TCP/UDP/TUNNEL.
+ * TYPE: SERVER / PEER.
+ * LINK QUALITY: LIMITED, NORMAL, HIGH_SPEED.
+ */
 
-const uint32_t RS_NET_CONN_TCP_LOCAL 		= 0x0001;
-const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
-const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY	= 0x0004;
-const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
-const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
+// CONNECTION 
+const uint32_t RS_NET_CONN_TRANS_MASK 			= 0x0000ffff;
+const uint32_t RS_NET_CONN_TRANS_TCP_MASK 		= 0x0000000f;
+const uint32_t RS_NET_CONN_TRANS_TCP_UNKNOWN 		= 0x00000001;
+const uint32_t RS_NET_CONN_TRANS_TCP_LOCAL 		= 0x00000002;
+const uint32_t RS_NET_CONN_TRANS_TCP_EXTERNAL 		= 0x00000004;
 
-/* extra flags */
-// not sure if needed yet.
-//const uint32_t RS_NET_CONN_PEERAGE 		= 0x0f00;
-//const uint32_t RS_NET_CONN_SERVER		= 0x0100; /* TCP only */
-//const uint32_t RS_NET_CONN_PEER			= 0x0200; /* all UDP */
+const uint32_t RS_NET_CONN_TRANS_UDP_MASK 		= 0x000000f0;
+const uint32_t RS_NET_CONN_TRANS_UDP_UNKNOWN 		= 0x00000010;
+const uint32_t RS_NET_CONN_TRANS_UDP_DIRECT 		= 0x00000020;
+const uint32_t RS_NET_CONN_TRANS_UDP_PROXY 		= 0x00000040;
+const uint32_t RS_NET_CONN_TRANS_UDP_RELAY 		= 0x00000080;
+
+const uint32_t RS_NET_CONN_TRANS_OTHER_MASK 		= 0x00000f00;
+const uint32_t RS_NET_CONN_TRANS_TUNNEL 		= 0x00000100;
+
+
+const uint32_t RS_NET_CONN_SPEED_MASK			= 0x000f0000;
+const uint32_t RS_NET_CONN_SPEED_UNKNOWN		= 0x00000000;
+const uint32_t RS_NET_CONN_SPEED_LOW			= 0x00010000;
+const uint32_t RS_NET_CONN_SPEED_NORMAL			= 0x00020000;
+const uint32_t RS_NET_CONN_SPEED_HIGH			= 0x00040000;
+
+const uint32_t RS_NET_CONN_QUALITY_MASK			= 0x00f00000;
+const uint32_t RS_NET_CONN_QUALITY_UNKNOWN		= 0x00000000;
+
+// THIS INFO MUST BE SUPPLIED BY PEERMGR....
+// Don't know if it should be here.
+const uint32_t RS_NET_CONN_TYPE_MASK			= 0x0f000000;
+const uint32_t RS_NET_CONN_TYPE_UNKNOWN			= 0x00000000;
+const uint32_t RS_NET_CONN_TYPE_ACQUAINTANCE		= 0x01000000;
+const uint32_t RS_NET_CONN_TYPE_FRIEND			= 0x02000000;
+const uint32_t RS_NET_CONN_TYPE_SERVER			= 0x04000000;
+const uint32_t RS_NET_CONN_TYPE_CLIENT			= 0x08000000;
+
 
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
 const uint32_t RS_UDP_STD_TIMEOUT_PERIOD	= 80; /* 80 secs, allows UDP TTL to get to 40! - Plenty of time (30+80) = 110 secs */
@@ -95,35 +118,16 @@ class peerConnectState
 	peerConnectState(); /* init */
 
 	std::string id;
-	//std::string gpg_id;
-
-	//uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
-	//uint32_t visState; /* STD, GRAY, DARK */	
-
-	//struct sockaddr_in localaddr, serveraddr;
-
-        //used to store current ip (for config and connection management)
-	//struct sockaddr_in currentlocaladdr;             /* Mandatory */
-	//struct sockaddr_in currentserveraddr;            /* Mandatory */
-        //std::string dyndns;
-
-
-	/* list of addresses from various sources */
-	//pqiIpAddrSet ipAddrs;
 
 	/***** Below here not stored permanently *****/
 
 	bool dhtVisible;
-
-        //time_t lastcontact; 
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
         time_t lastavailable;
 	time_t lastattempt;
 
 	std::string name;
-
-        //std::string location;
 
 	uint32_t    state;
 	uint32_t    actions;

@@ -33,6 +33,8 @@
 
 /******************** notify of new Cert **************************/
 
+#include "util/rswin.h"
+
 #include <openssl/evp.h>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>

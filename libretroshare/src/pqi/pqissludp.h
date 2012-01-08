@@ -28,6 +28,8 @@
 #ifndef MRK_PQI_SSL_UDP_HEADER
 #define MRK_PQI_SSL_UDP_HEADER
 
+#include "util/rswin.h"
+
 #include <openssl/ssl.h>
 
 // operating system specific network header.
@@ -65,6 +67,8 @@ virtual int listen();
 virtual int stoplistening();
 virtual int tick();
 virtual int reset();
+
+//virtual int getConnectFlags(uint32_t &flags);
 
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 virtual bool connect_additional_address(uint32_t type, struct sockaddr_in *addr);
