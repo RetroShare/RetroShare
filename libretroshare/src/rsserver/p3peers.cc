@@ -391,7 +391,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	if (pcs.state & RS_PEER_S_UNREACHABLE)
 		d.state |= RS_PEER_STATE_UNREACHABLE;
 
-
+	d.linkType = pcs.linkType;
 
 	/* Finally determine AutoConnect Status */
 	d.foundDHT = pcs.dht.found;

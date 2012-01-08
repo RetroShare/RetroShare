@@ -68,8 +68,6 @@ virtual int stoplistening();
 virtual int tick();
 virtual int reset();
 
-//virtual int getConnectFlags(uint32_t &flags);
-
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 virtual bool connect_additional_address(uint32_t type, struct sockaddr_in *addr);
 

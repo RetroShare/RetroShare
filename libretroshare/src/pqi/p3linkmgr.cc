@@ -43,7 +43,9 @@ const int p3connectzone = 3431;
 
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
+
 #include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 
 #include <sstream>
 
@@ -207,6 +209,28 @@ bool    p3LinkMgrIMPL::isOnline(const std::string &ssl_id)
 	}
 	return false;
 }
+
+
+
+uint32_t p3LinkMgrIMPL::getLinkType(const std::string &ssl_id)
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+        std::map<std::string, peerConnectState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return 0;
+	}
+
+	if (it->second.state & RS_PEER_S_CONNECTED)
+	{
+		return it->second.linkType;
+	}
+	return 0;
+}
+
+
 
 void    p3LinkMgrIMPL::getOnlineList(std::list<std::string> &ssl_peers)
 {
@@ -654,11 +678,82 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 	srcaddr = it->second.currentConnAddrAttempt.srcaddr;
 	bandwidth = it->second.currentConnAddrAttempt.bandwidth;
 
+	/********* Setup LinkType parameters **********/
+
+#define TRICKLE_LIMIT		2001		// 2kb
+#define LOW_BANDWIDTH_LIMIT	5001		// 5kb
+
+	it->second.linkType = 0;
+	if (type & RS_NET_CONN_TCP_ALL)
+	{
+		it->second.linkType |= RS_NET_CONN_TRANS_TCP_UNKNOWN;
+	}
+	else if (type & RS_NET_CONN_UDP_ALL)
+	{
+		if (flags & RS_CB_FLAG_MODE_UDP_DIRECT)
+		{
+			it->second.linkType |= RS_NET_CONN_TRANS_UDP_DIRECT;
+		}
+		else if (flags & RS_CB_FLAG_MODE_UDP_PROXY)
+		{
+			it->second.linkType |= RS_NET_CONN_TRANS_UDP_PROXY;
+		}
+		else if (flags & RS_CB_FLAG_MODE_UDP_RELAY)
+		{
+			it->second.linkType |= RS_NET_CONN_TRANS_UDP_RELAY;
+		}
+		else 
+		{
+			it->second.linkType |= RS_NET_CONN_TRANS_UDP_UNKNOWN;
+		}
+	}
+	else if (type & RS_NET_CONN_TUNNEL)
+	{
+		it->second.linkType |= RS_NET_CONN_TRANS_TUNNEL;
+	}
+	else
+	{
+		it->second.linkType |= RS_NET_CONN_TRANS_UNKNOWN;
+	}
+
+	if (flags & RS_CB_FLAG_MODE_UDP_RELAY)
+	{
+		if (bandwidth < TRICKLE_LIMIT)
+		{
+			it->second.linkType |= RS_NET_CONN_SPEED_TRICKLE;
+		}
+		else if (bandwidth < LOW_BANDWIDTH_LIMIT)
+		{
+			it->second.linkType |= RS_NET_CONN_SPEED_LOW;
+		}
+		else
+		{
+			it->second.linkType |= RS_NET_CONN_SPEED_NORMAL;
+		}
+	}
+	else
+	{ 
+		it->second.linkType |= RS_NET_CONN_SPEED_NORMAL;
+	}
+
+	uint32_t connType = mPeerMgr->getConnectionType(id);
+	it->second.linkType |= connType;
+
+	/********* Setup LinkType parameters **********/
+
+	// TEMP DEBUG.
+        std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;
+	std::cerr << " laddr: " << rs_inet_ntoa(raddr.sin_addr) << " lport: " << ntohs(raddr.sin_port) << " delay: " << delay << " period: " << period;
+	std::cerr << " type: " << type << std::endl;
+	std::cerr << "p3LinkMgrIMPL::connectAttempt() set LinkType to: " << it->second.linkType << std::endl;
+
+
 
 #ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;
 		std::cerr << " laddr: " << rs_inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
 		std::cerr << " type: " << type << std::endl;
+        	std::cerr << "p3LinkMgrIMPL::connectAttempt() set LinkType to: " << it->second.linkType << std::endl;
 #endif
         if (raddr.sin_addr.s_addr == 0 || raddr.sin_port == 0) {
 #ifdef LINKMGR_DEBUG
@@ -1485,9 +1580,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 	        std::map<std::string, peerConnectState>::iterator it;
 		if (mFriendList.end() != (it = mFriendList.find(id)))
 		{
-
 			locked_ConnectAttempt_CurrentAddresses(&(it->second), &lAddr, &eAddr);
-			locked_ConnectAttempt_HistoricalAddresses(&(it->second), histAddrs);
 
 			uint16_t dynPort = ntohs(eAddr.sin_port);
 			if (!dynPort)
@@ -1496,6 +1589,8 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 			{
 				locked_ConnectAttempt_AddDynDNS(&(it->second), dyndns, dynPort);
 			}
+
+			locked_ConnectAttempt_HistoricalAddresses(&(it->second), histAddrs);
 
 			//locked_ConnectAttempt_AddTunnel(&(it->second));
 	

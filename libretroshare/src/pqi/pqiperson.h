@@ -74,8 +74,8 @@ virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> co
 virtual bool 	connect_additional_address(uint32_t type, struct sockaddr_in *addr) { return ni -> connect_additional_address(type, addr);}
 
 
+
 virtual int     getConnectAddress(struct sockaddr_in &raddr){ return ni->getConnectAddress(raddr); }
-virtual int     getConnectFlags(uint32_t &flags){ return ni->getConnectFlags(flags); }
 
 	// get the contact from the net side!
 virtual std::string PeerId()
@@ -138,6 +138,7 @@ int 	notifyEvent(NetInterface *ni, int event);
 // PQInterface for rate control overloaded....
 virtual float   getRate(bool in);
 virtual void    setMaxRate(bool in, float val);
+virtual void    setRateCap(float val_in, float val_out);
 
 pqiconnect *getKid(uint32_t type);
 

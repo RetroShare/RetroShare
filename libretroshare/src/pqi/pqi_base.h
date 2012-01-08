@@ -116,7 +116,7 @@ virtual void	setRateCap(float val_in, float val_out)
 	else
 	{
         	std::cerr << "RateInterface::setRateCap() Enabled ";
-        	std::cerr << "in: " << bwCap_in << " out: " << bwCap_out" << std::endl;
+        	std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
 		bwCapEnabled = true;
 		bwCap_in = val_in;
 		bwCap_out = val_out;
@@ -319,7 +319,6 @@ virtual int disconnect() = 0;
 virtual int reset() = 0;
 virtual std::string PeerId() { return peerId; }
 virtual int getConnectAddress(struct sockaddr_in &raddr) = 0;
-virtual int getConnectFlags(uint32_t &flags) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
 virtual bool connect_additional_address(uint32_t /*type*/, struct sockaddr_in */*addr*/) { return false; } // only needed by udp.

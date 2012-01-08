@@ -189,7 +189,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	  	out << i << " of " << kids.size();
 	  	out << std::endl;
 		out << " type: " << (it->first);
-		out << " ni: " << (it->second)->ni;
+		//out << " ni: " << (it->second)->ni;
 		out << " in_ni: " << ni;
 	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 		i++;

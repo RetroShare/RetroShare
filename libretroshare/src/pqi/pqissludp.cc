@@ -279,7 +279,6 @@ int 	pqissludp::Initiate_Connection()
 
 			// Then send unreachable message.
 			waiting = WAITING_FAIL_INTERFACE;
-			net_unreachable |= net_attempt;
 		}
 
 		out << "Error: Connection Failed: " << tou_err;
@@ -364,8 +363,6 @@ int 	pqissludp::Basic_Connection_Complete()
 			out2 << "Error: Connection Failed: " << err;
 			out2 << " - " << socket_errorType(err);
 	  		rslog(RSL_DEBUG_BASIC, pqissludpzone, out2.str());
-
-			net_unreachable |= net_attempt;
 
 			reset();
 

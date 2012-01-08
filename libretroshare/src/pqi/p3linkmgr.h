@@ -38,47 +38,17 @@
 class ExtAddrFinder ;
 class DNSResolver ;
 
-/******************* FLAGS that are passed to p3LinkMgr *****
- * TRANSPORT: TCP/UDP/TUNNEL.
- * TYPE: SERVER / PEER.
- * LINK QUALITY: LIMITED, NORMAL, HIGH_SPEED.
- */
 
-// CONNECTION 
-const uint32_t RS_NET_CONN_TRANS_MASK 			= 0x0000ffff;
-const uint32_t RS_NET_CONN_TRANS_TCP_MASK 		= 0x0000000f;
-const uint32_t RS_NET_CONN_TRANS_TCP_UNKNOWN 		= 0x00000001;
-const uint32_t RS_NET_CONN_TRANS_TCP_LOCAL 		= 0x00000002;
-const uint32_t RS_NET_CONN_TRANS_TCP_EXTERNAL 		= 0x00000004;
-
-const uint32_t RS_NET_CONN_TRANS_UDP_MASK 		= 0x000000f0;
-const uint32_t RS_NET_CONN_TRANS_UDP_UNKNOWN 		= 0x00000010;
-const uint32_t RS_NET_CONN_TRANS_UDP_DIRECT 		= 0x00000020;
-const uint32_t RS_NET_CONN_TRANS_UDP_PROXY 		= 0x00000040;
-const uint32_t RS_NET_CONN_TRANS_UDP_RELAY 		= 0x00000080;
-
-const uint32_t RS_NET_CONN_TRANS_OTHER_MASK 		= 0x00000f00;
-const uint32_t RS_NET_CONN_TRANS_TUNNEL 		= 0x00000100;
-
-
-const uint32_t RS_NET_CONN_SPEED_MASK			= 0x000f0000;
-const uint32_t RS_NET_CONN_SPEED_UNKNOWN		= 0x00000000;
-const uint32_t RS_NET_CONN_SPEED_LOW			= 0x00010000;
-const uint32_t RS_NET_CONN_SPEED_NORMAL			= 0x00020000;
-const uint32_t RS_NET_CONN_SPEED_HIGH			= 0x00040000;
-
-const uint32_t RS_NET_CONN_QUALITY_MASK			= 0x00f00000;
-const uint32_t RS_NET_CONN_QUALITY_UNKNOWN		= 0x00000000;
-
-// THIS INFO MUST BE SUPPLIED BY PEERMGR....
-// Don't know if it should be here.
-const uint32_t RS_NET_CONN_TYPE_MASK			= 0x0f000000;
-const uint32_t RS_NET_CONN_TYPE_UNKNOWN			= 0x00000000;
-const uint32_t RS_NET_CONN_TYPE_ACQUAINTANCE		= 0x01000000;
-const uint32_t RS_NET_CONN_TYPE_FRIEND			= 0x02000000;
-const uint32_t RS_NET_CONN_TYPE_SERVER			= 0x04000000;
-const uint32_t RS_NET_CONN_TYPE_CLIENT			= 0x08000000;
-
+/* order of attempts ... */
+const uint32_t RS_NET_CONN_TCP_ALL             = 0x000f;
+const uint32_t RS_NET_CONN_UDP_ALL             = 0x00f0;
+const uint32_t RS_NET_CONN_TUNNEL              = 0x0f00;
+ 
+const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
+const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
+const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
+const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */
 
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
 const uint32_t RS_UDP_STD_TIMEOUT_PERIOD	= 80; /* 80 secs, allows UDP TTL to get to 40! - Plenty of time (30+80) = 110 secs */
@@ -131,6 +101,7 @@ class peerConnectState
 
 	uint32_t    state;
 	uint32_t    actions;
+	uint32_t    linkType;
 
 	uint32_t		source; /* most current source */
 	peerAddrInfo		dht;
@@ -174,6 +145,7 @@ virtual const 	std::string getOwnId() = 0;
 virtual bool  	isOnline(const std::string &ssl_id) = 0;
 virtual void  	getOnlineList(std::list<std::string> &ssl_peers) = 0;
 virtual bool  	getPeerName(const std::string &ssl_id, std::string &name) = 0;
+virtual uint32_t getLinkType(const std::string &ssl_id) = 0;
 
 	/**************** handle monitors *****************/
 virtual void	addMonitor(pqiMonitor *mon) = 0;
@@ -230,6 +202,7 @@ virtual const 	std::string getOwnId();
 virtual bool  	isOnline(const std::string &ssl_id);
 virtual void  	getOnlineList(std::list<std::string> &ssl_peers);
 virtual bool  	getPeerName(const std::string &ssl_id, std::string &name);
+virtual uint32_t getLinkType(const std::string &ssl_id);
 
 
 	/**************** handle monitors *****************/
