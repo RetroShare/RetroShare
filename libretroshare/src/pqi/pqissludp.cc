@@ -251,6 +251,7 @@ int 	pqissludp::Initiate_Connection()
 		std::cerr << remote_addr << ")" << std::endl;
 
                 tou_connect_via_relay(sockfd, &(mConnectSrcAddr), &(mConnectProxyAddr), &(remote_addr));
+		parent()->setRateCap( mConnectBandwidth / 1000.0, mConnectBandwidth / 1000.0); // Set RateCap.
 	}
 
 	if (0 != err)

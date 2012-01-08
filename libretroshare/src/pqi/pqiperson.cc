@@ -431,6 +431,9 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::connect reset() before connection attempt");
 	(it->second)->reset();
 
+	std::cerr << "pqiperson::connect() WARNING, clearing rate cap" << std::endl;
+	setRateCap(0,0);
+
 #ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
 #endif
@@ -488,4 +491,18 @@ void    pqiperson::setMaxRate(bool in, float val)
 		(it->second) -> setMaxRate(in, val);
 	}
 }
+
+void    pqiperson::setRateCap(float val_in, float val_out)
+{
+	// set to all of them. (and us)
+	PQInterface::setRateCap(val_in, val_out);
+	// clean up the children.
+	std::map<uint32_t, pqiconnect *>::iterator it;
+	for(it = kids.begin(); it != kids.end(); it++)
+	{
+		(it->second) -> setRateCap(val_in, val_out);
+	}
+}
+
+
 
