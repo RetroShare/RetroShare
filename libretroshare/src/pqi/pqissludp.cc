@@ -245,6 +245,11 @@ int 	pqissludp::Initiate_Connection()
 	}
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
 	{
+		std::cerr << "Calling tou_connect_via_relay(";
+		std::cerr << mConnectSrcAddr << ",";
+		std::cerr << mConnectProxyAddr << ",";
+		std::cerr << remote_addr << ")" << std::endl;
+
                 tou_connect_via_relay(sockfd, &(mConnectSrcAddr), &(mConnectProxyAddr), &(remote_addr));
 	}
 
@@ -470,6 +475,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectPeriod = value;
+		std::cerr << out.str() << std::endl;
 		return true;
 	}
 	else if (type == NET_PARAM_CONNECT_FLAGS)
@@ -479,6 +485,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectFlags = value;
+		std::cerr << out.str() << std::endl;
 		return true;
 	}
 	else if (type == NET_PARAM_CONNECT_BANDWIDTH)
@@ -488,6 +495,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectBandwidth = value;
+		std::cerr << out.str() << std::endl;
 		return true;
 	}
 	return pqissl::connect_parameter(type, value);
@@ -495,8 +503,6 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 
 bool pqissludp::connect_additional_address(uint32_t type, struct sockaddr_in *addr)
 {
-        struct sockaddr_in mConnectProxyAddr;
-        struct sockaddr_in mConnectSrcAddr;
 	if (type == NET_PARAM_CONNECT_PROXY)
 	{
 		std::ostringstream out;
