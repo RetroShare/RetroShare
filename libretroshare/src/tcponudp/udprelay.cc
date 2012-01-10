@@ -27,7 +27,8 @@
 #include <iostream>
 
 /*
- * #define DEBUG_UDP_RELAY 1
+ * #define DEBUG_UDP_RELAY 		1
+ * #define DEBUG_UDP_RELAY_PKTS		1
  */
 
 #define DEBUG_UDP_RELAY 1
@@ -211,6 +212,12 @@ int UdpRelayReceiver::getRelayProxies(std::list<UdpRelayProxy> &relayProxies)
 
 int UdpRelayReceiver::checkRelays()
 {
+
+#ifdef DEBUG_UDP_RELAY
+	// As this locks - must be out of the Mutex.
+	status(std::cerr);
+#endif
+
         RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
 
 	/* iterate through the Relays */
@@ -318,6 +325,7 @@ int UdpRelayReceiver::checkRelays()
 	{
 		removeUdpRelay_relayLocked(&(*it));
 	}
+
 	return 1;
 }
 
@@ -599,6 +607,16 @@ int UdpRelayReceiver::RelayStatus(std::ostream &out)
 		out << "\tDataSize: " << rit->second.mDataSize;
 		out << "\tLastBandwidthTS: " << rit->second.mLastBandwidthTS;
 	}
+
+	out << "ClassLimits:" << std::endl;
+	for(int i = 0; i < UDP_RELAY_NUM_CLASS; i++)
+	{
+		out << "ClassLimit[" << i << "] = " << mClassLimit[i] << std::endl;
+		out << "ClassCount[" << i << "] = " << mClassCount[i] << std::endl;
+		out << "ClassBandwidth[" << i << "] = " << mClassBandwidth[i] << std::endl;
+		out << std::endl;
+	}
+
 	return 1;
 }
 	
@@ -610,19 +628,44 @@ int     UdpRelayReceiver::status(std::ostream &out)
 
 	RelayStatus(out);
 
-	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
-
-	out << "UdpRelayReceiver::Connections:" << std::endl;
-
-	std::map<struct sockaddr_in, UdpRelayEnd>::iterator pit;
-	for(pit = mStreams.begin(); pit != mStreams.end(); pit++)
 	{
-		out << "\t" << pit->first << " : " << pit->second;
-		out << std::endl;
+		RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
+
+		out << "UdpRelayReceiver::Connections:" << std::endl;
+
+		std::map<struct sockaddr_in, UdpRelayEnd>::iterator pit;
+		for(pit = mStreams.begin(); pit != mStreams.end(); pit++)
+		{
+			out << "\t" << pit->first << " : " << pit->second;
+			out << std::endl;
+		}
 	}
+
+	UdpPeersStatus(out);
 
 	return 1;
 }
+
+int UdpRelayReceiver::UdpPeersStatus(std::ostream &out)
+{
+        RsStackMutex stack(udppeerMtx);   /********** LOCK MUTEX *********/
+
+	/* iterate through the Relays */
+	out << "UdpRelayReceiver::UdpPeersStatus()";
+	out << std::endl;
+
+        std::map<struct sockaddr_in, UdpPeer *>::iterator pit;
+	for(pit = mPeers.begin(); pit != mPeers.end(); pit++)
+	{
+		out << "UdpPeer for: " << pit->first;
+		out << " is: " << pit->second;
+		out << std::endl;
+	}
+	return 1;
+}
+
+
+
 
 #define UDP_RELAY_HEADER_SIZE 16
 
@@ -633,7 +676,7 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 	(void) from;
 
 	/* print packet information */
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_PKTS
 	std::cerr << "UdpRelayReceiver::recvPkt(" << size << ") from: " << from;
 	std::cerr << std::endl;
 	displayUdpRelayPacketHeader(data, size);
@@ -642,7 +685,7 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
  
 	if (!isUdpRelayPacket(data, size))
 	{
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_PKTS
 		std::cerr << "UdpRelayReceiver::recvPkt() is Not RELAY Pkt";
 		std::cerr << std::endl;
 #endif
@@ -665,11 +708,11 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 		if (rit != mRelays.end())
 		{
 			/* we are the relay */
-	#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_PKTS
 			std::cerr << "UdpRelayReceiver::recvPkt() We are the Relay. Passing onto: ";
 			std::cerr << rit->first.mDestAddr;
 			std::cerr << std::endl;
-	#endif
+#endif
 			/* do accounting */
 			rit->second.mLastTS = time(NULL);
 			rit->second.mDataSize += size;
@@ -690,11 +733,11 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 		if (pit != mPeers.end())
 		{
 			/* we are the end-point */
-	#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_PKTS
 			std::cerr << "UdpRelayReceiver::recvPkt() Sending to UdpPeer: ";
 			std::cerr << pit->first;
 			std::cerr << std::endl;
-	#endif
+#endif
 			/* remove the header */
 			void *pktdata = (void *) (((uint8_t *) data) + UDP_RELAY_HEADER_SIZE);
 			int   pktsize = size - UDP_RELAY_HEADER_SIZE;
@@ -705,10 +748,10 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 			else
 			{
 				/* packet undersized */
-	#ifdef DEBUG_UDP_RELAY
+//#ifdef DEBUG_UDP_RELAY
 				std::cerr << "UdpRelayReceiver::recvPkt() ERROR Packet Undersized";
 				std::cerr << std::endl;
-	#endif
+//#endif
 			}
 			return 1;
 		}
@@ -716,10 +759,10 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 	}
 
 	/* unknown */
-#ifdef DEBUG_UDP_RELAY
+//#ifdef DEBUG_UDP_RELAY
 	std::cerr << "UdpRelayReceiver::recvPkt() Peer Unknown!";
 	std::cerr << std::endl;
-#endif
+//#endif
 	return 0;
 }
 
@@ -743,7 +786,7 @@ int UdpRelayReceiver::sendPkt(const void *data, int size, const struct sockaddr_
 		return 0;
 	}
 	
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_PKTS
 	std::cerr << "UdpRelayReceiver::sendPkt() to Relay: " << it->second;
 	std::cerr << std::endl;
 #endif

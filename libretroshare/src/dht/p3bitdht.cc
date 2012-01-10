@@ -96,6 +96,8 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
         mOwnRsId = id;
 
+	mMinuteTS = 0; 
+
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::p3BitDht()" << std::endl;
 	std::cerr << "Using Id: " << id;

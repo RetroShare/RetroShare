@@ -110,9 +110,9 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure);
 //#define UDP_RELAY_LIFETIME_FOF	360	// 6 minutes.
 //#define UDP_RELAY_LIFETIME_FRIENDS	720 	// 12 minutes.
 
-#define UDP_RELAY_LIFETIME_GENERAL	1800	// 30 minutes
-#define UDP_RELAY_LIFETIME_FOF		3600	// 1 Hour.
-#define UDP_RELAY_LIFETIME_FRIENDS	7200 	// 2 Hour.
+#define UDP_RELAY_LIFETIME_GENERAL	3600	// 1 hour (chosen so we at least transfer 1 or 2 meg at lowest speed)
+#define UDP_RELAY_LIFETIME_FOF		7200	// 2 Hours.
+#define UDP_RELAY_LIFETIME_FRIENDS	14400 	// 4 Hours.
 
 #define STD_RELAY_TTL	64
 
@@ -157,6 +157,7 @@ virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
 virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, int ttl);
 
 int     status(std::ostream &out);
+int 	UdpPeersStatus(std::ostream &out);
 
 	private:
 
