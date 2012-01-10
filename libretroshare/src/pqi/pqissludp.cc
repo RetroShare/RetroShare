@@ -251,7 +251,18 @@ int 	pqissludp::Initiate_Connection()
 		std::cerr << remote_addr << ")" << std::endl;
 
                 tou_connect_via_relay(sockfd, &(mConnectSrcAddr), &(mConnectProxyAddr), &(remote_addr));
-		parent()->setRateCap( mConnectBandwidth / 1000.0, mConnectBandwidth / 1000.0); // Set RateCap.
+
+/*** It seems that the UDP Layer sees x 1.2 the traffic of the SSL layer.
+ * We need to compensate somewhere... we drop the maximum traffic to 75% of limit
+ * to allow for extra lost packets etc.
+ * NB: If we have a lossy UDP transmission - re-transmission could cause excessive data to 
+ * exceed the limit... This is difficult to account for without hacking the TcpOnUdp layer.
+ * If it is noticed as a problem - we'll deal with it then
+ */
+#define UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR (0.7)
+
+		parent()->setRateCap( UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0, 
+				UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0); // Set RateCap.
 	}
 
 	if (0 != err)
