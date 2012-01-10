@@ -223,11 +223,19 @@ int UdpRelayReceiver::checkRelays()
 	std::list<UdpRelayAddrSet> eraseList;
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
 	time_t now = time(NULL);
+
+#define BANDWIDTH_FILTER_K	(0.8)
 	
 	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
 	{
 		/* calc bandwidth */
-		rit->second.mBandwidth = rit->second.mDataSize / (float) (now - rit->second.mLastBandwidthTS);
+		//rit->second.mBandwidth = rit->second.mDataSize / (float) (now - rit->second.mLastBandwidthTS);
+		// Switch to a Low-Pass Filter to average it out.
+		float instantBandwidth = rit->second.mDataSize / (float) (now - rit->second.mLastBandwidthTS);
+	
+		rit->second.mBandwidth *= (BANDWIDTH_FILTER_K);
+		rit->second.mBandwidth += (1.0 - BANDWIDTH_FILTER_K) * instantBandwidth;
+
 		rit->second.mDataSize = 0;
 		rit->second.mLastBandwidthTS = now;
 
@@ -236,6 +244,18 @@ int UdpRelayReceiver::checkRelays()
 		std::cerr << "Relay: " << rit->first;
 		std::cerr << " using bandwidth: " << rit->second.mBandwidth;
 		std::cerr << std::endl;
+#endif
+
+		// ONLY A WARNING.
+#ifdef DEBUG_UDP_RELAY
+		if (instantBandwidth > rit->second.mBandwidthLimit)
+		{
+			std::cerr << "UdpRelayReceiver::checkRelays() ";
+			std::cerr << "Warning instantBandwidth: " << instantBandwidth;
+			std::cerr << " Exceeding Limit: " << rit->second.mBandwidthLimit;
+			std::cerr << " for Relay: " << rit->first;
+			std::cerr << std::endl;
+		}
 #endif
 
 		if (rit->second.mBandwidth > rit->second.mBandwidthLimit)
