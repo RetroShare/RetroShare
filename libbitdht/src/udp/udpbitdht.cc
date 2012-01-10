@@ -51,8 +51,8 @@
 
 // Original RS 0.5.0/0.5.1 version, is un-numbered.
 //#define BITDHT_VERSION			"00" // First Release of BitDHT with Connections (Proxy Support + Dht Stun)
-#define BITDHT_VERSION				"01" // Testing Connections 
-//#define BITDHT_VERSION			"02" // Completed? Full Connections 
+//#define BITDHT_VERSION			"01" // Testing Connections (Proxy Only)
+#define BITDHT_VERSION				"02" // Completed Relay Connections from svn 4766
 //#define BITDHT_VERSION			"04" // Full DHT implementation.?
 
 /*************************************/
