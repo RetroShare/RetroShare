@@ -122,6 +122,8 @@ class RsFiles
 		/***
 		 * Control of Downloads Priority.
 		 ***/
+		virtual uint32_t getMinPrioritizedTransfers() = 0 ;
+		virtual void setMinPrioritizedTransfers(uint32_t s) = 0 ;
 		virtual uint32_t getQueueSize() = 0 ;
 		virtual void setQueueSize(uint32_t s) = 0 ;
 		virtual bool changeQueuePosition(const std::string hash, QueueMove mv) = 0;

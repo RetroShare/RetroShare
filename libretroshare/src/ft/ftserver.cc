@@ -332,7 +332,14 @@ bool ftServer::FileClearCompleted()
 {
 	return mFtController->FileClearCompleted();
 }
-
+void ftServer::setMinPrioritizedTransfers(uint32_t s)
+{
+	mFtController->setMinPrioritizedTransfers(s) ;
+}
+uint32_t ftServer::getMinPrioritizedTransfers()
+{
+	return mFtController->getMinPrioritizedTransfers() ;
+}
 void ftServer::setQueueSize(uint32_t s)
 {
 	mFtController->setQueueSize(s) ;

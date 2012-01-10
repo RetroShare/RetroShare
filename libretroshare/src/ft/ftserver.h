@@ -139,6 +139,8 @@ virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 /***
  * Control of Downloads Priority.
  ***/
+virtual uint32_t getMinPrioritizedTransfers() ;
+virtual void setMinPrioritizedTransfers(uint32_t s) ;
 virtual uint32_t getQueueSize() ;
 virtual void setQueueSize(uint32_t s) ;
 virtual bool changeQueuePosition(const std::string hash, QueueMove queue_mv);

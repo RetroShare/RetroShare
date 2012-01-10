@@ -104,6 +104,7 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string /
 	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) 
 {
 	_max_active_downloads = 5 ; // default queue size
+	_min_prioritized_transfers = 3 ;
 	/* TODO */
 }
 
@@ -228,7 +229,7 @@ void ftController::run()
 		}
 
 		time_t now = time(NULL) ;
-		if((int)now - (int)last_save_time > (int)SAVE_TRANSFERS_DELAY)
+		if(now > last_save_time + SAVE_TRANSFERS_DELAY)
 		{
 			cleanCacheDownloads() ;
 
@@ -236,7 +237,7 @@ void ftController::run()
 			last_save_time = now ;
 		}
 
-		if((int)now - (int)last_clean_time > (int)INACTIVE_CHUNKS_CHECK_DELAY)
+		if(now > last_clean_time + INACTIVE_CHUNKS_CHECK_DELAY)
 		{
 			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -416,6 +417,37 @@ void ftController::checkDownloadQueue()
 			it->second->mCreator->resetRecvTimeStamp() ;	// very important!
 			++nb_moved ;
 		}
+
+	// Check that at least _min_prioritized_transfers are assigned to non cache transfers
+
+	std::cerr << "Asserting that at least " << _min_prioritized_transfers << " are dedicated to user transfers." << std::endl;
+
+	int user_transfers = 0 ;
+	std::vector<uint32_t> to_move_before ;	
+	std::vector<uint32_t> to_move_after ;
+
+	for(uint32_t p=0;p<_queue.size();++p)
+	{
+		if(p < _min_prioritized_transfers)
+			if(_queue[p]->mFlags & RS_FILE_HINTS_CACHE)		// cache file. add to potential move list
+				to_move_before.push_back(p) ;
+			else
+				++user_transfers ;									// count one more user file in the prioritized range.
+		else
+		{
+			if(to_move_after.size() + user_transfers >= _min_prioritized_transfers)	// we caught enough transfers to move back to the top of the queue.
+				break ;
+
+			if(!(_queue[p]->mFlags & RS_FILE_HINTS_CACHE))	// non cache file. add to potential move list
+				to_move_after.push_back(p) ;
+		}
+	}
+	uint32_t to_move = (uint32_t)std::max(0,(int)_min_prioritized_transfers - (int)user_transfers) ;	// we move as many transfers as needed to get _min_prioritized_transfers user transfers.
+
+	std::cerr << "  collected " << to_move << " transfers to move." << std::endl;
+
+	for(uint32_t i=0;i<to_move && i < to_move_after.size() && i<to_move_before.size();++i)
+		locked_swapQueue(to_move_before[i],to_move_after[i]) ;
 }
 
 void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
@@ -426,6 +458,10 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 
 	switch(add_strategy)
 	{
+		// Different strategies for files and cache files:
+		// 	- a min number of slots is reserved to user file transfer
+		// 	- cache files are always added after this slot.
+		//
 		case FT_FILECONTROL_QUEUE_ADD_END:			 _queue.push_back(ftfc) ;
 																 locked_checkQueueElement(_queue.size()-1) ;
 																 break ;
@@ -434,7 +470,7 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 																	 // We add the transfer just before the first non cache transfer.
 																	 //
 																	 uint32_t pos =0;
-																	 while(pos < _queue.size() && (_queue[pos]->mFlags & RS_FILE_HINTS_CACHE)>0) 
+																	 while(pos < _queue.size() && (pos < _min_prioritized_transfers || (_queue[pos]->mFlags & RS_FILE_HINTS_CACHE)>0) )
 																		 ++pos ;
 
 																	 _queue.push_back(NULL) ;
@@ -461,6 +497,18 @@ void ftController::locked_queueRemove(uint32_t pos)
 	}
 	_queue.pop_back();
 }
+
+void ftController::setMinPrioritizedTransfers(uint32_t s)
+{
+	RsStackMutex mtx(ctrlMutex) ;
+	_min_prioritized_transfers = s ;
+}
+uint32_t ftController::getMinPrioritizedTransfers()
+{
+	RsStackMutex mtx(ctrlMutex) ;
+	return _min_prioritized_transfers ;
+}
+
 
 void ftController::setQueueSize(uint32_t s)
 {
@@ -1829,6 +1877,7 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 }
 
 const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");
+const std::string min_prioritized_downl_ss("MIN_PRORITIZED_DOWNLOADS");
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
@@ -1860,6 +1909,9 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	std::list<std::string>::iterator it;
 
 	/* basic control parameters */
+	std::ostringstream strn ;
+	strn << getMinPrioritizedTransfers() ;
+	configMap[min_prioritized_downl_ss] = strn.str() ;
 	std::ostringstream strm ;
 	strm << getQueueSize() ;
 	configMap[active_downloads_size_ss] = strm.str() ;
@@ -2052,7 +2104,14 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		std::cerr << "Note: loading active max downloads: " << n << std::endl;
 		setQueueSize(n);
 	}
-
+	if (configMap.end() != (mit = configMap.find(min_prioritized_downl_ss)))
+	{
+		std::istringstream i(mit->second) ;
+		int n=3 ;
+		i >> n ;
+		std::cerr << "Note: loading min prioritized downloads: " << n << std::endl;
+		setMinPrioritizedTransfers(n);
+	}
 	if (configMap.end() != (mit = configMap.find(partial_dir_ss)))
 	{
 		setPartialsDirectory(mit->second);

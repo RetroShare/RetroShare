@@ -157,6 +157,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		void clearQueue() ;
 		void setQueueSize(uint32_t size) ;
 		uint32_t getQueueSize() ;
+		void setMinPrioritizedTransfers(uint32_t size) ;
+		uint32_t getMinPrioritizedTransfers() ;
 
 		/* get Details of File Transfers */
 		bool 	FileDownloads(std::list<std::string> &hashs);
@@ -255,6 +257,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		FileChunksInfo::ChunkStrategy mDefaultChunkStrategy ;
 
 		uint32_t _max_active_downloads ; // maximum number of simultaneous downloads
+		uint32_t _min_prioritized_transfers ; // min number of non cache transfers in the top of the queue.
 };
 
 #endif

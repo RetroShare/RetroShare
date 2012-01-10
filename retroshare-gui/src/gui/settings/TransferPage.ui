@@ -29,6 +29,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Slots reserved for non-cache transfers:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Default chunk strategy:</string>
@@ -59,6 +66,24 @@
             </property>
             <property name="value">
              <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="_minPrioritized_SB">
+            <property name="toolTip">
+             <string>You can use this to force RetroShare to download your files rather 
+than cache files for as many slots as requested. Setting that number 
+to be equal to the queue size above will always prioritize your files
+over cache. 
+
+It is however recommended to leave at least a few slots for cache files.</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>3</number>
             </property>
            </widget>
           </item>
