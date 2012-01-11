@@ -73,7 +73,7 @@ HEADERS +=	dht/p3bitdht.h \
 SOURCES +=	dht/p3bitdht.cc  \
 		dht/p3bitdht_interface.cc \
 		dht/p3bitdht_peers.cc \
-		dht/p3bitdht_peernet.cc \
+                dht/p3bitdht_peernet.cc \
 		dht/p3bitdht_relay.cc \
 		dht/connectstatebox.cc
 
@@ -158,7 +158,12 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \
-				serialiser/rspluginitems.h
+				serialiser/rspluginitems.h \
+    gxs/rsgxs.h \
+    gxs/rsgnp.h \
+    gxs/rsgdp.h \
+    util/rssqlite.h \
+    gxs/rsgixs.h
 
 HEADERS += $$PUBLIC_HEADERS
 
@@ -652,3 +657,17 @@ SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 }
 
+SOURCES += \
+    gxs/rsgxs.cpp
+
+SOURCES += \
+    gxs/rsgnp.cpp
+
+SOURCES += \
+    gxs/rsgdp.cpp
+
+SOURCES += \
+    util/rssqlite.cpp
+
+SOURCES += \
+    gxs/rsgixs.cpp
