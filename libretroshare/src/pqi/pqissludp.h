@@ -28,6 +28,8 @@
 #ifndef MRK_PQI_SSL_UDP_HEADER
 #define MRK_PQI_SSL_UDP_HEADER
 
+#include "util/rswin.h"
+
 #include <openssl/ssl.h>
 
 // operating system specific network header.

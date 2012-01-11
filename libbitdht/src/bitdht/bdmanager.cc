@@ -1434,3 +1434,26 @@ int bdDebugCallback::dhtConnectCallback(const bdId *srcId, const bdId *proxyId, 
 	return 1;
 }
 
+
+int bdDebugCallback::dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
+{
+	/* remove unused parameter warnings */
+	(void) id;
+	(void) type;
+	(void) flags;
+	(void) info;
+
+#ifdef DEBUG_MGR
+	std::cerr << "bdDebugCallback::dhtInfoCallback() Type: " << type;
+	std::cerr << " Id: ";
+	bdStdPrintId(std::cerr, id);
+	std::cerr << " flags: " << flags;
+	std::cerr << " info: " << info;
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
+
+
+

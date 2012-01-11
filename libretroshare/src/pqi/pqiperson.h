@@ -92,7 +92,7 @@ virtual std::string PeerId()
 
 	// to check if our interface.
 virtual bool	thisNetInterface(NetInterface *ni_in) { return (ni_in == ni); }
-//protected:
+protected:
 	NetBinInterface *ni;
 protected:
 };
@@ -138,6 +138,7 @@ int 	notifyEvent(NetInterface *ni, int event);
 // PQInterface for rate control overloaded....
 virtual float   getRate(bool in);
 virtual void    setMaxRate(bool in, float val);
+virtual void    setRateCap(float val_in, float val_out);
 
 pqiconnect *getKid(uint32_t type);
 

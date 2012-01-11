@@ -38,6 +38,7 @@
  *
  **/
 
+
 /* Have made the PROXY Attempts + MAX_TIME much larger, 
  * have have potential for this to take a while.
  */
@@ -46,18 +47,18 @@
 	#define FAILED_WAIT_TIME	(1800)  // 5 minutes.
 	#define TCP_WAIT_TIME		(10)   // 1/6 minutes.
 	#define DIRECT_MAX_WAIT_TIME	(30)   // 1/6 minutes.
-	#define PROXY_BASE_WAIT_TIME	(30)   // 1/6 minutes.
-	#define PROXY_MAX_WAIT_TIME	(120)   // 1/6 minutes.
+	#define PROXY_BASE_WAIT_TIME	(10)   // 30 // 1/6 minutes.
+	#define PROXY_MAX_WAIT_TIME	(30)  // 120 // 1/6 minutes.
 	#define RELAY_MAX_WAIT_TIME	(30)   // 1/6 minutes.
 	#define REVERSE_WAIT_TIME	(30)   // 1/2 minutes.
 
 	#define MAX_DIRECT_ATTEMPTS	(3)
-	#define MAX_PROXY_ATTEMPTS	(10)
+	#define MAX_PROXY_ATTEMPTS	(3)
 	#define MAX_RELAY_ATTEMPTS	(3)
 
 	#define MAX_DIRECT_FAILED_ATTEMPTS	(1)
 	#define MAX_PROXY_FAILED_ATTEMPTS	(2)
-	#define MAX_RELAY_FAILED_ATTEMPTS	(1)
+	#define MAX_RELAY_FAILED_ATTEMPTS	(2)
 #else
 	#define FAILED_WAIT_TIME	(1800) // 30 minutes.
 	#define TCP_WAIT_TIME		(60)   // 1 minutes.

@@ -245,7 +245,24 @@ int 	pqissludp::Initiate_Connection()
 	}
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
 	{
+		std::cerr << "Calling tou_connect_via_relay(";
+		std::cerr << mConnectSrcAddr << ",";
+		std::cerr << mConnectProxyAddr << ",";
+		std::cerr << remote_addr << ")" << std::endl;
+
                 tou_connect_via_relay(sockfd, &(mConnectSrcAddr), &(mConnectProxyAddr), &(remote_addr));
+
+/*** It seems that the UDP Layer sees x 1.2 the traffic of the SSL layer.
+ * We need to compensate somewhere... we drop the maximum traffic to 75% of limit
+ * to allow for extra lost packets etc.
+ * NB: If we have a lossy UDP transmission - re-transmission could cause excessive data to 
+ * exceed the limit... This is difficult to account for without hacking the TcpOnUdp layer.
+ * If it is noticed as a problem - we'll deal with it then
+ */
+#define UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR (0.7)
+
+		parent()->setRateCap( UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0, 
+				UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0); // Set RateCap.
 	}
 
 	if (0 != err)
@@ -273,7 +290,6 @@ int 	pqissludp::Initiate_Connection()
 
 			// Then send unreachable message.
 			waiting = WAITING_FAIL_INTERFACE;
-			net_unreachable |= net_attempt;
 		}
 
 		out << "Error: Connection Failed: " << tou_err;
@@ -358,8 +374,6 @@ int 	pqissludp::Basic_Connection_Complete()
 			out2 << "Error: Connection Failed: " << err;
 			out2 << " - " << socket_errorType(err);
 	  		rslog(RSL_DEBUG_BASIC, pqissludpzone, out2.str());
-
-			net_unreachable |= net_attempt;
 
 			reset();
 
@@ -470,6 +484,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectPeriod = value;
+		std::cerr << out.str() << std::endl;
 		return true;
 	}
 	else if (type == NET_PARAM_CONNECT_FLAGS)
@@ -479,6 +494,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectFlags = value;
+		std::cerr << out.str() << std::endl;
 		return true;
 	}
 	else if (type == NET_PARAM_CONNECT_BANDWIDTH)
@@ -488,6 +504,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		mConnectBandwidth = value;
+		std::cerr << out.str() << std::endl;
 		return true;
 	}
 	return pqissl::connect_parameter(type, value);
@@ -495,8 +512,6 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 
 bool pqissludp::connect_additional_address(uint32_t type, struct sockaddr_in *addr)
 {
-        struct sockaddr_in mConnectProxyAddr;
-        struct sockaddr_in mConnectSrcAddr;
 	if (type == NET_PARAM_CONNECT_PROXY)
 	{
 		std::ostringstream out;

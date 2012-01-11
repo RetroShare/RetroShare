@@ -32,7 +32,6 @@
  **/
 
 
-
 /******************************************************************************************
  ************************************* Dht Callback ***************************************
  ******************************************************************************************/
@@ -1087,6 +1086,7 @@ int p3BitDht::tick()
 }
 
 #define MINUTE_IN_SECS	60
+#define TEN_IN_SECS	10
 
 int p3BitDht::minuteTick()
 {
@@ -1098,7 +1098,8 @@ int p3BitDht::minuteTick()
 		deltaT = now-mMinuteTS;
 	}
 	
-	if (deltaT > MINUTE_IN_SECS)
+	//if (deltaT > MINUTE_IN_SECS)
+	if (deltaT > TEN_IN_SECS)
 	{
 		mRelay->checkRelays();
 

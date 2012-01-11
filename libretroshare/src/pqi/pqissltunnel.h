@@ -28,6 +28,7 @@
 #ifndef MRK_PQI_SSL_TUNNEL_HEADER
 #define MRK_PQI_SSL_TUNNEL_HEADER
 
+#include "util/rswin.h"
 
 #include <openssl/ssl.h>
 

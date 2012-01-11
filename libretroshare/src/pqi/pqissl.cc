@@ -101,7 +101,6 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	pqil(l),  // no init for remote_addr.
 	readpkt(NULL), pktlen(0), 
 	attempt_ts(0),
-	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0), mReadZeroTS(0), 
 	mConnectDelay(0), mConnectTS(0),
         mConnectTimeout(0), mTimeoutTS(0), mLinkMgr(lm)
@@ -151,7 +150,6 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 int	pqissl::connect(struct sockaddr_in raddr)
 {
 	// reset failures
-	net_failure = 0;
 	remote_addr = raddr;
 	remote_addr.sin_family = AF_INET;
 
@@ -709,8 +707,6 @@ int 	pqissl::Initiate_Connection()
 			//reset();
 
 			waiting = WAITING_FAIL_INTERFACE;
-			// removing unreachables...
-			//net_unreachable |= net_attempt;
 
 			return -1;
 		}
@@ -923,8 +919,6 @@ int 	pqissl::Basic_Connection_Complete()
 			//reset();
 			
 			waiting = WAITING_FAIL_INTERFACE;
-			// removing unreachables...
-			//net_unreachable |= net_attempt;
 
 			return -1;
 		}

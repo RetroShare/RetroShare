@@ -77,6 +77,47 @@ const int RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG  = 0x02 ;
 const int RS_PEER_CERT_CLEANING_CODE_NO_END_TAG    = 0x03 ;
 const int RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM   = 0x04 ;
 
+/* LinkType Flags */
+
+// CONNECTION
+const uint32_t RS_NET_CONN_TRANS_MASK			= 0x0000ffff;
+const uint32_t RS_NET_CONN_TRANS_TCP_MASK		= 0x0000000f;
+const uint32_t RS_NET_CONN_TRANS_TCP_UNKNOWN		= 0x00000001;
+const uint32_t RS_NET_CONN_TRANS_TCP_LOCAL		= 0x00000002;
+const uint32_t RS_NET_CONN_TRANS_TCP_EXTERNAL		= 0x00000004;
+
+const uint32_t RS_NET_CONN_TRANS_UDP_MASK		= 0x000000f0;
+const uint32_t RS_NET_CONN_TRANS_UDP_UNKNOWN		= 0x00000010;
+const uint32_t RS_NET_CONN_TRANS_UDP_DIRECT		= 0x00000020;
+const uint32_t RS_NET_CONN_TRANS_UDP_PROXY		= 0x00000040;
+const uint32_t RS_NET_CONN_TRANS_UDP_RELAY		= 0x00000080;
+
+const uint32_t RS_NET_CONN_TRANS_OTHER_MASK		= 0x00000f00;
+const uint32_t RS_NET_CONN_TRANS_TUNNEL			= 0x00000100;
+
+const uint32_t RS_NET_CONN_TRANS_UNKNOWN		= 0x00001000;
+
+
+const uint32_t RS_NET_CONN_SPEED_MASK			= 0x000f0000;
+const uint32_t RS_NET_CONN_SPEED_UNKNOWN		= 0x00000000;
+const uint32_t RS_NET_CONN_SPEED_TRICKLE		= 0x00010000;
+const uint32_t RS_NET_CONN_SPEED_LOW			= 0x00020000;
+const uint32_t RS_NET_CONN_SPEED_NORMAL			= 0x00040000;
+const uint32_t RS_NET_CONN_SPEED_HIGH			= 0x00080000;
+
+const uint32_t RS_NET_CONN_QUALITY_MASK			= 0x00f00000;
+const uint32_t RS_NET_CONN_QUALITY_UNKNOWN		= 0x00000000;
+
+// THIS INFO MUST BE SUPPLIED BY PEERMGR....
+const uint32_t RS_NET_CONN_TYPE_MASK			= 0x0f000000;
+const uint32_t RS_NET_CONN_TYPE_UNKNOWN			= 0x00000000;
+const uint32_t RS_NET_CONN_TYPE_ACQUAINTANCE		= 0x01000000;
+const uint32_t RS_NET_CONN_TYPE_FRIEND			= 0x02000000;
+const uint32_t RS_NET_CONN_TYPE_SERVER			= 0x04000000;
+const uint32_t RS_NET_CONN_TYPE_CLIENT			= 0x08000000;
+
+
+
 /* Groups */
 #define RS_GROUP_ID_FRIENDS    "Friends"
 #define RS_GROUP_ID_FAMILY     "Family"
@@ -143,6 +184,9 @@ class RsPeerDetails
 	std::string		connectStateString; /* Additional string like ip address */
 	uint32_t		connectPeriod;
 	bool			foundDHT;
+
+	/* linkType */
+	uint32_t		linkType;
 };
 
 class RsGroupInfo

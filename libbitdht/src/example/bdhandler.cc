@@ -45,7 +45,7 @@ virtual int dhtNodeCallback(const bdId *id, uint32_t peerflags)
 	return mParent->NodeCallback(id, peerflags);
 }
 
-virtual int dhtPeerCallback(const bdNodeId *id, uint32_t status)
+virtual int dhtPeerCallback(const bdId *id, uint32_t status)
 {
 	return mParent->PeerCallback(id, status);
 }
@@ -53,6 +53,16 @@ virtual int dhtPeerCallback(const bdNodeId *id, uint32_t status)
 virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
 	return mParent->ValueCallback(id, key, status);
+}
+
+virtual int dhtConnectCallback(const bdId*, const bdId*, const bdId*, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t)
+{
+	return 1;
+}
+
+virtual int dhtInfoCallback(const bdId*, uint32_t, uint32_t, std::string)
+{
+	return 1;
 }
 
 	private:
@@ -187,10 +197,10 @@ int BitDhtHandler::NodeCallback(const bdId *id, uint32_t peerflags)
 	return 0;
 }
 
-int BitDhtHandler::PeerCallback(const bdNodeId *id, uint32_t status)
+int BitDhtHandler::PeerCallback(const bdId *id, uint32_t status)
 {
 	std::cerr << "BitDhtHandler::PeerCallback() NodeId: ";
-	bdStdPrintNodeId(std::cerr, id);
+	bdStdPrintId(std::cerr, id);
 	std::cerr << std::endl;
 
 	bool connect = false;

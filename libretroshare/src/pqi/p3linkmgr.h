@@ -29,8 +29,6 @@
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
 
-//#include "pqi/p3dhtmgr.h"
-//#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
 
 #include "pqi/p3cfgmgr.h"
@@ -40,22 +38,17 @@
 class ExtAddrFinder ;
 class DNSResolver ;
 
+
 /* order of attempts ... */
-const uint32_t RS_NET_CONN_TCP_ALL 		= 0x000f;
-const uint32_t RS_NET_CONN_UDP_ALL 		= 0x00f0;
-const uint32_t RS_NET_CONN_TUNNEL 		= 0x0f00;
-
-const uint32_t RS_NET_CONN_TCP_LOCAL 		= 0x0001;
-const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
-const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY	= 0x0004;
-const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
-const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
-
-/* extra flags */
-// not sure if needed yet.
-//const uint32_t RS_NET_CONN_PEERAGE 		= 0x0f00;
-//const uint32_t RS_NET_CONN_SERVER		= 0x0100; /* TCP only */
-//const uint32_t RS_NET_CONN_PEER			= 0x0200; /* all UDP */
+const uint32_t RS_NET_CONN_TCP_ALL             = 0x000f;
+const uint32_t RS_NET_CONN_UDP_ALL             = 0x00f0;
+const uint32_t RS_NET_CONN_TUNNEL              = 0x0f00;
+ 
+const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
+const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
+const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
+const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */
 
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
 const uint32_t RS_UDP_STD_TIMEOUT_PERIOD	= 80; /* 80 secs, allows UDP TTL to get to 40! - Plenty of time (30+80) = 110 secs */
@@ -95,27 +88,10 @@ class peerConnectState
 	peerConnectState(); /* init */
 
 	std::string id;
-	//std::string gpg_id;
-
-	//uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
-	//uint32_t visState; /* STD, GRAY, DARK */	
-
-	//struct sockaddr_in localaddr, serveraddr;
-
-        //used to store current ip (for config and connection management)
-	//struct sockaddr_in currentlocaladdr;             /* Mandatory */
-	//struct sockaddr_in currentserveraddr;            /* Mandatory */
-        //std::string dyndns;
-
-
-	/* list of addresses from various sources */
-	//pqiIpAddrSet ipAddrs;
 
 	/***** Below here not stored permanently *****/
 
 	bool dhtVisible;
-
-        //time_t lastcontact; 
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
         time_t lastavailable;
@@ -123,10 +99,9 @@ class peerConnectState
 
 	std::string name;
 
-        //std::string location;
-
 	uint32_t    state;
 	uint32_t    actions;
+	uint32_t    linkType;
 
 	uint32_t		source; /* most current source */
 	peerAddrInfo		dht;
@@ -170,6 +145,7 @@ virtual const 	std::string getOwnId() = 0;
 virtual bool  	isOnline(const std::string &ssl_id) = 0;
 virtual void  	getOnlineList(std::list<std::string> &ssl_peers) = 0;
 virtual bool  	getPeerName(const std::string &ssl_id, std::string &name) = 0;
+virtual uint32_t getLinkType(const std::string &ssl_id) = 0;
 
 	/**************** handle monitors *****************/
 virtual void	addMonitor(pqiMonitor *mon) = 0;
@@ -226,6 +202,7 @@ virtual const 	std::string getOwnId();
 virtual bool  	isOnline(const std::string &ssl_id);
 virtual void  	getOnlineList(std::list<std::string> &ssl_peers);
 virtual bool  	getPeerName(const std::string &ssl_id, std::string &name);
+virtual uint32_t getLinkType(const std::string &ssl_id);
 
 
 	/**************** handle monitors *****************/

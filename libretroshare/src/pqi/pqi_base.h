@@ -58,7 +58,9 @@ class RateInterface
 public:
 
 	RateInterface()
-	:bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0) { return; }
+	:bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0),
+	bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
+
 virtual	~RateInterface() { return; }
 
 virtual float	getRate(bool in)
@@ -78,11 +80,49 @@ virtual float	getMaxRate(bool in)
 virtual void	setMaxRate(bool in, float val)
 	{
 	if (in)
+	{
 		bwMax_in = val;
+		if (bwCapEnabled)
+		{
+			if (bwMax_in > bwCap_in)
+			{
+				bwMax_in = bwCap_in;
+			}
+		}
+	}
 	else
+	{
 		bwMax_out = val;
+		if (bwCapEnabled)
+		{
+			if (bwMax_out > bwCap_out)
+			{
+				bwMax_out = bwCap_out;
+			}
+		}
+	}
+
 	return;
 	}
+
+
+virtual void	setRateCap(float val_in, float val_out)
+{
+	if ((val_in == 0) && (val_out == 0))
+	{
+        	std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
+		bwCapEnabled = false;
+	}
+	else
+	{
+        	std::cerr << "RateInterface::setRateCap() Enabled ";
+        	std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
+		bwCapEnabled = true;
+		bwCap_in = val_in;
+		bwCap_out = val_out;
+	}
+	return;
+}
 
 protected:
 
@@ -97,6 +137,9 @@ void	setRate(bool in, float val)
 
 	private:
 float	bw_in, bw_out, bwMax_in, bwMax_out;
+bool    bwCapEnabled;
+float   bwCap_in, bwCap_out;
+
 };
 
 

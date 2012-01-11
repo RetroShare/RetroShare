@@ -28,6 +28,8 @@
 #ifndef MRK_PQI_SSL_HEADER
 #define MRK_PQI_SSL_HEADER
 
+#include "util/rswin.h"
+
 #include <openssl/ssl.h>
 
 // operating system specific network header.
@@ -114,7 +116,7 @@ virtual bool cansend();
 
 virtual int close(); /* BinInterface version of reset() */
 virtual std::string gethash(); /* not used here */
-virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on lAN
+virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on LAN
 
 protected:
 	// A little bit of information to describe 
@@ -178,13 +180,6 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	int total_len ; // saves the reading state accross successive calls.
 
 	int attempt_ts;
-
-	// Some flags to indicate
-	// the status of the various interfaces
-	// (local), (server)
-	unsigned int net_attempt;
-	unsigned int net_failure;
-	unsigned int net_unreachable;
 
 	bool sameLAN; /* flag use to allow high-speed transfers */
 

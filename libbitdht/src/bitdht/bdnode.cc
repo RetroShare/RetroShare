@@ -60,9 +60,12 @@
 
  * #define DEBUG_NODE_MSGIN 1
  * #define DEBUG_NODE_MSGOUT 1
+ *
+ * #define DISABLE_BAD_PEER_FILTER		1
+ *
  ***/
 
-//#define DEBUG_NODE_MSGS 1
+//#define DISABLE_BAD_PEER_FILTER		1
 
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
@@ -461,9 +464,6 @@ void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAd
 }
 
 
-
-//#define DISABLE_BAD_PEER_FILTER		1
-
 void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {
 	/* Check BadPeer Filters for Potential Peers too */
@@ -488,6 +488,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 		{
 			if (knownAddr.sin_addr.s_addr != id->addr.sin_addr.s_addr)
 			{
+#ifndef DISABLE_BAD_PEER_FILTER	
 				std::cerr << "bdNode::checkPotentialPeer(";
 				mFns->bdPrintId(std::cerr, id);
 				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
@@ -496,7 +497,6 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, 0);
 
-#ifndef DISABLE_BAD_PEER_FILTER	
 	        		mFilterPeers->addPeerToFilter(id, 0);
 
 				std::list<struct sockaddr_in> filteredIPs;
@@ -574,6 +574,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 		{
 			if (knownAddr.sin_addr.s_addr != id->addr.sin_addr.s_addr)
 			{
+#ifndef DISABLE_BAD_PEER_FILTER	
 				std::cerr << "bdNode::addPeer(";
 				mFns->bdPrintId(std::cerr, id);
 				std::cerr << ", " << std::hex << peerflags << std::dec;
@@ -584,13 +585,11 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, peerflags);
 
-#ifndef DISABLE_BAD_PEER_FILTER	
 	        		mFilterPeers->addPeerToFilter(id, peerflags);
 
 				std::list<struct sockaddr_in> filteredIPs;
 				mFilterPeers->filteredIPs(filteredIPs);
 				mStore.filterIpList(filteredIPs);
-#endif
 
 				// DO WE EXPLICITLY NEED TO DO THIS, OR WILL THEY JUST BE DROPPED?
 				//mNodeSpace.remove_badpeer(id);
@@ -599,7 +598,6 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				// FLAG in NodeSpace (Should be dropped very quickly anyway)
 				mNodeSpace.flagpeer(id, 0, BITDHT_PEER_EXFLAG_BADPEER);
 
-#ifndef DISABLE_BAD_PEER_FILTER	
 				return;		
 #endif
 			}
@@ -657,15 +655,23 @@ void bdNode::processRemoteQuery()
 				case BD_QUERY_NEIGHBOURS:
 				{
 					/* search bdSpace for neighbours */
-						//std::list<bdId> excludeList;
 					
 						std::list<bdId> nearList;
         				std::multimap<bdMetric, bdId> nearest;
         				std::multimap<bdMetric, bdId>::iterator it;
 
-						//mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, excludeList, nearest, 0);
 
+					if (mRelayMode == BITDHT_RELAYS_SERVER)
+					{
+						std::list<bdId> excludeList;
+						mNodeSpace.find_nearest_nodes_with_flags(&(query.mQuery), 
+							BITDHT_QUERY_NEIGHBOUR_PEERS, 
+							excludeList, nearest, BITDHT_PEER_STATUS_DHT_RELAY_SERVER);
+					}
+					else
+					{
 						mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, nearest);
+					}
 
         				for(it = nearest.begin(); it != nearest.end(); it++)
         				{

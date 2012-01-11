@@ -124,9 +124,7 @@ bool    p3ZeroConf::getActive()
 
 bool    p3ZeroConf::getNetworkStats(uint32_t &netsize, uint32_t &localnetsize)
 {
-	//netsize = mUdpBitDht->statsNetworkSize();
-	//localnetsize = mUdpBitDht->statsBDVersionSize();
-	return true;
+	return false;  // Cannot provide Network Stats.
 }
 
 void 	p3ZeroConf::createTxtRecord()
