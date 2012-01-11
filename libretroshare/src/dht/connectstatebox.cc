@@ -38,8 +38,6 @@
  *
  **/
 
-#define TESTING_PERIODS		1
-#define DEBUG_CONNECTBOX	1
 
 /* Have made the PROXY Attempts + MAX_TIME much larger, 
  * have have potential for this to take a while.

@@ -315,9 +315,11 @@ void RsInit::InitRsConfig()
 
 /********
  * LOCALNET_TESTING - allows port restrictions
+ *
+ * #define LOCALNET_TESTING	1
+ *
  ********/
 
-#define LOCALNET_TESTING	1
 
 #ifdef LOCALNET_TESTING
 
@@ -2027,10 +2029,14 @@ int RsServer::StartupRetroShare()
 	
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
-	//uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+
+#ifdef LOCALNET_TESTING
 	// HACK Proxy Port near Dht Port - For Relay Testing.
 	uint16_t rndport = RsInitConfig::port + 3;
 	sndladdr.sin_port = htons(rndport);
+#else
+	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+#endif
 
 #ifdef LOCALNET_TESTING
 

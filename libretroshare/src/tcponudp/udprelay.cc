@@ -31,7 +31,7 @@
  * #define DEBUG_UDP_RELAY_PKTS		1
  */
 
-#define DEBUG_UDP_RELAY 1
+//#define DEBUG_UDP_RELAY 1
 
 
 #ifdef DEBUG_UDP_RELAY

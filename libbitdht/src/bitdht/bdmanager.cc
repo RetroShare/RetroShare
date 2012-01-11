@@ -312,11 +312,11 @@ void bdNodeManager::iteration()
 			 */
 			
 #define TRANSITION_OP_SPACE_SIZE	50 /* 1 query / sec, should take 12-15 secs */
-//#define MAX_FINDSELF_TIME		30
-//#define MIN_OP_SPACE_SIZE		10
+#define MAX_FINDSELF_TIME		30
+#define MIN_OP_SPACE_SIZE		10
 // testing parameters.
-#define MAX_FINDSELF_TIME		10
-#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
+//#define MAX_FINDSELF_TIME		10
+//#define MIN_OP_SPACE_SIZE		2   // for testing. self + oneother.
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
@@ -403,8 +403,7 @@ void bdNodeManager::iteration()
 				/* run a random search for ourselves, from own App DHT peer */
 				QueryRandomLocalNet();
 
-//#define SEARCH_MAX_SIZE 10					
-#define SEARCH_MAX_SIZE 0
+#define SEARCH_MAX_SIZE 10					
  				if (mBdNetworkSize < SEARCH_MAX_SIZE)
 				{
 #ifdef DEBUG_MGR

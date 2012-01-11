@@ -60,9 +60,12 @@
 
  * #define DEBUG_NODE_MSGIN 1
  * #define DEBUG_NODE_MSGOUT 1
+ *
+ * #define DISABLE_BAD_PEER_FILTER		1
+ *
  ***/
 
-//#define DEBUG_NODE_MSGS 1
+//#define DISABLE_BAD_PEER_FILTER		1
 
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
@@ -460,9 +463,6 @@ void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAd
 #endif
 }
 
-
-
-#define DISABLE_BAD_PEER_FILTER		1
 
 void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 {

@@ -35,13 +35,15 @@
 #include "util/bdrandom.h"
 
 /*
+ * #define DEBUG_PROXY_CONNECTION		1 
  * #define DEBUG_NODE_CONNECTION		1 
  * #define DEBUG_NODE_CONNECTION_EXTRA		1 
  * #define DEBUG_CONNECTION_DELAY		1
  */
 
-#define DEBUG_NODE_CONNECTION		1 
-#define DEBUG_CONNECTION_DELAY		1
+//#define DEBUG_PROXY_CONNECTION		1 
+//#define DEBUG_NODE_CONNECTION		1 
+//#define DEBUG_CONNECTION_DELAY		1
 
 
 #define BITDHT_CR_PAUSE_SHORT_PERIOD 1
