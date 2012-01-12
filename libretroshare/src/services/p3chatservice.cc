@@ -56,6 +56,8 @@ p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	_own_avatar = NULL ;
 	_custom_status_string = "" ;
 	_default_nick_name = rsPeers->getPeerName(rsPeers->getOwnId());
+	
+	last_public_lobby_info_request_time = 0 ;
 }
 
 int	p3ChatService::tick()
