@@ -316,6 +316,7 @@ void p3ChatService::locked_printDebugInfo() const
 		std::cerr << "   Lobby id\t\t: " << std::hex << it->first << std::dec << std::endl;
 		std::cerr << "   Lobby name\t\t: " << it->second.lobby_name << std::endl;
 		std::cerr << "   nick name\t\t: " << it->second.nick_name << std::endl;
+		std::cerr << "   Lobby type\t\t: " << ((it->second.lobby_privacy_level==RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)?"Public":"private") << std::endl;
 		std::cerr << "   Lobby peer id\t: " << it->second.virtual_peer_id << std::endl;
 		std::cerr << "   Challenge count\t: " << it->second.connexion_challenge_count << std::endl;
 		std::cerr << "   Last activity\t: " << now - it->second.last_activity << " seconds ago." << std::endl;
@@ -1820,7 +1821,7 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
 {
 #ifdef CHAT_DEBUG
-	std::cerr << "Received invite to lobby from " << item->PeerId() << " to lobby " << item->lobby_id << ", named " << item->lobby_name << std::endl;
+	std::cerr << "Received invite to lobby from " << item->PeerId() << " to lobby " << std::hex << item->lobby_id << std::dec << ", named " << item->lobby_name << std::endl;
 #endif
 
 	// 1 - store invite in a cache
@@ -2003,16 +2004,20 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 		entry.last_connexion_challenge_time = time(NULL) ;
 
 		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
-		_chat_lobbys[lobby_id] = entry ;
 
 		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+		{
 			invited_friends.push_back(*it2) ;
+			entry.participating_friends.insert(*it2) ;
+		}
+		_chat_lobbys[lobby_id] = entry ;
 	}
 
 	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	sendLobbyStatusNewPeer(lobby_id) ;
 
 	return true ;
 }
