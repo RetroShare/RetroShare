@@ -1427,6 +1427,18 @@ background: white;}</string>
     <string>Deletes all stored and displayed chat history</string>
    </property>
   </action>
+  <action name="actionCreate_new_Chat_lobby">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/user/agt_forum24.png</normaloff>:/images/user/agt_forum24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create new Chat lobby</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new Chat lobby</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

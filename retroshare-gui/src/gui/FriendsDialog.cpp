@@ -56,6 +56,7 @@
 #include "RetroShareLink.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
+#include "chat/CreateLobbyDialog.h"
 
 #include "FriendsDialog.h"
 
@@ -80,7 +81,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-    connect(ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
+    connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
+    connect( ui.actionCreate_new_Chat_lobby, SIGNAL(triggered()), this, SLOT(createChatLobby()));
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
@@ -149,6 +151,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     QMenu *menu = new QMenu();
     menu->addAction(ui.actionAdd_Friend);
     menu->addAction(ui.actionAdd_Group);
+    menu->addAction(ui.actionCreate_new_Chat_lobby);
 
     menu->addSeparator();
     menu->addAction(ui.actionCreate_New_Forum);
@@ -833,4 +836,10 @@ void FriendsDialog::lobbyInfoChanged()
     chatLobbyWidget->getInfo(isTyping, hasNewMessage, &icon);
 
     ui.peertabWidget->setTabIcon(chatlobbyTabIndex, icon);
+}
+
+void FriendsDialog::createChatLobby()
+{
+	std::list<std::string> friends;
+	CreateLobbyDialog(friends).exec();
 }

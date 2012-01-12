@@ -113,6 +113,8 @@ private slots:
     void newsFeedChanged(int count);
 
     void lobbyInfoChanged();
+    
+    void createChatLobby();
 
 signals:
     void notifyGroupChat(const QString&,const QString&) ;
