@@ -336,6 +336,7 @@ int p3BanList::condenseBanSources_locked()
 
 	printBanSet_locked(std::cerr);
 
+	return true ;
 }
 
 
@@ -448,6 +449,7 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 		out << " Age: " << now - it->second.mTs;
 		out << std::endl;
 	}			
+	return true ;
 }
 
 
@@ -475,6 +477,7 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 			out << std::endl;
 		}
 	}
+	return true ;
 }
 
 
