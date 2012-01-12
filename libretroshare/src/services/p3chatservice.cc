@@ -674,11 +674,48 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 {
-	std::cerr << "Received ChatLobbyEvent item of type " << item->event_type << ", and string=" << item->string1 << std::endl;
+	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
 
 	if(! bounceLobbyObject(item,item->PeerId()))
 		return ;
 
+	std::cerr << "  doing specific job for this status item." << std::endl;
+
+	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_LEFT)		// if a peer left. Remove its nickname from the list.
+	{
+		std::cerr << "  removing nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+
+		if(it != _chat_lobbys.end())
+		{
+			std::set<std::string>::iterator it2(it->second.nick_names.find(item->nick)) ;
+
+			if(it2 != it->second.nick_names.end())
+			{
+				it->second.nick_names.erase(it2) ;
+				std::cerr << "  removed nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+			}
+			else
+				std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
+		}
+	}
+	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
+	{
+		std::cerr << "  adding nickname " << item->nick << " to lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+
+		if(it != _chat_lobbys.end())
+		{
+			it->second.nick_names.insert(item->nick) ;
+			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+		}
+	}
 	rsicontrol->getNotify().notifyChatLobbyEvent(item->lobby_id,item->event_type,item->nick,item->string1) ;
 }
 
