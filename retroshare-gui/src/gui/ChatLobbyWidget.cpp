@@ -125,7 +125,7 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 
 	item->setText(COLUMN_USER_COUNT, QString::number(count));
 
-	item->setData(COLUMN_DATA, ROLE_ID, id);
+	item->setData(COLUMN_DATA, ROLE_ID, (qulonglong)id);
 	item->setData(COLUMN_DATA, ROLE_SUBSCRIBED, subscribed);
 
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
