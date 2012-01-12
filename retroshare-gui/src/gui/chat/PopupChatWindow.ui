@@ -37,7 +37,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="ChatTabWidget" name="tabWidget">
       <property name="tabsClosable">
        <bool>true</bool>
       </property>
@@ -147,6 +147,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ChatTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">gui/chat/ChatTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

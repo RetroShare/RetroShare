@@ -54,8 +54,10 @@ protected:
 
 private slots:
     void getAvatar();
-    void tabCloseRequested(int tab);
-    void tabCurrentChanged(int tab);
+    void tabChanged(PopupChatDialog *dialog);
+    void tabInfoChanged(PopupChatDialog *dialog);
+    void tabNewMessage(PopupChatDialog *dialog);
+    void dialogClose(PopupChatDialog *dialog);
     void dockTab();
     void undockTab();
     void setStyle();

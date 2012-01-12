@@ -88,8 +88,7 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
     connect(ui.actionUndockTab, SIGNAL(triggered()), this, SLOT(undockTab()));
     connect(ui.actionSetOnTop, SIGNAL(toggled(bool)), this, SLOT(setOnTop()));
 
-    connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
-    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabCurrentChanged(int)));
+    connect(ui.tabWidget, SIGNAL(tabChanged(PopupChatDialog*)), this, SLOT(tabChanged(PopupChatDialog*)));
 
     if (tabbedWindow) {
         /* signal toggled is called */
@@ -159,7 +158,7 @@ void PopupChatWindow::changeEvent(QEvent *event)
 void PopupChatWindow::addDialog(PopupChatDialog *dialog)
 {
     if (tabbedWindow) {
-        ui.tabWidget->addTab(dialog, dialog->getTitle());
+        ui.tabWidget->addDialog(dialog);
     } else {
         ui.horizontalLayout->addWidget(dialog);
         ui.horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -170,15 +169,20 @@ void PopupChatWindow::addDialog(PopupChatDialog *dialog)
         /* signal toggled is called */
         ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(peerId));
     }
+
+    QObject::connect(dialog, SIGNAL(infoChanged(PopupChatDialog*)), this, SLOT(tabInfoChanged(PopupChatDialog*)));
+    QObject::connect(dialog, SIGNAL(newMessage(PopupChatDialog*)), this, SLOT(tabNewMessage(PopupChatDialog*)));
+    QObject::connect(dialog, SIGNAL(dialogClose(PopupChatDialog*)), this, SLOT(dialogClose(PopupChatDialog*)));
 }
 
 void PopupChatWindow::removeDialog(PopupChatDialog *dialog)
 {
+    QObject::disconnect(dialog, SIGNAL(infoChanged(PopupChatDialog*)), this, SLOT(tabInfoChanged(PopupChatDialog*)));
+    QObject::disconnect(dialog, SIGNAL(newMessage(PopupChatDialog*)), this, SLOT(tabNewMessage(PopupChatDialog*)));
+    QObject::disconnect(dialog, SIGNAL(dialogClose(PopupChatDialog*)), this, SLOT(dialogClose(PopupChatDialog*)));
+
     if (tabbedWindow) {
-        int tab = ui.tabWidget->indexOf(dialog);
-        if (tab >= 0) {
-            ui.tabWidget->removeTab(tab);
-        }
+        ui.tabWidget->removeDialog(dialog);
 
         if (ui.tabWidget->count() == 0) {
             deleteLater();
@@ -220,39 +224,13 @@ void PopupChatWindow::alertDialog(PopupChatDialog */*dialog*/)
 
 void PopupChatWindow::calculateTitle(PopupChatDialog *dialog)
 {
-    if (dialog) {
-        if (ui.tabWidget->isVisible()) {
-            int tab = ui.tabWidget->indexOf(dialog);
-            if (tab >= 0) {
-                if (dialog->isTyping()) {
-                   ui.tabWidget->setTabIcon(tab, QIcon(IMAGE_TYPING));
-                } else if (dialog->hasNewMessages()) {
-                    ui.tabWidget->setTabIcon(tab, QIcon(IMAGE_CHAT));
-                } else {
-                    ui.tabWidget->setTabIcon(tab, QIcon(StatusDefs::imageIM(dialog->getPeerStatus())));
-                }
-            }
-        }
-    }
-
     bool hasNewMessages = false;
     PopupChatDialog *pcd;
 
     /* is typing */
     bool isTyping = false;
     if (ui.tabWidget->isVisible()) {
-        int tabCount = ui.tabWidget->count();
-        for (int i = 0; i < tabCount; i++) {
-            pcd = dynamic_cast<PopupChatDialog*>(ui.tabWidget->widget(i));
-            if (pcd) {
-                if (pcd->isTyping()) {
-                    isTyping = true;
-                }
-                if (pcd->hasNewMessages()) {
-                    hasNewMessages = true;
-                }
-            }
-        }
+        ui.tabWidget->getInfo(isTyping, hasNewMessages, NULL);
     } else {
         if (dialog) {
             isTyping = dialog->isTyping();
@@ -272,7 +250,7 @@ void PopupChatWindow::calculateTitle(PopupChatDialog *dialog)
     } else if (hasNewMessages) {
         icon = QIcon(IMAGE_CHAT);
     } else {
-        if (pcd) {
+        if (pcd && pcd->hasPeerStatus()) {
             icon = QIcon(StatusDefs::imageIM(pcd->getPeerStatus()));
         } else {
             icon = QIcon(IMAGE_WINDOW);
@@ -291,31 +269,32 @@ void PopupChatWindow::calculateTitle(PopupChatDialog *dialog)
 void PopupChatWindow::getAvatar()
 {
     QByteArray ba;
-    if (misc::getOpenAvatarPicture(this, ba))
-    {
+    if (misc::getOpenAvatarPicture(this, ba)) {
         std::cerr << "Avatar image size = " << ba.size() << std::endl ;
 
         rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size());	// last char 0 included.
     }
 }
 
-void PopupChatWindow::tabCloseRequested(int tab)
+void PopupChatWindow::dialogClose(PopupChatDialog *dialog)
 {
-    QWidget *widget = ui.tabWidget->widget(tab);
-
-    if (widget) {
-        widget->deleteLater();
-    }
+    removeDialog(dialog);
 }
 
-void PopupChatWindow::tabCurrentChanged(int tab)
+void PopupChatWindow::tabChanged(PopupChatDialog *dialog)
 {
-    PopupChatDialog *pcd = dynamic_cast<PopupChatDialog*>(ui.tabWidget->widget(tab));
+    calculateStyle(dialog);
+    calculateTitle(dialog);
+}
 
-    if (pcd) {
-        pcd->activate();
-        calculateStyle(pcd);
-    }
+void PopupChatWindow::tabInfoChanged(PopupChatDialog *dialog)
+{
+    calculateTitle(dialog);
+}
+
+void PopupChatWindow::tabNewMessage(PopupChatDialog *dialog)
+{
+    alertDialog(dialog);
 }
 
 void PopupChatWindow::dockTab()

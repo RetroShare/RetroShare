@@ -49,6 +49,8 @@ public:
     static void closeChat(const std::string &id);
     static void privateChatChanged(int list, int type);
 
+    void init();
+
     void updateStatusString(const QString& peer_id, const QString& statusString);
     std::string getPeerId() { return dialogId; }
     QString getTitle() { return dialogName; }
@@ -61,6 +63,16 @@ public:
     const RSStyle &getStyle();
     virtual void updateStatus(const QString &peer_id, int status);
 
+    // derived in ChatLobbyDialog.
+    //
+    virtual bool hasPeerStatus() { return true; }
+    virtual bool canClose() { return true; }
+
+signals:
+    void dialogClose(PopupChatDialog *dialog);
+    void infoChanged(PopupChatDialog *dialog);
+    void newMessage(PopupChatDialog *dialog);
+
 public slots:
     void updateStatus_slot(const QString &peer_id, int status);
 
@@ -71,16 +83,19 @@ protected:
     ~PopupChatDialog();
 
     virtual void resizeEvent(QResizeEvent *event);
+    virtual void showEvent(QShowEvent *event);
 
     bool eventFilter(QObject *obj, QEvent *ev);
 
     void insertChatMsgs();
     void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
 
-	 // derived in ChatLobbyDialog.
-	 //
-	 virtual void addIncomingChatMsg(const ChatInfo& info) ;				
-	 virtual QString makeStatusString(const QString& peer_id,const QString& status_string) const ;
+    // derived in ChatLobbyDialog.
+    //
+    virtual bool addToParent();
+    virtual bool isChatLobby() { return false; } // TODO: spilt into a good base class
+    virtual void addIncomingChatMsg(const ChatInfo& info);
+    virtual QString makeStatusString(const QString& peer_id, const QString& status_string) const;
 
 private slots:
     void pasteLink() ;
@@ -150,7 +165,7 @@ private:
     RSStyle style;
 
 protected:
-	 virtual bool sendPrivateChat(const std::wstring& msg) ;	// can be derived to send chat to e.g. a chat lobby
+    virtual bool sendPrivateChat(const std::wstring& msg) ;	// can be derived to send chat to e.g. a chat lobby
 
     /** Qt Designer generated object */
     Ui::PopupChatDialog ui;

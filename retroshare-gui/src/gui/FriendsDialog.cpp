@@ -38,7 +38,6 @@
 
 #include "channels/CreateChannel.h"
 #include "chat/PopupChatDialog.h"
-#include "chat/ChatLobbyDialog.h"
 #include "common/Emoticons.h"
 #include "common/vmessagebox.h"
 #include "connect/ConfCertDialog.h"
@@ -86,7 +85,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
 
-    ui.peertabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
+    chatLobbyWidget = new ChatLobbyWidget();
+    QObject::connect(chatLobbyWidget, SIGNAL(infoChanged()), this, SLOT(lobbyInfoChanged()));
+    chatlobbyTabIndex = ui.peertabWidget->addTab(chatLobbyWidget, tr("Chat lobbies"));
     ui.peertabWidget->setTabPosition(QTabWidget::North);
     ui.peertabWidget->addTab(new ProfileWidget(), tr("Profile"));
     NewsFeed *newsFeed = new NewsFeed();
@@ -300,21 +301,6 @@ void FriendsDialog::updateStatusTyping()
     }
 }
 
-void FriendsDialog::updatePublicLobbyList()
-{
-	std::cerr << "Updating public lobby list !!" << std::endl;
-}
-
-void FriendsDialog::displayChatLobbyEvent(qulonglong lobby_id,int event_type,const QString& nickname,const QString& str)
-{
-	std::cerr << "Received displayChatLobbyEvent()!" << std::endl;
-
-	std::string vpid ;
-	if(rsMsgs->getVirtualPeerId(lobby_id,vpid))
-		if( ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(PopupChatDialog::getExistingInstance(vpid)))
-			cld->displayLobbyEvent(event_type,nickname,str) ;
-}
-
 // Called by libretroshare through notifyQt to display the peer's status
 //
 void FriendsDialog::updateStatusString(const QString& peer_id, const QString& status_string)
@@ -327,28 +313,6 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
     ui.statusStringLabel->setText(status) ; // displays info for 5 secs.
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
-}
-
-void FriendsDialog::readChatLobbyInvites()
-{
-	std::list<ChatLobbyInvite> invites ;
-	rsMsgs->getPendingChatLobbyInvites(invites) ;
-
-	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
-		if(QMessageBox::Ok == QMessageBox::question(NULL,tr("Invitation to chat lobby"),QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())+QString(" invites you to chat lobby named ")+QString::fromUtf8((*it).lobby_name.c_str()),QMessageBox::Ok,QMessageBox::Ignore))
-		{
-			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
-
-			rsMsgs->acceptLobbyInvite( (*it).lobby_id ) ;
-
-			std::string vpid ;
-			if(rsMsgs->getVirtualPeerId( (*it).lobby_id,vpid ) )
-				PopupChatDialog::chatFriend(vpid) ;
-			else
-				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
-		}
-		else
-			rsMsgs->denyLobbyInvite( (*it).lobby_id ) ;
 }
 
 void FriendsDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
@@ -859,4 +823,14 @@ void FriendsDialog::newsFeedChanged(int count)
         ui.peertabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
         ui.peertabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
     }
+}
+
+void FriendsDialog::lobbyInfoChanged()
+{
+    bool isTyping;
+    bool hasNewMessage;
+    QIcon icon;
+    chatLobbyWidget->getInfo(isTyping, hasNewMessage, &icon);
+
+    ui.peertabWidget->setTabIcon(chatlobbyTabIndex, icon);
 }

@@ -666,7 +666,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 		}
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PUBLIC_CHAT_LOBBY_LIST,0) ;
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 }
 
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
@@ -1922,6 +1922,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 #endif
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD);
 
 	// send AKN item
 	sendLobbyStatusNewPeer(lobby_id) ;
@@ -2009,6 +2010,8 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+
 	return true ;
 }
 
@@ -2047,33 +2050,39 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+
 	return lobby_id ;
 }
 
 void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *item)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
 
 #ifdef CHAT_DEBUG
-	std::cerr << "Received unsubscribed to lobby " << std::hex << item->lobby_id << std::dec << ", from friend " << item->PeerId() << std::endl;
+		std::cerr << "Received unsubscribed to lobby " << std::hex << item->lobby_id << std::dec << ", from friend " << item->PeerId() << std::endl;
 #endif
 
-	if(it == _chat_lobbys.end())
-	{
-		std::cerr << "Chat lobby " << std::hex << item->lobby_id << std::dec << " does not exist ! Can't unsubscribe friend!" << std::endl;
-		return ;
+		if(it == _chat_lobbys.end())
+		{
+			std::cerr << "Chat lobby " << std::hex << item->lobby_id << std::dec << " does not exist ! Can't unsubscribe friend!" << std::endl;
+			return ;
+		}
+
+		for(std::set<std::string>::iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
+			if(*it2 == item->PeerId())
+			{
+#ifdef CHAT_DEBUG
+				std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
+				it->second.participating_friends.erase(it2) ;
+				break ;
+			}
 	}
 
-	for(std::set<std::string>::iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
-		if(*it2 == item->PeerId())
-		{
-#ifdef CHAT_DEBUG
-			std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << std::hex << item->lobby_id << std::dec << std::endl;
-#endif
-			it->second.participating_friends.erase(it2) ;
-			break ;
-		}
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_MOD) ;
 }
 
 void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
@@ -2117,6 +2126,9 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 				break ;
 			}
 	}
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;
+
 	// done!
 }
 bool p3ChatService::setDefaultNickNameForChatLobby(const std::string& nick)
@@ -2197,5 +2209,3 @@ void p3ChatService::cleanLobbyCaches()
 	// also clean inactive lobbies.
 	// [...]
 }
-
-

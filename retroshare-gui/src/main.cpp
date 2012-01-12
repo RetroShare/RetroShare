@@ -127,8 +127,6 @@ int main(int argc, char *argv[])
 		{
 			/* Login Dialog */
 			/* check for existing Certificate */
-			std::string userName;
-
 			StartDialog *sd = NULL;
 			bool genCert = false;
 			std::list<std::string> accountIds;
@@ -281,9 +279,6 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
 	QObject::connect(notify,SIGNAL(messagesTagsChanged())             ,w->messagesDialog   		,SLOT(messagesTagsChanged()            )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w                   		,SLOT(updateMessages()                 )) ;
-	QObject::connect(notify,SIGNAL(chatLobbyInviteReceived())         ,w->friendsDialog      		,SLOT(readChatLobbyInvites()           )) ;
-	QObject::connect(notify,SIGNAL(publicLobbyListChanged())         	,w->friendsDialog      		,SLOT(updatePublicLobbyList()          )) ;
-	QObject::connect(notify,SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)),w->friendsDialog,SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&))) ;
 	QObject::connect(notify,SIGNAL(forumsChanged())                   ,w                   		,SLOT(updateForums()                   ), Qt::QueuedConnection);
 	QObject::connect(notify,SIGNAL(channelsChanged(int))              ,w                   		,SLOT(updateChannels(int)              ), Qt::QueuedConnection);
 	QObject::connect(notify,SIGNAL(downloadCompleteCountChanged(int)) ,w                   		,SLOT(updateTransfers(int)             ));

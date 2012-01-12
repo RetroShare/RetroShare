@@ -41,34 +41,41 @@ class ChatLobbyDialog: public PopupChatDialog
 {
 	Q_OBJECT 
 
-	public:
-		void displayLobbyEvent(int event_type,const QString& nickname,const QString& str) ;
+public:
+	void displayLobbyEvent(int event_type,const QString& nickname,const QString& str) ;
 
-	protected:
-		/** Default constructor */
-		ChatLobbyDialog(const std::string& id,const ChatLobbyId& lid, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
+	// The following methods are differentfrom those of the parent:
+	//
+	virtual bool hasPeerStatus() { return false; }
+	virtual bool canClose();
 
-		/** Default destructor */
-		virtual ~ChatLobbyDialog();
+protected:
+	/** Default constructor */
+	ChatLobbyDialog(const std::string& id,const ChatLobbyId& lid, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
 
-//		virtual void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
-//		virtual void sendChat();
+	/** Default destructor */
+	virtual ~ChatLobbyDialog();
 
-		friend class PopupChatDialog ;
+//	virtual void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
+//	virtual void sendChat();
 
-		// The following methods are differentfrom those of the parent:
-		//
-		virtual void addIncomingChatMsg(const ChatInfo& info) ;				// 
-		virtual QString makeStatusString(const QString& peer_id,const QString& status_string) const ;
+	friend class PopupChatDialog ;
 
-	protected slots:
-		void setNickName(const QString&) ;
+	// The following methods are differentfrom those of the parent:
+	//
+	virtual bool addToParent();
+	virtual bool isChatLobby() { return true; }
+	virtual void addIncomingChatMsg(const ChatInfo& info) ;				//
+	virtual QString makeStatusString(const QString& peer_id,const QString& status_string) const ;
 
-	private:
-		void updateFriendsList() ;
+protected slots:
+	void setNickName(const QString&) ;
 
-		ChatLobbyId lobby_id ;
-		QListWidget *friendsListWidget ;
+private:
+	void updateFriendsList() ;
+
+	ChatLobbyId lobby_id ;
+	QListWidget *friendsListWidget ;
 };
 
 #endif

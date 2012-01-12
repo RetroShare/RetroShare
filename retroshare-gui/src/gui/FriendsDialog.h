@@ -36,6 +36,7 @@ class QAction;
 class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
+class ChatLobbyWidget;
 
 class FriendsDialog : public RsAutoUpdatePage
 {
@@ -56,10 +57,7 @@ public slots:
 
     void insertChat();
     void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
-	 void displayChatLobbyEvent(qulonglong,int,const QString&,const QString&) ;
-	 void updatePublicLobbyList() ;
     void resetStatusBar() ;
-	 void readChatLobbyInvites() ;
 
     void fileHashingFinished(QList<HashedFile> hashedFiles);
 
@@ -114,6 +112,8 @@ private slots:
 
     void newsFeedChanged(int count);
 
+    void lobbyInfoChanged();
+
 signals:
     void notifyGroupChat(const QString&,const QString&) ;
 
@@ -139,6 +139,9 @@ private:
     int newsFeedTabIndex;
     QColor newsFeedTabColor;
     QString newsFeedText;
+
+    ChatLobbyWidget *chatLobbyWidget;
+    int chatlobbyTabIndex;
 
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;
