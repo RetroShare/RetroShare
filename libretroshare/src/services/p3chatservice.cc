@@ -39,7 +39,6 @@
 /****
  * #define CHAT_DEBUG 1
  ****/
-#define CHAT_DEBUG 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   15 ; // sends a connexion challenge every 15 messages
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
@@ -517,7 +516,9 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 	//
 	std::map<ChatLobbyMsgId,std::vector<RsChatLobbyMsgItem*> >::iterator it = _pendingPartialLobbyMessages.find(ci->msg_id) ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Checking chat message for completeness:" << std::endl;
+#endif
 	bool ci_is_incomplete = ci->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE ;
 
 	if(it != _pendingPartialLobbyMessages.end())
@@ -544,7 +545,9 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 
 		if(complete)
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  Message is complete ! Re-forming it and returning true." << std::endl;
+#endif
 			std::wstring msg ;
 			uint32_t flags = 0 ;
 
@@ -565,13 +568,17 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 		}
 		else
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  Not complete: returning" << std::endl ;
+#endif
 			return false ;
 		}
 	}
 	else if(ci_is_incomplete || ci->subpacket_id > 0)	// the message id might not yet be recorded
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "  Message is partial, but not recorded. Adding it. " << std::endl;
+#endif
 
 		_pendingPartialLobbyMessages[ci->msg_id].resize(ci->subpacket_id+1,NULL) ;
 		_pendingPartialLobbyMessages[ci->msg_id][ci->subpacket_id] = ci ;
@@ -580,7 +587,9 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 	}
 	else
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "  Message is not partial. Returning it as is." << std::endl;
+#endif
 		return true ;
 	}
 }
@@ -629,7 +638,9 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 	//
 	RsChatLobbyListItem *item = new RsChatLobbyListItem;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Peer " << clr->PeerId() << " requested the list of public chat lobbies." << std::endl;
+#endif
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -637,19 +648,25 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 		for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
 			if(it->second.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)
 			{
+#ifdef CHAT_DEBUG
 				std::cerr << "  Adding lobby " << std::hex << it->first << std::dec << " \"" << it->second.lobby_name << "\" count=" << it->second.nick_names.size() << std::endl;
+#endif
 
 				item->lobby_ids.push_back(it->first) ;
 				item->lobby_names.push_back(it->second.lobby_name) ;
 				item->lobby_counts.push_back(it->second.nick_names.size()) ;
 			}
+#ifdef CHAT_DEBUG
 			else
 				std::cerr << "  Not adding private lobby " << std::hex << it->first << std::dec << std::endl ;
+#endif
 	}
 
 	item->PeerId(clr->PeerId()) ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "  Sending list to " << clr->PeerId() << std::endl;
+#endif
 	sendItem(item);
 }
 
@@ -674,16 +691,22 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 {
+#ifdef CHAT_DEBUG
 	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
+#endif
 
 	if(! bounceLobbyObject(item,item->PeerId()))
 		return ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "  doing specific job for this status item." << std::endl;
+#endif
 
 	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_LEFT)		// if a peer left. Remove its nickname from the list.
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "  removing nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
 
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -696,15 +719,21 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 			if(it2 != it->second.nick_names.end())
 			{
 				it->second.nick_names.erase(it2) ;
+#ifdef CHAT_DEBUG
 				std::cerr << "  removed nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
 			}
+#ifdef CHAT_DEBUG
 			else
 				std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
+#endif
 		}
 	}
 	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "  adding nickname " << item->nick << " to lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
 
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -713,7 +742,9 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 		if(it != _chat_lobbys.end())
 		{
 			it->second.nick_names.insert(item->nick) ;
+#ifdef CHAT_DEBUG
 			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
 		}
 	}
 	rsicontrol->getNotify().notifyChatLobbyEvent(item->lobby_id,item->event_type,item->nick,item->string1) ;
@@ -2027,7 +2058,9 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 			return true ;
 		}
 
+#ifdef CHAT_DEBUG
 		std::cerr << "  Creating new lobby entry." << std::endl;
+#endif
 
 		ChatLobbyEntry entry ;
 		entry.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
@@ -2154,7 +2187,9 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 			item->lobby_id = id ;
 			item->PeerId(*it2) ;
 
+#ifdef CHAT_DEBUG
 			std::cerr << "Sending unsubscribe item to friend " << *it2 << std::endl;
+#endif
 
 			sendItem(item) ;
 		}
