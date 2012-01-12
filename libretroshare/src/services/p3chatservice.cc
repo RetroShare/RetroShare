@@ -46,7 +46,7 @@ static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexi
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // sends a connexion challenge every 15 messages
 static const time_t 	MAX_KEEP_MSG_RECORD 					  =  240 ; // keep msg record for 240 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			  = 3600 ; // keep inactive lobbies for 1h max.
-static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   30 ; // don't ask for lobby list more than once every 30 secs.
+static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
