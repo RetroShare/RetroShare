@@ -1,6 +1,72 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+  	  - Added Chat Lobbies: decentalized anonymous chat rooms.
+        * Chat lobbies are private (on invitation only) or public (friends can join)
+        * Bit of GUI to show lobby list, with one tab per active chat lobby
+        * Most fonctionality of chat are ported to lobbies including status messages
+        * Internally to libretroshare, lobbies are virtual peers to talk to. 
+        * Deriving a RsItem from ChatLobbyBouncingObject allows the item to be bounced
+          to all peers in the lobby.
+        * Improved message splitting by adding sub item ids to lobby messages. Should 
+          be ported to normal chat in the next version.
+        * Added parent id to RsChatLobbyMsgItem, to allow threaded chat.
+        * List of public lobbies at friends are requested only when needed 
+        * Major cleaning of p3chatservice.cc
+
+     - Added new entry in config->transfers to allow reserving n slots to non cache transfers
+     - Add the ip address of the DNSResolver to the top of the list of the connect addresses.
+     - Little design improvements for Plugin Item
+     - Added manual entry for plugins
+     - Added relay connexions (Note: There are still some service changes required to 
+       reduce the traffic over relays)
+        * Merging Dht Relay improvements into the trunk. These changes should finally make relays functional.
+        * Changed the way proxy/relay peers are selected in bdConnection. (needs more work).
+        * Added LinkType to peer info in p3LinkMgr & rspeers.h interface.
+        * Added getConnectionType() to p3PeerMgr. This defaults to FRIEND for the moment.
+        * Provide information about Bandwidth, Transport and Peer Type via LinkType().
+        * Added RateCap() to limit traffic over Relay connections.
+        * Set Internal Rate to 75% of Relay Limit to account for transport overhead.
+        * Added various #include "util/rswin.h" to fix compile errors with standard ssl package.
+        * Removed Local variables (mConnectProxyAddr, etc) which were hiding Class Variables.
+        * Cleaned up bits in pqissl.cc and p3linkmgr.cc
+        * Increased UDP Relay Packet size (max transport of 1400 bytes per UDP packet)
+        * Modified checkRelay() to use Low Pass Filter to calculate Relay Bandwidth.
+        * Improved udprelay debugging.
+        * increased (x2) Relay Lifetimes - this is so that enough useful data can be transported (1meg).
+        * Added LOCALNET_TESTING code to rsinit.cc. This allows Port Restrictions to simulate firewalls.
+        * more debugging and minor bugfixes.
+
+       libbitdht
+        * added Relay Flags to bdNode::setNodeDhtMode()
+        * added dropRelayServers() / pingRelayServers() functions for mode switches
+        * added utility function:  bdFriendList::findPeersWithFlags()
+        * added utility function:  bdSpace::clean_node_flags(uint32_t flags)
+        * added RelayMode to ConnectManager.
+        * added failedConnection callback when in Server Mode.
+        * added incomplete udpproxylayer code. (not compiled)
+       
+       libretroshare
+        * added Configuration to p3BitDht for storing Relay Settings. (bit Hackish!)
+        * added RelayHandler & getRelayReceiver() - to outsource some Relay functions.
+        * + RelayHandler_InstallRelayConnection() & RelayHandler_LogFailedProxyAttempt()
+        * added RelayServer, Mode and RelayAllowance to external DHT interface.
+        * added p3PeerMgr::getGpgId() for ZeroConf usage.
+        * updated parts of pqiassist virtual interfaces.
+        * added Bandwidth storage to udprelay.
+        * modified the way Relay Slots are allocated to match GUI interface.
+        * ZeroConf now working on OSX.
+        * added ZeroConf to OSX compilation.
+        * extended rsDht interface to expose Relay configuration.
+       
+       retroshare-gui
+        * added Relay configuration panel.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 12 Dec 2011 19:00:00 +0100
+
+retroshare (0.5.2-0.4747~natty) natty; urgency=low
+
+  * Improvements
      - Added the real size of all files of a collection to the link when added with drag and drop.
      - ConnectionFriendWizard: Show the messagebox "Your Cert is copied to Clipboard" after copying the cert into the clipboard.
      - Removed "release" from the win32 build in retroshare-nogui.pro.
