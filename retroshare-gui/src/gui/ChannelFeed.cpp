@@ -57,12 +57,12 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
 
-	connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
+    connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
     connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
     connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
     connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
-    connect(setAllAsReadButton, SIGNAL(clicked()), this, SLOT(setAllAsReadClicked()));
-    connect(autoDownload, SIGNAL(clicked()), this, SLOT(toggleAutoDownload()));
+    connect(actionsetAllAsRead, SIGNAL(triggered()), this, SLOT(setAllAsReadClicked()));
+    connect(actionEnable_Auto_Download, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
 
     connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
@@ -86,6 +86,10 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(), false);
     otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(), false);
 
+    QMenu * channeloptsmenu = new QMenu();
+    channeloptsmenu->addAction(actionsetAllAsRead);
+    channeloptsmenu->addAction(actionEnable_Auto_Download);
+    channeloptions_Button->setMenu(channeloptsmenu);
 
     //added from ahead
     updateChannelList();
@@ -436,8 +440,10 @@ void ChannelFeed::updateChannelMsgs()
         postButton->setEnabled(false);
         subscribeButton->setEnabled(false);
         unsubscribeButton->setEnabled(false);
-        setAllAsReadButton->setEnabled(false);
-        autoDownload->setEnabled(false);
+        subscribeButton->hide();
+        unsubscribeButton->hide();
+        actionsetAllAsRead->setEnabled(false);
+        actionEnable_Auto_Download->setEnabled(false);
         nameLabel->setText(tr("No Channel Selected"));
         iconLabel->setPixmap(QPixmap(":/images/channels.png"));
         iconLabel->setEnabled(false);
@@ -467,25 +473,29 @@ void ChannelFeed::updateChannelMsgs()
     /* do buttons */
     if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
         subscribeButton->setEnabled(false);
+        subscribeButton->hide();
+        unsubscribeButton->show();
         unsubscribeButton->setEnabled(true);
-        setAllAsReadButton->setEnabled(true);
+        actionsetAllAsRead->setEnabled(true);
     } else {
         subscribeButton->setEnabled(true);
+        subscribeButton->show();
         unsubscribeButton->setEnabled(false);
-        setAllAsReadButton->setEnabled(false);
-        autoDownload->setEnabled(false);
+        unsubscribeButton->hide();
+        actionsetAllAsRead->setEnabled(false);
+        actionEnable_Auto_Download->setEnabled(false);
     }
 
     if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
         postButton->setEnabled(true);
-        autoDownload->setEnabled(false);
+        actionsetAllAsRead->setEnabled(false);
     } else {
         postButton->setEnabled(false);
     }
 
     if(!(ci.channelFlags & RS_DISTRIB_PUBLISH) &&
     	(ci.channelFlags & RS_DISTRIB_SUBSCRIBED))
-    	autoDownload->setEnabled(true);
+    	actionsetAllAsRead->setEnabled(true);
 
 
     std::list<ChannelMsgSummary> msgs;
@@ -638,8 +648,8 @@ bool ChannelFeed::navigate(const std::string& channelId, const std::string& msgI
 void ChannelFeed::setAutoDownloadButton(bool autoDl)
 {
 	if (autoDl) {
-		autoDownload->setText(tr("Disable Auto-Download"));
+		actionEnable_Auto_Download->setText(tr("Disable Auto-Download"));
 	}else{
-		autoDownload->setText(tr("Enable Auto-Download"));
+		actionEnable_Auto_Download->setText(tr("Enable Auto-Download"));
 	}
 }
