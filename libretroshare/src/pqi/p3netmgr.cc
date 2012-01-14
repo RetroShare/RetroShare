@@ -429,7 +429,7 @@ void p3NetMgrIMPL::tick()
 void p3NetMgrIMPL::slowTick()
 {
 	netTick();
-	netAssistConnectTick();
+	netAssistTick();
 	updateNetStateBox_temporal();
 
 	if (mDhtStunner)
@@ -1489,12 +1489,18 @@ bool p3NetMgrIMPL::netAssistSetAddress( struct sockaddr_in &/*laddr*/,
 	return true;
 }
 
-void p3NetMgrIMPL::netAssistConnectTick()
+void p3NetMgrIMPL::netAssistTick()
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 	for(it = mDhts.begin(); it != mDhts.end(); it++)
 	{
 		(it->second)->tick();
+	}
+
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator fit;
+	for(fit = mFwAgents.begin(); fit != mFwAgents.end(); fit++)
+	{
+		(fit->second)->tick();
 	}
 	return;
 }

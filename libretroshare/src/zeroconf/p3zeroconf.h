@@ -135,6 +135,12 @@ class zcPeerDetails
 
 };
 
+#define ZC_SERVICE_STOPPED 	0
+#define ZC_SERVICE_ACTIVE  	1
+
+// This is used by p3zcNatAssist too.
+std::string displayDNSServiceError(DNSServiceErrorType errcode);
+
 class p3NetMgr;
 
 class p3ZeroConf: public pqiNetAssistConnect, public pqiNetListener
@@ -233,7 +239,6 @@ virtual bool    setAttachMode(bool on);
 	int locked_completeQueryResult(zcQueryResult &qr);
 	int locked_stopQueryIp();
 
-	std::string displayDNSServiceError(DNSServiceErrorType errcode);
 
 	/**************** DATA ****************/
 

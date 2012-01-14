@@ -314,6 +314,7 @@ mac {
                 SOURCES += upnp/upnputil.c
 
 		CONFIG += zeroconf
+		CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
@@ -647,6 +648,7 @@ minimal {
 			services/p3photoservice.cc
 }
 
+
 zeroconf {
 
 HEADERS +=	zeroconf/p3zeroconf.h \
@@ -654,6 +656,20 @@ HEADERS +=	zeroconf/p3zeroconf.h \
 SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 	DEFINES *= RS_ENABLE_ZEROCONF
+
+}
+
+# This is seperated from the above for windows/linux platforms.
+# It is acceptable to build in zeroconf and have it not work, 
+# but unacceptable to rely on Apple's libraries for Upnp when we have alternatives.
+
+zcnatassist {
+
+HEADERS +=	zeroconf/p3zcnatassist.h \
+
+SOURCES +=	zeroconf/p3zcnatassist.cc \
+
+	DEFINES *= RS_ENABLE_ZCNATASSIST
 
 }
 

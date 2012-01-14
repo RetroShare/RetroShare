@@ -43,10 +43,6 @@
 
 #define DEBUG_ZEROCONF	1
 
-
-#define ZC_SERVICE_STOPPED	0
-#define ZC_SERVICE_ACTIVE	1
-
 #define ZC_MAX_QUERY_TIME	30
 #define ZC_MAX_RESOLVE_TIME	30
 
@@ -695,7 +691,7 @@ void p3ZeroConf::locked_stopRegister()
 	std::cerr << "p3ZeroConf::locked_stopRegister()";
 	std::cerr << std::endl;
 
-	if (mBrowseStatus != ZC_SERVICE_ACTIVE)
+	if (mRegisterStatus != ZC_SERVICE_ACTIVE)
 	{
 		return;
 	}
@@ -1250,7 +1246,7 @@ int p3ZeroConf::locked_stopQueryIp()
 
 
 
-std::string p3ZeroConf::displayDNSServiceError(DNSServiceErrorType errcode)
+std::string displayDNSServiceError(DNSServiceErrorType errcode)
 {
 	std::ostringstream str;
 	switch(errcode)

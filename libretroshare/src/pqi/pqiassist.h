@@ -60,6 +60,8 @@ virtual void	restart() = 0;
 virtual bool    getEnabled() = 0;
 virtual bool    getActive() = 0;
 
+virtual int	tick() { return 0; } /* for internal accounting */
+
 };
 
 class pqiNetAssistFirewall: public pqiNetAssist
@@ -134,8 +136,6 @@ class pqiNetAssistConnect: public pqiNetAssist
 	 * These Functions are the external interface
 	 * for the DHT, and must be non-blocking and return quickly
 	 */
-
-virtual int	tick() = 0; /* for internal accounting */
 
 
 	/* add / remove peers */

@@ -1747,7 +1747,10 @@ RsTurtle *rsTurtle = NULL ;
 
 #ifdef RS_ENABLE_ZEROCONF
 	#include "zeroconf/p3zeroconf.h"
-	//#include "zeroconf/p3zcnatassist.h"
+#endif
+
+#ifdef RS_ENABLE_ZCNATASSIST
+	#include "zeroconf/p3zcnatassist.h"
 #else
 	#include "upnp/upnphandler.h"
 #endif
@@ -2264,12 +2267,13 @@ int RsServer::StartupRetroShare()
 					mLinkMgr, mNetMgr, mPeerMgr);
 	mNetMgr->addNetAssistConnect(2, mZeroConf);
 	mNetMgr->addNetListener(mZeroConf); 
+#endif
 
+#ifdef RS_ENABLE_ZCNATASSIST
 	// Apple's UPnP & NAT-PMP assistance.
-	//p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
-	//mNetMgr->addNetAssistFirewall(2, mZcNatAssist);
+	p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
+	mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
 #else
-
 	// Original UPnP Interface.
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
