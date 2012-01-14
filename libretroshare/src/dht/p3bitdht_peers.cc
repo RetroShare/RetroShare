@@ -275,6 +275,49 @@ int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_in &add
 	return 1;
 }
 
+
+/* Total duplicate of above function - can't be helped, should merge somehow */
+int p3BitDht::addKnownNode(const bdId *id, uint32_t flags) 
+{
+	int bdflags = 0;
+
+	switch(flags & NETASSIST_KNOWN_PEER_TYPE_MASK)
+	{
+		default:
+			return 0;
+			break;
+		case NETASSIST_KNOWN_PEER_WHITELIST:
+			bdflags = BITDHT_PEER_STATUS_DHT_WHITELIST;
+
+			break;
+		case NETASSIST_KNOWN_PEER_FOF:
+			bdflags = BITDHT_PEER_STATUS_DHT_FOF;
+
+			break;
+		case NETASSIST_KNOWN_PEER_FRIEND:
+			bdflags = BITDHT_PEER_STATUS_DHT_FRIEND;
+
+			break;
+		case NETASSIST_KNOWN_PEER_RELAY:
+			bdflags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
+
+			break;
+		case NETASSIST_KNOWN_PEER_SELF:
+			bdflags = BITDHT_PEER_STATUS_DHT_SELF;
+
+			break;
+	}
+
+	if (flags & NETASSIST_KNOWN_PEER_ONLINE)
+	{
+		bdflags |= BD_FRIEND_ENTRY_ONLINE;
+	}
+
+	mUdpBitDht->updateKnownPeer(id, 0, bdflags);
+
+	return 1;
+}
+
 	
 
 #if 0

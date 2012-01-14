@@ -31,21 +31,26 @@ release {
 
 
 testnetwork {
-	#DEFINES *= PQI_DISABLE_UDP
-	DEFINES *= PQI_DISABLE_TUNNEL
+	# used in rsserver/rsinit.cc Enabled Port Restrictions, and makes Proxy Port next to Dht Port.
+	DEFINES *= LOCALNET_TESTING  
 
-	# DEFINES *= AUTHSSL_DEBUG GPG_DEBUG 
-	# DEFINES *= CONN_DEBUG 
-	# DEFINES *= P3DISC_DEBUG 
+	# used in tcponudp/udprelay.cc Debugging Info for Relays.
+	DEFINES *= DEBUG_UDP_RELAY
 
- 	# DEFINES *= PGRP_DEBUG
- 	# DEFINES *= PERSON_DEBUG
+	# used in tcponudp/udpstunner.[h | cc] enables local stun (careful - modifies class variables).
+	DEFINES *= UDPSTUN_ALLOW_LOCALNET
 
-	#DEFINES *= DEBUG_UDP_SORTER DEBUG_UDP_LAYER EXTADDRSEARCH_DEBUG
+	# used in pqi/p3linkmgr.cc prints out extra debug.
+	DEFINES *= LINKMGR_DEBUG_LINKTYPE
+
+	# used in dht/connectstatebox to reduce connection times and display debug.
+	# DEFINES *= TESTING_PERIODS
+	# DEFINES *= DEBUG_CONNECTBOX
 
         QMAKE_CXXFLAGS -= -fomit-frame-pointer
         QMAKE_CXXFLAGS -= -O2 
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
+
 }
 
 

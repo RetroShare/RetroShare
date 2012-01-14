@@ -37,7 +37,7 @@
 **/
 
 #define EXPECTED_REPLY 10 // Speed up queries
-#define QUERY_IDLE_RETRY_PEER_PERIOD 300 // 5min =  (mFns->bdNodesPerBucket() * 30)
+#define QUERY_IDLE_RETRY_PEER_PERIOD 300 // 5min =  (mFns->bdNumQueryNodes() * 30)
 #define MAX_QUERY_IDLE_PERIOD 	     900 // 15min.
 
 
@@ -82,7 +82,7 @@ bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryF
 	mQueryFlags = queryFlags;
 	mQueryTS = now;
 	mSearchTime = 0;
-	mClosestListSize = (int) (1.5 * mFns->bdNodesPerBucket());
+	mClosestListSize = (int) (1.5 * mFns->bdNumQueryNodes());
 	mPotPeerCleanTS = now;
 
 	mQueryIdlePeerRetryPeriod = QUERY_IDLE_RETRY_PEER_PERIOD;
@@ -174,7 +174,7 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 		 */	
 
 		if (((it->second.mLastRecvTime == 0) || (now - it->second.mLastRecvTime < EXPECTED_REPLY)) && 
-				(i < mFns->bdNodesPerBucket()))
+				(i < mFns->bdNumQueryNodes()))
 		{
 #ifdef DEBUG_QUERY 
         		fprintf(stderr, "NextQuery() Never Received @Idx(%d) notFinished = true: ", i);
@@ -231,7 +231,7 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 #endif
 		/* fall through and stop */
 	}
-	else if ((mClosest.size() < mFns->bdNodesPerBucket()) || (notFinished))
+	else if ((mClosest.size() < mFns->bdNumQueryNodes()) || (notFinished))
 	{
 #ifdef DEBUG_QUERY 
        		fprintf(stderr, "NextQuery() notFinished | !size(): Query not finished / No Query\n");
@@ -510,7 +510,7 @@ int bdQuery::worthyPotentialPeer(const bdId *id)
 	eit = mClosest.upper_bound(dist);
 
 	/* check if outside range, & bucket is full  */
-	if ((sit == mClosest.end()) && (mClosest.size() >= mFns->bdNodesPerBucket()))
+	if ((sit == mClosest.end()) && (mClosest.size() >= mFns->bdNumQueryNodes()))
 	{
 #ifdef DEBUG_QUERY 
 		fprintf(stderr, "Peer to far away for Potential\n");
@@ -604,7 +604,7 @@ int bdQuery::updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType
 
 #if 0
 	/* check if outside range, & bucket is full  */
-	if ((sit == mPotentialPeers.end()) && (mPotentialPeers.size() >= mFns->bdNodesPerBucket()))
+	if ((sit == mPotentialPeers.end()) && (mPotentialPeers.size() >= mFns->bdNumQueryNodes()))
 	{
 #ifdef DEBUG_QUERY 
 		fprintf(stderr, "Peer to far away for Potential\n");
@@ -640,7 +640,7 @@ int bdQuery::updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType
 int bdQuery::trimPotentialPeers_FixedLength()
 {
 	/* trim it back */
-	while(mPotentialPeers.size() > (uint32_t) (mFns->bdNodesPerBucket()))
+	while(mPotentialPeers.size() > (uint32_t) (mFns->bdNumQueryNodes()))
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mPotentialPeers.end();
@@ -658,7 +658,7 @@ int bdQuery::trimPotentialPeers_FixedLength()
 
 int bdQuery::trimPotentialPeers_toClosest()
 {
-	if (mPotentialPeers.size() <= (uint32_t) (mFns->bdNodesPerBucket()))
+	if (mPotentialPeers.size() <= (uint32_t) (mFns->bdNumQueryNodes()))
 		return 1;
 
 	std::multimap<bdMetric, bdPeer>::reverse_iterator it;
@@ -666,7 +666,7 @@ int bdQuery::trimPotentialPeers_toClosest()
 	bdMetric lastClosest = it->first;
 	
 	/* trim it back */
-	while(mPotentialPeers.size() > (uint32_t) (mFns->bdNodesPerBucket()))
+	while(mPotentialPeers.size() > (uint32_t) (mFns->bdNumQueryNodes()))
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mPotentialPeers.end();

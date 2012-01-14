@@ -31,8 +31,6 @@
  * #define DEBUG_UDP_RELAY_PKTS		1
  */
 
-//#define DEBUG_UDP_RELAY 1
-
 
 #ifdef DEBUG_UDP_RELAY
 // DEBUG FUNCTION
@@ -334,6 +332,10 @@ int UdpRelayReceiver::removeUdpRelay(UdpRelayAddrSet *addrSet)
 {
 	RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
 
+#ifdef DEBUG_UDP_RELAY
+	std::cerr << "UdpRelayReceiver::removeUdpRelay() :" << *addrSet << std::endl;
+#endif
+
 	return removeUdpRelay_relayLocked(addrSet);
 }
 
@@ -384,6 +386,10 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int &relayClass, uin
 
 int UdpRelayReceiver::removeUdpRelay_relayLocked(UdpRelayAddrSet *addrSet)
 {
+#ifdef DEBUG_UDP_RELAY
+	std::cerr << "UdpRelayReceiver::removeUdpRelay_relayLocked() :" << *addrSet << std::endl;
+#endif
+
 	/* find in Relay list */
         std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit = mRelays.find(*addrSet);
 	if (rit == mRelays.end())
@@ -606,14 +612,15 @@ int UdpRelayReceiver::RelayStatus(std::ostream &out)
 		out << "\tBandwidth: " << rit->second.mBandwidth;
 		out << "\tDataSize: " << rit->second.mDataSize;
 		out << "\tLastBandwidthTS: " << rit->second.mLastBandwidthTS;
+		out << std::endl;
 	}
 
 	out << "ClassLimits:" << std::endl;
 	for(int i = 0; i < UDP_RELAY_NUM_CLASS; i++)
 	{
-		out << "ClassLimit[" << i << "] = " << mClassLimit[i] << std::endl;
-		out << "ClassCount[" << i << "] = " << mClassCount[i] << std::endl;
-		out << "ClassBandwidth[" << i << "] = " << mClassBandwidth[i] << std::endl;
+		out << "Limit[" << i << "] = " << mClassLimit[i];
+		out << " Count: " << mClassCount[i];
+		out << " Bandwidth: " << mClassBandwidth[i];
 		out << std::endl;
 	}
 

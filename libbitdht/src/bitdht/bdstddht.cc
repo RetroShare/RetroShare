@@ -256,10 +256,16 @@ uint16_t bdStdDht::bdNumBuckets()
 	return BITDHT_STANDARD_N_BUCKETS;
 }
 
-uint16_t bdStdDht::bdNodesPerBucket() /* used for query + bdspace */
+uint16_t bdStdDht::bdNodesPerBucket() /* used for bdspace */
 {
 	return BITDHT_STANDARD_BUCKET_SIZE;
 }
+
+uint16_t bdStdDht::bdNumQueryNodes() /* used for queries */
+{
+	return BITDHT_STANDARD_BUCKET_SIZE;
+}
+
 uint16_t bdStdDht::bdBucketBitSize()
 {
 	return BITDHT_STANDARD_BUCKET_SIZE_BITS;
@@ -308,6 +314,20 @@ void bdStdDht::bdPrintNodeId(std::ostream &out, const bdNodeId *a)
 {
 	return bdStdPrintNodeId(out, a);
 }
+
 	
+/**************************/
+
+void bdModDht::setNodesPerBucket(uint16_t nodesPerBucket)
+{
+	mNodesPerBucket = nodesPerBucket;
+	return;
+}
+
+
+uint16_t bdModDht::bdNodesPerBucket() /* used for bdspace */
+{
+	return mNodesPerBucket;
+}
 
 

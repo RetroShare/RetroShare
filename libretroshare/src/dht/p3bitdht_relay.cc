@@ -124,6 +124,9 @@ uint32_t p3BitDht::getRelayMode()
 
 int p3BitDht::setRelayMode(uint32_t mode)
 {
+	std::cerr << "p3BitDht::setRelayMode(" << mode << ")";
+	std::cerr << std::endl;
+
 	if (mode & RSDHT_RELAY_ENABLED)
 	{
 		mUdpBitDht->ConnectionOptions(
