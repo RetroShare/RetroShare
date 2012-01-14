@@ -120,7 +120,8 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	/* standard dht behaviour */
-	bdDhtFunctions *stdfns = new bdStdDht();
+	//bdDhtFunctions *stdfns = new bdStdDht();
+	mDhtFns = new bdModDht();
 
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht() startup ... creating UdpBitDht";
@@ -128,7 +129,7 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	/* create dht */
-	mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, stdfns);
+	mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, mDhtFns);
 	udpstack->addReceiver(mUdpBitDht);
 
 	/* setup callback to here */
@@ -170,6 +171,12 @@ void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
 	mPeerSharer = sharer;
 }
 
+	/* Tweak the DHT Parameters */
+void 	p3BitDht::modifyNodesPerBucket(uint16_t count)
+{
+	bdModDht *modFns = (bdModDht *) mDhtFns;
+	modFns->setNodesPerBucket(count);
+}
 
 /* Support for Outsourced Relay Handling */
 

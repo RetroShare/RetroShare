@@ -56,6 +56,7 @@ const int p3connectzone = 3431;
  * #define LINKMGR_DEBUG 1
  * #define LINKMGR_DEBUG_CONNFAIL 1
  * #define LINKMGR_DEBUG_ACTIONS  1
+ * #define LINKMGR_DEBUG_LINKTYPE	1
  ***/
 
 /****
@@ -85,7 +86,7 @@ const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 30;  // this represents how long i
 void  printConnectState(std::ostream &out, peerConnectState &peer);
 
 peerConnectAddress::peerConnectAddress()
-	:delay(0), period(0), type(0), ts(0)
+	:delay(0), period(0), type(0), flags(0), ts(0)
 {
 	sockaddr_clear(&addr);
 }
@@ -683,71 +684,113 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 #define TRICKLE_LIMIT		2001		// 2kb
 #define LOW_BANDWIDTH_LIMIT	5001		// 5kb
 
+#ifdef LINKMGR_DEBUG_LINKTYPE
+	std::cerr << "p3LinkMgrIMPL::connectAttempt() Setting up LinkType" << std::endl;
+	std::cerr << "p3LinkMgrIMPL::connectAttempt() type = " << type << std::endl;
+#endif
+
 	it->second.linkType = 0;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+		std::cerr << "p3LinkMgrIMPL::connectAttempt() type & TCP_ALL => TCP_UNKNOWN" << std::endl;
+#endif
 		it->second.linkType |= RS_NET_CONN_TRANS_TCP_UNKNOWN;
 	}
 	else if (type & RS_NET_CONN_UDP_ALL)
 	{
 		if (flags & RS_CB_FLAG_MODE_UDP_DIRECT)
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() type & UDP_ALL && flags & DIRECT => UDP_DIRECT" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_TRANS_UDP_DIRECT;
 		}
 		else if (flags & RS_CB_FLAG_MODE_UDP_PROXY)
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() type & UDP_ALL && flags & PROXY => UDP_PROXY" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_TRANS_UDP_PROXY;
 		}
 		else if (flags & RS_CB_FLAG_MODE_UDP_RELAY)
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() type & UDP_ALL && flags & RELAY => UDP_RELAY" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_TRANS_UDP_RELAY;
 		}
 		else 
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() type & UDP_ALL && else => UDP_UNKNOWN" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_TRANS_UDP_UNKNOWN;
 		}
 	}
 	else if (type & RS_NET_CONN_TUNNEL)
 	{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+		std::cerr << "p3LinkMgrIMPL::connectAttempt() type & TUNNEL => TUNNEL" << std::endl;
+#endif
 		it->second.linkType |= RS_NET_CONN_TRANS_TUNNEL;
 	}
 	else
 	{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+		std::cerr << "p3LinkMgrIMPL::connectAttempt() else => TRANS_UNKNOWN" << std::endl;
+#endif
 		it->second.linkType |= RS_NET_CONN_TRANS_UNKNOWN;
 	}
 
-	if (flags & RS_CB_FLAG_MODE_UDP_RELAY)
+	if ((type & RS_NET_CONN_UDP_ALL) && (flags & RS_CB_FLAG_MODE_UDP_RELAY))
 	{
 		if (bandwidth < TRICKLE_LIMIT)
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() flags & RELAY && band < TRICKLE => SPEED_TRICKLE" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_SPEED_TRICKLE;
 		}
 		else if (bandwidth < LOW_BANDWIDTH_LIMIT)
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() flags & RELAY && band < LOW => SPEED_LOW" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_SPEED_LOW;
 		}
 		else
 		{
+#ifdef LINKMGR_DEBUG_LINKTYPE
+			std::cerr << "p3LinkMgrIMPL::connectAttempt() flags & RELAY && else => SPEED_NORMAL" << std::endl;
+#endif
 			it->second.linkType |= RS_NET_CONN_SPEED_NORMAL;
 		}
 	}
 	else
 	{ 
+#ifdef LINKMGR_DEBUG_LINKTYPE
+		std::cerr << "p3LinkMgrIMPL::connectAttempt() else => SPEED_NORMAL" << std::endl;
+#endif
 		it->second.linkType |= RS_NET_CONN_SPEED_NORMAL;
 	}
 
 	uint32_t connType = mPeerMgr->getConnectionType(id);
 	it->second.linkType |= connType;
 
-	/********* Setup LinkType parameters **********/
+#ifdef LINKMGR_DEBUG_LINKTYPE
+	std::cerr << "p3LinkMgrIMPL::connectAttempt() connType: " << connType << std::endl;
+	std::cerr << "p3LinkMgrIMPL::connectAttempt() final LinkType: " << it->second.linkType << std::endl;
 
-	// TEMP DEBUG.
+
         std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;
 	std::cerr << " laddr: " << rs_inet_ntoa(raddr.sin_addr) << " lport: " << ntohs(raddr.sin_port) << " delay: " << delay << " period: " << period;
 	std::cerr << " type: " << type << std::endl;
 	std::cerr << "p3LinkMgrIMPL::connectAttempt() set LinkType to: " << it->second.linkType << std::endl;
+#endif
 
 
+	/********* Setup LinkType parameters **********/
 
 #ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;

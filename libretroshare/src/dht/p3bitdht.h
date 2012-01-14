@@ -173,7 +173,7 @@ virtual std::string getUdpAddressString();
 
 	void	setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay);
 	void	setupPeerSharer(pqiNetAssistPeerShare *sharer);
-
+	void    modifyNodesPerBucket(uint16_t count);
 
 void	start(); /* starts up the bitdht thread */
 
@@ -322,6 +322,7 @@ int 	removePeer(const std::string pid);
 
 	// Can be used externally too.
 int 	calculateNodeId(const std::string pid, bdNodeId *id);
+int 	addKnownNode(const bdId *id, uint32_t flags);
 
 	private:
 
@@ -344,6 +345,8 @@ int 	removeTranslation_locked(const std::string pid);
 	p3NetMgr *mNetMgr;
 
 	pqiNetAssistPeerShare *mPeerSharer;
+
+        bdDhtFunctions *mDhtFns;
 
 	RsMutex dhtMtx;
 
