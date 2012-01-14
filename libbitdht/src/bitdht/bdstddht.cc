@@ -318,6 +318,12 @@ void bdStdDht::bdPrintNodeId(std::ostream &out, const bdNodeId *a)
 	
 /**************************/
 
+bdModDht::bdModDht()
+	:mNodesPerBucket(BITDHT_STANDARD_BUCKET_SIZE)
+{
+	return;
+}
+
 void bdModDht::setNodesPerBucket(uint16_t nodesPerBucket)
 {
 	mNodesPerBucket = nodesPerBucket;

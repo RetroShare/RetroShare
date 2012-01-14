@@ -90,6 +90,7 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a);
 class bdModDht: public bdStdDht
 {
 	public:
+	bdModDht();
 virtual void setNodesPerBucket(uint16_t nodesPerBucket);
 virtual uint16_t bdNodesPerBucket(); /* used for bdspace */
 
