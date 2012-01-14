@@ -307,7 +307,8 @@ uint32_t RsChatLobbyInviteItem::serial_size()
 {
 	uint32_t s = 8; /* header */
 	s += 8;											// lobby_id
-	s += GetTlvStringSize(lobby_name) ;		// lobby name
+	s += GetTlvStringSize(lobby_name) ;		// lobby_name
+	s += 4;											// lobby_privacy_level
 
 	return s;
 }
@@ -589,6 +590,7 @@ bool RsChatLobbyInviteItem::serialise(void *data, uint32_t& pktsize)
 
 	ok &= setRawUInt64(data, tlvsize, &offset, lobby_id);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_name);
+	ok &= setRawUInt32(data, tlvsize, &offset, lobby_privacy_level);
 
 	if (offset != tlvsize)
 	{
@@ -893,6 +895,7 @@ RsChatLobbyInviteItem::RsChatLobbyInviteItem(void *data,uint32_t /*size*/)
 	/* get mandatory parts first */
 	ok &= getRawUInt64(data, rssize, &offset, &lobby_id);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_name);
+	ok &= getRawUInt32(data, rssize, &offset, &lobby_privacy_level);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat msg item." << std::endl ;
@@ -913,7 +916,7 @@ RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t /*siz
 	/* get mandatory parts first */
 	uint32_t version = 0;
 	ok &= getRawUInt32(data, rssize, &offset, &version);
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, configPeerId);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, configPeerId);
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &configFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &sendTime);

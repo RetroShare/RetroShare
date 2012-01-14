@@ -155,6 +155,7 @@ class ChatLobbyInvite
 		ChatLobbyId lobby_id ;
 		std::string peer_id ;
 		std::string lobby_name ;
+		uint32_t lobby_privacy_level ;						
 };
 class PublicChatLobbyRecord
 {
@@ -163,9 +164,10 @@ class PublicChatLobbyRecord
 
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string lobby_name ;								// name to use for this lobby
-		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
+		std::set<std::string> participating_friends ;	// list of direct friend who participate. 
 
 		uint32_t total_number_of_peers ;						// total number of particpating peers. Might not be
+		time_t last_report_time ; 								// last time the lobby was reported.
 };
 class ChatLobbyInfo
 {
@@ -175,8 +177,8 @@ class ChatLobbyInfo
 		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
 		std::string nick_name ;									// nickname to use for this lobby
 
-		uint32_t lobby_privacy_level ;						// see RS_CHAT_LOBBY_
-		std::set<std::string> nick_names ;					// list of non direct friend who participate. Used to display only.
+		uint32_t lobby_privacy_level ;						// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
+		std::map<std::string,time_t> nick_names ;			// list of non direct friend who participate. Used to display only.
 		time_t last_activity ;									// last recorded activity. Useful for removing dead lobbies.
 };
 

@@ -39,12 +39,15 @@
 /****
  * #define CHAT_DEBUG 1
  ****/
+#define CHAT_DEBUG 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   15 ; // sends a connexion challenge every 15 messages
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // sends a connexion challenge every 15 messages
 static const time_t 	MAX_KEEP_MSG_RECORD 					  =  240 ; // keep msg record for 240 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			  = 3600 ; // keep inactive lobbies for 1h max.
+static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  240 ; // keep inactive lobbies for 1h max.
+static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
@@ -331,8 +334,8 @@ void p3ChatService::locked_printDebugInfo() const
 
 		std::cerr << "   Participating nick names: " << std::endl;
 
-		for(std::set<std::string>::const_iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();++it2)
-			std::cerr << "       " << *it2 << std::endl;
+		for(std::map<std::string,time_t>::const_iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();++it2)
+			std::cerr << "       " << it2->first << ": " << now - it2->second << " secs ago" << std::endl;
 
 	}
 
@@ -673,6 +676,8 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 {
 	{
+		time_t now = time(NULL) ;
+
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 		for(uint32_t i=0;i<item->lobby_ids.size();++i)
@@ -683,6 +688,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 			rec.lobby_name = item->lobby_names[i] ;
 			rec.participating_friends.insert(item->PeerId()) ;
 			rec.total_number_of_peers = item->lobby_counts[i] ;
+			rec.last_report_time = now ;
 		}
 	}
 
@@ -714,7 +720,7 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 
 		if(it != _chat_lobbys.end())
 		{
-			std::set<std::string>::iterator it2(it->second.nick_names.find(item->nick)) ;
+			std::map<std::string,time_t>::iterator it2(it->second.nick_names.find(item->nick)) ;
 
 			if(it2 != it->second.nick_names.end())
 			{
@@ -741,7 +747,7 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 
 		if(it != _chat_lobbys.end())
 		{
-			it->second.nick_names.insert(item->nick) ;
+			it->second.nick_names[item->nick] = time(NULL) ;
 #ifdef CHAT_DEBUG
 			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
@@ -1603,13 +1609,14 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 		}
 		ChatLobbyEntry& lobby(it->second) ;
 
+		time_t now = time(NULL) ;
+
 		// Adds the peer id to the list of friend participants, even if it's not original msg source
 
 		if(peer_id != mLinkMgr->getOwnId())
 			lobby.participating_friends.insert(peer_id) ;
 
-		if(item->nick != "Lobby management")		// not nice ! We need a lobby management flag.
-			lobby.nick_names.insert(item->nick) ;
+		lobby.nick_names[item->nick] = now ;
 
 		// Checks wether the msg is already recorded or not
 
@@ -1624,7 +1631,6 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 		std::cerr << "  Msg already not received already. Adding in cache, and forwarding!" << std::endl ;
 #endif
 
-		time_t now = time(NULL) ;
 		lobby.msg_cache[item->msg_id] = now ;
 		lobby.last_activity = now ;
 
@@ -1882,6 +1888,7 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 	}
 	item->lobby_id = lobby_id ;
 	item->lobby_name = it->second.lobby_name ;
+	item->lobby_privacy_level = it->second.lobby_privacy_level ;
 	item->PeerId(peer_id) ;
 
 	sendItem(item) ;
@@ -1902,7 +1909,18 @@ void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 
 		if(it != _chat_lobbys.end())
 		{
-			std::cerr << "  Lobby already exists. Addign new friend " << item->PeerId() << " to it" << std::endl;
+			std::cerr << "  Lobby already exists. " << std::endl;
+			std::cerr << "     privacy levels: " << item->lobby_privacy_level << " vs. " << it->second.lobby_privacy_level ;
+
+			if(item->lobby_privacy_level != it->second.lobby_privacy_level)
+			{
+				std::cerr << " : Don't match. Cancelling." << std::endl;
+				return ;
+			}
+			else
+				std::cerr << " : Match!" << std::endl;
+
+			std::cerr << "  Addign new friend " << item->PeerId() << " to lobby." << std::endl;
 
 			it->second.participating_friends.insert(item->PeerId()) ;
 			return ;
@@ -1913,6 +1931,7 @@ void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		invite.lobby_id = item->lobby_id ;
 		invite.peer_id = item->PeerId() ;
 		invite.lobby_name = item->lobby_name ;
+		invite.lobby_privacy_level = item->lobby_privacy_level ;
 
 		_lobby_invites_queue[item->lobby_id] = invite ;
 	}
@@ -1959,7 +1978,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
-		entry.lobby_privacy_level = ((_public_lobbies.find(lobby_id)!=_public_lobbies.end())?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE) ;	// should be updated later if the lobby is advertized
+		entry.lobby_privacy_level = it->second.lobby_privacy_level ;
 		entry.nick_name = _default_nick_name ;	
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
@@ -2269,12 +2288,15 @@ void p3ChatService::cleanLobbyCaches()
 
 	time_t now = time(NULL) ;
 
+	// 1 - clean cache of all lobbies and participating nicknames.
+	//
 	for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.begin();it!=_chat_lobbys.end();++it)
+	{
 		for(std::map<ChatLobbyMsgId,time_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
 			if(it2->second + MAX_KEEP_MSG_RECORD < now)
 			{
 #ifdef CHAT_DEBUG
-				std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << it2->second << std::endl;
+				std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
 #endif
 
 				std::map<ChatLobbyMsgId,time_t>::iterator tmp(it2) ;
@@ -2285,6 +2307,39 @@ void p3ChatService::cleanLobbyCaches()
 			else
 				++it2 ;
 
-	// also clean inactive lobbies.
-	// [...]
+		for(std::map<std::string,time_t>::iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();)
+			if(it2->second + MAX_KEEP_INACTIVE_NICKNAME < now)
+			{
+#ifdef CHAT_DEBUG
+				std::cerr << "  removing inactive nickname 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
+#endif
+
+				std::map<std::string,time_t>::iterator tmp(it2) ;
+				++tmp ;
+				it->second.nick_names.erase(it2) ;
+				it2 = tmp ;
+			}
+			else
+				++it2 ;
+	}
+
+	// 2 - clean deprecated public chat lobby records
+	// 
+	
+	for(std::map<ChatLobbyId,PublicChatLobbyRecord>::iterator it(_public_lobbies.begin());it!=_public_lobbies.end();)
+		if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now)	// this lobby record is too late.
+		{
+#ifdef CHAT_DEBUG
+				std::cerr << "  removing old public lobby record 0x" << std::hex << it->first << ", time=" << std::dec << now - it->second.last_report_time << " secs ago" << std::endl;
+#endif
+
+				std::map<ChatLobbyMsgId,PublicChatLobbyRecord>::iterator tmp(it) ;
+				++tmp ;
+				_public_lobbies.erase(it) ;
+				it = tmp ;
+		}
+		else
+			++it ;
 }
+
+

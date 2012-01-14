@@ -51,8 +51,8 @@ const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING 		= 0x0001;
 const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           	= 0x03 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           	= 0x04 ;	
 const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG 	= 0x05 ;	
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG_DEPRECATED= 0x06 ;	// don't use !
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE     	= 0x07 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG_DEPRECATED= 0x06 ;	// don't use ! Deprecated
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPREC = 0x07 ;	// don't use ! Deprecated
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     	= 0x08 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  	= 0x09 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	= 0x0A ;
@@ -60,6 +60,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT      	= 0x0B ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	= 0x0C ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	= 0x0D ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x0E ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -239,6 +240,7 @@ class RsChatLobbyInviteItem: public RsChatItem
 
 		ChatLobbyId lobby_id ;
 		std::string lobby_name ;
+		uint32_t lobby_privacy_level ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor

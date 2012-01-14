@@ -128,8 +128,8 @@ void ChatLobbyDialog::updateFriendsList()
 	for (; it!=linfos.end() && (*it).lobby_id != lobby_id; ++it);
 
 	if (it != linfos.end()) {
-		for (std::set<std::string>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {
-			friendsListWidget->addItem(QString::fromUtf8((*it2).c_str()));
+		for (std::map<std::string,time_t>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {
+			friendsListWidget->addItem(QString::fromUtf8((it2->first).c_str()));
 		}
 	}
 }
