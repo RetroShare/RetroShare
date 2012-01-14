@@ -69,7 +69,8 @@ class bdStdDht: public bdDhtFunctions
         bdStdDht();
         /* setup variables */
 virtual uint16_t bdNumBuckets();
-virtual uint16_t bdNodesPerBucket(); /* used for query + bdspace */
+virtual uint16_t bdNodesPerBucket(); /* used for bdspace */
+virtual uint16_t bdNumQueryNodes(); /* used for queries */
 virtual uint16_t bdBucketBitSize();
 
 virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric);
@@ -84,6 +85,16 @@ virtual void bdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNode
 virtual void bdPrintId(std::ostream &out, const bdId *a);
 virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a);
 
+};
+
+class bdModDht: public bdStdDht
+{
+	public:
+virtual void setNodesPerBucket(uint16_t nodesPerBucket);
+virtual uint16_t bdNodesPerBucket(); /* used for bdspace */
+
+	private:
+	uint16_t mNodesPerBucket;
 };
 
 

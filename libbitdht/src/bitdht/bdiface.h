@@ -88,7 +88,8 @@ class bdDhtFunctions
 //	bdDhtFunctions();
 	/* setup variables */
 virtual uint16_t bdNumBuckets() = 0;
-virtual uint16_t bdNodesPerBucket() = 0; /* used for query + bdspace */
+virtual uint16_t bdNodesPerBucket() = 0; /* used for bdspace */
+virtual uint16_t bdNumQueryNodes() = 0; /* used for queries */
 virtual uint16_t bdBucketBitSize() = 0;
 
 virtual int bdDistance(const bdNodeId *n1, const bdNodeId *n2, bdMetric *metric) = 0;

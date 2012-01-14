@@ -2148,7 +2148,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 		bool areProxy = (srcConnAddr->id == id->id);
 		if (areProxy)
 		{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::recvedConnectionRequest() We are MID Point for Proxy / Relay Connection.";
 			std::cerr << std::endl;
 #endif
@@ -2170,7 +2170,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 
 			if (mNodeSpace->find_node(&(destConnAddr->id), numNodes, matchingIds, with_flag))
 			{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 				std::cerr << "bdConnectManager::recvedConnectionRequest() Found Suitable Destination Addr";
 				std::cerr << std::endl;
 #endif
@@ -2188,7 +2188,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 
 			if (proxyOk)
 			{
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 				std::cerr << "bdConnectManager::recvedConnectionRequest() Proxy Addr Ok: ";
 				bdStdPrintId(std::cerr, destConnAddr);
 				std::cerr << "asking for AUTH to continue";
@@ -2215,7 +2215,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 			else
 			{
 				/* clean up connection... its not going to work */
-#ifdef DEBUG_NODE_CONNECTION
+#ifdef DEBUG_PROXY_CONNECTION
 				std::cerr << "bdConnectManager::recvedConnectionRequest() WARNING No Proxy Addr, Shutting Connect Attempt";
 				std::cerr << std::endl;
 #endif
@@ -2227,18 +2227,25 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 				int param = 0;
 				mPub->send_connect_msg(id, msgtype, srcConnAddr, destConnAddr, mode, param, status);
 
-				/* remove connection */
-				bdConnectManager::cleanConnectionBySender(id, srcConnAddr, destConnAddr);
 
 				/* WILL NEED CALLBACK FOR FAILED PROXY ATTEMPT - TO SUPPORT RELAYS PROPERLY 
 				 * NODE needs to know PEERS to potentially WHITELIST!
 				 */
 				if (mRelayMode == BITDHT_RELAYS_SERVER)
 				{
-					callbackConnect(&(conn->mSrcId),&(conn->mProxyId),&(conn->mDestId),
-						conn->mMode, conn->mPoint, param, BITDHT_CONNECT_CB_AUTH,
+#ifdef DEBUG_PROXY_CONNECTION
+					std::cerr << "bdConnectManager::recvedConnectionRequest() In RelayServer Mode, doing FAIL callbackConnect()";
+					std::cerr << std::endl;
+#endif
+
+					bdId proxyId;
+					proxyId.id = mOwnId;
+					callbackConnect(srcConnAddr, &proxyId, destConnAddr, mode, point, param, BITDHT_CONNECT_CB_AUTH,
 						BITDHT_CONNECT_ERROR_NOADDRESS);
 				}
+
+				/* remove connection */
+				bdConnectManager::cleanConnectionBySender(id, srcConnAddr, destConnAddr);
 			}
 		}
 		else
