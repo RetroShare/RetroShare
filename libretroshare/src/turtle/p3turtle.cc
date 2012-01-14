@@ -36,6 +36,7 @@
 
 #include "pqi/authssl.h"
 #include "pqi/p3linkmgr.h"
+#include "retroshare/rspeers.h"
 #include "pqi/pqinotify.h"
 
 #include "ft/ftserver.h"
@@ -807,6 +808,12 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #endif
 
 		for(std::list<std::string>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
+		{
+			uint32_t linkType = mLinkMgr->getLinkType(*it);
+
+			if ((linkType & RS_NET_CONN_SPEED_TRICKLE) || (linkType & RS_NET_CONN_SPEED_LOW)) 	// don't forward searches to slow link types (e.g relay peers)!
+				continue ;
+
 			if(*it != item->PeerId())
 			{
 #ifdef P3TURTLE_DEBUG
@@ -828,6 +835,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 				sendItem(fwd_item) ;
 			}
+		}
 	}
 #ifdef P3TURTLE_DEBUG
 	else
@@ -1732,6 +1740,12 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 #endif
 
 		for(std::list<std::string>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
+		{
+			uint32_t linkType = mLinkMgr->getLinkType(*it);
+
+			if ((linkType & RS_NET_CONN_SPEED_TRICKLE) || (linkType & RS_NET_CONN_SPEED_LOW)) 	// don't forward tunnel requests to slow link types (e.g relay peers)!
+				continue ;
+
 			if(*it != item->PeerId() && RSRandom::random_f32() <= forward_probability)
 			{
 #ifdef P3TURTLE_DEBUG
@@ -1758,6 +1772,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 				sendItem(fwd_item) ;
 			}
+		}
 	}
 #ifdef P3TURTLE_DEBUG
 	else
