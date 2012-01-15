@@ -58,6 +58,7 @@ p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	_own_avatar = NULL ;
 	_custom_status_string = "" ;
 	_default_nick_name = rsPeers->getPeerName(rsPeers->getOwnId());
+	_should_reset_lobby_counts = false ;
 	
 	last_public_lobby_info_request_time = 0 ;
 }
@@ -687,12 +688,18 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 			rec.lobby_id = item->lobby_ids[i] ;
 			rec.lobby_name = item->lobby_names[i] ;
 			rec.participating_friends.insert(item->PeerId()) ;
-			rec.total_number_of_peers = item->lobby_counts[i] ;
+
+			if(_should_reset_lobby_counts)
+				rec.total_number_of_peers = item->lobby_counts[i] ;
+			else
+				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
+
 			rec.last_report_time = now ;
 		}
 	}
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	_should_reset_lobby_counts = false ;
 }
 
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
@@ -929,6 +936,7 @@ void p3ChatService::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord
 			sendItem(item);
 		}
 		last_public_lobby_info_request_time = now ;
+		_should_reset_lobby_counts = true ;
 	}
 }
 

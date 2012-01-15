@@ -281,6 +281,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		std::string _default_nick_name ;
 		time_t last_lobby_challenge_time ; // prevents bruteforce attack
 		time_t last_public_lobby_info_request_time ;	// allows to ask for updates
+		bool _should_reset_lobby_counts ;
 };
 
 class p3ChatService::StateStringInfo
