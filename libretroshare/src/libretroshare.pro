@@ -10,6 +10,7 @@ CONFIG += test_voip
 # Beware: All data of the stripped services are lost
 #CONFIG += minimal
 DEFINES *= PQI_DISABLE_TUNNEL 
+INCLUDEPATH += C:/Development/Rs/OpenSSL/include
 #ENABLE_CACHE_OPT
 
 minimal {
@@ -286,13 +287,13 @@ win32 {
                 SOURCES += upnp/upnputil.c
 
 
-                UPNPC_DIR = ../../../../miniupnpc-1.3
-                GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-                GPGME_DIR  = ../../../../gpgme-1.1.8
+                UPNPC_DIR = ../../../lib/miniupnpc-1.3
+                GPG_ERROR_DIR = ../../../lib/libgpg-error-1.7
+                GPGME_DIR  = ../../../lib/gpgme-1.1.8
 
-                PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
-                ZLIB_DIR = ../../../../zlib-1.2.3
-                SSL_DIR = ../../../../OpenSSL
+                PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
+                ZLIB_DIR = ../../../lib/zlib-1.2.3
+                SSL_DIR = ../../../OpenSSL
 
 
                 INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src

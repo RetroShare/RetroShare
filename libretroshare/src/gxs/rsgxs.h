@@ -36,8 +36,8 @@
  * Retroshare general exchange service
  * This forms the basic interface that classes need to inherit
  * in order to use the general exchange service
- * General GNP drives the service.
- * GDP deals with exporting and importing
+ * Generally GNP drives the service.
+ * GDP deals with exporting and importing msgs to and from the concrete service
  * data from the derived class
  * GXIP is used to maintain
  */
@@ -48,13 +48,36 @@ public:
 
 public:
 
-    virtual void receiveMessage(RsGxsMessage*) = 0;
-    void sendMessage(RsGxsMessage*) = 0;
+    /*!
+     * These are messages, that have been pushed to you
+     * This will be called by RsGdp whenever a new msg(s) has arrived
+     * the list contains ids which may be queried from the external db
+     */
+    virtual void receiveMessage(std::set<std::string> msgIds) = 0;
+
+    /*!
+     * Push a set of messages which have been written to your service
+     * database
+     */
+    void push(std::set<std::string>& msgIds) = 0;
 
     /*!
      * drives synchronisation between peers
      */
     void tick();
+
+    void cache(RsGxsSignedMessage*);
+    bool cached(std::string& msgId);
+
+    /*!
+     * Use to retrieve cached msgs
+     *
+     * @param msgs the cached msgs
+     */
+    void retrieveCache(std::set<std::string>& requestIds, std::set<RsGxsSignedMessage*>& msgs);
+
+
+
 };
 
 #endif // RSGXS_H

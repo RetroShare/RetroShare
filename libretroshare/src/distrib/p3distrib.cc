@@ -28,7 +28,6 @@
 #endif
 
 #include <stdio.h>
-
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
