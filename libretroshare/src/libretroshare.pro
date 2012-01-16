@@ -163,7 +163,7 @@ HEADERS += plugins/pluginmanager.h \
     gxs/rsgxs.h \
     gxs/rsgnp.h \
     gxs/rsgdp.h \
-    util/rssqlite.h \
+    util/retrodb.h \
     gxs/rsgixs.h
 
 HEADERS += $$PUBLIC_HEADERS
@@ -668,7 +668,7 @@ SOURCES += \
     gxs/rsgdp.cpp
 
 SOURCES += \
-    util/rssqlite.cpp
+    util/retrodb.cpp
 
 SOURCES += \
     gxs/rsgixs.cpp
