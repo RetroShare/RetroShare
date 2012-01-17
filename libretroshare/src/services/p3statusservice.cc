@@ -106,7 +106,7 @@ bool p3StatusService::getStatusList(std::list<StatusInfo>& statusInfo)
 	return true;
 }
 
-bool p3StatusService::getStatus(std::string &id, StatusInfo &statusInfo)
+bool p3StatusService::getStatus(const std::string &id, StatusInfo &statusInfo)
 {
 #ifdef STATUS_DEBUG
 	std::cerr << "p3StatusService::getStatus() " << std::endl;

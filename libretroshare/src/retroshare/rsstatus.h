@@ -88,7 +88,7 @@ class RsStatus
 	 * This retrieves the status info one peer
 	 * @param statusInfo is populated with client's peer's status
 	 */
-	virtual bool getStatus(std::string &id, StatusInfo &statusInfo) = 0;
+	virtual bool getStatus(const std::string &id, StatusInfo &statusInfo) = 0;
 
 	/**
 	 * send the client's status to his/her peers
@@ -96,7 +96,7 @@ class RsStatus
 	 * @param status the status of the peers
 	 * @return will return false if status info does not belong to client
 	 */
-	virtual bool sendStatus(std::string id, uint32_t status)                 = 0;
+	virtual bool sendStatus(const std::string &id, uint32_t status)                 = 0;
 };
 
 

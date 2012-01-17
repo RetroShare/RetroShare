@@ -65,7 +65,7 @@ virtual void    statusChange(const std::list<pqipeer> &plist);
  */
 virtual bool getOwnStatus(StatusInfo& statusInfo);
 virtual bool getStatusList(std::list<StatusInfo>& statusInfo);
-virtual bool getStatus(std::string &id, StatusInfo &statusInfo);
+virtual bool getStatus(const std::string &id, StatusInfo &statusInfo);
 /* id = "", status is sent to all online peers */
 virtual bool sendStatus(const std::string &id, uint32_t status);
 

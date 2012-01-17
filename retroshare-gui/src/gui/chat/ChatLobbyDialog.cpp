@@ -21,52 +21,43 @@
  ****************************************************************/
 
 #include <QMessageBox>
-#include <QTimer>
-#include <QScrollBar>
-#include <QCloseEvent>
-#include <QColorDialog>
-#include <QDateTime>
-#include <QFontDialog>
-#include <QDir>
-#include <QBuffer>
-#include <QTextCodec>
-#include <QListWidget>
-#include <QSound>
-#include <sys/stat.h>
-
-#include "util/misc.h"
-#include "rshare.h"
-
-#include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rsstatus.h>
-
-#include <time.h>
-#include <algorithm>
 
 #include "ChatLobbyDialog.h"
 #include "gui/ChatLobbyWidget.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/settings/RsharePeerSettings.h"
+
+#include <retroshare/rsnotify.h>
+
+#include <time.h>
 
 /** Default constructor */
-ChatLobbyDialog::ChatLobbyDialog(const std::string& dialog_id, const ChatLobbyId& lid, const QString &name, QWidget *parent, Qt::WFlags flags)
-	: PopupChatDialog(dialog_id, name, parent, flags), lobby_id(lid)
+ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WFlags flags)
+	: ChatDialog(parent, flags), lobbyId(lid)
 {
-	// remove the avatar widget. Replace it with a friends list.
-	ui.avatarWidget->hide();
-	ui.ownAvatarWidget->hide();
-	PopupChatDialog::updateStatus(QString::fromStdString(getPeerId()),RS_STATUS_ONLINE);
+	/* Invoke Qt Designer generated QObject setup routine */
+	ui.setupUi(this);
 
-    // hide history buttons
-    ui.actionClearOfflineMessages->setVisible(false);
-    ui.actionDelete_Chat_History->setVisible(false);
-    ui.actionMessageHistory->setVisible(false);
+	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
+}
 
-    ui.avatarFrameButton->setToolTip(tr("Hide participants"));
+void ChatLobbyDialog::init(const std::string &peerId, const QString &peerName)
+{
+	ChatDialog::init(peerId, peerName);
 
-	ui.avatarframe->layout()->addWidget(new QLabel(tr("Participants:")));
-	friendsListWidget = new QListWidget;
-	ui.avatarframe->layout()->addWidget(friendsListWidget);
-	ui.avatarframe->layout()->addItem(new QSpacerItem(12, 335, QSizePolicy::Minimum, QSizePolicy::Expanding));
+	lastUpdateListTime = 0;
+
+	/* Hide or show the participants frames */
+	showParticipantsFrame(PeerSettings->getShowParticipantsFrame(peerId));
+
+	// add to window
+	ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
+	if (tabWidget) {
+		tabWidget->addDialog(this);
+	}
+
+	// load settings
+	processSettings(true);
 }
 
 /** Destructor. */
@@ -76,25 +67,35 @@ ChatLobbyDialog::~ChatLobbyDialog()
 
 	// check that the lobby still exists.
 	ChatLobbyId lid;
-	if (rsMsgs->isLobbyId(getPeerId(),lid)) {
-		rsMsgs->unsubscribeChatLobby(lobby_id);
+	if (rsMsgs->isLobbyId(getPeerId(), lid)) {
+		rsMsgs->unsubscribeChatLobby(lobbyId);
 	}
+
+	// save settings
+	processSettings(false);
 }
 
-bool ChatLobbyDialog::addToParent()
+ChatWidget *ChatLobbyDialog::getChatWidget()
 {
-	ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
-	if (tabWidget) {
-		tabWidget->addDialog(this);
-		return true;
+	return ui.chatWidget;
+}
+
+void ChatLobbyDialog::processSettings(bool load)
+{
+	Settings->beginGroup(QString("ChatLobbyDialog"));
+
+	if (load) {
+		// load settings
+	} else {
+		// save settings
 	}
 
-	return false;
+	Settings->endGroup();
 }
 
 void ChatLobbyDialog::setNickName(const QString& nick)
 {
-	rsMsgs->setNickNameForChatLobby(lobby_id, nick.toUtf8().constData());
+	rsMsgs->setNickNameForChatLobby(lobbyId, nick.toUtf8().constData());
 }
 
 void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
@@ -104,70 +105,89 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	QString message = QString::fromStdWString(info.msg);
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
 
-	addChatMsg(true, name, sendTime, recvTime, message, TYPE_NORMAL);
+	ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 
 	// also update peer list.
 
-	static time_t last = 0 ;
-	time_t now = time(NULL) ;
+	time_t now = time(NULL);
 
-	if (now > last) {
-		last = now;
-		updateFriendsList();
+	if (now > lastUpdateListTime) {
+		lastUpdateListTime = now;
+		updateParticipantsList();
 	}
 }
 
-void ChatLobbyDialog::updateFriendsList()
+void ChatLobbyDialog::updateParticipantsList()
 {
-	friendsListWidget->clear();
+	ui.participantsList->clear();
 
 	std::list<ChatLobbyInfo> linfos;
 	rsMsgs->getChatLobbyList(linfos);
 
 	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
-	for (; it!=linfos.end() && (*it).lobby_id != lobby_id; ++it);
+	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it);
 
 	if (it != linfos.end()) {
 		for (std::map<std::string,time_t>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {
-			friendsListWidget->addItem(QString::fromUtf8((it2->first).c_str()));
+			ui.participantsList->addItem(QString::fromUtf8((it2->first).c_str()));
 		}
 	}
 }
 
 void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname, const QString& str)
 {
-	switch(event_type)
-	{
-		case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
-			addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(str), TYPE_NORMAL);
-			break;
-		case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
-			addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(str), TYPE_NORMAL);
-			break;
-		case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
-			updateStatusString(nickname,str);
-			break;
-		default:
-			std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
+	switch (event_type) {
+	case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(str), ChatWidget::TYPE_NORMAL);
+		break;
+	case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(str), ChatWidget::TYPE_NORMAL);
+		break;
+	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
+		ui.chatWidget->updateStatusString(nickname + " %1", str);
+		break;
+	default:
+		std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
 	}
-}
-
-QString ChatLobbyDialog::makeStatusString(const QString& peer_id, const QString& status_string) const
-{
-	 return QString::fromUtf8(peer_id.toStdString().c_str()) + " " + tr(status_string.toAscii());
 }
 
 bool ChatLobbyDialog::canClose()
 {
 	// check that the lobby still exists.
 	ChatLobbyId lid;
-	if (!rsMsgs->isLobbyId(getPeerId(),lid)) {
+	if (!rsMsgs->isLobbyId(getPeerId(), lid)) {
 		return true;
 	}
 
-	if (QMessageBox::Yes == QMessageBox::question(NULL, tr("Unsubscribe to lobby?"), tr("Do you want to unsubscribe to this chat lobby?"), QMessageBox::Yes | QMessageBox::No)) {
+	if (QMessageBox::Yes == QMessageBox::question(this, tr("Unsubscribe to lobby"), tr("Do you want to unsubscribe to this chat lobby?"), QMessageBox::Yes | QMessageBox::No)) {
 		return true;
 	}
 
 	return false;
+}
+
+void ChatLobbyDialog::showDialog(uint chatflags)
+{
+	if (chatflags & RS_CHAT_FOCUS) {
+		ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
+		if (tabWidget) {
+			tabWidget->setCurrentWidget(this);
+		}
+	}
+}
+
+void ChatLobbyDialog::showParticipantsFrame(bool show)
+{
+	ui.participantsFrame->setVisible(show);
+	ui.participantsFrameButton->setChecked(show);
+
+	if (show) {
+		ui.participantsFrameButton->setToolTip(tr("Hide Participants"));
+		ui.participantsFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
+	} else {
+		ui.participantsFrameButton->setToolTip(tr("Show Participants"));
+		ui.participantsFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
+	}
+
+	PeerSettings->setShowParticipantsFrame(getPeerId(), show);
 }

@@ -20,749 +20,181 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMessageBox>
-#include <QTimer>
-#include <QScrollBar>
-#include <QCloseEvent>
-#include <QColorDialog>
-#include <QDateTime>
-#include <QFontDialog>
-#include <QBuffer>
-#include <QTextCodec>
-#include <QSound>
-#include <sys/stat.h>
-
 #include "PopupChatDialog.h"
-#include "ChatLobbyDialog.h"
 #include "PopupChatWindow.h"
-#include "gui/RetroShareLink.h"
-#include "util/misc.h"
-#include "rshare.h"
 
-#include <retroshare/rspeers.h>
-#include <retroshare/rsnotify.h>
-#include <retroshare/rsstatus.h>
-#include <retroshare/rshistory.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
-#include "../RsAutoUpdatePage.h"
-#include "gui/common/StatusDefs.h"
-#include "gui/common/AvatarDefs.h"
-#include "gui/common/Emoticons.h"
-#include "gui/common/PeerDefs.h"
-#include "gui/common/FilesDefs.h"
-#include "gui/im_history/ImHistoryBrowser.h"
-#include "gui/msgs/MessageComposer.h"
 
-#include <time.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsiface.h>
+
 #include <algorithm>
 
 #define appDir QApplication::applicationDirPath()
 
 #define WINDOW(This) dynamic_cast<PopupChatWindow*>(This->window())
 
-/*****
- * #define CHAT_DEBUG 1
- *****/
-
-static std::map<std::string, PopupChatDialog *> chatDialogs;
-
-// play sound when recv a message
-void playsound()
-{
-    Settings->beginGroup("Sound");
-        Settings->beginGroup("SoundFilePath");
-            QString OnlineSound = Settings->value("NewChatMessage","").toString();
-        Settings->endGroup();
-        Settings->beginGroup("Enable");
-            bool flag = Settings->value("NewChatMessage",false).toBool();
-        Settings->endGroup();
-    Settings->endGroup();
-
-    if (!OnlineSound.isEmpty() && flag) {
-        if (QSound::isAvailable()) {
-            QSound::play(OnlineSound);
-        }
-    }
-}
-
 /** Default constructor */
-PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWidget *parent, Qt::WFlags flags)
-  : QWidget(parent, flags), dialogId(id), dialogName(name),
-    lastChatTime(0), lastChatName("")
+PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WFlags flags)
+  : ChatDialog(parent, flags)
 {
-    /* Invoke Qt Designer generated QObject setup routine */
-    ui.setupUi(this);
+	/* Invoke Qt Designer generated QObject setup routine */
+	ui.setupUi(this);
 
-    newMessages = false;
-    typing = false;
-    manualDelete = false;
-    peerStatus = 0;
+	manualDelete = false;
 
-    last_status_send_time = 0 ;
-    chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
-
-    /* Hide or show the frames */
-    showAvatarFrame(PeerSettings->getShowAvatarFrame(dialogId));
-    ui.infoframe->setVisible(false);
-    ui.statusmessagelabel->hide();
-
-    connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
-
-    connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
-    connect(ui.addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-
-    connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));
-    connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));
-    connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
-    connect(ui.attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
-    connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(getFont()));
-    connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
-    connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
-    connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
-    connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
-
-    connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
-
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus_slot(const QString&, int)));
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
-
-    connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
-
-    ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-    ui.avatarWidget->setId(dialogId, false);
-
-    ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-    ui.ownAvatarWidget->setOwnId();
-
-    // Create the status bar
-    resetStatusBar();
-
-    ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
-    ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
-    ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
-    ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
-    ui.emoteiconButton->setIcon(QIcon(QString(":/images/emoticons/kopete/kopete020.png")));
-
-    ui.textboldButton->setCheckable(true);
-    ui.textunderlineButton->setCheckable(true);
-    ui.textitalicButton->setCheckable(true);
-
-    setAcceptDrops(true);
-    ui.chattextEdit->setAcceptDrops(false);
-    ui.hashBox->setDropWidget(this);
-    ui.hashBox->setAutoHide(true);
-
-    QMenu *toolmenu = new QMenu();
-    toolmenu->addAction(ui.actionClear_Chat_History);
-    toolmenu->addAction(ui.actionDelete_Chat_History);
-    toolmenu->addAction(ui.actionSave_Chat_History);
-    toolmenu->addAction(ui.actionClearOfflineMessages);
-    toolmenu->addAction(ui.actionMessageHistory);
-    //toolmenu->addAction(ui.action_Disable_Emoticons);
-    ui.pushtoolsButton->setMenu(toolmenu);
-
-    ui.chattextEdit->installEventFilter(this);
-
-#ifdef RS_RELEASE_VERSION
-    ui.attachPictureButton->setVisible(false);
-#endif
+	connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
+	connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
+	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(const QString&, const QString&, bool)), this, SLOT(chatStatusChanged(const QString&, const QString&, bool)));
 }
 
-void PopupChatDialog::init()
+void PopupChatDialog::init(const std::string &peerId, const QString &peerName)
 {
-    if (!isChatLobby()) {
-        mCurrentColor.setNamedColor(PeerSettings->getPrivateChatColor(dialogId));
-        mCurrentFont.fromString(PeerSettings->getPrivateChatFont(dialogId));
+	ChatDialog::init(peerId, peerName);
 
-        // load settings
-        processSettings(true);
+	/* Hide or show the avatar frames */
+	showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));
 
-        // load style
-        PeerSettings->getStyle(dialogId, "PopupChatDialog", style);
+	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
+	ui.avatarWidget->setId(peerId, false);
 
-        // initialize first status
-        StatusInfo peerStatusInfo;
-        // No check of return value. Non existing status info is handled as offline.
-        rsStatus->getStatus(dialogId, peerStatusInfo);
-        updateStatus(QString::fromStdString(dialogId), peerStatusInfo.status);
+	ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
+	ui.ownAvatarWidget->setOwnId();
 
-        // initialize first custom state string
-        QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(dialogId).c_str());
-        updatePeersCustomStateString(QString::fromStdString(dialogId), customStateString);
+	ui.chatWidget->addToolsAction(ui.actionClearOfflineMessages);
 
-        if (rsHistory->getEnable(false)) {
-            // get chat messages from history
-            std::list<HistoryMsg> historyMsgs;
-            int messageCount = Settings->getPrivateChatHistoryCount();
-            if (messageCount > 0) {
-                rsHistory->getMessages(dialogId, historyMsgs, messageCount);
+	// add offline chat messages
+	onChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
 
-                std::list<HistoryMsg>::iterator historyIt;
-                for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); historyIt++) {
-                    addChatMsg(historyIt->incoming, QString::fromUtf8(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), TYPE_HISTORY);
-                }
-            }
-        }
-        // add offline chat messages
-        onPrivateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
-    }
+	// add to window
+	PopupChatWindow *window = PopupChatWindow::getWindow(false);
+	if (window) {
+		window->addDialog(this);
+	}
 
-    colorChanged(mCurrentColor);
-    fontChanged(mCurrentFont);
+    // load settings
+    processSettings(true);
 }
 
 /** Destructor. */
 PopupChatDialog::~PopupChatDialog()
 {
-    // save settings
-    processSettings(false);
-
-    emit dialogClose(this);
-
-    std::map<std::string, PopupChatDialog *>::iterator it;
-    if (chatDialogs.end() != (it = chatDialogs.find(dialogId))) {
-        chatDialogs.erase(it);
-    }
+	// save settings
+	processSettings(false);
 }
 
-void PopupChatDialog::processSettings(bool bLoad)
+ChatWidget *PopupChatDialog::getChatWidget()
 {
-    Settings->beginGroup(QString("ChatDialog"));
-
-    if (bLoad) {
-        // load settings
-
-        // state of splitter
-        ui.chatsplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
-    } else {
-        // save settings
-
-        // state of splitter
-        Settings->setValue("ChatSplitter", ui.chatsplitter->saveState());
-    }
-
-    Settings->endGroup();
+	return ui.chatWidget;
 }
 
-/*static*/ PopupChatDialog *PopupChatDialog::getExistingInstance(const std::string &id)
+void PopupChatDialog::processSettings(bool load)
 {
-    std::map<std::string, PopupChatDialog *>::iterator it;
-    if (chatDialogs.end() != (it = chatDialogs.find(id))) {
-        /* exists already */
-        return it->second;
-    }
+	Settings->beginGroup(QString("PopupChatDialog"));
 
-    return NULL;
+	if (load) {
+		// load settings
+	} else {
+		// save settings
+	}
+
+	Settings->endGroup();
 }
 
-/*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(const std::string &id, uint chatflags)
+void PopupChatDialog::showDialog(uint chatflags)
 {
-    /* see if it already exists */
-    PopupChatDialog *popupchatdialog = getExistingInstance(id);
-
-    if (popupchatdialog == NULL) {
-        ChatLobbyId lobby_id;
-        if (rsMsgs->isLobbyId(id, lobby_id)) {
-            chatflags = RS_CHAT_OPEN; // use own flags
-        }
-
-        if (chatflags & RS_CHAT_OPEN) {
-            RsPeerDetails sslDetails;
-
-            if (rsPeers->getPeerDetails(id, sslDetails)) {
-                popupchatdialog = new PopupChatDialog(id, PeerDefs::nameWithLocation(sslDetails));
-                popupchatdialog->init();
-                chatDialogs[id] = popupchatdialog;
-
-                popupchatdialog->addToParent();
-            } else if (lobby_id) {
-                std::list<ChatLobbyInfo> linfos;
-                rsMsgs->getChatLobbyList(linfos);
-
-                for (std::list<ChatLobbyInfo>::const_iterator it(linfos.begin()); it != linfos.end(); ++it) {
-                    if ((*it).lobby_id == lobby_id) {
-                        popupchatdialog = new ChatLobbyDialog(id, lobby_id, QString::fromUtf8((*it).lobby_name.c_str()));
-                        popupchatdialog->init();
-                        chatDialogs[id] = popupchatdialog;
-
-                        popupchatdialog->addToParent();
-                    }
-                }
-            }
-        }
-    }
-
-    if (popupchatdialog == NULL) {
-        return NULL;
-    }
-
-    popupchatdialog->insertChatMsgs();
-
-    PopupChatWindow *window = WINDOW(popupchatdialog);
-    if (window) {
-        window->showDialog(popupchatdialog, chatflags);
-    }
-
-    return popupchatdialog;
-}
-
-/*static*/ void PopupChatDialog::cleanupChat()
-{
-    PopupChatWindow::cleanup();
-
-    /* PopupChatDialog destuctor removes the entry from the map */
-    std::list<PopupChatDialog*> list;
-
-    std::map<std::string, PopupChatDialog*>::iterator it;
-    for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
-        if (it->second) {
-            list.push_back(it->second);
-        }
-    }
-
-    chatDialogs.clear();
-
-    std::list<PopupChatDialog*>::iterator it1;
-    for (it1 = list.begin(); it1 != list.end(); it1++) {
-        delete (*it1);
-    }
-}
-
-/*static*/ void PopupChatDialog::privateChatChanged(int list, int type)
-{
-    if (list == NOTIFY_LIST_PRIVATE_INCOMING_CHAT && type == NOTIFY_TYPE_ADD) {
-        std::list<std::string> ids;
-        if (rsMsgs->getPrivateChatQueueIds(true, ids)) {
-            uint chatflags = Settings->getChatFlags();
-
-            std::list<std::string>::iterator id;
-            for (id = ids.begin(); id != ids.end(); id++) {
-                PopupChatDialog *pcd = getPrivateChat(*id, chatflags);
-
-                if (pcd) {
-                    pcd->insertChatMsgs();
-                }
-            }
-        }
-    }
-
-    /* now notify all open priavate chat windows */
-    std::map<std::string, PopupChatDialog *>::iterator it;
-    for (it = chatDialogs.begin (); it != chatDialogs.end(); it++) {
-        if (it->second) {
-            it->second->onPrivateChatChanged(list, type);
-        }
-    }
-}
-
-bool PopupChatDialog::addToParent()
-{
-    PopupChatWindow *window = PopupChatWindow::getWindow(false);
-    if (window) {
-        window->addDialog(this);
-        return true;
-    }
-
-    return false;
-}
-
-/*static*/ void PopupChatDialog::closeChat(const std::string& id)
-{
-    PopupChatDialog *popupchatdialog = getExistingInstance(id);
-
-    if (popupchatdialog) {
-        delete(popupchatdialog);
-    }
-}
-
-/*static*/ void PopupChatDialog::chatFriend(const std::string &id)
-{
-    if (id.empty()){
-        return;
-    }
-    std::cerr<<" popup dialog chat friend 1"<<std::endl;
-
-    ChatLobbyId lid ;
-    if(rsMsgs->isLobbyId(id, lid)) {
-        getPrivateChat(id, RS_CHAT_OPEN | RS_CHAT_FOCUS);
-        return;
-    }
-
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail)) 
-        return;
-
-    std::string firstId;
-
-    if (detail.isOnlyGPGdetail) {
-        //let's get the ssl child details, and open all the chat boxes
-        std::list<std::string> sslIds;
-        rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
-        for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
-            if (firstId.empty()) {
-                firstId = *it;
-            }
-
-            RsPeerDetails sslDetails;
-            if (rsPeers->getPeerDetails(*it, sslDetails)) {
-                if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
-                    getPrivateChat(*it, RS_CHAT_OPEN | RS_CHAT_FOCUS);
-                    return;
-                }
-            }
-        }
-    } else {
-        if (detail.state & RS_PEER_STATE_CONNECTED) {
-            getPrivateChat(id, RS_CHAT_OPEN | RS_CHAT_FOCUS);
-            return;
-        }
-        firstId = id;
-    }
-
-    /* info dialog */
-    QMessageBox mb(QMessageBox::Question, tr("Friend not Online"), tr("Your Friend is offline \nDo you want to send them a Message instead"), QMessageBox::Yes | QMessageBox::No);
-    mb.setWindowIcon(QIcon(":/images/rstray3.png"));
-    if (mb.exec() == QMessageBox::Yes) {
-        MessageComposer::msgFriend(id, false);
-    } else {
-        if (firstId.empty() == false) {
-            getPrivateChat(firstId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
-        }
-    }
-}
-
-void PopupChatDialog::focusDialog()
-{
-    ui.chattextEdit->setFocus();
-}
-
-void PopupChatDialog::pasteLink()
-{
-	std::cerr << "In paste link" << std::endl ;
-	ui.chattextEdit->insertHtml(RSLinkClipboard::toHtml()) ;
-}
-
-void PopupChatDialog::contextMenu( QPoint /*point*/ )
-{
-    std::cerr << "In context menu" << std::endl ;
-
-    QMenu *contextMnu = ui.chattextEdit->createStandardContextMenu();
-
-    contextMnu->addSeparator();
-    QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
-    action->setDisabled(RSLinkClipboard::empty());
-
-    contextMnu->exec(QCursor::pos());
-    delete(contextMnu);
-}
-
-void PopupChatDialog::resetStatusBar()
-{
-    ui.statusLabel->clear();
-    ui.typingpixmapLabel->clear();
-
-    typing = false;
-
-    emit infoChanged(this);
-}
-
-void PopupChatDialog::updateStatusTyping()
-{
-    if (time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
-    {
-#ifdef ONLY_FOR_LINGUIST
-        tr("is typing...");
-#endif
-
-        rsMsgs->sendStatusString(dialogId, "is typing...");
-        last_status_send_time = time(NULL) ;
-    }
-}
-
-QString PopupChatDialog::makeStatusString(const QString& peer_id,const QString& status_string) const
-{
-	return QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toAscii());
+	PopupChatWindow *window = WINDOW(this);
+	if (window) {
+		window->showDialog(this, chatflags);
+	}
 }
 
 // Called by libretroshare through notifyQt to display the peer's status
 //
-void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& status_string)
+void PopupChatDialog::chatStatusChanged(const QString &peerId, const QString& statusString, bool isPrivateChat)
 {
-    QString status = makeStatusString(peer_id, status_string) ;
-    ui.statusLabel->setText(status); // displays info for 5 secs.
-    ui.typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
-
-    if (status_string == "is typing...") {
-        typing = true;
-
-        emit infoChanged(this);
-    }
-
-    QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
-}
-
-void PopupChatDialog::resizeEvent(QResizeEvent */*event*/)
-{
-    // Workaround: now the scroll position is correct calculated
-    QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
-    scrollbar->setValue(scrollbar->maximum());
-}
-
-void PopupChatDialog::showEvent(QShowEvent */*event*/)
-{
-    newMessages = false;
-    emit infoChanged(this);
-    focusDialog();
-}
-
-void PopupChatDialog::activate()
-{
-    PopupChatWindow *window = WINDOW(this);
-    if (window) {
-        if (window->isActiveWindow()) {
-            newMessages = false;
-            emit infoChanged(this);
-            focusDialog();
-        }
-    } else {
-        newMessages = false;
-        emit infoChanged(this);
-        focusDialog();
-    }
-}
-
-void PopupChatDialog::onPrivateChatChanged(int list, int type)
-{
-    if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {
-        switch (type) {
-        case NOTIFY_TYPE_ADD:
-            {
-            if (!isChatLobby()) {
-                    std::list<ChatInfo> savedOfflineChatNew;
-
-                    QString name = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
-
-                    std::list<ChatInfo> offlineChat;
-                    if (rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, dialogId, offlineChat)) {
-                        ui.actionClearOfflineMessages->setEnabled(true);
-
-                        std::list<ChatInfo>::iterator it;
-                        for(it = offlineChat.begin(); it != offlineChat.end(); it++) {
-                            /* are they public? */
-                            if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
-                                /* this should not happen */
-                                continue;
-                            }
-
-                            savedOfflineChatNew.push_back(*it);
-
-                            if (std::find(savedOfflineChat.begin(), savedOfflineChat.end(), *it) != savedOfflineChat.end()) {
-                                continue;
-                            }
-
-                            QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
-                            QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-                            QString message = QString::fromStdWString(it->msg);
-
-                            addChatMsg(false, name, sendTime, recvTime, message, TYPE_OFFLINE);
-                        }
-                    }
-
-                    savedOfflineChat = savedOfflineChatNew;
-                }
-            }
-            break;
-        case NOTIFY_TYPE_DEL:
-            {
-            if (!isChatLobby()) {
-                    if (manualDelete == false) {
-                        QString name = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
-
-                        // now show saved offline chat messages as sent
-                        std::list<ChatInfo>::iterator it;
-                        for(it = savedOfflineChat.begin(); it != savedOfflineChat.end(); ++it) {
-                            QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
-                            QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-                            QString message = QString::fromStdWString(it->msg);
-
-                            addChatMsg(false, name, sendTime, recvTime, message, TYPE_NORMAL);
-                        }
-                    }
-
-                    savedOfflineChat.clear();
-                }
-            }
-            break;
-        }
-
-        ui.actionClearOfflineMessages->setEnabled(!savedOfflineChat.empty());
-    }
+	if (isPrivateChat && this->peerId == peerId.toStdString()) {
+		ui.chatWidget->updateStatusString(QString::fromUtf8(rsPeers->getPeerName(this->peerId).c_str()) + " %1", statusString);
+	}
 }
 
 void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
 {
-	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
-	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
-	QString message = QString::fromStdWString(info.msg);
-	QString name = QString::fromUtf8(rsPeers->getPeerName(info.rsid).c_str()) ;
+	ChatWidget *cw = getChatWidget();
+	if (cw) {
+		QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
+		QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
+		QString message = QString::fromStdWString(info.msg);
+		QString name = QString::fromUtf8(rsPeers->getPeerName(info.rsid).c_str()) ;
 
-	addChatMsg(true, name, sendTime, recvTime, message, TYPE_NORMAL);
+		cw->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+	}
 }
 
-void PopupChatDialog::insertChatMsgs()
+void PopupChatDialog::onChatChanged(int list, int type)
 {
-    std::list<ChatInfo> newchat;
-    if (!rsMsgs->getPrivateChatQueue(true, dialogId, newchat))
-    {
-#ifdef PEERS_DEBUG
-        std::cerr << "no chat for " << dialogId << " available." << std::endl ;
-#endif
-        return;
-    }
+	if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {
+		switch (type) {
+		case NOTIFY_TYPE_ADD:
+			{
+				std::list<ChatInfo> savedOfflineChatNew;
 
-    std::list<ChatInfo>::iterator it;
-    for(it = newchat.begin(); it != newchat.end(); it++) 
-	 {
-        /* are they public? */
-        if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
-            /* this should not happen */
-            continue;
-        }
+				QString name = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
 
-		  addIncomingChatMsg(*it) ;
-    }
+				std::list<ChatInfo> offlineChat;
+				if (rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, peerId, offlineChat)) {
+					ui.actionClearOfflineMessages->setEnabled(true);
 
-    rsMsgs->clearPrivateChatQueue(true, dialogId);
+					std::list<ChatInfo>::iterator it;
+					for(it = offlineChat.begin(); it != offlineChat.end(); it++) {
+						/* are they public? */
+						if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
+							/* this should not happen */
+							continue;
+						}
 
-    playsound();
+						savedOfflineChatNew.push_back(*it);
 
-    emit newMessage(this);
+						if (std::find(savedOfflineChat.begin(), savedOfflineChat.end(), *it) != savedOfflineChat.end()) {
+							continue;
+						}
 
-    PopupChatWindow *window = WINDOW(this);
-    if (isVisible() == false || (window && window->isActiveWindow() == false)) {
-        newMessages = true;
-    }
+						QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
+						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
+						QString message = QString::fromStdWString(it->msg);
 
-    emit infoChanged(this);
-}
+						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::TYPE_OFFLINE);
+					}
+				}
 
-void PopupChatDialog::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType)
-{
-#ifdef CHAT_DEBUG
-    std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
-#endif
+				savedOfflineChat = savedOfflineChatNew;
+			}
+			break;
+		case NOTIFY_TYPE_DEL:
+			{
+				if (manualDelete == false) {
+					QString name = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
 
-    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
+					// now show saved offline chat messages as sent
+					std::list<ChatInfo>::iterator it;
+					for(it = savedOfflineChat.begin(); it != savedOfflineChat.end(); ++it) {
+						QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
+						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
+						QString message = QString::fromStdWString(it->msg);
 
-    // embed smileys ?
-    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
-        formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
-    }
+						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+					}
+				}
 
-    ChatStyle::enumFormatMessage type;
-    if (chatType == TYPE_OFFLINE) {
-        type = ChatStyle::FORMATMSG_OOUTGOING;
-    } else if (chatType == TYPE_HISTORY) {
-        type = incoming ? ChatStyle::FORMATMSG_HINCOMING : ChatStyle::FORMATMSG_HOUTGOING;
-    } else {
-        type = incoming ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
-    }
+				savedOfflineChat.clear();
+			}
+			break;
+		}
 
-    QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, message, formatFlag);
-
-    ui.textBrowser->append(formatMsg);
-
-    /* Scroll to the end */
-    QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
-    scrollbar->setValue(scrollbar->maximum());
-
-    resetStatusBar();
-}
-
-bool PopupChatDialog::eventFilter(QObject *obj, QEvent *event)
-{
-    if (obj == ui.chattextEdit) {
-        if (event->type() == QEvent::KeyPress) {
-            updateStatusTyping() ;
-
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
-                // Enter pressed
-                if (Settings->getChatSendMessageWithCtrlReturn()) {
-                    if (keyEvent->modifiers() & Qt::ControlModifier) {
-                        // send message with Ctrl+Enter
-                        sendChat();
-                        return true; // eat event
-                    }
-                } else {
-                    if (keyEvent->modifiers() & Qt::ControlModifier) {
-                        // insert return
-                        ui.chattextEdit->textCursor().insertText("\n");
-                    } else {
-                        // send message with Enter
-                        sendChat();
-                    }
-                    return true; // eat event
-                }
-            }
-        }
-    }
-    // pass the event on to the parent class
-    return QWidget::eventFilter(obj, event);
-}
-
-void PopupChatDialog::sendChat()
-{
-    QTextEdit *chatWidget = ui.chattextEdit;
-
-    if (chatWidget->toPlainText().isEmpty()) {
-        // nothing to send
-        return;
-    }
-
-    QString text;
-    RsHtml::optimizeHtml(chatWidget, text);
-    std::wstring msg = text.toStdWString();
-
-    if (msg.empty()) {
-        // nothing to send
-        return;
-    }
-
-    std::string ownId;
-
-    {
-        rsiface->lockData(); /* Lock Interface */
-        const RsConfig &conf = rsiface->getConfig();
-
-        ownId = conf.ownId;
-
-        rsiface->unlockData(); /* Unlock Interface */
-    }
-
-#ifdef CHAT_DEBUG 
-    std::cout << "PopupChatDialog:sendChat " << std::endl;
-#endif
-
-    if (sendPrivateChat(msg))
-	 {
-        QDateTime currentTime = QDateTime::currentDateTime();
-        addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
-    }
-
-    chatWidget->clear();
-    // workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
-    // QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
-    chatWidget->setCurrentCharFormat(QTextCharFormat ());
-
-    setFont();
-}
-
-bool PopupChatDialog::sendPrivateChat(const std::wstring& msg)
-{
-	return rsMsgs->sendPrivateChat(dialogId, msg) ;
+		ui.actionClearOfflineMessages->setEnabled(!savedOfflineChat.empty());
+	}
 }
 
 /**
@@ -770,297 +202,23 @@ bool PopupChatDialog::sendPrivateChat(const std::wstring& msg)
  */
 void PopupChatDialog::showAvatarFrame(bool show)
 {
-    if (show) {
-        ui.avatarframe->setVisible(true);
-        ui.avatarFrameButton->setChecked(true);
-        ui.avatarFrameButton->setToolTip(tr("Hide Avatar"));
-        ui.avatarFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
-    } else {
-        ui.avatarframe->setVisible(false);
-        ui.avatarFrameButton->setChecked(false);
-        ui.avatarFrameButton->setToolTip(tr("Show Avatar"));
-        ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
-    }
+	ui.avatarframe->setVisible(show);
+	ui.avatarFrameButton->setChecked(show);
 
-    PeerSettings->setShowAvatarFrame(dialogId, show);
-}
+	if (show) {
+		ui.avatarFrameButton->setToolTip(tr("Hide Avatar"));
+		ui.avatarFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
+	} else {
+		ui.avatarFrameButton->setToolTip(tr("Show Avatar"));
+		ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
+	}
 
-void PopupChatDialog::on_closeInfoFrameButton_clicked()
-{
-    ui.infoframe->setVisible(false);
-}
-
-void PopupChatDialog::setColor()
-{	    
-    bool ok;
-    QRgb color = QColorDialog::getRgba(ui.chattextEdit->textColor().rgba(), &ok, window());
-    if (ok) {
-        mCurrentColor = QColor(color);
-        PeerSettings->setPrivateChatColor(dialogId, mCurrentColor.name());
-        colorChanged(mCurrentColor);
-    }
-    setFont();
-}
-
-void PopupChatDialog::colorChanged(const QColor &c)
-{
-    QPixmap pix(16, 16);
-    pix.fill(c);
-    ui.colorButton->setIcon(pix);
-}
-
-void PopupChatDialog::getFont()
-{
-    bool ok;
-    QFont font = QFontDialog::getFont(&ok, mCurrentFont, this);
-    if (ok) {
-        fontChanged(font);
-    }
-}
-
-void PopupChatDialog::fontChanged(const QFont &font)
-{
-    mCurrentFont = font;
-
-    ui.textboldButton->setChecked(mCurrentFont.bold());
-    ui.textunderlineButton->setChecked(mCurrentFont.underline());
-    ui.textitalicButton->setChecked(mCurrentFont.italic());
-
-    setFont();
-}
-
-void PopupChatDialog::setFont()
-{
-    mCurrentFont.setBold(ui.textboldButton->isChecked());
-    mCurrentFont.setUnderline(ui.textunderlineButton->isChecked());
-    mCurrentFont.setItalic(ui.textitalicButton->isChecked());
-
-    ui.chattextEdit->setFont(mCurrentFont);
-    ui.chattextEdit->setTextColor(mCurrentColor);
-
-    ui.chattextEdit->setFocus();
-
-    PeerSettings->setPrivateChatFont(dialogId, mCurrentFont.toString());
-}
-
-//============================================================================
-
-void PopupChatDialog::smileyWidget()
-{ 
-    Emoticons::showSmileyWidget(this, ui.emoteiconButton, SLOT(addSmiley()), true);
-}
-
-//============================================================================
-
-void PopupChatDialog::addSmiley()
-{
-    ui.chattextEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
-}
-
-//============================================================================
-
-void PopupChatDialog::on_actionClear_Chat_History_triggered()
-{
-    ui.textBrowser->clear();
-}
-
-void PopupChatDialog::on_actionDelete_Chat_History_triggered()
-{
-    if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
-        on_actionClear_Chat_History_triggered();
-        rsHistory->clear(dialogId);
-    }
-}
-
-void PopupChatDialog::addExtraFile()
-{
-    QStringList files;
-    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        ui.hashBox->addAttachments(files/*, 0*/);
-    }
-}
-
-void PopupChatDialog::addExtraPicture()
-{
-    // select a picture file
-    QString file;
-    if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
-        ui.hashBox->addAttachments(QStringList(file), HashedFile::Picture);
-    }
-}
-
-void PopupChatDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
-{
-    std::cerr << "PopupChatDialog::fileHashingFinished() started." << std::endl;
-
-    QString message;
-
-    QList<HashedFile>::iterator it;
-    for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
-        HashedFile& hashedFile = *it;
-        QString ext = QFileInfo(hashedFile.filename).suffix();
-
-        RetroShareLink link;
-        link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash));
-
-        if (hashedFile.flag & HashedFile::Picture) {
-            message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
-            message+="<br>";
-        } else {
-            QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
-            if (!image.isEmpty()) {
-                message += QString("<img src=\"%1\">").arg(image);
-            }
-        }
-        message += link.toHtmlSize();
-        if (it != hashedFiles.end()) {
-            message += "<BR>";
-        }
-    }
-
-#ifdef CHAT_DEBUG
-    std::cerr << "PopupChatDialog::fileHashingFinished message : " << message.toStdString() << std::endl;
-#endif
-
-    /* convert to real html document */
-    QTextBrowser textBrowser;
-    textBrowser.setHtml(message);
-    std::wstring msg = textBrowser.toHtml().toStdWString();
-
-    if (rsMsgs->sendPrivateChat(dialogId, msg)) {
-        std::string ownId = rsPeers->getOwnId();
-        QDateTime currentTime = QDateTime::currentDateTime();
-        addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
-    }
-}
-
-bool PopupChatDialog::fileSave()
-{
-    if (fileName.isEmpty())
-        return fileSaveAs();
-
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly))
-        return false;
-    QTextStream ts(&file);
-    ts.setCodec(QTextCodec::codecForName("UTF-8"));
-    ts << ui.textBrowser->document()->toPlainText();
-    ui.textBrowser->document()->setModified(false);
-    return true;
-}
-
-bool PopupChatDialog::fileSaveAs()
-{
-    QString fn;
-    if (misc::getSaveFileName(window(), RshareSettings::LASTDIR_HISTORY, tr("Save as..."), tr("Text File (*.txt );;All Files (*)"), fn)) {
-        setCurrentFileName(fn);
-        return fileSave();
-    }
-
-    return false;
-}
-
-void PopupChatDialog::setCurrentFileName(const QString &fileName)
-{
-    this->fileName = fileName;
-    ui.textBrowser->document()->setModified(false);
-
-    setWindowModified(false);
+	PeerSettings->setShowAvatarFrame(getPeerId(), show);
 }
 
 void PopupChatDialog::clearOfflineMessages()
 {
-    manualDelete = true;
-    rsMsgs->clearPrivateChatQueue(false, dialogId);
-    manualDelete = false;
-}
-
-void PopupChatDialog::updateStatus_slot(const QString &peer_id, int status)
-{
-    updateStatus(peer_id, status);
-}
-
-void PopupChatDialog::updateStatus(const QString &peer_id, int status)
-{
-    std::string stdPeerId = peer_id.toStdString();
-    
-    /* set font size for status  */
-    if (stdPeerId == dialogId) {
-        // the peers status has changed
-
-        switch (status) {
-        case RS_STATUS_OFFLINE:
-            ui.infoframe->setVisible(true);
-            ui.infolabel->setText(dialogName + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
-            break;
-
-        case RS_STATUS_INACTIVE:
-            ui.infoframe->setVisible(true);
-            ui.infolabel->setText(dialogName + " " + tr("is Idle and may not reply"));
-            break;
-
-        case RS_STATUS_ONLINE:
-            ui.infoframe->setVisible(false);
-            break;
-
-        case RS_STATUS_AWAY:
-            ui.infolabel->setText(dialogName + " " + tr("is Away and may not reply"));
-            ui.infoframe->setVisible(true);
-            break;
-
-        case RS_STATUS_BUSY:
-            ui.infolabel->setText(dialogName + " " + tr("is Busy and may not reply"));
-            ui.infoframe->setVisible(true);
-            break;
-        }
-
-        QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
-        ui.friendnamelabel->setText(dialogName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
-
-        peerStatus = status;
-
-        emit infoChanged(this);
-
-        return;
-    }
-
-    // ignore status change
-}
-
-void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
-{
-    std::string stdPeerId = peer_id.toStdString();
-    QString status_text;
-
-    if (stdPeerId == dialogId) {
-        // the peers status string has changed
-        if (status_string.isEmpty()) {
-            ui.statusmessagelabel->hide();
-        } else {
-            ui.statusmessagelabel->show();
-            status_text = RsHtml::formatText(status_string, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-            ui.statusmessagelabel->setText(status_text);
-        }
-    }
-}
-
-void PopupChatDialog::on_actionMessageHistory_triggered()
-{
-    ImHistoryBrowser imBrowser(dialogId, ui.chattextEdit, window());
-    imBrowser.exec();
-}
-
-bool PopupChatDialog::setStyle()
-{
-    if (style.showDialog(window())) {
-        PeerSettings->setStyle(dialogId, "PopupChatDialog", style);
-        return true;
-    }
-
-    return false;
-}
-
-const RSStyle &PopupChatDialog::getStyle()
-{
-    return style;
+	manualDelete = true;
+	rsMsgs->clearPrivateChatQueue(false, peerId);
+	manualDelete = false;
 }

@@ -21,7 +21,7 @@
 
 #include "OnlineToaster.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/chat/PopupChatDialog.h"
+#include "gui/chat/ChatDialog.h"
 #include "util/WidgetBackgroundImage.h"
 #include "gui/common/AvatarDefs.h"
 
@@ -50,7 +50,7 @@ OnlineToaster::OnlineToaster(const std::string &peerId, const QString &name) : Q
 
 void OnlineToaster::chatButtonSlot()
 {
-	PopupChatDialog::chatFriend(peerId);
+	ChatDialog::chatFriend(peerId);
 	hide();
 }
 

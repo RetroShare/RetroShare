@@ -295,7 +295,7 @@ void ChatLobbyWidget::subscribeItem()
 	if (rsMsgs->joinPublicChatLobby(id)) {
 		std::string vpeer_id;
 		if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
-			PopupChatDialog::chatFriend(vpeer_id) ;
+			ChatDialog::chatFriend(vpeer_id) ;
 		}
 	}
 }
@@ -311,7 +311,7 @@ void ChatLobbyWidget::unsubscribeItem()
 
 	std::string vpeer_id;
 	if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
-		PopupChatDialog::closeChat(vpeer_id);
+		ChatDialog::closeChat(vpeer_id);
 	}
 
 	rsMsgs->unsubscribeChatLobby(id);
@@ -339,7 +339,7 @@ void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type,
 
 	std::string vpid;
 	if (rsMsgs->getVirtualPeerId(lobby_id, vpid)) {
-		if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(PopupChatDialog::getExistingInstance(vpid))) {
+		if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(vpid))) {
 			cld->displayLobbyEvent(event_type, nickname, str);
 		}
 	}
@@ -351,14 +351,14 @@ void ChatLobbyWidget::readChatLobbyInvites()
 	rsMsgs->getPendingChatLobbyInvites(invites);
 
 	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it) {
-		if (QMessageBox::Ok == QMessageBox::question(NULL, tr("Invitation to chat lobby"), QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str()) + QString(" invites you to chat lobby named ") + QString::fromUtf8((*it).lobby_name.c_str()), QMessageBox::Ok, QMessageBox::Ignore)) {
+		if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str()) + QString(" invites you to chat lobby named ") + QString::fromUtf8((*it).lobby_name.c_str()), QMessageBox::Ok, QMessageBox::Ignore)) {
 			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
 
 			rsMsgs->acceptLobbyInvite((*it).lobby_id);
 
 			std::string vpid;
 			if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid )) {
-				PopupChatDialog::chatFriend(vpid);
+				ChatDialog::chatFriend(vpid);
 			} else {
 				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 			}

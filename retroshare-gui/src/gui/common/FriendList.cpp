@@ -25,12 +25,13 @@
 #include <QTimer>
 #include <QTreeWidgetItem>
 #include <QWidgetAction>
+#include <QDateTime>
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsstatus.h"
 
 #include "GroupDefs.h"
-#include "gui/chat/PopupChatDialog.h"
+#include "gui/chat/ChatDialog.h"
 #include "gui/chat/CreateLobbyDialog.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/connect/ConfCertDialog.h"
@@ -1209,7 +1210,7 @@ void FriendList::chatfriend(QTreeWidgetItem *pPeer)
     }
 
     std::string id = getRsId(pPeer);
-    PopupChatDialog::chatFriend(id);
+    ChatDialog::chatFriend(id);
 }
 
 void FriendList::addFriend()
@@ -1416,7 +1417,7 @@ void FriendList::showLobby()
 	 std::string vpeer_id ;
 
 	 if(rsMsgs->getVirtualPeerId( ChatLobbyId(QString::fromStdString(lobby_id).toULongLong() ),vpeer_id)) 
-		 PopupChatDialog::chatFriend(vpeer_id) ;
+		 ChatDialog::chatFriend(vpeer_id) ;
 }
 void FriendList::unsubscribeToLobby()
 {
@@ -1433,7 +1434,7 @@ void FriendList::unsubscribeToLobby()
 
 	 // we should also close existing windows.
 
-	 PopupChatDialog::closeChat(vpeer_id) ;
+	 ChatDialog::closeChat(vpeer_id) ;
 }
 
 
@@ -1462,7 +1463,7 @@ void FriendList::inviteToLobby()
 
 	 std::string vpeer_id ;
 	 if(rsMsgs->getVirtualPeerId( ChatLobbyId(QString::fromStdString(lobby_id).toULongLong() ),vpeer_id) )
-			 PopupChatDialog::chatFriend(vpeer_id) ;
+			 ChatDialog::chatFriend(vpeer_id) ;
 }
 
 void FriendList::createchatlobby()

@@ -47,12 +47,12 @@ bool p3Status::getStatusList(std::list<StatusInfo>& statusInfo){
 	return mStatusSrv->getStatusList(statusInfo);
 }
 
-bool p3Status::getStatus(std::string &id, StatusInfo &statusInfo)
+bool p3Status::getStatus(const std::string &id, StatusInfo &statusInfo)
 {
 	return mStatusSrv->getStatus(id, statusInfo);
 }
 
-bool p3Status::sendStatus(std::string id, uint32_t status){
+bool p3Status::sendStatus(const std::string &id, uint32_t status){
 
 	return mStatusSrv->sendStatus(id, status);
 }

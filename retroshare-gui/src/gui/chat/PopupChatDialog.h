@@ -24,151 +24,44 @@
 #define _POPUPCHATDIALOG_H
 
 #include "ui_PopupChatDialog.h"
-
-class QAction;
-class QTextEdit;
-class QTextCharFormat;
-class ChatInfo;
+#include "ChatDialog.h"
 
 #include <retroshare/rsmsgs.h>
-#include "ChatStyle.h"
-#include "gui/style/RSStyle.h"
 
-class PopupChatDialog : public QWidget
+class PopupChatDialog : public ChatDialog
 {
-  Q_OBJECT
+	Q_OBJECT
 
-public:
-    enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE };
-
-public:
-    static PopupChatDialog *getExistingInstance(const std::string &id);
-    static PopupChatDialog *getPrivateChat(const std::string &id, uint chatflags);
-    static void cleanupChat();
-    static void chatFriend(const std::string &id);
-    static void closeChat(const std::string &id);
-    static void privateChatChanged(int list, int type);
-
-    void init();
-
-    void updateStatusString(const QString& peer_id, const QString& statusString);
-    std::string getPeerId() { return dialogId; }
-    QString getTitle() { return dialogName; }
-    bool hasNewMessages() { return newMessages; }
-    bool isTyping() { return typing; }
-    int getPeerStatus() { return peerStatus; }
-    void focusDialog();
-    void activate();
-    bool setStyle();
-    const RSStyle &getStyle();
-    virtual void updateStatus(const QString &peer_id, int status);
-
-    // derived in ChatLobbyDialog.
-    //
-    virtual bool hasPeerStatus() { return true; }
-    virtual bool canClose() { return true; }
-
-signals:
-    void dialogClose(PopupChatDialog *dialog);
-    void infoChanged(PopupChatDialog *dialog);
-    void newMessage(PopupChatDialog *dialog);
-
-public slots:
-    void updateStatus_slot(const QString &peer_id, int status);
-
-protected:
-    /** Default constructor */
-    PopupChatDialog(const std::string &id, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
-    /** Default destructor */
-    ~PopupChatDialog();
-
-    virtual void resizeEvent(QResizeEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-    bool eventFilter(QObject *obj, QEvent *ev);
-
-    void insertChatMsgs();
-    void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
-
-    // derived in ChatLobbyDialog.
-    //
-    virtual bool addToParent();
-    virtual bool isChatLobby() { return false; } // TODO: spilt into a good base class
-    virtual void addIncomingChatMsg(const ChatInfo& info);
-    virtual QString makeStatusString(const QString& peer_id, const QString& status_string) const;
+	friend class ChatDialog;
 
 private slots:
-    void pasteLink() ;
-    void contextMenu(QPoint) ;
-
-    void fileHashingFinished(QList<HashedFile> hashedFiles);
-
-    void smileyWidget();
-    void addSmiley();
-
-    void resetStatusBar() ;
-    void updateStatusTyping() ;
-
-    void on_actionMessageHistory_triggered();
-    void addExtraFile();
-    void addExtraPicture();
-    void showAvatarFrame(bool show);
-    void on_closeInfoFrameButton_clicked();
-
-    void setColor();
-    void getFont();
-    void setFont();
-
-    void sendChat();
-
-    void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
-
-    void on_actionClear_Chat_History_triggered();
-    void on_actionDelete_Chat_History_triggered();
-
-    bool fileSave();
-    bool fileSaveAs();
-    void clearOfflineMessages();
-
-private:
-    void setCurrentFileName(const QString &fileName);
-
-    void colorChanged(const QColor &c);
-    void fontChanged(const QFont &font);
-    void processSettings(bool bLoad);
-
-    void onPrivateChatChanged(int list, int type);
-
-    QAction *actionTextBold;
-    QAction *actionTextUnderline;
-    QAction *actionTextItalic;
-
-    std::string dialogId;
-    QString dialogName;
-    unsigned int lastChatTime;
-    std::string  lastChatName;
-
-    time_t last_status_send_time ;
-    QColor mCurrentColor;
-    QFont  mCurrentFont;
-
-    std::list<ChatInfo> savedOfflineChat;
-    QString wholeChat;
-    QString fileName;
-
-    bool newMessages;
-    bool typing;
-    int peerStatus;
-    ChatStyle chatStyle;
-    bool manualDelete;
-
-    RSStyle style;
+	void showAvatarFrame(bool show);
+	void clearOfflineMessages();
+	void chatStatusChanged(const QString &peerId, const QString &statusString, bool isPrivateChat);
 
 protected:
-    virtual bool sendPrivateChat(const std::wstring& msg) ;	// can be derived to send chat to e.g. a chat lobby
+	/** Default constructor */
+	PopupChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+	/** Default destructor */
+	virtual ~PopupChatDialog();
 
-    /** Qt Designer generated object */
-    Ui::PopupChatDialog ui;
+	virtual void init(const std::string &peerId, const QString &peerName);
+	virtual void showDialog(uint chatflags);
+	virtual ChatWidget *getChatWidget();
+	virtual bool hasPeerStatus() { return true; }
+
+	void processSettings(bool load);
+
+protected:
+	virtual void addIncomingChatMsg(const ChatInfo& info);
+	virtual void onChatChanged(int list, int type);
+
+private:
+	bool manualDelete;
+	std::list<ChatInfo> savedOfflineChat;
+
+	/** Qt Designer generated object */
+	Ui::PopupChatDialog ui;
 };
 
 #endif

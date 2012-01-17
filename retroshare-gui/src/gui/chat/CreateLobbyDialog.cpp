@@ -28,56 +28,49 @@
 #include <retroshare/rspeers.h>
 
 #include "gui/common/PeerDefs.h"
-#include "gui/chat/PopupChatDialog.h"
+#include "ChatDialog.h"
 
 CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWidget *parent, Qt::WFlags flags, std::string grpId, int grpType) :
-        QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
+	QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
 {
 	ui = new Ui::CreateLobbyDialog() ;
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-	 std::string default_nick ;
-	 rsMsgs->getDefaultNickNameForChatLobby(default_nick) ;
+	std::string default_nick ;
+	rsMsgs->getDefaultNickNameForChatLobby(default_nick) ;
 
 #if QT_VERSION >= 0x040700
-	 ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
-	 ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
+	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
+	ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
 #endif
-	 ui->nickName_LE->setText(QString::fromStdString(default_nick)) ;
+	ui->nickName_LE->setText(QString::fromStdString(default_nick)) ;
 
-    connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
-    connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
-    connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
-    connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
+	connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
+	connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
+	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
+	connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 
-    connect(ui->keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-            this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
+	connect(ui->keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
 
-    setShareList(peer_list);
-	 checkTextFields() ;
+	setShareList(peer_list);
+	checkTextFields() ;
 }
-
 
 CreateLobbyDialog::~CreateLobbyDialog()
 {
-    delete ui;
-}
-
-void CreateLobbyDialog::closeEvent (QCloseEvent * event)
-{
- QWidget::closeEvent(event);
+	delete ui;
 }
 
 void CreateLobbyDialog::changeEvent(QEvent *e)
 {
-    QDialog::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
+	QDialog::changeEvent(e);
+	switch (e->type()) {
+	case QEvent::LanguageChange:
+		ui->retranslateUi(this);
+		break;
+	default:
+		break;
+	}
 }
 
 void CreateLobbyDialog::checkTextFields()
@@ -87,105 +80,104 @@ void CreateLobbyDialog::checkTextFields()
 	else
 		ui->shareButton->setEnabled(true) ;
 }
+
 void CreateLobbyDialog::createLobby()
 {
-    if(mShareList.empty())
-    {
-        QMessageBox::warning(this, tr("RetroShare"),tr("Please select at least one peer"),
-        QMessageBox::Ok, QMessageBox::Ok);
+	if(mShareList.empty())
+	{
+		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
 
-        return;
-    }
+	// create chat lobby !!
+	std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
 
-	 // create chat lobby !!
-	 std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
+	// add to group
 
-    // add to group
+	int lobby_privacy_type = (ui->security_CB->currentIndex() == 0)?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE ;
 
-	 int lobby_privacy_type = (ui->security_CB->currentIndex() == 0)?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE ;
+	ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList, lobby_privacy_type);
 
-    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList, lobby_privacy_type);
+	std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
 
-	 std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
+	// set nick name !
 
-	 // set nick name !
+	rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toStdString()) ;
 
-	 rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toStdString()) ;
+	// open chat window !!
+	std::string vpid ;
+	
+	if(rsMsgs->getVirtualPeerId(id,vpid))
+		ChatDialog::chatFriend(vpid) ; 
 
-	 // open chat window !!
-	 std::string vpid ;
-	 
-	 if(rsMsgs->getVirtualPeerId(id,vpid))
-		 PopupChatDialog::chatFriend(vpid) ; 
-
-    close();
+	close();
 }
 
 void CreateLobbyDialog::cancel()
 {
-      close();
+	close();
 }
 
 void CreateLobbyDialog::setShareList(const std::list<std::string>& friend_list)
 {
-    if (!rsPeers)
-    {
-            /* not ready yet! */
-            return;
-    }
+	if (!rsPeers)
+	{
+		/* not ready yet! */
+		return;
+	}
 
-    std::list<std::string> peers;
-    std::list<std::string>::iterator it;
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
 
-	 mShareList.clear() ;
-    rsPeers->getFriendList(peers);
+	mShareList.clear() ;
+	rsPeers->getFriendList(peers);
 
-    /* get a link to the table */
-    QTreeWidget *shareWidget = ui->keyShareList;
+	/* get a link to the table */
+	QTreeWidget *shareWidget = ui->keyShareList;
 
-    QList<QTreeWidgetItem *> items;
+	QList<QTreeWidgetItem *> items;
 
-    for(it = peers.begin(); it != peers.end(); it++)
-	 {
-		 RsPeerDetails detail;
-		 if (!rsPeers->getPeerDetails(*it, detail))
-		 {
-			 continue; /* BAD */
-		 }
+	for(it = peers.begin(); it != peers.end(); it++)
+	{
+		RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
+		{
+			continue; /* BAD */
+		}
 
-		 /* make a widget per friend */
-		 QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+		/* make a widget per friend */
+		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-		 item -> setText(0, PeerDefs::nameWithLocation(detail));
-		 if (detail.state & RS_PEER_STATE_CONNECTED) {
-			 item -> setTextColor(0,(Qt::darkBlue));
-		 }
-		 item -> setSizeHint(0,  QSize( 17,17 ) );
-		 item -> setText(1, QString::fromStdString(detail.id));
-		 item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+		item -> setText(0, PeerDefs::nameWithLocation(detail));
+		if (detail.state & RS_PEER_STATE_CONNECTED) {
+			item -> setTextColor(0,(Qt::darkBlue));
+		}
+		item -> setSizeHint(0,  QSize( 17,17 ) );
+		item -> setText(1, QString::fromStdString(detail.id));
+		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 
-		 item -> setCheckState(0, Qt::Unchecked);
+		item -> setCheckState(0, Qt::Unchecked);
 
-		 for(std::list<std::string>::const_iterator it2(friend_list.begin());it2!=friend_list.end();++it2)
-			 if(*it == *it2)
-			 {
-				 item -> setCheckState(0, Qt::Checked);
-				 mShareList.push_back(*it) ;
-				 break ;
-			 }
+		for(std::list<std::string>::const_iterator it2(friend_list.begin());it2!=friend_list.end();++it2)
+			if(*it == *it2)
+			{
+				item -> setCheckState(0, Qt::Checked);
+				mShareList.push_back(*it) ;
+				break ;
+			}
 
-		 /* add to the list */
-		 items.append(item);
-	 }
+		/* add to the list */
+		items.append(item);
+	}
 
-    /* remove old items */
-    shareWidget->clear();
-    shareWidget->setColumnCount(1);
+	/* remove old items */
+	shareWidget->clear();
+	shareWidget->setColumnCount(1);
 
-    /* add the items in! */
-    shareWidget->insertTopLevelItems(0, items);
+	/* add the items in! */
+	shareWidget->insertTopLevelItems(0, items);
 
-    shareWidget->update(); /* update display */
+	shareWidget->update(); /* update display */
 }
 
 void CreateLobbyDialog::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
@@ -206,4 +198,3 @@ void CreateLobbyDialog::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
 
 	return;
 }
-

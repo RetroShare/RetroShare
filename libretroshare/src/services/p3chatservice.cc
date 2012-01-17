@@ -366,8 +366,9 @@ bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id)
 		lobby_id = it->second ;
 		return true ;
 	}
-	else
-		return false ;
+
+	lobby_id = 0;
+	return false ;
 }
 
 bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)

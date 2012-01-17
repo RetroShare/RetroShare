@@ -153,7 +153,7 @@ bool HashBox::eventFilter(QObject* object, QEvent* event)
 void HashBox::addAttachments(const QStringList& files, HashedFile::Flags flag)
 {
 	/* add a AttachFileItem to the attachment section */
-	std::cerr << "PopupChatDialog::addExtraFile() hashing file." << std::endl;
+	std::cerr << "HashBox::addExtraFile() hashing file." << std::endl;
 
 	if (files.isEmpty()) {
 		return;

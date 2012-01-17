@@ -37,9 +37,9 @@
 #include <retroshare/rshistory.h>
 
 #include "channels/CreateChannel.h"
-#include "chat/PopupChatDialog.h"
 #include "common/Emoticons.h"
 #include "common/vmessagebox.h"
+#include "chat/ChatDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
 #include "forums/CreateForum.h"
@@ -320,15 +320,7 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
 
 void FriendsDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
-    if(is_private_chat)
-    {
-        PopupChatDialog *pcd = PopupChatDialog::getExistingInstance(peer_id.toStdString());
-        if (pcd) {
-            pcd->updateStatusString(peer_id, status_string);
-        }
-    }
-    else
-    {
+    if (!is_private_chat) {
 #ifdef FRIENDS_DEBUG
         std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
 #endif

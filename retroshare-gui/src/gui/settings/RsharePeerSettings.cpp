@@ -29,6 +29,7 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
 
 #include "RsharePeerSettings.h"
 #include "gui/style/RSStyle.h"
@@ -36,7 +37,7 @@
 /** The file in which all settings of he peers will read and written. */
 #define SETTINGS_FILE   (QString::fromUtf8(RsInit::RsProfileConfigDirectory().c_str()) + "/RSPeers.conf")
 
-/* clean dead gpg id's after these days */
+/* clean dead id's after these days */
 #define DAYS_TO_CLEAN   7
 
 /* Group for general data */
@@ -56,10 +57,10 @@ RsharePeerSettings *PeerSettings = NULL;
 RsharePeerSettings::RsharePeerSettings()
     : QSettings(SETTINGS_FILE, QSettings::IniFormat)
 {
-    cleanDeadGpgIds();
+    cleanDeadIds();
 }
 
-void RsharePeerSettings::cleanDeadGpgIds()
+void RsharePeerSettings::cleanDeadIds()
 {
     beginGroup(GROUP_GENERAL);
     QDateTime lastClean = value("lastClean").toDateTime();
@@ -75,6 +76,10 @@ void RsharePeerSettings::cleanDeadGpgIds()
                 continue;
             }
 
+            ChatLobbyId lid;
+            if (rsMsgs->isLobbyId((*group).toStdString(), lid)) {
+                continue;
+            }
             if (rsPeers->isGPGAccepted((*group).toStdString()) == false) {
                 remove(*group);
             }
@@ -86,22 +91,27 @@ void RsharePeerSettings::cleanDeadGpgIds()
     }
 }
 
-bool RsharePeerSettings::getGpgIdOfSslId(const std::string &sslId, std::string &gpgId)
-
+bool RsharePeerSettings::getSettingsIdOfPeerId(const std::string &peerId, std::string &settingsId)
 {
-    std::map<std::string, std::string>::iterator it = m_SslToGpg.find(sslId);
+    ChatLobbyId lid;
+    if (rsMsgs->isLobbyId(peerId, lid)) {
+        settingsId = peerId;
+        return true;
+    }
+
+    std::map<std::string, std::string>::iterator it = m_SslToGpg.find(peerId);
     if (it != m_SslToGpg.end()) {
-        gpgId = it->second;
+        settingsId = it->second;
         return true;
     }
 
     RsPeerDetails details;
-    if (rsPeers->getPeerDetails(sslId, details) == false) {
+    if (rsPeers->getPeerDetails(peerId, details) == false) {
         return false;
     }
 
-    gpgId = details.gpg_id;
-    m_SslToGpg[sslId] = gpgId;
+    settingsId = details.gpg_id;
+    m_SslToGpg[peerId] = settingsId;
 
     return true;
 }
@@ -111,13 +121,13 @@ QVariant RsharePeerSettings::get(const std::string &peerId, const QString &key, 
 {
     QVariant result;
 
-    std::string gpgId;
-    if (getGpgIdOfSslId(peerId, gpgId) == false) {
-        /* gpg id not found */
+    std::string settingsId;
+    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+        /* settings id not found */
         return result;
     }
 
-    beginGroup(QString::fromStdString(gpgId));
+    beginGroup(QString::fromStdString(settingsId));
     result = value(key, defaultValue);
     endGroup();
 
@@ -127,13 +137,13 @@ QVariant RsharePeerSettings::get(const std::string &peerId, const QString &key, 
 /* set value of peer */
 void RsharePeerSettings::set(const std::string &peerId, const QString &key, const QVariant &value)
 {
-    std::string gpgId;
-    if (getGpgIdOfSslId(peerId, gpgId) == false) {
-        /* gpg id not found */
+    std::string settingsId;
+    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+        /* settings id not found */
         return;
     }
 
-    beginGroup(QString::fromStdString(gpgId));
+    beginGroup(QString::fromStdString(settingsId));
     setValue(key, value);
     endGroup();
 }
@@ -170,13 +180,13 @@ void RsharePeerSettings::setPrivateChatOnTop(const std::string &peerId, bool val
 
 void RsharePeerSettings::saveWidgetInformation(const std::string &peerId, QWidget *widget)
 {
-    std::string gpgId;
-    if (getGpgIdOfSslId(peerId, gpgId) == false) {
-        /* gpg id not found */
+    std::string settingsId;
+    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+        /* settings id not found */
         return;
     }
 
-    beginGroup(QString::fromStdString(gpgId));
+    beginGroup(QString::fromStdString(settingsId));
     beginGroup("widgetInformation");
     beginGroup(widget->objectName());
 
@@ -190,13 +200,13 @@ void RsharePeerSettings::saveWidgetInformation(const std::string &peerId, QWidge
 
 void RsharePeerSettings::loadWidgetInformation(const std::string &peerId, QWidget *widget)
 {
-    std::string gpgId;
-    if (getGpgIdOfSslId(peerId, gpgId) == false) {
-        /* gpg id not found */
+    std::string settingsId;
+    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+        /* settings id not found */
         return;
     }
 
-    beginGroup(QString::fromStdString(gpgId));
+    beginGroup(QString::fromStdString(settingsId));
     beginGroup("widgetInformation");
     beginGroup(widget->objectName());
 
@@ -218,15 +228,25 @@ void RsharePeerSettings::setShowAvatarFrame(const std::string &peerId, bool valu
     return set(peerId, "ShowAvatarFrame", value);
 }
 
+bool RsharePeerSettings::getShowParticipantsFrame(const std::string &peerId)
+{
+    return get(peerId, "ShowParticipantsFrame", true).toBool();
+}
+
+void RsharePeerSettings::setShowParticipantsFrame(const std::string &peerId, bool value)
+{
+    return set(peerId, "ShowParticipantsFrame", value);
+}
+
 void RsharePeerSettings::getStyle(const std::string &peerId, const QString &name, RSStyle &style)
 {
-    std::string gpgId;
-    if (getGpgIdOfSslId(peerId, gpgId) == false) {
-        /* gpg id not found */
+    std::string settingsId;
+    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+        /* settings id not found */
         return;
     }
 
-    beginGroup(QString::fromStdString(gpgId));
+    beginGroup(QString::fromStdString(settingsId));
     beginGroup("style");
     beginGroup(name);
 
@@ -239,13 +259,13 @@ void RsharePeerSettings::getStyle(const std::string &peerId, const QString &name
 
 void RsharePeerSettings::setStyle(const std::string &peerId, const QString &name, RSStyle &style)
 {
-    std::string gpgId;
-    if (getGpgIdOfSslId(peerId, gpgId) == false) {
-        /* gpg id not found */
+    std::string settingsId;
+    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+        /* settings id not found */
         return;
     }
 
-    beginGroup(QString::fromStdString(gpgId));
+    beginGroup(QString::fromStdString(settingsId));
     beginGroup("style");
     beginGroup(name);
 

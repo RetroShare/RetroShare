@@ -968,17 +968,15 @@ p, li { white-space: pre-wrap; }
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location line="+295"/>
         <source>Set all to read</source>
-        <translation>Alle als gelesen markieren</translation>
+        <translation type="obsolete">Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="+33"/>
         <source>Enable Auto-download</source>
-        <translation>Aktiviere Auto-Download</translation>
+        <translation type="obsolete">Aktiviere Auto-Download</translation>
     </message>
     <message>
-        <location line="-293"/>
+        <location line="+35"/>
         <source>Create Channel</source>
         <translation>Kanal erstellen</translation>
     </message>
@@ -998,7 +996,13 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="-71"/>
+        <location line="+164"/>
+        <location line="+3"/>
+        <source>Set all as read</source>
+        <translation>Alle als gelesen markieren</translation>
+    </message>
+    <message>
+        <location line="-238"/>
         <source>Unsubcribe To Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
@@ -1023,8 +1027,8 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+188"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+51"/>
+        <location filename="../gui/ChannelFeed.ui" line="+116"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+55"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -1059,24 +1063,140 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+259"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+204"/>
         <source>Disable Auto-Download</source>
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../gui/ChannelFeed.ui" line="+127"/>
+        <location line="+3"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+2"/>
         <source>Enable Auto-Download</source>
         <translation>Aktiviere Auto-Download</translation>
     </message>
     <message>
-        <location line="-490"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-496"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
+    </message>
+</context>
+<context>
+    <name>ChatDialog</name>
+    <message>
+        <location filename="../gui/chat/ChatDialog.cpp" line="+224"/>
+        <source>Friend not Online</source>
+        <translation>Freund ist nicht online</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your Friend is offline 
+Do you want to send them a Message instead</source>
+        <translation>Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyDialog</name>
+    <message>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+141"/>
+        <location line="+3"/>
+        <source>Lobby management</source>
+        <translation>Lobby Verwaltung</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>%1 has left the lobby.</source>
+        <translation>%1 hat die Lobby verlassen.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 joined the lobby.</source>
+        <translation>%1 hat die Lobby betreten.</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Do you want to unsubscribe to this chat lobby?</source>
+        <translation>Möchtest du diese Lobby abbestellen?</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Unsubscribe to lobby</source>
+        <translation>Lobby abbestellen</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Hide Participants</source>
+        <translation>Telnehmer ausblenden</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show Participants</source>
+        <translation>Teilnehmer zeigen</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyWidget</name>
+    <message>
+        <location filename="../gui/ChatLobbyWidget.ui" line="+76"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Chat lobbies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Chat Lobbies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Create new chat lobby</source>
+        <translation>Neue Chat Lobby erstellen</translation>
+    </message>
+    <message>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+60"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Count</source>
+        <translation>Anzahl</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Private Lobbies</source>
+        <translation>Private Lobbies</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Public Lobbies</source>
+        <translation>Öffentliche Lobbies</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Create chat lobby</source>
+        <translation>Erstelle Chat Lobby</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Unsubscribe</source>
+        <translation>Abbestellen</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Subscribe</source>
+        <translation>Abonnieren</translation>
+    </message>
+    <message>
+        <location line="+244"/>
+        <source>Invitation to chat lobby</source>
+        <translation>Einladung zur Chat Lobby</translation>
     </message>
 </context>
 <context>
@@ -1131,12 +1251,17 @@ p, li { white-space: pre-wrap; }
         <translation>Chat Einstellungen</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+8"/>
         <source>Enable Emoticons Privat Chat</source>
         <translation>Emoticons für privaten Chat</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+27"/>
+        <source>Default nickname for chat lobbies:</source>
+        <translation>Default-Spitzname für Chat Lobbies:</translation>
+    </message>
+    <message>
+        <location line="+61"/>
         <source>Chat Font</source>
         <translation>Chat Schriftart</translation>
     </message>
@@ -1151,7 +1276,7 @@ p, li { white-space: pre-wrap; }
         <translation>Chat Schriftart:</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-112"/>
         <source>Enable Emoticons Group Chat</source>
         <translation>Emoticons für Gruppenchat</translation>
     </message>
@@ -1160,7 +1285,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Chat History</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+206"/>
         <location line="+66"/>
         <source>Load number of messages (0 = off)</source>
         <translation>Lade Anzahl von Nachrichten (0 = aus)</translation>
@@ -1192,7 +1317,7 @@ p, li { white-space: pre-wrap; }
         <translation>Privater Chat</translation>
     </message>
     <message>
-        <location line="-422"/>
+        <location line="-476"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
@@ -1201,7 +1326,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Chat Verlauf für Gruppenchat</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+40"/>
         <source>Send message with Ctrl+Return</source>
         <translation>Sende Nachricht mit Strg+Enter</translation>
     </message>
@@ -1210,7 +1335,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Chat Verlauf für privaten Chat</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+148"/>
         <location line="+66"/>
         <source>Enable</source>
         <translation>Aktiviert</translation>
@@ -1248,7 +1373,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+204"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+211"/>
         <source>Incoming message in history</source>
         <translation>Eingehehende Nachricht aus dem Verlauf</translation>
     </message>
@@ -1289,6 +1414,162 @@ p, li { white-space: pre-wrap; }
         <location line="+7"/>
         <source>Standard style for history</source>
         <translation>Standard Stil für den Verlauf</translation>
+    </message>
+</context>
+<context>
+    <name>ChatWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="obsolete">Formular</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/ChatWidget.ui" line="+180"/>
+        <source>Close</source>
+        <translation>Schliessen</translation>
+    </message>
+    <message>
+        <location line="+126"/>
+        <source>Attach a Picture</source>
+        <translation>Bild anhängen</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Add a File for your Friend</source>
+        <translation>Füge eine Datei für deinen Freund hinzu</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Send</source>
+        <translation>Senden</translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <location line="+285"/>
+        <source>Bold</source>
+        <translation>Fett</translation>
+    </message>
+    <message>
+        <location line="-250"/>
+        <location line="+260"/>
+        <source>Underline</source>
+        <translation>Unterstrichen</translation>
+    </message>
+    <message>
+        <location line="-225"/>
+        <location line="+220"/>
+        <source>Italic</source>
+        <translation>Kursiv</translation>
+    </message>
+    <message>
+        <location line="-185"/>
+        <source>Font</source>
+        <translation>Schriftart</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Text Color</source>
+        <translation>Textfarbe</translation>
+    </message>
+    <message>
+        <location line="+160"/>
+        <source>Strike</source>
+        <translation>Durchgestrichen</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Clear Chat History</source>
+        <translation>Nachrichtenverlauf leeren</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Disable Emoticons</source>
+        <translation>Deaktiviere Emoticons</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+3"/>
+        <source>Save Chat History</source>
+        <translation>Nachrichtenverlauf speichern</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Browse Message History</source>
+        <translation>Nachrichtenverlauf anzeigen</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Browse History</source>
+        <translation>Nachrichtenverlauf</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Delete Chat History</source>
+        <translation>Nachrichtenverlauf löschen</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Deletes all stored and displayed chat history</source>
+        <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+351"/>
+        <source>Paste RetroShare Link</source>
+        <translation>RetroShare Link einfügen</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>is typing...</source>
+        <translation>tippt...</translation>
+    </message>
+    <message>
+        <location line="+120"/>
+        <source>Do you really want to physically delete the history?</source>
+        <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Add Extra File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Load Picture File</source>
+        <translation>Lade Bilddatei</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>Save as...</source>
+        <translation>Speichern unter...</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Text File (*.txt );;All Files (*)</source>
+        <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>apears to be Offline.</source>
+        <translation>ist Offline.</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Messages you send will be delivered after Friend is again Online</source>
+        <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>is Idle and may not reply</source>
+        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>is Away and may not reply</source>
+        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Abwesend&quot; gesetzt wurde</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>is Busy and may not reply</source>
+        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Beschäftigt&quot; gesetzt wurde</translation>
     </message>
 </context>
 <context>
@@ -2561,6 +2842,121 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Edit Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Gruppe ändern&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>CreateLobbyDialog</name>
+    <message>
+        <location filename="../gui/chat/CreateLobbyDialog.ui" line="+14"/>
+        <source>Create Chat Lobby</source>
+        <translation>Erstelle Chat Lobby</translation>
+    </message>
+    <message>
+        <location line="+78"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Create Chat Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Neue Chat Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Lobby name:</source>
+        <translation>Lobby Name:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Your nick name:</source>
+        <translation>Dein Spitzname:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Security policy:</source>
+        <translation>Sicherheitsrichtlinie:</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Public (Visible by friends)</source>
+        <translation>Öffentlich (für Freunde sichtbar)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Private (Works on invitation only)</source>
+        <translation>Privat (nur private Einladung)</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Select the Friends with which you want to group chat.</source>
+        <translation>Wähle die Freunde mit denen du chatten möchtest.</translation>
+    </message>
+    <message>
+        <source>Check peers you would like to chat with</source>
+        <translation type="obsolete">Wähle die Nachbarn, mit denen du chatten möchtest</translation>
+    </message>
+    <message>
+        <source>check peers you would like to share private publish key with</source>
+        <translation type="obsolete">Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Invited friends</source>
+        <translation>Freunde einladen</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Contacts:</source>
+        <translation>Kontakte:</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Create</source>
+        <translation>Erstellen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Eine Chat Lobby ist ein dezentralisierter und anonymer Chat. Alle Teilnehmer erhalten alle Nachrichten. Wenn du eine Lobby erstellst, kannst du andere Freunde in der Freundesliste einladen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+43"/>
+        <source>Put a sensible lobby name here</source>
+        <translation>Gib einen Lobbynamen ein</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
+        <translation>Dein Spitzname für diese Lobby (Ändere den Defaultnamen in den Optionen-&gt;Chat)</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Please select at least one friend</source>
+        <translation>Bitte wähle mindestens einen Freund</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="obsolete">RetroShare</translation>
+    </message>
+    <message>
+        <source>Please select at least one peer</source>
+        <translation type="obsolete">Bitte wähle mindestens einen Nachbarn</translation>
     </message>
 </context>
 <context>
@@ -4300,7 +4696,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Gruppen</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="+302"/>
+        <location filename="../gui/common/FriendList.cpp" line="+305"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
@@ -4335,12 +4731,42 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+3"/>
+        <source>Create chat lobby</source>
+        <translation>Erstelle Chat Lobby</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
         <location line="+1"/>
+        <source>Chat lobbies</source>
+        <translation>Chat Lobbies</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>create new</source>
+        <translation>Erstellen</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Invite this friend</source>
+        <translation>Lade diesen Freund ein</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Show</source>
+        <translation>Zeigen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Unsubscribe</source>
+        <translation>Abbestellen</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Message Friend</source>
         <translation>Freund anschreiben</translation>
     </message>
@@ -4427,7 +4853,17 @@ p, li { white-space: pre-wrap; }
         <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+396"/>
+        <location line="+68"/>
+        <source>Unsubscribe to lobby</source>
+        <translation>Lobby abbestellen</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
+        <translation>Du bestellst die Lobby ab.&lt;br&gt;Du kannst nur wieder teilnehmen, wenn deine Freunde dich wieder einladen.</translation>
+    </message>
+    <message>
+        <location line="+402"/>
         <source>Sort by</source>
         <translation>Sortiere nach</translation>
     </message>
@@ -4598,6 +5034,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf speichern</translation>
     </message>
     <message>
+        <location line="+33"/>
+        <location line="+3"/>
+        <source>Create new Chat lobby</source>
+        <translation>Neue Chat Lobby erstellen</translation>
+    </message>
+    <message>
         <source>Hide Offline Friends</source>
         <translation type="obsolete">Verstecke offline Freunde</translation>
     </message>
@@ -4618,7 +5060,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Status ausblenden</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-27"/>
         <location line="+3"/>
         <source>Add a new Group</source>
         <translation>Neue Gruppe hinzufügen</translation>
@@ -4646,7 +5088,12 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+88"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+92"/>
+        <source>Chat lobbies</source>
+        <translation>Chat Lobbies</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -4661,7 +5108,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+67"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
@@ -4780,7 +5227,7 @@ p, li { white-space: pre-wrap; }
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+115"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>
@@ -8464,7 +8911,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte geben Sie das Passwort ein um folgenden GPG Schlüssel freizuschalten:</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+139"/>
         <source>Examining shared files...</source>
         <translation>Prüfe freigegebene Dateien...</translation>
     </message>
@@ -8919,22 +9366,31 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+126"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+232"/>
         <source>Status: </source>
         <translation>Status:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-20"/>
         <source>File hash:</source>
         <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-81"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+61"/>
         <source>File name: </source>
         <translation>Dateiname:</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="-27"/>
         <source>Launch configuration panel, if provided by the plugin</source>
         <translation>Starte Einstellungen, wenn vom Plugin unterstützt</translation>
     </message>
@@ -8944,7 +9400,7 @@ p, li { white-space: pre-wrap; }
         <translation>Einstellung</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-13"/>
         <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
         <translation>Fügt das Plugin als vertrauenswürdig hinzu. Das wirkt sich nach dem Neustart von RetroShare aus, da die Plugins beim Start geladen werden.</translation>
     </message>
@@ -8980,7 +9436,7 @@ p, li { white-space: pre-wrap; }
         <translation>Geladene Plugins</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+32"/>
         <source>Authorize all plugins</source>
         <translation>Erlaube alle Plugins</translation>
     </message>
@@ -9041,111 +9497,91 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+706"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+209"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+3"/>
         <source>Show Avatar</source>
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+88"/>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
+        <translation type="obsolete">Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Load Picture File</source>
-        <translation>Lade Bilddatei</translation>
+        <translation type="obsolete">Lade Bilddatei</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
         <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+102"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
+        <translation type="obsolete">Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="+564"/>
-        <location line="+285"/>
         <source>Bold</source>
-        <translation>Fett</translation>
+        <translation type="obsolete">Fett</translation>
     </message>
     <message>
-        <location line="-250"/>
-        <location line="+260"/>
         <source>Underline</source>
-        <translation>Unterstrichen</translation>
+        <translation type="obsolete">Unterstrichen</translation>
     </message>
     <message>
-        <location line="-225"/>
-        <location line="+220"/>
         <source>Italic</source>
-        <translation>Kursiv</translation>
+        <translation type="obsolete">Kursiv</translation>
     </message>
     <message>
-        <location line="-150"/>
         <source>Text Color</source>
-        <translation>Textfarbe</translation>
+        <translation type="obsolete">Textfarbe</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="+207"/>
         <source>Clear offline messages</source>
         <translation>Entferne offline Nachrichten</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Browse Message History</source>
-        <translation>Nachrichtenverlauf anzeigen</translation>
+        <translation type="obsolete">Nachrichtenverlauf anzeigen</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Browse History</source>
-        <translation>Nachrichtenverlauf</translation>
+        <translation type="obsolete">Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="-29"/>
         <source>Clear Chat History</source>
-        <translation>Nachrichtenverlauf leeren</translation>
+        <translation type="obsolete">Nachrichtenverlauf leeren</translation>
     </message>
     <message>
-        <location line="-204"/>
         <source>Font</source>
-        <translation>Schriftart</translation>
+        <translation type="obsolete">Schriftart</translation>
     </message>
     <message>
-        <location line="+242"/>
         <source>Delete Chat History</source>
-        <translation>Nachrichtenverlauf löschen</translation>
+        <translation type="obsolete">Nachrichtenverlauf löschen</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
+        <translation type="obsolete">Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location line="-409"/>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation type="obsolete">Senden</translation>
     </message>
     <message>
-        <location line="+376"/>
         <source>Disable Emoticons</source>
-        <translation>Deaktiviere Emoticons</translation>
+        <translation type="obsolete">Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location line="-17"/>
         <source>Strike</source>
-        <translation>Durchgestrichen</translation>
+        <translation type="obsolete">Durchgestrichen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-111"/>
         <source>Add Extra File</source>
-        <translation>Zusätzlich eine Datei hinzufügen</translation>
+        <translation type="obsolete">Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -9156,76 +9592,61 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-395"/>
         <source>Add a File for your Friend</source>
-        <translation>Füge eine Datei für deinen Freund hinzu</translation>
+        <translation type="obsolete">Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+417"/>
-        <location line="+3"/>
         <source>Save Chat History</source>
-        <translation>Nachrichtenverlauf speichern</translation>
+        <translation type="obsolete">Nachrichtenverlauf speichern</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+77"/>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation type="obsolete">Speichern unter...</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
+        <translation type="obsolete">Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-505"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation>Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
+        <translation type="obsolete">Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-452"/>
         <source>Attach a Picture</source>
-        <translation>Bild anhängen</translation>
+        <translation type="obsolete">Bild anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+544"/>
         <source>is Idle and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
+        <translation type="obsolete">antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>is Away and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Abwesend&quot; gesetzt wurde</translation>
+        <translation type="obsolete">antwortet möglicherweise nicht, da der Status auf &quot;Abwesend&quot; gesetzt wurde</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>is Busy and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Beschäftigt&quot; gesetzt wurde</translation>
+        <translation type="obsolete">antwortet möglicherweise nicht, da der Status auf &quot;Beschäftigt&quot; gesetzt wurde</translation>
     </message>
     <message>
-        <location line="-18"/>
         <source>apears to be Offline.</source>
-        <translation>ist Offline.</translation>
+        <translation type="obsolete">ist Offline.</translation>
     </message>
     <message>
-        <location line="-510"/>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare Link einfügen</translation>
+        <translation type="obsolete">RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+25"/>
         <source>is typing...</source>
-        <translation>tippt...</translation>
+        <translation type="obsolete">tippt...</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-126"/>
         <source>Close</source>
-        <translation>Schliessen</translation>
+        <translation type="obsolete">Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-54"/>
         <source>Friend not Online</source>
-        <translation>Freund ist nicht online</translation>
+        <translation type="obsolete">Freund ist nicht online</translation>
     </message>
 </context>
 <context>
@@ -9265,9 +9686,8 @@ Do you want to send them a Message instead</source>
         <translation>Immer im Vordergrund</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="+287"/>
         <source>RetroShare</source>
-        <translation>RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
 </context>
 <context>
@@ -9711,18 +10131,18 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <location filename="../main.cpp" line="+85"/>
-        <location line="+126"/>
+        <location line="+124"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-120"/>
+        <location line="-118"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+115"/>
+        <location line="+113"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -10410,7 +10830,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSettingsWin</name>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="+131"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="+133"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
@@ -10428,6 +10848,11 @@ p, li { white-space: pre-wrap; }
         <location line="+4"/>
         <source>Transfer</source>
         <translation>Übertragung</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Relay</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10496,6 +10921,93 @@ p, li { white-space: pre-wrap; }
         <location line="+0"/>
         <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Hoch:&lt;/strong&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>RelayPage</name>
+    <message>
+        <location filename="../gui/settings/RelayPage.ui" line="+19"/>
+        <source>Enable Relay Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Use Relay Servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Relay options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Bandwidth per link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Total Bandwidth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Friends</source>
+        <translation type="unfinished">Freunde</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+40"/>
+        <location line="+40"/>
+        <source>x</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-73"/>
+        <location line="+40"/>
+        <location line="+40"/>
+        <source>kB/s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-57"/>
+        <source>Friends of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>General</source>
+        <translation type="unfinished">Allgemein</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Total:</source>
+        <translation type="unfinished">Gesamt:</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Relay Server Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Server Dht Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Remove Server</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10760,22 +11272,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+188"/>
-        <location line="+143"/>
+        <location line="+144"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="-142"/>
+        <location line="-143"/>
         <source>Send RetroShare Link</source>
         <translation>Sende RetroShare Link</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+136"/>
         <source>Search again</source>
         <translation>Erneut suchen</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -10785,7 +11297,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+394"/>
+        <location line="+397"/>
         <location line="+68"/>
         <source>Folder</source>
         <translation>Ordner</translation>
@@ -10846,7 +11358,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-940"/>
+        <location filename="../gui/SearchDialog.cpp" line="-944"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -11298,6 +11810,11 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
         <translation>Übertragung</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>Relays</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+18"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
@@ -11328,7 +11845,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-217"/>
+        <location line="-226"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
@@ -11338,7 +11855,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
         <translation>Server</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+27"/>
         <source>Directories</source>
         <translation>Ordner</translation>
     </message>
@@ -12770,11 +13287,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
+        <source>Slots reserved for non-cache transfers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default chunk strategy:</source>
         <translation>Standard Block Strategie:</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+34"/>
+        <source>You can use this to force RetroShare to download your files rather 
+than cache files for as many slots as requested. Setting that number 
+to be equal to the queue size above will always prioritize your files
+over cache. 
+
+It is however recommended to leave at least a few slots for cache files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Streaming</source>
         <translation>Streaming</translation>
     </message>
@@ -12797,12 +13329,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-70"/>
+        <location line="-88"/>
         <source>Safety disk space limit :</source>
         <translation>Sicherheitsgrenze Festplattenspeicher:</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+62"/>
         <source> MB</source>
         <translation></translation>
     </message>

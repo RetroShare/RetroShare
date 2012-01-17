@@ -54,7 +54,7 @@
 #include "ChannelFeed.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
-#include "chat/PopupChatDialog.h"
+#include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
 
 #ifdef UNFINISHED
@@ -889,7 +889,7 @@ void MainWindow::updateStatus()
 void MainWindow::privateChatChanged(int list, int type)
 {
     /* first process the chat messages */
-    PopupChatDialog::privateChatChanged(list, type);
+    ChatDialog::chatChanged(list, type);
 
     if (list == NOTIFY_LIST_PRIVATE_INCOMING_CHAT) {
         /* than count the chat messages */
@@ -1257,13 +1257,13 @@ void MainWindow::trayIconChannelsClicked(QSystemTrayIcon::ActivationReason e)
 void MainWindow::trayIconChatClicked(QSystemTrayIcon::ActivationReason e)
 {
     if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
-        PopupChatDialog *pcd = NULL;
+        ChatDialog *chatDialog = NULL;
         std::list<std::string> ids;
         if (rsMsgs->getPrivateChatQueueIds(true, ids) && ids.size()) {
-            pcd = PopupChatDialog::getPrivateChat(ids.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
+            chatDialog = ChatDialog::getChat(ids.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
         }
 
-        if (pcd == NULL) {
+        if (chatDialog == NULL) {
             showWindow(MainWindow::Friends);
         }
     }

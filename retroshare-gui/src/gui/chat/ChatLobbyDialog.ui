@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PopupChatDialog</class>
- <widget class="QWidget" name="PopupChatDialog">
+ <class>ChatLobbyDialog</class>
+ <widget class="QWidget" name="ChatLobbyDialog">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -68,7 +68,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QPushButton" name="avatarFrameButton">
+         <widget class="QPushButton" name="participantsFrameButton">
           <property name="minimumSize">
            <size>
             <width>14</width>
@@ -112,7 +112,7 @@
       </widget>
      </item>
      <item row="0" column="1" rowspan="4">
-      <widget class="QFrame" name="avatarframe">
+      <widget class="QFrame" name="participantsFrame">
        <property name="maximumSize">
         <size>
          <width>132</width>
@@ -142,47 +142,13 @@
          <number>9</number>
         </property>
         <item row="0" column="0">
-         <widget class="AvatarWidget" name="avatarWidget" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>116</width>
-            <height>116</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>116</width>
-            <height>116</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <spacer name="myspacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>61</width>
-            <height>141</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="0">
-         <widget class="AvatarWidget" name="ownAvatarWidget" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>116</width>
-            <height>116</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>116</width>
-            <height>116</height>
-           </size>
+         <widget class="QListWidget" name="participantsList">
+          <property name="styleSheet">
+           <string notr="true">QListWidget{
+  border: 1px solid #B8B6B1;
+  border-radius: 6px;
+  background: white;
+}</string>
           </property>
          </widget>
         </item>
@@ -202,19 +168,8 @@
     </layout>
    </item>
   </layout>
-  <action name="actionClearOfflineMessages">
-   <property name="text">
-    <string>Clear offline messages</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>ChatWidget</class>
    <extends>QWidget</extends>

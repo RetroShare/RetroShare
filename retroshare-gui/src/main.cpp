@@ -31,7 +31,7 @@
 #include "gui/MessagesDialog.h"
 #include "gui/SharedFilesDialog.h"
 #include "gui/NetworkDialog.h"
-#include "gui/chat/PopupChatDialog.h"
+#include "gui/chat/ChatDialog.h"
 #include "gui/QuickStartWizard.h"
 #endif // MINIMAL_RSGUI
 #include "gui/MessengerWindow.h"
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* cleanup */
-	PopupChatDialog::cleanupChat();
+	ChatDialog::cleanupChat();
 #endif // MINIMAL_RSGUI
 
 	rsicontrol->rsGlobalShutDown();

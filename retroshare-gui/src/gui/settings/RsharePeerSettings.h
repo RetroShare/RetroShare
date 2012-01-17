@@ -48,6 +48,9 @@ public:
     bool    getShowAvatarFrame(const std::string &peerId);
     void    setShowAvatarFrame(const std::string &peerId, bool value);
 
+    bool    getShowParticipantsFrame(const std::string &peerId);
+    void    setShowParticipantsFrame(const std::string &peerId, bool value);
+
     void    getStyle(const std::string &peerId, const QString &name, RSStyle &style);
     void    setStyle(const std::string &peerId, const QString &name, RSStyle &style);
 
@@ -55,8 +58,8 @@ protected:
     /** Default constructor. */
     RsharePeerSettings();
 
-    bool getGpgIdOfSslId(const std::string &sslId, std::string &gpgId);
-    void cleanDeadGpgIds();
+    bool getSettingsIdOfPeerId(const std::string &peerId, std::string &settingsId);
+    void cleanDeadIds();
 
     /* get value of peer */
     QVariant get(const std::string &peerId, const QString &key, const QVariant &defaultValue = QVariant());

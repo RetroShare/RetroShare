@@ -44,7 +44,7 @@
 #include "feeds/SecurityItem.h"
 
 #include "settings/rsharesettings.h"
-#include "chat/PopupChatDialog.h"
+#include "chat/ChatDialog.h"
 
 const uint32_t NEWSFEED_PEERLIST = 	0x0001;
 const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
@@ -548,7 +548,7 @@ void NewsFeed::openChat(std::string peerId)
 	std::cerr << std::endl;
 #endif
 
-	PopupChatDialog::chatFriend(peerId);
+	ChatDialog::chatFriend(peerId);
 }
 
 void NewsFeed::itemDestroyed(QObject *item)

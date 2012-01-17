@@ -23,59 +23,49 @@
 #ifndef _CHATLOBBYDIALOG_H
 #define _CHATLOBBYDIALOG_H
 
-#include "ui_PopupChatDialog.h"
+#include "ui_ChatLobbyDialog.h"
+#include "ChatDialog.h"
 
-class QAction;
-class QTextEdit;
-class QTextCharFormat;
-class AttachFileItem;
-class ChatInfo;
-class QListWidget ;
-
-#include <retroshare/rsmsgs.h>
-#include "ChatStyle.h"
-#include "gui/style/RSStyle.h"
-#include "PopupChatDialog.h"
-
-class ChatLobbyDialog: public PopupChatDialog 
+class ChatLobbyDialog: public ChatDialog
 {
 	Q_OBJECT 
 
-public:
-	void displayLobbyEvent(int event_type,const QString& nickname,const QString& str) ;
+	friend class ChatDialog;
 
-	// The following methods are differentfrom those of the parent:
-	//
-	virtual bool hasPeerStatus() { return false; }
+public:
+	void displayLobbyEvent(int event_type, const QString& nickname, const QString& str);
+
 	virtual bool canClose();
+	virtual void showDialog(uint chatflags);
+	virtual ChatWidget *getChatWidget();
+	virtual bool hasPeerStatus() { return false; }
+
+private slots:
+	void showParticipantsFrame(bool show);
 
 protected:
 	/** Default constructor */
-	ChatLobbyDialog(const std::string& id,const ChatLobbyId& lid, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
+	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WFlags flags = 0);
 
 	/** Default destructor */
 	virtual ~ChatLobbyDialog();
 
-//	virtual void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
-//	virtual void sendChat();
+	void processSettings(bool load);
 
-	friend class PopupChatDialog ;
-
-	// The following methods are differentfrom those of the parent:
-	//
-	virtual bool addToParent();
-	virtual bool isChatLobby() { return true; }
-	virtual void addIncomingChatMsg(const ChatInfo& info) ;				//
-	virtual QString makeStatusString(const QString& peer_id,const QString& status_string) const ;
+	virtual void init(const std::string &peerId, const QString &peerName);
+	virtual void addIncomingChatMsg(const ChatInfo& info);
 
 protected slots:
-	void setNickName(const QString&) ;
+	void setNickName(const QString&);
 
 private:
-	void updateFriendsList() ;
+	void updateParticipantsList();
 
-	ChatLobbyId lobby_id ;
-	QListWidget *friendsListWidget ;
+	ChatLobbyId lobbyId;
+	time_t lastUpdateListTime;
+
+	/** Qt Designer generated object */
+	Ui::ChatLobbyDialog ui;
 };
 
 #endif

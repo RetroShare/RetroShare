@@ -26,55 +26,54 @@
 #include <QTimer>
 #include "ui_PopupChatWindow.h"
 
-class PopupChatDialog;
+class ChatDialog;
 
 class PopupChatWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    static PopupChatWindow *getWindow(bool needSingleWindow);
-    static void cleanup();
+	static PopupChatWindow *getWindow(bool needSingleWindow);
+	static void cleanup();
 
 public:
-    void addDialog(PopupChatDialog *dialog);
-    void removeDialog(PopupChatDialog *dialog);
-    void showDialog(PopupChatDialog *dialog, uint chatflags);
-    void alertDialog(PopupChatDialog *dialog);
-    void calculateTitle(PopupChatDialog *dialog);
+	void addDialog(ChatDialog *dialog);
+	void removeDialog(ChatDialog *dialog);
+	void showDialog(ChatDialog *dialog, uint chatflags);
+	void alertDialog(ChatDialog *dialog);
+	void calculateTitle(ChatDialog *dialog);
 
 protected:
-    /** Default constructor */
-    PopupChatWindow(bool tabbed, QWidget *parent = 0, Qt::WFlags flags = 0);
-    /** Default destructor */
-    ~PopupChatWindow();
+	/** Default constructor */
+	PopupChatWindow(bool tabbed, QWidget *parent = 0, Qt::WFlags flags = 0);
+	/** Default destructor */
+	~PopupChatWindow();
 
-    virtual void showEvent(QShowEvent *event);
-    virtual void changeEvent(QEvent *event);
+	virtual void showEvent(QShowEvent *event);
 
 private slots:
-    void getAvatar();
-    void tabChanged(PopupChatDialog *dialog);
-    void tabInfoChanged(PopupChatDialog *dialog);
-    void tabNewMessage(PopupChatDialog *dialog);
-    void dialogClose(PopupChatDialog *dialog);
-    void dockTab();
-    void undockTab();
-    void setStyle();
-    void setOnTop();
+	void getAvatar();
+	void tabChanged(ChatDialog *dialog);
+	void tabInfoChanged(ChatDialog *dialog);
+	void tabNewMessage(ChatDialog *dialog);
+	void dialogClose(ChatDialog *dialog);
+	void dockTab();
+	void undockTab();
+	void setStyle();
+	void setOnTop();
 
 private:
-    bool tabbedWindow;
-    bool firstShow;
-    std::string peerId;
-    PopupChatDialog *chatDialog;
+	bool tabbedWindow;
+	bool firstShow;
+	std::string peerId;
+	ChatDialog *chatDialog;
 
-    PopupChatDialog *getCurrentDialog();
-    void saveSettings();
-    void calculateStyle(PopupChatDialog *dialog);
+	ChatDialog *getCurrentDialog();
+	void saveSettings();
+	void calculateStyle(ChatDialog *dialog);
 
-    /** Qt Designer generated object */
-    Ui::PopupChatWindow ui;
+	/** Qt Designer generated object */
+	Ui::PopupChatWindow ui;
 };
 
 #endif
