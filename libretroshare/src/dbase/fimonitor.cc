@@ -1288,12 +1288,11 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 	return realroot;
 }
 
-int FileIndexMonitor::RequestDirDetails(std::string uid, std::string /*path*/, DirDetails &/*details*/) const
+int FileIndexMonitor::RequestDirDetails(const std::string& path, DirDetails& details) const
 {
 	/* lock it up */
 	RsStackMutex mutex(fiMutex) ;
-
-	return (uid == fi.root->id) ;
+	return fi.extractData(path,details) ;
 }
 
 uint32_t FileIndexMonitor::getType(void *ref) const

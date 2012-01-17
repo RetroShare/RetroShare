@@ -82,7 +82,7 @@ virtual int loadCache(const CacheData &data);	  /* actual load, once data availa
 
 
 	/* Search Interface - For Directory Access */
-	int RequestDirDetails(std::string uid, std::string path, DirDetails &details) const;
+	int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) const;
 	int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const;
 	uint32_t getType(void *ref) const ;
 

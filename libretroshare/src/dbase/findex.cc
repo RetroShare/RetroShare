@@ -1227,6 +1227,59 @@ uint32_t FileIndex::getType(void *ref)
 
 	return static_cast<FileEntry*>(ref)->type() ;
 }
+
+bool FileIndex::extractData(const std::string& fpath,DirDetails& details) const
+{
+	void *ref = findRef(fpath) ;
+
+	if(ref == NULL)
+		return false ;
+
+	return extractData(ref,details) ;
+}
+
+void *FileIndex::findRef(const std::string& fpath) const
+{
+	DirEntry *parent = root->findDirectory(fpath);
+
+	std::cerr << "findRef() Called on " << fpath << std::endl;
+
+	if (!parent) 
+	{
+//#ifdef FI_DEBUG
+		std::cerr << "FileIndex::updateFileEntry() NULL parent";
+		std::cerr << std::endl;
+//#endif
+		return false;
+	}
+	std::cerr << "Found parent directory: " << std::endl;
+	std::cerr << "  parent.name = " << parent->name << std::endl;
+	std::cerr << "  parent.path = " << parent->path << std::endl;
+
+	if(parent->path == fpath) // directory!
+	{
+		std::cerr << "  fpath is a directory. Returning parent!" << std::endl;
+		return parent ;
+	}
+	else
+	{
+		std::cerr << "  fpath is a file. Looking into parent directory..." << std::endl;
+		/* search in current dir */
+		for(std::map<std::string, FileEntry *>::iterator fit = parent->files.begin(); fit != parent->files.end(); ++fit)
+		{
+			std::cerr << "    trying " << parent->path + "/" + fit->second->name << std::endl;
+			if(parent->path + "/" + fit->second->name == fpath)
+			{
+				std::cerr << "  found !" << std::endl;
+				return fit->second ;
+			}
+		}
+
+		std::cerr << "  (EE) not found !" << std::endl;
+		return NULL ;
+	}
+}
+
 bool FileIndex::extractData(void *ref,DirDetails& details) 
 {
 	if(!isValid(ref))

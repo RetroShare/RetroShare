@@ -161,8 +161,21 @@ int FileIndexStore::loadCache(const CacheData &data)
 
 
 	/* Search Interface - For Directory Access */
-int FileIndexStore::RequestDirDetails(std::string uid, std::string /*path*/, DirDetails& details) const
+int FileIndexStore::RequestDirDetails(const std::string& uid, const std::string& path, DirDetails& details) const
 {
+	lockData();
+
+	std::map<RsPeerId, FileIndex *>::const_iterator it = indices.find(uid);
+	bool found = true;
+
+	if (it != indices.end())
+		found = it->second->extractData(path,details) ;
+
+	unlockData();
+
+	return found ;
+
+#ifdef OLD_STUFF_TO_REMOVE
 	/* lock it up */
 	lockData();
 
@@ -184,6 +197,7 @@ int FileIndexStore::RequestDirDetails(std::string uid, std::string /*path*/, Dir
 
 	unlockData();
 	return found;
+#endif
 }
 
 int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const

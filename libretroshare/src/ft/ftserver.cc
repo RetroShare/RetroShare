@@ -484,7 +484,7 @@ bool ftServer::ExtraFileMove(std::string fname, std::string hash, uint64_t size,
 	/******************** Directory Listing ************************/
 	/***************************************************************/
 
-int ftServer::RequestDirDetails(std::string uid, std::string path, DirDetails &details)
+int ftServer::RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::RequestDirDetails(uid:" << uid;
@@ -497,7 +497,10 @@ int ftServer::RequestDirDetails(std::string uid, std::string path, DirDetails &d
 		std::cerr << std::endl;
 	}
 #endif
-	return mFiStore->RequestDirDetails(uid, path, details);
+	if(uid == mLinkMgr->getOwnId())
+		return mFiMon->RequestDirDetails(path, details);
+	else
+		return mFiStore->RequestDirDetails(uid, path, details);
 }
 
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)

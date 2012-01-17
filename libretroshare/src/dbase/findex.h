@@ -255,6 +255,9 @@ class FileIndex
 		//
 		static bool extractData(void *ref,DirDetails& details) ;
 		static uint32_t getType(void *ref) ;
+
+		void *findRef(const std::string& path) const ;
+		bool extractData(const std::string& path,DirDetails& details) const ;
 };
 
 
