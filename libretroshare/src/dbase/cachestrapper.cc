@@ -1069,6 +1069,28 @@ bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
 			((dit->second).cid.type == data.cid.type) &&
 			((dit->second).cid.subid == data.cid.subid))
 		{
+			sit = cbStores.find(dit->second.hash);
+
+			/* if identical to previous request, then we don't want to cancel
+			 * a partially transferred cache file
+			 *
+			 * We wouldn't expect to have to request it again, however the feedback loop
+			 * from ftController is not completed (it should callback and tell us if it cancels
+			 * the cache file. XXX TO FIX.
+			 */
+			if ((data.hash == dit->second.hash) && 
+				(data.path == dit->second.path) && 
+				(data.size == dit->second.size) && 
+				(cbStore == cbStore))
+			{
+				std::cerr << "Re-request duplicate cache... let it continue";
+				std::cerr << std::endl;
+				/* request data */
+				RequestCacheFile(data.pid, data.path, data.hash, data.size);
+
+				return true;
+			}
+			
 			/* cancel old transfer */
 			CancelCacheFile(dit->second.pid, dit->second.path, 
 				dit->second.hash, dit->second.size);
