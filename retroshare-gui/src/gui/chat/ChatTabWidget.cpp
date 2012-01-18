@@ -30,7 +30,7 @@
 #define IMAGE_CHAT           ":/images/chat.png"
 
 ChatTabWidget::ChatTabWidget(QWidget *parent) :
-	QTabWidget(parent),
+	RSTabWidget(parent),
 	ui(new Ui::ChatTabWidget)
 {
 	ui->setupUi(this);

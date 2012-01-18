@@ -27,7 +27,6 @@
 
 #include "mainpage.h"
 
-
 #ifndef MINIMAL_RSGUI
 #include "ui_FriendsDialog.h"
 
@@ -35,8 +34,7 @@ class QFont;
 class QAction;
 class QTextEdit;
 class QTextCharFormat;
-class ChatDialog;
-class ChatLobbyWidget;
+class ChatTabWidget;
 
 class FriendsDialog : public RsAutoUpdatePage
 {
@@ -49,6 +47,8 @@ public:
     ~FriendsDialog ();
 
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
+
+    static ChatTabWidget *getTabWidget();
 
 public slots:
 
@@ -112,8 +112,6 @@ private slots:
 
     void newsFeedChanged(int count);
 
-    void lobbyInfoChanged();
-    
     void createChatLobby();
 
 signals:
@@ -141,9 +139,6 @@ private:
     int newsFeedTabIndex;
     QColor newsFeedTabColor;
     QString newsFeedText;
-
-    ChatLobbyWidget *chatLobbyWidget;
-    int chatlobbyTabIndex;
 
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;

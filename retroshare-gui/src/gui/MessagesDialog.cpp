@@ -300,11 +300,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messagestreeView->installEventFilter(this);
 
     // remove close button of the the first tab
-    QTabBar::ButtonPosition buttonPosition = (QTabBar::ButtonPosition) ui.tabWidget->tabBar()->style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition, 0, 0);
-    QWidget *tabButton = ui.tabWidget->tabBar()->tabButton(0, buttonPosition);
-    if (tabButton) {
-        tabButton->hide();
-    }
+    ui.tabWidget->hideCloseButton(0);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN

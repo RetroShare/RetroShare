@@ -4,7 +4,6 @@
 #include "RsAutoUpdatePage.h"
 
 class RSTreeWidgetItemCompareRole;
-class ChatTabWidget;
 
 class ChatLobbyWidget : public RsAutoUpdatePage, Ui::ChatLobbyWidget
 {
@@ -18,12 +17,6 @@ public:
 	~ChatLobbyWidget();
 
 	virtual void updateDisplay();
-	void getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon);
-
-	static ChatTabWidget *getTabWidget();
-
-signals:
-	void infoChanged();
 
 protected slots:
 	void lobbyChanged();
@@ -34,7 +27,6 @@ protected slots:
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str);
 	void readChatLobbyInvites();
-	void tabInfoChanged();
 
 private:
 	RSTreeWidgetItemCompareRole *compareRole;

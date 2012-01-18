@@ -29,16 +29,10 @@
 #define IMAGE_SUBSCRIBE   ""
 #define IMAGE_UNSUBSCRIBE ""
 
-static ChatLobbyWidget *instance = NULL;
-
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	: RsAutoUpdatePage(5000,parent)
 {
 	setupUi(this);
-
-	if (instance == NULL) {
-		instance = this;
-	}
 
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
@@ -46,8 +40,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 
 	QObject::connect(lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCostumPopupMenu()));
 	QObject::connect(lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
-	QObject::connect(lobbyTabWidget, SIGNAL(infoChanged()), this, SLOT(tabInfoChanged()));
-	
+
 	QObject::connect(newlobbypushButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
 	compareRole = new RSTreeWidgetItemCompareRole;
@@ -86,14 +79,6 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 
 ChatLobbyWidget::~ChatLobbyWidget()
 {
-	if (this == instance) {
-		instance = NULL;
-	}
-}
-
-/*static*/ ChatTabWidget *ChatLobbyWidget::getTabWidget()
-{
-	return instance ? instance->lobbyTabWidget : NULL;
 }
 
 void ChatLobbyWidget::lobbyTreeWidgetCostumPopupMenu()
@@ -366,14 +351,4 @@ void ChatLobbyWidget::readChatLobbyInvites()
 			rsMsgs->denyLobbyInvite((*it).lobby_id);
 		}
 	}
-}
-
-void ChatLobbyWidget::tabInfoChanged()
-{
-	emit infoChanged();
-}
-
-void ChatLobbyWidget::getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon)
-{
-	lobbyTabWidget->getInfo(isTyping, hasNewMessage, icon);
 }

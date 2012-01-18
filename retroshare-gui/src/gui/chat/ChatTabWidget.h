@@ -23,7 +23,7 @@
 #ifndef CHATTABWIDGET_H
 #define CHATTABWIDGET_H
 
-#include <QTabWidget>
+#include "gui/common/RSTabWidget.h"
 
 namespace Ui {
 class ChatTabWidget;
@@ -31,7 +31,7 @@ class ChatTabWidget;
 
 class ChatDialog;
 
-class ChatTabWidget : public QTabWidget
+class ChatTabWidget : public RSTabWidget
 {
 	Q_OBJECT
 

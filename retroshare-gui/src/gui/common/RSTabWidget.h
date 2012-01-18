@@ -28,10 +28,12 @@
 class RSTabWidget : public QTabWidget
 {
 public:
-    RSTabWidget(QWidget *parent = 0);
+	RSTabWidget(QWidget *parent = 0);
+
+	void hideCloseButton(int index);
 
 public:
-    QTabBar *tabBar() const;
+	QTabBar *tabBar() const;
 };
 
 #endif

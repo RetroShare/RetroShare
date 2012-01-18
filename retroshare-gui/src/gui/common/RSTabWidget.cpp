@@ -19,6 +19,9 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QTabBar>
+#include <QStyle>
+
 #include "RSTabWidget.h"
 
 RSTabWidget::RSTabWidget(QWidget *parent) : QTabWidget(parent)
@@ -27,5 +30,14 @@ RSTabWidget::RSTabWidget(QWidget *parent) : QTabWidget(parent)
 
 QTabBar *RSTabWidget::tabBar() const
 {
-    return QTabWidget::tabBar();
-};
+	return QTabWidget::tabBar();
+}
+
+void RSTabWidget::hideCloseButton(int index)
+{
+	QTabBar::ButtonPosition buttonPosition = (QTabBar::ButtonPosition) tabBar()->style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition, 0, 0);
+	QWidget *tabButton = tabBar()->tabButton(index, buttonPosition);
+	if (tabButton) {
+		tabButton->hide();
+	}
+}
