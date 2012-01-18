@@ -1018,7 +1018,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title), REPLY);
 
     QTextDocument doc ;
-    doc.setHtml(QString::fromStdWString(msgInfo.msg));
+    doc.setHtml(RsHtml::toHtml(QString::fromStdWString(msgInfo.msg), false));
 
     msgComposer->insertPastedText(doc.toPlainText());
     msgComposer->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
@@ -1062,7 +1062,7 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title), FORWARD);
 
     QTextDocument doc ;
-    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+    doc.setHtml(RsHtml::toHtml(QString::fromStdWString(msgInfo.msg), false));
 
     msgComposer->insertForwardPastedText(doc.toPlainText());
 

@@ -269,4 +269,17 @@ void optimizeHtml(QTextEdit *textEdit, QString &text)
 	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
 }
 
+QString toHtml(QString text, bool realHtml)
+{
+	// replace "\n" from the optimized html with "<br>"
+	text.replace("\n", "<br>");
+	if (!realHtml) {
+		return text;
+	}
+
+	QTextDocument doc;
+	doc.setHtml(text);
+	return doc.toHtml();
+}
+
 } // namespace RsHtml
