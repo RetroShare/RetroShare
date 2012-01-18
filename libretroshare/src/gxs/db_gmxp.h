@@ -52,12 +52,47 @@
 
 /******
  * NOTES:
+ * 1) Based on Forum/Channel Groups.
+ * 2) Will likely need to extend to handle info for other services.
+ * 3) Perhaps a more generalised class like gxmp::msg would be best with extra data.
+ *
+ */
+
+class gxmp::group
+{
+        gxp::id grpId;
+        uint32_t grpType;       /* FORUM, CHANNEL, TWITTER, etc */
+
+        uint32_t     timestamp;
+        uint32_t     grpFlags;
+        std::string  grpName;
+        std::string  grpDesc;
+        std::string  grpCategory;
+
+        RsTlvImage   grpPixmap;
+
+        gpp::permissions grpPermissions;
+
+        gxip::keyref     adminKey;
+        gxip::keyrefset  publishKeys;
+
+        gxip::signature adminSignature;
+};
+
+
+/******
+ * NOTES:
  * 1) This represents the base of the Unpacked Msgs, it will be overloaded by all classes
  * that want to use the service. It is difficult to go from gxmp::msg => gxmp::signedmsg
  * so data should be stored in the signedmsg format.
  * 2) All services will fundamentally use data types derived from this.
- * 3) This packet is only serialised once at post time, typically it is deserialised be all nodes.
+ * 3) This packet is only serialised once at post time, typically it is deserialised by all nodes.
  */
+class gmxp::link
+{
+	uint32_t linktype;
+	gxp::id  msgId;
+}
 
 class gmxp::msg
 {
@@ -70,15 +105,23 @@ class gmxp::msg
         gxp::id origMsgId;  /* if a replacement msg, otherwise == msgId */
         gxp::id replacingMsgId;  /* if a replacement msg, otherwise == NULL (for ordering) */
 
-        uint32_t type;          /* FORUM, CHANNEL, EVENT, COMMENT, VOTE, etc */
+        uint32_t msgtype;          /* FORUM, CHANNEL, EVENT, COMMENT, VOTE, etc */
         uint32_t flags;         /* Is this needed? */
         uint32_t timestamp;
 
+	// New extensions - put these in the generic message, so we can handle search / linking for all services.
+	std::list<std::string> hashtags;
+	std::list<gmxp::link>  linked;
+
         gpp::permissions msgPermissions; 
 
-        gxip::signset signatures;
+        gxip::signset signatures; // should this be a set, or a singleton?
 };
 
+class gmxp::group: public gxp::group
+{
+	???
+};
 
 
 /******
@@ -91,6 +134,45 @@ class gmxp::msg
  *     stuff from your friends. This will need to be an overloaded functionality as the 
  *     search will be service specific.
  */
+
+
+/* General Interface class which is extended by specific versions.
+ *
+ * This provides most of the generic search, and access functions.
+ * As we are going to end up with diamond style double inheritance.
+ * This function needs to be pure virtual.. so there is no disambiugation issues.
+ */
+
+class rsGmxp
+{
+	/* create content */
+       std::string createGroup(std::wstring name, std::wstring desc, uint32_t flags, unsigned char *pngImageData, uint32_t imageSize);
+       std::string publishMsg(RsDistribMsg *msg, bool personalSign);
+
+	/* indicate interest in info */
+       bool    subscribeToGroup(const std::string &grpId, bool subscribe);
+
+	/* search messages (TO DEFINE) */
+
+	/* extract messages (From p3Distrib Existing Methods) */
+
+	bool    getAllGroupList(std::list<std::string> &grpids);
+        bool    getSubscribedGroupList(std::list<std::string> &grpids);
+        bool    getPublishGroupList(std::list<std::string> &grpids);
+        void    getPopularGroupList(uint32_t popMin, uint32_t popMax, std::list<std::string> &grpids);
+
+        bool    getAllMsgList(const std::string& grpId, std::list<std::string> &msgIds);
+        bool    getParentMsgList(const std::string& grpId, 
+				const std::string& pId, std::list<std::string> &msgIds);
+        bool    getTimePeriodMsgList(const std::string& grpId, uint32_t timeMin,
+                                uint32_t timeMax, std::list<std::string> &msgIds);
+
+        GroupInfo *locked_getGroupInfo(const std::string& grpId);
+        RsDistribMsg *locked_getGroupMsg(const std::string& grpId, const std::string& msgId);
+
+        void getGrpListPubKeyAvailable(std::list<std::string>& grpList);
+
+};
 
 
 class p3gmxp

@@ -138,7 +138,7 @@ class gxmp::group
  *
  */
 
-class gxmp::signedmsg
+class gxp::signedmsg
 {
 	gxp::id groupId;  /* high level groupings, e.g. specific forum, channel, or twitter user, etc. */
 	gxp::id msgId;    /* unique msgId within that group, normally signature of the message */
@@ -154,15 +154,21 @@ class gxmp::signedmsg
 
 class gdp::interface
 {
+	/* query for available groups & messages */
+	int listgroups(std::list<gdb::id> &grpIds);
+	/* response from listmsgs: -1 = invalid parameters, 0 = incomplete list, 1 = all known msgs */
+	int listmsgs(const gdp::id grpId, std::list<gdb::id> &msgIds, const time_t from, const time_t to, const int maxmsgs);
 
-	/* very basic interface */
-
-	/* response from requestMsg: YES (available immediately, RETRIEVING (known to exist), IN_REQUEST (might exist), NOT_AVAILABLE (still might exist)
+	/* response from requestMsg: YES (available immediately), RETRIEVING (known to exist), 
+	 * IN_REQUEST (might exist), NOT_AVAILABLE (still might exist)
 	 * NB: NOT_AVAILABLE could mean that it will be retrievable later when other peers come online, or possibilly we are not allowed it. 
 	 */
+
 	int requestMsg(gdp::id groupId, gdp::id msgId, double &delay); 
 	int getMsg(gdp::id groupId, gdp::id msgId, gdp::message &msg);   
 	int storeMsg(const gdp::message &msg);
+
+	/* search interface, is it here? or next level up */
 
 };
 
