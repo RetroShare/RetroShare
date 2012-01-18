@@ -6,7 +6,7 @@
  *
  * General Exchange Protocol interface for RetroShare.
  *
- * Copyright 2011-2011 by Robert Fernie.
+ * Copyright 2011-2011 by Robert Fernie, Christopher Evi-Prker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +30,7 @@
 
 #include <openssl/ssl.h>
 #include <set>
+
 /*
  * GIXP: General Identity Exchange Protocol.
  *
@@ -48,7 +49,6 @@
  * 6) This class will use the generalised packet storage for efficient caching & loading.
  * 7) Data will be stored encrypted.
  */
-namespace retroshare_gxs {
 
     class GixsKey
     {
@@ -110,7 +110,7 @@ namespace retroshare_gxs {
      * also provides encyption, decryption, verification,
      * and signing functionality using any created identities
      */
-    class RsGixs : RsGxs
+    class RsIdentityExchangeService
     {
     public:
         RsGixs();
@@ -119,28 +119,28 @@ namespace retroshare_gxs {
          * creates gixs profile and shares it
          * @param profile
          */
-        bool createKey(RsGixsProfile& profile); /* fills in mKeyId, and signature */
+        bool createKey(RsGixsProfile& profile) = 0; /* fills in mKeyId, and signature */
 
         /*!
          * Use to query a whether given key is available by its key reference
          * @param keyref the keyref of key that is being checked for
          * @return true if available, false otherwise
          */
-        bool haveKey(const KeyRef& keyref);
+        bool haveKey(const KeyRef& keyref) = 0;
 
         /*!
          * Use to query whether private key member of the given key reference is available
          * @param keyref the KeyRef of the key being checked for
          * @return true if private key is held here, false otherwise
          */
-        bool havePrivateKey(const KeyRef& keyref);
+        bool havePrivateKey(const KeyRef& keyref) = 0;
 
         /*!
          * Use to request a given key reference
          * @param keyref the KeyRef of the key being requested
          * @return will
          */
-        bool requestKey(const KeyRef& keyref);
+        bool requestKey(const KeyRef& keyref) = 0;
 
         /*!
          * Retrieves a key identity
@@ -148,7 +148,7 @@ namespace retroshare_gxs {
          * @return a pointer to a valid profile if successful, otherwise NULL
          *
          */
-        RsGixsProfile* getProfile(const KeyRef& keyref);
+        RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
 
 
         /*** process data ***/
@@ -161,7 +161,7 @@ namespace retroshare_gxs {
          * @param signature is set with the signature from signing with keyref
          * @return false if signing failed, true otherwise
          */
-        bool sign(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature);
+        bool sign(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature) = 0;
 
         /*!
          * Verify that the data is signed by the key owner
@@ -171,7 +171,7 @@ namespace retroshare_gxs {
          * @param signature
          * @return false if verification failed, false otherwise
          */
-        bool verify(const KeyRef& keyref, unsigned char* data, int dataLen, std::string& signature);
+        bool verify(const KeyRef& keyref, unsigned char* data, int dataLen, std::string& signature) = 0;
 
         /*!
          * Attempt to decrypt data with a given key
@@ -183,7 +183,7 @@ namespace retroshare_gxs {
          * @return false
          */
         bool decrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
-                     unsigned char*& decryptedData, uint32_t& decyptDataLen);
+                     unsigned char*& decryptedData, uint32_t& decyptDataLen) = 0;
 
         /*!
          * Attempt to encrypt data with a given key
@@ -194,10 +194,9 @@ namespace retroshare_gxs {
          * @param encryptDataLen length of encrypted data
          */
         bool encrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
-                     unsigned char*& encryptedData, uint32_t& encryptDataLen);
+                     unsigned char*& encryptedData, uint32_t& encryptDataLen) = 0;
 
     };
 
-}
 
 #endif // RSGIXS_H

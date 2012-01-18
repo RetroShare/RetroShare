@@ -5,6 +5,7 @@
  * libretroshare/src/gxs   : rsgxs.h
  *
  * GXS  interface for RetroShare.
+ * Convenience header
  *
  * Copyright 2011 Christopher Evi-Parker
  *
@@ -30,74 +31,23 @@
  *
  */
 
-#include "rsgdp.h"
-#include "util/rsthreads.h"
+#include <string>
+#include <inttypes.h>
 
 /*!
- * Retroshare general exchange service
- * This forms the basic interface that classes need to inherit
- * in order to use the general exchange service
- * Generally GNP drives the service.
- * GDP deals with exporting and importing msgs to and from the concrete service
- * data from the derived class
- * GXIP is used to maintain
- *
- *
- * The maiin transport mechanism
+ * This is universal format for messages that is transported throughout
+ * the general exchange service chain. From concrete service to
  */
-class RsGxs : public RsThread
-{
-public:
-    RsGxs(const std::string& serviceName);
+class RsGxsSignedMessage {
 
-public:
-
-    /*!
-     * These are messages, that have been pushed to you
-     * This will be called by RsGdp whenever a new msg(s) has arrived
-     * the list contains ids which may be queried from the external db
-     *
-     * @param msgIds the ids of the new msgs received
-     */
-    virtual void receiveMessage(std::set<std::string>& msgIds) = 0;
-
-    /*!
-     * Push a set of messages which have been written to your service
-     * database
-     * @param msgIds
-     */
-    void push(std::set<std::string>& msgIds) = 0;
-
-
-    /*!
-     * allows for non blocking pushes, receives, and configuration changes.
-     */
-    void run();
-
-
-    /*!
-     * cache a message
-     * @param msg message to cache
-     *
-     */
-    void cache(RsGxsSignedMessage* msg);
-
-    /*!
-     * Queries if message with message id is cached
-     * @param msgId the id of the message to query
-     */
-    bool cached(std::string& msgId);
-
-    /*!
-     * Use to retrieve cached msgs
-     * If message id of messages not cached are requested, it is simply ignored
-     * @param requestIds The ids of messages to retrieve
-     * @param msgs the retrieved cached messages
-     */
-    void retrieveCache(std::set<std::string>& requestIds, std::set<RsGxsSignedMessage*>& msgs);
-
-
+    uint32_t timestamp;
+    void* signature;
+    void* data;
+    uint32_t msg_flags; /* encrypted */
+    std::string msgId; /* hash of all message data */
+    std::string grpId;
 
 };
+
 
 #endif // RSGXS_H
