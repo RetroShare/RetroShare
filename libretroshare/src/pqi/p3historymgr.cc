@@ -65,11 +65,18 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 		return;
 	}
 
+	const RsChatLobbyMsgItem *cli = dynamic_cast<const RsChatLobbyMsgItem*>(chatItem);
+
+	if (cli) {
+		// disable history for chat lobbies until they are saved
+		return;
+	}
+
 	RsHistoryMsgItem* item = new RsHistoryMsgItem;
 	item->chatPeerId = chatPeerId;
 	item->incoming = incoming;
 	item->peerId = peerId;
-	item->peerName = rsPeers->getPeerName(item->peerId);
+	item->peerName = cli ? cli->nick : rsPeers->getPeerName(item->peerId);
 	item->sendTime = chatItem->sendTime;
 	item->recvTime = chatItem->recvTime;
 

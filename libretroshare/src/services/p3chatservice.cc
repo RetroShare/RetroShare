@@ -378,7 +378,7 @@ bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstrin
 	ChatLobbyId lobby_id ;
 
 	if(isLobbyId(id,lobby_id))
-		return sendLobbyChat(msg,lobby_id) ;
+		return sendLobbyChat(id,msg,lobby_id) ;
 
 	// make chat item....
 #ifdef CHAT_DEBUG
@@ -1736,7 +1736,7 @@ void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,
 	item.nick = lobby.nick_name ;
 }
 
-bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lobby_id) 
+bool p3ChatService::sendLobbyChat(const std::string &id, const std::wstring& msg, const ChatLobbyId& lobby_id)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
@@ -1759,7 +1759,11 @@ bool p3ChatService::sendLobbyChat(const std::wstring& msg, const ChatLobbyId& lo
 		item.message = msg;
 	}
 
-	bounceLobbyObject(&item,rsPeers->getOwnId()) ;
+	std::string ownId = rsPeers->getOwnId();
+
+	mHistoryMgr->addMessage(false, id, ownId, &item);
+
+	bounceLobbyObject(&item, ownId) ;
 
 	return true ;
 }
@@ -2221,6 +2225,10 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 
 			sendItem(item) ;
 		}
+
+		// remove history
+
+		mHistoryMgr->clear(it->second.virtual_peer_id);
 
 		// remove lobby information
 
