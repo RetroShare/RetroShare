@@ -826,20 +826,13 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-		rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectResult() called Connect!: id: " + id);
-		if (success) 
-		{
-			rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectResult() called with SUCCESS.");
-		} else 
-		{
-			rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectResult() called with FAILED.");
-		}
 
 		if (id == getOwnId()) 
 		{
-#ifdef LINKMGR_DEBUG
-			rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectResult() Failed, connecting to own id: ");
-#endif
+			std::ostringstream out;
+			out << "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " << id;
+			rslog(RSL_ALERT, p3connectzone, out.str());
+
 			return false;
 		}
 		/* check for existing */
@@ -847,11 +840,44 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{
+			std::ostringstream out;
+			out << "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " << id;
+			rslog(RSL_ALERT, p3connectzone, out.str());
+
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::connectResult() ERROR, missing Friend " << " id: " << id << std::endl;
 #endif
 			return false;
 		}
+
+		/* now we can tell if we think we were connected - proper point to log */
+
+		{
+			std::ostringstream out;
+			out << "p3LinkMgrIMPL::connectResult() id: " << id;
+			if (success) 
+			{
+				out << " SUCCESS ";
+				if (it->second.state & RS_PEER_S_CONNECTED)
+				{
+					out << " WARNING: State says: Already Connected";
+				}
+			} 
+			else 
+			{
+				if (it->second.state & RS_PEER_S_CONNECTED)
+				{
+					out << " FAILURE OF THE CONNECTION (Was Connected)";
+				}
+				else
+				{
+					out << " FAILED ATTEMPT (Not Connected)";
+				}
+			}
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
+
+
 
 		if (success)
 		{
@@ -864,9 +890,9 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::connectResult() Connect!: id: " << id << std::endl;
 			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
-#endif
 
 			rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectResult() Success");
+#endif
 
 			/* change state */
 			it->second.state |= RS_PEER_S_CONNECTED;

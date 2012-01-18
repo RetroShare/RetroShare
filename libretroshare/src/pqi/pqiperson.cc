@@ -222,8 +222,12 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		if ((active) && (activepqi != pqi)) // already connected - trouble
 		{
-	  		pqioutput(PQL_WARNING, pqipersonzone, 
-                                "CONNECT_SUCCESS+active-> activing new connection, shutting others");
+			{
+	  			std::ostringstream out;
+	  			out << "pqiperson::notifyEvent() Id: " << PeerId();
+                                out << " CONNECT_SUCCESS+active-> activing new connection, shutting others";
+	  			pqioutput(PQL_WARNING, pqipersonzone, out.str());
+			}
 
 			// This is the RESET that's killing the connections.....
                         //activepqi -> reset();
@@ -235,8 +239,13 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		/* now install a new one. */
 		{
 
-	  		pqioutput(PQL_WARNING, pqipersonzone, 
-				"CONNECT_SUCCESS->marking so! (resetting others)");
+			{
+	  			std::ostringstream out;
+	  			out << "pqiperson::notifyEvent() Id: " << PeerId();
+				out << " CONNECT_SUCCESS->marking so! (resetting others)";
+	  			pqioutput(PQL_WARNING, pqipersonzone, out.str());
+			}
+
 			// mark as active.
 			active = true;
                         lastHeartbeatReceived = 0;
@@ -268,20 +277,34 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		{
 			if (activepqi == pqi)
 			{
-	  			pqioutput(PQL_WARNING, pqipersonzone, 
-					"CONNECT_FAILED->marking so!");
+				{
+		  			std::ostringstream out;
+		  			out << "pqiperson::notifyEvent() Id: " << PeerId();
+					out << " CONNECT_FAILED->marking so!";
+		  			pqioutput(PQL_WARNING, pqipersonzone, out.str());
+				}
+
 				active = false;
 				activepqi = NULL;
-                        } else 
+                        } 
+			else 
 			{
-                                pqioutput(PQL_WARNING, pqipersonzone,
-                                        "CONNECT_FAILED-> from an unactive connection, don't flag the peer as not connected, just try next attempt !");
+				{
+		  			std::ostringstream out;
+		  			out << "pqiperson::notifyEvent() Id: " << PeerId();
+					out << " CONNECT_FAILED-> from an unactive connection, don't flag the peer as not connected, just try next attempt !";
+		  			pqioutput(PQL_WARNING, pqipersonzone, out.str());
+				}
                         }
                 }
 		else
 		{
-	  		pqioutput(PQL_WARNING, pqipersonzone, 
-			  "CONNECT_FAILED+NOT active -> try connect again");
+			{
+		  		std::ostringstream out;
+		  		out << "pqiperson::notifyEvent() Id: " << PeerId();
+			  	out << " CONNECT_FAILED+NOT active -> try connect again";
+		  		pqioutput(PQL_WARNING, pqipersonzone, out.str());
+			}
 		}
 
 		/* notify up */

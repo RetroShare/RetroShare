@@ -121,8 +121,18 @@ std::string socket_errorType(int err)
 	{
 		return std::string("ENOTCONN");
 	}
+	// These ones have been turning up in SSL CONNECTION FAILURES.
+	else if (err == EPIPE)
+	{
+		return std::string("EPIPE");
+	}
+	else if (err == ECONNRESET)
+	{
+		return std::string("ECONNRESET");
+	}
+	//
 
-	return std::string("UNKNOWN ERROR CODE");
+	return std::string("UNKNOWN ERROR CODE - ASK RS-DEVS TO ADD IT!");
 }
 
 #include <net/if.h> 

@@ -138,12 +138,6 @@ std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 }
 
 /* thread-safe version of inet_ntoa */
-/*** XXX, PROBLEM this function is not Thread-Safe.
- * because it can be called in lots of other parts of the program.
- * which could still collide with this one!
- *
- * Must rewrite to make truely thread-safe.
- */
 
 std::string rs_inet_ntoa(struct in_addr in)
 {
