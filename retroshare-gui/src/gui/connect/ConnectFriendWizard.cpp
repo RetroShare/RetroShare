@@ -64,7 +64,7 @@
 
 //============================================================================
 //! 
-ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
+ConnectFriendWizard::ConnectFriendWizard(QWidget *parent,const QString& cert)
                     : QWizard(parent)
 {
     setPage(Page_Intro, new IntroPage);
@@ -77,8 +77,38 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setPage(Page_ErrorMessage, new ErrorMessagePage);
     setPage(Page_Conclusion, new ConclusionPage);
 
-    setStartId(Page_Intro);
+	 if(cert.isNull())
+		 setStartId(Page_Intro);
+	 else
+	 {
+		 RsPeerDetails pd;
+		 std::string error_string ;
 
+		 if ( rsPeers->loadDetailsFromStringCert(cert.toUtf8().constData(), pd,error_string) ) 
+		 {
+#ifdef FRIEND_WIZARD_DEBUG
+			 std::cerr << "ConnectFriendWizard got id : " << pd.id << "; gpg_id : " << pd.gpg_id << std::endl;
+#endif
+			 setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
+			 setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
+			 setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(pd.location.c_str()));
+			 setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, cert);
+
+			 setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
+			 setField("ext_friend_port", QString::number(pd.extPort));
+			 setField("local_friend_ip", QString::fromStdString(pd.localAddr));
+			 setField("local_friend_port", QString::number(pd.localPort));
+			 setField("dyndns", QString::fromStdString(pd.dyndns));
+
+			 setStartId(Page_Conclusion) ;
+		 }
+		 else
+		 {
+			 // error message 
+			 setField("errorMessage",  tr("Certificate Load Failed")+": "+QString::fromStdString(error_string) );
+			 setStartId(Page_ErrorMessage) ;
+		 }
+	 }
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_WS_MAC

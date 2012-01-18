@@ -36,7 +36,7 @@ public:
 
     enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion,Page_Foff, Page_Rsid, Page_Email };
 
-    ConnectFriendWizard(QWidget *parent = 0);
+    ConnectFriendWizard(QWidget *parent = 0,const QString& cert = QString());
 
     void setGroup(const std::string &groupId);
 

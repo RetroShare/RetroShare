@@ -382,6 +382,9 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
 					 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Connect To Friend"), this, SLOT(connectfriend()));
 
+					 if (type == TYPE_SSL) {
+						 contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
+					 }
 					 if (type == TYPE_GPG) {
 						 contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 					 }
@@ -1252,6 +1255,20 @@ void FriendList::recommendfriend()
 void FriendList::pastePerson()
 {
     RSLinkClipboard::process(RetroShareLink::TYPE_PERSON);
+}
+
+void FriendList::copyFullCertificate()
+{
+	QTreeWidgetItem *c = getCurrentPeer();
+	QList<RetroShareLink> urls;
+	RetroShareLink link ;
+	link.createCertificate(getRsId(c)) ;
+	urls.push_back(link);
+
+	std::cerr << "link: " << std::endl;
+
+	std::cerr<< link.toString().toStdString() << std::endl;
+	RSLinkClipboard::copyLinks(urls);
 }
 
 void FriendList::copyLink()

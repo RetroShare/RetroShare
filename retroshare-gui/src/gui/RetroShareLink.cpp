@@ -37,6 +37,7 @@
 #include "util/misc.h"
 #include "common/PeerDefs.h"
 #include "common/RsCollectionFile.h"
+#include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
 
 #include <retroshare/rsfiles.h>
@@ -44,14 +45,16 @@
 #include <retroshare/rsforums.h>
 #include <retroshare/rschannels.h>
 
-//#define DEBUG_RSLINK 1
+#define DEBUG_RSLINK 1
 
-#define HOST_FILE       "file"
-#define HOST_PERSON     "person"
-#define HOST_FORUM      "forum"
-#define HOST_CHANNEL    "channel"
-#define HOST_MESSAGE    "message"
-#define HOST_REGEXP     "file|person|forum|channel|search|message"
+#define HOST_FILE        "file"
+#define HOST_PERSON      "person"
+#define HOST_FORUM       "forum"
+#define HOST_CHANNEL     "channel"
+#define HOST_MESSAGE     "message"
+#define HOST_SEARCH      "search"
+#define HOST_CERTIFICATE "certificate"
+#define HOST_REGEXP      "file|person|forum|channel|search|message|certificate"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -71,8 +74,14 @@
 #define MESSAGE_ID      "id"
 #define MESSAGE_SUBJECT "subject"
 
-#define HOST_SEARCH     "search"
-#define SEARCH_KEYWORDS "keywords"
+#define SEARCH_KEYWORDS          "keywords"
+
+#define CERTIFICATE_SSLID        "sslid"
+#define CERTIFICATE_GPG_ID       "gpgid"
+#define CERTIFICATE_GPG_BASE64   "gpgbase64"
+#define CERTIFICATE_GPG_CHECKSUM "gpgchecksum"
+#define CERTIFICATE_LOCATION     "location"
+#define CERTIFICATE_NAME         "name"
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -208,6 +217,18 @@ void RetroShareLink::fromUrl(const QUrl& url)
         return;
     }
 
+	 if (url.host() == HOST_CERTIFICATE) {
+        _type = TYPE_CERTIFICATE;
+		  _SSLid = url.queryItemValue(CERTIFICATE_SSLID);
+		  _name = url.queryItemValue(CERTIFICATE_NAME);
+		  _location = url.queryItemValue(CERTIFICATE_LOCATION);
+		  _GPGBase64String = url.queryItemValue(CERTIFICATE_GPG_BASE64);
+		  _GPGid = url.queryItemValue(CERTIFICATE_GPG_ID);
+		  _GPGBase64CheckSum = url.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
+		  std::cerr << "Got a certificate link!!" << std::endl;
+		  check() ;
+        return;
+    }
     // bad link
 
 #ifdef DEBUG_RSLINK
@@ -254,6 +275,51 @@ bool RetroShareLink::createPerson(const std::string& id)
     check();
 
     return valid();
+}
+
+bool RetroShareLink::createCertificate(const std::string& ssl_id)
+{
+	std::string invite = rsPeers->GetRetroshareInvite(ssl_id,false) ;
+
+	if(invite == "")
+	{
+		std::cerr << "RetroShareLink::createPerson() Couldn't get retroshare invite for ssl id: " << ssl_id << std::endl;
+		return false;
+	}
+
+	RsPeerDetails detail;
+	if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
+		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
+		return false;
+	}
+
+	//_ssl_id = QString::fromStdString(id);
+	_name = QString::fromUtf8(detail.name.c_str());
+	QString gpg_cert = QString::fromStdString(invite) ;
+	QString gpg_base_64 = QString::fromStdString(invite).section("\n\n",1).section("-----",0,0) ;
+
+	_GPGBase64CheckSum = gpg_base_64.section("=",-1,-1).section("\n",0,0) ;
+	gpg_base_64 = gpg_base_64.section("\n=",0,0) ;
+
+	_type = TYPE_CERTIFICATE;
+
+	_GPGid = QString::fromStdString(detail.gpg_id).right(8);
+	_SSLid = QString::fromStdString(ssl_id) ;
+	_GPGBase64String = gpg_base_64.replace("\n","") ;
+	_location = QString::fromStdString(detail.location) ;
+	_name = QString::fromStdString(detail.name) ;
+
+	//_external_ipp = QString::fromStdString(invite).section("--EXT--",1,1) ;
+	QString lst = QString::fromStdString(invite).section("--EXT--",0,0) ;
+	//_local_ipp = lst.section("--LOCAL--",1,1) ;
+
+	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
+	std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
+	std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
+	std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
+	//std::cerr << "Found External IP+Port     = " << _external_ipp.toStdString() << std::endl;
+	//std::cerr << "Found External IP+Port     = " << _local_ipp.toStdString() << std::endl;
+	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
 }
 
 bool RetroShareLink::createForum(const std::string& id, const std::string& msgId)
@@ -440,6 +506,8 @@ QString RetroShareLink::title() const
 		break;
 	case TYPE_MESSAGE:
 		return PeerDefs::rsidFromId(hash().toStdString());
+	case TYPE_CERTIFICATE:
+		return QObject::tr("Click to add this RetroShare cert to your GPG keyring\nand open the Make Friend Wizard.\n") + QString("GPG Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
 	}
 
 	return "";
@@ -523,6 +591,20 @@ QString RetroShareLink::toString() const
 
             return url.toString();
         }
+	 case TYPE_CERTIFICATE:
+		  {
+			  QUrl url ;
+			  url.setScheme(RSLINK_SCHEME);
+			  url.setHost(HOST_CERTIFICATE) ;
+			  url.addQueryItem(CERTIFICATE_SSLID, _SSLid);
+			  url.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
+			  url.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
+			  url.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
+			  url.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
+			  url.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+
+			  return url.toString();
+		  }
     }
 
     return "";
@@ -533,6 +615,9 @@ QString RetroShareLink::niceName() const
     if (type() == TYPE_PERSON) {
         return PeerDefs::rsid(name().toUtf8().constData(), hash().toStdString());
     }
+
+	 if(type() == TYPE_CERTIFICATE)
+		 return QString("RetroShare Certificate (") + _name + ", @ " + _location + ")" ;	// should add SSL id there
 
     return name();
 }
@@ -743,6 +828,10 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 	QStringList messageReceipientNotAccepted;
 	QStringList messageReceipientUnknown;
 
+	// Certificate
+	QStringList GPGBase64Strings ;
+	QStringList SSLIds ;
+
 	// summary
 	QList<QStringList*> processedList;
 	QList<QStringList*> errorList;
@@ -760,212 +849,245 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 			continue;
 		}
 
-		switch (link.type()) {
-		case TYPE_UNKNOWN:
-			countUnknown++;
-			break;
+		switch (link.type()) 
+		{
+			case TYPE_UNKNOWN:
+				countUnknown++;
+				break;
 
-		case TYPE_FILE:
-			{
-#ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process FileRequest : fileName : " << link.name().toUtf8().constData() << ". fileHash : " << link.hash().toStdString() << ". fileSize : " << link.size() << std::endl;
-#endif
-
-				needNotifySuccess = true;
-
-				// Get a list of available direct sources, in case the file is browsable only.
-				std::list<std::string> srcIds;
-				FileInfo finfo ;
-				rsFiles->FileDetails(link.hash().toStdString(), RS_FILE_HINTS_REMOTE, finfo) ;
-
-				for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+			case TYPE_CERTIFICATE:
 				{
 #ifdef DEBUG_RSLINK
-					std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+					std::cerr << " RetroShareLink::process certificate." << std::endl;
 #endif
-					srcIds.push_back((*it).peerId) ;
-				}
+					needNotifySuccess = true;
 
-				if (rsFiles->FileRequest(link.name().toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
-					fileAdded.append(link.name());
-				} else {
-					fileExist.append(link.name());
-				}
-				break;
-			}
+					QString RS_Certificate ;
+					RS_Certificate += "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" ;
+					RS_Certificate += "Version: Retroshare Generated cert.\n" ;
+					RS_Certificate += "\n" ;
 
-		case TYPE_PERSON:
-			{
+					QString radix = link.GPGRadix64Key() ;
+
+					while(radix.size() > 64)
+					{
+						RS_Certificate += radix.left(64) + "\n" ;
+						radix = radix.right(radix.size() - 64) ;
+					}
+					RS_Certificate += radix.left(64) + "\n" ;
+					RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
+					RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
+					RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
+
+					std::cerr << "Usign this certificate:" << std::endl;
+					std::cerr << RS_Certificate.toStdString() << std::endl;
+
+					ConnectFriendWizard(NULL,RS_Certificate).exec() ;
+					needNotifySuccess = false;
+				}
+				break ;
+
+			case TYPE_FILE:
+				{
 #ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process FriendRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << std::endl;
+					std::cerr << " RetroShareLink::process FileRequest : fileName : " << link.name().toUtf8().constData() << ". fileHash : " << link.hash().toStdString() << ". fileSize : " << link.size() << std::endl;
 #endif
 
-				needNotifySuccess = true;
+					needNotifySuccess = true;
 
-				RsPeerDetails detail;
-				if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) {
-					if (detail.gpg_id == rsPeers->getGPGOwnId()) {
-						// it's me, do nothing
-						break;
-					}
+					// Get a list of available direct sources, in case the file is browsable only.
+					std::list<std::string> srcIds;
+					FileInfo finfo ;
+					rsFiles->FileDetails(link.hash().toStdString(), RS_FILE_HINTS_REMOTE, finfo) ;
 
-					if (detail.accept_connection) {
-						// peer connection is already accepted
-						personExist.append(PeerDefs::rsid(detail));
-						break;
-					}
-
-					if (rsPeers->addFriend("", link.hash().toStdString())) {
-						ConfCertDialog::loadAll();
-						personAdded.append(PeerDefs::rsid(detail));
-						break;
-					}
-
-					personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
-					break;
-				}
-
-				personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
-				break;
-			}
-
-		case TYPE_FORUM:
-			{
+					for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+					{
 #ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process ForumRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+						std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
 #endif
+						srcIds.push_back((*it).peerId) ;
+					}
 
-				ForumInfo fi;
-				if (!rsForums->getForumInfo(link.id().toStdString(), fi)) {
-					if (link.msgId().isEmpty()) {
-						forumUnknown.append(link.name());
+					if (rsFiles->FileRequest(link.name().toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
+						fileAdded.append(link.name());
 					} else {
-						forumMsgUnknown.append(link.name());
+						fileExist.append(link.name());
 					}
 					break;
 				}
 
-				ForumMsgInfo msg;
-				if (!link.msgId().isEmpty()) {
-					if (!rsForums->getForumMessage(fi.forumId, link.msgId().toStdString(), msg)) {
-						forumMsgUnknown.append(link.name());
-						break;
-					}
-				}
-
-				MainWindow::showWindow(MainWindow::Forums);
-				ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
-				if (!forumsDialog) {
-					return false;
-				}
-
-				if (forumsDialog->navigate(fi.forumId, msg.msgId)) {
-					if (link.msgId().isEmpty()) {
-						forumFound.append(link.name());
-					} else {
-						forumMsgFound.append(link.name());
-					}
-				} else {
-					if (link.msgId().isEmpty()) {
-						forumUnknown.append(link.name());
-					} else {
-						forumMsgUnknown.append(link.name());
-					}
-				}
-				break;
-			}
-
-		case TYPE_CHANNEL:
-			{
+			case TYPE_PERSON:
+				{
 #ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process ChannelRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+					std::cerr << " RetroShareLink::process FriendRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << std::endl;
 #endif
 
-				ChannelInfo ci;
-				if (!rsChannels->getChannelInfo(link.id().toStdString(), ci)) {
-					if (link.msgId().isEmpty()) {
-						channelUnknown.append(link.name());
-					} else {
-						channelMsgUnknown.append(link.name());
-					}
-					break;
-				}
+					needNotifySuccess = true;
 
-				ChannelMsgInfo msg;
-				if (!link.msgId().isEmpty()) {
-					if (!rsChannels->getChannelMessage(ci.channelId, link.msgId().toStdString(), msg)) {
-						channelMsgUnknown.append(link.name());
-						break;
-					}
-				}
-
-				MainWindow::showWindow(MainWindow::Channels);
-				ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
-				if (!channelFeed) {
-					return false;
-				}
-
-				if (channelFeed->navigate(ci.channelId, msg.msgId)) {
-					if (link.msgId().isEmpty()) {
-						channelFound.append(link.name());
-					} else {
-						channelMsgFound.append(link.name());
-					}
-				} else {
-					if (link.msgId().isEmpty()) {
-						channelUnknown.append(link.name());
-					} else {
-						channelMsgUnknown.append(link.name());
-					}
-				}
-				break;
-			}
-
-		case TYPE_SEARCH:
-			{
-#ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process SearchRequest : string : " << link.name().toStdString() << std::endl;
-#endif
-
-				MainWindow::showWindow(MainWindow::Search);
-				SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
-				if (!searchDialog) {
-					break;
-				}
-
-				searchDialog->searchKeywords(link.name());
-				searchStarted.append(link.name());
-				break;
-			}
-
-		case TYPE_MESSAGE:
-			{
-#ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
-#endif
-				RsPeerDetails detail;
-				if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) {
-					if (detail.accept_connection || detail.id == rsPeers->getOwnId() || detail.id == rsPeers->getGPGOwnId()) {
-						MessageComposer *msg = MessageComposer::newMsg();
-						msg->addRecipient(MessageComposer::TO, detail.id, false);
-						if (link.subject().isEmpty() == false) {
-							msg->insertTitleText(link.subject());
+					RsPeerDetails detail;
+					if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) {
+						if (detail.gpg_id == rsPeers->getGPGOwnId()) {
+							// it's me, do nothing
+							break;
 						}
-						msg->show();
-						messageStarted.append(PeerDefs::nameWithLocation(detail));
-					} else {
-						messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));
+
+						if (detail.accept_connection) {
+							// peer connection is already accepted
+							personExist.append(PeerDefs::rsid(detail));
+							break;
+						}
+
+						if (rsPeers->addFriend("", link.hash().toStdString())) {
+							ConfCertDialog::loadAll();
+							personAdded.append(PeerDefs::rsid(detail));
+							break;
+						}
+
+						personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
+						break;
 					}
-				} else {
-					messageReceipientUnknown.append(PeerDefs::rsidFromId(link.hash().toStdString()));
+
+					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
+					break;
 				}
 
-				break;
-			}
+			case TYPE_FORUM:
+				{
+#ifdef DEBUG_RSLINK
+					std::cerr << " RetroShareLink::process ForumRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+#endif
 
-		default:
-			std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
-			countUnknown++;
+					ForumInfo fi;
+					if (!rsForums->getForumInfo(link.id().toStdString(), fi)) {
+						if (link.msgId().isEmpty()) {
+							forumUnknown.append(link.name());
+						} else {
+							forumMsgUnknown.append(link.name());
+						}
+						break;
+					}
+
+					ForumMsgInfo msg;
+					if (!link.msgId().isEmpty()) {
+						if (!rsForums->getForumMessage(fi.forumId, link.msgId().toStdString(), msg)) {
+							forumMsgUnknown.append(link.name());
+							break;
+						}
+					}
+
+					MainWindow::showWindow(MainWindow::Forums);
+					ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+					if (!forumsDialog) {
+						return false;
+					}
+
+					if (forumsDialog->navigate(fi.forumId, msg.msgId)) {
+						if (link.msgId().isEmpty()) {
+							forumFound.append(link.name());
+						} else {
+							forumMsgFound.append(link.name());
+						}
+					} else {
+						if (link.msgId().isEmpty()) {
+							forumUnknown.append(link.name());
+						} else {
+							forumMsgUnknown.append(link.name());
+						}
+					}
+					break;
+				}
+
+			case TYPE_CHANNEL:
+				{
+#ifdef DEBUG_RSLINK
+					std::cerr << " RetroShareLink::process ChannelRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+#endif
+
+					ChannelInfo ci;
+					if (!rsChannels->getChannelInfo(link.id().toStdString(), ci)) {
+						if (link.msgId().isEmpty()) {
+							channelUnknown.append(link.name());
+						} else {
+							channelMsgUnknown.append(link.name());
+						}
+						break;
+					}
+
+					ChannelMsgInfo msg;
+					if (!link.msgId().isEmpty()) {
+						if (!rsChannels->getChannelMessage(ci.channelId, link.msgId().toStdString(), msg)) {
+							channelMsgUnknown.append(link.name());
+							break;
+						}
+					}
+
+					MainWindow::showWindow(MainWindow::Channels);
+					ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
+					if (!channelFeed) {
+						return false;
+					}
+
+					if (channelFeed->navigate(ci.channelId, msg.msgId)) {
+						if (link.msgId().isEmpty()) {
+							channelFound.append(link.name());
+						} else {
+							channelMsgFound.append(link.name());
+						}
+					} else {
+						if (link.msgId().isEmpty()) {
+							channelUnknown.append(link.name());
+						} else {
+							channelMsgUnknown.append(link.name());
+						}
+					}
+					break;
+				}
+
+			case TYPE_SEARCH:
+				{
+#ifdef DEBUG_RSLINK
+					std::cerr << " RetroShareLink::process SearchRequest : string : " << link.name().toStdString() << std::endl;
+#endif
+
+					MainWindow::showWindow(MainWindow::Search);
+					SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
+					if (!searchDialog) {
+						break;
+					}
+
+					searchDialog->searchKeywords(link.name());
+					searchStarted.append(link.name());
+					break;
+				}
+
+			case TYPE_MESSAGE:
+				{
+#ifdef DEBUG_RSLINK
+					std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
+#endif
+					RsPeerDetails detail;
+					if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) {
+						if (detail.accept_connection || detail.id == rsPeers->getOwnId() || detail.id == rsPeers->getGPGOwnId()) {
+							MessageComposer *msg = MessageComposer::newMsg();
+							msg->addRecipient(MessageComposer::TO, detail.id, false);
+							if (link.subject().isEmpty() == false) {
+								msg->insertTitleText(link.subject());
+							}
+							msg->show();
+							messageStarted.append(PeerDefs::nameWithLocation(detail));
+						} else {
+							messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));
+						}
+					} else {
+						messageReceipientUnknown.append(PeerDefs::rsidFromId(link.hash().toStdString()));
+					}
+
+					break;
+				}
+
+			default:
+				std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
+				countUnknown++;
 		}
 	}
 
@@ -1219,3 +1341,4 @@ bool RSLinkClipboard::empty(RetroShareLink::enumType type /*= RetroShareLink::TY
 
 	return RetroShareLink::process(linksToProcess, flag);
 }
+

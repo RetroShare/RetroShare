@@ -48,7 +48,7 @@
 class RetroShareLink
 {
 	public:
-		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH, TYPE_MESSAGE };
+		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH, TYPE_MESSAGE, TYPE_CERTIFICATE };
 
 	public:
 		RetroShareLink();
@@ -61,6 +61,7 @@ class RetroShareLink
 		bool createChannel(const std::string& id, const std::string& msgId);
 		bool createSearch(const QString& keywords);
 		bool createMessage(const std::string& peerId, const QString& subject);
+		bool createCertificate(const std::string& peerId) ;
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }
@@ -69,6 +70,11 @@ class RetroShareLink
 		const QString& id() const { return _hash ; }
 		const QString& msgId() const { return _msgId ; }
 		const QString& subject() const { return _subject ; }
+		const QString& GPGRadix64Key() const { return _GPGBase64String ; }
+		const QString& GPGBase64CheckSum() const { return _GPGBase64CheckSum ; }
+		const QString& SSLId() const { return _SSLid ; }
+		const QString& GPGId() const { return _GPGid ; }
+		const QString& location() const { return _location ; }
 		QString title() const;
 
 		// get nice name for anchor
@@ -110,6 +116,11 @@ class RetroShareLink
 		QString  _hash;  // or id (forum, channel, message)
 		QString  _msgId; // id of the message (forum, channel)
 		QString  _subject;
+		QString  _SSLid ; // ssl id for rs links
+		QString  _GPGid ; // ssl id for rs links
+		QString  _GPGBase64String ; // GPG Cert
+		QString  _GPGBase64CheckSum ; // GPG Cert
+		QString  _location ;	// location 
 };
 
 /// This class handles the copy/paste of links. Every member is static to ensure unicity.
