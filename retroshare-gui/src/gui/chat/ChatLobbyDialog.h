@@ -52,7 +52,7 @@ protected:
 
 	void processSettings(bool load);
 
-	virtual void init(const std::string &peerId, const QString &peerName);
+	virtual void init(const std::string &peerId, const QString &title);
 	virtual void addIncomingChatMsg(const ChatInfo& info);
 
 protected slots:

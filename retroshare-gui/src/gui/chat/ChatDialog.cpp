@@ -51,13 +51,13 @@ ChatDialog::~ChatDialog()
 	}
 }
 
-void ChatDialog::init(const std::string &peerId, const QString &peerName)
+void ChatDialog::init(const std::string &peerId, const QString &title)
 {
 	this->peerId = peerId;
 
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
-		cw->init(peerId, peerName);
+		cw->init(peerId, title);
 
 		connect(cw, SIGNAL(infoChanged(ChatWidget*)), this, SLOT(chatInfoChanged(ChatWidget*)));
 		connect(cw, SIGNAL(newMessage(ChatWidget*)), this, SLOT(chatNewMessage(ChatWidget*)));
@@ -282,7 +282,7 @@ QString ChatDialog::getTitle()
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
-		return cw->getPeerName();
+		return cw->getTitle();
 	}
 
 	return "";

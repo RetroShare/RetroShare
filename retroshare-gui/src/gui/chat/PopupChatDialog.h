@@ -45,7 +45,7 @@ protected:
 	/** Default destructor */
 	virtual ~PopupChatDialog();
 
-	virtual void init(const std::string &peerId, const QString &peerName);
+	virtual void init(const std::string &peerId, const QString &title);
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return true; }

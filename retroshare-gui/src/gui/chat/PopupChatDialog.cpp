@@ -50,9 +50,9 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WFlags flags)
 	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(const QString&, const QString&, bool)), this, SLOT(chatStatusChanged(const QString&, const QString&, bool)));
 }
 
-void PopupChatDialog::init(const std::string &peerId, const QString &peerName)
+void PopupChatDialog::init(const std::string &peerId, const QString &title)
 {
-	ChatDialog::init(peerId, peerName);
+	ChatDialog::init(peerId, title);
 
 	/* Hide or show the avatar frames */
 	showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));

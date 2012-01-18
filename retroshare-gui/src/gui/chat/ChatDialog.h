@@ -76,7 +76,7 @@ protected:
 	explicit ChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
 	virtual ~ChatDialog();
 
-	virtual void init(const std::string &peerId, const QString &peerName);
+	virtual void init(const std::string &peerId, const QString &title);
 	virtual void onChatChanged(int list, int type) {}
 
 	virtual void addIncomingChatMsg(const ChatInfo& info) = 0;

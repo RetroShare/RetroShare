@@ -48,8 +48,8 @@ public:
 public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
-    
-	void init(const std::string &peerId, const QString &peerName);
+
+	void init(const std::string &peerId, const QString &title);
 
 	bool hasNewMessages() { return newMessages; }
 	bool isTyping() { return typing; }
@@ -64,8 +64,9 @@ public:
 	void addToolsAction(QAction *action);
 
 	std::string getPeerId() { return peerId; }
-	QString getPeerName() { return peerName; }
+	QString getTitle() { return title; }
 	int getPeerStatus() { return peerStatus; }
+	void setName(const QString &name);
 
 	bool setStyle();
 	const RSStyle *getStyle() { return &style; }
@@ -120,7 +121,8 @@ private:
 	void processSettings(bool load);
 
 	std::string peerId;
-	QString peerName;
+	QString title;
+	QString name;
 
 	QColor currentColor;
 	QFont  currentFont;

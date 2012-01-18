@@ -147,12 +147,15 @@ ChatWidget::~ChatWidget()
 	delete ui;
 }
 
-void ChatWidget::init(const std::string &peerId, const QString &peerName)
+void ChatWidget::init(const std::string &peerId, const QString &title)
 {
 	this->peerId = peerId;
-	this->peerName = peerName;
+	this->title = title;
 
-	ui->friendnamelabel->setText(peerName);
+	ui->friendnamelabel->setText(title);
+
+	std::string ownId = rsPeers->getOwnId();
+	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
 
 	ChatLobbyId lid;
 	if (rsMsgs->isLobbyId(peerId, lid)) {
@@ -400,15 +403,13 @@ void ChatWidget::sendChat()
 		return;
 	}
 
-	std::string ownId = rsPeers->getOwnId();
-
 #ifdef CHAT_DEBUG
 	std::cout << "ChatWidget:sendChat " << std::endl;
 #endif
 
 	if (rsMsgs->sendPrivateChat(peerId, msg)) {
 		QDateTime currentTime = QDateTime::currentDateTime();
-		addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
+		addChatMsg(false, name, currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
 	}
 
 	chatWidget->clear();
@@ -562,9 +563,8 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	std::wstring msg = textBrowser.toHtml().toStdWString();
 
 	if (rsMsgs->sendPrivateChat(peerId, msg)) {
-		std::string ownId = rsPeers->getOwnId();
 		QDateTime currentTime = QDateTime::currentDateTime();
-		addChatMsg(false, QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
+		addChatMsg(false, name, currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
 	}
 }
 
@@ -607,6 +607,8 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	/* set font size for status  */
 	if (peer_id.toStdString() == peerId) {
 		// the peers status has changed
+
+		QString peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
 
 		switch (status) {
 		case RS_STATUS_OFFLINE:
@@ -676,6 +678,11 @@ void ChatWidget::updateStatusString(const QString &statusMask, const QString &st
 	}
 
 	QTimer::singleShot(5000, this, SLOT(resetStatusBar())) ;
+}
+
+void ChatWidget::setName(const QString &name)
+{
+	this->name = name;
 }
 
 bool ChatWidget::setStyle()

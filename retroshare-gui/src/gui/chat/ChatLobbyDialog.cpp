@@ -41,9 +41,13 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
 }
 
-void ChatLobbyDialog::init(const std::string &peerId, const QString &peerName)
+void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 {
-	ChatDialog::init(peerId, peerName);
+	ChatDialog::init(peerId, title);
+
+	std::string nickName;
+	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
+	ui.chatWidget->setName(QString::fromUtf8(nickName.c_str()));
 
 	lastUpdateListTime = 0;
 
@@ -96,6 +100,7 @@ void ChatLobbyDialog::processSettings(bool load)
 void ChatLobbyDialog::setNickName(const QString& nick)
 {
 	rsMsgs->setNickNameForChatLobby(lobbyId, nick.toUtf8().constData());
+	ui.chatWidget->setName(nick);
 }
 
 void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
