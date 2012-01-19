@@ -35,16 +35,52 @@
 
 #include "gxs/rsgxs.h"
 
+
+
+/*!
+ * This is universal format for messages that is transported throughout
+ * the general exchange service chain. From concrete service to
+ */
+class RsGxsSignedMessage : RsItem {
+
+    uint32_t timestamp;
+    void* signature;
+    void* data;
+    uint32_t msg_flags; /* encrypted */
+    std::string msgId; /* hash of all message data */
+    std::string grpId;
+
+};
+
+/*!
+ * Item for dealing
+ * with grp list
+ */
+class RsGxsMessageList : public RsGxsSignedMessage {
+
+};
+
+/*!
+ * Item for dealing with group
+ * description and msg list
+ */
+class RsGxsGroup : public RsGxsSignedMessage {
+
+
+};
+
+
 typedef std::map<std::string, std::set<std::string> > PeerGrp;
 
 /*!
  * Retroshare General Network Exchange Service: \n
- * This provides a module to service peers requests for GXS message \n
- * and also request GXS messages from other peers. \n
- * Users can make a general request for message under a grp id for a peer, all grp ids held \n
- * by a set of peers. And can also apply to timerange to them
- * An interface is provided for the observer pattern is provided to alert clients this class
- * when requests have been served
+ * Interface:
+ *   - This provides a module to service peers requests for GXS message \n
+ *      and also request GXS messages from other peers. \n
+ *   - Users can make a general request for message under a grp id for a peer, all grp ids held \n
+ *     by a set of peers. And can also apply to timerange to them
+ *   - An interface is provided for the observer pattern so clients of this class
+ *     can check if their requests have been served
  */
 class RsNetworktExchangeService
 {
@@ -89,8 +125,6 @@ public:
 
 
 public:
-
-
 
     /*!
      * attempt to retrieve requested messages

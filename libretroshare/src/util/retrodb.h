@@ -7,10 +7,10 @@
 #include <set>
 
 /*!
- * The idea of RsDb is to provide a means for Retroshare core and
- * its services itself to maintain easy to use random access files via a database
- * Especially for messages, rather than all data to memory
- * It models itself after android's sqlite functionality
+ * The idea of RsDb is to provide a means for Retroshare core and \n
+ * its services to maintain an easy to use random access files via a database \n
+ * Especially for messages, rather than all data to memory \n
+ * It models itself after android's sqlite functionality \n
  */
 class RetroDb
 {

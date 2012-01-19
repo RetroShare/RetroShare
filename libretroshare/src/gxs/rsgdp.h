@@ -31,19 +31,24 @@
 #include <string>
 
 #include "inttypes.h"
-#include "gxs/rsgxs.h"
+#include "rsgnp.h"
 
 typedef std::map<std::string, std::set<std::string> > MsgGrpId;
 typedef std::map<std::string, std::set<RsGxsSignedMessage*> > SignedMsgGrp;
 
 
 /*!
- * The main role of GDP is the preparation of messages requested from
- * GXS instance's storage module (RsGeneralStorageService)
+ * The main role of GDP is the preparation and handing out of messages requested from
+ * RsGeneralExchangeService and RsGeneralExchangeService
  *
- * It acts as a layer between RsGeneralStorageService and its parent GXS instance
+ * It also acts as a layer between RsGeneralStorageService and its parent RsGeneralExchangeService
  * thus allowing for non-blocking requests, etc.
  * It also provides caching ability
+ *
+ *
+ * Caching feature:
+ *   - A cache index should be maintained which is faster than normal message request
+ *   - This should allow fast retrieval of message based on grp id or msg id
  */
 class RsGeneralDataService
 {
@@ -131,12 +136,15 @@ class RequestFilter {
 
 /*!
  *
- * This is implemented by the concrete GXS class to represent to define how \n
- * RsGxsSignedMessage is stored and retrieved \n
+ * This is implemented by the concrete GXS class to represent and define how \n
+ * RsGxsSignedMessage is stored and retrieved from disk \n
  * More complicated queries are enabled through the use of \n
- * RequestFilter which through rtti store generic parameter used \n
- * The main reason for layering RsGeneralDataService between this and service implementer \n
- * is to avoid the overhead of storage access \n
+ * RequestFilter which through rtti store generic parameters used by the RsGeneralStorageService implementation \n
+ *
+ *
+ * The main reason for layering RsGeneralDataService between this and RsGeneralExchangeService implementer \n
+ * is to avoid the overhead of storage access and while allowing a rich variety of implementations not having to \n
+ * worry about efficiency \n
  */
 class RsGeneralStorageService {
 

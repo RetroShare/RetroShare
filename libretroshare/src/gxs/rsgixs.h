@@ -106,41 +106,47 @@
 
     /*!
      * Retroshare general identity exchange service
-     * provides a means to distribute identities among peers
-     * also provides encyption, decryption, verification,
-     * and signing functionality using any created identities
+     *
+     * Purpose: \n
+     *   Provides a means to distribute identities among peers \n
+     *   also provides encyption, decryption, verification, \n
+     *   and signing functionality using any created or received identities \n
+     *
+     * This may best be implemented as a singleton like current AuthGPG? \n
+     *
      */
-    class RsIdentityExchangeService
+    class RsIdentityExchangeService : RsGeneralExchangeService
     {
     public:
+
         RsGixs();
 
         /*!
          * creates gixs profile and shares it
          * @param profile
          */
-        bool createKey(RsGixsProfile& profile) = 0; /* fills in mKeyId, and signature */
+        virtual bool createKey(RsGixsProfile& profile) = 0; /* fills in mKeyId, and signature */
 
         /*!
          * Use to query a whether given key is available by its key reference
          * @param keyref the keyref of key that is being checked for
          * @return true if available, false otherwise
          */
-        bool haveKey(const KeyRef& keyref) = 0;
+        virtual bool haveKey(const KeyRef& keyref) = 0;
 
         /*!
          * Use to query whether private key member of the given key reference is available
          * @param keyref the KeyRef of the key being checked for
          * @return true if private key is held here, false otherwise
          */
-        bool havePrivateKey(const KeyRef& keyref) = 0;
+        virtual bool havePrivateKey(const KeyRef& keyref) = 0;
 
         /*!
          * Use to request a given key reference
          * @param keyref the KeyRef of the key being requested
          * @return will
          */
-        bool requestKey(const KeyRef& keyref) = 0;
+        virtual bool requestKey(const KeyRef& keyref) = 0;
 
         /*!
          * Retrieves a key identity
@@ -148,7 +154,7 @@
          * @return a pointer to a valid profile if successful, otherwise NULL
          *
          */
-        RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
+        virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
 
 
         /*** process data ***/
@@ -161,7 +167,7 @@
          * @param signature is set with the signature from signing with keyref
          * @return false if signing failed, true otherwise
          */
-        bool sign(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature) = 0;
+        virtual bool sign(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature) = 0;
 
         /*!
          * Verify that the data is signed by the key owner
@@ -171,7 +177,7 @@
          * @param signature
          * @return false if verification failed, false otherwise
          */
-        bool verify(const KeyRef& keyref, unsigned char* data, int dataLen, std::string& signature) = 0;
+        virtual bool verify(const KeyRef& keyref, unsigned char* data, int dataLen, std::string& signature) = 0;
 
         /*!
          * Attempt to decrypt data with a given key
@@ -182,7 +188,7 @@
          * @param decryptDataLen length of decrypted data
          * @return false
          */
-        bool decrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
+        virtual bool decrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
                      unsigned char*& decryptedData, uint32_t& decyptDataLen) = 0;
 
         /*!
@@ -193,7 +199,7 @@
          * @param encryptedData encrypted data
          * @param encryptDataLen length of encrypted data
          */
-        bool encrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
+        virtual bool encrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
                      unsigned char*& encryptedData, uint32_t& encryptDataLen) = 0;
 
     };
