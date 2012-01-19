@@ -39,14 +39,13 @@
 /****
  * #define CHAT_DEBUG 1
  ****/
-#define CHAT_DEBUG 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   15 ; // sends a connexion challenge every 15 messages
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // sends a connexion challenge every 15 messages
 static const time_t 	MAX_KEEP_MSG_RECORD 					  =  240 ; // keep msg record for 240 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			  = 3600 ; // keep inactive lobbies for 1h max.
-static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  240 ; // keep inactive lobbies for 1h max.
+static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         = 1800 ; // keep inactive nicknames for 30mn max.
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
@@ -828,7 +827,9 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 		// Check if new avatar is available at peer's. If so, send a request to get the avatar.
 		if(ci->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE) 
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "New avatar is available for peer " << ci->PeerId() << ", sending request" << std::endl ;
+#endif
 			sendAvatarRequest(ci->PeerId()) ;
 			ci->chatFlags &= ~RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 		}
@@ -842,7 +843,9 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 		//
 		if(it!=_avatars.end() && it->second->_peer_is_new)
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "Avatar is new for peer. ending info above" << std::endl ;
+#endif
 			ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 		}
 
@@ -859,11 +862,15 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 			ci->recvTime = now;
 
 			if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
+#ifdef CHAT_DEBUG
 				std::cerr << "Adding msg 0x" << std::hex << (void*)ci << std::dec << " to private chat incoming list." << std::endl;
+#endif
 				privateChanged = true;
 				privateIncomingList.push_back(ci);	// don't delete the item !!
 			} else {
+#ifdef CHAT_DEBUG
 				std::cerr << "Adding msg 0x" << std::hex << (void*)ci << std::dec << " to public chat incoming list." << std::endl;
+#endif
 				publicChanged = true;
 				publicList.push_back(ci);	// don't delete the item !!
 
@@ -901,7 +908,9 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 	}
 	else if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE)
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "New custom state is available for peer " << cs->PeerId() << ", sending request" << std::endl ;
+#endif
 		sendCustomStateRequest(cs->PeerId()) ;
 	}
 	else if(cs->flags & RS_CHAT_FLAG_PRIVATE)
@@ -930,7 +939,9 @@ void p3ChatService::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord
 
 		for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  asking list of public lobbies to " << *it << std::endl;
+#endif
 			RsChatLobbyListRequestItem *item = new RsChatLobbyListRequestItem ;
 			item->PeerId(*it) ;
 
@@ -1299,9 +1310,9 @@ void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *
 #endif
 	   return ;
        } else {
-           #ifdef CHAT_DEBUG
+#ifdef CHAT_DEBUG
 	   std::cerr << "No avatar for this peer. Requesting it by sending request packet." << std::endl ;
-           #endif
+#endif
        }
 
         sendAvatarRequest(peer_id);
@@ -1463,7 +1474,9 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
 				if(kit->key == "DEFAULT_NICK_NAME")
 				{
+#ifdef CHAT_DEBUG
 					std::cerr << "Loaded config default nick name for chat: " << kit->value << std::endl ;
+#endif
 					_default_nick_name = kit->value ;
 				}
 
@@ -1602,8 +1615,9 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		locked_printDebugInfo() ; // debug
 #ifdef CHAT_DEBUG
+		locked_printDebugInfo() ; // debug
+
 		std::cerr << "Handling ChatLobbyMsg " << std::hex << item->msg_id << ", lobby id " << item->lobby_id << ", from peer id " << peer_id << std::endl;
 #endif
 
@@ -1633,7 +1647,9 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 
 		if(it2 != lobby.msg_cache.end()) // found!
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  Msg already received at time " << it2->second << ". Dropping!" << std::endl ;
+#endif
 			return false ;
 		}
 #ifdef CHAT_DEBUG
@@ -1719,7 +1735,9 @@ void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,
 
 	if(it == _chat_lobbys.end())
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "Chatlobby for id " << std::hex << lobby_id << " has no record. This is a serious error!!" << std::dec << std::endl;
+#endif
 		return ;
 	}
 	ChatLobbyEntry& lobby(it->second) ;
@@ -1809,8 +1827,10 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 
 	if(found) // send invitation. As the peer already has the lobby, the invitation will most likely be accepted.
 		invitePeerToLobby(lobby_id, item->PeerId()) ;
+#ifdef CHAT_DEBUG
 	else
 		std::cerr << "    Challenge denied: no existing cached msg has matching Id." << std::endl;
+#endif
 }
 
 void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id) 
@@ -1896,7 +1916,9 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 
 	if(it == _chat_lobbys.end())
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "  invitation send: canceled. Lobby " << lobby_id << " not found!" << std::endl;
+#endif
 		return ;
 	}
 	item->lobby_id = lobby_id ;
@@ -1922,18 +1944,22 @@ void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 
 		if(it != _chat_lobbys.end())
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  Lobby already exists. " << std::endl;
 			std::cerr << "     privacy levels: " << item->lobby_privacy_level << " vs. " << it->second.lobby_privacy_level ;
+#endif
 
 			if(item->lobby_privacy_level != it->second.lobby_privacy_level)
 			{
 				std::cerr << " : Don't match. Cancelling." << std::endl;
 				return ;
 			}
+#ifdef CHAT_DEBUG
 			else
 				std::cerr << " : Match!" << std::endl;
 
 			std::cerr << "  Addign new friend " << item->PeerId() << " to lobby." << std::endl;
+#endif
 
 			it->second.participating_friends.insert(item->PeerId()) ;
 			return ;
@@ -2086,7 +2112,9 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 
 		if(_chat_lobbys.find(lobby_id) != _chat_lobbys.end())
 		{
+#ifdef CHAT_DEBUG
 			std::cerr << "  lobby already in participating list. Returning!" << std::endl;
+#endif
 			return true ;
 		}
 
