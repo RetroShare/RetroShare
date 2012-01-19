@@ -58,6 +58,8 @@ class pqistreamer: public PQInterface
 		virtual int     tick();
 		virtual int     status();
 
+		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
+
 	private:
 		/* Implementation */
 
@@ -113,8 +115,12 @@ class pqistreamer: public PQInterface
 		float avgReadCount;
 		float avgSentCount;
 
-		RsMutex streamerMtx ;
-		//	pthread_t thread_id;
+		time_t mLastIncomingTs;
+	
+		RsMutex streamerMtx ; 	// WHAT IS THIS PROTECTING. XXX
+		//	pthread_t thread_id;A
+
+
 };
 
 

@@ -165,6 +165,8 @@ virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
 
 virtual std::string getUdpAddressString();
 
+virtual void    getDhtRates(float &read, float &write);
+virtual void    getRelayRates(float &read, float &write, float &relay);
 
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
@@ -311,6 +313,21 @@ int     pushRelayServers();
         virtual void saveDone();
         virtual bool    loadList(std::list<RsItem *>& load);
 /*****************************************************************/
+
+	// DATA RATES: Variables (Mutex Protected).
+	private:
+
+	void 	updateDataRates();
+	void	clearDataRates();
+
+	float mRelayReadRate;
+	float mRelayWriteRate;
+	float mRelayRelayRate;
+	float mDhtReadRate;
+	float mDhtWriteRate;
+
+	time_t mLastDataRateUpdate;
+
 
 /***********************************************************************************************
  ************************** Internal Accounting (p3bitdht_peers.cc) ****************************

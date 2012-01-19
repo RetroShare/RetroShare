@@ -159,7 +159,11 @@ virtual int sendPkt(const void *data, int size, const struct sockaddr_in &to, in
 int     status(std::ostream &out);
 int 	UdpPeersStatus(std::ostream &out);
 
+void 	getDataTransferred(uint32_t &read, uint32_t &write, uint32_t &relay);
+
 	private:
+
+	void clearDataTransferred();
 
 	int removeUdpRelay_relayLocked(UdpRelayAddrSet *addrs);
 	int installRelayClass_relayLocked(int &classIdx, uint32_t &bandwidth);
@@ -177,6 +181,7 @@ int 	UdpPeersStatus(std::ostream &out);
 	RsMutex udppeerMtx; /* for all class data (below) */
 	
 	std::map<struct sockaddr_in, UdpPeer *> mPeers; /* indexed by <dest> */
+	uint32_t mReadBytes;
 
 	RsMutex relayMtx; /* for all class data (below) */
 
@@ -186,6 +191,9 @@ int 	UdpPeersStatus(std::ostream &out);
 
 	void *mTmpSendPkt;
 	uint32_t mTmpSendSize;
+
+	uint32_t mWriteBytes;
+	uint32_t mRelayBytes;
 
 };
 

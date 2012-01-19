@@ -194,6 +194,77 @@ std::string p3BitDht::getUdpAddressString()
 	return out.str();
 }
 
+void    p3BitDht::updateDataRates()
+{
+	uint32_t relayRead = 0;
+	uint32_t relayWrite = 0;
+	uint32_t relayRelay = 0;
+	uint32_t dhtRead = 0;
+	uint32_t dhtWrite = 0;
+
+	mRelay->getDataTransferred(relayRead, relayWrite, relayRelay);
+	mUdpBitDht->getDataTransferred(dhtRead, dhtWrite);
+
+	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+	time_t now = time(NULL);
+	float period = now - mLastDataRateUpdate;
+
+#define RATE_FACTOR (0.75)
+	
+	mRelayReadRate *= RATE_FACTOR;
+	mRelayReadRate += (1.0 - RATE_FACTOR) * (relayRead / period);
+
+	mRelayWriteRate *= RATE_FACTOR;
+	mRelayWriteRate += (1.0 - RATE_FACTOR) * (relayWrite / period);
+
+	mRelayRelayRate *= RATE_FACTOR;
+	mRelayRelayRate += (1.0 - RATE_FACTOR) * (relayRelay / period);
+
+	mDhtReadRate *= RATE_FACTOR;
+	mDhtReadRate += (1.0 - RATE_FACTOR) * (dhtRead / period);
+
+	mDhtWriteRate *= RATE_FACTOR;
+	mDhtWriteRate += (1.0 - RATE_FACTOR) * (dhtWrite / period);
+
+	mLastDataRateUpdate = now;
+
+}
+
+void    p3BitDht::clearDataRates()
+{
+	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+	mRelayReadRate = 0;
+	mRelayWriteRate = 0;
+	mRelayRelayRate = 0;
+	mDhtReadRate  = 0;
+	mDhtWriteRate = 0;
+
+	mLastDataRateUpdate = time(NULL);
+}
+
+
+/* in kB/s */
+void    p3BitDht::getDhtRates(float &read, float &write)
+{
+	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+	read = mDhtReadRate / 1024.0;
+	write = mDhtWriteRate / 1024.0;
+}
+
+void    p3BitDht::getRelayRates(float &read, float &write, float &relay)
+{
+	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+
+	read = mRelayReadRate / 1024.0;
+	write = mRelayWriteRate / 1024.0;
+	relay = mRelayRelayRate / 1024.0;
+}
+
+
+
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/

@@ -130,6 +130,10 @@ std::string socket_errorType(int err)
 	{
 		return std::string("ECONNRESET");
 	}
+	else if (err == EHOSTUNREACH)
+	{
+		return std::string("EHOSTUNREACH");
+	}
 	//
 
 	return std::string("UNKNOWN ERROR CODE - ASK RS-DEVS TO ADD IT!");

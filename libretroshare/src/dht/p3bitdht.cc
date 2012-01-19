@@ -150,6 +150,8 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	setupRelayDefaults();
+
+	clearDataRates();
 }
 
 p3BitDht::~p3BitDht()

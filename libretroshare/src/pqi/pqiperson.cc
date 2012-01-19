@@ -102,7 +102,6 @@ int 	pqiperson::status()
 
 int 	pqiperson::receiveHeartbeat()
 {
-        //pqioutput(PQL_DEBUG_ALERT, pqipersonzone, "pqiperson::receiveHeartbeat() from peer : " + PeerId());
         pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::receiveHeartbeat() from peer : " + PeerId());
         lastHeartbeatReceived = time(NULL);
 
@@ -113,17 +112,34 @@ int 	pqiperson::receiveHeartbeat()
 int	pqiperson::tick()
 {
         //if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
-        if (active && (lastHeartbeatReceived != 0) &&
+	if (active && (lastHeartbeatReceived != 0) &&
             (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) 
 	{
+		int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
 		std::ostringstream out;
-		out << "pqiperson::tick() No heartbeat from the peer, assume connection is dead. calling pqissl::reset(), LastHeartbeat was: ";
+		out << "pqiperson::tick() WARNING No heartbeat from: " << PeerId();
+		//out << " assume dead. calling pqissl::reset(), LastHeartbeat was: ";
+		out << " LastHeartbeat was: ";
 		out << time(NULL) - lastHeartbeatReceived << " secs ago";
+		out << " LastIncoming was: ";
+		out << ageLastIncoming << " secs ago";
             	pqioutput(PQL_WARNING, pqipersonzone, out.str());
-            	this->reset();
-        }
 
-        int activeTick = 0;
+#define NO_PACKET_TIMEOUT 60
+		
+		if (ageLastIncoming > NO_PACKET_TIMEOUT)
+		{
+			std::ostringstream out2;
+			out2 << "pqiperson::tick() " << PeerId();
+			out2 << " No Heartbeat & No Packets -> assume dead. calling pqissl::reset()";
+            		pqioutput(PQL_WARNING, pqipersonzone, out2.str());
+            	
+			this->reset();
+		}
+
+	}
+
+	int activeTick = 0;
 
 	{
 	  std::ostringstream out;

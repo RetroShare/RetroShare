@@ -67,6 +67,8 @@ UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
 	mTmpSendPkt = malloc(MAX_RELAY_UDP_PACKET_SIZE);
 	mTmpSendSize = MAX_RELAY_UDP_PACKET_SIZE;
 
+	clearDataTransferred();
+
 	return;
 }
 
@@ -672,6 +674,40 @@ int UdpRelayReceiver::UdpPeersStatus(std::ostream &out)
 }
 
 
+void UdpRelayReceiver::clearDataTransferred()
+{
+	{
+	        RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
+
+		mWriteBytes = 0;
+		mRelayBytes = 0;
+	}
+
+	{
+	        RsStackMutex stack(udppeerMtx);   /********** LOCK MUTEX *********/
+
+		mReadBytes = 0;
+	}
+}
+
+
+void UdpRelayReceiver::getDataTransferred(uint32_t &read, uint32_t &write, uint32_t &relay)
+{
+	{
+	        RsStackMutex stack(relayMtx);   /********** LOCK MUTEX *********/
+
+		write = mWriteBytes;
+		relay = mRelayBytes;
+	}
+
+	{
+	        RsStackMutex stack(udppeerMtx);   /********** LOCK MUTEX *********/
+
+		read = mReadBytes;
+	}
+	clearDataTransferred();
+}
+
 
 
 #define UDP_RELAY_HEADER_SIZE 16
@@ -723,6 +759,8 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 			/* do accounting */
 			rit->second.mLastTS = time(NULL);
 			rit->second.mDataSize += size;
+
+			mRelayBytes += size;
 	
 			mPublisher->sendPkt(data, size, rit->first.mDestAddr, STD_RELAY_TTL);
 			return 1;
@@ -745,6 +783,8 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 			std::cerr << pit->first;
 			std::cerr << std::endl;
 #endif
+			mReadBytes += size;
+
 			/* remove the header */
 			void *pktdata = (void *) (((uint8_t *) data) + UDP_RELAY_HEADER_SIZE);
 			int   pktsize = size - UDP_RELAY_HEADER_SIZE;
@@ -797,6 +837,9 @@ int UdpRelayReceiver::sendPkt(const void *data, int size, const struct sockaddr_
 	std::cerr << "UdpRelayReceiver::sendPkt() to Relay: " << it->second;
 	std::cerr << std::endl;
 #endif
+
+	mWriteBytes += size;
+
 	/* add a header to packet */
 	int finalPktSize = createRelayUdpPacket(data, size, mTmpSendPkt, MAX_RELAY_UDP_PACKET_SIZE, &(it->second));
 

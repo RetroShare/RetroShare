@@ -369,11 +369,18 @@ int 	pqistreamer::handleincomingitem(RsItem *pqi)
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 #endif
+	// timestamp last received packet.
+	mLastIncomingTs = time(NULL);
 
 	// Use overloaded Contact function 
 	pqi -> PeerId(PeerId());
 	incoming.push_back(pqi);
 	return 1;
+}
+
+time_t	pqistreamer::getLastIncomingTS()
+{
+	return mLastIncomingTs;
 }
 
 int	pqistreamer::handleoutgoing()

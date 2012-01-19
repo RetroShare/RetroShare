@@ -176,6 +176,8 @@ virtual int 	getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies) = 0;
 
 virtual std::string getUdpAddressString() = 0;
 
+virtual void    getDhtRates(float &read, float &write) = 0;
+virtual void    getRelayRates(float &read, float &write, float &relay) = 0;
 
 	// Interface for controlling Relays & DHT Relay Mode 
 virtual int 	getRelayServerList(std::list<std::string> &ids) = 0;

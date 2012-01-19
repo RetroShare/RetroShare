@@ -1103,6 +1103,29 @@ int p3BitDht::minuteTick()
 	{
 		mRelay->checkRelays();
 
+		updateDataRates();
+
+		/* temp - testing - print dht & relay traffic */
+		float dhtRead, dhtWrite;
+		float relayRead, relayWrite, relayRelayed;
+
+		getRelayRates(relayRead, relayWrite, relayRelayed);
+		getDhtRates(dhtRead, dhtWrite);
+		
+		double denom = deltaT;
+
+		std::cerr << "p3BitDht::minuteTick() ";
+		std::cerr << "DhtRead: " << dhtRead / denom << " kB/s ";
+		std::cerr << "DhtWrite: " << dhtWrite / denom << " kB/s ";
+		std::cerr << std::endl;
+
+		std::cerr << "p3BitDht::minuteTick() ";
+		std::cerr << "RelayRead: " << relayRead / denom << " kB/s ";
+		std::cerr << "RelayWrite: " << relayWrite / denom << " kB/s ";
+		std::cerr << "RelayRelayed: " << relayRelayed / denom << " kB/s ";
+		std::cerr << std::endl;
+
+
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/
 		mMinuteTS = now;
 	}

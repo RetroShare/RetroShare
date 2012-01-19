@@ -1530,6 +1530,8 @@ int 	pqissl::senddata(void *data, int len)
 		{
 			out << "SSL_write() SSL_ERROR_SYSCALL ";
 			out << "SOCKET_DEAD -> calling reset()";
+			out << " errno: " << errno;
+			out << " " << socket_errorType(errno);
 			std::cerr << out.str() << std::endl;
 			rslog(RSL_ALERT, pqisslzone, out.str());
 
@@ -1676,7 +1678,9 @@ int 	pqissl::readdata(void *data, int len)
 			{
 				out << "pqissl::readdata() " << PeerId();
 				out << " SSL_read() SSL_ERROR_SYSCALL";
-				out << "SOCKET_DEAD -> calling reset()";
+				out << " SOCKET_DEAD -> calling reset()";
+				out << " errno: " << errno;
+				out << " " << socket_errorType(errno);
 				rslog(RSL_ALERT, pqisslzone, out.str());
 
 				/* extra debugging - based on SSL_get_error() man page */
