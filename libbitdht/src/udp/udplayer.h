@@ -72,6 +72,7 @@ class UdpLayer: public bdThread
 virtual ~UdpLayer() { return; }
 
 int 	reset(struct sockaddr_in &local); /* calls join, close, openSocket */
+void	getDataTransferred(uint32_t &read, uint32_t &write);
 
 int     status(std::ostream &out);
 
@@ -106,9 +107,14 @@ virtual	int sendUdpPacket(const void *data, int size, const struct sockaddr_in &
 	/* low level */
 	private:
 
+void    clearDataTransferred();
+
 	UdpReceiver *recv;
 
 	struct sockaddr_in laddr; /* local addr */
+
+	uint32_t readBytes;
+	uint32_t writeBytes;
 
 	int  errorState;
 	int sockfd;

@@ -394,6 +394,7 @@ int UdpLayer::openSocket()
 	std::cerr << "Setting TTL to " << UDP_DEF_TTL << std::endl;
 #endif
 	setTTL(UDP_DEF_TTL);
+	clearDataTransferred(); // clear statistics.
 
 	// start up our thread.
 	{
@@ -464,6 +465,28 @@ int UdpLayer::tick()
 	return 1;
 }
 
+void    UdpLayer::getDataTransferred(uint32_t &read, uint32_t &write)
+{
+	sockMtx.lock();   /********** LOCK MUTEX *********/
+
+	read = readBytes;
+	write = writeBytes;
+
+	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+
+	clearDataTransferred();
+}
+
+void    UdpLayer::clearDataTransferred()
+{
+	sockMtx.lock();   /********** LOCK MUTEX *********/
+
+	readBytes = 0;
+	writeBytes = 0;
+
+	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+}
+
 /******************* Internals *************************************/
 
 int UdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
@@ -476,6 +499,11 @@ int UdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
 
 	insize = bdnet_recvfrom(sockfd,data,insize,0,
 			(struct sockaddr*)&fromaddr,&fromsize);
+
+	if (0 < insize)
+	{
+		readBytes += insize;
+	}
 
 	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
 
@@ -507,6 +535,8 @@ int UdpLayer::sendUdpPacket(const void *data, int size, const struct sockaddr_in
 	bdnet_sendto(sockfd, data, size, 0, 
 			   (struct sockaddr *) &(toaddr), 
 				sizeof(toaddr));
+
+	writeBytes += size;
 
 	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
 	return 1;

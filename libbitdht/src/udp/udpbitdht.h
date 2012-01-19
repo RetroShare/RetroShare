@@ -95,6 +95,8 @@ virtual uint32_t statsNetworkSize();
 virtual uint32_t statsBDVersionSize(); 
 virtual uint32_t setDhtMode(uint32_t dhtFlags);
 
+void getDataTransferred(uint32_t &read, uint32_t &write);
+
 	/******************* Internals *************************/
 	/***** Iteration / Loop Management *****/
 
@@ -111,9 +113,17 @@ virtual void run();
 
 	private:
 
+void clearDataTransferred();
+
 	bdMutex dhtMtx; /* for all class data (below) */
 	bdNodeManager *mBitDhtManager;
 	bdDhtFunctions *mFns;
+
+
+	uint32_t mReadBytes;
+	uint32_t mWriteBytes;
+
+
 };
 
 

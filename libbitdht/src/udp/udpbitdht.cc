@@ -72,10 +72,11 @@ UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, st
 	usedVersion = ""; /* blank it */
 #endif
 
+	clearDataTransferred();
+
 	/* setup nodeManager */
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 	mBitDhtManager = new bdNodeManager(id, usedVersion, bootstrapfile, fns);
-
 }
 
 
@@ -271,6 +272,7 @@ int UdpBitDht::recvPkt(void *data, int size, struct sockaddr_in &from)
 	if (mBitDhtManager->isBitDhtPacket((char *) data, size, from))
 	{
 
+		mReadBytes += size;
 		mBitDhtManager->incomingMsg(&from, (char *) data, size);
 		return 1;
 	}
@@ -284,6 +286,29 @@ int UdpBitDht::status(std::ostream &out)
 	return 1;
 }
 
+void UdpBitDht::clearDataTransferred()
+{
+	/* pass onto bitdht */
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	mReadBytes = 0;
+	mWriteBytes = 0;
+}
+
+
+void UdpBitDht::getDataTransferred(uint32_t &read, uint32_t &write)
+{
+	{
+		/* pass onto bitdht */
+		bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+		read = mReadBytes;
+		write = mWriteBytes;
+	}
+	clearDataTransferred();
+}
+
+			
         /*** Overloaded from iThread ***/
 #define MAX_MSG_PER_TICK	100
 #define TICK_PAUSE_USEC		20000  /* 20ms secs .. max messages = 50 x 100 = 5000 */
@@ -323,6 +348,7 @@ int UdpBitDht::tick()
 		std::cerr << std::endl;
 #endif
 
+		mWriteBytes += size;
 		sendPkt(data, size, toAddr, BITDHT_TTL);
 
 		// iterate
