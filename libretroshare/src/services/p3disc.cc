@@ -960,14 +960,20 @@ void p3disc::setGPGOperation(AuthGPGOperation *operation)
 		} else {
 			RsDiscReply *item = (RsDiscReply*) loadOrSave->m_userdata;
 
-			if (item) {
-				if (loadOrSave->m_certGpg.empty()) {
+			if (item) 
+			{
+// It is okay to send an empty certificate! - This is to reduce the network load at connection time.
+// Hopefully, we'll get the stripped down certificates working soon!... even then still be okay to send null.
+#if 0 
+				if (loadOrSave->m_certGpg.empty()) 
+				{
 #ifdef P3DISC_DEBUG
 					std::cerr << "p3disc::setGPGOperation() don't send details because the gpg cert is not good" << std::endl;
 #endif
 					delete item;
 					return;
 				}
+#endif
 
 				// Send off message
 				item->certGPG = loadOrSave->m_certGpg;

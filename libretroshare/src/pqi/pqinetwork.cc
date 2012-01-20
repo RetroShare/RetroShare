@@ -134,6 +134,10 @@ std::string socket_errorType(int err)
 	{
 		return std::string("EHOSTUNREACH");
 	}
+	else if (err == EADDRNOTAVAIL)
+	{
+		return std::string("EADDRNOTAVAIL");
+	}
 	//
 
 	return std::string("UNKNOWN ERROR CODE - ASK RS-DEVS TO ADD IT!");

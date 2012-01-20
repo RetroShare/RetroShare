@@ -434,7 +434,12 @@ void AuthGPGimpl::processServices()
 #endif
 
             /* save the certificate to string */
+#define DISABLE_CERTIFICATE_SEND	1
+#ifdef DISABLE_CERTIFICATE_SEND
+            loadOrSave->m_certGpg = "";
+#else
             loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId,true);
+#endif
         }
 
         service->setGPGOperation(loadOrSave);
