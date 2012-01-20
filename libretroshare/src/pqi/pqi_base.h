@@ -51,6 +51,7 @@ int fixme(char *str, int n);
 //! controlling data rates
 /*!
  * For controlling data rates.
+ * #define DEBUG_RATECAP	1
  */
 class RateInterface
 {
@@ -110,13 +111,17 @@ virtual void	setRateCap(float val_in, float val_out)
 {
 	if ((val_in == 0) && (val_out == 0))
 	{
+#ifdef DEBUG_RATECAP
         	std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
+#endif
 		bwCapEnabled = false;
 	}
 	else
 	{
+#ifdef DEBUG_RATECAP
         	std::cerr << "RateInterface::setRateCap() Enabled ";
         	std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
+#endif
 		bwCapEnabled = true;
 		bwCap_in = val_in;
 		bwCap_out = val_out;

@@ -463,14 +463,16 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 		return 0;
 	}
 
-	std::cerr << "pqiperson::connect() WARNING, resetting for new connection attempt" << std::endl;
 #ifdef PERSON_DEBUG
+	std::cerr << "pqiperson::connect() WARNING, resetting for new connection attempt" << std::endl;
 #endif
 	/* set the parameters */
 	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::connect reset() before connection attempt");
 	(it->second)->reset();
 
+#ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() WARNING, clearing rate cap" << std::endl;
+#endif
 	setRateCap(0,0);
 
 #ifdef PERSON_DEBUG

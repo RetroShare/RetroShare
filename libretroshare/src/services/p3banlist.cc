@@ -37,8 +37,6 @@
  * #define DEBUG_BANLIST		1
  ****/
 
-#define DEBUG_BANLIST		1
-
 
 /* DEFINE INTERFACE POINTER! */
 //RsBanList *rsBanList = NULL;
