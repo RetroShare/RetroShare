@@ -153,8 +153,8 @@ class bdProxyId
 {
 	public:
 
-	bdProxyId(const bdId &in_id, uint32_t in_srctype, uint32_t errcode)
-	:id(in_id), srcType(in_srctype) { return; }
+	bdProxyId(const bdId &in_id, uint32_t in_srctype, uint32_t in_errcode)
+	:id(in_id), srcType(in_srctype), errcode(in_errcode) { return; }
 
 	bdProxyId() :srcType(BD_PI_SRC_UNKNOWN) { return; }
 

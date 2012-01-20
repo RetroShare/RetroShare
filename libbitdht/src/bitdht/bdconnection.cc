@@ -34,6 +34,8 @@
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
 
+#include <sstream>
+
 /*
  * #define DEBUG_PROXY_CONNECTION		1 
  * #define DEBUG_NODE_CONNECTION		1 
@@ -3375,6 +3377,11 @@ std::string decodeConnectionErrorType(uint32_t errcode)
 	switch(errtype)
 	{
 		default:
+		{
+			std::ostringstream out;
+			out << "(" << errtype << ")";
+			namedtype += out.str();
+		}
 			break;
 		case BITDHT_CONNECT_ERROR_GENERIC:
 			namedtype = "GENERIC";
@@ -3427,6 +3434,11 @@ std::string decodeConnectionErrorSource(uint32_t errcode)
 	switch(errsrc)
 	{
 		default:
+		{
+			std::ostringstream out;
+			out << "(" << errsrc << ")";
+			namedtype += out.str();
+		}
 			break;
 		case BITDHT_CONNECT_ERROR_SOURCE_START:
 			namedtype = "START";

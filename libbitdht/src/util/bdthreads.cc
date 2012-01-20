@@ -32,7 +32,7 @@
  * #define DEBUG_THREADS 1
  *******/
 
-#define DEBUG_THREADS 1
+//#define DEBUG_THREADS 1
 
 #ifdef DEBUG_THREADS
 	#include <iostream>
