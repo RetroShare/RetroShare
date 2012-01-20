@@ -41,7 +41,7 @@
  *
  */
 
-#define DEBUG_ZEROCONF	1
+//#define DEBUG_ZEROCONF	1
 
 #define ZC_MAX_QUERY_TIME	30
 #define ZC_MAX_RESOLVE_TIME	30

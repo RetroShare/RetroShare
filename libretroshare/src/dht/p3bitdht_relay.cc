@@ -38,8 +38,7 @@
 
 int p3BitDht::setupRelayDefaults()
 {
-	//uint32_t mode = RSDHT_RELAY_ENABLED | RSDHT_RELAY_MODE_OFF;
-	uint32_t mode = RSDHT_RELAY_MODE_OFF;
+	uint32_t mode = RSDHT_RELAY_ENABLED | RSDHT_RELAY_MODE_OFF;
 	setRelayMode(mode);
 	
 	return 1;

@@ -152,7 +152,7 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId) = 0; /* valid
 virtual SSL_CTX *getCTX() = 0;
 
 /* Restored these functions: */
-virtual bool 	FailedCertificate(X509 *x509, bool incoming) = 0;     /* store for discovery */
+virtual bool    FailedCertificate(X509 *x509, const struct sockaddr_in &addr, bool incoming) = 0; /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509) = 0; /* check that they are exact match */
 };
 
@@ -226,7 +226,7 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate 
 virtual SSL_CTX *getCTX();
 
 /* Restored these functions: */
-virtual bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
+virtual bool    FailedCertificate(X509 *x509, const struct sockaddr_in &addr, bool incoming); /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
 

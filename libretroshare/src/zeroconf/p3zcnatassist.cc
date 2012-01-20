@@ -31,7 +31,7 @@
 #include <sstream>
 #include <iostream>
 
-#define DEBUG_ZCNATASSIST	1
+//#define DEBUG_ZCNATASSIST	1
 
 
 p3zcNatAssist::p3zcNatAssist()
@@ -385,6 +385,17 @@ void p3zcNatAssist::callbackMapping(DNSServiceRef sdRef, DNSServiceFlags flags,
 		std::cerr << std::endl;
 		return;
 	}
+
+	if ((externalAddress == 0) && (externalPort == 0))
+	{
+		/* failed :( */
+		mMapped = false;
+
+		std::cerr <<  "p3zcNatAssist::callbackMapping() ZeroAddress ... Mapping not possible";
+		std::cerr << std::endl;
+		return;
+	}
+
 
 	mMapped = true;
 	mExternalAddress.sin_addr.s_addr = externalAddress;

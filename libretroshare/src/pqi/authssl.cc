@@ -830,7 +830,10 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 	{
 		/* Process as FAILED Certificate */
 		/* Start as INCOMING, as outgoing is already captured */
-		AuthSSL::getAuthSSL()->FailedCertificate(X509_STORE_CTX_get_current_cert(ctx), true); 
+		struct sockaddr_in addr;
+		sockaddr_clear(&addr);
+		
+		AuthSSL::getAuthSSL()->FailedCertificate(X509_STORE_CTX_get_current_cert(ctx), addr, true); 
 	}
 
         return verify;
@@ -1142,7 +1145,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 
 /* store for discovery */
-bool    AuthSSLimpl::FailedCertificate(X509 *x509, bool incoming)
+bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &addr, bool incoming)
 {
         std::string peerId = "UnknownSSLID";
 	if(!getX509id(x509, peerId)) 
@@ -1166,6 +1169,13 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, bool incoming)
 
 	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << peerId;
 	std::cerr << std::endl;
+
+	{
+		// Hacky - adding IpAddress to SSLId.
+		std::ostringstream out;
+		out << "/" << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+		peerId += out.str();
+	}
 
 	uint32_t notifyType = 0;
 

@@ -92,10 +92,17 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure);
  * 20 x 2 x 1Kb/s => 40Kb/s Huge.
  */
 
-#define UDP_RELAY_DEFAULT_COUNT_ALL	10 
-#define UDP_RELAY_FRAC_GENERAL		(0.2)
+#define UDP_RELAY_DEFAULT_COUNT_ALL	2
+#define UDP_RELAY_DEFAULT_FRIEND	0
+#define UDP_RELAY_DEFAULT_FOF		1
+#define UDP_RELAY_DEFAULT_GENERAL	1
+#define UDP_RELAY_DEFAULT_BANDWIDTH	1024
+
+#define UDP_RELAY_FRAC_GENERAL		(0.5)
 #define UDP_RELAY_FRAC_FOF		(0.5)
-#define UDP_RELAY_FRAC_FRIENDS		(0.3)
+#define UDP_RELAY_FRAC_FRIENDS		(0.0)
+
+
 
 /**** DEFINED IN EXTERNAL HEADER FILE ***/
 #define UDP_RELAY_NUM_CLASS		RSDHT_RELAY_NUM_CLASS

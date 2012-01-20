@@ -148,9 +148,10 @@ bool 	p3BitDht::dropPeer(std::string pid)
 		DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
 		if (!dpd)
 		{
-			/* ERROR */
+#ifdef DEBUG_BITDHT
 			std::cerr << "p3BitDht::dropPeer(" << pid << ") HACK TO INCLUDE FRIEND AS NON-ACTIVE PEER";
 			std::cerr << std::endl;
+#endif
 	
 			//addFriend(pid);
 			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF);
@@ -551,26 +552,26 @@ int p3BitDht::lookupRsId_locked(const bdNodeId *id, std::string &pid)
 
 int p3BitDht::storeTranslation_locked(const std::string pid)
 {
+#ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::storeTranslation_locked(" << pid << ")";
 	std::cerr << std::endl;
-#ifdef DEBUG_BITDHT_TRANSLATE
 #endif
 
 	bdNodeId nid;
 	calculateNodeId(pid, &nid);
 
+#ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::storeTranslation_locked() Converts to NodeId: ";
 	bdStdPrintNodeId(std::cerr, &(nid));
 	std::cerr << std::endl;
-#ifdef DEBUG_BITDHT_TRANSLATE
 #endif
 
 	mTransToNodeId[pid] = nid;
 	mTransToRsId[nid] = pid;
 
+#ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::storeTranslation_locked() Success";
 	std::cerr << std::endl;
-#ifdef DEBUG_BITDHT_TRANSLATE
 #endif
 
 	return 1;

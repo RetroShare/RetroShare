@@ -330,9 +330,9 @@ int p3BanList::condenseBanSources_locked()
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked() Printing New Set:";
 	std::cerr << std::endl;
-#endif
 
 	printBanSet_locked(std::cerr);
+#endif
 
 	return true ;
 }
@@ -354,11 +354,13 @@ int	p3BanList::sendPackets()
 
 		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 
+#ifdef DEBUG_BANLIST
 		std::cerr << "p3BanList::sendPackets() Regular Broadcast";
 		std::cerr << std::endl;
 
 		printBanSources_locked(std::cerr);
 		printBanSet_locked(std::cerr);
+#endif
 
 		mSentListTime = now;
 	}

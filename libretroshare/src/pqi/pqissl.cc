@@ -1229,7 +1229,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	// we actually connected to remote_addr, 
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, false);
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, remote_addr, false);
 
 	return 1;
 }

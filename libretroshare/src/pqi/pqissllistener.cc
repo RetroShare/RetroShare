@@ -500,7 +500,7 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 
 
 
-int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in */*inaddr*/)
+int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *addr)
 {
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate()");
@@ -513,23 +513,34 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
 	if (peercert == NULL)
 	{
-		std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() ERROR, Peer didn't give Cert!";
-		std::cerr << std::endl;
+		std::ostringstream out;
+		out << "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
+		out << rs_inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port); 
+		out << " ERROR Peer didn't give Cert!";
+		std::cerr << out.str() << std::endl;
 
-  		pqioutput(PQL_WARNING, pqissllistenzone, 
-		  "pqissllistenbase::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
+  		pqioutput(PQL_WARNING, pqissllistenzone, out.str());
 		return -1;
 	}
 
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
 
-	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() Passing Cert to AuthSSL() for analysis";
-	std::cerr << std::endl;
+	{
+		std::ostringstream out;
+
+		out << "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
+		out << rs_inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port); 
+		out << " Passing Cert to AuthSSL() for analysis";
+		out << std::endl;
+		std::cerr << out.str() << std::endl;
+
+  		pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+	}
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, true);
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, *addr, true);
 
 	return 1;
 }
