@@ -85,10 +85,12 @@ bdFriendList::bdFriendList(const bdNodeId *ownId)
 	/* catch-all interface function */
 bool	bdFriendList::updatePeer(const bdId *id, uint32_t flags)
 {
+#ifdef DEBUG_FRIENDLIST	
 	std::cerr << "bdFriendList::updatePeer() Peer(";
 	bdStdPrintId(std::cerr, id);
 	std::cerr << ") Flags: " << flags;
 	std::cerr << std::endl;
+#endif
 
 	std::map<bdNodeId, bdFriendEntry>::iterator it;
 	it = mPeers.find(id->id);
@@ -122,10 +124,12 @@ bool	bdFriendList::removePeer(const bdNodeId *id)
 	it = mPeers.find(*id);
 	if (it == mPeers.end())
 	{
+#ifdef DEBUG_FRIENDLIST	
 		std::cerr << "bdFriendList::removeFriend() Peer(";
 		bdStdPrintNodeId(std::cerr, id);
 		std::cerr << ") is unknown!";
 		std::cerr << std::endl;
+#endif
 
 		return false;
 	}

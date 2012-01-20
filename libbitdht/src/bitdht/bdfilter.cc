@@ -143,8 +143,10 @@ int bdFilter::addrOkay(struct sockaddr_in *addr)
 	{
 		return 1; // Address is Okay!
 	}
+#ifdef DEBUG_FILTER
 	std::cerr << "Detected Packet From Banned Ip Address: " << inet_ntoa(addr->sin_addr);
 	std::cerr << std::endl;
+#endif
 	return 0;
 }
 
@@ -181,6 +183,7 @@ bool bdFilter::isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags)
 
 bool bdFilter::cleanupFilter()
 {
+#ifdef DEBUG_FILTER
 	std::cerr << "bdFilter::cleanupFilter() Current BanList" << std::endl;
 	struct in_addr inaddr;
 
@@ -190,10 +193,13 @@ bool bdFilter::cleanupFilter()
 		inaddr.s_addr = *sit;
 		std::cerr << "\tBanned: " << inet_ntoa(inaddr) << std::endl;
 	}
+#endif
 
 	mIpsBanned.clear();
 	
+#ifdef DEBUG_FILTER
 	std::cerr << "Filter List:" << std::endl;
+#endif
 
 	time_t now = time(NULL);
 	time_t dropTime = now - BDFILTER_ENTRY_DROP_PERIOD;
@@ -201,20 +207,26 @@ bool bdFilter::cleanupFilter()
 	std::list<bdFilteredPeer>::iterator it;
 	for(it = mFiltered.begin(); it != mFiltered.end();)
 	{
+#ifdef DEBUG_FILTER
 		std::cerr << "\t" << inet_ntoa(it->mAddr.sin_addr);
 		std::cerr << " Flags: " << it->mFilterFlags;
 		std::cerr << " FilterTS: " << now - it->mFilterTS;
 		std::cerr << " LastSeen: " << now - it->mLastSeen;
+#endif
 
 		if (it->mLastSeen < dropTime)
 		{
 			/* remove from filter */
+#ifdef DEBUG_FILTER
 			std::cerr << " OLD DROPPING" << std::endl;
+#endif
 			it = mFiltered.erase(it);
 		}
 		else
 		{
+#ifdef DEBUG_FILTER
 			std::cerr << " OK" << std::endl;
+#endif
 			uint32_t saddr = it->mAddr.sin_addr.s_addr;
 			mIpsBanned.insert(saddr);
 
