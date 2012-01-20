@@ -434,11 +434,33 @@ void AuthGPGimpl::processServices()
 #endif
 
             /* save the certificate to string */
-#define DISABLE_CERTIFICATE_SEND	1
+/*****
+ * #define DISABLE_CERTIFICATE_SEND	1
+ ****/
+
+#define LIMIT_CERTIFICATE_SIZE		1
+#define MAX_CERTIFICATE_SIZE		10000
+
 #ifdef DISABLE_CERTIFICATE_SEND
+            std::cerr << "AuthGPGimpl::processServices() Certificates Disabled" << std::endl;
             loadOrSave->m_certGpg = "";
 #else
             loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId,true);
+            std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
+	    std::cerr << " is " << loadOrSave->m_certGpg.size() << " bytes";
+	    std::cerr << std::endl;
+
+  #ifdef LIMIT_CERTIFICATE_SIZE
+	    if (loadOrSave->m_certGpg.size() > MAX_CERTIFICATE_SIZE)
+	    {
+                std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
+	        std::cerr << " is over size limit - removing";
+	        std::cerr << std::endl;
+
+	    	loadOrSave->m_certGpg = "";
+	    }
+  #endif
+
 #endif
         }
 

@@ -975,14 +975,30 @@ void p3disc::setGPGOperation(AuthGPGOperation *operation)
 				}
 #endif
 
-				// Send off message
-				item->certGPG = loadOrSave->m_certGpg;
+				/* for Relay Connections (and other slow ones) we don't want to 
+				 * to waste bandwidth sending certificates. So don't add it.
+				 */
+
+				uint32_t linkType = mLinkMgr->getLinkType(item->PeerId());
+				if ((linkType & RS_NET_CONN_SPEED_TRICKLE) || 
+					(linkType & RS_NET_CONN_SPEED_LOW))
+				{
+					std::cerr << "p3disc::setGPGOperation() Send DiscReply Packet to: ";
+					std::cerr << item->PeerId();
+					std::cerr << " without Certificate (low bandwidth)" << std::endl;
+				}
+				else
+				{
+					// Attaching Certificate.
+					item->certGPG = loadOrSave->m_certGpg;
+				}
 
 #ifdef P3DISC_DEBUG
 				std::cerr << "p3disc::setGPGOperation() About to Send Message:" << std::endl;
 				item->print(std::cerr, 5);
 #endif
 
+				// Send off message
 				sendItem(item);
 
 #ifdef P3DISC_DEBUG
