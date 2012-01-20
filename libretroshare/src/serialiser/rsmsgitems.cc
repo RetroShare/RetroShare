@@ -33,7 +33,6 @@
 #define RSSERIAL_DEBUG 1
 #define CHAT_DEBUG 1
 ***/
-#define CHAT_DEBUG 1
 
 #include <iostream>
 
@@ -738,10 +737,12 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/,uint8_t subtype)
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
+#ifdef CHAT_DEBUG
 		std::cerr << "Received packet result: " ;
 	for(int i=0;i<20;++i)
 		std::cerr << (int)((uint8_t*)data)[i] << " " ;
 	std::cerr << std::endl ;
+#endif
 
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
@@ -855,7 +856,9 @@ RsChatLobbyUnsubscribeItem::RsChatLobbyUnsubscribeItem(void *data,uint32_t /*siz
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "RsChatLobbyUnsubscribeItem: rsitem size is " << rssize << std::endl;
+#endif
 	uint32_t offset = 8 ;
 
 	/* get mandatory parts first */
@@ -872,7 +875,9 @@ RsChatLobbyConnectChallengeItem::RsChatLobbyConnectChallengeItem(void *data,uint
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "RsChatLobbyConnectChallengeItem: rsitem size is " << rssize << std::endl;
+#endif
 	uint32_t offset = 8 ;
 
 	/* get mandatory parts first */
@@ -889,7 +894,9 @@ RsChatLobbyInviteItem::RsChatLobbyInviteItem(void *data,uint32_t /*size*/)
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "RsChatLobbyInviteItem: rsitem size is " << rssize << std::endl;
+#endif
 	uint32_t offset = 8 ;
 
 	/* get mandatory parts first */
