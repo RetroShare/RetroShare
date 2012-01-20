@@ -140,6 +140,32 @@ class bdConnection
 
 };
 
+#define BD_PI_SRC_UNKNOWN					0
+#define BD_PI_SRC_QUERYRESULT				1
+#define BD_PI_SRC_QUERYPROXY				2
+#define BD_PI_SRC_NODESPACE_FRIEND			3
+#define BD_PI_SRC_NODESPACE_SERVER			4
+#define BD_PI_SRC_NODESPACE_ENGINEVERSION	5
+#define BD_PI_SRC_ADDGOODPROXY				6
+
+
+class bdProxyId
+{
+	public:
+
+	bdProxyId(const bdId &in_id, uint32_t in_srctype, uint32_t errcode)
+	:id(in_id), srcType(in_srctype) { return; }
+
+	bdProxyId() :srcType(BD_PI_SRC_UNKNOWN) { return; }
+
+	std::string proxySrcType() const;
+
+	bdId id;
+	uint32_t srcType;
+	uint32_t errcode;
+};
+
+
 class bdConnectionRequest
 {
 	public:
@@ -162,12 +188,16 @@ class bdConnectionRequest
 	int mDelay;
 	time_t mRequestTS;   // reference Time for mDelay.
 
-	std::list<bdId> mGoodProxies;
+	std::list<bdProxyId> mGoodProxies;
 	std::list<bdId> mPotentialProxies;
+	//std::list<bdId> mGoodProxies;
 	int mRecycled;
 
 	bdId mCurrentAttempt;
-	std::list<bdId> mPeersTried;
+	uint32_t mCurrentSrcType;
+
+	std::list<bdProxyId> mPeersTried;
+	//std::list<bdId> mPeersTried;
 };
 
 std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req);

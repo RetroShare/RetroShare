@@ -259,6 +259,12 @@ int bdConnectManager::killConnectionRequest(struct sockaddr_in *laddr, bdNodeId 
 				BITDHT_CONNECT_ERROR_USER;
 	
 	
+#ifdef DEBUG_PROXY_CONNECTION
+	std::cerr << "bdConnectManager::killConnectionRequest() Flagging Connection Request as DONE";
+	std::cerr << std::endl;
+	// Print Connection Attempt.
+	std::cerr << it->second << std::endl;
+#endif
 	
 	return 1;
 }
@@ -293,8 +299,14 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 
 	connreq.setupDirectConnection(laddr, target);
 
-	mQueryMgr->result(target, connreq.mGoodProxies);
-
+	std::list<bdId> goodProxies;
+	std::list<bdId>::iterator pit;
+	mQueryMgr->result(target, goodProxies);
+	for(pit = goodProxies.begin(); pit != goodProxies.end(); pit++)
+	{
+		connreq.mGoodProxies.push_back(bdProxyId(*pit, BD_PI_SRC_QUERYRESULT, 0));
+	}
+	
 	/* now look in the bdSpace as well */
 	if (connreq.mGoodProxies.size() < MIN_START_DIRECT_COUNT)
 	{
@@ -302,16 +314,22 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 		int with_flag = BITDHT_PEER_STATUS_DHT_ENGINE_VERSION;
 		std::list<bdId> matchIds;
 		std::list<bdId>::iterator it;
-		std::list<bdId>::iterator pit;
+		std::list<bdProxyId>::iterator git;
+		
 		mNodeSpace->find_node(target, number, matchIds, with_flag);
 
 		/* merge lists (costly should use sets or something) */
 		for(it = matchIds.begin(); it != matchIds.end(); it++)
 		{
-			pit = std::find(connreq.mGoodProxies.begin(), connreq.mGoodProxies.end(), *it);
-			if (pit != connreq.mGoodProxies.end())
+			for(git = connreq.mGoodProxies.begin(); git != connreq.mGoodProxies.end(); git++)
 			{
-				connreq.mGoodProxies.push_back(*it);
+				if (git->id == *it)
+					break;
+			}
+			
+			if (git == connreq.mGoodProxies.end())
+			{
+				connreq.mGoodProxies.push_back(bdProxyId(*it, BD_PI_SRC_NODESPACE_ENGINEVERSION, 0));
 			}
 		}
 	}
@@ -417,7 +435,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 			mFns->bdPrintId(std::cerr, &(*pit));
 			std::cerr << std::endl;
 #endif
-			connreq.mGoodProxies.push_back(*pit);
+			connreq.mGoodProxies.push_back(bdProxyId(*pit, BD_PI_SRC_QUERYPROXY, 0));
 		}
 	}
 
@@ -445,7 +463,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 			mFns->bdPrintId(std::cerr, &(it->second));
 			std::cerr << std::endl;
 #endif
-			connreq.mGoodProxies.push_back(it->second);
+			connreq.mGoodProxies.push_back(bdProxyId(it->second, BD_PI_SRC_NODESPACE_SERVER, 0));
 		}
 	}
 
@@ -466,7 +484,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 			mFns->bdPrintId(std::cerr, &(it->second));
 			std::cerr << std::endl;
 #endif
-			connreq.mGoodProxies.push_back(it->second);
+			connreq.mGoodProxies.push_back(bdProxyId(it->second, BD_PI_SRC_NODESPACE_FRIEND, 0));
 		}
 	}
 
@@ -481,7 +499,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 			mFns->bdPrintId(std::cerr, &(*pit));
 			std::cerr << std::endl;
 #endif
-			connreq.mGoodProxies.push_back(*pit);
+			connreq.mGoodProxies.push_back(bdProxyId(*pit, BD_PI_SRC_QUERYPROXY, 0));
 		}
 	}
 
@@ -518,7 +536,6 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		{
 
 			connreq.mPotentialProxies.push_back(*pit);
-
 			// If the pings come back will be handled by
 			// updatePotentialConnectionProxy()
 
@@ -886,8 +903,8 @@ void bdConnectManager::iterateConnectionRequests()
 		// Cleanup
 		if (now - it->second.mStateTS > BITDHT_CONNREQUEST_MAX_AGE)
 		{
-#ifdef DEBUG_NODE_CONNECTION
-			std::cerr << "bdConnectManager::iterateConnectionAttempt() Cleaning Old ConnReq: ";
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::iterateConnectionAttempt() Should clean Old ConnReq???: ";
 			std::cerr << std::endl;
 			std::cerr << it->second;
 			std::cerr << std::endl;
@@ -917,6 +934,13 @@ void bdConnectManager::iterateConnectionRequests()
 		it = mConnectionRequests.find(*eit);
 		if (it != mConnectionRequests.end())
 		{
+#ifdef DEBUG_PROXY_CONNECTION
+			std::cerr << "bdConnectManager::iterateConnectionAttempt() Erasing Old Connection Request: ";
+			std::cerr << std::endl;
+			std::cerr << it->second;
+			std::cerr << std::endl;
+#endif
+			
 			mConnectionRequests.erase(it);
 		}
 	}
@@ -969,10 +993,13 @@ int bdConnectManager::startConnectionAttempt(bdConnectionRequest *req)
 	srcConnAddr.id = mOwnId;
 	srcConnAddr.addr = req->mLocalAddr;
 
-	proxyId = req->mGoodProxies.front();
+	bdProxyId pidset = req->mGoodProxies.front();
+	proxyId = pidset.id;
 	req->mGoodProxies.pop_front();
 
 	req->mCurrentAttempt = proxyId;
+	req->mCurrentSrcType = pidset.srcType;
+	
 	//req->mPeersTried.push_back(proxyId);	
 
 	req->mState = BITDHT_CONNREQUEST_INPROGRESS;
@@ -1349,12 +1376,12 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 				 if (recycle)
 				{
 					/* rotate around */
-					cr->mGoodProxies.push_back(cr->mCurrentAttempt);
+					cr->mGoodProxies.push_back(bdProxyId(cr->mCurrentAttempt, cr->mCurrentSrcType, errcode));
 					cr->mRecycled++;
 				}
 				else
 				{
-					cr->mPeersTried.push_back(cr->mCurrentAttempt);
+					cr->mPeersTried.push_back(bdProxyId(cr->mCurrentAttempt, cr->mCurrentSrcType, errcode));
 				}
 
 				/* setup for next one */
@@ -3148,10 +3175,21 @@ int bdConnectionRequest::addGoodProxy(const bdId *srcId)
 		return 0;
 	}
 
-	std::list<bdId>::iterator it = std::find(mPeersTried.begin(), mPeersTried.end(), *srcId);
+	std::list<bdProxyId>::iterator it;
+	for(it = mPeersTried.begin(); it != mPeersTried.end(); it++)
+	{
+		if (*srcId == it->id)
+			break;
+	}
+	
 	if (it == mPeersTried.end())
 	{
-		it = std::find(mGoodProxies.begin(), mGoodProxies.end(), *srcId);
+		for(it = mGoodProxies.begin(); it != mGoodProxies.end(); it++)
+		{
+			if (*srcId == it->id)
+				break;
+		}
+
 		if (it == mGoodProxies.end())
 		{
 #ifdef DEBUG_NODE_CONNECTION
@@ -3160,18 +3198,19 @@ int bdConnectionRequest::addGoodProxy(const bdId *srcId)
 			std::cerr << std::endl;
 #endif
 
-			mGoodProxies.push_back(*srcId);
+			mGoodProxies.push_back(bdProxyId(*srcId, BD_PI_SRC_ADDGOODPROXY, 0));
 
 			/* if it is potentialProxies then remove */
-			it = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *srcId);
-			if (it != mPotentialProxies.end())
+			std::list<bdId>::iterator pit;
+			pit = std::find(mPotentialProxies.begin(), mPotentialProxies.end(), *srcId);
+			if (pit != mPotentialProxies.end())
 			{
 #ifdef DEBUG_NODE_CONNECTION
 				std::cerr << "bdConnectionRequest::addGoodProxy() Removing from PotentialProxy List";
 				std::cerr << std::endl;
 #endif
 
-				it = mPotentialProxies.erase(it);
+				pit = mPotentialProxies.erase(pit);
 			}
 			return 1;
 		}
@@ -3218,21 +3257,24 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 	out << "GoodProxies:";
 	out << std::endl;
 
-        std::list<bdId>::const_iterator it;
+	std::list<bdProxyId>::const_iterator it;
+	std::list<bdId>::const_iterator pit;
 	for(it = req.mGoodProxies.begin(); it != req.mGoodProxies.end(); it++)
 	{
 		out << "\t";
-		bdStdPrintId(out, &(*it));
+		bdStdPrintId(out, &(it->id));
+		out << ", " << it->proxySrcType();
+		out << ", " << decodeConnectionError(it->errcode);
 		out << std::endl;
 	}
 
 	out << "PotentialProxies:";
 	out << std::endl;
 
-	for(it = req.mPotentialProxies.begin(); it != req.mPotentialProxies.end(); it++)
+	for(pit = req.mPotentialProxies.begin(); pit != req.mPotentialProxies.end(); pit++)
 	{
 		out << "\t";
-		bdStdPrintId(out, &(*it));
+		bdStdPrintId(out, &(*pit));
 		out << std::endl;
 	}
 
@@ -3242,7 +3284,9 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 	for(it = req.mPeersTried.begin(); it != req.mPeersTried.end(); it++)
 	{
 		out << "\t";
-		bdStdPrintId(out, &(*it));
+		bdStdPrintId(out, &(it->id));
+		out << ", " << it->proxySrcType();
+		out << ", " << decodeConnectionError(it->errcode);
 		out << std::endl;
 	}
 	return out;
@@ -3450,4 +3494,34 @@ std::string decodeConnectionError(uint32_t errcode)
 
 	return totalerror;
 }
-
+											   
+std::string bdProxyId::proxySrcType() const
+{
+	std::string str("Unknown");
+	
+	switch (srcType) {
+		case BD_PI_SRC_QUERYRESULT:
+			str = "QueryResult";
+			break;
+		case BD_PI_SRC_QUERYPROXY:
+			str = "QueryProxy";
+			break;
+		case BD_PI_SRC_NODESPACE_FRIEND:
+			str = "NodeSpaceFriend";
+			break;
+		case BD_PI_SRC_NODESPACE_SERVER:
+			str = "NodeSpaceServer";
+			break;
+		case BD_PI_SRC_NODESPACE_ENGINEVERSION:
+			str = "NodeSpaceEngineVersion";
+			break;
+		case BD_PI_SRC_ADDGOODPROXY:
+			str = "AddGoodProxy";
+			break;
+		case BD_PI_SRC_UNKNOWN:
+		default:
+			break;
+	}
+	return str;
+}
+											   
