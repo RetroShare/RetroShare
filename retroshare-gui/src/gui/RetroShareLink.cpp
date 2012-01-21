@@ -320,6 +320,8 @@ bool RetroShareLink::createCertificate(const std::string& ssl_id)
 	//std::cerr << "Found External IP+Port     = " << _external_ipp.toStdString() << std::endl;
 	//std::cerr << "Found External IP+Port     = " << _local_ipp.toStdString() << std::endl;
 	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
+
+	return true;
 }
 
 bool RetroShareLink::createForum(const std::string& id, const std::string& msgId)
@@ -479,6 +481,8 @@ void RetroShareLink::check()
 
 		if(_hash.isEmpty())
 			_valid = false;
+		break;
+	case TYPE_CERTIFICATE:
 		break;
 	}
 
@@ -755,6 +759,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 			case TYPE_CHANNEL:
 			case TYPE_SEARCH:
 			case TYPE_MESSAGE:
+			case TYPE_CERTIFICATE:
 				// no need to ask
 				break;
 
