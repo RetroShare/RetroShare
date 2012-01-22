@@ -477,6 +477,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rswin.h \
 			util/rsrandom.h \
 			util/pugiconfig.h \
+			util/radix64.h \
+			util/pgpkey.h \
 			util/pugixml.h
 
 SOURCES +=	dbase/cachestrapper.cc \
@@ -616,6 +618,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
 			util/rsrandom.cc \
+			util/pgpkey.cc \
 			util/pugixml.cc
 
 

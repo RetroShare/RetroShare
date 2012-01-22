@@ -8,10 +8,13 @@ DHT_TOP_DIR = ../../../../libbitdht/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = netsetup_test.o random_test.o memory_management_test.o
-TESTS  = netsetup_test random_test memory_management_test
+TESTOBJ  = netsetup_test.o random_test.o memory_management_test.o pgpkey_test.o
+TESTS  = netsetup_test random_test memory_management_test pgpkey_test
 
 all: tests
+
+pgpkey_test: pgpkey_test.o 
+	$(CC) $(CFLAGS) -o pgpkey_test pgpkey_test.o $(LIBS)
 
 netsetup_test: netsetup_test.o 
 	$(CC) $(CFLAGS) -o netsetup_test netsetup_test.o $(LIBS)

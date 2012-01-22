@@ -1,0 +1,179 @@
+#pragma once
+
+#include <string>
+#include <string.h>
+#include <vector>
+
+class Radix64
+{
+	public:
+		static void decode(const std::string& buffer,char *& out, size_t& len)
+		{
+			char val;
+			int c = 0, c2;/* init c because gcc is not clever
+								  enough for the continue */
+			int idx;
+			size_t buffer_pos = 0;
+
+			radix64_init();
+
+			std::vector<char> buf ;
+			idx = 0;
+			val = 0;
+
+			for (buffer_pos = 0; buffer_pos < buffer.length(); buffer_pos++)
+			{
+				c = buffer[buffer_pos];
+
+again:
+				if (c == '\n' || c == ' ' || c == '\r' || c == '\t')
+					continue;
+				else if (c == '=')
+				{	
+					/* pad character: stop */
+					/* some mailers leave quoted-printable
+					 * encoded characters so we try to
+					 * workaround this */
+					if (buffer_pos + 2 < buffer.length())
+					{
+						int cc1, cc2, cc3;
+						cc1 = buffer[buffer_pos];
+						cc2 = buffer[buffer_pos + 1];
+						cc3 = buffer[buffer_pos + 2];
+
+						if (isxdigit((unsigned char)cc1) && isxdigit((unsigned char)cc2) && strchr("=\n\r\t ", cc3))
+						{
+							/* well it seems to be the case -
+							 * adjust */
+							c =
+								isdigit((unsigned char)cc1) ? (cc1 -
+										'0')
+								: (toupper((unsigned char)cc1) - 'A' + 10);
+							c <<= 4;
+							c |=
+								isdigit((unsigned char)cc2) ? (cc2 -
+										'0')
+								: (toupper((unsigned char)cc2) - 'A' + 10);
+							buffer_pos += 2;
+							goto again;
+						}
+					}
+
+					if (idx == 1)
+						buf.push_back(val) ;// buf[n++] = val;
+					break;
+				}
+				else if ((c = asctobin()[(c2 = c)]) == 255)
+				{
+					/* invalid radix64 character %02x skipped\n", c2; */
+					continue;
+				}
+
+				switch (idx)
+				{
+					case 0:
+						val = c << 2;
+						break;
+					case 1:
+						val |= (c >> 4) & 3;
+						buf.push_back(val);//buf[n++] = val;
+						val = (c << 4) & 0xf0;
+						break;
+					case 2:
+						val |= (c >> 2) & 15;
+						buf.push_back(val);//buf[n++] = val;
+						val = (c << 6) & 0xc0;
+						break;
+					case 3:
+						val |= c & 0x3f;
+						buf.push_back(val);//buf[n++] = val;
+						break;
+				}
+				idx = (idx + 1) % 4;
+			}
+
+			idx = idx;
+
+			len = buf.size() ;
+			out = new char[len] ;
+
+			memcpy(out,buf.data(),len) ;
+		}
+
+		/****************
+		 * create a radix64 encoded string.
+		 */
+		static void encode(const char *data,int len,std::string& out_string)
+		{
+			char *buffer, *p;
+
+			radix64_init();
+
+			int size = (len + 2) / 3 * 4 +1;
+			buffer = p = new char[size] ;
+
+			for (; len >= 3; len -= 3, data += 3)
+			{
+				*p++ = bintoasc()[(data[0] >> 2) & 077];
+				*p++ =
+					bintoasc()[
+					(((data[0] << 4) & 060) |
+					 ((data[1] >> 4) & 017)) & 077];
+				*p++ =
+					bintoasc()[
+					(((data[1] << 2) & 074) |
+					 ((data[2] >> 6) & 03)) & 077];
+				*p++ = bintoasc()[data[2] & 077];
+			}
+			if (len == 2)
+			{
+				*p++ = bintoasc()[(data[0] >> 2) & 077];
+				*p++ =
+					bintoasc()[
+					(((data[0] << 4) & 060) |
+					 ((data[1] >> 4) & 017)) & 077];
+				*p++ = bintoasc()[((data[1] << 2) & 074)];
+				*p++ = '=' ;
+			}
+			else if (len == 1)
+			{
+				*p++ = bintoasc()[(data[0] >> 2) & 077];
+				*p++ = bintoasc()[(data[0] << 4) & 060];
+				*p++ = '=' ;
+				*p++ = '=' ;
+			}
+			//*p = 0;
+			out_string = std::string(buffer,p-buffer) ;
+			delete[] buffer ;
+		}
+
+	private:
+		static inline char *bintoasc() { static char bta[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; return bta ; }
+		static inline char *asctobin() { static char s[256]; return s ; }	/* runtime radix64_initd */
+		static int& is_radix64_initd() { static int is_inited = false ; return is_inited ; }
+
+		/* hey, guess what: this is a read-only table.
+		 * we don't _care_ if multiple threads get to initialise it
+		 * at the same time, _except_ that is_radix64_initd=1 _must_
+		 * be done at the end...
+		 */
+		static bool radix64_init()
+		{
+			if (is_radix64_initd())
+				return true;
+
+			int i;
+			char *s;
+
+			/* build the helpapr_table_t for radix64 to bin conversion */
+			for (i = 0; i < 256; i++)
+				asctobin()[i] = 255;	/* used to detect invalid characters */
+			for (s = bintoasc(), i = 0; *s; s++, i++)
+				asctobin()[(int)*s] = i;
+
+			is_radix64_initd() = 1;
+			return true ;
+		}
+};
+
+
