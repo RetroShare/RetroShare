@@ -113,17 +113,17 @@ void SoundPage::load()
 	ui.eventTreeWidget->clear();
 
 	QTreeWidgetItem *groupItem = addGroup(tr("Friend"));
-	QTreeWidgetItem *childItem = addItem(groupItem, tr("go Online"), SoundManager::USER_ONLINE);
+	addItem(groupItem, tr("go Online"), SoundManager::USER_ONLINE);
 
 	groupItem = addGroup(tr("Chatmessage"));
-	childItem = addItem(groupItem, tr("New Msg"), SoundManager::NEW_CHAT_MESSAGE);
+	addItem(groupItem, tr("New Msg"), SoundManager::NEW_CHAT_MESSAGE);
 
 	ui.eventTreeWidget->resizeColumnToContents(COLUMN_NAME);
 
 	eventChanged(NULL, NULL);
 }
 
-void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem */*previous*/)
 {
 	if (!current || current->type() != TYPE_ITEM) {
 		ui.eventGroup->setEnabled(false);
