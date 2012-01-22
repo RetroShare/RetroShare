@@ -349,6 +349,7 @@ HEADERS +=  rshare.h \
             gui/statusbar/ratesstatus.h \
             gui/statusbar/hashingstatus.h \
             gui/statusbar/discstatus.h \
+            gui/statusbar/SoundStatus.h \
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
@@ -609,6 +610,7 @@ SOURCES +=  main.cpp \
             gui/statusbar/ratesstatus.cpp \
             gui/statusbar/hashingstatus.cpp \
             gui/statusbar/discstatus.cpp \
+            gui/statusbar/SoundStatus.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/DownloadToaster.cpp \
             gui/toaster/OnlineToaster.cpp \

@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006 - 2009 RetroShare Team
+ *  Copyright (C) 2012 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -24,80 +24,108 @@
 #include "SoundManager.h"
 #include "settings/rsharesettings.h"
 
-SoundManager::SoundManager()
+#define GROUP_MAIN      "Sound"
+#define GROUP_ENABLE    "Enable"
+#define GROUP_SOUNDFILE "SoundFilePath"
+
+SoundManager *soundManager = NULL;
+
+static QString settingName(SoundManager::Events event)
 {
-	isMute=false;
-	reInit();
+	switch (event) {
+	case SoundManager::NEW_CHAT_MESSAGE:
+		return "NewChatMessage";
+	case SoundManager::USER_ONLINE:
+		return "User_go_Online";
+	}
+
+	return "";
 }
 
-void SoundManager::doMute(bool t)
+void SoundManager::create()
 {
-	isMute=t;
-}
-
-void SoundManager::event_User_go_Online()
-{
-	if(isMute==true) return;
-		
-		if(enable_eventUser_go_Online) 
-			QSound::play(SoundFileUser_go_Online);
-}
-void SoundManager::event_User_go_Offline()
-{
-	if(isMute==true) return;
-	if(enable_eventUser_go_Offline)
-		QSound::play(SoundFileUser_go_Offline);	
-}
-void SoundManager::event_FileSend_Finished()
-{
-	if(isMute==true) return;
-	if(enable_eventFileSend_Finished)
-		QSound::play(SoundFileFileSend_Finished);
-}
-void SoundManager::event_FileRecive_Incoming()
-{
-	if(isMute==true) return;
-	if(enable_eventFileRecive_Incoming)
-		QSound::play(SoundFileFileRecive_Incoming);
-}
-
-void SoundManager::event_FileRecive_Finished()
-{
-	if(isMute==true) return;
-	if(enable_eventFileRecive_Finished)
-		QSound::play(SoundFileFileRecive_Finished);
-}
-
-
-void SoundManager::event_NewChatMessage()
-{
-	if(isMute==true) return;
-	if(enable_eventNewChatMessage)
-	{
-		QSound::play(SoundFileNewChatMessage);
-
+	if (soundManager == NULL) {
+		soundManager = new SoundManager;
 	}
 }
 
-void SoundManager::reInit()
+SoundManager::SoundManager() : QObject()
 {
-        Settings->beginGroup("Sound");
-		Settings->beginGroup("Enable");
-			enable_eventUser_go_Online = Settings->value("User_go_Online",false).toBool();
-			enable_eventUser_go_Offline = Settings->value("User_go_Offline",false).toBool();
-			enable_eventFileSend_Finished = Settings->value("FileSend_Finished",false).toBool();
-			enable_eventFileRecive_Incoming = Settings->value("FileRecive_Incoming",false).toBool();
-			enable_eventFileRecive_Finished = Settings->value("FileRecive_Finished",false).toBool();
-			enable_eventNewChatMessage = Settings->value("NewChatMessage",false).toBool();
-		Settings->endGroup();
+}
 
-		Settings->beginGroup("SoundFilePath");
-		SoundFileUser_go_Online = Settings->value("User_go_Online","").toString();
-		SoundFileUser_go_Offline = Settings->value("User_go_Offline","").toString();
-		SoundFileFileSend_Finished = Settings->value("FileSend_Finished","").toString();
-		SoundFileFileRecive_Incoming = Settings->value("FileRecive_Incoming","").toString();
-		SoundFileFileRecive_Finished = Settings->value("FileRecive_Finished","").toString();
-		SoundFileNewChatMessage = Settings->value("NewChatMessage","").toString();
-		Settings->endGroup();
+void SoundManager::setMute(bool mute)
+{
+	Settings->beginGroup(GROUP_MAIN);
+	Settings->setValue("mute", mute);
 	Settings->endGroup();
+
+	emit SoundManager::mute(mute);
+}
+
+bool SoundManager::isMute()
+{
+	Settings->beginGroup(GROUP_MAIN);
+	bool mute = Settings->value("mute", false).toBool();
+	Settings->endGroup();
+
+	return mute;
+}
+
+bool SoundManager::eventEnabled(Events event)
+{
+	Settings->beginGroup(GROUP_MAIN);
+	Settings->beginGroup(GROUP_ENABLE);
+	bool enabled = Settings->value(settingName(event), false).toBool();
+	Settings->endGroup();
+	Settings->endGroup();
+
+	return enabled;
+}
+
+void SoundManager::setEventEnabled(Events event, bool enabled)
+{
+	Settings->beginGroup(GROUP_MAIN);
+	Settings->beginGroup(GROUP_ENABLE);
+	Settings->setValue(settingName(event), enabled);
+	Settings->endGroup();
+	Settings->endGroup();
+}
+
+QString SoundManager::eventFilename(Events event)
+{
+	Settings->beginGroup(GROUP_MAIN);
+	Settings->beginGroup(GROUP_SOUNDFILE);
+	QString filename = Settings->value(settingName(event)).toString();
+	Settings->endGroup();
+	Settings->endGroup();
+
+	return filename;
+}
+
+void SoundManager::setEventFilename(Events event, const QString &filename)
+{
+	Settings->beginGroup(GROUP_MAIN);
+	Settings->beginGroup(GROUP_SOUNDFILE);
+	Settings->setValue(settingName(event), filename);
+	Settings->endGroup();
+	Settings->endGroup();
+}
+
+void SoundManager::play(Events event)
+{
+	if (isMute() || !QSound::isAvailable() || !eventEnabled(event)) {
+		return;
+	}
+
+	QString filename = eventFilename(event);
+	playFile(filename);
+}
+
+
+void SoundManager::playFile(const QString &filename)
+{
+	if (filename.isEmpty()) {
+		return;
+	}
+	QSound::play(filename);
 }

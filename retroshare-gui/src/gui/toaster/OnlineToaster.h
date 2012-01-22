@@ -38,8 +38,6 @@ private slots:
 	void chatButtonSlot();
 
 private:
-	void play();
-
 	std::string peerId;
 
 	/** Qt Designer generated object */

@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, 2007 crypton
+ *  Copyright (C) 2012 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -18,43 +18,46 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#ifndef SOUND_MANAGER_H
-#define SOUND_MANAGER_H
+
+#ifndef SOUNDMANAGER_H
+#define SOUNDMANAGER_H
 
 #include <QObject>
 
-class SoundManager :public QObject
+class SoundManager : public QObject
 {
 	Q_OBJECT
-	public:
-		SoundManager();
 
-	public slots:
-		void doMute(bool t);
-		void event_User_go_Online();
-		void event_User_go_Offline();
-		void event_FileSend_Finished();
-		void event_FileRecive_Incoming();
-		void event_FileRecive_Finished();
-		void event_NewChatMessage();
-		void reInit();
-		
+public:
+	enum Events {
+		NEW_CHAT_MESSAGE,
+		USER_ONLINE
+	};
 
-	private:
-		bool isMute;
-		QString SoundFileUser_go_Online;
-		QString SoundFileUser_go_Offline;
-		QString SoundFileFileSend_Finished;
-		QString SoundFileFileRecive_Incoming;
-		QString SoundFileFileRecive_Finished;
-		QString SoundFileNewChatMessage;
+public slots:
+	void setMute(bool mute);
 
-		bool enable_eventUser_go_Online;
-		bool enable_eventUser_go_Offline;
-		bool enable_eventFileSend_Finished;
-		bool enable_eventFileRecive_Incoming;
-		bool enable_eventFileRecive_Finished;
-		bool enable_eventNewChatMessage;
+signals:
+	void mute(bool isMute);
 
+public:
+	static void create();
+
+	bool isMute();
+
+	void play(Events event);
+	void playFile(const QString &filename);
+
+	bool eventEnabled(Events event);
+	void setEventEnabled(Events event, bool enabled);
+
+	QString eventFilename(Events event);
+	void setEventFilename(Events event, const QString &filename);
+
+private:
+	SoundManager();
 };
-#endif
+
+extern SoundManager *soundManager;
+
+#endif	//SOUNDMANAGER_H

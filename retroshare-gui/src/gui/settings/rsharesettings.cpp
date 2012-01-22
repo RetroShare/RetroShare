@@ -190,6 +190,8 @@ static QString getKeyForLastDir(RshareSettings::enumLastDir type)
         return "Messages";
     case RshareSettings::LASTDIR_BLOGS:
         return "Messages";
+    case RshareSettings::LASTDIR_SOUNDS:
+        return "SOUNDS";
     }
     return "";
 }

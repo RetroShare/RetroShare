@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <QSound>
-
 #include "OnlineToaster.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/chat/ChatDialog.h"
@@ -44,28 +42,10 @@ OnlineToaster::OnlineToaster(const std::string &peerId, const QString &name) : Q
 	ui.pixmaplabel->setPixmap(avatar);
 
 	WidgetBackgroundImage::setBackgroundImage(ui.windowFrame, ":images/toaster/backgroundtoaster.png", WidgetBackgroundImage::AdjustNone);
-
-	play();
 }
 
 void OnlineToaster::chatButtonSlot()
 {
 	ChatDialog::chatFriend(peerId);
 	hide();
-}
-
-void OnlineToaster::play()
-{
-	Settings->beginGroup("Sound");
-	Settings->beginGroup("SoundFilePath");
-	QString OnlineSound = Settings->value("User_go_Online","").toString();
-	Settings->endGroup();
-	Settings->beginGroup("Enable");
-	bool flag = Settings->value("User_go_Online",false).toBool();
-	Settings->endGroup();
-	Settings->endGroup();
-
-	if(!OnlineSound.isEmpty()&&flag)
-		if(QSound::isAvailable())
-			QSound::play(OnlineSound);
 }

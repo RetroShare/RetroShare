@@ -56,6 +56,7 @@
 #include "help/browser/helpbrowser.h"
 #include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
+#include "SoundManager.h"
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -75,6 +76,7 @@
 #include "statusbar/dhtstatus.h"
 #include "statusbar/hashingstatus.h"
 #include "statusbar/discstatus.h"
+#include "statusbar/SoundStatus.h"
 #include <retroshare/rsstatus.h>
 
 #include <retroshare/rsiface.h>
@@ -199,12 +201,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
     bool advancedMode = false;
     std::string advsetting;
-    if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
-    {
-	advancedMode = true;
+    if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES")) {
+        advancedMode = true;
     }
-
-
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "linkActivated");
@@ -231,7 +230,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     //connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
-
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
     connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
@@ -239,30 +237,23 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* load the StyleSheet*/
     loadStyleSheet(Rshare::stylesheet());
 
-
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
-
 
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
-
     ui.stackPages->add(friendsDialog = new FriendsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
-
 
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
 
-
     ui.stackPages->add(transfersDialog = new TransfersDialog(ui.stackPages),
                       transferAction = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
 
-
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
-
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                       messageAction = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
@@ -316,7 +307,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     }
 #endif
 
-
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
 
@@ -363,6 +353,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
+
+    statusBar()->addPermanentWidget(new SoundStatus());
     /** Status Bar end ******/
 
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
@@ -577,7 +569,7 @@ void MainWindow::createNotifyIcons()
     updateMessages();
     updateForums();
     updateChannels(NOTIFY_TYPE_ADD);
-    privateChatChanged(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+    privateChatChanged(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, 0);
     // transfer
 
 #undef DELETE_OBJECT

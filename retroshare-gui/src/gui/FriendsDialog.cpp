@@ -29,7 +29,6 @@
 #include <QFontDialog>
 #include <QMenu>
 #include <QScrollBar>
-#include <QSound>
 
 #include "retroshare/rsinit.h"
 #include "retroshare/rsnotify.h"
@@ -790,21 +789,6 @@ void FriendsDialog::setCurrentFileName(const QString &fileName)
     ui.msgText->document()->setModified(false);
 
     setWindowModified(false);
-}
-
-////play sound when recv a message
-void FriendsDialog::playsound(){
-    Settings->beginGroup("Sound");
-        Settings->beginGroup("SoundFilePath");
-            QString OnlineSound = Settings->value("NewChatMessage","").toString();
-        Settings->endGroup();
-        Settings->beginGroup("Enable");
-             bool flag = Settings->value("NewChatMessage",false).toBool();
-        Settings->endGroup();
-    Settings->endGroup();
-    if(!OnlineSound.isEmpty()&&flag)
-        if(QSound::isAvailable())
-            QSound::play(OnlineSound);
 }
 
 void FriendsDialog::on_actionMessageHistory_triggered()

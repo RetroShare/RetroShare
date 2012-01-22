@@ -26,34 +26,36 @@
 
 #include "configpage.h"
 #include "ui_SoundPage.h"
+#include "gui/SoundManager.h"
 
 class SoundPage : public ConfigPage
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  SoundPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-  /** Default Destructor */
-  ~SoundPage();
+	/** Default Constructor */
+	SoundPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+	/** Default Destructor */
+	~SoundPage();
 
-  /** Saves the changes on this page */
-  bool save(QString &errmsg);
-  /** Loads the settings for this page */
-  void load();
+	/** Saves the changes on this page */
+	bool save(QString &errmsg);
+	/** Loads the settings for this page */
+	void load();
 
 private slots:
-
-  void on_cmd_openFile();
-        //void on_cmd_openFile2();
-	void on_cmd_openFile3();
-	void on_cmd_openFile4();
-	void on_cmd_openFile5();
-	void on_cmd_openFile6();
+	void eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+	void filenameChanged(QString filename);
+	void clearButtonClicked();
+	void browseButtonClicked();
+	void playButtonClicked();
 
 private:
-  /** Qt Designer generated object */
-  Ui::SoundPage ui;
+	QTreeWidgetItem *addGroup(const QString &name);
+	QTreeWidgetItem *addItem(QTreeWidgetItem *groupItem, const QString &name, SoundManager::Events event);
+
+	/** Qt Designer generated object */
+	Ui::SoundPage ui;
 };
 
 #endif

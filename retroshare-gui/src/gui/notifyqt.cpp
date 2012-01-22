@@ -44,6 +44,7 @@
 #endif // MINIMAL_RSGUI
 
 #include "gui/settings/rsharesettings.h"
+#include "SoundManager.h"
 
 #include <iostream>
 #include <sstream>
@@ -489,6 +490,8 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_CONNECT:
+					soundManager->play(SoundManager::USER_ONLINE);
+
 					if (popupflags & RS_POPUP_CONNECT)
 					{
 						toaster = new Toaster(new OnlineToaster(id, name));

@@ -44,6 +44,7 @@
 #include "gui/common/Emoticons.h"
 #include "util/EventReceiver.h"
 #include "gui/RetroShareLink.h"
+#include "gui/SoundManager.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -65,9 +66,9 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-  QStringList args = char_array_to_stringlist(argv+1, argc-1);
-  
-  Q_INIT_RESOURCE(images);
+	QStringList args = char_array_to_stringlist(argv+1, argc-1);
+
+	Q_INIT_RESOURCE(images);
 
 	rsiface = NULL;
 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
 	createRsIface(*notify);
 	createRsControl(*rsiface, *notify);
 
-        /* RetroShare Core Objects */
+	/* RetroShare Core Objects */
 	RsInit::InitRsConfig();
 	int initResult = RsInit::InitRetroShare(argc, argv);
 
@@ -177,23 +178,23 @@ int main(int argc, char *argv[])
 			}
 
 			// true: note auto-login is active
-                        std::string lockFile;
-                        int retVal = RsInit::LockAndLoadCertificates(true, lockFile);
+			std::string lockFile;
+			int retVal = RsInit::LockAndLoadCertificates(true, lockFile);
 			switch(retVal)
 			{
 				case 0:	break;
 				case 1:	QMessageBox::warning(	0,
 												QObject::tr("Multiple instances"),
 												QObject::tr("Another RetroShare using the same profile is "
-                                                                                                                "already running on your system. Please close "
-                                                                                                                "that instance first\n Lock file:\n") +
-                                                                                                                QString::fromStdString(lockFile));
+												"already running on your system. Please close "
+												"that instance first\n Lock file:\n") +
+												QString::fromStdString(lockFile));
 						return 1;
 				case 2:	QMessageBox::critical(	0,
 												QObject::tr("Multiple instances"),
 												QObject::tr("An unexpected error occurred when Retroshare"
-                                                                                                                     "tried to acquire the single instance lock\n Lock file:\n") +
-                                                                                                                     QString::fromStdString(lockFile));
+												"tried to acquire the single instance lock\n Lock file:\n") +
+												QString::fromStdString(lockFile));
 						return 1;
 				case 3: QMessageBox::critical(	0,
 												QObject::tr("Login Failure"),
@@ -210,9 +211,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-        /* recreate global settings object, now with correct path */
+	/* recreate global settings object, now with correct path */
 	RshareSettings::Create(true);
 	Rshare::resetLanguageAndStyle();
+
+	SoundManager::create();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
@@ -323,8 +326,11 @@ int main(int argc, char *argv[])
 
 	rsicontrol->rsGlobalShutDown();
 
+	delete(soundManager);
+	soundManager = NULL;
+
 	Settings->sync();
-	delete Settings;
+	delete(Settings);
 
 	return ti ;
 }

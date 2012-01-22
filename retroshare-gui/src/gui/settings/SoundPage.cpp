@@ -19,30 +19,44 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#include <rshare.h>
 #include "SoundPage.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 
+#define COLUMN_NAME     0
+#define COLUMN_FILENAME 1
+#define COLUMN_COUNT    2
+#define COLUMN_DATA     COLUMN_NAME
+
+#define ROLE_EVENT      Qt::UserRole
+
+#define TYPE_GROUP      0
+#define TYPE_ITEM       1
 
 /** Constructor */
 SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-  connect(ui.cmd_openFile,  SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile()));
-  //connect(ui.cmd_openFile_2,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile2()));
-	connect(ui.cmd_openFile_3,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile3()));
-	connect(ui.cmd_openFile_4,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile4()));
-	connect(ui.cmd_openFile_5,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile5()));
-	connect(ui.cmd_openFile_6,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile6()));
-	
-	ui.groupBox_13->hide();
-	ui.groupBox_14->hide();
+	connect(ui.eventTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(eventChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+	connect(ui.filenameEdit, SIGNAL(textChanged(QString)), this, SLOT(filenameChanged(QString)));
+	connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearButtonClicked()));
+	connect(ui.browseButton, SIGNAL(clicked()), this, SLOT(browseButtonClicked()));
+	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
 
-  /* Hide platform specific features */
+	ui.clearButton->hide();
+	ui.eventTreeWidget->setColumnCount(COLUMN_COUNT);
+
+	QTreeWidgetItem *headerItem = ui.eventTreeWidget->headerItem();
+	headerItem->setText(COLUMN_NAME, tr("Event"));
+	headerItem->setText(COLUMN_FILENAME, tr("Filename"));
+
+	ui.eventTreeWidget->header()->setResizeMode(QHeaderView::Fixed);
+	ui.eventTreeWidget->setTextElideMode(Qt::ElideMiddle);
+
+	/* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
@@ -52,128 +66,116 @@ SoundPage::~SoundPage()
 {
 }
 
-/** Saves the changes on this page */
-bool
-SoundPage::save(QString &/*errmsg*/)
+QTreeWidgetItem *SoundPage::addGroup(const QString &name)
 {
-  Settings->beginGroup("Sound");
-                Settings->beginGroup("Enable");
-                        Settings->setValue("User_go_Online",ui.checkBoxSound->isChecked());
-                        //settings.setValue("User_go_Offline",ui.checkBoxSound_2->isChecked());
-                        Settings->setValue("FileSend_Finished",ui.checkBoxSound_3->isChecked());
-                        Settings->setValue("FileRecive_Incoming",ui.checkBoxSound_4->isChecked());
-                        Settings->setValue("FileRecive_Finished",ui.checkBoxSound_5->isChecked());
-                        Settings->setValue("NewChatMessage",ui.checkBoxSound_6->isChecked());
-                        Settings->endGroup();
-                Settings->beginGroup("SoundFilePath");
-                        Settings->setValue("User_go_Online",ui.txt_SoundFile->text());
-                        //settings.setValue("User_go_Offline",ui.txt_SoundFile2->text());
-                        Settings->setValue("FileSend_Finished",ui.txt_SoundFile3->text());
-                        Settings->setValue("FileRecive_Incoming",ui.txt_SoundFile4->text());
-                        Settings->setValue("FileRecive_Finished",ui.txt_SoundFile5->text());
-                        Settings->setValue("NewChatMessage",ui.txt_SoundFile6->text());
-                Settings->endGroup();
-        Settings->endGroup();
+	QTreeWidgetItem *item = new QTreeWidgetItem(TYPE_GROUP);
+	item->setText(COLUMN_NAME, name);
+	ui.eventTreeWidget->insertTopLevelItem(ui.eventTreeWidget->topLevelItemCount(), item);
+	ui.eventTreeWidget->expandItem(item);
+
+	return item;
+}
+
+QTreeWidgetItem *SoundPage::addItem(QTreeWidgetItem *groupItem, const QString &name, SoundManager::Events event)
+{
+	QTreeWidgetItem *item = new QTreeWidgetItem(TYPE_ITEM);
+	item->setData(COLUMN_DATA, ROLE_EVENT, event);
+	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+	item->setCheckState(COLUMN_NAME, soundManager->eventEnabled(event) ? Qt::Checked : Qt::Unchecked);
+	item->setText(COLUMN_NAME, name);
+	item->setText(COLUMN_FILENAME, soundManager->eventFilename(event));
+	groupItem->addChild(item);
+
+	return item;
+}
+
+/** Saves the changes on this page */
+bool SoundPage::save(QString &/*errmsg*/)
+{
+	QTreeWidgetItemIterator itemIterator(ui.eventTreeWidget);
+	QTreeWidgetItem *item = NULL;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+
+		if (item->type() == TYPE_ITEM) {
+			SoundManager::Events event = (SoundManager::Events) item->data(COLUMN_DATA, ROLE_EVENT).toInt();
+			soundManager->setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
+			soundManager->setEventFilename(event, item->text(COLUMN_FILENAME));
+		}
+	}
 
 	return true;
 }
 
-
-
 /** Loads the settings for this page */
-void
-SoundPage::load()
+void SoundPage::load()
 {
-        Settings->beginGroup("Sound");
-                Settings->beginGroup("SoundFilePath");
-                        ui.txt_SoundFile->setText(Settings->value("User_go_Online","").toString());
-                        //ui.txt_SoundFile2->setText(settings.value("User_go_Offline","").toString());
-                        ui.txt_SoundFile3->setText(Settings->value("FileSend_Finished","").toString());
-                        ui.txt_SoundFile4->setText(Settings->value("FileRecive_Incoming","").toString());
-                        ui.txt_SoundFile5->setText(Settings->value("FileRecive_Finished","").toString());
-                        ui.txt_SoundFile6->setText(Settings->value("NewChatMessage","").toString());
+	ui.eventTreeWidget->clear();
 
-			if(!ui.txt_SoundFile->text().isEmpty())ui.checkBoxSound->setEnabled(true);
-                        //if(!ui.txt_SoundFile2->text().isEmpty())ui.checkBoxSound_2->setEnabled(true);
-			if(!ui.txt_SoundFile3->text().isEmpty())ui.checkBoxSound_3->setEnabled(true);
-			if(!ui.txt_SoundFile4->text().isEmpty())ui.checkBoxSound_4->setEnabled(true);
-			if(!ui.txt_SoundFile5->text().isEmpty())ui.checkBoxSound_5->setEnabled(true);
-			if(!ui.txt_SoundFile6->text().isEmpty())ui.checkBoxSound_6->setEnabled(true);
+	QTreeWidgetItem *groupItem = addGroup(tr("Friend"));
+	QTreeWidgetItem *childItem = addItem(groupItem, tr("go Online"), SoundManager::USER_ONLINE);
 
-                Settings->endGroup();
+	groupItem = addGroup(tr("Chatmessage"));
+	childItem = addItem(groupItem, tr("New Msg"), SoundManager::NEW_CHAT_MESSAGE);
 
-                Settings->beginGroup("Enable");
-                        ui.checkBoxSound->setChecked(Settings->value("User_go_Online",false).toBool());
-                        //ui.checkBoxSound_2->setChecked(settings.value("User_go_Offline",false).toBool());
-                        ui.checkBoxSound_3->setChecked(Settings->value("FileSend_Finished",false).toBool());
-                        ui.checkBoxSound_4->setChecked(Settings->value("FileRecive_Incoming",false).toBool());
-                        ui.checkBoxSound_5->setChecked(Settings->value("FileRecive_Finished",false).toBool());
-                        ui.checkBoxSound_6->setChecked(Settings->value("NewChatMessage",false).toBool());
-                Settings->endGroup();
-        Settings->endGroup();
+	ui.eventTreeWidget->resizeColumnToContents(COLUMN_NAME);
+
+	eventChanged(NULL, NULL);
 }
 
-void SoundPage::on_cmd_openFile()
+void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-
-	ui.txt_SoundFile->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile->text().isEmpty()){
-		ui.checkBoxSound->setChecked(false);
-		ui.checkBoxSound->setEnabled(false);
+	if (!current || current->type() != TYPE_ITEM) {
+		ui.eventGroup->setEnabled(false);
+		ui.eventName->clear();
+		ui.filenameEdit->clear();
+		ui.playButton->setEnabled(false);
+		return;
 	}
-	else
-		ui.checkBoxSound->setEnabled(true);
+
+	ui.eventGroup->setEnabled(true);
+	ui.filenameEdit->setText(current->text(COLUMN_FILENAME));
+
+	QString eventName;
+	if (current->parent()) {
+		eventName = current->parent()->text(COLUMN_NAME) + ": ";
+	}
+	eventName += current->text(COLUMN_NAME);
+	ui.eventName->setText(eventName);
 }
 
-/*void SoundPage::on_cmd_openFile2()
+void SoundPage::filenameChanged(QString filename)
 {
-	ui.txt_SoundFile2->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile2->text().isEmpty()){
-		ui.checkBoxSound_2->setChecked(false);
-		ui.checkBoxSound_2->setEnabled(false);
-	}
-	else
-		ui.checkBoxSound_2->setEnabled(true);
+	ui.playButton->setEnabled(!filename.isEmpty());
+	ui.clearButton->setVisible(!filename.isEmpty());
 
-}*/
-void SoundPage::on_cmd_openFile3()
-{
-	ui.txt_SoundFile3->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile3->text().isEmpty()){
-		ui.checkBoxSound_3->setChecked(false);
-		ui.checkBoxSound_3->setEnabled(false);
+	QTreeWidgetItem *item = ui.eventTreeWidget->currentItem();
+	if (item) {
+		item->setText(COLUMN_FILENAME, filename);
 	}
-	else
-		ui.checkBoxSound_3->setEnabled(true);
 }
-void SoundPage::on_cmd_openFile4()
-{
-	ui.txt_SoundFile4->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile4->text().isEmpty()){
-		ui.checkBoxSound_4->setChecked(false);
-		ui.checkBoxSound_4->setEnabled(false);
-	}
-	else
-		ui.checkBoxSound_4->setEnabled(true);
-}
-void SoundPage::on_cmd_openFile5()
-{
-	ui.txt_SoundFile5->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile5->text().isEmpty()){
-		ui.checkBoxSound_5->setChecked(false);
-		ui.checkBoxSound_5->setEnabled(false);
-	}
-	else
-		ui.checkBoxSound_5->setEnabled(true);
-}
-void SoundPage::on_cmd_openFile6()
-{
-	ui.txt_SoundFile6->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile6->text().isEmpty()){
-		ui.checkBoxSound_6->setChecked(false);
-		ui.checkBoxSound_6->setEnabled(false);
-	}
-	else
-		ui.checkBoxSound_6->setEnabled(true);
 
+void SoundPage::clearButtonClicked()
+{
+	ui.filenameEdit->clear();
+}
+
+void SoundPage::browseButtonClicked()
+{
+	QString filename;
+	if (!misc::getOpenFileName(this, RshareSettings::LASTDIR_SOUNDS, tr("Open File"), "wav (*.wav)", filename)) {
+		return;
+	}
+	ui.filenameEdit->setText(filename);
+}
+
+void SoundPage::playButtonClicked()
+{
+	QTreeWidgetItem *item = ui.eventTreeWidget->currentItem();
+	if (!item) {
+		return;
+	}
+
+	QString filename = item->text(COLUMN_FILENAME);
+	soundManager->playFile(filename);
 }

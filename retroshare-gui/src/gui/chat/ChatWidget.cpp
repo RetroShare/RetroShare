@@ -27,7 +27,6 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QMessageBox>
-#include <QSound>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
@@ -51,25 +50,6 @@
 /*****
  * #define CHAT_DEBUG 1
  *****/
-
-// play sound when recv a message
-void playsound()
-{
-	Settings->beginGroup("Sound");
-		Settings->beginGroup("SoundFilePath");
-			QString OnlineSound = Settings->value("NewChatMessage","").toString();
-		Settings->endGroup();
-		Settings->beginGroup("Enable");
-			bool flag = Settings->value("NewChatMessage",false).toBool();
-		Settings->endGroup();
-	Settings->endGroup();
-
-	if (!OnlineSound.isEmpty() && flag) {
-		if (QSound::isAvailable()) {
-			QSound::play(OnlineSound);
-		}
-	}
-}
 
 ChatWidget::ChatWidget(QWidget *parent) :
 	QWidget(parent), ui(new Ui::ChatWidget)
@@ -330,8 +310,6 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	resetStatusBar();
 
 	if (incoming && chatType == TYPE_NORMAL) {
-		playsound();
-
 		emit newMessage(this);
 
 		if (!isVisible() || (window() && (!window()->isActiveWindow() || window()->isMinimized()))) {

@@ -124,9 +124,6 @@ private:
     void colorChanged(const QColor &c);
     void fontChanged(const QFont &font);
 
-    ///play the sound when recv a message
-    void playsound();
-
     QString fileName;
 
     ChatStyle style;
