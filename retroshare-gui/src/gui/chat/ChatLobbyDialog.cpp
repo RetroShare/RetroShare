@@ -155,6 +155,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 	default:
 		std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
 	}
+	updateParticipantsList() ;
 }
 
 bool ChatLobbyDialog::canClose()
