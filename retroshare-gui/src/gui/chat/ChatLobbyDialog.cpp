@@ -152,6 +152,9 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
 		ui.chatWidget->updateStatusString(nickname + " %1", str);
 		break;
+	case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
+		std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in lobby " << getPeerId() << std::endl;
+		break;
 	default:
 		std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
 	}

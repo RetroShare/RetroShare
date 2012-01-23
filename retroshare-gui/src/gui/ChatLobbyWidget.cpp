@@ -173,7 +173,9 @@ void ChatLobbyWidget::updateDisplay()
 	for (i = 0; i < size; ++i) {
 		const PublicChatLobbyRecord &lobby = publicLobbies[i];
 
+#ifdef CHAT_LOBBY_GUI_DEBUG
 		std::cerr << "adding " << lobby.lobby_name << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers." << std::endl;
+#endif
 
 		QTreeWidgetItem *item = NULL;
 
@@ -227,7 +229,9 @@ void ChatLobbyWidget::updateDisplay()
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
 		const ChatLobbyInfo &lobby = *lobbyIt;
 
+#ifdef CHAT_LOBBY_GUI_DEBUG
 		std::cerr << "adding " << lobby.lobby_name << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.nick_names.size() << " peers." << std::endl;
+#endif
 
 		QTreeWidgetItem *itemParent;
 		if (lobby.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) {

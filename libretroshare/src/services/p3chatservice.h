@@ -241,6 +241,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void sendLobbyStatusItem(const ChatLobbyId&, int type, const std::string& status_string) ;
 		void sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id) ;
 		void sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id) ;
+		void sendLobbyStatusKeepAlive(const ChatLobbyId&) ;
 
 		void locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
 
@@ -272,6 +273,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 				std::string virtual_peer_id ;
 				int connexion_challenge_count ;
 				time_t last_connexion_challenge_time ;
+				time_t last_keep_alive_packet_time ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;

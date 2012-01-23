@@ -42,10 +42,10 @@
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   15 ; // sends a connexion challenge every 15 messages
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
-static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // sends a connexion challenge every 15 messages
+static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
 static const time_t 	MAX_KEEP_MSG_RECORD 					  =  240 ; // keep msg record for 240 secs max.
-static const time_t 	MAX_KEEP_INACTIVE_LOBBY 			  = 3600 ; // keep inactive lobbies for 1h max.
-static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         = 1800 ; // keep inactive nicknames for 30mn max.
+static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
+static const time_t  MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
@@ -64,9 +64,8 @@ p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 
 int	p3ChatService::tick()
 {
-	if (receivedItems()) {
+	if(receivedItems()) 
 		receiveChatQueue();
-	}
 
 	static time_t last_clean_time = 0 ;
 	time_t now = time(NULL) ;
@@ -742,7 +741,25 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 #endif
 		}
 	}
-	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
+	else if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "  adding nickname " << item->nick << " to lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
+
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+
+		if(it != _chat_lobbys.end())
+		{
+			it->second.nick_names[item->nick] = time(NULL) ;
+#ifdef CHAT_DEBUG
+			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+#endif
+		}
+	}
+	else if(item->event_type == RS_CHAT_LOBBY_EVENT_KEEP_ALIVE)		// keep alive packet. 
 	{
 #ifdef CHAT_DEBUG
 		std::cerr << "  adding nickname " << item->nick << " to lobby " << std::hex << item->lobby_id << std::dec << std::endl;
@@ -1712,6 +1729,14 @@ void p3ChatService::sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id)
 
 	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_JOINED,nick) ; 
 }
+void p3ChatService::sendLobbyStatusKeepAlive(const ChatLobbyId& lobby_id)
+{
+	std::string nick ;
+	getNickNameForChatLobby(lobby_id,nick) ;
+
+	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,nick) ; 
+}
+
 void p3ChatService::sendLobbyStatusItem(const ChatLobbyId& lobby_id,int type,const std::string& status_string) 
 {
 	RsChatLobbyEventItem item ;
@@ -2014,6 +2039,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 #ifdef CHAT_DEBUG
 		std::cerr << "  Creating new Lobby entry." << std::endl;
 #endif
+		time_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
@@ -2023,8 +2049,9 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 		entry.lobby_name = it->second.lobby_name ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
-		entry.last_activity = time(NULL) ;
-		entry.last_connexion_challenge_time = time(NULL) ;
+		entry.last_activity = now ;
+		entry.last_connexion_challenge_time = now ;
+		entry.last_keep_alive_packet_time = now ;
 
 		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
@@ -2121,6 +2148,7 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 #ifdef CHAT_DEBUG
 		std::cerr << "  Creating new lobby entry." << std::endl;
 #endif
+		time_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
 		entry.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
@@ -2130,8 +2158,9 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 		entry.lobby_name = it->second.lobby_name ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
-		entry.last_activity = time(NULL) ;
-		entry.last_connexion_challenge_time = time(NULL) ;
+		entry.last_activity = now ; 
+		entry.last_connexion_challenge_time = now ; 
+		entry.last_keep_alive_packet_time = now ;
 
 		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 
@@ -2168,6 +2197,7 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 #ifdef CHAT_DEBUG
 		std::cerr << "  New (unique) ID: " << std::hex << lobby_id << std::dec << std::endl;
 #endif
+		time_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
 		entry.lobby_privacy_level = privacy_level ;
@@ -2177,8 +2207,9 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 		entry.lobby_name = lobby_name ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
-		entry.last_activity = time(NULL) ;
-		entry.last_connexion_challenge_time = time(NULL) ;
+		entry.last_activity = now ;
+		entry.last_connexion_challenge_time = now ;
+		entry.last_keep_alive_packet_time = now ;
 
 		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
@@ -2329,51 +2360,69 @@ void p3ChatService::cleanLobbyCaches()
 	std::cerr << "Cleaning chat lobby caches." << std::endl;
 #endif
 
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	std::list<ChatLobbyId> keep_alive_lobby_ids ;
+	std::list<ChatLobbyId> changed_lobbies ;
 
-	time_t now = time(NULL) ;
-
-	// 1 - clean cache of all lobbies and participating nicknames.
-	//
-	for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.begin();it!=_chat_lobbys.end();++it)
 	{
-		for(std::map<ChatLobbyMsgId,time_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
-			if(it2->second + MAX_KEEP_MSG_RECORD < now)
-			{
-#ifdef CHAT_DEBUG
-				std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
-#endif
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-				std::map<ChatLobbyMsgId,time_t>::iterator tmp(it2) ;
-				++tmp ;
-				it->second.msg_cache.erase(it2) ;
-				it2 = tmp ;
-			}
-			else
-				++it2 ;
+		time_t now = time(NULL) ;
 
-		for(std::map<std::string,time_t>::iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();)
-			if(it2->second + MAX_KEEP_INACTIVE_NICKNAME < now)
-			{
-#ifdef CHAT_DEBUG
-				std::cerr << "  removing inactive nickname 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
-#endif
-
-				std::map<std::string,time_t>::iterator tmp(it2) ;
-				++tmp ;
-				it->second.nick_names.erase(it2) ;
-				it2 = tmp ;
-			}
-			else
-				++it2 ;
-	}
-
-	// 2 - clean deprecated public chat lobby records
-	// 
-	
-	for(std::map<ChatLobbyId,PublicChatLobbyRecord>::iterator it(_public_lobbies.begin());it!=_public_lobbies.end();)
-		if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now)	// this lobby record is too late.
+		// 1 - clean cache of all lobbies and participating nicknames.
+		//
+		for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.begin();it!=_chat_lobbys.end();++it)
 		{
+			for(std::map<ChatLobbyMsgId,time_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
+				if(it2->second + MAX_KEEP_MSG_RECORD < now)
+				{
+#ifdef CHAT_DEBUG
+					std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
+#endif
+
+					std::map<ChatLobbyMsgId,time_t>::iterator tmp(it2) ;
+					++tmp ;
+					it->second.msg_cache.erase(it2) ;
+					it2 = tmp ;
+				}
+				else
+					++it2 ;
+
+			bool changed = false ;
+
+			for(std::map<std::string,time_t>::iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();)
+				if(it2->second + MAX_KEEP_INACTIVE_NICKNAME < now)
+				{
+#ifdef CHAT_DEBUG
+					std::cerr << "  removing inactive nickname 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
+#endif
+
+					std::map<std::string,time_t>::iterator tmp(it2) ;
+					++tmp ;
+					it->second.nick_names.erase(it2) ;
+					it2 = tmp ;
+					changed = true ;
+				}
+				else
+					++it2 ;
+
+			if(changed)
+				changed_lobbies.push_back(it->first) ;
+
+			// 3 - send lobby keep-alive packets to all lobbies
+			//
+			if(it->second.last_keep_alive_packet_time + MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE < now)
+			{
+				keep_alive_lobby_ids.push_back(it->first) ;
+				it->second.last_keep_alive_packet_time = now ;
+			}
+		}
+
+		// 2 - clean deprecated public chat lobby records
+		// 
+
+		for(std::map<ChatLobbyId,PublicChatLobbyRecord>::iterator it(_public_lobbies.begin());it!=_public_lobbies.end();)
+			if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now)	// this lobby record is too late.
+			{
 #ifdef CHAT_DEBUG
 				std::cerr << "  removing old public lobby record 0x" << std::hex << it->first << ", time=" << std::dec << now - it->second.last_report_time << " secs ago" << std::endl;
 #endif
@@ -2382,9 +2431,17 @@ void p3ChatService::cleanLobbyCaches()
 				++tmp ;
 				_public_lobbies.erase(it) ;
 				it = tmp ;
-		}
-		else
-			++it ;
+			}
+			else
+				++it ;
+	}
+
+	for(std::list<ChatLobbyId>::const_iterator it(keep_alive_lobby_ids.begin());it!=keep_alive_lobby_ids.end();++it)
+		sendLobbyStatusKeepAlive(*it) ;
+
+	// update the gui
+	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
+		rsicontrol->getNotify().notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"------------","") ;
 }
 
 
