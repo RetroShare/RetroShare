@@ -139,6 +139,8 @@ private:
 	ChatStyle chatStyle;
 	RSStyle style;
 
+	bool firstShow;
+
 	Ui::ChatWidget *ui;
 };
 

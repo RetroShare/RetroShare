@@ -60,6 +60,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	typing = false;
 	peerStatus = 0;
 	isChatLobby = false;
+	firstShow = true;
 
 	lastStatusSendTime = 0 ;
 	chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
@@ -253,6 +254,13 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 	newMessages = false;
 	emit infoChanged(this);
 	focusDialog();
+
+	if (firstShow) {
+		// Workaround: now the scroll position is correct calculated
+		firstShow = false;
+		QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+		scrollbar->setValue(scrollbar->maximum());
+	}
 }
 
 void ChatWidget::resizeEvent(QResizeEvent */*event*/)
@@ -302,10 +310,6 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, message, formatFlag);
 
 	ui->textBrowser->append(formatMsg);
-
-	/* Scroll to the end */
-	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
-	scrollbar->setValue(scrollbar->maximum());
 
 	resetStatusBar();
 
