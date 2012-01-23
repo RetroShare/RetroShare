@@ -55,6 +55,7 @@ private slots:
     void makeFriend();
     void denyFriend();
     void signGPGKey();
+    void loadInvitePage();
 
     void showHelpDialog();
     /** Called when a child window requests the given help <b>topic</b>. */

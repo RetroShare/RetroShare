@@ -78,6 +78,7 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
+    connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
 #ifndef MINIMAL_RSGUI
     MainWindow *w = MainWindow::getInstance();
@@ -322,7 +323,23 @@ void ConfCertDialog::load()
     }
     ui.signers->setHtml(text);
 
-    std::string invite = rsPeers->GetRetroshareInvite(detail.id,true) ; // this needs to be a SSL id
+	 loadInvitePage() ;
+}
+
+void ConfCertDialog::loadInvitePage()
+{
+	RsPeerDetails detail;
+    if (!rsPeers->getPeerDetails(mId, detail))
+    {
+        QMessageBox::information(this,
+                                 tr("RetroShare"),
+                                 tr("Error : cannot get peer details."));
+        close();
+        return;
+    }
+
+
+    std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
 
     ui.userCertificateText->setReadOnly(true);
     ui.userCertificateText->setMinimumHeight(200);

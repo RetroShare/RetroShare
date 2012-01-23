@@ -320,7 +320,7 @@ TextPage::TextPage(QWidget *parent)
     userCertButtonsLayout = new QVBoxLayout();
     userCertButtonsLayout->addWidget(userCertHelpButton);
 
-	 if(rsPeers->hasExportMinimal())
+//	 if(rsPeers->hasExportMinimal())
 		 userCertButtonsLayout->addWidget(userCertIncludeSignaturesButton);
 
     userCertButtonsLayout->addWidget(userCertCopyButton);

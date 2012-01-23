@@ -33,6 +33,7 @@
 #include "pqi/pqinotify.h"
 
 #include <util/rsdir.h>
+#include <util/pgpkey.h>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -1385,12 +1386,12 @@ bool	AuthGPGimpl::isGPGAccepted(const std::string &id)
 std::string AuthGPGimpl::SaveCertificateToString(const std::string &id,bool include_signatures)
 {
 
-        if (!isGPGId(id)) {
-                std::cerr << "AuthGPGimpl::SaveCertificateToString() unknown ID" << std::endl;
-                return "";
+	if (!isGPGId(id)) {
+		std::cerr << "AuthGPGimpl::SaveCertificateToString() unknown ID" << std::endl;
+		return "";
 	}
 
-        RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
+	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
 	std::string tmp;
 	const char *pattern[] = { NULL, NULL };
@@ -1408,17 +1409,17 @@ std::string AuthGPGimpl::SaveCertificateToString(const std::string &id,bool incl
 
 	if (GPG_ERR_NO_ERROR != gpgme_data_new (&gpgmeData))
 	{
-                std::cerr << "Error create Data" << std::endl;
+		std::cerr << "Error create Data" << std::endl;
 	}
 	gpgme_set_armor (CTX, 1);
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_export_ext (CTX, pattern, export_mode, gpgmeData))
 	{
-                std::cerr << "Error export Data" << std::endl;
+		std::cerr << "Error export Data" << std::endl;
 	}
 
 	fflush (NULL);
-        //showData (gpgmeData);
+	//showData (gpgmeData);
 
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);
@@ -1432,12 +1433,19 @@ std::string AuthGPGimpl::SaveCertificateToString(const std::string &id,bool incl
 	delete[] str ;
 
 #ifdef GPG_DEBUG
-        std::cerr << "Exported Certificate: " << std::endl << tmp << std::endl;
+	std::cerr << "Exported Certificate: " << std::endl << tmp << std::endl;
 #endif
 
 	gpgme_free(export_txt);
 
-	return tmp;
+	// Try to remove signatures manually.
+	//
+	std::string cleaned_key ;
+
+	if( (!include_signatures) && PGPKeyManagement::createMinimalKey(tmp,cleaned_key))
+		return cleaned_key ;
+	else
+		return tmp;
 }
 
 /* import to GnuPG and other Certificates */
