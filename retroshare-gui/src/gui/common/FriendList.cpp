@@ -376,7 +376,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 					 //            contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Profile View"), this, SLOT(viewprofile()));
 					 //            action = contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Export Friend"), this, SLOT(exportfriend()));
 
-					 if (type == TYPE_GPG) {
+					 if (type == TYPE_GPG || type == TYPE_SSL) {
 						 contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
 					 }
 
@@ -1247,8 +1247,20 @@ void FriendList::recommendfriend()
     if (!peer)
         return;
 
+    std::string peerId = getRsId(peer);
     std::list<std::string> ids;
-    ids.push_back(getRsId(peer));
+
+    switch (peer->type()) {
+    case TYPE_SSL:
+        ids.push_back(peerId);
+        break;
+    case TYPE_GPG:
+        rsPeers->getAssociatedSSLIds(peerId, ids);
+        break;
+    default:
+        return;
+    }
+
     MessageComposer::recommendFriend(ids);
 }
 

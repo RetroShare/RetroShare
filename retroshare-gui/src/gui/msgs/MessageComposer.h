@@ -48,7 +48,7 @@ public:
     ~MessageComposer();
 
     static void msgFriend(std::string id, bool group);
-    static void recommendFriend(std::list <std::string> &peerids);
+    static void recommendFriend(std::list <std::string> &sslIds);
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);

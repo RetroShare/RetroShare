@@ -388,15 +388,15 @@ void MessageComposer::processSettings(bool bLoad)
     /* window will destroy itself! */
 }
 
-static QString BuildRecommendHtml(std::list<std::string> &peerids)
+static QString buildRecommendHtml(std::list<std::string> &sslIds)
 {
     QString text;
 
-    /* process peer ids */
-    std::list <std::string>::iterator peerid;
-    for (peerid = peerids.begin(); peerid != peerids.end(); peerid++) {
+    /* process ssl ids */
+    std::list <std::string>::iterator sslIt;
+    for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
         RetroShareLink link;
-        if (link.createPerson(*peerid)) {
+        if (link.createCertificate(*sslIt)) {
             text += link.toHtml() + "<br>";
         }
     }
@@ -404,11 +404,11 @@ static QString BuildRecommendHtml(std::list<std::string> &peerids)
     return text;
 }
 
-void MessageComposer::recommendFriend(std::list <std::string> &peerids)
+void MessageComposer::recommendFriend(std::list <std::string> &sslIds)
 {
 //    std::cerr << "MessageComposer::recommendFriend()" << std::endl;
 
-    if (peerids.size() == 0) {
+    if (sslIds.size() == 0) {
         return;
     }
 
@@ -419,11 +419,11 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
 
     QString sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy friend link and paste to Friends list");
     sMsgText += "<br><br>";
-    sMsgText += BuildRecommendHtml(peerids);
+    sMsgText += buildRecommendHtml(sslIds);
     pMsgDialog->insertMsgText(sMsgText);
 
     std::list <std::string>::iterator peerIt;
-    for (peerIt = peerids.begin(); peerIt != peerids.end(); peerIt++) {
+    for (peerIt = sslIds.begin(); peerIt != sslIds.end(); peerIt++) {
         pMsgDialog->addRecipient(CC, *peerIt, false);
     }
 
@@ -2355,7 +2355,7 @@ void MessageComposer::addBcc()
 
 void MessageComposer::addRecommend()
 {
-    std::list<std::string> gpgIds;
+    std::list<std::string> sslIds;
 
     QTreeWidgetItemIterator itemIterator(ui.msgSendList);
     QTreeWidgetItem *item;
@@ -2372,35 +2372,36 @@ void MessageComposer::addRecommend()
                     continue;
                 }
 
-                std::list<std::string>::iterator it;
-                for (it = groupInfo.peerIds.begin(); it != groupInfo.peerIds.end(); it++) {
-                    if (std::find(gpgIds.begin(), gpgIds.end(), *it) == gpgIds.end()) {
-                        gpgIds.push_back(*it);
+                std::list<std::string>::iterator gpgIt;
+                for (gpgIt = groupInfo.peerIds.begin(); gpgIt != groupInfo.peerIds.end(); gpgIt++) {
+                    std::list<std::string> groupSslIds;
+                    rsPeers->getAssociatedSSLIds(*gpgIt, groupSslIds);
+
+                    std::list<std::string>::iterator sslIt;
+                    for (sslIt = groupSslIds.begin(); sslIt != groupSslIds.end(); sslIt++) {
+                        if (std::find(sslIds.begin(), sslIds.end(), *sslIt) == sslIds.end()) {
+                            sslIds.push_back(*sslIt);
+                        }
                     }
                 }
             } else {
-                RsPeerDetails detail;
-                if (rsPeers->getPeerDetails(id, detail) == false) {
-                    continue;
-                }
-
-                if (std::find(gpgIds.begin(), gpgIds.end(), detail.gpg_id) == gpgIds.end()) {
-                    gpgIds.push_back(detail.gpg_id);
+                if (std::find(sslIds.begin(), sslIds.end(), id) == sslIds.end()) {
+                    sslIds.push_back(id);
                 }
             }
         }
     }
 
-    if (gpgIds.empty()) {
+    if (sslIds.empty()) {
         return;
     }
 
     std::list <std::string>::iterator it;
-    for (it = gpgIds.begin(); it != gpgIds.end(); it++) {
+    for (it = sslIds.begin(); it != sslIds.end(); it++) {
         addRecipient(CC, *it, false);
     }
 
-    QString text = BuildRecommendHtml(gpgIds);
+    QString text = buildRecommendHtml(sslIds);
     ui.msgText->textCursor().insertHtml(text);
     ui.msgText->setFocus(Qt::OtherFocusReason);
 }
