@@ -38,10 +38,11 @@ class CryptoPage : public ConfigPage
       /** Saves the changes on this page */
       bool save(QString &errmsg);
       /** Loads the settings for this page */
-      void load();
 
   private slots:
+      void load();
       void copyPublicKey();
+		void copyRSLink() ;
       
       bool fileSave();
       bool fileSaveAs();

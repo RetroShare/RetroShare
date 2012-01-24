@@ -27,6 +27,7 @@
 
 #include "CryptoPage.h"
 #include "util/misc.h"
+#include <gui/RetroShareLink.h>
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 
@@ -39,6 +40,8 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 
   connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
+  connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
+  connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -65,11 +68,32 @@ CryptoPage::load()
     QFont font("Courier New",9,50,false) ;
     ui.certtextEdit->setFont(font) ;
 
-    ui.certtextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(true).c_str()));
+    ui.certtextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked()).c_str()));
     ui.certtextEdit->setReadOnly(true);
     ui.certtextEdit->setMinimumHeight(200);
 }
+void
+CryptoPage::copyRSLink()
+{
+	RetroShareLink link ;
+	std::string ownId = rsPeers->getOwnId() ;
 
+	if( link.createCertificate(ownId) )
+	{
+		QList<RetroShareLink> urls ;
+
+		urls.push_back(link) ;
+		RSLinkClipboard::copyLinks(urls) ;
+		QMessageBox::information(this,
+				tr("RetroShare"),
+				tr("A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your"
+					" friend via email or some other way"));
+	}
+	else
+		QMessageBox::warning(this,
+				tr("Error"),
+				tr("Your certificate could not be parsed correctly. Please contact the developpers."));
+}
 void
 CryptoPage::copyPublicKey()
 {
