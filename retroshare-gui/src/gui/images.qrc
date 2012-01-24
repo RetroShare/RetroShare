@@ -26,6 +26,7 @@
         <file>images/edit_16.png</file>
         <file>images/feedback_arrow.png</file>
         <file>images/feedback_arrow_hover.png</file>
+        <file>images/firewall_24.png</file>
         <file>images/list_bullet_arrow.png</file>
         <file>images/rc_combined.png</file>
         <file>images/combobox_arrow.png</file>
@@ -438,6 +439,7 @@
         <file>images/user/friends24.png</file>
         <file>images/user/identity16.png</file>
         <file>images/user/identity24.png</file>
+        <file>images/user/identity24_low.png</file>
         <file>images/user/identity32.png</file>
         <file>images/user/identity48.png</file>
         <file>images/user/identityoffline24.png</file>
@@ -445,6 +447,7 @@
         <file>images/user/identity24busy.png</file>
         <file>images/user/identity24idle.png</file>
         <file>images/user/identityavaiblecyan24.png</file>
+        <file>images/user/invite24.png</file>
         <file>images/user/agt_forum24.png</file>
         <file>images/user/identitygray16.png</file>
         <file>images/user/add_user16.png</file>
