@@ -1,7 +1,85 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
-  	  - Added Chat Lobbies: decentalized anonymous chat rooms.
+     - added retroshare certificate links: allows to paste certificates everywhere.
+     - added certificate links in friend recommandations
+     - added certificate cleaning method, to remove signatures at export
+     - improved chat lobby GUI
+         * added proper counting of peers in chat lobbies, using keep-alive packets, time stamps, etc.
+         * Moved the chat lobby tabs to the FriendsDialog.
+         * Extracted a new widget ChatWidget for the basic chat handling from the 
+             PopupChatDialog and use it in ChatLobbyDialog too.
+         * Added an own ui for the ChatLobbyDialog.
+         * Saved settings of the ChatLobbyDialog.
+     - Reworked SoundManager and SoundPage in the settings.
+     - Added new icon in the statusbar to switch off the sound
+     - Enabled Relays by default. 
+         * This will only effect people who upgrade from a very old version.
+         * Other people will have to switch it on manually.
+         * Default is 0 friends, 1 FOF & 1 General @ 1kb/s... max 4kb/s usage per peer.
+     - Disabled Thread debugging.
+     - Fixed up bdProxyId initialisation
+     - Improved Error Code translation (for unknown entries)
+     - cleaned up some of the std::cerr output.
+     - Changed parameters of RsStatus interface from "std::string" to "const std::string&"
+     - Fixed german language.
+
+     - Added Native (Bonjour API) Nat Port Forwarding to OSX.
+        * new classe p3zcNatAssist
+        * moved some common ZeroConf functions / definitions around.
+        * moved virtual tick() to parent class: pqiNetAssist
+        * added zcNetAssist section to makefiles. (active for OSX build)
+        * setup switch between p3zcNatAssist & upnphandler in rsinit.cc
+
+     - Changes to support Relays.
+        * added p3BitDht::addKnownNode() so that DhtIds can be used instead of SslIds.
+        * switched from bdStdDht() functions to use bdModDht().
+        * made DhtFunctions a class variable.
+        * added function to modify NodePerBucket() parameter.
+        * Bugfix for LinkType. peerConnectAddress.flags was not initialised.
+        * Extra debugging of LinkType data (use LINKMGR_DEBUG_LINKTYPE).
+        * cleaned up udprelay output.
+        * Added Compile Rules to libretroshare.pro for building LocalNet Testing Version. (testnetwork)
+        * Added NumQueryNodes() function to bdDhtFunctions.
+        * Switched bdquery.cc to use bdNumQueryNodes().
+        * Extended bdStdDht class to bdModDht to allow NodesPerBucket to be modified.
+        * Fixed up Connection Fail Callback for Relay Servers.
+        * Added Extra debugging for Proxy Connections.
+        * disabled turtle routing for relayed connexions
+
+  * Bugs
+     - lobby participant list now updated when peers join/leave
+     - Added chat lobby privacy type to lobby invite => lobby type is propagated 
+        correctly to friends that are invited.
+     - Bugfix for natassist (zeroconf returns 0.0.0.0:0 when its doesn't work).
+     - Logged IP Addresses for Failed incoming connections.
+     - Hacked IP address into the NewsFeed notifications (ugly).
+
+     - Attempts at fixing disconnections :)
+        * Added limit of 10kB for Certificate size. If it is bigger - discard certificate.
+        * Remove certificates for slow / trickle connections (for Relay connections).
+        * Disabled check for gpgcert text in p3disc.
+        * Disabled creation of GPG Cert in AuthGPG.
+        * Added extra error code to pqinetwork.
+        * Added DataRate accounting to Relay and Dht.
+        * Rates are exposed through rsDht.h interface.
+        * Added LastIncomingTS() to pqistreamer.
+        * Turned HeartBeat reset() into a warning.
+        * Added NoPacket in 60 sec reset().
+        * Minor typos/errors corrected.
+
+     - Fixed message reply and forward. The new lines were removed falsely.
+     - Improved logging of Connection Behaviours.
+     - Added history for chat lobbies and disabled it until the lobbies are saved.
+     - Added check in cachestrapper to see if a duplicate cache has been requested.
+        In this case, don't cancel the old one - just keep going!
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 24 Jan 2012 19:00:00 +0100
+
+retroshare (0.5.2-0.4783~natty) natty; urgency=low
+
+  * Improvements
+      - Added Chat Lobbies: decentalized anonymous chat rooms.
         * Chat lobbies are private (on invitation only) or public (friends can join)
         * Bit of GUI to show lobby list, with one tab per active chat lobby
         * Most fonctionality of chat are ported to lobbies including status messages
@@ -62,7 +140,7 @@ retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
        retroshare-gui
         * added Relay configuration panel.
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 12 Dec 2011 19:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 12 Jan 2012 19:00:00 +0100
 
 retroshare (0.5.2-0.4747~natty) natty; urgency=low
 
