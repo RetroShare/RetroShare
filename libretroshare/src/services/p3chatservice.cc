@@ -40,10 +40,10 @@
  * #define CHAT_DEBUG 1
  ****/
 
-static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   15 ; // sends a connexion challenge every 15 messages
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connexion challenge every 20 messages
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
-static const time_t 	MAX_KEEP_MSG_RECORD 					  =  240 ; // keep msg record for 240 secs max.
+static const time_t 	MAX_KEEP_MSG_RECORD 					  = 1200 ; // keep msg record for 1200 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
 static const time_t  MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
@@ -1280,25 +1280,13 @@ std::string p3ChatService::getCustomStateString(const std::string& peer_id)
 
 	std::map<std::string,StateStringInfo>::iterator it = _state_strings.find(peer_id) ; 
 
-#ifdef CHAT_DEBUG
-	std::cerr << "p3chatservice:: status string for peer " << peer_id << " requested from above. " << std::endl ;
-#endif
 	// has it. Return it strait away.
 	//
 	if(it!=_state_strings.end())
 	{
 	   it->second._peer_is_new = false ;
-#ifdef CHAT_DEBUG
-	   std::cerr << "Already has status string. Returning it" << std::endl ;
-#endif
 	   return it->second._custom_status_string ;
 	}
-
-
-#ifdef CHAT_DEBUG
-		std::cerr << "No status string for this peer. requesting it." << std::endl ;
-#endif
-
 
 	sendCustomStateRequest(peer_id);
 	return std::string() ;
@@ -1660,13 +1648,14 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 
 		// Checks wether the msg is already recorded or not
 
-		std::map<ChatLobbyMsgId,time_t>::const_iterator it2(lobby.msg_cache.find(item->msg_id)) ;
+		std::map<ChatLobbyMsgId,time_t>::iterator it2(lobby.msg_cache.find(item->msg_id)) ;
 
 		if(it2 != lobby.msg_cache.end()) // found!
 		{
 #ifdef CHAT_DEBUG
 			std::cerr << "  Msg already received at time " << it2->second << ". Dropping!" << std::endl ;
 #endif
+			it2->second = now ;	// update last msg seen time, to prevent echos.
 			return false ;
 		}
 #ifdef CHAT_DEBUG
