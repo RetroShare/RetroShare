@@ -133,7 +133,7 @@ private:
 
     QFont mCurrentFont; /* how the text will come out */
 
-    int newsFeedTabIndex;
+    QWidget *newsFeed;
     QColor newsFeedTabColor;
     QString newsFeedText;
 

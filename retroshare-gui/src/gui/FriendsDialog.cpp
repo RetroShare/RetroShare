@@ -95,8 +95,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->setTabPosition(QTabWidget::North);
     ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
     ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    NewsFeed *newsFeed = new NewsFeed();
-    newsFeedTabIndex = ui.tabWidget->addTab(newsFeed, tr("News Feed"));
+    newsFeed = new NewsFeed();
+    int newsFeedTabIndex = ui.tabWidget->addTab(newsFeed, tr("News Feed"));
 
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
@@ -805,6 +805,11 @@ void FriendsDialog::on_actionAdd_Group_activated()
 
 void FriendsDialog::newsFeedChanged(int count)
 {
+    int newsFeedTabIndex = ui.tabWidget->indexOf(newsFeed);
+    if (newsFeedTabIndex < 0) {
+        return;
+    }
+
     if (count) {
         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
