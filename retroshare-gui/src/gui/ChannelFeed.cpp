@@ -488,14 +488,14 @@ void ChannelFeed::updateChannelMsgs()
 
     if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
         postButton->setEnabled(true);
-        actionsetAllAsRead->setEnabled(false);
+        actionEnable_Auto_Download->setEnabled(false);
     } else {
         postButton->setEnabled(false);
     }
 
     if(!(ci.channelFlags & RS_DISTRIB_PUBLISH) &&
     	(ci.channelFlags & RS_DISTRIB_SUBSCRIBED))
-    	actionsetAllAsRead->setEnabled(true);
+    	actionEnable_Auto_Download->setEnabled(true);
 
 
     std::list<ChannelMsgSummary> msgs;
