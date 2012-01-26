@@ -31,13 +31,20 @@
 #include <openssl/ssl.h>
 #include <set>
 
-/*
+/*!
  * GIXP: General Identity Exchange Protocol.
  *
  * As we're always running into troubles with GPG signatures... we are going to
  * create a layer of RSA Keys for the following properties:
  *
  * 1) RSA Keys can be Anonymous, Self-Signed with Pseudonym, Signed by GPG Key.
+ * To clarify:
+ *    a. This forms a layer of keys stay between GPG and pub/priv publish key ?
+ *    b. Difference between anonymous and pseudonym keys?
+ *            - Anonymous cannot be signed?
+ *            -
+ *    c. To some extent this determines security model of RsGeneralExchangeService
+
  *	- Anonymous & Pseudonym Keys will be shared network-wide (Hop by Hop).
         - GPG signed Keys will only be shared if we can validate the signature
                 (providing similar behaviour to existing GPG Keys).
@@ -45,6 +52,8 @@
  * 2) These keys can be used anywhere, specifically in the protocols described below.
  * 3) These keys can be used to sign, encrypt, verify & decrypt
  * 4) Keys will never need to be directly accessed - stored in this class.
+ *     a. I guess can work solely through Id
+ *     b. Use Case: Receivve a message, has a key id, request
  * 5) They will be cached locally and exchanged p2p, by pull request.
  * 6) This class will use the generalised packet storage for efficient caching & loading.
  * 7) Data will be stored encrypted.
