@@ -89,6 +89,7 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
 	connect(ui.actionSetOnTop, SIGNAL(toggled(bool)), this, SLOT(setOnTop()));
 
 	connect(ui.tabWidget, SIGNAL(tabChanged(ChatDialog*)), this, SLOT(tabChanged(ChatDialog*)));
+	connect(ui.tabWidget, SIGNAL(tabClosed(ChatDialog*)), this, SLOT(tabClosed(ChatDialog*)));
 
 	if (tabbedWindow) {
 		/* signal toggled is called */
@@ -163,14 +164,12 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 
 	QObject::connect(dialog, SIGNAL(infoChanged(ChatDialog*)), this, SLOT(tabInfoChanged(ChatDialog*)));
 	QObject::connect(dialog, SIGNAL(newMessage(ChatDialog*)), this, SLOT(tabNewMessage(ChatDialog*)));
-	QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 }
 
 void PopupChatWindow::removeDialog(ChatDialog *dialog)
 {
 	QObject::disconnect(dialog, SIGNAL(infoChanged(ChatDialog*)), this, SLOT(tabInfoChanged(ChatDialog*)));
 	QObject::disconnect(dialog, SIGNAL(newMessage(ChatDialog*)), this, SLOT(tabNewMessage(ChatDialog*)));
-	QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 
 	if (tabbedWindow) {
 		ui.tabWidget->removeDialog(dialog);
@@ -272,9 +271,13 @@ void PopupChatWindow::getAvatar()
 	}
 }
 
-void PopupChatWindow::dialogClose(ChatDialog *dialog)
+void PopupChatWindow::tabClosed(ChatDialog *dialog)
 {
-	removeDialog(dialog);
+	if (tabbedWindow) {
+		if (ui.tabWidget->count() == 0) {
+			deleteLater();
+		}
+	}
 }
 
 void PopupChatWindow::tabChanged(ChatDialog *dialog)

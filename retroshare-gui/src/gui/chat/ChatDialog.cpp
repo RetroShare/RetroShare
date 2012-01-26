@@ -44,8 +44,6 @@ ChatDialog::ChatDialog(QWidget *parent, Qt::WFlags flags) :
 
 ChatDialog::~ChatDialog()
 {
-	emit dialogClose(this);
-
 	std::map<std::string, ChatDialog *>::iterator it;
 	if (chatDialogs.end() != (it = chatDialogs.find(getPeerId()))) {
 		chatDialogs.erase(it);

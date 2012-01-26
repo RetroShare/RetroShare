@@ -56,7 +56,7 @@ private slots:
 	void tabChanged(ChatDialog *dialog);
 	void tabInfoChanged(ChatDialog *dialog);
 	void tabNewMessage(ChatDialog *dialog);
-	void dialogClose(ChatDialog *dialog);
+	void tabClosed(ChatDialog *dialog);
 	void dockTab();
 	void undockTab();
 	void setStyle();

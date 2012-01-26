@@ -71,6 +71,8 @@ void ChatTabWidget::tabClose(int tab)
 
 	if (dialog) {
 		if (dialog->canClose()) {
+			removeDialog(dialog);
+			emit tabClosed(dialog);
 			dialog->deleteLater();
 		}
 	}

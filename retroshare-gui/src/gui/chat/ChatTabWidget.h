@@ -46,6 +46,7 @@ public:
 
 signals:
 	void tabChanged(ChatDialog *dialog);
+	void tabClosed(ChatDialog *dialog);
 	void infoChanged();
 
 private slots:

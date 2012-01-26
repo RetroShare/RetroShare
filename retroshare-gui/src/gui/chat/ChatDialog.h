@@ -64,7 +64,6 @@ public:
 	void focusDialog();
 
 signals:
-	void dialogClose(ChatDialog *dialog);
 	void infoChanged(ChatDialog *dialog);
 	void newMessage(ChatDialog *dialog);
 
