@@ -39,6 +39,7 @@
 /****
  * #define CHAT_DEBUG 1
  ****/
+#define CHAT_DEBUG 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connexion challenge every 20 messages
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds

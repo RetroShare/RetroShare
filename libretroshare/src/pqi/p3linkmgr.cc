@@ -2144,6 +2144,7 @@ int p3LinkMgrIMPL::addFriend(const std::string &id, bool isVisible)
 		pcs.name = "NoName";
 		pcs.state = RS_PEER_S_FRIEND;
 		pcs.actions = RS_PEER_NEW;
+		pcs.linkType = RS_NET_CONN_SPEED_UNKNOWN ;
 	
 		mFriendList[id] = pcs;
 

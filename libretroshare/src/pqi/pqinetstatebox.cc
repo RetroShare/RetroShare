@@ -190,24 +190,34 @@ void pqiNetStateBox::reset()
 	mStunDhtSet = false;
 	mStunDhtTS = 0;
 	mStunDhtStable = false;
+	mStunDhtAddr.sin_addr.s_addr = 0 ;
+	mStunDhtAddr.sin_port = 0 ;
 	//struct sockaddr_in mStunDhtAddr;
 	
 	mStunProxySet = false;
 	mStunProxySemiStable = false; 
 	mStunProxyTS = 0;
 	mStunProxyStable = false;
+	mStunProxyAddr.sin_addr.s_addr = 0 ;
+	mStunProxyAddr.sin_port = 0 ;
 	//struct sockaddr_in mStunProxyAddr;
 	
 	mUPnPSet = false;
 	mUPnPActive = false;
+	mUPnPAddr.sin_addr.s_addr = 0 ;
+	mUPnPAddr.sin_port = 0 ;
 	//struct sockaddr_in mUPnPAddr;
 
 	mNatPMPSet = false;
 	mNatPMPActive = false;
+	mNatPMPAddr.sin_addr.s_addr = 0 ;
+	mNatPMPAddr.sin_port = 0 ;
 	//struct sockaddr_in mNatPMPAddr;
 
 	mWebIPSet = false;
 	mWebIPActive = false;
+	mWebIPAddr.sin_addr.s_addr = 0 ;
+	mWebIPAddr.sin_port = 0 ;
 	//struct sockaddr_in mWebIPAddr;
 
 	mPortForwardSet = false;
