@@ -1284,6 +1284,12 @@ bool     RsInit::GenerateSSLCertificate(const std::string& gpg_id, const std::st
 			country.c_str(),
 			nbits, errString);
 
+	if (req == NULL)
+	{
+		fprintf(stderr,"RsGenerateCert() Couldn't create Request. Reason: %s\n", errString.c_str());
+		return false;
+	}
+
 	long days = 3000;
 	X509 *x509 = AuthSSL::getAuthSSL()->SignX509ReqWithGPG(req, days);
 

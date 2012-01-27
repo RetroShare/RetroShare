@@ -97,7 +97,7 @@ again:
 			len = buf.size() ;
 			out = new char[len] ;
 
-			memcpy(out,buf.data(),len) ;
+			memcpy(out,&buf[0],len) ;
 		}
 
 		/****************

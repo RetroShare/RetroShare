@@ -46,6 +46,9 @@ static std::list<std::string> waitingIds;
  ****/
 //#define PGRP_DEBUG 1
 
+#define DEFAULT_DOWNLOAD_KB_RATE	(200.0)
+#define DEFAULT_UPLOAD_KB_RATE		(50.0)
+
 /* MUTEX NOTES:
  * Functions like GetRsRawItem() lock itself (pqihandler) and
  * likewise ServiceServer and ConfigMgr mutex themselves.
@@ -265,8 +268,9 @@ int     pqipersongrp::load_config()
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone,
 			"pqipersongrp::load_config() Loading Default Rates!");
 
-		setMaxRate(true,  500.0);
-		setMaxRate(false, 500.0);
+
+		setMaxRate(true,  DEFAULT_DOWNLOAD_KB_RATE);
+		setMaxRate(false, DEFAULT_UPLOAD_KB_RATE);
 	}
 
 	return 1;
