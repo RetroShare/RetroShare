@@ -648,16 +648,15 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
 #endif
 
-	if (certGpgId.empty()) {
+	if (certGpgId.empty()) 
+	{
 #ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::recvPeerFriendMsg() gpg cert is not good, aborting" << std::endl;
+		std::cerr << "p3disc::recvPeerFriendMsg() gpg cert Id is empty - cert not transmitted" << std::endl;
 #endif
-		return;
 	}
-        if (item->aboutId == "" || item->aboutId != certGpgId) {
-#ifdef P3DISC_DEBUG
+	else if (item->aboutId == "" || item->aboutId != certGpgId) 
+	{
 		std::cerr << "p3disc::recvPeerFriendMsg() Error : about id is not the same as gpg id." << std::endl;
-#endif
 		return;
 	}
 
@@ -680,10 +679,10 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
-
 		pit->print(std::cerr, 10);
 		std::cerr << std::endl;
 #endif
+
 		if (pit->pid != rsPeers->getOwnId())
 		{
 			// Apparently, the connect manager won't add a friend if the gpg id is not
@@ -835,6 +834,11 @@ void p3disc::recvAskInfo(RsDiscAskInfo *item)
 void p3disc::recvDiscReply(RsDiscReply *dri)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::recvDiscReply() From: " << dri->PeerId() << " About: " << dri->aboutId;
+	std::cerr << std::endl;
+#endif
 
 	/* search pending item and remove it, when already exist */
 	std::list<RsDiscReply*>::iterator it;
