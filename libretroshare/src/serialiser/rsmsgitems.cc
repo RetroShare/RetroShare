@@ -46,7 +46,7 @@ std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 	out << "QblogMs " << chatFlags << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "sendTime:  " << sendTime  << std::endl;
+	out << "sendTime:  " << sendTime  << " (" << time(NULL)-sendTime << " secs ago)" << std::endl;
 
 	printIndent(out, int_Indent);
 
@@ -97,6 +97,7 @@ std::ostream& RsChatLobbyEventItem::print(std::ostream &out, uint16_t indent)
 	RsChatLobbyBouncingObject::print(out,indent) ;
 	printIndent(out, indent); out << "Event type  : " << event_type  << std::endl;
 	printIndent(out, indent); out << "String param: " << string1  << std::endl;
+	printIndent(out, indent); out << "Send time: " << sendTime  << " (" << time(NULL)-sendTime << " secs ago)" << std::endl;
 	printRsItemEnd(out, "RsChatLobbyEventItem", indent);
 	return out;
 } 
@@ -148,7 +149,7 @@ std::ostream& RsPrivateChatMsgConfigItem::print(std::ostream &out, uint16_t inde
 	out << "QblogMs " << configFlags << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "sendTime:  " << sendTime  << std::endl;
+	out << "sendTime:  " << sendTime  << " (" << time(NULL)-sendTime << " secs ago)" << std::endl;
 
 	printIndent(out, int_Indent);
 
@@ -271,6 +272,7 @@ uint32_t RsChatLobbyEventItem::serial_size()
 	s += RsChatLobbyBouncingObject::serial_size() ;
 	s += 1 ; // event_type
 	s += GetTlvStringSize(string1) ;	// string1
+	s += 4 ; // send time
 
 	return s ;
 }
@@ -506,6 +508,7 @@ bool RsChatLobbyEventItem::serialise(void *data, uint32_t& pktsize)
 	ok &= RsChatLobbyBouncingObject::serialise(data,tlvsize,offset) ;		// first, serialize parent
 	ok &= setRawUInt8(data, tlvsize, &offset, event_type);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, string1);
+	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
 
 	pktsize = tlvsize ;
 
@@ -752,7 +755,7 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/,uint8_t subtype)
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat msg item." << std::endl ;
 #endif
-	if (getRsItemSubType(getRsItemId(data)) == subtype && offset != rssize)
+	if (getRsItemSubType(getRsItemId(data)) == RS_PKT_SUBTYPE_DEFAULT && offset != rssize)
 		std::cerr << "Size error while deserializing." << std::endl ;
 	if (!ok)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
@@ -841,6 +844,7 @@ RsChatLobbyEventItem::RsChatLobbyEventItem(void *data,uint32_t /*size*/)
 
 	ok &= getRawUInt8(data, rssize, &offset, &event_type);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, string1);
+	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat lobby status item." << std::endl ;

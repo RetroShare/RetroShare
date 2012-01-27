@@ -160,7 +160,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool acceptLobbyInvite(const ChatLobbyId& id) ;
 		void denyLobbyInvite(const ChatLobbyId& id) ;
 		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
-		void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
+		void invitePeerToLobby(const ChatLobbyId&, const std::string& peer_id,bool connexion_challenge = false) ;
 		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
 		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
 		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;

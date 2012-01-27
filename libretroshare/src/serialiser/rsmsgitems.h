@@ -56,11 +56,12 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPREC = 0x07 ;	// don't use ! De
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     	= 0x08 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  	= 0x09 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	= 0x0A ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT      	= 0x0B ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT_DEPREC  = 0x0B ;	// don't use ! Deprecated
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	= 0x0C ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	= 0x0D ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x0E ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	= 0x10 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -167,6 +168,7 @@ class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
 		//
 		uint8_t event_type ;		// used for defining the type of event.
 		std::string string1;		// used for any string
+		uint32_t sendTime;		// used to check for old looping messages
 };
 
 class RsChatLobbyListRequestItem: public RsChatItem
