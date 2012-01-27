@@ -92,6 +92,7 @@ private:
     static bool filterItem(QTreeWidgetItem *pItem, const QString &sPattern);
     void updateHeader();
     void initializeHeader(bool afterLoadSettings);
+    void getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string> &sslIds);
 
 private slots:
     void groupsChanged();

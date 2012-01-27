@@ -996,13 +996,13 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+164"/>
+        <location line="+181"/>
         <location line="+3"/>
         <source>Set all as read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="-238"/>
+        <location line="-255"/>
         <source>Unsubcribe To Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
@@ -1073,7 +1073,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+127"/>
+        <location filename="../gui/ChannelFeed.ui" line="+144"/>
         <location line="+3"/>
         <location filename="../gui/ChannelFeed.cpp" line="+2"/>
         <source>Enable Auto-Download</source>
@@ -1088,7 +1088,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatDialog</name>
     <message>
-        <location filename="../gui/chat/ChatDialog.cpp" line="+226"/>
+        <location filename="../gui/chat/ChatDialog.cpp" line="+237"/>
         <source>Friend not Online</source>
         <translation>Freund ist nicht online</translation>
     </message>
@@ -1194,7 +1194,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+248"/>
+        <location line="+240"/>
         <source>Invitation to chat lobby</source>
         <translation>Einladung zur Chat Lobby</translation>
     </message>
@@ -4744,7 +4744,7 @@ p, li { white-space: pre-wrap; }
         <translation>Standort</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <source>Message Group</source>
         <translation>Gruppe anschreiben</translation>
     </message>
@@ -4764,27 +4764,26 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Create chat lobby</source>
-        <translation>Erstelle Chat Lobby</translation>
+        <translation type="obsolete">Erstelle Chat Lobby</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-6"/>
+        <location line="+7"/>
         <source>Chat lobbies</source>
         <translation>Chat Lobbies</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>create new</source>
-        <translation>Erstellen</translation>
+        <translation type="obsolete">Erstellen</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+116"/>
         <source>Invite this friend</source>
         <translation>Lade diesen Freund ein</translation>
     </message>
@@ -4799,7 +4798,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbestellen</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-124"/>
         <source>Message Friend</source>
         <translation>Freund anschreiben</translation>
     </message>
@@ -4830,12 +4829,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+3"/>
-        <location line="+79"/>
+        <location line="+110"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="-73"/>
+        <location line="-104"/>
         <source>Deny Friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -4870,7 +4869,17 @@ p, li { white-space: pre-wrap; }
         <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+10"/>
+        <source>Create new</source>
+        <translation>Erstellen</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Invite this group</source>
+        <translation>Lade diesen Gruppe ein</translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -4891,7 +4900,7 @@ p, li { white-space: pre-wrap; }
         <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+69"/>
         <source>Unsubscribe to lobby</source>
         <translation>Lobby abbestellen</translation>
     </message>
@@ -4901,7 +4910,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du bestellst die Lobby ab.&lt;br&gt;Du kannst nur wieder teilnehmen, wenn deine Freunde dich wieder einladen.</translation>
     </message>
     <message>
-        <location line="+402"/>
+        <location line="+420"/>
         <source>Sort by</source>
         <translation>Sortiere nach</translation>
     </message>
@@ -4918,7 +4927,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendSelectionWidget.ui" line="+28"/>
+        <location filename="../gui/common/FriendSelectionWidget.ui" line="+31"/>
         <source>Search for Name:</source>
         <translation>Suche Name:</translation>
     </message>
@@ -10631,21 +10640,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+120"/>
-        <location line="+269"/>
+        <location line="+262"/>
         <location line="+242"/>
         <source>Next &gt;</source>
         <translation>Weiter &gt;</translation>
     </message>
     <message>
-        <location line="-501"/>
-        <location line="+269"/>
+        <location line="-494"/>
+        <location line="+262"/>
         <location line="+242"/>
         <location line="+205"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-656"/>
+        <location line="-649"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
         <translation>Für die beste Leistung muß RetroShare ein wenig über Deine Internetverbindung wissen.</translation>
     </message>
@@ -10666,7 +10675,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wählen Sie Ihre maximale Downloadgeschwindigkeit: </translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+62"/>
         <source>Connection :</source>
         <translation>Verbindung :</translation>
     </message>
@@ -10691,7 +10700,7 @@ p, li { white-space: pre-wrap; }
         <translation>Entdeckung :</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+84"/>
         <location line="+242"/>
         <location line="+205"/>
         <source>&lt; Back</source>
@@ -10809,7 +10818,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertigstellen</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="+205"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="+202"/>
         <source>Select A Folder To Share</source>
         <translation>Wählen Sie ein Ordner zum Freigeben</translation>
     </message>
@@ -10829,7 +10838,7 @@ p, li { white-space: pre-wrap; }
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="-782"/>
+        <location filename="../gui/QuickStartWizard.ui" line="-775"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10866,7 +10875,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  beim Start von RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+242"/>
+        <location line="+245"/>
         <source>Public: DHT &amp; Discovery</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10886,9 +10895,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Dynamic DNS:</source>
-        <translation>Dynamisches DNS:</translation>
+        <translation type="obsolete">Dynamisches DNS:</translation>
     </message>
 </context>
 <context>
