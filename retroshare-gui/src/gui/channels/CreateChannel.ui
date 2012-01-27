@@ -159,7 +159,7 @@
            <number>0</number>
           </property>
           <item row="0" column="0">
-           <widget class="QTreeWidget" name="keyShareList">
+           <widget class="FriendSelectionWidget" name="keyShareList" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -190,14 +190,6 @@
               <height>0</height>
              </size>
             </property>
-            <property name="sortingEnabled">
-             <bool>true</bool>
-            </property>
-            <column>
-             <property name="text">
-              <string>Contacts:</string>
-             </property>
-            </column>
            </widget>
           </item>
          </layout>
@@ -475,6 +467,14 @@ border-radius: 10px;
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FriendSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendSelectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

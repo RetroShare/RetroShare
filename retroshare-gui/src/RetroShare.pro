@@ -337,6 +337,7 @@ HEADERS +=  rshare.h \
             gui/common/RSTreeView.h \
             gui/common/AvatarWidget.h \
             gui/common/FriendList.h \
+            gui/common/FriendSelectionWidget.h \
             gui/common/HashBox.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
@@ -464,6 +465,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/GroupTreeWidget.ui \
             gui/common/AvatarWidget.ui \
             gui/common/FriendList.ui \
+            gui/common/FriendSelectionWidget.ui \
             gui/common/HashBox.ui \
             gui/common/RsCollectionDialog.ui \
             gui/style/StyleDialog.ui \
@@ -578,6 +580,7 @@ SOURCES +=  main.cpp \
             gui/common/RSTreeView.cpp \
             gui/common/AvatarWidget.cpp \
             gui/common/FriendList.cpp \
+            gui/common/FriendSelectionWidget.cpp \
             gui/common/HashBox.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \

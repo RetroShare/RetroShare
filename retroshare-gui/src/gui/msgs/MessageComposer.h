@@ -55,7 +55,6 @@ public:
     static MessageComposer *forwardMsg(const std::string &msgId);
 
     /* worker fns */
-    void  insertSendList();
     void  insertFileList(const std::list<DirDetails>&);
     void  insertFileList(const std::list<FileInfo>&);
     void  addFile(const FileInfo &fileInfo);
@@ -88,6 +87,7 @@ private slots:
     void pasteRecommended();
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
+    void buildCompleter();
 
     void fileNew();
     void fileOpen();
@@ -126,8 +126,6 @@ private slots:
     void toggleCode();
     void addPostSplitter();
 
-    void filterRegExpChanged();
-    void clearFilter();
     void titleChanged();
 
     // Add to To/Cc/Bcc address fields
@@ -138,7 +136,6 @@ private slots:
     void editingRecipientFinished();
     void friendDetails();
 
-    void groupsChanged(int type);
     void peerStatusChanged(const QString& peer_id, int status);
 
     void tagAboutToShow();
@@ -167,9 +164,6 @@ private:
     void alignmentChanged(Qt::Alignment a);
 
     bool sendMessage_internal(bool bDraftbox);
-    
-    void FilterItems();
-    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
 
     void calculateTitle();
     void addEmptyRecipient();

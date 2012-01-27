@@ -27,34 +27,28 @@
 
 class CreateForum : public QDialog
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  CreateForum(QWidget *parent = 0);
+	CreateForum(QWidget *parent = 0);
 
-void  newForum(); /* cleanup */
-
-  /** Qt Designer generated object */
-  Ui::CreateForum ui;
-
-  QPixmap picture;
+	void newForum(); /* cleanup */
 
 private slots:
-
 	/* actions to take.... */
-void  createForum();
-void  cancelForum();
+	void createForum();
+	void cancelForum();
 
-// set private forum key share list
-void setShareList();
-
-// when user checks a person in share list checkboxes
-void togglePersonItem(QTreeWidgetItem* item, int col);
+	// set private forum key share list
+	void setShareList();
 
 private:
+	std::list<std::string> mShareList;
 
-std::list<std::string> mShareList;
+	QPixmap picture;
 
+	/** Qt Designer generated object */
+	Ui::CreateForum ui;
 };
 
 #endif

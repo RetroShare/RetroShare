@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _CREATE_CHANNEL_DIALOG_H
 #define _CREATE_CHANNEL_DIALOG_H
 
@@ -27,36 +26,26 @@
 
 class CreateChannel : public QDialog
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  CreateChannel(QWidget *parent = 0);
+	CreateChannel(QWidget *parent = 0);
 
-void  newChannel(); /* cleanup */
-
-  /** Qt Designer generated object */
-  Ui::CreateChannel ui;
-
-  QPixmap picture;
-
-public slots:
-  /** Overloaded QWidget.show */
-  void show();
+	void newChannel(); /* cleanup */
 
 private slots:
-
 	/* actions to take.... */
-void  createChannel();
-void  cancelChannel();
+	void createChannel();
+	void cancelChannel();
 
-void addChannelLogo();
-void setShareList();
-void togglePersonItem(QTreeWidgetItem* item, int col);
+	void addChannelLogo();
+	void setShareList();
 
 private:
+	QPixmap picture;
 
-std::list<std::string> mShareList;
-
+	/** Qt Designer generated object */
+	Ui::CreateChannel ui;
 };
 
 #endif

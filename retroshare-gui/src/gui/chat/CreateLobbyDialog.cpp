@@ -30,8 +30,8 @@
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
 
-CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWidget *parent, Qt::WFlags flags, std::string grpId, int grpType) :
-	QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
+CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWidget *parent, Qt::WFlags flags) :
+	QDialog(parent, flags)
 {
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
@@ -50,10 +50,13 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWi
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 
-	connect(ui->keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
+	/* initialize key share list */
+	ui->keyShareList->setHeaderText(tr("Contacts:"));
+	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui->keyShareList->start();
+	ui->keyShareList->setSelectedSslIds(peer_list, false);
 
-	setShareList(peer_list);
-	checkTextFields() ;
+	checkTextFields();
 }
 
 CreateLobbyDialog::~CreateLobbyDialog()
@@ -83,8 +86,10 @@ void CreateLobbyDialog::checkTextFields()
 
 void CreateLobbyDialog::createLobby()
 {
-	if(mShareList.empty())
-	{
+	std::list<std::string> shareList;
+	ui->keyShareList->selectedSslIds(shareList, false);
+
+	if (shareList.empty()) {
 		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
@@ -96,7 +101,7 @@ void CreateLobbyDialog::createLobby()
 
 	int lobby_privacy_type = (ui->security_CB->currentIndex() == 0)?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE ;
 
-	ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, mShareList, lobby_privacy_type);
+	ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, shareList, lobby_privacy_type);
 
 	std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
 
@@ -116,85 +121,4 @@ void CreateLobbyDialog::createLobby()
 void CreateLobbyDialog::cancel()
 {
 	close();
-}
-
-void CreateLobbyDialog::setShareList(const std::list<std::string>& friend_list)
-{
-	if (!rsPeers)
-	{
-		/* not ready yet! */
-		return;
-	}
-
-	std::list<std::string> peers;
-	std::list<std::string>::iterator it;
-
-	mShareList.clear() ;
-	rsPeers->getFriendList(peers);
-
-	/* get a link to the table */
-	QTreeWidget *shareWidget = ui->keyShareList;
-
-	QList<QTreeWidgetItem *> items;
-
-	for(it = peers.begin(); it != peers.end(); it++)
-	{
-		RsPeerDetails detail;
-		if (!rsPeers->getPeerDetails(*it, detail))
-		{
-			continue; /* BAD */
-		}
-
-		/* make a widget per friend */
-		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-		item -> setText(0, PeerDefs::nameWithLocation(detail));
-		if (detail.state & RS_PEER_STATE_CONNECTED) {
-			item -> setTextColor(0,(Qt::darkBlue));
-		}
-		item -> setSizeHint(0,  QSize( 17,17 ) );
-		item -> setText(1, QString::fromStdString(detail.id));
-		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-
-		item -> setCheckState(0, Qt::Unchecked);
-
-		for(std::list<std::string>::const_iterator it2(friend_list.begin());it2!=friend_list.end();++it2)
-			if(*it == *it2)
-			{
-				item -> setCheckState(0, Qt::Checked);
-				mShareList.push_back(*it) ;
-				break ;
-			}
-
-		/* add to the list */
-		items.append(item);
-	}
-
-	/* remove old items */
-	shareWidget->clear();
-	shareWidget->setColumnCount(1);
-
-	/* add the items in! */
-	shareWidget->insertTopLevelItems(0, items);
-
-	shareWidget->update(); /* update display */
-}
-
-void CreateLobbyDialog::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
-{
-	/* extract id */
-	std::string id = (item -> text(1)).toStdString();
-
-	/* get state */
-	bool checked = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
-
-	/* call control fns */
-	std::list<std::string>::iterator lit = std::find(mShareList.begin(), mShareList.end(), id);
-
-	if(checked && (lit == mShareList.end()))
-		mShareList.push_back(id);						 // make sure ids not added already
-	else if(lit != mShareList.end())
-		mShareList.erase(lit);
-
-	return;
 }

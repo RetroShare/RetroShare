@@ -30,183 +30,74 @@
 
 #include "gui/common/PeerDefs.h"
 
-ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string grpId,
-		int grpType) :
-        QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
+ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string grpId, int grpType) :
+	QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
 {
-    ui = new Ui::ShareKey();
-    ui->setupUi(this);
+	ui = new Ui::ShareKey();
+	ui->setupUi(this);
 
+	connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( shareKey( ) ) );
+	connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
 
-    connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( shareKey( ) ) );
-    connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
-
-    connect(ui->keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-            this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
-
-    setShareList();
-
+	/* initialize key share list */
+	ui->keyShareList->setHeaderText(tr("Contacts:"));
+	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui->keyShareList->start();
 }
-
 
 ShareKey::~ShareKey()
 {
-    delete ui;
-}
-
-void ShareKey::closeEvent (QCloseEvent * event)
-{
- QWidget::closeEvent(event);
+	delete ui;
 }
 
 void ShareKey::changeEvent(QEvent *e)
 {
-    QDialog::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
+	QDialog::changeEvent(e);
+	switch (e->type()) {
+	case QEvent::LanguageChange:
+		ui->retranslateUi(this);
+		break;
+	default:
+		break;
+	}
 }
 
 void ShareKey::shareKey()
 {
+	std::list<std::string> shareList;
+	ui->keyShareList->selectedSslIds(shareList, false);
 
+	if (shareList.empty()) {
+		QMessageBox::warning(this, "RetroShare", tr("Please select at least one peer"), QMessageBox::Ok, QMessageBox::Ok);
 
+		return;
+	}
 
-    if(mShareList.empty())
-    {
-        QMessageBox::warning(this, tr("RetroShare"),tr("Please select at least one peer"),
-        QMessageBox::Ok, QMessageBox::Ok);
-
-        return;
-    }
-
-	if(mGrpType & CHANNEL_KEY_SHARE)
-	{
-		if(!rsChannels)
+	if (mGrpType & CHANNEL_KEY_SHARE) {
+		if (!rsChannels)
 			return;
 
-	    if(!rsChannels->channelShareKeys(mGrpId, mShareList)){
-
-	        std::cerr << "Failed to share keys!" << std::endl;
-
-	        return;
-	    }
-
-	}else if(mGrpType & FORUM_KEY_SHARE)
-	{
+		if (!rsChannels->channelShareKeys(mGrpId, shareList)) {
+			std::cerr << "Failed to share keys!" << std::endl;
+			return;
+		}
+	} else if(mGrpType & FORUM_KEY_SHARE) {
 		if(!rsForums)
 			return;
 
-	    if(!rsForums->forumShareKeys(mGrpId, mShareList)){
-
-	        std::cerr << "Failed to share keys!" << std::endl;
-
-	        return;
-	    }
-
-	}else{
-
+		if (!rsForums->forumShareKeys(mGrpId, shareList)) {
+			std::cerr << "Failed to share keys!" << std::endl;
+			return;
+		}
+	} else {
 		// incorrect type
 		return;
 	}
 
-
-
-    close();
-    return;
+	close();
 }
 
 void ShareKey::cancel()
 {
-      close();
-      return;
+	close();
 }
-
-void ShareKey::setShareList(){
-
-    if (!rsPeers)
-    {
-            /* not ready yet! */
-            return;
-    }
-
-    std::list<std::string> peers;
-    std::list<std::string>::iterator it;
-
-    rsPeers->getFriendList(peers);
-
-    /* get a link to the table */
-    QTreeWidget *shareWidget = ui->keyShareList;
-
-    QList<QTreeWidgetItem *> items;
-
-    for(it = peers.begin(); it != peers.end(); it++)
-    {
-
-            RsPeerDetails detail;
-            if (!rsPeers->getPeerDetails(*it, detail))
-            {
-                    continue; /* BAD */
-            }
-
-            /* make a widget per friend */
-    QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-            item -> setText(0, PeerDefs::nameWithLocation(detail));
-            if (detail.state & RS_PEER_STATE_CONNECTED) {
-                    item -> setTextColor(0,(Qt::darkBlue));
-            }
-            item -> setSizeHint(0,  QSize( 17,17 ) );
-
-            item -> setText(1, QString::fromStdString(detail.id));
-
-            item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-            item -> setCheckState(0, Qt::Unchecked);
-
-
-            /* add to the list */
-            items.append(item);
-    }
-
-    /* remove old items */
-    shareWidget->clear();
-    shareWidget->setColumnCount(1);
-
-    /* add the items in! */
-    shareWidget->insertTopLevelItems(0, items);
-
-    shareWidget->update(); /* update display */
-
-}
-
-void ShareKey::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
-{
-
-        /* extract id */
-        std::string id = (item -> text(1)).toStdString();
-
-        /* get state */
-        bool checked = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
-
-        /* call control fns */
-        std::list<std::string>::iterator lit = std::find(mShareList.begin(), mShareList.end(), id);
-
-        if(checked && (lit == mShareList.end())){
-
-                // make sure ids not added already
-                mShareList.push_back(id);
-
-        }else
-                        if(lit != mShareList.end()){
-
-                mShareList.erase(lit);
-
-        }
-
-        return;
-}
-

@@ -144,8 +144,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
     connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
-    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
-    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.titleEdit, SIGNAL(textChanged(const QString &)), this, SLOT(titleChanged()));
 
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
@@ -165,7 +163,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.msgText->document(), SIGNAL(redoAvailable(bool)), actionRedo, SLOT(setEnabled(bool)));
 
     connect(ui.msgFileList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuFileList(QPoint)));
-    connect(ui.msgSendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuMsgSendList(QPoint)));
 
     connect(ui.hashBox, SIGNAL(fileHashingStarted()), this, SLOT(fileHashingStarted()));
     connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
@@ -194,19 +191,19 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(addCc()));
     connect(ui.addBccButton, SIGNAL(clicked(void)), this, SLOT(addBcc()));
     connect(ui.addRecommendButton, SIGNAL(clicked(void)), this, SLOT(addRecommend()));
-    connect(ui.msgSendList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addTo()));
 
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
+    connect(ui.friendSelectionWidget, SIGNAL(contentChanged()), this, SLOT(buildCompleter()));
+    connect(ui.friendSelectionWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuMsgSendList(QPoint)));
+    connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(IdType,QString)), this, SLOT(addTo()));
 
     /* hide the Tree +/- */
     ui.msgFileList -> setRootIsDecorated( false );
 
-    /* to hide the header  */
-    //ui.msgSendList->header()->hide();
-
-    /* sort send list by name ascending */
-    ui.msgSendList->sortItems(0, Qt::AscendingOrder);
+    /* initialize friends list */
+    ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
+    ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
+    ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
     connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
@@ -270,8 +267,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     QPalette palette = QApplication::palette();
     codeBackground = palette.color( QPalette::Active, QPalette::Midlight );
 
-    ui.clearButton->hide();
-
     ui.recipientWidget->setColumnCount(COLUMN_RECIPIENT_COUNT);
 
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
@@ -291,8 +286,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     // load settings
     processSettings(true);
 
-    /* worker fns */
-    insertSendList();
+    buildCompleter();
 
     /* set focus to subject */
     ui.titleEdit->setFocus();
@@ -497,9 +491,12 @@ void MessageComposer::contextMenuFileList(QPoint)
 
 void MessageComposer::contextMenuMsgSendList(QPoint)
 {
-	QMenu contextMnu(this);
+    QMenu contextMnu(this);
 
-    int selectedCount = ui.msgSendList->selectedItems().count();
+    int selectedCount = ui.friendSelectionWidget->selectedItemCount();
+
+    FriendSelectionWidget::IdType idType;
+    ui.friendSelectionWidget->selectedId(idType);
 
     QAction *action = contextMnu.addAction(QIcon(), tr("Add to \"To\""), this, SLOT(addTo()));
     action->setEnabled(selectedCount);
@@ -513,9 +510,9 @@ void MessageComposer::contextMenuMsgSendList(QPoint)
     contextMnu.addSeparator();
 
     action = contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(friendDetails()));
-    action->setEnabled(selectedCount == 1);
+    action->setEnabled(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_SSL);
 
-	contextMnu.exec(QCursor::pos());
+    contextMnu.exec(QCursor::pos());
 }
 
 void MessageComposer::pasteRecommended()
@@ -548,27 +545,8 @@ static void setNewCompleter(QTableWidget *tableWidget, QCompleter *completer)
     }
 }
 
-void MessageComposer::insertSendList()
+void MessageComposer::buildCompleter()
 {
-    /* get a link to the table */
-    QTreeWidget *sendWidget = ui.msgSendList;
-
-    /* remove old items */
-    sendWidget->clear();
-    sendWidget->setColumnCount(1);
-
-    setNewCompleter(ui.recipientWidget, NULL);
-    if (m_completer) {
-        delete(m_completer);
-        m_completer = NULL;
-    }
-
-    if (!rsPeers)
-    {
-        /* not ready yet! */
-        return;
-    }
-
     // get existing groups
     std::list<RsGroupInfo> groupInfoList;
     std::list<RsGroupInfo>::iterator groupIt;
@@ -577,118 +555,6 @@ void MessageComposer::insertSendList()
     std::list<std::string> peers;
     std::list<std::string>::iterator peerIt;
     rsPeers->getFriendList(peers);
-
-    std::list<StatusInfo> statusInfo;
-    rsStatus->getStatusList(statusInfo);
-
-    std::list<std::string> fillPeerIds;
-
-    // start with groups
-    groupIt = groupInfoList.begin();
-    while (true) {
-        QTreeWidgetItem *groupItem = NULL;
-        RsGroupInfo *groupInfo = NULL;
-
-        if (groupIt != groupInfoList.end()) {
-            groupInfo = &(*groupIt);
-
-            if (groupInfo->peerIds.size() == 0) {
-                // don't show empty groups
-                groupIt++;
-                continue;
-            }
-
-            // add group item
-            groupItem = new RSTreeWidgetItem(m_compareRole, TYPE_GROUP);
-
-            // Add item to the list
-            sendWidget->addTopLevelItem(groupItem);
-
-            groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-//            groupItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
-            groupItem->setTextAlignment(COLUMN_CONTACT_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-            groupItem->setIcon(COLUMN_CONTACT_NAME, QIcon(IMAGE_GROUP16));
-
-            /* used to find back the item */
-            groupItem->setData(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID, QString::fromStdString(groupInfo->id));
-
-            groupItem->setExpanded(true);
-
-            QString groupName = GroupDefs::name(*groupInfo);
-            groupItem->setText(COLUMN_CONTACT_NAME, groupName);
-            groupItem->setData(COLUMN_CONTACT_DATA, ROLE_CONTACT_SORT, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + groupName);
-        }
-
-        // iterate through peers
-        for (peerIt = peers.begin(); peerIt != peers.end(); peerIt++) {
-            RsPeerDetails detail;
-            if (!rsPeers->getPeerDetails(*peerIt, detail)) {
-                continue; /* BAD */
-            }
-
-            if (groupInfo) {
-                // we fill a group, check if gpg id is assigned
-                if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), detail.gpg_id) == groupInfo->peerIds.end()) {
-                    continue;
-                }
-            } else {
-                // we fill the not assigned gpg ids
-                if (std::find(fillPeerIds.begin(), fillPeerIds.end(), *peerIt) != fillPeerIds.end()) {
-                    continue;
-                }
-            }
-
-            // add equal too, its no problem
-            fillPeerIds.push_back(detail.id);
-
-            /* make a widget per friend */
-            QTreeWidgetItem *item = new RSTreeWidgetItem(m_compareRole, TYPE_SSL);
-
-            /* add all the labels */
-            /* (0) Person */
-            QString name = PeerDefs::nameWithLocation(detail);
-            item->setText(COLUMN_CONTACT_NAME, name);
-
-            int state = RS_STATUS_OFFLINE;
-            if (detail.state & RS_PEER_STATE_CONNECTED) {
-                std::list<StatusInfo>::iterator it;
-                for (it = statusInfo.begin(); it != statusInfo.end() ; it++) {
-                    if (it->id == detail.id) {
-                        state = it->status;
-                        break;
-                    }
-                }
-            }
-
-            if (state != (int) RS_STATUS_OFFLINE) {
-                item->setTextColor(COLUMN_CONTACT_NAME, COLOR_CONNECT);
-            }
-
-            item->setIcon(COLUMN_CONTACT_NAME, QIcon(StatusDefs::imageUser(state)));
-            item->setData(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID, QString::fromStdString(detail.id));
-            item->setData(COLUMN_CONTACT_DATA, ROLE_CONTACT_SORT, "2 " + name);
-
-            // add to the list
-            if (groupItem) {
-                groupItem->addChild(item);
-            } else {
-                sendWidget->addTopLevelItem(item);
-            }
-        }
-
-        if (groupIt != groupInfoList.end()) {
-            groupIt++;
-        } else {
-            // all done
-            break;
-        }
-    }
-
-    if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-        FilterItems();
-    }
-
-    sendWidget->update(); /* update display */
 
     // create completer list for friends
     QStringList completerList;
@@ -721,34 +587,8 @@ void MessageComposer::insertSendList()
     setNewCompleter(ui.recipientWidget, m_completer);
 }
 
-void MessageComposer::groupsChanged(int type)
-{
-    Q_UNUSED(type);
-
-    insertSendList();
-}
-
 void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
 {
-    QTreeWidgetItemIterator itemIterator(ui.msgSendList);
-    QTreeWidgetItem *item;
-    while ((item = *itemIterator) != NULL) {
-        itemIterator++;
-
-        if (item->data(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID).toString() == peer_id) {
-            QColor color;
-            if (status != (int) RS_STATUS_OFFLINE) {
-                color = COLOR_CONNECT;
-            } else {
-                color = Qt::black;
-            }
-
-            item->setTextColor(COLUMN_CONTACT_NAME, color);
-            item->setIcon(COLUMN_CONTACT_NAME, QIcon(StatusDefs::imageUser(status)));
-            //break; no break, peers can assigned to groups more than one
-        }
-    }
-
     int rowCount = ui.recipientWidget->rowCount();
     int row;
 
@@ -2266,75 +2106,20 @@ void MessageComposer::fileHashingFinished(QList<HashedFile> hashedFiles)
     ui.msgFileList->show();
 }
 
-/* clear Filter */
-void MessageComposer::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
-}
-
-void MessageComposer::filterRegExpChanged()
-{
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearButton->hide();
-    } else {
-        ui.clearButton->show();
-    }
-
-    FilterItems();
-}
-
-void MessageComposer::FilterItems()
-{
-    QString sPattern = ui.filterPatternLineEdit->text();
-
-    int nCount = ui.msgSendList->topLevelItemCount ();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FilterItem(ui.msgSendList->topLevelItem(nIndex), sPattern);
-    }
-}
-
-bool MessageComposer::FilterItem(QTreeWidgetItem *pItem, QString &sPattern)
-{
-    bool bVisible = true;
-
-    if (sPattern.isEmpty() == false) {
-        if (pItem->text(0).contains(sPattern, Qt::CaseInsensitive) == false) {
-            bVisible = false;
-        }
-    }
-
-    int nVisibleChildCount = 0;
-    int nCount = pItem->childCount();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        if (FilterItem(pItem->child(nIndex), sPattern)) {
-            nVisibleChildCount++;
-        }
-    }
-
-    if (bVisible || nVisibleChildCount) {
-        pItem->setHidden(false);
-    } else {
-        pItem->setHidden(true);
-    }
-
-    return (bVisible || nVisibleChildCount);
-}
-
 void MessageComposer::addContact(enumType type)
 {
-    QTreeWidgetItemIterator itemIterator(ui.msgSendList);
-    QTreeWidgetItem *item;
-    while ((item = *itemIterator) != NULL) {
-        itemIterator++;
+    std::list<std::string> ids;
+    ui.friendSelectionWidget->selectedGroupIds(ids);
 
-        if (item->isSelected()) {
-            std::string id = item->data(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID).toString().toStdString();
-            bool group = (item->type() == TYPE_GROUP);
-            addRecipient(type, id, group);
-        }
+    std::list<std::string>::iterator idIt;
+    for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
+        addRecipient(type, *idIt, true);
+    }
+
+    ids.empty();
+    ui.friendSelectionWidget->selectedSslIds(ids, true);
+    for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
+        addRecipient(type, *idIt, false);
     }
 }
 
@@ -2356,41 +2141,7 @@ void MessageComposer::addBcc()
 void MessageComposer::addRecommend()
 {
     std::list<std::string> sslIds;
-
-    QTreeWidgetItemIterator itemIterator(ui.msgSendList);
-    QTreeWidgetItem *item;
-    while ((item = *itemIterator) != NULL) {
-        itemIterator++;
-
-        if (item->isSelected()) {
-            std::string id = item->data(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID).toString().toStdString();
-            bool group = (item->type() == TYPE_GROUP);
-
-            if (group) {
-                RsGroupInfo groupInfo;
-                if (rsPeers->getGroupInfo(id, groupInfo) == false) {
-                    continue;
-                }
-
-                std::list<std::string>::iterator gpgIt;
-                for (gpgIt = groupInfo.peerIds.begin(); gpgIt != groupInfo.peerIds.end(); gpgIt++) {
-                    std::list<std::string> groupSslIds;
-                    rsPeers->getAssociatedSSLIds(*gpgIt, groupSslIds);
-
-                    std::list<std::string>::iterator sslIt;
-                    for (sslIt = groupSslIds.begin(); sslIt != groupSslIds.end(); sslIt++) {
-                        if (std::find(sslIds.begin(), sslIds.end(), *sslIt) == sslIds.end()) {
-                            sslIds.push_back(*sslIt);
-                        }
-                    }
-                }
-            } else {
-                if (std::find(sslIds.begin(), sslIds.end(), id) == sslIds.end()) {
-                    sslIds.push_back(id);
-                }
-            }
-        }
-    }
+    ui.friendSelectionWidget->selectedSslIds(sslIds, false);
 
     if (sslIds.empty()) {
         return;
@@ -2408,18 +2159,14 @@ void MessageComposer::addRecommend()
 
 void MessageComposer::friendDetails()
 {
-    QList<QTreeWidgetItem*> selectedItems = ui.msgSendList->selectedItems();
-    if (selectedItems.count() != 1) {
+    FriendSelectionWidget::IdType idType;
+    QString id = ui.friendSelectionWidget->selectedId(idType);
+
+    if (id.isEmpty() || idType != FriendSelectionWidget::IDTYPE_SSL) {
         return;
     }
 
-    QTreeWidgetItem *item = selectedItems[0];
-    if (item->type() == TYPE_GROUP) {
-        return;
-    }
-
-    std::string id = item->data(COLUMN_CONTACT_DATA, ROLE_CONTACT_ID).toString().toStdString();
-    ConfCertDialog::showIt(id, ConfCertDialog::PageDetails);
+    ConfCertDialog::showIt(id.toStdString(), ConfCertDialog::PageDetails);
 }
 
 void MessageComposer::tagAboutToShow()
