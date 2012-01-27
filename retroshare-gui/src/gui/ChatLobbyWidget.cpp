@@ -95,7 +95,6 @@ void ChatLobbyWidget::lobbyTreeWidgetCostumPopupMenu()
 			contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeItem()));
 		}
 	}
-	
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -273,9 +272,8 @@ void ChatLobbyWidget::createChatLobby()
 	CreateLobbyDialog(friends).exec();
 }
 
-void ChatLobbyWidget::subscribeItem()
+static void subscribeLobby(QTreeWidgetItem *item)
 {
-	QTreeWidgetItem *item = lobbyTreeWidget->currentItem();
 	if (item == NULL && item->type() != TYPE_LOBBY) {
 		return;
 	}
@@ -287,6 +285,11 @@ void ChatLobbyWidget::subscribeItem()
 			ChatDialog::chatFriend(vpeer_id) ;
 		}
 	}
+}
+
+void ChatLobbyWidget::subscribeItem()
+{
+	subscribeLobby(lobbyTreeWidget->currentItem());
 }
 
 void ChatLobbyWidget::unsubscribeItem()
@@ -308,18 +311,7 @@ void ChatLobbyWidget::unsubscribeItem()
 
 void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-	// Each lobby can be joined directly, by calling
-	// 	rsMsgs->joinPublicLobby(chatLobbyId) ;
-
-	// e.g. fill a list of public lobbies
-
-	// also maintain a list of active chat lobbies. Each active (subscribed) lobby has a lobby tab in the gui.
-	// Each tab knows its lobby id and its virtual peer id (the one to send private chat messages to)
-	//
-	// One possibility is to convert ChatLobbyDialog to be used at a chat lobby tab.
-
-	// then the lobby can be accessed using the virtual peer id through
-	// 	rsMsgs->getVirtualPeerId(ChatLobbyId,std::string& virtual_peer_id)
+	subscribeLobby(item);
 }
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)
