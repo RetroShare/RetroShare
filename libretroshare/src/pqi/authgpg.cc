@@ -455,10 +455,23 @@ void AuthGPGimpl::processServices()
 	    if (loadOrSave->m_certGpg.size() > MAX_CERTIFICATE_SIZE)
 	    {
                 std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
-	        std::cerr << " is over size limit - removing";
+	        std::cerr << " is over size limit - switching to a minimal certificate";
 	        std::cerr << std::endl;
-
-	    	loadOrSave->m_certGpg = "";
+        
+		std::string cleaned_key ;
+        	if(PGPKeyManagement::createMinimalKey(loadOrSave->m_certGpg,cleaned_key))
+		{
+        		loadOrSave->m_certGpg = cleaned_key;
+            		std::cerr << "AuthGPGimpl::processServices() Minimal Cert Generation, size";
+	    		std::cerr << " is " << loadOrSave->m_certGpg.size() << " bytes";
+	    		std::cerr << std::endl;
+		}
+        	else
+		{
+            		std::cerr << "AuthGPGimpl::processServices() Minimal Cert Generation Failed! removing cert";
+	    		std::cerr << std::endl;
+	    		loadOrSave->m_certGpg = "";
+		}
 	    }
   #endif
 
