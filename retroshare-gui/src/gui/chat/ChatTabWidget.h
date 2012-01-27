@@ -53,6 +53,7 @@ private slots:
 	void tabClose(int tab);
 	void tabChanged(int tab);
 	void tabInfoChanged(ChatDialog *dialog);
+	void dialogClose(ChatDialog *dialog);
 
 private:
 	Ui::ChatTabWidget *ui;

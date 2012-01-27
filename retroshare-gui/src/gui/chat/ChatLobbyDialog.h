@@ -35,7 +35,6 @@ class ChatLobbyDialog: public ChatDialog
 public:
 	void displayLobbyEvent(int event_type, const QString& nickname, const QString& str);
 
-	virtual bool canClose();
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return false; }
@@ -53,6 +52,7 @@ protected:
 	void processSettings(bool load);
 
 	virtual void init(const std::string &peerId, const QString &title);
+	virtual bool canClose();
 	virtual void addIncomingChatMsg(const ChatInfo& info);
 
 protected slots:

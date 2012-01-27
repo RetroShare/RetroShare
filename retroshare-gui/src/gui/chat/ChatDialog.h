@@ -41,7 +41,6 @@ public:
 	static void closeChat(const std::string &peerId);
 	static void chatChanged(int list, int type);
 
-	virtual bool canClose() { return true; }
 	virtual void showDialog(uint chatflags) {}
 
 	virtual ChatWidget *getChatWidget() = 0;
@@ -66,6 +65,7 @@ public:
 signals:
 	void infoChanged(ChatDialog *dialog);
 	void newMessage(ChatDialog *dialog);
+	void dialogClose(ChatDialog *dialog);
 
 private slots:
 	void chatInfoChanged(ChatWidget*);
@@ -74,6 +74,9 @@ private slots:
 protected:
 	explicit ChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
 	virtual ~ChatDialog();
+
+	void closeEvent(QCloseEvent *event);
+	virtual bool canClose() { return true; }
 
 	virtual void init(const std::string &peerId, const QString &title);
 	virtual void onChatChanged(int list, int type) {}

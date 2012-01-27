@@ -21,6 +21,7 @@
  ****************************************************************/
 
 #include <QPixmap>
+#include <QCloseEvent>
 
 #include "PopupChatWindow.h"
 #include "ChatDialog.h"
@@ -137,6 +138,27 @@ void PopupChatWindow::showEvent(QShowEvent */*event*/)
 	}
 }
 
+void PopupChatWindow::closeEvent(QCloseEvent *event)
+{
+	if (tabbedWindow) {
+		for (int index = ui.tabWidget->count() - 1; index >= 0; --index) {
+			ChatDialog *dialog = dynamic_cast<ChatDialog*>(ui.tabWidget->widget(0));
+			if (dialog == NULL) {
+				continue;
+			}
+		
+			if (!dialog->close()) {
+				event->ignore();
+				break;
+			}
+		}
+	} else {
+		if (chatDialog && !chatDialog->close()) {
+			event->ignore();
+		}
+	}
+}
+
 ChatDialog *PopupChatWindow::getCurrentDialog()
 {
 	if (tabbedWindow) {
@@ -160,6 +182,8 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 
 		/* signal toggled is called */
 		ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(peerId));
+
+		QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 	}
 
 	QObject::connect(dialog, SIGNAL(infoChanged(ChatDialog*)), this, SLOT(tabInfoChanged(ChatDialog*)));
@@ -178,6 +202,8 @@ void PopupChatWindow::removeDialog(ChatDialog *dialog)
 			deleteLater();
 		}
 	} else {
+		QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
+
 		if (chatDialog == dialog) {
 			saveSettings();
 			dialog->removeFromParent(this);
@@ -277,6 +303,13 @@ void PopupChatWindow::tabClosed(ChatDialog *dialog)
 		if (ui.tabWidget->count() == 0) {
 			deleteLater();
 		}
+	}
+}
+
+void PopupChatWindow::dialogClose(ChatDialog *dialog)
+{
+	if (!tabbedWindow) {
+		removeDialog(dialog);
 	}
 }
 

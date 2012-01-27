@@ -49,7 +49,8 @@ protected:
 	/** Default destructor */
 	~PopupChatWindow();
 
-	virtual void showEvent(QShowEvent *event);
+	void showEvent(QShowEvent *event);
+	void closeEvent(QCloseEvent *event);
 
 private slots:
 	void getAvatar();
@@ -57,6 +58,7 @@ private slots:
 	void tabInfoChanged(ChatDialog *dialog);
 	void tabNewMessage(ChatDialog *dialog);
 	void tabClosed(ChatDialog *dialog);
+	void dialogClose(ChatDialog *dialog);
 	void dockTab();
 	void undockTab();
 	void setStyle();

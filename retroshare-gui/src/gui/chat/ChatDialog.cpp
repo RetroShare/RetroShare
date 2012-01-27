@@ -21,6 +21,7 @@
  ****************************************************************/
 
 #include <QMessageBox>
+#include <QCloseEvent>
 
 #include "ChatDialog.h"
 #include "gui/common/PeerDefs.h"
@@ -40,6 +41,7 @@ static std::map<std::string, ChatDialog*> chatDialogs;
 ChatDialog::ChatDialog(QWidget *parent, Qt::WFlags flags) :
 	QWidget(parent, flags)
 {
+	setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 ChatDialog::~ChatDialog()
@@ -48,6 +50,15 @@ ChatDialog::~ChatDialog()
 	if (chatDialogs.end() != (it = chatDialogs.find(getPeerId()))) {
 		chatDialogs.erase(it);
 	}
+}
+
+void ChatDialog::closeEvent(QCloseEvent *event)
+{
+	if (!canClose()) {
+		event->ignore();
+		return;
+	}
+	emit dialogClose(this);
 }
 
 void ChatDialog::init(const std::string &peerId, const QString &title)

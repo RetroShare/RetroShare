@@ -50,6 +50,7 @@ void ChatTabWidget::addDialog(ChatDialog *dialog)
 	dialog->addToParent(this);
 
 	QObject::connect(dialog, SIGNAL(infoChanged(ChatDialog*)), this, SLOT(tabInfoChanged(ChatDialog*)));
+	QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 
 	tabInfoChanged(dialog);
 }
@@ -57,11 +58,13 @@ void ChatTabWidget::addDialog(ChatDialog *dialog)
 void ChatTabWidget::removeDialog(ChatDialog *dialog)
 {
 	QObject::disconnect(dialog, SIGNAL(infoChanged(ChatDialog*)), this, SLOT(tabInfoChanged(ChatDialog*)));
+	QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 
 	int tab = indexOf(dialog);
 	if (tab >= 0) {
 		dialog->removeFromParent(this);
 		removeTab(tab);
+		emit tabClosed(dialog);
 	}
 }
 
@@ -70,11 +73,7 @@ void ChatTabWidget::tabClose(int tab)
 	ChatDialog *dialog = dynamic_cast<ChatDialog*>(widget(tab));
 
 	if (dialog) {
-		if (dialog->canClose()) {
-			removeDialog(dialog);
-			emit tabClosed(dialog);
-			dialog->deleteLater();
-		}
+		dialog->close();
 	}
 }
 
@@ -103,6 +102,11 @@ void ChatTabWidget::tabInfoChanged(ChatDialog *dialog)
 	}
 
 	emit infoChanged();
+}
+
+void ChatTabWidget::dialogClose(ChatDialog *dialog)
+{
+	removeDialog(dialog);
 }
 
 void ChatTabWidget::getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon)
