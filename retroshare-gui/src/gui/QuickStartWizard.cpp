@@ -147,9 +147,6 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
         }
         rsicontrol->ConfigSetDataRates( ui.doubleSpinBoxDownloadSpeed->value(), ui.doubleSpinBoxUploadSpeed->value() );
 
-        if (ui.DynDNS->text().toStdString() != detail.dyndns)
-            rsPeers->setDynDNS (rsPeers->getOwnId(), ui.DynDNS->text().toStdString());
-
         ui.pagesWizard->setCurrentIndex(2);
 }
 
