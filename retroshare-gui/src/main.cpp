@@ -239,8 +239,12 @@ int main(int argc, char *argv[])
 		splashScreen.hide();
 
 		Settings->setValue(QString::fromUtf8("FirstRun"), false);
+// This is now disabled - as it doesn't add very much.
+// Need to make sure that defaults are sensible!
+#ifdef ENABLE_QUICKSTART_WIZARD
 		QuickStartWizard qstartWizard;
 		qstartWizard.exec();
+#endif
 	}
 
 	MainWindow *w = MainWindow::Create ();
