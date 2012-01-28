@@ -1,6 +1,40 @@
 retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - Added (make functional) the lobby menu in the context menu of the gpg and group item in FriendList.
+     - Added button to add/remove signatures and button to copy RS cert link to clipboard
+     - Added doubleclick to join a lobby.
+     - Disable the Startup Wizard. Most of the defaults are sensible now, so its no longer needed!
+     - Fixed default data rates to sensible options: 200 kB/s down, 50 kB/s up.
+     - Added Minimal certificates to discovery exchange. They are invoked if the standard cert is over 10k.
+     - Switched std::vector.data => &(std::vector[0]) to remove linuxism in radix64.
+     - Added new common widget FriendSelectionWidget for selecting friends and use it in CreateLobbyDialog, 
+       ShareKey (forums and channels) and MessageComposer.
+     - Fixed german language.
+
+  * Bug fixes
+     - Added Check for successful Req creation (was crashing with NULL pointer).
+     - Fixed echoes in chat lobbies
+        * added a time stamp to lobby events (new item tag)
+        * controlling time stamp of lobby msg and event: drop packets if time is older than cache duration.
+        * moved connexion challenge code to lobby management loop
+        * added new type of lobby invite to handle connexion challenges and avoid false invitations in the GUI
+
+        New lobby event format is not backward compatible -> "peer typing" and "peer joined/left" will need 
+        the new version. Messages are still compatible)
+
+     - Fixed crash when closing a chat window.
+     - Fixed Auto-Download Button
+     - Fixed wrong display of the news feed notify in FriendsDialog when the tabs were moved.
+     - Another fix for the discovery fiasco... Turns out that I broke the system with my previous changes.
+        * Allow certificates through with no attached GPG Certs.
+        * Added StoreAllKeys() call after adding new GPG Certificate.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 24 Jan 2012 19:00:00 +0100
+
+retroshare (0.5.2-0.4840~natty) natty; urgency=low
+
+  * Improvements
      - added retroshare certificate links: allows to paste certificates everywhere.
      - added certificate links in friend recommandations
      - added certificate cleaning method, to remove signatures at export
