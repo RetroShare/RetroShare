@@ -382,7 +382,9 @@ void NotifyQt::notifyListChange(int list, int type)
 			emit privateChatChanged(list, type);
 			break;
 		case NOTIFY_LIST_CHAT_LOBBY_LIST:
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received notify chat lobby list" << std::endl;
+#endif
 			emit lobbyListChanged();
 
 		case NOTIFY_LIST_GROUPLIST:

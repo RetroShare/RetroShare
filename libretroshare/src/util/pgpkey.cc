@@ -5,6 +5,10 @@
 #include <iostream>
 #include <stdexcept>
 
+/****************************/
+/*  #define DEBUG_PGPUTIL 1 */
+/****************************/
+
 #define PGP_PACKET_TAG_PUBLIC_KEY  6
 #define PGP_PACKET_TAG_USER_ID    13 
 #define PGP_PACKET_TAG_SIGNATURE   2 
@@ -42,8 +46,10 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 
 		std::string radix_cert = pgp_certificate.substr(i,j-i) ;
 
+#ifdef DEBUG_PGPUTIL
 		std::cerr << "extracted radix cert: " << std::endl;
 		std::cerr << radix_cert ;
+#endif
 
 		// 1 - Convert armored key into binary key
 		//
@@ -55,7 +61,9 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 
 		unsigned char *data = (unsigned char *)keydata ;
 
+#ifdef DEBUG_PGPUTIL
 		std::cerr << "Total size: " << len << std::endl;
+#endif
 
 		uint8_t packet_tag;
 		uint32_t packet_length ;
@@ -69,10 +77,11 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 		while(true) 
 		{
 			PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
-
+#ifdef DEBUG_PGPUTIL
 			std::cerr << "Header:" << std::endl;
 			std::cerr << "  Packet tag: " << (int)packet_tag << std::endl;
 			std::cerr << "  Packet length: " << packet_length << std::endl;
+#endif
 
 			data += packet_length ;
 
@@ -99,8 +108,10 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 		std::string crc_string ;
 		Radix64::encode((const char *)tmp,3,crc_string) ;
 
+#ifdef DEBUG_PGPUTIL
 		std::cerr << "After signature pruning: " << std::endl;
 		std::cerr << outstring << std::endl;
+#endif
 
 		cleaned_certificate = std::string(PGP_CERTIFICATE_START_STRING) + "\n" + version_string + "\n\n" ;
 
@@ -192,13 +203,17 @@ void PGPKeyParser::read_packetHeader(unsigned char *& data,uint8_t& packet_tag,u
 
 	if(new_format)
 	{
+#ifdef DEBUG_PGPUTIL
 		std::cerr << "Packet is in new format" << std::endl;
+#endif
 		packet_tag = b1 & 0x3f ;
 		packet_length = read_125Size(data) ;
 	}
 	else
 	{
+#ifdef DEBUG_PGPUTIL
 		std::cerr << "Packet is in old format" << std::endl;
+#endif
 		uint8_t length_type = b1 & 0x03 ;
 		packet_tag  = (b1 & 0x3c) >> 2 ;
 

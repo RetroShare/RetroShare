@@ -121,14 +121,18 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 
 void ChatLobbyWidget::updateDisplay()
 {
+#ifdef CHAT_LOBBY_GUI_DEBUG
 	std::cerr << "updating chat lobby display!" << std::endl;
+#endif
 	std::vector<PublicChatLobbyRecord> publicLobbies;
 	rsMsgs->getListOfNearbyChatLobbies(publicLobbies);
 
 	std::list<ChatLobbyInfo> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 
+#ifdef CHAT_LOBBY_GUI_DEBUG
 	std::cerr << "got " << publicLobbies.size() << " public lobbies, and " << lobbies.size() << " private lobbies." << std::endl;
+#endif
 
 	// now, do a nice display of lobbies
 	
