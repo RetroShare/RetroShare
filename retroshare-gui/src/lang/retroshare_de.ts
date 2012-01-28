@@ -1102,7 +1102,12 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+147"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+115"/>
+        <source>Please enter your new nick name</source>
+        <translation>Bitte gib deinen neuen Spitznamen ein</translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <location line="+3"/>
         <source>Lobby management</source>
         <translation>Lobby Verwaltung</translation>
@@ -1136,6 +1141,12 @@ Do you want to send them a Message instead</source>
         <location line="+3"/>
         <source>Show Participants</source>
         <translation>Teilnehmer zeigen</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/ChatLobbyDialog.ui" line="+177"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-104"/>
+        <source>Change nick name</source>
+        <translation>Ändere Spitznamen</translation>
     </message>
 </context>
 <context>
@@ -1194,7 +1205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+240"/>
+        <location line="+244"/>
         <source>Invitation to chat lobby</source>
         <translation>Einladung zur Chat Lobby</translation>
     </message>
@@ -1423,12 +1434,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="+180"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="+131"/>
         <source>Close</source>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location line="+126"/>
+        <location line="+332"/>
         <source>Attach a Picture</source>
         <translation>Bild anhängen</translation>
     </message>
@@ -1438,19 +1449,19 @@ p, li { white-space: pre-wrap; }
         <translation>Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+86"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+59"/>
-        <location line="+285"/>
+        <location line="-255"/>
+        <location line="+271"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="-250"/>
-        <location line="+260"/>
+        <location line="-243"/>
+        <location line="+253"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
@@ -1461,17 +1472,17 @@ p, li { white-space: pre-wrap; }
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="-185"/>
+        <location line="-192"/>
         <source>Font</source>
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+28"/>
         <source>Text Color</source>
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+174"/>
         <source>Strike</source>
         <translation>Durchgestrichen</translation>
     </message>
@@ -1512,7 +1523,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+340"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+342"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -1547,7 +1558,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+32"/>
         <source>apears to be Offline.</source>
         <translation>ist Offline.</translation>
     </message>
@@ -9605,7 +9616,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Textfarbe</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="+207"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="+205"/>
         <source>Clear offline messages</source>
         <translation>Entferne offline Nachrichten</translation>
     </message>

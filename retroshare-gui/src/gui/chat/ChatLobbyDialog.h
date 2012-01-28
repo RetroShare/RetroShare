@@ -38,6 +38,7 @@ public:
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return false; }
+	void setNickname(const QString &nickname);
 
 private slots:
 	void showParticipantsFrame(bool show);
@@ -56,7 +57,7 @@ protected:
 	virtual void addIncomingChatMsg(const ChatInfo& info);
 
 protected slots:
-	void setNickName(const QString&);
+	void changeNickname();
 
 private:
 	void updateParticipantsList();

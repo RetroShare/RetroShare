@@ -24,7 +24,10 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>3</number>
+     </property>
      <property name="leftMargin">
       <number>0</number>
      </property>
@@ -34,13 +37,7 @@
      <property name="bottomMargin">
       <number>0</number>
      </property>
-     <property name="horizontalSpacing">
-      <number>0</number>
-     </property>
-     <property name="verticalSpacing">
-      <number>1</number>
-     </property>
-     <item row="0" column="0" rowspan="4">
+     <item>
       <widget class="QFrame" name="leftsideframe">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -111,7 +108,7 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="1" rowspan="4">
+     <item>
       <widget class="QFrame" name="avatarframe">
        <property name="maximumSize">
         <size>
@@ -128,20 +125,14 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" name="_2">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="leftMargin">
-         <number>3</number>
-        </property>
-        <property name="topMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
-        <property name="bottomMargin">
-         <number>9</number>
-        </property>
-        <item row="0" column="0">
+        <item>
          <widget class="AvatarWidget" name="avatarWidget" native="true">
           <property name="minimumSize">
            <size>
@@ -157,7 +148,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item>
          <spacer name="myspacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -170,7 +161,7 @@
           </property>
          </spacer>
         </item>
-        <item row="2" column="0">
+        <item>
          <widget class="AvatarWidget" name="ownAvatarWidget" native="true">
           <property name="minimumSize">
            <size>
@@ -189,15 +180,22 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="2" rowspan="4">
-      <widget class="ChatWidget" name="chatWidget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+     <item>
+      <layout class="QHBoxLayout" name="chatLayout">
+       <property name="topMargin">
+        <number>3</number>
        </property>
-      </widget>
+       <item>
+        <widget class="ChatWidget" name="chatWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -210,15 +208,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ChatWidget</class>
    <extends>QWidget</extends>
    <header location="global">gui/chat/ChatWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

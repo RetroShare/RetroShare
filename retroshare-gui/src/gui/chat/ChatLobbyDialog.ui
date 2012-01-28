@@ -24,7 +24,10 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>3</number>
+     </property>
      <property name="leftMargin">
       <number>0</number>
      </property>
@@ -34,13 +37,7 @@
      <property name="bottomMargin">
       <number>0</number>
      </property>
-     <property name="horizontalSpacing">
-      <number>0</number>
-     </property>
-     <property name="verticalSpacing">
-      <number>1</number>
-     </property>
-     <item row="0" column="0" rowspan="4">
+     <item>
       <widget class="QFrame" name="leftsideframe">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -111,7 +108,7 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="1" rowspan="4">
+     <item>
       <widget class="QFrame" name="participantsFrame">
        <property name="maximumSize">
         <size>
@@ -128,20 +125,20 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" name="_2">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="leftMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>9</number>
-        </property>
-        <property name="rightMargin">
          <number>3</number>
         </property>
-        <property name="bottomMargin">
-         <number>9</number>
+        <property name="rightMargin">
+         <number>0</number>
         </property>
-        <item row="0" column="0">
+        <property name="bottomMargin">
+         <number>3</number>
+        </property>
+        <item>
          <widget class="QListWidget" name="participantsList">
           <property name="styleSheet">
            <string notr="true">QListWidget{
@@ -155,19 +152,31 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="2" rowspan="4">
-      <widget class="ChatWidget" name="chatWidget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+     <item>
+      <layout class="QHBoxLayout" name="chatLayout">
+       <property name="topMargin">
+        <number>3</number>
        </property>
-      </widget>
+       <item>
+        <widget class="ChatWidget" name="chatWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
   </layout>
+  <action name="actionChangeNickname">
+   <property name="text">
+    <string>Change nick name</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

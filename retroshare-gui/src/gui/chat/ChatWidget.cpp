@@ -133,7 +133,7 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 	this->peerId = peerId;
 	this->title = title;
 
-	ui->friendnamelabel->setText(title);
+	ui->titleLabel->setText(title);
 
 	std::string ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
@@ -166,6 +166,8 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		// currently not possible
 		ui->actionDeleteChatHistory->setVisible(false);
 		ui->actionMessageHistory->setVisible(false);
+
+		updateTitle();
 	}
 
 	if (rsHistory->getEnable(false)) {
@@ -586,6 +588,11 @@ void ChatWidget::setCurrentFileName(const QString &fileName)
 
 void ChatWidget::updateStatus(const QString &peer_id, int status)
 {
+	if (isChatLobby) {
+		// updateTitle is used
+		return;
+	}
+
 	/* set font size for status  */
 	if (peer_id.toStdString() == peerId) {
 		// the peers status has changed
@@ -619,7 +626,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 		}
 
 		QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
-		ui->friendnamelabel->setText(peerName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
+		ui->titleLabel->setText(peerName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
 
 		peerStatus = status;
 
@@ -629,6 +636,16 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	}
 
 	// ignore status change
+}
+
+void ChatWidget::updateTitle()
+{
+	if (!isChatLobby) {
+		// updateStatus is used
+		return;
+	}
+
+	ui->titleLabel->setText(name + "@" + title);
 }
 
 void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
@@ -665,6 +682,7 @@ void ChatWidget::updateStatusString(const QString &statusMask, const QString &st
 void ChatWidget::setName(const QString &name)
 {
 	this->name = name;
+	updateTitle();
 }
 
 bool ChatWidget::setStyle()

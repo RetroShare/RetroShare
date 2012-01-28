@@ -21,6 +21,7 @@
  ****************************************************************/
 
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include "ChatLobbyDialog.h"
 #include "ChatTabWidget.h"
@@ -40,6 +41,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 	ui.setupUi(this);
 
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
+	connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
 }
 
 void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
@@ -49,6 +51,8 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 	std::string nickName;
 	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
 	ui.chatWidget->setName(QString::fromUtf8(nickName.c_str()));
+
+	ui.chatWidget->addToolsAction(ui.actionChangeNickname);
 
 	lastUpdateListTime = 0;
 
@@ -98,10 +102,26 @@ void ChatLobbyDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void ChatLobbyDialog::setNickName(const QString& nick)
+void ChatLobbyDialog::setNickname(const QString &nickname)
 {
-	rsMsgs->setNickNameForChatLobby(lobbyId, nick.toUtf8().constData());
-	ui.chatWidget->setName(nick);
+	rsMsgs->setNickNameForChatLobby(lobbyId, nickname.toUtf8().constData());
+	ui.chatWidget->setName(nickname);
+}
+
+void ChatLobbyDialog::changeNickname()
+{
+	QInputDialog dialog;
+	dialog.setWindowTitle(tr("Change nick name"));
+	dialog.setLabelText(tr("Please enter your new nick name"));
+	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
+
+	std::string nickName;
+	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
+	dialog.setTextValue(QString::fromUtf8(nickName.c_str()));
+
+	if (dialog.exec() == QDialog::Accepted) {
+		setNickname(dialog.textValue());
+	}
 }
 
 void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)

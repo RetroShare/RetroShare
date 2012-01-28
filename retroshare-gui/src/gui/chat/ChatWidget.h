@@ -84,6 +84,7 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *event);
 	virtual void showEvent(QShowEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);
+	void updateTitle();
 
 private slots:
 	void pasteLink();
