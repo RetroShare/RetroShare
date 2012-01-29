@@ -409,7 +409,8 @@ TextPage::runEmailClient()
 
 void TextPage::cleanFriendCert()
 {
-    std::string cert = friendCertEdit->toPlainText().toUtf8().constData();
+    std::string cert = friendCertEdit->toPlainText().toUtf8().constData() ;
+	 cert += "\n";	// add an end of line to avoid a bug
     std::string cleanCert;
 	 int error_code ;
 
