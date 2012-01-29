@@ -75,6 +75,18 @@ macx {
     LIBS += -Wl,-search_paths_first
 }
 
+##################################### FreeBSD ######################################
+
+freebsd-* {
+	INCLUDEPATH *= /usr/local/include/gpgme
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= -lssl
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lgnome-keyring
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+}
+
 ############################## Common stuff ######################################
 
 # bitdht config

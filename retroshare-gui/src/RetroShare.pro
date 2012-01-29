@@ -146,13 +146,16 @@ macx {
 
 }
 
+##################################### FreeBSD ######################################
+
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/libretroshare.a
-        LIBS *= -lssl
-        LIBS *= -lgpgme
-        LIBS *= -lupnp
-        LIBS *= -lgnome-keyring
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= -lssl
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lgnome-keyring
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 }
 
 ############################## Common stuff ######################################
@@ -165,10 +168,6 @@ freebsd-* {
 bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
 	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
-
-	#For FreeBSD to need to use these ones.
-	#LIBS += ../../libbitdht/src/libbitdht.a
-	#PRE_TARGETDEPS *= ../../libbitdht/src/libbitdht.a
 }
 
 win32 {

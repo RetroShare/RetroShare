@@ -327,6 +327,8 @@ mac {
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
+################################# FreeBSD ##########################################
+
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
 	INCLUDEPATH *= /usr/local/include/glib-2.0
@@ -336,7 +338,7 @@ freebsd-* {
 	#libupnp implementation files
 	HEADERS += upnp/UPnPBase.h
 	SOURCES += upnp/UPnPBase.cpp
-
+	DESTDIR = lib
 }
 
 ################################### COMMON stuff ##################################
