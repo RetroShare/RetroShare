@@ -19,6 +19,7 @@
 #define ROLE_SORT         Qt::UserRole
 #define ROLE_ID           Qt::UserRole + 1
 #define ROLE_SUBSCRIBED   Qt::UserRole + 2
+#define ROLE_PRIVACYLEVEL Qt::UserRole + 3
 
 #define TYPE_FOLDER       0
 #define TYPE_LOBBY        1
@@ -65,11 +66,13 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	privateLobbyItem->setText(COLUMN_NAME, tr("Private Lobbies"));
 	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
+	privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
 	lobbyTreeWidget->insertTopLevelItem(0, privateLobbyItem);
 
 	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	publicLobbyItem->setText(COLUMN_NAME, tr("Public Lobbies"));
 	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
+	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	lobbyTreeWidget->insertTopLevelItem(1, publicLobbyItem);
 
 	lobbyTreeWidget->expandAll();
@@ -83,17 +86,25 @@ ChatLobbyWidget::~ChatLobbyWidget()
 
 void ChatLobbyWidget::lobbyTreeWidgetCostumPopupMenu()
 {
+	QTreeWidgetItem *item = lobbyTreeWidget->currentItem();
+
 	QMenu contextMnu(this);
 
-	contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create chat lobby"), this, SLOT(createChatLobby()));
+	if (item && item->type() == TYPE_FOLDER) {
+		QAction *action = contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create chat lobby"), this, SLOT(createChatLobby()));
+		action->setData(item->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt());
+	}
 
-	QTreeWidgetItem *item = lobbyTreeWidget->currentItem();
 	if (item && item->type() == TYPE_LOBBY) {
 		if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
 			contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeItem()));
 		} else {
 			contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeItem()));
 		}
+	}
+
+	if (contextMnu.children().count() == 0) {
+		return;
 	}
 
 	contextMnu.exec(QCursor::pos());
@@ -272,8 +283,14 @@ void ChatLobbyWidget::updateDisplay()
 
 void ChatLobbyWidget::createChatLobby()
 {
+	int privacyLevel = 0;
+	QAction *action = qobject_cast<QAction*>(sender());
+	if (action) {
+		privacyLevel = action->data().toInt();
+	}
+
 	std::list<std::string> friends;
-	CreateLobbyDialog(friends).exec();
+	CreateLobbyDialog(friends, privacyLevel).exec();
 }
 
 static void subscribeLobby(QTreeWidgetItem *item)

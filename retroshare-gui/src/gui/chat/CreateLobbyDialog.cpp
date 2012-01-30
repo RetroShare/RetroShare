@@ -30,7 +30,7 @@
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
 
-CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWidget *parent, Qt::WFlags flags) :
+CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, int privacyLevel, QWidget *parent, Qt::WFlags flags) :
 	QDialog(parent, flags)
 {
 	ui = new Ui::CreateLobbyDialog() ;
@@ -55,6 +55,10 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list,QWi
 	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui->keyShareList->start();
 	ui->keyShareList->setSelectedSslIds(peer_list, false);
+
+	if (privacyLevel) {
+		ui->security_CB->setCurrentIndex((privacyLevel == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
+	}
 
 	checkTextFields();
 }
