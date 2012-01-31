@@ -114,6 +114,7 @@ QString formatText(const QString &text, unsigned int flag);
 bool    findAnchors(const QString &text, QStringList& urls);
 
 void    optimizeHtml(QTextEdit *textEdit, QString &text);
+void    optimizeHtml(QString &text);
 QString toHtml(QString text, bool realHtml = true);
 
 } // namespace RsHtml

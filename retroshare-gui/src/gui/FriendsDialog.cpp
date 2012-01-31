@@ -370,7 +370,10 @@ void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name,
             type = ChatStyle::FORMATMSG_OUTGOING;
         }
     }
-    QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, message, formatFlag);
+    // Remove <p>'s from older RetroShare versions before 31.01.2012 (can be removed later)
+    QString optimizedMessage = message;
+    RsHtml::optimizeHtml(optimizedMessage);
+    QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, optimizedMessage, formatFlag);
 
     ui.msgText->append(formatMsg);
 }

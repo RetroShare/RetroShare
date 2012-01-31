@@ -381,7 +381,11 @@ void RshareSettings::setChatScreenFont(const QString &font)
 
 void RshareSettings::getPublicChatStyle(QString &stylePath, QString &styleVariant)
 {
-    stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/public").toString();
+    stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/standard/public").toString();
+    // Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
+    if (stylePath == ":/qss/chat/public") {
+        stylePath = ":/qss/chat/standard/public";
+    }
     styleVariant = valueFromGroup("Chat", "StylePublicVariant", "").toString();
 }
 
@@ -393,7 +397,11 @@ void RshareSettings::setPublicChatStyle(const QString &stylePath, const QString 
 
 void RshareSettings::getPrivateChatStyle(QString &stylePath, QString &styleVariant)
 {
-    stylePath = valueFromGroup("Chat", "StylePrivate", ":/qss/chat/private").toString();
+    stylePath = valueFromGroup("Chat", "StylePrivate", ":/qss/chat/standard/private").toString();
+    // Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
+    if (stylePath == ":/qss/chat/private") {
+        stylePath = ":/qss/chat/standard/private";
+    }
     styleVariant = valueFromGroup("Chat", "StylePrivateVariant", "").toString();
 }
 
@@ -405,7 +413,11 @@ void RshareSettings::setPrivateChatStyle(const QString &stylePath, const QString
 
 void RshareSettings::getHistoryChatStyle(QString &stylePath, QString &styleVariant)
 {
-    stylePath = valueFromGroup("Chat", "StyleHistory", ":/qss/chat/history").toString();
+    stylePath = valueFromGroup("Chat", "StyleHistory", ":/qss/chat/standard/history").toString();
+    // Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
+    if (stylePath == ":/qss/chat/history") {
+        stylePath = ":/qss/chat/standard/history";
+    }
     styleVariant = valueFromGroup("Chat", "StylePrivateVariant", "").toString();
 }
 

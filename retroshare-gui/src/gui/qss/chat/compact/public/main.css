@@ -1,8 +1,12 @@
+.name {
+	font-weight: bold;
+}
+
 .incomingTime {
 	color:#C00000;
 }
 
-.incomingName{
+.incomingName {
 	color:#2D84C9;
 }
 
@@ -10,7 +14,7 @@
 	color:#C00000;
 }
 
-.outgoingName{
+.outgoingName {
 	color:#2D84C9;
 }
 
@@ -18,7 +22,7 @@
 	color:#800000;
 }
 
-.hincomingName{
+.hincomingName {
 	color:#1E5684;
 }
 
@@ -26,7 +30,7 @@
 	color:#800000;
 }
 
-.houtgoingName{
+.houtgoingName {
 	color:#1E5684;
 }
 
@@ -34,7 +38,6 @@
 	color:#C00000;
 }
 
-.ooutgoingName{
-	color:#2D84C9;
+.ooutgoingName {
+	color:#ff0000;
 }
-

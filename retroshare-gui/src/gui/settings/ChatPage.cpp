@@ -202,27 +202,15 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
 
     textBrowser->clear();
 
-    QString nameIncoming = "Incoming";
-    QString nameOutgoing = "Outgoing";
+    QString nameIncoming = tr("Incoming");
+    QString nameOutgoing = tr("Outgoing");
     QDateTime timestmp = QDateTime::fromTime_t(time(NULL));
-    QTextEdit textEdit;
-    QString message;
 
-    textEdit.setText(tr("Incoming message in history"));
-    message = textEdit.toHtml();
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textEdit.setText(tr("Outgoing message in history"));
-    message = textEdit.toHtml();
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textEdit.setText(tr("Incoming message"));
-    message = textEdit.toHtml();
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textEdit.setText(tr("Outgoing message"));
-    message = textEdit.toHtml();
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textEdit.setText(tr("Outgoing offline message"));
-    message = textEdit.toHtml();
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history"), CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message"), CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message"), CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message"), CHAT_FORMATTEXT_EMBED_SMILEYS));
 }
 
 void ChatPage::fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)

@@ -173,7 +173,10 @@ QString formatText(const QString &text, unsigned int flag)
 		embedHtml(doc, body, defEmbedAhref);
 	}
 
-	return doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
+	QString formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
+	optimizeHtml(formattedText);
+
+	return formattedText;
 }
 
 static void findElements(QDomDocument& doc, QDomElement& currentElement, const QString& nodeName, const QString& nodeAttribute, QStringList &elements)
@@ -217,28 +220,100 @@ bool findAnchors(const QString &text, QStringList& urls)
 	return true;
 }
 
+static void removeElement(QDomElement& parentElement, QDomElement& element)
+{
+	QDomNodeList children = element.childNodes();
+	while (children.length() > 0) {
+		QDomNode childElement = element.removeChild(children.item(children.length() - 1));
+		parentElement.insertAfter(childElement, element);
+	}
+	parentElement.removeChild(element);
+}
+
 static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
 {
+	if (currentElement.tagName().toLower() == "html") {
+		// change <html> to <span>
+		currentElement.setTagName("span");
+	}
+
+	QDomNode styleNode;
+	QDomAttr styleAttr;
+	bool addBR = false;
+
 	QDomNodeList children = currentElement.childNodes();
 	for (uint index = 0; index < children.length(); ) {
 		QDomNode node = children.item(index);
+
+		// compress style attribute
+		styleNode = node.attributes().namedItem("style");
+		if (styleNode.isAttr()) {
+			styleAttr = styleNode.toAttr();
+			QString value = styleAttr.value().simplified();
+			value.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+			value.replace("; ", ";");
+			styleAttr.setValue(value);
+		}
+
 		if (node.isElement()) {
 			QDomElement element = node.toElement();
+
+			// not <p>
+			if (addBR && element.tagName().toLower() != "p") {
+				// add <br> after a removed <p> but not before a <p>
+				QDomElement elementBr = doc.createElement("br");
+				currentElement.insertBefore(elementBr, element);
+				addBR = false;
+				++index;
+			}
+
+			// <body>
+			if (element.tagName().toLower() == "body") {
+				if (element.attributes().length() == 0) {
+					// remove <body> without attributes
+					removeElement(currentElement, element);
+					// no ++index;
+					continue;
+				}
+				// change <body> to <span>
+				element.setTagName("span");
+			}
+
+			// <head>
 			if (element.tagName().toLower() == "head") {
-				// remove head
+				// remove <head>
 				currentElement.removeChild(node);
+				// no ++index;
 				continue;
 			}
-			QDomNode style = element.attributes().namedItem("style");
-			if (style.isAttr()) {
-				QDomAttr attr = style.toAttr();
-				// compress style attribute
-				QString value = attr.value().simplified();
-				value.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
-				value.replace("; ", ";");
-				attr.setValue(value);
-			}
+
+			// iterate children
 			optimizeHtml(doc, element);
+
+			// <p>
+			if (element.tagName().toLower() == "p") {
+				// <p style="...">
+				//styleNode = element.attributes().namedItem("style");
+				if (element.attributes().size() == 1 && styleNode.isAttr()) {
+					QString value = styleAttr.toAttr().value().simplified();
+					if (value == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;" ||
+						value.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
+
+						if (addBR) {
+							// add <br> after a removed <p> before a removed <p>
+							QDomElement elementBr = doc.createElement("br");
+							currentElement.insertBefore(elementBr, element);
+							++index;
+						}
+						// remove Qt standard <p> or empty <p>
+						index += element.childNodes().length();
+						removeElement(currentElement, element);
+						addBR = true;
+						continue;
+					 }
+				}
+				addBR = false;
+			}
 		}
 		++index;
 	}
@@ -254,6 +329,13 @@ void optimizeHtml(QTextEdit *textEdit, QString &text)
 
 	text = textEdit->toHtml();
 
+	optimizeHtml(text);
+}
+
+void optimizeHtml(QString &text)
+{
+	int originalLength = text.length();
+
 	// remove doctype
 	text.remove(QRegExp("<!DOCTYPE[^>]*>"));
 
@@ -266,7 +348,7 @@ void optimizeHtml(QTextEdit *textEdit, QString &text)
 	optimizeHtml(doc, body);
 	text = doc.toString(-1);
 
-	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
+	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
 }
 
 QString toHtml(QString text, bool realHtml)

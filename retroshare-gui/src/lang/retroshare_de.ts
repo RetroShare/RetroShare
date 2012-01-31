@@ -1384,27 +1384,37 @@ p, li { white-space: pre-wrap; }
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+211"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+205"/>
+        <source>Incoming</source>
+        <translation>Eingehend</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Outgoing</source>
+        <translation>Ausgehend</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Incoming message in history</source>
         <translation>Eingehehende Nachricht aus dem Verlauf</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Outgoing message in history</source>
         <translation>Ausgehende Nachricht aus dem Verlauf</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Incoming message</source>
         <translation>Eingehehende Nachricht</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Outgoing message</source>
         <translation>Ausgehehende Nachricht</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Outgoing offline message</source>
         <translation>Ausgehehende offline Nachricht</translation>
     </message>
@@ -1417,14 +1427,29 @@ p, li { white-space: pre-wrap; }
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Compact style for group chat</source>
+        <translation>Kompakter Stil für den Gruppenchat</translation>
+    </message>
+    <message>
         <location line="+7"/>
         <source>Standard style for private chat</source>
         <translation>Standard Stil für den privaten Chat</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Compact style for private chat</source>
+        <translation>Kompakter Stil für den privaten Chat</translation>
+    </message>
+    <message>
         <location line="+7"/>
         <source>Standard style for history</source>
         <translation>Standard Stil für den Verlauf</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Compact style for history</source>
+        <translation>Kompakter Stil für den Verlauf</translation>
     </message>
 </context>
 <context>
@@ -5307,7 +5332,7 @@ p, li { white-space: pre-wrap; }
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+118"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>

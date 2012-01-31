@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE RetroShare_StyleInfo>
+<RetroShare_Style version="1.0">
+<style>
+	<name>RetroShare compact</name>
+	<description>The description is defined in ChatStyle.cpp for translation</description>
+</style>
+<author>
+	<name>RetroShare Team</name>
+	<email></email>
+</author>
+</RetroShare_Style>
