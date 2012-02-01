@@ -40,7 +40,7 @@
  ****/
 
 /** Constructor */
-ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId, std::string msgId, bool isHome)
+ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, const std::string &msgId, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mChanId(chanId), mMsgId(msgId), mIsHome(isHome)
 {

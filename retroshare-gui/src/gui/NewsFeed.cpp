@@ -181,7 +181,7 @@ void NewsFeed::addFeedItem(QWidget *item)
 	item->setAttribute(Qt::WA_DeleteOnClose, true);
 
 	connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(itemDestroyed(QObject*)));
-	widgetList.push_back(item);
+	widgets.insert(item);
 
 	sendNewsFeedChanged();
 
@@ -192,16 +192,14 @@ void NewsFeed::addFeedItem(QWidget *item)
 	}
 }
 
-void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, std::string sslId, bool replace)
+void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const std::string &sslId, bool replace)
 {
-	QObjectList::iterator it;
-	for (it = widgetList.begin(); it != widgetList.end(); it++) 
-	{
-		SecurityItem *secitem = dynamic_cast<SecurityItem*>(*it);
+	foreach (QObject *itemObject, widgets) {
+		SecurityItem *secitem = dynamic_cast<SecurityItem*>(itemObject);
 		if ((secitem) && (secitem->isSame(sslId, itemType)))
 		{
 			if (!replace)
-			{	
+			{
 				delete item;
 				return;
 			}
@@ -496,7 +494,7 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 	}
 
 	/* make new widget */
-	ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, fi.mId1, fi.mId2, true);
+	ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, fi.mId1, fi.mId2);
 
 	/* store in forum list */
 
@@ -553,11 +551,7 @@ void NewsFeed::openChat(std::string peerId)
 
 void NewsFeed::itemDestroyed(QObject *item)
 {
-	int index = widgetList.indexOf(item);
-	if (index >= 0) {
-		widgetList.removeAt(index);
-	}
-
+	widgets.remove(item);
 	sendNewsFeedChanged();
 }
 
@@ -566,23 +560,21 @@ void NewsFeed::removeAll()
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::removeAll()" << std::endl;
 #endif
-	while (widgetList.count()) {
-		QObject *item = widgetList.first();
-		widgetList.pop_front();
 
+	foreach (QObject *item, widgets) {
 		if (item) {
 			item->deleteLater();
 		}
 	}
+	widgets.clear();
 }
 
 void NewsFeed::sendNewsFeedChanged()
 {
 	int count = 0;
 
-	QObjectList::iterator it;
-	for (it = widgetList.begin(); it != widgetList.end(); it++) {
-		if (dynamic_cast<PeerItem*>(*it) == NULL) {
+	foreach (QObject *item, widgets) {
+		if (dynamic_cast<PeerItem*>(item) == NULL) {
 			/* don't count PeerItem's */
 			count++;
 		}
@@ -593,5 +585,5 @@ void NewsFeed::sendNewsFeedChanged()
 
 void NewsFeed::feedoptions()
 {
-    RSettingsWin::showYourself(this, RSettingsWin::Notify);
+	RSettingsWin::showYourself(this, RSettingsWin::Notify);
 }

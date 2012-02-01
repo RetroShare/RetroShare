@@ -27,31 +27,27 @@
 
 class SubDestItem : public QWidget, private Ui::SubDestItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  	/** Default Constructor */
-  	SubDestItem(uint32_t type, std::string groupId, std::string inReplyTo);
-
-  	/** Default Destructor */
+	/** Default Constructor */
+	SubDestItem(uint32_t type, const std::string &groupId, const std::string &inReplyTo);
 
 	uint32_t     DestType() { return mType; }
 	std::string  DestGroupId() { return mGroupId; }
 	std::string  DestInReplyTo() { return mInReplyTo; }
 
-void updateItemStatic();
+	void updateItemStatic();
 
 private slots:
 	/* default stuff */
-  	void cancel();
+	void cancel();
 
 private:
 	uint32_t     mType; 
 	std::string  mGroupId; 
 	std::string  mInReplyTo; 
 };
-
-
 
 #endif
 

@@ -38,7 +38,7 @@
  ****/
 
 /** Constructor */
-MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool isHome)
+MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */

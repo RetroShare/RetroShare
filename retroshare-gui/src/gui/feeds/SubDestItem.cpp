@@ -31,7 +31,7 @@
  ****/
 
 /** Constructor */
-SubDestItem::SubDestItem(uint32_t type, std::string groupId, std::string inReplyTo)
+SubDestItem::SubDestItem(uint32_t type, const std::string &groupId, const std::string &inReplyTo)
 :QWidget(NULL), mType(type), mGroupId(groupId), mInReplyTo(inReplyTo)
 {
   /* Invoke the Qt Designer generated object setup routine */

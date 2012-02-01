@@ -41,7 +41,7 @@
  ****/
 
 /** Constructor */
-PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint32_t type, bool isHome)
+PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mPeerId(peerId), mType(type), mIsHome(isHome)
 {
@@ -95,19 +95,19 @@ void PeerItem::updateItemStatic()
 	switch(mType)
 	{
 		case PEER_TYPE_STD:
-							title = tr("Friend");
+			title = tr("Friend");
 			break;
 		case PEER_TYPE_CONNECT:
-							title = tr("Friend Connected");
+			title = tr("Friend Connected");
 			break;
 		case PEER_TYPE_HELLO:
-							title = tr("Connect Attempt");
+			title = tr("Connect Attempt");
 			break;
 		case PEER_TYPE_NEW_FOF:
-							title = tr("Friend of Friend");
+			title = tr("Friend of Friend");
 			break;
 		default:
-							title = tr("Peer");
+			title = tr("Peer");
 			break;
 	}
 
@@ -313,12 +313,12 @@ void PeerItem::togglequickmessage()
 {
 	if (messageframe->isHidden())
 	{
-        messageframe->setVisible(true);
-    }
+		messageframe->setVisible(true);
+	}
 	else
 	{
-        messageframe->setVisible(false);
-    }	
+		messageframe->setVisible(false);
+	}
 }
 
 void PeerItem::sendMessage()
@@ -328,7 +328,7 @@ void PeerItem::sendMessage()
     
     mi.title = tr("Quick Message").toStdWString();
     mi.msg =   quickmsgText->toHtml().toStdWString();
-    mi.msgto.push_back(mPeerId);       
+    mi.msgto.push_back(mPeerId);
     
     rsMsgs->MessageSend(mi);
 

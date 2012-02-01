@@ -29,20 +29,18 @@ class FeedHolder;
 
 class ForumNewItem : public QWidget, private Ui::ForumNewItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  ForumNewItem(FeedHolder *parent, uint32_t feedId, std::string forumId, bool isHome, bool isNew);
-
-  /** Default Destructor */
+	/** Default Constructor */
+	ForumNewItem(FeedHolder *parent, uint32_t feedId, const std::string &forumId, bool isHome, bool isNew);
 
 	void updateItemStatic();
-  	void small();
+	void small();
 
 private slots:
 	/* default stuff */
-  	void removeItem();
+	void removeItem();
 	void toggle();
 
 	void unsubscribeForum();
@@ -59,8 +57,6 @@ private:
 	bool mIsHome;
 	bool mIsNew;
 };
-
-
 
 #endif
 

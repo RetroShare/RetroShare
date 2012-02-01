@@ -31,7 +31,7 @@
  ****/
 
 /** Constructor */
-ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, std::string forumId, bool isHome, bool isNew)
+ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, const std::string &forumId, bool isHome, bool isNew)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mForumId(forumId), mIsHome(isHome), mIsNew(isNew)
 {
@@ -203,4 +203,3 @@ void ForumNewItem::postToForum()
     cfm->show();
 	}
 }
-

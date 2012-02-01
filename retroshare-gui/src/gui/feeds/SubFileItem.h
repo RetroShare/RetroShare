@@ -24,20 +24,20 @@
 
 #include "ui_SubFileItem.h"
 #include <stdint.h>
-const uint32_t SFI_MASK_STATE  		= 0x000f;
-const uint32_t SFI_MASK_TYPE   		= 0x00f0;
-//const uint32_t SFI_MASK_FT     		= 0x0f00;
+const uint32_t SFI_MASK_STATE		= 0x000f;
+const uint32_t SFI_MASK_TYPE		= 0x00f0;
+//const uint32_t SFI_MASK_FT		= 0x0f00;
 const uint32_t SFI_MASK_FLAG		= 0xf000;
 
-const uint32_t SFI_STATE_ERROR 		= 0x0001;
-const uint32_t SFI_STATE_EXTRA 		= 0x0002;
-const uint32_t SFI_STATE_REMOTE 	= 0x0003;
-const uint32_t SFI_STATE_DOWNLOAD 	= 0x0004;
-const uint32_t SFI_STATE_LOCAL 		= 0x0005;
-const uint32_t SFI_STATE_UPLOAD 	= 0x0006;
+const uint32_t SFI_STATE_ERROR		= 0x0001;
+const uint32_t SFI_STATE_EXTRA		= 0x0002;
+const uint32_t SFI_STATE_REMOTE		= 0x0003;
+const uint32_t SFI_STATE_DOWNLOAD	= 0x0004;
+const uint32_t SFI_STATE_LOCAL		= 0x0005;
+const uint32_t SFI_STATE_UPLOAD		= 0x0006;
 
-const uint32_t SFI_TYPE_CHANNEL 	= 0x0010;
-const uint32_t SFI_TYPE_ATTACH 		= 0x0020;
+const uint32_t SFI_TYPE_CHANNEL		= 0x0010;
+const uint32_t SFI_TYPE_ATTACH		= 0x0020;
 
 const uint32_t SFI_FLAG_CREATE		= 0x1000;
 
@@ -51,15 +51,13 @@ const uint32_t SFI_FLAG_CREATE		= 0x1000;
  */
 class SubFileItem : public QWidget, private Ui::SubFileItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  	/** Default Constructor */
+	/** Default Constructor */
 	SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const std::string &srcId);
 
-  	/** Default Destructor */
-
-  	void smaller();
+	void smaller();
 
 	std::string FileHash() { return mFileHash; }
 	std::string FileName() { return mFileName; }
@@ -68,14 +66,14 @@ public:
 
 	void updateItemStatic();
 
-  	bool done();
+	bool done();
 	bool ready();
 	uint32_t getState();
 
 	bool isDownloadable(bool &startable);
 	bool isPlayable(bool &startable);
 
-public  slots:
+public slots:
 	void download();
 	void play();
 
@@ -88,7 +86,6 @@ private slots:
 	void updateItem();
 
 private:
-
 	void Setup();
 
 	std::string mPath;
@@ -107,7 +104,6 @@ private:
 
 signals:
 	void fileFinished(SubFileItem * subFileItem);
-
 };
 
 #endif

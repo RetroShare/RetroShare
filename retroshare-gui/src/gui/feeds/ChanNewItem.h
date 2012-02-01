@@ -29,20 +29,18 @@ class FeedHolder;
 
 class ChanNewItem : public QWidget, private Ui::ChanNewItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  ChanNewItem(FeedHolder *parent, uint32_t feedId, std::string chanId, bool isHome, bool isNew);
-
-  /** Default Destructor */
+	/** Default Constructor */
+	ChanNewItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, bool isHome, bool isNew);
 
 	void updateItemStatic();
-  	void small();
+	void small();
 
 private slots:
 	/* default stuff */
-  	void removeItem();
+	void removeItem();
 	void toggle();
 
 	void unsubscribeChannel();
@@ -58,8 +56,6 @@ private:
 	bool mIsHome;
 	bool mIsNew;
 };
-
-
 
 #endif
 

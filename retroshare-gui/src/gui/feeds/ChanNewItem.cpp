@@ -32,7 +32,7 @@
  ****/
 
 /** Constructor */
-ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, std::string chanId, bool isHome, bool isNew)
+ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, bool isHome, bool isNew)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mChanId(chanId), mIsHome(isHome), mIsNew(isNew)
 {

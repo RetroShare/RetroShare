@@ -30,21 +30,19 @@ class SubFileItem;
 
 class MsgItem : public QWidget, private Ui::MsgItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool isHome);
-
-  /** Default Destructor */
+	/** Default Constructor */
+	MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome);
 
 	void updateItemStatic();
-  	void small();
+	void small();
 
 private slots:
 	/* default stuff */
-  	void gotoHome();
-  	void removeItem();
+	void gotoHome();
+	void removeItem();
 	void toggle();
 
 	void playMedia();
@@ -64,8 +62,6 @@ private:
 
 	std::list<SubFileItem *> mFileItems;
 };
-
-
 
 #endif
 

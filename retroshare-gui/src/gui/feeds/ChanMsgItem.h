@@ -34,7 +34,7 @@ class ChanMsgItem : public QWidget, private Ui::ChanMsgItem
 
 public:
 	/** Default Constructor */
-	ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId, std::string msgId, bool isHome);
+	ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, const std::string &msgId, bool isHome);
 
 	void updateItemStatic();
 	void small();

@@ -25,19 +25,15 @@
 #include "ui_ChatMsgItem.h"
 #include <stdint.h>
 
-
 class FeedHolder;
-
 
 class ChatMsgItem : public QWidget, private Ui::ChatMsgItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string message, bool isHome);
-
-  /** Default Destructor */
+	/** Default Constructor */
+	ChatMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, const std::string &message);
 
 	void updateItemStatic();
 
@@ -57,15 +53,12 @@ private slots:
 	void on_quickmsgText_textChanged();
 
 private:
-	void insertChat(std::string &message);
+	void insertChat(const std::string &message);
 
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
 	std::string mPeerId;
-
-	bool mIsHome;
 };
 
 #endif
-

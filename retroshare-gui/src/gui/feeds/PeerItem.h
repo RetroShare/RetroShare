@@ -25,30 +25,27 @@
 #include "ui_PeerItem.h"
 #include <stdint.h>
 
-const uint32_t PEER_TYPE_STD	 = 0x0001;
+const uint32_t PEER_TYPE_STD     = 0x0001;
 const uint32_t PEER_TYPE_CONNECT = 0x0002;
 const uint32_t PEER_TYPE_HELLO   = 0x0003; /* failed Connect Attempt */
 const uint32_t PEER_TYPE_NEW_FOF = 0x0004; /* new Friend of Friend */
 
 class FeedHolder;
 
-
 class PeerItem : public QWidget, private Ui::PeerItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint32_t type, bool isHome);
-
-  /** Default Destructor */
+	/** Default Constructor */
+	PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, uint32_t type, bool isHome);
 
 	void updateItemStatic();
-  	void small();
+	void small();
 
 private slots:
 	/* default stuff */
-  	void removeItem();
+	void removeItem();
 	void toggle();
 
 	void addFriend();
@@ -57,12 +54,11 @@ private slots:
 	void openChat();
 
 	void updateItem();
-	
-    void togglequickmessage();
+
+	void togglequickmessage();
 	void sendMessage();
 	
 	void on_quickmsgText_textChanged();
-
 
 private:
 	FeedHolder *mParent;
@@ -72,8 +68,6 @@ private:
 	uint32_t mType;
 	bool mIsHome;
 };
-
-
 
 #endif
 

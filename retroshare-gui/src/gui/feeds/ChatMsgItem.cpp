@@ -42,9 +42,8 @@
  ****/
 
 /** Constructor */
-ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string message, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mPeerId(peerId), mIsHome(isHome)
+ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, const std::string &message)
+:QWidget(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -140,7 +139,7 @@ void ChatMsgItem::updateItem()
     return;
 }
 
-void ChatMsgItem::insertChat(std::string &message)
+void ChatMsgItem::insertChat(const std::string &message)
 {
 #ifdef DEBUG_ITEM
     std::cerr << "ChatMsgItem::insertChat(): " << msg << std::endl;

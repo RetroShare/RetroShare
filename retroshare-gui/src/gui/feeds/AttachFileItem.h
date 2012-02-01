@@ -48,8 +48,6 @@ public:
 	AttachFileItem(const QString& localpath);
 	AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags, const std::string& srcId);
 
-	/** Default Destructor */
-
 	const std::string& FileHash() { return mFileHash; }
 	const QString& FileName() { return mFileName; }
 	uint64_t       FileSize() { return mFileSize; }

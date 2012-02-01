@@ -58,7 +58,7 @@ private slots:
 
 private:
   void  addFeedItem(QWidget *item);
-  void  addFeedItemIfUnique(QWidget *item, int itemType, std::string sslId, bool replace);
+  void  addFeedItemIfUnique(QWidget *item, int itemType, const std::string &sslId, bool replace);
 
   void	addFeedItemPeerConnect(RsFeedItem &fi);
   void	addFeedItemPeerDisconnect(RsFeedItem &fi);
@@ -85,7 +85,7 @@ private:
   void sendNewsFeedChanged();
 
   QLayout *mLayout;
-  QObjectList widgetList;
+  QSet<QObject*> widgets;
 
   /* lists of feedItems */
   std::list<ForumNewItem *> 	mForumNewItems;

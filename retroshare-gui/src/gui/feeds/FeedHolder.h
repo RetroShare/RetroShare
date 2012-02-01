@@ -26,16 +26,15 @@
 #include <stdint.h>
 
 const uint32_t FEEDHOLDER_MSG_MESSAGE	= 0x0001;
-const uint32_t FEEDHOLDER_MSG_FORUM	= 0x0002;
+const uint32_t FEEDHOLDER_MSG_FORUM		= 0x0002;
 const uint32_t FEEDHOLDER_MSG_CHANNEL	= 0x0003;
-const uint32_t FEEDHOLDER_MSG_BLOG	= 0x0004;
+const uint32_t FEEDHOLDER_MSG_BLOG		= 0x0004;
 
 class FeedHolder
 {
-	public:
-
-virtual void deleteFeedItem(QWidget *item, uint32_t type) = 0;
-virtual	void openChat(std::string peerId) = 0;
+public:
+	virtual void deleteFeedItem(QWidget *item, uint32_t type) = 0;
+	virtual	void openChat(std::string peerId) = 0;
 };
 
 #endif
