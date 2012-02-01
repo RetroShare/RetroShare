@@ -29,7 +29,7 @@
 class pqistore ;
 
 #include "retroshare/rsplugin.h"
-#include "plugins/pluginclasses.h"
+#include "plugins/rscacheservice.h"
 
 #include "rsrank.h"
 
