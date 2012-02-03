@@ -116,7 +116,7 @@ ChatPage::save(QString &/*errmsg*/)
     rsHistory->setSaveCount(true, ui.publicChatSaveCount->value());
     rsHistory->setSaveCount(false, ui.privateChatSaveCount->value());
 
-	 rsMsgs->setDefaultNickNameForChatLobby(ui.chatLobbyNick_LE->text().toStdString()) ;
+    rsMsgs->setDefaultNickNameForChatLobby(ui.chatLobbyNick_LE->text().toUtf8().constData()) ;
 
     ChatStyleInfo info;
     QListWidgetItem *item = ui.publicList->currentItem();
@@ -179,9 +179,9 @@ ChatPage::load()
     privateStylePath = loadStyleInfo(ChatStyle::TYPE_PRIVATE, ui.privateList, ui.privateComboBoxVariant, privateStyleVariant);
     historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyList, ui.historyComboBoxVariant, historyStyleVariant);
 
-	 std::string nick ;
-	 rsMsgs->getDefaultNickNameForChatLobby(nick) ;
-	 ui.chatLobbyNick_LE->setText(QString::fromStdString(nick)) ;
+    std::string nick ;
+    rsMsgs->getDefaultNickNameForChatLobby(nick) ;
+    ui.chatLobbyNick_LE->setText(QString::fromUtf8(nick.c_str())) ;
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()

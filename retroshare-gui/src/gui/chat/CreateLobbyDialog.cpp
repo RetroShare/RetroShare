@@ -43,7 +43,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
 	ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
 #endif
-	ui->nickName_LE->setText(QString::fromStdString(default_nick)) ;
+	ui->nickName_LE->setText(QString::fromUtf8(default_nick.c_str())) ;
 
 	connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
 	connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
@@ -111,7 +111,7 @@ void CreateLobbyDialog::createLobby()
 
 	// set nick name !
 
-	rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toStdString()) ;
+	rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toUtf8().constData()) ;
 
 	// open chat window !!
 	std::string vpid ;
