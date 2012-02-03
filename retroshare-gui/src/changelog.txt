@@ -254,7 +254,8 @@ Changes for v0.5.3a
      - Removed "location:" before the ssl name in FriendsDialog and MessengerWindow.
 
   * Bug fixes
-     - fixed small bug in certificate correction
+     - Fixed handling of utf8 characters in lobby nick name.
+     - Fixed small bug in certificate correction
      - Added Check for successful Req creation (was crashing with NULL pointer).
      - Fixed echoes in chat lobbies
         * added a time stamp to lobby events (new item tag)
