@@ -255,13 +255,22 @@ void GetStartedDialog::inviteFriends()
 
 	std::ostringstream out;
 
+	out << GetInviteText();
+	out << std::endl;
+	out << GetCutBelowText() << std::endl;
+	out << std::endl;
+	out << cert;
+	out << std::endl;
+
+	sendMail("", tr("Retroshare Invitation").toStdString(), out.str());
+
+}
 
 
-
-
-
-
-    	QString trstr;
+std::string GetStartedDialog::GetInviteText()
+{
+	std::ostringstream out;
+	QString trstr;
 	trstr = tr("Your friend has installed Retroshare, and would like you to try it out.");
 	out << trstr.toStdString() << std::endl;
 	out << std::endl;
@@ -270,23 +279,33 @@ void GetStartedDialog::inviteFriends()
 	out << std::endl;
 	trstr = tr("Retroshare is a private Friend-2-Friend sharing network.");
 	out << trstr.toStdString() << std::endl;
-	trstr = tr("It has an many features, including built-in chat, messaging, "); 
+	trstr = tr("It has many features, including built-in chat, messaging, "); 
 	out << trstr.toStdString() << std::endl;
 	trstr = tr("forums and channels, all of which are as secure as the file-sharing.");
 	out << trstr.toStdString() << std::endl;
 	out << std::endl;
 	out << std::endl;
-	trstr = tr("Below is your friends ID Certificate. Cut and paste this into your Retroshare client");
+	trstr = tr("Here is your friends ID Certificate.");
 	out << trstr.toStdString() << std::endl;
-	trstr = tr("and send them your ID Certificate to enable the secure connection");
+	trstr = tr("Cut and paste the text below into your Retroshare client");
 	out << trstr.toStdString() << std::endl;
-	out << std::endl;
-	out << cert;
-	out << std::endl;
+	trstr = tr("and send them your ID Certificate to get securely connected.");
+	out << trstr.toStdString() << std::endl;
 
-	sendMail("", tr("Retroshare Invitation").toStdString(), out.str());
-
+	std::string finaltext = out.str();
+	return finaltext;
 }
+
+
+std::string GetStartedDialog::GetCutBelowText()
+{
+    	QString trstr;
+	trstr = tr("Cut Below Here");
+	std::string text = trstr.toStdString() + " <-------------------------------------------------------------------------------------";
+	return text;
+}
+
+
 
 
 void GetStartedDialog::emailSubscribe()

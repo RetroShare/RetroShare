@@ -28,6 +28,7 @@
 
 #include <QTimer>
 
+
 class GetStartedDialog : public MainPage
 {
     Q_OBJECT
@@ -37,6 +38,11 @@ class GetStartedDialog : public MainPage
     GetStartedDialog(QWidget *parent = 0);
 /** Default Destructor */
     ~GetStartedDialog();
+
+// Single Point for (English) Text of the Invitation.
+// This is used by other classes.
+static	std::string GetInviteText();
+static  std::string GetCutBelowText();
 
 /*** signals: ***/
 

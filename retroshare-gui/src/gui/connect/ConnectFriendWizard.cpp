@@ -23,6 +23,8 @@
 #include "gui/common/PeerDefs.h"
 #include "gui/common/GroupDefs.h"
 
+#include "gui/GetStartedDialog.h"
+
 #include <retroshare/rspeers.h> //for rsPeers variable
 #include <retroshare/rsiface.h>
 
@@ -1279,7 +1281,7 @@ EmailPage::EmailPage(QWidget *parent) : QWizardPage(parent) {
 
     subjectLabel = new QLabel(tr("Subject:" ) );
     subjectEdit = new QLineEdit;
-    subjectEdit->setText(tr("Friend invites you to check out RetroShare"));
+    subjectEdit->setText(tr("RetroShare Invitation"));
     registerField("subjectEdit*", subjectEdit);
 
     emailhbox2Layout = new QHBoxLayout;
@@ -1293,11 +1295,8 @@ EmailPage::EmailPage(QWidget *parent) : QWizardPage(parent) {
 
     inviteTextEdit = new QTextEdit;
     inviteTextEdit->setReadOnly(true);
-    inviteTextEdit->setHtml(tr("Friend uses RetroShare to communicate securely, and invites you to join him to share files together. <br>"
-                               "RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. <br>"
-                               "For more information, see our website http://retroshare.sourceforge.net/ "
-                               "or download the software here http://retroshare.sourceforge.net/downloads.html. <br>"
-                               "See you soon on RetroShare!"));
+
+    inviteTextEdit->setPlainText(QString::fromUtf8(GetStartedDialog::GetInviteText().c_str()));
 
     emailvboxLayout = new QVBoxLayout;
     emailvboxLayout->addLayout(emailhbox2Layout);
@@ -1329,6 +1328,8 @@ bool EmailPage::validatePage()
     if (mailaddresses.isEmpty() == false)
     {
         QString body = inviteTextEdit->toPlainText();
+
+	body += "\n" + QString::fromUtf8(GetStartedDialog::GetCutBelowText().c_str());
         body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
 
         sendMail (mailaddresses, subjectEdit->text(), body);
