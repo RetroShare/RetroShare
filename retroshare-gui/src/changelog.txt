@@ -1,6 +1,18 @@
 Changes for v0.5.3a
 
   * Improvements
+     - Updated English Email Invite .
+     - Set OSX default style to "Cleanlooks" - as AQUA style hides some windows.
+     - Fixed missing headers for plugin manager.
+     - Disabled ZEROCONF for OSX.  
+     - Optimized some internals in the news feed items
+     - std::string -> const std::string&
+     - QObjectList -> QSet<QObject*>
+     - Added new compact style for chat.
+     - Improved the HTML optimizer.
+     - Start the CreateLobbyDialog from the list of chat lobbies with the privacy level of the selected item.
+     - Added change nick name to the chat lobby dialog.
+     - Optimized layout of the chat dialogs.
      - Added (make functional) the lobby menu in the context menu of the gpg and group item in FriendList.
      - Added button to add/remove signatures and button to copy RS cert link to clipboard
      - Added doubleclick to join a lobby.
@@ -103,6 +115,7 @@ Changes for v0.5.3a
         * added incomplete udpproxylayer code. (not compiled)
        
      libretroshare
+        * added RsPQIService to allow plugins based on peer-to-peer services
         * added Configuration to p3BitDht for storing Relay Settings. (bit Hackish!)
         * added RelayHandler & getRelayReceiver() - to outsource some Relay functions.
         * + RelayHandler_InstallRelayConnection() & RelayHandler_LogFailedProxyAttempt()
@@ -115,7 +128,7 @@ Changes for v0.5.3a
         * added ZeroConf to OSX compilation.
         * extended rsDht interface to expose Relay configuration.
        
-       retroshare-gui
+     retroshare-gui
         * added Relay configuration panel.
      - Added the real size of all files of a collection to the link when added with drag and drop.
      - ConnectionFriendWizard: Show the messagebox "Your Cert is copied to Clipboard" after copying the cert into the clipboard.
@@ -241,6 +254,7 @@ Changes for v0.5.3a
      - Removed "location:" before the ssl name in FriendsDialog and MessengerWindow.
 
   * Bug fixes
+     - fixed small bug in certificate correction
      - Added Check for successful Req creation (was crashing with NULL pointer).
      - Fixed echoes in chat lobbies
         * added a time stamp to lobby events (new item tag)
