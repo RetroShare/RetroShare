@@ -1,19 +1,19 @@
 .incomingName {
-	color:#2D84C9;
+	color:%color%;
 }
 
 .outgoingName {
-	color:#2D84C9;
+	color:%color%;
 }
 
 .hincomingName {
-	color:#1E5684;
+	color:%color%;
 }
 
 .houtgoingName {
-	color:#1E5684;
+	color:%color%;
 }
 
 .ooutgoingName {
-	color:#ff0000;
+	color:%color%;
 }

@@ -41,9 +41,9 @@ class ChatWidget;
 class ChatWidget : public QWidget
 {
 	Q_OBJECT
-    
+
 public:
-    enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE };
+	enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE, TYPE_SYSTEM };
 
 public:
 	explicit ChatWidget(QWidget *parent = 0);

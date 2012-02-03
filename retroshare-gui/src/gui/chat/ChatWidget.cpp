@@ -309,6 +309,10 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		type = incoming ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
 	}
 
+	if (chatType == TYPE_SYSTEM) {
+		formatFlag |= CHAT_FORMATMSG_SYSTEM;
+	}
+
 	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, message, formatFlag);
 
 	ui->textBrowser->append(formatMsg);

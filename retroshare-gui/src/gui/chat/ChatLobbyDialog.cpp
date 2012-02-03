@@ -164,10 +164,10 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 {
 	switch (event_type) {
 	case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(str), ChatWidget::TYPE_NORMAL);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(str), ChatWidget::TYPE_SYSTEM);
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(str), ChatWidget::TYPE_NORMAL);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(str), ChatWidget::TYPE_SYSTEM);
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
 		ui.chatWidget->updateStatusString(nickname + " %1", str);

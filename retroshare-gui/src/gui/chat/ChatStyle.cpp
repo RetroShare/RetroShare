@@ -99,6 +99,7 @@
 */
 
 #include <QApplication>
+#include <QColor>
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
@@ -106,6 +107,8 @@
 #include "gui/common/Emoticons.h"
 
 #include <retroshare/rsinit.h>
+
+//#define COLORED_NICKNAMES
 
 enum enumGetStyle
 {
@@ -223,15 +226,19 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
             fileCss.close();
         }
 
-        if (styleVariant.isEmpty() == false) {
-            QFile fileCssVariant(QFileInfo(styleDir, "variants/" + styleVariant + ".css").absoluteFilePath());
-            QString cssVariant;
-            if (fileCssVariant.open(QIODevice::ReadOnly)) {
-                cssVariant = fileCssVariant.readAll();
-                fileCssVariant.close();
+        QString variant = styleVariant;
+        if (styleVariant.isEmpty()) {
+            // use standard
+            variant = "Standard";
+        }
 
-                css += "\n" + cssVariant;
-            }
+        QFile fileCssVariant(QFileInfo(styleDir, "variants/" + variant + ".css").absoluteFilePath());
+        QString cssVariant;
+        if (fileCssVariant.open(QIODevice::ReadOnly)) {
+            cssVariant = fileCssVariant.readAll();
+            fileCssVariant.close();
+
+            css += "\n" + cssVariant;
         }
 
         style.replace("%css-style%", css);
@@ -281,34 +288,31 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 
     QString msg = RsHtml::formatText(message, formatFlag);
 
-//    //replace http://, https:// and www. with <a href> links
-//    QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
-//    int count = 0;
-//    int pos = 100; //ignore the first 100 char because of the standard DTD ref
-//    while ( (pos = rx.indexIn(message, pos)) != -1 ) {
-//        //we need to look ahead to see if it's already a well formed link
-//        if (message.mid(pos - 6, 6) != "href=\"" && message.mid(pos - 6, 6) != "href='" && message.mid(pos - 6, 6) != "ttp://" ) {
-//            QString tempMessg = message.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + message.mid(pos + rx.matchedLength(), -1);
-//            message = tempMessg;
+    QColor color;
+#ifdef COLORED_NICKNAMES
+    if (flag & CHAT_FORMATMSG_SYSTEM) {
+        color = Qt::darkBlue;
+    } else {
+        // Calculate color from the name
+//        uint hash = 0x73ffe23a;
+//        for (int i = 0; i < name.length(); ++i) {
+//            hash = (hash ^ 0x28594888) + ((uint32_t) name[i].toAscii() << (i % 4));
 //        }
-//        pos += rx.matchedLength() + 15;
-//        count ++;
-//    }
 
-//    {
-//	QHashIterator<QString, QString> i(smileys);
-//	while(i.hasNext())
-//	{
-//            i.next();
-//            foreach(QString code, i.key().split("|"))
-//                message.replace(code, "<img src=\"" + i.value() + "\">");
-//	}
-//    }
+        uint hash = 0;
+        for (int i = 0; i < name.length(); ++i) {
+            hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toAscii())) & 0x3fff;
+        }
+
+        color.setHsv(hash, 255, 150);
+    }
+#endif
 
     QString formatMsg = style.replace("%name%", name)
                              .replace("%date%", timestamp.date().toString("dd.MM.yyyy"))
                              .replace("%time%", timestamp.time().toString("hh:mm:ss"))
-                             .replace("%message%", msg);
+                             .replace("%message%", msg)
+                             .replace("%color%", color.name());
 
     return formatMsg;
 }
@@ -519,6 +523,11 @@ static QString getBaseDir()
 
     // iterate variants
     for (QFileInfoList::iterator file = fileList.begin(); file != fileList.end(); file++) {
+#ifndef COLORED_NICKNAMES
+        if (file->baseName().toLower() == "colored") {
+            continue;
+        }
+#endif
         variants.append(file->baseName());
     }
 

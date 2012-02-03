@@ -32,6 +32,7 @@
 /* Flags for ChatStyle::formatMessage */
 #define CHAT_FORMATMSG_EMBED_SMILEYS    1
 #define CHAT_FORMATMSG_EMBED_LINKS      2
+#define CHAT_FORMATMSG_SYSTEM           4
 
 /* Flags for ChatStyle::formatText */
 #define CHAT_FORMATTEXT_EMBED_SMILEYS  1

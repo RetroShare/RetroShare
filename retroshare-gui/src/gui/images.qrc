@@ -506,6 +506,7 @@
         <file>qss/chat/compact/private/ooutgoing.htm</file>
         <file>qss/chat/compact/private/main.css</file>
         <file>qss/chat/compact/private/variants/Standard.css</file>
+        <file>qss/chat/compact/private/variants/Colored.css</file>
         <file>qss/chat/compact/public/info.xml</file>
         <file>qss/chat/compact/public/incoming.htm</file>
         <file>qss/chat/compact/public/outgoing.htm</file>
@@ -514,6 +515,7 @@
         <file>qss/chat/compact/public/ooutgoing.htm</file>
         <file>qss/chat/compact/public/main.css</file>
         <file>qss/chat/compact/public/variants/Standard.css</file>
+        <file>qss/chat/compact/public/variants/Colored.css</file>
         <file>qss/chat/compact/history/info.xml</file>
         <file>qss/chat/compact/history/incoming.htm</file>
         <file>qss/chat/compact/history/outgoing.htm</file>
