@@ -1,3 +1,345 @@
+Changes for v0.5.3a
+
+  * Improvements
+     - Added (make functional) the lobby menu in the context menu of the gpg and group item in FriendList.
+     - Added button to add/remove signatures and button to copy RS cert link to clipboard
+     - Added doubleclick to join a lobby.
+     - Disable the Startup Wizard. Most of the defaults are sensible now, so its no longer needed!
+     - Fixed default data rates to sensible options: 200 kB/s down, 50 kB/s up.
+     - Added Minimal certificates to discovery exchange. They are invoked if the standard cert is over 10k.
+     - Switched std::vector.data => &(std::vector[0]) to remove linuxism in radix64.
+     - Added new common widget FriendSelectionWidget for selecting friends and use it in CreateLobbyDialog, 
+       ShareKey (forums and channels) and MessageComposer.
+     - Fixed german language.
+     - added retroshare certificate links: allows to paste certificates everywhere.
+     - added certificate links in friend recommandations
+     - added certificate cleaning method, to remove signatures at export
+     - improved chat lobby GUI
+         * added proper counting of peers in chat lobbies, using keep-alive packets, time stamps, etc.
+         * Moved the chat lobby tabs to the FriendsDialog.
+         * Extracted a new widget ChatWidget for the basic chat handling from the 
+             PopupChatDialog and use it in ChatLobbyDialog too.
+         * Added an own ui for the ChatLobbyDialog.
+         * Saved settings of the ChatLobbyDialog.
+     - Reworked SoundManager and SoundPage in the settings.
+     - Added new icon in the statusbar to switch off the sound
+     - Enabled Relays by default. 
+         * This will only effect people who upgrade from a very old version.
+         * Other people will have to switch it on manually.
+         * Default is 0 friends, 1 FOF & 1 General @ 1kb/s... max 4kb/s usage per peer.
+     - Disabled Thread debugging.
+     - Fixed up bdProxyId initialisation
+     - Improved Error Code translation (for unknown entries)
+     - cleaned up some of the std::cerr output.
+     - Changed parameters of RsStatus interface from "std::string" to "const std::string&"
+     - Fixed german language.
+
+     - Added Native (Bonjour API) Nat Port Forwarding to OSX.
+        * new classe p3zcNatAssist
+        * moved some common ZeroConf functions / definitions around.
+        * moved virtual tick() to parent class: pqiNetAssist
+        * added zcNetAssist section to makefiles. (active for OSX build)
+        * setup switch between p3zcNatAssist & upnphandler in rsinit.cc
+
+     - Changes to support Relays.
+        * added p3BitDht::addKnownNode() so that DhtIds can be used instead of SslIds.
+        * switched from bdStdDht() functions to use bdModDht().
+        * made DhtFunctions a class variable.
+        * added function to modify NodePerBucket() parameter.
+        * Bugfix for LinkType. peerConnectAddress.flags was not initialised.
+        * Extra debugging of LinkType data (use LINKMGR_DEBUG_LINKTYPE).
+        * cleaned up udprelay output.
+        * Added Compile Rules to libretroshare.pro for building LocalNet Testing Version. (testnetwork)
+        * Added NumQueryNodes() function to bdDhtFunctions.
+        * Switched bdquery.cc to use bdNumQueryNodes().
+        * Extended bdStdDht class to bdModDht to allow NodesPerBucket to be modified.
+        * Fixed up Connection Fail Callback for Relay Servers.
+        * Added Extra debugging for Proxy Connections.
+        * disabled turtle routing for relayed connexions
+        
+     - Added Chat Lobbies: decentalized anonymous chat rooms.
+        * Chat lobbies are private (on invitation only) or public (friends can join)
+        * Bit of GUI to show lobby list, with one tab per active chat lobby
+        * Most fonctionality of chat are ported to lobbies including status messages
+        * Internally to libretroshare, lobbies are virtual peers to talk to. 
+        * Deriving a RsItem from ChatLobbyBouncingObject allows the item to be bounced
+          to all peers in the lobby.
+        * Improved message splitting by adding sub item ids to lobby messages. Should 
+          be ported to normal chat in the next version.
+        * Added parent id to RsChatLobbyMsgItem, to allow threaded chat.
+        * List of public lobbies at friends are requested only when needed 
+        * Major cleaning of p3chatservice.cc
+
+     - Added new entry in config->transfers to allow reserving n slots to non cache transfers
+     - Add the ip address of the DNSResolver to the top of the list of the connect addresses.
+     - Little design improvements for Plugin Item
+     - Added manual entry for plugins
+     - Added relay connexions (Note: There are still some service changes required to 
+       reduce the traffic over relays)
+        * Merging Dht Relay improvements into the trunk. These changes should finally make relays functional.
+        * Changed the way proxy/relay peers are selected in bdConnection. (needs more work).
+        * Added LinkType to peer info in p3LinkMgr & rspeers.h interface.
+        * Added getConnectionType() to p3PeerMgr. This defaults to FRIEND for the moment.
+        * Provide information about Bandwidth, Transport and Peer Type via LinkType().
+        * Added RateCap() to limit traffic over Relay connections.
+        * Set Internal Rate to 75% of Relay Limit to account for transport overhead.
+        * Added various #include "util/rswin.h" to fix compile errors with standard ssl package.
+        * Removed Local variables (mConnectProxyAddr, etc) which were hiding Class Variables.
+        * Cleaned up bits in pqissl.cc and p3linkmgr.cc
+        * Increased UDP Relay Packet size (max transport of 1400 bytes per UDP packet)
+        * Modified checkRelay() to use Low Pass Filter to calculate Relay Bandwidth.
+        * Improved udprelay debugging.
+        * increased (x2) Relay Lifetimes - this is so that enough useful data can be transported (1meg).
+        * Added LOCALNET_TESTING code to rsinit.cc. This allows Port Restrictions to simulate firewalls.
+        * more debugging and minor bugfixes.
+
+    libbitdht
+        * added Relay Flags to bdNode::setNodeDhtMode()
+        * added dropRelayServers() / pingRelayServers() functions for mode switches
+        * added utility function:  bdFriendList::findPeersWithFlags()
+        * added utility function:  bdSpace::clean_node_flags(uint32_t flags)
+        * added RelayMode to ConnectManager.
+        * added failedConnection callback when in Server Mode.
+        * added incomplete udpproxylayer code. (not compiled)
+       
+     libretroshare
+        * added Configuration to p3BitDht for storing Relay Settings. (bit Hackish!)
+        * added RelayHandler & getRelayReceiver() - to outsource some Relay functions.
+        * + RelayHandler_InstallRelayConnection() & RelayHandler_LogFailedProxyAttempt()
+        * added RelayServer, Mode and RelayAllowance to external DHT interface.
+        * added p3PeerMgr::getGpgId() for ZeroConf usage.
+        * updated parts of pqiassist virtual interfaces.
+        * added Bandwidth storage to udprelay.
+        * modified the way Relay Slots are allocated to match GUI interface.
+        * ZeroConf now working on OSX.
+        * added ZeroConf to OSX compilation.
+        * extended rsDht interface to expose Relay configuration.
+       
+       retroshare-gui
+        * added Relay configuration panel.
+     - Added the real size of all files of a collection to the link when added with drag and drop.
+     - ConnectionFriendWizard: Show the messagebox "Your Cert is copied to Clipboard" after copying the cert into the clipboard.
+     - Removed "release" from the win32 build in retroshare-nogui.pro.
+     - Added retroshare-nogui to the subdir project.
+
+    - DHT (Merging r4705 through r4717 from retroshare/branches/v0.5-dhtmods)
+       * Switched on Local BadPeer DHT Filter.
+          - This will remove any peer detected to be spoofing yourself or your friends.
+          - This list is also shared with you friends. (in Test Mode).
+       * Added Cleanup of BadPeer Filter.
+          - Instead of permanent ban, peers are be banned for 6 hours.
+          - bdManager periodically calls this - which prints out ban list too.
+       * Added Checks against spoofing to UdpStunner.
+          - Throw away Stun Results where remote_addr = reported ext_addr.
+          - Added extra checks to ensure that the same Ext IP is returned, before reporting.
+          - accept BadPeer List from DHT BadPeer Detection.
+       * Changed BanList Service Id from Test ID to Real ID.
+
+     - Added new widget for hashing files.
+     - Added new common class FilesDefs to handle informations of file types like icons and names.
+     - Removed calls to exit() in rsinit. Replaced them by proper return false
+     - Adjustment of some values for file transfer: some delays can be larger, now that chunks are shared between sources. This makes file transfer more stable:
+        FT_TM_DOWNLOAD_TIMEOUT: 10 -> 20 secs (RTT limit of 10 secs is too low -> transfers in long tunnels kept switching between active and inactive)
+        INACTIVE_CHUNKS_CHECK_DELAY: 60 -> 240 secs (Chunks are kept longer before beign cancelled, which is now affordable)
+        MAX_TIME_INACTIVE_REQUEUED: 60 -> 120 secs.(Transfers a kept longer before being re-prioritized in queue)
+
+    - DHT:
+        * Reduced Default DHT Message rate from 50msg/sec to 5msg/sec
+           (Searches now take longer, but it should make crappy firewalls happy.)
+        * Added Interface to allow this rate to be dynamically changed (no GUI yet).
+        * Bugfixes for p3BanList: removed internal IPs from Lists, fixed AddBanPeer() logic bug.
+        * Disabled p3Dsdv, after brief test.
+        * Added knowledge of Friends / FoFs and Relays to DHT.
+        * Added bdFriendList class to store this information.
+        * Added Checks against known Peer:IP information to detect bad peers.
+        * Bad Peer Checking is in Test Mode Only for the moment,
+        * New Interfaces to exchange above information with libretroshare
+        * Cleaned up various compiler warnings.
+     - GUI
+        * Added new button "Open Collection" in TransfersDialog.
+        * Show main window with click on system icon when the main window is minimized.
+        * Beautified RsCollectionDialog.
+        * Fixed german language.
+        * Added new column "Last Contact" to the FriendsDialog and MessengerWindow. 
+          Moved some more basic functions to FriendsList and optimized the exisiting code.
+        * Added translation for plugins and added german language to LinksCloud. Recompile needed.
+        * Changed the name and the description of the plugin to utf8.
+        * fixed download priority handling. Proof-tested on multiple DL from the same peer.
+
+     - libretroshare Improvements:
+        * corrected disabled RequestdirDetails in FileIndexStore to be able to retrieve root directory of a user ID
+        * removed dependency of mRateIncrease into measured rtt -> would cause very slow transfers through long tunnels
+        * Removed compiler warnings.
+        * Added p3BanList Service and DataTypes to exchange Bad Peer information.
+        * Added Plumbing to get info from network to DHT and back.
+        * Supply Friend List from p3LinkMgr
+        * Supply Friend of Friend List from p3Disc.
+        * Added p3Dsdv Service and DataTypes for NetworkWide Routing (Testing Mode).
+        * Various BugFixes.
+        * Patch Manual Forward mode to preserve user selected Port.        
+
+     - implemented handling and creation of collection files
+     - improved computation of CRC32 maps (separate thread, cache keeping, sending of keep-alive packets)
+     - fixed compilation of some tests in libretroshare/src/tests/ft/
+     - updated german language
+     - started implementing a file mapper to allow linear download of data with automatic de-fragmentation (not enabled yet)     
+
+     - updated build scripts and .pro files forubuntu oneiric
+     - fixed plugin system on windows.
+     - updated french translation
+     - Add the private chat message to the history after removing the private chat 
+       queue (when the user has read the message).
+     - Added loading text to forumsdialog and enabled percentage numbers to be shown also
+     - added display of TR forwarding probability as a function of depth. 
+     - Moved the chat history into the libretroshare.
+        * Now the history is saved encrypted. Please delete all files with "chat*.xml" in your profile folder.
+        * Added new config p3HistoryMgr and interface p3History.
+        * Added new option to limit the count of the saved history items.
+        * Added new simple html optimizer "RsHtml::optimizeHtml" to reduce the size of the html strings. 
+        
+     - Changed default random number generator to use RAND_bytes from openssl. 
+     - Updated random testing code and fixed compilation
+     - Fixed compilation on FreeBSD, and improved sorting on DHT window
+       (Patch from Ben Laurie)
+     - Added next unread button to forums (patch from devnewton #3401840)
+     - Fixed inaccurate text in transfer page
+     - Removed calls to rsfiles->get{Download,Partials}Directory() in RsDiscSpace 
+       class, since it would trigger a call to ftController
+     - Changed names of functions in ftTransferModules to locked_* when appropriate 
+       (helps debugging)
+     - Show the availability status of peers at the level of locations instead of GPG
+       keys (patch from AsamK)
+     - Added paste of RS links to post on channels, and additional check that the file 
+       is actually shared.
+       
+     - Stopping hash when a shared directory containing the file was removed
+     - Reworked the process of the RetroShare links. Now RetroShare asks when 
+       adding a file or a person link and shows a detailed result.
+     - Merging distrib split into trunk, suppressed p3distrib in services 
+     - Send msg in plain text when the html encoding does not change anything
+       into the message. This drastically reduces message s size
+     - Added missing status frame for idle.
+     - Merged QoS branch into trunk.
+     - Set own status initially to online
+     - Added double click to NetworkDialog to show the peer details
+     - Put some pqissl warnings in log file only in debug mode, since this is quite CPU demanding
+     - Added new widget to display an avatar with or without the status frame - AvatarWidget.
+       Changed all existing avatars to AvatarWidget.
+     - Added avatar image to ConfCertDialog (defnax).
+     - Added new class AvatarDefs to get the avatar for a ssl id or gpg id
+                        
+     - changed local root directory to be "My files" instead of SSLid
+     - set default of the signature checkbox in ConnectFriendWizard to disabled
+     - set the initial option for the download directory to network wide only
+     - set the default of a new shared directory to network wide
+     - added private groups option to forums
+     - Added a new checbox in the settings (NotifyPage) to enable/disable the
+       new SecurityItem. It is enabled by default, but all existing users need to enable it.
+     - Added new buttons to SecurityItem to add/remove the peer and view peer details.
+     - Added new call to notifyListChange with NOTIFY_LIST_FRIENDS in AuthGPGimpl::AllowConnection.
+     - Fixed german language.
+     - Removed "location:" before the ssl name in FriendsDialog and MessengerWindow.
+
+  * Bug fixes
+     - Added Check for successful Req creation (was crashing with NULL pointer).
+     - Fixed echoes in chat lobbies
+        * added a time stamp to lobby events (new item tag)
+        * controlling time stamp of lobby msg and event: drop packets if time is older than cache duration.
+        * moved connexion challenge code to lobby management loop
+        * added new type of lobby invite to handle connexion challenges and avoid false invitations in the GUI
+
+        New lobby event format is not backward compatible -> "peer typing" and "peer joined/left" will need 
+        the new version. Messages are still compatible)
+
+     - Fixed crash when closing a chat window.
+     - Fixed Auto-Download Button
+     - Fixed wrong display of the news feed notify in FriendsDialog when the tabs were moved.
+     - Another fix for the discovery fiasco... Turns out that I broke the system with my previous changes.
+        * Allow certificates through with no attached GPG Certs.
+        * Added StoreAllKeys() call after adding new GPG Certificate.
+        
+     - lobby participant list now updated when peers join/leave
+     - Added chat lobby privacy type to lobby invite => lobby type is propagated 
+        correctly to friends that are invited.
+     - Bugfix for natassist (zeroconf returns 0.0.0.0:0 when its doesn't work).
+     - Logged IP Addresses for Failed incoming connections.
+     - Hacked IP address into the NewsFeed notifications (ugly).
+
+     - Attempts at fixing disconnections :)
+        * Added limit of 10kB for Certificate size. If it is bigger - discard certificate.
+        * Remove certificates for slow / trickle connections (for Relay connections).
+        * Disabled check for gpgcert text in p3disc.
+        * Disabled creation of GPG Cert in AuthGPG.
+        * Added extra error code to pqinetwork.
+        * Added DataRate accounting to Relay and Dht.
+        * Rates are exposed through rsDht.h interface.
+        * Added LastIncomingTS() to pqistreamer.
+        * Turned HeartBeat reset() into a warning.
+        * Added NoPacket in 60 sec reset().
+        * Minor typos/errors corrected.
+
+     - Fixed message reply and forward. The new lines were removed falsely.
+     - Improved logging of Connection Behaviours.
+     - Added history for chat lobbies and disabled it until the lobbies are saved.
+     - Added check in cachestrapper to see if a duplicate cache has been requested.
+        In this case, don't cancel the old one - just keep going!
+                
+     - Added the size of the collection to the link only for files (missing test)
+     - Show the correct name in the title of the RsCollectionDialog when the filename contains ".".
+     - Fixed creating of the download path of the collection when running as portable version.
+     
+     - 2 bug fixes (by AsamK) to make rscollection files compatible with utf8
+     - fixed bug asking data to deleted mTransfer
+
+     - bug in CRC32 map cross-checking: only downloaded chunks would be checked.
+     - fixed bug in file transfer re-allocating a local variable
+
+     - removed delay in file checking that would cause excessively long file update cycle
+     - implemented slice sharing between peers.
+     - Replaced spaces with %20 in RetroShare links.
+     - obfuscation of TR and SR by random rare non-increase of length 1 requests (original idea by Costa)
+     - layout changes for PluginItem, fixed qrc resource load in plugins.
+     
+     - corrected bug about wrong layout of friend list (patch from asamK)
+     - corrected bug that would allow a direct friend to DL a file that is NETWORK_WIDE only, using direct transfer     
+
+     - fixed issue of loading the correct instance of RetroShare.conf when switching 
+       locations (Patch from AsamK #3423256)
+     - fixed utf8 issues (umlauts in the Windows user name, search string with utf8, 
+       location names, links from browser, history manager)
+     - fixed update of friend status in chat window
+     - fixed bug with anonymous channels asking for friends to be sources
+     - fixed link passed issue due to usin self-closign links (Patch from Asamk #3418941)
+     - fixed display of filename when an upload is a partially downloaded file
+     - removed early pruning of TR which was preventing any TR to go beyond the limit 
+       in case of heavy traffic. Pruning now applied probabilitically at end of loop.
+
+     - fixed missing TCP connection call - when peer is found on the DHT.
+        * save IP address for DHT display.
+        * store Action in action Queue (the BUG).
+     - fixed sorting of transfer by priority
+     - fixed utf8 issues in sending cert by email (patch from asamK #3393826)
+     - added a lock into ftTransferModule::recvFileData() (Crash reported by Costa 
+       of data race due to storing data in a deleted transfer module)
+     - Added chunk splitting in case part of the file transfer data does not come. 
+       Added strategy to ask again for missing data. The combination of these two cannot 
+       result into an infinite loop (as before)
+
+     - Fixed bug fue to deleting ftFileCreator used by datamultiplex before 
+       asking datamultiplex to remove it!
+     - Fixed crash in pqiSSLstore::readPkt() when rsSerialiser->deserialise() returns NULL
+     - Added auto-split of long private messages, and re-combination of partial messages on 
+       client side. Corrects the bug causing disconnection when sending messages of side 
+       larger than the maximum packet size
+     - Patch from AsamK to fix up crash at startup due to a missing else in config load
+
+     - fixed up color codes for qt 4.7 in NetworkGraph (bug in qt::lighter())
+     - corrected a few bugs in the cert cleaning method.
+     - corrected several utf8 issues (for peer names, in private chat and file list, and search)
+     - fixed time display in security item
+     - removed potential mem leak with p3distrib group edit
+     - Added check for administrator rights to add/remove the retroshare:// protocol.
+
 Changes for v0.5.2a
 
 * Improvements
