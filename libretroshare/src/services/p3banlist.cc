@@ -408,9 +408,9 @@ int p3BanList::sendBanSet(std::string peerid)
 		std::map<uint32_t, BanListPeer>::iterator it;
 		for(it = mBanSet.begin(); it != mBanSet.end(); it++)
 		{
-			if (it->second.level > RSBANLIST_SOURCE_FRIEND)
+			if (it->second.level >= RSBANLIST_SOURCE_FRIEND)
 			{
-				continue; // only share OWN and FRIENDS.
+				continue; // only share OWN for the moment.
 			}
 	
 			RsTlvBanListEntry bi;
