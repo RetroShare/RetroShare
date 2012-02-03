@@ -255,21 +255,26 @@ void GetStartedDialog::inviteFriends()
 
 	std::ostringstream out;
 
+
+
+
+
+
+
     	QString trstr;
-	trstr = tr("You are cordially invited to join the Retroshare Network,");
+	trstr = tr("Your friend has installed Retroshare, and would like you to try it out.");
 	out << trstr.toStdString() << std::endl;
 	out << std::endl;
-	trstr = tr("Retroshare is a Secure P2P Sharing Network");
-	out << trstr.toStdString() << std::endl;
-	trstr = tr("We use direct connections between you and your friends to maintain your Privacy");
+	trstr = tr("You can get Retroshare here: http://retroshare.sourceforge.net/download");
 	out << trstr.toStdString() << std::endl;
 	out << std::endl;
-	trstr = tr("Install the client to chat, share data and converse in the forums");
+	trstr = tr("Retroshare is a private Friend-2-Friend sharing network.");
+	out << trstr.toStdString() << std::endl;
+	trstr = tr("It has an many features, including built-in chat, messaging, "); 
+	out << trstr.toStdString() << std::endl;
+	trstr = tr("forums and channels, all of which are as secure as the file-sharing.");
 	out << trstr.toStdString() << std::endl;
 	out << std::endl;
-	out << std::endl;
-	trstr = tr("Get Retroshare here: http://retroshare.sourceforge.net/download");
-	out << trstr.toStdString() << std::endl;
 	out << std::endl;
 	trstr = tr("Below is your friends ID Certificate. Cut and paste this into your Retroshare client");
 	out << trstr.toStdString() << std::endl;

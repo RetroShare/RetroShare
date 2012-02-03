@@ -313,6 +313,7 @@ mac {
                 HEADERS += upnp/upnputil.h
                 SOURCES += upnp/upnputil.c
 
+		# zeroconf disabled at the end of libretroshare.pro (but need the code)
 		CONFIG += zeroconf
 		CONFIG += zcnatassist
 
@@ -660,7 +661,8 @@ HEADERS +=	zeroconf/p3zeroconf.h \
 
 SOURCES +=	zeroconf/p3zeroconf.cc  \
 
-	DEFINES *= RS_ENABLE_ZEROCONF
+# Disable Zeroconf (we still need the code for zcnatassist
+#	DEFINES *= RS_ENABLE_ZEROCONF
 
 }
 

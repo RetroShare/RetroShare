@@ -13,7 +13,8 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsfiles.h>
 #include <pqi/pqiservice.h>
-#include <plugins/pluginclasses.h>
+#include <plugins/rscacheservice.h>
+#include <plugins/rspqiservice.h>
 
 // lets disable the plugin system for now, as it's unfinished.
 #ifdef WINDOWS_SYS

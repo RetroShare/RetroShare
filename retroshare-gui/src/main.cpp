@@ -219,7 +219,14 @@ int main(int argc, char *argv[])
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
-	rsicontrol->StartupRetroShare();
+	/* stop Retroshare if startup fails */
+	if (!rsicontrol->StartupRetroShare())
+	{
+		std::cerr << "libretroshare failed to startup!" << std::endl;
+		return 1;
+	}
+
+
 	Rshare::initPlugins();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
@@ -239,12 +246,23 @@ int main(int argc, char *argv[])
 		splashScreen.hide();
 
 		Settings->setValue(QString::fromUtf8("FirstRun"), false);
+
+#ifdef __APPLE__
+		/* For OSX, we set the default to "cleanlooks", as the AQUA style hides some input boxes 
+		 * only on the first run - as the user might want to change it ;)
+		 */
+		QString osx_style("cleanlooks");
+		Rshare::setStyle(osx_style);
+		Settings->setInterfaceStyle(osx_style);
+#endif
+
 // This is now disabled - as it doesn't add very much.
 // Need to make sure that defaults are sensible!
 #ifdef ENABLE_QUICKSTART_WIZARD
 		QuickStartWizard qstartWizard;
 		qstartWizard.exec();
 #endif
+
 	}
 
 	MainWindow *w = MainWindow::Create ();
