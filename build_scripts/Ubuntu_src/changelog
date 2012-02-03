@@ -1,4 +1,33 @@
-retroshare (0.5.2-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+     - Added new variant to the compact chat style with colored nicknames calculated from the name.
+       It's disabled by default. You can enable it with the define COLORED_NICKNAMES in ChatStyle.cpp.
+     - Fixed up Email Invite Text...
+         * Unified Text Source.
+         * Added "Cut Below Here" line
+     - Switched BanList sharing to only your own list. (was OWN + FRIENDS lists)
+    	 This data is not used at the moment, so just reducing data before release.
+     - Updated English Email Invite (sorry guys, you'll have to redo translations).
+     - Set OSX default style to "Cleanlooks" - as AQUA style hides some windows.
+     - Updated Version strings to V0.5.3a. / 4874
+     - Fixed missing headers for plugin manager.
+     - Disabled ZEROCONF for OSX.
+     - minor improvements to plugin system
+     - updated french translation (from Max Romeo)
+     - Added new compact style for chat.
+     - Improved the HTML optimizer.
+     - Start the CreateLobbyDialog from the list of chat lobbies with the privacy level of the selected item.
+     - fixed to display the the correct help icon on MainWindow
+     - Fixup BSD qmake parameters: mainly library locations.
+     
+  * Bug fixes
+     - Fixed handling of utf8 characters in lobby nick name.
+     - fixed small bug in certificate correction (missing ending newline caused crash)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 03 Jan 2012 22:00:00 +0100
+
+retroshare (0.5.2-0.4861~natty) natty; urgency=low
 
   * Improvements
      - Added (make functional) the lobby menu in the context menu of the gpg and group item in FriendList.
