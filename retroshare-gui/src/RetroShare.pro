@@ -1,4 +1,6 @@
-CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
+CONFIG += qt gui uic qrc resources uitools idle bitdht 
+CONFIG += photoshare wikipoos 
+
 QT     += network xml script 
 
 TEMPLATE = app
@@ -843,3 +845,45 @@ minimal {
                   util/stringutil.h \
                   lang/languagesupport.h
 }
+
+
+
+photoshare {
+
+	HEADERS += gui/PhotoShare/PhotoItem.h \
+		gui/PhotoShare/PhotoDialog.h \
+		gui/PhotoShare/PhotoAddDialog.h \
+		gui/PhotoShare/PhotoDetailsDialog.h \
+		gui/PhotoShare/PhotoDrop.h \
+
+	FORMS += gui/PhotoShare/PhotoItem.ui \
+		gui/PhotoShare/PhotoDialog.ui \
+		gui/PhotoShare/PhotoAddDialog.ui \
+		gui/PhotoShare/PhotoDetailsDialog.ui \
+
+	SOURCES += gui/PhotoShare/PhotoItem.cpp \
+		gui/PhotoShare/PhotoDialog.cpp \
+		gui/PhotoShare/PhotoAddDialog.cpp \
+		gui/PhotoShare/PhotoDetailsDialog.cpp \
+		gui/PhotoShare/PhotoDrop.cpp \
+
+}
+
+
+wikipoos {
+
+	HEADERS += gui/WikiPoos/WikiDialog.h \
+		gui/WikiPoos/WikiAddDialog.h \
+		gui/WikiPoos/WikiEditDialog.h \
+
+	FORMS += gui/WikiPoos/WikiDialog.ui \
+		gui/WikiPoos/WikiAddDialog.ui \
+		gui/WikiPoos/WikiEditDialog.ui \
+
+	SOURCES += gui/WikiPoos/WikiDialog.cpp \
+		gui/WikiPoos/WikiAddDialog.cpp \
+		gui/WikiPoos/WikiEditDialog.cpp \
+
+}
+
+
