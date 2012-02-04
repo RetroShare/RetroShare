@@ -32,12 +32,19 @@
 #include <iostream>
 #include <sstream>
 
+#define URL_FAQ         "http://retroshare.sourceforge.net/wiki/index.php/Frequently_Asked_Questions"
+#define URL_FORUM       "http://retroshare.sourceforge.net/forum/"
+#define URL_WEBSITE     "http://retroshare.org"
+#define URL_DOWNLOAD    "http://retroshare.sourceforge.net/download"
+
+#define EMAIL_SUBSCRIBE "lists@retroshare.org"
+
 /** Constructor */
 GetStartedDialog::GetStartedDialog(QWidget *parent)
 : MainPage(parent)
 {
-    /* Invoke the Qt Designer generated object setup routine */
-    ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
 	mTimer = NULL;
 	mInviteTimer = NULL;
@@ -69,40 +76,37 @@ GetStartedDialog::GetStartedDialog(QWidget *parent)
 
 GetStartedDialog::~GetStartedDialog()
 {
-
 }
 
 void GetStartedDialog::changeEvent(QEvent *e)
 {
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui.retranslateUi(this);
-        break;
-    default:
-        break;
-    }
-
+	switch (e->type()) {
+	case QEvent::LanguageChange:
+		ui.retranslateUi(this);
+		break;
+	default:
+		break;
+	}
 }
 
 void GetStartedDialog::showEvent ( QShowEvent * /*event*/ )
 {
-        /* do nothing if locked, or not visible */
-        if (RsAutoUpdatePage::eventsLocked() == true)
-        {
-                std::cerr << "GetStartedDialog::showEvent() events Are Locked" << std::endl;
-                return;
-        }
+	/* do nothing if locked, or not visible */
+	if (RsAutoUpdatePage::eventsLocked() == true)
+	{
+		std::cerr << "GetStartedDialog::showEvent() events Are Locked" << std::endl;
+		return;
+	}
 
 	if ((mFirstShow) && (rsConfig))
 	{
-        	RsAutoUpdatePage::lockAllEvents();
+		RsAutoUpdatePage::lockAllEvents();
 
 		updateFromUserLevel();
 		mFirstShow = false;
 
-        	RsAutoUpdatePage::unlockAllEvents() ;
+		RsAutoUpdatePage::unlockAllEvents() ;
 	}
-
 }
 
 void GetStartedDialog::updateFromUserLevel()
@@ -187,46 +191,36 @@ void GetStartedDialog::tickFirewallChanged()
 	}
 }
 
-
-
-
-
-static void sendMail(std::string sAddress, std::string sSubject, std::string sBody)
+static void sendMail(const QString &address, const QString &subject, QString body)
 {
 	/* Only under windows do we need to do this! */
 #ifdef Q_WS_WIN
-    /* search and replace the end of lines with: "%0D%0A" */
-    size_t loc;
-    while ((loc = sBody.find("\n")) != sBody.npos) {
-        sBody.replace(loc, 1, "%0D%0A");
-    }
+	/* search and replace the end of lines with: "%0D%0A" */
+	body.replace("\n", "%0D%0A");
 #endif
 
-    std::string mailstr = "mailto:" + sAddress;
-    mailstr += "?subject=" + sSubject;
-    mailstr += "&body=" + sBody;
+	QString mailstr = "mailto:" + address;
+	mailstr += "?subject=" + subject;
+	mailstr += "&body=" + body;
 
-    std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
+	std::cerr << "MAIL STRING:" << mailstr.toStdString() << std::endl;
 
-    /* pass the url directly to QDesktopServices::openUrl */
-    QDesktopServices::openUrl (QUrl (QString::fromUtf8(mailstr.c_str())));
+	/* pass the url directly to QDesktopServices::openUrl */
+	QDesktopServices::openUrl(QUrl(mailstr));
 }
-
-
 
 void GetStartedDialog::addFriends()
 {
-    ConnectFriendWizard connwiz(this);
+	ConnectFriendWizard connwiz(this);
 
-    connwiz.show();
-    connwiz.next();
-    connwiz.exec();
+	connwiz.show();
+	connwiz.next();
+	connwiz.exec();
 }
-
 
 void GetStartedDialog::inviteFriends()
 {
-        if (RsAutoUpdatePage::eventsLocked() == true)
+	if (RsAutoUpdatePage::eventsLocked() == true)
 	{	
 		std::cerr << "GetStartedDialog::inviteFriends() EventsLocked... waiting";
 		std::cerr << std::endl;
@@ -234,9 +228,9 @@ void GetStartedDialog::inviteFriends()
 		if (!mInviteTimer)
 		{
 			mInviteTimer = new QTimer(this);
-    			mInviteTimer->connect(mTimer, SIGNAL(timeout()), this, SLOT(inviteFriends()));
-    			mInviteTimer->setInterval(100); /* 1/10 second */
-    			mInviteTimer->setSingleShot(true);
+			mInviteTimer->connect(mTimer, SIGNAL(timeout()), this, SLOT(inviteFriends()));
+			mInviteTimer->setInterval(100); /* 1/10 second */
+			mInviteTimer->setSingleShot(true);
 		}
 
 		mInviteTimer->start();
@@ -245,121 +239,82 @@ void GetStartedDialog::inviteFriends()
 
 	std::string cert;
 	{
-        	RsAutoUpdatePage::lockAllEvents();
+		RsAutoUpdatePage::lockAllEvents();
 
-    		bool shouldAddSignatures = false;
-    		cert = rsPeers->GetRetroshareInvite(shouldAddSignatures);
+		cert = rsPeers->GetRetroshareInvite(false);
 
-        	RsAutoUpdatePage::unlockAllEvents() ;
+		RsAutoUpdatePage::unlockAllEvents() ;
 	}
 
-	std::ostringstream out;
+	QString text = QString("%1\n%2\n\n%3\n").arg(GetInviteText()).arg(GetCutBelowText()).arg(QString::fromUtf8(cert.c_str()));
 
-	out << GetInviteText();
-	out << std::endl;
-	out << GetCutBelowText() << std::endl;
-	out << std::endl;
-	out << cert;
-	out << std::endl;
-
-	sendMail("", tr("Retroshare Invitation").toStdString(), out.str());
-
+	sendMail("", tr("RetroShare Invitation"), text);
 }
 
-
-std::string GetStartedDialog::GetInviteText()
+QString GetStartedDialog::GetInviteText()
 {
-	std::ostringstream out;
-	QString trstr;
-	trstr = tr("Your friend has installed Retroshare, and would like you to try it out.");
-	out << trstr.toStdString() << std::endl;
-	out << std::endl;
-	trstr = tr("You can get Retroshare here: http://retroshare.sourceforge.net/download");
-	out << trstr.toStdString() << std::endl;
-	out << std::endl;
-	trstr = tr("Retroshare is a private Friend-2-Friend sharing network.");
-	out << trstr.toStdString() << std::endl;
-	trstr = tr("It has many features, including built-in chat, messaging, "); 
-	out << trstr.toStdString() << std::endl;
-	trstr = tr("forums and channels, all of which are as secure as the file-sharing.");
-	out << trstr.toStdString() << std::endl;
-	out << std::endl;
-	out << std::endl;
-	trstr = tr("Here is your friends ID Certificate.");
-	out << trstr.toStdString() << std::endl;
-	trstr = tr("Cut and paste the text below into your Retroshare client");
-	out << trstr.toStdString() << std::endl;
-	trstr = tr("and send them your ID Certificate to get securely connected.");
-	out << trstr.toStdString() << std::endl;
+	QString text = tr("Your friend has installed RetroShare, and would like you to try it out.") + "\n";
+	text += "\n";
+	text += tr("You can get RetroShare here: %1").arg(URL_DOWNLOAD) + "\n";
+	text += "\n";
+	text += tr("RetroShare is a private Friend-2-Friend sharing network.") + "\n";
+	text += tr("It has many features, including built-in chat, messaging, ") + "\n";
+	text += tr("forums and channels, all of which are as secure as the file-sharing.") + "\n";
+	text += "\n";
+	text += "\n";
+	text += tr("Here is your friends ID Certificate.") + "\n";
+	text += tr("Cut and paste the text below into your RetroShare client") + "\n";
+	text += tr("and send them your ID Certificate to get securely connected.") + "\n";
 
-	std::string finaltext = out.str();
-	return finaltext;
-}
-
-
-std::string GetStartedDialog::GetCutBelowText()
-{
-    	QString trstr;
-	trstr = tr("Cut Below Here");
-	std::string text = trstr.toStdString() + " <-------------------------------------------------------------------------------------";
 	return text;
 }
 
-
-
+QString GetStartedDialog::GetCutBelowText()
+{
+	return QString("%1 <-------------------------------------------------------------------------------------").arg(tr("Cut Below Here"));
+}
 
 void GetStartedDialog::emailSubscribe()
 {
-	std::ostringstream out;
-	out << "Please let me know when Retroshare has a new release, or exciting news";
-	out << std::endl;
-	out << std::endl;
-	out << "Furthermore, I'd like to say ... ";
-	out << std::endl;
-	out << std::endl;
+	// when translation is needed, replace QString by tr
+	QString text = QString("Please let me know when RetroShare has a new release, or exciting news") + "\n";
+	text += "\n";
+	text += QString("Furthermore, I'd like to say ... ") + "\n";
+	text += "\n";
 
-	sendMail("lists@retroshare.org", "Subscribe", out.str());
+	sendMail(EMAIL_SUBSCRIBE, "Subscribe", text);
 }
 
 
 void GetStartedDialog::emailUnsubscribe()
 {
-	std::ostringstream out;
-	out << "I am no longer interested in Retroshare News.";
-	out << std::endl;
-	out << "Please remove me from the Mailing List";
-	out << std::endl;
+	// when translation is needed, replace QString by tr
+	QString text = QString("I am no longer interested in RetroShare News.") + "\n";
+	text += QString("Please remove me from the Mailing List") + "\n";
 
-	sendMail("lists@retroshare.org", "Unsubscribe", out.str());
+	sendMail(EMAIL_SUBSCRIBE, "Unsubscribe", text);
 }
-
 
 void GetStartedDialog::emailFeedback()
 {
-	std::ostringstream out;
-	out << "Dear Retroshare Developers";
-	out << std::endl;
-	out << std::endl;
-	out << "I've tried out Retroshare and would like provide feedback:";
-	out << std::endl;
-	out << std::endl;
-	out << "To make Retroshare more user friendly, please [ what do you think? ] ";
-	out << std::endl;
-	out << "The best feature of Retroshare is [ what do you think? ] ";
-	out << std::endl;
-	out << "and the biggest missing feature is [ what do you think? ] ";
-	out << std::endl;
-	out << std::endl;
-	out << "Furthermore, I'd like to say ... ";
-	out << std::endl;
-	out << std::endl;
+	// when translation is needed, replace QString by tr
+	QString text = QString("Dear RetroShare Developers") + "\n";
+	text += "\n";
+	text += QString("I've tried out RetroShare and would like provide feedback:") + "\n";
+	text += "\n";
+	text += QString("To make RetroShare more user friendly, please [ what do you think? ] ") + "\n";
+	text += QString("The best feature of RetroShare is [ what do you think? ] ") + "\n";
+	text += QString("and the biggest missing feature is [ what do you think? ] ") + "\n";
+	text += "\n";
+	text += QString("Furthermore, I'd like to say ... ") + "\n";
+	text += "\n";
 
-	sendMail("feedback@retroshare.org", tr("RetroShare Feedback").toStdString(), out.str());
+	sendMail("feedback@retroshare.org", tr("RetroShare Feedback"), text);
 }
 
 void GetStartedDialog::emailSupport()
 {
-        if (RsAutoUpdatePage::eventsLocked() == true)
+	if (RsAutoUpdatePage::eventsLocked() == true)
 	{	
 		std::cerr << "GetStartedDialog::emailSupport() EventsLocked... waiting";
 		std::cerr << std::endl;
@@ -367,9 +322,9 @@ void GetStartedDialog::emailSupport()
 		if (!mTimer)
 		{
 			mTimer = new QTimer(this);
-    			mTimer->connect(mTimer, SIGNAL(timeout()), this, SLOT(emailSupport()));
-    			mTimer->setInterval(100); /* 1/10 second */
-    			mTimer->setSingleShot(true);
+			mTimer->connect(mTimer, SIGNAL(timeout()), this, SLOT(emailSupport()));
+			mTimer->setInterval(100); /* 1/10 second */
+			mTimer->setSingleShot(true);
 		}
 
 		mTimer->start();
@@ -379,150 +334,139 @@ void GetStartedDialog::emailSupport()
 	std::string versionString;
 	uint32_t    userLevel;
 	{
-        	RsAutoUpdatePage::lockAllEvents();
+		RsAutoUpdatePage::lockAllEvents();
 
 		/* set retroshare version */
-    		std::map<std::string, std::string>::iterator vit;
-    		std::map<std::string, std::string> versions;
-        	bool retv = rsDisc->getDiscVersions(versions);
-			std::string id = rsPeers->getOwnId();
-        	if (retv && versions.end() != (vit = versions.find(id)))
-        	{
+		std::map<std::string, std::string>::iterator vit;
+		std::map<std::string, std::string> versions;
+		bool retv = rsDisc->getDiscVersions(versions);
+		std::string id = rsPeers->getOwnId();
+		if (retv && versions.end() != (vit = versions.find(id)))
+		{
 			versionString = vit->second;
-        	}
+		}
 		userLevel = rsConfig->getUserLevel();
 
-        	RsAutoUpdatePage::unlockAllEvents() ;
+		RsAutoUpdatePage::unlockAllEvents() ;
 	}
 
-	std::ostringstream out;
-	out << "Hello";
-	out << std::endl;
-	out << std::endl;
+	// when translation is needed, replace QString by tr
+	QString text = QString("Hello") + "\n";
+	text += "\n";
 
-	out << "My Retroshare Configuration is: (" << versionString;
-	out << ", ";
+	QString sysVersion;
 
 #ifdef __APPLE__
 
   #ifdef Q_WS_MAC
 	switch(QSysInfo::MacintoshVersion)
 	{
-  		case QSysInfo::MV_9: 
-			out << "Mac OS 9";
+		case QSysInfo::MV_9: 
+			sysVersion = "Mac OS 9";
 			break;
-  		case QSysInfo::MV_10_0: 
-			out << "Mac OSX 10.0";
+		case QSysInfo::MV_10_0: 
+			sysVersion = "Mac OSX 10.0";
 			break;
-  		case QSysInfo::MV_10_1: 
-			out << "Mac OSX 10.1";
+		case QSysInfo::MV_10_1: 
+			sysVersion = "Mac OSX 10.1";
 			break;
-  		case QSysInfo::MV_10_2: 
-			out << "Mac OSX 10.2";
+		case QSysInfo::MV_10_2: 
+			sysVersion = "Mac OSX 10.2";
 			break;
-  		case QSysInfo::MV_10_3: 
-			out << "Mac OSX 10.3";
+		case QSysInfo::MV_10_3: 
+			sysVersion = "Mac OSX 10.3";
 			break;
-  		case QSysInfo::MV_10_4: 
-			out << "Mac OSX 10.4";
+		case QSysInfo::MV_10_4: 
+			sysVersion = "Mac OSX 10.4";
 			break;
-  		case QSysInfo::MV_10_5: 
-			out << "Mac OSX 10.5";
+		case QSysInfo::MV_10_5: 
+			sysVersion = "Mac OSX 10.5";
 			break;
-  		case QSysInfo::MV_10_6: 
-			out << "Mac OSX 10.6";
+		case QSysInfo::MV_10_6: 
+			sysVersion = "Mac OSX 10.6";
 			break;
-//  		case QSysInfo::MV_10_7: 
-//			out << "Mac OSX 10.7";
+//		case QSysInfo::MV_10_7: 
+//			sysVersion = "Mac OSX 10.7";
 //			break;
-  		default: 
-			out << "Mac Unknown";
+		default: 
+			sysVersion = "Mac Unknown";
 			break;
 	}
   #else
-	out << "OSX Unknown";
+    sysVersion = "OSX Unknown";
   #endif
 #else
   #if defined(_WIN32) || defined(__MINGW32__)
-    // Windows
-    #ifdef Q_WS_WIN
+	// Windows
+	#ifdef Q_WS_WIN
 	switch(QSysInfo::windowsVersion())
 	{
-  		case QSysInfo::WV_32s: 
-			out << "Windows 2.1";
+		case QSysInfo::WV_32s: 
+			sysVersion = "Windows 2.1";
 			break;
-  		case QSysInfo::WV_95: 
-			out << "Windows 95";
+		case QSysInfo::WV_95: 
+			sysVersion = "Windows 95";
 			break;
-  		case QSysInfo::WV_98: 
-			out << "Windows 98";
+		case QSysInfo::WV_98: 
+			sysVersion = "Windows 98";
 			break;
-  		case QSysInfo::WV_Me: 
-			out << "Windows Me";
+		case QSysInfo::WV_Me: 
+			sysVersion = "Windows Me";
 			break;
-  		case QSysInfo::WV_NT: 
-			out << "Windows NT";
+		case QSysInfo::WV_NT: 
+			sysVersion = "Windows NT";
 			break;
-  		case QSysInfo::WV_2000: 
-			out << "Windows 2000";
+		case QSysInfo::WV_2000: 
+			sysVersion = "Windows 2000";
 			break;
-  		case QSysInfo::WV_XP:
-			out << "Windows XP";
+		case QSysInfo::WV_XP:
+			sysVersion = "Windows XP";
 			break;
-  		case QSysInfo::WV_2003: 
-			out << "Windows 2003";
+		case QSysInfo::WV_2003: 
+			sysVersion = "Windows 2003";
 			break;
-  		case QSysInfo::WV_VISTA: 
-			out << "Windows Vista";
+		case QSysInfo::WV_VISTA: 
+			sysVersion = "Windows Vista";
 			break;
 		case QSysInfo::WV_WINDOWS7:
-			out << "Windows 7";
+			sysVersion = "Windows 7";
 			break;
-  		default: 
-			out << "Windows";
+		default: 
+			sysVersion = "Windows";
 			break;
 	}
-    #else
-	out << "Windows Unknown";
-    #endif
+	#else
+	sysVersion = "Windows Unknown";
+	#endif
   #else
 	// Linux
-	out << "Linux";
+	sysVersion = "Linux";
   #endif
 #endif
-	out << ", 0x60" << std::hex << userLevel << std::dec;
-	out << ")" << std::endl;
-	out << std::endl;
+    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(QString::fromStdString(versionString)).arg(sysVersion).arg(userLevel) + "\n";
+    text += "\n";
 
-	out << "I am having trouble with Retroshare.";
-	out << " Can you help me with....";
-	out << std::endl;
-	out << std::endl;
+	text += QString("I am having trouble with RetroShare.");
+	text += QString(" Can you help me with....") + "\n";
+	text += "\n";
 
-	sendMail("support@retroshare.org", tr("RetroShare Support").toStdString(), out.str());
+	sendMail("support@retroshare.org", tr("RetroShare Support"), text);
 }
-
 
 void GetStartedDialog::OpenFAQ()
 {
-    /* pass the url directly to QDesktopServices::openUrl */
-    std::string faq_url("http://retroshare.sourceforge.net/wiki/index.php/Frequently_Asked_Questions");
-    QDesktopServices::openUrl (QUrl (QString::fromStdString(faq_url)));
+	/* pass the url directly to QDesktopServices::openUrl */
+	QDesktopServices::openUrl(QUrl(URL_FAQ));
 }
 
 void GetStartedDialog::OpenForums()
 {
-    /* pass the url directly to QDesktopServices::openUrl */
-    std::string forum_url("http://retroshare.sourceforge.net/forum/");
-    QDesktopServices::openUrl (QUrl (QString::fromStdString(forum_url)));
+	/* pass the url directly to QDesktopServices::openUrl */
+	QDesktopServices::openUrl(QUrl(URL_FORUM));
 }
 
 void GetStartedDialog::OpenWebsite()
 {
-    /* pass the url directly to QDesktopServices::openUrl */
-    std::string website_url("http://retroshare.org");
-    QDesktopServices::openUrl (QUrl (QString::fromStdString(website_url)));
+	/* pass the url directly to QDesktopServices::openUrl */
+	QDesktopServices::openUrl(QUrl(URL_WEBSITE));
 }
-
-
-

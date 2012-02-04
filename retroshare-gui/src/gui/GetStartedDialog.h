@@ -31,61 +31,57 @@
 
 class GetStartedDialog : public MainPage
 {
-    Q_OBJECT
+	Q_OBJECT
 
-        public:
-/** Default Constructor */
-    GetStartedDialog(QWidget *parent = 0);
-/** Default Destructor */
-    ~GetStartedDialog();
+public:
+	/** Default Constructor */
+	GetStartedDialog(QWidget *parent = 0);
+	/** Default Destructor */
+	~GetStartedDialog();
 
-// Single Point for (English) Text of the Invitation.
-// This is used by other classes.
-static	std::string GetInviteText();
-static  std::string GetCutBelowText();
+	// Single Point for (English) Text of the Invitation.
+	// This is used by other classes.
+	static QString GetInviteText();
+	static QString GetCutBelowText();
 
 /*** signals: ***/
 
 protected:
 	// Overloaded to get first show!
-virtual void showEvent ( QShowEvent * event );
-virtual void changeEvent(QEvent *e);
+	virtual void showEvent ( QShowEvent * event );
+	virtual void changeEvent(QEvent *e);
 
 private slots:
+	void tickInviteChanged();
+	void tickAddChanged();
+	void tickConnectChanged();
+	void tickFirewallChanged();
 
-  void tickInviteChanged();
-  void tickAddChanged();
-  void tickConnectChanged();
-  void tickFirewallChanged();
+	void addFriends();
+	void inviteFriends();
 
-  void addFriends();
-  void inviteFriends();
+	void emailFeedback();
+	void emailSupport();
+	void emailSubscribe();
+	void emailUnsubscribe();
 
-  void emailFeedback();
-  void emailSupport();
-  void emailSubscribe();
-  void emailUnsubscribe();
-
-  void OpenFAQ();
-  void OpenForums();
-  void OpenWebsite();
+	void OpenFAQ();
+	void OpenForums();
+	void OpenWebsite();
 
 private:
+	void updateFromUserLevel();
 
-  void updateFromUserLevel();
-
-
-  bool mFirstShow;
+	bool mFirstShow;
 
 	private:
 
- 	QTimer *mTimer;
- 	QTimer *mInviteTimer;
+	QTimer *mTimer;
+	QTimer *mInviteTimer;
 
 /** Qt Designer generated object */
-    Ui::GetStartedDialog ui;
+	Ui::GetStartedDialog ui;
 
 };
 
 #endif
-

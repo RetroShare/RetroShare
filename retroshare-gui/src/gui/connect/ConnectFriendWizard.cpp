@@ -1296,7 +1296,7 @@ EmailPage::EmailPage(QWidget *parent) : QWizardPage(parent) {
     inviteTextEdit = new QTextEdit;
     inviteTextEdit->setReadOnly(true);
 
-    inviteTextEdit->setPlainText(QString::fromUtf8(GetStartedDialog::GetInviteText().c_str()));
+    inviteTextEdit->setPlainText(GetStartedDialog::GetInviteText());
 
     emailvboxLayout = new QVBoxLayout;
     emailvboxLayout->addLayout(emailhbox2Layout);
@@ -1329,7 +1329,7 @@ bool EmailPage::validatePage()
     {
         QString body = inviteTextEdit->toPlainText();
 
-	body += "\n" + QString::fromUtf8(GetStartedDialog::GetCutBelowText().c_str());
+        body += "\n" + GetStartedDialog::GetCutBelowText();
         body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
 
         sendMail (mailaddresses, subjectEdit->text(), body);
