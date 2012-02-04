@@ -2,11 +2,11 @@
 #define RETROSHARE_PHOTO_GUI_INTERFACE_H
 
 /*
- * libretroshare/src/rsiface: rsphoto.h
+ * libretroshare/src/retroshare: rsphoto.h
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2008-2008 by Robert Fernie.
+ * Copyright 2008-2012 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,61 +34,69 @@
 class RsPhoto;
 extern RsPhoto *rsPhoto;
 
-class RsPhotoDetails;
-class RsPhotoShowDetails;
+/******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
 
-class RsPhotoShowInfo
+#define RSPHOTO_MODE_NEW	1
+#define RSPHOTO_MODE_OWN	2
+#define RSPHOTO_MODE_REMOTE	3
+
+class RsPhotoPhoto
 {
 	public:
 
-	std::string photoId;
-	std::wstring altComment;
-	uint32_t    deltaT; /* in 100ths of sec? */
+	std::string mAlbumId;
+	std::string mId;
+
+	std::string mTitle; // only used by Album.
+	std::string mCaption;
+	std::string mDescription;
+	std::string mPhotographer;
+	std::string mWhere;
+	std::string mWhen;
+	std::string mOther;
+	std::string mCategory;
+
+	std::string mHashTags;
+
+	int mOrder;
+
+	int mMode;
+	std::string path; // if in Mode NEW.
 };
-	
-class RsPhotoShowDetails
+
+class RsPhotoAlbumShare
 {
 	public:
 
-	RsPhotoShowDetails();
-
-	std::string id;
-	std::string showid;
-
-	std::string name;
-	std::wstring location;
-	std::wstring comment;
-	std::string date;
-	std::list<RsPhotoShowInfo> photos;
+	uint32_t mShareType;
+	std::string mShareGroupId;
+	std::string mPublishKey;
+	uint32_t mCommentMode;
+	uint32_t mResizeMode;
 };
 
-/* Details class */
-class RsPhotoDetails
+class RsPhotoAlbum: public RsPhotoPhoto
 {
 	public:
 
-	RsPhotoDetails();
-
-	std::string id;
-	std::string srcid;
-
-	std::string hash;
-	uint64_t size;
-
-	std::string name; 
-	std::wstring comment;
-
-	std::string location;
-	std::string date;
-
-	uint32_t format;
-
-	bool isAvailable;
-	std::string path;
+	std::string mPhotoPath;
+	RsPhotoAlbumShare mShareOptions;
 };
 
-std::ostream &operator<<(std::ostream &out, const RsPhotoShowDetails &detail);
-std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
+class RsPhotoThumbnail
+{
+	public:
+		RsPhotoThumbnail()
+		:data(NULL), size(0), type("N/A") { return; }
+
+	bool copyFrom(const RsPhotoThumbnail &nail);
+
+	// Holds Thumbnail image.
+	uint8_t *data;
+	int size;
+	std::string type;
+};
+
 
 class RsPhoto
 {
@@ -100,28 +108,19 @@ virtual ~RsPhoto() { return; }
 	/* changed? */
 virtual bool updated() = 0;
 
-	/* access data */
-virtual bool getPhotoList(std::string id, std::list<std::string> &hashs) 	= 0;
-virtual bool getShowList(std::string id,  std::list<std::string> &showIds) 	= 0;
-virtual bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail) = 0;
-virtual bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail) = 0;
+virtual bool getAlbumList(std::list<std::string> &album) = 0;
 
-	/* add / delete */
-virtual std::string createShow(std::string name) 				= 0; 
-virtual bool deleteShow(std::string showId)					= 0;
-virtual bool addPhotoToShow(std::string showId, std::string photoId, int16_t index) = 0;
-virtual bool movePhotoInShow(std::string showId, std::string photoId, int16_t index) = 0;
-virtual bool removePhotoFromShow(std::string showId, std::string photoId) 	= 0;
+virtual bool getAlbum(const std::string &albumid, RsPhotoAlbum &album) = 0;
+virtual bool getPhoto(const std::string &photoid, RsPhotoPhoto &photo) = 0;
+virtual bool getPhotoList(const std::string &albumid, std::list<std::string> &photoIds) = 0;
+virtual bool getPhotoThumbnail(const std::string &photoid, RsPhotoThumbnail &thumbnail) = 0;
+virtual bool getAlbumThumbnail(const std::string &albumid, RsPhotoThumbnail &thumbnail) = 0;
 
-virtual std::string addPhoto(std::string path) = 0; /* add from file */
-virtual bool addPhoto(std::string srcId, std::string photoId) = 0; /* add from peers photos */
-virtual bool deletePhoto(std::string photoId) = 0;
-
-	/* modify properties (TODO) */
-virtual bool modifyShow(std::string showId, std::wstring name, std::wstring comment) = 0;
-virtual bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment) = 0;
-virtual bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment) = 0;
+/* details are updated in album - to choose Album ID, and storage path */
+virtual bool submitAlbumDetails(RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail) = 0;
+virtual bool submitPhoto(RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail) = 0;
 
 };
+
 
 #endif

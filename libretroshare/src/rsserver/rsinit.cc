@@ -1726,12 +1726,14 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3gamelauncher.h"
-#include "services/p3photoservice.h"
 #include "services/p3forums.h"
 #include "services/p3channels.h"
 #include "services/p3statusservice.h"
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
+
+#include "services/p3photoservice.h"
+#include "services/p3wikiservice.h"
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
@@ -1750,7 +1752,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3peers.h"
 #include "rsserver/p3msgs.h"
 #include "rsserver/p3discovery.h"
-#include "rsserver/p3photo.h"
 #include "rsserver/p3status.h"
 #include "rsserver/p3history.h"
 #include "rsserver/p3serverconfig.h"
@@ -2131,16 +2132,18 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
 
+	// Testing New Cache Services.
+	p3PhotoService *mPhotos = new p3PhotoService(RS_SERVICE_TYPE_PHOTO);
+	pqih -> addService(mPhotos);
+
+	// Testing New Cache Services.
+	p3WikiService *mWikis = new p3WikiService(RS_SERVICE_TYPE_WIKI);
+	pqih -> addService(mWikis);
+
 #ifndef RS_RELEASE
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mLinkMgr);
 	pqih -> addService(gameLauncher);
 
-	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
-			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir);
-
-        CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
-	mCacheStrapper -> addCachePair(cp2);
 #endif
 
 #ifdef RS_VOIPTEST
@@ -2396,10 +2399,17 @@ int RsServer::StartupRetroShare()
 	rsDisc  = new p3Discovery(ad);
 	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, mGeneralConfig);
 
+
+
 #ifndef MINIMAL_LIBRS
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsForums = mForums;
 	rsChannels = mChannels;
+
+	// Testing of new cache system interfaces.
+	rsPhoto = mPhotos;
+	rsWiki = mWikis;
+
 #ifdef RS_USE_BLOGS	
 	rsBlogs = mBlogs;
 #endif
@@ -2408,10 +2418,8 @@ int RsServer::StartupRetroShare()
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
-	rsPhoto = new p3Photo(photoService);
 #else
 	rsGameLauncher = NULL;
-	rsPhoto = NULL;
 #endif
 #endif // MINIMAL_LIBRS
 

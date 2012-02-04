@@ -91,12 +91,14 @@ const uint16_t RS_SERVICE_TYPE_VOIP        = 0xf011;
  /* Proxy - Service only */
 const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
- /* Photo - Cache Only */
-const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf040;
 
 /* DSDV Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
 
+ /* New Cache Services  */
+const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf101;
+const uint16_t RS_SERVICE_TYPE_WIKI        = 0xf102;
+const uint16_t RS_SERVICE_TYPE_WIRE        = 0xf103;
 
 /* Games/External Apps - Service Only */
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;

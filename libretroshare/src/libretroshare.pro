@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib bitdht
+CONFIG += staticlib bitdht newservices 
 CONFIG -= qt
 TARGET = retroshare
 
@@ -160,17 +160,14 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \
 				serialiser/rspluginitems.h \
-    gxs/rsgxs.h \
-    gxs/rsgnp.h \
-    gxs/rsgdp.h \
-    util/retrodb.h \
-    gxs/rsgixs.h
+
 
 HEADERS += $$PUBLIC_HEADERS
 
 # public headers to be...
 HEADERS +=		retroshare/rsgame.h \
 					retroshare/rsphoto.h
+
 
 ################################# Linux ##########################################
 linux-* {
@@ -406,7 +403,6 @@ HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3history.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
-			rsserver/p3photo.h \
 			rsserver/p3status.h \
 			rsserver/p3serverconfig.h
 
@@ -445,7 +441,6 @@ HEADERS +=	services/p3channels.h \
 			services/p3gamelauncher.h \
 			services/p3gameservice.h \
 			services/p3msgservice.h \
-			services/p3photoservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3dsdv.h \
@@ -537,7 +532,6 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3history.cc \
 			rsserver/p3msgs.cc \
 			rsserver/p3peers.cc \
-			rsserver/p3photo.cc \
 			rsserver/p3status.cc \
 			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
@@ -560,7 +554,6 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsgameitems.cc \
 			serialiser/rshistoryitems.cc \
 			serialiser/rsmsgitems.cc \
-			serialiser/rsphotoitems.cc \
 			serialiser/rsserial.cc \
 			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \
@@ -583,7 +576,6 @@ SOURCES +=	services/p3channels.cc \
 			services/p3forums.cc \
 			services/p3gamelauncher.cc \
 			services/p3msgservice.cc \
-			services/p3photoservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
 			services/p3dsdv.cc \
@@ -658,17 +650,38 @@ SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 }
 
-SOURCES += \
-    gxs/rsgxs.cpp
 
-SOURCES += \
-    gxs/rsgnp.cpp
+newcache { 
 
-SOURCES += \
-    gxs/rsgdp.cpp
+HEADERS += gxs/rsgxs.h \
+		gxs/rsgnp.h \
+    		gxs/rsgdp.h \
+		util/retrodb.h \
+		gxs/rsgixs.h
 
-SOURCES += \
-    util/retrodb.cpp
+SOURCES += gxs/rsgxs.cpp \
+		gxs/rsgnp.cpp \
+		gxs/rsgdp.cpp \
+		util/retrodb.cpp \
+		gxs/rsgixs.cpp 
 
-SOURCES += \
-    gxs/rsgixs.cpp
+}
+
+
+
+newservices { 
+
+HEADERS += services/p3photoservice.h \
+		retroshare/rsphoto.h \
+		services/p3wikiservice.h \
+		retroshare/rswiki.h \
+
+SOURCES += services/p3photoservice.cc \
+		serialiser/rsphotoitems.cc \
+		services/p3wikiservice.cc \
+
+# Other Old Code.
+#	rsserver/p3photo.cc \
+}
+
+
