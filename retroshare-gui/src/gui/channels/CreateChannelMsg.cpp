@@ -529,7 +529,6 @@ void CreateChannelMsg::cancelMsg()
 
 void CreateChannelMsg::newChannelMsg()
 {
-
 	if (!rsChannels)
 		return;
 
@@ -541,8 +540,8 @@ void CreateChannelMsg::newChannelMsg()
 	}
 			
 	channelName->setText(QString::fromStdWString(ci.channelName));
+	subjectEdit->setFocus();
 }
-
 
 void CreateChannelMsg::sendMsg()
 {

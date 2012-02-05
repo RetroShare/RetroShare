@@ -82,6 +82,8 @@ void CreateChannel::newChannel()
 	ui.msgAnon->setChecked(true);
 	ui.msgAuth->setEnabled(false);
 	ui.msgGroupBox->hide();
+
+	ui.channelName->setFocus();
 }
 
 void CreateChannel::createChannel()

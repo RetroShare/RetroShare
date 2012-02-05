@@ -30,13 +30,10 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
-#include "gui/notifyqt.h"
-
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/chat/HandleRichText.h"
 #include "gui/common/AvatarDefs.h"
-
-#include <algorithm>
+//#include "gui/settings/rsharesettings.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -46,30 +43,29 @@
 ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &forumId, const std::string &postId, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId), mForumId(forumId), mPostId(postId), mIsHome(isHome), mIsTop(false)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	setupUi(this);
 
-  setAttribute ( Qt::WA_DeleteOnClose, true );
+	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-  /* general ones */
-  connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-  connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+	/* general ones */
+	connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
+	connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
-  /* specific ones */
-  connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
-  connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
-  connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+	/* specific ones */
+	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
+	connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
+	connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
-  subjectLabel->setMinimumWidth(20);
+	subjectLabel->setMinimumWidth(20);
 
-  small();
-  updateItemStatic();
-  updateItem();
-  textEdit->hide();
-  sendButton->hide();
-  signedcheckBox->hide();
+	small();
+	updateItemStatic();
+	updateItem();
+	textEdit->hide();
+	sendButton->hide();
+	signedcheckBox->hide();
 }
-
 
 void ForumMsgItem::updateItemStatic()
 {
@@ -157,10 +153,10 @@ void ForumMsgItem::updateItemStatic()
 			prevSubLabel->setText(link.toHtml());
 			prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
-            QDateTime qtime;
-            qtime.setTime_t(msg.ts);
-            QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-            timestamplabel->setText(timestamp);
+			QDateTime qtime;
+			qtime.setTime_t(msg.ts);
+			QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+			timestamplabel->setText(timestamp);
 
 			nextFrame->hide();
 		}
@@ -183,9 +179,9 @@ void ForumMsgItem::updateItemStatic()
 			nextMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
 			QDateTime qtime;
-            qtime.setTime_t(msg.ts);
-            QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-            timestamplabel->setText(timestamp);
+			qtime.setTime_t(msg.ts);
+			QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+			timestamplabel->setText(timestamp);
 			
 			prevSHLabel->setText(tr("In Reply to") + ": ");
 
@@ -234,7 +230,6 @@ void ForumMsgItem::updateItemStatic()
 	unsubscribeButton->hide();
 }
 
-
 void ForumMsgItem::updateItem()
 {
 	/* fill in */
@@ -242,9 +237,7 @@ void ForumMsgItem::updateItem()
 	std::cerr << "ForumMsgItem::updateItem()";
 	std::cerr << std::endl;
 #endif
-
 }
-
 
 void ForumMsgItem::small()
 {
@@ -261,10 +254,31 @@ void ForumMsgItem::toggle()
 		sendButton->setVisible(canReply);
 		signedcheckBox->setVisible(canReply);
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    expandButton->setToolTip("Hide");
+		expandButton->setToolTip("Hide");
 		if (!mIsTop)
 		{
 			nextFrame->show();
+		}
+
+		uint32_t status;
+		rsForums->getMessageStatus(mForumId, mPostId, status);
+
+		if (canReply) {
+			/* set always to read ... */
+			uint32_t statusNew = status | FORUM_MSG_STATUS_READ;
+
+//			bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
+//			if (setToReadOnActive) {
+				/* ... and to read by user */
+				statusNew &= ~FORUM_MSG_STATUS_UNREAD_BY_USER;
+//			} else {
+//				/* ... and to unread by user */
+//				statusNew |= FORUM_MSG_STATUS_UNREAD_BY_USER;
+//			}
+
+			if (status != statusNew) {
+				rsForums->setMessageStatus(mForumId, mPostId, statusNew, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_UNREAD_BY_USER);
+			}
 		}
 	}
 	else
@@ -275,10 +289,9 @@ void ForumMsgItem::toggle()
 		sendButton->hide();
 		signedcheckBox->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    expandButton->setToolTip("Expand");
+		expandButton->setToolTip("Expand");
 	}
 }
-
 
 void ForumMsgItem::removeItem()
 {
@@ -295,7 +308,6 @@ void ForumMsgItem::removeItem()
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
-
 void ForumMsgItem::unsubscribeForum()
 {
 #ifdef DEBUG_ITEM
@@ -308,7 +320,6 @@ void ForumMsgItem::unsubscribeForum()
 	}
 	updateItemStatic();
 }
-
 
 void ForumMsgItem::subscribeForum()
 {
@@ -338,7 +349,6 @@ void ForumMsgItem::replyToPost()
 		CreateForumMsg *cfm = new CreateForumMsg(mForumId, mPostId);
 		cfm->show();
 	}
-	
 }
 
 void ForumMsgItem::sendMsg()

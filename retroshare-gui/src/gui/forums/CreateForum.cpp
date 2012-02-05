@@ -73,6 +73,8 @@ void CreateForum::newForum()
 
 	ui.forumName->clear();
 	ui.forumDesc->clear();
+
+	ui.forumName->setFocus();
 }
 
 void CreateForum::createForum()

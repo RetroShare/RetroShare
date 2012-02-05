@@ -44,38 +44,38 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string 
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mChanId(chanId), mMsgId(msgId), mIsHome(isHome)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	setupUi(this);
 
-  setAttribute ( Qt::WA_DeleteOnClose, true );
+	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-  m_inUpdateItemStatic = false;
+	m_inUpdateItemStatic = false;
 
-  /* general ones */
-  connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-  connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+	/* general ones */
+	connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
+	connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
-  /* specific */
-  connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
-  connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
-  connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
-  connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
+	/* specific */
+	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
+	connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
+	connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
+	connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
 
-  connect( readButton, SIGNAL( toggled(bool) ), this, SLOT( readToggled(bool) ) );
-  connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
+	connect( readButton, SIGNAL( toggled(bool) ), this, SLOT( readToggled(bool) ) );
+	connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 
-  downloadButton->hide();
-  playButton->hide();
-  warn_image_label->hide();
-  warning_label->hide();
+	downloadButton->hide();
+	playButton->hide();
+	warn_image_label->hide();
+	warning_label->hide();
 
-  titleLabel->setMinimumWidth(100);
-  subjectLabel->setMinimumWidth(100);
-  warning_label->setMinimumWidth(100);
+	titleLabel->setMinimumWidth(100);
+	subjectLabel->setMinimumWidth(100);
+	warning_label->setMinimumWidth(100);
 
-  small();
-  updateItemStatic();
-  updateItem();
+	small();
+	updateItemStatic();
+	updateItem();
 }
 
 void ChanMsgItem::updateItemStatic()
@@ -311,6 +311,10 @@ void ChanMsgItem::toggle()
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 		expandButton->setToolTip(tr("Hide"));
+
+		if (!mIsHome) {
+			readToggled(false);
+		}
 	}
 	else
 	{
@@ -374,27 +378,27 @@ void ChanMsgItem::play()
 
 void ChanMsgItem::readToggled(bool checked)
 {
-    if (m_inUpdateItemStatic) {
-        return;
-    }
+	if (m_inUpdateItemStatic) {
+		return;
+	}
 
-    /* set always as read ... */
-    uint32_t statusNew = CHANNEL_MSG_STATUS_READ;
-    if (checked) {
-        /* ... and as unread by user */
-        statusNew |= CHANNEL_MSG_STATUS_UNREAD_BY_USER;
-    } else {
-        /* ... and as read by user */
-        statusNew &= ~CHANNEL_MSG_STATUS_UNREAD_BY_USER;
-    }
-    rsChannels->setMessageStatus(mChanId, mMsgId, statusNew, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
+	/* set always as read ... */
+	uint32_t statusNew = CHANNEL_MSG_STATUS_READ;
+	if (checked) {
+		/* ... and as unread by user */
+		statusNew |= CHANNEL_MSG_STATUS_UNREAD_BY_USER;
+	} else {
+		/* ... and as read by user */
+		statusNew &= ~CHANNEL_MSG_STATUS_UNREAD_BY_USER;
+	}
+	rsChannels->setMessageStatus(mChanId, mMsgId, statusNew, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
 }
 
 void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int /*status*/)
 {
-    if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
-        updateItemStatic();
-    }
+	if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
+		updateItemStatic();
+	}
 }
 
 void ChanMsgItem::copyLink()

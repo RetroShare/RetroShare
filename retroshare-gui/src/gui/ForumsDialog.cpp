@@ -742,6 +742,8 @@ void ForumsDialog::fillThreadFinished()
 #ifdef DEBUG_FORUMS
             std::cerr << "ForumsDialog::fillThreadFinished Add messages" << std::endl;
 #endif
+            ui.threadTreeWidget->setSortingEnabled(false);
+
             /* add all messages in! */
             if (lastViewType != thread->viewType || lastForumID != mCurrForumId) {
                 ui.threadTreeWidget->clear();
@@ -757,6 +759,8 @@ void ForumsDialog::fillThreadFinished()
                 // cleanup list
                 CleanupItems (thread->items);
             }
+
+            ui.threadTreeWidget->setSortingEnabled(true);
 
             if (thread->focusMsgId.empty() == false) {
                 /* Search exisiting item */
