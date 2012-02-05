@@ -1349,6 +1349,14 @@ Voulez-vous lui envoyer un message à la place ?</translation>
         <source>Show Participants</source>
         <translation>Afficher les participants</translation>
     </message>
+    <message>
+        <source>Change nick name</source>
+        <translation>Changer de pseudo</translation>
+    </message>
+    <message>
+        <source>Please enter your new nick name</source>
+        <translation>S&apos;il vous plaît entrez votre nouveau pseudo</translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
@@ -1532,11 +1540,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation type="unfinished">Message entrant pour l&apos;historique</translation>
+        <translation type="unfinished">Message entrant de l&apos;historique</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation type="unfinished">Message sortant pour l&apos;historique</translation>
+        <translation type="unfinished">Message sortant de l&apos;historique</translation>
     </message>
     <message>
         <source>Incoming message</source>
@@ -1562,6 +1570,14 @@ p, li { white-space: pre-wrap; }
         <source>Number of saved messages (0 = unlimited)</source>
         <translation>Nombre de messages sauvegardés (0 = aucun)</translation>
     </message>
+    <message>
+        <source>Incoming</source>
+        <translation>Entrant</translation>
+    </message>
+    <message>
+        <source>Outgoing</source>
+        <translation>Sortant</translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1576,6 +1592,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Standard style for history</source>
         <translation>Le style standard pour l&apos;historique</translation>
+    </message>
+    <message>
+        <source>Compact style for group chat</source>
+        <translation type="unfinished">Le style compacté pour le chat public</translation>
+    </message>
+    <message>
+        <source>Compact style for private chat</source>
+        <translation type="unfinished">Le style compacté pour le chat privé</translation>
+    </message>
+    <message>
+        <source>Compact style for history</source>
+        <translation type="unfinished">Le style compacté pour l&apos;historique</translation>
     </message>
 </context>
 <context>
@@ -2528,11 +2556,11 @@ Voulez-vous sauvegarder les changements?</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Limité - N&apos;importe qui peut lire, mais la publication est limitée ( la clé de publication est privée )</translation>
+        <translation type="unfinished">Limité - N&apos;importe qui peut lire, mais la publication est limitée (la clé de publication est privée)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privé - ( La clé de publication privée est exigée pour voir les messages )</translation>
+        <translation type="unfinished">Privé - (La clé de publication privée est exigée pour voir les messages)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
@@ -2784,7 +2812,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Public - Tout le monde peut lire et publier ( la clé de pubication est partagée )</translation>
+        <translation type="unfinished">Public - Tout le monde peut lire et publier (la clé de pubication est partagée)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -2792,7 +2820,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privé - ( La clé de publication privée est exigée pour voir les messages )</translation>
+        <translation type="unfinished">Privé - (La clé de publication privée est exigée pour voir les messages)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
@@ -3009,11 +3037,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public (Visible by friends)</source>
-        <translation>Public ( Visible par les amis )</translation>
+        <translation type="unfinished">Public (Visible par les amis)</translation>
     </message>
     <message>
         <source>Private (Works on invitation only)</source>
-        <translation>Privé ( sur invitation uniquement )</translation>
+        <translation type="unfinished">Privé (sur invitation uniquement)</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to group chat.</source>
@@ -3049,7 +3077,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Votre pseudo pour ce salon ( Changer le nom par défaut dans les options-&gt; chat )</translation>
+        <translation type="unfinished">Votre pseudo pour ce salon (Changer le nom par défaut dans les options-&gt; chat)</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -3155,7 +3183,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation>Utilisateurs Retroshare trouvés dans les DHT ( Utilisateurs totaux de la DHT )</translation>
+        <translation type="unfinished">Utilisateurs Retroshare trouvés dans les DHT (Utilisateurs totaux de la DHT)</translation>
     </message>
     <message>
         <source>DHT Off</source>
@@ -3492,7 +3520,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished">Age</translation>
+        <translation type="unfinished">Ancienneté</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -3511,7 +3539,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Partager automatiquement le dossier de réception ( Recommandé )</translation>
+        <translation type="unfinished">Partager automatiquement le dossier de réception (Recommandé)</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
@@ -3689,7 +3717,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished">Éditer les détails du forum</translation>
+        <translation>Éditer les détails du forum</translation>
     </message>
     <message>
         <source>Forum Info</source>
@@ -3716,7 +3744,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation>Entrez les adresses e-mail de vos amis ( séparées par un point-virgule )</translation>
+        <translation type="unfinished">Entrez les adresses e-mail de vos amis (séparées par un point-virgule)</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
@@ -3732,7 +3760,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Friend invites you to check out RetroShare</source>
-        <translation>Un ami vous invite à découvrir Retroshare ( plateforme décentralisée de communictation et de partage de fichier )</translation>
+        <translation type="unfinished">Un ami vous invite à découvrir Retroshare (plateforme décentralisée de communictation et de partage de fichier)</translation>
     </message>
     <message>
         <source>Friend uses RetroShare to communicate securely, and invites you to join him to share files together. &lt;br&gt;RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. &lt;br&gt;For more information, see our website http://retroshare.sourceforge.net/ or download the software here http://retroshare.sourceforge.net/downloads.html. &lt;br&gt;See you soon on RetroShare!</source>
@@ -3850,7 +3878,7 @@ p, li { white-space: pre-wrap; }
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation type="unfinished">Zone d&apos;expression</translation>
+        <translation type="unfinished">Expression Widget</translation>
     </message>
     <message>
         <source>Delete this expression</source>
@@ -3873,7 +3901,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit this Association</source>
-        <translation type="unfinished">Éditer cette association</translation>
+        <translation>Éditer cette association</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
@@ -3992,7 +4020,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous F2F</source>
-        <translation type="unfinished">F2F Anonyme</translation>
+        <translation>F2F Anonyme</translation>
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
@@ -4074,11 +4102,11 @@ p, li { white-space: pre-wrap; }
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished">Dossiers partagés de mes amis</translation>
+        <translation type="unfinished">Répertoires de mes amis</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished">Mes dossiers</translation>
+        <translation type="unfinished">Mes répertoires</translation>
     </message>
     <message>
         <source>Size</source>
@@ -4330,7 +4358,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished">Signaler les messages non lus</translation>
+        <translation type="unfinished">Changer l&apos;état de lecture du message</translation>
     </message>
     <message>
         <source>Expand new messages</source>
@@ -4689,7 +4717,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Partager le forum</translation>
     </message>
 </context>
 <context>
@@ -4977,7 +5005,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Personal message</source>
-        <translation type="unfinished">Éditer mon message perso</translation>
+        <translation type="unfinished">Éditer votre message perso</translation>
     </message>
     <message>
         <source>Group Chat</source>
@@ -5336,7 +5364,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished">Connexion</translation>
+        <translation type="unfinished">Serveur</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5344,7 +5372,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished">Accepter</translation>
+        <translation>Accepter</translation>
     </message>
     <message>
         <source>Form</source>
@@ -5802,7 +5830,7 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     </message>
     <message>
         <source>Register retroshare:// as url protocol (Restart required)</source>
-        <translation>Enregistrer retroshare:// en tant que protocole ( Redémarrage requis )</translation>
+        <translation type="unfinished">Enregistrer retroshare:// en tant que protocole (Redémarrage requis)</translation>
     </message>
     <message>
         <source>Idle</source>
@@ -5838,7 +5866,7 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation>Activer le mode Avancé ( redémarrage nécessaire )</translation>
+        <translation type="unfinished">Activer le mode Avancé (redémarrage requis)</translation>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
@@ -5919,7 +5947,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connect To Friends</source>
-        <translation type="unfinished">Se connecter aux amis</translation>
+        <translation>Se connecter aux amis</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5955,7 +5983,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation type="unfinished">Avancé : Ouverture des ports du firewall</translation>
+        <translation type="unfinished">Avancé : Ouverture des ports du pare-feu</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6049,23 +6077,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You are cordially invited to join the Retroshare Network,</source>
-        <translation>Vous êtes cordialement invités à rejoindre le réseau RetroShare,</translation>
+        <translation type="obsolete">Vous êtes cordialement invités à rejoindre le réseau RetroShare,</translation>
     </message>
     <message>
         <source>Retroshare is a Secure P2P Sharing Network</source>
-        <translation>RetroShare est un réseau P2P de partage sécurisé</translation>
+        <translation type="obsolete">RetroShare est un réseau P2P de partage sécurisé</translation>
     </message>
     <message>
         <source>We use direct connections between you and your friends to maintain your Privacy</source>
-        <translation>Nous utilisons des connexions directes entre vous et vos amis pour maintenir votre confidentialité</translation>
+        <translation type="obsolete">Nous utilisons des connexions directes entre vous et vos amis pour maintenir votre confidentialité</translation>
     </message>
     <message>
         <source>Install the client to chat, share data and converse in the forums</source>
-        <translation>Installez le client pour discuter, partager des données et converser dans les forums</translation>
+        <translation type="obsolete">Installez le client pour discuter, partager des données et converser dans les forums</translation>
     </message>
     <message>
         <source>Get Retroshare here: http://retroshare.sourceforge.net/download</source>
-        <translation type="unfinished">Obtenez RetroShare ici : http://retroshare.sourceforge.net/download</translation>
+        <translation type="obsolete">Obtenez RetroShare ici : http://retroshare.sourceforge.net/download</translation>
     </message>
     <message>
         <source>Below is your friends ID Certificate. Cut and paste this into your Retroshare client</source>
@@ -6086,6 +6114,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>RetroShare Support</source>
         <translation>Aide RetroShare</translation>
+    </message>
+    <message>
+        <source>Your friend has installed Retroshare, and would like you to try it out.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can get Retroshare here: http://retroshare.sourceforge.net/download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retroshare is a private Friend-2-Friend sharing network.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It has an many features, including built-in chat, messaging, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>forums and channels, all of which are as secure as the file-sharing.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6440,7 +6488,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; disponible sur Windows et Linux qui vous permet de communiquer en toute&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;sécurité avec vos amis, collègues ou famille. &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare utilise un système de réseau de confiance pour authentifier les contacts et utilise le protocole OpenSSL pour crypter toutes les communications.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare intègre plusieurs fonctionalités dont le partage de fichiers, un chat (privé ou public), une messagerie, un système de blogs et bien d&apos;autres fonctionnalités. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare intègre plusieurs fonctionalités dont le partage de fichiers, un chat (privé ou public), une méssagerie, un système de blogs et bien d&apos;autres fonctionnalités. &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&lt;/span&gt;Liens utiles pour plus d&apos;informations :&lt;/p&gt;
 &lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Site officiel de RetroShare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
@@ -6689,7 +6737,7 @@ Il y a pour cela deux possibilités :</translation>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare) </source>
         <translation>Envoyez une invitation par email à un ami
-( Elle/il recevra par email les instructions pour télécharger RetroShare ) </translation>
+(Elle/il recevra par email les instructions pour télécharger RetroShare) </translation>
     </message>
     <message>
         <source>&amp;Use *.rsc files with certificates</source>
@@ -6925,7 +6973,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages</source>
-        <translation>Messagerie</translation>
+        <translation type="unfinished">Méssagerie</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -7110,7 +7158,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation type="unfinished">Messenger</translation>
+        <translation type="unfinished">Ouvrir le messenger</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -7150,7 +7198,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="unfinished">Messagerie</translation>
+        <translation type="unfinished">Ouvrir la méssagerie</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -7756,7 +7804,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">A :</translation>
+        <translation>Pour :</translation>
     </message>
     <message>
         <source>Cc:</source>
@@ -8310,7 +8358,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished">À</translation>
+        <translation>Pour</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -9328,19 +9376,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation type="unfinished">Mettre les onglets à droite</translation>
+        <translation>Mettre les onglets à droite</translation>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation type="unfinished">Mettre les onglets en haut</translation>
+        <translation>Mettre les onglets en haut</translation>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation type="unfinished">Mettre les onglets en bas</translation>
+        <translation>Mettre les onglets en bas</translation>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation type="unfinished">Mettre les onglets à gauche</translation>
+        <translation>Mettre les onglets à gauche</translation>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
@@ -11747,7 +11795,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation>%1 des %2 liens RetroShare traités.</translation>
+        <translation type="unfinished">%1 des%2 lien(s) RetroShare traité(s).</translation>
     </message>
     <message>
         <source>Request Confirmation</source>
@@ -11834,7 +11882,7 @@ et ouvrir Ajouter un ami.</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
-        <translation>%1 des %2 liens RetroShare traités.</translation>
+        <translation type="unfinished">%1 des%2 lien(s) RetroShare traité(s).</translation>
     </message>
     <message>
         <source>File added</source>
@@ -12039,7 +12087,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Exit</source>
-        <translation type="unfinished">Fin</translation>
+        <translation type="unfinished">Quitter</translation>
     </message>
     <message>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
@@ -12095,7 +12143,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -12111,7 +12159,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  De choisir les fichiers à partager&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;De commencer à utiliser RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  De commencer à utiliser RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Discovery :</source>
@@ -12201,7 +12249,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished">Partager automatiquement le dossier de réception ( Recommandé )</translation>
+        <translation type="unfinished">Partager automatiquement le dossier de réception (Recommandé)</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12708,7 +12756,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation type="unfinished">Entrez un mot clé ici ( minimum 3 caractères )</translation>
+        <translation type="unfinished">Entrez un mot clé ici (minimum 3 caractères)</translation>
     </message>
     <message>
         <source>Copy retroshare Link</source>
@@ -12902,7 +12950,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Include own files</source>
-        <translation type="unfinished">Inclure  mes fichiers</translation>
+        <translation type="unfinished">Inclure mes fichiers</translation>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
@@ -12915,8 +12963,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation>Recherche jusqu&apos;à 6 niveaux de contacts dans le réseau
-( Toujours proposer des fichiers disponibles )</translation>
+        <translation type="unfinished">Recherche jusqu&apos;à 6 niveaux de contacts dans le réseau
+(Toujours proposer des fichiers disponibles)</translation>
     </message>
     <message>
         <source>F2F search</source>
@@ -13091,11 +13139,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished">Tentative de connexion ( entrante ) inconnue</translation>
+        <translation type="unfinished">Tentative de connexion (entrante) inconnue</translation>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
-        <translation type="unfinished">Tentative de connexion ( sortante ) inconnue</translation>
+        <translation type="unfinished">Tentative de connexion (sortante) inconnue</translation>
     </message>
     <message>
         <source>Unknown Security Issue</source>
@@ -13227,7 +13275,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Automatic (Upnp)</source>
-        <translation>Automatique ( UPnP )</translation>
+        <translation type="unfinished">Automatique (UPnP)</translation>
     </message>
     <message>
         <source>Manual Forwarded Port</source>
@@ -13330,10 +13378,10 @@ les pairs se fassent mutuellement confiance pour permettre la connexion.</transl
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you&apos;re 
 behind a firewall or a VPN.</source>
-        <translation>Si vous décochez cette case, RetroShare ne pourra déterminer votre adresse IP 
+        <translation type="unfinished">Si vous décochez cette case, RetroShare ne pourra déterminer votre adresse IP 
 que si vous vous connectez à quelqu&apos;un. Laisser cette case cochée vous aidera 
 à vous connecter si vous avez peu d&apos;amis. Cela vous aidera aussi si vous êtes 
-derrière un pare-feu ou un VPN ( Virtual Private Network ).</translation>
+derrière un pare-feu ou un VPN (Virtual Private Network).</translation>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
@@ -13416,7 +13464,7 @@ derrière un pare-feu ou un VPN ( Virtual Private Network ).</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Messagerie</translation>
+        <translation type="unfinished">Méssagerie</translation>
     </message>
     <message>
         <source>Forum</source>
@@ -14318,7 +14366,7 @@ Etes-vous certains de vouloir continuer ?</translation>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Le mot de passe de votre certificat SSL ( votre emplacement ) sera stocké chiffré dans votre trousseau.
+        <translation type="unfinished">Le mot de passe de votre certificat SSL (votre emplacement) sera stocké chiffré dans votre trousseau.
 
 Votre mot de passe PGP ne sera pas stocké.
 
@@ -14920,7 +14968,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation type="unfinished">Pas de checksum trouve ( les 5 derniers caractères doivent être séparés par un &apos;=&apos; char ), ou aucun saut de ligne après la ligne d&apos;étiquette ( p.ex. ligne commençant avec Version: )</translation>
+        <translation type="unfinished">Pas de checksum trouve (les 5 derniers caractères doivent être séparés par un &apos;=&apos; char), ou aucun saut de ligne après la ligne d&apos;étiquette (p.ex. ligne commençant avec Version:)</translation>
     </message>
     <message>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
@@ -15064,7 +15112,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; est capable de transférer des fichiers et d&apos;effectuer des recherches entre personnes qui ne sont pas amies. Cependant, ce traffic se fait à travers une liste de contacts anonymes.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; est capable de transférer des fichiers et d&apos;effectuer des recherches entre personnes qui ne sont pas amies. Cependant, ce trafic se fait à travers une liste de contacts anonymes.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer le type de partage dans la fenêtre de partage de dossier :&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Visible par mes amis&lt;/span&gt;: les fichiers sont visibles par mes amis.&lt;/li&gt;
@@ -15399,7 +15447,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation>Priorité ( Vitesse )...</translation>
+        <translation type="unfinished">Priorité (Vitesse)...</translation>
     </message>
     <message>
         <source>Paused</source>
@@ -15447,7 +15495,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open Collection</source>
-        <translation type="unfinished">Ouvrir la collection</translation>
+        <translation type="unfinished">Ouvrir une collection</translation>
     </message>
     <message>
         <source>RTT Statistics</source>
