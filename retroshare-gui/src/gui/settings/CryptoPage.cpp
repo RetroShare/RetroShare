@@ -85,7 +85,7 @@ CryptoPage::copyRSLink()
 		urls.push_back(link) ;
 		RSLinkClipboard::copyLinks(urls) ;
 		QMessageBox::information(this,
-				tr("RetroShare"),
+				"RetroShare",
 				tr("A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your"
 					" friend via email or some other way"));
 	}

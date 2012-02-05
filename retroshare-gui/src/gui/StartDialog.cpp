@@ -163,13 +163,13 @@ void StartDialog::loadCertificates()
 										tr("Another RetroShare using the same profile is "
 											"already running on your system. Please close "
                                                                                         "that instance first, or choose another profile\n"
-                                                                                        "lock file:\n ")+ QString::fromStdString(lockFile));
+                                                                                        "lock file:\n")+ QString::fromStdString(lockFile));
 				break;
 		case 2:	QMessageBox::warning(	this,
 										tr("Multiple instances"),
-										tr("An unexpected error occurred when Retroshare"
+										tr("An unexpected error occurred when Retroshare "
                                                                                         "tried to acquire the single instance lock\n"
-                                                                                        "lock file:\n ")+ QString::fromStdString(lockFile));
+                                                                                        "lock file:\n")+ QString::fromStdString(lockFile));
 				break;
 		case 3: QMessageBox::warning(	this,
 										tr("Login Failure"),

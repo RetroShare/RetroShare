@@ -94,7 +94,7 @@ void DHTStatus::getDHTStatus()
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
 				dhtstatusLabel->setPixmap(QPixmap(":/images/yellowled.png"));
-				dhtstatusLabel->setToolTip(tr("DHT Searching for Retroshare Peers"));
+				dhtstatusLabel->setToolTip(tr("DHT Searching for RetroShare Peers"));
 				
 				spaceLabel->setVisible(true);
 				dhtnetworkLabel->setVisible(true);

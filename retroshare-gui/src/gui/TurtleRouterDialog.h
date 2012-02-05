@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QPoint>
 #include <retroshare/rsturtle.h>
 #include "ui_TurtleRouterDialog.h"
 #include "RsAutoUpdatePage.h"
@@ -8,6 +7,8 @@
 
 class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
 {
+	Q_OBJECT
+
 	public:
 		TurtleRouterDialog(QWidget *parent = NULL) ;
 		~TurtleRouterDialog();
@@ -33,6 +34,3 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 		QTreeWidgetItem *top_level_t_requests ;
 
 } ;
-
-
-

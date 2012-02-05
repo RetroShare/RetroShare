@@ -332,7 +332,7 @@ p, li { white-space: pre-wrap; }
           <item row="0" column="4">
            <widget class="QCheckBox" name="thumbNailCb">
             <property name="toolTip">
-             <string> allow channels to get frame for message thumbnail from movie media attachments or not</string>
+             <string>Allow channels to get frame for message thumbnail from movie media attachments or not</string>
             </property>
             <property name="text">
              <string>Auto Thumbnail</string>
@@ -352,8 +352,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>517</width>
-               <height>269</height>
+               <width>511</width>
+               <height>277</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">

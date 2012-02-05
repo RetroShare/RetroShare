@@ -30,6 +30,8 @@ class TurtleRouterStatisticsWidget ;
 
 class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterStatistics
 {
+	Q_OBJECT
+
 	public:
 		TurtleRouterStatistics(QWidget *parent = NULL) ;
 		~TurtleRouterStatistics();
@@ -49,6 +51,8 @@ class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterSt
 
 class TurtleRouterStatisticsWidget:  public QWidget
 {
+	Q_OBJECT
+
 	public:
 		TurtleRouterStatisticsWidget(QWidget *parent = NULL) ;
 

@@ -140,10 +140,10 @@ class TRHistogram
 			oy += (p+1)*celly+6 ;
 
 			painter->setPen(QColor::fromRgb(0,0,0)) ;
-			painter->drawText(ox,oy+celly,QObject::tr("(Age in seconds)"));
-			painter->drawText(ox+MaxTime*cellx+20,oy+celly,QObject::tr("(Depth)"));
+			painter->drawText(ox,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "Age in seconds")+")");
+			painter->drawText(ox+MaxTime*cellx+20,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "Depth")+")");
 
-			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+celly,"("+QObject::tr("total")+")");
+			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "total")+")");
 
 			oy += 3*celly ;
 
@@ -227,7 +227,6 @@ void TurtleRouterStatistics::processSettings(bool bLoad)
 
 }
 
-
 void TurtleRouterStatistics::updateDisplay()
 {
 	std::vector<std::vector<std::string> > hashes_info ;
@@ -254,7 +253,7 @@ QString TurtleRouterStatistics::getPeerName(const std::string& peer_id)
 	{
 		RsPeerDetails detail ;
 		if(!rsPeers->getPeerDetails(peer_id,detail))
-			return "unknown peer";
+			return tr("Unknown Peer");
 
 		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
 	}
@@ -289,13 +288,13 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	// draw...
 	int ox=5,oy=5 ;
 
-	TRHistogram(search_reqs_info).draw(&painter,ox,oy,QObject::tr("Search requests repartition:")) ;
+	TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":") ;
 
 	painter.setPen(QColor::fromRgb(70,70,70)) ;
 	painter.drawLine(0,oy,maxWidth,oy) ;
 	oy += celly ;
 
-	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,QObject::tr("Tunnel requests repartition:")) ;
+	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":") ;
 
 	// now give information about turtle traffic.
 	//
@@ -306,7 +305,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	painter.drawLine(0,oy,maxWidth,oy) ;
 	oy += celly ;
 
-	painter.drawText(ox,oy+celly,tr("Turtle router traffic:")) ; oy += celly*2 ;
+	painter.drawText(ox,oy+celly,tr("Turtle router traffic")+":") ; oy += celly*2 ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Dn")+"\t: " + speedString(info.tr_dn_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
@@ -352,5 +351,3 @@ void TurtleRouterStatisticsWidget::resizeEvent(QResizeEvent *event)
 	 QWidget::resizeEvent(event);
 	 update();
 }
-
-
