@@ -500,7 +500,7 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" colspan="5">
+   <item row="0" column="0" colspan="6">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Public Key</string>
@@ -549,7 +549,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
+   <item row="1" column="5">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -562,14 +562,14 @@ p, li { white-space: pre-wrap; }
      </property>
     </spacer>
    </item>
-   <item row="1" column="3">
+   <item row="1" column="4">
     <widget class="QCheckBox" name="_includeSignatures_CB">
      <property name="text">
       <string>Include signatures</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QPushButton" name="_copyLink_PB">
      <property name="text">
       <string>copy RetroShare link to clipboard</string>
@@ -578,8 +578,6 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
