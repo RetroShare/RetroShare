@@ -63,7 +63,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	firstShow = true;
 
 	lastStatusSendTime = 0 ;
-	chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
 
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
@@ -141,6 +140,9 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 	ChatLobbyId lid;
 	if (rsMsgs->isLobbyId(peerId, lid)) {
 		isChatLobby = true;
+		chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
+	} else {
+		chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
 	}
 
 	currentColor.setNamedColor(PeerSettings->getPrivateChatColor(peerId));
