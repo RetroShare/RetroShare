@@ -1209,6 +1209,11 @@ p, li { white-space: pre-wrap; }
         <source>Invitation to chat lobby</source>
         <translation>Einladung zur Chat Lobby</translation>
     </message>
+    <message>
+        <location line="+0"/>
+        <source>%1  invites you to chat lobby named %2</source>
+        <translation>%1 lädt dich in die Lobby %2 ein</translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
@@ -1548,7 +1553,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+346"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+348"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>

@@ -353,7 +353,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
 	rsMsgs->getPendingChatLobbyInvites(invites);
 
 	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it) {
-		if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str()) + QString(" invites you to chat lobby named ") + QString::fromUtf8((*it).lobby_name.c_str()), QMessageBox::Ok, QMessageBox::Ignore)) {
+		if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), tr("%1  invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(QString::fromUtf8((*it).lobby_name.c_str())), QMessageBox::Ok, QMessageBox::Ignore)) {
 			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
 
 			rsMsgs->acceptLobbyInvite((*it).lobby_id);
