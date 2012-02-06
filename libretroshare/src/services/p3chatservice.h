@@ -246,7 +246,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
 
 		static std::string makeVirtualPeerId(ChatLobbyId) ;
-		static uint64_t makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
+		static uint64_t makeConnexionChallengeCode(const std::string& peer_id,ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
 
 		void locked_printDebugInfo() const ;
 		RsChatAvatarItem *makeOwnAvatarItem() ;

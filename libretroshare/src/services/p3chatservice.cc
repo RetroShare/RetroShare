@@ -39,8 +39,10 @@
 /****
  * #define CHAT_DEBUG 1
  ****/
+#define CHAT_DEBUG 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connexion challenge every 20 messages
+static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connexion challenge
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
 static const time_t 	MAX_KEEP_MSG_RECORD 					  = 1200 ; // keep msg record for 1200 secs max.
@@ -1813,33 +1815,36 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 	std::cerr << "    Peer Id        =   " << item->PeerId() << std::endl;
 #endif
 
+	time_t now = time(NULL) ;
 	ChatLobbyId lobby_id ;
+	std::string ownId = rsPeers->getOwnId();
 	bool found = false ;
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 		for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end() && !found;++it)
 			for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end() && !found;++it2)
-			{
-				uint64_t code = makeConnexionChallengeCode(it->first,it2->first) ;
-#ifdef CHAT_DEBUG
-				std::cerr << "    Lobby_id = 0x" << std::hex << it->first << ", msg_id = 0x" << it2->first << ": code = 0x" << code << std::dec << std::endl ;
-#endif
-
-				if(code == item->challenge_code)
+				if(it2->second + CONNECTION_CHALLENGE_MAX_MSG_AGE + 5 > now)  // any msg not older than 5 seconds plus max challenge count is fine.
 				{
+					uint64_t code = makeConnexionChallengeCode(ownId,it->first,it2->first) ;
 #ifdef CHAT_DEBUG
-					std::cerr << "    Challenge accepted for lobby " << std::hex << it->first << ", for chat msg " << it2->first << std::dec << std::endl ;
-					std::cerr << "    Sending connection request to peer " << item->PeerId() << std::endl;
+					std::cerr << "    Lobby_id = 0x" << std::hex << it->first << ", msg_id = 0x" << it2->first << ": code = 0x" << code << std::dec << std::endl ;
 #endif
 
-					lobby_id = it->first ;
-					found = true ;
+					if(code == item->challenge_code)
+					{
+#ifdef CHAT_DEBUG
+						std::cerr << "    Challenge accepted for lobby " << std::hex << it->first << ", for chat msg " << it2->first << std::dec << std::endl ;
+						std::cerr << "    Sending connection request to peer " << item->PeerId() << std::endl;
+#endif
 
-					// also add the peer to the list of participating friends
-					it->second.participating_friends.insert(item->PeerId()) ; 
+						lobby_id = it->first ;
+						found = true ;
+
+						// also add the peer to the list of participating friends
+						it->second.participating_friends.insert(item->PeerId()) ; 
+					}
 				}
-			}
 	}
 
 	if(found) // send invitation. As the peer already has the lobby, the invitation will most likely be accepted.
@@ -1869,19 +1874,19 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 	}
 
 	time_t now = time(NULL) ;
-	uint64_t code = 0 ;
+	ChatLobbyMsgId msg_id = 0 ;
 
 	for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
-		if(it2->second + 20 > now)  // any msg not older than 20 seconds is fine.
+		if(it2->second + CONNECTION_CHALLENGE_MAX_MSG_AGE > now)  // any msg not older than 20 seconds is fine.
 		{
-			code = makeConnexionChallengeCode(lobby_id,it2->first) ;
+			msg_id = it2->first ;
 #ifdef CHAT_DEBUG
-			std::cerr << "  Using msg id 0x" << std::hex << it2->first << ", challenge code = " << code << std::dec << std::endl; 
+			std::cerr << "  Using msg id 0x" << std::hex << it2->first << std::dec << std::endl; 
 #endif
 			break ;
 		}
 
-	if(code == 0)
+	if(msg_id == 0)
 	{
 		std::cerr << "  No suitable message found in cache. Weird !!" << std::endl;
 		return ;
@@ -1896,6 +1901,11 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 	{
 		RsChatLobbyConnectChallengeItem *item = new RsChatLobbyConnectChallengeItem ;
 
+		uint64_t code = makeConnexionChallengeCode(*it,lobby_id,msg_id) ;
+
+#ifdef CHAT_DEBUG
+		std::cerr << "  Sending collexion challenge code 0x" << std::hex << code <<  std::dec << " to peer " << *it << std::endl; 
+#endif
 		item->PeerId(*it) ;
 		item->challenge_code = code ;
 
@@ -1903,9 +1913,20 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 	}
 }
 
-uint64_t p3ChatService::makeConnexionChallengeCode(ChatLobbyId lobby_id,ChatLobbyMsgId msg_id)
+uint64_t p3ChatService::makeConnexionChallengeCode(const std::string& peer_id,ChatLobbyId lobby_id,ChatLobbyMsgId msg_id)
 {
-	return ((uint64_t)lobby_id) ^ (uint64_t)msg_id ;
+	uint64_t result = 0 ;
+
+	for(uint32_t i=0;i<peer_id.size();++i)
+	{
+		result += msg_id ;
+		result ^= result >> 35 ;
+		result += result <<  6 ;
+		result ^= peer_id[i] * lobby_id ;
+		result += result << 26 ;
+		result ^= result >> 13 ;
+	}
+	return result ;
 }
 
 void p3ChatService::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
