@@ -1374,7 +1374,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new chat lobby</source>
-        <translation type="unfinished">Créer un nouveau salon de chat</translation>
+        <translation>Créer un nouveau salon de chat</translation>
     </message>
     <message>
         <source>Name</source>
@@ -1382,31 +1382,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Count</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Participants</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation type="unfinished">Salons privé</translation>
+        <translation>Salons privés</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation type="unfinished">Salons public</translation>
+        <translation>Salons publics</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation type="unfinished">Créer un nouveau salon de chat</translation>
+        <translation>Créer un nouveau salon de chat</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished">Se désabonner</translation>
+        <translation>Se désabonner</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished">S&apos;abonner</translation>
+        <translation>S&apos;abonner</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
-        <translation type="unfinished">Invitation à un salon</translation>
+        <translation>Invitation à un salon</translation>
     </message>
 </context>
 <context>
@@ -1445,7 +1445,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished">Dialoguer</translation>
+        <translation>Dialoguer</translation>
     </message>
     <message>
         <source>Quick Message</source>
@@ -1512,7 +1512,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished">Chat public</translation>
+        <translation>Chat public</translation>
     </message>
     <message>
         <source>Variant</source>
@@ -1536,15 +1536,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation type="unfinished">Activer les émoticônes pour le chat public</translation>
+        <translation>Activer les émoticônes pour le chat public</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation type="unfinished">Message entrant de l&apos;historique</translation>
+        <translation>Message entrant de l&apos;historique</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation type="unfinished">Message sortant de l&apos;historique</translation>
+        <translation>Message sortant de l&apos;historique</translation>
     </message>
     <message>
         <source>Incoming message</source>
@@ -1595,15 +1595,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Compact style for group chat</source>
-        <translation type="unfinished">Le style compacté pour le chat public</translation>
+        <translation>Le style compact pour le chat public</translation>
     </message>
     <message>
         <source>Compact style for private chat</source>
-        <translation type="unfinished">Le style compacté pour le chat privé</translation>
+        <translation>Le style compact pour le chat privé</translation>
     </message>
     <message>
         <source>Compact style for history</source>
-        <translation type="unfinished">Le style compacté pour l&apos;historique</translation>
+        <translation>Le style compact pour l&apos;historique</translation>
     </message>
 </context>
 <context>
@@ -1625,7 +1625,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation type="unfinished">Joindre un fichier pour votre ami</translation>
+        <translation>Joindre un fichier pour votre ami</translation>
     </message>
     <message>
         <source>Send</source>
@@ -5983,7 +5983,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation type="unfinished">Avancé : Ouverture des ports du pare-feu</translation>
+        <translation>Avancé : Ouverture des ports du pare-feu</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6097,7 +6097,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Below is your friends ID Certificate. Cut and paste this into your Retroshare client</source>
-        <translation type="unfinished">Ci-dessous se trouve le certificat d&apos;identité de votre ami. Coupez et collez le dans votre client RetroShare</translation>
+        <translation>Ci-dessous se trouve le certificat d&apos;identité de votre ami. Coupez et collez le dans votre client RetroShare</translation>
     </message>
     <message>
         <source>and send them your ID Certificate to enable the secure connection</source>
@@ -6109,7 +6109,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Feedback</source>
-        <translation type="unfinished">Retour RetroShare</translation>
+        <translation>Retour-utilisateur RetroShare</translation>
     </message>
     <message>
         <source>RetroShare Support</source>
@@ -6117,23 +6117,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your friend has installed Retroshare, and would like you to try it out.</source>
-        <translation type="unfinished"></translation>
+        <translation>Votre ami a installé RetroShare et vous propose de l&apos;essayer</translation>
     </message>
     <message>
         <source>You can get Retroshare here: http://retroshare.sourceforge.net/download</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous pouvez récupérer RetroShare ici: http://retroshare.sourceforge.net/downloads.html</translation>
     </message>
     <message>
         <source>Retroshare is a private Friend-2-Friend sharing network.</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare est un réseau privé de type F2F</translation>
     </message>
     <message>
         <source>It has an many features, including built-in chat, messaging, </source>
-        <translation type="unfinished"></translation>
+        <translation>Il propose plusieurs services de messagerie (chat, groupes de discussion),</translation>
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation type="unfinished"></translation>
+        <translation>des forums, des cannaux de diffusion, tous aussi sécurisés que le transfer de fichier.</translation>
     </message>
 </context>
 <context>
@@ -6225,7 +6225,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation type="unfinished">Trier par dernier message</translation>
+        <translation>Trier par dernier message</translation>
     </message>
     <message>
         <source>Private Key Available</source>
@@ -6276,7 +6276,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>contains</source>
-        <translation type="unfinished">contient un des mots suivants</translation>
+        <translation>contient un des mots suivants</translation>
     </message>
     <message>
         <source>contains all</source>
@@ -6288,11 +6288,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>less than</source>
-        <translation type="unfinished">inférieur à</translation>
+        <translation>inférieur à</translation>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation type="unfinished">inférieur ou égal à</translation>
+        <translation>inférieur ou égal à</translation>
     </message>
     <message>
         <source>equals</source>
@@ -6300,11 +6300,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation type="unfinished">supérieur ou égal à</translation>
+        <translation>supérieur ou égal à</translation>
     </message>
     <message>
         <source>greater than</source>
-        <translation type="unfinished">supérieur à</translation>
+        <translation>supérieur à</translation>
     </message>
     <message>
         <source>is in range</source>
@@ -6480,7 +6480,7 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -6722,7 +6722,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.
 These ways are possible to do this:</source>
-        <translation type="unfinished">Cet assistant vous aidera à vous connecter à vos amis à l&apos;aide de RetroShare.
+        <translation>Cet assistant vous aidera à vous connecter à vos amis à l&apos;aide de RetroShare.
 Il y a pour cela deux possibilités :</translation>
     </message>
     <message>
@@ -6973,7 +6973,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished">Méssagerie</translation>
+        <translation>Méssagerie</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -6993,7 +6993,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> directory is running low (current limit is </source>
-        <translation type="unfinished">dossier diminue (l&apos;espace restant est de </translation>
+        <translation>dossier presque plein! (l&apos;espace restant est de </translation>
     </message>
     <message>
         <source>MB). 
@@ -7138,7 +7138,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Messenger</source>
-        <translation type="unfinished">Messenger</translation>
+        <translation>Messenger</translation>
     </message>
     <message>
         <source>Show/Hide</source>
@@ -7158,7 +7158,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation type="unfinished">Ouvrir le messenger</translation>
+        <translation>Ouvrir le messenger</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -7198,7 +7198,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="unfinished">Ouvrir la méssagerie</translation>
+        <translation>Ouvrir la méssagerie</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -7246,7 +7246,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">Notifications</translation>
+        <translation>Notifications</translation>
     </message>
     <message>
         <source>Dht Details</source>
@@ -7445,7 +7445,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="unfinished">Aligner à D&amp;roite</translation>
+        <translation>Aligner à D&amp;roite</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
