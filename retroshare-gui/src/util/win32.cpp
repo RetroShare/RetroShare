@@ -160,9 +160,11 @@ win32_program_files_folder()
 {
   return win32_get_folder_location(
 #if 0
-     CSIDL_PROGRAM_FILES, QDir::rootPath() + "\\Program Files");
+     CSIDL_PROGRAM_FILES, 
+#else
+     0, 
 #endif
-     0, QDir::rootPath() + "\\Program Files");
+	  QDir::rootPath() + "\\Program Files");
 }
 
 /** Gets the location of the user's %APPDATA% folder. */
@@ -171,9 +173,11 @@ win32_app_data_folder()
 {
   return win32_get_folder_location(
 #if 0
-      CSIDL_APPDATA, QDir::homePath() + "\\Application Data");
+      CSIDL_APPDATA, 
+#else
+      0, 
 #endif
-      0, QDir::homePath() + "\\Application Data");
+			QDir::homePath() + "\\Application Data");
 
 }
 
