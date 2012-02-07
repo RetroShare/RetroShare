@@ -1,6 +1,7 @@
 TEMPLATE = app
 TARGET = retroshare-nogui
 CONFIG += bitdht
+#CONFIG += introserver
 
 ################################# Linux ##########################################
 linux-* {
@@ -108,6 +109,11 @@ HEADERS +=  notifytxt.h
 SOURCES +=  notifytxt.cc \
             retroshare.cc 
 
+introserver {
+	HEADERS += introserver.h
+	SOURCES += introserver.cc
+	DEFINES *= RS_INTRO_SERVER
+}
 
 
 

@@ -35,6 +35,9 @@
 #include <winsock2.h>
 #endif
                                 
+#ifdef RS_INTRO_SERVER
+#include "introserver.h"
+#endif
 
 /* Basic instructions for running libretroshare as background thread.
  * ******************************************************************* *
@@ -130,6 +133,10 @@ int main(int argc, char **argv)
 
 	/* Start-up libretroshare server threads */
 	rsServer -> StartupRetroShare();
+
+#ifdef RS_INTRO_SERVER
+	RsIntroServer rsIS;
+#endif
 	
 	/* pass control to the GUI */
 	while(1)
@@ -139,6 +146,10 @@ int main(int argc, char **argv)
 		sleep(1);
 #else
 		Sleep(1000);
+#endif
+
+#ifdef RS_INTRO_SERVER
+		rsIS.tick();
 #endif
 	}
 	return 1;
