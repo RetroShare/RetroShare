@@ -3,6 +3,10 @@
     <!-- English -->
     <file>en/contents.xml</file>
     <file>en/index.html</file>
+    <file>en/invitefriends.html</file>
+    <file>en/addfriends.html</file>
+    <file>en/connectfriends.html</file>
+    <file>en/advanced.html</file>
     <file>en/config.html</file>
     <file>en/links.html</file>
     <file>en/commandline.html</file>
