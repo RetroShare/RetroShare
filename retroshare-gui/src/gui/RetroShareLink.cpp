@@ -519,7 +519,7 @@ QString RetroShareLink::title() const
 
 static QString encodeItem(QString item)
 {
-	return item.replace(" ", "%20");
+	return item.replace(" ", "%20").replace("&", "%26").replace("#", "%23");
 }
 
 QString RetroShareLink::toString() const
