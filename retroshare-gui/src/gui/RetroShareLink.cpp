@@ -519,7 +519,7 @@ QString RetroShareLink::title() const
 
 static QString encodeItem(QString item)
 {
-	return item.replace(" ", "%20").replace("&", "%26").replace("#", "%23");
+	return item.replace(" ", "%20").replace("&", "%26").replace("#", "%23").replace("\"", "%22");
 }
 
 QString RetroShareLink::toString() const
@@ -727,7 +727,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 	result += "</p>";
 }
 
-/*static*/ int RetroShareLink::process(QList<RetroShareLink> &linksIn, uint flag /*= RSLINK_PROCESS_NOTIFY_ALL*/)
+/*static*/ int RetroShareLink::process(QList<RetroShareLink> &linksIn, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
 	QList<RetroShareLink>::iterator linkIt;
 
@@ -1200,7 +1200,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 	return 0;
 }
 
-/*static*/ int RetroShareLink::process(QStringList &urls, RetroShareLink::enumType type /*= RetroShareLink::TYPE_UNKNOWN*/, uint flag /*= RSLINK_PROCESS_NOTIFY_ALL*/)
+/*static*/ int RetroShareLink::process(QStringList &urls, RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
 	QList<RetroShareLink> links;
 
@@ -1310,7 +1310,7 @@ QString RSLinkClipboard::toHtmlFull()
     return res ;
 }
 
-bool RSLinkClipboard::empty(RetroShareLink::enumType type /*= RetroShareLink::TYPE_UNKNOWN*/)
+bool RSLinkClipboard::empty(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/)
 {
     QList<RetroShareLink> links;
     parseClipboard(links);
@@ -1328,7 +1328,7 @@ bool RSLinkClipboard::empty(RetroShareLink::enumType type /*= RetroShareLink::TY
     return true;
 }
 
-/*static*/ int RSLinkClipboard::process(RetroShareLink::enumType type /*= RetroShareLink::TYPE_UNKNOWN*/, uint flag /*= RSLINK_PROCESS_NOTIFY_ALL*/)
+/*static*/ int RSLinkClipboard::process(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
     QList<RetroShareLink> links;
     pasteLinks(links);

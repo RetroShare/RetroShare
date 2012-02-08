@@ -139,7 +139,7 @@ static void showErrorBox(const QString& filename, const QString& error)
 	mb.exec();
 }
 
-bool RsCollectionFile::load(const QString& filename, bool showError /*= true*/)
+bool RsCollectionFile::load(const QString& filename, bool showError /* = true*/)
 {
 	QFile file(filename);
 

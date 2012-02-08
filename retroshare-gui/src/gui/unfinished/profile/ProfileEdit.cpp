@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "gui/profile/ProfileEdit.h"
+#include "ProfileEdit.h"
 
 #include <retroshare/rspeers.h>
 

@@ -48,7 +48,7 @@ const QString PeerDefs::rsid(const RsPeerDetails &details)
     return rsid(details.name, details.id);
 }
 
-const QString PeerDefs::rsidFromId(const std::string &id, QString *name /*= NULL*/)
+const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NULL*/)
 {
     QString rsid;
 

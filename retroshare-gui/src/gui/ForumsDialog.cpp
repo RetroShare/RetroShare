@@ -696,7 +696,7 @@ void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRead
     bHasUnreadChilddren = bHasUnreadChilddren || bMyUnreadChilddren || bUnread;
 }
 
-void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem /*= NULL*/)
+void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem /* = NULL*/)
 {
     bool bDummy1 = false;
     bool bDummy2 = false;

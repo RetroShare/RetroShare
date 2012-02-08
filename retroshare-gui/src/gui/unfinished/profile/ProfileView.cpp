@@ -19,8 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "gui/profile/ProfileView.h"
-#include "gui/profile/ProfileEdit.h"
+#include "ProfileView.h"
+#include "ProfileEdit.h"
 #include "gui/common/AvatarDefs.h"
 
 #include <retroshare/rspeers.h>

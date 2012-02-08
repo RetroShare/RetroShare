@@ -763,7 +763,7 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
     }
 }
 
-MessageComposer *MessageComposer::newMsg(const std::string &msgId /*= ""*/)
+MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 {
     MessageComposer *msgComposer = new MessageComposer();
 

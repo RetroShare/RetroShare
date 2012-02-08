@@ -64,7 +64,7 @@ RSettingsWin::~RSettingsWin()
     _instance = NULL;
 }
 
-/*static*/ void RSettingsWin::showYourself(QWidget *parent, PageType page /*= LastPage*/)
+/*static*/ void RSettingsWin::showYourself(QWidget *parent, PageType page /* = LastPage*/)
 {
     if(_instance == NULL) {
         _instance = new RSettingsWin(parent);

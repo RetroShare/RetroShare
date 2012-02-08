@@ -4059,7 +4059,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6360,7 +6360,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6400,12 +6400,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>greater than or equal</source>
-        <translation>grösser als oder gleich</translation>
+        <translation>größer als oder gleich</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>greater than</source>
-        <translation>grösser als</translation>
+        <translation>größer als</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7414,7 +7414,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <message>
         <location line="+5"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7886,7 +7886,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9480,7 +9480,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-103"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9547,7 +9547,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+26"/>
         <source>Display Size:</source>
-        <translation>Anzeige-Grösse:</translation>
+        <translation>Anzeige-Größe:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9562,7 +9562,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Full Size</source>
-        <translation>Volle Grösse</translation>
+        <translation>Volle Größe</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10192,7 +10192,7 @@ Do you want to send them a Message instead</source>
     <message>
         <location line="+16"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11326,7 +11326,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11657,7 +11657,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="+160"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -13771,7 +13771,7 @@ p, li { white-space: pre-wrap; }
         <location line="+60"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -14115,7 +14115,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Size</source>
-        <translation>Grösse</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+2"/>
