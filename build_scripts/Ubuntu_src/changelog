@@ -1,6 +1,22 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - Added Code to convert retroshare-nogui into an "Introduction Server".
+       Perhaps the community can use this instead of their existing certificate exchanger.
+     - Updated the help page, added few more infos
+
+  * Bug fixes
+     - Fixed RS links with special caracters: ",&,#
+     - Removed unused plugins from trunk
+     - Fixed parenthesis problem with #ifdef that armed lupdate
+     - Fixed layout of the CryptoPage and german language.
+     - Fixed many tranlation issues
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 08 feb 2012 22:00:00 +0100
+
+retroshare (0.5.3-0.4885~natty) natty; urgency=low
+
+  * Improvements
      - Added new variant to the compact chat style with colored nicknames calculated from the name.
        It's disabled by default. You can enable it with the define COLORED_NICKNAMES in ChatStyle.cpp.
      - Fixed up Email Invite Text...
@@ -25,7 +41,7 @@ retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
      - Fixed handling of utf8 characters in lobby nick name.
      - fixed small bug in certificate correction (missing ending newline caused crash)
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 03 Jan 2012 22:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 03 Feb 2012 22:00:00 +0100
 
 retroshare (0.5.2-0.4861~natty) natty; urgency=low
 
