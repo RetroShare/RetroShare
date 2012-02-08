@@ -1,4 +1,6 @@
-<!DOCTYPE TS><TS>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0">
 <context>
     <name></name>
     <message>
@@ -17,59 +19,59 @@
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
-        <translation type="obsolete">Tietoja RetroSharesta</translation>
+        <translation type="unfinished">Tietoja RetroSharesta</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="obsolete">Tietoja</translation>
+        <translation type="unfinished">Tietoja</translation>
     </message>
     <message>
         <source>close</source>
-        <translation type="obsolete">sulje</translation>
+        <translation type="unfinished">sulje</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
-        <translation type="obsolete">Tietoja RetroSharesta %1</translation>
+        <translation type="unfinished">Tietoja RetroSharesta %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation type="obsolete">Max. pisteet: %1</translation>
+        <translation type="unfinished">Max. pisteet: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation type="obsolete">Pisteet: %1</translation>
+        <translation type="unfinished">Pisteet: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
-        <translation type="obsolete">Taso: %1</translation>
+        <translation type="unfinished">Taso: %1</translation>
     </message>
     <message>
         <source>Have fun ;-)</source>
-        <translation type="obsolete">Pidä hauskaa ;-)</translation>
+        <translation type="unfinished">Pidä hauskaa ;-)</translation>
     </message>
 </context>
 <context>
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation type="obsolete">Tiedostotyyppi (pääte):</translation>
+        <translation type="unfinished">Tiedostotyyppi (pääte):</translation>
     </message>
     <message>
         <source>Use default command</source>
-        <translation type="obsolete">Käytä oletuskomentoa</translation>
+        <translation type="unfinished">Käytä oletuskomentoa</translation>
     </message>
     <message>
         <source>Command</source>
-        <translation type="obsolete">Komento</translation>
+        <translation type="unfinished">Komento</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Sorry, can&apos;t determine system default command for this file
 </source>
-        <translation type="obsolete">Järjestelmän oletuskomentoa tälle tiedostolle ei voitu selvittää</translation>
+        <translation type="unfinished">Järjestelmän oletuskomentoa tälle tiedostolle ei voitu selvittää</translation>
     </message>
 </context>
 <context>
@@ -188,35 +190,35 @@ p, li { white-space: pre-wrap; }
     <name>AdvancedSearchDialog</name>
     <message>
         <source>RetroShare: Advanced Search</source>
-        <translation type="obsolete">Retroshare: tarkennettu haku</translation>
+        <translation type="unfinished">Retroshare: tarkennettu haku</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="obsolete">Etsi</translation>
+        <translation type="unfinished">Etsi</translation>
     </message>
     <message>
         <source>Add a further search criterion.</source>
-        <translation type="obsolete">Lisää hakuehto.</translation>
+        <translation type="unfinished">Lisää hakuehto.</translation>
     </message>
     <message>
         <source>Reset the search criteria.</source>
-        <translation type="obsolete">Tyhjennä hakuehdot.</translation>
+        <translation type="unfinished">Tyhjennä hakuehdot.</translation>
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation type="obsolete">Peruu haun.</translation>
+        <translation type="unfinished">Peruu haun.</translation>
     </message>
     <message>
         <source>Perform the advanced search.</source>
-        <translation type="obsolete">Suorita tarkennettu haku.</translation>
+        <translation type="unfinished">Suorita tarkennettu haku.</translation>
     </message>
     <message>
         <source>Search Criteria</source>
-        <translation type="obsolete">Hakuehdot</translation>
+        <translation type="unfinished">Hakuehdot</translation>
     </message>
 </context>
 <context>
@@ -262,54 +264,54 @@ p, li { white-space: pre-wrap; }
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation type="obsolete">Kieli</translation>
+        <translation type="unfinished">Kieli</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the language used in RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Valitse RetroSharessa käytetty kieli&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Muutokset kieleen tulevat voimaan vasta RetroSharen uudelleenkäynnistyksen jälkeen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Muutokset kieleen tulevat voimaan vasta RetroSharen uudelleenkäynnistyksen jälkeen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="obsolete">Tyyli</translation>
+        <translation type="unfinished">Tyyli</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Valitse RetroSharen käyttöliittymän tyyli&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation type="obsolete">Tyylitiedosto</translation>
+        <translation type="unfinished">Tyylitiedosto</translation>
     </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -321,26 +323,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Games Launcher</source>
-        <translation type="obsolete">Pelit</translation>
+        <translation type="unfinished">Pelit</translation>
     </message>
     <message>
         <source>Photo View</source>
-        <translation type="obsolete">Valokuvat</translation>
+        <translation type="unfinished">Valokuvat</translation>
     </message>
     <message>
         <source>Shared Calendars</source>
-        <translation type="obsolete">Jaetut kalenterit</translation>
+        <translation type="unfinished">Jaetut kalenterit</translation>
     </message>
     <message>
         <source>Statistics</source>
-        <translation type="obsolete">Tilastot</translation>
+        <translation type="unfinished">Tilastot</translation>
     </message>
 </context>
 <context>
     <name>AttachFileItem</name>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -348,11 +350,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%p Kb</source>
-        <translation type="obsolete">%p Kb</translation>
+        <translation type="unfinished">%p Kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="obsolete">Peru lataus</translation>
+        <translation type="unfinished">Peru lataus</translation>
+    </message>
+    <message>
+        <source>[ERROR])</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -375,62 +381,69 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AvatarWidget</name>
+    <message>
+        <source>Click to change your avatar</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BandwidthGraph</name>
     <message>
         <source>Show Settings</source>
-        <translation type="obsolete">Näytä asetukset</translation>
+        <translation type="unfinished">Näytä asetukset</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="obsolete">Vastaanottonopeus</translation>
+        <translation type="unfinished">Vastaanottonopeus</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="obsolete">Lähetysnopeus</translation>
+        <translation type="unfinished">Lähetysnopeus</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="obsolete">Tyyli</translation>
+        <translation type="unfinished">Tyyli</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="obsolete">Muuttaa siirtonopeuskuvaajan läpinäkyvyyttä</translation>
+        <translation type="unfinished">Muuttaa siirtonopeuskuvaajan läpinäkyvyyttä</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="obsolete">100</translation>
+        <translation type="unfinished">100</translation>
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="obsolete">% näkyvä</translation>
+        <translation type="unfinished">% näkyvä</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="obsolete">Tallenna</translation>
+        <translation type="unfinished">Tallenna</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Since:</source>
-        <translation type="obsolete">Alkaen:</translation>
+        <translation type="unfinished">Alkaen:</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="obsolete">Piilota asetukset</translation>
+        <translation type="unfinished">Piilota asetukset</translation>
     </message>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation type="obsolete">RetroSharen kaistanleveyden käyttö</translation>
+        <translation type="unfinished">RetroSharen kaistanleveyden käyttö</translation>
     </message>
     <message>
         <source>Always on Top</source>
-        <translation type="obsolete">Aina päällimmäisenä</translation>
+        <translation type="unfinished">Aina päällimmäisenä</translation>
     </message>
 </context>
 <context>
@@ -448,92 +461,92 @@ p, li { white-space: pre-wrap; }
     <name>BlogDetails</name>
     <message>
         <source>Blog Details</source>
-        <translation type="obsolete">Blogin yksityiskohdat</translation>
+        <translation type="unfinished">Blogin yksityiskohdat</translation>
     </message>
     <message>
         <source>Blog Info</source>
-        <translation type="obsolete">Tietoja blogista</translation>
+        <translation type="unfinished">Tietoja blogista</translation>
     </message>
     <message>
         <source>Blog Name</source>
-        <translation type="obsolete">Blogin nimi</translation>
+        <translation type="unfinished">Blogin nimi</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="obsolete">Suosio</translation>
+        <translation type="unfinished">Suosio</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="obsolete">Viimeisin teksti</translation>
+        <translation type="unfinished">Viimeisin teksti</translation>
     </message>
     <message>
         <source>Blog ID</source>
-        <translation type="obsolete">Blogin tunniste</translation>
+        <translation type="unfinished">Blogin tunniste</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation type="obsolete">Blogin kuvaus</translation>
+        <translation type="unfinished">Blogin kuvaus</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Sulje</translation>
+        <translation type="unfinished">Sulje</translation>
     </message>
 </context>
 <context>
     <name>BlogMsgItem</name>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="obsolete">Aihe</translation>
+        <translation type="unfinished">Aihe</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="obsolete">Toista media</translation>
+        <translation type="unfinished">Toista media</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="obsolete">Tilaa blogi</translation>
+        <translation type="unfinished">Tilaa blogi</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Blog Decscription</source>
-        <translation type="obsolete">Blogin kuvaus</translation>
+        <translation type="unfinished">Blogin kuvaus</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -541,7 +554,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -549,7 +562,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Lisää</translation>
+        <translation type="unfinished">Lisää</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -557,7 +570,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -569,7 +582,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -581,7 +594,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubcribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
@@ -589,7 +602,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="obsolete">Lopeta tilaus</translation>
+        <translation type="unfinished">Lopeta tilaus</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -597,7 +610,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
@@ -605,61 +618,61 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="obsolete">Aloita tilaus</translation>
+        <translation type="unfinished">Aloita tilaus</translation>
     </message>
     <message>
         <source>Create New Blog</source>
-        <translation type="obsolete">Luo uusi blogi</translation>
+        <translation type="unfinished">Luo uusi blogi</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation type="obsolete">Tunniste</translation>
+        <translation type="unfinished">Tunniste</translation>
     </message>
     <message>
         <source>Own Blogs</source>
-        <translation type="obsolete">Omat blogit</translation>
+        <translation type="unfinished">Omat blogit</translation>
     </message>
     <message>
         <source>Subscribed Blogs</source>
-        <translation type="obsolete">Tilatut blogit</translation>
+        <translation type="unfinished">Tilatut blogit</translation>
     </message>
     <message>
         <source>Popular Blogs</source>
-        <translation type="obsolete">Suositut blogit</translation>
+        <translation type="unfinished">Suositut blogit</translation>
     </message>
     <message>
         <source>Other Blogs</source>
-        <translation type="obsolete">Muut blogit</translation>
+        <translation type="unfinished">Muut blogit</translation>
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation type="obsolete">Kirjoita blogiin</translation>
+        <translation type="unfinished">Kirjoita blogiin</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="obsolete">Tilaa blogi</translation>
+        <translation type="unfinished">Tilaa blogi</translation>
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation type="obsolete">Lopeta blogin tilaus</translation>
+        <translation type="unfinished">Lopeta blogin tilaus</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
-        <translation type="obsolete">Näytä blogin yksityiskohdat</translation>
+        <translation type="unfinished">Näytä blogin yksityiskohdat</translation>
     </message>
     <message>
         <source>Create a new Blog</source>
-        <translation type="obsolete">Luo uusi blogi</translation>
+        <translation type="unfinished">Luo uusi blogi</translation>
     </message>
     <message>
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation type="obsolete">Suosio: %1
+        <translation type="unfinished">Suosio: %1
 Hakukerrat: %2
 Saatavilla: %3</translation>
     </message>
@@ -668,7 +681,7 @@ Saatavilla: %3</translation>
     <name>BlogsMsgItem</name>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -676,7 +689,7 @@ Saatavilla: %3</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
@@ -688,7 +701,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -696,90 +709,90 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="obsolete">Lopeta kanavan tilaus</translation>
+        <translation type="unfinished">Lopeta kanavan tilaus</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="obsolete">Kommentti</translation>
+        <translation type="unfinished">Kommentti</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Comments here</source>
-        <translation type="obsolete">Kommentit tähän</translation>
+        <translation type="unfinished">Kommentit tähän</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
     </message>
 </context>
 <context>
     <name>CalDialog</name>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>Local Calendars</source>
-        <translation type="obsolete">Paikalliset kalenterit</translation>
+        <translation type="unfinished">Paikalliset kalenterit</translation>
     </message>
     <message>
         <source>Shared Calendar List</source>
-        <translation type="obsolete">Luettelo jaetuista kalenterista</translation>
+        <translation type="unfinished">Luettelo jaetuista kalenterista</translation>
     </message>
     <message>
         <source>Share Details</source>
-        <translation type="obsolete">Jakamisen yksityiskohdat</translation>
+        <translation type="unfinished">Jakamisen yksityiskohdat</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="obsolete">Nimi:</translation>
+        <translation type="unfinished">Nimi:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="obsolete">Sijainti:</translation>
+        <translation type="unfinished">Sijainti:</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="obsolete">...</translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="obsolete">Tila:</translation>
+        <translation type="unfinished">Tila:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation type="obsolete">Yksityinen</translation>
+        <translation type="unfinished">Yksityinen</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="obsolete">Julkinen</translation>
+        <translation type="unfinished">Julkinen</translation>
     </message>
     <message>
         <source>Allow List:</source>
-        <translation type="obsolete">Sallittujen luettelo:</translation>
+        <translation type="unfinished">Sallittujen luettelo:</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
-        <translation type="obsolete">&lt;Ei käytössä&gt;</translation>
+        <translation type="unfinished">&lt;Ei käytössä&gt;</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Lisää</translation>
+        <translation type="unfinished">Lisää</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation type="obsolete">Vertaiskalenterit</translation>
+        <translation type="unfinished">Vertaiskalenterit</translation>
     </message>
 </context>
 <context>
@@ -793,27 +806,27 @@ p, li { white-space: pre-wrap; }
     <name>CertificatePage</name>
     <message>
         <source>Certificate files</source>
-        <translation type="obsolete">Varmennetiedostot</translation>
+        <translation type="unfinished">Varmennetiedostot</translation>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
-        <translation type="obsolete">Käytä tiedostoihin tallennettuja PGP-varmenteita.</translation>
+        <translation type="unfinished">Käytä tiedostoihin tallennettuja PGP-varmenteita.</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="obsolete">Sinun tulee generoida tiedosto, joka sisältää varmenteesi ja antaa se ystävällesi. Voit myös käyttää aiemmin generoitua tiedostoa.</translation>
+        <translation type="unfinished">Sinun tulee generoida tiedosto, joka sisältää varmenteesi ja antaa se ystävällesi. Voit myös käyttää aiemmin generoitua tiedostoa.</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="obsolete">Vie varmenteeni...</translation>
+        <translation type="unfinished">Vie varmenteeni...</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">Selaa</translation>
+        <translation type="unfinished">Selaa</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation type="obsolete">Valitse varmenne</translation>
+        <translation type="unfinished">Valitse varmenne</translation>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
@@ -821,47 +834,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation type="obsolete">Ole hyvä ja valitse tiedostonimi</translation>
+        <translation type="unfinished">Ole hyvä ja valitse tiedostonimi</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation type="obsolete">Tuo ystävän varmenne...</translation>
+        <translation type="unfinished">Tuo ystävän varmenne...</translation>
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation type="obsolete">Vedä ja pudota ystäviesi varmenteita tähän ikkunaan tai määritä polku allaolevaan laatikkoon</translation>
+        <translation type="unfinished">Vedä ja pudota ystäviesi varmenteita tähän ikkunaan tai määritä polku allaolevaan laatikkoon</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="obsolete">RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="obsolete">Varmenteen luominen epäonnistui</translation>
+        <translation type="unfinished">Varmenteen luominen epäonnistui</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="obsolete">Varmennetiedosto luotiin</translation>
+        <translation type="unfinished">Varmennetiedosto luotiin</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="obsolete">Varmennetiedoston luominen epäonnistui</translation>
+        <translation type="unfinished">Varmennetiedoston luominen epäonnistui</translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="obsolete">Varmenteen avaaminen epäonnistui: jotakin on vialla %1 </translation>
+        <translation type="unfinished">Varmenteen avaaminen epäonnistui: jotakin on vialla %1 </translation>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="obsolete">Varmenteen avaaminen epäonnistui: ei voitu lukea tiedostosta %1 </translation>
+        <translation type="unfinished">Varmenteen avaaminen epäonnistui: ei voitu lukea tiedostosta %1 </translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation type="obsolete">Varmenteen avaaminen epäonnistui: tiedostoa %1 ei löydy</translation>
+        <translation type="unfinished">Varmenteen avaaminen epäonnistui: tiedostoa %1 ei löydy</translation>
     </message>
 </context>
 <context>
@@ -958,58 +971,78 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="obsolete">Uusi</translation>
+        <translation type="unfinished">Uusi</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="obsolete">Toista</translation>
+        <translation type="unfinished">Toista</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="obsolete">Lopeta kanavan tilaus</translation>
+        <translation type="unfinished">Lopeta kanavan tilaus</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
-        <translation type="obsolete">Varoitus! Sinulla on vähemmän kuin %1 tuntia ja %2 minuuttia ennen kuin tämä tiedosto tuhotaan. Harkitse sen tallentamista.</translation>
+        <translation type="unfinished">Varoitus! Sinulla on vähemmän kuin %1 tuntia ja %2 minuuttia ennen kuin tämä tiedosto tuhotaan. Harkitse sen tallentamista.</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
+    </message>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel Feed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="obsolete">Tilaa kanava</translation>
+        <translation type="unfinished">Tilaa kanava</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Channel Decscription</source>
-        <translation type="obsolete">Kanavan kuvaus</translation>
+        <translation type="unfinished">Kanavan kuvaus</translation>
+    </message>
+    <message>
+        <source>Unknown Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Updated Channel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1031,66 +1064,66 @@ p, li { white-space: pre-wrap; }
     <name>ChannelDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation type="obsolete">Kanavan yksityiskohdat</translation>
+        <translation type="unfinished">Kanavan yksityiskohdat</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="obsolete">Kanavan tiedot</translation>
+        <translation type="unfinished">Kanavan tiedot</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="obsolete">Suosio</translation>
+        <translation type="unfinished">Suosio</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="obsolete">Viimeisin teksti</translation>
+        <translation type="unfinished">Viimeisin teksti</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="obsolete">Kanavan nimi</translation>
+        <translation type="unfinished">Kanavan nimi</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation type="obsolete">Kanavan tunniste</translation>
+        <translation type="unfinished">Kanavan tunniste</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="obsolete">Kanavan kuvaus</translation>
+        <translation type="unfinished">Kanavan kuvaus</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="obsolete">Tyyppi</translation>
+        <translation type="unfinished">Tyyppi</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="obsolete">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="obsolete">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Sulje</translation>
+        <translation type="unfinished">Sulje</translation>
     </message>
 </context>
 <context>
     <name>ChannelFeed</name>
     <message>
         <source>Create Channel</source>
-        <translation type="obsolete">Luo kanava</translation>
+        <translation type="unfinished">Luo kanava</translation>
     </message>
     <message>
         <source>Subscribe To Channel</source>
-        <translation type="obsolete">Tilaa kanava</translation>
+        <translation type="unfinished">Tilaa kanava</translation>
     </message>
     <message>
         <source>Enter a Keyword here</source>
@@ -1114,7 +1147,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Channels&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1126,19 +1159,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>Unsubcribe To Channel</source>
-        <translation type="obsolete">Lopeta kanavan tilaus</translation>
+        <translation type="unfinished">Lopeta kanavan tilaus</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="obsolete">Lopeta tilaus</translation>
+        <translation type="unfinished">Lopeta tilaus</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="obsolete">Tilaa</translation>
+        <translation type="unfinished">Tilaa</translation>
     </message>
     <message>
         <source>Set all to read</source>
@@ -1154,27 +1187,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Own Channels</source>
-        <translation type="obsolete">Omat kanavat</translation>
+        <translation type="unfinished">Omat kanavat</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="obsolete">Tilatut kanavat</translation>
+        <translation type="unfinished">Tilatut kanavat</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="obsolete">Suositut kanavat</translation>
+        <translation type="unfinished">Suositut kanavat</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="obsolete">Muut kanavat</translation>
+        <translation type="unfinished">Muut kanavat</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="obsolete">Jaa kanava</translation>
+        <translation type="unfinished">Jaa kanava</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Popularity: %1</source>
@@ -1182,31 +1215,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="obsolete">Ei kanavaa valittuna</translation>
+        <translation type="unfinished">Ei kanavaa valittuna</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="obsolete">Lähetä viesti kanavaan</translation>
+        <translation type="unfinished">Lähetä viesti kanavaan</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="obsolete">Tilaa kanava</translation>
+        <translation type="unfinished">Tilaa kanava</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="obsolete">Lopeta kanavan tilaus</translation>
+        <translation type="unfinished">Lopeta kanavan tilaus</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="obsolete">Näytä kanavan yksityiskohdat</translation>
+        <translation type="unfinished">Näytä kanavan yksityiskohdat</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="obsolete">Palauta kanavan julkaisuoikeudet</translation>
+        <translation type="unfinished">Palauta kanavan julkaisuoikeudet</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="obsolete">Muokkaa kanavan yksityiskohtia</translation>
+        <translation type="unfinished">Muokkaa kanavan yksityiskohtia</translation>
+    </message>
+    <message>
+        <source>Set all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1230,32 +1275,132 @@ p, li { white-space: pre-wrap; }
         <source>Send</source>
         <translation type="obsolete">Lähetä</translation>
     </message>
+    <message>
+        <source>Friend not Online</source>
+        <translation type="unfinished">Ystävä ei ole linjoilla</translation>
+    </message>
+    <message>
+        <source>Your Friend is offline 
+Do you want to send them a Message instead</source>
+        <translation type="unfinished">Ystäväsi ei ole kytkeytyneenä
+Haluatko sen sijaan lähettää hänelle viestin</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyDialog</name>
+    <message>
+        <source>Change nick name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter your new nick name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lobby management</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 has left the lobby.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 joined the lobby.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe to lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to unsubscribe to this chat lobby?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Participants</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Participants</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyWidget</name>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Chat lobbies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new chat lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nimi</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished">Lukumäärä</translation>
+    </message>
+    <message>
+        <source>Private Lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public Lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create chat lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation type="unfinished">Lopeta tilaus</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invitation to chat lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1  invites you to chat lobby named %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="obsolete">Pikainen viestinkirjoitus</translation>
+        <translation type="unfinished">Pikainen viestinkirjoitus</translation>
     </message>
     <message>
         <source>Send Mail</source>
-        <translation type="obsolete">Lähetä postia</translation>
+        <translation type="unfinished">Lähetä postia</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="obsolete">Kirjoita viesti</translation>
+        <translation type="unfinished">Kirjoita viesti</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="obsolete">Lähetä</translation>
+        <translation type="unfinished">Lähetä</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -1263,38 +1408,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="obsolete">Aloita keskustelu</translation>
+        <translation type="unfinished">Aloita keskustelu</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="obsolete">Pikainen viesti</translation>
+        <translation type="unfinished">Pikainen viesti</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
         <source>General</source>
-        <translation type="obsolete">Yleiset</translation>
+        <translation type="unfinished">Yleiset</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation type="obsolete">Keskusteluasetukset</translation>
+        <translation type="unfinished">Keskusteluasetukset</translation>
     </message>
     <message>
         <source>Enable Emoticons Privat Chat</source>
-        <translation type="obsolete">Aktivoi hymiöt yksityiskeskustelussa</translation>
+        <translation type="unfinished">Aktivoi hymiöt yksityiskeskustelussa</translation>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation type="obsolete">Keskustelun fontti</translation>
+        <translation type="unfinished">Keskustelun fontti</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation type="obsolete">Vaihda keskustelun fonttia</translation>
+        <translation type="unfinished">Vaihda keskustelun fonttia</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation type="obsolete">Keskustelun fontti:</translation>
+        <translation type="unfinished">Keskustelun fontti:</translation>
     </message>
     <message>
         <source>Enable Private Chat History</source>
@@ -1306,7 +1451,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation type="obsolete">Lähetä viesti painamalla Ctrl ja Enter</translation>
+        <translation type="unfinished">Lähetä viesti painamalla Ctrl ja Enter</translation>
     </message>
     <message>
         <source>Chat History</source>
@@ -1314,137 +1459,288 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load number of messages (0 = off)</source>
-        <translation type="obsolete">Avaa viestien määrä (0 = pois)</translation>
+        <translation type="unfinished">Avaa viestien määrä (0 = pois)</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="obsolete">Ryhmäkeskustelu</translation>
+        <translation type="unfinished">Ryhmäkeskustelu</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="obsolete">Yksityinen keskustelu</translation>
+        <translation type="unfinished">Yksityinen keskustelu</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="obsolete">Tyyli</translation>
+        <translation type="unfinished">Tyyli</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="obsolete">Ryhmäkeskustelu</translation>
+        <translation type="unfinished">Ryhmäkeskustelu</translation>
     </message>
     <message>
         <source>Variant</source>
-        <translation type="obsolete">Muunnelma</translation>
+        <translation type="unfinished">Muunnelma</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="obsolete">Kirjoittaja:</translation>
+        <translation type="unfinished">Kirjoittaja:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="obsolete">Kuvaus:</translation>
+        <translation type="unfinished">Kuvaus:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="obsolete">Yksityinen keskustelu</translation>
+        <translation type="unfinished">Yksityinen keskustelu</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="obsolete">Historia</translation>
+        <translation type="unfinished">Historia</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation type="obsolete">Aktivoi hymiöt ryhmäkeskustelussa</translation>
+        <translation type="unfinished">Aktivoi hymiöt ryhmäkeskustelussa</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation type="obsolete">Tuleva viesti historiassa</translation>
+        <translation type="unfinished">Tuleva viesti historiassa</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation type="obsolete">Lähtevä viesti historiassa</translation>
+        <translation type="unfinished">Lähtevä viesti historiassa</translation>
     </message>
     <message>
         <source>Incoming message</source>
-        <translation type="obsolete">Tuleva viesti</translation>
+        <translation type="unfinished">Tuleva viesti</translation>
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation type="obsolete">Lähtevä viesti</translation>
+        <translation type="unfinished">Lähtevä viesti</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
-        <translation type="obsolete">Lähtevä viesti ei-kytketyssä tilassa</translation>
+        <translation type="unfinished">Lähtevä viesti ei-kytketyssä tilassa</translation>
+    </message>
+    <message>
+        <source>Default nickname for chat lobbies:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of saved messages (0 = unlimited)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incoming</source>
+        <translation type="unfinished">Sisääntuleva</translation>
+    </message>
+    <message>
+        <source>Outgoing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ChatStyle</name>
     <message>
         <source>Standard style for group chat</source>
-        <translation type="obsolete">Vakiotyyli ryhmäkeskustelulle</translation>
+        <translation type="unfinished">Vakiotyyli ryhmäkeskustelulle</translation>
     </message>
     <message>
         <source>Standard style for private chat</source>
-        <translation type="obsolete">Vakiotyyli yksityiselle keskustelulle</translation>
+        <translation type="unfinished">Vakiotyyli yksityiselle keskustelulle</translation>
     </message>
     <message>
         <source>Standard style for history</source>
-        <translation type="obsolete">Vakiotyyli historialle</translation>
+        <translation type="unfinished">Vakiotyyli historialle</translation>
+    </message>
+    <message>
+        <source>Compact style for group chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact style for private chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact style for history</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatWidget</name>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Sulje</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation type="unfinished">Lihavoitu</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation type="unfinished">Alleviivattu</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation type="unfinished">Kursivoitu</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation type="unfinished">Fontti</translation>
+    </message>
+    <message>
+        <source>Text Color</source>
+        <translation type="unfinished">Tekstin väri</translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation type="unfinished">Liitä kuva</translation>
+    </message>
+    <message>
+        <source>Add a File for your Friend</source>
+        <translation type="unfinished">Lisää tiedosto ystävällesi</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation type="unfinished">Lähetä</translation>
+    </message>
+    <message>
+        <source>Strike</source>
+        <translation type="unfinished">Yliviivaus</translation>
+    </message>
+    <message>
+        <source>Clear Chat History</source>
+        <translation type="unfinished">Tyhjennä keskusteluhistoria</translation>
+    </message>
+    <message>
+        <source>Disable Emoticons</source>
+        <translation type="unfinished">Kytke hymiöt pois</translation>
+    </message>
+    <message>
+        <source>Save Chat History</source>
+        <translation type="unfinished">Tallenna keskusteluhistoria</translation>
+    </message>
+    <message>
+        <source>Browse Message History</source>
+        <translation type="unfinished">Selaa viestihistoriaa</translation>
+    </message>
+    <message>
+        <source>Browse History</source>
+        <translation type="unfinished">Selaa historiaa</translation>
+    </message>
+    <message>
+        <source>Delete Chat History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deletes all stored and displayed chat history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>is typing...</source>
+        <translation type="unfinished">kirjoittaa...</translation>
+    </message>
+    <message>
+        <source>Do you really want to physically delete the history?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished">Lisää ylimääräinen tiedosto</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation type="unfinished">Tallenna nimellä...</translation>
+    </message>
+    <message>
+        <source>Text File (*.txt );;All Files (*)</source>
+        <translation type="unfinished">Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
+    </message>
+    <message>
+        <source>apears to be Offline.</source>
+        <translation type="unfinished">näyttää olevan poissa linjoilta.</translation>
+    </message>
+    <message>
+        <source>Messages you send will be delivered after Friend is again Online</source>
+        <translation type="unfinished">Lähettämäsi viestit toimitetaan kunhan ystäväsi palaa jälleen linjoille</translation>
+    </message>
+    <message>
+        <source>is Idle and may not reply</source>
+        <translation type="unfinished">on jouten, eikä välttämättä vastaa</translation>
+    </message>
+    <message>
+        <source>is Away and may not reply</source>
+        <translation type="unfinished">on poissa, eikä välttämättä vastaa</translation>
+    </message>
+    <message>
+        <source>is Busy and may not reply</source>
+        <translation type="unfinished">on kiireinen, eikä välttämättä vastaa</translation>
     </message>
 </context>
 <context>
     <name>ConclusionPage</name>
     <message>
         <source>Make Friend</source>
-        <translation type="obsolete">Tee ystäväksi</translation>
+        <translation type="unfinished">Tee ystäväksi</translation>
     </message>
     <message>
         <source>Details about your friend : </source>
-        <translation type="obsolete">Tietoja ystävästä:</translation>
+        <translation type="unfinished">Tietoja ystävästä:</translation>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation type="obsolete">Avaimen kelpoisuus:</translation>
+        <translation type="unfinished">Avaimen kelpoisuus:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation type="obsolete">Sähköposti:</translation>
+        <translation type="unfinished">Sähköposti:</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Valinnat</translation>
+        <translation type="unfinished">Valinnat</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation type="obsolete">Lisää ystävä ryhmään:</translation>
+        <translation type="unfinished">Lisää ystävä ryhmään:</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="obsolete">Varmenna ystävä (GPG-allekirjoitus)</translation>
+        <translation type="unfinished">Varmenna ystävä (GPG-allekirjoitus)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation type="obsolete">Lisää ystäväksi, johon ottaa yhteys</translation>
+        <translation type="unfinished">Lisää ystäväksi, johon ottaa yhteys</translation>
     </message>
     <message>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="obsolete">Ystäväsi näyttää olevan jo rekisteröitynyt. Hänen lisäämisensä saattaa ainoastaan määrittää IP-osoitteen.</translation>
+        <translation type="unfinished">Ystäväsi näyttää olevan jo rekisteröitynyt. Hänen lisäämisensä saattaa ainoastaan määrittää IP-osoitteen.</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="obsolete">Vertaisen yksityiskohdat</translation>
+        <translation type="unfinished">Vertaisen yksityiskohdat</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="obsolete">Nimi:</translation>
+        <translation type="unfinished">Nimi:</translation>
     </message>
     <message>
         <source>Loc:</source>
-        <translation type="obsolete">Sijainti:</translation>
+        <translation type="unfinished">Sijainti:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation type="obsolete">Allekirjoittajat</translation>
+        <translation type="unfinished">Allekirjoittajat</translation>
     </message>
 </context>
 <context>
@@ -1547,16 +1843,6 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
@@ -1701,14 +1987,18 @@ p, li { white-space: pre-wrap; }
     <name>ConnectFriendWizard</name>
     <message>
         <source>Connect Friend Wizard</source>
-        <translation type="obsolete">Ohjattu toiminto ystävän yhdistämiseksi</translation>
+        <translation type="unfinished">Ohjattu toiminto ystävän yhdistämiseksi</translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed</source>
+        <translation type="unfinished">Varmenteen lataus epäonnistui</translation>
     </message>
 </context>
 <context>
     <name>CreateBlog</name>
     <message>
         <source>Create new Blog</source>
-        <translation type="obsolete">Luo uusi blogi</translation>
+        <translation type="unfinished">Luo uusi blogi</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1716,7 +2006,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1724,379 +2014,383 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="obsolete">Kuvaus</translation>
+        <translation type="unfinished">Kuvaus</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="obsolete">Tyyppi:</translation>
+        <translation type="unfinished">Tyyppi:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="obsolete">Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
+        <translation type="unfinished">Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="obsolete">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="obsolete">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="obsolete">Sallitut viestit</translation>
+        <translation type="unfinished">Sallitut viestit</translation>
     </message>
     <message>
         <source>Authemticated Messages</source>
-        <translation type="obsolete">Varmennetut viestit</translation>
+        <translation type="unfinished">Varmennetut viestit</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="obsolete">Nimettömät viestit</translation>
+        <translation type="unfinished">Nimettömät viestit</translation>
     </message>
     <message>
         <source>Blog Logo</source>
-        <translation type="obsolete">Blogin logo</translation>
+        <translation type="unfinished">Blogin logo</translation>
     </message>
     <message>
         <source>Add Blog Logo</source>
-        <translation type="obsolete">Lisää logo blogille</translation>
+        <translation type="unfinished">Lisää logo blogille</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="obsolete">Luo</translation>
+        <translation type="unfinished">Luo</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="obsolete">Ole hyvä ja lisää nimi</translation>
+        <translation type="unfinished">Ole hyvä ja lisää nimi</translation>
     </message>
     <message>
         <source>Load File</source>
-        <translation type="obsolete">Avaa tiedosto</translation>
+        <translation type="unfinished">Avaa tiedosto</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation type="obsolete">Kuvat (*.png *.xpm *.jpg)</translation>
+        <translation type="unfinished">Kuvat (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
     <name>CreateBlogMsg</name>
     <message>
         <source>New Blog Post</source>
-        <translation type="obsolete">Uusi blogiteksti</translation>
+        <translation type="unfinished">Uusi blogiteksti</translation>
     </message>
     <message>
         <source>Blog Post</source>
-        <translation type="obsolete">Blogiteksti</translation>
+        <translation type="unfinished">Blogiteksti</translation>
     </message>
     <message>
         <source>Blog Post to:</source>
-        <translation type="obsolete">Blogiteksti vastaanottajalle:</translation>
+        <translation type="unfinished">Blogiteksti vastaanottajalle:</translation>
     </message>
     <message>
         <source>Visual Editor</source>
-        <translation type="obsolete">Visuaalinen muokkaustyökalu</translation>
+        <translation type="unfinished">Visuaalinen muokkaustyökalu</translation>
     </message>
     <message>
         <source>Blog Message</source>
-        <translation type="obsolete">Blogiviesti</translation>
+        <translation type="unfinished">Blogiviesti</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="obsolete">Aihe:</translation>
+        <translation type="unfinished">Aihe:</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation type="obsolete">Html-editori</translation>
+        <translation type="unfinished">Html-editori</translation>
     </message>
     <message>
         <source>toolBar</source>
-        <translation type="obsolete">Työkalupalkki</translation>
+        <translation type="unfinished">Työkalupalkki</translation>
     </message>
     <message>
         <source>toolBar_2</source>
-        <translation type="obsolete">Työkalupalkki_2</translation>
+        <translation type="unfinished">Työkalupalkki_2</translation>
     </message>
     <message>
         <source>blockquoute</source>
-        <translation type="obsolete">Lainauslohko (blockquote)</translation>
+        <translation type="unfinished">Lainauslohko (blockquote)</translation>
     </message>
     <message>
         <source>Increase font Size</source>
-        <translation type="obsolete">Suurenna fonttikokoa</translation>
+        <translation type="unfinished">Suurenna fonttikokoa</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="obsolete">Pienennä fonttikokoa</translation>
+        <translation type="unfinished">Pienennä fonttikokoa</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="obsolete">Lihavoitu</translation>
+        <translation type="unfinished">Lihavoitu</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="obsolete">Alleviivattu</translation>
+        <translation type="unfinished">Alleviivattu</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="obsolete">Kursivoitu</translation>
+        <translation type="unfinished">Kursivoitu</translation>
     </message>
     <message>
         <source>Publish</source>
-        <translation type="obsolete">Julkaise</translation>
+        <translation type="unfinished">Julkaise</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="obsolete">Uusi</translation>
+        <translation type="unfinished">Uusi</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation type="obsolete">Koodi</translation>
+        <translation type="unfinished">Koodi</translation>
     </message>
     <message>
         <source>splitPost</source>
-        <translation type="obsolete">Jaa teksti</translation>
+        <translation type="unfinished">Jaa teksti</translation>
     </message>
     <message>
         <source>Ordered List</source>
-        <translation type="obsolete">Järjestetty lista (ol)</translation>
+        <translation type="unfinished">Järjestetty lista (ol)</translation>
     </message>
     <message>
         <source>Unordered List</source>
-        <translation type="obsolete">Järjestämätön lista (ul)</translation>
+        <translation type="unfinished">Järjestämätön lista (ul)</translation>
     </message>
     <message>
         <source>Clipboard</source>
-        <translation type="obsolete">Leikepöytä</translation>
+        <translation type="unfinished">Leikepöytä</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="obsolete">Kumoa</translation>
+        <translation type="unfinished">Kumoa</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="obsolete">Ole hyvä ja lisää aihe</translation>
+        <translation type="unfinished">Ole hyvä ja lisää aihe</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="obsolete">&amp;Tiedosto</translation>
+        <translation type="unfinished">&amp;Tiedosto</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="obsolete">&amp;Uusi</translation>
+        <translation type="unfinished">&amp;Uusi</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="obsolete">&amp;Avaa...</translation>
+        <translation type="unfinished">&amp;Avaa...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="obsolete">&amp;Tallenna</translation>
+        <translation type="unfinished">&amp;Tallenna</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation type="obsolete">Tallenna ni&amp;mellä...</translation>
+        <translation type="unfinished">Tallenna ni&amp;mellä...</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="obsolete">Tu&amp;losta...</translation>
+        <translation type="unfinished">Tu&amp;losta...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="obsolete">Tulostuksen esikatselu...</translation>
+        <translation type="unfinished">Tulostuksen esikatselu...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="obsolete">&amp;Vie PDF...</translation>
+        <translation type="unfinished">&amp;Vie PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="obsolete">Lo&amp;peta</translation>
+        <translation type="unfinished">Lo&amp;peta</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="obsolete">&amp;Muokkaa</translation>
+        <translation type="unfinished">&amp;Muokkaa</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="obsolete">K&amp;umoa</translation>
+        <translation type="unfinished">K&amp;umoa</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="obsolete">To&amp;ista</translation>
+        <translation type="unfinished">To&amp;ista</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="obsolete">&amp;Leikkaa</translation>
+        <translation type="unfinished">&amp;Leikkaa</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="obsolete">K&amp;opioi</translation>
+        <translation type="unfinished">K&amp;opioi</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="obsolete">Lii&amp;tä</translation>
+        <translation type="unfinished">Lii&amp;tä</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="obsolete">&amp;Näytä</translation>
+        <translation type="unfinished">&amp;Näytä</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="obsolete">Lis&amp;ää</translation>
+        <translation type="unfinished">Lis&amp;ää</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="obsolete">&amp;Kuva</translation>
+        <translation type="unfinished">&amp;Kuva</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
-        <translation type="obsolete">Muotoil&amp;e</translation>
+        <translation type="unfinished">Muotoil&amp;e</translation>
     </message>
     <message>
         <source>&amp;Bold</source>
-        <translation type="obsolete">Liha&amp;voitu</translation>
+        <translation type="unfinished">Liha&amp;voitu</translation>
     </message>
     <message>
         <source>&amp;Italic</source>
-        <translation type="obsolete">Kur&amp;sivoitu</translation>
+        <translation type="unfinished">Kur&amp;sivoitu</translation>
     </message>
     <message>
         <source>&amp;Underline</source>
-        <translation type="obsolete">Allev&amp;iivattu</translation>
+        <translation type="unfinished">Allev&amp;iivattu</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="obsolete">Tas&amp;aa vasemmalle</translation>
+        <translation type="unfinished">Tas&amp;aa vasemmalle</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="obsolete">&amp;Keskitä</translation>
+        <translation type="unfinished">&amp;Keskitä</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="obsolete">Tasaa &amp;oikealle</translation>
+        <translation type="unfinished">Tasaa &amp;oikealle</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation type="obsolete">Tasaa &amp;molemmat reunat</translation>
+        <translation type="unfinished">Tasaa &amp;molemmat reunat</translation>
     </message>
     <message>
         <source>&amp;Text Color...</source>
-        <translation type="obsolete">&amp;Tekstin väri...</translation>
+        <translation type="unfinished">&amp;Tekstin väri...</translation>
     </message>
     <message>
         <source>Application</source>
-        <translation type="obsolete">Sovellus</translation>
+        <translation type="unfinished">Sovellus</translation>
     </message>
     <message>
         <source>The document has been modified.
 Do you want to save your changes?</source>
-        <translation type="obsolete">Asiakirjaa on muokattu.
+        <translation type="unfinished">Asiakirjaa on muokattu.
 Haluatko tallentaa sen?</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="obsolete">Avaa tiedosto...</translation>
+        <translation type="unfinished">Avaa tiedosto...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="obsolete">HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="obsolete">ODF-tiedostot HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">ODF-tiedostot HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="obsolete">Tulosta asiakirja</translation>
+        <translation type="unfinished">Tulosta asiakirja</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="obsolete">Valitse kuva</translation>
+        <translation type="unfinished">Valitse kuva</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="obsolete">Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation type="unfinished">Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>CreateChannel</name>
     <message>
         <source>Create a new Channel</source>
-        <translation type="obsolete">Luo uusi kanava</translation>
+        <translation type="unfinished">Luo uusi kanava</translation>
     </message>
     <message>
         <source>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;New Channel&lt;/span&gt;</source>
-        <translation type="obsolete">&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Uusi kanaval&lt;/span&gt;</translation>
+        <translation type="unfinished">&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Uusi kanaval&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="obsolete">Tarkista vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <translation type="unfinished">Tarkista vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="obsolete">Jaa avain</translation>
+        <translation type="unfinished">Jaa avain</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="obsolete">Kontaktit:</translation>
+        <translation type="unfinished">Kontaktit:</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="obsolete">Kuvaus</translation>
+        <translation type="unfinished">Kuvaus</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="obsolete">Tyyppi:</translation>
+        <translation type="unfinished">Tyyppi:</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="obsolete">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="obsolete">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="obsolete">Sallitut viestit</translation>
+        <translation type="unfinished">Sallitut viestit</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="obsolete">Nimettömät viestit</translation>
+        <translation type="unfinished">Nimettömät viestit</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="obsolete">Varmennetut viestit</translation>
+        <translation type="unfinished">Varmennetut viestit</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="obsolete">Avaimen jakaminen</translation>
+        <translation type="unfinished">Avaimen jakaminen</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels </source>
@@ -2104,23 +2398,23 @@ Haluatko tallentaa sen?</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="obsolete">Jaa yksityinen julkaisuavain</translation>
+        <translation type="unfinished">Jaa yksityinen julkaisuavain</translation>
     </message>
     <message>
         <source>Channel Logo</source>
-        <translation type="obsolete">Kanavan logo</translation>
+        <translation type="unfinished">Kanavan logo</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="obsolete">Lisää logo kanavalle</translation>
+        <translation type="unfinished">Lisää logo kanavalle</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="obsolete">Luo</translation>
+        <translation type="unfinished">Luo</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2128,7 +2422,7 @@ Haluatko tallentaa sen?</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="obsolete">Ole hyvä ja lisää nimi</translation>
+        <translation type="unfinished">Ole hyvä ja lisää nimi</translation>
     </message>
     <message>
         <source>Load File</source>
@@ -2138,12 +2432,20 @@ Haluatko tallentaa sen?</translation>
         <source>Pictures (*.png *.xpm *.jpg)</source>
         <translation type="obsolete">Kuvat (*.png *.xpm *.jpg)</translation>
     </message>
+    <message>
+        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load channel logo</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateChannelMsg</name>
     <message>
         <source>New Channel Post</source>
-        <translation type="obsolete">Uusi kirjoitus kanavalle</translation>
+        <translation type="unfinished">Uusi kirjoitus kanavalle</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2151,7 +2453,7 @@ Haluatko tallentaa sen?</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;New Channel Post&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -2159,11 +2461,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="obsolete">Kirjoitus kanavalle</translation>
+        <translation type="unfinished">Kirjoitus kanavalle</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation type="obsolete">Kirjoitus kanavalle:</translation>
+        <translation type="unfinished">Kirjoitus kanavalle:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2174,7 +2476,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drap and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -2185,23 +2487,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation type="obsolete">Lisää liitettävä tiedosto</translation>
+        <translation type="unfinished">Lisää liitettävä tiedosto</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation type="obsolete">Lisää kanavan näytekuva</translation>
+        <translation type="unfinished">Lisää kanavan näytekuva</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="obsolete">Viesti</translation>
+        <translation type="unfinished">Viesti</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="obsolete">Aihe:</translation>
+        <translation type="unfinished">Aihe:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="obsolete">Liitteet</translation>
+        <translation type="unfinished">Liitteet</translation>
     </message>
     <message>
         <source> allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -2209,35 +2511,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation type="obsolete">Automaattinen näytekuva</translation>
+        <translation type="unfinished">Automaattinen näytekuva</translation>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation type="obsolete">Vedä ja pudota tiedostoja hakutuloksista</translation>
+        <translation type="unfinished">Vedä ja pudota tiedostoja hakutuloksista</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation type="obsolete">Virhe pudotettaessa tiedostoa.</translation>
+        <translation type="unfinished">Virhe pudotettaessa tiedostoa.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="obsolete">Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
+        <translation type="unfinished">Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="obsolete">Lisää ylimääräinen tiedosto</translation>
+        <translation type="unfinished">Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation type="obsolete">Tiedosto on jo lisätty ja tiivistetty (hash)</translation>
+        <translation type="unfinished">Tiedosto on jo lisätty ja tiivistetty (hash)</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="obsolete">Ole hyvä ja lisää aihe</translation>
+        <translation type="unfinished">Ole hyvä ja lisää aihe</translation>
     </message>
     <message>
         <source>Load File</source>
@@ -2247,24 +2549,52 @@ p, li { white-space: pre-wrap; }
         <source>Pictures (*.png *.xpm *.jpg)</source>
         <translation type="obsolete">Kuvat (*.png *.xpm *.jpg)</translation>
     </message>
+    <message>
+        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can only post files that you do have</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load thumbnail picture</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateForum</name>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="obsolete">Tyyppi:</translation>
+        <translation type="unfinished">Tyyppi:</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="obsolete">Varmennetut viestit</translation>
+        <translation type="unfinished">Varmennetut viestit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2272,11 +2602,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="obsolete">Ole hyvä ja lisää nimi</translation>
+        <translation type="unfinished">Ole hyvä ja lisää nimi</translation>
     </message>
     <message>
         <source>Create new Forum</source>
-        <translation type="obsolete">Luo uusi foorumi</translation>
+        <translation type="unfinished">Luo uusi foorumi</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2284,7 +2614,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -2292,98 +2622,122 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="obsolete">Kuvaus</translation>
+        <translation type="unfinished">Kuvaus</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="obsolete">Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
+        <translation type="unfinished">Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="obsolete">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="obsolete">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation type="unfinished">Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="obsolete">Sallitut viestit</translation>
+        <translation type="unfinished">Sallitut viestit</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="obsolete">Nimettömät viestit</translation>
+        <translation type="unfinished">Nimettömät viestit</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="obsolete">Luo</translation>
+        <translation type="unfinished">Luo</translation>
+    </message>
+    <message>
+        <source>check peers you would like to share private publish key with</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Key With</source>
+        <translation type="unfinished">Jaa avain</translation>
+    </message>
+    <message>
+        <source>Key Sharing</source>
+        <translation type="unfinished">Avaimen jakaminen</translation>
+    </message>
+    <message>
+        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Private Publish Key</source>
+        <translation type="unfinished">Jaa yksityinen julkaisuavain</translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished">Kontaktit:</translation>
     </message>
 </context>
 <context>
     <name>CreateForumMsg</name>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Sulje</translation>
+        <translation type="unfinished">Sulje</translation>
     </message>
     <message>
         <source>Post Forum Message</source>
-        <translation type="obsolete">Lähetä viesti foorumiin</translation>
+        <translation type="unfinished">Lähetä viesti foorumiin</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="obsolete">Foorumi</translation>
+        <translation type="unfinished">Foorumi</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="obsolete">Liitä tiedosto</translation>
+        <translation type="unfinished">Liitä tiedosto</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="obsolete">Foorumikirjoitus</translation>
+        <translation type="unfinished">Foorumikirjoitus</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="obsolete">Allekirjoita viesti</translation>
+        <translation type="unfinished">Allekirjoita viesti</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="obsolete">Aihe</translation>
+        <translation type="unfinished">Aihe</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="obsolete">Liitä RetroShare-linkki</translation>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="obsolete">Liitä tiedostoja vetämällä ja pudottamalla</translation>
+        <translation type="unfinished">Liitä tiedostoja vetämällä ja pudottamalla</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="obsolete">Voit liittää tiedostoja vetämällä ja pudottamalla niitä tähän ikkunaan</translation>
+        <translation type="unfinished">Voit liittää tiedostoja vetämällä ja pudottamalla niitä tähän ikkunaan</translation>
     </message>
     <message>
         <source>Post Forum Msg</source>
-        <translation type="obsolete">Lähetä viesti foorumiin</translation>
+        <translation type="unfinished">Lähetä viesti foorumiin</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="obsolete">Liitä kokonainen RetroShare-linkki</translation>
+        <translation type="unfinished">Liitä kokonainen RetroShare-linkki</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="obsolete">Vastauksena</translation>
+        <translation type="unfinished">Vastauksena</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="obsolete">Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
+        <translation type="unfinished">Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="obsolete">Lisää ylimääräinen tiedosto</translation>
+        <translation type="unfinished">Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -2402,7 +2756,7 @@ p, li { white-space: pre-wrap; }
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
-        <translation type="obsolete">Luo ryhmä</translation>
+        <translation type="unfinished">Luo ryhmä</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2410,7 +2764,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Create a Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -2418,42 +2772,117 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Group Name</source>
-        <translation type="obsolete">Ryhmän nimi</translation>
+        <translation type="unfinished">Ryhmän nimi</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation type="obsolete">Anna ryhmälle nimi</translation>
+        <translation type="unfinished">Anna ryhmälle nimi</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="obsolete">Muokkaa ryhmää</translation>
+        <translation type="unfinished">Muokkaa ryhmää</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Edit Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Muokkaa ryhmää&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Muokkaa ryhmää&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>CreateLobbyDialog</name>
+    <message>
+        <source>Create Chat Lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Create Chat Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lobby name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your nick name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Security policy:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public (Visible by friends)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private (Works on invitation only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select the Friends with which you want to group chat.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invited friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation type="unfinished">Luo</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Peru</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put a sensible lobby name here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished">Kontaktit:</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="obsolete">Julkinen avaimesi kopioitiin leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation type="unfinished">Julkinen avaimesi kopioitiin leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="obsolete">RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <source>Public Key</source>
-        <translation type="obsolete">Julkinen avain</translation>
+        <translation type="unfinished">Julkinen avain</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2461,7 +2890,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copy my Key to Clipboard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -2469,7 +2898,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy Key</source>
-        <translation type="obsolete">Kopioi avain</translation>
+        <translation type="unfinished">Kopioi avain</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2477,7 +2906,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Save Key into a file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -2485,7 +2914,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save Key</source>
-        <translation type="obsolete">Tallenna avain</translation>
+        <translation type="unfinished">Tallenna avain</translation>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>copy RetroShare link to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your certificate could not be parsed correctly. Please contact the developpers.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2583,7 +3032,7 @@ p, li { white-space: pre-wrap; }
     <name>DHTStatus</name>
     <message>
         <source>DHT</source>
-        <translation type="obsolete">DHT</translation>
+        <translation type="unfinished">DHT</translation>
     </message>
     <message>
         <source>DHT On</source>
@@ -2591,141 +3040,288 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation type="obsolete">RetroSharen käyttäjiä DHT:ssä (Kaikki DHT:n käyttäjät)</translation>
+        <translation type="unfinished">RetroSharen käyttäjiä DHT:ssä (Kaikki DHT:n käyttäjät)</translation>
     </message>
     <message>
         <source>DHT Off</source>
-        <translation type="obsolete">DHT Pois päältä</translation>
+        <translation type="unfinished">DHT Pois päältä</translation>
+    </message>
+    <message>
+        <source>DHT Searching for RetroShare Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Good</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DLListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="obsolete">t</translation>
+        <translation type="unfinished">t</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="obsolete">Kt</translation>
+        <translation type="unfinished">Kt</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="obsolete">Mt</translation>
+        <translation type="unfinished">Mt</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="obsolete">Gt</translation>
+        <translation type="unfinished">Gt</translation>
     </message>
 </context>
 <context>
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation type="obsolete">Yksityiskohdat</translation>
+        <translation type="unfinished">Yksityiskohdat</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="obsolete">Yleiset</translation>
+        <translation type="unfinished">Yleiset</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="obsolete">Tiedoston nimi:</translation>
+        <translation type="unfinished">Tiedoston nimi:</translation>
     </message>
     <message>
         <source>Hash:</source>
-        <translation type="obsolete">Tiiviste (hash):</translation>
+        <translation type="unfinished">Tiiviste (hash):</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="obsolete">Koko:</translation>
+        <translation type="unfinished">Koko:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="obsolete">Tila:</translation>
+        <translation type="unfinished">Tila:</translation>
     </message>
     <message>
         <source>Priority:</source>
-        <translation type="obsolete">Tärkeysjärjestys:</translation>
+        <translation type="unfinished">Tärkeysjärjestys:</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="obsolete">Tyyppi:</translation>
+        <translation type="unfinished">Tyyppi:</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="obsolete">Siirto</translation>
+        <translation type="unfinished">Siirto</translation>
     </message>
     <message>
         <source>Sources:</source>
-        <translation type="obsolete">Lähteet:</translation>
+        <translation type="unfinished">Lähteet:</translation>
     </message>
     <message>
         <source>Datarate:</source>
-        <translation type="obsolete">Siirtonopeus:</translation>
+        <translation type="unfinished">Siirtonopeus:</translation>
     </message>
     <message>
         <source>Completed:</source>
-        <translation type="obsolete">Valmiina:</translation>
+        <translation type="unfinished">Valmiina:</translation>
     </message>
     <message>
         <source>Chunk size:</source>
-        <translation type="obsolete">Palasten koko:</translation>
+        <translation type="unfinished">Palasten koko:</translation>
     </message>
     <message>
         <source>Number of Chunks</source>
-        <translation type="obsolete">Palasten lukumäärä</translation>
+        <translation type="unfinished">Palasten lukumäärä</translation>
     </message>
     <message>
         <source>Chunks:</source>
-        <translation type="obsolete">Palaset:</translation>
+        <translation type="unfinished">Palaset:</translation>
     </message>
     <message>
         <source>Remaining:</source>
-        <translation type="obsolete">Jäljellä:</translation>
+        <translation type="unfinished">Jäljellä:</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">Päiväys</translation>
+        <translation type="unfinished">Päiväys</translation>
     </message>
     <message>
         <source>Download time:</source>
-        <translation type="obsolete">Latauksen kesto:</translation>
+        <translation type="unfinished">Latauksen kesto:</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="obsolete">Kommentit</translation>
+        <translation type="unfinished">Kommentit</translation>
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation type="obsolete">RetroSharen linkki/linkit</translation>
+        <translation type="unfinished">RetroSharen linkki/linkit</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="obsolete">Kopioi</translation>
+        <translation type="unfinished">Kopioi</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation type="obsolete">Arvostelu</translation>
+        <translation type="unfinished">Arvostelu</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="obsolete">Tiedoston nimi</translation>
+        <translation type="unfinished">Tiedoston nimi</translation>
     </message>
     <message>
         <source>Not Rated</source>
-        <translation type="obsolete">Ei arvosteltu</translation>
+        <translation type="unfinished">Ei arvosteltu</translation>
     </message>
     <message>
         <source>No Comments</source>
-        <translation type="obsolete">Ei kommentteja</translation>
+        <translation type="unfinished">Ei kommentteja</translation>
+    </message>
+</context>
+<context>
+    <name>DhtWindow</name>
+    <message>
+        <source>Dht Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Details</source>
+        <translation type="unfinished">Vertaisen yksityiskohdat</translation>
+    </message>
+    <message>
+        <source>Net Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nat Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nat Hole</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Address</source>
+        <translation type="unfinished">Vertaisen osoite</translation>
+    </message>
+    <message>
+        <source>Extra Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nimi</translation>
+    </message>
+    <message>
+        <source>PeerId</source>
+        <translation type="unfinished">Vertaistunniste</translation>
+    </message>
+    <message>
+        <source>Dht Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ConnectLogic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cb Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RsId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bucket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP:Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Recv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relay Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Class</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Age</source>
+        <translation type="unfinished">Ikä</translation>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2747,49 +3343,49 @@ p, li { white-space: pre-wrap; }
     <name>DirectoriesPage</name>
     <message>
         <source>Incoming Directory</source>
-        <translation type="obsolete">Sisääntulevien hakemisto</translation>
+        <translation type="unfinished">Sisääntulevien hakemisto</translation>
     </message>
     <message>
         <source>Partials Directory</source>
-        <translation type="obsolete">Keskeneräisten hakemisto</translation>
+        <translation type="unfinished">Keskeneräisten hakemisto</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="obsolete">Jaa sisääntulevien hakemisto automaattisesti (suositeltavaa)</translation>
+        <translation type="unfinished">Jaa sisääntulevien hakemisto automaattisesti (suositeltavaa)</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
 This might be useful if you&apos;re sharing an 
 external HD, to avoid re-hashing files when 
 you plug it in.</source>
-        <translation type="obsolete">Muista tiedostojen tiivisteet (hash), vaikka ne eivät 
+        <translation type="unfinished">Muista tiedostojen tiivisteet (hash), vaikka ne eivät 
 olisi jaossa. Tämä voi olla hyödyllistä, jos jaat ulkoiselta 
 kiintolevyltä, jolloin voit välttyä tekemästä tiivisteitä 
 tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation type="obsolete">Muista tiivistetyt (hashed) tiedostot</translation>
+        <translation type="unfinished">Muista tiivistetyt (hashed) tiedostot</translation>
     </message>
     <message>
         <source> days</source>
-        <translation type="obsolete">päivää</translation>
+        <translation type="unfinished">päivää</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation type="obsolete">Unohda kaikki tiivistetyt (hashed) tiedostot, jotka eivät ole enää jaossa.</translation>
+        <translation type="unfinished">Unohda kaikki tiivistetyt (hashed) tiedostot, jotka eivät ole enää jaossa.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation type="obsolete">Tyhjennä tiivisteiden (hash) välimuisti</translation>
+        <translation type="unfinished">Tyhjennä tiivisteiden (hash) välimuisti</translation>
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation type="obsolete">Jaetut hakemistot</translation>
+        <translation type="unfinished">Jaetut hakemistot</translation>
     </message>
     <message>
         <source>Edit Share</source>
-        <translation type="obsolete">Muokkaa jakoa</translation>
+        <translation type="unfinished">Muokkaa jakoa</translation>
     </message>
     <message>
         <source>Incoming files</source>
@@ -2805,7 +3401,7 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">Selaa</translation>
+        <translation type="unfinished">Selaa</translation>
     </message>
     <message>
         <source>Add Shared Directory</source>
@@ -2813,26 +3409,45 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
     <message>
         <source>Set Incoming Directory</source>
-        <translation type="obsolete">Määritä sisääntulevien hakemisto</translation>
+        <translation type="unfinished">Määritä sisääntulevien hakemisto</translation>
     </message>
     <message>
         <source>Set Partials Directory</source>
-        <translation type="obsolete">Määritä keskeneräisten hakemisto</translation>
+        <translation type="unfinished">Määritä keskeneräisten hakemisto</translation>
+    </message>
+    <message>
+        <source>Auto-check shared directories every </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> minute(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DiscStatus</name>
+    <message>
+        <source>Waiting outgoing discovery operations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting incoming discovery operations</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DownloadToaster</name>
     <message>
         <source>Start file</source>
-        <translation type="obsolete">Aloita tiedosto</translation>
+        <translation type="unfinished">Aloita tiedosto</translation>
     </message>
     <message>
         <source>&lt;b&gt;Download completed&lt;/b&gt;</source>
-        <translation type="obsolete">&lt;b&gt;Lataus suoritettu&lt;/b&gt;</translation>
+        <translation type="unfinished">&lt;b&gt;Lataus suoritettu&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Sulje</translation>
+        <translation type="unfinished">Sulje</translation>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
@@ -2843,35 +3458,35 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     <name>EditChanDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation type="obsolete">Kanavan yksityiskohdat</translation>
+        <translation type="unfinished">Kanavan yksityiskohdat</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="obsolete">Muokkaa kanavan yksityiskohtia</translation>
+        <translation type="unfinished">Muokkaa kanavan yksityiskohtia</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="obsolete">Kanavan tiedot</translation>
+        <translation type="unfinished">Kanavan tiedot</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="obsolete">Kanavan nimi</translation>
+        <translation type="unfinished">Kanavan nimi</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="obsolete">Kanavan kuvaus</translation>
+        <translation type="unfinished">Kanavan kuvaus</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="obsolete">Lisää kanavalle logo</translation>
+        <translation type="unfinished">Lisää kanavalle logo</translation>
     </message>
     <message>
         <source>Load File</source>
@@ -2881,59 +3496,63 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
         <source>Pictures (*.png *.xpm *.jpg)</source>
         <translation type="obsolete">Kuvat (*.png *.xpm *.jpg)</translation>
     </message>
+    <message>
+        <source>Load channel logo</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="obsolete">Foorumin yksityiskohdat</translation>
+        <translation type="unfinished">Foorumin yksityiskohdat</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="obsolete">Muokkaa foorumin yksityiskohtia</translation>
+        <translation type="unfinished">Muokkaa foorumin yksityiskohtia</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="obsolete">Foorumin tiedot</translation>
+        <translation type="unfinished">Foorumin tiedot</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="obsolete">Foorumin nimi</translation>
+        <translation type="unfinished">Foorumin nimi</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="obsolete">Foorumin kuvaus</translation>
+        <translation type="unfinished">Foorumin kuvaus</translation>
     </message>
 </context>
 <context>
     <name>EmailPage</name>
     <message>
         <source>Invite Friends by Email</source>
-        <translation type="obsolete">Kutsu ystäviä sähköpostilla</translation>
+        <translation type="unfinished">Kutsu ystäviä sähköpostilla</translation>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation type="obsolete">Kirjoita ystäviesi sähköpostiosoitteet (erottele osoitteet puolipisteellä)</translation>
+        <translation type="unfinished">Kirjoita ystäviesi sähköpostiosoitteet (erottele osoitteet puolipisteellä)</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation type="obsolete">Ystäviesi sähköpostiosoitteet:</translation>
+        <translation type="unfinished">Ystäviesi sähköpostiosoitteet:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation type="obsolete">Kirjoita ystäviesi sähköpostiosoitteet</translation>
+        <translation type="unfinished">Kirjoita ystäviesi sähköpostiosoitteet</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="obsolete">Aihe:</translation>
+        <translation type="unfinished">Aihe:</translation>
     </message>
     <message>
         <source>Friend invites you to check out RetroShare</source>
@@ -2943,162 +3562,166 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
         <source>Friend uses RetroShare to communicate securely, and invites you to join him to share files together. &lt;br&gt;RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. &lt;br&gt;For more information, see our website http://retroshare.sourceforge.net/ or download the software here http://retroshare.sourceforge.net/downloads.html. &lt;br&gt;See you soon on RetroShare!</source>
         <translation type="obsolete">Ystäväsi käyttää RetroSharea kommunikoidakseen turvallisesti ja kutsuu sinut jakamaan kanssaan tiedostoja. &lt;br&gt;RetroShare on ilmainen ja sen käyttäminen on turvallista: se ei sisällä viruksia, vakoiluohjelmia, eikä mainoksia ja sen asennus voidaan poistaa vaivattomasti. &lt;br&gt;Lisätietoja saat verkkosivuiltamme http://retroshare.sourceforge.net tai voit ladata ohjelman täältä: http://retroshare.sourceforge.net/downloads.html &lt;br&gt;Pikaisiin näkemisiin RetroSharessa!</translation>
     </message>
+    <message>
+        <source>RetroShare Invitation</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ErrorMessagePage</name>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation type="obsolete">Valitettavasti on tapahtunut jokin virhe</translation>
+        <translation type="unfinished">Valitettavasti on tapahtunut jokin virhe</translation>
     </message>
     <message>
         <source>Here is the error message: </source>
-        <translation type="obsolete">Tässä on virheen viesti:</translation>
+        <translation type="unfinished">Tässä on virheen viesti:</translation>
     </message>
 </context>
 <context>
     <name>ExampleDialog</name>
     <message>
         <source>Vote Up</source>
-        <translation type="obsolete">Äänestä ylös</translation>
+        <translation type="unfinished">Äänestä ylös</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="obsolete">Äänestä alas</translation>
+        <translation type="unfinished">Äänestä alas</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Ystävät&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="obsolete">Tila</translation>
+        <translation type="unfinished">Tila</translation>
     </message>
     <message>
         <source>Person</source>
-        <translation type="obsolete">Henkilö</translation>
+        <translation type="unfinished">Henkilö</translation>
     </message>
     <message>
         <source>Auto Connect</source>
-        <translation type="obsolete">Yhdistä automaattisesti</translation>
+        <translation type="unfinished">Yhdistä automaattisesti</translation>
     </message>
     <message>
         <source>Trust Level</source>
-        <translation type="obsolete">Luottamustaso</translation>
+        <translation type="unfinished">Luottamustaso</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="obsolete">Vertaisen osoite</translation>
+        <translation type="unfinished">Vertaisen osoite</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation type="obsolete">Viimeisin kontakti</translation>
+        <translation type="unfinished">Viimeisin kontakti</translation>
     </message>
     <message>
         <source>Organisation</source>
-        <translation type="obsolete">Organisaatio</translation>
+        <translation type="unfinished">Organisaatio</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="obsolete">Sijainti</translation>
+        <translation type="unfinished">Sijainti</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation type="obsolete">Maa</translation>
+        <translation type="unfinished">Maa</translation>
     </message>
     <message>
         <source>Person Id</source>
-        <translation type="obsolete">Henkilön tunniste</translation>
+        <translation type="unfinished">Henkilön tunniste</translation>
     </message>
     <message>
         <source>Auth Code</source>
-        <translation type="obsolete">Varmennekoodi</translation>
+        <translation type="unfinished">Varmennekoodi</translation>
     </message>
     <message>
         <source>#</source>
-        <translation type="obsolete">#</translation>
+        <translation type="unfinished">#</translation>
     </message>
 </context>
 <context>
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
-        <translation type="obsolete">vastaanottajalle</translation>
+        <translation type="unfinished">vastaanottajalle</translation>
     </message>
     <message>
         <source>ignore case</source>
-        <translation type="obsolete">sivuuta kirjainkoko</translation>
+        <translation type="unfinished">sivuuta kirjainkoko</translation>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation type="obsolete">pp.KK.vvvv</translation>
+        <translation type="unfinished">pp.KK.vvvv</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="obsolete">Kt</translation>
+        <translation type="unfinished">Kt</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="obsolete">Mt</translation>
+        <translation type="unfinished">Mt</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="obsolete">Gt</translation>
+        <translation type="unfinished">Gt</translation>
     </message>
 </context>
 <context>
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation type="obsolete">Lausekepienohjelma</translation>
+        <translation type="unfinished">Lausekepienohjelma</translation>
     </message>
     <message>
         <source>Delete this expression</source>
-        <translation type="obsolete">Poista tämä lauseke</translation>
+        <translation type="unfinished">Poista tämä lauseke</translation>
     </message>
 </context>
 <context>
     <name>FileAssociationsPage</name>
     <message>
         <source>&amp;New</source>
-        <translation type="obsolete">&amp;Uusi</translation>
+        <translation type="unfinished">&amp;Uusi</translation>
     </message>
     <message>
         <source>Add new Association</source>
-        <translation type="obsolete">Lisää uusi sidos</translation>
+        <translation type="unfinished">Lisää uusi sidos</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="obsolete">&amp;Muokkaa</translation>
+        <translation type="unfinished">&amp;Muokkaa</translation>
     </message>
     <message>
         <source>Edit this Association</source>
-        <translation type="obsolete">Muokkaa tätä sidosta</translation>
+        <translation type="unfinished">Muokkaa tätä sidosta</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation type="obsolete">&amp;Poista</translation>
+        <translation type="unfinished">&amp;Poista</translation>
     </message>
     <message>
         <source>Remove this Association</source>
-        <translation type="obsolete">Poista tämä sidos</translation>
+        <translation type="unfinished">Poista tämä sidos</translation>
     </message>
     <message>
         <source>File type</source>
-        <translation type="obsolete">Tiedostotyyppi</translation>
+        <translation type="unfinished">Tiedostotyyppi</translation>
     </message>
     <message>
         <source> Friend Help</source>
-        <translation type="obsolete">Ystäväohje</translation>
+        <translation type="unfinished">Ystäväohje</translation>
     </message>
     <message>
         <source>You  this</source>
-        <translation type="obsolete">Sinä  tämä</translation>
+        <translation type="unfinished">Sinä  tämä</translation>
     </message>
 </context>
 <context>
@@ -3133,15 +3756,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>bytes</source>
-        <translation type="obsolete">tavua</translation>
+        <translation type="unfinished">tavua</translation>
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="obsolete">Jäljellä</translation>
+        <translation type="unfinished">Jäljellä</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="obsolete">Palasten strategia</translation>
+        <translation type="unfinished">Palasten strategia</translation>
     </message>
     <message>
         <source>Chunk size: </source>
@@ -3171,6 +3794,105 @@ p, li { white-space: pre-wrap; }
         <source>Transfer type: </source>
         <translation type="obsolete">Siirtotyyppi:</translation>
     </message>
+    <message>
+        <source>Chunk map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active chunks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Availability map (%1 active source)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Availability map (%1 active sources)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chunk size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of chunks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous F2F</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direct friend transfer / Availability assumed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FilesDefs</name>
+    <message>
+        <source>Picture</source>
+        <translation type="unfinished">Kuva</translation>
+    </message>
+    <message>
+        <source>Video</source>
+        <translation type="unfinished">Video</translation>
+    </message>
+    <message>
+        <source>Audio</source>
+        <translation type="unfinished">Ääni</translation>
+    </message>
+    <message>
+        <source>Archive</source>
+        <translation type="unfinished">Pakattu tiedosto</translation>
+    </message>
+    <message>
+        <source>Program</source>
+        <translation type="unfinished">Ohjelma</translation>
+    </message>
+    <message>
+        <source>CD/DVD-Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document</source>
+        <translation type="unfinished">Dokumentti</translation>
+    </message>
+    <message>
+        <source>RetroShare collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtitles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nintendo DS Rom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FindWindow</name>
@@ -3191,305 +3913,313 @@ p, li { white-space: pre-wrap; }
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation type="obsolete">Ystävien hakemistot</translation>
+        <translation type="unfinished">Ystävien hakemistot</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="obsolete">Omat hakemistot</translation>
+        <translation type="unfinished">Omat hakemistot</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="obsolete">Ikä</translation>
+        <translation type="unfinished">Ikä</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="obsolete">Ystävä</translation>
+        <translation type="unfinished">Ystävä</translation>
     </message>
     <message>
         <source>Share Type</source>
-        <translation type="obsolete">Jakamisen tyyppi</translation>
+        <translation type="unfinished">Jakamisen tyyppi</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="obsolete">Hakemisto</translation>
+        <translation type="unfinished">Hakemisto</translation>
     </message>
 </context>
 <context>
     <name>FofPage</name>
     <message>
         <source>Friends of friends</source>
-        <translation type="obsolete">Ystävien ystävät</translation>
+        <translation type="unfinished">Ystävien ystävät</translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation type="obsolete">Valitse nyt, kenen kanssa haluat ystävystyä.</translation>
+        <translation type="unfinished">Valitse nyt, kenen kanssa haluat ystävystyä.</translation>
     </message>
     <message>
         <source>Show me: </source>
-        <translation type="obsolete">Näytä minulle:</translation>
+        <translation type="unfinished">Näytä minulle:</translation>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation type="obsolete">Kaikki vertaiset, joita en ole allekirjoittanut</translation>
+        <translation type="unfinished">Kaikki vertaiset, joita en ole allekirjoittanut</translation>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation type="obsolete">Ystävieni ystävät, jotka jo luottavat minuun</translation>
+        <translation type="unfinished">Ystävieni ystävät, jotka jo luottavat minuun</translation>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation type="obsolete">Allekirjoitetut vertaiset, jotka näkyvät torjuttuina</translation>
+        <translation type="unfinished">Allekirjoitetut vertaiset, jotka näkyvät torjuttuina</translation>
     </message>
     <message>
         <source>Peer name</source>
-        <translation type="obsolete">Vertaisen nimi</translation>
+        <translation type="unfinished">Vertaisen nimi</translation>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation type="obsolete">Muita allekirjoittaneita</translation>
+        <translation type="unfinished">Muita allekirjoittaneita</translation>
     </message>
     <message>
         <source>Peer id</source>
-        <translation type="obsolete">Vertaisen tunniste</translation>
+        <translation type="unfinished">Vertaisen tunniste</translation>
     </message>
     <message>
         <source>Make friend with these peers</source>
-        <translation type="obsolete">Ystävysty näiden vertaisten kanssa</translation>
+        <translation type="unfinished">Ystävysty näiden vertaisten kanssa</translation>
     </message>
     <message>
         <source>*** None ***</source>
-        <translation type="obsolete">***Ei mitään***</translation>
+        <translation type="unfinished">***Ei mitään***</translation>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="obsolete">Foorumin yksityiskohdat</translation>
+        <translation type="unfinished">Foorumin yksityiskohdat</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="obsolete">Foorumin tiedot</translation>
+        <translation type="unfinished">Foorumin tiedot</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="obsolete">Foorumin nimi</translation>
+        <translation type="unfinished">Foorumin nimi</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="obsolete">Suosio</translation>
+        <translation type="unfinished">Suosio</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="obsolete">Viimeisin viesti</translation>
+        <translation type="unfinished">Viimeisin viesti</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation type="obsolete">Foorumin tunniste</translation>
+        <translation type="unfinished">Foorumin tunniste</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="obsolete">Foorumin kuvaus</translation>
+        <translation type="unfinished">Foorumin kuvaus</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="obsolete">Turvallisuus</translation>
+        <translation type="unfinished">Turvallisuus</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="obsolete">Sallitut viestit</translation>
+        <translation type="unfinished">Sallitut viestit</translation>
     </message>
     <message>
         <source>Authemticated Messages</source>
-        <translation type="obsolete">Varmennetut viestit</translation>
+        <translation type="unfinished">Varmennetut viestit</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="obsolete">Nimettömät viestit</translation>
+        <translation type="unfinished">Nimettömät viestit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation type="obsolete">Käytä ja sulje</translation>
+        <translation type="unfinished">Käytä ja sulje</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Subject: </source>
-        <translation type="obsolete">Aihe:</translation>
+        <translation type="unfinished">Aihe:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
-        <translation type="obsolete">Lopeta foorumin tilaus</translation>
+        <translation type="unfinished">Lopeta foorumin tilaus</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="obsolete">Vastaa</translation>
+        <translation type="unfinished">Vastaa</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="obsolete">Lähetä</translation>
+        <translation type="unfinished">Lähetä</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="obsolete">Allekirjoitettu</translation>
+        <translation type="unfinished">Allekirjoitettu</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="obsolete">Foorumikirjoitus</translation>
+        <translation type="unfinished">Foorumikirjoitus</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="obsolete">Nimetön</translation>
+        <translation type="unfinished">Nimetön</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="obsolete">Vastauksena viestiin</translation>
+        <translation type="unfinished">Vastauksena viestiin</translation>
+    </message>
+    <message>
+        <source>Unknown Forum Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please give a Text Message</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ForumNewItem</name>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="obsolete">Tilaa foorumi</translation>
+        <translation type="unfinished">Tilaa foorumi</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="obsolete">Foorumin kuvaus</translation>
+        <translation type="unfinished">Foorumin kuvaus</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation type="obsolete">Sekalaiset</translation>
+        <translation type="unfinished">Sekalaiset</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="obsolete">Merkitse viesti luetuksi aktivoitaessa</translation>
+        <translation type="unfinished">Merkitse viesti luetuksi aktivoitaessa</translation>
     </message>
     <message>
         <source>Expand new messages</source>
-        <translation type="obsolete">Laajenna uudet viestit</translation>
+        <translation type="unfinished">Laajenna uudet viestit</translation>
     </message>
 </context>
 <context>
     <name>ForumsDialog</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="obsolete">Subscribe to Forum</translation>
+        <translation type="unfinished">Subscribe to Forum</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="obsolete">Lopeta foorumin tilaus</translation>
+        <translation type="unfinished">Lopeta foorumin tilaus</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="obsolete">Uusi foorumi</translation>
+        <translation type="unfinished">Uusi foorumi</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="obsolete">Näytä foorumin yksityiskohdat</translation>
+        <translation type="unfinished">Näytä foorumin yksityiskohdat</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="obsolete">Muokkaa foorumin yksityiskohtia</translation>
+        <translation type="unfinished">Muokkaa foorumin yksityiskohtia</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="obsolete">Vastaa</translation>
+        <translation type="unfinished">Vastaa</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="obsolete">Vastaa kirjoittajalle</translation>
+        <translation type="unfinished">Vastaa kirjoittajalle</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="obsolete">Laajenna kaikki</translation>
+        <translation type="unfinished">Laajenna kaikki</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="obsolete">Kutista kaikki</translation>
+        <translation type="unfinished">Kutista kaikki</translation>
     </message>
     <message>
         <source>Your Forums</source>
-        <translation type="obsolete">Foorumisi</translation>
+        <translation type="unfinished">Foorumisi</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="obsolete">Tilatut foorumit</translation>
+        <translation type="unfinished">Tilatut foorumit</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="obsolete">Suositut foorumit</translation>
+        <translation type="unfinished">Suositut foorumit</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="obsolete">Muut foorumit</translation>
+        <translation type="unfinished">Muut foorumit</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="obsolete">Merkitse luetuksi</translation>
+        <translation type="unfinished">Merkitse luetuksi</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="obsolete">Merkitse lukemattomaksi</translation>
+        <translation type="unfinished">Merkitse lukemattomaksi</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation type="obsolete">jälkeläisten kanssa</translation>
+        <translation type="unfinished">jälkeläisten kanssa</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="obsolete">Merkitse kaikki luetuiksi</translation>
+        <translation type="unfinished">Merkitse kaikki luetuiksi</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="obsolete">Merkitse kaikki lukemattomiksi</translation>
+        <translation type="unfinished">Merkitse kaikki lukemattomiksi</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Popularity:</source>
@@ -3509,27 +4239,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="obsolete">Ei valittua foorumia!</translation>
+        <translation type="unfinished">Ei valittua foorumia!</translation>
     </message>
     <message>
         <source>You cant reply a Anonymous Author</source>
-        <translation type="obsolete">Et voi vastata nimettömälle kirjoittajalle</translation>
+        <translation type="unfinished">Et voi vastata nimettömälle kirjoittajalle</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">Päiväys</translation>
+        <translation type="unfinished">Päiväys</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="obsolete">Otsikko</translation>
+        <translation type="unfinished">Otsikko</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="obsolete">Aloita uusi viestiketju</translation>
+        <translation type="unfinished">Aloita uusi viestiketju</translation>
     </message>
     <message>
         <source>New Message</source>
@@ -3557,23 +4287,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="obsolete">Viimeisin viesti</translation>
+        <translation type="unfinished">Viimeisin viesti</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="obsolete">Ketjunäkymä</translation>
+        <translation type="unfinished">Ketjunäkymä</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="obsolete">Tasanäkymä</translation>
+        <translation type="unfinished">Tasanäkymä</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="obsolete">Kirjoittaja</translation>
+        <translation type="unfinished">Kirjoittaja</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="obsolete">Allekirjoitettu</translation>
+        <translation type="unfinished">Allekirjoitettu</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3593,7 +4323,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -3601,19 +4331,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="obsolete">Sisältö</translation>
+        <translation type="unfinished">Sisältö</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="obsolete">Luo foorumi</translation>
+        <translation type="unfinished">Luo foorumi</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Tulosta</translation>
+        <translation type="unfinished">Tulosta</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3621,7 +4351,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -3629,42 +4359,308 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="obsolete">Aloita uusi viestiketju valitussa foorumissa</translation>
+        <translation type="unfinished">Aloita uusi viestiketju valitussa foorumissa</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="obsolete">Edellinen viestiketju</translation>
+        <translation type="unfinished">Edellinen viestiketju</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="obsolete">Seuraava viestiketju</translation>
+        <translation type="unfinished">Seuraava viestiketju</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="obsolete">Vastaa viestiin</translation>
+        <translation type="unfinished">Vastaa viestiin</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="obsolete">Tulostuksen esikatselu</translation>
+        <translation type="unfinished">Tulostuksen esikatselu</translation>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download all files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
     <message>
         <source>Anonymous</source>
-        <translation type="obsolete">Nimetön</translation>
+        <translation type="unfinished">Nimetön</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="obsolete">allekirjoitettu</translation>
+        <translation type="unfinished">allekirjoitettu</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="obsolete">ei mitään</translation>
+        <translation type="unfinished">ei mitään</translation>
+    </message>
+</context>
+<context>
+    <name>FriendList</name>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">Ystävät</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">Tila</translation>
+    </message>
+    <message>
+        <source>Last Contact</source>
+        <translation type="unfinished">Viimeisin kontakti</translation>
+    </message>
+    <message>
+        <source>Avatar</source>
+        <translation type="unfinished">Avatar</translation>
+    </message>
+    <message>
+        <source>Hide Offline Friends</source>
+        <translation type="unfinished">Piilota offline-ystävät</translation>
+    </message>
+    <message>
+        <source>State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by State</source>
+        <translation type="unfinished">Järjestä tilan mukaan</translation>
+    </message>
+    <message>
+        <source>Hide State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort Descending Order</source>
+        <translation type="unfinished">Laskeva järjestys</translation>
+    </message>
+    <message>
+        <source>Sort Ascending Order</source>
+        <translation type="unfinished">Nouseva järjestys</translation>
+    </message>
+    <message>
+        <source>Show Avatar Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nimi</translation>
+    </message>
+    <message>
+        <source>Sort by Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by last contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Last Contact Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set root is Decorated</source>
+        <translation type="unfinished">Asetettu juuri on koristeltu</translation>
+    </message>
+    <message>
+        <source>Set Root Decorated</source>
+        <translation type="unfinished">Aseta juuri koristelluksi</translation>
+    </message>
+    <message>
+        <source>Show Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">Ryhmä</translation>
+    </message>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished">Ystävä</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Sijainti</translation>
+    </message>
+    <message>
+        <source>Message Group</source>
+        <translation type="unfinished">Viestiryhmä</translation>
+    </message>
+    <message>
+        <source>Add Friend</source>
+        <translation type="unfinished">Lisää ystävä</translation>
+    </message>
+    <message>
+        <source>Edit Group</source>
+        <translation type="unfinished">Muokkaa ryhmää</translation>
+    </message>
+    <message>
+        <source>Remove Group</source>
+        <translation type="unfinished">Poista ryhmä</translation>
+    </message>
+    <message>
+        <source>Chat lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished">Keskustelu</translation>
+    </message>
+    <message>
+        <source>Message Friend</source>
+        <translation type="unfinished">Lähetä viesti ystävälle</translation>
+    </message>
+    <message>
+        <source>Friend Details</source>
+        <translation type="unfinished">Ystävän yksityiskohdat</translation>
+    </message>
+    <message>
+        <source>Recommend this Friend to...</source>
+        <translation type="unfinished">Suosittele tätä ystävää...</translation>
+    </message>
+    <message>
+        <source>Connect To Friend</source>
+        <translation type="unfinished">Yhdistä ystävään</translation>
+    </message>
+    <message>
+        <source>Copy certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Paste Friend Link</source>
+        <translation type="unfinished">Liitä ystävälinkki</translation>
+    </message>
+    <message>
+        <source>Deny Friend</source>
+        <translation type="unfinished">Torju ystävä</translation>
+    </message>
+    <message>
+        <source>Remove Friend Location</source>
+        <translation type="unfinished">Poista ystävän sijainti</translation>
+    </message>
+    <message>
+        <source>Add to group</source>
+        <translation type="unfinished">Lisää ryhmään</translation>
+    </message>
+    <message>
+        <source>Move to group</source>
+        <translation type="unfinished">Siirrä ryhmään</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation type="unfinished">Ryhmät</translation>
+    </message>
+    <message>
+        <source>Remove from group</source>
+        <translation type="unfinished">Poista ryhmästä</translation>
+    </message>
+    <message>
+        <source>Remove from all groups</source>
+        <translation type="unfinished">Poista kaikista ryhmistä</translation>
+    </message>
+    <message>
+        <source>Create new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite this group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite this friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation type="unfinished">Näytä</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation type="unfinished">Lopeta tilaus</translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished">Laajenna kaikki</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished">Kutista kaikki</translation>
+    </message>
+    <message>
+        <source>Available</source>
+        <translation type="unfinished">Saatavilla</translation>
+    </message>
+    <message>
+        <source>Do you want to remove this Friend?</source>
+        <translation type="unfinished">Haluatko poistaa tämän ystävän?</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by</source>
+        <translation type="unfinished">Lajittelu</translation>
+    </message>
+</context>
+<context>
+    <name>FriendSelectionWidget</name>
+    <message>
+        <source>Search for Name:</source>
+        <translation type="unfinished">Etsi nimellä:</translation>
+    </message>
+    <message>
+        <source>Search Friends</source>
+        <translation type="unfinished">Etsi ystäviä</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
 </context>
 <context>
@@ -3675,7 +4671,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -3683,11 +4679,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Lisää</translation>
+        <translation type="unfinished">Lisää</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -3703,95 +4699,95 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Personal message</source>
-        <translation type="obsolete">Muokkaa henkilökohtaista viestiä</translation>
+        <translation type="unfinished">Muokkaa henkilökohtaista viestiä</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="obsolete">Ryhmäkeskustelu</translation>
+        <translation type="unfinished">Ryhmäkeskustelu</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="obsolete">Lihavoitu</translation>
+        <translation type="unfinished">Lihavoitu</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="obsolete">Alleviivattu</translation>
+        <translation type="unfinished">Alleviivattu</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="obsolete">Kursivoitu</translation>
+        <translation type="unfinished">Kursivoitu</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="obsolete">Fontti</translation>
+        <translation type="unfinished">Fontti</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="obsolete">Tekstin väri</translation>
+        <translation type="unfinished">Tekstin väri</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="obsolete">Liitä tiedosto</translation>
+        <translation type="unfinished">Liitä tiedosto</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="obsolete">Lähetä</translation>
+        <translation type="unfinished">Lähetä</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="obsolete">Tyhjennä keskusteluhistoria</translation>
+        <translation type="unfinished">Tyhjennä keskusteluhistoria</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="obsolete">Lisää ystävä</translation>
+        <translation type="unfinished">Lisää ystävä</translation>
     </message>
     <message>
         <source>Create new Profile</source>
-        <translation type="obsolete">Luo uusi profiili</translation>
+        <translation type="unfinished">Luo uusi profiili</translation>
     </message>
     <message>
         <source>Create new Forum</source>
-        <translation type="obsolete">Luo uusi foorumi</translation>
+        <translation type="unfinished">Luo uusi foorumi</translation>
     </message>
     <message>
         <source>F</source>
-        <translation type="obsolete">F</translation>
+        <translation type="unfinished">F</translation>
     </message>
     <message>
         <source>Create new Channel</source>
-        <translation type="obsolete">Luo uusi kanava</translation>
+        <translation type="unfinished">Luo uusi kanava</translation>
     </message>
     <message>
         <source>C</source>
-        <translation type="obsolete">C</translation>
+        <translation type="unfinished">C</translation>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
-        <translation type="obsolete">Lisää avatarkuva</translation>
+        <translation type="unfinished">Lisää avatarkuva</translation>
     </message>
     <message>
         <source>A</source>
-        <translation type="obsolete">A</translation>
+        <translation type="unfinished">A</translation>
     </message>
     <message>
         <source>Set your Personal Message</source>
-        <translation type="obsolete">Aseta henkilökohtainen viesti</translation>
+        <translation type="unfinished">Aseta henkilökohtainen viesti</translation>
     </message>
     <message>
         <source>Edit your status Message</source>
-        <translation type="obsolete">Muokkaa tilaviestiäsi</translation>
+        <translation type="unfinished">Muokkaa tilaviestiäsi</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="obsolete">Selaa viestihistoriaa</translation>
+        <translation type="unfinished">Selaa viestihistoriaa</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="obsolete">Selaa historiaa</translation>
+        <translation type="unfinished">Selaa historiaa</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="obsolete">Tallenna keskusteluhistoria</translation>
+        <translation type="unfinished">Tallenna keskusteluhistoria</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
@@ -3807,7 +4803,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add a new Group</source>
-        <translation type="obsolete">Lisää uusi ryhmä</translation>
+        <translation type="unfinished">Lisää uusi ryhmä</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
@@ -3819,23 +4815,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Profile</source>
-        <translation type="obsolete">Profiili</translation>
+        <translation type="unfinished">Profiili</translation>
     </message>
     <message>
         <source>News Feed</source>
-        <translation type="obsolete">Uutissyöte</translation>
+        <translation type="unfinished">Uutissyöte</translation>
     </message>
     <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="obsolete">Tervetuloa RetroSharen ryhmäkeskusteluun.</translation>
+        <translation type="unfinished">Tervetuloa RetroSharen ryhmäkeskusteluun.</translation>
     </message>
     <message>
         <source>me</source>
-        <translation type="obsolete">minä</translation>
+        <translation type="unfinished">minä</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="obsolete">Liitä RetroShare-linkki</translation>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
     </message>
     <message>
         <source>Group</source>
@@ -3947,11 +4943,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="obsolete">kirjoittaa...</translation>
+        <translation type="unfinished">kirjoittaa...</translation>
     </message>
     <message>
         <source>New group chat</source>
-        <translation type="obsolete">Uusi ryhmäkeskustelu</translation>
+        <translation type="unfinished">Uusi ryhmäkeskustelu</translation>
     </message>
     <message>
         <source>Load File</source>
@@ -3959,7 +4955,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="obsolete">Lisää ylimääräinen tiedosto</translation>
+        <translation type="unfinished">Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -3971,11 +4967,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="obsolete">Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
+    </message>
+    <message>
+        <source>Messages entered here are sent to all connected friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Chat History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deletes all stored and displayed chat history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new Chat lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to physically delete the history?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4005,133 +5025,133 @@ p, li { white-space: pre-wrap; }
     <name>GamesDialog</name>
     <message>
         <source>Cancel Game</source>
-        <translation type="obsolete">Peru peli</translation>
+        <translation type="unfinished">Peru peli</translation>
     </message>
     <message>
         <source>Add to Invite List</source>
-        <translation type="obsolete">Lisää kutsuluetteloon</translation>
+        <translation type="unfinished">Lisää kutsuluetteloon</translation>
     </message>
     <message>
         <source>Remove from Invite List</source>
-        <translation type="obsolete">Poista kutsuluettelosta</translation>
+        <translation type="unfinished">Poista kutsuluettelosta</translation>
     </message>
     <message>
         <source>Interested in Playing</source>
-        <translation type="obsolete">Kiinnostunut pelaamaan</translation>
+        <translation type="unfinished">Kiinnostunut pelaamaan</translation>
     </message>
     <message>
         <source>Not Interested in Game</source>
-        <translation type="obsolete">Ei kiinnostunut pelaamaan</translation>
+        <translation type="unfinished">Ei kiinnostunut pelaamaan</translation>
     </message>
     <message>
         <source>Not Interested</source>
-        <translation type="obsolete">Ei kiinnostunut</translation>
+        <translation type="unfinished">Ei kiinnostunut</translation>
     </message>
     <message>
         <source>Confirm Peer in Game</source>
-        <translation type="obsolete">Vahvista vertainen peliin</translation>
+        <translation type="unfinished">Vahvista vertainen peliin</translation>
     </message>
     <message>
         <source>Remove Peer from Game</source>
-        <translation type="obsolete">Poista vertainen pelistä</translation>
+        <translation type="unfinished">Poista vertainen pelistä</translation>
     </message>
     <message>
         <source>Interested in Game</source>
-        <translation type="obsolete">Kiinnostunut pelaamaan</translation>
+        <translation type="unfinished">Kiinnostunut pelaamaan</translation>
     </message>
     <message>
         <source>Quit Game</source>
-        <translation type="obsolete">Poistu pelistä</translation>
+        <translation type="unfinished">Poistu pelistä</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="obsolete">Palvelin</translation>
+        <translation type="unfinished">Palvelin</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="obsolete">Tila</translation>
+        <translation type="unfinished">Tila</translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation type="obsolete">Hyväksy</translation>
+        <translation type="unfinished">Hyväksy</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="obsolete">Lomake</translation>
+        <translation type="unfinished">Lomake</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Pelien käynnistys&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Game:</source>
-        <translation type="obsolete">Peli:</translation>
+        <translation type="unfinished">Peli:</translation>
     </message>
     <message>
         <source>GameType: 0. Want to Add your Game here?</source>
-        <translation type="obsolete">Pelityyppi: 0. Haluatko lisätä pelisi tähän?</translation>
+        <translation type="unfinished">Pelityyppi: 0. Haluatko lisätä pelisi tähän?</translation>
     </message>
     <message>
         <source>GameType: 1. Get In Touch with the developers</source>
-        <translation type="obsolete">Pelityyppi: 1. Ota yhteyttä kehittäjiin</translation>
+        <translation type="unfinished">Pelityyppi: 1. Ota yhteyttä kehittäjiin</translation>
     </message>
     <message>
         <source>GameType: 2.</source>
-        <translation type="obsolete">Pelityyppi: 2.</translation>
+        <translation type="unfinished">Pelityyppi: 2.</translation>
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation type="obsolete">Otsikko / Kommentti</translation>
+        <translation type="unfinished">Otsikko / Kommentti</translation>
     </message>
     <message>
         <source>Create New Game</source>
-        <translation type="obsolete">Luo uusi peli</translation>
+        <translation type="unfinished">Luo uusi peli</translation>
     </message>
     <message>
         <source>Invite All Friends</source>
-        <translation type="obsolete">Kutsu kaikki ystävät</translation>
+        <translation type="unfinished">Kutsu kaikki ystävät</translation>
     </message>
     <message>
         <source>Game Type</source>
-        <translation type="obsolete">Pelityyppi</translation>
+        <translation type="unfinished">Pelityyppi</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="obsolete">Kommentti</translation>
+        <translation type="unfinished">Kommentti</translation>
     </message>
     <message>
         <source>GameID</source>
-        <translation type="obsolete">Pelitunniste</translation>
+        <translation type="unfinished">Pelitunniste</translation>
     </message>
     <message>
         <source>Player</source>
-        <translation type="obsolete">Pelaaja</translation>
+        <translation type="unfinished">Pelaaja</translation>
     </message>
     <message>
         <source>Invite</source>
-        <translation type="obsolete">Kutsu</translation>
+        <translation type="unfinished">Kutsu</translation>
     </message>
     <message>
         <source>Interested</source>
-        <translation type="obsolete">Kiinnostunut</translation>
+        <translation type="unfinished">Kiinnostunut</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="obsolete">Tuhoa</translation>
+        <translation type="unfinished">Tuhoa</translation>
     </message>
     <message>
         <source>Move Player</source>
-        <translation type="obsolete">Siirrä pelaaja</translation>
+        <translation type="unfinished">Siirrä pelaaja</translation>
     </message>
     <message>
         <source>Play Game</source>
-        <translation type="obsolete">Pelaa</translation>
+        <translation type="unfinished">Pelaa</translation>
     </message>
 </context>
 <context>
@@ -4366,61 +5386,6 @@ Kirjoita GPG-salasanasi pyydettäessä allekirjoittaaksesi uuden avaimesi.</tran
         <source>Location:</source>
         <translation type="obsolete">Sijainti:</translation>
     </message>
-    <message>
-        <source>QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QFrame#frame{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QFrame#frame_2{background-image: url(:/images/genbackground.png);} 
-</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>GeneralDialog</name>
@@ -4501,194 +5466,436 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Startup</source>
-        <translation type="obsolete">Käynnistys</translation>
+        <translation type="unfinished">Käynnistys</translation>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation type="obsolete">Käynnistä RetroShare yhtäaikaa järjestelmän kanssa</translation>
+        <translation type="unfinished">Käynnistä RetroShare yhtäaikaa järjestelmän kanssa</translation>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation type="obsolete">Käynnistä pienennettynä</translation>
+        <translation type="unfinished">Käynnistä pienennettynä</translation>
     </message>
     <message>
         <source>Misc</source>
-        <translation type="obsolete">Sekalaiset</translation>
+        <translation type="unfinished">Sekalaiset</translation>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
-        <translation type="obsolete">Älä näytä viestilaatikkoa RetroSharea suljettaessa</translation>
+        <translation type="unfinished">Älä näytä viestilaatikkoa RetroSharea suljettaessa</translation>
     </message>
     <message>
         <source>Do not Minimize to Tray Icon</source>
-        <translation type="obsolete">Älä pienennä ilmaisinalueelle</translation>
+        <translation type="unfinished">Älä pienennä ilmaisinalueelle</translation>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation type="obsolete">Automaattinen kirjautuminen</translation>
+        <translation type="unfinished">Automaattinen kirjautuminen</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="obsolete">Jouten</translation>
+        <translation type="unfinished">Jouten</translation>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation type="obsolete">Joutenoloaika</translation>
+        <translation type="unfinished">Joutenoloaika</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="obsolete">sekuntia</translation>
+        <translation type="unfinished">sekuntia</translation>
+    </message>
+    <message>
+        <source>Start minimized on system start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For Advanced Users </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Advanced Mode (Restart Required)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Register retroshare:// as url protocol (Restart required)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You need administrator rights to change this option.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not add retroshare:// as protocol.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not remove retroshare:// protocol.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GetStartedDialog</name>
+    <message>
+        <source>Getting Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Your Friends to RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Add Friends </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect To Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you startup RetroShare&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced: Open Firewall Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;If none of this makes sense, don&apos;t worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Further Help and Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open RS Website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open FAQ Wiki</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Online Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Email Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Email Feedback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Invitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your friend has installed RetroShare, and would like you to try it out.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can get RetroShare here: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare is a private Friend-2-Friend sharing network.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It has many features, including built-in chat, messaging, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>forums and channels, all of which are as secure as the file-sharing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Here is your friends ID Certificate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cut and paste the text below into your RetroShare client</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>and send them your ID Certificate to get securely connected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cut Below Here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Feedback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Support</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation type="obsolete">Vast: </translation>
+        <translation type="unfinished">Vast: </translation>
     </message>
     <message>
         <source>%1 KB/s</source>
-        <translation type="obsolete">%1 Kt/s</translation>
+        <translation type="unfinished">%1 Kt/s</translation>
     </message>
     <message>
         <source>Sent: </source>
-        <translation type="obsolete">Läh: </translation>
+        <translation type="unfinished">Läh: </translation>
     </message>
     <message>
         <source>%1 KB</source>
-        <translation type="obsolete">%1 Kt</translation>
+        <translation type="unfinished">%1 Kt</translation>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation type="obsolete">%1 Mt</translation>
+        <translation type="unfinished">%1 Mt</translation>
     </message>
     <message>
         <source>%1 GB</source>
-        <translation type="obsolete">%1 Gt</translation>
+        <translation type="unfinished">%1 Gt</translation>
     </message>
 </context>
 <context>
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation type="obsolete">Napauta ja vedä solmuja paikasta toiseen ja suurenna hiiren rullalla tai &apos;+&apos; ja &apos;-&apos; -näppäimillä</translation>
+        <translation type="unfinished">Napauta ja vedä solmuja paikasta toiseen ja suurenna hiiren rullalla tai &apos;+&apos; ja &apos;-&apos; -näppäimillä</translation>
     </message>
 </context>
 <context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation type="obsolete">Ystävät</translation>
+        <translation type="unfinished">Ystävät</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="obsolete">Perhe</translation>
+        <translation type="unfinished">Perhe</translation>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation type="obsolete">Työtoverit</translation>
+        <translation type="unfinished">Työtoverit</translation>
     </message>
     <message>
         <source>Other Contacts</source>
-        <translation type="obsolete">Muut kontaktit</translation>
+        <translation type="unfinished">Muut kontaktit</translation>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="obsolete">Suosikit</translation>
+        <translation type="unfinished">Suosikit</translation>
     </message>
 </context>
 <context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
-        <translation type="obsolete">Otsikko</translation>
+        <translation type="unfinished">Otsikko</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="obsolete">Kuvaus</translation>
+        <translation type="unfinished">Kuvaus</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
+    </message>
+    <message>
+        <source>Enter a Keyword here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by Popularity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by Last Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private Key Available</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>GuiExprElement</name>
     <message>
         <source>and</source>
-        <translation type="obsolete">ja</translation>
+        <translation type="unfinished">ja</translation>
     </message>
     <message>
         <source>and / or</source>
-        <translation type="obsolete">ja / tai</translation>
+        <translation type="unfinished">ja / tai</translation>
     </message>
     <message>
         <source>or</source>
-        <translation type="obsolete">tai</translation>
+        <translation type="unfinished">tai</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="obsolete">Polku</translation>
+        <translation type="unfinished">Polku</translation>
     </message>
     <message>
         <source>Extension</source>
-        <translation type="obsolete">Pääte</translation>
+        <translation type="unfinished">Pääte</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="obsolete">Tiiviste (hash)</translation>
+        <translation type="unfinished">Tiiviste (hash)</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">Päiväys</translation>
+        <translation type="unfinished">Päiväys</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="obsolete">Suosio</translation>
+        <translation type="unfinished">Suosio</translation>
     </message>
     <message>
         <source>contains</source>
-        <translation type="obsolete">sisältää</translation>
+        <translation type="unfinished">sisältää</translation>
     </message>
     <message>
         <source>contains all</source>
-        <translation type="obsolete">sisältää kaikki</translation>
+        <translation type="unfinished">sisältää kaikki</translation>
     </message>
     <message>
         <source>is</source>
-        <translation type="obsolete">on</translation>
+        <translation type="unfinished">on</translation>
     </message>
     <message>
         <source>less than</source>
-        <translation type="obsolete">pienempi kuin</translation>
+        <translation type="unfinished">pienempi kuin</translation>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation type="obsolete">pienempi tai sama kuin</translation>
+        <translation type="unfinished">pienempi tai sama kuin</translation>
     </message>
     <message>
         <source>equals</source>
-        <translation type="obsolete">yhtä kuin</translation>
+        <translation type="unfinished">yhtä kuin</translation>
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation type="obsolete">suurempi tai sama kuin</translation>
+        <translation type="unfinished">suurempi tai sama kuin</translation>
     </message>
     <message>
         <source>greater than</source>
-        <translation type="obsolete">suurempi kuin</translation>
+        <translation type="unfinished">suurempi kuin</translation>
     </message>
     <message>
         <source>is in range</source>
-        <translation type="obsolete">on välillä</translation>
+        <translation type="unfinished">on välillä</translation>
+    </message>
+</context>
+<context>
+    <name>HashBox</name>
+    <message>
+        <source>Drop file error.</source>
+        <translation type="unfinished">Virhe pudotettaessa tiedostoa.</translation>
+    </message>
+    <message>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not found or file name not accepted.</source>
+        <translation type="unfinished">Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
 </context>
 <context>
@@ -4826,7 +6033,7 @@ p, li { white-space: pre-wrap; }
     <name>HelpDialog</name>
     <message>
         <source>About</source>
-        <translation type="obsolete">Tietoja</translation>
+        <translation type="unfinished">Tietoja</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4834,7 +6041,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.<byte value="x9"/>&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.	&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
@@ -4850,7 +6057,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare on avoimen lähdekoodin alustariippumaton &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;yksityinen ja turvallinen hajautettu kommunikaatioalusta.<byte value="x9"/>&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;yksityinen ja turvallinen hajautettu kommunikaatioalusta.	&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Se antaa sinulle mahdollisuuden jakaa turvallisesti ystäviesi kanssa &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;käyttäen luottamuksen verkkoa vertaisten varmentamiseen ja OpenSSL-tekniikkaa kaiken kommunikaation salaamiseen. &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare tarjoaa tiedostojenjaon, keskustelut, viestit ja kanavat&lt;/span&gt;&lt;/p&gt;
@@ -4864,15 +6071,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authors</source>
-        <translation type="obsolete">Tekijät</translation>
+        <translation type="unfinished">Tekijät</translation>
     </message>
     <message>
         <source>Thanks to</source>
-        <translation type="obsolete">Kiitokset</translation>
+        <translation type="unfinished">Kiitokset</translation>
     </message>
     <message>
         <source>Translation</source>
-        <translation type="obsolete">Käännös</translation>
+        <translation type="unfinished">Käännös</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4891,7 +6098,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -4934,7 +6141,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>License Agreement</source>
-        <translation type="obsolete">Lisenssisopimus</translation>
+        <translation type="unfinished">Lisenssisopimus</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4942,11 +6149,30 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Tietoja RetroSharesta&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Usefull External Links to more information:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4980,7 +6206,7 @@ p, li { white-space: pre-wrap; }
     <name>ImHistoryBrowser</name>
     <message>
         <source>Message History</source>
-        <translation type="obsolete">Viestihistoria</translation>
+        <translation type="unfinished">Viestihistoria</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4988,7 +6214,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Message History&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -4996,31 +6222,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="obsolete">Kopioi</translation>
+        <translation type="unfinished">Kopioi</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
     </message>
     <message>
         <source>Mark all</source>
-        <translation type="obsolete">Merkitse kaikki</translation>
+        <translation type="unfinished">Merkitse kaikki</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="obsolete">Tuhoa</translation>
+        <translation type="unfinished">Tuhoa</translation>
     </message>
     <message>
         <source>Clear history</source>
-        <translation type="obsolete">Tyhjennä historia</translation>
+        <translation type="unfinished">Tyhjennä historia</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="obsolete">Lähetä</translation>
+        <translation type="unfinished">Lähetä</translation>
     </message>
 </context>
 <context>
@@ -5073,24 +6299,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
-    <message>
-        <source>QLabel#label{background: white;
-border: 2px solid black;
-border-radius: 10px;}
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>IntroPage</name>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation type="obsolete">&amp;Ystävysty valitsemieni ystävien ystävien kanssa</translation>
+        <translation type="unfinished">&amp;Ystävysty valitsemieni ystävien ystävien kanssa</translation>
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation type="obsolete">Lisää uusi ystävä</translation>
+        <translation type="unfinished">Lisää uusi ystävä</translation>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network. There are five possible ways to do this:</source>
@@ -5098,21 +6316,26 @@ border-radius: 10px;}
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation type="obsolete">&amp;Anna varmenne manuaalisesti</translation>
+        <translation type="unfinished">&amp;Anna varmenne manuaalisesti</translation>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation type="obsolete">&amp;Saat varmenteen ystävältäsi</translation>
+        <translation type="unfinished">&amp;Saat varmenteen ystävältäsi</translation>
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation type="obsolete">A&amp;nna RetroSharen tunniste manuaalisesti</translation>
+        <translation type="unfinished">A&amp;nna RetroSharen tunniste manuaalisesti</translation>
     </message>
     <message>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare) </source>
-        <translation type="obsolete">&amp;Lähetä kutsu sähköpostilla
+        <translation type="unfinished">&amp;Lähetä kutsu sähköpostilla
 (Hän saa sähköpostin, jossa on ohjeet RetroSharen lataamiseksi) </translation>
+    </message>
+    <message>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network.
+These ways are possible to do this:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5376,44 +6599,44 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the<byte value="x9"/>certificate in a zip file before sending, as some email programs<byte value="x9"/>don&apos;t transmit the file correctly).<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it<byte value="x9"/>from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the	certificate in a zip file before sending, as some email programs	don&apos;t transmit the file correctly).	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it	from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. <byte value="x9"/>Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. 	Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up <byte value="x9"/>a configuration window. which allows you to look at the details<byte value="x9"/>of the certificate.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, <byte value="x9"/>indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up 	a configuration window. which allows you to look at the details	of the certificate.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, 	indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:<byte value="x9"/>&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully<byte value="x9"/>connected.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:	&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully	connected.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -5455,15 +6678,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and<byte value="x9"/><byte value="x9"/>&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/><byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.		(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and		&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)		&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.		(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -5593,44 +6816,44 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the<byte value="x9"/>certificate in a zip file before sending, as some email programs<byte value="x9"/>don&apos;t transmit the file correctly).<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it<byte value="x9"/>from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the	certificate in a zip file before sending, as some email programs	don&apos;t transmit the file correctly).	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it	from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. <byte value="x9"/>Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. 	Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up <byte value="x9"/>a configuration window. which allows you to look at the details<byte value="x9"/>of the certificate.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, <byte value="x9"/>indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up 	a configuration window. which allows you to look at the details	of the certificate.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, 	indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:<byte value="x9"/>&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully<byte value="x9"/>connected.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:	&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully	connected.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -5672,15 +6895,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.<byte value="x9"/>(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and<byte value="x9"/>&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.<byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.<byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.<byte value="x9"/>(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.	(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and	&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.	(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.	(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.	(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -5762,39 +6985,39 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <source>Network</source>
-        <translation type="obsolete">Verkko</translation>
+        <translation type="unfinished">Verkko</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="obsolete">Ystävät</translation>
+        <translation type="unfinished">Ystävät</translation>
     </message>
     <message>
         <source>Transfers</source>
-        <translation type="obsolete">Siirrot</translation>
+        <translation type="unfinished">Siirrot</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="obsolete">Viestit</translation>
+        <translation type="unfinished">Viestit</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="obsolete">Kanavat</translation>
+        <translation type="unfinished">Kanavat</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="obsolete">Blogit</translation>
+        <translation type="unfinished">Blogit</translation>
     </message>
     <message>
         <source>Low disk space warning</source>
-        <translation type="obsolete">Varoitus: levytila vähissä</translation>
+        <translation type="unfinished">Varoitus: levytila vähissä</translation>
     </message>
     <message>
         <source>The disk space in your </source>
-        <translation type="obsolete">Levytila </translation>
+        <translation type="unfinished">Levytila </translation>
     </message>
     <message>
         <source> directory is running low (current limit is </source>
-        <translation type="obsolete"> -hakemistossasi käy vähiin (tämänhetkinen raja on </translation>
+        <translation type="unfinished"> -hakemistossasi käy vähiin (tämänhetkinen raja on </translation>
     </message>
     <message>
         <source>MB). 
@@ -5802,7 +7025,7 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation type="obsolete">Mt). 
+        <translation type="unfinished">Mt). 
 
  RetroShare pysäyttää nyt turvallisesti kaiken tähän hakemistoon tulevan dataliikenteen.
 
@@ -5810,7 +7033,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="obsolete">Tila</translation>
+        <translation type="unfinished">Tila</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -5818,75 +7041,75 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have %1 new messages</source>
-        <translation type="obsolete">Sinulle on uusia viestejä %1 kpl</translation>
+        <translation type="unfinished">Sinulle on uusia viestejä %1 kpl</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="obsolete">%1 kappalettal uusia viestejä</translation>
+        <translation type="unfinished">%1 kappalettal uusia viestejä</translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="obsolete">%1 uusi viesti</translation>
+        <translation type="unfinished">%1 uusi viesti</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
-        <translation type="obsolete">Sinulla on %1 valmista latausta</translation>
+        <translation type="unfinished">Sinulla on %1 valmista latausta</translation>
     </message>
     <message>
         <source>You have %1 completed download</source>
-        <translation type="obsolete">Sinulla on %1 valmis lataus</translation>
+        <translation type="unfinished">Sinulla on %1 valmis lataus</translation>
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation type="obsolete">%1 valmiita latauksia</translation>
+        <translation type="unfinished">%1 valmiita latauksia</translation>
     </message>
     <message>
         <source>%1 completed download</source>
-        <translation type="obsolete">%1 valmis lataus</translation>
+        <translation type="unfinished">%1 valmis lataus</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
-        <translation type="obsolete">Lataus: %1 (kB/s)</translation>
+        <translation type="unfinished">Lataus: %1 (kB/s)</translation>
     </message>
     <message>
         <source>Up: %1 (kB/s)</source>
-        <translation type="obsolete">Lähetys: %1 (kB/s)</translation>
+        <translation type="unfinished">Lähetys: %1 (kB/s)</translation>
     </message>
     <message>
         <source>%1 friend connected</source>
-        <translation type="obsolete">%1 ystävä yhdistettynä</translation>
+        <translation type="unfinished">%1 ystävä yhdistettynä</translation>
     </message>
     <message>
         <source>%1 friends connected</source>
-        <translation type="obsolete">%1 ystävää yhdistettynä</translation>
+        <translation type="unfinished">%1 ystävää yhdistettynä</translation>
     </message>
     <message>
         <source>Internal Error</source>
-        <translation type="obsolete">Sisäinen virhe</translation>
+        <translation type="unfinished">Sisäinen virhe</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation type="obsolete">Tämä näyttäisi olevan vanha RetroShare-linkki. Käytä mielummin kopiointia.</translation>
+        <translation type="unfinished">Tämä näyttäisi olevan vanha RetroShare-linkki. Käytä mielummin kopiointia.</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation type="obsolete">Linkki on virheellinen.</translation>
+        <translation type="unfinished">Linkki on virheellinen.</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Valinnat</translation>
+        <translation type="unfinished">Valinnat</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Invite Friend</source>
@@ -5894,31 +7117,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>MainWindow</source>
-        <translation type="obsolete">Pääikkuna</translation>
+        <translation type="unfinished">Pääikkuna</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="obsolete">Lisää ystävä</translation>
+        <translation type="unfinished">Lisää ystävä</translation>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
-        <translation type="obsolete">Ohjattu toiminto ystävän lisäämiseksi</translation>
+        <translation type="unfinished">Ohjattu toiminto ystävän lisäämiseksi</translation>
     </message>
     <message>
         <source>Add Share</source>
-        <translation type="obsolete">Lisää jako</translation>
+        <translation type="unfinished">Lisää jako</translation>
     </message>
     <message>
         <source>Quick Start Wizard</source>
-        <translation type="obsolete">Ohjattu nopea käynnistys</translation>
+        <translation type="unfinished">Ohjattu nopea käynnistys</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="obsolete">Etsi</translation>
+        <translation type="unfinished">Etsi</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="obsolete">Tiedostot</translation>
+        <translation type="unfinished">Tiedostot</translation>
     </message>
     <message>
         <source>Add Shared Directory</source>
@@ -5926,31 +7149,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show/Hide</source>
-        <translation type="obsolete">Piilota/Näytä</translation>
+        <translation type="unfinished">Piilota/Näytä</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="obsolete">Lo&amp;peta</translation>
+        <translation type="unfinished">Lo&amp;peta</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
-        <translation type="obsolete">Sinulle on %1 uusi viesti</translation>
+        <translation type="unfinished">Sinulle on %1 uusi viesti</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
-        <translation type="obsolete">Siirtonopeuskuvaaja</translation>
+        <translation type="unfinished">Siirtonopeuskuvaaja</translation>
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation type="obsolete">Avaa pikaviestin</translation>
+        <translation type="unfinished">Avaa pikaviestin</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="obsolete">Pienennä</translation>
+        <translation type="unfinished">Pienennä</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="obsolete">Suurenna</translation>
+        <translation type="unfinished">Suurenna</translation>
     </message>
     <message>
         <source>Links Cloud</source>
@@ -5958,31 +7181,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare %1 a secure decentralised communication platform</source>
-        <translation type="obsolete">RetroShare %1 turvallinen hajautettu kommunikaatioalusta</translation>
+        <translation type="unfinished">RetroShare %1 turvallinen hajautettu kommunikaatioalusta</translation>
     </message>
     <message>
         <source>Unfinished</source>
-        <translation type="obsolete">Kesken</translation>
+        <translation type="unfinished">Kesken</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="obsolete">Ohje</translation>
+        <translation type="unfinished">Ohje</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="obsolete">Tietoja</translation>
+        <translation type="unfinished">Tietoja</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="obsolete">Foorumit</translation>
+        <translation type="unfinished">Foorumit</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="obsolete">Avaa viestit</translation>
+        <translation type="unfinished">Avaa viestit</translation>
     </message>
     <message>
         <source>Applications</source>
-        <translation type="obsolete">Ohjelmat</translation>
+        <translation type="unfinished">Ohjelmat</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -5990,38 +7213,50 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="obsolete">Lisäosat</translation>
+        <translation type="unfinished">Lisäosat</translation>
     </message>
     <message>
         <source>Really quit ? </source>
-        <translation type="obsolete">Lopeta?</translation>
+        <translation type="unfinished">Lopeta?</translation>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation type="obsolete">Haluatko todella poistua RetroSharesta?</translation>
+        <translation type="unfinished">Haluatko todella poistua RetroSharesta?</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="obsolete">Lopeta</translation>
+        <translation type="unfinished">Lopeta</translation>
     </message>
     <message>
         <source>SMPlayer</source>
-        <translation type="obsolete">SMPlayer</translation>
+        <translation type="unfinished">SMPlayer</translation>
     </message>
     <message>
         <source>Messenger</source>
-        <translation type="obsolete">Pikaviestin</translation>
+        <translation type="unfinished">Pikaviestin</translation>
+    </message>
+    <message>
+        <source>Getting Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notify</source>
+        <translation type="unfinished">Huomauta</translation>
+    </message>
+    <message>
+        <source>Dht Details</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation type="obsolete">Kirjoita viesti</translation>
+        <translation type="unfinished">Kirjoita viesti</translation>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="obsolete">Kontaktit</translation>
+        <translation type="unfinished">Kontaktit</translation>
     </message>
     <message>
         <source>Search for Name:</source>
@@ -6033,15 +7268,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send To:</source>
-        <translation type="obsolete">Lähetä:</translation>
+        <translation type="unfinished">Lähetä:</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="obsolete">Aihe:</translation>
+        <translation type="unfinished">Aihe:</translation>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation type="obsolete">Kappale</translation>
+        <translation type="unfinished">Kappale</translation>
     </message>
     <message>
         <source>Search Friends</source>
@@ -6049,103 +7284,103 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation type="obsolete">&gt;&gt; Vastaanottaja</translation>
+        <translation type="unfinished">&gt;&gt; Vastaanottaja</translation>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation type="obsolete">&gt;&gt; Kopio</translation>
+        <translation type="unfinished">&gt;&gt; Kopio</translation>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation type="obsolete">&gt;&gt; Piilokopio</translation>
+        <translation type="unfinished">&gt;&gt; Piilokopio</translation>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation type="obsolete">&gt;&gt; Suosittele</translation>
+        <translation type="unfinished">&gt;&gt; Suosittele</translation>
     </message>
     <message>
         <source>Heading 1</source>
-        <translation type="obsolete">Otsikko 1</translation>
+        <translation type="unfinished">Otsikko 1</translation>
     </message>
     <message>
         <source>Heading 2</source>
-        <translation type="obsolete">Otsikko 2</translation>
+        <translation type="unfinished">Otsikko 2</translation>
     </message>
     <message>
         <source>Heading 3</source>
-        <translation type="obsolete">Otsikko 3</translation>
+        <translation type="unfinished">Otsikko 3</translation>
     </message>
     <message>
         <source>Heading 4</source>
-        <translation type="obsolete">Otsikko 4</translation>
+        <translation type="unfinished">Otsikko 4</translation>
     </message>
     <message>
         <source>Heading 5</source>
-        <translation type="obsolete">Otsikko 5</translation>
+        <translation type="unfinished">Otsikko 5</translation>
     </message>
     <message>
         <source>Heading 6</source>
-        <translation type="obsolete">Otsikko 6</translation>
+        <translation type="unfinished">Otsikko 6</translation>
     </message>
     <message>
         <source>Font size</source>
-        <translation type="obsolete">Fonttikoko</translation>
+        <translation type="unfinished">Fonttikoko</translation>
     </message>
     <message>
         <source>Increase font size</source>
-        <translation type="obsolete">Suurenna fonttikokoa</translation>
+        <translation type="unfinished">Suurenna fonttikokoa</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="obsolete">Pienennä fonttikokoa</translation>
+        <translation type="unfinished">Pienennä fonttikokoa</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="obsolete">Lihavoitu</translation>
+        <translation type="unfinished">Lihavoitu</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="obsolete">Alleviivattu</translation>
+        <translation type="unfinished">Alleviivattu</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="obsolete">Kursivoitu</translation>
+        <translation type="unfinished">Kursivoitu</translation>
     </message>
     <message>
         <source>Select Color</source>
-        <translation type="obsolete">Valitse väri</translation>
+        <translation type="unfinished">Valitse väri</translation>
     </message>
     <message>
         <source>Alignment</source>
-        <translation type="obsolete">Asettelu</translation>
+        <translation type="unfinished">Asettelu</translation>
     </message>
     <message>
         <source>Add a Image</source>
-        <translation type="obsolete">Lisää kuva</translation>
+        <translation type="unfinished">Lisää kuva</translation>
     </message>
     <message>
         <source>Sets text font to code style</source>
-        <translation type="obsolete">Asettaa tekstin fontin koodityyliin</translation>
+        <translation type="unfinished">Asettaa tekstin fontin koodityyliin</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="obsolete">Merkkaukset:</translation>
+        <translation type="unfinished">Merkkaukset:</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="obsolete">Merkkaukset</translation>
+        <translation type="unfinished">Merkkaukset</translation>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation type="obsolete">Suositellut tiedostot</translation>
+        <translation type="unfinished">Suositellut tiedostot</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="obsolete">Tiedoston nimi</translation>
+        <translation type="unfinished">Tiedoston nimi</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Sources</source>
@@ -6153,85 +7388,85 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation type="obsolete">Tiiviste (hash)</translation>
+        <translation type="unfinished">Tiiviste (hash)</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="obsolete">Lähetä</translation>
+        <translation type="unfinished">Lähetä</translation>
     </message>
     <message>
         <source>Send this message now</source>
-        <translation type="obsolete">Lähetä tämä viesti nyt</translation>
+        <translation type="unfinished">Lähetä tämä viesti nyt</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="obsolete">Vastaa</translation>
+        <translation type="unfinished">Vastaa</translation>
     </message>
     <message>
         <source>Toggle Contacts View</source>
-        <translation type="obsolete">Kontaktinäkymän vaihto</translation>
+        <translation type="unfinished">Kontaktinäkymän vaihto</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="obsolete">Tallenna</translation>
+        <translation type="unfinished">Tallenna</translation>
     </message>
     <message>
         <source>Save this message</source>
-        <translation type="obsolete">Tallenna tämä viesti</translation>
+        <translation type="unfinished">Tallenna tämä viesti</translation>
     </message>
     <message>
         <source>Attach</source>
-        <translation type="obsolete">Liitä</translation>
+        <translation type="unfinished">Liitä</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="obsolete">Liitä tiedosto</translation>
+        <translation type="unfinished">Liitä tiedosto</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation type="obsolete">Lainaa</translation>
+        <translation type="unfinished">Lainaa</translation>
     </message>
     <message>
         <source>Add Blockquote</source>
-        <translation type="obsolete">Lisää lainauslohko (blockquote)</translation>
+        <translation type="unfinished">Lisää lainauslohko (blockquote)</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="obsolete">Tas&amp;aa vasemmalle</translation>
+        <translation type="unfinished">Tas&amp;aa vasemmalle</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="obsolete">&amp;Keskitä</translation>
+        <translation type="unfinished">&amp;Keskitä</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="obsolete">Tasaa &amp;oikealle</translation>
+        <translation type="unfinished">Tasaa &amp;oikealle</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation type="obsolete">Tasaa &amp;molemmat reunat</translation>
+        <translation type="unfinished">Tasaa &amp;molemmat reunat</translation>
     </message>
     <message>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
-        <translation type="obsolete">Suosittelen hyvää ystävääni, voit luottaa häneen, kun luotat minuun. &lt;br&gt; Kopioi ystävälinkki ja liitä se ystävälistaan</translation>
+        <translation type="unfinished">Suosittelen hyvää ystävääni, voit luottaa häneen, kun luotat minuun. &lt;br&gt; Kopioi ystävälinkki ja liitä se ystävälistaan</translation>
     </message>
     <message>
         <source>Save Message</source>
-        <translation type="obsolete">Tallenna viesti</translation>
+        <translation type="unfinished">Tallenna viesti</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation type="obsolete">Viestiä ei ole lähetetty.
+        <translation type="unfinished">Viestiä ei ole lähetetty.
 Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
     </message>
     <message>
         <source>Friend Recommendation(s)</source>
-        <translation type="obsolete">Ystäväsuositukset</translation>
+        <translation type="unfinished">Ystäväsuositukset</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="obsolete">Liitä RetroShare-linkki</translation>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
     </message>
     <message>
         <source>No Title</source>
@@ -6239,165 +7474,165 @@ Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="obsolete">Ystävän yksityiskohdat</translation>
+        <translation type="unfinished">Ystävän yksityiskohdat</translation>
     </message>
     <message>
         <source>Re:</source>
-        <translation type="obsolete">Vs:</translation>
+        <translation type="unfinished">Vs:</translation>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation type="obsolete">Fwd:</translation>
+        <translation type="unfinished">Fwd:</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation type="obsolete">Haluatko lähettää viestin ilman otsikkoa?</translation>
+        <translation type="unfinished">Haluatko lähettää viestin ilman otsikkoa?</translation>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
-        <translation type="obsolete">Ole hyvä ja lisää ainakin yksi vastaanottaja.</translation>
+        <translation type="unfinished">Ole hyvä ja lisää ainakin yksi vastaanottaja.</translation>
     </message>
     <message>
         <source>To</source>
-        <translation type="obsolete">Vastaanottaja</translation>
+        <translation type="unfinished">Vastaanottaja</translation>
     </message>
     <message>
         <source>Cc</source>
-        <translation type="obsolete">Kopio</translation>
+        <translation type="unfinished">Kopio</translation>
     </message>
     <message>
         <source>Bcc</source>
-        <translation type="obsolete">Piilokopio</translation>
+        <translation type="unfinished">Piilokopio</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="obsolete">Tuntematon</translation>
+        <translation type="unfinished">Tuntematon</translation>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation type="obsolete">Tuntematon ystävä</translation>
+        <translation type="unfinished">Tuntematon ystävä</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="obsolete">&amp;Tiedosto</translation>
+        <translation type="unfinished">&amp;Tiedosto</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="obsolete">&amp;Uusi</translation>
+        <translation type="unfinished">&amp;Uusi</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="obsolete">&amp;Avaa...</translation>
+        <translation type="unfinished">&amp;Avaa...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="obsolete">&amp;Tallenna</translation>
+        <translation type="unfinished">&amp;Tallenna</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="obsolete">Tallenna t&amp;iedostona</translation>
+        <translation type="unfinished">Tallenna t&amp;iedostona</translation>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation type="obsolete">Tallenna &amp;luonnoksena</translation>
+        <translation type="unfinished">Tallenna &amp;luonnoksena</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="obsolete">Tu&amp;losta...</translation>
+        <translation type="unfinished">Tu&amp;losta...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="obsolete">&amp;Vie PDF...</translation>
+        <translation type="unfinished">&amp;Vie PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="obsolete">Lo&amp;peta</translation>
+        <translation type="unfinished">Lo&amp;peta</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="obsolete">&amp;Muokkaa</translation>
+        <translation type="unfinished">&amp;Muokkaa</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="obsolete">K&amp;umoa</translation>
+        <translation type="unfinished">K&amp;umoa</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="obsolete">To&amp;ista</translation>
+        <translation type="unfinished">To&amp;ista</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="obsolete">&amp;Leikkaa</translation>
+        <translation type="unfinished">&amp;Leikkaa</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="obsolete">K&amp;opioi</translation>
+        <translation type="unfinished">K&amp;opioi</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="obsolete">Lii&amp;tä</translation>
+        <translation type="unfinished">Lii&amp;tä</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="obsolete">&amp;Näytä</translation>
+        <translation type="unfinished">&amp;Näytä</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
-        <translation type="obsolete">&amp;Kontaktit sivupalkissa</translation>
+        <translation type="unfinished">&amp;Kontaktit sivupalkissa</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="obsolete">Lis&amp;ää</translation>
+        <translation type="unfinished">Lis&amp;ää</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="obsolete">Ku&amp;va</translation>
+        <translation type="unfinished">Ku&amp;va</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation type="obsolete">V&amp;aakaviiva</translation>
+        <translation type="unfinished">V&amp;aakaviiva</translation>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation type="obsolete">Muotoil&amp;e</translation>
+        <translation type="unfinished">Muotoil&amp;e</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="obsolete">Avaa tiedosto...</translation>
+        <translation type="unfinished">Avaa tiedosto...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="obsolete">HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="obsolete">Tulosta asiakirja</translation>
+        <translation type="unfinished">Tulosta asiakirja</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="obsolete">Viestiä ei ole lähetetty.
+        <translation type="unfinished">Viestiä ei ole lähetetty.
 Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="obsolete">Valitse kuva</translation>
+        <translation type="unfinished">Valitse kuva</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="obsolete">Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation type="unfinished">Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="obsolete">Lisää ylimääräinen tiedosto</translation>
+        <translation type="unfinished">Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -6411,6 +7646,26 @@ Haluatko tallentaa viestin?</translation>
         <source>File not found or file name not accepted.</source>
         <translation type="obsolete">Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
     </message>
+    <message>
+        <source>Add to &quot;To&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to &quot;CC&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to &quot;BCC&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add as Recommend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -6420,35 +7675,51 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="obsolete">Aseta viesti luetuksi aktivoitaessa</translation>
+        <translation type="unfinished">Aseta viesti luetuksi aktivoitaessa</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="obsolete">Merkkaukset</translation>
+        <translation type="unfinished">Merkkaukset</translation>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation type="obsolete">Merkkauksilla voit luokitella viestejä ja järjestää niitä tärkeyden mukaan</translation>
+        <translation type="unfinished">Merkkauksilla voit luokitella viestejä ja järjestää niitä tärkeyden mukaan</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Lisää</translation>
+        <translation type="unfinished">Lisää</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="obsolete">Muokkaa</translation>
+        <translation type="unfinished">Muokkaa</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="obsolete">Tuhoa</translation>
+        <translation type="unfinished">Tuhoa</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="obsolete">Oletus</translation>
+        <translation type="unfinished">Oletus</translation>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation type="obsolete">Muokka merkkausta</translation>
+        <translation type="unfinished">Muokka merkkausta</translation>
+    </message>
+    <message>
+        <source>Reading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open messages in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A new tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A new window</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6463,7 +7734,7 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="obsolete">Aihe</translation>
+        <translation type="unfinished">Aihe</translation>
     </message>
     <message>
         <source>Play video</source>
@@ -6483,7 +7754,15 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Sulje</translation>
+        <translation type="unfinished">Sulje</translation>
+    </message>
+    <message>
+        <source>1 new Message from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sub:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6493,208 +7772,224 @@ Haluatko tallentaa viestin?</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Suositellut tiedostot&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="obsolete">Aihe:</translation>
+        <translation type="unfinished">Aihe:</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="obsolete">Lähettäjä:</translation>
+        <translation type="unfinished">Lähettäjä:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="obsolete">Vastaanottaja:</translation>
+        <translation type="unfinished">Vastaanottaja:</translation>
     </message>
     <message>
         <source>Cc:</source>
-        <translation type="obsolete">Kopio:</translation>
+        <translation type="unfinished">Kopio:</translation>
     </message>
     <message>
         <source>Bcc:</source>
-        <translation type="obsolete">Piilokopio:</translation>
+        <translation type="unfinished">Piilokopio:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="obsolete">Merkkaukset:</translation>
+        <translation type="unfinished">Merkkaukset:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="obsolete">Tiedoston nimi</translation>
+        <translation type="unfinished">Tiedoston nimi</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="obsolete">Tiiviste (hash)</translation>
+        <translation type="unfinished">Tiiviste (hash)</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Tulosta</translation>
+        <translation type="unfinished">Tulosta</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="obsolete">Tulostuksen esikatselu</translation>
+        <translation type="unfinished">Tulostuksen esikatselu</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="obsolete">Tiedosto</translation>
+        <translation type="unfinished">Tiedosto</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="obsolete">Tiedostot</translation>
+        <translation type="unfinished">Tiedostot</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="obsolete">Tulosta asiakirja</translation>
+        <translation type="unfinished">Tulosta asiakirja</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="obsolete">HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+    </message>
+    <message>
+        <source>Download all Recommended Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download all</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation type="obsolete">Uusi viesti</translation>
+        <translation type="unfinished">Uusi viesti</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="obsolete">Vastaa valittuun viestiin</translation>
+        <translation type="unfinished">Vastaa valittuun viestiin</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="obsolete">Vastaa</translation>
+        <translation type="unfinished">Vastaa</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="obsolete">Vastaa kaikkiin valittuihin viesteihin</translation>
+        <translation type="unfinished">Vastaa kaikkiin valittuihin viesteihin</translation>
     </message>
     <message>
         <source>Reply all</source>
-        <translation type="obsolete">Vastaa kaikille</translation>
+        <translation type="unfinished">Vastaa kaikille</translation>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="obsolete">Välitä valittu viesti</translation>
+        <translation type="unfinished">Välitä valittu viesti</translation>
     </message>
     <message>
         <source>Foward</source>
-        <translation type="obsolete">Välitä</translation>
+        <translation type="unfinished">Välitä</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="obsolete">Poista valittu viesti</translation>
+        <translation type="unfinished">Poista valittu viesti</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="obsolete">Tuhoa</translation>
+        <translation type="unfinished">Tuhoa</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="obsolete">Tulosta valittu viesti</translation>
+        <translation type="unfinished">Tulosta valittu viesti</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Tulosta</translation>
+        <translation type="unfinished">Tulosta</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="obsolete">Merkkaukset</translation>
+        <translation type="unfinished">Merkkaukset</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="obsolete">Tulostuksen esikatselu</translation>
+        <translation type="unfinished">Tulostuksen esikatselu</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation type="obsolete">Painikkeet vain kuvakkeella</translation>
+        <translation type="unfinished">Painikkeet vain kuvakkeella</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation type="obsolete">Painikkeet tekstillä kuvakkeen vieressä</translation>
+        <translation type="unfinished">Painikkeet tekstillä kuvakkeen vieressä</translation>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation type="obsolete">Painikkeet tekstillä</translation>
+        <translation type="unfinished">Painikkeet tekstillä</translation>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation type="obsolete">Painikkeet tekstillä kuvakkeen alla</translation>
+        <translation type="unfinished">Painikkeet tekstillä kuvakkeen alla</translation>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation type="obsolete">Aseta teksti kuvakkeen alle</translation>
+        <translation type="unfinished">Aseta teksti kuvakkeen alle</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="obsolete">&amp;Tiedosto</translation>
+        <translation type="unfinished">&amp;Tiedosto</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="obsolete">Tallenna t&amp;iedostona</translation>
+        <translation type="unfinished">Tallenna t&amp;iedostona</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="obsolete">Tu&amp;losta...</translation>
+        <translation type="unfinished">Tu&amp;losta...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="obsolete">Tulostuksen esikatselu...</translation>
+        <translation type="unfinished">Tulostuksen esikatselu...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="obsolete">Lo&amp;peta</translation>
+        <translation type="unfinished">Lo&amp;peta</translation>
+    </message>
+    <message>
+        <source>Compose</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation type="obsolete">Uusi viesti</translation>
+        <translation type="unfinished">Uusi viesti</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation type="obsolete">Vastaa viestiin</translation>
+        <translation type="unfinished">Vastaa viestiin</translation>
     </message>
     <message>
         <source>Remove Message</source>
-        <translation type="obsolete">Poista viesti</translation>
+        <translation type="unfinished">Poista viesti</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">Päiväys</translation>
+        <translation type="unfinished">Päiväys</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="obsolete">Lähettäjä</translation>
+        <translation type="unfinished">Lähettäjä</translation>
     </message>
     <message>
         <source>Size</source>
@@ -6712,15 +8007,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply</source>
-        <translation type="obsolete">Vastaa</translation>
+        <translation type="unfinished">Vastaa</translation>
     </message>
     <message>
         <source>Reply all</source>
-        <translation type="obsolete">Vastaa kaikille</translation>
+        <translation type="unfinished">Vastaa kaikille</translation>
     </message>
     <message>
         <source>Foward</source>
-        <translation type="obsolete">Välitä</translation>
+        <translation type="unfinished">Välitä</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -6731,51 +8026,51 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="obsolete">Tuhoa</translation>
+        <translation type="unfinished">Tuhoa</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="obsolete">Kirjoita viesti</translation>
+        <translation type="unfinished">Kirjoita viesti</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="obsolete">Vastaa valittuun viestiin</translation>
+        <translation type="unfinished">Vastaa valittuun viestiin</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="obsolete">Vastaa kaikkiin valittuihin viesteihin</translation>
+        <translation type="unfinished">Vastaa kaikkiin valittuihin viesteihin</translation>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="obsolete">Välitä valittu viesti</translation>
+        <translation type="unfinished">Välitä valittu viesti</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="obsolete">Poista valittu viesti</translation>
+        <translation type="unfinished">Poista valittu viesti</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="obsolete">Tulosta valittu viesti</translation>
+        <translation type="unfinished">Tulosta valittu viesti</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="obsolete">Näytä</translation>
+        <translation type="unfinished">Näytä</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="obsolete">Liitteet</translation>
+        <translation type="unfinished">Liitteet</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="obsolete">Sisältö</translation>
+        <translation type="unfinished">Sisältö</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="obsolete">Merkkaukset</translation>
+        <translation type="unfinished">Merkkaukset</translation>
     </message>
     <message>
         <source>Tag</source>
@@ -6783,23 +8078,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Inbox</source>
-        <translation type="obsolete">Saapuneet</translation>
+        <translation type="unfinished">Saapuneet</translation>
     </message>
     <message>
         <source>Outbox</source>
-        <translation type="obsolete">Lähtevät</translation>
+        <translation type="unfinished">Lähtevät</translation>
     </message>
     <message>
         <source>Draft</source>
-        <translation type="obsolete">Luonnokset</translation>
+        <translation type="unfinished">Luonnokset</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="obsolete">Lähetetyt</translation>
+        <translation type="unfinished">Lähetetyt</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="obsolete">Roskat</translation>
+        <translation type="unfinished">Roskat</translation>
     </message>
     <message>
         <source>Favorite Tags</source>
@@ -6807,11 +8102,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Total Inbox:</source>
-        <translation type="obsolete">Saapuneet yhteensä:</translation>
+        <translation type="unfinished">Saapuneet yhteensä:</translation>
     </message>
     <message>
         <source>Folders</source>
-        <translation type="obsolete">Hakemistot</translation>
+        <translation type="unfinished">Hakemistot</translation>
     </message>
     <message>
         <source>Cc:</source>
@@ -6827,35 +8122,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print...</source>
-        <translation type="obsolete">Tulosta...</translation>
+        <translation type="unfinished">Tulosta...</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="obsolete">Tulostuksen esikatselu</translation>
+        <translation type="unfinished">Tulostuksen esikatselu</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation type="obsolete">Painikkeet vain kuvakkeella</translation>
+        <translation type="unfinished">Painikkeet vain kuvakkeella</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation type="obsolete">Painikkeet tekstillä kuvakkeen vieressä</translation>
+        <translation type="unfinished">Painikkeet tekstillä kuvakkeen vieressä</translation>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation type="obsolete">Painikkeet tekstillä</translation>
+        <translation type="unfinished">Painikkeet tekstillä</translation>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation type="obsolete">Painikkeet tekstillä kuvakkeen alla</translation>
+        <translation type="unfinished">Painikkeet tekstillä kuvakkeen alla</translation>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation type="obsolete">Aseta teksti kuvakkeen alle</translation>
+        <translation type="unfinished">Aseta teksti kuvakkeen alle</translation>
     </message>
     <message>
         <source>Save As...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -6895,19 +8190,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forward selected Message</source>
-        <translation type="obsolete">Välitä valittu viesti</translation>
+        <translation type="unfinished">Välitä valittu viesti</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="obsolete">Muokkaa</translation>
+        <translation type="unfinished">Muokkaa</translation>
     </message>
     <message>
         <source>Remove Messages</source>
-        <translation type="obsolete">Poista viestit</translation>
+        <translation type="unfinished">Poista viestit</translation>
     </message>
     <message>
         <source>Forward Message</source>
-        <translation type="obsolete">Välitä viesti</translation>
+        <translation type="unfinished">Välitä viesti</translation>
     </message>
     <message>
         <source>Remove All Tags</source>
@@ -6923,15 +8218,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="obsolete">Merkitse luetuksi</translation>
+        <translation type="unfinished">Merkitse luetuksi</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="obsolete">Merkitse lukemattomaksi</translation>
+        <translation type="unfinished">Merkitse lukemattomaksi</translation>
     </message>
     <message>
         <source>Undelete</source>
-        <translation type="obsolete">Kumoa tuhoaminen</translation>
+        <translation type="unfinished">Kumoa tuhoaminen</translation>
     </message>
     <message>
         <source>Download</source>
@@ -6939,7 +8234,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Empty trash</source>
-        <translation type="obsolete">Tyhjennä roskat</translation>
+        <translation type="unfinished">Tyhjennä roskat</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -6951,11 +8246,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Drafts</source>
-        <translation type="obsolete">Luonnokset</translation>
+        <translation type="unfinished">Luonnokset</translation>
     </message>
     <message>
         <source>To</source>
-        <translation type="obsolete">Vastaanottaja</translation>
+        <translation type="unfinished">Vastaanottaja</translation>
     </message>
     <message>
         <source>File</source>
@@ -6975,15 +8270,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Total:</source>
-        <translation type="obsolete">Yhteensä:</translation>
+        <translation type="unfinished">Yhteensä:</translation>
     </message>
     <message>
         <source>Reply to All</source>
-        <translation type="obsolete">Vastaa kaikille</translation>
+        <translation type="unfinished">Vastaa kaikille</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="obsolete">Aihe</translation>
+        <translation type="unfinished">Aihe</translation>
     </message>
     <message>
         <source>Subject:</source>
@@ -7013,7 +8308,67 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Tulosta</translation>
+        <translation type="unfinished">Tulosta</translation>
+    </message>
+    <message>
+        <source>Quick View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by attachments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by star</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Starred</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in a new window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in a new tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Star</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit as new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to sort by to</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7229,86 +8584,6 @@ p, li { white-space: pre-wrap; }
         <source>Share Files for your Friends</source>
         <translation>Jaa tiedostoja ystävillesi</translation>
     </message>
-    <message>
-        <source>QPushButton {
-         text-align: left;
-}
-QPushButton:hover {
-            border: 2px solid #8f8f91;
-            border-radius: 6px;
-            background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                              stop: 0 #f6f7fa, stop: 1 #dadbde);
-            min-width: 80px;
-
-}
-QPushButton:pressed {
-            background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                              stop: 0 #dadbde, stop: 1 #f6f7fa);
-}
-
-QPushButton:flat {
-            border: none; /* no border for a flat push button */
-}
-
-QPushButton:default {
-            border-color: navy; /* make the default button prominent */
-}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>#frame { 
-border-image:none; 
-background-color: qlineargradient(x1: 0, y1: 0, x2: 0.0, y2: 1.0,
-stop: 0 #ffffff,
-stop: 0.4 #eeeeee,
-stop: 0.401 #e2e2e2,
-stop: 1 #dddddd);
-color: #CCCCCC;
-border-top: 1px solid #606060;
-border-bottom: 1px solid #CCCCCC;
-}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QPushButton::menu-indicator { 
-subcontrol-origin: padding;
-subcontrol-position: bottom right;
-}
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QPushButton
-{
- border-image: url(:/images/closenormal.png) 
-}
-                                
-QPushButton:hover 
-{
-border-image: url(:/images/closehover.png) 
-}
-                                
-QPushButton:pressed  {
-border-image: url(:/images/closepressed.png) 
-}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QFrame#logoframe{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QFrame#frame_2{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-}</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>MsgFeed</name>
@@ -7333,31 +8608,47 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
-        <translation type="obsolete">Vastaa viestiin</translation>
+        <translation type="unfinished">Vastaa viestiin</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="obsolete">Vastaa viestiin</translation>
+        <translation type="unfinished">Vastaa viestiin</translation>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation type="obsolete">Tuhoa viesti</translation>
+        <translation type="unfinished">Tuhoa viesti</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="obsolete">Toista media</translation>
+        <translation type="unfinished">Toista media</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
+    </message>
+    <message>
+        <source>Message From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sent Msg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draft Msg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pending Msg</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7514,23 +8805,59 @@ p, li { white-space: pre-wrap; }
     <name>NATStatus</name>
     <message>
         <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;NAT:&lt;/strong&gt;</translation>
+        <translation type="unfinished">&lt;strong&gt;NAT:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Internet connection</source>
-        <translation type="obsolete">Internetyhteys</translation>
+        <translation type="unfinished">Internetyhteys</translation>
     </message>
     <message>
         <source>No internet connection</source>
-        <translation type="obsolete">Ei internetyhteyttä</translation>
+        <translation type="unfinished">Ei internetyhteyttä</translation>
     </message>
     <message>
         <source>No local network</source>
-        <translation type="obsolete">Ei paikallista verkkoa</translation>
+        <translation type="unfinished">Ei paikallista verkkoa</translation>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
-        <translation type="obsolete">OK | RetroSharen palvelin</translation>
+        <translation type="unfinished">OK | RetroSharen palvelin</translation>
+    </message>
+    <message>
+        <source>Network Status Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation type="unfinished">Offline</translation>
+    </message>
+    <message>
+        <source>Nasty Firewall</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Disabled and Firewalled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network Restarting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Behind Firewall</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forwarded Port</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7561,32 +8888,32 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Personal signature</source>
-        <translation type="obsolete">Henkilökohtainen allekirjoitus</translation>
+        <translation type="unfinished">Henkilökohtainen allekirjoitus</translation>
     </message>
     <message>
         <source>GPG key signed by you</source>
-        <translation type="obsolete">Allekirjoittamasi GPG-avain</translation>
+        <translation type="unfinished">Allekirjoittamasi GPG-avain</translation>
     </message>
     <message>
         <source>Marginally trusted peer</source>
-        <translation type="obsolete">Rajallisesti luotettu vertainen</translation>
+        <translation type="unfinished">Rajallisesti luotettu vertainen</translation>
     </message>
     <message>
         <source>Fully trusted peer</source>
-        <translation type="obsolete">Täysin luotettu vertainen</translation>
+        <translation type="unfinished">Täysin luotettu vertainen</translation>
     </message>
     <message>
         <source>Untrusted peer</source>
-        <translation type="obsolete">Ei-luotettu vertainen</translation>
+        <translation type="unfinished">Ei-luotettu vertainen</translation>
     </message>
     <message>
         <source>Has authenticated me</source>
-        <translation type="obsolete">On varmentanut minut</translation>
+        <translation type="unfinished">On varmentanut minut</translation>
     </message>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation type="obsolete">on varmentanut sinut.
+        <translation type="unfinished">on varmentanut sinut.
 Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden.</translation>
     </message>
     <message>
@@ -7621,7 +8948,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -7641,11 +8968,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cert Id</source>
-        <translation type="obsolete">Varmennetunniste</translation>
+        <translation type="unfinished">Varmennetunniste</translation>
     </message>
     <message>
         <source>Network</source>
-        <translation type="obsolete">Verkko</translation>
+        <translation type="unfinished">Verkko</translation>
     </message>
     <message>
         <source>Peer Details</source>
@@ -7653,43 +8980,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authentication matrix</source>
-        <translation type="obsolete">Varmennusmatriisi</translation>
+        <translation type="unfinished">Varmennusmatriisi</translation>
     </message>
     <message>
         <source>Network View</source>
-        <translation type="obsolete">Verkkonäkymä</translation>
+        <translation type="unfinished">Verkkonäkymä</translation>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="obsolete">Torju ystävä</translation>
+        <translation type="unfinished">Torju ystävä</translation>
     </message>
     <message>
         <source>Make friend</source>
-        <translation type="obsolete">Ystävysty</translation>
+        <translation type="unfinished">Ystävysty</translation>
     </message>
     <message>
         <source>Delete certificate</source>
-        <translation type="obsolete">Tuhoa varmenne</translation>
+        <translation type="unfinished">Tuhoa varmenne</translation>
     </message>
     <message>
         <source>Export my Cert</source>
-        <translation type="obsolete">Vie varmenteeni</translation>
+        <translation type="unfinished">Vie varmenteeni</translation>
     </message>
     <message>
         <source>Peer details...</source>
-        <translation type="obsolete">Vertaisen yksityiskohdat...</translation>
+        <translation type="unfinished">Vertaisen yksityiskohdat...</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="obsolete">Tuntematon</translation>
+        <translation type="unfinished">Tuntematon</translation>
     </message>
     <message>
         <source>yourself</source>
-        <translation type="obsolete">sinä itse</translation>
+        <translation type="unfinished">sinä itse</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -7717,11 +9044,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Did I authenticated peer</source>
-        <translation type="obsolete">Varmensinko vertaisen</translation>
+        <translation type="unfinished">Varmensinko vertaisen</translation>
     </message>
     <message>
         <source>Did I sign his gpg key</source>
-        <translation type="obsolete">Allekirjoitinko hänen GPG-avaimensa</translation>
+        <translation type="unfinished">Allekirjoitinko hänen GPG-avaimensa</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7729,7 +9056,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Network&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -7737,7 +9064,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="obsolete">Vertaisen tunniste</translation>
+        <translation type="unfinished">Vertaisen tunniste</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7745,7 +9072,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -7753,83 +9080,83 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Network Status</source>
-        <translation type="obsolete">Verkon tila</translation>
+        <translation type="unfinished">Verkon tila</translation>
     </message>
     <message>
         <source>Local network</source>
-        <translation type="obsolete">Paikallinen verkko</translation>
+        <translation type="unfinished">Paikallinen verkko</translation>
     </message>
     <message>
         <source>UPnP</source>
-        <translation type="obsolete">UPnP</translation>
+        <translation type="unfinished">UPnP</translation>
     </message>
     <message>
         <source>Did peer authenticated me</source>
-        <translation type="obsolete">Varmensiko vertainen minut</translation>
+        <translation type="unfinished">Varmensiko vertainen minut</translation>
     </message>
     <message>
         <source>Search Network</source>
-        <translation type="obsolete">Etsi verkosta</translation>
+        <translation type="unfinished">Etsi verkosta</translation>
     </message>
     <message>
         <source>Clear Filter</source>
-        <translation type="obsolete">Tyhjennä suodatin</translation>
+        <translation type="unfinished">Tyhjennä suodatin</translation>
     </message>
     <message>
         <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation type="obsolete">Näytä avaimet, jotka eivät ole GPG:n luottamuksen verkon varmentamia</translation>
+        <translation type="unfinished">Näytä avaimet, jotka eivät ole GPG:n luottamuksen verkon varmentamia</translation>
     </message>
     <message>
         <source>External ip address finder</source>
-        <translation type="obsolete">Ulkoisen IP-osoitteen paikallistaminen</translation>
+        <translation type="unfinished">Ulkoisen IP-osoitteen paikallistaminen</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="obsolete">Tyhjennä</translation>
+        <translation type="unfinished">Tyhjennä</translation>
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation type="obsolete">Aseta välilehdet oikealle</translation>
+        <translation type="unfinished">Aseta välilehdet oikealle</translation>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation type="obsolete">Aseta välilehdet pohjoiseen</translation>
+        <translation type="unfinished">Aseta välilehdet pohjoiseen</translation>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation type="obsolete">Aseta välilehdet etelään</translation>
+        <translation type="unfinished">Aseta välilehdet etelään</translation>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation type="obsolete">Aseta välilehdet vasemmalle</translation>
+        <translation type="unfinished">Aseta välilehdet vasemmalle</translation>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
-        <translation type="obsolete">Aseta välilehdet pyöristetyiksi</translation>
+        <translation type="unfinished">Aseta välilehdet pyöristetyiksi</translation>
     </message>
     <message>
         <source>Set Tabs Triangular</source>
-        <translation type="obsolete">Aseta välilehdet kolmikulmaisiksi</translation>
+        <translation type="unfinished">Aseta välilehdet kolmikulmaisiksi</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="obsolete">Lisää ystävä</translation>
+        <translation type="unfinished">Lisää ystävä</translation>
     </message>
     <message>
         <source>Copy My Key to Clipboard</source>
-        <translation type="obsolete">Kopioi avaimeni leikepöydälle</translation>
+        <translation type="unfinished">Kopioi avaimeni leikepöydälle</translation>
     </message>
     <message>
         <source>Export My Key</source>
-        <translation type="obsolete">Vie avaimeni</translation>
+        <translation type="unfinished">Vie avaimeni</translation>
     </message>
     <message>
         <source>Create New Profile</source>
-        <translation type="obsolete">Luo uusi profiili</translation>
+        <translation type="unfinished">Luo uusi profiili</translation>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation type="obsolete">Luo uusi profiili</translation>
+        <translation type="unfinished">Luo uusi profiili</translation>
     </message>
 </context>
 <context>
@@ -7869,15 +9196,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
-        <translation type="obsolete">background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray)</translation>
+        <translation type="unfinished">background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray)</translation>
     </message>
     <message>
         <source>Redraw</source>
-        <translation type="obsolete">Uudista näkymä</translation>
+        <translation type="unfinished">Uudista näkymä</translation>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation type="obsolete">Ystävyystaso:</translation>
+        <translation type="unfinished">Ystävyystaso:</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -7885,30 +9212,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edge length:</source>
-        <translation type="obsolete">Reunan pituus:</translation>
+        <translation type="unfinished">Reunan pituus:</translation>
     </message>
 </context>
 <context>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation type="obsolete">Uusi merkkaus</translation>
+        <translation type="unfinished">Uusi merkkaus</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="obsolete">Nimi:</translation>
+        <translation type="unfinished">Nimi:</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="obsolete">Valitse väri</translation>
+        <translation type="unfinished">Valitse väri</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
 </context>
 <context>
@@ -7927,11 +9254,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="obsolete">Poista kaikki</translation>
+        <translation type="unfinished">Poista kaikki</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Valinnat</translation>
+        <translation type="unfinished">Valinnat</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;News Feed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7957,59 +9292,59 @@ p, li { white-space: pre-wrap; }
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation type="obsolete">Uutissyöte</translation>
+        <translation type="unfinished">Uutissyöte</translation>
     </message>
     <message>
         <source>Peers</source>
-        <translation type="obsolete">Vertaiset</translation>
+        <translation type="unfinished">Vertaiset</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="obsolete">Kanavat</translation>
+        <translation type="unfinished">Kanavat</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="obsolete">Foorumit</translation>
+        <translation type="unfinished">Foorumit</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="obsolete">Keskustelu</translation>
+        <translation type="unfinished">Keskustelu</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="obsolete">Blogit</translation>
+        <translation type="unfinished">Blogit</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="obsolete">Viestit</translation>
+        <translation type="unfinished">Viestit</translation>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation type="obsolete">Lisää syötteet loppuun</translation>
+        <translation type="unfinished">Lisää syötteet loppuun</translation>
     </message>
     <message>
         <source>Systray Icon</source>
-        <translation type="obsolete">Ilmaisinalueen kuvake</translation>
+        <translation type="unfinished">Ilmaisinalueen kuvake</translation>
     </message>
     <message>
         <source>Private Message</source>
-        <translation type="obsolete">Yksityinen viesti</translation>
+        <translation type="unfinished">Yksityinen viesti</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="obsolete">Viesti</translation>
+        <translation type="unfinished">Viesti</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="obsolete">Kanavakirjoitus</translation>
+        <translation type="unfinished">Kanavakirjoitus</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="obsolete">Foorumikirjoitus</translation>
+        <translation type="unfinished">Foorumikirjoitus</translation>
     </message>
     <message>
         <source>Download completed</source>
-        <translation type="obsolete">Lataus suoritettu</translation>
+        <translation type="unfinished">Lataus suoritettu</translation>
     </message>
     <message>
         <source>Combined icon</source>
@@ -8017,39 +9352,75 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Toasters</source>
-        <translation type="obsolete">Paahtimet</translation>
+        <translation type="unfinished">Paahtimet</translation>
     </message>
     <message>
         <source>Friend Connect</source>
-        <translation type="obsolete">Yhteys ystävään</translation>
+        <translation type="unfinished">Yhteys ystävään</translation>
     </message>
     <message>
         <source>New Message</source>
-        <translation type="obsolete">Uusi viesti</translation>
+        <translation type="unfinished">Uusi viesti</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="obsolete">Yksityinen keskustelu</translation>
+        <translation type="unfinished">Yksityinen keskustelu</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
-        <translation type="obsolete">Avaa ikkuna uutta keskustelua varten</translation>
+        <translation type="unfinished">Avaa ikkuna uutta keskustelua varten</translation>
     </message>
     <message>
         <source>Grab Focus when chat arrives</source>
-        <translation type="obsolete">Kohdista keskusteluun, kun se alkaa</translation>
+        <translation type="unfinished">Kohdista keskusteluun, kun se alkaa</translation>
     </message>
     <message>
         <source>Use a single tabbed window</source>
-        <translation type="obsolete">Käytä yhtä ainutta välilehtiä käyttävää ikkunaa</translation>
+        <translation type="unfinished">Käytä yhtä ainutta välilehtiä käyttävää ikkunaa</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="obsolete">Ryhmäkeskustelu</translation>
+        <translation type="unfinished">Ryhmäkeskustelu</translation>
     </message>
     <message>
         <source>Display systray message</source>
-        <translation type="obsolete">Näytä ilmaisinalueen viesti</translation>
+        <translation type="unfinished">Näytä ilmaisinalueen viesti</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished">Turvallisuus</translation>
+    </message>
+    <message>
+        <source>Combined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X Margin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Y Margin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom Right</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8083,7 +9454,7 @@ p, li { white-space: pre-wrap; }
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
-        <translation type="obsolete">Ystävä linjoilla</translation>
+        <translation type="unfinished">Ystävä linjoilla</translation>
     </message>
 </context>
 <context>
@@ -8116,11 +9487,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chat</source>
-        <translation type="obsolete">Keskustelu</translation>
+        <translation type="unfinished">Keskustelu</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="obsolete">Aloita keskustelu</translation>
+        <translation type="unfinished">Aloita keskustelu</translation>
     </message>
     <message>
         <source>Organisation</source>
@@ -8136,43 +9507,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="obsolete">Poista kohde</translation>
+        <translation type="unfinished">Poista kohde</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="obsolete">Laajenna</translation>
+        <translation type="unfinished">Laajenna</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="obsolete">Kirjoita viesti pikaisesti</translation>
+        <translation type="unfinished">Kirjoita viesti pikaisesti</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="obsolete">Lähetä</translation>
+        <translation type="unfinished">Lähetä</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation type="obsolete">Vertaisen tunniste:</translation>
+        <translation type="unfinished">Vertaisen tunniste:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="obsolete">Kirjoita viesti</translation>
+        <translation type="unfinished">Kirjoita viesti</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="obsolete">Tila:</translation>
+        <translation type="unfinished">Tila:</translation>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="obsolete">Luottamus:</translation>
+        <translation type="unfinished">Luottamus:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="obsolete">Nimi:</translation>
+        <translation type="unfinished">Nimi:</translation>
     </message>
     <message>
         <source>IP Address</source>
@@ -8184,50 +9555,62 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation type="obsolete">Ystävä</translation>
+        <translation type="unfinished">Ystävä</translation>
     </message>
     <message>
         <source>Friend Connected</source>
-        <translation type="obsolete">Ystävä yhdistyneenä</translation>
+        <translation type="unfinished">Ystävä yhdistyneenä</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="obsolete">Yhteydenottoyritys</translation>
+        <translation type="unfinished">Yhteydenottoyritys</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation type="obsolete">Ystävän ystävä</translation>
+        <translation type="unfinished">Ystävän ystävä</translation>
     </message>
     <message>
         <source>Peer</source>
-        <translation type="obsolete">Vertainen</translation>
+        <translation type="unfinished">Vertainen</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="obsolete">Tuntematon vertainen</translation>
+        <translation type="unfinished">Tuntematon vertainen</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="obsolete">Piilota</translation>
+        <translation type="unfinished">Piilota</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="obsolete">Pikainen viesti</translation>
+        <translation type="unfinished">Pikainen viesti</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation type="unfinished">Sijainti:</translation>
+    </message>
+    <message>
+        <source>IP Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection Method:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PeerStatus</name>
     <message>
         <source>Friends: 0/0</source>
-        <translation type="obsolete">Ystävät: 0/0</translation>
+        <translation type="unfinished">Ystävät: 0/0</translation>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation type="obsolete">Ystäviä linjoilla / Ystäviä yhteensä</translation>
+        <translation type="unfinished">Ystäviä linjoilla / Ystäviä yhteensä</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="obsolete">Ystävät</translation>
+        <translation type="unfinished">Ystävät</translation>
     </message>
 </context>
 <context>
@@ -8618,241 +10001,327 @@ p, li { white-space: pre-wrap; }
     <name>PhotoDialog</name>
     <message>
         <source>Insert Show Lists</source>
-        <translation type="obsolete">Lisää esittelylistoja</translation>
+        <translation type="unfinished">Lisää esittelylistoja</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="obsolete">Avaa</translation>
+        <translation type="unfinished">Avaa</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
     </message>
     <message>
         <source>Excellent</source>
-        <translation type="obsolete">Loistava</translation>
+        <translation type="unfinished">Loistava</translation>
     </message>
     <message>
         <source>Good</source>
-        <translation type="obsolete">Hyvä</translation>
+        <translation type="unfinished">Hyvä</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation type="obsolete">Keskiverto</translation>
+        <translation type="unfinished">Keskiverto</translation>
     </message>
     <message>
         <source>Below avarage</source>
-        <translation type="obsolete">Keskiverron alapuolella</translation>
+        <translation type="unfinished">Keskiverron alapuolella</translation>
     </message>
     <message>
         <source>Bad</source>
-        <translation type="obsolete">Huono</translation>
+        <translation type="unfinished">Huono</translation>
     </message>
     <message>
         <source>Unrated</source>
-        <translation type="obsolete">Ei arvosteltu</translation>
+        <translation type="unfinished">Ei arvosteltu</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation type="obsolete">Arvostelu</translation>
+        <translation type="unfinished">Arvostelu</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">Päiväys</translation>
+        <translation type="unfinished">Päiväys</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="obsolete">Sijainti</translation>
+        <translation type="unfinished">Sijainti</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photo View&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Valokuvanäkymä&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Peer</source>
-        <translation type="obsolete">Vertainen</translation>
+        <translation type="unfinished">Vertainen</translation>
     </message>
     <message>
         <source>Slideshow</source>
-        <translation type="obsolete">Diaesitys</translation>
+        <translation type="unfinished">Diaesitys</translation>
     </message>
     <message>
         <source>Photo</source>
-        <translation type="obsolete">Valokuva</translation>
+        <translation type="unfinished">Valokuva</translation>
     </message>
     <message>
         <source>Thumb Image</source>
-        <translation type="obsolete">Pikkukuva</translation>
+        <translation type="unfinished">Pikkukuva</translation>
     </message>
     <message>
         <source>Image Name</source>
-        <translation type="obsolete">Kuvan nimi</translation>
+        <translation type="unfinished">Kuvan nimi</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="obsolete">Kommentti</translation>
+        <translation type="unfinished">Kommentti</translation>
     </message>
     <message>
         <source>PeerId</source>
-        <translation type="obsolete">Vertaistunniste</translation>
+        <translation type="unfinished">Vertaistunniste</translation>
     </message>
     <message>
         <source>PhotoId</source>
-        <translation type="obsolete">Valokuvatunniste</translation>
+        <translation type="unfinished">Valokuvatunniste</translation>
     </message>
     <message>
         <source>Add Photo(s)</source>
-        <translation type="obsolete">Lisää kuv(i)a</translation>
+        <translation type="unfinished">Lisää kuv(i)a</translation>
     </message>
     <message>
         <source>Add Photo SlideShow</source>
-        <translation type="obsolete">Lisää diaesitys</translation>
+        <translation type="unfinished">Lisää diaesitys</translation>
     </message>
     <message>
         <source>Update Details</source>
-        <translation type="obsolete">Päivitä yksityiskohdat</translation>
+        <translation type="unfinished">Päivitä yksityiskohdat</translation>
     </message>
     <message>
         <source>Photo </source>
-        <translation type="obsolete">Valokuva</translation>
+        <translation type="unfinished">Valokuva</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="obsolete">Kuvaus</translation>
+        <translation type="unfinished">Kuvaus</translation>
     </message>
 </context>
 <context>
     <name>PhotoShow</name>
     <message>
         <source>Date:</source>
-        <translation type="obsolete">Päiväys:</translation>
+        <translation type="unfinished">Päiväys:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="obsolete">Sijainti:</translation>
+        <translation type="unfinished">Sijainti:</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation type="obsolete">Kommentti:</translation>
+        <translation type="unfinished">Kommentti:</translation>
     </message>
     <message>
         <source>Display Size:</source>
-        <translation type="obsolete">Näkymän koko:</translation>
+        <translation type="unfinished">Näkymän koko:</translation>
     </message>
     <message>
         <source>320 x 320</source>
-        <translation type="obsolete">320 x 320</translation>
+        <translation type="unfinished">320 x 320</translation>
     </message>
     <message>
         <source>640 x 640</source>
-        <translation type="obsolete">640 x 640</translation>
+        <translation type="unfinished">640 x 640</translation>
     </message>
     <message>
         <source>Full Size</source>
-        <translation type="obsolete">Täysi koko</translation>
+        <translation type="unfinished">Täysi koko</translation>
     </message>
     <message>
         <source>Play Rate:</source>
-        <translation type="obsolete">Toistonopeus:</translation>
+        <translation type="unfinished">Toistonopeus:</translation>
     </message>
     <message>
         <source>1 Sec</source>
-        <translation type="obsolete">1 sek</translation>
+        <translation type="unfinished">1 sek</translation>
     </message>
     <message>
         <source>2 Sec</source>
-        <translation type="obsolete">2 sek</translation>
+        <translation type="unfinished">2 sek</translation>
     </message>
     <message>
         <source>5 Sec</source>
-        <translation type="obsolete">5 sek</translation>
+        <translation type="unfinished">5 sek</translation>
     </message>
     <message>
         <source>10 Sec</source>
-        <translation type="obsolete">10 sek</translation>
+        <translation type="unfinished">10 sek</translation>
     </message>
     <message>
         <source>20 Sec</source>
-        <translation type="obsolete">20 sek</translation>
+        <translation type="unfinished">20 sek</translation>
     </message>
     <message>
         <source>1 Min</source>
-        <translation type="obsolete">1 min</translation>
+        <translation type="unfinished">1 min</translation>
     </message>
     <message>
         <source>Edit Photo Details</source>
-        <translation type="obsolete">Muokkaa valokuvan yksityiskohtia</translation>
+        <translation type="unfinished">Muokkaa valokuvan yksityiskohtia</translation>
     </message>
     <message>
         <source>Save Photo</source>
-        <translation type="obsolete">Tallenna valokuva</translation>
+        <translation type="unfinished">Tallenna valokuva</translation>
     </message>
     <message>
         <source>No Photo Selected</source>
-        <translation type="obsolete">Ei kuvaa valittuna</translation>
+        <translation type="unfinished">Ei kuvaa valittuna</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="obsolete">Aloita</translation>
+        <translation type="unfinished">Aloita</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="obsolete">Takaisin</translation>
+        <translation type="unfinished">Takaisin</translation>
     </message>
     <message>
         <source>Photo Show</source>
-        <translation type="obsolete">Näytä valokuva</translation>
+        <translation type="unfinished">Näytä valokuva</translation>
     </message>
     <message>
         <source>Play </source>
-        <translation type="obsolete">Toista</translation>
+        <translation type="unfinished">Toista</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="obsolete">Tauko</translation>
+        <translation type="unfinished">Tauko</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="obsolete">Eteenpäin</translation>
+        <translation type="unfinished">Eteenpäin</translation>
     </message>
 </context>
 <context>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
+    </message>
+</context>
+<context>
+    <name>PluginItem</name>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Launch configuration panel, if provided by the plugin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File hash:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
-        <translation type="obsolete">Asenna uusi lisäosa...</translation>
+        <translation type="unfinished">Asenna uusi lisäosa...</translation>
     </message>
     <message>
         <source>Open Plugin to install</source>
-        <translation type="obsolete">Avaa asennettava lisäosa</translation>
+        <translation type="unfinished">Avaa asennettava lisäosa</translation>
     </message>
     <message>
         <source>Plugins (*.so *.dll)</source>
-        <translation type="obsolete">Lisäosat (*.so *.dll)</translation>
+        <translation type="unfinished">Lisäosat (*.so *.dll)</translation>
+    </message>
+</context>
+<context>
+    <name>PluginsPage</name>
+    <message>
+        <source>Loaded plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authorize all plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugin look-up directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hash rejected. Add to white list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing symbol. Wrong version?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No plugin object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins is loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown status.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title unavailable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description unavailable</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation type="obsolete">Suosio</translation>
+        <translation type="unfinished">Suosio</translation>
     </message>
 </context>
 <context>
@@ -8877,7 +10346,7 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
     </message>
     <message>
         <source>Hide Avatar</source>
-        <translation type="obsolete">Piilota avatar</translation>
+        <translation type="unfinished">Piilota avatar</translation>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
@@ -8885,7 +10354,7 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
     </message>
     <message>
         <source>Show Avatar</source>
-        <translation type="obsolete">Näytä avatar</translation>
+        <translation type="unfinished">Näytä avatar</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -8981,7 +10450,7 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
     </message>
     <message>
         <source>Clear offline messages</source>
-        <translation type="obsolete">Tyhjennä offline-viestit</translation>
+        <translation type="unfinished">Tyhjennä offline-viestit</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -9008,19 +10477,19 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
     <name>PopupChatWindow</name>
     <message>
         <source>Avatar</source>
-        <translation type="obsolete">Avatar</translation>
+        <translation type="unfinished">Avatar</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
-        <translation type="obsolete">Aseta avatarkuvasi</translation>
+        <translation type="unfinished">Aseta avatarkuvasi</translation>
     </message>
     <message>
         <source>Dock tab</source>
-        <translation type="obsolete">Telakoi välilehti</translation>
+        <translation type="unfinished">Telakoi välilehti</translation>
     </message>
     <message>
         <source>Undock tab</source>
-        <translation type="obsolete">Irrota välilehti</translation>
+        <translation type="unfinished">Irrota välilehti</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -9029,6 +10498,14 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
     <message>
         <source>Load File</source>
         <translation type="obsolete">Avaa tiedosto</translation>
+    </message>
+    <message>
+        <source>Set Chat Window Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set window on top</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9070,169 +10547,169 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
-        <translation type="obsolete">RetroShare-viesti - Tulostuksen esikatselu</translation>
+        <translation type="unfinished">RetroShare-viesti - Tulostuksen esikatselu</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Tulosta</translation>
+        <translation type="unfinished">Tulosta</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="obsolete">Tu&amp;losta...</translation>
+        <translation type="unfinished">Tu&amp;losta...</translation>
     </message>
     <message>
         <source>Page Setup...</source>
-        <translation type="obsolete">Sivun asetukset...</translation>
+        <translation type="unfinished">Sivun asetukset...</translation>
     </message>
     <message>
         <source>Zoom In</source>
-        <translation type="obsolete">Suurenna</translation>
+        <translation type="unfinished">Suurenna</translation>
     </message>
     <message>
         <source>Zoom Out</source>
-        <translation type="obsolete">Pienennä</translation>
+        <translation type="unfinished">Pienennä</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="obsolete">&amp;Sulje</translation>
+        <translation type="unfinished">&amp;Sulje</translation>
     </message>
 </context>
 <context>
     <name>ProfileEdit</name>
     <message>
         <source>Remove Profile Entry</source>
-        <translation type="obsolete">Poista profiilimerkintä</translation>
+        <translation type="unfinished">Poista profiilimerkintä</translation>
     </message>
     <message>
         <source>Move Profile Entry Up</source>
-        <translation type="obsolete">Siirrä profiilimerkintää ylös</translation>
+        <translation type="unfinished">Siirrä profiilimerkintää ylös</translation>
     </message>
     <message>
         <source>Move Profile Entry Down</source>
-        <translation type="obsolete">Siirrä profiilimerkintää alas</translation>
+        <translation type="unfinished">Siirrä profiilimerkintää alas</translation>
     </message>
     <message>
         <source>Profile Edit</source>
-        <translation type="obsolete">Profiilin muokkaus</translation>
+        <translation type="unfinished">Profiilin muokkaus</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation type="obsolete">Profiili</translation>
+        <translation type="unfinished">Profiili</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="obsolete">Luokitus</translation>
+        <translation type="unfinished">Luokitus</translation>
     </message>
     <message>
         <source>Thoughts</source>
-        <translation type="obsolete">Ajatuksia</translation>
+        <translation type="unfinished">Ajatuksia</translation>
     </message>
     <message>
         <source>Edit Profile Category</source>
-        <translation type="obsolete">Muokkaa profiililuokitusta</translation>
+        <translation type="unfinished">Muokkaa profiililuokitusta</translation>
     </message>
     <message>
         <source>Birthday</source>
-        <translation type="obsolete">Syntymäpäivä</translation>
+        <translation type="unfinished">Syntymäpäivä</translation>
     </message>
     <message>
         <source>School</source>
-        <translation type="obsolete">Koulu</translation>
+        <translation type="unfinished">Koulu</translation>
     </message>
     <message>
         <source>University</source>
-        <translation type="obsolete">Yliopisto</translation>
+        <translation type="unfinished">Yliopisto</translation>
     </message>
     <message>
         <source>Phone Number</source>
-        <translation type="obsolete">Puhelinnumero</translation>
+        <translation type="unfinished">Puhelinnumero</translation>
     </message>
     <message>
         <source>Favourite Books</source>
-        <translation type="obsolete">Lempikirjat</translation>
+        <translation type="unfinished">Lempikirjat</translation>
     </message>
     <message>
         <source>Favourite Music</source>
-        <translation type="obsolete">Lempimusiikki</translation>
+        <translation type="unfinished">Lempimusiikki</translation>
     </message>
     <message>
         <source>Favourite Films</source>
-        <translation type="obsolete">Lempielokuvat</translation>
+        <translation type="unfinished">Lempielokuvat</translation>
     </message>
     <message>
         <source>or Custom Entry</source>
-        <translation type="obsolete">tai räätälöity merkintä</translation>
+        <translation type="unfinished">tai räätälöity merkintä</translation>
     </message>
     <message>
         <source>Add Entry</source>
-        <translation type="obsolete">Lisää merkintä</translation>
+        <translation type="unfinished">Lisää merkintä</translation>
     </message>
     <message>
         <source>Move</source>
-        <translation type="obsolete">Siirrä</translation>
+        <translation type="unfinished">Siirrä</translation>
     </message>
     <message>
         <source>Close Editor</source>
-        <translation type="obsolete">Sulje muokkaaja</translation>
+        <translation type="unfinished">Sulje muokkaaja</translation>
     </message>
 </context>
 <context>
     <name>ProfileView</name>
     <message>
         <source>Clear Photo</source>
-        <translation type="obsolete">Tyhjennä valokuva</translation>
+        <translation type="unfinished">Tyhjennä valokuva</translation>
     </message>
     <message>
         <source>Change Photo</source>
-        <translation type="obsolete">Vaihda valokuva</translation>
+        <translation type="unfinished">Vaihda valokuva</translation>
     </message>
     <message>
         <source>Edit Profile</source>
-        <translation type="obsolete">Muokkaa profiilia</translation>
+        <translation type="unfinished">Muokkaa profiilia</translation>
     </message>
     <message>
         <source>Remove Favourite</source>
-        <translation type="obsolete">Poista suosikki</translation>
+        <translation type="unfinished">Poista suosikki</translation>
     </message>
     <message>
         <source>Clear Favourites</source>
-        <translation type="obsolete">Tyhjennä suosikit</translation>
+        <translation type="unfinished">Tyhjennä suosikit</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation type="obsolete">Lataa tiedosto</translation>
+        <translation type="unfinished">Lataa tiedosto</translation>
     </message>
     <message>
         <source>Download All</source>
-        <translation type="obsolete">Lataa kaikki</translation>
+        <translation type="unfinished">Lataa kaikki</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation type="obsolete">Virhe haettaessa vertaisen yksityiskohtia.</translation>
+        <translation type="unfinished">Virhe haettaessa vertaisen yksityiskohtia.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="obsolete">Vertaisen tunniste</translation>
+        <translation type="unfinished">Vertaisen tunniste</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Profile View</source>
-        <translation type="obsolete">Profiilinäkymä</translation>
+        <translation type="unfinished">Profiilinäkymä</translation>
     </message>
     <message>
         <source>Last Post:</source>
-        <translation type="obsolete">Viimeisin viesti:</translation>
+        <translation type="unfinished">Viimeisin viesti:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9240,7 +10717,7 @@ Haluatko sen sijaan lähettää hänelle viestin</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -9248,30 +10725,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Category</source>
-        <translation type="obsolete">Luokitus</translation>
+        <translation type="unfinished">Luokitus</translation>
     </message>
     <message>
         <source>Thoughts</source>
-        <translation type="obsolete">Ajatuksia</translation>
+        <translation type="unfinished">Ajatuksia</translation>
     </message>
     <message>
         <source>Favourite Files</source>
-        <translation type="obsolete">Suosikkitiedostot</translation>
+        <translation type="unfinished">Suosikkitiedostot</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="obsolete">Tiiviste (hash)</translation>
+        <translation type="unfinished">Tiiviste (hash)</translation>
     </message>
     <message>
         <source>Close Profile</source>
-        <translation type="obsolete">Sulje profiili</translation>
+        <translation type="unfinished">Sulje profiili</translation>
     </message>
 </context>
 <context>
     <name>ProfileWidget</name>
     <message>
         <source>Edit Personal message</source>
-        <translation type="obsolete">Muokkaa henkilökohtaista viestiä</translation>
+        <translation type="unfinished">Muokkaa henkilökohtaista viestiä</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9279,7 +10756,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Public Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9291,7 +10768,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Public Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9303,7 +10780,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Name:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9315,7 +10792,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Location:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9327,7 +10804,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Other Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9339,7 +10816,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Number of Friends:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9351,7 +10828,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Dynamic DNS:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9363,7 +10840,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Peer ID:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9375,7 +10852,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Version:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9387,7 +10864,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Online since:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9399,7 +10876,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;My Address&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9411,7 +10888,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Local Address:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9423,7 +10900,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;External Address:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9435,7 +10912,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Addresses list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9510,7 +10987,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation type="obsolete">Tiedostopyyntö peruttu</translation>
+        <translation type="unfinished">Tiedostopyyntö peruttu</translation>
     </message>
     <message>
         <source>The file has not been added to your download list, because you already have it.</source>
@@ -9550,22 +11027,214 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="obsolete">Torju ystävä</translation>
+        <translation type="unfinished">Torju ystävä</translation>
     </message>
     <message>
         <source>Make friend</source>
-        <translation type="obsolete">Ystävysty</translation>
+        <translation type="unfinished">Ystävysty</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="obsolete">Vertaisen yksityiskohdat</translation>
+        <translation type="unfinished">Vertaisen yksityiskohdat</translation>
+    </message>
+    <message>
+        <source>Click to add this RetroShare cert to your GPG keyring
+and open the Make Friend Wizard.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to process the link ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to process %1 links ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of %2 RetroShare link processed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of %2 RetroShare links processed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend not added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends not added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forums not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum message not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum messages not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channels not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel message not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel messages not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Receipient not accepted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Receipients not accepted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unkown receipient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unkown receipients</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malformed links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>secs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Old</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Now</source>
+        <translation type="unfinished">Nyt</translation>
+    </message>
+    <message>
+        <source>Round Trip Time:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to make path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to make path:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treatment of collection file has failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The collection file %1 could not be openned.
+Reported error is: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The following has not been added to your download list, because you already have it:
+    </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
     <message>
         <source>Quick Start Wizard</source>
-        <translation type="obsolete">Ohjattu pika-aloitus</translation>
+        <translation type="unfinished">Ohjattu pika-aloitus</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9573,7 +11242,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9597,7 +11266,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9617,63 +11286,63 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Next &gt;</source>
-        <translation type="obsolete">Seuraava &gt;</translation>
+        <translation type="unfinished">Seuraava &gt;</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation type="obsolete">Lopeta</translation>
+        <translation type="unfinished">Lopeta</translation>
     </message>
     <message>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation type="obsolete">Varmistaakseen tehokkaan toimivuuden, RetroSharen tulee tietää hieman internetyhteydestäsi.</translation>
+        <translation type="unfinished">Varmistaakseen tehokkaan toimivuuden, RetroSharen tulee tietää hieman internetyhteydestäsi.</translation>
     </message>
     <message>
         <source>Choose your upload speed limit: </source>
-        <translation type="obsolete">Valitse lähetysnopeutesi yläraja:</translation>
+        <translation type="unfinished">Valitse lähetysnopeutesi yläraja:</translation>
     </message>
     <message>
         <source> KB/s</source>
-        <translation type="obsolete">Kt/s</translation>
+        <translation type="unfinished">Kt/s</translation>
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation type="obsolete">Valitse latausnopeutesi yläraja:</translation>
+        <translation type="unfinished">Valitse latausnopeutesi yläraja:</translation>
     </message>
     <message>
         <source>Connection :</source>
-        <translation type="obsolete">Yhteys:</translation>
+        <translation type="unfinished">Yhteys:</translation>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation type="obsolete">Automaattinen (UPnP)</translation>
+        <translation type="unfinished">Automaattinen (UPnP)</translation>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation type="obsolete">Palomuuri</translation>
+        <translation type="unfinished">Palomuuri</translation>
     </message>
     <message>
         <source>Manually forwarded port</source>
-        <translation type="obsolete">Portti avattu käsin</translation>
+        <translation type="unfinished">Portti avattu käsin</translation>
     </message>
     <message>
         <source>Discovery :</source>
-        <translation type="obsolete">Etsintä:</translation>
+        <translation type="unfinished">Etsintä:</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="obsolete">Julkinen: DHT &amp; etsintä</translation>
+        <translation type="unfinished">Julkinen: DHT &amp; etsintä</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="obsolete">Yksityinen: Vain etsintä</translation>
+        <translation type="unfinished">Yksityinen: Vain etsintä</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="obsolete">Käänteinen: Vain DHT</translation>
+        <translation type="unfinished">Käänteinen: Vain DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="obsolete">Darknet: ei mitään</translation>
+        <translation type="unfinished">Darknet: ei mitään</translation>
     </message>
     <message>
         <source>Dynamic DNS:</source>
@@ -9681,7 +11350,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&lt; Back</source>
-        <translation type="obsolete">&lt; Takaisin</translation>
+        <translation type="unfinished">&lt; Takaisin</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9692,7 +11361,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9703,27 +11372,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="obsolete">Hakemisto</translation>
+        <translation type="unfinished">Hakemisto</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="obsolete">Verkon laajuinen</translation>
+        <translation type="unfinished">Verkon laajuinen</translation>
     </message>
     <message>
         <source>Browseable</source>
-        <translation type="obsolete">Selattavissa</translation>
+        <translation type="unfinished">Selattavissa</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Lisää</translation>
+        <translation type="unfinished">Lisää</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="obsolete">Jaa sisääntulevien hakemisto automaattisesti (suositeltavaa)</translation>
+        <translation type="unfinished">Jaa sisääntulevien hakemisto automaattisesti (suositeltavaa)</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9733,7 +11402,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9750,7 +11419,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9761,109 +11430,184 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do not show a message when Closing RetroShare</source>
-        <translation type="obsolete">Älä näytä viestiä RetroSharea suljettaessa</translation>
+        <translation type="unfinished">Älä näytä viestiä RetroSharea suljettaessa</translation>
     </message>
     <message>
         <source>Start Minimized</source>
-        <translation type="obsolete">Käynnistä pienennettynä</translation>
+        <translation type="unfinished">Käynnistä pienennettynä</translation>
     </message>
     <message>
         <source>Start RetroShare when my System Starts.</source>
-        <translation type="obsolete">Käynnistä RetroShare järjestelmän käynnistyessä.</translation>
+        <translation type="unfinished">Käynnistä RetroShare järjestelmän käynnistyessä.</translation>
     </message>
     <message>
         <source>Finish</source>
-        <translation type="obsolete">Valmis</translation>
+        <translation type="unfinished">Valmis</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation type="obsolete">Valitse hakemisto jaettavaksi</translation>
+        <translation type="unfinished">Valitse hakemisto jaettavaksi</translation>
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation type="obsolete">Jaettu hakemisto lisätty!</translation>
+        <translation type="unfinished">Jaettu hakemisto lisätty!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation type="obsolete">Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
+        <translation type="unfinished">Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
     </message>
     <message>
         <source>Warning!</source>
-        <translation type="obsolete">Varoitus!</translation>
+        <translation type="unfinished">Varoitus!</translation>
+    </message>
+    <message>
+        <source>Start minimized on system start</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>RSettingsWin</name>
     <message>
         <source>General</source>
-        <translation type="obsolete">Yleiset</translation>
+        <translation type="unfinished">Yleiset</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="obsolete">Hakemistot</translation>
+        <translation type="unfinished">Hakemistot</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="obsolete">Palvelin</translation>
+        <translation type="unfinished">Palvelin</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="obsolete">Siirto</translation>
+        <translation type="unfinished">Siirto</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="obsolete">Huomauta</translation>
+        <translation type="unfinished">Huomauta</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="obsolete">Turvallisuus</translation>
+        <translation type="unfinished">Turvallisuus</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="obsolete">Viesti</translation>
+        <translation type="unfinished">Viesti</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="obsolete">Foorumi</translation>
+        <translation type="unfinished">Foorumi</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="obsolete">Keskustelu</translation>
+        <translation type="unfinished">Keskustelu</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="obsolete">Ulkoasu</translation>
+        <translation type="unfinished">Ulkoasu</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="obsolete">Ääni</translation>
+        <translation type="unfinished">Ääni</translation>
     </message>
     <message>
         <source>UnknownPage</source>
-        <translation type="obsolete">Tuntematon sivu</translation>
+        <translation type="unfinished">Tuntematon sivu</translation>
     </message>
     <message>
         <source>Error Saving Configuration on page </source>
-        <translation type="obsolete">Virhe tallennettaessa asetuksia sivulle</translation>
+        <translation type="unfinished">Virhe tallennettaessa asetuksia sivulle</translation>
     </message>
     <message>
         <source>Error Saving Configuration</source>
         <translation type="obsolete">Virhe tallennettaessa asetuksia</translation>
+    </message>
+    <message>
+        <source>Relay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished">Lisäosat</translation>
     </message>
 </context>
 <context>
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="obsolete">&lt;strong&gt;Lataus:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Lähetys:&lt;/strong&gt; 0.00 (kB/s) </translation>
+        <translation type="unfinished">&lt;strong&gt;Lataus:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Lähetys:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Lataus:&lt;/strong&gt;</translation>
+        <translation type="unfinished">&lt;strong&gt;Lataus:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Lähetys:&lt;/strong&gt;</translation>
+        <translation type="unfinished">&lt;strong&gt;Lähetys:&lt;/strong&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>RelayPage</name>
+    <message>
+        <source>Enable Relay Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Relay Servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relay options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bandwidth per link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Bandwidth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">Ystävät</translation>
+    </message>
+    <message>
+        <source>kB/s</source>
+        <translation type="unfinished">kB/s</translation>
+    </message>
+    <message>
+        <source>Friends of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished">Yleiset</translation>
+    </message>
+    <message>
+        <source>Total:</source>
+        <translation type="unfinished">Yhteensä:</translation>
+    </message>
+    <message>
+        <source>Relay Server Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server Dht Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Server</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9933,19 +11677,89 @@ p, li { white-space: pre-wrap; }
     <name>RetroshareDirModel</name>
     <message>
         <source>Anonymous</source>
-        <translation type="obsolete">Nimetön</translation>
+        <translation type="unfinished">Nimetön</translation>
     </message>
     <message>
         <source>Anonymous and browsable by friends</source>
-        <translation type="obsolete">Nimetön ja ystävien selattavissa</translation>
+        <translation type="unfinished">Nimetön ja ystävien selattavissa</translation>
     </message>
     <message>
         <source>Only browsable by friends</source>
-        <translation type="obsolete">Vain ystävien selattavissa</translation>
+        <translation type="unfinished">Vain ystävien selattavissa</translation>
     </message>
     <message>
         <source>NEW</source>
-        <translation type="obsolete">UUSI</translation>
+        <translation type="unfinished">UUSI</translation>
+    </message>
+</context>
+<context>
+    <name>RsCollectionDialog</name>
+    <message>
+        <source>Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total size :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected files:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deselect all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Peru</translation>
+    </message>
+    <message>
+        <source>Download!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">Tiedosto</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished">Koko</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation type="unfinished">Tiiviste (hash)</translation>
+    </message>
+</context>
+<context>
+    <name>RsCollectionFile</name>
+    <message>
+        <source>Cannot open file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error parsing xml file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collection files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create collection file</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10003,77 +11817,77 @@ p, li { white-space: pre-wrap; }
     <name>RsidPage</name>
     <message>
         <source>RetroShare ID</source>
-        <translation type="obsolete">RetroShare-tunniste</translation>
+        <translation type="unfinished">RetroShare-tunniste</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation type="obsolete">Käytä RetroShare-tunnistetta verkossasi olevan ystävän lisäämiseen.</translation>
+        <translation type="unfinished">Käytä RetroShare-tunnistetta verkossasi olevan ystävän lisäämiseen.</translation>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation type="obsolete">Lisää ystävän RetroShare-tunniste...</translation>
+        <translation type="unfinished">Lisää ystävän RetroShare-tunniste...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below </source>
-        <translation type="obsolete">Liitä ystävän RetroShare-tunniste allaolevaan laatikkoon </translation>
+        <translation type="unfinished">Liitä ystävän RetroShare-tunniste allaolevaan laatikkoon </translation>
     </message>
     <message>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
-        <translation type="obsolete">Kirjoita ystäväsi RetroShare-tunniste, esim. Peer@BDE8D16A46D938CF </translation>
+        <translation type="unfinished">Kirjoita ystäväsi RetroShare-tunniste, esim. Peer@BDE8D16A46D938CF </translation>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation type="obsolete">Tämä vertainen %1 ei ole verkossasi</translation>
+        <translation type="unfinished">Tämä vertainen %1 ei ole verkossasi</translation>
     </message>
 </context>
 <context>
     <name>SFListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="obsolete">t</translation>
+        <translation type="unfinished">t</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="obsolete">Kt</translation>
+        <translation type="unfinished">Kt</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="obsolete">Mt</translation>
+        <translation type="unfinished">Mt</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="obsolete">Gt</translation>
+        <translation type="unfinished">Gt</translation>
     </message>
 </context>
 <context>
     <name>SearchDialog</name>
     <message>
         <source>Sources</source>
-        <translation type="obsolete">Lähteet</translation>
+        <translation type="unfinished">Lähteet</translation>
     </message>
     <message>
         <source>Results</source>
-        <translation type="obsolete">Tulokset</translation>
+        <translation type="unfinished">Tulokset</translation>
     </message>
     <message>
         <source>Close all Search Resullts</source>
-        <translation type="obsolete">Sulje kaikki hakutulokset</translation>
+        <translation type="unfinished">Sulje kaikki hakutulokset</translation>
     </message>
     <message>
         <source>Close All Search Results</source>
-        <translation type="obsolete">Sulje kaikki hakutulokset</translation>
+        <translation type="unfinished">Sulje kaikki hakutulokset</translation>
     </message>
     <message>
         <source>Download Selected</source>
-        <translation type="obsolete">Lataa valitut</translation>
+        <translation type="unfinished">Lataa valitut</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation type="obsolete">Anna hakusana (vähintään 3 merkkiä)</translation>
+        <translation type="unfinished">Anna hakusana (vähintään 3 merkkiä)</translation>
     </message>
     <message>
         <source>Copy retroshare Link</source>
@@ -10093,23 +11907,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="obsolete">Poista kaikki</translation>
+        <translation type="unfinished">Poista kaikki</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="obsolete">Kansio</translation>
+        <translation type="unfinished">Kansio</translation>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation type="obsolete">Uusi RetroShare-linkki tai -linkit</translation>
+        <translation type="unfinished">Uusi RetroShare-linkki tai -linkit</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -10123,15 +11937,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Any</source>
-        <translation type="obsolete">Mikä tahansa</translation>
+        <translation type="unfinished">Mikä tahansa</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="obsolete">Ääni</translation>
+        <translation type="unfinished">Ääni</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="obsolete">Video</translation>
+        <translation type="unfinished">Video</translation>
     </message>
     <message>
         <source>Images</source>
@@ -10151,133 +11965,260 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download Notice</source>
-        <translation type="obsolete">Lataushuomautus</translation>
+        <translation type="unfinished">Lataushuomautus</translation>
     </message>
     <message>
         <source>Skipping Local Files</source>
-        <translation type="obsolete">Paikallisten tiedostojen ohittaminen</translation>
+        <translation type="unfinished">Paikallisten tiedostojen ohittaminen</translation>
     </message>
     <message>
         <source>Sorry</source>
-        <translation type="obsolete">Anteeksi</translation>
+        <translation type="unfinished">Anteeksi</translation>
     </message>
     <message>
         <source>This function is not yet implemented.</source>
-        <translation type="obsolete">Tätä toimintoa ei ole vielä otettu käyttöön.</translation>
+        <translation type="unfinished">Tätä toimintoa ei ole vielä otettu käyttöön.</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="obsolete">Tyyppi</translation>
+        <translation type="unfinished">Tyyppi</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="obsolete">Pakattu tiedosto</translation>
+        <translation type="unfinished">Pakattu tiedosto</translation>
     </message>
     <message>
         <source>CD-Image</source>
-        <translation type="obsolete">CD-levykuva</translation>
+        <translation type="unfinished">CD-levykuva</translation>
     </message>
     <message>
         <source>Document</source>
-        <translation type="obsolete">Dokumentti</translation>
+        <translation type="unfinished">Dokumentti</translation>
     </message>
     <message>
         <source>Picture</source>
-        <translation type="obsolete">Kuva</translation>
+        <translation type="unfinished">Kuva</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="obsolete">Ohjelma</translation>
+        <translation type="unfinished">Ohjelma</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="obsolete">Hakemisto</translation>
+        <translation type="unfinished">Hakemisto</translation>
     </message>
     <message>
         <source>Clear Filter</source>
-        <translation type="obsolete">Tyhjennä suodatin</translation>
+        <translation type="unfinished">Tyhjennä suodatin</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="obsolete">Tiedoston nimi</translation>
+        <translation type="unfinished">Tiedoston nimi</translation>
     </message>
     <message>
         <source>Include files from your own file list in the search result</source>
-        <translation type="obsolete">Sisällytä hakutuloksiin oman tiedostoluettelosi tiedostot</translation>
+        <translation type="unfinished">Sisällytä hakutuloksiin oman tiedostoluettelosi tiedostot</translation>
     </message>
     <message>
         <source>Include own files</source>
-        <translation type="obsolete">Sisällytä omat tiedostot</translation>
+        <translation type="unfinished">Sisällytä omat tiedostot</translation>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation type="obsolete">Etsi ystäviesi &quot;selattavien&quot; tiedostojen joukosta</translation>
+        <translation type="unfinished">Etsi ystäviesi &quot;selattavien&quot; tiedostojen joukosta</translation>
     </message>
     <message>
         <source>Search in friends lists</source>
-        <translation type="obsolete">Etsi ystäväluettelosta</translation>
+        <translation type="unfinished">Etsi ystäväluettelosta</translation>
     </message>
     <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation type="obsolete">Usean hypyn haku verkossa etäisyydellä 6
+        <translation type="unfinished">Usean hypyn haku verkossa etäisyydellä 6
 (näyttää aina saatavilla olevat tiedostot)</translation>
     </message>
     <message>
         <source>F2F search</source>
-        <translation type="obsolete">F2F-haku</translation>
+        <translation type="unfinished">F2F-haku</translation>
     </message>
     <message>
         <source>Limit number of results to :</source>
-        <translation type="obsolete">Rajoita tulosten lukumäärä:</translation>
+        <translation type="unfinished">Rajoita tulosten lukumäärä:</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="obsolete">Tiedostonimi</translation>
+        <translation type="unfinished">Tiedostonimi</translation>
     </message>
     <message>
         <source>Start Search</source>
-        <translation type="obsolete">Aloita haku</translation>
+        <translation type="unfinished">Aloita haku</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="obsolete">Etsi</translation>
+        <translation type="unfinished">Etsi</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Enter a Keyword here</source>
-        <translation type="obsolete">Anna hakusana tähän</translation>
+        <translation type="unfinished">Anna hakusana tähän</translation>
     </message>
     <message>
         <source>Advanced Search</source>
-        <translation type="obsolete">Tarkennettu haku</translation>
+        <translation type="unfinished">Tarkennettu haku</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="obsolete">Tarkennettu</translation>
+        <translation type="unfinished">Tarkennettu</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="obsolete">Ikä</translation>
+        <translation type="unfinished">Ikä</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="obsolete">Tiiviste (hash)</translation>
+        <translation type="unfinished">Tiiviste (hash)</translation>
     </message>
     <message>
         <source>KeyWords</source>
-        <translation type="obsolete">Hakusanat</translation>
+        <translation type="unfinished">Hakusanat</translation>
     </message>
     <message>
         <source>Search Id</source>
-        <translation type="obsolete">Hakutunniste</translation>
+        <translation type="unfinished">Hakutunniste</translation>
+    </message>
+    <message>
+        <source>Filter Search Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search again</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SecurityItem</name>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished">Laajenna</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished">Poista kohde</translation>
+    </message>
+    <message>
+        <source>Peer details</source>
+        <translation type="unfinished">Vertaisen yksityiskohdat</translation>
+    </message>
+    <message>
+        <source>Deny friend</source>
+        <translation type="unfinished">Torju ystävä</translation>
+    </message>
+    <message>
+        <source>Make friend</source>
+        <translation type="unfinished">Ystävysty</translation>
+    </message>
+    <message>
+        <source>Write a quick Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished">Keskustelu</translation>
+    </message>
+    <message>
+        <source>Start Chat</source>
+        <translation type="unfinished">Aloita keskustelu</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Peru</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation type="unfinished">Lähetä</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished">Nimi:</translation>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation type="unfinished">Vertaisen tunniste:</translation>
+    </message>
+    <message>
+        <source>Trust: </source>
+        <translation type="unfinished">Luottamus:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation type="unfinished">Sijainti:</translation>
+    </message>
+    <message>
+        <source>IP Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection Method:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status:</source>
+        <translation type="unfinished">Tila:</translation>
+    </message>
+    <message>
+        <source>Write Message</source>
+        <translation type="unfinished">Kirjoita viesti</translation>
+    </message>
+    <message>
+        <source>Connect Attempt</source>
+        <translation type="unfinished">Yhteydenottoyritys</translation>
+    </message>
+    <message>
+        <source>Not Yet Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown (Incoming) Connect Attempt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown (Outgoing) Connect Attempt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Security Issue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation type="unfinished">Tuntematon vertainen</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Piilota</translation>
+    </message>
+    <message>
+        <source>Do you want to remove this Friend?</source>
+        <translation type="unfinished">Haluatko poistaa tämän ystävän?</translation>
+    </message>
+    <message>
+        <source>Quick Message</source>
+        <translation type="unfinished">Pikainen viesti</translation>
     </message>
 </context>
 <context>
@@ -10340,15 +12281,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Automatic (Upnp)</source>
-        <translation type="obsolete">Automaattinen (UPnP)</translation>
+        <translation type="unfinished">Automaattinen (UPnP)</translation>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation type="obsolete">Palomuuri</translation>
+        <translation type="unfinished">Palomuuri</translation>
     </message>
     <message>
         <source>Manual Forwarded Port</source>
-        <translation type="obsolete">Portti avattu käsin</translation>
+        <translation type="unfinished">Portti avattu käsin</translation>
     </message>
     <message>
         <source>Should be disabled if you don&apos;t want to share connection information between peers.</source>
@@ -10356,77 +12297,77 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation type="obsolete">Lataus (Kt/s)</translation>
+        <translation type="unfinished">Lataus (Kt/s)</translation>
     </message>
     <message>
         <source>Upload (KB/s) </source>
-        <translation type="obsolete">Lähetys (Kt/s)</translation>
+        <translation type="unfinished">Lähetys (Kt/s)</translation>
     </message>
     <message>
         <source>Network Configuration</source>
-        <translation type="obsolete">Verkon asetukset</translation>
+        <translation type="unfinished">Verkon asetukset</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="obsolete">Julkinen: DHT &amp; etsintä</translation>
+        <translation type="unfinished">Julkinen: DHT &amp; etsintä</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="obsolete">Yksityinen: Vain etsintä</translation>
+        <translation type="unfinished">Yksityinen: Vain etsintä</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="obsolete">Käänteinen: Vain DHT</translation>
+        <translation type="unfinished">Käänteinen: Vain DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="obsolete">Darknet: ei mitään</translation>
+        <translation type="unfinished">Darknet: ei mitään</translation>
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="obsolete">kB/s</translation>
+        <translation type="unfinished">kB/s</translation>
     </message>
     <message>
         <source>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</source>
-        <translation type="obsolete">Jos poistat tästä rastin, RetroShare ei käytä tunneliyhteyttä palomuuria käyttävien vertaisten välillä eikä voi ottaa suoraa yhteyttä. Tämä on riippumaton F2F-reitittämisestä (kilpikonnareititin).</translation>
+        <translation type="unfinished">Jos poistat tästä rastin, RetroShare ei käytä tunneliyhteyttä palomuuria käyttävien vertaisten välillä eikä voi ottaa suoraa yhteyttä. Tämä on riippumaton F2F-reitittämisestä (kilpikonnareititin).</translation>
     </message>
     <message>
         <source>Allow Tunnel Connection</source>
-        <translation type="obsolete">Salli tunneliyhteys</translation>
+        <translation type="unfinished">Salli tunneliyhteys</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="obsolete">Paikallinen osoite</translation>
+        <translation type="unfinished">Paikallinen osoite</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="obsolete">Ulkoinen osoite</translation>
+        <translation type="unfinished">Ulkoinen osoite</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="obsolete">Dynaaminen nimipalvelujärjestelmä</translation>
+        <translation type="unfinished">Dynaaminen nimipalvelujärjestelmä</translation>
     </message>
     <message>
         <source>Port:</source>
-        <translation type="obsolete">Portti:</translation>
+        <translation type="unfinished">Portti:</translation>
     </message>
     <message>
         <source>IP Service</source>
-        <translation type="obsolete">IP-palvelu</translation>
+        <translation type="unfinished">IP-palvelu</translation>
     </message>
     <message>
         <source>If you unckeck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you&apos;re 
 behind a firewall or a VPN.</source>
-        <translation type="obsolete">Jos poistat tästä rastin, RetroShare voi ainoastaan määritellä 
+        <translation type="unfinished">Jos poistat tästä rastin, RetroShare voi ainoastaan määritellä 
 IP-osoitteesi, jos olet yhteydessä johonkuhun. Tämän 
 jättäminen päälle helpottaa yhteydenottoa, kun sinulla on 
 vähän ystäviä. Se auttaa myös, jos olet palomuurin tai VPN:n takana.</translation>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation type="obsolete">Salli RetroSharen kysyä IP:täni näiltä verkkosivuilta:</translation>
+        <translation type="unfinished">Salli RetroSharen kysyä IP:täni näiltä verkkosivuilta:</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -10442,7 +12383,27 @@ vähän ystäviä. Se auttaa myös, jos olet palomuurin tai VPN:n takana.</trans
     </message>
     <message>
         <source>Transfer Rates</source>
-        <translation type="obsolete">Siirtonopeudet</translation>
+        <translation type="unfinished">Siirtonopeudet</translation>
+    </message>
+    <message>
+        <source>The DHT allows you to answer connection 
+requests from your friends using BitTorrent&apos;s DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and GPG 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Discovery information in statusbar</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10453,43 +12414,43 @@ vähän ystäviä. Se auttaa myös, jos olet palomuurin tai VPN:n takana.</trans
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Valinnat</translation>
+        <translation type="unfinished">Valinnat</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="obsolete">Siirto</translation>
+        <translation type="unfinished">Siirto</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="obsolete">Huomauta</translation>
+        <translation type="unfinished">Huomauta</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="obsolete">Turvallisuus</translation>
+        <translation type="unfinished">Turvallisuus</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="obsolete">Viesti</translation>
+        <translation type="unfinished">Viesti</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="obsolete">Foorumi</translation>
+        <translation type="unfinished">Foorumi</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="obsolete">Keskustelu</translation>
+        <translation type="unfinished">Keskustelu</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="obsolete">Ulkoasu</translation>
+        <translation type="unfinished">Ulkoasu</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="obsolete">Ääni</translation>
+        <translation type="unfinished">Ääni</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -10497,11 +12458,11 @@ vähän ystäviä. Se auttaa myös, jos olet palomuurin tai VPN:n takana.</trans
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="obsolete">Yleiset</translation>
+        <translation type="unfinished">Yleiset</translation>
     </message>
     <message>
         <source>Network</source>
@@ -10509,18 +12470,26 @@ vähän ystäviä. Se auttaa myös, jos olet palomuurin tai VPN:n takana.</trans
     </message>
     <message>
         <source>Server</source>
-        <translation type="obsolete">Palvelin</translation>
+        <translation type="unfinished">Palvelin</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="obsolete">Hakemistot</translation>
+        <translation type="unfinished">Hakemistot</translation>
+    </message>
+    <message>
+        <source>Relays</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished">Lisäosat</translation>
     </message>
 </context>
 <context>
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation type="obsolete">RetroSharen jaettu kansio</translation>
+        <translation type="unfinished">RetroSharen jaettu kansio</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10528,7 +12497,7 @@ vähän ystäviä. Se auttaa myös, jos olet palomuurin tai VPN:n takana.</trans
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Folder&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10536,39 +12505,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Folder</source>
-        <translation type="obsolete">Jaettu kansio</translation>
+        <translation type="unfinished">Jaettu kansio</translation>
     </message>
     <message>
         <source>Local Path</source>
-        <translation type="obsolete">Paikallinen polku</translation>
+        <translation type="unfinished">Paikallinen polku</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">Selaa</translation>
+        <translation type="unfinished">Selaa</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="obsolete">Virtuaalinen kansio</translation>
+        <translation type="unfinished">Virtuaalinen kansio</translation>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="obsolete">Jakoilmaisimet</translation>
+        <translation type="unfinished">Jakoilmaisimet</translation>
     </message>
     <message>
         <source>Browsable</source>
-        <translation type="obsolete">Selattavissa</translation>
+        <translation type="unfinished">Selattavissa</translation>
     </message>
     <message>
         <source>Anonymous shared Network Wide</source>
-        <translation type="obsolete">Nimettömästi jaettu verkon laajuisesti</translation>
+        <translation type="unfinished">Nimettömästi jaettu verkon laajuisesti</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="obsolete">Verkon laajuinen</translation>
+        <translation type="unfinished">Verkon laajuinen</translation>
     </message>
     <message>
         <source>Browseable by Friends</source>
-        <translation type="obsolete">Ystävien selattavissa</translation>
+        <translation type="unfinished">Ystävien selattavissa</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -10576,26 +12545,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation type="obsolete">Valitse kansio jaettavaksi</translation>
+        <translation type="unfinished">Valitse kansio jaettavaksi</translation>
     </message>
 </context>
 <context>
     <name>ShareKey</name>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="obsolete">merkitse vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <translation type="unfinished">merkitse vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="obsolete">Jakokanava</translation>
+        <translation type="unfinished">Jakokanava</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10603,7 +12572,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10611,19 +12580,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation type="obsolete">Jaa ystävälle</translation>
+        <translation type="unfinished">Jaa ystävälle</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="obsolete">Kontaktit:</translation>
+        <translation type="unfinished">Kontaktit:</translation>
     </message>
     <message>
         <source>Share</source>
-        <translation type="obsolete">Jaa</translation>
+        <translation type="unfinished">Jaa</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10631,7 +12600,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Select the Friends with which you want to Share your Channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10643,22 +12612,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation type="obsolete">Valitse ainakin yksi vertainen</translation>
+        <translation type="unfinished">Valitse ainakin yksi vertainen</translation>
     </message>
 </context>
 <context>
     <name>ShareManager</name>
     <message>
         <source>Add a Share Directory</source>
-        <translation type="obsolete">Lisää jaettava hakemisto</translation>
+        <translation type="unfinished">Lisää jaettava hakemisto</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
-        <translation type="obsolete">Lopeta valitun hakemiston jakaminen</translation>
+        <translation type="unfinished">Lopeta valitun hakemiston jakaminen</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Poista</translation>
+        <translation type="unfinished">Poista</translation>
     </message>
     <message>
         <source>Add Shared Directory</source>
@@ -10666,27 +12635,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation type="obsolete">Jos rastitat tämän, kyseinen jako on nimettömästi kaikkien saatavissa.</translation>
+        <translation type="unfinished">Jos rastitat tämän, kyseinen jako on nimettömästi kaikkien saatavissa.</translation>
     </message>
     <message>
         <source>If checked, the share is browsable by your friends.</source>
-        <translation type="obsolete">Jos rastitat tämän, kyseinen jako on ystäviesi selattavissa.</translation>
+        <translation type="unfinished">Jos rastitat tämän, kyseinen jako on ystäviesi selattavissa.</translation>
     </message>
     <message>
         <source>Warning!</source>
-        <translation type="obsolete">Varoitus!</translation>
+        <translation type="unfinished">Varoitus!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation type="obsolete">Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
+        <translation type="unfinished">Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation type="obsolete">Virhe pudotettaessa tiedostoa.</translation>
+        <translation type="unfinished">Virhe pudotettaessa tiedostoa.</translation>
     </message>
     <message>
         <source>RetroShare Share Manager</source>
-        <translation type="obsolete">RetroSharen jakamisten hallinta</translation>
+        <translation type="unfinished">RetroSharen jakamisten hallinta</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10694,7 +12663,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10702,7 +12671,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Folder Manager</source>
-        <translation type="obsolete">Jaettujen kansioiden hallinta</translation>
+        <translation type="unfinished">Jaettujen kansioiden hallinta</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10714,7 +12683,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10726,42 +12695,50 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="obsolete">Hakemisto</translation>
+        <translation type="unfinished">Hakemisto</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="obsolete">Virtuaalinen kansio</translation>
+        <translation type="unfinished">Virtuaalinen kansio</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="obsolete">Verkon laajuinen</translation>
+        <translation type="unfinished">Verkon laajuinen</translation>
     </message>
     <message>
         <source>Browsable</source>
-        <translation type="obsolete">Selattavissa</translation>
+        <translation type="unfinished">Selattavissa</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Lisää</translation>
+        <translation type="unfinished">Lisää</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Sulje</translation>
+        <translation type="unfinished">Sulje</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
-        <translation type="obsolete">Muokkaa valittua jaettua hakemistoa</translation>
+        <translation type="unfinished">Muokkaa valittua jaettua hakemistoa</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="obsolete">Muokkaa</translation>
+        <translation type="unfinished">Muokkaa</translation>
+    </message>
+    <message>
+        <source>File can&apos;t be dropped, only directories are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory not found or directory name not accepted.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
         <source>Download</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -10775,91 +12752,91 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="obsolete">Tarkistaa...</translation>
+        <translation type="unfinished">Tarkistaa...</translation>
     </message>
     <message>
         <source>Check files</source>
-        <translation type="obsolete">Tarkista tiedostot</translation>
+        <translation type="unfinished">Tarkista tiedostot</translation>
     </message>
     <message>
         <source>Copy retroshare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Send retroshare Link</source>
-        <translation type="obsolete">Lähetä RetroShare-linkki</translation>
+        <translation type="unfinished">Lähetä RetroShare-linkki</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation type="obsolete">Kopioi RetroShare-linkkejä leikepöydälle</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkkejä leikepöydälle</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="obsolete">Kopioi RetroShare-linkkejä leikepöydälle (HTML)</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkkejä leikepöydälle (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation type="obsolete">Lähetä RetroShare-linkkejä</translation>
+        <translation type="unfinished">Lähetä RetroShare-linkkejä</translation>
     </message>
     <message>
         <source>Send retroshare Links (HTML)</source>
-        <translation type="obsolete">Lähetä RetroShare-linkkejä (HTML)</translation>
+        <translation type="unfinished">Lähetä RetroShare-linkkejä (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation type="obsolete">Lähetä RetroShare-linkkejä pilveen</translation>
+        <translation type="unfinished">Lähetä RetroShare-linkkejä pilveen</translation>
     </message>
     <message>
         <source>Add Links to Cloud</source>
-        <translation type="obsolete">Lisää linkkejä pilveen</translation>
+        <translation type="unfinished">Lisää linkkejä pilveen</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="obsolete">Avaa tiedosto</translation>
+        <translation type="unfinished">Avaa tiedosto</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="obsolete">Avaa kansio</translation>
+        <translation type="unfinished">Avaa kansio</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation type="obsolete">Suosittele viestissä vastaanottajalle</translation>
+        <translation type="unfinished">Suosittele viestissä vastaanottajalle</translation>
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation type="obsolete">RetroShare-linkki</translation>
+        <translation type="unfinished">RetroShare-linkki</translation>
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation type="obsolete">Suositukset</translation>
+        <translation type="unfinished">Suositukset</translation>
     </message>
     <message>
         <source>Set command for opening this file</source>
-        <translation type="obsolete">Aseta komento tämän tiedoston avaamiseksi</translation>
+        <translation type="unfinished">Aseta komento tämän tiedoston avaamiseksi</translation>
     </message>
     <message>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Omat jaetut tiedostot&lt;/strong&gt;</translation>
+        <translation type="unfinished">&lt;strong&gt;Omat jaetut tiedostot&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Ystävien tiedostot&lt;/strong&gt;</translation>
+        <translation type="unfinished">&lt;strong&gt;Ystävien tiedostot&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Tiedostot&lt;/strong&gt;</translation>
+        <translation type="unfinished">&lt;strong&gt;Tiedostot&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Splitted View</source>
-        <translation type="obsolete">Jaettu näkymä</translation>
+        <translation type="unfinished">Jaettu näkymä</translation>
     </message>
     <message>
         <source>Friends Folders</source>
-        <translation type="obsolete">Ystävien kansiot</translation>
+        <translation type="unfinished">Ystävien kansiot</translation>
     </message>
     <message>
         <source>My Folders</source>
-        <translation type="obsolete">Omat kansioni</translation>
+        <translation type="unfinished">Omat kansioni</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10867,7 +12844,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10875,39 +12852,51 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All</source>
-        <translation type="obsolete">Kaikki</translation>
+        <translation type="unfinished">Kaikki</translation>
     </message>
     <message>
         <source>One day old</source>
-        <translation type="obsolete">Päivän vanhat</translation>
+        <translation type="unfinished">Päivän vanhat</translation>
     </message>
     <message>
         <source>One Week old</source>
-        <translation type="obsolete">Viikon vanhat</translation>
+        <translation type="unfinished">Viikon vanhat</translation>
     </message>
     <message>
         <source>One month old</source>
-        <translation type="obsolete">Kuukauden vanhat</translation>
+        <translation type="unfinished">Kuukauden vanhat</translation>
     </message>
     <message>
         <source>Search files</source>
-        <translation type="obsolete">Etsi tiedostoja</translation>
+        <translation type="unfinished">Etsi tiedostoja</translation>
     </message>
     <message>
         <source>Start Search</source>
-        <translation type="obsolete">Aloita haku</translation>
+        <translation type="unfinished">Aloita haku</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation type="obsolete">Lataa valitut</translation>
+        <translation type="unfinished">Lataa valitut</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation type="obsolete">tarkista tiedostot</translation>
+        <translation type="unfinished">tarkista tiedostot</translation>
+    </message>
+    <message>
+        <source>Tree view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flat view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create collection file</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10918,19 +12907,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>go Online</source>
-        <translation type="obsolete">mene online</translation>
+        <translation type="unfinished">mene online</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="obsolete">Ystävä</translation>
+        <translation type="unfinished">Ystävä</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">Selaa</translation>
+        <translation type="unfinished">Selaa</translation>
     </message>
     <message>
         <source>New Msg</source>
-        <translation type="obsolete">Uusi viesti</translation>
+        <translation type="unfinished">Uusi viesti</translation>
     </message>
     <message>
         <source>FileSend</source>
@@ -10950,7 +12939,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chatmessage</source>
-        <translation type="obsolete">Keskusteluviesti</translation>
+        <translation type="unfinished">Keskusteluviesti</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">Palauta asetukset</translation>
+    </message>
+    <message>
+        <source>Event:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation type="unfinished">Tiedostonimi</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished">Avaa tiedosto</translation>
+    </message>
+</context>
+<context>
+    <name>SoundStatus</name>
+    <message>
+        <source>Sound on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound off</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11069,18 +13093,6 @@ p, li { white-space: pre-wrap; }
 Oletko varma, että haluat jatkaa?</translation>
     </message>
     <message>
-        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
-lock file:
- </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
-lock file:
- </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11115,21 +13127,6 @@ This choice be reverted in settings.</source>
 Tämän valinnan voi muuttaa asetuksista.</translation>
     </message>
     <message>
-        <source>.QWidget {
-   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #ECECEC, stop:1 #E0E0E0);
- }</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QToolButton{
-border-image: url(:/images/avatar_background.png);
-
-}
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
@@ -11137,16 +13134,28 @@ border-image: url(:/images/avatar_background.png);
 This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
+lock file:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
+lock file:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StatisticDialog</name>
     <message>
         <source>Session:</source>
-        <translation type="obsolete">Istunto:</translation>
+        <translation type="unfinished">Istunto:</translation>
     </message>
     <message>
         <source>Downloaded:</source>
-        <translation type="obsolete">Ladattu:</translation>
+        <translation type="unfinished">Ladattu:</translation>
     </message>
     <message>
         <source>Average Downloadspeed:</source>
@@ -11154,23 +13163,23 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Count of Downloads:</source>
-        <translation type="obsolete">Latausten määrä:</translation>
+        <translation type="unfinished">Latausten määrä:</translation>
     </message>
     <message>
         <source>Overall</source>
-        <translation type="obsolete">Yhteensä</translation>
+        <translation type="unfinished">Yhteensä</translation>
     </message>
     <message>
         <source>Upload</source>
-        <translation type="obsolete">Lähetys</translation>
+        <translation type="unfinished">Lähetys</translation>
     </message>
     <message>
         <source>Session</source>
-        <translation type="obsolete">Istunto</translation>
+        <translation type="unfinished">Istunto</translation>
     </message>
     <message>
         <source>Uploaded:</source>
-        <translation type="obsolete">Lähetetty:</translation>
+        <translation type="unfinished">Lähetetty:</translation>
     </message>
     <message>
         <source>Average Uploadspeed:</source>
@@ -11178,19 +13187,19 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Count of Uploads:</source>
-        <translation type="obsolete">Lähetettyjen lukumäärä:</translation>
+        <translation type="unfinished">Lähetettyjen lukumäärä:</translation>
     </message>
     <message>
         <source>Uploaded</source>
-        <translation type="obsolete">Lähetetty</translation>
+        <translation type="unfinished">Lähetetty</translation>
     </message>
     <message>
         <source>Connections:</source>
-        <translation type="obsolete">Yhteydet:</translation>
+        <translation type="unfinished">Yhteydet:</translation>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="obsolete">Vertaiset:</translation>
+        <translation type="unfinished">Vertaiset:</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -11198,7 +13207,7 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Uptime:</source>
-        <translation type="obsolete">Päällä:</translation>
+        <translation type="unfinished">Päällä:</translation>
     </message>
     <message>
         <source>Overall:</source>
@@ -11206,103 +13215,103 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Uptime</source>
-        <translation type="obsolete">Päällä</translation>
+        <translation type="unfinished">Päällä</translation>
     </message>
     <message>
         <source>Records</source>
-        <translation type="obsolete">Tietueet</translation>
+        <translation type="unfinished">Tietueet</translation>
     </message>
     <message>
         <source>Uploadspeed:</source>
-        <translation type="obsolete">Lähetysnopeus:</translation>
+        <translation type="unfinished">Lähetysnopeus:</translation>
     </message>
     <message>
         <source>Downloadspeed:</source>
-        <translation type="obsolete">Latausnopeus:</translation>
+        <translation type="unfinished">Latausnopeus:</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="obsolete">Näytä asetukset</translation>
+        <translation type="unfinished">Näytä asetukset</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="obsolete">Palauta asetukset</translation>
+        <translation type="unfinished">Palauta asetukset</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="obsolete">Vastaanottonopeus</translation>
+        <translation type="unfinished">Vastaanottonopeus</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="obsolete">Lähetysnopeus</translation>
+        <translation type="unfinished">Lähetysnopeus</translation>
     </message>
     <message>
         <source>Always On Top</source>
-        <translation type="obsolete">Aina päällimmäisenä</translation>
+        <translation type="unfinished">Aina päällimmäisenä</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="obsolete">100</translation>
+        <translation type="unfinished">100</translation>
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="obsolete">% näkyvä</translation>
+        <translation type="unfinished">% näkyvä</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="obsolete">Muuttaa siirtonopeuskuvaajan läpinäkyvyyttä</translation>
+        <translation type="unfinished">Muuttaa siirtonopeuskuvaajan läpinäkyvyyttä</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="obsolete">Tallenna</translation>
+        <translation type="unfinished">Tallenna</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="obsolete">Piilota asetukset</translation>
+        <translation type="unfinished">Piilota asetukset</translation>
     </message>
     <message>
         <source>%1 days </source>
-        <translation type="obsolete">%1 päivää </translation>
+        <translation type="unfinished">%1 päivää </translation>
     </message>
     <message>
         <source>Statistics</source>
-        <translation type="obsolete">Tilastot</translation>
+        <translation type="unfinished">Tilastot</translation>
     </message>
     <message>
         <source>Now</source>
-        <translation type="obsolete">Nyt</translation>
+        <translation type="unfinished">Nyt</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="obsolete">Siirto</translation>
+        <translation type="unfinished">Siirto</translation>
     </message>
     <message>
         <source>Session UL:DL Ratio:</source>
-        <translation type="obsolete">Istunnon LAT:LÄH-suhde:</translation>
+        <translation type="unfinished">Istunnon LAT:LÄH-suhde:</translation>
     </message>
     <message>
         <source>Cumulative UL:DL Ratio</source>
-        <translation type="obsolete">Kertynyt LAT:LÄH-suhde</translation>
+        <translation type="unfinished">Kertynyt LAT:LÄH-suhde</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>Time Statistics</source>
-        <translation type="obsolete">Aikatilastot</translation>
+        <translation type="unfinished">Aikatilastot</translation>
     </message>
     <message>
         <source>Since:</source>
-        <translation type="obsolete">Alkaen:</translation>
+        <translation type="unfinished">Alkaen:</translation>
     </message>
     <message>
         <source>Cumulative</source>
-        <translation type="obsolete">Kertynyt</translation>
+        <translation type="unfinished">Kertynyt</translation>
     </message>
 </context>
 <context>
@@ -11400,11 +13409,11 @@ This choice can be reverted in settings.</source>
     <name>StatusMessage</name>
     <message>
         <source>Personal message</source>
-        <translation type="obsolete">Henkilökohtainen viesti</translation>
+        <translation type="unfinished">Henkilökohtainen viesti</translation>
     </message>
     <message>
         <source>Status message</source>
-        <translation type="obsolete">Tilaviesti</translation>
+        <translation type="unfinished">Tilaviesti</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11412,7 +13421,7 @@ This choice can be reverted in settings.</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -11424,7 +13433,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -11432,11 +13441,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -11447,11 +13456,43 @@ p, li { white-space: pre-wrap; }
     <name>StyleDialog</name>
     <message>
         <source>Choose color</source>
-        <translation type="obsolete">Valitse väri</translation>
+        <translation type="unfinished">Valitse väri</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="obsolete">Tyyli</translation>
+        <translation type="unfinished">Tyyli</translation>
+    </message>
+    <message>
+        <source>Define Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Define Style&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Solid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11462,7 +13503,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete FeedItem</source>
-        <translation type="obsolete">Tuhoa syötekohde</translation>
+        <translation type="unfinished">Tuhoa syötekohde</translation>
     </message>
 </context>
 <context>
@@ -11473,178 +13514,210 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="obsolete">VIRHE</translation>
+        <translation type="unfinished">VIRHE</translation>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation type="obsolete">YLIMÄÄRÄINEN</translation>
+        <translation type="unfinished">YLIMÄÄRÄINEN</translation>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation type="obsolete">ETÄ</translation>
+        <translation type="unfinished">ETÄ</translation>
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation type="obsolete">LATAUS</translation>
+        <translation type="unfinished">LATAUS</translation>
     </message>
     <message>
         <source>LOCAL</source>
-        <translation type="obsolete">PAIKALLINEN</translation>
+        <translation type="unfinished">PAIKALLINEN</translation>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation type="obsolete">LÄHETYS</translation>
+        <translation type="unfinished">LÄHETYS</translation>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
-        <translation type="obsolete">Tiedostoa %1 ei löydy sijainnista.</translation>
+        <translation type="unfinished">Tiedostoa %1 ei löydy sijainnista.</translation>
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation type="obsolete">Tiedosto %1 ei ole valmistunut.</translation>
+        <translation type="unfinished">Tiedosto %1 ei ole valmistunut.</translation>
     </message>
     <message>
         <source>Save Channel File</source>
-        <translation type="obsolete">Tallenna kanavatiedosto</translation>
+        <translation type="unfinished">Tallenna kanavatiedosto</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="obsolete">Toista</translation>
+        <translation type="unfinished">Toista</translation>
     </message>
     <message>
         <source>%p Kb</source>
-        <translation type="obsolete">%p Kb</translation>
+        <translation type="unfinished">%p Kb</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation type="obsolete">Tallenna tiedosto</translation>
+        <translation type="unfinished">Tallenna tiedosto</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="obsolete">Peru lataus</translation>
+        <translation type="unfinished">Peru lataus</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation type="obsolete">Lataa tiedosto</translation>
+        <translation type="unfinished">Lataa tiedosto</translation>
     </message>
     <message>
         <source>Play File</source>
-        <translation type="obsolete">Toista tiedosto</translation>
+        <translation type="unfinished">Toista tiedosto</translation>
+    </message>
+    <message>
+        <source>Remove Attachment</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation type="obsolete">Tauko</translation>
+        <translation type="unfinished">Tauko</translation>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation type="obsolete">Tärkeä</translation>
+        <translation type="unfinished">Tärkeä</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="obsolete">Työ</translation>
+        <translation type="unfinished">Työ</translation>
     </message>
     <message>
         <source>Personal</source>
-        <translation type="obsolete">Henkilökohtainen</translation>
+        <translation type="unfinished">Henkilökohtainen</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="obsolete">Tehtävänä</translation>
+        <translation type="unfinished">Tehtävänä</translation>
     </message>
     <message>
         <source>Later</source>
-        <translation type="obsolete">Myöhemmin</translation>
+        <translation type="unfinished">Myöhemmin</translation>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation type="obsolete">Poista kaikki merkkaukset</translation>
+        <translation type="unfinished">Poista kaikki merkkaukset</translation>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation type="obsolete">Uusi merkkaus...</translation>
+        <translation type="unfinished">Uusi merkkaus...</translation>
     </message>
 </context>
 <context>
     <name>TextPage</name>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation type="obsolete">Näytä PGP-varmenteet tekstimuotoisina.</translation>
+        <translation type="unfinished">Näytä PGP-varmenteet tekstimuotoisina.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation type="obsolete">Allaoleva teksti on PGP-varmenteesi. Sinun täytyy antaa se ystävällesi </translation>
+        <translation type="unfinished">Allaoleva teksti on PGP-varmenteesi. Sinun täytyy antaa se ystävällesi </translation>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="obsolete">Ole hyvä ja liitä ystäväsi PGP-varmenne allaolevaan laatikkoon</translation>
+        <translation type="unfinished">Ole hyvä ja liitä ystäväsi PGP-varmenne allaolevaan laatikkoon</translation>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="obsolete">Voit kopioida tämän tekstin ja lähettää sen ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation type="unfinished">Voit kopioida tämän tekstin ja lähettää sen ystävällesi sähköpostilla tai muulla tavoin</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Text certificate</source>
-        <translation type="obsolete">Tekstivarmenne</translation>
+        <translation type="unfinished">Tekstivarmenne</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="obsolete">Kopioi varmenne leikepöydälle</translation>
+        <translation type="unfinished">Kopioi varmenne leikepöydälle</translation>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation type="obsolete">Tallenna varmenne tiedostoon</translation>
+        <translation type="unfinished">Tallenna varmenne tiedostoon</translation>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation type="obsolete">Käynnistä sähköpostiohjelma</translation>
+        <translation type="unfinished">Käynnistä sähköpostiohjelma</translation>
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation type="obsolete">RetroSharekutsu</translation>
+        <translation type="unfinished">RetroSharekutsu</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation type="obsolete">Ohje ystävän yhdistämisestä</translation>
+        <translation type="unfinished">Ohje ystävän yhdistämisestä</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="obsolete">Varmenteesi on kopioitu leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation type="unfinished">Varmenteesi on kopioitu leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="obsolete">Tallenna nimellä...</translation>
+        <translation type="unfinished">Tallenna nimellä...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="obsolete">RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
+        <translation type="unfinished">RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <source>Certificate Load Failed</source>
-        <translation type="obsolete">Varmenteen lataus epäonnistui</translation>
+        <translation type="unfinished">Varmenteen lataus epäonnistui</translation>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clean certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No or misspelled BEGIN tag found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No or misspelled END tag found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error. Your cert is probably not even a certificate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate cleaning error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
-        <translation type="obsolete">Siirtoasetukset</translation>
+        <translation type="unfinished">Siirtoasetukset</translation>
     </message>
     <message>
         <source>Queue Size:</source>
@@ -11652,23 +13725,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation type="obsolete">Palasten oletusstrategia:</translation>
+        <translation type="unfinished">Palasten oletusstrategia:</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation type="obsolete">Kiintolevytilan turvallisuusrajoitus:</translation>
+        <translation type="unfinished">Kiintolevytilan turvallisuusrajoitus:</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="obsolete">Suoratoisto</translation>
+        <translation type="unfinished">Suoratoisto</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="obsolete">Satunnainen</translation>
+        <translation type="unfinished">Satunnainen</translation>
     </message>
     <message>
         <source> MB</source>
-        <translation type="obsolete">Mt</translation>
+        <translation type="unfinished">Mt</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11690,24 +13763,53 @@ p, li { white-space: pre-wrap; }
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Ystävien selattavissa&lt;/span&gt;: ystäväsi näkevät tiedostosi.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Nimettömästi jaetut&lt;/span&gt;: tiedostoihin päästään käsiksi nimettömästi kaukaisten F2F-tunneleiden kautta.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Maximum simultaneous downloads:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slots reserved for non-cache transfers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use this to force RetroShare to download your files rather 
+than cache files for as many slots as requested. Setting that number 
+to be equal to the queue size above will always prioritize your files
+over cache. 
+
+It is however recommended to leave at least a few slots for cache files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TransfersDialog</name>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Peru</translation>
+        <translation type="unfinished">Peru</translation>
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation type="obsolete">Poista valmistuneet</translation>
+        <translation type="unfinished">Poista valmistuneet</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="obsolete">Tila</translation>
+        <translation type="unfinished">Tila</translation>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="obsolete">Valmis</translation>
+        <translation type="unfinished">Valmis</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -11725,7 +13827,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Downloads:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -11733,27 +13835,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show cache transfers</source>
-        <translation type="obsolete">Näytä välimuistisiirrot</translation>
+        <translation type="unfinished">Näytä välimuistisiirrot</translation>
     </message>
     <message>
         <source>Uploads</source>
-        <translation type="obsolete">Lähetykset</translation>
+        <translation type="unfinished">Lähetykset</translation>
     </message>
     <message>
         <source>Selected transfer</source>
-        <translation type="obsolete">Valittu siirto</translation>
+        <translation type="unfinished">Valittu siirto</translation>
     </message>
     <message>
         <source>Done</source>
-        <translation type="obsolete">Valmis</translation>
+        <translation type="unfinished">Valmis</translation>
     </message>
     <message>
         <source>Active</source>
-        <translation type="obsolete">Aktiivinen</translation>
+        <translation type="unfinished">Aktiivinen</translation>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation type="obsolete">Suorittamaton</translation>
+        <translation type="unfinished">Suorittamaton</translation>
     </message>
     <message>
         <source>Tunneling</source>
@@ -11772,12 +13874,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="obsolete">Nimi</translation>
+        <translation type="unfinished">Nimi</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Progress</source>
@@ -11787,291 +13889,315 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation type="obsolete">Nopeus</translation>
+        <translation type="unfinished">Nopeus</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="obsolete">Edistyminen / saatu</translation>
+        <translation type="unfinished">Edistyminen / saatu</translation>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation type="obsolete">Lähteet</translation>
+        <translation type="unfinished">Lähteet</translation>
     </message>
     <message>
         <source>Core-ID</source>
-        <translation type="obsolete">Ydintunniste</translation>
+        <translation type="unfinished">Ydintunniste</translation>
     </message>
     <message>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation type="obsolete">Edistyminen</translation>
+        <translation type="unfinished">Edistyminen</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation type="obsolete">Nopeus</translation>
+        <translation type="unfinished">Nopeus</translation>
     </message>
     <message>
         <source>Transferred</source>
-        <translation type="obsolete">Siirretty</translation>
+        <translation type="unfinished">Siirretty</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="obsolete">Tiiviste (hash)</translation>
+        <translation type="unfinished">Tiiviste (hash)</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="obsolete">Toista</translation>
+        <translation type="unfinished">Toista</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="obsolete">Tauko</translation>
+        <translation type="unfinished">Tauko</translation>
     </message>
     <message>
         <source>Resume</source>
-        <translation type="obsolete">Jatka</translation>
+        <translation type="unfinished">Jatka</translation>
     </message>
     <message>
         <source>Force Check</source>
-        <translation type="obsolete">Pakota tarkistus</translation>
+        <translation type="unfinished">Pakota tarkistus</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="obsolete">Avaa kansio</translation>
+        <translation type="unfinished">Avaa kansio</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="obsolete">Avaa tiedosto</translation>
+        <translation type="unfinished">Avaa tiedosto</translation>
     </message>
     <message>
         <source>Preview File</source>
-        <translation type="obsolete">Esikatsele tiedostoa</translation>
+        <translation type="unfinished">Esikatsele tiedostoa</translation>
     </message>
     <message>
         <source>Details...</source>
-        <translation type="obsolete">Yksityiskohdat...</translation>
+        <translation type="unfinished">Yksityiskohdat...</translation>
     </message>
     <message>
         <source>Down</source>
-        <translation type="obsolete">Alas</translation>
+        <translation type="unfinished">Alas</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="obsolete">Ylös</translation>
+        <translation type="unfinished">Ylös</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="obsolete">Ylimmäiseksi</translation>
+        <translation type="unfinished">Ylimmäiseksi</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation type="obsolete">Alimmaiseksi</translation>
+        <translation type="unfinished">Alimmaiseksi</translation>
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation type="obsolete">Tärkeysjärjestys (nopeus)...</translation>
+        <translation type="unfinished">Tärkeysjärjestys (nopeus)...</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="obsolete">Suoratoisto</translation>
+        <translation type="unfinished">Suoratoisto</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="obsolete">Satunnainen</translation>
+        <translation type="unfinished">Satunnainen</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="obsolete">Palasten strategia</translation>
+        <translation type="unfinished">Palasten strategia</translation>
     </message>
     <message>
         <source>Queued</source>
-        <translation type="obsolete">Jonossa</translation>
+        <translation type="unfinished">Jonossa</translation>
     </message>
     <message>
         <source>Paused</source>
-        <translation type="obsolete">Tauolla</translation>
+        <translation type="unfinished">Tauolla</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation type="obsolete">Siirtää</translation>
+        <translation type="unfinished">Siirtää</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="obsolete">Tarkistaa...</translation>
+        <translation type="unfinished">Tarkistaa...</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
+        <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <source>Details:</source>
-        <translation type="obsolete">Yksityiskohdat:</translation>
+        <translation type="unfinished">Yksityiskohdat:</translation>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation type="obsolete">Avaa siirto</translation>
+        <translation type="unfinished">Avaa siirto</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation type="obsolete">Tiedosto %1 ei ole valmis. Jos se on mediatiedosto, voit yrittää esikatsella sitä.</translation>
+        <translation type="unfinished">Tiedosto %1 ei ole valmis. Jos se on mediatiedosto, voit yrittää esikatsella sitä.</translation>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation type="obsolete">Oletko varma, että haluat perua ja tuhota nämä tiedostot?</translation>
+        <translation type="unfinished">Oletko varma, että haluat perua ja tuhota nämä tiedostot?</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation type="obsolete">Nopeus / paikka jonossa</translation>
+        <translation type="unfinished">Nopeus / paikka jonossa</translation>
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="obsolete">Jäljellä</translation>
+        <translation type="unfinished">Jäljellä</translation>
     </message>
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="obsolete">Latausaika</translation>
+        <translation type="unfinished">Latausaika</translation>
     </message>
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation type="obsolete">Vertainen</translation>
+        <translation type="unfinished">Vertainen</translation>
     </message>
     <message>
         <source>Router Statistics</source>
-        <translation type="obsolete">Reitittimen tilastot</translation>
+        <translation type="unfinished">Reitittimen tilastot</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="obsolete">Kopioi RetroShare-linkki</translation>
+        <translation type="unfinished">Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="obsolete">Liitä RetroShare-linkki</translation>
+        <translation type="unfinished">Liitä RetroShare-linkki</translation>
     </message>
     <message>
         <source>Slower</source>
-        <translation type="obsolete">Hitaammin</translation>
+        <translation type="unfinished">Hitaammin</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation type="obsolete">Keskinkertaisella nopeudella</translation>
+        <translation type="unfinished">Keskinkertaisella nopeudella</translation>
     </message>
     <message>
         <source>Faster</source>
-        <translation type="obsolete">Nopeammin</translation>
+        <translation type="unfinished">Nopeammin</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation type="obsolete">Siirrä jonossa...</translation>
+        <translation type="unfinished">Siirrä jonossa...</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation type="obsolete">Epäonnistunut</translation>
+        <translation type="unfinished">Epäonnistunut</translation>
     </message>
     <message>
         <source>Okay</source>
-        <translation type="obsolete">OK</translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Waiting</source>
-        <translation type="obsolete">Odottaa</translation>
+        <translation type="unfinished">Odottaa</translation>
     </message>
     <message>
         <source>Downloading</source>
-        <translation type="obsolete">Lataa</translation>
+        <translation type="unfinished">Lataa</translation>
     </message>
     <message>
         <source>Complete</source>
-        <translation type="obsolete">Valmis</translation>
+        <translation type="unfinished">Valmis</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="obsolete">Tuntematon</translation>
+        <translation type="unfinished">Tuntematon</translation>
     </message>
     <message>
         <source>version: </source>
-        <translation type="obsolete">versio:</translation>
+        <translation type="unfinished">versio:</translation>
     </message>
     <message>
         <source>Uploading</source>
-        <translation type="obsolete">Lähettää</translation>
+        <translation type="unfinished">Lähettää</translation>
+    </message>
+    <message>
+        <source>Open Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Requests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 preview failed.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
         <source>FILE</source>
-        <translation type="obsolete">TIEDOSTO</translation>
+        <translation type="unfinished">TIEDOSTO</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="obsolete">Tiedostot</translation>
+        <translation type="unfinished">Tiedostot</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="obsolete">Tiedosto</translation>
+        <translation type="unfinished">Tiedosto</translation>
     </message>
     <message>
         <source>DIR</source>
-        <translation type="obsolete">HAK</translation>
+        <translation type="unfinished">HAK</translation>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation type="obsolete">Ystävien hakemistot</translation>
+        <translation type="unfinished">Ystävien hakemistot</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="obsolete">Omat hakemistot</translation>
+        <translation type="unfinished">Omat hakemistot</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="obsolete">Koko</translation>
+        <translation type="unfinished">Koko</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="obsolete">Ikä</translation>
+        <translation type="unfinished">Ikä</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="obsolete">Ystävä</translation>
+        <translation type="unfinished">Ystävä</translation>
     </message>
     <message>
         <source>Share Type</source>
-        <translation type="obsolete">Jakamisen tyyppi</translation>
+        <translation type="unfinished">Jakamisen tyyppi</translation>
     </message>
     <message>
         <source>What&apos;s new</source>
-        <translation type="obsolete">Uusia</translation>
+        <translation type="unfinished">Uusia</translation>
+    </message>
+    <message>
+        <source>My files</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TrustView</name>
     <message>
         <source>Zoom :</source>
-        <translation type="obsolete">Koko:</translation>
+        <translation type="unfinished">Koko:</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="obsolete">Päivitä</translation>
+        <translation type="unfinished">Päivitä</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
-        <translation type="obsolete">Näyttää: koko verkon</translation>
+        <translation type="unfinished">Näyttää: koko verkon</translation>
     </message>
     <message>
         <source>This table normaly auto-updates every 10 seconds.</source>
-        <translation type="obsolete">Tämä taulukko päivittää itsensä normaalisti joka kymmenes sekunti.</translation>
+        <translation type="unfinished">Tämä taulukko päivittää itsensä normaalisti joka kymmenes sekunti.</translation>
     </message>
     <message>
         <source>Self</source>
-        <translation type="obsolete">Itse</translation>
+        <translation type="unfinished">Itse</translation>
     </message>
     <message>
         <source>Trust</source>
-        <translation type="obsolete">Luottamus</translation>
+        <translation type="unfinished">Luottamus</translation>
     </message>
     <message>
         <source> is athenticated (one way) by </source>
@@ -12095,41 +14221,81 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Half</source>
-        <translation type="obsolete">Puolet</translation>
+        <translation type="unfinished">Puolet</translation>
     </message>
     <message>
         <source>Full</source>
-        <translation type="obsolete">Täysi</translation>
+        <translation type="unfinished">Täysi</translation>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation type="obsolete">vertaiset, mukaanlukien hän itse.</translation>
+        <translation type="unfinished">vertaiset, mukaanlukien hän itse.</translation>
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation type="obsolete">Näyttää: vertaiset yhteydessä</translation>
+        <translation type="unfinished">Näyttää: vertaiset yhteydessä</translation>
+    </message>
+    <message>
+        <source> is authenticated (one way) by </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> authenticated himself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> authenticated each other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> is authenticated by </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> authenticated </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
         <source>Search requests</source>
-        <translation type="obsolete">Hakupyynnöt</translation>
+        <translation type="unfinished">Hakupyynnöt</translation>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation type="obsolete">Tunnelointipyynnöt</translation>
+        <translation type="unfinished">Tunnelointipyynnöt</translation>
+    </message>
+    <message>
+        <source>Unknown hashes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>last transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation type="unfinished">Nopeus</translation>
+    </message>
+    <message>
+        <source>Request id: %1	 from [%2]	 %3 secs ago</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialogForm</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="obsolete">Reitittimen tilastot</translation>
+        <translation type="unfinished">Reitittimen tilastot</translation>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation type="obsolete">F2F-reitittimen tiedot</translation>
+        <translation type="unfinished">F2F-reitittimen tiedot</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -12144,7 +14310,62 @@ p, li { white-space: pre-wrap; }
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="obsolete">Reitittimen tilastot</translation>
+        <translation type="unfinished">Reitittimen tilastot</translation>
+    </message>
+    <message>
+        <source>Age in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>total</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation type="unfinished">Tuntematon vertainen</translation>
+    </message>
+</context>
+<context>
+    <name>TurtleRouterStatisticsWidget</name>
+    <message>
+        <source>Search requests repartition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel requests repartition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turtle router traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel requests Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel requests Dn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incoming file data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outgoing file data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forwarded data    </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TR Forward probabilities</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12212,19 +14433,19 @@ p, li { white-space: pre-wrap; }
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="obsolete">t</translation>
+        <translation type="unfinished">t</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="obsolete">Kt</translation>
+        <translation type="unfinished">Kt</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="obsolete">Mt</translation>
+        <translation type="unfinished">Mt</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="obsolete">Gt</translation>
+        <translation type="unfinished">Gt</translation>
     </message>
 </context>
 <context>
@@ -12275,85 +14496,100 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>VoipStatistics</name>
+    <message>
+        <source>VoipTest Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>misc</name>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="obsolete">Tuntematon</translation>
+        <translation type="unfinished">Tuntematon</translation>
     </message>
     <message>
         <source> B</source>
         <comment>bytes</comment>
-        <translation type="obsolete">t</translation>
+        <translation type="unfinished">t</translation>
     </message>
     <message>
         <source> KiB</source>
         <comment>kibibytes (1024 bytes)</comment>
-        <translation type="obsolete">kibitavu</translation>
+        <translation type="unfinished">kibitavu</translation>
     </message>
     <message>
         <source> MiB</source>
         <comment>mebibytes (1024 kibibytes)</comment>
-        <translation type="obsolete">mebitavu</translation>
+        <translation type="unfinished">mebitavu</translation>
     </message>
     <message>
         <source> GiB</source>
         <comment>gibibytes (1024 mibibytes)</comment>
-        <translation type="obsolete">gibitavu</translation>
+        <translation type="unfinished">gibitavu</translation>
     </message>
     <message>
         <source> TiB</source>
         <comment>tebibytes (1024 gibibytes)</comment>
-        <translation type="obsolete">tebitavu</translation>
+        <translation type="unfinished">tebitavu</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="obsolete">Tuntematon</translation>
+        <translation type="unfinished">Tuntematon</translation>
     </message>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation type="obsolete">&lt; 1 min</translation>
+        <translation type="unfinished">&lt; 1 min</translation>
     </message>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation type="obsolete">%1 minuuttia</translation>
+        <translation type="unfinished">%1 minuuttia</translation>
     </message>
     <message>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation type="obsolete">%1d %2h </translation>
+        <translation type="unfinished">%1d %2h </translation>
     </message>
     <message>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation type="obsolete">%1v %2d</translation>
+        <translation type="unfinished">%1v %2d</translation>
     </message>
     <message>
         <source>k</source>
         <comment>e.g: 3.1 k</comment>
-        <translation type="obsolete">k</translation>
+        <translation type="unfinished">k</translation>
     </message>
     <message>
         <source>M</source>
         <comment>e.g: 3.1 M</comment>
-        <translation type="obsolete">M</translation>
+        <translation type="unfinished">M</translation>
     </message>
     <message>
         <source>G</source>
         <comment>e.g: 3.1 G</comment>
-        <translation type="obsolete">G</translation>
+        <translation type="unfinished">G</translation>
     </message>
     <message>
         <source>T</source>
         <comment>e.g: 3.1 T</comment>
-        <translation type="obsolete">T</translation>
+        <translation type="unfinished">T</translation>
     </message>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation type="obsolete">%1h %2min</translation>
+        <translation type="unfinished">%1h %2min</translation>
+    </message>
+    <message>
+        <source>Load avatar image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
