@@ -42,6 +42,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
 	connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
+
+	ui.participantsList->sortItems(Qt::AscendingOrder);
 }
 
 void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
