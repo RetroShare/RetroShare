@@ -1,6 +1,13 @@
 Changes for v0.5.3a
 
   * Improvements
+     - Fixed RetroShare links with " characters in the name.
+     - Fixed RetroShare links with "#" and "&" characters in the name.
+     - Fixed layout of the CryptoPage and german language.
+     - Fix some source code for better translation, added some new words to translate and removed some words not to be translated.
+     - Set the focus the subject input when creating a new forum/channel or channel message.
+     - Set the forum/channel message to read when expanding the message feed.
+     - Replaced std::string by QString in GetStartedDialog for easier translation and to prevent problems with utf8 chars.
      - Updated English Email Invite .
      - Set OSX default style to "Cleanlooks" - as AQUA style hides some windows.
      - Fixed missing headers for plugin manager.
@@ -254,6 +261,7 @@ Changes for v0.5.3a
      - Removed "location:" before the ssl name in FriendsDialog and MessengerWindow.
 
   * Bug fixes
+     - changed hash calculation of lobby connexion challenge to make it only usable by the receiver 
      - Fixed handling of utf8 characters in lobby nick name.
      - Fixed small bug in certificate correction
      - Added Check for successful Req creation (was crashing with NULL pointer).
