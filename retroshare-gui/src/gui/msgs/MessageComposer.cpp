@@ -346,7 +346,7 @@ void MessageComposer::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-/*static*/ void MessageComposer::msgFriend(std::string id, bool group)
+/*static*/ void MessageComposer::msgFriend(const std::string &id, bool group)
 {
 //    std::cerr << "MessageComposer::msgfriend()" << std::endl;
 
@@ -382,13 +382,16 @@ void MessageComposer::processSettings(bool bLoad)
     /* window will destroy itself! */
 }
 
-static QString buildRecommendHtml(std::list<std::string> &sslIds)
+static QString buildRecommendHtml(const std::list<std::string> &sslIds, const std::string &excludeId = "")
 {
     QString text;
 
     /* process ssl ids */
-    std::list <std::string>::iterator sslIt;
+    std::list <std::string>::const_iterator sslIt;
     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+        if (*sslIt == excludeId) {
+            continue;
+        }
         RetroShareLink link;
         if (link.createCertificate(*sslIt)) {
             text += link.toHtml() + "<br>";
@@ -398,11 +401,21 @@ static QString buildRecommendHtml(std::list<std::string> &sslIds)
     return text;
 }
 
-void MessageComposer::recommendFriend(std::list <std::string> &sslIds)
+QString MessageComposer::recommendMessage()
+{
+    return tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy friend link and paste to Friends list");
+}
+
+void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, const std::string &to, const QString &msg, bool autoSend)
 {
 //    std::cerr << "MessageComposer::recommendFriend()" << std::endl;
 
     if (sslIds.size() == 0) {
+        return;
+    }
+
+    QString recommendHtml = buildRecommendHtml(sslIds, to);
+    if (recommendHtml.isEmpty()) {
         return;
     }
 
@@ -411,14 +424,28 @@ void MessageComposer::recommendFriend(std::list <std::string> &sslIds)
 
     pMsgDialog->insertTitleText(tr("Friend Recommendation(s)"));
 
-    QString sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy friend link and paste to Friends list");
+    if (!to.empty()) {
+        pMsgDialog->addRecipient(TO, to, false);
+    }
+
+    QString sMsgText = msg.isEmpty() ? recommendMessage() : msg;
     sMsgText += "<br><br>";
-    sMsgText += buildRecommendHtml(sslIds);
+    sMsgText += recommendHtml;
     pMsgDialog->insertMsgText(sMsgText);
 
-    std::list <std::string>::iterator peerIt;
+    std::list <std::string>::const_iterator peerIt;
     for (peerIt = sslIds.begin(); peerIt != sslIds.end(); peerIt++) {
+        if (*peerIt == to) {
+            continue;
+        }
         pMsgDialog->addRecipient(CC, *peerIt, false);
+    }
+
+    if (autoSend) {
+        if (pMsgDialog->sendMessage_internal(false)) {
+            pMsgDialog->close();
+            return;
+        }
     }
 
     pMsgDialog->show();
@@ -917,7 +944,7 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     return msgComposer;
 }
 
-void  MessageComposer::insertTitleText(const QString &title, enumMessageType type)
+void MessageComposer::insertTitleText(const QString &title, enumMessageType type)
 {
     QString titleText;
 
@@ -944,7 +971,7 @@ void  MessageComposer::insertTitleText(const QString &title, enumMessageType typ
     ui.titleEdit->setText(misc::removeNewLine(titleText));
 }
 
-void  MessageComposer::insertPastedText(QString msg)
+void MessageComposer::insertPastedText(QString msg)
 {
     msg.replace("\n", "\n<BR>> ");
 
@@ -959,7 +986,7 @@ void  MessageComposer::insertPastedText(QString msg)
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::insertForwardPastedText(QString msg)
+void MessageComposer::insertForwardPastedText(QString msg)
 {
     msg.replace("\n", "\n<BR>> ");
 
@@ -974,7 +1001,7 @@ void  MessageComposer::insertForwardPastedText(QString msg)
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::insertMsgText(const QString &msg)
+void MessageComposer::insertMsgText(const QString &msg)
 {
     ui.msgText->setText(msg);
 
@@ -987,14 +1014,14 @@ void  MessageComposer::insertMsgText(const QString &msg)
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::insertHtmlText(const QString &msg)
+void MessageComposer::insertHtmlText(const QString &msg)
 {
     ui.msgText->setHtml("<a href='" + msg + "'> " + msg + "</a>");
 
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::sendMessage()
+void MessageComposer::sendMessage()
 {
     if (sendMessage_internal(false)) {
         close();

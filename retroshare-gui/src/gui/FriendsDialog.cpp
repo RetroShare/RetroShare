@@ -56,6 +56,7 @@
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
 #include "chat/CreateLobbyDialog.h"
+#include "FriendRecommendDialog.h"
 
 #include "FriendsDialog.h"
 
@@ -88,6 +89,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
     connect( ui.actionCreate_new_Chat_lobby, SIGNAL(triggered()), this, SLOT(createChatLobby()));
+    connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
@@ -159,6 +161,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     menu->addAction(ui.actionAdd_Friend);
     menu->addAction(ui.actionAdd_Group);
     menu->addAction(ui.actionCreate_new_Chat_lobby);
+    menu->addAction(ui.actionFriendRecommendations);
 
     menu->addSeparator();
     menu->addAction(ui.actionCreate_New_Forum);
@@ -828,6 +831,11 @@ void FriendsDialog::createChatLobby()
 {
 	std::list<std::string> friends;
 	CreateLobbyDialog(friends).exec();
+}
+
+void FriendsDialog::recommendFriends()
+{
+	FriendRecommendDialog::showYourself();
 }
 
 /*static*/ ChatTabWidget *FriendsDialog::getTabWidget()

@@ -4960,6 +4960,39 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendRecommendDialog</name>
+    <message>
+        <location filename="../gui/FriendRecommendDialog.ui" line="+14"/>
+        <source>Friend Recommendations</source>
+        <translation>Freundempfehlungen</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Message:</source>
+        <translation>Nachricht:</translation>
+    </message>
+    <message>
+        <location filename="../gui/FriendRecommendDialog.cpp" line="+48"/>
+        <source>Recommend friends</source>
+        <translation>Freunde empfehlen</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>To</source>
+        <translation>An</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation>Bitte mindestens einen Freund als Empfehlung wählen.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Please select at least one friend as recipient.</source>
+        <translation>Bitte mindestens einen Empfänger wählen.</translation>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Form</source>
@@ -5148,6 +5181,11 @@ p, li { white-space: pre-wrap; }
         <translation>Neue Chat Lobby erstellen</translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Friend Recommendations</source>
+        <translation>Freundempfehlungen</translation>
+    </message>
+    <message>
         <source>Hide Offline Friends</source>
         <translation type="obsolete">Verstecke offline Freunde</translation>
     </message>
@@ -5168,7 +5206,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Status ausblenden</translation>
     </message>
     <message>
-        <location line="-27"/>
+        <location line="-32"/>
         <location line="+3"/>
         <source>Add a new Group</source>
         <translation>Neue Gruppe hinzufügen</translation>
@@ -5196,7 +5234,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+96"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+98"/>
         <source>Chat lobbies</source>
         <translation>Chat Lobbies</translation>
     </message>
@@ -5216,7 +5254,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+68"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
@@ -7237,7 +7275,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+676"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+703"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
@@ -7256,7 +7294,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-472"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-499"/>
         <source>Send To:</source>
         <translation>Senden an:</translation>
     </message>
@@ -7387,7 +7425,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+939"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+966"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -7472,7 +7510,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1025"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1052"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -7492,7 +7530,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>&amp;Blocksatz</translation>
     </message>
     <message>
-        <location line="+217"/>
+        <location line="+244"/>
         <location line="+1503"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
@@ -7737,12 +7775,12 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-1665"/>
+        <location line="-1679"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-19"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
         <translation>Ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt; Kopiere den Link und füge ihn in der Freundesliste ein</translation>
     </message>

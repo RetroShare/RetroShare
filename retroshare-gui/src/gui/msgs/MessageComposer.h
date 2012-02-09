@@ -47,8 +47,9 @@ public:
     MessageComposer(QWidget *parent = 0, Qt::WFlags flags = 0);
     ~MessageComposer();
 
-    static void msgFriend(std::string id, bool group);
-    static void recommendFriend(std::list <std::string> &sslIds);
+    static void msgFriend(const std::string &id, bool group);
+    static QString recommendMessage();
+    static void recommendFriend(const std::list <std::string> &sslIds, const std::string &to = "", const QString &msg = "", bool autoSend = false);
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);

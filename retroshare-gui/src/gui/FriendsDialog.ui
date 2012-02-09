@@ -1442,6 +1442,11 @@ background: white;}</string>
     <string>Create new Chat lobby</string>
    </property>
   </action>
+  <action name="actionFriendRecommendations">
+   <property name="text">
+    <string>Friend Recommendations</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

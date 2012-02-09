@@ -113,6 +113,7 @@ private slots:
     void newsFeedChanged(int count);
 
     void createChatLobby();
+    void recommendFriends();
 
 signals:
     void notifyGroupChat(const QString&,const QString&) ;
