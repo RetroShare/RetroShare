@@ -537,7 +537,7 @@ void ChannelFeed::subscribeChannel()
 #endif
 
     if (rsChannels) {
-        rsChannels->channelSubscribe(mChannelId, true, true);
+        rsChannels->channelSubscribe(mChannelId, true, false);
     }
 
     updateChannelMsgs();
