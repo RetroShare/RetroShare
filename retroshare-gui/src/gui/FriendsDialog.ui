@@ -1443,6 +1443,10 @@ background: white;}</string>
    </property>
   </action>
   <action name="actionFriendRecommendations">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/user/invite24.png</normaloff>:/images/user/invite24.png</iconset>
+   </property>
    <property name="text">
     <string>Friend Recommendations</string>
    </property>
