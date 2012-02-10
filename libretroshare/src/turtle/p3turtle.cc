@@ -89,6 +89,8 @@ static const uint32_t MAX_ALLOWED_SR_IN_CACHE   = 120 ;		/// maximum number of s
 static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.4f,0.15f,0.1f } ;
 static const int TUNNEL_REQUEST_PACKET_SIZE 	= 50 ;
 static const int MAX_TR_FORWARD_PER_SEC 		= 20 ;
+static const int MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT = 100 ;
+static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT =  10 ;
 static const int DISTANCE_SQUEEZING_POWER 	= 8 ;
 
 p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
@@ -110,6 +112,7 @@ p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
 
 	_traffic_info.reset() ;
 	_sharing_strategy = SHARE_ENTIRE_NETWORK ;
+	_max_tr_up_rate = MAX_TR_FORWARD_PER_SEC ;
 }
 
 int p3turtle::tick()
@@ -552,66 +555,83 @@ RsSerialiser *p3turtle::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser ;
 	rss->addSerialType(new RsTurtleSerialiser) ;
+	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss ;
 }
 
-bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>&)
+bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>& lst)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: saving list..." << std::endl ;
 #endif
 	cleanup = true ;
-	 ;
-#ifdef TO_REMOVE
-	RsTurtleSearchResultItem *item = new RsTurtleSearchResultItem ;
-	item->PeerId("") ;
 
-	for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
-	{
-		TurtleFileInfo finfo ;
-		finfo.name = it->second.name ;
-		finfo.size = it->second.size ;
-		finfo.hash = it->first ;
-#ifdef P3TURTLE_DEBUG
-		std::cerr << "  Saving item " << finfo.name << ", " << finfo.hash << ", " << finfo.size << std::endl ;
-#endif
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+	kv.key = "TURTLE_CONFIG_MAX_TR_RATE" ;
 
-		item->result.push_back(finfo) ;
-	}
-	lst.push_back(item) ;
-#endif
+	std::ostringstream s ;
+	s << _max_tr_up_rate;
+	kv.value = s.str() ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	lst.push_back(vitem) ;
+
 	return true ;
 }
 
-#ifdef TO_REMOVE
-bool p3turtle::loadList(std::list<RsItem*> load)
+bool p3turtle::loadList(std::list<RsItem*>& load)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: loading list..." << std::endl ;
 #endif
 	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
 	{
-		RsTurtleSearchResultItem *item = dynamic_cast<RsTurtleSearchResultItem*>(*it) ;
-
 #ifdef P3TURTLE_DEBUG
 		assert(item!=NULL) ;
 #endif
-		if(item == NULL)
-			continue ;
+		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it) ;
 
-		for(std::list<TurtleFileInfo>::const_iterator it2(item->result.begin());it2!=item->result.end();++it2)
-		{
-#ifdef P3TURTLE_DEBUG
-			std::cerr << "   Restarting tunneling for: " << it2->hash << "  " << it2->size << " " << it2->name << std::endl ;
+		if(vitem != NULL)
+			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+				if(kit->key == "TURTLE_CONFIG_MAX_TR_RATE")
+				{
+#ifdef CHAT_DEBUG
+					std::cerr << "Loaded config default nick name for chat: " << kit->value << std::endl ;
 #endif
-			monitorFileTunnels(it2->name,it2->hash,it2->size) ;
-		}
-		delete item ;
+					std::istringstream is(kit->value) ;
+
+					int val ;
+					is >> val ;
+				
+					setMaxTRForwardRate(val) ;
+				}
+
+		delete vitem ;
 	}
 	return true ;
 }
-#endif
+int p3turtle::getMaxTRForwardRate() const
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	return _max_tr_up_rate ;
+}
+
+
+void p3turtle::setMaxTRForwardRate(int val)
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+	if(val > MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT || val < MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT)
+		std::cerr << "Warning: MAX_TR_FORWARD_PER_SEC value " << val << " read in config file is off limits [" << MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT << "..." << MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT << "]. Ignoring!" << std::endl;
+	else
+	{
+		_max_tr_up_rate = val ;
+		std::cerr << "p3turtle: Set max tr up rate to " << val << std::endl;
+	}
+	IndicateConfigChanged() ;
+}
 
 
 // -----------------------------------------------------------------------------------//
@@ -1591,7 +1611,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 		_traffic_info_buffer.tr_dn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
 
-		float distance_to_maximum	= std::min(100.0f,_traffic_info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*MAX_TR_FORWARD_PER_SEC)) ;
+		float distance_to_maximum	= std::min(100.0f,_traffic_info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*_max_tr_up_rate)) ;
 		float corrected_distance 	= pow(distance_to_maximum,DISTANCE_SQUEEZING_POWER) ;
 		forward_probability	= pow(depth_peer_probability[std::min((uint16_t)6,item->depth)],corrected_distance) ;
 #ifdef P3TURTLE_DEBUG
@@ -2157,7 +2177,7 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	info = _traffic_info ;
 
-	float distance_to_maximum	= std::min(100.0f,info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*MAX_TR_FORWARD_PER_SEC)) ;
+	float distance_to_maximum	= std::min(100.0f,info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*_max_tr_up_rate)) ;
 	info.forward_probabilities.clear() ;
 
 	for(int i=0;i<=6;++i)

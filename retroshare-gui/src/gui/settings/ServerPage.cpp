@@ -30,6 +30,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsturtle.h>
 
 #include <QTimer>
 
@@ -42,6 +43,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
   connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
+  connect( ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -72,6 +74,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void ServerPage::updateMaxTRUpRate(int b)
+{
+	rsTurtle->setMaxTRForwardRate(b) ;
 }
 
 void ServerPage::toggleIpDetermination(bool b)
@@ -185,6 +192,8 @@ void ServerPage::load()
 	ui.dynDNS -> setText(QString::fromStdString(detail.dyndns));
 
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
+
+	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
 }
 
 /** Loads the settings for this page */

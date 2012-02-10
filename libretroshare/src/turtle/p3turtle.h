@@ -250,14 +250,6 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		
 		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const ;
 
-#ifdef TO_REMOVE
-		/************* from pqiMonitor *******************/
-		/// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
-		/// and closing other tunnels.
-		///
-		virtual void statusChange(const std::list<pqipeer> &plist);
-#endif
-
 		/************* from pqiMonitor *******************/
 
 		/// This function does many things:
@@ -271,13 +263,17 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
 		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
-		virtual bool loadList(std::list<RsItem*>& /*load*/) { return true; }
+		virtual bool loadList(std::list<RsItem*>& /*load*/) ;
 
 		/************* Communication with ftserver *******************/
 		/// Does the turtle router manages tunnels to this peer ? (this is not a
 		/// real id, but a fake one, that the turtle router is capable of connecting with a tunnel id).
 		virtual bool isTurtlePeer(const std::string& peer_id) const ;
 
+		/// sets/gets the max number of forwarded tunnel requests per second.
+		virtual void setMaxTRForwardRate(int max_tr_up_rate) ;
+		virtual int getMaxTRForwardRate() const ;
+		
 		/// Examines the peer id, finds the turtle tunnel in it, and respond yes if the tunnel is ok and operational.
 		bool isOnline(const std::string& peer_id) const ;
 
@@ -417,6 +413,8 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		//
 		TurtleTrafficStatisticsInfoOp _traffic_info ;			// used for recording speed
 		TurtleTrafficStatisticsInfoOp _traffic_info_buffer ;	// used as a buffer to collect bytes
+
+		float _max_tr_up_rate ;
 
 #ifdef P3TURTLE_DEBUG
 		// debug function

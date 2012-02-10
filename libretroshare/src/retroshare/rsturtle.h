@@ -125,6 +125,9 @@ class RsTurtle
 		// Convenience function.
 		virtual bool isTurtlePeer(const std::string& peer_id) const = 0 ;
 
+		// Hardcore handles
+		virtual void setMaxTRForwardRate(int max_tr_up_rate) = 0 ;
+		virtual int getMaxTRForwardRate() const = 0 ;
 	protected:
 		FileSharingStrategy _sharing_strategy ;
 };
