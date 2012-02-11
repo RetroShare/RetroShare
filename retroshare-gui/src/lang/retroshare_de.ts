@@ -790,7 +790,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+323"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+324"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -1102,7 +1102,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+115"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+117"/>
         <source>Please enter your new nick name</source>
         <translation>Bitte gib deinen neuen Spitznamen ein</translation>
     </message>
@@ -1469,50 +1469,50 @@ p, li { white-space: pre-wrap; }
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location line="+332"/>
+        <location line="+346"/>
         <source>Attach a Picture</source>
         <translation>Bild anhängen</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+29"/>
         <source>Add a File for your Friend</source>
         <translation>Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+68"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="-255"/>
-        <location line="+271"/>
+        <location line="-250"/>
+        <location line="+266"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="-243"/>
-        <location line="+253"/>
+        <location line="-234"/>
+        <location line="+244"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-225"/>
-        <location line="+220"/>
+        <location line="-212"/>
+        <location line="+207"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="-192"/>
+        <location line="-175"/>
         <source>Font</source>
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+32"/>
         <source>Text Color</source>
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+153"/>
         <source>Strike</source>
         <translation>Durchgestrichen</translation>
     </message>
@@ -1553,7 +1553,17 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+348"/>
+        <location line="+5"/>
+        <source>Choose font</source>
+        <translation>Schriftart wählen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Reset font to default</source>
+        <translation>Schriftart auf den Standard setzen</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+344"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -1563,7 +1573,7 @@ p, li { white-space: pre-wrap; }
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+129"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
@@ -1684,7 +1694,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="+753"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="+746"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -1694,7 +1704,7 @@ p, li { white-space: pre-wrap; }
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-702"/>
+        <location line="-695"/>
         <source>Peer Info</source>
         <translation>Nachbar Info</translation>
     </message>
@@ -1714,12 +1724,12 @@ p, li { white-space: pre-wrap; }
         <translation>Peer ID</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+134"/>
         <source>Peer Address</source>
         <translation>Adresse des Nachbarn</translation>
     </message>
     <message>
-        <location line="+448"/>
+        <location line="+444"/>
         <source>Deny Friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -1735,7 +1745,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichne GPG Schlüssel</translation>
     </message>
     <message>
-        <location line="-196"/>
+        <location line="-192"/>
         <source>Your trust in this peer is:</source>
         <translation>Dein Vertrauen zu diesem Nachbar ist:</translation>
     </message>
@@ -1755,7 +1765,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachbar Schlüssel ist unterzeichnet von:</translation>
     </message>
     <message>
-        <location line="-476"/>
+        <location line="-473"/>
         <source>Last Contact</source>
         <translation>Letzter Kontakt</translation>
     </message>
@@ -1775,7 +1785,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ort</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+49"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -1816,7 +1826,7 @@ p, li { white-space: pre-wrap; }
         <translation>Voll </translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+90"/>
         <location line="+29"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -1915,7 +1925,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="-329"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="-325"/>
         <source>Trust </source>
         <translation>Vertrauen </translation>
     </message>
@@ -1930,12 +1940,12 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
         <translation>Zeige Hilfe</translation>
     </message>
     <message>
-        <location line="-414"/>
+        <location line="-411"/>
         <source>RetroShare ID</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+588"/>
+        <location line="+581"/>
         <source>Certificate</source>
         <translation>Zertifikat</translation>
     </message>
@@ -4582,7 +4592,7 @@ p, li { white-space: pre-wrap; }
         <translation>Forum erstellen</translation>
     </message>
     <message>
-        <location line="+620"/>
+        <location line="+614"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -4598,7 +4608,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle neues Thema</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="-227"/>
+        <location filename="../gui/ForumsDialog.ui" line="-221"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -5062,17 +5072,17 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppenchat</translation>
     </message>
     <message>
-        <location line="+456"/>
+        <location line="+417"/>
         <source>Messages entered here are sent to all connected friends</source>
         <translation>Nachrichten, die Du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
     <message>
-        <location line="-369"/>
+        <location line="-333"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+38"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
@@ -5082,27 +5092,27 @@ p, li { white-space: pre-wrap; }
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+38"/>
         <source>Font</source>
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+35"/>
         <source>Text Color</source>
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+72"/>
         <source>Attach File</source>
         <translation>Datei anhängen</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+38"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+111"/>
         <source>Clear Chat History</source>
         <translation>Nachrichtenverlauf leeren</translation>
     </message>
@@ -5181,9 +5191,19 @@ p, li { white-space: pre-wrap; }
         <translation>Neue Chat Lobby erstellen</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+9"/>
         <source>Friend Recommendations</source>
         <translation>Freundempfehlungen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Choose Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Reset font to default</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
@@ -5206,7 +5226,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Status ausblenden</translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="-46"/>
         <location line="+3"/>
         <source>Add a new Group</source>
         <translation>Neue Gruppe hinzufügen</translation>
@@ -7874,7 +7894,7 @@ Möchtest du die Nachricht speichern ?</translation>
 <context>
     <name>MessageWidget</name>
     <message>
-        <location filename="../gui/msgs/MessageWidget.ui" line="+80"/>
+        <location filename="../gui/msgs/MessageWidget.ui" line="+74"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -13909,7 +13929,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+125"/>
         <source>Priority (Speed)...</source>
-        <translation>Prioritä t(Geschwindigkeit)...</translation>
+        <translation>Priorität (Geschwindigkeit)...</translation>
     </message>
     <message>
         <location line="-123"/>

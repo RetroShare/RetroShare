@@ -32,6 +32,7 @@
 #include <retroshare/rsmsgs.h>
 
 #include "RsharePeerSettings.h"
+#include "rsharesettings.h"
 #include "gui/style/RSStyle.h"
 
 /** The file in which all settings of he peers will read and written. */
@@ -144,7 +145,11 @@ void RsharePeerSettings::set(const std::string &peerId, const QString &key, cons
     }
 
     beginGroup(QString::fromStdString(settingsId));
-    setValue(key, value);
+    if (value.isNull()) {
+        remove(key);
+    } else {
+        setValue(key, value);
+    }
     endGroup();
 }
 
@@ -160,12 +165,16 @@ void RsharePeerSettings::setPrivateChatColor(const std::string &peerId, const QS
 
 QString RsharePeerSettings::getPrivateChatFont(const std::string &peerId)
 {
-    return get(peerId, "PrivateChatFont", QFont("Comic Sans MS", 10).toString()).toString();
+    return get(peerId, "PrivateChatFont", Settings->getChatScreenFont()).toString();
 }
 
 void RsharePeerSettings::setPrivateChatFont(const std::string &peerId, const QString &value)
 {
-    set(peerId, "PrivateChatFont", value);
+    if (Settings->getChatScreenFont() == value) {
+        set(peerId, "PrivateChatFont", QVariant());
+    } else {
+        set(peerId, "PrivateChatFont", value);
+    }
 }
 
 bool RsharePeerSettings::getPrivateChatOnTop(const std::string &peerId)

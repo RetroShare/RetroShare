@@ -101,8 +101,9 @@ private slots:
 	void addExtraPicture();
 	void on_closeInfoFrameButton_clicked();
 
-	void setColor();
-	void getFont();
+	void chooseColor();
+	void chooseFont();
+	void resetFont();
 	void setFont();
 
 	void sendChat();
@@ -117,8 +118,9 @@ private:
 	void updateStatusTyping();
 	void setCurrentFileName(const QString &fileName);
 
-	void colorChanged(const QColor &c);
-	void fontChanged(const QFont &font);
+	void colorChanged();
+	void fontChanged();
+	void setColorAndFont();
 	void processSettings(bool load);
 
 	std::string peerId;

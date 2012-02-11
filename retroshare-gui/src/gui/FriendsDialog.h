@@ -86,14 +86,14 @@ private slots:
 
     void addFriend();
 
-    void setColor();
+    void chooseColor();
     void insertSendList();
     void sendMsg();
 
     void statusmessage();
 
     void setFont();
-    void getFont();
+    void chooseFont();
 
     void getAvatar();
 
@@ -122,8 +122,9 @@ private:
     void processSettings(bool bLoad);
     void addChatMsg(bool incoming, bool history, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message);
 
-    void colorChanged(const QColor &c);
-    void fontChanged(const QFont &font);
+    void colorChanged();
+    void fontChanged();
+    void setColorAndFont();
 
     QString fileName;
 

@@ -864,9 +864,6 @@ border: 1px solid #CCCCCC;}</string>
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
                 </property>
-                <property name="text">
-                 <string/>
-                </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
                   <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
@@ -907,9 +904,6 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                 <property name="toolTip">
                  <string>Bold</string>
-                </property>
-                <property name="text">
-                 <string/>
                 </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
@@ -990,9 +984,6 @@ border: 1px solid #CCCCCC;}</string>
                 <property name="toolTip">
                  <string>Italic</string>
                 </property>
-                <property name="text">
-                 <string/>
-                </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
                   <normaloff>:/images/edit-italic.png</normaloff>:/images/edit-italic.png</iconset>
@@ -1031,9 +1022,6 @@ border: 1px solid #CCCCCC;}</string>
                 <property name="toolTip">
                  <string>Font</string>
                 </property>
-                <property name="text">
-                 <string/>
-                </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
                   <normaloff>:/images/fonts.png</normaloff>:/images/fonts.png</iconset>
@@ -1069,16 +1057,13 @@ border: 1px solid #CCCCCC;}</string>
                 <property name="toolTip">
                  <string>Text Color</string>
                 </property>
-                <property name="text">
-                 <string/>
-                </property>
                 <property name="autoRaise">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="menuButton">
+               <widget class="QToolButton" name="menuButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1100,24 +1085,6 @@ border: 1px solid #CCCCCC;}</string>
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true">QPushButton::menu-indicator {
-     subcontrol-origin: padding;
-     subcontrol-position: bottom right;
- }
-
- QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
-     position: relative;
-     top: 1px; left: 1px; /* shift the arrow by 2 px */
- }
-
- QPushButton:hover {
-	border: 1px solid #CCCCCC;
- }</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
                   <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
@@ -1128,7 +1095,10 @@ border: 1px solid #CCCCCC;}</string>
                   <height>22</height>
                  </size>
                 </property>
-                <property name="flat">
+                <property name="popupMode">
+                 <enum>QToolButton::InstantPopup</enum>
+                </property>
+                <property name="autoRaise">
                  <bool>true</bool>
                 </property>
                </widget>
@@ -1158,9 +1128,6 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                 <property name="toolTip">
                  <string>Attach File</string>
-                </property>
-                <property name="text">
-                 <string/>
                 </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
@@ -1443,6 +1410,16 @@ background: white;}</string>
    </property>
    <property name="text">
     <string>Friend Recommendations</string>
+   </property>
+  </action>
+  <action name="actionChooseFont">
+   <property name="text">
+    <string>Choose Font</string>
+   </property>
+  </action>
+  <action name="actionResetFont">
+   <property name="text">
+    <string>Reset font to default</string>
    </property>
   </action>
  </widget>

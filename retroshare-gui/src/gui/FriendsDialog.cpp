@@ -119,8 +119,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
     connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
     connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
-    connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));
-    connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
+    connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(chooseFont()));
+    connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(chooseColor()));
     connect(ui.actionSave_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
     connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
@@ -130,8 +130,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     mCurrentColor = Qt::black;
     mCurrentFont.fromString(Settings->getChatScreenFont());
 
-    colorChanged(mCurrentColor);
-    fontChanged(mCurrentFont);
+    colorChanged();
+    fontChanged();
+    setColorAndFont();
 
     style.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
 
@@ -150,14 +151,14 @@ FriendsDialog::FriendsDialog(QWidget *parent)
         }
     }
 
-    QMenu * grpchatmenu = new QMenu();
-    grpchatmenu->addAction(ui.actionClear_Chat_History);
-    grpchatmenu->addAction(ui.actionDelete_Chat_History);
-    grpchatmenu->addAction(ui.actionSave_History);
-    grpchatmenu->addAction(ui.actionMessageHistory);
-    ui.menuButton->setMenu(grpchatmenu);
-
     QMenu *menu = new QMenu();
+    menu->addAction(ui.actionClear_Chat_History);
+    menu->addAction(ui.actionDelete_Chat_History);
+    menu->addAction(ui.actionSave_History);
+    menu->addAction(ui.actionMessageHistory);
+    ui.menuButton->setMenu(menu);
+
+    menu = new QMenu();
     menu->addAction(ui.actionAdd_Friend);
     menu->addAction(ui.actionAdd_Group);
     menu->addAction(ui.actionCreate_new_Chat_lobby);
@@ -493,7 +494,7 @@ void FriendsDialog::sendMsg()
     // QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
     ui.lineEdit->setCurrentCharFormat(QTextCharFormat ());
 
-    setFont();
+    setColorAndFont();
 
     /* redraw send list */
     insertSendList();
@@ -590,54 +591,58 @@ void  FriendsDialog::insertSendList()
 
 //============================================================================
 
-void FriendsDialog::setColor()
+void FriendsDialog::chooseColor()
 {
     bool ok;
     QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
     if (ok) {
         mCurrentColor = QColor(color);
-        colorChanged(mCurrentColor);
+        colorChanged();
+        setColorAndFont();
     }
-    setFont();
 }
 
-void FriendsDialog::colorChanged(const QColor &c)
+void FriendsDialog::colorChanged()
 {
     QPixmap pxm(16,16);
-    pxm.fill(c);
+    pxm.fill(mCurrentColor);
     ui.colorChatButton->setIcon(pxm);
 }
 
-void FriendsDialog::getFont()
+void FriendsDialog::chooseFont()
 {
     bool ok;
-    mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
+    QFont font = QFontDialog::getFont(&ok, mCurrentFont, this);
     if (ok) {
-        fontChanged(mCurrentFont);
+        mCurrentFont = font;
+        fontChanged();
+        setFont();
     }
 }
 
-void FriendsDialog::fontChanged(const QFont &font)
+void FriendsDialog::fontChanged()
 {
-    mCurrentFont = font;
-
     ui.textboldChatButton->setChecked(mCurrentFont.bold());
     ui.textunderlineChatButton->setChecked(mCurrentFont.underline());
     ui.textitalicChatButton->setChecked(mCurrentFont.italic());
-
-    setFont();
 }
 
-void FriendsDialog::setFont()
+void FriendsDialog::setColorAndFont()
 {
     mCurrentFont.setBold(ui.textboldChatButton->isChecked());
     mCurrentFont.setUnderline(ui.textunderlineChatButton->isChecked());
     mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
+
     ui.lineEdit->setFont(mCurrentFont);
     ui.lineEdit->setTextColor(mCurrentColor);
-    Settings->setChatScreenFont(mCurrentFont.toString());
 
     ui.lineEdit->setFocus();
+}
+
+void FriendsDialog::setFont()
+{
+    setColorAndFont();
+    Settings->setChatScreenFont(mCurrentFont.toString());
 }
 
 // Update Chat Info information
