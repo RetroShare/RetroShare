@@ -27,6 +27,7 @@
 #include <retroshare/rspeers.h>
 #include "util/folderiterator.h"
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 
 #include "introserver.h"
 
@@ -36,10 +37,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <time.h>
+
 #include <fstream>
-
-
-
 #include <iostream>
                       
 #define RSIS_CHECKTIME	60
