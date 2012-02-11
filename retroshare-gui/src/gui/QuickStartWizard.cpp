@@ -399,7 +399,7 @@ void QuickStartWizard::loadNetwork()
 
 	/* set net mode */
 	int netIndex = 0;
-	switch(detail.tryNetMode)
+	switch(detail.netMode)
 	{
 		case RS_NETMODE_EXT:
 			netIndex = 2;
