@@ -36,8 +36,8 @@
 #include "ftchunkmap.h"
 #include <time.h>
 
-static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	= 60 ; //! TTL for chunkmap info
-static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 60 ; //! TTL for an inactive chunk
+static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=  60 ; //! TTL for chunkmap info
+static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 300 ; //! TTL for an inactive chunk
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
