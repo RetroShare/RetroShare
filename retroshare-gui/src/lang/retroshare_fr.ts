@@ -3540,7 +3540,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished">Ancienneté</translation>
+        <translation>Ancienneté</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -3788,7 +3788,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished">Invitation RetroShare</translation>
+        <translation>Invitation RetroShare</translation>
     </message>
 </context>
 <context>
@@ -4008,7 +4008,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>bytes</source>
-        <translation type="unfinished">octets</translation>
+        <translation>octets</translation>
     </message>
     <message>
         <source>File size</source>
@@ -4979,6 +4979,33 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendRecommendDialog</name>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished">Recommandations d&apos;amis</translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation type="unfinished">Message :</translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation type="unfinished">Amis recommandés</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation type="unfinished">À</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation type="unfinished">S&apos;il vous plaît sélectionner au moins un ami à recommander.</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation type="unfinished">S&apos;il vous plaît sélectionner au moins un destinataire.</translation>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
@@ -5342,6 +5369,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Fichier texte (*.txt );;Tous les fichiers (*)</translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished">Recommandations d&apos;amis</translation>
     </message>
 </context>
 <context>
@@ -6271,7 +6302,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished">Invitation RetroShare</translation>
+        <translation>Invitation RetroShare</translation>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
@@ -7177,7 +7208,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished">Messagerie</translation>
+        <translation>Messagerie</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -7402,7 +7433,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="unfinished">Ouvrir la messagerie</translation>
+        <translation>Ouvrir la messagerie</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -7657,7 +7688,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
-        <translation>Je vous recommande un bon ami, vous pouvez lui faire confiance autant qu&apos;à moi.&lt;br&gt; Cliquez sur le lien suivant afin de le rajouter à votre liste d&apos;amis.</translation>
+        <translation type="unfinished">Je vous recommande un bon ami, vous pouvez lui faire confiance autant qu&apos;à moi.&lt;br&gt; Cliquez sur le lien suivant afin de l&apos;ajouter à votre liste d&apos;amis.</translation>
     </message>
     <message>
         <source>Save Message</source>
@@ -13643,6 +13674,46 @@ derrière un pare-feu ou un VPN (Virtual Private Network).</translation>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
         <translation>Les ports acceptables vont de 1024 à 65535.Les ports inférieurs à 1024 sont réservés pourvotre système.</translation>
     </message>
+    <message>
+        <source>Turtle router</source>
+        <translation type="unfinished">Routage Turtle</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Attention&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt;Cet onglet contient des paramètres du noyau qui sont peu susceptibles à être modifiés. Ne les changer pas  sauf si vous savez vraiment ce que vous faites.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Max average tunnel request forwarded per second:</source>
+        <translation type="unfinished">Demande moyenne max de tunnels transmise par seconde :</translation>
+    </message>
+    <message>
+        <source>This value controls how many tunnel request your peer can forward per second. 
+
+If you have a large internet bandwidth, you may raise this up to 30-40, to allow
+statisticlly longuer tunnels to pass. Be very careful though, since this generates 
+many small packets that can significantly slow down your own file transfer. 
+
+The default value is 20.</source>
+        <translation type="unfinished">Cette valeur contrôle le nombre de tunnel demander votre pair peut transmettre par seconde.
+
+Si vous avez une grande bande passante, vous pouvez l&apos;augmenter à 30-40, pour permettre
+aux tunnels statistiquement plus long de passer. Soyez très prudent cependant, car cela génère
+de nombreux petits paquets qui peuvent considérablement ralentir les transfert  de vos propres fichiers.
+
+La valeur par défaut est de 20.</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -13668,7 +13739,7 @@ derrière un pare-feu ou un VPN (Virtual Private Network).</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished">Messagerie</translation>
+        <translation>Messagerie</translation>
     </message>
     <message>
         <source>Forum</source>
@@ -16006,15 +16077,15 @@ bloquera ce dernier.</translation>
     </message>
     <message>
         <source>Age in seconds</source>
-        <translation type="unfinished">Ancienneté en secondes</translation>
+        <translation>Ancienneté en secondes</translation>
     </message>
     <message>
         <source>Depth</source>
-        <translation type="unfinished">Profondeur</translation>
+        <translation>Profondeur</translation>
     </message>
     <message>
         <source>total</source>
-        <translation type="unfinished">total</translation>
+        <translation>total</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
