@@ -82,6 +82,8 @@
 #define CERTIFICATE_GPG_CHECKSUM "gpgchecksum"
 #define CERTIFICATE_LOCATION     "location"
 #define CERTIFICATE_NAME         "name"
+#define CERTIFICATE_EXT_IPPORT   "extipp"
+#define CERTIFICATE_LOC_IPPORT   "locipp"
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -225,6 +227,8 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		  _GPGBase64String = url.queryItemValue(CERTIFICATE_GPG_BASE64);
 		  _GPGid = url.queryItemValue(CERTIFICATE_GPG_ID);
 		  _GPGBase64CheckSum = url.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
+		  _ext_ip_port = url.queryItemValue(CERTIFICATE_EXT_IPPORT);
+		  _loc_ip_port = url.queryItemValue(CERTIFICATE_LOC_IPPORT);
 		  std::cerr << "Got a certificate link!!" << std::endl;
 		  check() ;
         return;
@@ -309,16 +313,16 @@ bool RetroShareLink::createCertificate(const std::string& ssl_id)
 	_location = QString::fromStdString(detail.location) ;
 	_name = QString::fromStdString(detail.name) ;
 
-	//_external_ipp = QString::fromStdString(invite).section("--EXT--",1,1) ;
+	_ext_ip_port = QString::fromStdString(invite).section("--EXT--",1,1) ;
 	QString lst = QString::fromStdString(invite).section("--EXT--",0,0) ;
-	//_local_ipp = lst.section("--LOCAL--",1,1) ;
+	_loc_ip_port = lst.section("--LOCAL--",1,1) ;
 
 	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
 	std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
 	std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
 	std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
-	//std::cerr << "Found External IP+Port     = " << _external_ipp.toStdString() << std::endl;
-	//std::cerr << "Found External IP+Port     = " << _local_ipp.toStdString() << std::endl;
+	std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
+	std::cerr << "Found External IP+Port     = " << _ext_ip_port.toStdString() << std::endl;
 	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
 
 	return true;
@@ -606,6 +610,8 @@ QString RetroShareLink::toString() const
 			  url.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
 			  url.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
 			  url.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+			  url.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
+			  url.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
 
 			  return url.toString();
 		  }
@@ -883,6 +889,12 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 					RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
 					RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
 					RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
+
+					if(!link.externalIPAndPort().isNull())
+						RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
+					if(!link.localIPAndPort().isNull())
+						RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
+					RS_Certificate += "\n" ;
 
 					std::cerr << "Usign this certificate:" << std::endl;
 					std::cerr << RS_Certificate.toStdString() << std::endl;

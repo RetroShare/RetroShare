@@ -74,6 +74,8 @@ class RetroShareLink
 		const QString& GPGBase64CheckSum() const { return _GPGBase64CheckSum ; }
 		const QString& SSLId() const { return _SSLid ; }
 		const QString& GPGId() const { return _GPGid ; }
+		const QString& localIPAndPort() const { return _loc_ip_port ; }
+		const QString& externalIPAndPort() const { return _ext_ip_port ; }
 		const QString& location() const { return _location ; }
 		QString title() const;
 
@@ -121,6 +123,8 @@ class RetroShareLink
 		QString  _GPGBase64String ; // GPG Cert
 		QString  _GPGBase64CheckSum ; // GPG Cert
 		QString  _location ;	// location 
+		QString  _ext_ip_port ;
+		QString  _loc_ip_port ;
 };
 
 /// This class handles the copy/paste of links. Every member is static to ensure unicity.
