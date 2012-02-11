@@ -339,6 +339,7 @@ HEADERS +=  rshare.h \
             gui/common/FriendList.h \
             gui/common/FriendSelectionWidget.h \
             gui/common/HashBox.h \
+            gui/common/LinkTextBrowser.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -584,6 +585,7 @@ SOURCES +=  main.cpp \
             gui/common/FriendList.cpp \
             gui/common/FriendSelectionWidget.cpp \
             gui/common/HashBox.cpp \
+            gui/common/LinkTextBrowser.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/configpage.cpp \

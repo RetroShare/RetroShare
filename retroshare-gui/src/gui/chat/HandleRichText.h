@@ -80,7 +80,7 @@ public:
 	EmbedInHtmlAhref() :
 		EmbedInHtml(Ahref)
 	{
-		myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bwww\\.[^\\s]*)");
+		myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
 	}
 };
 

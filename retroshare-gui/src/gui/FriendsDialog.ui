@@ -1218,7 +1218,7 @@ border: 1px solid #CCCCCC;}</string>
              <property name="childrenCollapsible">
               <bool>false</bool>
              </property>
-             <widget class="QTextBrowser" name="msgText">
+             <widget class="LinkTextBrowser" name="msgText">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1236,12 +1236,6 @@ border: 1px solid #CCCCCC;}</string>
 background: white;}</string>
               </property>
               <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-              <property name="openLinks">
                <bool>true</bool>
               </property>
              </widget>
@@ -1476,6 +1470,11 @@ background: white;}</string>
    <extends>QWidget</extends>
    <header>gui/common/FriendList.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LinkTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

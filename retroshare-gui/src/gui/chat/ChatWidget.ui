@@ -173,7 +173,7 @@ border-image: url(:/images/closepressed.png)
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QTextBrowser" name="textBrowser">
+        <widget class="LinkTextBrowser" name="textBrowser">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -190,12 +190,6 @@ border-image: url(:/images/closepressed.png)
           <string notr="true">QTextBrowser{border: 1px solid #B8B6B1;
 border-radius: 6px;
 background: white;}</string>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-         <property name="openLinks">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -664,6 +658,11 @@ border: 1px solid #CCCCCC;
    <extends>QScrollArea</extends>
    <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LinkTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

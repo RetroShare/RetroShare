@@ -29,6 +29,7 @@
 #include "gui/notifyqt.h"
 #include "util/misc.h"
 #include "gui/RetroShareLink.h"
+#include "gui/chat/HandleRichText.h"
 
 #include <retroshare/rschannels.h>
 
@@ -125,7 +126,7 @@ void ChanMsgItem::updateItemStatic()
 	{
 		/* subject */
 		titleLabel->setText(QString::fromStdWString(cmi.subject));
-		subjectLabel->setText(QString::fromStdWString(cmi.msg));
+		subjectLabel->setText(RsHtml::formatText(QString::fromStdWString(cmi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 		/* disable buttons: deletion facility not enabled with cache services yet */
 		clearButton->setEnabled(false);
@@ -162,7 +163,7 @@ void ChanMsgItem::updateItemStatic()
 		}
 	}
 
-	msgLabel->setText(QString::fromStdWString(cmi.msg));
+	msgLabel->setText(RsHtml::formatText(QString::fromStdWString(cmi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	msgWidget->setVisible(!cmi.msg.empty());
 
 	QDateTime qtime;

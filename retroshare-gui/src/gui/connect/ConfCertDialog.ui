@@ -116,7 +116,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QTextBrowser" name="rsid">
+           <widget class="LinkTextBrowser" name="rsid">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -139,9 +139,6 @@
              <enum>Qt::ScrollBarAlwaysOff</enum>
             </property>
             <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="openExternalLinks">
              <bool>true</bool>
             </property>
            </widget>
@@ -549,11 +546,7 @@
             </property>
             <layout class="QVBoxLayout" name="_11">
              <item>
-              <widget class="QTextBrowser" name="signers">
-               <property name="openExternalLinks">
-                <bool>true</bool>
-               </property>
-              </widget>
+              <widget class="LinkTextBrowser" name="signers"/>
              </item>
             </layout>
            </widget>
@@ -764,6 +757,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LinkTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>
