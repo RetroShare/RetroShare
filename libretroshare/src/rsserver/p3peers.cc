@@ -340,20 +340,6 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			break;
 	}
 	
-	
-	if (ps.netMode & RS_NET_MODE_TRY_EXT)
-	{
-		d.tryNetMode	= RS_NETMODE_EXT;
-	}
-	else if (ps.netMode & RS_NET_MODE_TRY_UPNP)
-	{
-		d.tryNetMode	= RS_NETMODE_UPNP;
-	}
-	else
-	{
-		d.tryNetMode 	= RS_NETMODE_UDP;
-	}
-	
 	d.visState	= 0;
 	if (!(ps.visState & RS_VIS_STATE_NODISC))
 	{
