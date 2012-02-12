@@ -313,9 +313,7 @@ void ChanMsgItem::toggle()
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 		expandButton->setToolTip(tr("Hide"));
 
-		if (!mIsHome) {
-			readToggled(false);
-		}
+		readToggled(false);
 	}
 	else
 	{
@@ -392,12 +390,25 @@ void ChanMsgItem::readToggled(bool checked)
 		/* ... and as read by user */
 		statusNew &= ~CHANNEL_MSG_STATUS_UNREAD_BY_USER;
 	}
+
+	if (!mIsHome) {
+		disconnect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
+	}
 	rsChannels->setMessageStatus(mChanId, mMsgId, statusNew, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
+	if (!mIsHome) {
+		connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
+	}
 }
 
-void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int /*status*/)
+void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
 {
 	if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
+		if (!mIsHome) {
+			if (status & CHANNEL_MSG_STATUS_READ) {
+				close();
+				return;
+			}
+		}
 		updateItemStatic();
 	}
 }

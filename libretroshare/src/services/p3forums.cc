@@ -367,6 +367,9 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 
 bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status, const uint32_t statusMask)
 {
+	bool changed = false;
+	uint32_t newStatus = 0;
+
 	{
 		RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
@@ -374,8 +377,14 @@ bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,co
 		if (mit != mReadStatus.end())
 		{
 			RsForumReadStatus* rsi = mit->second;
+			uint32_t oldStatus = rsi->msgReadStatus[mId];
 			rsi->msgReadStatus[mId] &= ~statusMask;
 			rsi->msgReadStatus[mId] |= (status & statusMask);
+
+			newStatus = rsi->msgReadStatus[mId];
+			if (oldStatus != newStatus) {
+				changed = true;
+			}
 		} else {
 			// if forum id does not exist create one
 			RsForumReadStatus* rsi = new RsForumReadStatus();
@@ -383,12 +392,18 @@ bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,co
 			rsi->msgReadStatus[mId] = status & statusMask;
 			mReadStatus[fId] = rsi;
 			mSaveList.push_back(rsi);
+
+			newStatus = rsi->msgReadStatus[mId];
+			changed = true;
 		}
 		
 		IndicateConfigChanged();
 	} /******* UNLOCKED ********/
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
+		rsicontrol->getNotify().notifyForumMsgReadSatusChanged(fId, mId, newStatus);
+	}
 
 	return true;
 }

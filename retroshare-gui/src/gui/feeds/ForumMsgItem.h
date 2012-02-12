@@ -48,6 +48,8 @@ private slots:
 	void replyToPost();
 	void sendMsg();
 
+	void forumMsgReadSatusChanged(const QString &forumId, const QString &msgId, int status);
+
 	void updateItem();
 
 private:

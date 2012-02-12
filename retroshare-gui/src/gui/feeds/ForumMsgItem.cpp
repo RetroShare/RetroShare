@@ -33,6 +33,7 @@
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/chat/HandleRichText.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/notifyqt.h"
 //#include "gui/settings/rsharesettings.h"
 
 /****
@@ -56,6 +57,8 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
 	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
 	connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
 	connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+
+	connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 
 	subjectLabel->setMinimumWidth(20);
 
@@ -277,7 +280,9 @@ void ForumMsgItem::toggle()
 //			}
 
 			if (status != statusNew) {
+				disconnect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 				rsForums->setMessageStatus(mForumId, mPostId, statusNew, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_UNREAD_BY_USER);
+				connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 			}
 		}
 	}
@@ -399,6 +404,15 @@ void ForumMsgItem::sendMsg()
 
 		if (rsForums->ForumMessageSend(msgInfo) == true) {
 			textEdit->clear();
+		}
+	}
+}
+
+void ForumMsgItem::forumMsgReadSatusChanged(const QString &forumId, const QString &msgId, int status)
+{
+	if (mForumId == forumId.toStdString() && mPostId == msgId.toStdString()) {
+		if (status & FORUM_MSG_STATUS_READ) {
+			close();
 		}
 	}
 }

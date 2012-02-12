@@ -48,6 +48,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
+		virtual void notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status);
 		virtual void notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status);
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
@@ -93,6 +94,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void discInfoChanged() const ;
 		void downloadComplete(const QString& /* fileHash */);
 		void downloadCompleteCountChanged(int /* count */);
+		void forumMsgReadSatusChanged(const QString& forumId, const QString& msgId, int status);
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
@@ -101,8 +103,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 
 	public slots:
-
-		void	UpdateGUI(); /* called by timer */
+		void UpdateGUI(); /* called by timer */
 
 	private slots:
 		void runningTick();

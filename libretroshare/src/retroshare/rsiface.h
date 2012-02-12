@@ -198,6 +198,7 @@ class NotifyBase
 	virtual void notifyPeerStatusChanged(const std::string& /* peer_id */, uint32_t /* status */) {}
 	/* one or more peers has changed the states */
 	virtual void notifyPeerStatusChangedSummary() {}
+	virtual void notifyForumMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
 	virtual void notifyChannelMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
 	virtual void notifyDiscInfoChanged() {}
 	virtual void notifyDownloadComplete(const std::string& /* fileHash */) {};
