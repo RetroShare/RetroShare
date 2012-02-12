@@ -40,6 +40,8 @@ typedef std::map<std::string, std::set<RsGxsSignedMessage*> > SignedMsgGrp;
 /*!
  * The main role of GDP is the preparation and handing out of messages requested from
  * RsGeneralExchangeService and RsGeneralExchangeService
+ * It is important to note that no actual messages are passed by this interface as its is expected
+ * architecturally to pass messages to the service via a call back
  *
  * It also acts as a layer between RsGeneralStorageService and its parent RsGeneralExchangeService
  * thus allowing for non-blocking requests, etc.
@@ -49,6 +51,12 @@ typedef std::map<std::string, std::set<RsGxsSignedMessage*> > SignedMsgGrp;
  * Caching feature:
  *   - A cache index should be maintained which is faster than normal message request
  *   - This should allow fast retrieval of message based on grp id or msg id
+ *
+ * Identity Exchange Service:
+ *   - As this is the point where data is accessed by both the GNP and GXS the identities
+ *     used to decrypt, encrypt and verify is handle here.
+ *
+ *
  */
 class RsGeneralDataService
 {
@@ -59,17 +67,17 @@ public:
      * @param msgGrp this contains grp and the message to retrieve
      * @return request code to be redeemed later
      */
-    virtual int request(const MsgGrpId& msgGrp, SignedMsgGrp& result, bool decrypted) = 0;
+    virtual int request(const MsgGrpId& msgGrp, bool decrypted) = 0;
 
 
     /*!
      * allows for more complex queries specific to the service
-     * Service should implement method taking case
+     * Service should implement its own specific filter
      * @param filter generally stores parameters needed for query
      * @param cacheRequest set to true to cache the messages requested
      * @return request code to be redeemed later
      */
-    virtual int request(RequestFilter* filter, SignedMsgGrp& msgs, bool cacheRequest) = 0;
+    virtual int request(RequestFilter* filter, bool cacheRequest) = 0;
 
 
     /*!
@@ -79,13 +87,14 @@ public:
     virtual bool store(SignedMsgGrp& msgs) = 0;
 
     /*!
-     * @param grpIds set with grpIds available from storage
+     * Gets group and any associated meta data
+     * @param grpIds set with group Ids available from storage
      * @return request code to be redeemed later
      */
-    virtual int getGroups(std::set<std::string>& grpIds) = 0;
+    virtual int getGroups(const std::set<std::string>& grpIds) = 0;
 
     /*!
-     *
+     * Gets list of message ids in storage
      * @param msgIds gets message ids in storage
      * @return request code to be redeemed later
      */

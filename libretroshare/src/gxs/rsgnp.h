@@ -34,7 +34,7 @@
 #include <map>
 
 #include "gxs/rsgxs.h"
-
+#include "services/p3service.h"
 
 
 /*!
@@ -75,75 +75,35 @@ typedef std::map<std::string, std::set<std::string> > PeerGrp;
 /*!
  * Retroshare General Network Exchange Service: \n
  * Interface:
- *   - This provides a module to service peers requests for GXS message \n
+ *   - This provides a module to service peer's requests for GXS messages \n
  *      and also request GXS messages from other peers. \n
- *   - Users can make a general request for message under a grp id for a peer, all grp ids held \n
- *     by a set of peers. And can also apply to timerange to them
- *   - An interface is provided for the observer pattern so clients of this class
- *     can check if their requests have been served
+ *   - The general mode of operation is to sychronise all messages/grps between
+ *     peers
+ *
+ * The interface is sparse as this service is mostly making the requests to other GXS components
+ *
+ * Groups:
+ *   - As this is where exchanges occur between peers, this is also where groups relationships
+ *     should get resolved as far as
+ *   - Per implemented GXS there are a set of rules which will determine whether data is transferred
+ *     between any set of groups
+ *
+ *  1 allow transfers to any group
+ *  2 transfers only between group
+ *   - the also group matrix settings which is by default everyone can transfer to each other
  */
-class RsNetworktExchangeService
+class RsNetworktExchangeService : public p3Service
 {
 public:
 
-    RsNetworkExchangeService();
-
-    /*!
-     * Queries peers for a set of grp ids
-     * @param pg a map of peer to a set of grp ids to query message from
-     * @param from start range of time
-     * @param to end range of time
-     * @return a request code to be kept to redeem query later
-     */
-    virtual int requestAvailableMsgs(PeerGrp& pg, time_t from, time_t to) = 0;
-
-    /*!
-     * Queries peer for msgs of peer grp id pairs
-     * @param pg peer, grp id peers
-     * @param from start range of time
-     * @param to end range of time
-     * @return a request code to be kept to redeem query later
-     */
-    virtual int requestMsgs(PeerGrp& pg, time_t from, time_t to) = 0;
-
-    /*!
-     * Queries peers in list for groups avaialble
-     *
-     * @param peers the peers to query
-     * @param from start range of time
-     * @param to end range of time
-     * @return a request code to be kept to redeem query later
-     */
-    int requestAvailableGrps(const std::set<std::string>& peers, time_t from, time_t to) = 0;
+    RsNetworkExchangeService(uint16_t subtype);
 
 
     /*!
-     * When messages are received this function should be call containing the messages
-     * @param msgs the messages received from peers
+     * Use this to set how far back synchronisation of messages should take place
+     * @param range how far back from current time to synchronise with other peers
      */
-    void messageFromPeers(std::list<RsGxsSignedMessage*>& msgs) = 0;
-
-
-public:
-
-    /*!
-     * attempt to retrieve requested messages
-     * @param requestCode
-     * @param msgs
-     * @return false if not received, true is requestCode has been redeemed
-     * @see RsGeneralNetExchangeService::requestAvailableGrps()
-     */
-    bool getRequested(uint32_t requestCode, std::list<RsGxsSignedMessage*>& msgs) = 0;
-
-    /*!
-     * Allows observer pattern for checking if a request has been satisfied
-     *
-     * @param requestCode the code returned msg request functions
-     * @return false if not ready, true otherwise
-     * @see RsGeneralNetExchangeService::requestAvailableGrps()
-     * @see RsGeneralNetExchangeService::requestAvailableMsgs()
-     */
-    bool requestCodeReady(uint32_t reuqestCode);
+    virtual void setTimeRange(uint64_t range) = 0;
 
 };
 

@@ -38,6 +38,9 @@
 //      Relay connexions:
 //       * allow relay connexions between people of group A and group B.
 //
+//      General Exchange Services:
+//       * Allow data exchanged from one peers of one group to peers of another group
+//
 //   We need per-group permission flags for:
 //
 //      File download permission: 

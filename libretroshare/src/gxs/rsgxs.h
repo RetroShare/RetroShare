@@ -33,11 +33,15 @@
 
 #include <string>
 #include <inttypes.h>
+#include <map>
 
 #include "serialiser/rsbaseitems.h"
 #include "rsgnp.h"
 #include "rsgdp.h"
 #include "rsgixs.h"
+
+
+typedef std::map<uint32_t, std::string> requestMsgMap;
 
 /*!
  *
@@ -82,17 +86,42 @@ public:
 
     /*!
      * get the RsGeneralDataService instance serving this \n
-     * RsGeneralExchangeService
+     * @see RsGeneralExchangeService
      * @return data service
      */
     virtual RsGeneralDataService* getDataService() = 0;
 
     /*!
      * get the RsNetworktExchangeService instance serving this \n
-     * RsGeneralExchangeService
+     * @see RsGeneralExchangeService
      * @return network exchange service
      */
     virtual RsNetworktExchangeService* getNetworkService() = 0;
+
+
+    /*!
+     * Requests by this service for messages can be satisfied calling \n
+     * this method with a map containing id to msg map
+     */
+    virtual void receiveMessages(requestMsgMap&) = 0;
+
+    /*!
+     * This allows non blocking requests to be made to this service
+     */
+    virtual void tick();
+
+};
+
+/*!
+ * Implementations of general exchange service can be added \n
+ * to this service runner which ticks the service's general data service \n
+ * and the service itself
+ */
+class RsGxServiceRunner : public RsThread {
+
+public:
+
+    virtual void addGxService() = 0;
 
 };
 
