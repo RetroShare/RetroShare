@@ -38,7 +38,7 @@ typedef std::map<std::string, std::set<RsGxsSignedMessage*> > SignedMsgGrp;
 
 
 /*!
- * The main role of GDP is the preparation and handing out of messages requested from
+ * The main role of GDS is the preparation and handing out of messages requested from
  * RsGeneralExchangeService and RsGeneralExchangeService
  * It is important to note that no actual messages are passed by this interface as its is expected
  * architecturally to pass messages to the service via a call back

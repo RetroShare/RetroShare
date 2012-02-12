@@ -4,7 +4,7 @@
 /*
  * libretroshare/src/gxs: rsgnp.h
  *
- * General Exchange Protocol interface for RetroShare.
+ * Network Exchange Service interface for RetroShare.
  *
  * Copyright 2011-2011 by Robert Fernie, Christopher Evi-Prker
  *

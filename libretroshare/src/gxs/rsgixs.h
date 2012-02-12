@@ -4,7 +4,7 @@
 /*
  * libretroshare/src/gxs: gxs.h
  *
- * General Exchange Protocol interface for RetroShare.
+ * General Identity Exchange Service interface for RetroShare.
  *
  * Copyright 2011-2011 by Robert Fernie, Christopher Evi-Prker
  *
@@ -32,7 +32,7 @@
 #include <set>
 
 /*!
- * GIXP: General Identity Exchange Protocol.
+ * GIXP: General Identity Exchange Service.
  *
  * As we're always running into troubles with GPG signatures... we are going to
  * create a layer of RSA Keys for the following properties:
