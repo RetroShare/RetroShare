@@ -468,6 +468,7 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 		case FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE:
 																 {
 																	 // We add the transfer just before the first non cache transfer.
+																	 // This is costly, so only use this in case we really need it.
 																	 //
 																	 uint32_t pos =0;
 																	 while(pos < _queue.size() && (pos < _min_prioritized_transfers || (_queue[pos]->mFlags & RS_FILE_HINTS_CACHE)>0) )
@@ -1274,7 +1275,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	/* add structures into the accessible data. Needs to be locked */
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-		locked_addToQueue(ftfc, (flags & RS_FILE_HINTS_CACHE)?FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE : FT_FILECONTROL_QUEUE_ADD_END ) ;
+		locked_addToQueue(ftfc, FT_FILECONTROL_QUEUE_ADD_END ) ;
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;
