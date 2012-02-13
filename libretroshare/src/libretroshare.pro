@@ -10,7 +10,6 @@ CONFIG += test_voip
 # Beware: All data of the stripped services are lost
 #CONFIG += minimal
 DEFINES *= PQI_DISABLE_TUNNEL 
-INCLUDEPATH += C:/Development/Rs/OpenSSL/include
 #ENABLE_CACHE_OPT
 
 minimal {
@@ -675,10 +674,13 @@ HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
 		services/p3wikiservice.h \
 		retroshare/rswiki.h \
+		services/p3idservice.h \
+		retroshare/rsidentity.h \
 
 SOURCES += services/p3photoservice.cc \
 		serialiser/rsphotoitems.cc \
 		services/p3wikiservice.cc \
+		services/p3idservice.cc \
 
 # Other Old Code.
 #	rsserver/p3photo.cc \

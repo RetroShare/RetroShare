@@ -61,7 +61,11 @@ const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
  /* Status - Service only */
 const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
 
-/* Combined Cache/Service ids */
+/***************** IDS ALLOCATED FOR PLUGINS ******************/
+
+const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID   = 0x0401;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID  = 0x0402;
+
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
 /*
@@ -88,6 +92,9 @@ const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
 /* TEST VOIP - Service only */
 const uint16_t RS_SERVICE_TYPE_VOIP        = 0xf011;
 
+ /* Status - Service only */
+//const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
+
  /* Proxy - Service only */
 const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
@@ -99,6 +106,12 @@ const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
 const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf101;
 const uint16_t RS_SERVICE_TYPE_WIKI        = 0xf102;
 const uint16_t RS_SERVICE_TYPE_WIRE        = 0xf103;
+const uint16_t RS_SERVICE_TYPE_IDENTITY    = 0xf103;
+
+//const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
+//const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
+//const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
+//const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
 
 /* Games/External Apps - Service Only */
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
@@ -114,7 +127,10 @@ const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
 const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
 
 
+/***************** IDS ALLOCATED FOR PLUGINS ******************/
 
+const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1   = 0xf401;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_TEST_ID1   = 0xf402;
 
 
 
