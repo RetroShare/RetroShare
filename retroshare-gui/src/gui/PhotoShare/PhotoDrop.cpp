@@ -561,13 +561,27 @@ void PhotoDrop::dragEnterEvent(QDragEnterEvent *event)
 	std::cerr << "PhotoDrop::dragEnterEvent()";
 	std::cerr << std::endl;
 
-	//if (event->mimeData()->hasFormat("image/x-photo-item"))
+
+#if 0
+	const QStringList& formats = event->mimeData()->formats();
+        std::cerr << "dragEnterEvent() Formats" << std::endl;
+        QStringList::const_iterator it;
+        for (it = formats.begin(); it != formats.end(); ++it) {
+                std::cerr << "Format: " << (*it).toStdString();
+                std::cerr << std::endl;
+        }
+#endif
+
 	if (event->mimeData()->hasUrls())
 	{
+		std::cerr << "PhotoDrop::dragEnterEvent() Accepting";
+		std::cerr << std::endl;
 		event->accept();
 	}
 	else
 	{
+		std::cerr << "PhotoDrop::dragEnterEvent() Ignoring";
+		std::cerr << std::endl;
 		event->ignore();
 	}
 }
@@ -589,8 +603,8 @@ void PhotoDrop::dragMoveEvent(QDragMoveEvent *event)
 	std::cerr << "PhotoDrop::dragMoveEvent()";
 	std::cerr << std::endl;
 
-        //event->accept();
-        event->ignore();
+        event->accept();
+        //event->ignore();
 }
 
 void PhotoDrop::dropEvent(QDropEvent *event)
@@ -621,6 +635,8 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 	}
 	else
 	{
+		std::cerr << "PhotoDrop::dropEvent Ignoring";
+		std::cerr << std::endl;
         	event->ignore();
 	}
 

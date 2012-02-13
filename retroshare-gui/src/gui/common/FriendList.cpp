@@ -40,7 +40,7 @@
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "gui/RsAutoUpdatePage.h"
-#ifdef UNFINISHED
+#ifdef UNFINISHED_FD
 #include "gui/unfinished/profile/ProfileView.h"
 #endif
 #include "RSTreeWidgetItem.h"
@@ -1310,7 +1310,7 @@ QTreeWidgetItem *FriendList::getCurrentPeer() const
     return item;
 }
 
-#ifdef UNFINISHED
+#ifdef UNFINISHED_FD
 /* GUI stuff -> don't do anything directly with Control */
 void FriendsDialog::viewprofile()
 {

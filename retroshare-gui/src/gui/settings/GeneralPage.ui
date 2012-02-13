@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
+    <width>411</width>
     <height>400</height>
    </rect>
   </property>
@@ -561,14 +561,18 @@
      <property name="title">
       <string>For Advanced Users </string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <property name="verticalSpacing">
-       <number>2</number>
-      </property>
-      <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
        <widget class="QCheckBox" name="checkAdvanced">
         <property name="text">
          <string>Enable Advanced Mode (Restart Required)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkAdvanced_2">
+        <property name="text">
+         <string>Enable Experimental Features (Restart Required)</string>
         </property>
        </widget>
       </item>
