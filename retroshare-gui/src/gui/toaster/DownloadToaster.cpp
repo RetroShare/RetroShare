@@ -20,12 +20,12 @@
  *
  *************************************************************************/
 
-#include <QDesktopServices>
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QUrl>
 
 #include "DownloadToaster.h"
+#include "gui/common/RsUrlHandler.h"
 
 #include <retroshare/rsfiles.h>
 
@@ -55,11 +55,12 @@ void DownloadToaster::play()
 
 	/* open file with a suitable application */
 	QFileInfo qinfo;
-	qinfo.setFile(filename.c_str());
+	qinfo.setFile(QString::fromUtf8(filename.c_str()));
 	if (qinfo.exists()) {
-		QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()));
-	}else{
-//		QMessageBox::information(this, "RetroShare", tr("File %1 does not exist at location.").arg(fi.path.c_str()));
+		hide(); // hide here, because the rscollection dialog blocks and the toaster is deleted in that time
+		RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()));
+		// please add no code here, because "this" can be deleted
+		return;
 	}
 
 	hide();
