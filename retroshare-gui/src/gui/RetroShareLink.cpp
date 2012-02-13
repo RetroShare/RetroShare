@@ -298,8 +298,6 @@ bool RetroShareLink::createCertificate(const std::string& ssl_id)
 	}
 
 	//_ssl_id = QString::fromStdString(id);
-	_name = QString::fromUtf8(detail.name.c_str());
-	QString gpg_cert = QString::fromStdString(invite) ;
 	QString gpg_base_64 = QString::fromStdString(invite).section("\n\n",1).section("-----",0,0) ;
 
 	_GPGBase64CheckSum = gpg_base_64.section("=",-1,-1).section("\n",0,0) ;
@@ -310,8 +308,8 @@ bool RetroShareLink::createCertificate(const std::string& ssl_id)
 	_GPGid = QString::fromStdString(detail.gpg_id).right(8);
 	_SSLid = QString::fromStdString(ssl_id) ;
 	_GPGBase64String = gpg_base_64.replace("\n","") ;
-	_location = QString::fromStdString(detail.location) ;
-	_name = QString::fromStdString(detail.name) ;
+	_location = QString::fromUtf8(detail.location.c_str()) ;
+	_name = QString::fromUtf8(detail.name.c_str()) ;
 
 	_ext_ip_port = QString::fromStdString(invite).section("--EXT--",1,1) ;
 	QString lst = QString::fromStdString(invite).section("--EXT--",0,0) ;
@@ -627,7 +625,7 @@ QString RetroShareLink::niceName() const
     }
 
 	 if(type() == TYPE_CERTIFICATE)
-		 return QString("RetroShare Certificate (") + _name + ", @ " + _location + ")" ;	// should add SSL id there
+		 return QString("RetroShare Certificate (%1, @%2)").arg(_name, _location);	// should add SSL id there
 
     return name();
 }
