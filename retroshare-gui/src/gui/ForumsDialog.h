@@ -30,6 +30,7 @@
 
 class ForumInfo;
 class ForumsFillThread;
+class ForumMsgInfo;
 
 class ForumsDialog : public RsAutoUpdatePage 
 {
@@ -43,6 +44,9 @@ public:
 
     /* overloaded from RsAuthUpdatePage */
     virtual void updateDisplay();
+
+    static QString titleFromInfo(ForumMsgInfo &msgInfo);
+    static QString messageFromInfo(ForumMsgInfo &msgInfo);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);

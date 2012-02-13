@@ -346,7 +346,7 @@ bool RetroShareLink::createForum(const std::string& id, const std::string& msgId
 		} else {
 			ForumMsgInfo mi;
 			if (rsForums->getForumMessage(id, msgId, mi)) {
-				_name = QString::fromStdWString(mi.title);
+				_name = ForumsDialog::titleFromInfo(mi);
 			}
 		}
 	}

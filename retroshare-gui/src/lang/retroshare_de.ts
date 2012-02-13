@@ -691,7 +691,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+736"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+737"/>
         <source>Certificate files</source>
         <translation>Zertifikat-Dateien</translation>
     </message>
@@ -790,7 +790,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+324"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+322"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -825,7 +825,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-217"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-215"/>
         <source>Channel Feed</source>
         <translation>Kanal</translation>
     </message>
@@ -1563,7 +1563,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schriftart auf den Standard setzen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+344"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+345"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -1573,7 +1573,7 @@ p, li { white-space: pre-wrap; }
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+127"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
@@ -1953,7 +1953,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-881"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-882"/>
         <source>Certificate Load Failed</source>
         <translation>Das Zertifikat konnte nicht geladen werden</translation>
     </message>
@@ -3674,7 +3674,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1140"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1141"/>
         <source>Invite Friends by Email</source>
         <translation>Lade Freunde per Email ein</translation>
     </message>
@@ -4264,7 +4264,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichnen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+88"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+91"/>
         <source>Forum Post</source>
         <translation>Beitrag</translation>
     </message>
@@ -4286,7 +4286,7 @@ p, li { white-space: pre-wrap; }
         <translation>Als Antwort auf</translation>
     </message>
     <message>
-        <location line="+178"/>
+        <location line="+180"/>
         <source>Please give a Text Message</source>
         <translation>Bitte Nachricht eingeben</translation>
     </message>
@@ -4426,7 +4426,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+906"/>
+        <location line="+554"/>
+        <source>[ ... Missing Message ... ]</source>
+        <translation>[ ... Fehlende Nachricht ... ]</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Placeholder for missing Message</source>
+        <translation>Platzhalter für fehlende Nachricht</translation>
+    </message>
+    <message>
+        <location line="+358"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -4442,7 +4452,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1311"/>
+        <location line="-1326"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4603,7 +4613,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+151"/>
-        <location line="+1081"/>
+        <location line="+1096"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -4631,7 +4641,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1068"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1083"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4652,7 +4662,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1453"/>
+        <location line="+1468"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -5203,7 +5213,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Reset font to default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Schriftart auf den Standard setzen</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
@@ -5269,7 +5279,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neuigkeiten</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
@@ -5399,7 +5409,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neuer Gruppenchat</translation>
     </message>
     <message>
-        <location line="+230"/>
+        <location line="+234"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
@@ -5752,7 +5762,7 @@ p, li { white-space: pre-wrap; }
         <location line="-44"/>
         <location line="+45"/>
         <source>Generate new Location</source>
-        <translation>Erstelle neues Ort</translation>
+        <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
         <location line="-44"/>
@@ -9263,7 +9273,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte geben Sie das Passwort ein um folgenden GPG Schlüssel freizuschalten:</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+144"/>
         <source>Examining shared files...</source>
         <translation>Prüfe freigegebene Dateien...</translation>
     </message>
@@ -10605,7 +10615,7 @@ Lockdatei:
         <translation type="obsolete">Der Empfänger der Nachricht ist unbekannt.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+514"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+518"/>
         <source>Click to add this RetroShare cert to your GPG keyring
 and open the Make Friend Wizard.
 </source>
@@ -10614,7 +10624,7 @@ und den Assistent zum Hinzufügen von Freunden zu starten.
 </translation>
     </message>
     <message>
-        <location line="+264"/>
+        <location line="+266"/>
         <source>Add file</source>
         <translation>Datei hinzufügen</translation>
     </message>
@@ -10649,7 +10659,7 @@ und den Assistent zum Hinzufügen von Freunden zu starten.
         <translation>Bestätigung</translation>
     </message>
     <message>
-        <location line="+328"/>
+        <location line="+334"/>
         <source>%1 of %2 RetroShare links processed.</source>
         <translation>%1 von %2 RetroShare Links verarbeitet.</translation>
     </message>
@@ -12131,7 +12141,39 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
         <translation>Erlaube RetroShare folgende Webseiten nach Ihrer IP zu fragen:</translation>
     </message>
     <message>
-        <location line="-106"/>
+        <location line="+18"/>
+        <source>Turtle router</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Max average tunnel request forwarded per second:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>This value controls how many tunnel request your peer can forward per second. 
+
+If you have a large internet bandwidth, you may raise this up to 30-40, to allow
+statisticlly longuer tunnels to pass. Be very careful though, since this generates 
+many small packets that can significantly slow down your own file transfer. 
+
+The default value is 20.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-152"/>
         <source>Dynamic DNS</source>
         <translation>Dynamisches DNS</translation>
     </message>

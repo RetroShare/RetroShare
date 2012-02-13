@@ -872,9 +872,6 @@ void ForumsDialog::insertThreads()
     subscribeFlags = fi.subscribeFlags;
     ui.forumName->setText(QString::fromStdWString(fi.forumName));
 
-
-
-
     ui.progressBarLayOut->setEnabled(true);
 
     ui.progLayOutTxt->show();
@@ -1068,6 +1065,24 @@ void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewPar
     }
 }
 
+QString ForumsDialog::titleFromInfo(ForumMsgInfo &msgInfo)
+{
+    if (msgInfo.msgflags & RS_DISTRIB_MISSING_MSG) {
+        return QApplication::translate("ForumsDialog", "[ ... Missing Message ... ]");
+    }
+
+    return QString::fromStdWString(msgInfo.title);
+}
+
+QString ForumsDialog::messageFromInfo(ForumMsgInfo &msgInfo)
+{
+    if (msgInfo.msgflags & RS_DISTRIB_MISSING_MSG) {
+        return QApplication::translate("ForumsDialog", "Placeholder for missing Message");
+    }
+
+    return QString::fromStdWString(msgInfo.msg);
+}
+
 void ForumsDialog::insertPost()
 {
     if ((mCurrForumId == "") || (mCurrThreadId == ""))
@@ -1124,10 +1139,10 @@ void ForumsDialog::insertPost()
         }
     }
 
-    QString extraTxt = RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+    QString extraTxt = RsHtml::formatText(messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
     ui.postText->setHtml(extraTxt);
-    ui.threadTitle->setText(QString::fromStdWString(msg.title));
+    ui.threadTitle->setText(titleFromInfo(msg));
 }
 
 void ForumsDialog::previousMessage ()
@@ -1814,7 +1829,7 @@ void ForumsFillThread::run()
             item->setText(COLUMN_THREAD_DATE, text);
         }
 
-        item->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(tit->title));
+        item->setText(COLUMN_THREAD_TITLE, ForumsDialog::titleFromInfo(msginfo));
 
         text = QString::fromUtf8(rsPeers->getPeerName(msginfo.srcId).c_str());
         if (text.isEmpty())
@@ -1928,7 +1943,7 @@ void ForumsFillThread::run()
                         child->setText(COLUMN_THREAD_DATE, text);
                     }
 
-                    child->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(mit->title));
+                    child->setText(COLUMN_THREAD_TITLE, ForumsDialog::titleFromInfo(msginfo));
 
                     text = QString::fromUtf8(rsPeers->getPeerName(msginfo.srcId).c_str());
                     if (text.isEmpty())
@@ -1954,7 +1969,7 @@ void ForumsFillThread::run()
                     if (filterColumn == COLUMN_THREAD_CONTENT) {
                         // need content for filter
                         QTextDocument doc;
-                        doc.setHtml(QString::fromStdWString(msginfo.msg));
+                        doc.setHtml(ForumsDialog::messageFromInfo(msginfo));
                         child->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
                     }
 

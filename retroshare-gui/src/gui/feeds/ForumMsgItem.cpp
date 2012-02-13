@@ -34,6 +34,7 @@
 #include "gui/chat/HandleRichText.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/notifyqt.h"
+#include "gui/ForumsDialog.h"
 //#include "gui/settings/rsharesettings.h"
 
 /****
@@ -154,8 +155,8 @@ void ForumMsgItem::updateItemStatic()
 			}
 
 			prevSubLabel->setText(link.toHtml());
-			prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-			
+			prevMsgLabel->setText(RsHtml::formatText(ForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
 			QDateTime qtime;
 			qtime.setTime_t(msg.ts);
 			QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
@@ -179,7 +180,7 @@ void ForumMsgItem::updateItemStatic()
 			}
 
 			nextSubLabel->setText(link.toHtml());
-			nextMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+			nextMsgLabel->setText(RsHtml::formatText(ForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
 			QDateTime qtime;
 			qtime.setTime_t(msg.ts);
@@ -196,7 +197,7 @@ void ForumMsgItem::updateItemStatic()
 				RetroShareLink linkParent;
 				linkParent.createForum(msgParent.forumId, msgParent.msgId);
 				prevSubLabel->setText(linkParent.toHtml());
-				prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msgParent.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+				prevMsgLabel->setText(RsHtml::formatText(ForumsDialog::messageFromInfo(msgParent), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 				
 				if (rsPeers->getPeerName(msgParent.srcId) !="")
 				{
@@ -217,7 +218,7 @@ void ForumMsgItem::updateItemStatic()
 		}
 
 		/* header stuff */
-		subjectLabel->setText(QString::fromStdWString(msg.title));
+		subjectLabel->setText(ForumsDialog::titleFromInfo(msg));
 		//srcLabel->setText(QString::fromStdString(msg.srcId));
 	}
 
