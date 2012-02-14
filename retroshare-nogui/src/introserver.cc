@@ -45,7 +45,8 @@
 #include <iostream>
                       
 #define RSIS_CHECKTIME	60
-#define MAX_PEER_AGE	(3600 * 24 * 14) // 2 weeks.
+//#define MAX_PEER_AGE	(3600 * 24 * 14) // 2 weeks.
+#define MAX_PEER_AGE	(3600 * 24 * 3) // 3 days.
 //#define MAX_PEER_AGE	(600) // 10 minutes - for testing
 
 #define LOBBY_BASENAME "Chat Server"
@@ -63,7 +64,7 @@ RsIntroServer::RsIntroServer()
 
 	mMaxPeerAge = MAX_PEER_AGE;
 
-	std::string sslDir = RsInit::RsConfigDirectory();
+	std::string sslDir = RsInit::RsProfileConfigDirectory();
 	std::string certsDir = sslDir + "/NEWCERTS";
 	std::string peersDir = sslDir + "/STORAGE";
 
@@ -123,7 +124,7 @@ int RsIntroServer::setupChatLobbies(std::string &genericLobbyName)
 	// get a date/time string.
 	time_t now = time(NULL);
 	std::string tstr = ctime(&now);
-	std::string trimmedstr = tstr.substr(0, 16);
+	std::string trimmedstr = tstr.substr(4, 12);
 
 	genericLobbyName = LOBBY_BASENAME;
 	std::string englishLobbyName = LOBBY_BASENAME;
