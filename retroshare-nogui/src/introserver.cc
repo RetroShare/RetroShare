@@ -25,6 +25,8 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsinit.h>
+
 #include "util/folderiterator.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
@@ -46,6 +48,9 @@
 #define MAX_PEER_AGE	(3600 * 24 * 14) // 2 weeks.
 //#define MAX_PEER_AGE	(600) // 10 minutes - for testing
 
+#define LOBBY_BASENAME "Chat Server"
+
+
 RsIntroServer::RsIntroServer()
 	:mStartTS(0)
 {
@@ -58,12 +63,32 @@ RsIntroServer::RsIntroServer()
 
 	mMaxPeerAge = MAX_PEER_AGE;
 
-	setupChatLobbies();
+	std::string sslDir = RsInit::RsConfigDirectory();
+	std::string certsDir = sslDir + "/NEWCERTS";
+	std::string peersDir = sslDir + "/STORAGE";
 
-	mPeersFile = "./STORAGE/peers.txt";
-	mCertLoadPath = "./NEWCERTS";
+	RsDirUtil::checkCreateDirectory(certsDir);
+	RsDirUtil::checkCreateDirectory(peersDir);
+
+	// chmod certsDir -> so WebServer can write to it.
+	// might be UNIX specific!
+	chmod(certsDir.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+
+	mPeersFile = peersDir + "/peers.txt";
+	mCertLoadPath = certsDir;
+
+	std::string genericLobbyName;
+
+	removeAllPeers();
+
+	setupChatLobbies(genericLobbyName);
+
+	createConfigFiles(peersDir, genericLobbyName);
+
 	mStorePeers = new RsIntroStore(mPeersFile);
 	mStorePeers->loadPeers();
+
+	restoreStoredPeers();
 }
 
 
@@ -90,16 +115,25 @@ int RsIntroServer::tick()
 }
 
 
-
-
-int RsIntroServer::setupChatLobbies()
+int RsIntroServer::setupChatLobbies(std::string &genericLobbyName)
 {
 	std::cerr << "RsIntroServer::setupChatLobbies()";
 	std::cerr << std::endl;
 
-	std::string englishLobbyName = "Meeting Place (English)";
-	std::string germanLobbyName = "Meeting Place (German)";
-	std::string frenchLobbyName = "Meeting Place (French)";
+	// get a date/time string.
+	time_t now = time(NULL);
+	std::string tstr = ctime(&now);
+	std::string trimmedstr = tstr.substr(0, 16);
+
+	genericLobbyName = LOBBY_BASENAME;
+	std::string englishLobbyName = LOBBY_BASENAME;
+	std::string germanLobbyName  = LOBBY_BASENAME;
+	std::string frenchLobbyName  = LOBBY_BASENAME;
+
+	genericLobbyName += " " + trimmedstr;
+	englishLobbyName += " (EN) " + trimmedstr;
+	germanLobbyName  += " (DE) " + trimmedstr;
+	frenchLobbyName  += " (FR) " + trimmedstr;
 
 	std::list<std::string> emptyList;
 	uint32_t lobby_privacy_type = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC;
@@ -110,6 +144,36 @@ int RsIntroServer::setupChatLobbies()
 
 	return 1;
 }
+
+int RsIntroServer::createConfigFiles(std::string peersDir, std::string lobbyName)
+{
+	/* write three files: server key, hyperlink & lobbyname */
+
+	std::string serverfile = peersDir + "/serverkey.txt";
+	//std::string hyperfile = peersDir + "/hyperlink.txt";
+	std::string lobbyfile = peersDir + "/lobbyname.txt";
+
+	std::ofstream fd1(serverfile.c_str());
+	//std::ofstream fd2(hyperfile.c_str());
+	std::ofstream fd3(lobbyfile.c_str());
+
+	if (fd1)
+	{
+		fd1 << rsPeers->GetRetroshareInvite(false);
+		fd1 << std::endl;
+		fd1.close();
+	}
+
+	if (fd3)
+	{
+		fd3 << lobbyName << std::endl;
+		fd3.close();
+	}
+	return 1;
+}
+
+
+
 
 int RsIntroServer::addCertificateFile(std::string filepath)
 {
@@ -305,6 +369,52 @@ int RsIntroServer::cleanOldPeers()
 	}
 
 	mStorePeers->savePeers();
+
+	return 1;
+}
+
+
+int RsIntroServer::restoreStoredPeers()
+{
+	std::cerr << "RsIntroServer::restoreStoredPeers()";
+	std::cerr << std::endl;
+
+	std::list<std::string> oldIds;
+	std::list<std::string>::iterator it;
+
+	time_t now = time(NULL);
+
+	mStorePeers->getPeersBeforeTS(now, oldIds);
+
+	for(it = oldIds.begin(); it != oldIds.end(); it++)
+	{
+		std::cerr << "RsIntroServer::restoreStoredPeers() Restoring: " << *it;
+		std::cerr << std::endl;
+
+		std::string emptySslId;
+		rsPeers->addFriend(emptySslId, *it);
+	}
+	return 1;
+}
+
+
+int RsIntroServer::removeAllPeers()
+{
+	std::cerr << "RsIntroServer::removeAllPeers()";
+	std::cerr << std::endl;
+
+	std::list<std::string> oldIds;
+	std::list<std::string>::iterator it;
+
+	rsPeers->getGPGAcceptedList(oldIds);
+
+	for(it = oldIds.begin(); it != oldIds.end(); it++)
+	{
+		std::cerr << "RsIntroServer::removeAllPeers() Removing: " << *it;
+		std::cerr << std::endl;
+
+		rsPeers->removeFriend(*it);
+	}
 
 	return 1;
 }

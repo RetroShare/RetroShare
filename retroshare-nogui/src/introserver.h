@@ -47,7 +47,10 @@ int 	displayPeers();
 
 int 	addCertificateFile(std::string);
 int 	addNewUser(std::string certificate);
-int 	setupChatLobbies();
+int 	setupChatLobbies(std::string &genericLobbyName);
+int 	createConfigFiles(std::string peersDir, std::string lobbyName);
+int 	restoreStoredPeers();
+int 	removeAllPeers();
 
 int 	checkForNewCerts();
 int 	cleanOldPeers();
