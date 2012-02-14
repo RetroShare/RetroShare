@@ -112,7 +112,6 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 
 		mLinkMgr = NULL;
 		mNetMgr = NULL;
-		mHistoryMgr = NULL;
 
 		/* setup basics of own state */
 		mOwnState.id = AuthSSL::getAuthSSL()->OwnId();
@@ -135,11 +134,10 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 	return;
 }
 
-void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr, p3HistoryMgr *historyMgr)
+void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr)
 {
 	mLinkMgr = linkMgr;
 	mNetMgr = netMgr;
-	mHistoryMgr = historyMgr;
 }
 
 void p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
@@ -564,7 +562,6 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 		{
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
 			{
-				mHistoryMgr->clear(it->second.id);
 				mFriendList.erase(it);
 			}
 		}

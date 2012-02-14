@@ -1387,7 +1387,7 @@ bool p3NetMgrIMPL::netAssistConnectShutdown()
 	return true;
 }
 
-bool p3NetMgrIMPL::netAssistFriend(std::string id, bool on)
+bool p3NetMgrIMPL::netAssistFriend(const std::string &id, bool on)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
@@ -1407,7 +1407,7 @@ bool p3NetMgrIMPL::netAssistFriend(std::string id, bool on)
 }
 
 
-bool p3NetMgrIMPL::netAssistKnownPeer(std::string id, const struct sockaddr_in &addr, uint32_t flags)
+bool p3NetMgrIMPL::netAssistKnownPeer(const std::string &id, const struct sockaddr_in &addr, uint32_t flags)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
@@ -1458,7 +1458,7 @@ bool p3NetMgrIMPL::netAssistAttach(bool on)
 
 
 
-bool p3NetMgrIMPL::netAssistStatusUpdate(std::string id, int state)
+bool p3NetMgrIMPL::netAssistStatusUpdate(const std::string &id, int state)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 

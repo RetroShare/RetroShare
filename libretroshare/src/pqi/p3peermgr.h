@@ -113,7 +113,6 @@ class p3NetMgr;
 
 class p3LinkMgrIMPL;
 class p3NetMgrIMPL;
-class p3HistoryMgr;
 
 class p3PeerMgr
 {
@@ -284,7 +283,7 @@ virtual bool 	haveOnceConnected();
 
         p3PeerMgrIMPL();
 
-void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr, p3HistoryMgr *historyMgr);
+void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
 
 void 	tick();
 
@@ -319,7 +318,6 @@ void    printPeerLists(std::ostream &out);
 
 	p3LinkMgrIMPL *mLinkMgr;
 	p3NetMgrIMPL  *mNetMgr;
-	p3HistoryMgr *mHistoryMgr;
 
 private:
 	RsMutex mPeerMtx; /* protects below */

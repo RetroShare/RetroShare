@@ -1134,9 +1134,7 @@ bool p3ChatService::clearPrivateChatQueue(bool incoming, const std::string &id)
 				delete c;
 				changed = true;
 
-				std::list<RsChatMsgItem *>::iterator it1 = it;
-				it++;
-				list->erase(it1);
+				it = list->erase(it);
 
 				continue;
 			}
@@ -1439,6 +1437,9 @@ std::cerr << "p3chatservice: sending requested status string for peer " << peer_
 
 bool p3ChatService::loadList(std::list<RsItem*>& load)
 {
+	std::list<std::string> ssl_peers;
+	mLinkMgr->getFriendList(ssl_peers);
+
 	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
 	{
 		RsChatAvatarItem *ai = NULL ;
@@ -1474,18 +1475,21 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 			if (citem->chatFlags & RS_CHAT_FLAG_PRIVATE) {
-				RsChatMsgItem *ci = new RsChatMsgItem();
-				citem->get(ci);
+				if (std::find(ssl_peers.begin(), ssl_peers.end(), citem->configPeerId) != ssl_peers.end()) {
+					RsChatMsgItem *ci = new RsChatMsgItem();
+					citem->get(ci);
 
-				if (citem->configFlags & RS_CHATMSG_CONFIGFLAG_INCOMING) {
-					privateIncomingList.push_back(ci);
+					if (citem->configFlags & RS_CHATMSG_CONFIGFLAG_INCOMING) {
+						privateIncomingList.push_back(ci);
+					} else {
+						privateOutgoingList.push_back(ci);
+					}
 				} else {
-					privateOutgoingList.push_back(ci);
+					// no friends
 				}
 			} else {
 				// ignore all other items
 			}
-
 
 			delete *it;
 
@@ -1507,6 +1511,7 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 		// delete unknown items
 		delete *it;
 	}
+
 	return true;
 }
 
@@ -1621,6 +1626,11 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 					IndicateConfigChanged();
 				}
 			}
+		} else if (it->actions & RS_PEER_MOVED) {
+			/* now handle remove */
+			clearPrivateChatQueue(true, it->id);
+			clearPrivateChatQueue(false, it->id);
+			mHistoryMgr->clear(it->id);
 		}
 	}
 }

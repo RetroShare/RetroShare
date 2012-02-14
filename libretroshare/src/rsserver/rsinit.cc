@@ -1913,7 +1913,7 @@ int RsServer::StartupRetroShare()
         rsNotify = new p3Notify();
         rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 
-	mPeerMgr->setManagers(mLinkMgr, mNetMgr, mHistoryMgr);
+	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 	
         //load all the SSL certs as friends
