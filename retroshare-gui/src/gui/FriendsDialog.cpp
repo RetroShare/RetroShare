@@ -98,7 +98,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
     ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
     newsFeed = new NewsFeed();
-    int newsFeedTabIndex = ui.tabWidget->addTab(newsFeed, tr("News Feed"));
+    int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
+    ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
 
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);

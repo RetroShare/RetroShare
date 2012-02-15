@@ -131,6 +131,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent,const QString& cert)
               QPixmap(":/images/connect/connectFriendBanner.png")) ;
               
     setWindowTitle(tr("Connect Friend Wizard"));
+    setWindowIcon(QIcon(":/images/rstray3.png"));
 }
 
 
