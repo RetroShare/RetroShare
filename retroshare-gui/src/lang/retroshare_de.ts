@@ -3306,8 +3306,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/dht/DhtWindow.ui" line="+17"/>
         <location line="+180"/>
-        <source>Dht Details</source>
-        <translation type="unfinished">Dht Details</translation>
+        <source>DHT Details</source>
+        <translation type="unfinished">DHT Details</translation>
     </message>
     <message>
         <location line="-161"/>
@@ -3366,7 +3366,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+5"/>
-        <source>Dht Status</source>
+        <source>DHT Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7023,7 +7023,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <location line="+8"/>
-        <source>Dht Details</source>
+        <source>DHT Details</source>
         <translation>DHT Details</translation>
     </message>
     <message>
@@ -11344,7 +11344,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+8"/>
-        <source>Server Dht Key</source>
+        <source>Server DHT Key</source>
         <translation>Server DHT Schlüssel</translation>
     </message>
     <message>

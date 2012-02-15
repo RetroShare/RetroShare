@@ -2978,7 +2978,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>Dht Details</source>
+        <source>DHT Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3026,7 +3026,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Dht Status</source>
+        <source>DHT Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5929,7 +5929,7 @@ These ways are possible to do this:</source>
         <translation type="unfinished">Advisér</translation>
     </message>
     <message>
-        <source>Dht Details</source>
+        <source>DHT Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9643,7 +9643,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Server Dht Key</source>
+        <source>Server DHT Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

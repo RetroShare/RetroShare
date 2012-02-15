@@ -3415,7 +3415,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>Dht Details</source>
+        <source>DHT Details</source>
         <translation>Détails de la Dht</translation>
     </message>
     <message>
@@ -3463,7 +3463,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">ID du contact</translation>
     </message>
     <message>
-        <source>Dht Status</source>
+        <source>DHT Status</source>
         <translation type="unfinished">Statut Dht</translation>
     </message>
     <message>
@@ -7484,7 +7484,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>Notifications</translation>
     </message>
     <message>
-        <source>Dht Details</source>
+        <source>DHT Details</source>
         <translation>Détails de la Dht</translation>
     </message>
 </context>
@@ -12710,7 +12710,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ajouter un serveur</translation>
     </message>
     <message>
-        <source>Server Dht Key</source>
+        <source>Server DHT Key</source>
         <translation>Clé Dht du serveur</translation>
     </message>
     <message>

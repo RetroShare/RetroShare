@@ -434,7 +434,7 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
 #ifdef USE_DHTWINDOW
-    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Dht Details"), this, SLOT(showDhtWindow()));
+    trayMenu->addAction(QIcon(IMAGE_DHT), tr("DHT Details"), this, SLOT(showDhtWindow()));
 #endif
 
 #ifdef UNFINISHED

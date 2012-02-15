@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dht Details</string>
+   <string>DHT Details</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
@@ -152,7 +152,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Dht Status</string>
+            <string>DHT Status</string>
            </property>
           </column>
           <column>
@@ -194,7 +194,7 @@
         <item>
          <widget class="QLabel" name="dhtLabel">
           <property name="text">
-           <string>Dht Details</string>
+           <string>DHT Details</string>
           </property>
          </widget>
         </item>

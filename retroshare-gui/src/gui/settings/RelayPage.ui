@@ -361,7 +361,7 @@
        <widget class="QTreeWidget" name="serverTreeWidget">
         <column>
          <property name="text">
-          <string>Server Dht Key</string>
+          <string>Server DHT Key</string>
          </property>
         </column>
        </widget>
