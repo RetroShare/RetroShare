@@ -1965,7 +1965,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2513,7 +2513,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">允许邮件</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Authenticated Messages</translation>
     </message>
     <message>
@@ -3782,7 +3782,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">允许邮件</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">经过身份验证的邮件</translation>
     </message>
     <message>

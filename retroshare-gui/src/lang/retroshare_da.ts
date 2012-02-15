@@ -1939,7 +1939,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Tilladt beskeder</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Godkendt Beskeder</translation>
     </message>
     <message>
@@ -2278,7 +2278,7 @@ Do you want to save your changes?</source>
         <translation type="unfinished">Anonym Beskeder</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Godkendt Beskeder</translation>
     </message>
     <message>
@@ -2511,7 +2511,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Tilladt beskeder</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Godkendt Beskeder</translation>
     </message>
     <message>
@@ -3751,7 +3751,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Tilladt beskeder</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Godkendt Beskeder</translation>
     </message>
     <message>

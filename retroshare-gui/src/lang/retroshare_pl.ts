@@ -1957,7 +1957,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3786,7 +3786,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

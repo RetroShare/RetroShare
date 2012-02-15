@@ -2041,7 +2041,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Sallitut viestit</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Varmennetut viestit</translation>
     </message>
     <message>
@@ -4026,7 +4026,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Sallitut viestit</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Varmennetut viestit</translation>
     </message>
     <message>

@@ -1744,7 +1744,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Izin Mesajlar</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Doğrulanmış Mesajlar</translation>
     </message>
     <message>
@@ -2091,7 +2091,7 @@ Do you want to save your changes?</source>
         <translation type="unfinished">Anonim Mesajlar</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Doğrulanmış Mesajlar</translation>
     </message>
     <message>
@@ -2324,7 +2324,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Izin Mesajlar</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Doğrulanmış Mesajlar</translation>
     </message>
     <message>
@@ -3570,7 +3570,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Izin Mesajlar</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Doğrulanmış Mesajlar</translation>
     </message>
     <message>

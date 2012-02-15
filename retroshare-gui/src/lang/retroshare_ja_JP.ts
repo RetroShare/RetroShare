@@ -2343,7 +2343,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">許可されるメッセージ</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">認証されたメッセージ</translation>
     </message>
     <message>
@@ -2675,7 +2675,7 @@ Do you want to save your changes?</source>
         <translation type="unfinished">匿名のメッセージ</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">認証されたメッセージ</translation>
     </message>
     <message>
@@ -2927,7 +2927,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">許可されるメッセージ</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">認証されたメッセージ</translation>
     </message>
     <message>
@@ -4221,7 +4221,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">許可されるメッセージ</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">認証されたメッセージ</translation>
     </message>
     <message>

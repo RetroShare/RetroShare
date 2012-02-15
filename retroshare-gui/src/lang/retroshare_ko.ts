@@ -1800,7 +1800,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">허용 메시지</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">인증된 메시지</translation>
     </message>
     <message>
@@ -2131,7 +2131,7 @@ Do you want to save your changes?</source>
         <translation type="unfinished">익명 메시지</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">인증된 메시지</translation>
     </message>
     <message>
@@ -2372,7 +2372,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">허용 메시지</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">인증된 메시지</translation>
     </message>
     <message>
@@ -3610,7 +3610,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">허용 메시지</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">인증된 메시지</translation>
     </message>
     <message>

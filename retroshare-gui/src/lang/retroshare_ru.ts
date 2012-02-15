@@ -2054,7 +2054,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Номер сообщения</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Прошедшие проверку сообщений</translation>
     </message>
     <message>
@@ -2405,7 +2405,7 @@ Do you want to save your changes?</source>
         <translation type="unfinished">Анонимные сообщения</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Прошедшие проверку сообщений</translation>
     </message>
     <message>
@@ -2634,7 +2634,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Номер сообщения</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Прошедшие проверку сообщений</translation>
     </message>
     <message>
@@ -3964,7 +3964,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Номер сообщения</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Прошедшие проверку сообщений</translation>
     </message>
     <message>

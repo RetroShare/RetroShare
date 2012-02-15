@@ -1471,7 +1471,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="160"/>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -2207,7 +2207,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messages autorisés</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation>Messages authentifiés</translation>
     </message>
     <message>
@@ -2579,7 +2579,7 @@ Voulez-vous sauvegarder les changements?</translation>
         <translation>Messages authentifiés</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Messages authentifiés</translation>
     </message>
     <message>
@@ -2839,7 +2839,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messages autorisés</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Messages authentifiés</translation>
     </message>
     <message>
@@ -4239,7 +4239,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messages autorisés</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation>Messages authentifiés</translation>
     </message>
     <message>

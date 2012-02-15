@@ -121,7 +121,7 @@
           <item row="0" column="0">
            <widget class="QRadioButton" name="radioButton_authd">
             <property name="text">
-             <string>Authemticated Messages</string>
+             <string>Authenticated Messages</string>
             </property>
            </widget>
           </item>

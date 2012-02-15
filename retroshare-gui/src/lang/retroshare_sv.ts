@@ -2729,7 +2729,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Tillåtna meddelanden</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Verifierade meddelanden</translation>
     </message>
     <message>
@@ -3076,7 +3076,7 @@ Do you want to save your changes?</source>
         <translation type="unfinished">Anonyma meddelanden</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Verifierade meddelanden</translation>
     </message>
     <message>
@@ -3313,7 +3313,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Tillåtna meddelanden</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="obsolete">Verifierade meddelanden</translation>
     </message>
     <message>
@@ -4733,7 +4733,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Tillåtna meddelanden</translation>
     </message>
     <message>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Verifierade meddelanden</translation>
     </message>
     <message>

@@ -2051,7 +2051,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="-137"/>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation type="unfinished">Authentifizierte Nachrichten</translation>
     </message>
     <message>
@@ -4220,7 +4220,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="-59"/>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation>Authentifizierte Nachrichten</translation>
     </message>
 </context>
