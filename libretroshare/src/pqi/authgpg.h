@@ -83,6 +83,12 @@ class gpgcert
                 bool accept_connection;
 
 		gpgme_key_t key;
+
+	// Cached Certificates...
+	bool mHaveCachedCert;
+	std::string mCachedCert;
+	
+	
 };
 
 class AuthGPGOperation
@@ -101,19 +107,21 @@ public:
 class AuthGPGOperationLoadOrSave : public AuthGPGOperation
 {
 public:
-    AuthGPGOperationLoadOrSave(bool load, const std::string &certGpgOrId, void *userdata) : AuthGPGOperation(userdata)
+    AuthGPGOperationLoadOrSave(bool load, const std::string &gpgId, const std::string &gpgCert, void *userdata) 
+    : AuthGPGOperation(userdata)
     {
         m_load = load;
         if (m_load) {
-            m_certGpg = certGpgOrId;
+            m_certGpg = gpgCert;
+	    m_certGpgId = gpgId;
         } else {
-            m_certGpgId = certGpgOrId;
+            m_certGpgId = gpgId;
         }
     }
 
 public:
     bool m_load;
-    std::string m_certGpgId; // set for save
+    std::string m_certGpgId; // set for save & load.
     std::string m_certGpg; // set for load
 };
 
@@ -339,6 +347,10 @@ virtual bool    isGPGId(const std::string &id);
  ****/
 virtual bool LoadCertificateFromString(const std::string &pem, std::string &gpg_id,std::string& error_string);
 virtual std::string SaveCertificateToString(const std::string &id,bool include_signatures) ;
+
+// Cached certificates.
+bool   cacheGPGCertificate(const std::string &id, const std::string &certificate);
+bool   getCachedGPGCertificate(const std::string &id, std::string &certificate);
 
 /*********************************************************************************/
 /************************* STAGE 6 ***********************************************/

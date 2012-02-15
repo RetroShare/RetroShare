@@ -897,7 +897,7 @@ AuthGPGOperation *p3disc::getGPGOperation()
 		if (mPendingDiscReplyInList.empty() == false) {
 			RsDiscReply *item = mPendingDiscReplyInList.front();
 
-			return new AuthGPGOperationLoadOrSave(true, item->certGPG, item);
+			return new AuthGPGOperationLoadOrSave(true, item->aboutId, item->certGPG, item);
 		}
 	}
 
@@ -931,7 +931,7 @@ AuthGPGOperation *p3disc::getGPGOperation()
 	if (!destId.empty() && !srcId.empty()) {
 		RsDiscReply *item = createDiscReply(destId, srcId);
 		if (item) {
-			return new AuthGPGOperationLoadOrSave(false, item->aboutId, item);
+			return new AuthGPGOperationLoadOrSave(false, item->aboutId, "", item);
 		}
 	}
 

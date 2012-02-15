@@ -86,7 +86,7 @@ static std::string ProcessPGPmeError(gpgme_error_t ERR);
  */
 
 gpgcert::gpgcert()
-	:key(NULL)
+	:key(NULL), mHaveCachedCert(false)
 {
 	return;
 }
@@ -420,13 +420,26 @@ void AuthGPGimpl::processServices()
         if (loadOrSave->m_load) {
             /* process load operation */
 
-#ifdef GPG_DEBUG
-            std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
-#endif
 
-            /* load the certificate */
-				std::string error_string ;
-            LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId,error_string);
+		/* load the certificate */
+
+
+		/* don't bother loading - if we already have the certificate */
+		if (isGPGId(loadOrSave->m_certGpgId))
+		{
+            		std::cerr << "AuthGPGimpl::processServices() Skipping load - already have it" << std::endl;
+		}
+		else
+		{
+			std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
+#ifdef GPG_DEBUG
+#endif
+			std::string error_string ;
+			LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId,error_string);
+		}
+
+
+
         } else {
             /* process save operation */
 
@@ -442,36 +455,42 @@ void AuthGPGimpl::processServices()
 #define LIMIT_CERTIFICATE_SIZE		1
 #define MAX_CERTIFICATE_SIZE		10000
 
+	    if (!getCachedGPGCertificate(loadOrSave->m_certGpgId, loadOrSave->m_certGpg))
+	    {	
+
+
 #ifdef DISABLE_CERTIFICATE_SEND
-            std::cerr << "AuthGPGimpl::processServices() Certificates Disabled" << std::endl;
-            loadOrSave->m_certGpg = "";
+            	std::cerr << "AuthGPGimpl::processServices() Certificates Disabled" << std::endl;
+            	loadOrSave->m_certGpg = "";
 #else
-            loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId,true);
-            std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
-	    std::cerr << " is " << loadOrSave->m_certGpg.size() << " bytes";
-	    std::cerr << std::endl;
+            	loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId,true);
+            	std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
+	    	std::cerr << " is " << loadOrSave->m_certGpg.size() << " bytes";
+	    	std::cerr << std::endl;
 
   #ifdef LIMIT_CERTIFICATE_SIZE
-	    if (loadOrSave->m_certGpg.size() > MAX_CERTIFICATE_SIZE)
-	    {
-                std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
-	        std::cerr << " is over size limit - switching to a minimal certificate";
-	        std::cerr << std::endl;
-        
-		std::string cleaned_key ;
-        	if(PGPKeyManagement::createMinimalKey(loadOrSave->m_certGpg,cleaned_key))
+		if (loadOrSave->m_certGpg.size() > MAX_CERTIFICATE_SIZE)
 		{
-        		loadOrSave->m_certGpg = cleaned_key;
-            		std::cerr << "AuthGPGimpl::processServices() Minimal Cert Generation, size";
-	    		std::cerr << " is " << loadOrSave->m_certGpg.size() << " bytes";
-	    		std::cerr << std::endl;
+	                std::cerr << "AuthGPGimpl::processServices() Cert for: " << loadOrSave->m_certGpgId;
+		        std::cerr << " is over size limit - switching to a minimal certificate";
+		        std::cerr << std::endl;
+	        
+			std::string cleaned_key ;
+	        	if(PGPKeyManagement::createMinimalKey(loadOrSave->m_certGpg,cleaned_key))
+			{
+	        		loadOrSave->m_certGpg = cleaned_key;
+	            		std::cerr << "AuthGPGimpl::processServices() Minimal Cert Generation, size";
+		    		std::cerr << " is " << loadOrSave->m_certGpg.size() << " bytes";
+		    		std::cerr << std::endl;
+			}
+	        	else
+			{
+	            		std::cerr << "AuthGPGimpl::processServices() Minimal Cert Generation Failed! removing cert";
+		    		std::cerr << std::endl;
+		    		loadOrSave->m_certGpg = "";
+			}
 		}
-        	else
-		{
-            		std::cerr << "AuthGPGimpl::processServices() Minimal Cert Generation Failed! removing cert";
-	    		std::cerr << std::endl;
-	    		loadOrSave->m_certGpg = "";
-		}
+		cacheGPGCertificate(loadOrSave->m_certGpgId, loadOrSave->m_certGpg);
 	    }
   #endif
 
@@ -1389,6 +1408,50 @@ bool	AuthGPGimpl::isGPGAccepted(const std::string &id)
         }
         return false;
 }
+
+
+bool   AuthGPGimpl::cacheGPGCertificate(const std::string &id, const std::string &certificate)
+{
+
+        RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
+        certmap::iterator it;
+        if (mKeyList.end() != (it = mKeyList.find(id)))
+        {
+                it->second.mCachedCert = certificate;
+		it->second.mHaveCachedCert = true;
+		std::cerr << "AuthGPGimpl::cacheGPGCertificate() success for: " << id;
+		std::cerr << std::endl;
+
+		return true;
+        }
+
+	std::cerr << "AuthGPGimpl::cacheGPGCertificate() failed for: " << id;
+	std::cerr << std::endl;
+        return false;
+}
+
+
+bool	AuthGPGimpl::getCachedGPGCertificate(const std::string &id, std::string &certificate)
+{
+        RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
+        certmap::iterator it;
+        if (mKeyList.end() != (it = mKeyList.find(id)))
+        {
+                if (it->second.mHaveCachedCert)
+		{
+			certificate = it->second.mCachedCert;
+
+			std::cerr << "AuthGPGimpl::getCachedGPGCertificate() success for: " << id;
+			std::cerr << std::endl;
+
+			return true;
+		}
+        }
+	std::cerr << "AuthGPGimpl::getCachedGPGCertificate() failed for: " << id;
+	std::cerr << std::endl;
+        return false;
+}
+
 
 /*****************************************************************
  * Loading and Saving Certificates - this has to 
