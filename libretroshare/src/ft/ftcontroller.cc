@@ -1970,8 +1970,12 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 			continue;
 		}
 
-		if ((fit->second)->mCreator->finished())
-			continue;
+		// Node: We still save finished transfers. This keeps transfers that are 
+		// in checking mode. Finished or checked transfers will restart and
+		// immediately terminate/recheck at next startup.
+		//
+		//		if ((fit->second)->mCreator->finished())
+		//			continue;
 
 		/* make RsFileTransfer item for save list */
 		RsFileTransfer *rft = new RsFileTransfer();
