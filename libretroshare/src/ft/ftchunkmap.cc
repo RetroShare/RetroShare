@@ -190,12 +190,12 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 
 	if(it == _active_chunks_feed.end())		
 	{
+		SourceChunksInfo *sci = getSourceChunksInfo(peer_id) ;
+
 		// 0 - Look into other pending chunks and slice from here.
 		//
 		for(std::map<std::string,Chunk>::iterator pit(_active_chunks_feed.begin());pit!=_active_chunks_feed.end();++pit)
 		{
-			SourceChunksInfo *sci = getSourceChunksInfo(pit->first) ;
-
 			if(sci->is_full || sci->cmap[pit->second._start / _chunk_size])
 			{
 				it = pit ;

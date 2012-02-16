@@ -3,6 +3,7 @@
 
 #include "util/utest.h"
 #include "util/rsdir.h"
+#include "util/rsdiscspace.h"
 #include <stdlib.h>
 
 #include "util/rswin.h"
@@ -13,6 +14,8 @@ INITTEST();
 static void createTmpFile(const std::string& name,uint64_t size,std::string& hash) ;
 static void transfer(ftFileProvider *server, const std::string& server_peer_id,ftFileCreator *client,const std::string& client_peer_id) ;
 
+static const float TRANSFER_FAIL_PROBABILITY = 0.0f ;
+
 int main()
 {
 	// We create two file creators and feed them with a file both from elsewhere
@@ -22,15 +25,17 @@ int main()
 	// meaning that many requests can't be fullfilled. This is a good way to
 	// test if chunks availability is correctly handled.
 
+	RsDiscSpace::setPartialsPath(".") ;
+
 	// 1 - Create a temporary file, compute its hash
 	//
 	std::string fname = "source_tmp.bin" ;
 	std::string fname_copy_1 = "copy_1_tmp.bin" ;
 	std::string fname_copy_2 = "copy_2_tmp.bin" ;
-	uint64_t size = 5560000 ;
+	uint64_t size = 15560000 ;
 	std::string hash = "" ;
 
-	pthread_t seed = 6;//getpid() ;
+	pthread_t seed = 8;//getpid() ;
 
 	std::cerr << "Seeding random generator with " << seed << std::endl ;
 	srand48(seed) ;
@@ -40,8 +45,8 @@ int main()
 	//
 
 	ftFileProvider *server = new ftFileProvider(fname,size,hash) ;
-	ftFileCreator *client1 = new ftFileCreator(fname_copy_1,size,hash) ;
-	ftFileCreator *client2 = new ftFileCreator(fname_copy_2,size,hash) ;
+	ftFileCreator *client1 = new ftFileCreator(fname_copy_1,size,hash,false) ;
+	ftFileCreator *client2 = new ftFileCreator(fname_copy_2,size,hash,false) ;
 
 	// 3 - Exchange chunks, and build two copies of the file.
 	//
@@ -128,7 +133,7 @@ int main()
 
 void transfer(ftFileProvider *server, const std::string& server_peer_id,ftFileCreator *client,const std::string& client_peer_id)
 {
-	uint32_t size_hint = 128 + (lrand48()%8000) ;
+	uint32_t size_hint = 128 + (lrand48()%1000) ;
 	uint64_t offset = 0;
 	uint32_t chunk_size = 0;
 	bool toOld = false ;
@@ -136,30 +141,41 @@ void transfer(ftFileProvider *server, const std::string& server_peer_id,ftFileCr
 	//std::cerr << " for a pending chunk of size " << size_hint ;
 
 	if(! client->getMissingChunk(server_peer_id, size_hint, offset, chunk_size, toOld))
+	{
+		std::cerr << "###### Server does not have any chunk to offer: server is " << server_peer_id << ", client is " << client_peer_id << std::endl ;
+		// Normally this can't be true, because the ChunkMap class assumes availability for non turtle 
+		// peers.
+		if(toOld)
+		{
+			std::cerr << "###### Map is too old. Transferring chunk map" << std::endl ;
+			CompressedChunkMap map ;
+			server->getAvailabilityMap(map) ;
+			client->setSourceMap(server_peer_id,map) ;
+		}	
 		return ;
+	}
 
-	//std::cerr << "###### Got chunk " << offset << ", size=" << chunk_size << std::endl ;
+	std::cerr << "###### Got chunk " << offset << ", size=" << chunk_size << std::endl ;
 
 	void *data = malloc(chunk_size) ;
-	//std::cerr << "###### Asking data " << offset << ", size=" << chunk_size << std::endl ;
+	std::cerr << "###### Asking data " << offset << ", size=" << chunk_size << std::endl ;
 
 	if( server->getFileData(client_peer_id,offset,chunk_size,data) )
 	{
-		client->addFileData(offset,chunk_size,data) ;
-		//std::cerr << "###### Added data " << offset << ", size=" << chunk_size << std::endl ;
+		if(drand48() < TRANSFER_FAIL_PROBABILITY)
+		{
+			std::cerr << "simulating faulting data chunk " << offset << " + " << chunk_size << "." << std::endl;
+		}
+		else
+		{
+			client->addFileData(offset,chunk_size,data) ;
+			std::cerr << "###### Added data " << offset << ", size=" << chunk_size << std::endl ;
+		}
 	}
 
-	//std::cerr << ", completion=" << client->getRecvd() << std::endl ;
+	std::cerr << ", completion=" << client->getRecvd() << std::endl ;
 
-	// Normally this can't be true, because the ChunkMap class assumes availability for non turtle 
-	// peers.
-	if(toOld)
-	{
-		//std::cerr << "###### Map is too old. Transferring" << std::endl ;
-		CompressedChunkMap map ;
-		server->getAvailabilityMap(map) ;
-		client->setSourceMap(server_peer_id,map) ;
-	}
+
 	free(data) ;
 }
 
@@ -194,6 +210,8 @@ void createTmpFile(const std::string& name,uint64_t S,std::string& hash)
 	}
 	fclose(tmpf) ;
 
-	RsDirUtil::hashFile(name,hash) ;
+	uint64_t size ;
+	std::string path ;
+	RsDirUtil::hashFile(name,path,hash,size) ;
 }
 

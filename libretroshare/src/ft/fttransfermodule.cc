@@ -598,6 +598,8 @@ bool ftTransferModule::checkFile()
 			return true ;
 		}
 	}
+
+
 	forceCheck() ;
 	return false ;
 }
@@ -699,18 +701,21 @@ bool ftTransferModule::checkCRC()
 					break ;
 				}
 
-				int n = rand()%(mFileSources.size()) ;
-				int p=0 ;
-				std::map<std::string,peerInfo>::const_iterator mit ;
-				for(mit = mFileSources.begin();mit != mFileSources.end() && p<n;++mit,++p) ;
+				bool found = false ;
 
-#ifdef FT_DEBUG
-				std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;
-#endif
-				_crcmap_last_asked_time = now ;
-				_crcreq_source = mit->first ;
+				for(std::map<std::string,peerInfo>::const_iterator mit = mFileSources.begin();mit != mFileSources.end();++mit) 
+					if(mFileCreator->sourceIsComplete(mit->first))
+					{
+//#ifdef FT_DEBUG
+						std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;
+//#endif
+						_crcmap_last_asked_time = now ;
+						_crcreq_source = mit->first ;
 
-				mMultiplexor->sendCRC32MapRequest(mit->first,mHash);
+						mMultiplexor->sendCRC32MapRequest(mit->first,mHash);
+						found = true ;
+						break ;
+					}
 			}
 			break ;
 
@@ -750,7 +755,7 @@ bool ftTransferModule::checkCRC()
 				{
 					// We do as if the file is not complete. This way, it finishes properly.
 					//
-					mFlag = FT_TM_FLAG_DOWNLOADING ;
+					mFlag = FT_TM_FLAG_COMPLETE ;	// Transfer is complete.
 					mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 #ifdef FT_DEBUG
 					std::cerr << "ftTransferModule::checkCRC(): Done. CRC check is ok, file is complete." << std::endl ;

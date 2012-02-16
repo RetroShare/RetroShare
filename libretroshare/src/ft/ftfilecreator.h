@@ -117,6 +117,10 @@ class ftFileCreator: public ftFileProvider
 		//
 		void setSourceMap(const std::string& peer_id,const CompressedChunkMap& map) ;
 
+		// Returns true id the given file source is complete.
+		//
+		bool sourceIsComplete(const std::string& peer_id) ;
+
 	protected:
 
 		virtual int locked_initializeFileAttrs(); 

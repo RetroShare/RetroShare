@@ -84,6 +84,16 @@ class SourceChunksInfo
 		CompressedChunkMap cmap ;	//! map of what the peer has/doens't have
 		time_t TS ;						//! last update time for this info
 		bool is_full ;					//! is the map full ? In such a case, re-asking for it is unnecessary.
+
+		// Returns true if the offset is starting in a mapped chunk.
+		//
+		bool hasData(uint64_t offset,uint32_t fixed_chunk_size) const
+		{
+			if(is_full)
+				return true ;
+
+			return cmap[offset / (uint64_t)fixed_chunk_size ] ;
+		}
 };
 
 class ChunkMap

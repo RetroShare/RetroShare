@@ -447,17 +447,17 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 	// 0 - is there a faulting chunk that would need to be asked again ?
 	
 	for(std::map<uint64_t,ftChunk>::iterator it(mChunks.begin());it!=mChunks.end();++it)
-	if(it->second.ts + CHUNK_MAX_AGE < now)
-	{
-		offset = it->second.offset ;
-		size   = it->second.size ;
-		it->second.ts = now ;
+		if(it->second.ts + CHUNK_MAX_AGE < now && chunkMap.getSourceChunksInfo(peer_id)->hasData(it->second.offset,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE))
+		{
+			offset = it->second.offset ;
+			size   = it->second.size ;
+			it->second.ts = now ;
 
 #ifdef FILE_DEBUG
-		std::cerr << "ftFileCreator::getMissingChunk(): re-askign for chunk that wasn't received: " << offset << " + " << size << std::endl;
+			std::cerr << "ftFileCreator::getMissingChunk(): re-asking for chunk that wasn't received: " << offset << " + " << size << std::endl;
 #endif
-		return true ;
-	}
+			return true ;
+		}
 
 	// 1 - is there an ongoing 1MB chunk for which we need to take a new slice?
 	//
@@ -560,6 +560,13 @@ void ftFileCreator::getAvailabilityMap(CompressedChunkMap& map)
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	chunkMap.getAvailabilityMap(map) ;
+}
+
+bool ftFileCreator::sourceIsComplete(const std::string& peer_id)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	return chunkMap.getSourceChunksInfo(peer_id)->is_full ;
 }
 
 void ftFileCreator::setSourceMap(const std::string& peer_id,const CompressedChunkMap& compressed_map)
