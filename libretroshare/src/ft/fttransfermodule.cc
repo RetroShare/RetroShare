@@ -158,6 +158,7 @@ bool ftTransferModule::addFileSource(const std::string& peerId)
     	mFileSources.insert(std::pair<std::string,peerInfo>(peerId,pInfo));
 	mit = mFileSources.find(peerId);
 
+		mMultiplexor->sendChunkMapRequest(peerId, mHash,false) ;
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::addFileSource()";
 	std::cerr << " adding peer: " << peerId << " to sourceList";
