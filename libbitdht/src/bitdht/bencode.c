@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h> /* malloc() realloc() free() strtoll() */
 #include <string.h> /* memset() */
+#include "util/bdstring.h"
 
 #include "bitdht/bencode.h"
 
@@ -425,7 +426,7 @@ int be_encode(be_node *node, char *str, int len)
 
 	switch (node->type) {
 		case BE_STR:
-			snprintf(str, len, "%lli:", be_str_len(node));
+			bd_snprintf(str, len, "%lli:", be_str_len(node));
 			loc += strlen(&(str[loc]));
 
 			memcpy(&(str[loc]), node->val.s, be_str_len(node));
@@ -433,7 +434,7 @@ int be_encode(be_node *node, char *str, int len)
 			break;
 
 		case BE_INT:
-			snprintf(str, len, "i%llie", node->val.i);
+			bd_snprintf(str, len, "i%llie", node->val.i);
 			loc += strlen(&(str[loc]));
 			break;
 

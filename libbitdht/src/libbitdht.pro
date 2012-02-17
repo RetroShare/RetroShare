@@ -19,6 +19,10 @@ debug {
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
+# treat warnings as error for better removing
+#QMAKE_CFLAGS += -Werror
+#QMAKE_CXXFLAGS += -Werror
+
 ################################# Linux ##########################################
 linux-* {
 	DESTDIR = lib
@@ -58,6 +62,10 @@ win32 {
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
 		DESTDIR = lib
+
+		# Switch on extra warnings
+		QMAKE_CFLAGS += -Wextra
+		QMAKE_CXXFLAGS += -Wextra
 
 		# Switch off optimization for release version
 		QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -107,6 +115,7 @@ HEADERS += \
 	util/bdnet.h	\
 	util/bdthreads.h	\
 	util/bdrandom.h		\
+	util/bdstring.h		\
 	udp/udplayer.h   	\
 	udp/udpstack.h		\
 	udp/udpbitdht.h   	\

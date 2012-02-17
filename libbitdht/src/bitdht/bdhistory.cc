@@ -36,7 +36,6 @@ void	bdMsgHistoryList::printHistory(std::ostream &out, int mode, time_t start_ts
 	sit = msgHistory.lower_bound(start_ts);
 	eit = msgHistory.upper_bound(end_ts);
 	time_t curr_ts = 0;
-	time_t old_ts = 0;
 	bool time_changed = false;
 	bool first_line = true;
 	
@@ -45,7 +44,6 @@ void	bdMsgHistoryList::printHistory(std::ostream &out, int mode, time_t start_ts
 		time_changed = false;
 		if (curr_ts != it->first)
 		{
-			old_ts = curr_ts;
 			curr_ts = it->first;
 			time_changed = true;
 		}

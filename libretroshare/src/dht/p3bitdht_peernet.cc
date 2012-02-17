@@ -46,7 +46,7 @@
  * -> do we care if we know them? not really!
  */
 
-int p3BitDht::InfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
+int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/, std::string /*info*/)
 {
 	/* translate info */
 	std::string rsid;
@@ -1893,7 +1893,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	std::cerr << std::endl;
 #endif
 
-	uint32_t touConnectMode = 0;
+//	uint32_t touConnectMode = 0;
 	std::string rsId;
 	
 	{
@@ -1923,7 +1923,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 		{
 			default:
 			case BITDHT_CONNECT_MODE_DIRECT:
-				touConnectMode = RSDHT_TOU_MODE_DIRECT;
+//				touConnectMode = RSDHT_TOU_MODE_DIRECT;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				delay = delayOrBandwidth;
 				break;
@@ -1941,12 +1941,12 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				delay = delayOrBandwidth;
 				if (useProxyPort)
 				{
-					touConnectMode = RSDHT_TOU_MODE_PROXY;
+//					touConnectMode = RSDHT_TOU_MODE_PROXY;
 					connectFlags |= RS_CB_FLAG_MODE_UDP_PROXY;
 				}
 				else
 				{
-					touConnectMode = RSDHT_TOU_MODE_DIRECT;
+//					touConnectMode = RSDHT_TOU_MODE_DIRECT;
 					connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				}
 
@@ -1954,7 +1954,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				break;
 	
 			case BITDHT_CONNECT_MODE_RELAY:
-				touConnectMode = RSDHT_TOU_MODE_RELAY;
+//				touConnectMode = RSDHT_TOU_MODE_RELAY;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_RELAY;
 				bandwidth = delayOrBandwidth;
 				break;

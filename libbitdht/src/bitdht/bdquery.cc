@@ -364,7 +364,6 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
 #ifdef DEBUG_QUERY 
         	fprintf(stderr, "Dropping Peer that dont reply\n");
 #endif
-		bool removed = false;
 		for(it = mClosest.begin(); it != mClosest.end(); ++it)
 		{
 			time_t sendts = ts - it->second.mLastSendTime;
@@ -379,7 +378,6 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
         			fprintf(stderr, "\n");
 #endif
 				mClosest.erase(it);
-				removed = true;
 				break ;
 			}
 		}
@@ -568,12 +566,10 @@ int bdQuery::updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType
 	sit = mPotentialPeers.lower_bound(dist);
 	eit = mPotentialPeers.upper_bound(dist);
 
-	bool found = false;
 	for(it = sit; it != eit; it++)
 	{
 		if (mFns->bdSimilarId(id, &(it->second.mPeerId)))
 		{
-			found = true;
 
 			it->second.mPeerFlags |= mode;
 			it->second.mLastRecvTime = now;

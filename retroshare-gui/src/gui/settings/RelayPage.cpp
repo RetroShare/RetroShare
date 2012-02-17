@@ -61,7 +61,7 @@ RelayPage::RelayPage(QWidget * parent, Qt::WFlags flags)
 }
 
 	/** Saves the changes on this page */
-bool RelayPage::save(QString &errmsg)
+bool RelayPage::save(QString &/*errmsg*/)
 {
 
 	int nFriends = ui.noFriendSpinBox->value();

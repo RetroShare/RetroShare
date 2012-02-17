@@ -30,7 +30,7 @@ class MainPage : public QWidget
 {
 public:
   /** Default Constructor */
-  MainPage(QWidget *parent = 0) : QWidget(parent) {}
+  MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0) : QWidget(parent, flags) {}
 
   virtual void retranslateUi() {}
 };

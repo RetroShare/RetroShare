@@ -22,6 +22,10 @@ minimal {
 	DEFINES += MINIMAL_RSGUI
 }
 
+# treat warnings as error for better removing
+#QMAKE_CFLAGS += -Werror
+#QMAKE_CXXFLAGS += -Werror
+
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
@@ -91,36 +95,40 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-    # Switch off optimization for release version
-    QMAKE_CXXFLAGS_RELEASE -= -O2
-    QMAKE_CXXFLAGS_RELEASE += -O0
-    QMAKE_CFLAGS_RELEASE -= -O2
-    QMAKE_CFLAGS_RELEASE += -O0
+	# Switch on extra warnings
+	QMAKE_CFLAGS += -Wextra
+	QMAKE_CXXFLAGS += -Wextra
 
-    # Switch on optimization for debug version
-    #QMAKE_CXXFLAGS_DEBUG += -O2
-    #QMAKE_CFLAGS_DEBUG += -O2
+	# Switch off optimization for release version
+	QMAKE_CXXFLAGS_RELEASE -= -O2
+	QMAKE_CXXFLAGS_RELEASE += -O0
+	QMAKE_CFLAGS_RELEASE -= -O2
+	QMAKE_CFLAGS_RELEASE += -O0
 
-    OBJECTS_DIR = temp/obj
-    #LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
-    #QTPLUGIN += qjpeg
+	# Switch on optimization for debug version
+	#QMAKE_CXXFLAGS_DEBUG += -O2
+	#QMAKE_CFLAGS_DEBUG += -O2
 
-    PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+	OBJECTS_DIR = temp/obj
+	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
+	#QTPLUGIN += qjpeg
 
-    LIBS += ../../libretroshare/src/lib/libretroshare.a
-    LIBS += -L"../../../../lib"
-    LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
+	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += -L"../../../../lib"
+	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 #    LIBS += -lws2_32
-    LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-    LIBS += -lole32 -lwinmm
-    RC_FILE = gui/images/retroshare_win.rc
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+	LIBS += -lole32 -lwinmm
+	RC_FILE = gui/images/retroshare_win.rc
 
-    DEFINES += WINDOWS_SYS
+	DEFINES += WINDOWS_SYS
 
-    GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-    GPGME_DIR  = ../../../../gpgme-1.1.8
-    INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+	GPGME_DIR  = ../../../../gpgme-1.1.8
+	INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
 ##################################### MacOS ######################################

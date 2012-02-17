@@ -104,7 +104,7 @@ int  	tou_init(void **udpSubRecvs, int *udpTypes, int nUdps);
 	 */ 
 
 	/* creation/connections */
-int	tou_socket(int domain, int type, int protocol);
+int	tou_socket(uint32_t domain, uint32_t type, int protocol);
 int 	tou_bind(int sockfd, const struct sockaddr *my_addr, socklen_t addrlen);	/* null op now */
 int 	tou_listen(int sockfd, int backlog); 						/* null op now */
 int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, 

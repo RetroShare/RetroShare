@@ -708,7 +708,7 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
 #endif
 
-	if(time(NULL)+100 > item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
+	if(time(NULL)+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
 	{
 		std::cerr << "Received severely outdated lobby event item! Dropping it!" << std::endl;
 		std::cerr << "Message item is:" << std::endl;
@@ -820,7 +820,7 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 				return true ;
 		}
 
-		if(now+100 > cli->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep plus 100 seconds ! It's too old, and is going to make an echo!
+		if(now+100 > (time_t) cli->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep plus 100 seconds ! It's too old, and is going to make an echo!
 		{
 			std::cerr << "Received severely outdated message!Dropping it!" << std::endl;
 			std::cerr << "Message item is:" << std::endl;

@@ -351,7 +351,7 @@ int	pqiarchive::writePkt(RsItem *pqi)
 	out << "Writing Pkt Body" << std::endl;
 
 	// write packet.
-	if (len != bio->senddata(ptr, len))
+	if ((int) len != bio->senddata(ptr, len))
 	{
 		out << "Problems with Send Data!";
 		out << std::endl;

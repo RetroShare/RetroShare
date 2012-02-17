@@ -184,7 +184,7 @@ bool 	p3BitDht::dropPeer(std::string pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-int p3BitDht::addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age)
+int p3BitDht::addBadPeer(const struct sockaddr_in &addr, uint32_t /*reason*/, uint32_t /*flags*/, uint32_t /*age*/)
 {
 	//mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
 
@@ -359,7 +359,7 @@ int p3BitDht::removePeer(const std::string pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-DhtPeerDetails *p3BitDht::addInternalPeer_locked(const std::string pid, int type)
+DhtPeerDetails *p3BitDht::addInternalPeer_locked(const std::string pid, uint32_t type)
 {
 	/* create the data structure */
 	if (!havePeerTranslation_locked(pid))
@@ -417,7 +417,7 @@ int p3BitDht::removeInternalPeer_locked(const std::string pid)
 
 
 /* indexed by bdNodeId, as this is the more used call interface */
-DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, int type)
+DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type)
 {
 	std::map<bdNodeId, DhtPeerDetails>::iterator it = mPeers.find(*id);
 	if (it == mPeers.end())

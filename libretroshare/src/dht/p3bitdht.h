@@ -343,9 +343,9 @@ int 	addKnownNode(const bdId *id, uint32_t flags);
 
 	private:
 
-DhtPeerDetails *addInternalPeer_locked(const std::string pid, int type);
+DhtPeerDetails *addInternalPeer_locked(const std::string pid, uint32_t type);
 int 	removeInternalPeer_locked(const std::string pid);
-DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, int type);
+DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
 DhtPeerDetails *findInternalRsPeer_locked(const std::string &pid);
 
 bool 	havePeerTranslation_locked(const std::string &pid);

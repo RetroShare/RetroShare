@@ -955,6 +955,9 @@ m_WanService(NULL)
 #ifdef UPNP_DEBUG
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() bound to " << ipAddress << ":" <<
 		port << "." << std::endl;
+#else
+	// unused variable
+	(void)port;
 #endif
 
 	ret = UpnpRegisterClient(

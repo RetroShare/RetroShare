@@ -143,7 +143,7 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(std::string id, struct sockaddr_in addr, int type, int reason, int age)
+void p3BanList::updatePeer(std::string /*id*/, struct sockaddr_in addr, int /*type*/, int /*reason*/, int age)
 {
 	std::string ownId = mLinkMgr->getOwnId();
 
@@ -160,7 +160,7 @@ void p3BanList::updatePeer(std::string id, struct sockaddr_in addr, int type, in
 }
 
 
-bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in &addr, uint32_t level, uint32_t reason, uint32_t age)
+bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in &addr, int level, uint32_t reason, uint32_t age)
 {
 	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 
@@ -217,7 +217,7 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 		/* see if it needs an update */
 		if ((mit->second.reason != reason) ||
 			(mit->second.level != level) ||
-			(mit->second.mTs < now - age))
+			(mit->second.mTs < (time_t) (now - age)))
 		{
 			/* update */
 			mit->second.addr = addr;

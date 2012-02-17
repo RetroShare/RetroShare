@@ -270,7 +270,7 @@ bool    p3PeerMgrIMPL::getGpgId(const std::string &ssl_id, std::string &gpgId)
 }
 
 // Placeholder until we implement this functionality.
-uint32_t p3PeerMgrIMPL::getConnectionType(const std::string &sslId)
+uint32_t p3PeerMgrIMPL::getConnectionType(const std::string &/*sslId*/)
 {
 	return RS_NET_CONN_TYPE_FRIEND;
 }

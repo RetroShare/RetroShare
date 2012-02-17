@@ -95,7 +95,7 @@ int 	tou_init(void **in_udpsubrecvs, int *type, int number)
 	}
 
 	noUdpSR = number;
-	int i;
+	uint32_t i;
 	for(i = 0; i < noUdpSR; i++)
 	{
 		udpSR[i] = usrArray[i];
@@ -110,7 +110,7 @@ int 	tou_init(void **in_udpsubrecvs, int *type, int number)
 
 
 /* 	open - allocates a sockfd, and checks that the type is okay */
-int     tou_socket(int recvIdx, int type, int /*protocol*/)
+int     tou_socket(uint32_t recvIdx, uint32_t type, int /*protocol*/)
 {
 	if (!tou_inited)
 	{

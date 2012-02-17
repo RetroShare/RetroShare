@@ -31,7 +31,7 @@
 #define IMAGE_UNSUBSCRIBE ""
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
-	: RsAutoUpdatePage(5000,parent)
+	: RsAutoUpdatePage(5000, parent, flags)
 {
 	setupUi(this);
 
@@ -330,7 +330,7 @@ void ChatLobbyWidget::unsubscribeItem()
 	rsMsgs->unsubscribeChatLobby(id);
 }
 
-void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int column)
+void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 {
 	subscribeLobby(item);
 }

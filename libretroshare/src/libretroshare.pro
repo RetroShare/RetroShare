@@ -28,7 +28,9 @@ release {
 	#DEFINES *= PQI_DISABLE_UDP
 }
 
-
+# treat warnings as error for better removing
+#QMAKE_CFLAGS += -Werror
+#QMAKE_CXXFLAGS += -Werror
 
 testnetwork {
 	# used in rsserver/rsinit.cc Enabled Port Restrictions, and makes Proxy Port next to Dht Port.
@@ -262,40 +264,44 @@ win32-x-g++ {
 
 
 win32 {
-                QMAKE_CC = g++
-                OBJECTS_DIR = temp/obj
-                MOC_DIR = temp/moc
-                DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-                DEFINES *= MINIUPNPC_VERSION=13
-                DESTDIR = lib
+	QMAKE_CC = g++
+	OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
+	DEFINES *= MINIUPNPC_VERSION=13
+	DESTDIR = lib
 
-                # Switch off optimization for release version
-                QMAKE_CXXFLAGS_RELEASE -= -O2
-                QMAKE_CXXFLAGS_RELEASE += -O0
-                QMAKE_CFLAGS_RELEASE -= -O2
-                QMAKE_CFLAGS_RELEASE += -O0
+	# Switch on extra warnings
+	QMAKE_CFLAGS += -Wextra
+	QMAKE_CXXFLAGS += -Wextra
 
-                # Switch on optimization for debug version
-                #QMAKE_CXXFLAGS_DEBUG += -O2
-                #QMAKE_CFLAGS_DEBUG += -O2
+	# Switch off optimization for release version
+	QMAKE_CXXFLAGS_RELEASE -= -O2
+	QMAKE_CXXFLAGS_RELEASE += -O0
+	QMAKE_CFLAGS_RELEASE -= -O2
+	QMAKE_CFLAGS_RELEASE += -O0
 
-                DEFINES += USE_CMD_ARGS
+	# Switch on optimization for debug version
+	#QMAKE_CXXFLAGS_DEBUG += -O2
+	#QMAKE_CFLAGS_DEBUG += -O2
 
-                #miniupnp implementation files
-                HEADERS += upnp/upnputil.h
-                SOURCES += upnp/upnputil.c
+	DEFINES += USE_CMD_ARGS
 
-
-                UPNPC_DIR = ../../../../miniupnpc-1.3
-                GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-                GPGME_DIR  = ../../../../gpgme-1.1.8
-
-                PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
-                ZLIB_DIR = ../../../../zlib-1.2.3
-                SSL_DIR = ../../../../OpenSSL
+	#miniupnp implementation files
+	HEADERS += upnp/upnputil.h
+	SOURCES += upnp/upnputil.c
 
 
-                INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	UPNPC_DIR = ../../../../miniupnpc-1.3
+	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+	GPGME_DIR  = ../../../../gpgme-1.1.8
+
+	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
+	ZLIB_DIR = ../../../../zlib-1.2.3
+	SSL_DIR = ../../../../OpenSSL
+
+
+	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
 

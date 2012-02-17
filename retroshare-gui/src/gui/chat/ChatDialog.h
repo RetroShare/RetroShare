@@ -41,7 +41,7 @@ public:
 	static void closeChat(const std::string &peerId);
 	static void chatChanged(int list, int type);
 
-	virtual void showDialog(uint chatflags) {}
+	virtual void showDialog(uint /*chatflags*/) {}
 
 	virtual ChatWidget *getChatWidget() = 0;
 	virtual bool hasPeerStatus() = 0;
@@ -79,7 +79,7 @@ protected:
 	virtual bool canClose() { return true; }
 
 	virtual void init(const std::string &peerId, const QString &title);
-	virtual void onChatChanged(int list, int type) {}
+	virtual void onChatChanged(int /*list*/, int /*type*/) {}
 
 	virtual void addIncomingChatMsg(const ChatInfo& info) = 0;
 

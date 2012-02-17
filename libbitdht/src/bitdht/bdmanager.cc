@@ -168,7 +168,7 @@ bool bdNodeManager::setAttachMode(bool on)
 }
 
         /* Friend Tracking */
-void bdNodeManager::addBadPeer(const struct sockaddr_in &addr, uint32_t source, uint32_t reason, uint32_t age)
+void bdNodeManager::addBadPeer(const struct sockaddr_in &/*addr*/, uint32_t /*source*/, uint32_t /*reason*/, uint32_t /*age*/)
 {
 	std::cerr << "bdNodeManager::addBadPeer() not implemented yet!";
 	std::cerr << std::endl;

@@ -4,8 +4,8 @@
 
 bool RsAutoUpdatePage::_locked = false ;
 
-RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period,QWidget *parent)
-	: MainPage(parent)
+RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period, QWidget *parent, Qt::WindowFlags flags)
+	: MainPage(parent, flags)
 {
 	_timer = new QTimer ;
 	_timer->setInterval(ms_update_period);

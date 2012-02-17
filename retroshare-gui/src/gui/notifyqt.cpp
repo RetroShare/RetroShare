@@ -446,13 +446,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 void NotifyQt::UpdateGUI()
 {
 #ifndef MINIMAL_RSGUI
-	/* hack to force updates until we've fixed that part */
-	static  time_t lastTs = 0;
-
-//	std::cerr << "Got update signal t=" << lastTs << std::endl ;
-
-	lastTs = time(NULL) ;
-
 	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
@@ -655,9 +648,6 @@ void NotifyQt::startWaitingToasters()
 void NotifyQt::runningTick()
 {
 //	QMutexLocker lock(&runningToasterMutex);
-
-	QDesktopWidget *desktop = QApplication::desktop();
-	QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
 
 	int interval = runningToasterTimer->interval();
 	QPoint diff;

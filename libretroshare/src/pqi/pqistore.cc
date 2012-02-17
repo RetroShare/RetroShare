@@ -294,7 +294,7 @@ int	pqistore::writePkt(RsItem *pqi)
 	out << "Writing Pkt Body" << std::endl;
 #endif
 	// write packet.
-	if (len != bio->senddata(ptr, len))
+	if (len != (uint32_t) bio->senddata(ptr, len))
 	{
 #ifdef PQISTORE_DEBUG
 		out << "Problems with Send Data!";

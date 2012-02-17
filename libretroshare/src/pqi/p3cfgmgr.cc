@@ -329,10 +329,10 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 			return true;
 		}
 
-		if(size_file != fwrite(config_buff,1,  size_file, file))
+		if(size_file != (int) fwrite(config_buff,1,  size_file, file))
 			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + fname_backup + "\nIs your disc full or out of quota ?");
 
-		if(size_sign != fwrite(sign_buff, 1, size_sign, sign))
+		if(size_sign != (int) fwrite(sign_buff, 1, size_sign, sign))
 			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing main signature file " + sign_fname_backup + "\nIs your disc full or out of quota ?");
 		
 		fclose(file);
@@ -1124,7 +1124,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 #endif
 		}
 
-		if(size_file != fwrite(buff, 1, size_file, cfg_file))
+		if(size_file != (int) fwrite(buff, 1, size_file, cfg_file))
 		{
 			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + cfg_fname_backup + "\nIs your disc full or out of quota ?");
 			fclose(cfg_file);

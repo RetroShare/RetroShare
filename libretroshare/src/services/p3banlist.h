@@ -94,7 +94,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 
 		bool recvBanItem(RsBanListItem *item);
 		bool addBanEntry(const std::string &peerId, const struct sockaddr_in &addr, 
-			uint32_t level, uint32_t reason, uint32_t age);
+			int level, uint32_t reason, uint32_t age);
 		void sendBanLists();
 		int sendBanSet(std::string peerid);
 

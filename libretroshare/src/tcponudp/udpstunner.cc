@@ -41,9 +41,9 @@ static const int STUN_TTL = 64;
 
 //#define DEBUG_UDP_STUNNER 1
 
-const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
+const uint32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
 const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
-const int32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
+const uint32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
 // TIMEOUT is now tied to  STUN RATE ... const int32_t TOU_STUN_ADDR_MAX_AGE  = 120; /* 2 minutes */
 
 const int32_t TOU_STUN_DEFAULT_TARGET_RATE  = 15; /* 20 secs is minimum to keep a NAT UDP port open */
@@ -384,7 +384,7 @@ bool    UdpStunner::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 		/* address timeout
 		 * no timeout if in exclusive mode
 		 */
-		if ((time(NULL) - eaddrTime > (mTargetStunPeriod * 2)) && (!mExclusiveMode))
+		if ((time(NULL) - eaddrTime > (long) (mTargetStunPeriod * 2)) && (!mExclusiveMode))
 		{
 			std::cerr << "UdpStunner::externalAddr() eaddr expired";
 			std::cerr << std::endl;
@@ -839,7 +839,7 @@ bool    UdpStunner::attemptStun()
 	{
           RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
-	  int i;
+	  size_t i;
 	  for(i = 0; ((i < mStunList.size()) && (mStunList.size() > 0) && (!found)); i++)
 	  {
 	  	/* extract entry */
@@ -1053,7 +1053,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 #else
 			(isExternalNet(&(it->eaddr.sin_addr))) &&
 #endif
-			(it->failCount == 0) && (age < (mTargetStunPeriod * 2))) 
+			(it->failCount == 0) && (age < (long) (mTargetStunPeriod * 2)))
 		{
 			if (!found1)
 			{

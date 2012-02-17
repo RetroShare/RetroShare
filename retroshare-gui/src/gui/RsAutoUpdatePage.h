@@ -18,7 +18,7 @@ class RsAutoUpdatePage: public MainPage
 	Q_OBJECT
 
 	public:
-		RsAutoUpdatePage(int ms_update_period = 1000,QWidget *parent=NULL) ;
+		RsAutoUpdatePage(int ms_update_period = 1000, QWidget *parent = NULL, Qt::WindowFlags flags = 0) ;
 		virtual ~RsAutoUpdatePage() ;
 
 		virtual void updateDisplay() {}

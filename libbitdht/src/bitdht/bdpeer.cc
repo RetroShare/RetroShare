@@ -27,6 +27,7 @@
 #include "bitdht/bdpeer.h"
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
+#include "util/bdstring.h"
 #include "bitdht/bdiface.h"
 
 #include <stdlib.h>
@@ -941,13 +942,13 @@ int     bdSpace::printDHT()
 			if (size)
 			{
 				if (doPrint)
-					fprintf(stderr, "Estimated NetSize >> %llu\n", no_nets);
+					bd_fprintf(stderr, "Estimated NetSize >> %llu\n", no_nets);
 			}
 			else
 			{
 #ifdef BITDHT_DEBUG
 				if (doPrint)
-					fprintf(stderr, " Bucket = Net / >> %llu\n", no_nets);
+					bd_fprintf(stderr, " Bucket = Net / >> %llu\n", no_nets);
 #endif
 			}
 		}
@@ -957,14 +958,14 @@ int     bdSpace::printDHT()
 			if (size)
 			{	
 				if (doPrint)
-					fprintf(stderr, "Estimated NetSize = %llu\n", no_peers);
+					bd_fprintf(stderr, "Estimated NetSize = %llu\n", no_peers);
 			}
 			else
 			{
 
 #ifdef BITDHT_DEBUG
 				if (doPrint)
-					fprintf(stderr, " Bucket = Net / %llu\n", no_nets);
+					bd_fprintf(stderr, " Bucket = Net / %llu\n", no_nets);
 #endif
 
 			}
@@ -994,7 +995,7 @@ int     bdSpace::printDHT()
 	}
 	else
 	{
-		fprintf(stderr, "Estimated Network Size = (%llu / %d) = %llu\n", sum, count, sum / count);
+		bd_fprintf(stderr, "Estimated Network Size = (%llu / %d) = %llu\n", sum, count, sum / count);
 	}
 
 	return 1;

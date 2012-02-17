@@ -297,7 +297,7 @@ void PopupChatWindow::getAvatar()
 	}
 }
 
-void PopupChatWindow::tabClosed(ChatDialog *dialog)
+void PopupChatWindow::tabClosed(ChatDialog */*dialog*/)
 {
 	if (tabbedWindow) {
 		if (ui.tabWidget->count() == 0) {

@@ -197,7 +197,7 @@ void *dlopen( const char *file, int mode )
     else
     {
         char lpFileName[MAX_PATH];
-        int i;
+        unsigned int i;
 
         /* MSDN says backslashes *must* be used instead of forward slashes. */
         for( i = 0 ; i < sizeof(lpFileName)-1 ; i++ )
