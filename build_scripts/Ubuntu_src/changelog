@@ -1,6 +1,57 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - removed unused plugins in .pro file
+     - added early sendign of chunkmap requests to new sources (FT)
+     - saving finished/checking transfers (FT)
+     - improved swarming test code with fault simulation
+     - started conversion of VOIP code (from Joss) into a plugin. Unfinished!
+     - Added multi friend recommendation dialog. You can start it from the tools menu in FriendsDialog.
+     - GUI
+        * Moved the news feed tab to the first position.
+        * Added icon to the ConnectFriendWizard.
+        * renamed Dht to DHT, Authemticated to Authenticated
+        * The channel message (in channels) is set to read when the user clicks on the show more button.
+        * The forum/channel news feed is removed when the user reads the message in forums/channels
+        * The standard font is now used for new chat lobbies.
+        * Added a new menu item to set the font of a private chat and chat lobby to the default font.
+     	  * Changed the color of the time of the compact chat style from red to gray.
+     	  * disabled autodownload when subscribing to a channel.
+        * set a icon for Friend Recommendation menu action
+        * Sort nick names by name in the chat lobby.
+
+     - Added missing IPs to certificate links
+     - set max chunk inactivity period to 5 mins instead of 1 mins. Shoudl favor slow DLs. This 
+       is nw possible since missing bits will be re-asked regularly (FT)
+     - added Cache system to GPG certificates. Should reduce GPG calls by 90%
+     - added code for Intro Server: automatically accept peers, and spews a chat lobby where users can meet.
+     - Show clickable links in the channel feed message.
+     - updated franch and german translations
+     - added control over TR forward rate, so that we can experiment with it on large bandwidth servers
+
+  * Bugs
+     - fixed 2 potential flaws of swarming causing request of unavailable data 
+     - only ask CRC32 maps to peers that have a complete file.
+     - Fixed private message notification. Remove offline private messages of none friends 
+       at startup and when a friend is removed.
+     - Moved the removing of the history of removed friends from p3PeerMgrIMPL to p3ChatService.
+     - Fixed Download toaster (utf8 in file name, use QDesktopServices vs RsUrlHandler for collections, fixed
+       crash after opening a collection) (Patch from AsamK).
+     - fixed utf8 chars in certificate links (Patch from AsamK)
+     - removed cache adding strategy to DL queue that was O(n^2). Now addign cache at the end of the queue
+     - Fixed bug when the user clicks on a link without http:// in a QTextBrowser. This link was 
+       oppened directly in RetroShare.
+     - Attempted fix for maintaining External Port in Manual Forwarded Mode.
+        * added check for RS_NET_MODE_EXT instead of RS_NET_MODE_TRY_EXT... as trys aren't used in p3PeerMgr.
+        * removed tryMode from external interface - as this data is not available anymore.
+        * Removed setting this parameter in p3peers.cc
+     - Fixed reference to tryNetMode.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 17 feb 2012 14:00:00 +0100
+
+retroshare (0.5.3-0.4909~lucid) lucid; urgency=low
+
+  * Improvements
      - Added Code to convert retroshare-nogui into an "Introduction Server".
        Perhaps the community can use this instead of their existing certificate exchanger.
      - Updated the help page, added few more infos
