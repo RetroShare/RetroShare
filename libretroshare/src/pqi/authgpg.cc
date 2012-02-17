@@ -427,12 +427,14 @@ void AuthGPGimpl::processServices()
 		/* don't bother loading - if we already have the certificate */
 		if (isGPGId(loadOrSave->m_certGpgId))
 		{
+#ifdef GPG_DEBUG
             		std::cerr << "AuthGPGimpl::processServices() Skipping load - already have it" << std::endl;
+#endif
 		}
 		else
 		{
-			std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
 #ifdef GPG_DEBUG
+			std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
 #endif
 			std::string error_string ;
 			LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId,error_string);
@@ -490,11 +492,18 @@ void AuthGPGimpl::processServices()
 		    		loadOrSave->m_certGpg = "";
 			}
 		}
+  #endif
 		cacheGPGCertificate(loadOrSave->m_certGpgId, loadOrSave->m_certGpg);
 	    }
-  #endif
-
 #endif
+
+#ifdef GPG_DEBUG
+		std::cerr << "Certificate for: " << loadOrSave->m_certGpgId << " is: ";
+		std::cerr << std::endl;
+		std::cerr << loadOrSave->m_certGpg;
+		std::cerr << std::endl;
+#endif
+
         }
 
         service->setGPGOperation(loadOrSave);
@@ -1419,14 +1428,18 @@ bool   AuthGPGimpl::cacheGPGCertificate(const std::string &id, const std::string
         {
                 it->second.mCachedCert = certificate;
 		it->second.mHaveCachedCert = true;
+#ifdef GPG_DEBUG
 		std::cerr << "AuthGPGimpl::cacheGPGCertificate() success for: " << id;
 		std::cerr << std::endl;
+#endif
 
 		return true;
         }
 
+#ifdef GPG_DEBUG
 	std::cerr << "AuthGPGimpl::cacheGPGCertificate() failed for: " << id;
 	std::cerr << std::endl;
+#endif
         return false;
 }
 
@@ -1441,14 +1454,18 @@ bool	AuthGPGimpl::getCachedGPGCertificate(const std::string &id, std::string &ce
 		{
 			certificate = it->second.mCachedCert;
 
+#ifdef GPG_DEBUG
 			std::cerr << "AuthGPGimpl::getCachedGPGCertificate() success for: " << id;
 			std::cerr << std::endl;
+#endif
 
 			return true;
 		}
         }
+#ifdef GPG_DEBUG
 	std::cerr << "AuthGPGimpl::getCachedGPGCertificate() failed for: " << id;
 	std::cerr << std::endl;
+#endif
         return false;
 }
 
