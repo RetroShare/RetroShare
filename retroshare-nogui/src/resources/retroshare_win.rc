@@ -1,3 +1,3 @@
 #include "retroshare_win.rc.h"
 
-IDI_ICON1               ICON    "resources/rs.ico"
+IDI_ICON1               ICON    "rs.ico"
