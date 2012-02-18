@@ -39,7 +39,9 @@
 class p3VoipService: public RsPQIService, public RsVoip
 {
 	public:
-		p3VoipService() : RsPQIService(RS_SERVICE_TYPE_VOIP) {}
+		p3VoipService(RsPluginHandler *handler) 
+			: RsPQIService(RS_SERVICE_TYPE_VOIP,CONFIG_TYPE_VOIP,0,handler) 
+		{}
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -49,7 +51,7 @@ class p3VoipService: public RsPQIService, public RsVoip
 		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
 		 * @see NotifyBase
 		 */
-		virtual void   tick();
+		virtual int   tick();
 		virtual int   status();
 
 		// /*************** pqiMonitor callback ***********************/

@@ -47,7 +47,7 @@ RsPQIService *VOIPPlugin::rs_pqi_service() const
 {
 	if(mVoip == NULL)
 	{
-		mVoip = new p3VoipService(/*mPlugInHandler*/) ; // , 3600 * 24 * 30 * 6); // 6 Months
+		mVoip = new p3VoipService(mPlugInHandler) ; // , 3600 * 24 * 30 * 6); // 6 Months
 		rsVoip = mVoip ;
 	}
 
