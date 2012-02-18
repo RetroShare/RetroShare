@@ -57,6 +57,9 @@
 #define SR_HASH_COL         5
 #define SR_SEARCH_ID_COL    6
 #define SR_UID_COL          7
+#define SR_DATA_COL         SR_NAME_COL
+
+#define SR_ROLE_LOCAL       Qt::UserRole
 
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
@@ -354,7 +357,7 @@ void SearchDialog::download()
 		 }
 	 }
     if (attemptDownloadLocal)
-    	QMessageBox::information(0, tr("Download Notice"), tr("Skipping Local Files"));
+    	QMessageBox::information(this, tr("Download Notice"), tr("Skipping Local Files"));
 }
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
@@ -993,96 +996,68 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 			(*it)->setText(SR_ID_COL,modifiedResult);
 			QTreeWidgetItem *item = (*it);
 			found = true ;
-			int sources = friendSource + anonymousSource ;
-			if ( sources < 1)
-			{
-				for(int i = 0; i < 7; i++)
+
+			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
+				QColor foreground;
+
+				int sources = friendSource + anonymousSource ;
+				if (sources < 1)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 19)));
+					foreground = QColor(0, 0, 19);
 				}
-			}
-			else if ( sources < 2)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 2)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 38)));
+					foreground = QColor(0, 0, 38);
 				}
-			}
-			else if ( sources < 3)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 3)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 57)));
+					foreground = QColor(0, 0, 57);
 				}
-			}	
-			else if ( sources < 4)
-			{
-				for(int i = 0; i < 7; i++)
-				{	
-					item->setForeground(i,QBrush( QColor(0, 0, 76)));
+				else if (sources < 4)
+				{
+					foreground = QColor(0, 0, 76);
 				}
-			}
-			else if ( sources < 5)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 5)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 96)));
+					foreground = QColor(0, 0, 96);
 				}
-			}
-			else if ( sources < 6)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 6)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 114)));
+					foreground = QColor(0, 0, 114);
 				}
-			}
-			else if ( sources < 7)
-			{	
-				for(int i = 0; i < 7; i++)
+				else if (sources < 7)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 133)));
+					foreground = QColor(0, 0, 133);
 				}
-			}
-			else if ( sources < 8)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 8)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 152)));
-				}	
-			}
-			else if ( sources < 9)
-			{
-				for(int i = 0; i < 7; i++)
-				{
-					item->setForeground(i,QBrush( QColor(0, 0, 171)));
+					foreground = QColor(0, 0, 152);
 				}
-			}
-			else if ( sources < 10)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 9)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 190)));
+					foreground = QColor(0, 0, 171);
 				}
-			}
-			else if ( sources < 11)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 10)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 209)));
+					foreground = QColor(0, 0, 190);
 				}
-			}
-			else if ( sources < 12)
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 11)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 228)));
+					foreground = QColor(0, 0, 209);
 				}
-			}
-			else
-			{
-				for(int i = 0; i < 7; i++)
+				else if (sources < 12)
 				{
-					item->setForeground(i,QBrush( QColor(0, 0, 228)));
+					foreground = QColor(0, 0, 228);
+				}
+				else
+				{
+					foreground = QColor(0, 0, 228);
+				}
+
+				QBrush brush(foreground);
+				for (int i = 0; i < item->columnCount(); i++)
+				{
+					item->setForeground(i, brush);
 				}
 			}
 			break ;
@@ -1119,18 +1094,35 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		}
 
 		anonymousSource = anonymousSource + friendSource;
-                modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
+		modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
 		item->setText(SR_ID_COL,modifiedResult);
 		item->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
-	
-			
-		sources = item->text(SR_ID_COL).toInt(); 
-		if ( sources == 1)
-		{
-			for(int i = 0; i < 7; i++)
+
+		QColor foreground;
+		bool setForeground = false;
+
+		FileInfo fi;
+		if (rsFiles->FileDetails(file.hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_SPEC_ONLY, fi)) {
+			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, true);
+			foreground = Qt::red;
+			setForeground = true;
+		} else {
+			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, false);
+
+			sources = item->text(SR_ID_COL).toInt();
+			if (sources == 1)
 			{
-				item->setForeground(i,QBrush( QColor(0, 0, 0)));
+				foreground = QColor(0, 0, 0);
+				setForeground = true;
+			}
+		}
+
+		if (setForeground) {
+			QBrush brush(foreground);
+			for (int i = 0; i < item->columnCount(); i++)
+			{
+				item->setForeground(i, brush);
 			}
 		}
 
