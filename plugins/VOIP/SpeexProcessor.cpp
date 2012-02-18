@@ -10,7 +10,10 @@
 #include <math.h>
 #include <cstdlib>
 #include <QDateTime>
-#include "gui/settings/rsharesettings.h"
+
+#include "rsvoip.h"
+
+//#include "gui/settings/rsharesettings.h"
 
 #define iroundf(x) ( static_cast<int>(x) )
 
@@ -160,7 +163,7 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
                         iArg = -60;
                         speex_preprocess_ctl(preprocessor, SPEEX_PREPROCESS_SET_AGC_DECREMENT, &iArg);
 
-                        iArg = Settings->getVoipiNoiseSuppress();
+                        iArg = rsVoip->getVoipiNoiseSuppress();
                         speex_preprocess_ctl(preprocessor, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &iArg);
 
                         if (echo_state) {
@@ -172,18 +175,18 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
                         bResetProcessor = false;
                 }
 
-                float v = 30000.0f / static_cast<float>(Settings->getVoipiMinLoudness());
+                float v = 30000.0f / static_cast<float>(rsVoip->getVoipiMinLoudness());
 
                 iArg = iroundf(floorf(20.0f * log10f(v)));
                 speex_preprocess_ctl(preprocessor, SPEEX_PREPROCESS_SET_AGC_MAX_GAIN, &iArg);
 
                 speex_preprocess_ctl(preprocessor, SPEEX_PREPROCESS_GET_AGC_GAIN, &iArg);
                 float gainValue = static_cast<float>(iArg);
-                iArg = Settings->getVoipiNoiseSuppress() - iArg;
+                iArg = rsVoip->getVoipiNoiseSuppress() - iArg;
                 speex_preprocess_ctl(preprocessor, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &iArg);
 
                 short * psSource = psMic;
-                if (echo_state && Settings->getVoipEchoCancel()) {
+                if (echo_state && rsVoip->getVoipEchoCancel()) {
                     speex_echo_playback(echo_state, (short*)lastEchoFrame->data());
                     speex_echo_capture(echo_state,psMic,psClean);
                     psSource = psClean;
@@ -207,29 +210,29 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
 
                 bool bIsSpeech = false;
 
-                if (dVoiceAcivityLevel > (static_cast<float>(Settings->getVoipfVADmax()) / 32767))
+                if (dVoiceAcivityLevel > (static_cast<float>(rsVoip->getVoipfVADmax()) / 32767))
                         bIsSpeech = true;
-                else if (dVoiceAcivityLevel > (static_cast<float>(Settings->getVoipfVADmin()) / 32767) && bPreviousVoice)
+                else if (dVoiceAcivityLevel > (static_cast<float>(rsVoip->getVoipfVADmin()) / 32767) && bPreviousVoice)
                         bIsSpeech = true;
 
                 if (! bIsSpeech) {
                         iHoldFrames++;
-                        if (iHoldFrames < Settings->getVoipVoiceHold())
+                        if (iHoldFrames < rsVoip->getVoipVoiceHold())
                                 bIsSpeech = true;
                 } else {
                         iHoldFrames = 0;
                 }
 
 
-                if (Settings->getVoipATransmit() == RshareSettings::AudioTransmitContinous) {
+                if (rsVoip->getVoipATransmit() == RsVoip::AudioTransmitContinous) {
                         bIsSpeech = true;
                 }
-                else if (Settings->getVoipATransmit() == RshareSettings::AudioTransmitPushToTalk)
+                else if (rsVoip->getVoipATransmit() == RsVoip::AudioTransmitPushToTalk)
                         bIsSpeech = false;//g.s.uiDoublePush && ((g.uiDoublePush < g.s.uiDoublePush) || (g.tDoublePush.elapsed() < g.s.uiDoublePush));
 
                 //bIsSpeech = bIsSpeech || (g.iPushToTalk > 0);
 
-                /*if (g.s.bMute || ((g.s.lmLoopMode != Settings::Local) && p && (p->bMute || p->bSuppress)) || g.bPushToMute || (g.iTarget < 0)) {
+                /*if (g.s.bMute || ((g.s.lmLoopMode != RsVoip::Local) && p && (p->bMute || p->bSuppress)) || g.bPushToMute || (g.iTarget < 0)) {
                         bIsSpeech = false;
                 }*/
 
@@ -241,11 +244,11 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
 
                 /*if (p) {
                         if (! bIsSpeech)
-                                p->setTalking(Settings::Passive);
+                                p->setTalking(RsVoip::Passive);
                         else if (g.iTarget == 0)
-                                p->setTalking(Settings::Talking);
+                                p->setTalking(RsVoip::Talking);
                         else
-                                p->setTalking(Settings::Shouting);
+                                p->setTalking(RsVoip::Shouting);
                 }*/
 
 
@@ -266,7 +269,7 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
                 int vbr_on=0;
                 //just use fixed bitrate for now
                 //encryption of VBR-encoded speech may not ensure complete privacy, as phrases can still be identified, at least in a controlled setting with a small dictionary of phrases, by analysing the pattern of variation of the bit rate.
-                if (Settings->getVoipATransmit() == RshareSettings::AudioTransmitVAD) {//maybe we can do fixer bitrate when voice detection is active
+                if (rsVoip->getVoipATransmit() == RsVoip::AudioTransmitVAD) {//maybe we can do fixer bitrate when voice detection is active
                     vbr_on = 1;//test it on for all modes
                 } else {//maybe we can do vbr for ppt and continuous
                     vbr_on = 1;
@@ -365,7 +368,7 @@ bool SpeexInputProcessor::isSequential() const {
 }
 
 void SpeexInputProcessor::addEchoFrame(QByteArray* echo_frame) {
-    if (Settings->getVoipEchoCancel() && echo_frame) {
+    if (rsVoip->getVoipEchoCancel() && echo_frame) {
         QMutexLocker l(&qmSpeex);
         lastEchoFrame = echo_frame;
         if (!echo_state) {//init echo_state

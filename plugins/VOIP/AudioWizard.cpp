@@ -34,8 +34,8 @@
 //#include "Settings.h"
 //#include "Log.h"
 //#include "MainWindow.h"
-#include "gui/settings/rsharesettings.h"
 #include "audiodevicehelper.h"
+#include "rsvoip.h"
 
 #define iroundf(x) ( static_cast<int>(x) )
 
@@ -70,9 +70,9 @@ AudioWizard::AudioWizard(QWidget *p) : QWizard(p) {
 
         verticalLayout_3->addWidget(abAmplify);
 
-        if (Settings->getVoipATransmit() == RshareSettings::AudioTransmitPushToTalk)
+        if (rsVoip->getVoipATransmit() == RsVoip::AudioTransmitPushToTalk)
 		qrPTT->setChecked(true);
-        else if (Settings->getVoipATransmit() == RshareSettings::AudioTransmitVAD)
+        else if (rsVoip->getVoipATransmit() == RsVoip::AudioTransmitVAD)
                 qrVAD->setChecked(true);
 	else
                 qrContinuous->setChecked(true);
@@ -82,13 +82,13 @@ AudioWizard::AudioWizard(QWidget *p) : QWizard(p) {
 	abVAD->qcInside = Qt::yellow;
 	abVAD->qcAbove = Qt::green;
 
-        qsTransmitMin->setValue(Settings->getVoipfVADmin());
-        qsTransmitMax->setValue(Settings->getVoipfVADmax());
+        qsTransmitMin->setValue(rsVoip->getVoipfVADmin());
+        qsTransmitMax->setValue(rsVoip->getVoipfVADmax());
 
         verticalLayout_6->addWidget(abVAD);
 
 	// Volume
-        qsMaxAmp->setValue(Settings->getVoipiMinLoudness());
+        qsMaxAmp->setValue(rsVoip->getVoipiMinLoudness());
 
 	setOption(QWizard::NoCancelButton, false);
 	resize(700, 500);
@@ -130,7 +130,7 @@ AudioWizard::AudioWizard(QWidget *p) : QWizard(p) {
 
 
 void AudioWizard::on_qsMaxAmp_valueChanged(int v) {
-        Settings->setVoipiMinLoudness(qMin(v, 30000));
+        rsVoip->setVoipiMinLoudness(qMin(v, 30000));
 }
 
 void AudioWizard::on_Ticker_timeout() {
@@ -158,8 +158,8 @@ void AudioWizard::on_Ticker_timeout() {
 
         abVAD->iBelow = qsTransmitMin->value();
         abVAD->iAbove = qsTransmitMax->value();
-        Settings->setVoipfVADmin(qsTransmitMin->value());
-        Settings->setVoipfVADmax(qsTransmitMax->value());
+        rsVoip->setVoipfVADmin(qsTransmitMin->value());
+        rsVoip->setVoipfVADmax(qsTransmitMax->value());
 
         abVAD->iValue = iroundf(inputProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
 
@@ -214,19 +214,19 @@ void AudioWizard::on_playEcho_timeout() {
 
 void AudioWizard::on_qsTransmitMax_valueChanged(int v) {
         if (! bInit) {
-                Settings->setVoipfVADmax(v);
+                rsVoip->setVoipfVADmax(v);
         }
 }
 
 void AudioWizard::on_qsTransmitMin_valueChanged(int v) {
         if (! bInit) {
-                Settings->setVoipfVADmin(v);
+                rsVoip->setVoipfVADmin(v);
         }
 }
 
 void AudioWizard::on_qrVAD_clicked(bool on) {
 	if (on) {
-                Settings->setVoipATransmit(RshareSettings::AudioTransmitVAD);
+                rsVoip->setVoipATransmit(RsVoip::AudioTransmitVAD);
                 updateTriggerWidgets(true);
 		bTransmitChanged = true;
 	}
@@ -234,7 +234,7 @@ void AudioWizard::on_qrVAD_clicked(bool on) {
 
 void AudioWizard::on_qrPTT_clicked(bool on) {
 	if (on) {
-                Settings->setVoipATransmit(RshareSettings::AudioTransmitPushToTalk);
+                rsVoip->setVoipATransmit(RsVoip::AudioTransmitPushToTalk);
                 updateTriggerWidgets(false);
 		bTransmitChanged = true;
 	}
@@ -242,7 +242,7 @@ void AudioWizard::on_qrPTT_clicked(bool on) {
 
 void AudioWizard::on_qrContinuous_clicked(bool on) {
         if (on) {
-                Settings->setVoipATransmit(RshareSettings::AudioTransmitContinous);
+                rsVoip->setVoipATransmit(RsVoip::AudioTransmitContinous);
                 updateTriggerWidgets(false);
                 bTransmitChanged = true;
         }

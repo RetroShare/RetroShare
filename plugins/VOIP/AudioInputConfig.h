@@ -34,49 +34,54 @@
 #include <QAudioInput>
 #include <QWidget>
 
-#include "configpage.h"
+#include "retroshare-gui/configpage.h"
+
 #include "ui_AudioInputConfig.h"
-#include "util/SpeexProcessor.h"
+#include "SpeexProcessor.h"
 #include "AudioStats.h"
 
-class AudioInputConfig : public ConfigPage {
-        Q_OBJECT
+class AudioInputConfig : public ConfigPage 
+{
+	Q_OBJECT
 
-        private:
-                Ui::AudioInput ui;
-                QAudioInput* inputDevice;
-                QtSpeex::SpeexInputProcessor* inputProcessor;
-                AudioBar* abSpeech;
-                bool loaded;
+	private:
+		Ui::AudioInput ui;
+		QAudioInput* inputDevice;
+		QtSpeex::SpeexInputProcessor* inputProcessor;
+		AudioBar* abSpeech;
+		bool loaded;
 
 
-        protected:
-                QTimer *qtTick;
-                /*void hideEvent(QHideEvent *event);
-                void showEvent(QShowEvent *event);*/
+	protected:
+		QTimer *qtTick;
+		/*void hideEvent(QHideEvent *event);
+		  void showEvent(QShowEvent *event);*/
 
 	public:
-                /** Default Constructor */
-                AudioInputConfig(QWidget * parent = 0, Qt::WFlags flags = 0);
-                /** Default Destructor */
-                ~AudioInputConfig();
+		/** Default Constructor */
+		AudioInputConfig(QWidget * parent = 0, Qt::WFlags flags = 0);
+		/** Default Destructor */
+		~AudioInputConfig();
 
-                /** Saves the changes on this page */
-                bool save(QString &errmsg);
-                /** Loads the settings for this page */
-                void load();
+		/** Saves the changes on this page */
+		virtual bool save(QString &errmsg);
+		/** Loads the settings for this page */
+		virtual void load();
 
-        private slots:
-                void loadSettings();
-                void emptyBuffer();
+		virtual QPixmap iconPixmap() const { return QPixmap(":/images/talking_on.svg") ; }
+		virtual QString pageName() const { return tr("VOIP") ; }
 
-                void on_qsTransmitHold_valueChanged(int v);
-                void on_qsAmp_valueChanged(int v);
-                void on_qsNoise_valueChanged(int v);
-                void on_qcbTransmit_currentIndexChanged(int v);
-                void on_Tick_timeout();
-                void on_qpbAudioWizard_clicked();
-                void on_qcbEchoCancel_clicked();
+	private slots:
+		void loadSettings();
+		void emptyBuffer();
+
+		void on_qsTransmitHold_valueChanged(int v);
+		void on_qsAmp_valueChanged(int v);
+		void on_qsNoise_valueChanged(int v);
+		void on_qcbTransmit_currentIndexChanged(int v);
+		void on_Tick_timeout();
+		void on_qpbAudioWizard_clicked();
+		void on_qcbEchoCancel_clicked();
 };
 
 #endif

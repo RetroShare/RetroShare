@@ -31,6 +31,8 @@
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
 #include "retroshare/rsmsgs.h"
+#include "plugins/rspqiservice.h"
+#include "rsvoip.h"
 
 //!The basic VOIP service.
   
@@ -47,16 +49,36 @@ class p3VoipService: public RsPQIService, public RsVoip
 		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
 		 * @see NotifyBase
 		 */
-		virtual int   tick();
+		virtual void   tick();
 		virtual int   status();
 
-		/*************** pqiMonitor callback ***********************/
-		virtual void statusChange(const std::list<pqipeer> &plist);
+		// /*************** pqiMonitor callback ***********************/
+		// virtual void statusChange(const std::list<pqipeer> &plist);
 
 		/*!
 		 * public chat sent to all peers
 		 */
 		int sendVoipData(const void *data,uint32_t size);
+
+		// config values
+
+		virtual int getVoipATransmit() const ;
+		virtual void setVoipATransmit(int) const ;
+
+		virtual int getVoipVoiceHold() const ;
+		virtual void setVoipVoiceHold(int) const ;
+
+		virtual int getVoipfVADmin() const ;
+		virtual void setVoipfVADmin(int) const ;
+
+		virtual int getVoipfVADmax() const ;
+		virtual void setVoipfVADmax(int) const ;
+		virtual int getVoipiNoiseSuppress() const ;
+		virtual void setVoipiNoiseSuppress(int) const ;
+		virtual int getVoipiMinLoudness() const ;
+		virtual void setVoipiMinLoudness(int) const ;
+		virtual bool getVoipEchoCancel() const ;
+		virtual void setVoipEchoCancel(bool) const ;
 
 	protected:
 		/************* from p3Config *******************/

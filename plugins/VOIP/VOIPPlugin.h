@@ -14,6 +14,7 @@ class VOIPPlugin: public RsPlugin
 		virtual MainPage       *qt_page()       			const	;
 		virtual QIcon          *qt_icon()       			const	;
 		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_VOIP ; }
+		virtual ConfigPage     *qt_config_page()        const ;
 
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode) const;
 
@@ -27,10 +28,9 @@ class VOIPPlugin: public RsPlugin
 		virtual void setInterfaces(RsPlugInInterfaces& interfaces);
 
 	private:
-		mutable p3Voip *mVoip ;
+		mutable p3VoipService *mVoip ;
 		mutable RsPluginHandler *mPlugInHandler;
 		mutable RsPeers* mPeers;
-		mutable MainPage* mainpage ;
-		mutable QIcon* mIcon ;
+		mutable ConfigPage *config_page ;
 };
 
