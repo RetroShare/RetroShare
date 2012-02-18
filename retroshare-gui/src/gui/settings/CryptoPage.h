@@ -22,7 +22,7 @@
 #ifndef _CRYPTOPAGE_H
 #define _CRYPTOPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_CryptoPage.h"
 
 class CryptoPage : public ConfigPage
@@ -36,11 +36,14 @@ class CryptoPage : public ConfigPage
       ~CryptoPage();
 
       /** Saves the changes on this page */
-      bool save(QString &errmsg);
+      virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
 
+		virtual QPixmap iconPixmap() const { return QPixmap(":/images/encrypted32.png") ; }
+		virtual QString pageName() const { return tr("Security") ; }
+
   private slots:
-      void load();
+      virtual void load();
       void copyPublicKey();
 		void copyRSLink() ;
       

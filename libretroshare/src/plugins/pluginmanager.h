@@ -40,6 +40,9 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		virtual ftServer *getFileServer() const ;
 		virtual p3LinkMgr *getLinkMgr() const ;
 
+		virtual void allowAllPlugins(bool b) ;
+		virtual bool getAllowAllPlugins() const ;
+
 		// ---------------- Derived from p3Config -------------------//
 		//
 		bool saveList(bool& cleanup, std::list<RsItem*>& list) ;
@@ -84,6 +87,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 
 		std::vector<PluginInfo> _plugins ;
 		std::set<std::string> _accepted_hashes ;
+		bool _allow_all_plugins ;
 
 		static std::string _plugin_entry_symbol ;
 		static std::string _remote_cache_dir ;

@@ -24,7 +24,7 @@
 
 # include <QtGui/QWidget>
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_TransferPage.h"
 
 class TransferPage: public ConfigPage
@@ -39,6 +39,9 @@ class TransferPage: public ConfigPage
 		virtual bool save(QString &/*errmsg*/) { return true ; }
 		/** Loads the settings for this page */
 		virtual void load() {}
+
+		virtual QPixmap iconPixmap() const { return QPixmap(":/images/ktorrent32.png") ; }
+		virtual QString pageName() const { return tr("Transfer") ; }
 
 	public slots:
 		void updateQueueSize(int) ;

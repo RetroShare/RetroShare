@@ -21,6 +21,7 @@
 
 #include <QMessageBox>
 
+#include <retroshare/rsplugin.h>
 #include "GeneralPage.h"
 #include "DirectoriesPage.h"
 #include "ServerPage.h"
@@ -105,95 +106,58 @@ RSettingsWin::initStackedWidget()
     stackedWidget->setCurrentIndex(-1);
     stackedWidget->removeWidget(stackedWidget->widget(0));
 
-    stackedWidget->addWidget(new GeneralPage(0));
-    stackedWidget->addWidget(new ServerPage());
-    stackedWidget->addWidget(new TransferPage());
-    stackedWidget->addWidget(new RelayPage() );
-    stackedWidget->addWidget(new DirectoriesPage());
-    stackedWidget->addWidget(new PluginsPage() );
-    stackedWidget->addWidget(new NotifyPage());
-    stackedWidget->addWidget(new CryptoPage());
-    stackedWidget->addWidget(new MessagePage());
-    stackedWidget->addWidget(new ForumPage());
-    stackedWidget->addWidget(new ChatPage());
-    stackedWidget->addWidget(new AppearancePage());
-    stackedWidget->addWidget(new SoundPage() );
+    addPage(new GeneralPage(0));
+    addPage(new ServerPage());
+    addPage(new TransferPage());
+    addPage(new RelayPage() );
+    addPage(new DirectoriesPage());
+    addPage(new PluginsPage() );
+    addPage(new NotifyPage());
+    addPage(new CryptoPage());
+    addPage(new MessagePage());
+    addPage(new ForumPage());
+    addPage(new ChatPage());
+    addPage(new AppearancePage());
+    addPage(new SoundPage() );
+
+	 // add widgets from plugins
+
+	 for(int i=0;i<rsPlugins->nbPlugins();++i)
+	 {
+		 RsPlugin *pl = rsPlugins->plugin(i) ;
+
+		 if(pl->qt_config_page() != NULL)
+			 stackedWidget->addWidget(pl->qt_config_page()) ;
+	 }
+
+	 // make the first page the default.
 
     setNewPage(General);
+}
+
+void RSettingsWin::addPage(ConfigPage *page)
+{
+	stackedWidget->addWidget(page) ;
+
+	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
+	listWidget->addItem(item) ;
 }
 
 void
 RSettingsWin::setNewPage(int page)
 {
-    QString text;
+	ConfigPage *pagew = dynamic_cast<ConfigPage*>(stackedWidget->widget(page)) ;
 
-    switch (page)
-    {
-        case General:
-            text = tr("General");
-            pageicon->setPixmap(QPixmap(":/images/kcmsystem24.png"));
-            break;
-        case Directories:
-            text = tr("Directories");
-            pageicon->setPixmap(QPixmap(":/images/folder_doments.png"));
-            break;
-        case Server:
-            text = tr("Server");
-            pageicon->setPixmap(QPixmap(":/images/server_24x24.png"));
-            break;
-        case Transfer:
-            text = tr("Transfer");
-            pageicon->setPixmap(QPixmap(":/images/ktorrent32.png"));
-            break;    
-        case Relay:
-            text = tr("Relay");
-            pageicon->setPixmap(QPixmap(":/images/server_24x24.png"));
-            break;
-        case Notify:
-            text = tr("Notify");
-            pageicon->setPixmap(QPixmap(":/images/status_unknown.png"));
-            break;
-        case Security:
-            text = tr("Security");
-            pageicon->setPixmap(QPixmap(":/images/encrypted32.png"));
-            break;
-        case Message:
-            text = tr("Message");
-            pageicon->setPixmap(QPixmap(":/images/evolution.png"));
-            break;      
-        case Forum:
-            text = tr("Forum");
-            pageicon->setPixmap(QPixmap(":/images/konversation.png"));
-            break;
-        case Plugins:
-            text = tr("Plugins");
-            pageicon->setPixmap(QPixmap(":/images/extension_32.png"));
-            break;
-        case Chat:
-            text = tr("Chat");
-            pageicon->setPixmap(QPixmap(":/images/chat_24.png"));
-            break;
-        case Appearance:
-            text = tr("Appearance");
-            pageicon->setPixmap(QPixmap(":/images/looknfeel.png"));
-            break;
-      /*//  #ifndef RS_RELEASE_VERSION
-        case Fileassociations:
-            text = tr("File Associations");
-            pageicon->setPixmap(QPixmap(":/images/filetype-association.png"));
-            break;*/
-        case Sound:
-            text = tr("Sound");
-            pageicon->setPixmap(QPixmap(":/images/sound.png"));
-            break;
-      //  #endif
-        default:
-            text = tr("UnknownPage");// impossible case
-    }
+	if(pagew == NULL)
+	{
+		std::cerr << "Error in RSettingsWin::setNewPage(): widget is not a ConfigPage!" << std::endl;
+		return ;
+	}
+	pageName->setText(pagew->pageName());
+	pageicon->setPixmap(pagew->iconPixmap()) ;
 
-    pageName->setText(text);
-    stackedWidget->setCurrentIndex(page);
-    listWidget->setCurrentRow(page);
+	stackedWidget->setCurrentIndex(page);
+	listWidget->setCurrentRow(page);
 }
 
 /** Saves changes made to settings. */

@@ -22,7 +22,7 @@
 #ifndef NOTIFYPAGE_H
 #define NOTIFYPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_NotifyPage.h"
 
 class NotifyPage : public ConfigPage
@@ -36,9 +36,12 @@ public:
     ~NotifyPage();
 
     /** Saves the changes on this page */
-    bool save(QString &errmsg);
+    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
-    void load();
+    virtual void load();
+
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/status_unknown.png") ; }
+	 virtual QString pageName() const { return tr("Notify") ; }
 
 private slots:
     void privatChatToggled();

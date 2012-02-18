@@ -22,7 +22,7 @@
 #ifndef _APPERARANCEPAGE_H
 #define _APPERARANCEPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_AppearancePage.h"
 
 class AppearancePage : public ConfigPage
@@ -36,9 +36,13 @@ class AppearancePage : public ConfigPage
       ~AppearancePage();
 
       /** Saves the changes on this page */
-      bool save(QString &errmsg);
+      virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
-      void load();
+      virtual void load();
+
+		virtual QPixmap iconPixmap() const { return QPixmap(":/images/looknfeel.png") ; }
+		virtual QString pageName() const { return tr("Appearance") ; }
+
 
   private slots:
 

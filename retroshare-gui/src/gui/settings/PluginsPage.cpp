@@ -95,6 +95,9 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 			 if(plugin != NULL)
 				 item->_enabled_CB->setChecked(true) ;
 
+			 if(rsPlugins->getAllowAllPlugins())
+				 item->_enabled_CB->setEnabled(false) ;
+
 			 QObject::connect(item,SIGNAL(pluginEnabled(bool,const QString&)),this,SLOT(togglePlugin(bool,const QString&))) ;
 			 QObject::connect(item,SIGNAL(pluginConfigure(int)),this,SLOT(configurePlugin(int))) ;
 		 }
@@ -109,7 +112,15 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 	 ui._lookupDirectories_TB->setHtml(text) ;
 
 	// todo
+	ui.enableAll->setChecked(rsPlugins->getAllowAllPlugins());
+	ui.enableAll->setToolTip(tr("Check this for developing plugins. They will not\nbe checked for the hash. However, in normal\ntimes, checking the hash protects you from\nmalicious behavior of crafted plugins."));
 	ui.enableAll->setEnabled(false);
+
+	QObject::connect(ui.enableAll,SIGNAL(toggled(bool)),this,SLOT(toggleEnableAll(bool))) ;
+}
+void PluginsPage::toggleEnableAll(bool b)
+{
+	rsPlugins->allowAllPlugins(b) ;
 }
 void PluginsPage::configurePlugin(int i)
 {

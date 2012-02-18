@@ -36,6 +36,7 @@ RsPluginHandler *rsPlugins ;
 
 RsPluginManager::RsPluginManager() : p3Config(CONFIG_TYPE_PLUGINS)
 {
+	_allow_all_plugins = false ;
 }
 
 void RsPluginManager::loadConfiguration()
@@ -145,10 +146,20 @@ void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_n
 	file_name = _plugins[i].file_name ;
 }
 
+bool RsPluginManager::getAllowAllPlugins() const
+{
+	return _allow_all_plugins ;
+}
+void RsPluginManager::allowAllPlugins(bool b)
+{
+	_allow_all_plugins = b ;
+	IndicateConfigChanged() ;
+}
 RsSerialiser *RsPluginManager::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser ;
-        rss->addSerialType(new RsPluginSerialiser()) ;
+	rss->addSerialType(new RsPluginSerialiser()) ;
+	rss->addSerialType(new RsGeneralConfigSerialiser()) ;
 
 	return rss ;
 }
@@ -203,7 +214,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 
 	std::cerr << "    -> hash = " << pinfo.file_hash << std::endl;
 
-	if(_accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end())
+	if((!_allow_all_plugins) && _accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end())
 	{
 		std::cerr  << "    -> hash is not in white list. Plugin is rejected. Go to config->plugins to authorise this plugin." << std::endl;
 		pinfo.status = PLUGIN_STATUS_UNKNOWN_HASH ;
@@ -342,7 +353,19 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
 				_accepted_hashes.insert(*it) ;
 				std::cerr << "  loaded hash " << *it << std::endl;
 			}
-		
+
+		RsConfigKeyValueSet *witem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
+
+		if(witem)
+		{
+			for(std::list<RsTlvKeyValue>::const_iterator kit = witem->tlvkvs.pairs.begin(); kit != witem->tlvkvs.pairs.end(); ++kit) 
+				if((*kit).key == "ALLOW_ALL_PLUGINS")
+				{
+					std::cerr << "WARNING: Allowing all plugins. No hash will be checked. Be careful! " << std::endl ;
+					_allow_all_plugins = (kit->value == "YES");
+				}
+		}
+
 		delete (*it);
 	}
 	return true;
@@ -358,6 +381,14 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 		vitem->hashes.ids.push_back(*it) ;
 
 	list.push_back(vitem) ;
+
+	RsConfigKeyValueSet *witem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+	kv.key = "ALLOW_ALL_PLUGINS" ;
+	kv.value = _allow_all_plugins?"YES":"NO" ;
+	witem->tlvkvs.pairs.push_back(kv) ;
+
+	list.push_back(witem) ;
 
 	return true;
 }

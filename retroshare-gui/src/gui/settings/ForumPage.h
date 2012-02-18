@@ -22,7 +22,7 @@
 #ifndef FORUMPAGE_H
 #define FORUMPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_ForumPage.h"
 
 class ForumPage : public ConfigPage
@@ -34,9 +34,12 @@ public:
     ~ForumPage();
 
     /** Saves the changes on this page */
-    bool save(QString &errmsg);
+    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
-    void load();
+    virtual void load();
+
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/konversation.png") ; }
+	 virtual QString pageName() const { return tr("Forum") ; }
 
 private:
     Ui::ForumPage ui;

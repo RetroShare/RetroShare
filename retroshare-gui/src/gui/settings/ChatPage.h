@@ -22,7 +22,7 @@
 #ifndef _CHATPAGE_H
 #define _CHATPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_ChatPage.h"
 
 class ChatPage : public ConfigPage
@@ -36,9 +36,12 @@ class ChatPage : public ConfigPage
       ~ChatPage() {}
 
       /** Saves the changes on this page */
-      bool save(QString &errmsg);
+      virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
-      void load();
+      virtual void load();
+
+		virtual QPixmap iconPixmap() const { return QPixmap(":/images/chat_24.png") ; }
+		virtual QString pageName() const { return tr("Chat") ; }
 
   private slots:
       void on_historyComboBoxVariant_currentIndexChanged(int index);

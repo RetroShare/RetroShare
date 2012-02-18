@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_MessagePage.h"
 
 class MsgTagType;
@@ -38,9 +38,13 @@ public:
     ~MessagePage();
 
     /** Saves the changes on this page */
-    bool save(QString &errmsg);
+    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
-    void load();
+    virtual void load();
+
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/evolution.png") ; }
+	 virtual QString pageName() const { return tr("Message") ; }
+
 
 private slots:
     void addTag();

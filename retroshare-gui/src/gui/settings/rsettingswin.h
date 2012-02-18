@@ -23,6 +23,7 @@
 # define RSETTINGSWIN_HPP_
 
 # include <QtGui/QDialog>
+# include <retroshare-gui/configpage.h>
 # include "ui_settings.h"
 
 
@@ -41,6 +42,7 @@ class RSettingsWin: public QDialog, private Ui::Settings
         RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
         ~RSettingsWin();
 
+		  void addPage(ConfigPage*) ;
     public slots:
         //! Go to a specific part of the control panel.
         void setNewPage(int page);

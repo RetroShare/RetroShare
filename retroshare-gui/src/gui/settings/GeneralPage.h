@@ -23,7 +23,7 @@
 #ifndef _GENERALPAGE_H
 #define _GENERALPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_GeneralPage.h"
 
 class GeneralPage : public ConfigPage
@@ -37,9 +37,12 @@ public:
   ~GeneralPage();
 
   /** Saves the changes on this page */
-  bool save(QString &errmsg);
+  virtual bool save(QString &errmsg);
   /** Loads the settings for this page */
-  void load();
+  virtual void load();
+
+  virtual QPixmap iconPixmap() const { return QPixmap(":/images/kcmsystem24.png") ; }
+  virtual QString pageName() const { return tr("General") ; }
 
 private:
   /** Qt Designer generated object */

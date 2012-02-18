@@ -22,7 +22,7 @@
 #ifndef DIRECTORIESPAGE_H
 #define DIRECTORIESPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_DirectoriesPage.h"
 
 class DirectoriesPage: public ConfigPage
@@ -33,9 +33,12 @@ public:
     DirectoriesPage(QWidget * parent = 0, Qt::WFlags flags = 0);
 
     /** Saves the changes on this page */
-    bool save(QString &errmsg);
+    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
-    void load();
+    virtual void load();
+
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/folder_doments.png") ; }
+	 virtual QString pageName() const { return tr("Directories") ; }
 
 private slots:
     void editDirectories() ;

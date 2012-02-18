@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_PluginsPage.h"
 
 class PluginsPage : public ConfigPage
@@ -33,13 +33,18 @@ class PluginsPage : public ConfigPage
 		~PluginsPage();
 
 		/** Saves the changes on this page */
-		bool save(QString &errmsg);
+		virtual bool save(QString &errmsg);
 		/** Loads the settings for this page */
-		void load();
+		virtual void load();
+
+		virtual QPixmap iconPixmap() const { return QPixmap(":/images/extension_32.png") ; }
+		virtual QString pageName() const { return tr("Plugins") ; }
+
 
 	public slots:
 		void togglePlugin(bool b,const QString&) ;
 		void configurePlugin(int i) ;
+		void toggleEnableAll(bool) ;
 
 	private:
 			Ui::PluginsPage ui;

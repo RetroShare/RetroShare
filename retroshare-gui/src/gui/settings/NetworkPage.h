@@ -22,7 +22,7 @@
 #ifndef NETWORKPAGE_H
 #define NETWORKPAGE_H
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_NetworkPage.h"
 
 class NetworkPage : public ConfigPage
@@ -32,9 +32,12 @@ public:
     ~NetworkPage() {}
 
     /** Saves the changes on this page */
-    bool save(QString &errmsg);
+    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
-    void load();
+    virtual void load();
+
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
+	 virtual QString pageName() const { return tr("Network") ; }
 
 private:
     Ui::NetworkPage ui;

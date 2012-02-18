@@ -24,7 +24,7 @@
 
 #include <QFileDialog>
 
-#include "configpage.h"
+#include <retroshare-gui/configpage.h>
 #include "ui_SoundPage.h"
 #include "gui/SoundManager.h"
 
@@ -39,9 +39,12 @@ public:
 	~SoundPage();
 
 	/** Saves the changes on this page */
-	bool save(QString &errmsg);
+	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
-	void load();
+	virtual void load();
+
+	virtual QPixmap iconPixmap() const { return QPixmap(":/images/sound.png") ; }
+	virtual QString pageName() const { return tr("Sound") ; }
 
 private slots:
 	void eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
