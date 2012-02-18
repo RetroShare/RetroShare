@@ -5,7 +5,7 @@
 #include "VOIPPlugin.h"
 #include "AudioInputConfig.h"
 
-//static void *inited = new VOIPPlugin() ;
+static void *inited = new VOIPPlugin() ;
 
 extern "C" {
 	void *RETROSHARE_PLUGIN_provide()
@@ -28,6 +28,7 @@ VOIPPlugin::VOIPPlugin()
 	mVoip = NULL ;
 	mPlugInHandler = NULL;
 	mPeers = NULL;
+	config_page = NULL ;
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -48,7 +49,7 @@ RsPQIService *VOIPPlugin::rs_pqi_service() const
 	if(mVoip == NULL)
 	{
 		mVoip = new p3VoipService(mPlugInHandler) ; // , 3600 * 24 * 30 * 6); // 6 Months
-		rsVoip = mVoip ;
+		rsVoipSI = mVoip ;
 	}
 
 	return mVoip ;

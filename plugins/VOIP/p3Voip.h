@@ -36,11 +36,11 @@
 
 //!The basic VOIP service.
   
-class p3VoipService: public RsPQIService, public RsVoip
+class p3VoipService: public RsPQIService, public RsVoipServiceInterface
 {
 	public:
 		p3VoipService(RsPluginHandler *handler) 
-			: RsPQIService(RS_SERVICE_TYPE_VOIP,CONFIG_TYPE_VOIP,0,handler) 
+			: RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,CONFIG_TYPE_VOIP_PLUGIN,0,handler) 
 		{}
 
 		/***** overloaded from p3Service *****/
@@ -51,8 +51,8 @@ class p3VoipService: public RsPQIService, public RsVoip
 		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
 		 * @see NotifyBase
 		 */
-		virtual int   tick();
-		virtual int   status();
+		virtual int   tick() { return 0 ;}
+//		virtual int   status();
 
 		// /*************** pqiMonitor callback ***********************/
 		// virtual void statusChange(const std::list<pqipeer> &plist);
@@ -60,27 +60,24 @@ class p3VoipService: public RsPQIService, public RsVoip
 		/*!
 		 * public chat sent to all peers
 		 */
-		int sendVoipData(const void *data,uint32_t size);
+		int sendVoipData(const void *data,uint32_t size) { return 0 ;}
 
 		// config values
 
-		virtual int getVoipATransmit() const ;
-		virtual void setVoipATransmit(int) const ;
-
-		virtual int getVoipVoiceHold() const ;
-		virtual void setVoipVoiceHold(int) const ;
-
-		virtual int getVoipfVADmin() const ;
-		virtual void setVoipfVADmin(int) const ;
-
-		virtual int getVoipfVADmax() const ;
-		virtual void setVoipfVADmax(int) const ;
-		virtual int getVoipiNoiseSuppress() const ;
-		virtual void setVoipiNoiseSuppress(int) const ;
-		virtual int getVoipiMinLoudness() const ;
-		virtual void setVoipiMinLoudness(int) const ;
-		virtual bool getVoipEchoCancel() const ;
-		virtual void setVoipEchoCancel(bool) const ;
+		virtual int  getVoipATransmit() const  { return _atransmit ; }
+		virtual void setVoipATransmit(int) ;
+		virtual int  getVoipVoiceHold() const  { return _voice_hold ; }
+		virtual void setVoipVoiceHold(int) ;
+		virtual int  getVoipfVADmin() const    { return _vadmin ; }
+		virtual void setVoipfVADmin(int) ;
+		virtual int  getVoipfVADmax() const    { return _vadmax ; } 
+		virtual void setVoipfVADmax(int) ;
+		virtual int  getVoipiNoiseSuppress() const { return _noise_suppress ; }
+		virtual void setVoipiNoiseSuppress(int) ;
+		virtual int  getVoipiMinLoudness() const   { return _min_loudness ; }
+		virtual void setVoipiMinLoudness(int) ;
+		virtual bool getVoipEchoCancel() const 	 { return _echo_cancel ; }
+		virtual void setVoipEchoCancel(bool) ;
 
 	protected:
 		/************* from p3Config *******************/
@@ -95,6 +92,14 @@ class p3VoipService: public RsPQIService, public RsVoip
 	private:
 		//RsMutex mChatMtx;
 
-		void receiveVoipQueue();
+		void receiveVoipQueue() {}
+
+		int _atransmit ;
+		int _voice_hold ;
+		int _vadmin ;
+		int _vadmax ;
+		int _min_loudness ;
+		int _noise_suppress ;
+		bool _echo_cancel ;
 };
 

@@ -2,11 +2,13 @@
 
 CONFIG += qt uic qrc resources
 CONFIG += mobility
-QT += multimedia
+#/QT += multimedia
 MOBILITY = multimedia
 
-SOURCES = VOIPPlugin.cpp AudioInputConfig.cpp  AudioStats.cpp  AudioWizard.cpp  SpeexProcessor.cpp  audiodevicehelper.cpp
-HEADERS = AudioInputConfig.h  AudioStats.h  AudioWizard.h  SpeexProcessor.h  audiodevicehelper.h
+QMAKE_CXXFLAGS *= -Wall
+
+SOURCES = p3Voip.cpp VOIPPlugin.cpp AudioInputConfig.cpp  AudioStats.cpp  AudioWizard.cpp  SpeexProcessor.cpp  audiodevicehelper.cpp
+HEADERS = p3Voip.h AudioInputConfig.h  AudioStats.h  AudioWizard.h  SpeexProcessor.h  audiodevicehelper.h
 FORMS   = AudioInputConfig.ui AudioStats.ui AudioWizard.ui
 
 TARGET = VOIP

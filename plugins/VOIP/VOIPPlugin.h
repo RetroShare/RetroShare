@@ -11,9 +11,7 @@ class VOIPPlugin: public RsPlugin
 		virtual ~VOIPPlugin() {}
 
 		virtual RsPQIService   *rs_pqi_service() 			const	;
-		virtual MainPage       *qt_page()       			const	;
-		virtual QIcon          *qt_icon()       			const	;
-		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_VOIP ; }
+		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_VOIP_PLUGIN ; }
 		virtual ConfigPage     *qt_config_page()        const ;
 
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode) const;
