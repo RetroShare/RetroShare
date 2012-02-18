@@ -1,17 +1,18 @@
 #pragma once
 
+#include "services/p3service.h"
 #include "plugins/pluginmanager.h"
 
 // The following class abstracts the construction of a peer-to-peer service. The user only has to 
 // supply RS with a type ID. If the ID is already in use, RS will complain.
 //
-class RsPQIService: public p3Config
+class RsPQIService: public p3Service, public p3Config
 {
 	public:
 		RsPQIService(uint16_t type,uint32_t config_type,uint32_t tick_delay_in_seconds, RsPluginHandler* pgHandler) ;
 
 		uint32_t tickDelay() const { return _tick_delay_in_seconds ; }
-		virtual void tick() {}
+		virtual int tick() = 0 ;
 
 		// Functions from p3config
 		//

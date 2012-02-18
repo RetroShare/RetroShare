@@ -10,13 +10,14 @@ class p3ConfigMgr ;
 class p3ServiceServer ;
 class p3LinkMgr ;
 
-struct PluginInfo
+class PluginInfo
 {
-	RsPlugin *plugin ;
-	std::string info_string ;
-	std::string file_hash ;
-	std::string file_name ;
-	uint32_t status ;
+	public:
+		RsPlugin *plugin ;
+		std::string info_string ;
+		std::string file_hash ;
+		std::string file_name ;
+		uint32_t status ;
 };
 
 class RsPluginManager: public RsPluginHandler, public p3Config

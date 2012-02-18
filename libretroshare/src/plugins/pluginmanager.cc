@@ -198,6 +198,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	PluginInfo pf ;
 	pf.plugin = NULL ;
 	pf.file_name = plugin_name ;
+	pf.info_string = "" ;
 	std::cerr << "    -> hashing." << std::endl;
 	uint64_t size ;
 
@@ -232,9 +233,10 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 
 		if(handle == NULL)
 		{
-			std::cerr << "  Cannot open plugin: " << dlerror() << std::endl ;
+			const char *val = dlerror() ;
+			std::cerr << "  Cannot open plugin: " << val << std::endl ;
 			pinfo.status = PLUGIN_STATUS_DLOPEN_ERROR ;
-			pinfo.info_string = dlerror() ;
+			pinfo.info_string = val ;
 			return false ;
 		}
 
@@ -331,7 +333,13 @@ void RsPluginManager::addConfigurations(p3ConfigMgr *ConfigMgr)
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->configurationFileName().length() > 0)
 		{
-			ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_cache_service());
+			if( _plugins[i].plugin->rs_cache_service() != NULL)
+				ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_cache_service());
+			else if(_plugins[i].plugin->rs_pqi_service() != NULL)
+				ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_pqi_service());
+			else
+				continue ;
+
 			std::cerr << "    Added configuration for plugin " << _plugins[i].plugin->getPluginName() << ", with file " << _plugins[i].plugin->configurationFileName() << std::endl;
 		}
 }		
@@ -398,6 +406,11 @@ RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32
           CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
 	  p3Config(config_type), // CONFIG_TYPE_RANK_LINK
 	  _tick_delay_in_seconds(tick_delay)
+{
+}
+
+RsPQIService::RsPQIService(uint16_t service_type,uint32_t config_type,uint32_t tick_delay_in_seconds, RsPluginHandler* pgHandler) 
+	: p3Service(service_type),p3Config(config_type)
 {
 }
 

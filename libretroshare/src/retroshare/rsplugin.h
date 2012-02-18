@@ -46,7 +46,7 @@ class QApplication;
 class RsCacheService ;
 class ftServer ;
 class ConfigPage ;
-class pqiService ;
+class RsPQIService ;
 
 // Used for the status of plugins.
 //
@@ -78,7 +78,7 @@ class RsPlugin
 {
 	public:
 		virtual RsCacheService *rs_cache_service() 	const	{ return NULL ; }
-		virtual pqiService     *rs_pqi_service() 		const	{ return NULL ; }
+		virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
 
 		virtual MainPage       *qt_page()       		const	{ return NULL ; }
