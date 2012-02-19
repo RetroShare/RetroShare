@@ -5,13 +5,27 @@
 
 #include <stdint.h>
 
-class RsVoipServiceInterface ;
-extern RsVoipServiceInterface *rsVoipSI;
-
+class RsVoip ;
+extern RsVoip *rsVoip;
+ 
 static const uint32_t CONFIG_TYPE_VOIP_PLUGIN = 0xe001 ;
 static const uint32_t RS_SERVICE_TYPE_VOIP_PLUGIN = 0xe001 ;
 
-class RsVoipServiceInterface
+class RsVoipPongResult
+{
+	public:
+	RsVoipPongResult()
+	:mTS(0), mRTT(0), mOffset(0) { return; }
+
+	RsVoipPongResult(double ts, double rtt, double offset)
+	:mTS(ts), mRTT(rtt), mOffset(offset) { return; }
+
+	double mTS;
+	double mRTT;
+	double mOffset;
+};
+
+class RsVoip
 {
 	public:
 		virtual int sendVoipData(const void *data,uint32_t size) = 0;
@@ -34,4 +48,8 @@ class RsVoipServiceInterface
 		virtual void setVoipiMinLoudness(int) = 0 ;
 		virtual bool getVoipEchoCancel() const = 0 ;
 		virtual void setVoipEchoCancel(bool) = 0 ;
+
+		virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResult> &results) = 0;
 };
+
+

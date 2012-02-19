@@ -3,7 +3,8 @@
 #include <QApplication>
 
 #include "VOIPPlugin.h"
-#include "AudioInputConfig.h"
+#include "interface/rsvoip.h"
+#include "gui/AudioInputConfig.h"
 
 static void *inited = new VOIPPlugin() ;
 
@@ -38,18 +39,15 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 
 ConfigPage *VOIPPlugin::qt_config_page() const
 {
-	if(config_page == NULL)
-		config_page = new AudioInputConfig() ;
-
-	return config_page ;
+	return new AudioInputConfig() ;
 }
 
 RsPQIService *VOIPPlugin::rs_pqi_service() const
 {
 	if(mVoip == NULL)
 	{
-		mVoip = new p3VoipService(mPlugInHandler) ; // , 3600 * 24 * 30 * 6); // 6 Months
-		rsVoipSI = mVoip ;
+		mVoip = new p3VoRS(mPlugInHandler) ; // , 3600 * 24 * 30 * 6); // 6 Months
+		rsVoip = mVoip ;
 	}
 
 	return mVoip ;

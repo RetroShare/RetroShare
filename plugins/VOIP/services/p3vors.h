@@ -30,9 +30,10 @@
 #include <list>
 #include <string>
 
-#include "serialiser/rsvoipitems.h"
+#include "services/rsvoipitems.h"
 #include "services/p3service.h"
-#include "retroshare/rsvoip.h"
+#include "plugins/rspqiservice.h"
+#include <interface/rsvoip.h>
 
 class p3LinkMgr;
 
@@ -60,16 +61,17 @@ class VorsPeerInfo
   * This is only used to test Latency for the moment.
   */
 
-class p3VoRS: public RsVoip, public p3Service
+class p3VoRS: public RsPQIService, public RsVoip
 // Maybe we inherit from these later - but not needed for now.
 //, public p3Config, public pqiMonitor
 {
 	public:
-		p3VoRS(p3LinkMgr *cm);
+		p3VoRS(RsPluginHandler *cm);
 
 		/***** overloaded from rsVoip *****/
 
-virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResult> &results);
+		virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResult> &results);
+		virtual int sendVoipData(const void *data,uint32_t size) ;
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -82,7 +84,6 @@ virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResul
 		virtual int   tick();
 		virtual int   status();
 
-
 		int     sendPackets();
 		void 	sendPingMeasurements();
 		int 	processIncoming();
@@ -93,21 +94,33 @@ virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResul
 		int 	storePingAttempt(std::string id, double ts, uint32_t mCounter);
 		int 	storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset);
 
-
-		/*!
-		 * This retrieves all public chat msg items
-		 */
-		//bool getPublicChatQueue(std::list<ChatInfo> &chats);
-
 		/*************** pqiMonitor callback ***********************/
 		//virtual void statusChange(const std::list<pqipeer> &plist);
 
+		virtual int  getVoipATransmit() const  { return _atransmit ; }
+		virtual void setVoipATransmit(int) ;
+		virtual int  getVoipVoiceHold() const  { return _voice_hold ; }
+		virtual void setVoipVoiceHold(int) ;
+		virtual int  getVoipfVADmin() const    { return _vadmin ; }
+		virtual void setVoipfVADmin(int) ;
+		virtual int  getVoipfVADmax() const    { return _vadmax ; } 
+		virtual void setVoipfVADmax(int) ;
+		virtual int  getVoipiNoiseSuppress() const { return _noise_suppress ; }
+		virtual void setVoipiNoiseSuppress(int) ;
+		virtual int  getVoipiMinLoudness() const   { return _min_loudness ; }
+		virtual void setVoipiMinLoudness(int) ;
+		virtual bool getVoipEchoCancel() const 	 { return _echo_cancel ; }
+		virtual void setVoipEchoCancel(bool) ;
 
 		/************* from p3Config *******************/
-		//virtual RsSerialiser *setupSerialiser() ;
-		//virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
-		//virtual void saveDone();
-		//virtual bool loadList(std::list<RsItem*>& load) ;
+		virtual RsSerialiser *setupSerialiser() ;
+
+		/*!
+		 * chat msg items and custom status are saved
+		 */
+		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+		virtual bool loadList(std::list<RsItem*>& load) ;
+
 
 	private:
 		RsMutex mVorsMtx;
@@ -120,6 +133,13 @@ virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResul
 
 		p3LinkMgr *mLinkMgr;
 
+		int _atransmit ;
+		int _voice_hold ;
+		int _vadmin ;
+		int _vadmax ;
+		int _min_loudness ;
+		int _noise_suppress ;
+		bool _echo_cancel ;
 };
 
 #endif // SERVICE_RSVOIP_HEADER

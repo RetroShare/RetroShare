@@ -25,8 +25,9 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsvoipitems.h"
 #include "serialiser/rstlvbase.h"
+
+#include "services/rsvoipitems.h"
 
 /***
 #define RSSERIAL_DEBUG 1

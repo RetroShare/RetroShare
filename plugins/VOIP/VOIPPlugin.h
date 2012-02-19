@@ -1,8 +1,7 @@
 #pragma once
 
 #include <retroshare/rsplugin.h>
-#include <gui/mainpage.h>
-#include "p3Voip.h"
+#include "services/p3vors.h"
 
 class VOIPPlugin: public RsPlugin
 {
@@ -26,7 +25,7 @@ class VOIPPlugin: public RsPlugin
 		virtual void setInterfaces(RsPlugInInterfaces& interfaces);
 
 	private:
-		mutable p3VoipService *mVoip ;
+		mutable p3VoRS *mVoip ;
 		mutable RsPluginHandler *mPlugInHandler;
 		mutable RsPeers* mPeers;
 		mutable ConfigPage *config_page ;

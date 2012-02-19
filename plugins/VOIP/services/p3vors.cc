@@ -29,9 +29,12 @@
 #include "pqi/pqinotify.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
+#include <serialiser/rsserial.h>
+#include <serialiser/rsconfigitems.h>
+
 
 #include "services/p3vors.h"
-#include "serialiser/rsvoipitems.h"
+#include "services/rsvoipitems.h"
 
 #include <sys/time.h>
 
@@ -130,7 +133,6 @@ static uint64_t convertTsTo64bits(double ts)
 	return bits;
 }
 
-
 static double convert64bitsToTs(uint64_t bits)
 {
 	uint32_t usecs = (uint32_t) (bits & 0xffffffff);
@@ -140,11 +142,8 @@ static double convert64bitsToTs(uint64_t bits)
 	return ts;
 }
 
-
-
-
-p3VoRS::p3VoRS(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_VOIP), /* p3Config(CONFIG_TYPE_VOIP), */ mVorsMtx("p3VoRS"), mLinkMgr(lm) 
+p3VoRS::p3VoRS(RsPluginHandler *handler)
+	 : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,CONFIG_TYPE_VOIP_PLUGIN,0,handler), mVorsMtx("p3VoRS"), mLinkMgr(handler->getLinkMgr()) 
 {
 	addSerialType(new RsVoipSerialiser());
 
@@ -152,7 +151,6 @@ p3VoRS::p3VoRS(p3LinkMgr *lm)
 	mCounter = 0;
 
 }
-
 
 int	p3VoRS::tick()
 {
@@ -166,8 +164,6 @@ int	p3VoRS::status()
 {
 	return 1;
 }
-
-
 
 int	p3VoRS::sendPackets()
 {
@@ -188,7 +184,12 @@ int	p3VoRS::sendPackets()
 	return true ;
 }
 
+int p3VoRS::sendVoipData(const void *data,uint32_t size)
+{
+	std::cerr << "Sending " << size << " bytes of voip data." << std::endl;
 
+	return size ;
+}
 
 void p3VoRS::sendPingMeasurements()
 {
@@ -474,6 +475,61 @@ bool VorsPeerInfo::initialisePeerInfo(std::string id)
 	mPongResults.clear();
 
 	return true;
+}
+
+void p3VoRS::setVoipATransmit(int t) 
+{
+	_atransmit = t ;
+	IndicateConfigChanged() ;
+}
+void p3VoRS::setVoipVoiceHold(int vh) 
+{
+	_voice_hold = vh ;
+	IndicateConfigChanged() ;
+}
+void p3VoRS::setVoipfVADmin(int vad) 
+{
+	_vadmin = vad ;
+	IndicateConfigChanged() ;
+}
+void p3VoRS::setVoipfVADmax(int vad) 
+{
+	_vadmax = vad ;
+	IndicateConfigChanged() ;
+}
+void p3VoRS::setVoipiNoiseSuppress(int n) 
+{
+	_noise_suppress = n ;
+	IndicateConfigChanged() ;
+}
+void p3VoRS::setVoipiMinLoudness(int ml) 
+{
+	_min_loudness = ml ;
+	IndicateConfigChanged() ;
+}
+void p3VoRS::setVoipEchoCancel(bool b) 
+{
+	_echo_cancel = b ;
+	IndicateConfigChanged() ;
+}
+
+bool p3VoRS::saveList(bool& cleanup, std::list<RsItem*>&) 
+{
+	cleanup = true ;
+	return true ;
+}
+bool p3VoRS::loadList(std::list<RsItem*>& load) 
+{
+	return true ;
+}
+
+RsSerialiser *p3VoRS::setupSerialiser() 
+{
+	RsSerialiser *rsSerialiser = new RsSerialiser();
+//	rsSerialiser->addSerialType(new RsVoipSerialiser());
+	rsSerialiser->addSerialType(new RsGeneralConfigSerialiser());
+
+	return rsSerialiser ;
 }
 
 
