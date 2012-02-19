@@ -126,7 +126,7 @@ RSettingsWin::initStackedWidget()
 	 {
 		 RsPlugin *pl = rsPlugins->plugin(i) ;
 
-		 if(pl->qt_config_page() != NULL)
+		 if(pl != NULL && pl->qt_config_page() != NULL)
 			 addPage(pl->qt_config_page()) ;
 	 }
 
