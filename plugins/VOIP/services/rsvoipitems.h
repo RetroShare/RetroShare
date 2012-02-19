@@ -34,37 +34,93 @@
 
 /**************************************************************************/
 
-const uint8_t RS_PKT_SUBTYPE_VOIP_PING = 0x01;
-const uint8_t RS_PKT_SUBTYPE_VOIP_PONG = 0x02;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	= 0x01;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	= 0x02;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PROTOCOL= 0x03 ;
+const uint8_t RS_PKT_SUBTYPE_VOIP_DATA   	= 0x04 ;
+
+const uint8_t QOS_PRIORITY_RS_VOIP = 9 ;
 
 class RsVoipItem: public RsItem
 {
 	public:
-		RsVoipItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP,chat_subtype) 
-	{ setPriorityLevel(QOS_PRIORITY_RS_VOIP_PING) ;}	// should be refined later.
+		RsVoipItem(uint8_t voip_subtype) 
+			: RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP,voip_subtype) 
+		{ 
+			setPriorityLevel(QOS_PRIORITY_RS_VOIP) ;
+		}	
 
 		virtual ~RsVoipItem() {};
 		virtual void clear() {};
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
+
+		virtual bool serialise(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialise themselves ?
+		virtual uint32_t serial_size() const = 0 ; 							// deserialise is handled using a constructor
 };
 
 class RsVoipPingItem: public RsVoipItem
 {
 	public:
 		RsVoipPingItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PING) {}
+		RsVoipPingItem(void *data,uint32_t size) ;
 
-		virtual ~RsVoipPingItem();
-		virtual void clear();
+		virtual bool serialise(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() const ; 						
+
+		virtual ~RsVoipPingItem() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;
 };
 
+class RsVoipDataItem: public RsVoipItem
+{
+	public:
+		RsVoipDataItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_DATA) {}
+		RsVoipDataItem(void *data,uint32_t size) ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;
+		virtual uint32_t serial_size() const ; 							
+
+		virtual ~RsVoipDataItem() 
+		{
+			free(voip_data) ;
+			voip_data = NULL ;
+		}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		uint32_t flags ;
+		uint32_t data_size ;
+		void *voip_data ;
+};
+
+class RsVoipProtocolItem: public RsVoipItem
+{
+	public:
+		RsVoipProtocolItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
+		RsVoipProtocolItem(void *data,uint32_t size) ;
+
+		enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3 } ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;
+		virtual uint32_t serial_size() const ; 							
+
+		virtual ~RsVoipProtocolItem() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		uint32_t protocol ;
+		uint32_t flags ;
+};
+
 class RsVoipPongItem: public RsVoipItem
 {
 	public:
 		RsVoipPongItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PONG) {}
+		RsVoipPongItem(void *data,uint32_t size) ;
+
+		virtual bool serialise(void *data,uint32_t& size) ;
+		virtual uint32_t serial_size() const ; 							
 
 		virtual ~RsVoipPongItem();
 		virtual void clear();
@@ -75,30 +131,25 @@ class RsVoipPongItem: public RsVoipItem
 		uint64_t mPongTS;
 };
 
-
 class RsVoipSerialiser: public RsSerialType
 {
 	public:
-	RsVoipSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_VOIP)
-	{ return; }
-	
-virtual     ~RsVoipSerialiser() { return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+		RsVoipSerialiser()
+			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_VOIP)
+		{ 
+		}
+		virtual ~RsVoipSerialiser() {}
 
-	private:
+		virtual uint32_t 	size (RsItem *item) 
+		{ 
+			return dynamic_cast<RsVoipItem *>(item)->serial_size() ;
+		}
 
-virtual	uint32_t    sizeVoipPingItem(RsVoipPingItem *);
-virtual	bool        serialiseVoipPingItem  (RsVoipPingItem *item, void *data, uint32_t *size);
-virtual	RsVoipPingItem *deserialiseVoipPingItem(void *data, uint32_t *size);
-
-virtual	uint32_t    sizeVoipPongItem(RsVoipPongItem *);
-virtual	bool        serialiseVoipPongItem  (RsVoipPongItem *item, void *data, uint32_t *size);
-virtual	RsVoipPongItem *deserialiseVoipPongItem(void *data, uint32_t *size);
-
+		virtual	bool serialise  (RsItem *item, void *data, uint32_t *size)
+		{ 
+			return dynamic_cast<RsVoipItem *>(item)->serialise(data,*size) ;
+		}
+		virtual	RsItem *deserialise(void *data, uint32_t *size);
 };
 
 /**************************************************************************/

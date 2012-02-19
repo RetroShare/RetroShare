@@ -526,7 +526,7 @@ bool p3VoRS::loadList(std::list<RsItem*>& load)
 RsSerialiser *p3VoRS::setupSerialiser() 
 {
 	RsSerialiser *rsSerialiser = new RsSerialiser();
-//	rsSerialiser->addSerialType(new RsVoipSerialiser());
+	rsSerialiser->addSerialType(new RsVoipSerialiser());
 	rsSerialiser->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rsSerialiser ;
