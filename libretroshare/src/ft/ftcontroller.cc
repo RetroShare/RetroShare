@@ -753,7 +753,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 
 	free(buffer) ;
 
-	return true ;
+	return bRet ;
 }
 
 
