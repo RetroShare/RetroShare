@@ -24,7 +24,7 @@
 
 #include "PeerItem.h"
 #include "FeedHolder.h"
-#include "../RsAutoUpdatePage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/AvatarDefs.h"

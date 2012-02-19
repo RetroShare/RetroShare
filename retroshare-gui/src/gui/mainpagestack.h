@@ -26,7 +26,7 @@
 #include <QStackedWidget>
 #include <QHash>
 
-#include "mainpage.h"
+#include "retroshare-gui/mainpage.h"
 
 
 class MainPageStack : public QStackedWidget

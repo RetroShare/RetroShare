@@ -1818,16 +1818,9 @@ RsTurtle *rsTurtle = NULL ;
 
 /****
  * #define RS_RELEASE 		1
- * #define RS_VOIPTEST		1
 ****/
 
 #define RS_RELEASE 	1
-#define RS_VOIPTEST	1
-
-
-#ifdef RS_VOIPTEST
-#include "services/p3vors.h"
-#endif
 
 #include "services/p3banlist.h"
 #include "services/p3dsdv.h"
@@ -2152,7 +2145,7 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
 	mPluginsManager->setFileServer(ftserver) ;
-        mPluginsManager->setLinkMgr(mLinkMgr) ;
+	mPluginsManager->setLinkMgr(mLinkMgr) ;
 
 	// Now load the plugins. This parses the available SO/DLL files for known symbols.
 	//

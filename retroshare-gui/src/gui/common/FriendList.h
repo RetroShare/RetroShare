@@ -26,7 +26,7 @@
 
 #include <QWidget>
 
-#include "gui/RsAutoUpdatePage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 
 namespace Ui {
     class FriendList;

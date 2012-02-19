@@ -28,7 +28,7 @@
 #include "RetroShareLink.h"
 #include "msgs/MessageComposer.h"
 #include "gui/RSHumanReadableDelegate.h"
-#include "gui/RsAutoUpdatePage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/common/RsCollectionFile.h"
 #include "gui/common/FilesDefs.h"
 #include "settings/rsharesettings.h"

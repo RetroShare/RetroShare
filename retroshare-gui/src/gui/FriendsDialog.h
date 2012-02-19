@@ -23,9 +23,7 @@
 #define _FRIENDSDIALOG_H
 
 #include "chat/ChatStyle.h"
-#include "RsAutoUpdatePage.h"
-
-#include "mainpage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 
 #ifndef MINIMAL_RSGUI
 #include "ui_FriendsDialog.h"

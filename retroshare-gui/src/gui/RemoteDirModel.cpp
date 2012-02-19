@@ -26,7 +26,7 @@
 #include <QTimer>
 #include <QFileDialog>
 
-#include <gui/RsAutoUpdatePage.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include <gui/common/RsCollectionFile.h>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/FilesDefs.h>

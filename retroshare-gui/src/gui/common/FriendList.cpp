@@ -40,7 +40,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
-#include "gui/RsAutoUpdatePage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 #ifdef UNFINISHED
 #include "gui/unfinished/profile/ProfileView.h"
 #endif

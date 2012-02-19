@@ -22,6 +22,8 @@ minimal {
 	DEFINES += MINIMAL_RSGUI
 }
 
+INCLUDEPATH *= retroshare-gui
+
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
@@ -203,6 +205,8 @@ INCLUDEPATH += ../../libretroshare/src/
 # Input
 HEADERS +=  rshare.h \
             retroshare-gui/configpage.h \
+            retroshare-gui/RsAutoUpdatePage.h \
+            retroshare-gui/mainpage.h \
             gui/notifyqt.h \
             control/bandwidthevent.h \
             control/eventtype.h \
@@ -216,13 +220,11 @@ HEADERS +=  rshare.h \
             gui/TransfersDialog.h \
             gui/graphframe.h \
             gui/linetypes.h \
-            gui/mainpage.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
             gui/RSHumanReadableDelegate.h \
             gui/TurtleRouterDialog.h \
             gui/TurtleRouterStatistics.h \
-            gui/VoipStatistics.h \
             gui/AboutDialog.h \
             gui/ForumsDialog.h \
             gui/forums/ForumDetails.h \
@@ -244,7 +246,6 @@ HEADERS +=  rshare.h \
             gui/SFListDelegate.h \
             gui/SoundManager.h \
             gui/FileTransferInfoWidget.h \
-            gui/RsAutoUpdatePage.h \
             gui/HelpDialog.h \
             gui/InfoDialog.h \
             gui/LogoBar.h \
@@ -397,7 +398,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/MainWindow.ui \
             gui/TurtleRouterDialog.ui \
             gui/TurtleRouterStatistics.ui \
-            gui/VoipStatistics.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/forums/ForumDetails.ui \
@@ -498,7 +498,6 @@ SOURCES +=  main.cpp \
             gui/mainpagestack.cpp \
             gui/TurtleRouterDialog.cpp \
             gui/TurtleRouterStatistics.cpp \
-            gui/VoipStatistics.cpp \
             gui/MainWindow.cpp \
             gui/ForumsDialog.cpp \
             gui/forums/ForumDetails.cpp \

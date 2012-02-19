@@ -24,7 +24,7 @@
 #include <rshare.h>
 #include <control/bandwidthevent.h>
 #include "bwgraph.h"
-#include <gui/RsAutoUpdatePage.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include <retroshare/rsiface.h>
 
 #include <sstream>

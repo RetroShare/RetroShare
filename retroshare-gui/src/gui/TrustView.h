@@ -1,5 +1,5 @@
 #include "ui_TrustView.h"
-#include <gui/RsAutoUpdatePage.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 class QWheelEvent ;
 class QShowEvent ;

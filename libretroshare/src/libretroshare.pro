@@ -630,17 +630,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/pgpkey.cc \
 			util/pugixml.cc
 
-
-# VOIP TEST STUFF
-HEADERS +=	retroshare/rsvoip.h 		\
-		serialiser/rsvoipitems.h	\
-		services/p3vors.h
-
-SOURCES +=	serialiser/rsvoipitems.cc 	\
-		services/p3vors.cc 
-
-
-
 minimal {
 	SOURCES -= rsserver/p3msgs.cc \
 			rsserver/p3status.cc \
