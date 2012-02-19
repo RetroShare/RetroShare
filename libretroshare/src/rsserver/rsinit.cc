@@ -51,6 +51,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#if (defined(__unix__) || defined(unix)) && !defined(USG)
+#include <sys/param.h>
+#endif
+
 // for blocking signals
 #include <signal.h>
 
@@ -860,6 +864,8 @@ std::string RsInit::getRetroshareDataDirectory()
 #ifndef WINDOWS_SYS
 
   #ifdef __APPLE__
+	/* NOTE: OSX also qualifies as BSD... so this #ifdef must be before the BSD check. */
+
 	/* For OSX, applications are Bundled in a directory...
 	 * need to get the path to the executable Bundle.
 	 * 
@@ -877,6 +883,15 @@ std::string RsInit::getRetroshareDataDirectory()
 
     	dataDirectory += "/Contents/Resources";
 	std::cerr << "getRetroshareDataDirectory() OSX: " << dataDirectory;
+
+  #elif (defined(BSD) && (BSD >= 199103))
+	/* For BSD, the default is LOCALBASE which will be set
+	 * before compilation via the ports/pkg-src mechanisms.
+	 * For compilation without ports/pkg-src it is set to
+	 * /usr/local (default on Open and Free; Net has /usr/pkg)
+	 */
+	dataDirectory = "/usr/local/share/retroshare";
+	std::cerr << "getRetroshareDataDirectory() BSD: " << dataDirectory;
 
   #else
 	/* For Linux, we have a fixed standard data directory  */
