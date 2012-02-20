@@ -1,6 +1,24 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - added BSD specific changes
+     - made settings page system more automatic
+     - updated french translation
+     - mark local existing files in search dialog with red color
+     - started working on VOIP plugin (not finished yet)
+        * merged p3voRS code with plugin code
+        * created new interface directory retroshare-gui/src/retroshare-gui
+        * improved plugin system to allow adding settings pages from plugins
+
+  * Bugs
+     - fixed crash in config dialog
+     - fixed missing return value in ftcontroller.cc
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 20 feb 2012 12:00:00 +0100
+
+retroshare (0.5.3-0.4953~natty) natty; urgency=low
+
+  * Improvements
      - removed unused plugins in .pro file
      - added early sendign of chunkmap requests to new sources (FT)
      - saving finished/checking transfers (FT)
