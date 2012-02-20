@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
+CONFIG += qt gui uic qrc resources uitools idle bitdht# framecatcher# blogs
 QT     += network xml script 
 
 TEMPLATE = app
@@ -118,7 +118,7 @@ win32 {
 	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -L"../../../../lib"
+	LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 #    LIBS += -lws2_32
@@ -128,8 +128,8 @@ win32 {
 
 	DEFINES += WINDOWS_SYS
 
-	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-	GPGME_DIR  = ../../../../gpgme-1.1.8
+	GPG_ERROR_DIR = ../../../libgpg-error-1.10
+	GPGME_DIR  = ../../../gpgme-1.1.8
 	INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 

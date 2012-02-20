@@ -1,3 +1,56 @@
+Changes for v0.5.3b
+
+  * Improvements
+    - Added BSD specific changes - data directory and #including <sys/params.h>
+    - improved plugin management to allow services to be used, and config pages to be added
+    - Improvement to plugin system:
+      - made config page system more automatic, to allow addign config pages from plugins
+      - added (disabled) checkbox and function to allow all plugins for development
+      - added config page methods to RsPlugin class
+    - Mark local existing files in SearchDialog with red text color.
+    - added early sending of chunkmap request to newly added sources
+    - Improvements to file transfer:
+      - corrected 2 potential flaws of swarming causing request of unavailable data (This should normally be taken care of on the server side!)
+      - improved swarming test code with fault simulation
+      - only ask CRC32 maps to peers that have a complete file.
+    - Moved the news feed tab to the first position.
+    - Added Cache system for GPG Certificates.
+      - This should reduce gpg calls by 90+%.
+    - Added translation for "[ ... Missing Message ... ]".
+    - removed cache adding strategy to DL queue that was O(n^2). Now addign cache at the end of the queue
+    - The channel message (in channels) is set to read when the user clicks on the show more button.
+    - The forum/channel news feed is removed when the user reads the message in forums/channels.
+    - The standard font is now used for new chat lobbies.
+    - Added a new menu item to set the font of a private chat and chat lobby to the default font.
+    - set max chunk inactivity period to 5 mins instead of 1 mins. Shoudl favor slow DLs. This is nw possible since missing bits will be re-asked regularly
+    - Changed the color of the time of the compact chat style from red to gray.
+    - disabled autodownload when subscribing to a channel. 
+    - Sort nick names by name in the chat lobby.
+    - Added multi friend recommendation dialog.
+      - You can start it from the tools menu in FriendsDialog.
+      
+  * Fixes
+    - Fixed tab order in config pages Directories and Server.
+    - corrected stupid bug in settings causing crash when a plugin is ot loaded correctly
+    - Fixed compile on Windows with enabled shadow build of Qt Creator.
+    - patch by AsamK to save finished/checking transfers
+    - Fixed private message notification. Remove offline private messages of none friends at startup and when a friend is removed.
+    - Moved the removing of the history of removed friends from p3PeerMgrIMPL to p3ChatService.
+    - DownloadToaster:
+      - Fixed handling of utf8 characters in the file name
+      - Replaced QDesktopServices by RsUrlHandler to handle collections
+      - Fixed crash after opening a collection (Thanks to AsamK =
+    - Fixed usage of utf8 characters in certificate links (gpg and location name) (Patch from Asamk)
+    - added missing IPs to certificate links
+    - Fixed bug when the user clicks on a link without http:// in a QTextBrowser. This link was opened directly in RetroShare.
+    - Show clickable links in the channel feed message.
+    - fixed reference to tryNetMode.
+    Attempted fix for maintaining External Port in Manual Forwarded Mode.
+    - added check for RS_NET_MODE_EXT instead of RS_NET_MODE_TRY_EXT... as trys aren't used in p3PeerMgr.
+    - removed tryMode from external interface - as this data is not available anymore.
+    - Removed setting this parameter in p3peers.cc
+      
+
 Changes for v0.5.3a
 
   * Improvements

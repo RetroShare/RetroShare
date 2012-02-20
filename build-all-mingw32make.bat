@@ -3,7 +3,7 @@ set MINGW=%QTDIR%\mingw
 
 set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"D:\Programme\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
+"D:\Program Files\Tortoisesvn\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
 
 cd libbitdht\src
 
@@ -30,6 +30,8 @@ qmake retroshare-nogui.pro
 mingw32-make
 
 cd ..\..\retroshare-gui\src
+
+mingw32-make clean 
 
 qmake RetroShare.pro
 

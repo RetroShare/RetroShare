@@ -292,12 +292,12 @@ win32 {
 	SOURCES += upnp/upnputil.c
 
 
-	UPNPC_DIR = ../../../../miniupnpc-1.3
-	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-	GPGME_DIR  = ../../../../gpgme-1.1.8
+	UPNPC_DIR = ../../../miniupnpc-1.3
+	GPG_ERROR_DIR = ../../../libgpg-error-1.10
+	GPGME_DIR  = ../../../gpgme-1.1.8
 
-	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
-	ZLIB_DIR = ../../../../zlib-1.2.3
+	PTHREADS_DIR = ../../../pthreads-w32-2-8-0-release
+	ZLIB_DIR = ../../../zlib-1.2.3
 	SSL_DIR = ../../../../OpenSSL
 
 
