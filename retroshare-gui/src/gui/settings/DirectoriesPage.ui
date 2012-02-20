@@ -730,8 +730,17 @@ you plug it in.</string>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>shareDownloadDirectoryCB</tabstop>
+  <tabstop>editShareButton</tabstop>
+  <tabstop>rememberHashesCB</tabstop>
+  <tabstop>rememberHashesSB</tabstop>
+  <tabstop>cleanHashCachePB</tabstop>
+  <tabstop>autoCheckDirectories_CB</tabstop>
+  <tabstop>autoCheckDirectoriesDelay_SB</tabstop>
   <tabstop>incomingDir</tabstop>
   <tabstop>incomingButton</tabstop>
+  <tabstop>partialsDir</tabstop>
+  <tabstop>partialButton</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>

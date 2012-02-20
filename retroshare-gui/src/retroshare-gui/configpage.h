@@ -29,7 +29,7 @@ class ConfigPage : public QWidget
 {
 	public:
 		/** Default Constructor */
-		ConfigPage(QWidget *parent = 0, Qt::WFlags flags = 0) : loaded(false) {}
+		ConfigPage(QWidget *parent = 0, Qt::WFlags flags = 0) : QWidget(parent, flags), loaded(false) {}
 
 		/** Pure virtual method. Subclassed pages load their config settings here. */
 		virtual void load() = 0;
@@ -50,7 +50,7 @@ class ConfigPage : public QWidget
 		virtual QString pageName() const = 0 ;
 
 	protected:
-		virtual void showEvent(QShowEvent * event)
+		virtual void showEvent(QShowEvent * /*event*/)
 		{
 			if(!loaded)
 			{
