@@ -47,6 +47,7 @@ class RsCacheService ;
 class ftServer ;
 class ConfigPage ;
 class RsPQIService ;
+class RsAutoUpdatePage ;
 
 // Used for the status of plugins.
 //
@@ -77,23 +78,60 @@ public:
 class RsPlugin
 {
 	public:
-		virtual RsCacheService *rs_cache_service() 	const	{ return NULL ; }
+		//
+		//================================ Services ==================================//
+		//
+		// Cache service. Use this for providing cache-based services, such as channels, forums.
+		// Example plugin: LinksCloud 
+		//
+		virtual RsCacheService *rs_cache_service() 	const	{ return NULL ; }	
+
+		// Peer-to-Peer service. Use this for providing a service based to friend to friend
+		// exchange of data, such as chat, messages, etc. 
+		// Example plugin: VOIP
+		//
 		virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
 
-		virtual MainPage       *qt_page()       		const	{ return NULL ; }
-		virtual QWidget        *qt_config_panel()		const	{ return NULL ; }
-		virtual QIcon          *qt_icon()       		const	{ return NULL ; }
-		virtual ConfigPage     *qt_config_page()  	const	{ return NULL ; }
+		// Filename used for saving the specific plugin configuration. Both RsCacheService and RsPQIService
+		// derive from p3Config, which means that the service provided by the plugin can load/save its own
+		// config by deriving loadList() and saveList() from p3Config.
+		//
+		virtual std::string configurationFileName() const { return std::string() ; }
+
+		//
+		//=================================== GUI ====================================//
+		//
+		// Derive the following methods to provide GUI additions to RetroShare's GUI.
+		//
+		// Main page: like Transfers, Channels, Forums, etc.
+		//
+		virtual MainPage       		*qt_page()       		const	{ return NULL ; }	// The page itself
+		virtual QIcon          		*qt_icon()       		const	{ return NULL ; } // the page icon. Todo: put icon as virtual in MainPage
+
+		virtual QWidget        		*qt_config_panel()	const	{ return NULL ; } // Config panel, to appear config->plugins->[]->
+		virtual ConfigPage     		*qt_config_page()  	const	{ return NULL ; } // Config tab to add in config panel.
+		virtual RsAutoUpdatePage 	*qt_transfers_tab()	const	{ return NULL ; } // Tab to add in transfers, after turtle statistics.
+		virtual std::string   		 qt_transfers_tab_name()const	{ return "Tab" ; } // Tab name
 
 		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */ ) const	{ return NULL ; }
 
-		virtual std::string configurationFileName() const { return std::string() ; }
+		// 
+		//========================== Plugin Description ==============================//
+		// 
+		//  All these items appear in the config->plugins tab, as a description of the plugin.
+		//
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
-		virtual void setPlugInHandler(RsPluginHandler* pgHandler) = 0;
+
+		// 
+		//========================== Plugin Interface ================================//
+		// 
+		// Use these methods to access main objects from RetroShare.
+		//
 		virtual void setInterfaces(RsPlugInInterfaces& interfaces) = 0;
+		virtual void setPlugInHandler(RsPluginHandler* pgHandler) = 0;
 };
 
 class RsPluginHandler

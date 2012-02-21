@@ -122,9 +122,8 @@ class RsVoipPongItem: public RsVoipItem
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							
 
-		virtual ~RsVoipPongItem();
-		virtual void clear();
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+		virtual ~RsVoipPongItem() {}
+	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;

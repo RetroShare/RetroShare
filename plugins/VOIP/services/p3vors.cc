@@ -154,6 +154,8 @@ p3VoRS::p3VoRS(RsPluginHandler *handler)
 
 int	p3VoRS::tick()
 {
+	std::cerr << "ticking p3VoRS" << std::endl;
+
 	processIncoming();
 	sendPackets();
 

@@ -51,6 +51,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
+#include <retroshare/rsplugin.h>
 
 /****
  * #define SHOW_RTT_STATISTICS		1
@@ -304,10 +305,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
 
-#ifdef SHOW_RTT_STATISTICS
-	 ui.tabWidget->addTab( new VoipStatistics(), tr("RTT Statistics")) ;
-#endif
-	 
+	 for(int i=0;i<rsPlugins->nbPlugins();++i)
+		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)
+			 ui.tabWidget->addTab( rsPlugins->plugin(i)->qt_transfers_tab(),QString::fromStdString(rsPlugins->plugin(i)->qt_transfers_tab_name()) ) ;
 
 //    TurtleRouterDialog *trdl = new TurtleRouterDialog();
 //    ui.tunnelInfoWidget->setWidget(trdl);
@@ -595,7 +595,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 }
 
 int TransfersDialog::addItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
-		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
+		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime,const QString& tooltip)
 {
 	int rowCount = DLListModel->rowCount();
 	int row ;
@@ -626,6 +626,7 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
 	DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
 	DLListModel->setData(DLListModel->index(row,NAME), FilesDefs::getIconFromFilename(name), Qt::DecorationRole);
+	DLListModel->item(row,STATUS)->setToolTip(tooltip) ;
 
 	return row ;
 }
@@ -897,7 +898,12 @@ void TransfersDialog::insertTransfers()
 		for(uint32_t i=0;i<fcinfo.active_chunks.size();++i)
 			pinfo.chunks_in_progress.push_back(fcinfo.active_chunks[i].first) ;
 
-		int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining, downloadtime);
+		QString tooltip("") ;
+
+		if(info.downloadStatus == FT_STATE_CHECKING_HASH)
+			tooltip = tr("If the hash of the downloaded data does\nnot correspond to the hash announced\nby the file source. The data is likely \nto be corrupted.\n\nRetroShare will ask the source a detailed \nmap of the data; it will compare and invalidate\nbad blocks, and download them again\n\nTry to be patient!") ;
+
+		int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining, downloadtime,tooltip);
 		used_hashes.insert(info.hash) ;
 
 		std::map<std::string, std::string>::iterator vit;

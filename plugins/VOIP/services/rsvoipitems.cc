@@ -68,7 +68,32 @@ std::ostream& RsVoipPongItem::print(std::ostream &out, uint16_t indent)
 	printRsItemEnd(out, "RsVoipPongItem", indent);
 	return out;
 }
+std::ostream& RsVoipProtocolItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsVoipProtocolItem", indent);
+	uint16_t int_Indent = indent + 2;
+	printIndent(out, int_Indent);
+	out << "flags: " << flags << std::endl;
 
+	printIndent(out, int_Indent);
+	out << "protocol: " << std::hex << protocol << std::dec << std::endl;
+
+	printRsItemEnd(out, "RsVoipProtocolItem", indent);
+	return out;
+}
+std::ostream& RsVoipDataItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsVoipDataItem", indent);
+	uint16_t int_Indent = indent + 2;
+	printIndent(out, int_Indent);
+	out << "flags: " << flags << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "data size: " << std::hex << data_size << std::dec << std::endl;
+
+	printRsItemEnd(out, "RsVoipDataItem", indent);
+	return out;
+}
 
 /*************************************************************************/
 uint32_t RsVoipDataItem::serial_size() const

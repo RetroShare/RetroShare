@@ -1,9 +1,13 @@
 #include <retroshare/rsplugin.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include <QTranslator>
 #include <QApplication>
+#include <QString>
 
 #include "VOIPPlugin.h"
 #include "interface/rsvoip.h"
+
+#include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
 
 static void *inited = new VOIPPlugin() ;
@@ -40,6 +44,15 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 ConfigPage *VOIPPlugin::qt_config_page() const
 {
 	return new AudioInputConfig() ;
+}
+
+std::string VOIPPlugin::qt_transfers_tab_name() const
+{
+	return QObject::tr("RTT Statistics").toStdString() ;
+}
+RsAutoUpdatePage *VOIPPlugin::qt_transfers_tab() const
+{
+	return new VoipStatistics ;
 }
 
 RsPQIService *VOIPPlugin::rs_pqi_service() const
