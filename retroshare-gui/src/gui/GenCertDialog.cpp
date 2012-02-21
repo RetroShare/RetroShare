@@ -139,7 +139,7 @@ void GenCertDialog::genPerson()
         if (!genNewGPGKey) {
             if (genLoc.length() < 3) {
                     /* Message Dialog */
-                    QMessageBox::warning ( NULL,
+                    QMessageBox::warning(this,
                                     tr("Generate GPG key Failure"),
                                     tr("Location field is required with a minimum of 3 characters"),
                                       QMessageBox::Ok);
@@ -149,7 +149,7 @@ void GenCertDialog::genPerson()
             if (pgpidx < 0)
             {
                     /* Message Dialog */
-                    QMessageBox::warning ( NULL,
+                    QMessageBox::warning(this,
                                     "Generate ID Failure",
                                     "Missing PGP Certificate",
                                       QMessageBox::Ok);
@@ -159,9 +159,10 @@ void GenCertDialog::genPerson()
             PGPId = (data.toString()).toStdString();
         } else {
             if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3
-                || ui.email_input->text().length() < 3 || ui.location_label->text().length() < 3) {
+                || ui.email_input->text().length() < 3 || ui.location_label->text().length() < 3 ||
+                genLoc.length() < 3) {
                     /* Message Dialog */
-                    QMessageBox::warning ( NULL,
+                    QMessageBox::warning(this,
                                     tr("Generate GPG key Failure"),
                                     tr("All fields are required with a minimum of 3 characters"),
                                       QMessageBox::Ok);
@@ -186,7 +187,7 @@ void GenCertDialog::genPerson()
             ui.infopushButton->hide();
             ui.genButton->hide();
             ui.label_location2->hide();
-//            QMessageBox::StandardButton info = QMessageBox::information( NULL,
+//            QMessageBox::StandardButton info = QMessageBox::information(this,
 //                            "Generating GPG key",
 //                            "This process can take some time (approximately one minute), please be patient after pressing the OK button",
 //                              QMessageBox::Ok);
@@ -234,7 +235,7 @@ void GenCertDialog::genPerson()
 	else
 	{
 		/* Message Dialog */
-		QMessageBox::warning( NULL,
+		QMessageBox::warning(this,
 				"Generate ID Failure",
 				"Failed to Generate your new Certificate, maybe PGP password is wrong !",
 				QMessageBox::Ok);
