@@ -71,7 +71,13 @@ class p3VoRS: public RsPQIService, public RsVoip
 		/***** overloaded from rsVoip *****/
 
 		virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResult> &results);
-		virtual int sendVoipData(const void *data,uint32_t size) ;
+
+		// Call stuff.
+		//
+		virtual int sendVoipData(const std::string& peer_id,const void *data,uint32_t size) ;
+		virtual int sendVoipHangUpCall(const std::string& peer_id) ;
+		virtual int sendVoipRinging(const std::string& peer_id) ;
+		virtual int sendVoipAcceptCall(const std::string& peer_id) ;
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -83,16 +89,6 @@ class p3VoRS: public RsPQIService, public RsVoip
 		 */
 		virtual int   tick();
 		virtual int   status();
-
-		int     sendPackets();
-		void 	sendPingMeasurements();
-		int 	processIncoming();
-
-		int 	handlePing(RsItem *item);
-		int 	handlePong(RsItem *item);
-
-		int 	storePingAttempt(std::string id, double ts, uint32_t mCounter);
-		int 	storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset);
 
 		/*************** pqiMonitor callback ***********************/
 		//virtual void statusChange(const std::list<pqipeer> &plist);
@@ -121,11 +117,24 @@ class p3VoRS: public RsPQIService, public RsVoip
 		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
 		virtual bool loadList(std::list<RsItem*>& load) ;
 
-
 	private:
+		int     sendPackets();
+		void 	sendPingMeasurements();
+		int 	processIncoming();
+
+		int 	handlePing(RsItem *item);
+		int 	handlePong(RsItem *item);
+
+		int 	storePingAttempt(std::string id, double ts, uint32_t mCounter);
+		int 	storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset);
+
+
 		RsMutex mVorsMtx;
 
 		VorsPeerInfo *locked_GetPeerInfo(std::string id);
+
+		static RsTlvKeyValue push_int_value(const std::string& key,int value) ;
+		static int pop_int_value(const std::string& s) ;
 
 		std::map<std::string, VorsPeerInfo> mPeerInfo;
 		time_t mSentPingTime;

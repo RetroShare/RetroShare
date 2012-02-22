@@ -28,7 +28,10 @@ class RsVoipPongResult
 class RsVoip
 {
 	public:
-		virtual int sendVoipData(const void *data,uint32_t size) = 0;
+		virtual int sendVoipData(const std::string& peer_id,const void *data,uint32_t size) = 0;
+		virtual int sendVoipHangUpCall(const std::string& peer_id) = 0;
+		virtual int sendVoipRinging(const std::string& peer_id) = 0;
+		virtual int sendVoipAcceptCall(const std::string& peer_id) = 0;
 
 		typedef enum { AudioTransmitContinous = 0, AudioTransmitVAD = 1, AudioTransmitPushToTalk = 2 } enumAudioTransmit ;
 

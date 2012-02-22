@@ -185,12 +185,68 @@ int	p3VoRS::sendPackets()
 	}
 	return true ;
 }
+int p3VoRS::sendVoipHangUpCall(const std::string& peer_id)
+{
+	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
 
-int p3VoRS::sendVoipData(const void *data,uint32_t size)
+	item->protocol = RsVoipProtocolItem::VoipProtocol_Close;
+	item->flags = 0 ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+
+	return true ;
+}
+int p3VoRS::sendVoipAcceptCall(const std::string& peer_id)
+{
+	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
+
+	item->protocol = RsVoipProtocolItem::VoipProtocol_Ackn ;
+	item->flags = 0 ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+
+	return true ;
+}
+int p3VoRS::sendVoipRinging(const std::string& peer_id)
+{
+	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
+
+	item->protocol = RsVoipProtocolItem::VoipProtocol_Ring ;
+	item->flags = 0 ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+
+	return true ;
+}
+
+int p3VoRS::sendVoipData(const std::string& peer_id,const void *data,uint32_t size)
 {
 	std::cerr << "Sending " << size << " bytes of voip data." << std::endl;
 
-	return size ;
+	RsVoipDataItem *item = new RsVoipDataItem ;
+
+	if(!item)
+	{
+		std::cerr << "Cannot allocate RsVoipDataItem !" << std::endl;
+		return false ;
+	}
+	item->voip_data = malloc(size) ;
+
+	if(item->voip_data == NULL)
+	{
+		std::cerr << "Cannot allocate RsVoipDataItem.voip_data of size " << size << " !" << std::endl;
+		return false ;
+	}
+	memcpy(item->voip_data,data,size) ;
+	item->flags = 0 ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+
+	return true ;
 }
 
 void p3VoRS::sendPingMeasurements()
@@ -460,8 +516,6 @@ VorsPeerInfo *p3VoRS::locked_GetPeerInfo(std::string id)
 	return &(it->second);
 }
 
-
-
 bool VorsPeerInfo::initialisePeerInfo(std::string id)
 {
 	mId = id;
@@ -515,13 +569,73 @@ void p3VoRS::setVoipEchoCancel(bool b)
 	IndicateConfigChanged() ;
 }
 
-bool p3VoRS::saveList(bool& cleanup, std::list<RsItem*>&) 
+RsTlvKeyValue p3VoRS::push_int_value(const std::string& key,int value)
+{
+	RsTlvKeyValue kv ;
+	kv.key = key ;
+	std::ostringstream s ;
+	s << value;
+	kv.value = s.str() ;
+
+	return kv ;
+}
+int p3VoRS::pop_int_value(const std::string& s)
+{
+	std::istringstream is(s) ;
+
+	int val ;
+	is >> val ;
+
+	return val ;
+}
+
+bool p3VoRS::saveList(bool& cleanup, std::list<RsItem*>& lst) 
 {
 	cleanup = true ;
+
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_ATRANSMIT",_atransmit)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VOICEHOLD",_voice_hold)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VADMIN"   ,_vadmin)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VADMAX"   ,_vadmax)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_NOISE_SUP",_noise_suppress)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_MIN_LOUDN",_min_loudness)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_ECHO_CNCL",_echo_cancel)) ;
+
+	lst.push_back(vitem) ;
+
 	return true ;
 }
 bool p3VoRS::loadList(std::list<RsItem*>& load) 
 {
+	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
+	{
+#ifdef P3TURTLE_DEBUG
+		assert(item!=NULL) ;
+#endif
+		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it) ;
+
+		if(vitem != NULL)
+			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+				if(kit->key == "P3VOIP_CONFIG_ATRANSMIT")
+					_atransmit = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VOICEHOLD")
+					_voice_hold = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VADMIN")
+					_vadmin = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VADMAX")
+					_vadmax = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_NOISE_SUP")
+					_noise_suppress = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_MIN_LOUDN")
+					_min_loudness = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_ECHO_CNCL")
+					_echo_cancel = pop_int_value(kit->value) ;
+
+		delete vitem ;
+	}
+
 	return true ;
 }
 

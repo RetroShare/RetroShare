@@ -78,7 +78,7 @@ class RsVoipDataItem: public RsVoipItem
 {
 	public:
 		RsVoipDataItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_DATA) {}
-		RsVoipDataItem(void *data,uint32_t size) ;
+		RsVoipDataItem(void *data,uint32_t size) ; // de-serialization
 
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							
