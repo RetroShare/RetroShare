@@ -162,6 +162,11 @@ p, li { white-space: pre-wrap; }
         <source>Style Sheet</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../gui/settings/AppearancePage.h" line="+44"/>
+        <source>Appearance</source>
+        <translation>Aussehen</translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -1088,15 +1093,20 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatDialog</name>
     <message>
-        <location filename="../gui/chat/ChatDialog.cpp" line="+237"/>
         <source>Friend not Online</source>
-        <translation>Freund ist nicht online</translation>
+        <translation type="obsolete">Freund ist nicht online</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation>Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
+        <translation type="obsolete">Dein Freund ist Offline. Möchtest du ihm stattdessen eine Nachricht senden</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/ChatDialog.cpp" line="+235"/>
+        <source>Your friend has more than one locations.
+Please choose one of it to chat with.</source>
+        <translation>Dein Freund besitzt mehrere Orte.
+Bitte wähle einen zum chatten aus.</translation>
     </message>
 </context>
 <context>
@@ -1422,6 +1432,11 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>Outgoing offline message</source>
         <translation>Ausgehehende offline Nachricht</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/ChatPage.h" line="+44"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
     </message>
 </context>
 <context>
@@ -3101,6 +3116,11 @@ p, li { white-space: pre-wrap; }
         <source>copy RetroShare link to clipboard</source>
         <translation>Kopiere RetroShare Link in die Zwischenablage</translation>
     </message>
+    <message>
+        <location filename="../gui/settings/CryptoPage.h" line="+43"/>
+        <source>Security</source>
+        <translation>Sicherheit</translation>
+    </message>
 </context>
 <context>
     <name>DHTStatus</name>
@@ -3553,6 +3573,11 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
         <source>Automatically share incoming directory (Recommended)</source>
         <translation>Eingehende Ordner automatisch freigeben (Empfohlen)</translation>
     </message>
+    <message>
+        <location filename="../gui/settings/DirectoriesPage.h" line="+41"/>
+        <source>Directories</source>
+        <translation>Ordner</translation>
+    </message>
 </context>
 <context>
     <name>DiscStatus</name>
@@ -3907,6 +3932,11 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>You  this</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/FileAssociationsPage.h" line="+57"/>
+        <source>Associations</source>
+        <translation>Verknüpfungen</translation>
     </message>
 </context>
 <context>
@@ -4264,7 +4294,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichnen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+91"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+92"/>
         <source>Forum Post</source>
         <translation>Beitrag</translation>
     </message>
@@ -4335,6 +4365,11 @@ p, li { white-space: pre-wrap; }
         <location line="+7"/>
         <source>Expand new messages</source>
         <translation>Neue Beiträge erweitern</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/ForumPage.h" line="+42"/>
+        <source>Forum</source>
+        <translation>Forum</translation>
     </message>
 </context>
 <context>
@@ -4800,7 +4835,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Location</source>
-        <translation>Standort</translation>
+        <translation>Ort</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5279,7 +5314,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neuigkeiten</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
@@ -5610,17 +5645,17 @@ p, li { white-space: pre-wrap; }
     <name>GenCertDialog</name>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="+143"/>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
     </message>
     <message>
-        <location line="-21"/>
+        <location line="-22"/>
         <source>Location field is required with a minimum of 3 characters</source>
         <translation>Das Feld Ort ist mit min. 3 Zeichen zu versehen</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
     </message>
@@ -5667,7 +5702,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-192"/>
-        <location filename="../gui/GenCertDialog.cpp" line="-159"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-160"/>
         <location line="+23"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
@@ -5750,7 +5785,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare benutzt GPG Schlüssel für die Identität. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst ein vorhandenes Profil (GPG Schlüssel) benutzen oder ein neues Profil erstellen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Standorten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="-32"/>
@@ -5783,7 +5818,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle neues Profil</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+57"/>
         <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your GPG password when asked, to sign your new key.</source>
@@ -5910,6 +5945,11 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
         <location line="+2"/>
         <source>Could not remove retroshare:// protocol.</source>
         <translation>Konnte retroshare:// Protokoll nicht entfernen.</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/GeneralPage.h" line="+45"/>
+        <source>General</source>
+        <translation>Allgemein</translation>
     </message>
 </context>
 <context>
@@ -7877,6 +7917,11 @@ Möchtest du die Nachricht speichern ?</translation>
         <source>Edit Tag</source>
         <translation>Schlagwort bearbeiten</translation>
     </message>
+    <message>
+        <location filename="../gui/settings/MessagePage.h" line="+46"/>
+        <source>Message</source>
+        <translation>Nachricht</translation>
+    </message>
 </context>
 <context>
     <name>MessageToaster</name>
@@ -9011,6 +9056,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>NetworkPage</name>
+    <message>
+        <location filename="../gui/settings/NetworkPage.h" line="+40"/>
+        <source>Network</source>
+        <translation>Netzwerk</translation>
+    </message>
+</context>
+<context>
     <name>NetworkView</name>
     <message>
         <location filename="../gui/NetworkView.ui" line="+26"/>
@@ -9254,6 +9307,11 @@ p, li { white-space: pre-wrap; }
         <source>Bottom Right</source>
         <translation>Unten Rechts</translation>
     </message>
+    <message>
+        <location filename="../gui/settings/NotifyPage.h" line="+44"/>
+        <source>Notify</source>
+        <translation>Meldungen</translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -9321,7 +9379,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+242"/>
         <source>Location:</source>
-        <translation>Standort:</translation>
+        <translation>Ort:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9851,6 +9909,19 @@ p, li { white-space: pre-wrap; }
         <source>Description unavailable</source>
         <translation>Beschreibung nicht verfügbar</translation>
     </message>
+    <message>
+        <location line="+42"/>
+        <source>Check this for developing plugins. They will not
+be checked for the hash. However, in normal
+times, checking the hash protects you from
+malicious behavior of crafted plugins.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/PluginsPage.h" line="+41"/>
+        <source>Plugins</source>
+        <translation>Plugins</translation>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
@@ -10360,7 +10431,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Standort:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Ort:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -10615,7 +10686,7 @@ Lockdatei:
         <translation type="obsolete">Der Empfänger der Nachricht ist unbekannt.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+518"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+516"/>
         <source>Click to add this RetroShare cert to your GPG keyring
 and open the Make Friend Wizard.
 </source>
@@ -10852,26 +10923,20 @@ und den Assistent zum Hinzufügen von Freunden zu starten.
         <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
     </message>
     <message>
-        <location filename="../gui/VoipStatistics.cpp" line="+145"/>
-        <location line="+2"/>
-        <location line="+2"/>
         <source>secs</source>
-        <translation>Sekunden</translation>
+        <translation type="obsolete">Sekunden</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Old</source>
-        <translation>Alt</translation>
+        <translation type="obsolete">Alt</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Now</source>
-        <translation>Jetzt</translation>
+        <translation type="obsolete">Jetzt</translation>
     </message>
     <message>
-        <location line="+209"/>
         <source>Round Trip Time:</source>
-        <translation>Round Trip Zeit:</translation>
+        <translation type="obsolete">Round Trip Zeit:</translation>
     </message>
     <message>
         <location filename="../gui/common/RsCollectionDialog.cpp" line="+179"/>
@@ -11180,79 +11245,65 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSettingsWin</name>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="+133"/>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation type="obsolete">Allgemein</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Directories</source>
-        <translation>Ordner</translation>
+        <translation type="obsolete">Ordner</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Server</source>
-        <translation>Server</translation>
+        <translation type="obsolete">Server</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Transfer</source>
-        <translation>Übertragung</translation>
+        <translation type="obsolete">Übertragung</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Relay</source>
-        <translation>Relay</translation>
+        <translation type="obsolete">Relay</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Notify</source>
-        <translation>Meldungen</translation>
+        <translation type="obsolete">Meldungen</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Security</source>
-        <translation>Sicherheit</translation>
+        <translation type="obsolete">Sicherheit</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="obsolete">Plugins</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Appearance</source>
-        <translation>Aussehen</translation>
+        <translation type="obsolete">Aussehen</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Sound</source>
-        <translation>Sound</translation>
+        <translation type="obsolete">Sound</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>UnknownPage</source>
-        <translation>Unbekannte Seite</translation>
+        <translation type="obsolete">Unbekannte Seite</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="+182"/>
         <source>Error Saving Configuration on page </source>
         <translation>Fehler beim Speichern der Konfiguration auf der Seite </translation>
     </message>
     <message>
-        <location line="-57"/>
         <source>Message</source>
-        <translation>Nachricht</translation>
+        <translation type="obsolete">Nachricht</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation type="obsolete">Chat</translation>
     </message>
     <message>
-        <location line="-8"/>
         <source>Forum</source>
-        <translation>Forum</translation>
+        <translation type="obsolete">Forum</translation>
     </message>
 </context>
 <context>
@@ -11351,6 +11402,11 @@ p, li { white-space: pre-wrap; }
         <location line="+8"/>
         <source>Remove Server</source>
         <translation>Server entfernen</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/RelayPage.h" line="+44"/>
+        <source>Relay</source>
+        <translation>Relay</translation>
     </message>
 </context>
 <context>
@@ -11604,7 +11660,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+296"/>
+        <location filename="../gui/SearchDialog.cpp" line="+299"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -11646,7 +11702,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+396"/>
+        <location line="+385"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
@@ -11701,7 +11757,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-944"/>
+        <location filename="../gui/SearchDialog.cpp" line="-933"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -11926,7 +11982,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>Location:</source>
-        <translation>Standort:</translation>
+        <translation>Ort:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -12078,7 +12134,7 @@ peers still need to trust each other to allow connection. </source>
         <translation>DHT erlaubt dir das Verbinden mit Freunden, die das BitTorrent DHT benutzen
 Das verbessert den Verbindungsaufbau.
 
-Der Discovery Service sendet die Standorte und GPG Schlüssel deiner vertrauten
+Der Discovery Service sendet die Orte und GPG Schlüssel deiner vertrauten
 Kontakte zu deinen verbundenen Freunden um bei der Suche nach neuen Freunden zu helfen.
 Die Freundschat wird nicht automatisch erstellt. Beide Freunde müssen sich vertrauen
 um eine Verbindung zu erstellen.</translation>
@@ -12150,10 +12206,10 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12177,6 +12233,11 @@ The default value is 20.</source>
         <source>Dynamic DNS</source>
         <translation>Dynamisches DNS</translation>
     </message>
+    <message>
+        <location filename="../gui/settings/ServerPage.h" line="+42"/>
+        <source>Server</source>
+        <translation>Server</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -12186,37 +12247,31 @@ The default value is 20.</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location line="+89"/>
         <source>Transfer</source>
-        <translation>Übertragung</translation>
+        <translation type="obsolete">Übertragung</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Relays</source>
-        <translation>Relays</translation>
+        <translation type="obsolete">Relays</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="obsolete">Plugins</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Notify</source>
-        <translation>Meldungen</translation>
+        <translation type="obsolete">Meldungen</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Security</source>
-        <translation>Sicherheit</translation>
+        <translation type="obsolete">Sicherheit</translation>
     </message>
     <message>
-        <location line="+36"/>
         <source>Appearance</source>
-        <translation>Aussehen</translation>
+        <translation type="obsolete">Aussehen</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+167"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12226,39 +12281,32 @@ The default value is 20.</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-226"/>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation type="obsolete">Allgemein</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Server</source>
-        <translation>Server</translation>
+        <translation type="obsolete">Server</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Directories</source>
-        <translation>Ordner</translation>
+        <translation type="obsolete">Ordner</translation>
     </message>
     <message>
-        <location line="+36"/>
         <source>Message</source>
-        <translation>Nachricht</translation>
+        <translation type="obsolete">Nachricht</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation type="obsolete">Chat</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Sound</source>
-        <translation>Sound</translation>
+        <translation type="obsolete">Sound</translation>
     </message>
     <message>
-        <location line="-27"/>
         <source>Forum</source>
-        <translation>Forum</translation>
+        <translation type="obsolete">Forum</translation>
     </message>
 </context>
 <context>
@@ -12834,6 +12882,11 @@ p, li { white-space: pre-wrap; }
         <source>New Msg</source>
         <translation>Neue Nachricht</translation>
     </message>
+    <message>
+        <location filename="../gui/settings/SoundPage.h" line="+47"/>
+        <source>Sound</source>
+        <translation>Sound</translation>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
@@ -12897,8 +12950,8 @@ p, li { white-space: pre-wrap; }
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
         <translation>Öffnet ein Fenster zum Erstellen eines neuen Profiles oder 
-zum Hinzufügen von Standorten zu Deinem vorhandenen Profil.
-Die aktuellen Identitäten/Standorte werden nicht geändert.</translation>
+zum Hinzufügen von Orten zu Deinem vorhandenen Profil.
+Die aktuellen Identitäten/Orte werden nicht geändert.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12911,7 +12964,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Verwalte Profile und Standorte...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Verwalte Profile und Orte...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+69"/>
@@ -12989,7 +13042,7 @@ Lockdatei:
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL Zertifikates (deines Standortes) wird verschlüsselt in deinem Gnome Keyring gespeichert.
+        <translation>Das Passwort deines SSL Zertifikates (deines Ortes) wird verschlüsselt in deinem Gnome Keyring gespeichert.
 
 Dein PGP wird nicht gespeichert.
 
@@ -13002,7 +13055,7 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL Zertifikates (deines Standortes) wird verschlüsselt in deinem Schlüsselanhänger gespeichert.
+        <translation>Das Passwort deines SSL Zertifikates (deines Ortes) wird verschlüsselt in deinem Schlüsselanhänger gespeichert.
 
 Dein PGP wird nicht gespeichert.
 
@@ -13015,7 +13068,7 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL Zertifikates (deines Standortes) wird verschlüsselt in der Datei keys/help.dta gespeichert- Das ist nicht sicher.
+        <translation>Das Passwort deines SSL Zertifikates (deines Ortes) wird verschlüsselt in der Datei keys/help.dta gespeichert- Das ist nicht sicher.
 
 Dein PGP wird nicht gespeichert.
 
@@ -13787,6 +13840,11 @@ p, li { white-space: pre-wrap; }
         <source> MB</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../gui/settings/TransferPage.h" line="+44"/>
+        <source>Transfer</source>
+        <translation>Übertragung</translation>
+    </message>
 </context>
 <context>
     <name>TransfersDialog</name>
@@ -13801,7 +13859,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-162"/>
+        <location line="-161"/>
         <location line="+59"/>
         <source>Status</source>
         <translation>Status</translation>
@@ -13914,7 +13972,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+127"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -13989,7 +14047,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+365"/>
+        <location line="+366"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -14004,7 +14062,21 @@ p, li { white-space: pre-wrap; }
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+368"/>
+        <location line="+175"/>
+        <source>If the hash of the downloaded data does
+not correspond to the hash announced
+by the file source. The data is likely 
+to be corrupted.
+
+RetroShare will ask the source a detailed 
+map of the data; it will compare and invalidate
+bad blocks, and download them again
+
+Try to be patient!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+198"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -14039,7 +14111,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-901"/>
+        <location line="-906"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -14076,12 +14148,7 @@ p, li { white-space: pre-wrap; }
         <translation>Router Anfragen</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>RTT Statistics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -14092,68 +14159,68 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
-        <location line="+505"/>
+        <location line="+506"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-503"/>
-        <location line="+504"/>
+        <location line="-504"/>
+        <location line="+505"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-504"/>
-        <location line="+503"/>
+        <location line="-505"/>
+        <location line="+504"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+230"/>
+        <location line="+231"/>
         <location line="+143"/>
-        <location line="+135"/>
+        <location line="+140"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-274"/>
+        <location line="-279"/>
         <location line="+140"/>
-        <location line="+135"/>
+        <location line="+140"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-134"/>
-        <location line="+135"/>
+        <location line="-139"/>
+        <location line="+140"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location line="-134"/>
+        <location line="-139"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
         <location line="-130"/>
         <location line="+131"/>
-        <location line="+135"/>
+        <location line="+140"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-137"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+53"/>
         <source>version: </source>
         <translation>Version: </translation>
     </message>
@@ -14163,12 +14230,12 @@ p, li { white-space: pre-wrap; }
         <translation>Hochladend</translation>
     </message>
     <message>
-        <location line="-131"/>
+        <location line="-136"/>
         <source>Checking...</source>
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-530"/>
+        <location line="-531"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>
@@ -14540,14 +14607,6 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>Browse</source>
         <translation>Durchsuchen</translation>
-    </message>
-</context>
-<context>
-    <name>VoipStatistics</name>
-    <message>
-        <location filename="../gui/VoipStatistics.ui" line="+14"/>
-        <source>VoipTest Statistics</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

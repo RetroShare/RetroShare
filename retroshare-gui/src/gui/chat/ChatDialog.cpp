@@ -29,7 +29,6 @@
 #include "ChatLobbyDialog.h"
 #include "PopupChatWindow.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/msgs/MessageComposer.h"
 #include "gui/SoundManager.h"
 
 #include <retroshare/rsiface.h>
@@ -206,42 +205,38 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 	if (!rsPeers->getPeerDetails(peerId, detail))
 		return;
 
-	std::string firstId;
-
 	if (detail.isOnlyGPGdetail) {
-		//let's get the ssl child details, and open all the chat boxes
+		std::list<std::string> onlineIds;
+
+		//let's get the ssl child details
 		std::list<std::string> sslIds;
 		rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
-		for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
-			if (firstId.empty()) {
-				firstId = *it;
-			}
 
-			RsPeerDetails sslDetails;
-			if (rsPeers->getPeerDetails(*it, sslDetails)) {
-				if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
-					getChat(*it, RS_CHAT_OPEN | RS_CHAT_FOCUS);
-					return;
-				}
-			}
-		}
-	} else {
-		if (detail.state & RS_PEER_STATE_CONNECTED) {
-			getChat(peerId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+		if (sslIds.size() == 1) {
+			// chat with the one ssl id (online or offline)
+			getChat(sslIds.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
 			return;
 		}
-		firstId = peerId;
-	}
 
-	/* info dialog */
-	QMessageBox mb(QMessageBox::Question, tr("Friend not Online"), tr("Your Friend is offline \nDo you want to send them a Message instead"), QMessageBox::Yes | QMessageBox::No);
-	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
-	if (mb.exec() == QMessageBox::Yes) {
-		MessageComposer::msgFriend(peerId, false);
-	} else {
-		if (firstId.empty() == false) {
-			getChat(firstId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+		// more than one ssl ids available, check for online
+		for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); ++it) {
+			if (rsPeers->isOnline(*it)) {
+				onlineIds.push_back(*it);
+			}
 		}
+
+		if (onlineIds.size() == 1) {
+			// chat with the online ssl id
+			getChat(onlineIds.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
+			return;
+		}
+
+		// more than one ssl ids online or all offline
+		QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one locations.\nPlease choose one of it to chat with."), QMessageBox::Ok);
+		mb.setWindowIcon(QIcon(":/images/rstray3.png"));
+		mb.exec();
+	} else {
+		getChat(peerId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
 	}
 }
 
