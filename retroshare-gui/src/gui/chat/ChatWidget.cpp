@@ -611,6 +611,10 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
 		QString peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
 
+		// is scrollbar at the end?
+		QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+		bool atEnd = (scrollbar->value() == scrollbar->maximum());
+
 		switch (status) {
 		case RS_STATUS_OFFLINE:
 			ui->infoframe->setVisible(true);
@@ -641,6 +645,11 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 		ui->titleLabel->setText(peerName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
 
 		peerStatus = status;
+
+		if (atEnd) {
+			// scroll to the end
+			scrollbar->setValue(scrollbar->maximum());
+		}
 
 		emit infoChanged(this);
 
