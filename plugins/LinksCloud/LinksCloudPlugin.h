@@ -1,7 +1,7 @@
 #pragma once
 
 #include <retroshare/rsplugin.h>
-#include <gui/mainpage.h>
+#include <retroshare-gui/mainpage.h>
 #include "p3ranking.h"
 
 class LinksCloudPlugin: public RsPlugin

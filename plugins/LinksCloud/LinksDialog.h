@@ -22,7 +22,7 @@
 #ifndef _LINKS_DIALOG_H
 #define _LINKS_DIALOG_H
 
-#include <gui/mainpage.h>
+#include <retroshare-gui/mainpage.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 #include "ui_LinksDialog.h"
