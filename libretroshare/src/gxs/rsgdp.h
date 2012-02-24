@@ -67,7 +67,14 @@ public:
      * @param msgGrp this contains grp and the message to retrieve
      * @return request code to be redeemed later
      */
-    virtual int request(const MsgGrpId& msgGrp, bool decrypted) = 0;
+    virtual int request(const MsgGrpId& msgGrp) = 0;
+
+    /*!
+     * Retrieves a group item by grpId
+     * @param grpId the ID of the group to retrieve
+     * @return request code to be redeemed later
+     */
+    virtual int request(const std::string grpId) = 0;
 
 
     /*!
