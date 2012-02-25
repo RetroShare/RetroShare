@@ -52,6 +52,7 @@ class VorsPeerInfo
 	uint32_t mSentPings;
 
 	std::list<RsVoipPongResult> mPongResults;
+	std::list<RsVoipDataItem*> incoming_queue ;
 };
 
 
@@ -74,7 +75,15 @@ class p3VoRS: public RsPQIService, public RsVoip
 
 		// Call stuff.
 		//
-		virtual int sendVoipData(const std::string& peer_id,const void *data,uint32_t size) ;
+
+		// Sending data. The client keeps the memory ownership and must delete it after calling this.
+		virtual int sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk) ;
+
+		// The server fill in the data and gives up memory ownership. The client must delete the memory
+		// in each chunk once it has been used.
+		//
+		virtual bool getIncomingData(const std::string& peer_id,std::vector<RsVoipDataChunk>& chunks) ;
+
 		virtual int sendVoipHangUpCall(const std::string& peer_id) ;
 		virtual int sendVoipRinging(const std::string& peer_id) ;
 		virtual int sendVoipAcceptCall(const std::string& peer_id) ;
@@ -122,12 +131,14 @@ class p3VoRS: public RsPQIService, public RsVoip
 		void 	sendPingMeasurements();
 		int 	processIncoming();
 
-		int 	handlePing(RsItem *item);
-		int 	handlePong(RsItem *item);
+		int 	handlePing(RsVoipPingItem *item);
+		int 	handlePong(RsVoipPongItem *item);
 
 		int 	storePingAttempt(std::string id, double ts, uint32_t mCounter);
 		int 	storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset);
 
+		void handleProtocol(RsVoipProtocolItem*) ;
+		void handleData(RsVoipDataItem*) ;
 
 		RsMutex mVorsMtx;
 

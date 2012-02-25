@@ -222,9 +222,9 @@ int p3VoRS::sendVoipRinging(const std::string& peer_id)
 	return true ;
 }
 
-int p3VoRS::sendVoipData(const std::string& peer_id,const void *data,uint32_t size)
+int p3VoRS::sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk)
 {
-	std::cerr << "Sending " << size << " bytes of voip data." << std::endl;
+	std::cerr << "Sending " << chunk.size << " bytes of voip data." << std::endl;
 
 	RsVoipDataItem *item = new RsVoipDataItem ;
 
@@ -233,14 +233,14 @@ int p3VoRS::sendVoipData(const std::string& peer_id,const void *data,uint32_t si
 		std::cerr << "Cannot allocate RsVoipDataItem !" << std::endl;
 		return false ;
 	}
-	item->voip_data = malloc(size) ;
+	item->voip_data = malloc(chunk.size) ;
 
 	if(item->voip_data == NULL)
 	{
-		std::cerr << "Cannot allocate RsVoipDataItem.voip_data of size " << size << " !" << std::endl;
+		std::cerr << "Cannot allocate RsVoipDataItem.voip_data of size " << chunk.size << " !" << std::endl;
 		return false ;
 	}
-	memcpy(item->voip_data,data,size) ;
+	memcpy(item->voip_data,chunk.data,chunk.size) ;
 	item->flags = 0 ;
 	item->PeerId(peer_id) ;
 
@@ -251,8 +251,6 @@ int p3VoRS::sendVoipData(const std::string& peer_id,const void *data,uint32_t si
 
 void p3VoRS::sendPingMeasurements()
 {
-
-
 	/* we ping our peers */
 	/* who is online? */
 	std::list<std::string> idList;
@@ -297,7 +295,65 @@ void p3VoRS::sendPingMeasurements()
 }
 
 
+void p3VoRS::handleProtocol(RsVoipProtocolItem *item)
+{
+	// should we keep a list of received requests?
 
+	// we notify the notifier that something occurred.
+
+	// mNotify->notifyPluginAction(mPluginId, PluginSignalId, (void *)data_to_send_upward);
+}
+
+void p3VoRS::handleData(RsVoipDataItem *item)
+{
+	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+
+	// store the data in a queue.
+
+	std::map<std::string,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
+
+	if(it == mPeerInfo.end())
+	{
+		std::cerr << "Peer unknown to VOIP process. Dropping data" << std::endl;
+		delete item ;
+	}
+	else
+	{
+		it->second.incoming_queue.push_back(item) ;	// be careful with the delete action!
+
+		// notify->notifyPluginAction(mPluginId, PluginSignalId, (void *)data_to_send_upward);
+	}
+}
+
+bool p3VoRS::getIncomingData(const std::string& peer_id,std::vector<RsVoipDataChunk>& incoming_data_chunks)
+{
+	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+
+	incoming_data_chunks.clear() ;
+
+	std::map<std::string,VorsPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
+
+	if(it == mPeerInfo.end())
+	{
+		std::cerr << "Peer unknown to VOIP process. No data returned. Probably a bug !" << std::endl;
+		return false ;
+	}
+	for(std::list<RsVoipDataItem*>::const_iterator it2(it->second.incoming_queue.begin());it2!=it->second.incoming_queue.end();++it2)
+	{
+		RsVoipDataChunk chunk ;
+		chunk.size = (*it2)->data_size ;
+		chunk.data = malloc((*it2)->data_size) ;
+		memcpy(chunk.data,(*it2)->voip_data,(*it2)->data_size) ;
+
+		incoming_data_chunks.push_back(chunk) ;
+
+		delete *it2 ;
+	}
+
+	it->second.incoming_queue.clear() ;
+
+	return true ;
+}
 
 int	p3VoRS::processIncoming()
 {
@@ -305,53 +361,44 @@ int	p3VoRS::processIncoming()
 	RsItem *item = NULL;
 	while(NULL != (item = recvItem()))
 	{
+		bool keep = false ;
+
 		switch(item->PacketSubType())
 		{
-			default:
-				break;
-			case RS_PKT_SUBTYPE_VOIP_PING:
-			{
-				handlePing(item);
-			}
-				break;
-			case RS_PKT_SUBTYPE_VOIP_PONG:
-			{
-				handlePong(item);
-			}
-				break;
+			case RS_PKT_SUBTYPE_VOIP_PING: handlePing(dynamic_cast<RsVoipPingItem*>(item));
+													 break;
 
+			case RS_PKT_SUBTYPE_VOIP_PONG: handlePong(dynamic_cast<RsVoipPongItem*>(item));
+													 break;
+
+			case RS_PKT_SUBTYPE_VOIP_PROTOCOL: handleProtocol(dynamic_cast<RsVoipProtocolItem*>(item)) ;
+														  break ;
+
+			case RS_PKT_SUBTYPE_VOIP_DATA: handleData(dynamic_cast<RsVoipDataItem*>(item));
+													 keep = true ;
+													 break;
 #if 0
-			/* THESE ARE ALL FUTURISTIC DATA TYPES */
-			case RS_DATA_ITEM:
-			{
-				handleData(item);
-			}
-				break;
+													 /* THESE ARE ALL FUTURISTIC DATA TYPES */
+			case RS_BANDWIDTH_PING_ITEM:	 handleBandwidthPing(item);
+													 break;
 
-			case RS_BANDWIDTH_PING_ITEM:
-			{
-				handleBandwidthPing(item);
-			}
-				break;
-
-			case RS_BANDWIDTH_PONG_ITEM:
-			{
-				handleBandwidthPong(item);
-			}
-				break;
+			case RS_BANDWIDTH_PONG_ITEM:	 handleBandwidthPong(item);
+													 break;
 #endif
+			default:
+													 break;
 		}
 
 		/* clean up */
-		delete item;
+		if(!keep)
+			delete item;
 	}
 	return true ;
 } 
 
-int p3VoRS::handlePing(RsItem *item)
+int p3VoRS::handlePing(RsVoipPingItem *ping)
 {
 	/* cast to right type */
-	RsVoipPingItem *ping = (RsVoipPingItem *) item;
 
 #ifdef DEBUG_VORS
 	std::cerr << "p3VoRS::handlePing() Recvd Packet from: " << ping->PeerId();
@@ -382,10 +429,9 @@ int p3VoRS::handlePing(RsItem *item)
 }
 
 
-int p3VoRS::handlePong(RsItem *item)
+int p3VoRS::handlePong(RsVoipPongItem *pong)
 {
 	/* cast to right type */
-	RsVoipPongItem *pong = (RsVoipPongItem *) item;
 
 #ifdef DEBUG_VORS
 	std::cerr << "p3VoRS::handlePong() Recvd Packet from: " << pong->PeerId();
@@ -419,9 +465,6 @@ int p3VoRS::handlePong(RsItem *item)
 	storePongResult(pong->PeerId(), pong->mSeqNo, pingTS, rtt, offset);
 	return true ;
 }
-
-
-
 
 int	p3VoRS::storePingAttempt(std::string id, double ts, uint32_t seqno)
 {

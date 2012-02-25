@@ -14,6 +14,7 @@ class VOIPPlugin: public RsPlugin
 		virtual ConfigPage     *qt_config_page()        const ;
 		virtual RsAutoUpdatePage *qt_transfers_tab()    const ;
 		virtual std::string qt_transfers_tab_name()    const ;
+		virtual PopupChatDialog *qt_allocate_new_popup_chat_dialog() const ;
 
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode) const;
 

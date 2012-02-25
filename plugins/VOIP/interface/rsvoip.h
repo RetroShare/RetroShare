@@ -25,13 +25,26 @@ class RsVoipPongResult
 	double mOffset;
 };
 
+struct RsVoipDataChunk
+{
+	void *data ; // create/delete using malloc/free.
+	uint32_t size ;
+};
+
 class RsVoip
 {
 	public:
-		virtual int sendVoipData(const std::string& peer_id,const void *data,uint32_t size) = 0;
 		virtual int sendVoipHangUpCall(const std::string& peer_id) = 0;
 		virtual int sendVoipRinging(const std::string& peer_id) = 0;
 		virtual int sendVoipAcceptCall(const std::string& peer_id) = 0;
+
+		// Sending data. The client keeps the memory ownership and must delete it after calling this.
+		virtual int sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk) = 0;
+
+		// The server fill in the data and gives up memory ownership. The client must delete the memory
+		// in each chunk once it has been used.
+		//
+		virtual bool getIncomingData(const std::string& peer_id,std::vector<RsVoipDataChunk>& chunks) = 0;
 
 		typedef enum { AudioTransmitContinous = 0, AudioTransmitVAD = 1, AudioTransmitPushToTalk = 2 } enumAudioTransmit ;
 

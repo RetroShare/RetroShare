@@ -9,6 +9,7 @@
 
 #include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
+#include "gui/AudioPopupChatDialog.h"
 
 static void *inited = new VOIPPlugin() ;
 
@@ -44,6 +45,11 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 ConfigPage *VOIPPlugin::qt_config_page() const
 {
 	return new AudioInputConfig() ;
+}
+
+PopupChatDialog *VOIPPlugin::qt_allocate_new_popup_chat_dialog() const
+{
+	return new AudioPopupChatDialog() ;
 }
 
 std::string VOIPPlugin::qt_transfers_tab_name() const

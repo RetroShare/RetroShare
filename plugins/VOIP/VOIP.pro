@@ -4,6 +4,8 @@ CONFIG += qt uic qrc resources
 CONFIG += mobility
 MOBILITY = multimedia
 
+INCLUDEPATH += ../../retroshare-gui/src/temp/ui
+
 QMAKE_CXXFLAGS *= -Wall
 
 SOURCES = services/p3vors.cc \
@@ -14,6 +16,7 @@ SOURCES = services/p3vors.cc \
 			 gui/SpeexProcessor.cpp \
 			 gui/audiodevicehelper.cpp \
           gui/VoipStatistics.cpp \
+          gui/AudioPopupChatDialog.cpp \
           VOIPPlugin.cpp 
 
 HEADERS = services/p3vors.h \
@@ -24,6 +27,7 @@ HEADERS = services/p3vors.h \
 			 gui/SpeexProcessor.h \
 			 gui/audiodevicehelper.h \
           gui/VoipStatistics.h \
+          gui/AudioPopupChatDialog.h \
 			 interface/rsvoip.h
 
 FORMS   = gui/AudioInputConfig.ui \
