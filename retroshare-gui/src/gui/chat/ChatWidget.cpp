@@ -123,6 +123,11 @@ ChatWidget::~ChatWidget()
 	delete ui;
 }
 
+void ChatWidget::addChatButton(QPushButton *button)
+{
+	ui->chatButtonLayout->addWidget(button) ;
+}
+
 void ChatWidget::init(const std::string &peerId, const QString &title)
 {
 	this->peerId = peerId;

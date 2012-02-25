@@ -133,6 +133,11 @@ void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
 	}
 }
 
+void PopupChatDialog::addButton(QPushButton *button)
+{
+	getChatWidget()->addChatButton(button) ;
+}
+
 void PopupChatDialog::onChatChanged(int list, int type)
 {
 	if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {

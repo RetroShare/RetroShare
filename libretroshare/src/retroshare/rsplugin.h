@@ -48,6 +48,7 @@ class ftServer ;
 class ConfigPage ;
 class RsPQIService ;
 class RsAutoUpdatePage ;
+class PopupChatDialog ;
 
 // Used for the status of plugins.
 //
@@ -113,6 +114,10 @@ class RsPlugin
 		virtual ConfigPage     		*qt_config_page()  	const	{ return NULL ; } // Config tab to add in config panel.
 		virtual RsAutoUpdatePage 	*qt_transfers_tab()	const	{ return NULL ; } // Tab to add in transfers, after turtle statistics.
 		virtual std::string   		 qt_transfers_tab_name()const	{ return "Tab" ; } // Tab name
+
+		// Any derived class of PopupChatDialog to be used for chat.
+		//
+		virtual PopupChatDialog    *qt_allocate_new_popup_chat_dialog() const { return NULL ; }	
 
 		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */ ) const	{ return NULL ; }
 

@@ -33,6 +33,7 @@
 
 class QAction;
 class QTextEdit;
+class QPushButton;
 
 namespace Ui {
 class ChatWidget;
@@ -71,6 +72,8 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle() { return &style; }
 
+	void addChatButton(QPushButton *button) ;
+
 private slots:
 	void clearChatHistory();
 	void deleteChatHistory();
@@ -85,6 +88,8 @@ protected:
 	virtual void showEvent(QShowEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);
 	void updateTitle();
+	virtual void updateStatus(const QString &peer_id, int status);
+	void resetStatusBar() ;
 
 private slots:
 	void pasteLink();
@@ -94,8 +99,6 @@ private slots:
 
 	void smileyWidget();
 	void addSmiley();
-
-	void resetStatusBar() ;
 
 	void addExtraFile();
 	void addExtraPicture();
@@ -108,7 +111,6 @@ private slots:
 
 	void sendChat();
 
-	void updateStatus(const QString &peer_id, int status);
 	void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
 
 	bool fileSave();
