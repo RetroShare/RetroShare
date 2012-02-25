@@ -63,7 +63,9 @@ ConfigPage *VOIPPlugin::qt_config_page() const
 
 PopupChatDialog *VOIPPlugin::qt_allocate_new_popup_chat_dialog() const
 {
-	return new AudioPopupChatDialog() ;
+	AudioPopupChatDialog *ap =	new AudioPopupChatDialog() ;
+
+	return ap ;
 }
 
 std::string VOIPPlugin::qt_transfers_tab_name() const

@@ -19,6 +19,7 @@ class AudioPopupChatDialog: public PopupChatDialog
 				inputDevice->stop() ;
 		}
 
+		void addAudioData(const QString name, QByteArray* array) ;
 	private slots:
 		void toggleAudioListen();
 		void toggleAudioMuteCapture();
@@ -33,8 +34,6 @@ class AudioPopupChatDialog: public PopupChatDialog
 		QtSpeex::SpeexOutputProcessor* outputProcessor;
 
 		virtual void updateStatus(const QString& peer_id,int status) ;
-
-		void addAudioData(const QString name, QByteArray* array) ;
 
 		QPushButton *audioListenToggleButton ;
 		QPushButton *audioMuteCaptureToggleButton ;
