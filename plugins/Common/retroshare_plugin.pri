@@ -54,7 +54,7 @@ win32 {
         LIBS += ../../libbitdht/src/lib/libbitdht.a
         PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
-        LIBS += -L"../../../../lib"
+        LIBS += -L"../../../lib"
         LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
         LIBS += -lws2_32
