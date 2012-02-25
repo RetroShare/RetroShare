@@ -57,6 +57,7 @@
 #include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
 #include "SoundManager.h"
+#include "notifyqt.h"
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -176,6 +177,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     m_bStatusLoadDone = false;
     isIdle = false;
+    onlineCount = 0;
 
     notifyMenu = NULL;
     trayIconMessages = NULL;
@@ -196,7 +198,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
-
 
     /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
     bool advancedMode = false;
@@ -359,6 +360,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
     createTrayIcon();
+
+    /* caclulate friend count */
+    updateFriends();
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
+    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
 
     loadOwnStatus();
 
@@ -803,19 +809,12 @@ void MainWindow::updateStatus()
     if(RsAutoUpdatePage::eventsLocked())
         return;
 
-    unsigned int nFriendCount = 0;
-    unsigned int nOnlineCount = 0;
-    rsPeers->getPeerCount (&nFriendCount, &nOnlineCount, false);
-    
     float downKb = 0;
     float upKb = 0;
     rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);
-
-    if (peerstatus)
-        peerstatus->getPeerStatus(nFriendCount, nOnlineCount);
 
     if (natstatus)
         natstatus->getNATStatus();
@@ -827,22 +826,40 @@ void MainWindow::updateStatus()
         discstatus->update();
     }
 
+    QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
+
+    if (onlineCount == 1) {
+        tray += tr("%1 friend connected").arg(onlineCount);
+    } else {
+        tray += tr("%1 friends connected").arg(onlineCount);
+    }
+
+    tray += "\n" + nameAndLocation;
+
+    if (!notifyToolTip.isEmpty()) {
+        tray += "\n";
+        tray += notifyToolTip;
+    }
+    trayIcon->setToolTip(tray);
+}
+
+void MainWindow::updateFriends()
+{
+    unsigned int friendCount = 0;
+    rsPeers->getPeerCount (&friendCount, &onlineCount, false);
+
+    if (peerstatus)
+        peerstatus->getPeerStatus(friendCount, onlineCount);
+
     QString trayIconResource;
 
-    if (nOnlineCount == 0)
-    {
+    if (onlineCount == 0) {
         trayIconResource = IMAGE_NOONLINE;
-    }
-    else if (nOnlineCount < 2)
-    {
+    } else if (onlineCount < 2) {
         trayIconResource = IMAGE_ONEONLINE;
-    }
-    else if (nOnlineCount < 3)
-    {
+    } else if (onlineCount < 3) {
         trayIconResource = IMAGE_TWOONLINE;
-    }
-    else
-    {
+    } else {
         trayIconResource = IMAGE_RETROSHARE;
     }
 
@@ -860,22 +877,6 @@ void MainWindow::updateStatus()
     }
 
     trayIcon->setIcon(icon);
-
-    QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
-
-    if (nOnlineCount == 1) {
-        tray += tr("%1 friend connected").arg(nOnlineCount);
-    } else {
-        tray += tr("%1 friends connected").arg(nOnlineCount);
-    }
-
-    tray += "\n" + nameAndLocation;
-
-    if (!notifyToolTip.isEmpty()) {
-        tray += "\n";
-        tray += notifyToolTip;
-    }
-    trayIcon->setToolTip(tray);
 }
 
 void MainWindow::privateChatChanged(int list, int type)

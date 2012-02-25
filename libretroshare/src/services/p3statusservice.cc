@@ -384,6 +384,16 @@ void p3StatusService::statusChange(const std::list<pqipeer> &plist)
 				changedState = true;
 				rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_ONLINE);
 			}
+		} else if (it->actions & RS_PEER_MOVED) {
+			/* now handle remove */
+			{
+				RsStackMutex stack(mStatusMtx);
+				/* remove peer from status map */
+				mStatusInfoMap.erase(it->id);
+			} /* UNLOCKED */
+
+			changedState = true;
+			rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_OFFLINE);
 		}
 	}
 

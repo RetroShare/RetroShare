@@ -275,6 +275,51 @@ uint32_t p3PeerMgrIMPL::getConnectionType(const std::string &/*sslId*/)
 	return RS_NET_CONN_TYPE_FRIEND;
 }
 
+int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
+{
+	if (online) {
+		// count only online id's
+		std::list<std::string> onlineIds;
+		mLinkMgr->getOnlineList(onlineIds);
+
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		std::set<std::string> gpgIds;
+		int count = 0;
+
+		std::map<std::string, peerState>::iterator it;
+		for(it = mFriendList.begin(); it != mFriendList.end(); ++it) {
+			if (online && std::find(onlineIds.begin(), onlineIds.end(), it->first) == onlineIds.end()) {
+				continue;
+			}
+			if (ssl) {
+				// count ssl id's only
+				count++;
+			} else {
+				// count unique gpg id's
+				gpgIds.insert(it->second.gpg_id);
+			}
+		}
+
+		return ssl ? count : gpgIds.size();
+	}
+
+	if (ssl) {
+		// count all ssl id's
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		return mFriendList.size();
+	}
+
+	// count all gpg id's
+	std::list<std::string> gpgIds;
+	AuthGPG::getAuthGPG()->getGPGAcceptedList(gpgIds);
+
+	// add own gpg id, if we have more than one location
+	std::list<std::string> ownSslIds;
+	getAssociatedPeers(AuthGPG::getAuthGPG()->getGPGOwnId(), ownSslIds);
+
+	return gpgIds.size() + ((ownSslIds.size() > 0) ? 1 : 0);
+}
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const std::string &id, peerState &state)
 {

@@ -184,6 +184,7 @@ virtual bool    getPeerName(const std::string &ssl_id, std::string &name) = 0;
 virtual bool	getGpgId(const std::string &sslId, std::string &gpgId) = 0;
 virtual uint32_t getConnectionType(const std::string &sslId) = 0;
 
+virtual int 	getFriendCount(bool ssl, bool online) = 0;
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -270,6 +271,7 @@ virtual bool    getPeerName(const std::string &ssl_id, std::string &name);
 virtual bool	getGpgId(const std::string &sslId, std::string &gpgId);
 virtual uint32_t getConnectionType(const std::string &sslId);
 
+virtual int 	getFriendCount(bool ssl, bool online);
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 

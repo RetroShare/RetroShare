@@ -252,14 +252,12 @@ void    p3LinkMgrIMPL::getFriendList(std::list<std::string> &ssl_peers)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		ssl_peers.push_back(it->first);
 	}
 	return;
-
-
 }
 
 bool    p3LinkMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
@@ -267,34 +265,6 @@ bool    p3LinkMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
 	return mPeerMgr->getPeerName(ssl_id, name);
 }
 
-
-int     p3LinkMgrIMPL::getFriendCount()
-{
-	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-	return mFriendList.size();
-
-
-}
-
-int     p3LinkMgrIMPL::getOnlineCount()
-{
-	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-	int count = 0;
-
-        std::map<std::string, peerConnectState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
-	{
-		if (it->second.state & RS_PEER_S_CONNECTED)
-		{
-			count++;
-		}
-	}
-
-	return count;
-
-}
 
 bool    p3LinkMgrIMPL::getFriendNetStatus(const std::string &id, peerConnectState &state)
 {

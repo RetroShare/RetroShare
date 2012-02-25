@@ -185,9 +185,9 @@ uint32_t p3ServerConfig::getUserLevel()
 		case RSCONFIG_USER_LEVEL_NEW:
 		{
 
-			if (mLinkMgr->getFriendCount() > MIN_BASIC_FRIENDS)
+			if (mPeerMgr->getFriendCount(true, false) > MIN_BASIC_FRIENDS)
 			{
-                		userLevel = RSCONFIG_USER_LEVEL_BASIC;
+				userLevel = RSCONFIG_USER_LEVEL_BASIC;
 			}
 		}
 		case RSCONFIG_USER_LEVEL_BASIC:
@@ -195,12 +195,12 @@ uint32_t p3ServerConfig::getUserLevel()
 			/* check that we have some lastConnect > 0 */
 			if (mPeerMgr->haveOnceConnected())
 			{
-                		userLevel = RSCONFIG_USER_LEVEL_CASUAL;
+				userLevel = RSCONFIG_USER_LEVEL_CASUAL;
 			}
 		}
 
 		case RSCONFIG_USER_LEVEL_CASUAL:
-                case RSCONFIG_USER_LEVEL_POWER:
+		case RSCONFIG_USER_LEVEL_POWER:
 
 		{
 			/* check that the firewall is open */
@@ -214,7 +214,7 @@ uint32_t p3ServerConfig::getUserLevel()
 			   		(RSNET_NATHOLE_NATPMP == firewallMode) ||
 			   		(RSNET_NATHOLE_FORWARDED == firewallMode))))
 			{
-                		userLevel = RSCONFIG_USER_LEVEL_POWER;
+				userLevel = RSCONFIG_USER_LEVEL_POWER;
 			}
 		}
 			break; /* for all */

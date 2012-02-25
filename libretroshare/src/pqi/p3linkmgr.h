@@ -166,8 +166,6 @@ virtual struct sockaddr_in getLocalAddress() = 0;
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
 virtual void	getFriendList(std::list<std::string> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
-virtual int 	getOnlineCount() = 0; // ONLY used by p3peers.cc
-virtual int 	getFriendCount() = 0; // ONLY used by p3serverconfig.cc & p3peers.cc
 virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
 virtual void 	setTunnelConnection(bool b) = 0; // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
@@ -232,8 +230,6 @@ virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
 virtual void	getFriendList(std::list<std::string> &ssl_peers); // ONLY used by p3peers.cc USE p3PeerMgr instead.
-virtual int 	getOnlineCount(); // ONLY used by p3peers.cc
-virtual int 	getFriendCount(); // ONLY used by p3serverconfig.cc & p3peers.cc
 virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state); // ONLY used by p3peers.cc
 
 virtual void 	setTunnelConnection(bool b); // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr

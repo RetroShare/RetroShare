@@ -165,6 +165,7 @@ private slots:
 
     void updateMenu();
     void updateStatus();
+    void updateFriends();
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
@@ -256,6 +257,7 @@ private:
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status
     bool m_bStatusLoadDone;
+    unsigned int onlineCount;
 
     void loadOwnStatus();
 
