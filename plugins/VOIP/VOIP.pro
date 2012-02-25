@@ -17,6 +17,8 @@ SOURCES = services/p3vors.cc \
 			 gui/audiodevicehelper.cpp \
           gui/VoipStatistics.cpp \
           gui/AudioPopupChatDialog.cpp \
+          gui/PluginGUIHandler.cpp \
+          gui/PluginNotifier.cpp \
           VOIPPlugin.cpp 
 
 HEADERS = services/p3vors.h \
@@ -28,6 +30,8 @@ HEADERS = services/p3vors.h \
 			 gui/audiodevicehelper.h \
           gui/VoipStatistics.h \
           gui/AudioPopupChatDialog.h \
+          gui/PluginGUIHandler.h \
+          gui/PluginNotifier.h \
 			 interface/rsvoip.h
 
 FORMS   = gui/AudioInputConfig.ui \

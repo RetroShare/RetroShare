@@ -35,6 +35,7 @@
 
 #include "services/p3vors.h"
 #include "services/rsvoipitems.h"
+#include "gui/PluginNotifier.h"
 
 #include <sys/time.h>
 
@@ -142,8 +143,8 @@ static double convert64bitsToTs(uint64_t bits)
 	return ts;
 }
 
-p3VoRS::p3VoRS(RsPluginHandler *handler)
-	 : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,CONFIG_TYPE_VOIP_PLUGIN,0,handler), mVorsMtx("p3VoRS"), mLinkMgr(handler->getLinkMgr()) 
+p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
+	 : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,CONFIG_TYPE_VOIP_PLUGIN,0,handler), mVorsMtx("p3VoRS"), mLinkMgr(handler->getLinkMgr()) , mNotify(notifier)
 {
 	addSerialType(new RsVoipSerialiser());
 
@@ -301,7 +302,19 @@ void p3VoRS::handleProtocol(RsVoipProtocolItem *item)
 
 	// we notify the notifier that something occurred.
 
-	// mNotify->notifyPluginAction(mPluginId, PluginSignalId, (void *)data_to_send_upward);
+	switch(item->protocol)
+	{
+		case RsVoipProtocolItem::VoipProtocol_Ring: std::cerr << "Received protocol ring item." << std::endl;
+																  mNotify->notifyReceivedVoipInvite(item->PeerId());
+																  break ;
+
+		case RsVoipProtocolItem::VoipProtocol_Ackn:
+		case RsVoipProtocolItem::VoipProtocol_Close:
+		default:
+																  std::cerr << "Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
+																  break ;
+	}
+
 }
 
 void p3VoRS::handleData(RsVoipDataItem *item)
@@ -321,7 +334,7 @@ void p3VoRS::handleData(RsVoipDataItem *item)
 	{
 		it->second.incoming_queue.push_back(item) ;	// be careful with the delete action!
 
-		// notify->notifyPluginAction(mPluginId, PluginSignalId, (void *)data_to_send_upward);
+		mNotify->notifyReceivedVoipData(item->PeerId());
 	}
 }
 

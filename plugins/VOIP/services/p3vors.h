@@ -36,6 +36,7 @@
 #include <interface/rsvoip.h>
 
 class p3LinkMgr;
+class PluginNotifier ;
 
 class VorsPeerInfo
 {
@@ -67,7 +68,7 @@ class p3VoRS: public RsPQIService, public RsVoip
 //, public p3Config, public pqiMonitor
 {
 	public:
-		p3VoRS(RsPluginHandler *cm);
+		p3VoRS(RsPluginHandler *cm,PluginNotifier *);
 
 		/***** overloaded from rsVoip *****/
 
@@ -127,7 +128,7 @@ class p3VoRS: public RsPQIService, public RsVoip
 		virtual bool loadList(std::list<RsItem*>& load) ;
 
 	private:
-		int     sendPackets();
+		int   sendPackets();
 		void 	sendPingMeasurements();
 		int 	processIncoming();
 
@@ -152,6 +153,7 @@ class p3VoRS: public RsPQIService, public RsVoip
 		uint32_t mCounter;
 
 		p3LinkMgr *mLinkMgr;
+		PluginNotifier *mNotify ;
 
 		int _atransmit ;
 		int _voice_hold ;

@@ -10,10 +10,18 @@
 #include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
 #include "gui/AudioPopupChatDialog.h"
+#include "gui/PluginGUIHandler.h"
+#include "gui/PluginNotifier.h"
 
 static void *inited = new VOIPPlugin() ;
 
 extern "C" {
+
+	// This is *the* function required by RS plugin system to give RS access to the plugin.
+	// Be careful to:
+	// - always respect the C linkage convention
+	// - always return an object of type RsPlugin*
+	//
 	void *RETROSHARE_PLUGIN_provide()
 	{
 		static VOIPPlugin *p = new VOIPPlugin() ;
@@ -35,6 +43,12 @@ VOIPPlugin::VOIPPlugin()
 	mPlugInHandler = NULL;
 	mPeers = NULL;
 	config_page = NULL ;
+
+	mPluginGUIHandler = new PluginGUIHandler ;
+	mPluginNotifier = new PluginNotifier ;
+
+	QObject::connect(mPluginNotifier,SIGNAL(voipInvitationReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedInvitation(const QString&)),Qt::QueuedConnection) ;
+	QObject::connect(mPluginNotifier,SIGNAL(voipDataReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipData(const QString&)),Qt::QueuedConnection) ;
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -65,7 +79,7 @@ RsPQIService *VOIPPlugin::rs_pqi_service() const
 {
 	if(mVoip == NULL)
 	{
-		mVoip = new p3VoRS(mPlugInHandler) ; // , 3600 * 24 * 30 * 6); // 6 Months
+		mVoip = new p3VoRS(mPlugInHandler,mPluginNotifier) ; // , 3600 * 24 * 30 * 6); // 6 Months
 		rsVoip = mVoip ;
 	}
 

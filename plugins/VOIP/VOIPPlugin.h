@@ -3,6 +3,9 @@
 #include <retroshare/rsplugin.h>
 #include "services/p3vors.h"
 
+class PluginGUIHandler ;
+class PluginNotifier ;
+
 class VOIPPlugin: public RsPlugin
 {
 	public:
@@ -32,5 +35,8 @@ class VOIPPlugin: public RsPlugin
 		mutable RsPluginHandler *mPlugInHandler;
 		mutable RsPeers* mPeers;
 		mutable ConfigPage *config_page ;
+
+		PluginNotifier *mPluginNotifier ;
+		PluginGUIHandler *mPluginGUIHandler ;
 };
 
