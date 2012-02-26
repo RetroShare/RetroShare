@@ -238,7 +238,7 @@ RsVoipProtocolItem::RsVoipProtocolItem(void *data, uint32_t pktsize)
 
 	uint32_t offset = 0;
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PING != getRsItemSubType(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PING != getRsItemSubType(rstype)))
 		throw std::runtime_error("Wrong packet type!") ;
 
 	if (pktsize < rssize)    /* check size */
@@ -269,7 +269,7 @@ RsVoipPingItem::RsVoipPingItem(void *data, uint32_t pktsize)
 	uint32_t offset = 0;
 
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PING != getRsItemSubType(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PING != getRsItemSubType(rstype)))
 		throw std::runtime_error("Wrong packet type!") ;
 
 	if (pktsize < rssize)    /* check size */
@@ -350,7 +350,7 @@ RsVoipDataItem::RsVoipDataItem(void *data, uint32_t pktsize)
 
 	uint32_t offset = 0;
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_DATA != getRsItemSubType(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_DATA != getRsItemSubType(rstype)))
 		throw std::runtime_error("Wrong packet subtype") ;
 
 	if (pktsize < rssize)    /* check size */
@@ -384,7 +384,7 @@ RsVoipPongItem::RsVoipPongItem(void *data, uint32_t pktsize)
 
 	uint32_t offset = 0;
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PONG != getRsItemSubType(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PONG != getRsItemSubType(rstype)))
 		throw std::runtime_error("Wrong packet subtype") ;
 
 	if (pktsize < rssize)    /* check size */
@@ -418,7 +418,7 @@ RsItem* RsVoipSerialiser::deserialise(void *data, uint32_t *pktsize)
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP != getRsItemService(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)))
 		return NULL ;
 	
 	try

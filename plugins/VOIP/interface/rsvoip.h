@@ -8,8 +8,7 @@
 class RsVoip ;
 extern RsVoip *rsVoip;
  
-static const uint32_t CONFIG_TYPE_VOIP_PLUGIN = 0xe001 ;
-static const uint32_t RS_SERVICE_TYPE_VOIP_PLUGIN = 0xe001 ;
+static const uint32_t CONFIG_TYPE_VOIP_PLUGIN 		= 0xe001 ;
 
 class RsVoipPongResult
 {

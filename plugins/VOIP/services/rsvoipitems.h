@@ -34,7 +34,7 @@
 
 /**************************************************************************/
 
-const uint16_t RS_SERVICE_TYPE_VOIP       = 0xa021;
+const uint16_t RS_SERVICE_TYPE_VOIP_PLUGIN = 0xa021;
 
 const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	= 0x01;
 const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	= 0x02;
@@ -47,7 +47,7 @@ class RsVoipItem: public RsItem
 {
 	public:
 		RsVoipItem(uint8_t voip_subtype) 
-			: RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP,voip_subtype) 
+			: RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP_PLUGIN,voip_subtype) 
 		{ 
 			setPriorityLevel(QOS_PRIORITY_RS_VOIP) ;
 		}	
@@ -136,7 +136,7 @@ class RsVoipSerialiser: public RsSerialType
 {
 	public:
 		RsVoipSerialiser()
-			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_VOIP)
+			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_VOIP_PLUGIN)
 		{ 
 		}
 		virtual ~RsVoipSerialiser() {}
