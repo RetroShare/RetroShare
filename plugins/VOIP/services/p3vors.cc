@@ -152,6 +152,15 @@ p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
 	mSentPingTime = 0;
 	mCounter = 0;
 
+        //plugin default configuration
+        _atransmit = 0;
+        _voice_hold = 75;
+        _vadmin = 16018;
+        _vadmax = 23661;
+        _min_loudness = 4702;
+        _noise_suppress = -45;
+        _echo_cancel = true;
+
 }
 
 int	p3VoRS::tick()
