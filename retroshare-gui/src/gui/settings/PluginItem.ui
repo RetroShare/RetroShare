@@ -7,10 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>416</width>
-    <height>175</height>
+    <height>157</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
      <property name="enabled">
@@ -141,12 +144,6 @@ p, li { white-space: pre-wrap; }
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
              </spacer>
             </item>
             <item>
@@ -204,6 +201,9 @@ p, li { white-space: pre-wrap; }
              <property name="text">
               <string notr="true">TextLabel</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item row="2" column="0">
@@ -224,6 +224,9 @@ p, li { white-space: pre-wrap; }
              <property name="text">
               <string notr="true">TextLabel</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item row="0" column="0">
@@ -243,6 +246,9 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="text">
               <string notr="true">TextLabel</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>

@@ -39,7 +39,6 @@ PluginItem::PluginItem(int id, const QString& pluginTitle,const QString& pluginD
 	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
 	
 	expandFrame->hide();
-
 }
 
 void PluginItem::togglePlugin(bool b)
@@ -54,6 +53,10 @@ void PluginItem::configurePlugin()
 
 void PluginItem::on_moreinfo_label_linkActivated(QString)
 {
-	expandFrame->show();
+	if (expandFrame->isVisible()) {
+		expandFrame->hide();
+	} else {
+		expandFrame->show();
+	}
 }
 
