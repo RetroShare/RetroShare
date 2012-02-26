@@ -42,6 +42,7 @@
 /****
  * #define DEBUG_VORS		1
  ****/
+#define DEBUG_VORS		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -300,18 +301,21 @@ void p3VoRS::handleProtocol(RsVoipProtocolItem *item)
 {
 	// should we keep a list of received requests?
 
-	// we notify the notifier that something occurred.
-
 	switch(item->protocol)
 	{
-		case RsVoipProtocolItem::VoipProtocol_Ring: std::cerr << "Received protocol ring item." << std::endl;
+		case RsVoipProtocolItem::VoipProtocol_Ring: std::cerr << "p3VoRS::handleProtocol(): Received protocol ring item." << std::endl;
 																  mNotify->notifyReceivedVoipInvite(item->PeerId());
 																  break ;
 
-		case RsVoipProtocolItem::VoipProtocol_Ackn:
-		case RsVoipProtocolItem::VoipProtocol_Close:
+		case RsVoipProtocolItem::VoipProtocol_Ackn: std::cerr << "p3VoRS::handleProtocol(): Received protocol accept call" << std::endl;
+																  mNotify->notifyReceivedVoipAccept(item->PeerId());
+																  break ;
+
+		case RsVoipProtocolItem::VoipProtocol_Close: std::cerr << "p3VoRS::handleProtocol(): Received protocol Close call." << std::endl;
+																  mNotify->notifyReceivedVoipHangUp(item->PeerId());
+																  break ;
 		default:
-																  std::cerr << "Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
+																  std::cerr << "p3VoRS::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
 																  break ;
 	}
 

@@ -11,6 +11,16 @@ void PluginGUIHandler::ReceivedInvitation(const QString& peer_id)
 	std::cerr << "****** Plugin GUI handler: received data!" << std::endl;
 }
 
+void PluginGUIHandler::ReceivedVoipHangUp(const QString& peer_id) 
+{
+	std::cerr << "****** Plugin GUI handler: received HangUp!" << std::endl;
+}
+
+void PluginGUIHandler::ReceivedVoipAccept(const QString& peer_id) 
+{
+	std::cerr << "****** Plugin GUI handler: received VoipAccept!" << std::endl;
+}
+
 void PluginGUIHandler::ReceivedVoipData(const QString& peer_id) 
 {
 	std::cerr << "****** Plugin GUI handler: received invitation!" << std::endl;

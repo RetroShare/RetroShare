@@ -14,4 +14,6 @@ class PluginGUIHandler: public QObject
 	public slots:
 		void ReceivedInvitation(const QString& peer_id) ;
 		void ReceivedVoipData(const QString& peer_id) ;
+		void ReceivedVoipHangUp(const QString& peer_id) ;
+		void ReceivedVoipAccept(const QString& peer_id) ;
 };
