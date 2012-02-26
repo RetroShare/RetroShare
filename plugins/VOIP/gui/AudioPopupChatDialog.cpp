@@ -18,8 +18,7 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Normal,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Disabled,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Active,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Selected,QIcon::On) ;
-        //icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
+        icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Selected,QIcon::On) ;
 
 	audioListenToggleButton->setIcon(icon) ;
 	audioListenToggleButton->setIconSize(QSize(22,22)) ;
@@ -36,8 +35,7 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Normal,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Disabled,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Active,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Selected,QIcon::On) ;
-        //icon2.addPixmap(QPixmap(":/images/muted_self.svg")) ;
+        icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Selected,QIcon::On) ;
 
 	audioMuteCaptureToggleButton->setIcon(icon2) ;
 	audioMuteCaptureToggleButton->setIconSize(QSize(22,22)) ;
@@ -159,8 +157,7 @@ void AudioPopupChatDialog::sendAudioData() {
         QByteArray qbarray = inputProcessor->getNetworkPacket();
         RsVoipDataChunk chunk;
         chunk.size = qbarray.size();
-        chunk.data = malloc(qbarray.size());
-        memcpy(chunk.data,qbarray.constData(),qbarray.size()) ;
+        chunk.data = (void*)qbarray.constData();
         rsVoip->sendVoipData(peerId,chunk);
     }
 }

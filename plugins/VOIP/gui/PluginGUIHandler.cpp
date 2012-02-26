@@ -8,7 +8,7 @@
 
 void PluginGUIHandler::ReceivedInvitation(const QString& peer_id) 
 {
-	std::cerr << "****** Plugin GUI handler: received data!" << std::endl;
+        std::cerr << "****** Plugin GUI handler: received Invitation!" << std::endl;
 }
 
 void PluginGUIHandler::ReceivedVoipHangUp(const QString& peer_id) 
@@ -23,7 +23,7 @@ void PluginGUIHandler::ReceivedVoipAccept(const QString& peer_id)
 
 void PluginGUIHandler::ReceivedVoipData(const QString& peer_id) 
 {
-	std::cerr << "****** Plugin GUI handler: received invitation!" << std::endl;
+        std::cerr << "****** Plugin GUI handler: received VoipData!" << std::endl;
 
 	std::vector<RsVoipDataChunk> chunks ;
 
