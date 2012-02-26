@@ -2,6 +2,7 @@
 #include <QPropertyAnimation>
 #include <QIcon>
 #include "AudioPopupChatDialog.h"
+#include "interface/rsvoip.h"
 
 AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 {
@@ -13,33 +14,35 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	std::cerr << "****** VOIPLugin: Creating new AudioPopupChatDialog !!" << std::endl;
 
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/deafened_self.svg"),QIcon::Normal,QIcon::Off) ;
+        icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Normal,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Disabled,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Active,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Selected,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
+        //icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
 
 	audioListenToggleButton->setIcon(icon) ;
 	audioListenToggleButton->setIconSize(QSize(22,22)) ;
 	audioListenToggleButton->setFlat(true) ;
+        audioListenToggleButton->setCheckable(true);
 
 	audioMuteCaptureToggleButton = new QPushButton ;
 	audioMuteCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
 	audioMuteCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
-	audioMuteCaptureToggleButton->setText(QString()) ;
+        audioMuteCaptureToggleButton->setText(QString()) ;
 
 	QIcon icon2 ;
-	icon2.addPixmap(QPixmap(":/images/muted_self.svg"),QIcon::Normal,QIcon::Off) ;
+        icon2.addPixmap(QPixmap(":/images/muted_self.svg")) ;
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Normal,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Disabled,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Active,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Selected,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/muted_self.svg")) ;
+        //icon2.addPixmap(QPixmap(":/images/muted_self.svg")) ;
 
 	audioMuteCaptureToggleButton->setIcon(icon2) ;
 	audioMuteCaptureToggleButton->setIconSize(QSize(22,22)) ;
 	audioMuteCaptureToggleButton->setFlat(true) ;
+        audioMuteCaptureToggleButton->setCheckable(true) ;
 
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioMuteCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioMuteCapture()));
@@ -60,7 +63,7 @@ void AudioPopupChatDialog::toggleAudioListen()
 	std::cerr << "******** VOIPLugin: Toggling audio listen!" << std::endl;
     if (audioListenToggleButton->isChecked()) {
     } else {
-        audioListenToggleButton->setChecked(false);
+        //audioListenToggleButton->setChecked(false);
         /*if (outputDevice) {
             outputDevice->stop();
         }*/
@@ -154,14 +157,11 @@ void AudioPopupChatDialog::addAudioData(const QString name, QByteArray* array)
 void AudioPopupChatDialog::sendAudioData() {
     while(inputProcessor && inputProcessor->hasPendingPackets()) {
         QByteArray qbarray = inputProcessor->getNetworkPacket();
-        if (qbarray != NULL) {
-            std::wstring s2 ( L"" );
-            char * buff = new char[qbarray.size()];
-            memcpy(buff,qbarray.constData(),qbarray.size()) ;
-#ifdef VOIP_SUSPENDED
-            rsMsgs->sendPrivateChat(peerId, s2,buff, qbarray.size());
-#endif
-        }
+        RsVoipDataChunk chunk;
+        chunk.size = qbarray.size();
+        chunk.data = malloc(qbarray.size());
+        memcpy(chunk.data,qbarray.constData(),qbarray.size()) ;
+        rsVoip->sendVoipData(peerId,chunk);
     }
 }
 

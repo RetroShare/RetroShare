@@ -244,7 +244,8 @@ int p3VoRS::sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk
 	}
 	memcpy(item->voip_data,chunk.data,chunk.size) ;
 	item->flags = 0 ;
-	item->PeerId(peer_id) ;
+        item->PeerId(peer_id) ;
+        item->data_size = chunk.size;
 
 	sendItem(item) ;
 

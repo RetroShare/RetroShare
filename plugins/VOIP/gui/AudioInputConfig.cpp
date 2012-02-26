@@ -125,8 +125,8 @@ void AudioInputConfig::loadSettings() {
 	loadSlider(qsTransmitMax, iroundf(r.fVADmax * 32767.0f + 0.5f));
 	loadSlider(qsFrames, (r.iFramesPerPacket == 1) ? 1 : (r.iFramesPerPacket/2 + 1));
         loadSlider(qsDoublePush, iroundf(static_cast<float>(r.uiDoublePush) / 1000.f + 0.5f));*/
-        ui.qcbTransmit->setCurrentIndex(rsVoip->getVoipATransmit()-1);
-        on_qcbTransmit_currentIndexChanged(rsVoip->getVoipATransmit()-1);
+        ui.qcbTransmit->setCurrentIndex(rsVoip->getVoipATransmit());
+        on_qcbTransmit_currentIndexChanged(rsVoip->getVoipATransmit());
         ui.qsTransmitHold->setValue(rsVoip->getVoipVoiceHold());
         on_qsTransmitHold_valueChanged(rsVoip->getVoipVoiceHold());
         ui.qsTransmitMin->setValue(rsVoip->getVoipfVADmin());
@@ -167,7 +167,7 @@ bool AudioInputConfig::save(QString &/*errmsg*/) {//mainly useless beacause savi
         rsVoip->setVoipfVADmin(ui.qsTransmitMin->value());
         rsVoip->setVoipfVADmax(ui.qsTransmitMax->value());
         /*s.uiDoublePush = qsDoublePush->value() * 1000;*/
-        rsVoip->setVoipATransmit(static_cast<RsVoip::enumAudioTransmit>(ui.qcbTransmit->currentIndex() + 1));
+        rsVoip->setVoipATransmit(static_cast<RsVoip::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
         rsVoip->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
 
         return true;
@@ -232,7 +232,7 @@ void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
 			break;
 	}
         if (loaded)
-            rsVoip->setVoipATransmit(static_cast<RsVoip::enumAudioTransmit>(ui.qcbTransmit->currentIndex() + 1));
+            rsVoip->setVoipATransmit(static_cast<RsVoip::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
 }
 
 
