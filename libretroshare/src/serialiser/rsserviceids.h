@@ -85,9 +85,6 @@ const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
  /*! for Qblog service (Cache Only) */
 const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
 
-/* TEST VOIP - Service only */
-const uint16_t RS_SERVICE_TYPE_VOIP        = 0xf011;
-
  /* Proxy - Service only */
 const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 

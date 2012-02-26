@@ -34,6 +34,8 @@
 
 /**************************************************************************/
 
+const uint16_t RS_SERVICE_TYPE_VOIP       = 0xa021;
+
 const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	= 0x01;
 const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	= 0x02;
 const uint8_t RS_PKT_SUBTYPE_VOIP_PROTOCOL= 0x03 ;
