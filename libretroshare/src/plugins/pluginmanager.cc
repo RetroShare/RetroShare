@@ -50,12 +50,11 @@ void RsPluginManager::setInterfaces(RsPlugInInterfaces &interfaces)
     std::cerr << "RsPluginManager::setInterfaces()  " << std::endl;
 
     for(uint32_t i=0;i<_plugins.size();++i)
-
-        if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL)
-        {
-            _plugins[i].plugin->setInterfaces(interfaces);
-            std::cerr << " setting iterface for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
-        }
+        if(_plugins[i].plugin != NULL)
+		  {
+			  std::cerr << " setting iterface for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
+			  _plugins[i].plugin->setInterfaces(interfaces);
+		  }
 }
 
 void RsPluginManager::setCacheDirectories(const std::string& local_cache, const std::string& remote_cache)
@@ -263,7 +262,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 
 		pinfo.status = PLUGIN_STATUS_LOADED ;
 		pinfo.plugin = p ;
-                p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
+		p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
 		pinfo.info_string = "" ;
 
 		return true;
