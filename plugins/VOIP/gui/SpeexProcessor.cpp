@@ -10,6 +10,7 @@
 #include <math.h>
 #include <cstdlib>
 #include <QDateTime>
+#include <limits.h>
 
 #include "interface/rsvoip.h"
 

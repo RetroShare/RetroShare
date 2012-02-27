@@ -1,7 +1,7 @@
 #ifndef AUDIODEVICEHELPER_H
 #define AUDIODEVICEHELPER_H
-#include <QtMultimediaKit/QAudioInput>
-#include <QtMultimediaKit/QAudioOutput>
+#include <QAudioInput>
+#include <QAudioOutput>
 
 class AudioDeviceHelper
 {
