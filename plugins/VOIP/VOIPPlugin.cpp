@@ -72,7 +72,7 @@ PopupChatDialog *VOIPPlugin::qt_allocate_new_popup_chat_dialog() const
 
 std::string VOIPPlugin::qt_transfers_tab_name() const
 {
-	return QObject::tr("RTT Statistics").toStdString() ;
+	return QObject::tr("RTT Statistics").toUtf8().constData() ;
 }
 RsAutoUpdatePage *VOIPPlugin::qt_transfers_tab() const
 {

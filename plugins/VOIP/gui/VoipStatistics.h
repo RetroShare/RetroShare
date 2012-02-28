@@ -30,6 +30,8 @@ class VoipStatisticsWidget ;
 
 class VoipStatistics: public RsAutoUpdatePage, public Ui::VoipStatistics
 {
+	Q_OBJECT
+
 	public:
 		VoipStatistics(QWidget *parent = NULL) ;
 		~VoipStatistics();
@@ -49,6 +51,8 @@ class VoipStatistics: public RsAutoUpdatePage, public Ui::VoipStatistics
 
 class VoipStatisticsWidget:  public QWidget
 {
+	Q_OBJECT
+
 	public:
 		VoipStatisticsWidget(QWidget *parent = NULL) ;
 

@@ -307,7 +307,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 	 for(int i=0;i<rsPlugins->nbPlugins();++i)
 		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)
-			 ui.tabWidget->addTab( rsPlugins->plugin(i)->qt_transfers_tab(),QString::fromStdString(rsPlugins->plugin(i)->qt_transfers_tab_name()) ) ;
+			 ui.tabWidget->addTab( rsPlugins->plugin(i)->qt_transfers_tab(),QString::fromUtf8(rsPlugins->plugin(i)->qt_transfers_tab_name().c_str()) ) ;
 
 //    TurtleRouterDialog *trdl = new TurtleRouterDialog();
 //    ui.tunnelInfoWidget->setWidget(trdl);

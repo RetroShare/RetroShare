@@ -408,7 +408,7 @@ RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32
 {
 }
 
-RsPQIService::RsPQIService(uint16_t service_type,uint32_t config_type,uint32_t tick_delay_in_seconds, RsPluginHandler* pgHandler) 
+RsPQIService::RsPQIService(uint16_t service_type,uint32_t config_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
 	: p3Service(service_type),p3Config(config_type)
 {
 }
