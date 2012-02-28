@@ -4,6 +4,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
+#include <list>
+#include <vector>
 
 class RsVoip ;
 extern RsVoip *rsVoip;

@@ -57,6 +57,10 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WFlags flags)
     ui.setupUi(this);
 
     loaded = false;
+
+    inputProcessor = NULL;
+    inputDevice = NULL;
+    abSpeech = NULL;
 }
 
 AudioInputConfig::~AudioInputConfig()
@@ -94,12 +98,9 @@ void AudioInputConfig::load()
     //abSpeech->setGeometry(9,20,50,10);
     ui.qwVadLayout_2->addWidget(abSpeech,0,0,1,0);
 
-
     //on_qcbPushClick_clicked(g.s.bPushClick);
     //ui.on_Tick_timeout();
     loadSettings();
-    inputProcessor = NULL;
-    inputDevice = NULL;
 }
 
 

@@ -126,6 +126,9 @@ win32 {
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
+	# export symbols for the plugins
+	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
+
 	DEFINES += WINDOWS_SYS
 
 	GPG_ERROR_DIR = ../../../libgpg-error-1.10

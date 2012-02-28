@@ -15,6 +15,13 @@ lessThan(QT_VER_MAJ, 4) | lessThan(QT_VER_MIN, 7) {
 
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui
 
+#################################### Windows #####################################
+
+win32 {
+	# Speex
+	INCLUDEPATH += ../../../speex-1.2rc1/include
+}
+
 QMAKE_CXXFLAGS *= -Wall
 
 SOURCES = services/p3vors.cc \

@@ -206,7 +206,7 @@ void VoipStatistics::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
 
-    Settings->beginGroup(QString("VoipStatistics"));
+//    Settings->beginGroup(QString("VoipStatistics"));
 
     if (bLoad) {
         // load settings
@@ -221,7 +221,7 @@ void VoipStatistics::processSettings(bool bLoad)
 
     }
 
-    Settings->endGroup();
+//    Settings->endGroup();
     
     m_bProcessSettings = false;
 

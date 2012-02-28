@@ -1,8 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-        LinksCloud
-
-
-
-
+		LinksCloud \
+		VOIP
