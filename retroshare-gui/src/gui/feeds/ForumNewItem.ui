@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>354</height>
+    <height>117</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout">
    <property name="margin">
-    <number>6</number>
+    <number>0</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -55,7 +55,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/images/konversation.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
           </property>
          </widget>
         </item>
@@ -142,7 +142,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
           </property>
          </widget>
@@ -153,7 +153,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
           </property>
          </widget>
@@ -189,7 +189,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -212,7 +212,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -249,7 +249,7 @@ border-radius: 10px}</string>
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap>:/images/contacts24.png</pixmap>
+               <pixmap resource="../images.qrc">:/images/contacts24.png</pixmap>
               </property>
              </widget>
             </item>
@@ -273,19 +273,6 @@ border-radius: 10px}</string>
            </layout>
           </widget>
          </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </widget>
       </item>
@@ -294,6 +281,8 @@ border-radius: 10px}</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
