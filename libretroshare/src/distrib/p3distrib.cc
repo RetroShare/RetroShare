@@ -2539,7 +2539,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 						  << "grpId " << grpId
 						  << std::endl;
 		#endif
-				return false;
+				return msgId;
 			}
 
 			if(p3DistribSecurity::encrypt((void*&)out_data, (int&)out_size, (void*&)data, (int)size, privateKey)){
