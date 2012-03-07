@@ -205,6 +205,10 @@ p, li { white-space: pre-wrap; }
         <source>Style Sheet</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -1091,12 +1095,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Изпращане</translation>
     </message>
     <message>
-        <source>Friend not Online</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your Friend is offline 
-Do you want to send them a Message instead</source>
+        <source>Your friend has more than one locations.
+Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1343,6 +1343,10 @@ p, li { white-space: pre-wrap; }
         <source>Outgoing offline message</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished">Разговор</translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1487,6 +1491,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>is Busy and may not reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset font to default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2666,6 +2678,10 @@ p, li { white-space: pre-wrap; }
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CryptographyDialog</name>
@@ -3122,6 +3138,10 @@ you plug it in.</source>
         <source>Set Partials Directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Directories</source>
+        <translation type="unfinished">Директории</translation>
+    </message>
 </context>
 <context>
     <name>DiscStatus</name>
@@ -3400,6 +3420,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You  this</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Associations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3764,6 +3788,10 @@ p, li { white-space: pre-wrap; }
         <source>Expand new messages</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsDialog</name>
@@ -3985,6 +4013,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You cant reply a Anonymous Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ ... Missing Message ... ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Placeholder for missing Message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4223,6 +4259,33 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendRecommendDialog</name>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
@@ -4441,6 +4504,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset font to default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4913,6 +4988,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Could not remove retroshare:// protocol.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished">Общи</translation>
     </message>
 </context>
 <context>
@@ -6350,6 +6429,10 @@ Do you want to save message ?</source>
         <source>Edit Tag</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageToaster</name>
@@ -7612,6 +7695,10 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Скорост за един потребител (KB/S):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished">Мрежа</translation>
+    </message>
 </context>
 <context>
     <name>NetworkView</name>
@@ -7837,6 +7924,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bottom Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notify</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8416,6 +8507,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description unavailable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check this for developing plugins. They will not
+be checked for the hash. However, in normal
+times, checking the hash protects you from
+malicious behavior of crafted plugins.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9036,22 +9138,6 @@ and open the Make Friend Wizard.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>secs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Old</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Round Trip Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unable to make path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9289,63 +9375,23 @@ p, li { white-space: pre-wrap; }
     <name>RSettingsWin</name>
     <message>
         <source>General</source>
-        <translation type="unfinished">Общи</translation>
+        <translation type="obsolete">Общи</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">Директории</translation>
+        <translation type="obsolete">Директории</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished">Сървър</translation>
+        <translation type="obsolete">Сървър</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished">Разговор</translation>
+        <translation type="obsolete">Разговор</translation>
     </message>
     <message>
         <source>Error Saving Configuration</source>
         <translation type="obsolete">Грешка при запазване на настройките</translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Relay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Notify</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Appearance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>UnknownPage</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -9427,6 +9473,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relay</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10161,6 +10211,38 @@ behind a firewall or a VPN.</source>
         <source>Allow RetroShare to ask my ip to these websites:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Turtle router</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max average tunnel request forwarded per second:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This value controls how many tunnel request your peer can forward per second. 
+
+If you have a large internet bandwidth, you may raise this up to 30-40, to allow
+statisticlly longuer tunnels to pass. Be very careful though, since this generates 
+many small packets that can significantly slow down your own file transfer. 
+
+The default value is 20.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation type="unfinished">Сървър</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -10174,7 +10256,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished">Разговор</translation>
+        <translation type="obsolete">Разговор</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -10190,7 +10272,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">Общи</translation>
+        <translation type="obsolete">Общи</translation>
     </message>
     <message>
         <source>Network</source>
@@ -10198,47 +10280,11 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished">Сървър</translation>
+        <translation type="obsolete">Сървър</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">Директории</translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Relays</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Notify</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Appearance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Директории</translation>
     </message>
 </context>
 <context>
@@ -10671,6 +10717,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11411,6 +11461,10 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TransfersDialog</name>
@@ -11566,10 +11620,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Router Requests</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RTT Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11730,6 +11780,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If the hash of the downloaded data does
+not correspond to the hash announced
+by the file source. The data is likely 
+to be corrupted.
+
+RetroShare will ask the source a detailed 
+map of the data; it will compare and invalidate
+bad blocks, and download them again
+
+Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12083,13 +12146,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>VoipStatistics</name>
-    <message>
-        <source>VoipTest Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

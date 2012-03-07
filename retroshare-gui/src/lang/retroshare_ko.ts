@@ -134,6 +134,10 @@ p, li { white-space: pre-wrap; }
         <source>Style Sheet</source>
         <translation type="unfinished">문서 양식</translation>
     </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished">외관</translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -1026,12 +1030,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatDialog</name>
     <message>
-        <source>Friend not Online</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your Friend is offline 
-Do you want to send them a Message instead</source>
+        <source>Your friend has more than one locations.
+Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1274,6 +1274,10 @@ p, li { white-space: pre-wrap; }
         <source>Outgoing offline message</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1425,6 +1429,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>is Busy and may not reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset font to default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2132,7 +2144,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="obsolete">인증된 메시지</translation>
+        <translation type="unfinished">인증된 메시지</translation>
     </message>
     <message>
         <source>Channel Logo</source>
@@ -2168,10 +2180,6 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2373,7 +2381,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="obsolete">인증된 메시지</translation>
+        <translation type="unfinished">인증된 메시지</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
@@ -2409,10 +2417,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2674,6 +2678,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished">보안</translation>
     </message>
 </context>
 <context>
@@ -3049,6 +3057,10 @@ you plug it in.</source>
         <source>Set Partials Directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Directories</source>
+        <translation type="unfinished">전화번호부</translation>
+    </message>
 </context>
 <context>
     <name>DiscStatus</name>
@@ -3324,6 +3336,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You  this</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Associations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3722,6 +3738,10 @@ p, li { white-space: pre-wrap; }
         <source>Expand new messages</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished">포럼</translation>
+    </message>
 </context>
 <context>
     <name>ForumsDialog</name>
@@ -4021,6 +4041,14 @@ p, li { white-space: pre-wrap; }
         <source>You cant reply a Anonymous Author</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[ ... Missing Message ... ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Placeholder for missing Message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4253,6 +4281,33 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FriendRecommendDialog</name>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4491,6 +4546,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset font to default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4960,6 +5027,10 @@ Fill in your GPG password when asked, to sign your new key.</source>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished">일반</translation>
     </message>
 </context>
 <context>
@@ -6382,6 +6453,10 @@ Do you want to save message ?</source>
         <source>Edit Tag</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished">메시지</translation>
+    </message>
 </context>
 <context>
     <name>MessageToaster</name>
@@ -7566,6 +7641,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Rate per Person (KB/S):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;사람마다 속도 (KB/S):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished">네트워크</translation>
+    </message>
 </context>
 <context>
     <name>NetworkView</name>
@@ -7765,6 +7844,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Bottom Right</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notify</source>
+        <translation type="unfinished">알림</translation>
     </message>
 </context>
 <context>
@@ -8499,6 +8582,17 @@ p, li { white-space: pre-wrap; }
         <source>Description unavailable</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Check this for developing plugins. They will not
+be checked for the hash. However, in normal
+times, checking the hash protects you from
+malicious behavior of crafted plugins.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished">플러그인</translation>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
@@ -9226,22 +9320,6 @@ and open the Make Friend Wizard.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>secs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Old</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Round Trip Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unable to make path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9515,39 +9593,39 @@ p, li { white-space: pre-wrap; }
     <name>RSettingsWin</name>
     <message>
         <source>General</source>
-        <translation type="unfinished">일반</translation>
+        <translation type="obsolete">일반</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">전화번호부</translation>
+        <translation type="obsolete">전화번호부</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished">동료 조정</translation>
+        <translation type="obsolete">동료 조정</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">전송</translation>
+        <translation type="obsolete">전송</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">알림</translation>
+        <translation type="obsolete">알림</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">보안</translation>
+        <translation type="obsolete">보안</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished">메시지</translation>
+        <translation type="obsolete">메시지</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished">포럼</translation>
+        <translation type="obsolete">포럼</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished">외관</translation>
+        <translation type="obsolete">외관</translation>
     </message>
     <message>
         <source>File Associations</source>
@@ -9555,27 +9633,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sound</source>
-        <translation type="unfinished">사운드</translation>
+        <translation type="obsolete">사운드</translation>
     </message>
     <message>
         <source>UnknownPage</source>
-        <translation type="unfinished">알 수없는 페이지</translation>
+        <translation type="obsolete">알 수없는 페이지</translation>
     </message>
     <message>
         <source>Error Saving Configuration</source>
         <translation type="obsolete">과실 저축 윤곽 </translation>
     </message>
     <message>
-        <source>Relay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Plugins</source>
-        <translation type="unfinished">플러그인</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">플러그인</translation>
     </message>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -9665,6 +9735,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relay</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10457,6 +10531,38 @@ behind a firewall or a VPN.</source>
         <source>Allow RetroShare to ask my ip to these websites:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Turtle router</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max average tunnel request forwarded per second:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This value controls how many tunnel request your peer can forward per second. 
+
+If you have a large internet bandwidth, you may raise this up to 30-40, to allow
+statisticlly longuer tunnels to pass. Be very careful though, since this generates 
+many small packets that can significantly slow down your own file transfer. 
+
+The default value is 20.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation type="unfinished">동료 조정</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -10470,31 +10576,31 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">전송</translation>
+        <translation type="obsolete">전송</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">알림</translation>
+        <translation type="obsolete">알림</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">보안</translation>
+        <translation type="obsolete">보안</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished">메시지</translation>
+        <translation type="obsolete">메시지</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished">포럼</translation>
+        <translation type="obsolete">포럼</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished">외관</translation>
+        <translation type="obsolete">외관</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="unfinished">사운드</translation>
+        <translation type="obsolete">사운드</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -10510,7 +10616,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">일반</translation>
+        <translation type="obsolete">일반</translation>
     </message>
     <message>
         <source>Network</source>
@@ -10518,23 +10624,15 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished">동료 조정</translation>
+        <translation type="obsolete">동료 조정</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">전화번호부</translation>
-    </message>
-    <message>
-        <source>Relays</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">전화번호부</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="unfinished">플러그인</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">플러그인</translation>
     </message>
 </context>
 <context>
@@ -10985,6 +11083,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Open File</source>
         <translation type="unfinished">파일 열기</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation type="unfinished">사운드</translation>
     </message>
 </context>
 <context>
@@ -11720,7 +11822,7 @@ p, li { white-space: pre-wrap; }
     <name>TransferPage</name>
     <message>
         <source>Transfer</source>
-        <translation type="obsolete">전송</translation>
+        <translation type="unfinished">전송</translation>
     </message>
     <message>
         <source>Transfer options</source>
@@ -12127,10 +12229,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RTT Statistics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Force Check</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12148,6 +12246,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File %1 preview failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If the hash of the downloaded data does
+not correspond to the hash announced
+by the file source. The data is likely 
+to be corrupted.
+
+RetroShare will ask the source a detailed 
+map of the data; it will compare and invalidate
+bad blocks, and download them again
+
+Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12436,13 +12547,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>VoipStatistics</name>
-    <message>
-        <source>VoipTest Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

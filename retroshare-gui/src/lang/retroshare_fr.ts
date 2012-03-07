@@ -134,6 +134,10 @@ p, li { white-space: pre-wrap; }
         <source>Style Sheet</source>
         <translation>Feuille de style</translation>
     </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished">Apparence</translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -900,13 +904,18 @@ p, li { white-space: pre-wrap; }
     <name>ChatDialog</name>
     <message>
         <source>Friend not Online</source>
-        <translation>Ami Hors ligne</translation>
+        <translation type="obsolete">Ami Hors ligne</translation>
     </message>
     <message>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation>Votre ami est hors ligne
+        <translation type="obsolete">Votre ami est hors ligne
 Voulez-vous lui envoyer un message à la place ?</translation>
+    </message>
+    <message>
+        <source>Your friend has more than one locations.
+Please choose one of it to chat with.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1151,6 +1160,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Outgoing</source>
         <translation>Sortant</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished">Chat</translation>
     </message>
 </context>
 <context>
@@ -2482,6 +2495,10 @@ p, li { white-space: pre-wrap; }
         <source>Your certificate could not be parsed correctly. Please contact the developpers.</source>
         <translation>Votre certificat n&apos;a pas pu être analysé correctement. S&apos;il vous plaît contactez les développeurs.</translation>
     </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished">Sécurité</translation>
+    </message>
 </context>
 <context>
     <name>DHTStatus</name>
@@ -2843,6 +2860,10 @@ des fichiers quand vous le rebrancher.</translation>
         <source>Edit Share</source>
         <translation type="unfinished">Ajouter dossier</translation>
     </message>
+    <message>
+        <source>Directories</source>
+        <translation type="unfinished">Répertoires</translation>
+    </message>
 </context>
 <context>
     <name>DiscStatus</name>
@@ -3122,6 +3143,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>You  this</source>
         <translation>Moi</translation>
+    </message>
+    <message>
+        <source>Associations</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3462,6 +3487,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Expand new messages</source>
         <translation type="unfinished">Développer les forums contenant des nouveaux messages</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4545,6 +4574,10 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     <message>
         <source>Could not remove retroshare:// protocol.</source>
         <translation>Impossible de supprimer RetroShare : // en tant que protocole.</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished">Général</translation>
     </message>
 </context>
 <context>
@@ -6045,6 +6078,10 @@ Voulez-vous enregistrer votre message ?</translation>
         <source>Edit Tag</source>
         <translation>Modifier le mot clé</translation>
     </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageToaster</name>
@@ -6859,6 +6896,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>NetworkPage</name>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished">Réseau</translation>
+    </message>
+</context>
+<context>
     <name>NetworkView</name>
     <message>
         <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
@@ -7052,6 +7096,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Combined</source>
         <translation>Combiné</translation>
+    </message>
+    <message>
+        <source>Notify</source>
+        <translation type="unfinished">Notifications</translation>
     </message>
 </context>
 <context>
@@ -7528,6 +7576,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Description unavailable</source>
         <translation>Description indisponible</translation>
+    </message>
+    <message>
+        <source>Check this for developing plugins. They will not
+be checked for the hash. However, in normal
+times, checking the hash protects you from
+malicious behavior of crafted plugins.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished">Extensions</translation>
     </message>
 </context>
 <context>
@@ -8176,19 +8235,15 @@ et ouvrir Ajouter un ami.</translation>
     </message>
     <message>
         <source>secs</source>
-        <translation>secs</translation>
+        <translation type="obsolete">secs</translation>
     </message>
     <message>
         <source>Old</source>
-        <translation type="unfinished">Vieux</translation>
+        <translation type="obsolete">Vieux</translation>
     </message>
     <message>
         <source>Now</source>
-        <translation>Maintenant</translation>
-    </message>
-    <message>
-        <source>Round Trip Time:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Maintenant</translation>
     </message>
     <message>
         <source>Unable to make path</source>
@@ -8444,51 +8499,51 @@ p, li { white-space: pre-wrap; }
     <name>RSettingsWin</name>
     <message>
         <source>General</source>
-        <translation>Général</translation>
+        <translation type="obsolete">Général</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">Répertoires</translation>
+        <translation type="obsolete">Répertoires</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation>Serveur</translation>
+        <translation type="obsolete">Serveur</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation>Transferts</translation>
+        <translation type="obsolete">Transferts</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Notifications</translation>
+        <translation type="obsolete">Notifications</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation>Sécurité</translation>
+        <translation type="obsolete">Sécurité</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Messagerie</translation>
+        <translation type="obsolete">Messagerie</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Forums</translation>
+        <translation type="obsolete">Forums</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation type="obsolete">Chat</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation>Apparence</translation>
+        <translation type="obsolete">Apparence</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation>Sons</translation>
+        <translation type="obsolete">Sons</translation>
     </message>
     <message>
         <source>UnknownPage</source>
-        <translation>Page inconnue</translation>
+        <translation type="obsolete">Page inconnue</translation>
     </message>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -8496,11 +8551,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Relay</source>
-        <translation>Relais</translation>
+        <translation type="obsolete">Relais</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Extensions</translation>
+        <translation type="obsolete">Extensions</translation>
     </message>
 </context>
 <context>
@@ -8579,6 +8634,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Remove Server</source>
         <translation>Supprimer serveur</translation>
+    </message>
+    <message>
+        <source>Relay</source>
+        <translation type="unfinished">Relais</translation>
     </message>
 </context>
 <context>
@@ -9219,7 +9278,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9247,6 +9306,20 @@ de nombreux petits paquets qui peuvent considérablement ralentir les transfert 
 
 La valeur par défaut est de 20.</translation>
     </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation type="unfinished">Serveur</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -9256,35 +9329,35 @@ La valeur par défaut est de 20.</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation>Transferts</translation>
+        <translation type="obsolete">Transferts</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Notifications</translation>
+        <translation type="obsolete">Notifications</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation>Sécurité</translation>
+        <translation type="obsolete">Sécurité</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Messagerie</translation>
+        <translation type="obsolete">Messagerie</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Forums</translation>
+        <translation type="obsolete">Forums</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation type="obsolete">Chat</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation>Apparence</translation>
+        <translation type="obsolete">Apparence</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation>Sons</translation>
+        <translation type="obsolete">Sons</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9296,23 +9369,23 @@ La valeur par défaut est de 20.</translation>
     </message>
     <message>
         <source>General</source>
-        <translation>Général</translation>
+        <translation type="obsolete">Général</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation>Serveur</translation>
+        <translation type="obsolete">Serveur</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation>Répertoires</translation>
+        <translation type="obsolete">Répertoires</translation>
     </message>
     <message>
         <source>Relays</source>
-        <translation>Relais</translation>
+        <translation type="obsolete">Relais</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Extensions</translation>
+        <translation type="obsolete">Extensions</translation>
     </message>
 </context>
 <context>
@@ -9752,6 +9825,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Open File</source>
         <translation>Ouvrir le fichier</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation type="unfinished">Sons</translation>
     </message>
 </context>
 <context>
@@ -10522,6 +10599,10 @@ p, li { white-space: pre-wrap; }
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Visible par mes amis&lt;/span&gt;: les fichiers sont visibles par mes amis.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Partage anonyme&lt;/span&gt;: les fichiers sont accessibles anonymement par des tunnels F2F.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TransfersDialog</name>
@@ -10820,7 +10901,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RTT Statistics</source>
-        <translation>Statistiques RTT</translation>
+        <translation type="obsolete">Statistiques RTT</translation>
+    </message>
+    <message>
+        <source>If the hash of the downloaded data does
+not correspond to the hash announced
+by the file source. The data is likely 
+to be corrupted.
+
+RetroShare will ask the source a detailed 
+map of the data; it will compare and invalidate
+bad blocks, and download them again
+
+Try to be patient!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11111,7 +11205,7 @@ p, li { white-space: pre-wrap; }
     <name>VoipStatistics</name>
     <message>
         <source>VoipTest Statistics</source>
-        <translation type="unfinished">VoipTest Statistics</translation>
+        <translation type="obsolete">VoipTest Statistics</translation>
     </message>
 </context>
 <context>
