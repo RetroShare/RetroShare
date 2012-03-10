@@ -27,6 +27,7 @@
 #include <retroshare/rsinit.h>
 
 #include "EventReceiver.h"
+#include "gui/MainWindow.h"
 #include "gui/RetroShareLink.h"
 
 #ifdef WINDOWS_SYS
@@ -162,10 +163,71 @@ bool EventReceiver::winEvent(MSG* message, long* result)
 }
 #endif
 
+#ifdef WINDOWS_SYS
+//void SetForegroundWindowInternal(HWND hWnd)
+//{
+//	if (!::IsWindow(hWnd)) return;
+
+//	// relation time of SetForegroundWindow lock
+//	DWORD lockTimeOut = 0;
+//	HWND  hCurrWnd = ::GetForegroundWindow();
+//	DWORD dwThisTID = ::GetCurrentThreadId(),
+//		  dwCurrTID = ::GetWindowThreadProcessId(hCurrWnd,0);
+
+//	// we need to bypass some limitations from Microsoft :)
+//	if (dwThisTID != dwCurrTID) {
+//		::AttachThreadInput(dwThisTID, dwCurrTID, TRUE);
+
+//		::SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT,0,&lockTimeOut,0);
+//		::SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT,0,0,SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+
+//		::AllowSetForegroundWindow(ASFW_ANY);
+//	}
+
+//	::SetForegroundWindow(hWnd);
+
+//	if(dwThisTID != dwCurrTID) {
+//		::SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT,0,(PVOID)lockTimeOut,SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+//		::AttachThreadInput(dwThisTID, dwCurrTID, FALSE);
+//	}
+//}
+
+void SetForegroundWindowInternal(HWND hWnd)
+{
+	if (!::IsWindow(hWnd)) return;
+
+	BYTE keyState[256] = {0};
+	// to unlock SetForegroundWindow we need to imitate Alt pressing
+	if (::GetKeyboardState((LPBYTE)&keyState)) {
+		if(!(keyState[VK_MENU] & 0x80)) {
+			::keybd_event(VK_MENU, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+		}
+	}
+
+	::SetForegroundWindow(hWnd);
+
+	if (::GetKeyboardState((LPBYTE)&keyState)) {
+		if(!(keyState[VK_MENU] & 0x80)) {
+			::keybd_event(VK_MENU, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+		}
+	}
+}
+#endif
+
 void EventReceiver::received(const QString &url)
 {
 	RetroShareLink link(url);
 	if (link.valid()) {
+		MainWindow *window = MainWindow::getInstance();
+		if (window) {
+			window->show();
+			window->raise();
+
+#ifdef WINDOWS_SYS
+			SetForegroundWindowInternal(window->winId());
+#endif
+		}
+
 		emit linkReceived(link.toUrl());
 	}
 }
