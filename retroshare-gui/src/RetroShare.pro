@@ -129,6 +129,9 @@ win32 {
 	# export symbols for the plugins
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
+	# create lib directory
+	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+
 	DEFINES += WINDOWS_SYS
 
 	GPG_ERROR_DIR = ../../../libgpg-error-1.10
