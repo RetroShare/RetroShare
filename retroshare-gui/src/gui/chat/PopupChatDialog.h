@@ -38,6 +38,7 @@ private slots:
 	void showAvatarFrame(bool show);
 	void clearOfflineMessages();
 	void chatStatusChanged(const QString &peerId, const QString &statusString, bool isPrivateChat);
+	void statusChanged(int);
 
 protected:
 	/** Default constructor */
@@ -49,6 +50,8 @@ protected:
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return true; }
+
+	virtual void updateStatus(int /*status*/) {}
 
 	void processSettings(bool load);
 

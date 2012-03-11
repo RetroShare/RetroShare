@@ -657,6 +657,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 		}
 
 		emit infoChanged(this);
+		emit statusChanged(status);
 
 		return;
 	}

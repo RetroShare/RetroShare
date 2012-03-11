@@ -52,6 +52,8 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WFlags flags)
 
 void PopupChatDialog::init(const std::string &peerId, const QString &title)
 {
+	connect(ui.chatWidget, SIGNAL(statusChanged(int)), this, SLOT(statusChanged(int)));
+
 	ChatDialog::init(peerId, title);
 
 	/* Hide or show the avatar frames */
@@ -226,4 +228,9 @@ void PopupChatDialog::clearOfflineMessages()
 	manualDelete = true;
 	rsMsgs->clearPrivateChatQueue(false, peerId);
 	manualDelete = false;
+}
+
+void PopupChatDialog::statusChanged(int status)
+{
+	updateStatus(status);
 }

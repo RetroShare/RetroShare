@@ -33,7 +33,7 @@ class AudioPopupChatDialog: public PopupChatDialog
 		QtSpeex::SpeexInputProcessor* inputProcessor;
 		QtSpeex::SpeexOutputProcessor* outputProcessor;
 
-		virtual void updateStatus(const QString& peer_id,int status) ;
+		virtual void updateStatus(int status) ;
 
 		QPushButton *audioListenToggleButton ;
 		QPushButton *audioMuteCaptureToggleButton ;

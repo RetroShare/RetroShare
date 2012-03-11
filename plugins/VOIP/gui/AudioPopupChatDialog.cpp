@@ -162,11 +162,11 @@ void AudioPopupChatDialog::sendAudioData() {
     }
 }
 
-void AudioPopupChatDialog::updateStatus(const QString& peer_id,int status) 
+void AudioPopupChatDialog::updateStatus(int status)
 {
 	audioListenToggleButton->setEnabled(true);
 	audioMuteCaptureToggleButton->setEnabled(true);
 
-	updateStatus(peer_id,status) ;
+	PopupChatDialog::updateStatus(status) ;
 }
 
