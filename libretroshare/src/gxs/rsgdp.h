@@ -84,7 +84,7 @@ public:
      * @param cacheRequest set to true to cache the messages requested
      * @return request code to be redeemed later
      */
-    virtual int request(RequestFilter* filter, bool cacheRequest) = 0;
+    virtual int request(RsGxsSearch* filter, bool cacheRequest) = 0;
 
 
     /*!
@@ -142,7 +142,7 @@ public:
  * Might be better off simply sending request codes
  *
  */
-class RequestFilter {
+class RsGxsSearch {
 
     /*!
      *
@@ -179,7 +179,7 @@ public:
      * Service should implement method taking case
      * @param filter
      */
-    virtual void retrieve(RequestFilter* filter, SignedMsgGrp& msgs) = 0;
+    virtual void retrieve(RsGxsSearch* search, SignedMsgGrp& msgs) = 0;
 
     /*!
      * stores signed message in internal storage

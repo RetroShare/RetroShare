@@ -132,6 +132,7 @@ class RsGroupManagement
 		virtual bool allow_TwoPeers_TurtleTraffic     (const SSLId& p1,const SSLId& p2) = 0 ;
 		virtual bool allow_TwoPeers_Discovery         (const SSLId& p1,const SSLId& p2) = 0 ;
 		virtual bool allow_TwoPeers_LobbyAdvertisement(const SSLId& p1,const SSLId& p2) = 0 ;
+                virtual bool allow_TwoPeers_GeneralExchangeService(const SSLId& p1,const SSLId& p2) = 0 ;
 		// [...]
 };
 

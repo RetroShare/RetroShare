@@ -91,17 +91,16 @@ class KeyRefSet {
 };
 
 class SignatureSet {
-    std::set<Signature> mSignatureSet;
+    std::set<RsGxsSignature> mSignatureSet;
 };
 
 /*!
  *
  *
  */
-class Signature {
+class RsGxsSignature {
 
     KeyRef mKeyRef;
-    Signature mSignature;
 };
 
 /*!
@@ -121,7 +120,7 @@ public:
 
     // TODO: add permissions members
 
-    Signature mSignature;
+    RsGxsSignature mSignature;
 
 };
 
@@ -136,9 +135,11 @@ public:
  * This may best be implemented as a singleton like current AuthGPG? \n
  *
  */
-class RsIdentityExchangeService : RsGeneralExchangeService
+class RsIdentityExchangeService : RsGxsService
 {
 public:
+
+    enum IdentityType { Pseudonym, Signed, Anonymous };
 
     RsGixs();
 

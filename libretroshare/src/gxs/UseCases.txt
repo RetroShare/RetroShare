@@ -17,6 +17,9 @@ Please not all request* functions have a receive pair if not noted below
 			-> This function will get the group list from
            Component:
 				GDService::requestGroup()
+
+
+				-> 
 		----------------
 	1.1.2) list of messages for each Group.
            ----------------
@@ -35,7 +38,7 @@ Please not all request* functions have a receive pair if not noted below
 	1.1.4) details of messages by message Id.
            ----------------
 		int GXService::requestMessages(multimap<grpId, pair<msgId,version> >)
-           void receiveMsgs(int token, std::list<RsGxsMsg*>); // call back		
+                void receiveMsgs(int token, std::list<RsGxsMsg*>); // call back		
            ----------------		
 
 	1.1.5) newest version of each message -> get version list.
@@ -55,8 +58,7 @@ Please not all request* functions have a receive pair if not noted below
 	1.1.7) access to Identity associated with Group and Messages
 
 		----------------
-		int requestMsgIdentity(multimap<grpId, pair<msgId,version> >)
-		int requestGrpIdentity(string grpId)
+		returned with message
 		----------------
 
 	1.1.8) updates when new groups arrive.
@@ -74,7 +76,7 @@ Please not all request* functions have a receive pair if not noted below
 
 		----------------
 		int receivedNewUpdates(multimap<grpId, pair<msgId,version> >)
-		int receivedNewUpdates(multimap<grpId, version> >)
+		int receivedNewUpdates(map<grpId, version> >)
 		----------------
 
 	1.1.11) Search forums for Keywords.
@@ -149,7 +151,7 @@ Please not all request* functions have a receive pair if not noted below
 	1.4.4) modify forums we own.
 
 		---------------- 		
-		int GXService::updateForum(multimap<grpId, version>)
+		int GXService::updateGroup(multimap<grpId, version>)
 		----------------
 
 		---------------- 		
