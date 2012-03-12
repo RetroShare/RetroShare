@@ -661,9 +661,9 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 	}
 
 	bool should_notify_discovery = false ;
+	std::string item_gpg_id = rsPeers->getGPGId(item->PeerId()) ;
 
-	std::list<RsPeerNetItem>::iterator pit;
-	for (pit = item->rsPeerList.begin(); pit != item->rsPeerList.end(); pit++) 
+	for (std::list<RsPeerNetItem>::iterator pit = item->rsPeerList.begin(); pit != item->rsPeerList.end(); pit++) 
 	{
 		if(isDummyFriend(pit->pid)) 
 		{
@@ -671,8 +671,8 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 		}
 
 		bool new_info = false;
-		addDiscoveryData(item->PeerId(), pit->pid,rsPeers->getGPGId(item->PeerId()),
-			item->aboutId, pit->currentlocaladdr, pit->currentremoteaddr, 0, time(NULL),new_info);
+		addDiscoveryData(item->PeerId(), pit->pid,item_gpg_id,
+				item->aboutId, pit->currentlocaladdr, pit->currentremoteaddr, 0, time(NULL),new_info);
 
 		if(new_info)
 			should_notify_discovery = true ;
@@ -717,10 +717,10 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 
 				/* add into NetMgr and non-search, so we can detect connect attempts */
 				mNetMgr->netAssistFriend(pit->pid,false);
-				
+
 				/* inform NetMgr that we know this peer */
 				mNetMgr->netAssistKnownPeer(pit->pid, pit->currentremoteaddr, 
-							NETASSIST_KNOWN_PEER_FOF | NETASSIST_KNOWN_PEER_OFFLINE);
+						NETASSIST_KNOWN_PEER_FOF | NETASSIST_KNOWN_PEER_OFFLINE);
 
 				continue;
 			}
@@ -853,7 +853,11 @@ void p3disc::recvDiscReply(RsDiscReply *dri)
 	}
 
 	// add item to list for later process
-	mPendingDiscReplyInList.push_back(dri); // no delete
+
+	if(mDiscEnabled || dri->aboutId == rsPeers->getGPGId(dri->PeerId()))
+		mPendingDiscReplyInList.push_back(dri); // no delete
+	else
+		delete dri ;
 }
 
 
