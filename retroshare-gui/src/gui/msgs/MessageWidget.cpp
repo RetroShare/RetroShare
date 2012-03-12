@@ -127,7 +127,9 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WFlags flags)
 		processSettings("MessageWidget", true);
 	}
 
-    /* Hide platform specific features */
+	ui.dateText-> setText("");
+
+	/* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif

@@ -38,6 +38,7 @@
 #include "common/PopularityDefs.h"
 #include "RetroShareLink.h"
 #include "channels/ShareKey.h"
+#include "notifyqt.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -135,6 +136,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     m_bProcessSettings = false;
     subscribeFlags = 0;
+    inMsgAsReadUnread = false;
 
     connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
@@ -159,6 +161,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+
+    connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 
     /* Set initial size the splitter */
     QList<int> sizes;
@@ -629,6 +633,35 @@ void ForumsDialog::clickedThread (QTreeWidgetItem *item, int column)
         setMsgAsReadUnread(Rows, IS_UNREAD(status));
         return;
     }
+}
+
+void ForumsDialog::forumMsgReadSatusChanged(const QString &forumId, const QString &msgId, int status)
+{
+    if (inMsgAsReadUnread) {
+        return;
+    }
+
+    if (forumId.toStdString() == mCurrForumId) {
+        /* Search exisiting item */
+        QTreeWidgetItemIterator itemIterator(ui.threadTreeWidget);
+        QTreeWidgetItem *item = NULL;
+        while ((item = *itemIterator) != NULL) {
+            itemIterator++;
+
+            if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString() == msgId) {
+                // update status
+                item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, status);
+
+                QTreeWidgetItem *parentItem = item;
+                while (parentItem->parent()) {
+                    parentItem = parentItem->parent();
+                }
+                CalculateIconsAndFonts(parentItem);
+                break;
+            }
+        }
+    }
+    updateMessageSummaryList(forumId.toStdString());
 }
 
 void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren)
@@ -1260,6 +1293,8 @@ void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
     QList<QTreeWidgetItem*>::iterator Row;
     std::list<QTreeWidgetItem*> changedItems;
 
+    inMsgAsReadUnread = true;
+
     for (Row = Rows.begin(); Row != Rows.end(); Row++) {
         if ((*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool()) {
             /* Missing message */
@@ -1292,6 +1327,8 @@ void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
             }
         }
     }
+
+    inMsgAsReadUnread = false;
 
     if (changedItems.size()) {
         for (std::list<QTreeWidgetItem*>::iterator it = changedItems.begin(); it != changedItems.end(); it++) {

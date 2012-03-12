@@ -61,6 +61,7 @@ private slots:
     void changedForum(const QString &id);
     void changedThread();
     void clickedThread (QTreeWidgetItem *item, int column);
+    void forumMsgReadSatusChanged(const QString &forumId, const QString &msgId, int status);
 
     void replytomessage();
     //void print();
@@ -130,6 +131,7 @@ private:
     bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn);
 
     bool m_bProcessSettings;
+    bool inMsgAsReadUnread;
 
     QTreeWidgetItem *yourForums;
     QTreeWidgetItem *subscribedForums;
