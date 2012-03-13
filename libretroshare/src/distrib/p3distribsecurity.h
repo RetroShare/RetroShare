@@ -27,12 +27,11 @@
 #ifndef P3DISTRIBVERIFY_H_
 #define P3DISTRIBVERIFY_H_
 
+#include "serialiser/rstlvkeys.h"
+#include "distrib/p3distrib.h"
 
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
-
-#include "serialiser/rstlvkeys.h"
-#include "distrib/p3distrib.h"
 
 
 /*!
