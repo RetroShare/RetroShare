@@ -529,7 +529,7 @@ int TextPage::nextId() const {
         wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
         wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
         wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(pd.location.c_str()));
-        wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
+        wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(certstr.c_str()));
 
         wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
         wizard()->setField("ext_friend_port", QString::number(pd.extPort));
@@ -901,7 +901,7 @@ int CertificatePage::nextId() const
                 wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
                 wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
                 wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(pd.location.c_str()));
-                wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
+                wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(certstr.c_str()));
 
                 wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
                 wizard()->setField("ext_friend_port", QString::number(pd.extPort));
@@ -1088,8 +1088,8 @@ void ConclusionPage::groupCurrentIndexChanged(int index)
 void ConclusionPage::initializePage() {
     std::string id = field(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
     std::string gpg_id = field(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
-    std::string location = field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
-    std::string certString = field(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+//    std::string location = field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+    std::string certString = field(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD).toString().toUtf8().constData();
     std::cerr << "Conclusion page id : " << id << "; gpg_id : " << gpg_id << std::endl;
 
     RsPeerDetails detail;
