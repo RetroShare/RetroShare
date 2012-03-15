@@ -79,6 +79,7 @@ private slots:
 	void deleteChatHistory();
 	void messageHistory();
 	void updateStatus(const QString &peer_id, int status);
+	void resetStatusBar() ;
 
 signals:
 	void infoChanged(ChatWidget*);
@@ -90,7 +91,6 @@ protected:
 	virtual void showEvent(QShowEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);
 	void updateTitle();
-	void resetStatusBar() ;
 
 private slots:
 	void pasteLink();
