@@ -151,8 +151,90 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 #ifdef DEBUG_FTCHUNK
 		std::cerr << "*** ChunkMap::dataReceived: Chunk is complete. Removing it." << std::endl ;
 #endif
-		_map[n] = FileChunksInfo::CHUNK_DONE ;
+		_map[n] = FileChunksInfo::CHUNK_CHECKING ;
+		_chunks_checking_queue.push_back(n) ;
+
 		_slices_to_download.erase(itc) ;
+
+		updateTotalDownloaded() ;
+	}
+}
+
+void ChunkMap::updateTotalDownloaded()
+{
+	_total_downloaded = 0 ;
+	_file_is_complete = true ;
+
+	// First, round over chunk map to get the raw info.
+	//
+	for(uint32_t i=0;i<_map.size();++i)
+		switch(_map[i])
+		{
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
+			case FileChunksInfo::CHUNK_CHECKING: _file_is_complete = false ;
+#else
+			case FileChunksInfo::CHUNK_CHECKING: //_file_is_complete = false ;********WARNING******** Re-enable this when users have massively switched to chunk checking code
+#endif
+			case FileChunksInfo::CHUNK_DONE:		 _total_downloaded += sizeOfChunk(i) ;
+															 break ;
+			default:
+															 _file_is_complete = false ;
+		}
+
+	// Then go through active chunks.
+	//
+	for(std::map<ChunkNumber,ChunkDownloadInfo>::const_iterator itc(_slices_to_download.begin());itc!=_slices_to_download.end();++itc)
+	{
+		if(_map[itc->first] == FileChunksInfo::CHUNK_CHECKING)
+			_total_downloaded -= sizeOfChunk(itc->first) ;
+
+		_total_downloaded += sizeOfChunk(itc->first) - itc->second._remains ;
+
+		if(_file_is_complete)
+			std::cerr << "ChunkMap::updateTotalDownloaded(): ERROR: file still has pending slices but all chunks are marked as DONE !!" << std::endl;
+	}
+}
+
+void ChunkMap::getChunksToCheck(std::vector<std::pair<uint32_t,std::list<std::string> > >& chunks_crc_to_ask)
+{
+	chunks_crc_to_ask.clear() ;
+
+	for(uint32_t i=0;i<_chunks_checking_queue.size();)
+	{
+		std::list<std::string> peers ;
+
+		for(std::map<std::string,SourceChunksInfo>::const_iterator it2(_peers_chunks_availability.begin());it2!=_peers_chunks_availability.end();++it2)
+			if(it2->second.cmap[_chunks_checking_queue[i]])
+				peers.push_back(it2->first) ;
+
+		if(peers.empty())	// no peers => can't ask!
+		{
+			++i ;
+			continue ;
+		}
+
+		chunks_crc_to_ask.push_back(std::pair<uint32_t,std::list<std::string> >(_chunks_checking_queue[i],peers)) ;
+
+		// remove that chunk from the queue
+
+		_chunks_checking_queue[i] = _chunks_checking_queue.back() ;
+		_chunks_checking_queue.pop_back() ;
+	}
+}
+
+void ChunkMap::setChunkCheckingResult(uint32_t chunk_number,bool check_succeeded)
+{
+	// Find the chunk is the waiting queue. Remove it, and mark it as done.
+	//
+	if(_map[chunk_number] != FileChunksInfo::CHUNK_CHECKING)
+	{
+		std::cerr << "(EE) ChunkMap: asked to set checking result of chunk " << chunk_number<< " that is not marked as being checked!!" << std::endl;
+		return ;
+	}
+	
+	if(check_succeeded)
+	{
+		_map[chunk_number] = FileChunksInfo::CHUNK_DONE ;
 
 		// We also check whether the file is complete or not.
 
@@ -164,6 +246,11 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 				_file_is_complete = false ;
 				break ;
 			}
+	}
+	else
+	{
+		_total_downloaded -= sizeOfChunk(chunk_number) ;	// restore completion.
+		_map[chunk_number] = FileChunksInfo::CHUNK_OUTSTANDING ;
 	}
 }
 
@@ -493,6 +580,17 @@ void ChunkMap::getAvailabilityMap(CompressedChunkMap& compressed_map) const
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "ChunkMap:: retrieved availability map of size " << _map.size() << ", chunk_size=" << _chunk_size << std::endl ;
 #endif
+}
+
+void ChunkMap::forceCheck()
+{
+	for(uint32_t i=0;i<_map.size();++i)
+	{
+		_map[i] = FileChunksInfo::CHUNK_CHECKING ;
+		_chunks_checking_queue.push_back(i) ;
+	}
+
+	updateTotalDownloaded() ;
 }
 
 uint32_t ChunkMap::getNumberOfChunks(uint64_t size)

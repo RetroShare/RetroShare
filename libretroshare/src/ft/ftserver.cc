@@ -227,6 +227,8 @@ void	ftServer::run()
 	while(isRunning())
 	{
 		mFtDataplex->deleteUnusedServers() ;
+		mFtDataplex->handlePendingCrcRequests() ;
+		mFtDataplex->dispatchReceivedChunkCheckSum() ;
 #ifdef WIN32
 		Sleep(5000);
 #else
@@ -876,8 +878,28 @@ bool ftServer::sendCRC32MapRequest(const std::string& peerId,const std::string& 
 		mP3iface->SendFileCRC32MapRequest(rfi);
 	}
 
-	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
-	// direct friends, so I'll see later whether I code it or not.
+	return true ;
+}
+bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::string& hash,uint32_t chunk_number)
+{
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendSingleChunkCRCRequest(peerId,hash,chunk_number) ;
+	else
+	{
+		/* create a packet */
+		/* push to networking part */
+		RsFileSingleChunkCrcRequest *rfi = new RsFileSingleChunkCrcRequest();
+
+		/* id */
+		rfi->PeerId(peerId);
+
+		/* file info */
+		rfi->hash = hash; /* ftr->hash; */
+		rfi->chunk_number = chunk_number ;
+
+		mP3iface->SendFileSingleChunkCrcRequest(rfi);
+	}
+
 	return true ;
 }
 
@@ -901,8 +923,29 @@ bool ftServer::sendCRC32Map(const std::string& peerId,const std::string& hash,co
 		mP3iface->SendFileCRC32Map(rfi);
 	}
 
-	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
-	// direct friends, so I'll see later whether I code it or not.
+	return true ;
+}
+bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+{
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendSingleChunkCRC(peerId,hash,chunk_number,crc) ;
+	else
+	{
+		/* create a packet */
+		/* push to networking part */
+		RsFileSingleChunkCrc *rfi = new RsFileSingleChunkCrc();
+
+		/* id */
+		rfi->PeerId(peerId);
+
+		/* file info */
+		rfi->hash = hash; /* ftr->hash; */
+		rfi->check_sum = crc; 
+		rfi->chunk_number = chunk_number; 
+
+		mP3iface->SendFileSingleChunkCrc(rfi);
+	}
+
 	return true ;
 }
 
@@ -1146,6 +1189,8 @@ bool    ftServer::handleFileData()
 	RsFileChunkMap *fcm;
 	RsFileCRC32MapRequest *fccrcmr;
 	RsFileCRC32Map *fccrcm;
+	RsFileSingleChunkCrcRequest *fscrcr;
+	RsFileSingleChunkCrc *fscrc;
 
 	int i_init = 0;
 	int i = 0;
@@ -1289,6 +1334,48 @@ FileInfo(ffr);
 		mFtDataplex->recvCRC32Map(fccrcm->PeerId(), fccrcm->hash,fccrcm->crc_map); 
 
 		delete fccrcm;
+	}
+	// now file chunk crc requests
+	i_init = i;
+	while((fscrcr = mP3iface -> GetFileSingleChunkCrcRequest()) != NULL )
+	{
+#ifdef SERVER_DEBUG
+		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
+		std::ostringstream out;
+		if (i == i_init)
+		{
+			out << "Incoming(Net) File CRC Request:" << std::endl;
+		}
+		fscrcr -> print(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+#endif
+		i++; /* count */
+
+		/* incoming data */
+		mFtDataplex->recvSingleChunkCrcRequest(fscrcr->PeerId(), fscrcr->hash,fscrcr->chunk_number) ;
+
+		delete fscrcr;
+	}
+	// now file chunkmaps 
+	i_init = i;
+	while((fscrc = mP3iface -> GetFileSingleChunkCrc()) != NULL )
+	{
+#ifdef SERVER_DEBUG
+		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
+		std::ostringstream out;
+		if (i == i_init)
+		{
+			out << "Incoming(Net) File Data:" << std::endl;
+		}
+		fscrc -> print(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+#endif
+		i++; /* count */
+
+		/* incoming data */
+		mFtDataplex->recvSingleChunkCrc(fscrc->PeerId(), fscrc->hash,fscrc->chunk_number,fscrc->check_sum); 
+
+		delete fscrcr;
 	}
 	if (i > 0)
 	{

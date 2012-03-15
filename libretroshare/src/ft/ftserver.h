@@ -229,8 +229,8 @@ virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& h
 virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
 virtual bool sendCRC32MapRequest(const std::string&, const std::string&) ;
 virtual bool sendCRC32Map(const std::string&, const std::string&, const CRC32Map&) ;
-
-
+virtual bool sendSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_number) ;
+virtual bool sendSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
 
 	/*************** Internal Transfer Fns *************************/
 virtual int tick();

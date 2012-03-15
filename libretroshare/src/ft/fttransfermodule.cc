@@ -426,6 +426,22 @@ bool ftTransferModule::queryInactive()
 		mFileStatus.stat = ftFileStatus::PQIFILE_CHECKING ;
 		mFlag = FT_TM_FLAG_CHECKING;      
 	}
+	else
+	{
+		// request for CRCs to ask
+		std::vector<std::pair<uint32_t,std::list<std::string> > > chunks_to_ask ;
+
+#ifdef FT_DEBUG
+		std::cerr << "ftTransferModule::queryInactive() : getting chunks to check." << std::endl;
+#endif
+
+		mFileCreator->getChunksToCheck(chunks_to_ask) ;
+#ifdef FT_DEBUG
+		std::cerr << "ftTransferModule::queryInactive() : got " << chunks_to_ask.size() << " chunks." << std::endl;
+#endif
+
+		mMultiplexor->sendSingleChunkCRCRequests(mHash,chunks_to_ask);
+	}
 
 	return true; 
 }
@@ -611,11 +627,16 @@ void ftTransferModule::forceCheck()
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::forceCheck(): setting flags to force check." << std::endl ;
 #endif
+
+#ifndef USE_NEW_CHUNK_CHECKING_CODE
 	mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map.
 
-	// setup flags for CRC state machine to work properly
+	 // setup flags for CRC state machine to work properly
 	_crcmap_state = FT_TM_CRC_MAP_STATE_DONT_HAVE ;
 	_crcmap_last_asked_time = 0 ;
+#else
+	mFileCreator->forceCheck() ;
+#endif
 }
 
 bool ftTransferModule::checkCRC()

@@ -609,6 +609,56 @@ bool ftFileCreator::hashReceivedData(std::string& hash)
 	return RsDirUtil::getFileHash(file_name,hash,tmpsize) ;
 }
 
+void ftFileCreator::forceCheck()
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	chunkMap.forceCheck(); 
+}
+
+void ftFileCreator::getChunksToCheck(std::vector<std::pair<uint32_t,std::list<std::string> > >& chunks_to_ask)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	
+	chunkMap.getChunksToCheck(chunks_to_ask) ;
+}
+
+bool ftFileCreator::verifyChunk(uint32_t chunk_number,const Sha1CheckSum& sum)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	if(!locked_initializeFileAttrs() )
+		return false ;
+
+	static const uint32_t chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
+	unsigned char *buff = new unsigned char[chunk_size] ;
+	uint32_t len ;
+
+	if(fseeko64(fd,(uint64_t)chunk_number * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
+	{
+		Sha1CheckSum comp = RsDirUtil::sha1sum(buff,len) ;
+
+		if(sum == comp)
+			chunkMap.setChunkCheckingResult(chunk_number,true) ;
+		else
+		{
+			std::cerr << "Sum mismatch for chunk " << chunk_number << std::endl;
+			std::cerr << "    Computed  hash = " << comp.toStdString() << std::endl;
+			std::cerr << "    Reference hash = " << sum.toStdString() << std::endl;
+
+			chunkMap.setChunkCheckingResult(chunk_number,false) ;
+		}
+	}
+	else
+	{
+		printf("Chunk verification: cannot fseek!\n") ;
+		chunkMap.setChunkCheckingResult(chunk_number,false) ;
+	}
+
+	delete[] buff ;
+	return true ;
+}
+
 bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks)
 {
 	{

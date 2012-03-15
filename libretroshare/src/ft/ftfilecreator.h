@@ -76,6 +76,18 @@ class ftFileCreator: public ftFileProvider
 		// incomplete_chunks: count of any bad or not yet downloaded chunk
 		//
 		bool crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks) ;
+
+		// Sets all chunks to checking state
+		//
+		void forceCheck() ; 
+
+		bool verifyChunk(uint32_t, const Sha1CheckSum&) ;
+
+		// Looks into the chunkmap for downloaded chunks that have not yet been certified.
+		// For each of them, returns the chunk number and a source peer to ask the CRC to.
+		//
+		void getChunksToCheck(std::vector<std::pair<uint32_t,std::list<std::string> > >& chunks_to_ask) ;
+
 		/* 
 		 * creation functions for FileCreator 
 		 */

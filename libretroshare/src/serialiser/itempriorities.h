@@ -36,10 +36,12 @@ const uint8_t QOS_PRIORITY_RS_TURTLE_TUNNEL_OK      	= 6 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST	= 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_REQUEST   	= 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_CRC_REQUEST = 5 ;	
+const uint8_t QOS_PRIORITY_RS_TURTLE_CHUNK_CRC_REQUEST= 5 ;	
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_MAP_REQUEST = 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT  	= 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_DATA      	= 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_CRC         = 3 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_CHUNK_CRC        = 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_MAP         = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM     = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FORWARD_FILE_DATA= 2 ;
@@ -48,10 +50,12 @@ const uint8_t QOS_PRIORITY_RS_TURTLE_FORWARD_FILE_DATA= 2 ;
 //
 const uint8_t QOS_PRIORITY_RS_FILE_REQUEST   			= 5 ;
 const uint8_t QOS_PRIORITY_RS_FILE_CRC_REQUEST 			= 5 ;	
+const uint8_t QOS_PRIORITY_RS_CHUNK_CRC_REQUEST			= 5 ;	
 const uint8_t QOS_PRIORITY_RS_FILE_MAP_REQUEST 			= 5 ;
 const uint8_t QOS_PRIORITY_RS_CACHE_REQUEST   			= 4 ;
 const uint8_t QOS_PRIORITY_RS_FILE_DATA      			= 3 ;
 const uint8_t QOS_PRIORITY_RS_FILE_CRC         			= 3 ;
+const uint8_t QOS_PRIORITY_RS_CHUNK_CRC        			= 5 ;
 const uint8_t QOS_PRIORITY_RS_FILE_MAP         			= 3 ;
 const uint8_t QOS_PRIORITY_RS_CACHE_ITEM      			= 3 ;
 

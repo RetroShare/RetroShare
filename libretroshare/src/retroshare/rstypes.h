@@ -54,6 +54,20 @@ const uint32_t RS_PARTIALS_DIRECTORY = 0x0000 ;
 const uint32_t RS_DOWNLOAD_DIRECTORY = 0x0001 ;
 const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
 
+class Sha1CheckSum
+{
+	public:
+		Sha1CheckSum() {}
+		explicit Sha1CheckSum(const uint8_t *twenty_bytes_digest) ; 		// inits form a 20-bytes digest.
+		explicit Sha1CheckSum(const std::string& fourty_bytes_string) ; 	// inits form a 40 bytes hexadecimal string.
+
+		std::string toStdString() const ;
+
+		bool operator==(const Sha1CheckSum& s) const ;
+//	private:
+		uint32_t fourbytes[5] ;
+};
+
 class TransferInfo
 {
 	public:
@@ -286,7 +300,7 @@ class CompressedChunkMap ;
 class FileChunksInfo
 {
 	public:
-		enum ChunkState { CHUNK_DONE=2, CHUNK_ACTIVE=1, CHUNK_OUTSTANDING=0 } ;
+		enum ChunkState { CHUNK_CHECKING=3, CHUNK_DONE=2, CHUNK_ACTIVE=1, CHUNK_OUTSTANDING=0 } ;
 		enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM } ;
 
 		struct SliceInfo
@@ -326,7 +340,11 @@ class CompressedChunkMap
 			_map.resize( getCompressedSize(uncompressed_data.size()),0 ) ;
 
 			for(uint32_t i=0;i<uncompressed_data.size();++i)
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
 				if(uncompressed_data[i]==FileChunksInfo::CHUNK_DONE) 
+#else
+				if(uncompressed_data[i]==FileChunksInfo::CHUNK_DONE || uncompressed_data[i] == FileChunksInfo::CHUNK_CHECKING) 
+#endif
 					set(i) ;
 		}
 
@@ -353,33 +371,33 @@ class CompressedChunkMap
 		std::vector<uint32_t> _map ;
 };
 
-class CRC32Map
+template<class CRCTYPE> class t_CRCMap
 {
 	public:
 		// Build from a file.
 		//
-		CRC32Map(uint64_t file_size,uint32_t chunk_size) 
+		t_CRCMap(uint64_t file_size,uint32_t chunk_size) 
 			: _crcs( file_size/chunk_size + ( (file_size%chunk_size)>0)), _ccmap(file_size/chunk_size + ( (file_size%chunk_size)>0),0)
 		{
 		}
-		CRC32Map() {}
+		t_CRCMap() {}
 
-		// Compares two maps and returns the valid chunks in a compressed chunk map.
-		//
-		friend CompressedChunkMap compare(const CRC32Map& crc1,const CRC32Map& crc2) ;
+		inline void set(uint32_t i,const CRCTYPE& val) { _crcs[i] = val ; _ccmap.set(i) ; }
+		inline bool isSet(uint32_t i) const { return _ccmap[i] ; }
 
-		inline void set(uint32_t i,uint32_t val) { _crcs[i] = val ; _ccmap.set(i) ; }
-
-		inline uint32_t operator[](int i) const { return _crcs[i] ; }
+		inline const CRCTYPE& operator[](int i) const { return _crcs[i] ; }
 		inline uint32_t size() const { return _crcs.size() ; }
 	private:
-		std::vector<uint32_t> _crcs;
+		std::vector<CRCTYPE> _crcs;
 		CompressedChunkMap _ccmap ;
 
 		friend class RsTurtleFileCrcItem ;
 		friend class RsFileItemSerialiser ;
 		friend class RsFileCRC32Map ;
 };
+
+typedef t_CRCMap<uint32_t> 		CRC32Map ;
+typedef t_CRCMap<Sha1CheckSum> 	Sha1Map ;
 
 /* class which encapsulates download details */
 class DwlDetails {

@@ -55,6 +55,7 @@ private:
     QPixmap downloadedPixmap;
     QPixmap downloadingPixmap;
     QPixmap notDownloadPixmap;
+    QPixmap checkingPixmap;
 
 	 std::string _file_hash ;
 };

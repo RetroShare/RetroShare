@@ -22,6 +22,8 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC              = 0x12 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST      = 0x13 ;	
+const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC             = 0x14 ;
+const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST     = 0x15 ;	
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
@@ -281,14 +283,32 @@ class RsTurtleFileCrcRequestItem: public RsTurtleGenericTunnelItem
 		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
 										// this info from the file size, but this allows a security check.
 												
-//		CompressedChunkMap _map ;	// list of chunks for which we need the CRC
-
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 		virtual bool serialize(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() ; 
 };
 
+class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem			
+{
+	public:
+		RsTurtleChunkCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST);}
+		RsTurtleChunkCrcRequestItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return false ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
+
+		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
+										// this info from the file size, but this allows a security check.
+
+		uint32_t chunk_number ; // id of the chunk to CRC.
+												
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
 
 class RsTurtleFileCrcItem: public RsTurtleGenericTunnelItem			
 {
@@ -312,6 +332,26 @@ class RsTurtleFileCrcItem: public RsTurtleGenericTunnelItem
 		virtual uint32_t serial_size() ; 
 };
 
+class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem			
+{
+	public:
+		RsTurtleChunkCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC);}
+		RsTurtleChunkCrcItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return true ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return DIRECTION_CLIENT ; }
+
+		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
+										// this info from the file size, but this allows a security check.
+												
+		uint32_t chunk_number ;
+		Sha1CheckSum check_sum ;
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
 /***********************************************************************************/
 /*                           Turtle Serialiser class                               */
 /***********************************************************************************/

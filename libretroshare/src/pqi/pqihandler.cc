@@ -395,6 +395,14 @@ int     pqihandler::SendFileCRC32Map(RsFileCRC32Map *ns)
 {
 	return queueOutRsItem(ns) ;
 }
+int     pqihandler::SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest *ns)
+{
+	return queueOutRsItem(ns) ;
+}
+int     pqihandler::SendFileSingleChunkCrc(RsFileSingleChunkCrc *ns)
+{
+	return queueOutRsItem(ns) ;
+}
 
 int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
@@ -572,6 +580,17 @@ void pqihandler::locked_SortnStoreItem(RsItem *item)
 					  item = NULL;
 					  break;
 
+				  case RS_PKT_SUBTYPE_FI_CHUNK_CRC_REQUEST:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File Crc Request");
+					  in_singlechunkcrc_request.push_back(item);
+					  item = NULL;
+					  break;
+
+				  case RS_PKT_SUBTYPE_FI_CHUNK_CRC:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File CRC32Map");
+					  in_singlechunkcrc.push_back(item);
+					  item = NULL;
+					  break;
 
 				  default:
 					  break; /* no match! */
@@ -709,8 +728,32 @@ RsFileCRC32Map *pqihandler::GetFileCRC32Map()
 	}
 	return NULL;
 }
+RsFileSingleChunkCrcRequest *pqihandler::GetFileSingleChunkCrcRequest()
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
+	if (in_singlechunkcrc_request.size() != 0)
+	{
+		RsFileSingleChunkCrcRequest *fi = dynamic_cast<RsFileSingleChunkCrcRequest *>(in_singlechunkcrc_request.front());
+		if (!fi) { delete in_singlechunkcrc_request.front(); }
+		in_singlechunkcrc_request.pop_front();
+		return fi;
+	}
+	return NULL;
+}
+RsFileSingleChunkCrc *pqihandler::GetFileSingleChunkCrc()
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
+	if (in_singlechunkcrc.size() != 0)
+	{
+		RsFileSingleChunkCrc *fi = dynamic_cast<RsFileSingleChunkCrc *>(in_singlechunkcrc.front());
+		if (!fi) { delete in_singlechunkcrc.front(); }
+		in_singlechunkcrc.pop_front();
+		return fi;
+	}
+	return NULL;
+}
 RsRawItem *pqihandler::GetRsRawItem()
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/

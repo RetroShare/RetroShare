@@ -43,6 +43,7 @@
 #include <sstream>
 
 #include <fstream>
+#include <stdexcept>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include "util/rsstring.h"
@@ -624,16 +625,94 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 
 	SHA1_Final(&sha_buf[0], sha_ctx);
 
-	std::ostringstream tmpout;
-	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-	{
-		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
-	}
-	hash = tmpout.str();
+	hash = Sha1CheckSum(sha_buf).toStdString() ;
 
 	delete sha_ctx;
 	fclose(fd);
 	return true;
+}
+
+/* Function to hash, and get details of a file */
+Sha1CheckSum RsDirUtil::sha1sum(unsigned char *data, uint32_t size)
+{
+	SHA_CTX sha_ctx ;
+
+	if(SHA_DIGEST_LENGTH != 20) 
+		throw std::runtime_error("Warning: can't compute Sha1Sum with sum size != 20") ;
+
+	SHA1_Init(&sha_ctx);
+	while(size > 512)
+	{
+		SHA1_Update(&sha_ctx, data, 512);
+		data = &data[512] ;
+		size -= 512 ;
+	}
+	SHA1_Update(&sha_ctx, data, size);
+
+	unsigned char sha_buf[SHA_DIGEST_LENGTH];
+	SHA1_Final(&sha_buf[0], &sha_ctx);
+
+	return Sha1CheckSum(sha_buf) ;
+}
+
+bool Sha1CheckSum::operator==(const Sha1CheckSum& s) const
+{
+	for(int i=0;i<5;++i)
+		if(fourbytes[i] != s.fourbytes[i])
+			return false ;
+	return true ;
+}
+
+std::string Sha1CheckSum::toStdString() const
+{
+	std::ostringstream tmpout;
+
+	for(int i = 0; i < 5; i++)
+		for(int j = 0; j < 4; j++)
+			tmpout << std::setw(2) << std::setfill('0') << std::hex << ((fourbytes[i] >> (8*j)) & 0xff ) ;
+	
+	return tmpout.str() ;
+}
+
+Sha1CheckSum::Sha1CheckSum(const uint8_t *buf)
+{
+	int n=0;
+
+	for(int i = 0; i < 5; i++)
+	{
+		fourbytes[i] = 0 ;
+
+		for(int j = 0; j < 4; j++)
+			fourbytes[i] += buf[n++] << (8*j) ;
+	}
+}
+Sha1CheckSum::Sha1CheckSum(const std::string& s)
+{
+	int n=0;
+	if(s.length() != 40)
+		throw std::runtime_error("Sha1CheckSum::Sha1CheckSum: can only init from 40 chars hexadecimal string") ;
+
+	for(int i = 0; i < 5; ++i)
+	{
+		fourbytes[i] = 0 ;
+
+		for(int j = 0; j < 4; ++j)
+		{
+			for(int k=0;k<2;++k)
+			{
+				char b = s[n++] ;
+
+				if(b >= 'A' && b <= 'F')
+					fourbytes[i] += (b-'A'+10) << ((4*(1-k))+8*j) ;
+				else if(b >= 'a' && b <= 'f')
+					fourbytes[i] += (b-'a'+10) << ((4*(1-k))+8*j) ;
+				else if(b >= '0' && b <= '9')
+					fourbytes[i] += (b-'0') << ((4*(1-k))+8*j) ;
+				else
+					throw std::runtime_error("Sha1CheckSum::Sha1CheckSum: can't init from non pure hexadecimal string") ;
+			}
+		}
+	}
 }
 
 bool RsDirUtil::renameFile(const std::string& from, const std::string& to)

@@ -333,8 +333,14 @@ TransfersDialog::TransfersDialog(QWidget *parent)
    resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
    connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
+	// *********WARNING**********
+	// csoler: this has been suspended because it needs the file transfer to consider a file as complete only if all chunks are
+	// 			verified by hash. As users are goign to slowly switch to new checking code, this will not be readily available.
+	//
    forceCheckAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Force Check" ), this );
    connect( forceCheckAct , SIGNAL( triggered() ), this, SLOT( forceCheck() ) );
+#endif
 
    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );

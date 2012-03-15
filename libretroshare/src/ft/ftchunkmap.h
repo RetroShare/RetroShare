@@ -178,7 +178,21 @@ class ChunkMap
 		/// returns true is the file is complete
 		bool isComplete() const { return _file_is_complete ; }
 
+		/// returns info about currently downloaded chunks
 		void getChunksInfo(FileChunksInfo& info) const ;
+
+		/// input the result of the chunk hash checking 
+		void setChunkCheckingResult(uint32_t chunk_number, bool succeed) ;
+
+		/// returns the current list of chunks to ask for a CRC, and a proposed source for each
+		void getChunksToCheck(std::vector<std::pair<unsigned int, std::list<std::string> > >& chunks_to_ask) ;
+
+		/// sets all chunks to checking state
+		void forceCheck() ;
+
+		/// Goes through all structures and computes the actual file completion. The true completion
+		/// gets lost when force checking the file.
+		void updateTotalDownloaded() ;
 
 	protected:
 		/// handles what size the last chunk has.
@@ -199,6 +213,7 @@ class ChunkMap
 		uint64_t												_total_downloaded ;				//! completion for the file
 		bool													_file_is_complete ;           //! set to true when the file is complete.
 		bool													_assume_availability ;			//! true if all sources always have the complete file.
+		std::vector<uint32_t>							_chunks_checking_queue ;		//! Queue of downloaded chunks to be checked.
 };
 
 

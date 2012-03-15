@@ -42,6 +42,8 @@ const uint8_t RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST  = 0x04;
 const uint8_t RS_PKT_SUBTYPE_FI_CHUNK_MAP          = 0x05;
 const uint8_t RS_PKT_SUBTYPE_FI_CRC32_MAP_REQUEST  = 0x06;
 const uint8_t RS_PKT_SUBTYPE_FI_CRC32_MAP          = 0x07;
+const uint8_t RS_PKT_SUBTYPE_FI_CHUNK_CRC_REQUEST  = 0x08;
+const uint8_t RS_PKT_SUBTYPE_FI_CHUNK_CRC          = 0x09;
 
 const uint8_t RS_PKT_SUBTYPE_CACHE_ITEM    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_CACHE_REQUEST = 0x02;
@@ -137,6 +139,24 @@ class RsFileCRC32MapRequest: public RsItem
 		std::ostream &print(std::ostream &out, uint16_t indent = 0);
 };
 
+class RsFileSingleChunkCrcRequest: public RsItem
+{
+	public:
+		RsFileSingleChunkCrcRequest() 
+			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CHUNK_CRC_REQUEST)
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST) ;
+		}
+		virtual ~RsFileSingleChunkCrcRequest() {}
+		virtual void clear() {}
+
+		std::string hash ;		// hash of the file for which we request the crc 
+		uint32_t chunk_number ;	// chunk number
+
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
+
+
 class RsFileCRC32Map: public RsItem
 {
 	public:
@@ -153,6 +173,25 @@ class RsFileCRC32Map: public RsItem
 
 		std::ostream &print(std::ostream &out, uint16_t indent = 0);
 };
+
+class RsFileSingleChunkCrc: public RsItem
+{
+	public:
+		RsFileSingleChunkCrc() 
+			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CHUNK_CRC)
+		{
+			setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC) ;
+		}
+		virtual ~RsFileSingleChunkCrc() {}
+		virtual void clear() {}
+
+		std::string hash ; // hash of the file for which we request the chunk map
+		uint32_t chunk_number ;
+		Sha1CheckSum check_sum ; // CRC32 map of the file.
+
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
+
 /**************************************************************************/
 
 class RsFileItemSerialiser: public RsSerialType
@@ -175,6 +214,8 @@ class RsFileItemSerialiser: public RsSerialType
 		virtual	uint32_t    sizeData(RsFileData *);
 		virtual	uint32_t    sizeChunkMapReq(RsFileChunkMapRequest *);
 		virtual	uint32_t    sizeChunkMap(RsFileChunkMap *);
+		virtual	uint32_t    sizeChunkCrcReq(RsFileSingleChunkCrcRequest *);
+		virtual	uint32_t    sizeChunkCrc(RsFileSingleChunkCrc *);
 		virtual	uint32_t    sizeCRC32MapReq(RsFileCRC32MapRequest *);
 		virtual	uint32_t    sizeCRC32Map(RsFileCRC32Map *);
 
@@ -184,6 +225,8 @@ class RsFileItemSerialiser: public RsSerialType
 		virtual	bool        serialiseChunkMap(RsFileChunkMap *item, void *data, uint32_t *size);
 		virtual	bool        serialiseCRC32MapReq(RsFileCRC32MapRequest *item, void *data, uint32_t *size);
 		virtual	bool        serialiseCRC32Map(RsFileCRC32Map *item, void *data, uint32_t *size);
+		virtual	bool        serialiseChunkCrcReq(RsFileSingleChunkCrcRequest *item, void *data, uint32_t *size);
+		virtual	bool        serialiseChunkCrc(RsFileSingleChunkCrc *item, void *data, uint32_t *size);
 
 		virtual	RsFileRequest         *deserialiseReq(void *data, uint32_t *size);
 		virtual	RsFileData            *deserialiseData(void *data, uint32_t *size);
@@ -191,6 +234,8 @@ class RsFileItemSerialiser: public RsSerialType
 		virtual	RsFileChunkMap        *deserialiseChunkMap(void *data, uint32_t *size);
 		virtual	RsFileCRC32MapRequest *deserialiseCRC32MapReq(void *data, uint32_t *size);
 		virtual	RsFileCRC32Map        *deserialiseCRC32Map(void *data, uint32_t *size);
+		virtual	RsFileSingleChunkCrcRequest     *deserialiseChunkCrcReq(void *data, uint32_t *size);
+		virtual	RsFileSingleChunkCrc            *deserialiseChunkCrc(void *data, uint32_t *size);
 };
 
 /**************************************************************************/

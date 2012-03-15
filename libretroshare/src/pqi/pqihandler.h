@@ -68,12 +68,16 @@ class pqihandler: public P3Interface, public pqiQoS
 		virtual int     SendFileChunkMap(RsFileChunkMap *ns);
 		virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns);
 		virtual int     SendFileCRC32Map(RsFileCRC32Map *ns);
+		virtual int     SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest *ns);
+		virtual int     SendFileSingleChunkCrc(RsFileSingleChunkCrc *ns);
 		virtual RsFileRequest         *GetFileRequest();
 		virtual RsFileData            *GetFileData();
 		virtual RsFileChunkMapRequest *GetFileChunkMapRequest();
 		virtual RsFileChunkMap        *GetFileChunkMap();
 		virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest();
 		virtual RsFileCRC32Map        *GetFileCRC32Map();
+		virtual RsFileSingleChunkCrcRequest *GetFileSingleChunkCrcRequest();
+		virtual RsFileSingleChunkCrc        *GetFileSingleChunkCrc();
 
 		// Rest of P3Interface
 		virtual int 	tick();
@@ -112,7 +116,7 @@ class pqihandler: public P3Interface, public pqiQoS
 		SecurityPolicy *globsec;
 
 		// Temporary storage...
-		std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request,in_crc32map_request,in_crc32map;
+		std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request,in_crc32map_request,in_crc32map,in_singlechunkcrc,in_singlechunkcrc_request;
 
 	private:
 

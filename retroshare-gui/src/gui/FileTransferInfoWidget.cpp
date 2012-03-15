@@ -50,6 +50,7 @@ FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WFlags 
 	downloadedPixmap.load(":images/graph-downloaded.png");
 	downloadingPixmap.load(":images/graph-downloading.png");
 	notDownloadPixmap.load(":images/graph-notdownload.png");
+	checkingPixmap.load(":images/graph-checking.png");
 
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
@@ -139,6 +140,9 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 																	break ;
 
 			  case FileChunksInfo::CHUNK_ACTIVE: 		painter->drawPixmap(target, downloadingPixmap, source);
+																	break ;
+
+			  case FileChunksInfo::CHUNK_CHECKING:		painter->drawPixmap(target, checkingPixmap, source);
 																	break ;
 
 			  case FileChunksInfo::CHUNK_OUTSTANDING: painter->drawPixmap(target, notDownloadPixmap, source);

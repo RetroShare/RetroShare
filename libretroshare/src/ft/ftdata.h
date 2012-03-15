@@ -38,10 +38,12 @@
 #include <string>
 #include <inttypes.h>
 
+#include <retroshare/rstypes.h>
+
 	/*************** SEND INTERFACE *******************/
 
 class CompressedChunkMap ;
-class CRC32Map ;
+class Sha1CheckSum ;
 
 class ftDataSend
 {
@@ -66,6 +68,10 @@ class ftDataSend
 		virtual bool sendCRC32MapRequest(const std::string& peer_id,const std::string& hash) = 0;
 		/// Send a chunk crc map
 		virtual bool sendCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crc_map) = 0;
+		/// Send a request for a chunk crc map
+		virtual bool sendSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_number) = 0;
+		/// Send a chunk crc map
+		virtual bool sendSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) = 0;
 };
 
 

@@ -32,8 +32,9 @@
 #include <list>
 #include <stdint.h>
 
-class CRC32Map ;
 class RsThread;
+
+#include <retroshare/rstypes.h>
 
 namespace RsDirUtil {
 
@@ -66,6 +67,8 @@ bool    	cleanupDirectory(const std::string& dir, const std::list<std::string> &
 
 bool 		hashFile(const std::string& filepath,   std::string &name, std::string &hash, uint64_t &size);
 bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size, RsThread *thread = NULL);
+
+Sha1CheckSum sha1sum(uint8_t *data,uint32_t size) ;
 
 
 std::wstring 	getWideTopDir(std::wstring);

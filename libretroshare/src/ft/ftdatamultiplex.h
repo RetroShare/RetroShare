@@ -78,8 +78,17 @@ class ftRequest
 	void *mData;
 };
 
-	
+typedef std::map<std::string,time_t> ChunkCheckSumSourceList ;
 
+class Sha1CacheEntry
+{
+	public:
+		Sha1Map _map ; 												// Map of available sha1 sums for every chunk.
+		time_t last_activity ;										// This is used for removing unused entries.
+		std::vector<uint32_t> _received ;						// received chunk ids. To bedispatched.
+		std::map<uint32_t,ChunkCheckSumSourceList> _to_ask ;		// Chunks to ask to sources.
+};
+	
 class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 {
 
@@ -98,6 +107,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		bool    FileDetails(const std::string &hash, uint32_t hintsflag, FileInfo &info);
 
 		void		deleteUnusedServers() ;
+		void 	  handlePendingCrcRequests() ;
 
 
 		/*************** SEND INTERFACE (calls ftDataSend) *******************/
@@ -117,6 +127,11 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/* called from a separate thread */
 		bool computeAndSendCRC32Map(const std::string& peerId, const std::string& hash) ;
 
+		/* called from a separate thread */
+		bool sendSingleChunkCRCRequests(const std::string& hash, const std::vector<std::pair<uint32_t, std::list<std::string > > >& to_ask) ;
+
+		bool dispatchReceivedChunkCheckSum() ;
+
 		/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 		/* Client Recv */
@@ -132,6 +147,9 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		virtual bool recvCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crc_map) ;
 		/// Receive a CRC map request
 		virtual bool recvCRC32MapRequest(const std::string& peer_id,const std::string& hash) ;
+
+		virtual bool recvSingleChunkCrcRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) ;
+		virtual bool recvSingleChunkCrc(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) ;
 		
 		// Returns the chunk map from the file uploading client. Also initiates a chunk map request if this 
 		// map is too old. This supposes that the caller will ask again in a few seconds.
@@ -153,6 +171,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		bool handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 		bool handleRecvServerChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 		bool handleRecvCRC32MapRequest(const std::string& peerId, const std::string& hash) ;
+		bool handleRecvChunkCrcRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_id) ;
 
 		/* We end up doing the actual server job here */
 		bool    locked_handleServerRequest(ftFileProvider *provider, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
@@ -168,6 +187,9 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 
 		std::list<CRC32Thread *> _crc32map_threads ;
 		std::map<std::string,std::pair<time_t,CRC32Map> > _cached_crc32maps ;
+
+		std::map<std::string,Sha1CacheEntry> _cached_sha1maps ;						// one cache entry per file hash. Handled dynamically.
+
 		ftDataSend *mDataSend;
 		ftSearch   *mSearch;
 		std::string mOwnId;
