@@ -157,6 +157,7 @@ class ChatLobbyInvite
 		ChatLobbyId lobby_id ;
 		std::string peer_id ;
 		std::string lobby_name ;
+		std::string lobby_topic ;
 		uint32_t lobby_privacy_level ;						
 };
 class PublicChatLobbyRecord
@@ -166,6 +167,7 @@ class PublicChatLobbyRecord
 
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string lobby_name ;								// name to use for this lobby
+		std::string lobby_topic ;								// topic to use for this lobby
 		std::set<std::string> participating_friends ;	// list of direct friend who participate. 
 
 		uint32_t total_number_of_peers ;						// total number of particpating peers. Might not be
@@ -176,6 +178,7 @@ class ChatLobbyInfo
 	public:
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string lobby_name ;								// name to use for this lobby
+		std::string lobby_topic ;								// topic to use for this lobby
 		std::set<std::string> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
 		std::string nick_name ;									// nickname to use for this lobby
 
@@ -206,7 +209,7 @@ virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
 
-virtual	bool MessageSend(MessageInfo &info)                 = 0;
+virtual bool MessageSend(MessageInfo &info)                 = 0;
 virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId) = 0;
 virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
 virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
@@ -267,7 +270,7 @@ virtual bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::stri
 virtual bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) = 0 ;
 virtual bool setDefaultNickNameForChatLobby(const std::string& nick) = 0;
 virtual bool getDefaultNickNameForChatLobby(std::string& nick) = 0 ;
-virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t lobby_privacy_type) = 0 ;
+virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t lobby_privacy_type) = 0 ;
 
 /****************************************/
 

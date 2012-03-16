@@ -48,6 +48,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 	connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
 	connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
+	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 
 	/* initialize key share list */
@@ -93,19 +94,20 @@ void CreateLobbyDialog::createLobby()
 	std::list<std::string> shareList;
 	ui->keyShareList->selectedSslIds(shareList, false);
 
-	if (shareList.empty()) {
-		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
-		return;
-	}
+//	if (shareList.empty()) {
+//		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
+//		return;
+//	}
 
 	// create chat lobby !!
 	std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
+	std::string lobby_topic = ui->lobbyTopic_LE->text().toUtf8().constData() ;
 
 	// add to group
 
 	int lobby_privacy_type = (ui->security_CB->currentIndex() == 0)?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE ;
 
-	ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, shareList, lobby_privacy_type);
+	ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, lobby_topic, shareList, lobby_privacy_type);
 
 	std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
 

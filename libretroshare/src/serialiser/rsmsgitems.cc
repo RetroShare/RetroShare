@@ -56,6 +56,19 @@ std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 	printRsItemEnd(out, "RsChatMsgItem", indent);
 	return out;
 }
+std::ostream& RsChatLobbyListItem_deprecated::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsChatLobbyListItem_deprecated", indent);
+
+	for(uint32_t i=0;i<lobby_ids.size();++i)
+	{
+		printIndent(out, indent+2);
+		out << "lobby 0x" << std::hex << lobby_ids[i] << std::dec << " (name=\"" << lobby_names[i] << "\", count=" << lobby_counts[i] << std::endl ;
+	}
+
+	printRsItemEnd(out, "RsChatLobbyListItem_deprecated", indent);
+	return out;
+}
 std::ostream& RsChatLobbyListItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsChatLobbyListItem", indent);
@@ -63,7 +76,7 @@ std::ostream& RsChatLobbyListItem::print(std::ostream &out, uint16_t indent)
 	for(uint32_t i=0;i<lobby_ids.size();++i)
 	{
 		printIndent(out, indent+2);
-		out << "lobby 0x" << std::hex << lobby_ids[i] << std::dec << " (name=\"" << lobby_names[i] << "\", count=" << lobby_counts[i] << std::endl ;
+		out << "lobby 0x" << std::hex << lobby_ids[i] << std::dec << " (name=\"" << lobby_names[i] << "\", topic="<< lobby_topics[i]  << "\", count=" << lobby_counts[i] << std::endl ;
 	}
 
 	printRsItemEnd(out, "RsChatLobbyListItem", indent);
@@ -131,6 +144,9 @@ std::ostream& RsChatLobbyInviteItem::print(std::ostream &out, uint16_t indent)
 
 	printIndent(out, int_Indent);
 	out << "lobby name: " << lobby_name << std::endl;
+	
+	printIndent(out, int_Indent);
+	out << "lobby topic: " << lobby_topic << std::endl;
 
 	printRsItemEnd(out, "RsChatLobbyInviteItem", indent);
 	return out;
@@ -225,6 +241,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT:			return new RsChatLobbyEventItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:	return new RsChatLobbyListRequestItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        	return new RsChatLobbyListItem(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated:	return new RsChatLobbyListItem_deprecated(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -282,6 +299,18 @@ uint32_t RsChatLobbyListRequestItem::serial_size()
 	uint32_t s = 8 ;	// header
 	return s ;
 }
+uint32_t RsChatLobbyListItem_deprecated::serial_size()
+{
+	uint32_t s = 8 ;	// header
+	s += 4 ; 			// number of elements in the vectors
+	s += lobby_ids.size() * 8 ;	// lobby_ids
+
+	for(uint32_t i=0;i<lobby_names.size();++i)
+		s += GetTlvStringSize(lobby_names[i]) ;	// lobby_names
+		
+	s += lobby_counts.size() * 4 ;	// lobby_counts
+	return s ;
+}
 uint32_t RsChatLobbyListItem::serial_size()
 {
 	uint32_t s = 8 ;	// header
@@ -290,11 +319,13 @@ uint32_t RsChatLobbyListItem::serial_size()
 
 	for(uint32_t i=0;i<lobby_names.size();++i)
 		s += GetTlvStringSize(lobby_names[i]) ;	// lobby_names
+		
+  for(uint32_t i=0;i<lobby_topics.size();++i)
+		s += GetTlvStringSize(lobby_topics[i]) ;	// lobby_topics
 
 	s += lobby_counts.size() * 4 ;	// lobby_counts
 	return s ;
 }
-
 uint32_t RsChatLobbyMsgItem::serial_size()
 {
 	uint32_t s = RsChatMsgItem::serial_size() ;		// parent 
@@ -459,7 +490,40 @@ bool RsChatLobbyListRequestItem::serialise(void *data, uint32_t& pktsize)
 	pktsize = tlvsize ;
 	return ok ;
 }
+bool RsChatLobbyListItem_deprecated::serialise(void *data, uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size() ;
+	bool ok = true ;
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
 
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	if(lobby_ids.size() != lobby_counts.size() || lobby_ids.size() != lobby_names.size())
+	{
+		std::cerr << "Consistency error in RsChatLobbyListItem!! Sizes don't match!" << std::endl;
+		return false ;
+	}
+	pktsize = tlvsize ;
+
+	uint32_t offset = 8 ;
+	ok &= setRawUInt32(data, tlvsize, &offset, lobby_ids.size());
+
+	for(uint32_t i=0;i<lobby_ids.size();++i)
+	{
+		ok &= setRawUInt64(data, tlvsize, &offset, lobby_ids[i]);
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
+		ok &= setRawUInt32(data, tlvsize, &offset, lobby_counts[i]);
+	}
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef CHAT_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+	return ok ;
+}
 bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size() ;
@@ -483,6 +547,7 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 	{
 		ok &= setRawUInt64(data, tlvsize, &offset, lobby_ids[i]);
 		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
 		ok &= setRawUInt32(data, tlvsize, &offset, lobby_counts[i]);
 	}
 	if (offset != tlvsize)
@@ -793,9 +858,8 @@ RsChatLobbyListRequestItem::RsChatLobbyListRequestItem(void *data,uint32_t)
 	if (!ok)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
-
-RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
-	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST)
+RsChatLobbyListItem_deprecated::RsChatLobbyListItem_deprecated(void *data,uint32_t)
+	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated)
 {
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
@@ -812,6 +876,34 @@ RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
 	{
 		ok &= getRawUInt64(data, rssize, &offset, &lobby_ids[i]);
 		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
+		ok &= getRawUInt32(data, rssize, &offset, &lobby_counts[i]);
+	}
+
+	if (offset != rssize)
+		std::cerr << "Size error while deserializing." << std::endl ;
+	if (!ok)
+		std::cerr << "Unknown error while deserializing." << std::endl ;
+}
+RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
+	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST)
+{
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+	uint32_t offset = 8; // skip the header 
+
+	uint32_t n=0 ;
+	ok &= getRawUInt32(data, rssize, &offset, &n);
+
+	lobby_ids.resize(n) ;
+	lobby_names.resize(n) ;
+  lobby_topics.resize(n) ;
+	lobby_counts.resize(n) ;
+
+	for(uint32_t i=0;i<n;++i)
+	{
+		ok &= getRawUInt64(data, rssize, &offset, &lobby_ids[i]);
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
 		ok &= getRawUInt32(data, rssize, &offset, &lobby_counts[i]);
 	}
 

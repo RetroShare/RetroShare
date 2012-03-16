@@ -317,6 +317,7 @@ void p3ChatService::locked_printDebugInfo() const
 	{
 		std::cerr << "   Lobby id\t\t: " << std::hex << it->first << std::dec << std::endl;
 		std::cerr << "   Lobby name\t\t: " << it->second.lobby_name << std::endl;
+    std::cerr << "   Lobby topic\t\t: " << it->second.lobby_topic << std::endl;
 		std::cerr << "   nick name\t\t: " << it->second.nick_name << std::endl;
 		std::cerr << "   Lobby type\t\t: " << ((it->second.lobby_privacy_level==RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)?"Public":"private") << std::endl;
 		std::cerr << "   Lobby peer id\t: " << it->second.virtual_peer_id << std::endl;
@@ -348,7 +349,7 @@ void p3ChatService::locked_printDebugInfo() const
 
 	for( std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin()) ;it!=_public_lobbies.end();++it)
 	{
-		std::cerr << "   " << std::hex << it->first << " name = " << std::dec << it->second.lobby_name << std::endl;
+		std::cerr << "   " << std::hex << it->first << " name = " << std::dec << it->second.lobby_name << it->second.lobby_topic << std::endl;
 		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
 			std::cerr << "    With friend: " << *it2 << std::endl;
 	}
@@ -628,6 +629,7 @@ void p3ChatService::receiveChatQueue()
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:  handleFriendUnsubscribeLobby  (dynamic_cast<RsChatLobbyUnsubscribeItem     *>(item)) ; break ;
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: handleRecvChatLobbyListRequest(dynamic_cast<RsChatLobbyListRequestItem     *>(item)) ; break ;
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:         handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem            *>(item)) ; break ;
+			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated: handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem_deprecated *>(item)) ; break ;
 		
 			default:
 				  std::cerr << "Unhandled item subtype " << item->PacketSubType() << " in p3ChatService: " << std::endl;
@@ -653,11 +655,12 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 			if(it->second.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)
 			{
 #ifdef CHAT_DEBUG
-				std::cerr << "  Adding lobby " << std::hex << it->first << std::dec << " \"" << it->second.lobby_name << "\" count=" << it->second.nick_names.size() << std::endl;
+				std::cerr << "  Adding lobby " << std::hex << it->first << std::dec << " \"" << it->second.lobby_name << it->second.lobby_topic << "\" count=" << it->second.nick_names.size() << std::endl;
 #endif
 
 				item->lobby_ids.push_back(it->first) ;
 				item->lobby_names.push_back(it->second.lobby_name) ;
+        item->lobby_topics.push_back(it->second.lobby_topic) ;
 				item->lobby_counts.push_back(it->second.nick_names.size()) ;
 			}
 #ifdef CHAT_DEBUG
@@ -672,8 +675,47 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 	std::cerr << "  Sending list to " << clr->PeerId() << std::endl;
 #endif
 	sendItem(item);
-}
 
+	// *********** Also send an item in old format. To be removed.
+	
+	RsChatLobbyListItem_deprecated *itemd = new RsChatLobbyListItem_deprecated;
+	itemd->lobby_ids = item->lobby_ids ;
+	itemd->lobby_names = item->lobby_names ;
+	itemd->lobby_counts = item->lobby_counts ;
+	itemd->PeerId(clr->PeerId()) ;
+
+	sendItem(itemd) ;
+
+	// End of part to remove in future versions. *************
+}
+void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item)
+{
+	{
+		time_t now = time(NULL) ;
+
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		{
+			PublicChatLobbyRecord& rec(_public_lobbies[item->lobby_ids[i]]) ;
+
+			rec.lobby_id = item->lobby_ids[i] ;
+			rec.lobby_name = item->lobby_names[i] ;
+      rec.lobby_topic = "[Old format: no topic provided]" ;
+			rec.participating_friends.insert(item->PeerId()) ;
+
+			if(_should_reset_lobby_counts)
+				rec.total_number_of_peers = item->lobby_counts[i] ;
+			else
+				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
+
+			rec.last_report_time = now ;
+		}
+	}
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	_should_reset_lobby_counts = false ;
+}
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 {
 	{
@@ -687,6 +729,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 			rec.lobby_id = item->lobby_ids[i] ;
 			rec.lobby_name = item->lobby_names[i] ;
+      rec.lobby_topic = item->lobby_topics[i] ;
 			rec.participating_friends.insert(item->PeerId()) ;
 
 			if(_should_reset_lobby_counts)
@@ -1973,6 +2016,7 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 	}
 	item->lobby_id = lobby_id ;
 	item->lobby_name = it->second.lobby_name ;
+	item->lobby_topic = it->second.lobby_topic ;
 	item->lobby_privacy_level = connexion_challenge?RS_CHAT_LOBBY_PRIVACY_LEVEL_CHALLENGE:(it->second.lobby_privacy_level) ;
 	item->PeerId(peer_id) ;
 
@@ -1981,7 +2025,7 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
 {
 #ifdef CHAT_DEBUG
-	std::cerr << "Received invite to lobby from " << item->PeerId() << " to lobby " << std::hex << item->lobby_id << std::dec << ", named " << item->lobby_name << std::endl;
+	std::cerr << "Received invite to lobby from " << item->PeerId() << " to lobby " << std::hex << item->lobby_id << std::dec << ", named " << item->lobby_name << item->lobby_topic << std::endl;
 #endif
 
 	// 1 - store invite in a cache
@@ -2026,6 +2070,7 @@ void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		invite.lobby_id = item->lobby_id ;
 		invite.peer_id = item->PeerId() ;
 		invite.lobby_name = item->lobby_name ;
+		invite.lobby_topic = item->lobby_topic ;
 		invite.lobby_privacy_level = item->lobby_privacy_level ;
 
 		_lobby_invites_queue[item->lobby_id] = invite ;
@@ -2078,6 +2123,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 		entry.nick_name = _default_nick_name ;	
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
+		entry.lobby_topic = it->second.lobby_topic ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ;
@@ -2187,6 +2233,7 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 		entry.nick_name = _default_nick_name ;	
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
+    entry.lobby_topic = it->second.lobby_topic ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ; 
@@ -2212,7 +2259,7 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 	return true ;
 }
 
-ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_level)
+ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t privacy_level)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Creating a new Chat lobby !!" << std::endl;
@@ -2236,6 +2283,7 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 		entry.nick_name = _default_nick_name ;	// to be changed. For debug only!!
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = lobby_name ;
+    entry.lobby_topic = lobby_topic ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ;

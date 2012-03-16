@@ -124,6 +124,16 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
+				 <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Lobby topic:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="label_4">
                <property name="text">
                 <string>Your nick name:</string>
@@ -149,6 +159,9 @@ p, li { white-space: pre-wrap; }
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
               <widget class="QLineEdit" name="lobbyName_LE"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lobbyTopic_LE"/>
              </item>
              <item>
               <widget class="QLineEdit" name="nickName_LE"/>

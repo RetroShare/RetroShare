@@ -167,7 +167,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
 		bool getDefaultNickNameForChatLobby(std::string& nick) ;
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
-		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
+		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
 
 		void getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) ;
 		bool joinPublicChatLobby(const ChatLobbyId& id) ;
@@ -211,6 +211,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
 		void handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item) ;
 		void handleRecvChatLobbyList(RsChatLobbyListItem *item) ;
+		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item) ;
 		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
 
 		/// Sends a request for an avatar to the peer of given id

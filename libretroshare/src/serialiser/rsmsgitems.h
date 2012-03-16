@@ -59,9 +59,10 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	= 0x0A ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT_DEPREC  = 0x0B ;	// don't use ! Deprecated
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	= 0x0C ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	= 0x0D ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x0E ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated = 0x0E ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	= 0x10 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x11 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -183,6 +184,22 @@ class RsChatLobbyListRequestItem: public RsChatItem
 
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 };
+class RsChatLobbyListItem_deprecated: public RsChatItem
+{
+	public:
+		RsChatLobbyListItem_deprecated() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated) {}
+		RsChatLobbyListItem_deprecated(void *data,uint32_t size) ; 
+		virtual ~RsChatLobbyListItem_deprecated() {}
+
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ;				 			
+
+		std::vector<ChatLobbyId> lobby_ids ;
+		std::vector<std::string> lobby_names ;
+		std::vector<uint32_t>    lobby_counts ;
+};
 class RsChatLobbyListItem: public RsChatItem
 {
 	public:
@@ -197,9 +214,9 @@ class RsChatLobbyListItem: public RsChatItem
 
 		std::vector<ChatLobbyId> lobby_ids ;
 		std::vector<std::string> lobby_names ;
+		std::vector<std::string> lobby_topics ;
 		std::vector<uint32_t>    lobby_counts ;
 };
-
 class RsChatLobbyUnsubscribeItem: public RsChatItem
 {
 	public:
@@ -242,6 +259,7 @@ class RsChatLobbyInviteItem: public RsChatItem
 
 		ChatLobbyId lobby_id ;
 		std::string lobby_name ;
+		std::string lobby_topic ;
 		uint32_t lobby_privacy_level ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?

@@ -309,9 +309,9 @@ void p3Msgs::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& publ
 	mChatSrv->getListOfNearbyChatLobbies(public_lobbies) ;
 }
 
-ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::list<std::string>& invited_friends,uint32_t privacy_type) 
+ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t privacy_type) 
 {
-	return mChatSrv->createChatLobby(lobby_name,invited_friends,privacy_type) ;
+	return mChatSrv->createChatLobby(lobby_name,lobby_topic,invited_friends,privacy_type) ;
 }
 
 bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 

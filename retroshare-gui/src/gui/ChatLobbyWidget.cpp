@@ -13,7 +13,8 @@
 
 #define COLUMN_NAME       0
 #define COLUMN_USER_COUNT 1
-#define COLUMN_COUNT      2
+#define COLUMN_TOPIC      2
+#define COLUMN_COUNT      3
 
 #define COLUMN_DATA       0
 #define ROLE_SORT         Qt::UserRole
@@ -53,12 +54,15 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	QTreeWidgetItem *headerItem = lobbyTreeWidget->headerItem();
 	headerItem->setText(COLUMN_NAME, tr("Name"));
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
+	headerItem->setText(COLUMN_TOPIC, tr("Topic"));
 	headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
+  headerItem->setTextAlignment(COLUMN_TOPIC, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_USER_COUNT, Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QHeaderView *header = lobbyTreeWidget->header();
 	header->setResizeMode(COLUMN_NAME, QHeaderView::Interactive);
-	header->setResizeMode(COLUMN_USER_COUNT, QHeaderView::Stretch);
+	header->setResizeMode(COLUMN_USER_COUNT, QHeaderView::Interactive);
+	header->setResizeMode(COLUMN_TOPIC, QHeaderView::Stretch);
 
 	lobbyTreeWidget->setColumnWidth(COLUMN_NAME, 200);
 	lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50);
@@ -115,10 +119,13 @@ void ChatLobbyWidget::lobbyChanged()
 	updateDisplay();
 }
 
-static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, int count, bool subscribed)
+static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed)
 {
 	item->setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 	item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(name.c_str()));
+
+	item->setText(COLUMN_TOPIC, QString::fromUtf8(topic.c_str()));
+	item->setData(COLUMN_TOPIC, ROLE_SORT, QString::fromUtf8(topic.c_str()));
 
 	item->setText(COLUMN_USER_COUNT, QString::number(count));
 
@@ -188,7 +195,7 @@ void ChatLobbyWidget::updateDisplay()
 		const PublicChatLobbyRecord &lobby = publicLobbies[i];
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
-		std::cerr << "adding " << lobby.lobby_name << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers." << std::endl;
+		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers." << std::endl;
 #endif
 
 		QTreeWidgetItem *item = NULL;
@@ -215,7 +222,7 @@ void ChatLobbyWidget::updateDisplay()
 			subscribed = true;
 		}
 
-		updateItem(item, lobby.lobby_id, lobby.lobby_name, lobby.total_number_of_peers, subscribed);
+		updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed);
 	}
 
 	// remove not existing private lobbies
@@ -244,7 +251,7 @@ void ChatLobbyWidget::updateDisplay()
 		const ChatLobbyInfo &lobby = *lobbyIt;
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
-		std::cerr << "adding " << lobby.lobby_name << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.nick_names.size() << " peers." << std::endl;
+		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.nick_names.size() << " peers." << std::endl;
 #endif
 
 		QTreeWidgetItem *itemParent;
@@ -277,7 +284,7 @@ void ChatLobbyWidget::updateDisplay()
 			item->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 		}
 
-		updateItem(item, lobby.lobby_id, lobby.lobby_name, lobby.nick_names.size(), true);
+		updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true);
 	}
 }
 
