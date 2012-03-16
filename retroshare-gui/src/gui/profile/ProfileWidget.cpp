@@ -26,6 +26,9 @@
 
 #include "StatusMessage.h"
 
+#include <QApplication>
+#include <QClipboard>
+#include <QMessageBox>
 #include <QTime>
 
 #include <sstream>
@@ -43,7 +46,8 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
     ui.setupUi(this);
   
     connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
-    
+    connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
+
     ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
 
 }
@@ -118,5 +122,23 @@ void ProfileWidget::statusmessagedlg()
     statusmsgdialog->show();
 }
 
+void ProfileWidget::copyCert()
+{
+    std::string cert = rsPeers->GetRetroshareInvite(false);
+    if (cert.empty()) {
+        QMessageBox::information(this, tr("RetroShare"),
+                         tr("Sorry, create certificate failed"),
+                         QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+    
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(QString::fromStdString(cert));
+                                
+    QMessageBox::information(this,
+                             tr("RetroShare"),
+                             tr("Your Cert is copied to Clipboard, paste and send it to your "
+                                "friend via email or some other way"));                               
 
+}
 

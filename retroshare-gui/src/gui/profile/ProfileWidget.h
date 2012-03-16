@@ -45,7 +45,8 @@ private slots:
 
     void showEvent ( QShowEvent * event );
     void statusmessagedlg();
-  
+    void copyCert();
+ 
 private:
 
 

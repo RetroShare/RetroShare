@@ -48,7 +48,7 @@ border: 1px solid #CCCCCC;}</string>
       <property name="bottomMargin">
        <number>1</number>
       </property>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QPushButton" name="editstatuspushButton">
         <property name="toolTip">
          <string>Edit Personal message</string>
@@ -66,7 +66,7 @@ border: 1px solid #CCCCCC;
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="2">
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -78,6 +78,21 @@ border: 1px solid #CCCCCC;
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="CopyCertButton">
+        <property name="styleSheet">
+         <string notr="true">QPushButton:hover { 
+border: 1px solid #CCCCCC;
+}</string>
+        </property>
+        <property name="text">
+         <string>Copy Certificate</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -697,6 +712,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
