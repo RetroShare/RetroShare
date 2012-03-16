@@ -59,7 +59,7 @@
 #define IMAGE_FOLDERGREEN    ":/images/folder_green.png"
 #define IMAGE_FOLDERRED      ":/images/folder_red.png"
 #define IMAGE_FOLDERYELLOW   ":/images/folder_yellow.png"
-#define IMAGE_FORUM          ":/images/konversation16.png"
+#define IMAGE_FORUM          ":/images/konversation.png"
 #define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
 #define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
 #define IMAGE_INFO           ":/images/info16.png"
