@@ -124,8 +124,16 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 	item->setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 	item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(name.c_str()));
 
-	item->setText(COLUMN_TOPIC, QString::fromUtf8(topic.c_str()));
-	item->setData(COLUMN_TOPIC, ROLE_SORT, QString::fromUtf8(topic.c_str()));
+	if(topic.empty())
+	{
+		item->setText(COLUMN_TOPIC, QObject::tr("[No topic provided]"));
+		item->setData(COLUMN_TOPIC, ROLE_SORT, QObject::tr("[No topic provided]"));
+	}
+	else
+	{
+		item->setText(COLUMN_TOPIC, QString::fromUtf8(topic.c_str()));
+		item->setData(COLUMN_TOPIC, ROLE_SORT, QString::fromUtf8(topic.c_str()));
+	}
 
 	item->setText(COLUMN_USER_COUNT, QString::number(count));
 

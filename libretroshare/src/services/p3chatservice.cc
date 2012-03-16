@@ -701,7 +701,6 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item
 
 			rec.lobby_id = item->lobby_ids[i] ;
 			rec.lobby_name = item->lobby_names[i] ;
-      rec.lobby_topic = "[Old format: no topic provided]" ;
 			rec.participating_friends.insert(item->PeerId()) ;
 
 			if(_should_reset_lobby_counts)
