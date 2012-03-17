@@ -130,11 +130,19 @@ int RsIntroServer::setupChatLobbies(std::string &genericLobbyName)
 	std::string englishLobbyName = LOBBY_BASENAME;
 	std::string germanLobbyName  = LOBBY_BASENAME;
 	std::string frenchLobbyName  = LOBBY_BASENAME;
+	std::string spanishLobbyName  = LOBBY_BASENAME;
+	
+	std::string englishLobbyTopic  = "Welcome!";
+	std::string germanLobbyTopic   = "Willkommen !";
+	std::string frenchLobbyTopic   = "Bienvenue !";
+	std::string spanishLobbyTopic  = "Bienvenido !";
+
 
 	genericLobbyName += " " + trimmedstr;
 	englishLobbyName += " (EN) " + trimmedstr;
 	germanLobbyName  += " (DE) " + trimmedstr;
 	frenchLobbyName  += " (FR) " + trimmedstr;
+	spanishLobbyName += " (ES) " + trimmedstr;
 
 	std::string englishTopic = "Connect to this lobby to meet new friends" ;
 	std::string frenchTopic = "Connectez vous a ce lobby pour rencontrer de nouveaux amis" ;
@@ -143,9 +151,10 @@ int RsIntroServer::setupChatLobbies(std::string &genericLobbyName)
 	std::list<std::string> emptyList;
 	uint32_t lobby_privacy_type = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC;
 	
-	mEnglishLobby = rsMsgs->createChatLobby(englishLobbyName,englishTopic, emptyList, lobby_privacy_type);
-	mFrenchLobby = rsMsgs->createChatLobby(frenchLobbyName,frenchTopic, emptyList, lobby_privacy_type);
-	mGermanLobby = rsMsgs->createChatLobby(germanLobbyName,germanTopic, emptyList, lobby_privacy_type);
+	mEnglishLobby = rsMsgs->createChatLobby(englishLobbyName, englishLobbyTopic, emptyList, lobby_privacy_type);
+	mFrenchLobby = rsMsgs->createChatLobby(frenchLobbyName, frenchLobbyTopic, emptyList, lobby_privacy_type);
+	mGermanLobby = rsMsgs->createChatLobby(germanLobbyName, germanLobbyTopic, emptyList, lobby_privacy_type);
+	mSpanishLobby = rsMsgs->createChatLobby(spanishLobbyName, spanishLobbyTopic, emptyList, lobby_privacy_type);
 
 	return 1;
 }

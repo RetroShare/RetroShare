@@ -68,6 +68,7 @@ int    mMaxPeerAge;
 	ChatLobbyId mEnglishLobby;
 	ChatLobbyId mFrenchLobby;
 	ChatLobbyId mGermanLobby;
+	ChatLobbyId mSpanishLobby;
 };
 
 
