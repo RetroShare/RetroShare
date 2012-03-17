@@ -1,6 +1,40 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - added copy certificate button to profile widget
+     - added topics to chat lobbies. Improved CL gui
+     - added deferred checking of chunks in FT. Not fully functional yet, for backward compatibility reasons.
+     - prepared libretroshare for OpenSSL-1.0
+     - Bring the main window to foreground when receiving a link from the browser (Windows only).
+     - Fixed compilation on MacOS 10.6 (patch from K.Gupta)
+     - Update installer script, added spanish,arabic,italian,greek and portuguese language support
+     - Optimized layout of the newsfeed items.
+     - Fixed linking of the VOIP plugin on Windows (Exports all symbols from RetroShare.exe and import it in the plugins.
+        Removed the direct linking of the libretroshare and libbitdht from the plugins.)
+     - Fixed utf8 characters in the transfer tab name of plugins.
+     - Functional version of VOIP plugin.
+     - Added ability for plugins to return their own PopupChatDialog class
+     - Count the friends (gpg id's) instead of the locations (ssl id's) in the statusbar.
+     - Moved update of the friends from QTimer to signals.
+     - Combined p3LinkMgr::getFriendCount and p3LinkMgr::getOnlineCount and moved to p3PeerMgr.
+     - Fixed scroll position of the text browser in the chat dialog when the friend changes the status and the info frame is shown or hidden
+     - Reworked the start of a chat with a gpg id (doubleclick in friends tree). Removed the question to send a message when a chat 
+        with an offline friend is started. Start the chat when only one ssl id exist (online or offline) or only one ssl id is online.
+        Show a messagebox when more than one ssl ids are online or all are offline.
+     - Added check for required location during gpg key generation.
+
+  * Bugs
+     - Fixed display of the location with utf8 characters in ConnectFriendWizard.
+     - Fixed icon size in forums
+     - Disabled adding new keys from friends of friends in non-discovery mode.
+     - Fixed display of friend status in chat window
+     - Fixed bug returning false while a string is expected in p3distrib
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 20 feb 2012 12:00:00 +0100
+
+retroshare (0.5.3-0.4973~natty) natty; urgency=low
+
+  * Improvements
      - added BSD specific changes
      - made settings page system more automatic
      - updated french translation
