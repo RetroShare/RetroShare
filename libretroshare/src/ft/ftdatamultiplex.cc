@@ -489,12 +489,12 @@ bool 	ftDataMultiplex::doWork()
 	return true;
 }
 
-bool ftDataMultiplex::recvSingleChunkCrc(const std::string& /*peerId*/, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+bool ftDataMultiplex::recvSingleChunkCrc(const std::string& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
 //#ifdef MPLEX_DEBUG
-	std::cerr << "ftDataMultiplex::recvSingleChunkCrc() Received crc of file " << hash << ", chunk " << chunk_number << ", crc=" << crc.toStdString() << std::endl;
+	std::cerr << "ftDataMultiplex::recvSingleChunkCrc() Received crc of file " << hash << ", from peer id " << peerId << ", chunk " << chunk_number << ", crc=" << crc.toStdString() << std::endl;
 //#endif
 
 	std::map<std::string, ftClient>::iterator it = mClients.find(hash);
@@ -757,7 +757,7 @@ bool ftDataMultiplex::computeAndSendCRC32Map(const std::string& peerId, const st
 
 	std::cerr << "Computing CRC32Map for file " << filename << ", hash=" << hash << ", size=" << filesize << std::endl;
 
-	FILE *fd = fopen(filename.c_str(),"r") ;
+	FILE *fd = RsDirUtil::rs_fopen(filename.c_str(),"rb") ;
 
 	if(fd == NULL)
 	{
@@ -899,7 +899,7 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const
 	std::cerr << "Computing Sha1 for chunk " << chunk_number<< " of file " << filename << ", hash=" << hash << ", size=" << filesize << std::endl;
 
 	unsigned char *buf = new unsigned char[ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE] ;
-	FILE *fd = fopen(filename.c_str(),"r") ;
+	FILE *fd = RsDirUtil::rs_fopen(filename.c_str(),"rb") ;
 
 	if(fd == NULL)
 	{

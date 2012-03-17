@@ -47,7 +47,7 @@ int main(int argc,char *argv[])
 		return -1 ;
 	}
 
-	FILE *f = fopen(argv[1],"r") ;
+	FILE *f = RsDirUtil::rs_fopen(argv[1],"r") ;
 
 	if(f == NULL)
 	{
@@ -75,6 +75,19 @@ int main(int argc,char *argv[])
 	Sha1CheckSum H(hash) ;
 	std::cerr << "Hashed transformed: " << H.toStdString() << std::endl;
 
+	std::cerr << "Computing all chunk hashes:" << std::endl;
+
+	fseek(f,0,SEEK_SET) ;
+	int n=0 ;
+
+	while(len = fread(buf,1,SIZE,f))
+	{
+		Sha1CheckSum sum = RsDirUtil::sha1sum(buf,len) ;
+		std::cerr << "Chunk " << n << ": " << sum.toStdString() << std::endl;
+		n++;
+	}
+
+	fclose(f) ;
 	return 0 ;
 }
 
