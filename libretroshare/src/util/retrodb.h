@@ -1,10 +1,34 @@
 #ifndef RSSQLITE_H
 #define RSSQLITE_H
 
+/*
+ * RetroShare : RetroDb functionality
+ *
+ * Copyright 2012 Christopher Evi-Parker
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include "sqlite3.h"
 
 #include <string>
 #include <set>
+#include <list>
 #include <map>
 
 
@@ -12,10 +36,10 @@ class ContentValue;
 class RetroCursor;
 
 /*!
- * The idea of RsDb is to provide a means for Retroshare core and \n
- * its services to maintain an easy to use random access file via a database \n
+ * RetroDb provide a means for Retroshare's core and \n
+ * services to maintain an easy to use random access file via a database \n
  * It models itself after android's sqlite functionality \n
- * This is essentially close of Androids SQLiteDatabase
+ * This is essentially unashamedly a clone of Android's SQLiteDatabase interface
  */
 class RetroDb
 {
@@ -34,7 +58,9 @@ public:
 
     /*!
      * opens sqlite data base
-     * @return false if we failed to open
+     * @param dbPath
+     * @param flags
+     * @return false if failed to open, true otherwise
      */
     bool openDb(const std::string& dbPath, int flags = OPEN_READONLY);
 
@@ -43,22 +69,40 @@ public:
      */
     void closeDb();
 
+    /*!
+     *
+     * @return false if database is not open, true otherwise
+     */
+    bool isOpen() const;
+
     /* modifying db */
 public:
 
+
+
     /*!
-     * To make queries which does not return a result
+     * To a make query which do not return a result \n
+     * below are the type of queries this method should be used for \n
+     * ALTER TABLE \n
+     * CREATE or DROP table / trigger / view / index / virtual table \n
+     * REINDEX \n
+     * RELEASE \n
+     * SAVEPOINT \n
+     * PRAGMA that returns no data \n
      * @param query SQL query
+     * @return false if there was an sqlite error, true otherwise
      */
-    void execSQL(const std::string& query);
+    bool execSQL(const std::string& query);
 
     /*!
      * inserts a row in a database table
      * @param table table you want to insert content values into
+     * @param nullColumnHack  SQL doesn't allow inserting a completely \n
+     *        empty row without naming at least one column name
      * @param cv hold entries to insert
      * @return true if insertion successful, false otherwise
      */
-    bool sqlInsert(std::string& table, std::string nullColumnHack, const ContentValue& cv);
+    bool sqlInsert(const std::string& table,const  std::string& nullColumnHack, const ContentValue& cv);
 
     /*!
      * update row in a database table
@@ -72,14 +116,15 @@ public:
     /*!
      * Query the given table, returning a Cursor over the result set
      * @param tableName the table name
-     * @param columns columns that should be returned
+     * @param columns list columns that should be returned and their order (the list's order)
      * @param selection  A filter declaring which rows to return, formatted as \n
      *        an SQL WHERE clause (excluding the WHERE itself). Passing null will \n
      *        return all rows for the given table.
      * @param order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself)
-     * @return cursor over result set
+     * @return cursor over result set, this allocated resource should be free'd after use \n
+     *         column order is in list order.
      */
-    RetroCursor* sqlQuery(const std::string& tableName, const std::set<std::string>& columns,
+    RetroCursor* sqlQuery(const std::string& tableName, const std::list<std::string>& columns,
                           const std::string& selection, const std::string& orderBy);
 
     /*!
@@ -88,9 +133,10 @@ public:
      * @param whereClause formatted as where statement without 'WHERE' itself
      * @return false
      */
-    bool sqlDelete(const std::string& tableName, const std::string& whereClause);
+    bool sqlDelete(const std::string& tableName, const std::string& whereClause, const std::string& whereArgs);
 
     /*!
+     * TODO
      * defragment database, should be done on databases if many modifications have occured
      */
     void vacuum();
@@ -104,6 +150,7 @@ public:
 
     static const int OPEN_READONLY;
     static const int OPEN_READWRITE;
+    static const int OPEN_READWRITE_CREATE;
 
 private:
 
@@ -122,24 +169,27 @@ public:
 
     /*!
      * Initialises a null cursor
+     * @warning cursor takes ownership of statement passed to it
      */
     RetroCursor(sqlite3_stmt*);
 
+    ~RetroCursor();
+
     /*!
      * move to first row of results
-     * @return false if no result
+     * @return false if no results
      */
     bool moveToFirst();
 
     /*!
      * move to next row of results
-     * @return false if no row to move next to
+     * @return false if no further results
      */
     bool moveToNext();
 
     /*!
      * move to last row of results
-     * @return false if no result
+     * @return false if no result, true otherwise
      */
     bool moveToLast();
 
@@ -147,9 +197,35 @@ public:
      * gets current position of cursor
      * @return current position of cursor
      */
-    uint32_t getPosition();
+    int32_t getPosition() const;
 
     /* data retrieval */
+
+    /*!
+     * @return true if cursor is open and active, false otherwise
+     */
+    bool isOpen() const;
+
+    /*!
+     * cursor is closed, statement used to open cursor is deleted
+     * @return false if error on close (was already closed, error occured)
+     */
+    bool close();
+
+    /*!
+     *
+     * @return -1 if cursor is in error, otherwise number of rows in result
+     */
+    int32_t getResultCount() const;
+
+    /*!
+     * Current statement is closed and discarded (finalised)
+     * before actual opening occurs
+     * @param stm statement to open cursor on
+     * @return true if cursor is successfully opened
+     */
+    bool open(sqlite3_stmt* stm);
+
 public:
 
 
@@ -158,7 +234,7 @@ public:
      * @param columnIndex the zero-based index of the target column.
      * @return  the value of the column as 32 bit integer
      */
-    int32_t getInt(int columnIndex);
+    int32_t getInt32(int columnIndex);
 
     /*!
      * Returns the value of the requested column as a String.
@@ -186,20 +262,21 @@ public:
      * @param columnIndex the zero-based index of the target column.
      * @return the value of the column as a string
      */
-    std::string getString(int columnIndex);
+    void getString(int columnIndex, std::string& str);
 
     /*!
      * Returns the value of the requested column as a String.
      * @param columnIndex the zero-based index of the target column.
      * @return  the value of the column as pointer to raw data
      */
-    void* getData(int columnIndex, uint32_t& datSize);
+    const void* getData(int columnIndex, uint32_t& datSize);
 
 
 private:
 
     sqlite3_stmt* mStmt;
-    int mCount;
+    int mCount; /// number of results
+    int mPosCounter;
 };
 
 
@@ -239,6 +316,8 @@ public:
      * Adds a value to the set
      * @param key  the name of the value to put
      * @param value  the data for the value to put
+     * @warning cast string literals explicitly as string, observed string literal \n
+     *          being casted to bool instead e.g. string("hello") rather than "hello"
      */
     void put(const std::string& key, const std::string& value);
 
@@ -275,29 +354,29 @@ public:
      * @param key  the name of the value to put
      * @param value  the data for the value to put
      */
-    void put(const std::string& key, uint32_t len, char* value);
+    void put(const std::string& key, uint32_t len, const char* value);
 
 
     /*!
-     * get as value as
+     * get value as 32 bit signed integer
      * @param key the value to get
      */
     bool getAsInt32(const std::string& key, int32_t& value) const;
 
     /*!
-     * get as value as 64 bit integer
+     * get value as 64 bit signed integer
      * @param key the value to get
      */
     bool getAsInt64(const std::string& key, int64_t& value) const;
 
     /*!
-     * get as value as bool
+     * get value as bool
      * @param key the value to get
      */
     bool getAsBool(const std::string& key, bool& value) const;
 
     /*!
-     * get as value as double
+     * get as value double
      * @param key the value to get
      */
     bool getAsDouble(const std::string& key, double& value) const;
