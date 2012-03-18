@@ -9,7 +9,7 @@ QT_VERSION = $$split(QT_VERSION, ".")
 QT_VER_MAJ = $$member(QT_VERSION, 0)
 QT_VER_MIN = $$member(QT_VERSION, 1)
  
-lessThan(QT_VER_MAJ, 4) | lessThan(QT_VER_MIN, 7) {
+lessThan(QT_VER_MAJ, 4) | lessThan(QT_VER_MIN, 7) | win32 {
    QT += multimedia
 }
 
