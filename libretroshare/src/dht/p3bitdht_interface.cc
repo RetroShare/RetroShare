@@ -156,7 +156,7 @@ std::string p3BitDht::getUdpAddressString()
 
 	if (mDhtStunner->externalAddr(extAddr, extStable))
 	{
-		out << " DhtExtAddr: " << inet_ntoa(extAddr.sin_addr);
+		out << " DhtExtAddr: " << rs_inet_ntoa(extAddr.sin_addr);
 		out << ":" << ntohs(extAddr.sin_port);
 		
 		if (extStable)
@@ -174,7 +174,7 @@ std::string p3BitDht::getUdpAddressString()
 	}
 	if (mProxyStunner->externalAddr(extAddr, extStable))
 	{
-		out << " ProxyExtAddr: " << inet_ntoa(extAddr.sin_addr);
+		out << " ProxyExtAddr: " << rs_inet_ntoa(extAddr.sin_addr);
 		out << ":" << ntohs(extAddr.sin_port);
 		
 		if (extStable)

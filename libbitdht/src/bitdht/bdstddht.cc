@@ -209,7 +209,7 @@ void bdStdPrintNodeId(std::ostream &out, const bdNodeId *a)
 void bdStdPrintId(std::ostream &out, const bdId *a)
 {
 	bdStdPrintNodeId(out, &(a->id));
-	out << " ip:" << inet_ntoa(a->addr.sin_addr);
+	out << " ip:" << bdnet_inet_ntoa(a->addr.sin_addr);
 	out << ":" << ntohs(a->addr.sin_port);
 	return;
 }

@@ -1031,7 +1031,7 @@ int bdNodeManager::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &fro
 			from = pit->second.mDhtAddr;
 
 			std::cerr << "bdNodeManager::getDhtPeerAddress() Found Peer Address:";
-			std::cerr << inet_ntoa(from.sin_addr) << ":" << htons(from.sin_port);
+			std::cerr << bdnet_inet_ntoa(from.sin_addr) << ":" << htons(from.sin_port);
 			std::cerr << std::endl;
 
 			return 1;

@@ -27,6 +27,7 @@
 #include "bdnet.h"
 
 #include <iostream>
+#include <sstream>
 #include <stdlib.h>
 #include <string.h>
 
@@ -356,4 +357,15 @@ void    bdsockaddr_clear(struct sockaddr_in *addr)
 	memset(addr, 0, sizeof(*addr));
 }
 
+/* thread-safe version of inet_ntoa */
 
+std::string bdnet_inet_ntoa(struct in_addr in)
+{
+	std::ostringstream str;
+	uint8_t *bytes = (uint8_t *) &(in.s_addr);
+	str << (int) bytes[0] << ".";
+	str << (int) bytes[1] << ".";
+	str << (int) bytes[2] << ".";
+	str << (int) bytes[3];
+	return str.str();
+}

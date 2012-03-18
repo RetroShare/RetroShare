@@ -126,7 +126,7 @@ int bdFilter::addPeerToFilter(const bdId *id, uint32_t flags)
 		uint32_t saddr = id->addr.sin_addr.s_addr;
 		mIpsBanned.insert(saddr);
 
-		std::cerr << "Adding New Banned Ip Address: " << inet_ntoa(id->addr.sin_addr);
+		std::cerr << "Adding New Banned Ip Address: " << bdnet_inet_ntoa(id->addr.sin_addr);
 		std::cerr << std::endl;
 
 		return true;
