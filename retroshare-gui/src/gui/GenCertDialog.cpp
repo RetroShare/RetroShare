@@ -54,6 +54,12 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   QString titleString("<span style=\"font-size:17pt; font-weight:500;"
                                "color:white;\">%1</span>");
 
+#if QT_VERSION >= 0x040700
+  ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
+  ui.location_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
+  ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
+  ui.password_input->setPlaceholderText(tr("[Required] This password protects your PGP key."));
+#endif
     /* get all available pgp private certificates....
      * mark last one as default.
      */
