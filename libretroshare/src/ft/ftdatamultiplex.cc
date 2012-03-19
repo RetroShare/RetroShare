@@ -920,7 +920,7 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const
 	if(fd == NULL)
 	{
 		std::cerr << "Cannot read file " << filename << ". Something's wrong!" << std::endl;
-		delete buf ;
+		delete[] buf ;
 		return false ;
 	}
 	uint32_t len ;
@@ -932,6 +932,7 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const
 	fclose(fd) ;
 
 	crc = RsDirUtil::sha1sum(buf,len) ;
+	delete[] buf ;
 
 	// update cache
 	{
