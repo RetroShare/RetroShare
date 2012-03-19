@@ -429,10 +429,10 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 
 	delete store;
 
-	/* clear publication of groups if local cache file found */
-	RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
 	if (local)
 	{
+		/* clear publication of groups if local cache file found */
+		RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
 		mGroupsRepublish = false;
 	}
 
@@ -528,6 +528,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, const CacheData& 
 		std::cerr << "p3GroupDistrib::loadFileMsgs() CacheSubId: " << cacheSubId << " recvd: " << ts;
 		std::cerr << std::endl;
 #endif
+		RsStackMutex stack(distribMtx);
 
 		mLocalCacheTs[data.recvd] = cacheSubId;
 		if (cacheSubId > mMaxCacheSubId)
@@ -556,12 +557,15 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, const CacheData& 
 
 bool p3GroupDistrib::processCacheOptReq(std::string  grpId)
 {
-	if(mSubscribedGrp.find(grpId) != mSubscribedGrp.end())
-		return false;
+	{
+		RsStackMutex stack(distribMtx);
+		if(mSubscribedGrp.find(grpId) != mSubscribedGrp.end())
+			return false;
 
-	// grp already loaded
-	if(mCacheOptLoaded.find(grpId) != mCacheOptLoaded.end())
-		return false;
+		// grp already loaded
+		if(mCacheOptLoaded.find(grpId) != mCacheOptLoaded.end())
+			return false;
+	}
 
 	bool ok;
 	std::list<CacheData> cList;
@@ -585,6 +589,7 @@ bool p3GroupDistrib::processCacheOptReq(std::string  grpId)
 		return false;
 	}
 
+	RsStackMutex stack(distribMtx);
 	mCacheOptLoaded.insert(grpId);
 
 	return true;
@@ -2355,6 +2360,7 @@ void p3GroupDistrib::receivePubKeys(){
 		RsDistribGrpKey* key_item = dynamic_cast<RsDistribGrpKey*>(item);
 
 		if(key_item != NULL){
+			RsStackMutex stack(distribMtx);
 
                     it = mGroups.find(key_item->grpId);
 
