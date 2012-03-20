@@ -291,6 +291,11 @@ void ChatWidget::focusDialog()
 	ui->chattextEdit->setFocus();
 }
 
+void ChatWidget::setWelcomeMessage(QString &text)
+{
+	ui->textBrowser->setText(text);
+}
+
 void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType)
 {
 #ifdef CHAT_DEBUG

@@ -1112,7 +1112,17 @@ Bitte wähle einen zum chatten aus.</translation>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+117"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+59"/>
+        <source>Welcome to lobby %1</source>
+        <translation>Willkommen in der Lobby %1</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Topic: %1</source>
+        <translation>Thema: %1</translation>
+    </message>
+    <message>
+        <location line="+74"/>
         <source>Please enter your new nick name</source>
         <translation>Bitte gib deinen neuen Spitznamen ein</translation>
     </message>
@@ -1162,7 +1172,7 @@ Bitte wähle einen zum chatten aus.</translation>
 <context>
     <name>ChatLobbyWidget</name>
     <message>
-        <location filename="../gui/ChatLobbyWidget.ui" line="+76"/>
+        <location filename="../gui/ChatLobbyWidget.ui" line="+74"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1180,7 +1190,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neue Chat Lobby erstellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+54"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+55"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -1190,7 +1200,12 @@ p, li { white-space: pre-wrap; }
         <translation>Anzahl</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+1"/>
+        <source>Topic</source>
+        <translation>Thema</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Private Lobbies</source>
         <translation>Private Lobbies</translation>
     </message>
@@ -1215,7 +1230,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+254"/>
+        <location line="+265"/>
         <source>Invitation to chat lobby</source>
         <translation>Einladung zur Chat Lobby</translation>
     </message>
@@ -1578,7 +1593,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schriftart auf den Standard setzen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+350"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+355"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -2940,6 +2955,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+10"/>
+        <source>Lobby topic:</source>
+        <translation>Lobby Thema:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Your nick name:</source>
         <translation>Dein Spitzname:</translation>
     </message>
@@ -2949,7 +2969,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sicherheitsrichtlinie:</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+24"/>
         <source>Public (Visible by friends)</source>
         <translation>Öffentlich (für Freunde sichtbar)</translation>
     </message>
@@ -2977,7 +2997,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde einladen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+54"/>
+        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+55"/>
         <source>Contacts:</source>
         <translation>Kontakte:</translation>
     </message>
@@ -3005,7 +3025,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Eine Chat Lobby ist ein dezentralisierter und anonymer Chat. Alle Teilnehmer erhalten alle Nachrichten. Wenn du eine Lobby erstellst, kannst du andere Freunde in der Freundesliste einladen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="-11"/>
+        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="-12"/>
         <source>Put a sensible lobby name here</source>
         <translation>Gib einen Lobbynamen ein</translation>
     </message>
@@ -3015,9 +3035,8 @@ p, li { white-space: pre-wrap; }
         <translation>Dein Spitzname für diese Lobby (Ändere den Defaultnamen in den Optionen-&gt;Chat)</translation>
     </message>
     <message>
-        <location line="+53"/>
         <source>Please select at least one friend</source>
-        <translation>Bitte wähle mindestens einen Freund</translation>
+        <translation type="obsolete">Bitte wähle mindestens einen Freund</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -5243,12 +5262,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Choose Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftart wählen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reset font to default</source>
-        <translation type="unfinished">Schriftart auf den Standard setzen</translation>
+        <translation>Schriftart auf den Standard setzen</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
@@ -5644,7 +5663,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+143"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+149"/>
         <location line="+23"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -5788,7 +5807,27 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-32"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-62"/>
+        <source>[Optional] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>[Required] Examples: Home, Laptop,...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>[Required] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>[Required] This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <location line="+45"/>
         <source>Create new Location</source>
         <translation>Erstelle neuen Ort</translation>
@@ -10382,7 +10421,12 @@ p, li { white-space: pre-wrap; }
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+28"/>
+        <source>Copy Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10562,6 +10606,22 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Adressliste&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/ProfileWidget.cpp" line="+129"/>
+        <location line="+10"/>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <location line="-9"/>
+        <source>Sorry, create certificate failed</source>
+        <translation type="unfinished">Zertifikat-Datei konnte nicht erstellt werden</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation type="unfinished">Dein Zertiifkat ist in in die Zwischenablage kopiert worden</translation>
     </message>
 </context>
 <context>
@@ -10959,6 +11019,12 @@ und den Assistent zum Hinzufügen von Freunden zu starten.
 Reported error is: %2</source>
         <translation>Die Kollektion %1 konnte nicht geöffnet werden.
 Fehlermeldung: %2</translation>
+    </message>
+    <message>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="-242"/>
+        <location line="+1"/>
+        <source>[No topic provided]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13920,7 +13986,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+34"/>
         <source>Needs checking</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfung erforderlich</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="-2"/>
@@ -14052,7 +14118,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+366"/>
+        <location line="+368"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -14116,7 +14182,7 @@ Try to be patient!</source>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-912"/>
+        <location line="-914"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -14164,30 +14230,30 @@ Try to be patient!</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+506"/>
+        <location line="+508"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-504"/>
-        <location line="+505"/>
+        <location line="-506"/>
+        <location line="+507"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-505"/>
-        <location line="+504"/>
+        <location line="-507"/>
+        <location line="+506"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-394"/>
+        <location line="-396"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+233"/>
         <location line="+143"/>
         <location line="+140"/>
         <source>Failed</source>
@@ -14240,7 +14306,7 @@ Try to be patient!</source>
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-532"/>
+        <location line="-534"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>

@@ -48,6 +48,24 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 {
+	std::list<ChatLobbyInfo> lobbies;
+	rsMsgs->getChatLobbyList(lobbies);
+
+	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
+	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+		std::string vpid;
+		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
+			if (vpid == peerId) {
+				QString msg = tr("Welcome to lobby %1").arg(QString::fromUtf8(lobbyIt->lobby_name.c_str()));
+				if (!lobbyIt->lobby_topic.empty()) {
+					msg += "\n" + tr("Topic: %1").arg(QString::fromUtf8(lobbyIt->lobby_topic.c_str()));
+				}
+				ui.chatWidget->setWelcomeMessage(msg);
+				break;
+			}
+		}
+	}
+
 	ChatDialog::init(peerId, title);
 
 	std::string nickName;

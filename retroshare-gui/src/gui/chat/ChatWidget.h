@@ -59,6 +59,7 @@ public:
 	void addToParent(QWidget *newParent);
 	void removeFromParent(QWidget *oldParent);
 
+	void setWelcomeMessage(QString &text);
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType);
 	void updateStatusString(const QString &statusMask, const QString &statusString);
 
