@@ -61,6 +61,10 @@ border: 1px solid #CCCCCC;
         <property name="text">
          <string>Edit Personal message</string>
         </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
+        </property>
         <property name="flat">
          <bool>true</bool>
         </property>
@@ -89,6 +93,10 @@ border: 1px solid #CCCCCC;
         <property name="text">
          <string>Copy Certificate</string>
         </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/view-certificate-copy-32.png</normaloff>:/images/view-certificate-copy-32.png</iconset>
+        </property>
         <property name="flat">
          <bool>true</bool>
         </property>
@@ -108,7 +116,7 @@ border: 1px solid #CCCCCC;
         <x>0</x>
         <y>0</y>
         <width>498</width>
-        <height>574</height>
+        <height>573</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
@@ -712,8 +720,6 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
