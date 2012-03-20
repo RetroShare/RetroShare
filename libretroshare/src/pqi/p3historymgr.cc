@@ -53,66 +53,74 @@ p3HistoryMgr::~p3HistoryMgr()
 
 void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, const std::string &peerId, const RsChatMsgItem *chatItem)
 {
-	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
+	uint32_t addMsgId = 0;
 
-	if (mPublicEnable == false && chatPeerId.empty()) {
-		// public chat not enabled
-		return;
-	}
+	{
+		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-	if (mPrivateEnable == false && chatPeerId.empty() == false) {
-		// private chat not enabled
-		return;
-	}
-
-	const RsChatLobbyMsgItem *cli = dynamic_cast<const RsChatLobbyMsgItem*>(chatItem);
-
-	if (cli) {
-		// disable history for chat lobbies until they are saved
-		return;
-	}
-
-	RsHistoryMsgItem* item = new RsHistoryMsgItem;
-	item->chatPeerId = chatPeerId;
-	item->incoming = incoming;
-	item->peerId = peerId;
-	item->peerName = cli ? cli->nick : rsPeers->getPeerName(item->peerId);
-	item->sendTime = chatItem->sendTime;
-	item->recvTime = chatItem->recvTime;
-
-	librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
-
-	std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
-	if (mit != mMessages.end()) {
-		item->msgId = nextMsgId++;
-		mit->second.insert(std::make_pair(item->msgId, item));
-
-		// check the limit
-		uint32_t limit;
-		if (chatPeerId.empty()) {
-			limit = mPublicSaveCount;
-		} else {
-			limit = mPrivateSaveCount;
+		if (mPublicEnable == false && chatPeerId.empty()) {
+			// public chat not enabled
+			return;
 		}
 
-		if (limit) {
-			while (mit->second.size() > limit) {
-				delete(mit->second.begin()->second);
-				mit->second.erase(mit->second.begin());
+		if (mPrivateEnable == false && chatPeerId.empty() == false) {
+			// private chat not enabled
+			return;
+		}
+
+		const RsChatLobbyMsgItem *cli = dynamic_cast<const RsChatLobbyMsgItem*>(chatItem);
+
+		if (cli) {
+			// disable history for chat lobbies until they are saved
+			return;
+		}
+
+		RsHistoryMsgItem* item = new RsHistoryMsgItem;
+		item->chatPeerId = chatPeerId;
+		item->incoming = incoming;
+		item->peerId = peerId;
+		item->peerName = cli ? cli->nick : rsPeers->getPeerName(item->peerId);
+		item->sendTime = chatItem->sendTime;
+		item->recvTime = chatItem->recvTime;
+
+		librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
+
+		std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
+		if (mit != mMessages.end()) {
+			item->msgId = nextMsgId++;
+			mit->second.insert(std::make_pair(item->msgId, item));
+			addMsgId = item->msgId;
+
+			// check the limit
+			uint32_t limit;
+			if (chatPeerId.empty()) {
+				limit = mPublicSaveCount;
+			} else {
+				limit = mPrivateSaveCount;
 			}
-		}
-	} else {
-		std::map<uint32_t, RsHistoryMsgItem*> msgs;
-		item->msgId = nextMsgId++;
-		msgs.insert(std::make_pair(item->msgId, item));
-		mMessages.insert(std::make_pair(item->chatPeerId, msgs));
 
-		// no need to check the limit
+			if (limit) {
+				while (mit->second.size() > limit) {
+					delete(mit->second.begin()->second);
+					mit->second.erase(mit->second.begin());
+				}
+			}
+		} else {
+			std::map<uint32_t, RsHistoryMsgItem*> msgs;
+			item->msgId = nextMsgId++;
+			msgs.insert(std::make_pair(item->msgId, item));
+			mMessages.insert(std::make_pair(item->chatPeerId, msgs));
+			addMsgId = item->msgId;
+
+			// no need to check the limit
+		}
+
+		IndicateConfigChanged();
 	}
 
-	IndicateConfigChanged();
-
-	rsicontrol->getNotify().notifyHistoryChanged(item->msgId, NOTIFY_TYPE_ADD);
+	if (addMsgId) {
+		rsicontrol->getNotify().notifyHistoryChanged(addMsgId, NOTIFY_TYPE_ADD);
+	}
 }
 
 /***** p3Config *****/
@@ -320,21 +328,23 @@ bool p3HistoryMgr::getMessage(uint32_t msgId, HistoryMsg &msg)
 
 void p3HistoryMgr::clear(const std::string &chatPeerId)
 {
-	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-	std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(chatPeerId);
-	if (mit == mMessages.end()) {
-		return;
+		std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(chatPeerId);
+		if (mit == mMessages.end()) {
+			return;
+		}
+
+		std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
+		for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
+			delete(lit->second);
+		}
+		mit->second.clear();
+		mMessages.erase(mit);
+
+		IndicateConfigChanged();
 	}
-
-	std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
-	for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
-		delete(lit->second);
-	}
-	mit->second.clear();
-	mMessages.erase(mit);
-
-	IndicateConfigChanged();
 
 	rsicontrol->getNotify().notifyHistoryChanged(0, NOTIFY_TYPE_MOD);
 }
