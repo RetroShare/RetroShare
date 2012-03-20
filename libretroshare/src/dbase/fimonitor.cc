@@ -55,7 +55,7 @@ FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::str
 		mForceCheck(false), mInCheck(false),cb(cb_in), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
 
 {
-	updatePeriod = 60;
+	updatePeriod = 15 * 60; // 15 minutes
 }
 
 bool FileIndexMonitor::autoCheckEnabled() const

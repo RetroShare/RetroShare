@@ -1411,7 +1411,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Incoming message in history</source>
-        <translation>Eingehehende Nachricht aus dem Verlauf</translation>
+        <translation>Eingehende Nachricht aus dem Verlauf</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1421,17 +1421,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Incoming message</source>
-        <translation>Eingehehende Nachricht</translation>
+        <translation>Eingehende Nachricht</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Outgoing message</source>
-        <translation>Ausgehehende Nachricht</translation>
+        <translation>Ausgehende Nachricht</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Outgoing offline message</source>
-        <translation>Ausgehehende offline Nachricht</translation>
+        <translation>Ausgehende offline Nachricht</translation>
     </message>
     <message>
         <location filename="../gui/settings/ChatPage.h" line="+44"/>
@@ -3942,12 +3942,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FileTransferInfoWidget</name>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="+122"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="+123"/>
         <source>Chunk map</source>
         <translation>Block map</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+43"/>
         <source>Active chunks</source>
         <translation>Aktive Blöcke</translation>
     </message>
@@ -4375,7 +4375,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+290"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+294"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -4461,7 +4461,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+554"/>
+        <location line="+583"/>
         <source>[ ... Missing Message ... ]</source>
         <translation>[ ... Fehlende Nachricht ... ]</translation>
     </message>
@@ -4471,7 +4471,7 @@ p, li { white-space: pre-wrap; }
         <translation>Platzhalter für fehlende Nachricht</translation>
     </message>
     <message>
-        <location line="+358"/>
+        <location line="+362"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -4487,7 +4487,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1326"/>
+        <location line="-1359"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4648,7 +4648,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+151"/>
-        <location line="+1096"/>
+        <location line="+1129"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -4676,7 +4676,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1083"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1116"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4697,7 +4697,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1468"/>
+        <location line="+1501"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -8017,7 +8017,7 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageWidget.cpp" line="+223"/>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="+225"/>
         <source>No subject</source>
         <translation>Kein Betreff</translation>
     </message>
@@ -9934,7 +9934,7 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+214"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+216"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -10918,7 +10918,7 @@ und den Assistent zum Hinzufügen von Freunden zu starten.
         <translation>Nachbar Details</translation>
     </message>
     <message>
-        <location filename="../util/EventReceiver.cpp" line="+122"/>
+        <location filename="../util/EventReceiver.cpp" line="+123"/>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
     </message>
@@ -13849,7 +13849,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+339"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+345"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -13859,7 +13859,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-161"/>
+        <location line="-167"/>
         <location line="+59"/>
         <source>Status</source>
         <translation>Status</translation>
@@ -13918,6 +13918,11 @@ p, li { white-space: pre-wrap; }
         <translation>Ausstehend</translation>
     </message>
     <message>
+        <location line="+34"/>
+        <source>Needs checking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/TransfersDialog.cpp" line="-2"/>
         <location line="+60"/>
         <source>Name</source>
@@ -13972,12 +13977,12 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+133"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location line="-50"/>
+        <location line="-56"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
@@ -13987,7 +13992,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fortsetzen</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+15"/>
         <source>Open Folder</source>
         <translation>Ordner öffnen</translation>
     </message>
@@ -14111,7 +14116,7 @@ Try to be patient!</source>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-906"/>
+        <location line="-912"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -14148,7 +14153,7 @@ Try to be patient!</source>
         <translation>Router Anfragen</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+58"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -14235,7 +14240,7 @@ Try to be patient!</source>
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-531"/>
+        <location line="-532"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>

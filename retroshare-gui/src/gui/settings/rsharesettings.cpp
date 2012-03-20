@@ -720,7 +720,7 @@ void RshareSettings::setExpandNewMessages (bool bValue)
 uint RshareSettings::getMaxTimeBeforeIdle()
 {
     if (m_maxTimeBeforeIdle == -1) {
-        m_maxTimeBeforeIdle = value("maxTimeBeforeIdle", 30).toUInt();
+        m_maxTimeBeforeIdle = value("maxTimeBeforeIdle", 300).toUInt();
     }
 
     return m_maxTimeBeforeIdle;
