@@ -38,6 +38,7 @@
 #include "channels/CreateChannel.h"
 #include "common/Emoticons.h"
 #include "common/vmessagebox.h"
+#include "common/PeerDefs.h"
 #include "chat/ChatDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
@@ -203,9 +204,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     // add self nick and Avatar to Friends.
     RsPeerDetails pd ;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
-                         "color:#32cd32;\">%1</span>");
-        ui.nicklabel->setText(titleStr.arg(QString::fromUtf8(pd.name.c_str()) + " (" + tr("me") + ") " + QString::fromUtf8(pd.location.c_str())));
+        QString titleStr("<span style=\"font-size:16pt; font-weight:500;color:#32cd32;\">%1</span>");
+        ui.nicklabel->setText(titleStr.arg(PeerDefs::nameWithLocation(pd)));
     }
 
     /* Hide platform specific features */
