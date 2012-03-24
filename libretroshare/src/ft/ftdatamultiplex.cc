@@ -496,6 +496,15 @@ bool ftDataMultiplex::recvSingleChunkCrc(const std::string& peerId, const std::s
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvSingleChunkCrc() Received crc of file " << hash << ", from peer id " << peerId << ", chunk " << chunk_number << ", crc=" << crc.toStdString() << std::endl;
 #endif
+	// remove this chunk from the request list as well.
+	
+	Sha1CacheEntry& sha1cache(_cached_sha1maps[hash]) ;
+	std::map<uint32_t,ChunkCheckSumSourceList>::iterator it2(sha1cache._to_ask.find(chunk_number)) ;
+
+	if(it2 != sha1cache._to_ask.end())
+		sha1cache._to_ask.erase(it2) ;
+
+	// update the cache: get size from the client.
 
 	std::map<std::string, ftClient>::iterator it = mClients.find(hash);
 
@@ -508,19 +517,10 @@ bool ftDataMultiplex::recvSingleChunkCrc(const std::string& peerId, const std::s
 
 	// store in the cache as well
 
-	Sha1CacheEntry& sha1cache(_cached_sha1maps[hash]) ;
-
 	if(sha1cache._map.size() == 0)
 		sha1cache._map = Sha1Map(it->second.mCreator->fileSize(),ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE) ;
 
 	sha1cache._map.set(chunk_number,crc) ;
-
-	// remove this chunk from the request list as well.
-	
-	std::map<uint32_t,ChunkCheckSumSourceList>::iterator it2(sha1cache._to_ask.find(chunk_number)) ;
-
-	if(it2 != sha1cache._to_ask.end())
-		sha1cache._to_ask.erase(it2) ;
 
 	sha1cache._received.push_back(chunk_number) ;
 
@@ -537,45 +537,43 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 
 	uint32_t MAX_CHECKSUM_CHECK_PER_FILE = 25 ;
 
-	for(std::map<std::string,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();++it)
+	for(std::map<std::string,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();)
 	{
-		ftFileCreator *client = NULL ;
-
-		for(uint32_t n=0;n<MAX_CHECKSUM_CHECK_PER_FILE && n < it->second._received.size();)
-		{
-			if(client == NULL)
-			{
-				std::map<std::string, ftClient>::iterator itc = mClients.find(it->first);
+		std::map<std::string, ftClient>::iterator itc = mClients.find(it->first);
 
 #ifdef MPLEX_DEBUG
-				std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum(): treating hash " << it->first << std::endl;
+		std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum(): treating hash " << it->first << std::endl;
 #endif
 
-				if(itc == mClients.end())
-				{
-					std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum() ERROR: No matching Client for hash. This is an error. Hash=" << it->first << std::endl;
-					/* error */
-					break ;
-				}
-				else
-					client = itc->second.mCreator ;
-			}
-			int chunk_number = it->second._received[n] ;
+		if(itc == mClients.end())
+		{
+			std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum() ERROR: No matching Client for hash. This is probably a late answer. Dropping the hash. Hash=" << it->first << std::endl;
+
+			std::map<std::string,Sha1CacheEntry>::iterator tmp(it) ;
+			++tmp ;
+			_cached_sha1maps.erase(it) ;
+			it = tmp ;
+			/* error */
+			continue ;
+		}
+		ftFileCreator *client = itc->second.mCreator ;
+
+		for(uint32_t n=0;n<MAX_CHECKSUM_CHECK_PER_FILE && !it->second._received.empty();++n)
+		{
+			int chunk_number = it->second._received.back() ;
 
 			if(!it->second._map.isSet(chunk_number))
-			{
 				std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum() ERROR: chunk " << chunk_number << " is supposed to be initialized but it was not received !!" << std::endl;
-				++n ;
-				continue ;
-			}
+			else
+			{
 #ifdef MPLEX_DEBUG
-			std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum(): checking chunk " << chunk_number << " with hash " << it->second._map[chunk_number].toStdString() << std::endl;
+				std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum(): checking chunk " << chunk_number << " with hash " << it->second._map[chunk_number].toStdString() << std::endl;
 #endif
-			client->verifyChunk(chunk_number,it->second._map[chunk_number]) ;
-
-			it->second._received[n] = it->second._received.back() ;
+				client->verifyChunk(chunk_number,it->second._map[chunk_number]) ;
+			}
 			it->second._received.pop_back() ;
 		}
+		++it ;
 	}
 	return true ;
 }
@@ -1178,11 +1176,16 @@ void ftDataMultiplex::handlePendingCrcRequests()
 			for(std::map<std::string,time_t>::iterator it3(it2->second.begin());it3!=it2->second.end();++it3) 
 				if(it3->second + MAX_CHECKING_CHUNK_WAIT_DELAY < now) // do nothing, otherwise, ask again
 				{
+#ifdef MPLEX_DEBUG
+					std::cerr << "ftDataMultiplex::handlePendingCrcRequests(): Asking crc of chunk " << it2->first << " to peer " << it3->first << " for hash " << it->first << std::endl;
+#endif
 					mDataSend->sendSingleChunkCRCRequest(it3->first,it->first,it2->first);
 					it3->second = now ;
 
 					if(++n > MAX_SIMULTANEOUS_CRC_REQUESTS)
 						return ;
+
+					break ;	// go to next chunk. Don't ask the same chunk to multiple sources.
 				}
 }
 

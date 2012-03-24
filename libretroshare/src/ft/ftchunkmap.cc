@@ -151,8 +151,11 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 #ifdef DEBUG_FTCHUNK
 		std::cerr << "*** ChunkMap::dataReceived: Chunk is complete. Removing it." << std::endl ;
 #endif
+
 		_map[n] = FileChunksInfo::CHUNK_CHECKING ;
-		_chunks_checking_queue.push_back(n) ;
+
+		if(n > 0 || _file_size > CHUNKMAP_FIXED_CHUNK_SIZE)	// dont' put <1MB files into checking mode. This is useless.
+			_chunks_checking_queue.push_back(n) ;
 
 		_slices_to_download.erase(itc) ;
 
