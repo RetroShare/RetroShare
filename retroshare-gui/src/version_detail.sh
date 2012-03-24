@@ -20,7 +20,7 @@ if (ls &> /dev/null); then
 	fi
 
 	if ( /usr/bin/svn info &> /dev/null); then
-		echo "Svn version : $(svn info | head -n 5 | tail -1)" >> gui/help/version.html
+		echo "Svn version : $(svn info | grep '^Revision:')" >> gui/help/version.html
 	fi
 	date >> gui/help/version.html
 	echo "" >> gui/help/version.html
@@ -42,7 +42,7 @@ elif ( git log -n 10 | grep svn &> /dev/null); then
 fi
 
 if ( svn info &> /dev/null); then
-	version=$(svn info | head -n 5 | tail -1)
+	version=$(svn info | grep '^Revision:')
 fi
 if [[ $version != '' ]]; then
 	version="$version  date : $(date +'%T %m.%d.%y')"

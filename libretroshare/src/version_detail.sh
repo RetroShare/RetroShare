@@ -18,7 +18,7 @@ elif ( git log -n 10 | grep svn &> /dev/null); then
 fi
 
 if ( svn info &> /dev/null); then
-	version=$(svn info | head -n 5 | tail -1)
+	version=$(svn info | grep '^Revision:')
 fi
 if [[ $version != '' ]]; then
 	version="$version  date : $(date +'%T %m.%d.%y')"
