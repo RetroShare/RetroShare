@@ -132,14 +132,6 @@ int ops_parse_errs(ops_parse_info_t *parse_info,ops_ulong_list_t *errs);
 
 void ops_parse_and_validate(ops_parse_info_t *parse_info);
 
-/** Used to specify whether subpackets should be returned raw, parsed or ignored.
- */
-enum ops_parse_type_t
-    {
-    OPS_PARSE_RAW,	/*!< Callback Raw */
-    OPS_PARSE_PARSED,	/*!< Callback Parsed */
-    OPS_PARSE_IGNORE, 	/*!< Don't callback */
-    };
 
 void ops_parse_options(ops_parse_info_t *pinfo,ops_content_tag_t tag,
 		       ops_parse_type_t type);
