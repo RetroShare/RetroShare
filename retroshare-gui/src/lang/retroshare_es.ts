@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="es_ES">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -40,7 +40,7 @@
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation type="unfinished">Tipo de archivo (extención):</translation>
+        <translation type="unfinished">Tipo de archivo (extensión):</translation>
     </message>
     <message>
         <source>Use default command</source>
@@ -57,7 +57,7 @@
     <message>
         <source>Sorry, can&apos;t determine system default command for this file
 </source>
-        <translation type="unfinished">Perdona, no se ha encontrado el comando por defecto del sistema para este archivo
+        <translation type="unfinished">Lo siento, no se ha encontrado el comando por defecto del sistema para este archivo
 </translation>
     </message>
 </context>
@@ -144,11 +144,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset the search criteria.</source>
-        <translation type="unfinished">Reiniciar los critérios de búsqueda.</translation>
+        <translation type="unfinished">Reiniciar criterios de búsqueda.</translation>
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation type="unfinished">Cancela la búsqueda.</translation>
+        <translation type="unfinished">Cancelar búsqueda.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -156,7 +156,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Perform the advanced search.</source>
-        <translation type="unfinished">Ejacuta la búsqueda avanzada.</translation>
+        <translation type="unfinished">Ejacutar búsqueda avanzada.</translation>
     </message>
     <message>
         <source>Search</source>
@@ -189,11 +189,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Elegir el estilo del interfaz de Retroshare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Elegir el estilo de·la interfaz de Retroshare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation type="unfinished">Hoja del estilo</translation>
+        <translation type="unfinished">Hoja de estilo</translation>
     </message>
     <message>
         <source>Appearance</source>
@@ -208,7 +208,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Statistics</source>
-        <translation type="unfinished">Estadística</translation>
+        <translation type="unfinished">Estadísticas</translation>
     </message>
     <message>
         <source>Photo View</source>
@@ -247,25 +247,25 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">[ERROR]</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clic para cambiar tu avatar</translation>
     </message>
 </context>
 <context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation type="unfinished">RetroShare uso de la red</translation>
+        <translation type="unfinished">Ancho de banda de RetroShare</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished">Demostrar ajustes</translation>
+        <translation type="unfinished">Mostrar ajustes</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -273,11 +273,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished">Recibiendo</translation>
+        <translation type="unfinished">Recibir ratio</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished">Enviando</translation>
+        <translation type="unfinished">Enviar ratio</translation>
     </message>
     <message>
         <source>Always on Top</source>
@@ -289,7 +289,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="unfinished">Cambia la transparencia del gráfico de tráfico de la red</translation>
+        <translation type="unfinished">Cambia la transparencia del gráfico de tráfico de red</translation>
     </message>
     <message>
         <source>100</source>
@@ -297,7 +297,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="unfinished">% transparente</translation>
+        <translation type="unfinished">% transparencia</translation>
     </message>
     <message>
         <source>Save</source>
@@ -328,7 +328,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Blog Name</source>
-        <translation type="unfinished">Nombre de blog</translation>
+        <translation type="unfinished">Nombre del blog</translation>
     </message>
     <message>
         <source>Popularity</source>
@@ -367,11 +367,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Quitar objeto</translation>
+        <translation type="unfinished">Eliminar de la lista</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Abrir</translation>
+        <translation type="unfinished">Expandir</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -379,22 +379,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished">Reproducir medio</translation>
+        <translation type="unfinished">Reproducir archivo</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Quitar objeto</translation>
+        <translation type="unfinished">Eliminarr objeto</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished">Suscribir blog</translation>
+        <translation type="unfinished">Suscribir al blog</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Abrir</translation>
+        <translation type="unfinished">Expandir</translation>
     </message>
     <message>
         <source>Blog Decscription</source>
@@ -457,7 +457,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Anular suscripción del blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Anular suscripción al blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -509,7 +509,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation type="unfinished">Crear entrada</translation>
+        <translation type="unfinished">Postear entrada</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
@@ -517,7 +517,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation type="unfinished">Anular suscripción del blog</translation>
+        <translation type="unfinished">Anular suscripción al blog</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
@@ -566,15 +566,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Abrir</translation>
+        <translation type="unfinished">Expandir</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Quitar objeto</translation>
+        <translation type="unfinished">Eliminar objeto</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished">Anular suscripción del canal</translation>
+        <translation type="unfinished">Anular suscripción al canal</translation>
     </message>
     <message>
         <source>Comments here</source>
@@ -633,7 +633,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allow List:</source>
-        <translation type="unfinished">Lista &quot;permitido&quot;:</translation>
+        <translation type="unfinished">Lista &quot;permitidos&quot;:</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
@@ -645,11 +645,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Quitar</translation>
+        <translation type="unfinished">Eliminar</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation type="unfinished">Calendarios de vecinos</translation>
+        <translation type="unfinished">Calendario de peers</translation>
     </message>
 </context>
 <context>
@@ -664,7 +664,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished">Tienes que generar un archivo de tu certificado GPG y mandaselo a tu amigo. Tambien puedes usar un archivo generado antes.</translation>
+        <translation type="unfinished">Tienes que crear un archivo con tu certificado GPG y mandárselo a tu amigo. También puedes usar un archivo generado anteriormente.</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
@@ -676,7 +676,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation type="unfinished">Arrastra el certificado GPG de un amigo a esta ventana o localizalo en campo abajo</translation>
+        <translation type="unfinished">Arrastra el certificado GPG de un amigo a esta ventana o especifica el directorio en el campo de abajo</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -696,7 +696,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="unfinished">Lo siento, creación de certificado GPG ha fallado</translation>
+        <translation type="unfinished">Lo siento, la creación del certificado GPG ha fallado</translation>
     </message>
     <message>
         <source>Please choose a filename</source>
@@ -704,11 +704,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished">Certificado GPG creado con exito</translation>
+        <translation type="unfinished">Certificado GPG creado con éxito</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="unfinished">Lo siento, creación del archico de certificados GPG ha fallado</translation>
+        <translation type="unfinished">Lo siento, la creación del archico de certificados GPG ha fallado</translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
@@ -716,7 +716,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished">Abrir certificado GPG ha fallado: no puedo leer el archivo %1</translation>
+        <translation type="unfinished">Abrir certificado GPG ha fallado: no puedo leer del archivo %1</translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
@@ -727,7 +727,7 @@ p, li { white-space: pre-wrap; }
     <name>ChanMsgItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished">Cambiar estado del mensaje</translation>
+        <translation type="unfinished">Activar estado de lectura del mensaje</translation>
     </message>
     <message>
         <source>New</source>
@@ -743,11 +743,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished">Anular suscripción del canal</translation>
+        <translation type="unfinished">Anular suscripción al canal</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Quitar objeto</translation>
+        <translation type="unfinished">Eliminar objeto</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -763,7 +763,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
-        <translation type="unfinished">Aviso! Tienes menos de %1 horas y %2 minutos para que se borre este archivo. Considera guardarlo.</translation>
+        <translatorcomment>In english it should say deleted not delted</translatorcomment>
+        <translation type="unfinished">¡Aviso! Tienes menos de %1 horas y %2 minutos para que se borre este archivo. Considera guardarlo.</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -774,15 +775,15 @@ p, li { white-space: pre-wrap; }
     <name>ChanNewItem</name>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished">Suscribir canal</translation>
+        <translation type="unfinished">Suscribir al canal</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Abrir</translation>
+        <translation type="unfinished">Expandir</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Quitar objeto</translation>
+        <translation type="unfinished">Eliminarr objeto</translation>
     </message>
     <message>
         <source>Channel Decscription</source>
@@ -825,7 +826,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel ID</source>
-        <translation type="unfinished">Canal ID</translation>
+        <translation type="unfinished">ID del canal</translation>
     </message>
     <message>
         <source>Channel Description</source>
@@ -880,7 +881,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubcribe To Channel</source>
-        <translation type="unfinished">Anular suscripción</translation>
+        <translation type="unfinished">Anular suscripción al canal</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -888,7 +889,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe To Channel</source>
-        <translation type="unfinished">Suscribir canal</translation>
+        <translation type="unfinished">Suscribir al canal</translation>
     </message>
     <message>
         <source>Subscribe</source>
@@ -904,7 +905,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished">Crear entrada</translation>
+        <translation type="unfinished">Postear en canal</translation>
     </message>
     <message>
         <source>Own Channels</source>
@@ -924,11 +925,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished">Suscribir canal</translation>
+        <translation type="unfinished">Suscribir al canal</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished">Anular suscripción del canal</translation>
+        <translation type="unfinished">Anular suscripción al canal</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
@@ -956,15 +957,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished">Desactivar descarga automatica</translation>
+        <translation type="unfinished">Desactivar descarga automática</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished">Activar descarga automatica</translation>
+        <translation type="unfinished">Activar descarga automática</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Establecer todo como lectura</translation>
     </message>
 </context>
 <context>
@@ -982,46 +983,46 @@ Quieres mandarle un mensaje email en lugar de un mensaje instantaneo?</translati
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tu amigo tiene más de una ubicación. Por favor elige una para chatear.</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Change nick name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cambiar nick</translation>
     </message>
     <message>
         <source>Please enter your new nick name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Introduce tu nuevo nick</translation>
     </message>
     <message>
         <source>Lobby management</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestionar sala</translation>
     </message>
     <message>
         <source>%1 has left the lobby.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 ha dejado la sala.</translation>
     </message>
     <message>
         <source>%1 joined the lobby.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 ha entrado en la sala.</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anular suscripción a la sala</translation>
     </message>
     <message>
         <source>Do you want to unsubscribe to this chat lobby?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">¿Quieres anular la suscripción a esta sala?</translation>
     </message>
     <message>
         <source>Hide Participants</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Esconder participantes</translation>
     </message>
     <message>
         <source>Show Participants</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostrar participantes</translation>
     </message>
 </context>
 <context>
@@ -1036,7 +1037,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crear nueva sala de chat</translation>
     </message>
     <message>
         <source>Name</source>
@@ -1044,19 +1045,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Contar</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salas privadas</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salas públicas</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crear sala de chat</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -1068,22 +1069,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Invitation to chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Invitación para chatear</translation>
     </message>
     <message>
         <source>%1  invites you to chat lobby named %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 te invita a la sala %2</translation>
     </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Quitar objeto</translation>
+        <translation type="unfinished">Eliminar objeto</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished">Escribir un mensaje instantaneo</translation>
+        <translation type="unfinished">Escribir un mensaje instantáneo</translation>
     </message>
     <message>
         <source>Send Mail</source>
@@ -1107,7 +1108,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished">Mensaje instantaneo</translation>
+        <translation type="unfinished">Mensaje instantáneo</translation>
     </message>
 </context>
 <context>
@@ -1122,23 +1123,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Emoticons Privat Chat</source>
-        <translation type="unfinished">Activar emoticónes para el chat privado</translation>
+        <translation type="unfinished">Activar emoticonos para el chat privado</translation>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation type="unfinished">Tipo de letra del chat</translation>
+        <translation type="unfinished">Fuente del chat</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation type="unfinished">Cambiar el tipo de letra del chat</translation>
+        <translation type="unfinished">Cambiar la fuente del chat</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation type="unfinished">Tipo de letra del chat:</translation>
+        <translation type="unfinished">Fuente del chat:</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation type="unfinished">Activar emoticónes para el chat público</translation>
+        <translation type="unfinished">Permitir emoticonos para el chat público</translation>
     </message>
     <message>
         <source>Enable Private Chat History</source>
@@ -1150,7 +1151,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation type="unfinished">Enviar mensajes con Ctrl+Intro</translation>
+        <translation type="unfinished">Enviar mensajes con Ctrl+Enter</translation>
     </message>
     <message>
         <source>Chat History</source>
@@ -1158,7 +1159,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load number of messages (0 = off)</source>
-        <translation type="unfinished">Cargar numero de mensajes (0 = desactivado)</translation>
+        <translation type="unfinished">Cargar número de mensajes (0 = desactivado)</translation>
     </message>
     <message>
         <source>Group Chat</source>
@@ -1178,7 +1179,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Variant</source>
-        <translation type="unfinished">Estilo</translation>
+        <translation type="unfinished">Variante</translation>
     </message>
     <message>
         <source>Author:</source>
@@ -1194,15 +1195,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished">Historia</translation>
+        <translation type="unfinished">Historial</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation type="unfinished">Mensajes recibidos en historia</translation>
+        <translation type="unfinished">Mensajes recibidos en historial</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation type="unfinished">Mensajes enviados en historia</translation>
+        <translation type="unfinished">Mensajes enviados en historial</translation>
     </message>
     <message>
         <source>Incoming message</source>
@@ -1210,7 +1211,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation type="unfinished">Mensaje enviado</translation>
+        <translation type="unfinished">Mensaje saliente</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
@@ -1218,15 +1219,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nombre por defecto para salas de chat:</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Permitir</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mensajes guardados (0 = ilimitados)</translation>
     </message>
     <message>
         <source>Incoming</source>
@@ -1234,7 +1235,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Outgoing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salida</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -1245,27 +1246,27 @@ p, li { white-space: pre-wrap; }
     <name>ChatStyle</name>
     <message>
         <source>Standard style for group chat</source>
-        <translation type="unfinished">Estilo estándar del chat público</translation>
+        <translation type="unfinished">Plantilla estándar del chat público</translation>
     </message>
     <message>
         <source>Standard style for private chat</source>
-        <translation type="unfinished">Estilo estándar del chat privado</translation>
+        <translation type="unfinished">Plantilla estándar del chat privado</translation>
     </message>
     <message>
         <source>Standard style for history</source>
-        <translation type="unfinished">Estilo estándar de la historia</translation>
+        <translation type="unfinished">Plantilla estándar del historial</translation>
     </message>
     <message>
         <source>Compact style for group chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plantilla. compacta para chat público</translation>
     </message>
     <message>
         <source>Compact style for private chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plantilla. compacta para chat privado</translation>
     </message>
     <message>
         <source>Compact style for history</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plantilla. compacta para historial</translation>
     </message>
 </context>
 <context>
@@ -1288,11 +1289,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished">Letra</translation>
+        <translation type="unfinished">Fuente</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished">Color de letra</translation>
+        <translation type="unfinished">Color del texto</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
@@ -1312,15 +1313,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="unfinished">Vaciar historia del chat</translation>
+        <translation type="unfinished">Elminar historial del chat</translation>
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation type="unfinished">Desactivar emoticónes</translation>
+        <translation type="unfinished">Desactivar emoticonos</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished">Guardar historia del chat</translation>
+        <translation type="unfinished">Guardar historial del chat</translation>
     </message>
     <message>
         <source>Browse Message History</source>
