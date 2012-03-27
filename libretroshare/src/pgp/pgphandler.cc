@@ -3,20 +3,28 @@
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
+#include <string.h>
 
 extern "C" {
 #include <openpgpsdk/util.h>
+#include <openpgpsdk/crypto.h>
+#include <openpgpsdk/keyring.h>
 }
 #include "pgphandler.h"
 
 std::string	PGPIdType::toStdString() const
 {
-	std::ostringstream tmpout;
+	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
+
+	std::string res ;
 
 	for(int j = 0; j < KEY_ID_SIZE; j++)
-		tmpout << std::setw(2) << std::setfill('0') << std::hex << (int)bytes[j] ;
+	{
+		res += out[ (bytes[j]>>4) ] ;
+		res += out[ bytes[j] & 0xf ] ;
+	}
 
-	return tmpout.str() ;
+	return res ;
 }
 
 PGPIdType::PGPIdType(const std::string& s)
@@ -45,6 +53,11 @@ PGPIdType::PGPIdType(const std::string& s)
 	}
 }
 
+PGPIdType::PGPIdType(const unsigned char b[])
+{
+	memcpy(bytes,b,8) ;
+}
+
 uint64_t PGPIdType::toUInt64() const
 {
 	uint64_t res = 0  ;
@@ -56,8 +69,7 @@ uint64_t PGPIdType::toUInt64() const
 }
 
 PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
-	:_pubring_path(pubring),_secring_path(secring),
-	pgphandlerMtx(std::string("PGPHandler"))
+	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring)
 {
 	// Allocate public and secret keyrings.
 	// 
@@ -87,3 +99,75 @@ PGPHandler::~PGPHandler()
 	free(_pubring) ;
 	free(_secring) ;
 }
+
+void PGPHandler::printKeys() const
+{
+	std::cerr << "Public keyring: " << std::endl;
+	ops_keyring_list(_pubring) ;
+
+	std::cerr << "Secret keyring: " << std::endl;
+	ops_keyring_list(_secring) ;
+}
+
+bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& ids)
+{
+	// go through secret keyring, and check that we have the pubkey as well.
+	//
+	
+	const ops_keydata_t *keydata = NULL ;
+	int i=0 ;
+
+	while( (keydata = ops_keyring_get_key_by_index(_secring,i++)) != NULL )
+	{
+		// check that the key is in the pubring as well
+
+		if(ops_keyring_find_key_by_id(_pubring,keydata->key_id) != NULL)
+			ids.push_back(PGPIdType(keydata->key_id)) ;
+	}
+
+	return true ;
+}
+
+static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo __attribute__((unused)))
+{
+	const ops_parser_content_union_t *content=&content_->content;
+	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
+	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
+
+	switch(content_->tag)
+	{
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+			/*
+				Doing this so the test can be automated.
+			 */
+			*(content->secret_key_passphrase.passphrase)=ops_malloc_passphrase("hello");
+			return OPS_KEEP_MEMORY;
+			break;
+
+		default:
+			break;
+	}
+
+	return OPS_RELEASE_MEMORY;
+}
+
+bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) 
+{
+	static const int KEY_NUMBITS = 2048 ;
+
+	ops_user_id_t uid ;
+	const char *s = (name + " " + email).c_str() ;
+	uid.user_id = (unsigned char *)s ;
+	unsigned long int e = 44497 ; // some prime number
+
+	ops_keydata_t *key = ops_rsa_create_selfsigned_keypair(KEY_NUMBITS,e,&uid) ;
+
+	if(!key)
+		return false ;
+
+	pgpId = PGPIdType(key->key_id) ;
+
+	ops_keydata_free(key) ;
+	return true ;
+}
+

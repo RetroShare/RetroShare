@@ -15,11 +15,41 @@ int main(int argc,char *argv[])
 	// test PGPHandler
 	//
 	// 0 - init
-	
+
 	static const std::string pubring = "pubring.gpg" ;
 	static const std::string secring = "secring.gpg" ;
 
 	PGPHandler pgph(pubring,secring) ;
+	pgph.printKeys() ;
+
+	std::cerr << std::endl ;
+	std::cerr << std::endl ;
+
+	std::cerr << "Looking for keys with complete secret/public key pair: " << std::endl;
+
+	std::list<PGPIdType> lst ;	
+	pgph.availableGPGCertificatesWithPrivateKeys(lst) ;
+
+	for(std::list<PGPIdType>::const_iterator it(lst.begin());it!=lst.end();++it)
+		std::cerr << "Found id : " << (*it).toStdString() << std::endl;
+
+	std::string email_str("test@gmail.com") ;
+	std::string  name_str("test") ;
+	std::string passw_str("test00") ;
+
+	std::cerr << "Now generating a new PGP certificate: " << std::endl;
+	std::cerr << "   email: " << email_str << std::endl;
+	std::cerr << "   passw: " << passw_str << std::endl;
+	std::cerr << "   name : " <<  name_str << std::endl;
+
+	PGPIdType newid ;
+	std::string errString ;
+
+	if(!pgph.GeneratePGPCertificate(name_str, email_str, passw_str, newid, errString))
+		std::cerr << "Generation of certificate returned error: " << errString << std::endl;
+	else
+		std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
 
 	return 0 ;
 }
+

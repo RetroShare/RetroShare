@@ -8,6 +8,7 @@
 extern "C" {
 #include <openpgpsdk/types.h>
 #include <openpgpsdk/keyring.h>
+#include <openpgpsdk/keyring_local.h>
 }
 
 class PGPIdType
@@ -15,6 +16,7 @@ class PGPIdType
 	public:
 		static const int KEY_ID_SIZE = 8 ;
 
+		PGPIdType() {}
 		PGPIdType(const std::string& hex_string) ;
 		PGPIdType(const unsigned char bytes[]) ;
 
@@ -48,7 +50,7 @@ class PGPHandler
 		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string &withfingerprint) { return false ; }
 
 		// Debug stuff.
-		virtual bool printKeys() { return false;}
+		virtual void printKeys() const ;
 
 	private:
 		RsMutex pgphandlerMtx ;
