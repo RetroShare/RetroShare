@@ -111,7 +111,6 @@ public:
     FriendsDialog     *friendsDialog;
     SearchDialog      *searchDialog;
     TransfersDialog   *transfersDialog;
-    ChatDialog        *chatDialog;
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
     ForumsDialog      *forumsDialog;
