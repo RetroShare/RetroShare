@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <sstream>
 #include <time.h>
 #include <sys/stat.h>
 #include <algorithm>

@@ -28,7 +28,6 @@
 #include "util/RsAction.h"
 
 #include <iostream>
-#include <sstream>
 
 #include <QtGui>
 #include <QContextMenuEvent>

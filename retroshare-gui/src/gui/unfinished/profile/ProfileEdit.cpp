@@ -23,8 +23,6 @@
 
 #include <retroshare/rspeers.h>
 
-#include <sstream>
-
 #include <QMenu>
 
 

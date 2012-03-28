@@ -36,8 +36,6 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
-#include <sstream>
-
 /*****
  * #define DEBUG_ITEM 1
  ****/
@@ -220,14 +218,7 @@ void SecurityItem::updateItem()
 		statusLabel->setText(status);
 		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
-		{
-			std::ostringstream out;
-			out << details.localAddr << ":";
-			out << details.localPort << "/";
-			out << details.extAddr << ":";
-			out << details.extPort;
-			ipLabel->setText(QString::fromStdString(out.str()));
-		}
+		ipLabel->setText(QString("%1:%2/%3:%4").arg(QString::fromStdString(details.localAddr)).arg(details.localPort).arg(QString::fromStdString(details.extAddr)).arg(details.extPort));
 
 		connLabel->setText(StatusDefs::connectStateString(details));
 

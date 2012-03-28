@@ -33,9 +33,6 @@
 
 #include <retroshare/rschannels.h>
 
-#include <sstream>
-
-
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -170,12 +167,8 @@ void ChanMsgItem::updateItemStatic()
 	qtime.setTime_t(cmi.ts);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
 	datetimelabel->setText(timestamp);
-	
-	{
-		std::ostringstream out;
-		out << "(" << cmi.count << " Files)";
-		filelabel->setText(QString::fromStdString(out.str()) + " " + misc::friendlyUnit(cmi.size));
-	}
+
+	filelabel->setText(QString("(%1 %2) %3").arg(cmi.count).arg(tr("Files")).arg(misc::friendlyUnit(cmi.size)));
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;

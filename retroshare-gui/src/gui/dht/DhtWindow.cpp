@@ -24,7 +24,6 @@
 #include <QTimer>
 #include <QDateTime>
 
-#include <sstream>
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
@@ -146,11 +145,11 @@ void DhtWindow::update()
 void DhtWindow::updateNetStatus()
 {
 
-        QString status;
+		QString status;
 	QString oldstatus;
 
 #if 0
-        status = QString::fromStdString(mPeerNet->getPeerStatusString());
+		status = QString::fromStdString(mPeerNet->getPeerStatusString());
 	oldstatus = ui->peerLine->text();
 	if (oldstatus != status)
 	{
@@ -158,7 +157,7 @@ void DhtWindow::updateNetStatus()
 	}
 #endif
 
-        status = QString::fromStdString(rsDht->getUdpAddressString());
+		status = QString::fromStdString(rsDht->getUdpAddressString());
 	oldstatus = ui->peerAddressLabel->text();
 	if (oldstatus != status)
 	{
@@ -242,29 +241,29 @@ void DhtWindow::updateNetStatus()
 	uint32_t connect = rsConfig->getConnectModes();
 
 	label = ui->connectLabel;
-	std::ostringstream connOut;
+	QString connOut;
 	if (connect & RSNET_CONNECT_OUTGOING_TCP)
 	{
-		connOut << "TCP_OUT ";
+		connOut += "TCP_OUT ";
 	}
 	if (connect & RSNET_CONNECT_ACCEPT_TCP)
 	{
-		connOut << "TCP_IN ";
+		connOut += "TCP_IN ";
 	}
 	if (connect & RSNET_CONNECT_DIRECT_UDP)
 	{
-		connOut << "DIRECT_UDP ";
+		connOut += "DIRECT_UDP ";
 	}
 	if (connect & RSNET_CONNECT_PROXY_UDP)
 	{
-		connOut << "PROXY_UDP ";
+		connOut += "PROXY_UDP ";
 	}
 	if (connect & RSNET_CONNECT_RELAY_UDP)
 	{
-		connOut << "RELAY_UDP ";
+		connOut += "RELAY_UDP ";
 	}
 
-	label->setText(QString::fromStdString(connOut.str()));
+	label->setText(connOut);
 
 	uint32_t netState = rsConfig->getNetState();
 
@@ -306,8 +305,6 @@ void DhtWindow::updateNetStatus()
 
 void DhtWindow::updateNetPeers()
 {
-
-
 	QTreeWidget *peerTreeWidget = ui->peerTreeWidget;
 
 	std::list<std::string> peerIds;
@@ -399,70 +396,68 @@ void DhtWindow::updateNetPeers()
 		peer_item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
 		peer_item -> setData(PTW_COL_RSID, Qt::DisplayRole, QString::fromStdString(status.mRsId));
 
-		std::ostringstream dhtstate;
+		QString dhtstate;
 		switch(status.mDhtState)
 		{
 			default:
 			case RSDHT_PEERDHT_NOT_ACTIVE:
-				dhtstate << "Not Active (Maybe Connected!)";
+				dhtstate = "Not Active (Maybe Connected!)";
 				break;
 			case RSDHT_PEERDHT_SEARCHING:
-				dhtstate << "Searching";
+				dhtstate = "Searching";
 				break;
 			case RSDHT_PEERDHT_FAILURE:
-				dhtstate << "Failed";
+				dhtstate = "Failed";
 				break;
 			case RSDHT_PEERDHT_OFFLINE:
-				dhtstate << "offline";
+				dhtstate = "offline";
 				nOfflinePeers++;
 				break;
 			case RSDHT_PEERDHT_UNREACHABLE:
-				dhtstate << "Unreachable";
+				dhtstate = "Unreachable";
 				nUnreachablePeers++;
 				break;
 			case RSDHT_PEERDHT_ONLINE:
-				dhtstate << "ONLINE";
+				dhtstate = "ONLINE";
 				nOnlinePeers++;
 				break;
 		}
 			
-		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, QString::fromStdString(dhtstate.str()));
+		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, dhtstate);
 
 		// NOW CONNECT STATE
-		std::ostringstream cpmstr;
+		QString cpmstr;
 		switch(status.mPeerConnectMode)
 		{
 			case RSDHT_TOU_MODE_DIRECT:
-				cpmstr << "Direct";
+				cpmstr = "Direct";
 				break;
 			case RSDHT_TOU_MODE_PROXY:
-				cpmstr << "Proxy VIA ";
-				cpmstr << status.mPeerConnectProxyId;
+				cpmstr = "Proxy VIA " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			case RSDHT_TOU_MODE_RELAY:
-				cpmstr << "Relay VIA ";
-				cpmstr << status.mPeerConnectProxyId;
+				cpmstr = "Relay VIA " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			default:
-				cpmstr << "None";
+				cpmstr = "None";
 				break;
 		}
 
 
-		std::ostringstream cpsstr;
+		QString cpsstr;
 		switch(status.mPeerConnectState)
 		{
 			default:
 			case RSDHT_PEERCONN_DISCONNECTED:
-				cpsstr << "Disconnected";
+				cpsstr = "Disconnected";
 				nDisconnPeers++;
 				break;
 			case RSDHT_PEERCONN_UDP_STARTED:
-				cpsstr << "Udp Started";
+				cpsstr = "Udp Started";
 				break;
 			case RSDHT_PEERCONN_CONNECTED:
 			{
-				cpsstr << "Connected";
+				cpsstr = "Connected";
 				break;
 				switch(status.mPeerConnectMode)
 				{
@@ -481,7 +476,7 @@ void DhtWindow::updateNetPeers()
 				break;
 		}
 
-		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, QString::fromStdString(cpsstr.str()));
+		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, cpsstr);
 		
 		if (status.mPeerConnectState == RSDHT_PEERCONN_DISCONNECTED)
 		{
@@ -489,28 +484,28 @@ void DhtWindow::updateNetPeers()
 		}
 		else 
 		{
-			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, QString::fromStdString(cpmstr.str()));
+			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, cpmstr);
 		}
 	
 		// NOW REQ STATE.
-		std::ostringstream reqstr;
-                if (status.mExclusiveProxyLock)
-                {
-                        reqstr << "(E) ";
-                }
+		QString reqstr;
+		if (status.mExclusiveProxyLock)
+		{
+				reqstr = "(E) ";
+		}
 		switch(status.mPeerReqState)
 		{
 			case RSDHT_PEERREQ_RUNNING:
-				reqstr << "Request Active";
+				reqstr += "Request Active";
 				break;
 			case RSDHT_PEERREQ_STOPPED:
-				reqstr << "No Request";
+				reqstr += "No Request";
 				break;
 			default:
-				reqstr << "Unknown";
+				reqstr += "Unknown";
 				break;
 		}
-		peer_item -> setData(PTW_COL_PEER_REQ_STATUS, Qt::DisplayRole, QString::fromStdString(reqstr.str()));
+		peer_item -> setData(PTW_COL_PEER_REQ_STATUS, Qt::DisplayRole, reqstr);
 
 		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mCbPeerMsg));
 		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole, 
@@ -518,20 +513,18 @@ void DhtWindow::updateNetPeers()
 	}
 
 
-	std::ostringstream connstr;
-	connstr << "#Peers: " << nPeers;
-	connstr << " DHT: (#off:" << nOfflinePeers;
-	connstr << ",unreach:" << nUnreachablePeers;
-	connstr << ",online:" << nOnlinePeers;
-	connstr << ") Connections: (#dis:" << nDisconnPeers;
-	connstr << ",#dir:" << nDirectPeers;
-	connstr << ",#proxy:" << nProxyPeers;
-	connstr << ",#relay:" << nRelayPeers;
-	connstr << ")";
+	QString connstr;
+	connstr =  "#Peers: " + QString::number(nPeers);
+	connstr += " DHT: (#off:" + QString::number(nOfflinePeers);
+	connstr += ",unreach:" + QString::number(nUnreachablePeers);
+	connstr += ",online:" + QString::number(nOnlinePeers);
+	connstr += ") Connections: (#dis:" + QString::number(nDisconnPeers);
+	connstr += ",#dir:" + QString::number(nDirectPeers);
+	connstr += ",#proxy:" + QString::number(nProxyPeers);
+	connstr += ",#relay:" + QString::number(nRelayPeers);
+	connstr += ")";
 
-	QLabel *label = ui->peerSummaryLabel;
-	label->setText(QString::fromStdString(connstr.str()));
-
+	ui->peerSummaryLabel->setText(connstr);
 }
 
 
@@ -569,42 +562,26 @@ void DhtWindow::updateRelays()
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		relayTreeWidget->addTopLevelItem(item);
 
-		std::ostringstream typestr;
-		typestr << "RELAY END";
-
-		std::ostringstream srcstr;
-		srcstr << "Yourself";
-
-		std::ostringstream proxystr;
-		proxystr << reit->mProxyAddr;
-
-		std::ostringstream deststr;
-		deststr << reit->mRemoteAddr;
-		
-		std::ostringstream agestr;
-		agestr << "unknown";
-
-		std::ostringstream lastsendstr;
-		lastsendstr << "unknown";
-
-		std::ostringstream bandwidthstr;
-		bandwidthstr << "unlimited";
-
-		std::ostringstream classstr;
-		classstr << "Own Relay";
+		QString typestr = "RELAY END";
+		QString srcstr = "Yourself";
+		QString proxystr = QString::fromStdString(reit->mProxyAddr);
+		QString deststr = QString::fromStdString(reit->mRemoteAddr);
+		QString agestr = "unknown";
+		QString lastsendstr = "unknown";
+		QString bandwidthstr = "unlimited";
+		QString classstr = "Own Relay";
 
 		//std::ostringstream dhtupdatestr;
 		//dhtupdatestr << now - status.mDhtUpdateTS << " secs ago";
 
-
-		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, QString::fromStdString(typestr.str()));
-		item -> setData(RTW_COL_SRC, Qt::DisplayRole, QString::fromStdString(srcstr.str()));
-		item -> setData(RTW_COL_PROXY, Qt::DisplayRole, QString::fromStdString(proxystr.str()));
-		item -> setData(RTW_COL_DEST, Qt::DisplayRole, QString::fromStdString(deststr.str()));
-		item -> setData(RTW_COL_CLASS, Qt::DisplayRole, QString::fromStdString(classstr.str()));
-		item -> setData(RTW_COL_AGE, Qt::DisplayRole, QString::fromStdString(agestr.str()));
-		item -> setData(RTW_COL_LASTSEND, Qt::DisplayRole, QString::fromStdString(lastsendstr.str()));
-		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, QString::fromStdString(bandwidthstr.str()));
+		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, typestr);
+		item -> setData(RTW_COL_SRC, Qt::DisplayRole, srcstr);
+		item -> setData(RTW_COL_PROXY, Qt::DisplayRole, proxystr);
+		item -> setData(RTW_COL_DEST, Qt::DisplayRole, deststr);
+		item -> setData(RTW_COL_CLASS, Qt::DisplayRole, classstr);
+		item -> setData(RTW_COL_AGE, Qt::DisplayRole, agestr);
+		item -> setData(RTW_COL_LASTSEND, Qt::DisplayRole, lastsendstr);
+		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, bandwidthstr);
 
 	}
 
@@ -615,38 +592,23 @@ void DhtWindow::updateRelays()
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		relayTreeWidget->addTopLevelItem(item);
 
-		std::ostringstream typestr;
-		typestr << "RELAY PROXY";
+		QString typestr = "RELAY PROXY";
+		QString srcstr = QString::fromStdString(rpit->mSrcAddr);
+		QString proxystr = "Yourself";
+		QString deststr = QString::fromStdString(rpit->mDestAddr);
+		QString agestr = QString("%1 secs ago").arg(now - rpit->mCreateTS);
+		QString lastsendstr = QString("%1 secs ago").arg(now - rpit->mLastTS);
+		QString bandwidthstr = QString("%1B/s").arg(QString::number(rpit->mBandwidth));
+		QString classstr = QString::number(rpit->mRelayClass);
 
-		std::ostringstream srcstr;
-		srcstr << rpit->mSrcAddr;
-		
-		std::ostringstream proxystr;
-		proxystr << "Yourself";
-
-		std::ostringstream deststr;
-		deststr << rpit->mDestAddr;
-		
-		std::ostringstream agestr;
-		agestr << now - rpit->mCreateTS << " secs ago";
-
-		std::ostringstream lastsendstr;
-		lastsendstr << now - rpit->mLastTS << " secs ago";
-
-		std::ostringstream bandwidthstr;
-		bandwidthstr << rpit->mBandwidth << "B/s";
-
-		std::ostringstream classstr;
-		classstr << rpit->mRelayClass;
-
-		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, QString::fromStdString(typestr.str()));
-		item -> setData(RTW_COL_SRC, Qt::DisplayRole, QString::fromStdString(srcstr.str()));
-		item -> setData(RTW_COL_PROXY, Qt::DisplayRole, QString::fromStdString(proxystr.str()));
-		item -> setData(RTW_COL_DEST, Qt::DisplayRole, QString::fromStdString(deststr.str()));
-		item -> setData(RTW_COL_CLASS, Qt::DisplayRole, QString::fromStdString(classstr.str()));
-		item -> setData(RTW_COL_AGE, Qt::DisplayRole, QString::fromStdString(agestr.str()));
-		item -> setData(RTW_COL_LASTSEND, Qt::DisplayRole, QString::fromStdString(lastsendstr.str()));
-		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, QString::fromStdString(bandwidthstr.str()));
+		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, typestr);
+		item -> setData(RTW_COL_SRC, Qt::DisplayRole, srcstr);
+		item -> setData(RTW_COL_PROXY, Qt::DisplayRole, proxystr);
+		item -> setData(RTW_COL_DEST, Qt::DisplayRole, deststr);
+		item -> setData(RTW_COL_CLASS, Qt::DisplayRole, classstr);
+		item -> setData(RTW_COL_AGE, Qt::DisplayRole, agestr);
+		item -> setData(RTW_COL_LASTSEND, Qt::DisplayRole, lastsendstr);
+		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, bandwidthstr);
 
 	}
 }
@@ -717,43 +679,32 @@ void DhtWindow::updateDhtPeers()
 		/* insert */
 		dht_item = new DhtTreeWidgetItem();
 
-		int dist = it->mBucket;
-		std::ostringstream buckstr;
-		buckstr << dist;
+		QString buckstr = QString::number(it->mBucket);
+		QString ipstr = QString::fromStdString(it->mAddr);
+		QString idstr = QString::fromStdString(it->mDhtId);
+		QString flagsstr = QString("0x%1 EX:0x%2").arg(it->mPeerFlags, 0, 16, QChar('0')).arg(it->mExtraFlags, 0, 16, QChar('0'));
+		QString foundstr = QString("%1 secs ago").arg(now - it->mFoundTime);
 
-		std::ostringstream ipstr;
-		ipstr << it->mAddr;
-
-		std::ostringstream idstr;
-		idstr << it->mDhtId;
-
-		std::ostringstream flagsstr;
-		flagsstr << "0x" << std::hex << std::setfill('0') << it->mPeerFlags;
-		flagsstr << " EX:0x" << std::hex << std::setfill('0') << it->mExtraFlags;
-		std::ostringstream foundstr;
-		foundstr << now - it->mFoundTime << " secs ago";
-
-		std::ostringstream lastsendstr;
+		QString lastsendstr;
 		if (it->mLastSendTime == 0)
 		{
-			lastsendstr << "never";
+			lastsendstr = "never";
 		}
 		else
 		{
-			lastsendstr << now - it->mLastSendTime << " secs ago";
+			lastsendstr = QString ("%1 secs ago").arg(now - it->mLastSendTime);
 		}
 
-		std::ostringstream lastrecvstr;
-		lastrecvstr << now - it->mLastRecvTime << " secs ago";
+		QString lastrecvstr = QString ("%1 secs ago").arg(now - it->mLastRecvTime);
 
-		dht_item -> setData(DTW_COL_BUCKET, Qt::DisplayRole, QString::fromStdString(buckstr.str()));
-		dht_item -> setData(DTW_COL_IPADDR, Qt::DisplayRole, QString::fromStdString(ipstr.str()));
-		dht_item -> setData(DTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(idstr.str()));
-		dht_item -> setData(DTW_COL_FLAGS, Qt::DisplayRole, QString::fromStdString(flagsstr.str()));
+		dht_item -> setData(DTW_COL_BUCKET, Qt::DisplayRole, buckstr);
+		dht_item -> setData(DTW_COL_IPADDR, Qt::DisplayRole, ipstr);
+		dht_item -> setData(DTW_COL_PEERID, Qt::DisplayRole, idstr);
+		dht_item -> setData(DTW_COL_FLAGS, Qt::DisplayRole, flagsstr);
 
-		dht_item -> setData(DTW_COL_FOUND, Qt::DisplayRole, QString::fromStdString(foundstr.str()));
-		dht_item -> setData(DTW_COL_SEND, Qt::DisplayRole, QString::fromStdString(lastsendstr.str()));
-		dht_item -> setData(DTW_COL_RECV, Qt::DisplayRole, QString::fromStdString(lastrecvstr.str()));
+		dht_item -> setData(DTW_COL_FOUND, Qt::DisplayRole, foundstr);
+		dht_item -> setData(DTW_COL_SEND, Qt::DisplayRole, lastsendstr);
+		dht_item -> setData(DTW_COL_RECV, Qt::DisplayRole, lastrecvstr);
 
 		dhtTreeWidget->addTopLevelItem(dht_item);
 	}

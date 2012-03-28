@@ -28,7 +28,6 @@
 #include <QTime>
 #include <QDateTime>
 
-#include <sstream>
 #include <list>
 #include <iostream>
 #include <string>

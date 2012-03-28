@@ -1171,8 +1171,6 @@ void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std:
 	ui.searchResultWidget->setSortingEnabled(false);
 
 	/* translate search results */
-	std::ostringstream out;
-	out << searchId;
 
 	std::list<DirDetails>::const_iterator it;
 	for(it = results.begin(); it != results.end(); it++)

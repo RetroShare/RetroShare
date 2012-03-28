@@ -46,10 +46,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "SoundManager.h"
 
-#include <iostream>
-#include <sstream>
-#include <time.h>
-
 /*****
  * #define NOTIFY_DEBUG
  ****/

@@ -23,7 +23,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <sstream>
 #include <stdexcept>
 #include <QObject>
 #include <QPair>
@@ -39,45 +38,45 @@ class misc : public QObject
  public:
     // Convert any type of variable to C++ String
     // convert=true will convert -1 to 0
-    template <class T> static std::string toString(const T& x, bool convert=false) {
-      std::ostringstream o;
-      if(!(o<<x)) {
-        throw std::runtime_error("::toString()");
-      }
-      if(o.str() == "-1" && convert)
-        return "0";
-      return o.str();
-    }
+//    template <class T> static std::string toString(const T& x, bool convert=false) {
+//      std::ostringstream o;
+//      if(!(o<<x)) {
+//        throw std::runtime_error("::toString()");
+//      }
+//      if(o.str() == "-1" && convert)
+//        return "0";
+//      return o.str();
+//    }
 
-    template <class T> static QString toQString(const T& x, bool convert=false) {
-      std::ostringstream o;
-      if(!(o<<x)) {
-        throw std::runtime_error("::toString()");
-      }
-      if(o.str() == "-1" && convert)
-        return QString::fromUtf8("0");
-      return QString::fromUtf8(o.str().c_str());
-    }
+//    template <class T> static QString toQString(const T& x, bool convert=false) {
+//      std::ostringstream o;
+//      if(!(o<<x)) {
+//        throw std::runtime_error("::toString()");
+//      }
+//      if(o.str() == "-1" && convert)
+//        return QString::fromUtf8("0");
+//      return QString::fromUtf8(o.str().c_str());
+//    }
 
-    template <class T> static QByteArray toQByteArray(const T& x, bool convert=false) {
-      std::ostringstream o;
-      if(!(o<<x)) {
-        throw std::runtime_error("::toString()");
-      }
-      if(o.str() == "-1" && convert)
-        return "0";
-      return QByteArray(o.str().c_str());
-    }
+//    template <class T> static QByteArray toQByteArray(const T& x, bool convert=false) {
+//      std::ostringstream o;
+//      if(!(o<<x)) {
+//        throw std::runtime_error("::toString()");
+//      }
+//      if(o.str() == "-1" && convert)
+//        return "0";
+//      return QByteArray(o.str().c_str());
+//    }
 
     // Convert C++ string to any type of variable
-    template <class T> static T fromString(const std::string& s) {
-      T x;
-      std::istringstream i(s);
-      if(!(i>>x)) {
-        throw std::runtime_error("::fromString()");
-      }
-      return x;
-    }
+//    template <class T> static T fromString(const std::string& s) {
+//      T x;
+//      std::istringstream i(s);
+//      if(!(i>>x)) {
+//        throw std::runtime_error("::fromString()");
+//      }
+//      return x;
+//    }
 
 //     template <class T> static T fromQString::fromUtf8(const QString& s) {
 //       T x;

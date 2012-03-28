@@ -49,7 +49,6 @@
 #include "settings/rsharesettings.h"
 
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 #include <set>
 

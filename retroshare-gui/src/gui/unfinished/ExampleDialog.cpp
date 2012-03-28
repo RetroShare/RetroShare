@@ -27,7 +27,6 @@
 #include <retroshare/rsiface.h>
 
 #include <iostream>
-#include <sstream>
 
 #include <QContextMenuEvent>
 #include <QMenu>

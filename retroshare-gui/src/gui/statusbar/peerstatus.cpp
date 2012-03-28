@@ -24,8 +24,6 @@
 
 #include "peerstatus.h"
 
-#include <sstream>
-
 PeerStatus::PeerStatus(QWidget *parent)
  : QWidget(parent)
 {
@@ -50,16 +48,10 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
 {
     /* set users/friends/network */
 
-    std::ostringstream out;
-    out << nFriendCount << " ";
-    
-    std::ostringstream out2;
-    out2 << nOnlineCount << "";
-
     statusPeers->setToolTip(tr("Online Friends/Total Friends") );
 
     if (statusPeers)
-        statusPeers -> setText( "<strong>" + tr("Friends") + ":</strong> " + QString::fromStdString(out2.str()) + "/" + QString::fromStdString(out.str()) );
+        statusPeers -> setText(QString("<strong>%1:</strong> %2/%3 ").arg(tr("Friends")).arg(nOnlineCount).arg(nFriendCount));
     		
     if (nOnlineCount > 0)
     {

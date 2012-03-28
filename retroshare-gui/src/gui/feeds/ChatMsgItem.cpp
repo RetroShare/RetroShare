@@ -35,8 +35,6 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
-#include <sstream>
-
 /*****
  * #define DEBUG_ITEM 1
  ****/

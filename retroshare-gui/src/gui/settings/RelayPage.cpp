@@ -24,7 +24,6 @@
 #include "rshare.h"
 
 #include <iostream>
-#include <sstream>
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsfiles.h>
@@ -175,27 +174,15 @@ void RelayPage::updateRelayOptions()
 	int nGeneral = ui.noGeneralSpinBox->value();
 	int genBandwidth = ui.bandGeneralSpinBox->value();
 
-	std::ostringstream tfriendout;
-	tfriendout << nFriends * friendBandwidth * 2;
-	ui.totalFriendLineEdit->setText(QString::fromStdString(tfriendout.str()));
+	ui.totalFriendLineEdit->setText(QString::number(nFriends * friendBandwidth * 2));
 
-	std::ostringstream tfofout;
-	tfofout << nFOF * fofBandwidth * 2;
-	ui.totalFOFLineEdit->setText(QString::fromStdString(tfofout.str()));
+	ui.totalFOFLineEdit->setText(QString::number(nFOF * fofBandwidth * 2));
 
-	std::ostringstream tgenout;
-	tgenout << nGeneral * genBandwidth * 2;
-	ui.totalGeneralLineEdit->setText(QString::fromStdString(tgenout.str()));
+	ui.totalGeneralLineEdit->setText(QString::number(nGeneral * genBandwidth * 2));
 
-	std::ostringstream totalout;
-	totalout << (nFriends * friendBandwidth
-		+ nFOF * fofBandwidth
-		+ nGeneral * genBandwidth) * 2;
-	ui.totalBandwidthLineEdit->setText(QString::fromStdString(totalout.str()));
+	ui.totalBandwidthLineEdit->setText(QString::number((nFriends * friendBandwidth + nFOF * fofBandwidth + nGeneral * genBandwidth) * 2));
 
-	std::ostringstream countout;
-	countout << (nFriends + nFOF + nGeneral);
-	ui.noTotalLineEdit->setText(QString::fromStdString(countout.str()));
+	ui.noTotalLineEdit->setText(QString::number(nFriends + nFOF + nGeneral));
 }
 
 void RelayPage::updateEnabled()
@@ -274,5 +261,3 @@ void RelayPage::removeServer()
 
 	loadServers();
 }
-
-

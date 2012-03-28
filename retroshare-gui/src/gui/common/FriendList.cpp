@@ -1331,15 +1331,14 @@ QTreeWidgetItem *FriendList::getCurrentPeer() const
     }
 
     /* Display the columns of this item. */
-    std::ostringstream out;
-    out << "CurrentPeerItem: " << std::endl;
+    QString out = "CurrentPeerItem: \n";
 
     for(int i = 1; i < COLUMN_COUNT; i++)
     {
         QString txt = item -> text(i);
-        out << "\t" << i << ":" << txt.toStdString() << std::endl;
+        out += QString("\t%1:%2\n").arg(i).arg(txt);
     }
-    std::cerr << out.str();
+    std::cerr << out.toStdString();
 #endif
     return item;
 }

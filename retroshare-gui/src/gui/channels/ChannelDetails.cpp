@@ -28,7 +28,6 @@
 #include <QTime>
 #include <QDateTime>
 
-#include <sstream>
 #include <list>
 #include <iostream>
 #include <string>
@@ -109,9 +108,7 @@ void ChannelDetails::loadChannel()
 
     // Set Channel Popularity
     {
-      std::ostringstream out;
-      out << ci.pop;
-      ui.popline -> setText(QString::fromStdString(out.str()));
+      ui.popline -> setText(QString::number(ci.pop));
     }
 	
     // Set Last Channel Post Date 

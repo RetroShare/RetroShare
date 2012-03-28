@@ -24,13 +24,10 @@
 #include "rshare.h"
 
 #include <iostream>
-#include <sstream>
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
-
-#include <QTimer>
 
 TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)

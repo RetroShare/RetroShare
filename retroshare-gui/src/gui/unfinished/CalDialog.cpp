@@ -32,7 +32,6 @@
 //#include <retroshare/rsrank.h>
 
 #include <iostream>
-#include <sstream>
 #include <map>
 
 #include <QContextMenuEvent>

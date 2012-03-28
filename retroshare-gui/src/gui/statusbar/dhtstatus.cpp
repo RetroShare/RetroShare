@@ -30,7 +30,6 @@
 
 #include "util/misc.h"
 
-#include <sstream>
 #include <iomanip>
 
 DHTStatus::DHTStatus(QWidget *parent)

@@ -26,8 +26,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 
-#include <sstream>
-
 //#include <QContextMenuEvent>
 #include <QMenu>
 #include <QFileDialog>

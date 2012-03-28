@@ -27,7 +27,6 @@
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <retroshare/rsiface.h>
 
-#include <sstream>
 #include <iomanip>
 #include <unistd.h>
 

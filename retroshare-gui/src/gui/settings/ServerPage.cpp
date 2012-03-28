@@ -26,7 +26,6 @@
 #include "rsharesettings.h"
 
 #include <iostream>
-#include <sstream>
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>

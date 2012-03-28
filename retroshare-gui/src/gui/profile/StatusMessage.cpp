@@ -29,7 +29,6 @@
 
 #include <QTime>
 
-#include <sstream>
 #include <iomanip>
 
 

@@ -30,7 +30,6 @@
 #include <QDesktopServices>
 
 #include <iostream>
-#include <sstream>
 
 #define URL_FAQ         "http://retroshare.sourceforge.net/wiki/index.php/Frequently_Asked_Questions"
 #define URL_FORUM       "http://retroshare.sourceforge.net/forum/"

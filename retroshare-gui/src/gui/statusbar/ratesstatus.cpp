@@ -25,7 +25,6 @@
 #include "ratesstatus.h"
 #include <retroshare/rsiface.h>
 
-#include <sstream>
 #include <iomanip>
 
 RatesStatus::RatesStatus(QWidget *parent)
@@ -51,16 +50,9 @@ void RatesStatus::getRatesStatus(float downKb, float upKb)
 {
     /* set users/friends/network */
 
-    std::ostringstream out;
-    out << std::setprecision(2) << std::fixed << downKb ;
-    
-    std::ostringstream out2;
-    out2 << std::setprecision(2) << std::fixed <<  upKb ;
-
-
     if (statusRates)
-          statusRates -> setText( tr("<strong>Down:</strong>") + " " + QString::fromStdString(out.str()) + " (kB/s) | " + tr("<strong>Up:</strong>") + " " + QString::fromStdString(out2.str()) + " (kB/s) " );
-    		
+          statusRates -> setText(QString("<strong>%1:</strong> %2 (kB/s) | <strong>%3:</strong> %4 (kB/s) ").arg(tr("Down")).arg(downKb, 0, 'f', 2).arg(tr("Up")).arg(upKb, 0, 'f', 2));
+
     if( upKb > 0 || downKb < 0  )
     {
         iconLabel->setPixmap(QPixmap(":/images/up1down0.png"));

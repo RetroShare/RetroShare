@@ -27,7 +27,6 @@
 #include <retroshare/rsphoto.h>
 
 #include <iostream>
-#include <sstream>
 
 #include <QContextMenuEvent>
 #include <QMenu>

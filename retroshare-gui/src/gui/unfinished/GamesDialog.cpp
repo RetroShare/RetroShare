@@ -28,7 +28,6 @@
 #include <retroshare/rspeers.h>
 
 #include <iostream>
-#include <sstream>
 
 #include <QContextMenuEvent>
 #include <QMenu>

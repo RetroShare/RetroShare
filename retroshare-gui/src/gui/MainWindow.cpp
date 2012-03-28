@@ -93,7 +93,6 @@
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
 
-#include <sstream>
 #include <iomanip>
 #include <unistd.h>
 

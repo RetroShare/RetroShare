@@ -25,7 +25,6 @@
 #include <retroshare/rsdisc.h>
 
 #include <iostream>
-#include <sstream>
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>

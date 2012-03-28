@@ -24,7 +24,6 @@
 #include <retroshare/rsiface.h>
 
 #include <iostream>
-#include <sstream>
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>

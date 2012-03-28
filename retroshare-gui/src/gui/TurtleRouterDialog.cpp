@@ -1,5 +1,3 @@
-#include <iostream>
-#include <QTimer>
 #include <QObject>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>

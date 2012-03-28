@@ -37,7 +37,6 @@
 #include "util/misc.h"
 
 #include <set>
-#include <sstream>
 #include <algorithm>
 
 /*****
@@ -1184,7 +1183,7 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
 QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) const
 {
 	/* extract from each the member text */
-	std::string  text;
+	QString text;
 	QModelIndexList::const_iterator it;
 	std::map<std::string, uint64_t> drags;
 	std::map<std::string, uint64_t>::iterator dit;
@@ -1235,17 +1234,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 
 		drags[details.hash] = details.count;
 
-		std::string line = details.name;
-		line += "/";
-		line += details.hash;
-		line += "/";
-
-		{
-			std::ostringstream out;
-			out << details.count;
-			line += out.str();
-			line += "/";
-		}
+		QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details.name.c_str())).arg(QString::fromStdString(details.hash)).arg(details.count);
 
 		if (RemoteMode)
 		{
@@ -1269,11 +1258,9 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 #endif
 
 	QMimeData *data = new QMimeData();
-	data->setData("application/x-rsfilelist", QByteArray(text.c_str()));
+	data->setData("application/x-rsfilelist", QByteArray(text.toAscii()));
 
 	return data;
-
-
 }
 
 QStringList RetroshareDirModel::mimeTypes () const
