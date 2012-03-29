@@ -25,7 +25,10 @@
 #include <windows.h>
 #else
 #include <vector>
+#include <stdarg.h>
+#include <malloc.h>
 #endif
+#include <stdio.h>
 
 namespace librs { namespace util {
 
@@ -201,3 +204,56 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest)
 }
 
 } } // librs::util
+
+#ifdef WINDOWS_SYS
+// asprintf() and vasprintf() are missing in Win32
+int vasprintf(char **sptr, const char *fmt, va_list argv)
+{
+	int wanted = __mingw_vsnprintf(*sptr = NULL, 0, fmt, argv);
+	if ((wanted > 0) && ((*sptr = (char*) malloc(wanted + 1)) != NULL)) {
+		return __mingw_vsprintf(*sptr, fmt, argv);
+	}
+
+	return wanted;
+}
+
+//int asprintf(char **sptr, const char *fmt, ...)
+//{
+//	int retval;
+//	va_list argv;
+//	va_start( argv, fmt );
+//	retval = vasprintf(sptr, fmt, argv);
+//	va_end(argv);
+//	return retval;
+//}
+#endif
+
+int rs_sprintf(std::string &str, const char *fmt, ...)
+{
+	char *buffer;
+	va_list ap;
+
+	va_start(ap, fmt);
+	int retval = vasprintf(&buffer, fmt, ap);
+	va_end(ap);
+
+	str = buffer;
+	free(buffer);
+
+	return retval;
+}
+
+int rs_sprintf_append(std::string &str, const char *fmt, ...)
+{
+	va_list ap;
+	char *ret;
+
+	va_start(ap, fmt);
+	int retval = vasprintf(&ret, fmt, ap);
+	va_end(ap);
+
+	str.append(ret);
+	free(ret);
+
+	return retval;
+}

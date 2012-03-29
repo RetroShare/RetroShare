@@ -31,4 +31,7 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
 
 } } // librs::util
 
+int rs_sprintf(std::string &str, const char *fmt, ...);
+int rs_sprintf_append(std::string &str, const char *fmt, ...);
+
 #endif // RSSTRING_H_
