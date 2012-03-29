@@ -1203,6 +1203,14 @@ Please choose one of it to chat with.</source>
         <source>Show Participants</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Welcome to lobby %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Topic: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
@@ -1252,6 +1260,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1  invites you to chat lobby named %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Topic</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2755,7 +2767,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please select at least one friend</source>
+        <source>Lobby topic:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4639,7 +4651,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>me</source>
-        <translation type="unfinished">我</translation>
+        <translation type="obsolete">我</translation>
     </message>
     <message>
         <source>Location</source>
@@ -4795,6 +4807,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset font to default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5118,6 +5134,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Name:</source>
         <translation type="obsolete">名字</translation>
+    </message>
+    <message>
+        <source>[Optional] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Examples: Home, Laptop,...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9761,6 +9793,22 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Addresses list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Copy Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">Retroshare </translation>
+    </message>
+    <message>
+        <source>Sorry, create certificate failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -10058,6 +10106,10 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[No topic provided]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13090,6 +13142,10 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Needs checking</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

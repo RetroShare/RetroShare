@@ -5126,12 +5126,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Wähle oder ändere dein Avatar Bild</translation>
     </message>
     <message>
-        <location line="+164"/>
+        <location line="+321"/>
         <source>Edit Personal message</source>
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+28"/>
         <source>Group Chat</source>
         <translation>Gruppenchat</translation>
     </message>
@@ -5181,12 +5181,18 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf leeren</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-619"/>
+        <location line="+628"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-590"/>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <location line="+599"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -5249,13 +5255,15 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf speichern</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="-637"/>
+        <location line="+670"/>
         <location line="+3"/>
         <source>Create new Chat lobby</source>
         <translation>Neue Chat Lobby erstellen</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-638"/>
+        <location line="+647"/>
         <source>Friend Recommendations</source>
         <translation>Freundempfehlungen</translation>
     </message>
@@ -5290,7 +5298,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Status ausblenden</translation>
     </message>
     <message>
-        <location line="-46"/>
+        <location line="-727"/>
+        <location line="+681"/>
         <location line="+3"/>
         <source>Add a new Group</source>
         <translation>Neue Gruppe hinzufügen</translation>
@@ -5318,7 +5327,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+98"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+104"/>
         <source>Chat lobbies</source>
         <translation>Chat Lobbies</translation>
     </message>
@@ -5338,12 +5347,11 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+68"/>
         <source>me</source>
-        <translation>ich</translation>
+        <translation type="obsolete">ich</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+132"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -10421,12 +10429,12 @@ p, li { white-space: pre-wrap; }
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+32"/>
         <source>Copy Certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+49"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }

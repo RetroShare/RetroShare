@@ -1024,6 +1024,14 @@ Please choose one of it to chat with.</source>
         <source>Show Participants</source>
         <translation type="unfinished">Mostrar participantes</translation>
     </message>
+    <message>
+        <source>Welcome to lobby %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Topic: %1</source>
+        <translation>Tema: %1</translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
@@ -1037,43 +1045,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new chat lobby</source>
-        <translation type="unfinished">Crear nueva sala de chat</translation>
+        <translation>Crear nueva sala de chat</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Count</source>
-        <translation type="unfinished">Contar</translation>
+        <translation>Contar</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation type="unfinished">Salas privadas</translation>
+        <translation>Salas privadas</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation type="unfinished">Salas públicas</translation>
+        <translation>Salas públicas</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation type="unfinished">Crear sala de chat</translation>
+        <translation>Crear sala de chat</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished">Anular suscripción</translation>
+        <translation>Anular suscripción</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished">Suscribir</translation>
+        <translation>Suscribir</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
-        <translation type="unfinished">Invitación para chatear</translation>
+        <translation>Invitación para chatear</translation>
     </message>
     <message>
         <source>%1  invites you to chat lobby named %2</source>
-        <translation type="unfinished">%1 te invita a la sala %2</translation>
+        <translation>%1 te invita a la sala %2</translation>
+    </message>
+    <message>
+        <source>Topic</source>
+        <translation>Tema</translation>
     </message>
 </context>
 <context>
@@ -2540,7 +2552,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Contactos:</translation>
     </message>
     <message>
-        <source>Please select at least one friend</source>
+        <source>Lobby topic:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4113,7 +4125,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anular suscripción a la sala</translation>
     </message>
     <message>
         <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
@@ -4350,7 +4362,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>me</source>
-        <translation type="unfinished">yo</translation>
+        <translation type="obsolete">yo</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -4531,6 +4543,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Reset font to default</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
@@ -4829,6 +4845,22 @@ Introduce tu contraseña cuando se te pregunte para firmar tu nueva llave GPG.</
     <message>
         <source>Failed to Load your new Certificate!</source>
         <translation>Error al cargar tu nuevo certificado!</translation>
+    </message>
+    <message>
+        <source>[Optional] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Examples: Home, Laptop,...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8791,6 +8823,22 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Lista de direcciones&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Copy Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>Sorry, create certificate failed</source>
+        <translation type="unfinished">Lo siento, la creación del certificado GPG ha fallado</translation>
+    </message>
+    <message>
+        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation type="unfinished">Tu certificado se ha copiado al portapapeles. Pegalo y mandaselo a un amigo por email u otro medio</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -9131,6 +9179,10 @@ and open the Make Friend Wizard.
     <message>
         <source>The collection file %1 could not be openned.
 Reported error is: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[No topic provided]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11795,6 +11847,10 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Needs checking</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

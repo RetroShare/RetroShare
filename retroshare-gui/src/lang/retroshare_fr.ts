@@ -957,6 +957,14 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
         <source>Please enter your new nick name</source>
         <translation>S&apos;il vous plaît entrez votre nouveau pseudo</translation>
     </message>
+    <message>
+        <source>Welcome to lobby %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Topic: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
@@ -4153,7 +4161,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>me</source>
-        <translation>Moi</translation>
+        <translation type="obsolete">Moi</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -4206,6 +4214,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Reset font to default</source>
         <translation>Réinitialiser à la valeur par défaut</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
@@ -4508,6 +4520,22 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certificats (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>[Optional] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Examples: Home, Laptop,...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Visible to your friends, and friends of friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
