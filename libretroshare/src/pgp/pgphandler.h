@@ -22,6 +22,7 @@ class PGPIdType
 
 		std::string toStdString() const ;
 		uint64_t toUInt64() const ;
+		const unsigned char *toByteArray() const { return &bytes[0] ; }
 
 	private:
 		unsigned char bytes[KEY_ID_SIZE] ;
@@ -53,6 +54,8 @@ class PGPHandler
 		virtual void printKeys() const ;
 
 	private:
+		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key) ;
+
 		RsMutex pgphandlerMtx ;
 
 		ops_keyring_t *_pubring ;

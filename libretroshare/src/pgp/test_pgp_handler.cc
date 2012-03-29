@@ -50,6 +50,11 @@ int main(int argc,char *argv[])
 	else
 		std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
 
+	PGPIdType id2(std::string("EFD19E9DC737CA98")) ;
+	std::cerr << "Now extracting key " << id2.toStdString() << " from keyring:" << std::endl ;
+	std::string cert = pgph.SaveCertificateToString(id2,false) ;
+
+	std::cerr << cert << std::endl;
 	return 0 ;
 }
 

@@ -59,6 +59,7 @@ class PGPKeyManagement
 		//
 		static bool createMinimalKey(const std::string& pgp_certificate,std::string& cleaned_certificate) ;
 
+		static std::string makeArmouredKey(const unsigned char *keydata,size_t key_size,const std::string& version_string) ;
 	private:
 		// Computes the 24 bits CRC checksum necessary to all PGP data.
 		// 
