@@ -39,6 +39,7 @@ AvatarWidget::AvatarWidget(QWidget *parent) :
 
 	mFlag.isOwnId = false;
 	mFlag.isGpg = false;
+	defaultAvatar = ":/images/no_avatar_background.png";
 
 	setFrameType(NO_FRAME);
 
@@ -137,6 +138,12 @@ void AvatarWidget::setOwnId()
 	setId(rsPeers->getOwnId(), false);
 }
 
+void AvatarWidget::setDefaultAvatar(const QString &avatar)
+{
+	defaultAvatar = avatar;
+	updateAvatar(QString::fromStdString(mId));
+}
+
 void AvatarWidget::refreshStatus()
 {
 	switch (mFrameType) {
@@ -226,8 +233,6 @@ void AvatarWidget::updateStatus(const QString peerId, int status)
 
 void AvatarWidget::updateAvatar(const QString &peerId)
 {
-	QString defaultAvatar = ":/images/no_avatar_background.png";
-
 	if (mId.empty()) {
 		QPixmap avatar(defaultAvatar);
 		ui->avatar->setPixmap(avatar);

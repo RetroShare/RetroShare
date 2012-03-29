@@ -114,12 +114,14 @@ void SecurityItem::updateItemStatic()
 	{
 		case SEC_TYPE_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
+			avatar->setDefaultAvatar(":images/user/user_request48.png");
 			break;
 		case SEC_TYPE_AUTH_DENIED:
 			title = tr("Not Yet Friends");
 			break;
 		case SEC_TYPE_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");
+			avatar->setDefaultAvatar(":images/user/user_request_unknown48.png");
 			break;
 		case SEC_TYPE_UNKNOWN_OUT:
 			title = tr("Unknown (Outgoing) Connect Attempt");

@@ -46,6 +46,7 @@ public:
 	void setFrameType(FrameType type);
 	void setId(const std::string& id, bool isGpg);
 	void setOwnId();
+	void setDefaultAvatar(const QString &avatar);
 
 protected:
 	void resizeEvent(QResizeEvent *event);
@@ -59,6 +60,7 @@ private slots:
 private:
 	void refreshStatus();
 
+	QString defaultAvatar;
 	Ui::AvatarWidget *ui;
 
 	std::string mId;
