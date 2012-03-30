@@ -38,20 +38,26 @@ QMimeData * SearchTreeWidget::mimeData ( const QList<QTreeWidgetItem *> items ) 
 	QString text;
 	for(it = items.begin(); it != items.end(); it++)
 	{
-		QString line;
-		for(int i = 0; i < (*it)->columnCount(); i++)
+		QString line = QString("%1/%2/%3/").arg((*it)->text(SR_NAME_COL), (*it)->text(SR_HASH_COL), (*it)->text(SR_SIZE_COL));
+
+		bool isLocal = (*it)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool();
+		if (isLocal)
 		{
-			line += (*it)->text(i);
-			line += "/";
+			line += "Local";
 		}
-		line += "\n";
+		else
+		{
+			line += "Remote";
+		}
+		line += "/\n";
+
 		text += line;
 	}
 
 	std::cerr << "Created MimeData:";
 	std::cerr << std::endl;
 
-	std::string str = text.toStdString();
+	std::string str = text.toUtf8().constData();
 	std::cerr << str;
 	std::cerr << std::endl;
 

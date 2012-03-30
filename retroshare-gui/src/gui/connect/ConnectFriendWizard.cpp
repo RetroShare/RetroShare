@@ -338,6 +338,7 @@ TextPage::TextPage(QWidget *parent)
                                     "certificate into the box below" )) ;
     
     friendCertEdit = new QTextEdit;
+    friendCertEdit->setAcceptRichText(false);
 
     //font.setWeight(75);
     QFont font("Courier New",10,50,false);

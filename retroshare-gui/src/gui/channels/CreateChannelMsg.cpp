@@ -110,7 +110,7 @@ void CreateChannelMsg::pasteLink()
 
 			FileInfo info ;
 			if(rsFiles->alreadyHaveFile( (*it).hash().toStdString(),info ) )
-				addAttachment((*it).hash().toStdString(), (*it).name().toStdString(), (*it).size(), true, "") ;
+				addAttachment((*it).hash().toStdString(), (*it).name().toUtf8().constData(), (*it).size(), true, "") ;
 			else
 				not_have.push_back( *it ) ;
 		}

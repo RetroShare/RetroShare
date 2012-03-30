@@ -363,7 +363,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  }
 
                  QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
-                 if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
+                 if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) && RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
                      action->setDisabled(true);
                  }
 
@@ -473,7 +473,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
          }
      } else {
         QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
-        if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
+        if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) && RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
             action->setDisabled(true);
         }
     }
@@ -1271,6 +1271,7 @@ void FriendList::recommendfriend()
 void FriendList::pastePerson()
 {
     RSLinkClipboard::process(RetroShareLink::TYPE_PERSON);
+    RSLinkClipboard::process(RetroShareLink::TYPE_CERTIFICATE);
 }
 
 void FriendList::copyFullCertificate()

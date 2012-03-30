@@ -1234,7 +1234,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 
 		drags[details.hash] = details.count;
 
-		QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details.name.c_str())).arg(QString::fromStdString(details.hash)).arg(details.count);
+		QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details.name.c_str()), QString::fromStdString(details.hash), QString::number(details.count));
 
 		if (RemoteMode)
 		{
@@ -1258,7 +1258,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 #endif
 
 	QMimeData *data = new QMimeData();
-	data->setData("application/x-rsfilelist", QByteArray(text.toAscii()));
+	data->setData("application/x-rsfilelist", text.toUtf8());
 
 	return data;
 }

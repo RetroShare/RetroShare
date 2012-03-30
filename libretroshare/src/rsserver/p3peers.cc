@@ -1127,7 +1127,8 @@ static bool splitCert(const std::string &certstr, std::string &cert, std::string
 	if (pos != std::string::npos) {
 		pos += pgpend.length();
 		cert = certstr.substr(0, pos);
-		peerInfo = certstr.substr(pos + 1);
+		if (pos + 1 < certstr.length())
+			peerInfo = certstr.substr(pos + 1);
 	}
 
 	return !cert.empty();
