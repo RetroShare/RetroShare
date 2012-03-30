@@ -847,3 +847,29 @@ void FriendsDialog::recommendFriends()
 {
     return instance ? instance->ui.tabWidget : NULL;
 }
+
+/*static*/ bool FriendsDialog::isGroupChatActive()
+{
+	FriendsDialog *friendsDialog = dynamic_cast<FriendsDialog*>(MainWindow::getPage(MainWindow::Friends));
+	if (!friendsDialog) {
+		return false;
+	}
+
+    if (friendsDialog->ui.tabWidget->currentWidget() == friendsDialog->ui.groupChatTab) {
+        return true;
+    }
+
+    return false;
+}
+
+/*static*/ void FriendsDialog::groupChatActivate()
+{
+	FriendsDialog *friendsDialog = dynamic_cast<FriendsDialog*>(MainWindow::getPage(MainWindow::Friends));
+	if (!friendsDialog) {
+		return;
+	}
+
+	MainWindow::showWindow(MainWindow::Friends);
+	friendsDialog->ui.tabWidget->setCurrentWidget(friendsDialog->ui.groupChatTab);
+	friendsDialog->ui.lineEdit->setFocus();
+}

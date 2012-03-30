@@ -33,7 +33,7 @@ class MessageToaster : public QWidget
 	Q_OBJECT
 
 public:
-	MessageToaster(const QString &name, const QString &title, const QString &message);
+	MessageToaster(const std::string &peerId, const QString &title, const QString &message);
 
 private slots:
 	void openmessageClicked();

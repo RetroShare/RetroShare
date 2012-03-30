@@ -25,6 +25,7 @@
 
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
+#include "util/rsstring.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "pqi/pqibin.h"
@@ -848,6 +849,8 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 	bool privateChanged = false;
 
 	time_t now = time(NULL);
+	std::string name;
+	uint32_t popupChatFlag = RS_POPUP_CHAT;
 
 	// check if it's a lobby msg, in which case we replace the peer id by the lobby's virtual peer id.
 	//
@@ -878,7 +881,9 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 		//
 		std::string virtual_peer_id ;
 		getVirtualPeerId(cli->lobby_id,virtual_peer_id) ;
-		cli->PeerId(virtual_peer_id) ;		
+		cli->PeerId(virtual_peer_id) ;
+		name = cli->nick;
+		popupChatFlag = RS_POPUP_CHATLOBBY;
 	}	
 	else 
 	{
@@ -927,10 +932,14 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 			ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 		}
 
-		if ((ci->chatFlags & RS_CHAT_FLAG_PRIVATE) == 0) {
+		std::string message;
+		librs::util::ConvertUtf16ToUtf8(ci->message, message);
+		if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
+			/* notify private chat message */
+			getPqiNotify()->AddPopupMessage(popupChatFlag, ci->PeerId(), name, message);
+		} else {
 			/* notify public chat message */
-			std::string message;
-			message.assign(ci->message.begin(), ci->message.end());
+			getPqiNotify()->AddPopupMessage(RS_POPUP_GROUPCHAT, ci->PeerId(), "", message);
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId(), message, "");
 		}
 

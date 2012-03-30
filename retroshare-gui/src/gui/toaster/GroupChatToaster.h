@@ -1,6 +1,6 @@
 /*
  * RetroShare
- * Copyright (C) 2006 crypton
+ * Copyright (C) 2012 RetroShare Team
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef ONLINETOASTER_H
-#define ONLINETOASTER_H
+#ifndef GROUPCHATTOASTER_H
+#define GROUPCHATTOASTER_H
 
-#include "ui_OnlineToaster.h"
+#include "ui_GroupChatToaster.h"
 
 /**
- * Shows a toaster when friend is Online .
+ * Shows a toaster when friend is GroupChat .
  *
  *
  */
-class OnlineToaster : public QWidget
+class GroupChatToaster : public QWidget
 {
 	Q_OBJECT
 
 public:
-	OnlineToaster(const std::string &peerId);
+	GroupChatToaster(const std::string &peerId, const QString &message);
 
 private slots:
 	void chatButtonSlot();
@@ -41,7 +41,7 @@ private:
 	std::string peerId;
 
 	/** Qt Designer generated object */
-	Ui::OnlineToaster ui;
+	Ui::GroupChatToaster ui;
 };
 
-#endif	//MESSAGETOASTER_H
+#endif	//GROUPCHATTOASTER_H

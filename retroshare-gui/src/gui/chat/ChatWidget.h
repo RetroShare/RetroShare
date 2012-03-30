@@ -75,6 +75,8 @@ public:
 
 	void addChatButton(QPushButton *button) ;
 
+	bool isActive();
+
 private slots:
 	void clearChatHistory();
 	void deleteChatHistory();

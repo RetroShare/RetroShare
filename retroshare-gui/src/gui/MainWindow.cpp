@@ -947,6 +947,72 @@ void MainWindow::addAction(QAction *action, const char *slot)
     connect(action, SIGNAL(triggered()), this, slot);
 }
 
+#ifdef WINDOWS_SYS
+//void SetForegroundWindowInternal(HWND hWnd)
+//{
+//	if (!::IsWindow(hWnd)) return;
+
+//	// relation time of SetForegroundWindow lock
+//	DWORD lockTimeOut = 0;
+//	HWND  hCurrWnd = ::GetForegroundWindow();
+//	DWORD dwThisTID = ::GetCurrentThreadId(),
+//		  dwCurrTID = ::GetWindowThreadProcessId(hCurrWnd,0);
+
+//	// we need to bypass some limitations from Microsoft :)
+//	if (dwThisTID != dwCurrTID) {
+//		::AttachThreadInput(dwThisTID, dwCurrTID, TRUE);
+
+//		::SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT,0,&lockTimeOut,0);
+//		::SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT,0,0,SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+
+//		::AllowSetForegroundWindow(ASFW_ANY);
+//	}
+
+//	::SetForegroundWindow(hWnd);
+
+//	if(dwThisTID != dwCurrTID) {
+//		::SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT,0,(PVOID)lockTimeOut,SPIF_SENDWININICHANGE | SPIF_UPDATEINIFILE);
+//		::AttachThreadInput(dwThisTID, dwCurrTID, FALSE);
+//	}
+//}
+
+void SetForegroundWindowInternal(HWND hWnd)
+{
+	if (!::IsWindow(hWnd)) return;
+
+	BYTE keyState[256] = {0};
+	// to unlock SetForegroundWindow we need to imitate Alt pressing
+	if (::GetKeyboardState((LPBYTE)&keyState)) {
+		if(!(keyState[VK_MENU] & 0x80)) {
+			::keybd_event(VK_MENU, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+		}
+	}
+
+	::SetForegroundWindow(hWnd);
+
+	if (::GetKeyboardState((LPBYTE)&keyState)) {
+		if(!(keyState[VK_MENU] & 0x80)) {
+			::keybd_event(VK_MENU, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+		}
+	}
+}
+#endif
+
+/*static*/ void MainWindow::raiseWindow()
+{
+    if (_instance == NULL) {
+        return;
+    }
+
+    /* Show the dialog. */
+    _instance->show();
+    _instance->raise();
+
+#ifdef WINDOWS_SYS
+    SetForegroundWindowInternal(_instance->winId());
+#endif
+}
+
 /** Shows the MainWindow with focus set to the given page. */
 /*static*/ void MainWindow::showWindow(Page page)
 {
@@ -955,7 +1021,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
     }
 
     /* Show the dialog. */
-    _instance->show();
+    raiseWindow();
     /* Set the focus to the specified page. */
     activatePage (page);
 }

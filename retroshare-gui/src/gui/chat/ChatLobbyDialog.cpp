@@ -27,6 +27,7 @@
 #include "ChatTabWidget.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
+#include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
 
 #include <retroshare/rsnotify.h>
@@ -219,6 +220,7 @@ bool ChatLobbyDialog::canClose()
 void ChatLobbyDialog::showDialog(uint chatflags)
 {
 	if (chatflags & RS_CHAT_FOCUS) {
+		MainWindow::showWindow(MainWindow::Friends);
 		ChatTabWidget *tabWidget = FriendsDialog::getTabWidget();
 		if (tabWidget) {
 			tabWidget->setCurrentWidget(this);

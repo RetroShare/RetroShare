@@ -126,8 +126,8 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 
 	if(topic.empty())
 	{
-		item->setText(COLUMN_TOPIC, QObject::tr("[No topic provided]"));
-		item->setData(COLUMN_TOPIC, ROLE_SORT, QObject::tr("[No topic provided]"));
+		item->setText(COLUMN_TOPIC, qApp->translate("ChatLobbyWidget", "[No topic provided]"));
+		item->setData(COLUMN_TOPIC, ROLE_SORT, qApp->translate("ChatLobbyWidget", "[No topic provided]"));
 	}
 	else
 	{

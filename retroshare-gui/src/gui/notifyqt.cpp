@@ -27,12 +27,6 @@
 
 #include "notifyqt.h"
 #include <retroshare/rsnotify.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsphoto.h>
-#include <retroshare/rsmsgs.h>
-#ifdef TURTLE_HOPPING
-#include <retroshare/rsturtle.h>
-#endif
 
 #include "RsAutoUpdatePage.h"
 
@@ -41,8 +35,14 @@
 #include "toaster/OnlineToaster.h"
 #include "toaster/MessageToaster.h"
 #include "toaster/DownloadToaster.h"
+#include "toaster/ChatToaster.h"
+#include "toaster/GroupChatToaster.h"
+#include "toaster/ChatLobbyToaster.h"
 #endif // MINIMAL_RSGUI
 
+#include "chat/ChatDialog.h"
+#include "chat/ChatWidget.h"
+#include "FriendsDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "SoundManager.h"
 
@@ -468,21 +468,12 @@ void NotifyQt::UpdateGUI()
 			/* You can set timeToShow, timeToLive and timeToHide or can leave the standard */
 			Toaster *toaster = NULL;
 
-			/* id the name */
-			QString name;
-
-			if (type == RS_POPUP_DOWNLOAD) {
-				/* id = file hash */
-			} else {
-				name = QString::fromUtf8(rsPeers->getPeerName(id).c_str());
-			}
-
 			switch(type)
 			{
 				case RS_POPUP_MSG:
 					if (popupflags & RS_POPUP_MSG)
 					{
-						toaster = new Toaster(new MessageToaster(name, QString::fromUtf8(title.c_str()), QString::fromStdString(msg)));
+						toaster = new Toaster(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT:
@@ -490,13 +481,53 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_CONNECT)
 					{
-						toaster = new Toaster(new OnlineToaster(id, name));
+						toaster = new Toaster(new OnlineToaster(id));
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
 					if (popupflags & RS_POPUP_DOWNLOAD)
 					{
+						/* id = file hash */
 						toaster = new Toaster(new DownloadToaster(id, QString::fromUtf8(title.c_str())));
+					}
+					break;
+				case RS_POPUP_CHAT:
+					if (popupflags & RS_POPUP_CHAT)
+					{
+						ChatDialog *chatDialog = ChatDialog::getChat(id, 0);
+						ChatWidget *chatWidget;
+						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
+							// do not show when active
+							break;
+						}
+						toaster = new Toaster(new ChatToaster(id, QString::fromUtf8(msg.c_str())));
+					}
+					break;
+				case RS_POPUP_GROUPCHAT:
+					if (popupflags & RS_POPUP_GROUPCHAT)
+					{
+						MainWindow *mainWindow = MainWindow::getInstance();
+						if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()) {
+							if (MainWindow::getActivatePage() == MainWindow::Friends) {
+								if (FriendsDialog::isGroupChatActive()) {
+									// do not show when active
+									break;
+								}
+							}
+						}
+						toaster = new Toaster(new GroupChatToaster(id, QString::fromUtf8(msg.c_str())));
+					}
+					break;
+				case RS_POPUP_CHATLOBBY:
+					if (popupflags & RS_POPUP_CHATLOBBY)
+					{
+						ChatDialog *chatDialog = ChatDialog::getChat(id, 0);
+						ChatWidget *chatWidget;
+						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
+							// do not show when active
+							break;
+						}
+						toaster = new Toaster(new ChatLobbyToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 			}

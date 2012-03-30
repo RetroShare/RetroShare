@@ -331,12 +331,21 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	if (incoming && chatType == TYPE_NORMAL) {
 		emit newMessage(this);
 
-		if (!isVisible() || (window() && (!window()->isActiveWindow() || window()->isMinimized()))) {
+		if (!isActive()) {
 			newMessages = true;
 		}
 
 		emit infoChanged(this);
 	}
+}
+
+bool ChatWidget::isActive()
+{
+	if (!isVisible() || (window() && (!window()->isActiveWindow() || window()->isMinimized()))) {
+		return false;
+	}
+
+	return true;
 }
 
 void ChatWidget::pasteLink()

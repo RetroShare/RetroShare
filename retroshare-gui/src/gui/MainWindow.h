@@ -93,6 +93,7 @@ public:
     /** Destructor. */
     ~MainWindow();
 
+    static void raiseWindow();
     /** Shows the MainWindow dialog with focus set to the given page. */
     static void showWindow(Page page);
     /** Set focus to the given page. */

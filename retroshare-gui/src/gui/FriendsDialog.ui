@@ -817,7 +817,7 @@ p, li { white-space: pre-wrap; }
          <property name="tabsClosable">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="tab">
+         <widget class="QWidget" name="groupChatTab">
           <attribute name="title">
            <string>Group Chat</string>
           </attribute>

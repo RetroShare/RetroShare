@@ -146,7 +146,7 @@ void ChatMsgItem::insertChat(const std::string &message)
     QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
     timestampLabel->setText(timestamp);
 
-    QString formatMsg = QString::fromStdString(message);
+    QString formatMsg = QString::fromUtf8(message.c_str());
 
     unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
 

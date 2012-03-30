@@ -593,7 +593,7 @@
             <item row="0" column="0">
              <widget class="QCheckBox" name="trayNotify_PrivateChat">
               <property name="text">
-               <string>Private Message</string>
+               <string>Private Chat</string>
               </property>
              </widget>
             </item>
@@ -712,6 +712,27 @@
            <widget class="QCheckBox" name="popup_DownloadFinished">
             <property name="text">
              <string>Download completed</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="popup_PrivateChat">
+            <property name="text">
+             <string>Private Chat</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="popup_GroupChat">
+            <property name="text">
+             <string>Group Chat</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="popup_ChatLobby">
+            <property name="text">
+             <string>Chat Lobby</string>
             </property>
            </widget>
           </item>

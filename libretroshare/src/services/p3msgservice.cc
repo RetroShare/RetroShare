@@ -35,6 +35,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 
 #include <sstream>
 #include <iomanip>
@@ -150,10 +151,10 @@ void p3MsgService::processMsg(RsMsgItem *mi)
 		pqiNotify *notify = getPqiNotify();
 		if (notify)
 		{
-			std::string message , title;
-			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(),
-									title.assign(mi->subject.begin(), mi->subject.end()),
-									message.assign(mi->message.begin(),mi->message.end()));
+			std::string title, message;
+			librs::util::ConvertUtf16ToUtf8(mi->subject, title);
+			librs::util::ConvertUtf16ToUtf8(mi->message, message);
+			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), title, message);
 
 			std::ostringstream out;
 			out << mi->msgId;

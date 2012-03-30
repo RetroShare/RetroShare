@@ -1,6 +1,6 @@
 /*
  * RetroShare
- * Copyright (C) 2006 - 2009  RetroShare Team
+ * Copyright (C) 2012 RetroShare Team
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,31 +17,32 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "MessageToaster.h"
-#include "../MainWindow.h"
+#include "GroupChatToaster.h"
+#include "gui/FriendsDialog.h"
+#include "gui/chat/HandleRichText.h"
 
 #include <retroshare/rspeers.h>
 
-MessageToaster::MessageToaster(const std::string &peerId, const QString &title, const QString &message) : QWidget(NULL)
+GroupChatToaster::GroupChatToaster(const std::string &peerId, const QString &message) : QWidget(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	/* connect buttons */
-	connect(ui.closebtn, SIGNAL(clicked()), this, SLOT(hide()));
-	//connect(ui.openmessagebtn, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
-	connect(ui.openmessagetoolButton, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
+	this->peerId = peerId;
+
+	connect(ui.chatButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
+	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.subjectline->setText(tr("Sub:") + " " + title);
-	ui.subjectline->setToolTip(title);
-	ui.contentBrowser->setText(message);
-	ui.contentBrowser->setToolTip(message);
-	ui.lblTitle->setText(ui.lblTitle->text() + " " + QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+	ui.messageLabel->setText(RsHtml::formatText(message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	ui.nameLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
+	ui.avatarWidget->setDefaultAvatar(":/images/user/personal64.png");
+	ui.avatarWidget->setId(peerId, false);
 }
 
-void MessageToaster::openmessageClicked()
+void GroupChatToaster::chatButtonSlot()
 {
-	MainWindow::showWindow(MainWindow::Messages);
+	FriendsDialog::groupChatActivate();
 	hide();
 }

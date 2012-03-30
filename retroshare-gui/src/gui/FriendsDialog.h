@@ -47,6 +47,8 @@ public:
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 
     static ChatTabWidget *getTabWidget();
+    static bool isGroupChatActive();
+    static void groupChatActivate();
 
 public slots:
 
