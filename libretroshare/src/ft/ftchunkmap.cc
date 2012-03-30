@@ -244,7 +244,12 @@ void ChunkMap::setChunkCheckingResult(uint32_t chunk_number,bool check_succeeded
 		_file_is_complete = true ;
 
 		for(uint32_t i=0;i<_map.size();++i)
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
 			if(_map[i] != FileChunksInfo::CHUNK_DONE)
+#else
+			if(_map[i] != FileChunksInfo::CHUNK_DONE && _map[i] != FileChunksInfo::CHUNK_CHECKING)
+#endif
+
 			{
 				_file_is_complete = false ;
 				break ;
