@@ -1,6 +1,15 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - Added Copy Certificate Button to ProfileWidget
+     - Fixed compile of VOIP on Windows with Qt >4.7
+     - Modified some defaults (auto check of shared directories to 15 minutes, time to idle mode to 5 minutes)
+     - Added welcome message to the chat lobby
+     - Changed display of the own name in FriendsDialog from "Name (me) Location" to "Name (Location)".
+     - update new Spanish translation from Aitor
+     - Added two new functions to libretroshare for writing formatted data to std::string
+     - Added two new images from defnax to SecurityItem for SEC_TYPE_CONNECT_ATTEMPT and SEC_TYPE_UNKNOWN_IN.kkkkk
+  	  - added new toasters for private/group/lobby chat.
      - added copy certificate button to profile widget
      - added topics to chat lobbies. Improved CL gui
      - added deferred checking of chunks in FT. Not fully functional yet, for backward compatibility reasons.
@@ -24,6 +33,13 @@ retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
      - Added check for required location during gpg key generation.
 
   * Bugs
+     - Added thread safe function for inet_ntoa in libbitdht using the existing thread safe function for inet_ntoa in libretroshare
+     - Fixed deadlock when receiving a chat message with open history browser.
+     - fixed version script (Patch form AC)
+     - Fixed Download link for Email Invite
+     - Fixed utf8 in dropping links to channels (patch from AsamK)
+     - Fixed pasting cert links in the friend list (patch from AsamK)
+     - Added code to allow pasting GPG certificates missing a newline at the end (patch from AsamK)
      - Fixed display of the location with utf8 characters in ConnectFriendWizard.
      - Fixed icon size in forums
      - Disabled adding new keys from friends of friends in non-discovery mode.
