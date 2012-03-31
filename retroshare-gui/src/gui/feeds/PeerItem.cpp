@@ -122,7 +122,7 @@ void PeerItem::updateItemStatic()
 		peernameLabel->setText(nameStr.arg(peername));
 
 		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
-		QString stime = date.toString(Qt::LocalDate);
+		QString stime = date.toString("dd.MMMM yyyy hh:mm");
 		lastLabel-> setText(stime);
 
 		/* expanded Info */

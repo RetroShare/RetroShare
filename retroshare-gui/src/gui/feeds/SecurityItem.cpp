@@ -50,8 +50,8 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
   
     messageframe->setVisible(false);
     sendmsgButton->setEnabled(false);
-    quickmsgButton->setEnabled(false);
-    chatButton->setEnabled(false);
+    quickmsgButton->hide();
+    chatButton->hide();
     addFriendButton->setEnabled(false);
     removeFriendButton->setEnabled(false);
     removeFriendButton->hide();
@@ -118,6 +118,7 @@ void SecurityItem::updateItemStatic()
 			break;
 		case SEC_TYPE_AUTH_DENIED:
 			title = tr("Not Yet Friends");
+      avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");
@@ -134,7 +135,7 @@ void SecurityItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(currentTime.toString(Qt::LocalDate));
+	timeLabel->setText(currentTime.toString("dd.MMMM yyyy hh:mm"));
 
 	if (mIsHome)
 	{
@@ -184,8 +185,8 @@ void SecurityItem::updateItem()
 				ipLabel->setText(tr("Unknown Peer"));
 				connLabel->setText(tr("Unknown Peer"));
 
-				chatButton->setEnabled(false);
-				quickmsgButton->setEnabled(false);
+				chatButton->hide();
+				quickmsgButton->hide();
 
                 addFriendButton->setEnabled(false);
                 addFriendButton->show();
@@ -225,8 +226,16 @@ void SecurityItem::updateItem()
 		connLabel->setText(StatusDefs::connectStateString(details));
 
 		/* do buttons */
-		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
 		peerDetailsButton->setEnabled(true);
+		
+		if (details.state & RS_PEER_STATE_CONNECTED)
+		{
+			chatButton->show();
+		}
+		else
+		{
+			chatButton->hide();
+		}
 
 		if (details.accept_connection)
 		{
@@ -245,11 +254,11 @@ void SecurityItem::updateItem()
 
 		if (details.state & RS_PEER_STATE_FRIEND)
 		{
-			quickmsgButton->setEnabled(true);
+			quickmsgButton->show();
 		}
 		else
 		{
-			quickmsgButton->setEnabled(false);
+			quickmsgButton->hide();
 		}
 	}
 
