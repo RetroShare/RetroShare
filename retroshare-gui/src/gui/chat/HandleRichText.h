@@ -36,6 +36,13 @@
 /* Flags for RsHtml::formatText */
 #define RSHTML_FORMATTEXT_EMBED_SMILEYS  1
 #define RSHTML_FORMATTEXT_EMBED_LINKS    2
+#define RSHTML_FORMATTEXT_REMOVE_FONT    4
+#define RSHTML_FORMATTEXT_REMOVE_COLOR   8
+#define RSHTML_FORMATTEXT_CLEANSTYLE     (RSHTML_FORMATTEXT_REMOVE_FONT | RSHTML_FORMATTEXT_REMOVE_COLOR)
+
+/* Flags for RsHtml::formatText */
+#define RSHTML_OPTIMIZEHTML_REMOVE_FONT    2
+#define RSHTML_OPTIMIZEHTML_REMOVE_COLOR   1
 
 class QTextEdit;
 
@@ -113,8 +120,8 @@ extern EmbedInHtmlImg defEmbedImg;
 QString formatText(const QString &text, unsigned int flag);
 bool    findAnchors(const QString &text, QStringList& urls);
 
-void    optimizeHtml(QTextEdit *textEdit, QString &text);
-void    optimizeHtml(QString &text);
+void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
+void    optimizeHtml(QString &text, unsigned int flag = 0);
 QString toHtml(QString text, bool realHtml = true);
 
 } // namespace RsHtml

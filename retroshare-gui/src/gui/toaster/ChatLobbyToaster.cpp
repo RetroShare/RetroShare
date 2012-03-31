@@ -36,7 +36,9 @@ ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &nam
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.messageLabel->setText(RsHtml::formatText(message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	ui.messageLabel->setText(RsHtml::formatText(message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
+	ui.avatarWidget->setDefaultAvatar(":images/user/agt_forum64.png");
 
 	QString lobbyName = name;
 

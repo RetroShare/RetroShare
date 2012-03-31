@@ -174,7 +174,15 @@ QString formatText(const QString &text, unsigned int flag)
 	}
 
 	QString formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
-	optimizeHtml(formattedText);
+
+	unsigned int optimizeFlag = 0;
+	if (flag & RSHTML_FORMATTEXT_REMOVE_FONT) {
+		optimizeFlag |= RSHTML_OPTIMIZEHTML_REMOVE_FONT;
+	}
+	if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
+		optimizeFlag |= RSHTML_OPTIMIZEHTML_REMOVE_COLOR;
+	}
+	optimizeHtml(formattedText, optimizeFlag);
 
 	return formattedText;
 }
@@ -230,7 +238,7 @@ static void removeElement(QDomElement& parentElement, QDomElement& element)
 	parentElement.removeChild(element);
 }
 
-static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
+static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigned int flag)
 {
 	if (currentElement.tagName().toLower() == "html") {
 		// change <html> to <span>
@@ -238,7 +246,6 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
 	}
 
 	QDomNode styleNode;
-	QDomAttr styleAttr;
 	bool addBR = false;
 
 	QDomNodeList children = currentElement.childNodes();
@@ -248,11 +255,46 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
 		// compress style attribute
 		styleNode = node.attributes().namedItem("style");
 		if (styleNode.isAttr()) {
-			styleAttr = styleNode.toAttr();
-			QString value = styleAttr.value().simplified();
-			value.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
-			value.replace("; ", ";");
-			styleAttr.setValue(value);
+			QDomAttr styleAttr = styleNode.toAttr();
+			QString style = styleAttr.value().simplified();
+			style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+			style.replace("; ", ";");
+
+			if (flag & (RSHTML_OPTIMIZEHTML_REMOVE_FONT | RSHTML_OPTIMIZEHTML_REMOVE_COLOR)) {
+				QStringList styles = style.split(';');
+				style.clear();
+				foreach (QString pair, styles) {
+					if (!pair.trimmed().isEmpty()) {
+						QStringList keyvalue = pair.split(':');
+						if (keyvalue.length() == 2) {
+							QString key = keyvalue.at(0).trimmed();
+
+							if (flag & RSHTML_OPTIMIZEHTML_REMOVE_FONT) {
+								if (key == "font-family" ||
+									key == "font-size" ||
+									key == "font-weight" ||
+									key == "font-style") {
+									continue;
+								}
+							}
+							if (flag & RSHTML_OPTIMIZEHTML_REMOVE_COLOR) {
+								if (key == "color") {
+									continue;
+								}
+							}
+							style += key + ":" + keyvalue.at(1).trimmed() + ";";
+						} else {
+							style += pair + ";";
+						}
+					}
+				}
+			}
+			if (style.isEmpty()) {
+				node.attributes().removeNamedItem("style");
+				styleNode.clear();
+			} else {
+				styleAttr.setValue(style);
+			}
 		}
 
 		if (node.isElement()) {
@@ -288,14 +330,14 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
 			}
 
 			// iterate children
-			optimizeHtml(doc, element);
+			optimizeHtml(doc, element, flag);
 
 			// <p>
 			if (element.tagName().toLower() == "p") {
 				// <p style="...">
 				//styleNode = element.attributes().namedItem("style");
 				if (element.attributes().size() == 1 && styleNode.isAttr()) {
-					QString value = styleAttr.toAttr().value().simplified();
+					QString value = styleNode.toAttr().value().simplified();
 					if (value == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;" ||
 						value.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
 
@@ -319,7 +361,7 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement)
 	}
 }
 
-void optimizeHtml(QTextEdit *textEdit, QString &text)
+void optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
 {
 	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
@@ -329,10 +371,10 @@ void optimizeHtml(QTextEdit *textEdit, QString &text)
 
 	text = textEdit->toHtml();
 
-	optimizeHtml(text);
+	optimizeHtml(text, flag);
 }
 
-void optimizeHtml(QString &text)
+void optimizeHtml(QString &text, unsigned int flag)
 {
 	int originalLength = text.length();
 
@@ -345,7 +387,7 @@ void optimizeHtml(QString &text)
 	}
 
 	QDomElement body = doc.documentElement();
-	optimizeHtml(doc, body);
+	optimizeHtml(doc, body, flag);
 	text = doc.toString(-1);
 
 	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
