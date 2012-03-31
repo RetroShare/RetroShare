@@ -959,11 +959,11 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bienvenue dans le salon %1</translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sujet : %1</translation>
     </message>
 </context>
 <context>
@@ -4161,7 +4161,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>me</source>
-        <translation type="obsolete">Moi</translation>
+        <translation>Moi</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -4214,10 +4214,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Reset font to default</source>
         <translation>Réinitialiser à la valeur par défaut</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
@@ -4523,19 +4519,19 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">[Optionnel] Visible par vos ami(e)s et les ami(e)s de vos ami(e)s.</translation>
     </message>
     <message>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">[Obligatoire] Exemples : Maison, Portable...</translation>
     </message>
     <message>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">[Obligatoire] Visible par vos ami(e)s et les ami(e)s de vos ami(e)s.</translation>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">[obligatoire] Ce mot de passe protège votre clef PGP.</translation>
     </message>
 </context>
 <context>
@@ -10051,7 +10047,7 @@ Fichier vérouillé :
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
 lock file:
 </source>
-        <translation type="unfinished">Une erreur inattendue s&apos;est produite lorsque RetroShare a essayé d&apos;acquérir le verrou d&apos;instance unique
+        <translation>Une erreur inattendue s&apos;est produite lorsque RetroShare a essayé d&apos;acquérir le verrou d&apos;instance unique
 Fichier vérrouillé :
 </translation>
     </message>
