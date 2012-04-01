@@ -84,6 +84,13 @@ int main(int argc,char *argv[])
 		std::cerr << "Signature error." << std::endl;
 	else
 		std::cerr << "Signature success." << std::endl;
+ 
+	std::cerr << "Now verifying signature..." << std::endl;
+
+	if(!pgph.VerifySignBin(test_bin,13,sign,signlen,""))
+		std::cerr << "Signature verification failed." << std::endl;
+	else
+		std::cerr << "Signature verification worked!" << std::endl;
 
 	return 0 ;
 }

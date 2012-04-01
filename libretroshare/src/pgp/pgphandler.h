@@ -51,7 +51,7 @@ class PGPHandler
 		bool TrustCertificate(const PGPIdType& id, int trustlvl);
 
 		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
-		bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string &withfingerprint) { return false ; }
+		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const std::string &withfingerprint) ;
 
 		// Debug stuff.
 		virtual void printKeys() const ;

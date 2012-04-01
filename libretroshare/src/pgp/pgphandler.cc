@@ -11,6 +11,7 @@ extern "C" {
 #include <openpgpsdk/armour.h>
 #include <openpgpsdk/keyring.h>
 #include <openpgpsdk/readerwriter.h>
+#include <openpgpsdk/validate.h>
 }
 #include "pgphandler.h"
 
@@ -229,7 +230,14 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	std::cerr << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." << std::endl;
 
-	// We should store it in the keyring.
+	// 5 - copy the private key to the public keyring
+	
+	addNewKeyToOPSKeyring(_pubring,tmp_keyring->keys[0]) ;
+	_public_keyring_map[ pgpId.toUInt64() ] = _pubring->nkeys-1 ;
+
+	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
+
+	// 6 - clean
 
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
@@ -378,5 +386,20 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	free(secret_key) ;
 
 	return true ;
+}
+
+bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const std::string &withfingerprint)
+{
+	ops_memory_t *mem = ops_memory_new() ;
+	ops_memory_add(mem,(unsigned char *)sign,sign_len) ;
+
+	ops_validate_result_t *result = (ops_validate_result_t*)ops_mallocz(sizeof(ops_validate_result_t)) ;
+	ops_boolean_t res = ops_validate_mem(result, mem, ops_false, _pubring);
+
+	ops_validate_result_free(result) ;
+
+	// no need to clear mem. It's already deleted by ops_validate_mem (weird but true).
+
+	return res ;
 }
 

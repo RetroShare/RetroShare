@@ -3032,6 +3032,9 @@ static int ops_parse_one_packet(ops_parse_info_t *pinfo,
 	pinfo->rinfo.asize=0;
 	CBP(pinfo,OPS_PARSER_PACKET_END,&content);
 	}
+    else
+       C.packet.raw = NULL ;
+
     pinfo->rinfo.alength=0;
 	
 	free(C.packet.raw) ;
