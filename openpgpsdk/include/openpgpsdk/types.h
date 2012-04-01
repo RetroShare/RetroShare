@@ -55,6 +55,10 @@ typedef unsigned ops_boolean_t;
  * \see RFC4880 5.2.3.1
  */
 
+#ifndef __cplusplus
+typedef enum ops_content_tag_t ops_content_tag_t ;
+#endif
+
 enum ops_content_tag_t
     {
     OPS_PTAG_CT_RESERVED		= 0,	/*!< Reserved - a packet tag must not have this value */

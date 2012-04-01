@@ -48,6 +48,7 @@ const ops_keydata_t *
 ops_keyring_find_key_by_userid(const ops_keyring_t *keyring,
 			       const char* userid);
 void ops_keydata_free(ops_keydata_t *key);
+void ops_keydata_copy(ops_keydata_t *dst,const ops_keydata_t *src);
 void ops_keyring_free(ops_keyring_t *keyring);
 void ops_dump_keyring(const ops_keyring_t *keyring);
 const ops_public_key_t *

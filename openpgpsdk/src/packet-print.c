@@ -849,8 +849,8 @@ int ops_print_packet(const ops_parser_content_t *content_)
 	start_subpacket(content_->tag);
 	/* not yet tested */
 	printf ("  revocation key: class=0x%x",
-		content->ss_revocation_key.class);
-	if (content->ss_revocation_key.class&0x40)
+		content->ss_revocation_key.cclass);
+	if (content->ss_revocation_key.cclass&0x40)
 	    printf (" (sensitive)");
 	printf (", algid=0x%x",
 		content->ss_revocation_key.algid);

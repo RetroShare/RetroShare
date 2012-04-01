@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG = staticlib
+CONFIG = staticlib debug
 
 DEFINES *= OPENSSL_NO_IDEA 
 

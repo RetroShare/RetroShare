@@ -3,6 +3,11 @@
 #include <iostream>
 #include "pgphandler.h"
 
+static std::string passphrase_callback(const std::string& what)
+{
+	return std::string(getpass(what.c_str())) ;
+}
+
 int main(int argc,char *argv[])
 {
 	// test pgp ids.
@@ -19,7 +24,7 @@ int main(int argc,char *argv[])
 	static const std::string pubring = "pubring.gpg" ;
 	static const std::string secring = "secring.gpg" ;
 
-	PGPHandler pgph(pubring,secring) ;
+	PGPHandler pgph(pubring,secring,&passphrase_callback) ;
 	pgph.printKeys() ;
 
 	std::cerr << std::endl ;
@@ -50,11 +55,36 @@ int main(int argc,char *argv[])
 	else
 		std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
 
-	PGPIdType id2(std::string("EFD19E9DC737CA98")) ;
+	PGPIdType id2(std::string("618E54CF7670FF5E")) ;
 	std::cerr << "Now extracting key " << id2.toStdString() << " from keyring:" << std::endl ;
 	std::string cert = pgph.SaveCertificateToString(id2,false) ;
 
+	std::cerr << "Now, trying to re-read this cert from the string:" << std::endl;
+
+	PGPIdType id3 ;
+	std::string error_string ;
+	pgph.LoadCertificateFromString(cert,id3,error_string) ;
+
+	std::cerr << "Loaded cert id: " << id3.toStdString() << ", Error string=\"" << error_string << "\"" << std::endl;
+
 	std::cerr << cert << std::endl;
+
+	std::cerr << "Testing password callback: " << std::endl;
+	std::string pass = passphrase_callback("Please enter password: ") ;
+
+	std::cerr << "Password = \"" << pass << "\"" << std::endl;
+
+	std::cerr << "Testing signature with keypair " << newid.toStdString() << std::endl;
+	char test_bin[14] = "34f4fhuif3489" ;
+
+	unsigned char sign[100] ;
+	uint32_t signlen = 100 ;
+
+	if(!pgph.SignDataBin(newid,test_bin,13,sign,&signlen))
+		std::cerr << "Signature error." << std::endl;
+	else
+		std::cerr << "Signature success." << std::endl;
+
 	return 0 ;
 }
 

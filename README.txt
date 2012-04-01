@@ -18,7 +18,7 @@ Compilation
 
 Project
   02   [1] determine what's missing in OpenPGP-SDK
-  03   [ ] make a separate layer in RS to handle PGP. AuthPGP is too close to libretroshare.
+  03   [1] make a separate layer in RS to handle PGP. AuthPGP is too close to libretroshare.
 
 Notes
 =====

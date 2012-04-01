@@ -999,6 +999,41 @@ void ops_public_key_free(ops_public_key_t *p)
 	}
     }
 
+void ops_public_key_copy(ops_public_key_t *dst,const ops_public_key_t *src)
+{
+   *dst = *src ;
+
+   switch(src->algorithm)
+   {
+      case OPS_PKA_RSA:
+      case OPS_PKA_RSA_ENCRYPT_ONLY:
+      case OPS_PKA_RSA_SIGN_ONLY:
+	 dst->key.rsa.n = BN_dup(src->key.rsa.n);
+	 dst->key.rsa.e = BN_dup(src->key.rsa.e);
+	 break;
+
+      case OPS_PKA_DSA:
+	 dst->key.dsa.p = BN_dup(src->key.dsa.p);
+	 dst->key.dsa.q = BN_dup(src->key.dsa.q);
+	 dst->key.dsa.g = BN_dup(src->key.dsa.g);
+	 dst->key.dsa.y = BN_dup(src->key.dsa.y);
+	 break;
+
+      case OPS_PKA_ELGAMAL:
+      case OPS_PKA_ELGAMAL_ENCRYPT_OR_SIGN:
+	 dst->key.elgamal.p = BN_dup(src->key.elgamal.p);
+	 dst->key.elgamal.g = BN_dup(src->key.elgamal.g);
+	 dst->key.elgamal.y = BN_dup(src->key.elgamal.y);
+	 break;
+
+	 //case 0:
+	 // nothing to free
+	 //   break;
+
+      default:
+	 assert(0);
+   }
+}
 /**
    \ingroup Core_ReadPackets
 */
@@ -1573,9 +1608,9 @@ static int parse_one_signature_subpacket(ops_signature_t *sig,
 
     case OPS_PTAG_SS_REVOCATION_KEY:
 	/* octet 0 = class. Bit 0x80 must be set */
-	if(!limited_read (&C.ss_revocation_key.class,1,&subregion,pinfo))
+	if(!limited_read (&C.ss_revocation_key.cclass,1,&subregion,pinfo))
 	    return 0;
-	if(!(C.ss_revocation_key.class&0x80))
+	if(!(C.ss_revocation_key.cclass&0x80))
 	    {
 	    printf("Warning: OPS_PTAG_SS_REVOCATION_KEY class: "
 		   "Bit 0x80 should be set\n");
@@ -2124,6 +2159,31 @@ void ops_secret_key_free(ops_secret_key_t *key)
     ops_public_key_free(&key->public_key);
     }
 
+void ops_secret_key_copy(ops_secret_key_t *dst,const ops_secret_key_t *src)
+{
+   *dst = *src ;
+   ops_public_key_copy(&dst->public_key,&src->public_key);
+
+   switch(src->public_key.algorithm)
+   {
+      case OPS_PKA_RSA:
+      case OPS_PKA_RSA_ENCRYPT_ONLY:
+      case OPS_PKA_RSA_SIGN_ONLY:
+	 dst->key.rsa.d = BN_dup(src->key.rsa.d) ;
+	 dst->key.rsa.p = BN_dup(src->key.rsa.p) ;
+	 dst->key.rsa.q = BN_dup(src->key.rsa.q) ;
+	 dst->key.rsa.u = BN_dup(src->key.rsa.u) ;
+	 break;
+
+      case OPS_PKA_DSA:
+	 dst->key.dsa.x = BN_dup(src->key.dsa.x) ;
+	 break;
+
+      default:
+	 fprintf(stderr,"ops_secret_key_copy: Unknown algorithm: %d (%s)\n",src->public_key.algorithm, ops_show_pka(src->public_key.algorithm));
+	 //assert(0);
+   }
+}
 static int consume_packet(ops_region_t *region,ops_parse_info_t *pinfo,
 			  ops_boolean_t warn)
     {

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <list>
+#include <map>
 #include <util/rsthreads.h>
 
 extern "C" {
@@ -10,6 +11,8 @@ extern "C" {
 #include <openpgpsdk/keyring.h>
 #include <openpgpsdk/keyring_local.h>
 }
+
+typedef std::string (*PassphraseCallback)(const std::string& display_msg) ;
 
 class PGPIdType
 {
@@ -31,7 +34,7 @@ class PGPIdType
 class PGPHandler
 {
 	public:
-		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring) ;
+		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring,PassphraseCallback cb) ;
 
 		virtual ~PGPHandler() ;
 
@@ -47,20 +50,31 @@ class PGPHandler
 
 		bool TrustCertificate(const PGPIdType& id, int trustlvl);
 
-		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) { return false ; }
-		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string &withfingerprint) { return false ; }
+		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
+		bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string &withfingerprint) { return false ; }
 
 		// Debug stuff.
 		virtual void printKeys() const ;
 
 	private:
 		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key) ;
+		static ops_keyring_t *allocateOPSKeyring() ;
+		static void addNewKeyToOPSKeyring(ops_keyring_t*, const ops_keydata_t&) ;
+
+		const ops_keydata_t *getPublicKey(const PGPIdType&) const ;
+		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;
 
 		RsMutex pgphandlerMtx ;
 
 		ops_keyring_t *_pubring ;
 		ops_keyring_t *_secring ;
 
+		std::map<uint64_t,uint32_t> _public_keyring_map ;	// used for fast access to keys. Gives the index in the keyring.
+		std::map<uint64_t,uint32_t> _secret_keyring_map ;
+
 		const std::string _pubring_path ;
 		const std::string _secring_path ;
+
+		PassphraseCallback _passphrase_callback ;
 };
+

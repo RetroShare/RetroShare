@@ -26,7 +26,7 @@
 #include <openpgpsdk/packet-parse.h>
 #include <openpgpsdk/util.h>
 #include <openpgpsdk/accumulate.h>
-#include "keyring_local.h"
+#include <openpgpsdk/keyring_local.h>
 #include "parse_local.h"
 #include <openpgpsdk/signature.h>
 #include <assert.h>

@@ -261,7 +261,7 @@ typedef struct
     unsigned pos;
     } linebreak_arg_t;
 
-#define BREAKPOS	76
+#define BREAKPOS	64
 
 static ops_boolean_t linebreak_writer(const unsigned char *src,
 					 unsigned length,

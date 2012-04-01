@@ -127,6 +127,7 @@ static unsigned public_key_length(const ops_public_key_t *key)
 	return mpi_length(key->key.rsa.n)+mpi_length(key->key.rsa.e);
 
     default:
+	fprintf(stderr,"Bad algorithm type in key: %d\n",key->algorithm) ;
 	assert(!"unknown key algorithm");
 	}
     /* not reached */

@@ -70,23 +70,48 @@ uint64_t PGPIdType::toUInt64() const
 	return res ;
 }
 
-PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
-	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring)
+ops_keyring_t *PGPHandler::allocateOPSKeyring() 
+{
+	ops_keyring_t *kr = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
+	kr->nkeys = 0 ;
+	kr->nkeys_allocated = 0 ;
+	kr->keys = 0 ;
+
+	return kr ;
+}
+
+PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,PassphraseCallback cb)
+	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring),_passphrase_callback(cb)
 {
 	// Allocate public and secret keyrings.
 	// 
-	_pubring = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
-	_secring = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
+	_pubring = allocateOPSKeyring() ;
+	_secring = allocateOPSKeyring() ;
 
 	// Read public and secret keyrings from supplied files.
 	//
 	if(ops_false == ops_keyring_read_from_file(_pubring, false, pubring.c_str()))
 		throw std::runtime_error("PGPHandler::readKeyRing(): cannot read pubring.") ;
 
+	const ops_keydata_t *keydata ;
+	int i=0 ;
+	while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
+	{
+		_public_keyring_map[ PGPIdType(keydata->key_id).toUInt64() ] = i ;
+		++i ;
+	}
+
 	std::cerr << "Pubring read successfully." << std::endl;
 
 	if(ops_false == ops_keyring_read_from_file(_secring, false, secring.c_str()))
 		throw std::runtime_error("PGPHandler::readKeyRing(): cannot read secring.") ;
+
+	i=0 ;
+	while( (keydata = ops_keyring_get_key_by_index(_secring,i)) != NULL )
+	{
+		_secret_keyring_map[ PGPIdType(keydata->key_id).toUInt64() ] = i ;
+		++i ;
+	}
 
 	std::cerr << "Secring read successfully." << std::endl;
 }
@@ -95,6 +120,8 @@ PGPHandler::~PGPHandler()
 {
 	std::cerr << "Freeing PGPHandler. Deleting keyrings." << std::endl;
 
+	// no need to free the the _map_ elements. They will be freed by the following calls:
+	//
 	ops_keyring_free(_pubring) ;
 	ops_keyring_free(_secring) ;
 
@@ -130,28 +157,28 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	return true ;
 }
 
-static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo __attribute__((unused)))
-{
-	const ops_parser_content_union_t *content=&content_->content;
-	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
-	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
-
-	switch(content_->tag)
-	{
-		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-			/*
-				Doing this so the test can be automated.
-			 */
-			*(content->secret_key_passphrase.passphrase)=ops_malloc_passphrase("hello");
-			return OPS_KEEP_MEMORY;
-			break;
-
-		default:
-			break;
-	}
-
-	return OPS_RELEASE_MEMORY;
-}
+// static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo __attribute__((unused)))
+// {
+// 	const ops_parser_content_union_t *content=&content_->content;
+// 	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
+// 	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
+// 
+// 	switch(content_->tag)
+// 	{
+// 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+// 			/*
+// 				Doing this so the test can be automated.
+// 			 */
+// 			*(content->secret_key_passphrase.passphrase)=ops_malloc_passphrase("hello");
+// 			return OPS_KEEP_MEMORY;
+// 			break;
+// 
+// 		default:
+// 			break;
+// 	}
+// 
+// 	return OPS_RELEASE_MEMORY;
+// }
 
 bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) 
 {
@@ -167,15 +194,40 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	if(!key)
 		return false ;
 
-	pgpId = PGPIdType(key->key_id) ;
+	// 1 - get a passphrase for encrypting.
+	
+	std::string passphrase = _passphrase_callback("Please enter passwd for encrypting your key : ") ;
 
-	// Now output the pubkey to a string.
-	//
-	std::string akey = makeRadixEncodedPGPKey(key) ;
+	// 2 - save the private key encrypted to a temporary memory buffer
 
-	std::cerr << "key: " << std::endl;
-	std::cerr << akey << std::endl;
-	ops_keydata_free(key) ;
+	ops_create_info_t *cinfo = NULL ;
+	ops_memory_t *buf = NULL ;
+   ops_setup_memory_write(&cinfo, &buf, 0);
+
+	ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo);
+
+	// 3 - read the file into a keyring
+	
+	ops_keyring_t *tmp_keyring = allocateOPSKeyring() ;
+	if(! ops_keyring_read_from_mem(tmp_keyring, ops_false, buf))
+	{
+		std::cerr << "Cannot re-read key from memory!!" << std::endl;
+		return false ;
+	}
+	ops_teardown_memory_write(cinfo,buf);	// cleanup memory
+
+	// 4 - copy the private key to the private keyring
+	
+	pgpId = PGPIdType(tmp_keyring->keys[0].key_id) ;
+	addNewKeyToOPSKeyring(_secring,tmp_keyring->keys[0]) ;
+	_secret_keyring_map[ pgpId.toUInt64() ] = _secring->nkeys-1 ;
+
+	std::cerr << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." << std::endl;
+
+	// We should store it in the keyring.
+
+	ops_keyring_free(tmp_keyring) ;
+	free(tmp_keyring) ;
 	
 	return true ;
 }
@@ -183,10 +235,9 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 {
 	ops_boolean_t armoured=ops_true;
-   ops_boolean_t overwrite=ops_true;
    ops_create_info_t* cinfo;
 
-	ops_memory_t *buf = NULL ;//(ops_memory_t*)ops_mallocz(1000) ;
+	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&cinfo, &buf, 0);
 
    ops_write_transferable_public_key(key,armoured,cinfo);
@@ -199,9 +250,28 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 	return akey ;
 }
 
+const ops_keydata_t *PGPHandler::getSecretKey(const PGPIdType& id) const
+{
+	std::map<uint64_t,uint32_t>::const_iterator res = _secret_keyring_map.find(id.toUInt64()) ;
+
+	if(res == _secret_keyring_map.end())
+		return NULL ;
+	else
+		return ops_keyring_get_key_by_index(_secring,res->second) ;
+}
+const ops_keydata_t *PGPHandler::getPublicKey(const PGPIdType& id) const
+{
+	std::map<uint64_t,uint32_t>::const_iterator res = _public_keyring_map.find(id.toUInt64()) ;
+
+	if(res == _public_keyring_map.end())
+		return NULL ;
+	else
+		return ops_keyring_get_key_by_index(_pubring,res->second) ;
+}
+
 std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include_signatures)
 {
-	const ops_keydata_t *key = ops_keyring_find_key_by_id(_pubring,id.toByteArray());
+	const ops_keydata_t *key = getPublicKey(id) ;
 
 	if(key == NULL)
 	{
@@ -210,5 +280,88 @@ std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include
 	}
 
 	return makeRadixEncodedPGPKey(key) ;
+}
+
+void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& key)
+{
+	kr->keys = (ops_keydata_t*)realloc(kr->keys,(kr->nkeys+1)*sizeof(ops_keydata_t)) ;
+	memset(&kr->keys[kr->nkeys],0,sizeof(ops_keydata_t)) ;
+	ops_keydata_copy(&kr->keys[kr->nkeys],&key) ;
+	kr->nkeys++ ;
+}
+
+bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType& id,std::string& error_string)
+{
+	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
+	ops_memory_t *mem = ops_memory_new() ;
+	ops_memory_add(mem,(unsigned char *)pgp_cert.c_str(),pgp_cert.length()) ;
+
+	if(!ops_keyring_read_from_mem(tmp_keyring,ops_true,mem))
+	{
+		ops_keyring_free(tmp_keyring) ;
+		ops_memory_release(mem) ;
+
+		std::cerr << "Could not read key. Format error?" << std::endl;
+		error_string = std::string("Could not read key. Format error?") ;
+		return false ;
+	}
+	ops_memory_release(mem) ;
+	error_string.clear() ;
+
+	std::cerr << "Key read correctly: " << std::endl;
+	ops_keyring_list(tmp_keyring) ;
+
+	const ops_keydata_t *keydata = NULL ;
+	int i=0 ;
+
+	while( (keydata = ops_keyring_get_key_by_index(tmp_keyring,i++)) != NULL )
+	{
+		id = PGPIdType(keydata->key_id) ;
+
+		addNewKeyToOPSKeyring(_pubring,*keydata) ;
+		_public_keyring_map[id.toUInt64()] = _pubring->nkeys-1 ;
+	}
+
+	std::cerr << "Added the key in the main public keyring." << std::endl;
+	
+	ops_keyring_free(tmp_keyring) ;
+	return true ;
+}
+
+bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen)
+{
+	// need to find the key and to decrypt it.
+	
+	const ops_keydata_t *key = getSecretKey(id) ;
+
+	if(!key)
+	{
+		std::cerr << "Cannot sign: no secret key with id " << id.toStdString() << std::endl;
+		return false ;
+	}
+
+	std::string passphrase = _passphrase_callback("Please enter passwd:") ;
+
+	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
+
+	if(!secret_key)
+	{
+		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
+		return false ;
+	}
+
+	// then do the signature.
+
+	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x10,secret_key,ops_false) ;
+
+	if(!memres)
+		return false ;
+
+	uint32_t tlen = std::min(*signlen,(uint32_t)ops_memory_get_length(memres)) ;
+
+	memcpy(sign,ops_memory_get_data(memres),tlen) ;
+	*signlen = tlen ;
+
+	return true ;
 }
 
