@@ -11,48 +11,41 @@ Please not all request* functions have a receive pair if not noted below
 1.1) Display of subscribed forums.  Service must provide:
 	1.1.1) list of subscribed Groups.
 		----------------
-		int GXService::requestSubscribedGroupList(); @return token
-		void receiveGroupList(token, list<grpId>); //call back
+                int requestSubscribedGrps();
 
-			-> This function will get the group list from
-           Component:
-				GDService::requestGroup()
+                    Component:
+                        RsGnp::requestGroups()
 
 
-				-> 
 		----------------
 	1.1.2) list of messages for each Group.
-           ----------------
-		int GDService::requestGroupMsgs(std::string grpId); @return token
-		-> Return a request token that will be redeemed by:
-              void receiveMsgs(int token, std::list<RsGxsMsg*>); // call back
-	      Component: 
-              GDService::request(string grpId) X
- 			-> which further uses the client service's implemented 
-		----------------
+                ----------------
+                int requestGrpMsgs(std::list<RsGxsGrpId>&);
+                ----------------
+
 	1.1.3) details of group by group Id.
-           ----------------
-		int GDService::requestGroup(std::string grpId);
-           ----------------          
+               ----------------
+               int requestGrp(std::list<RsGxsGrpId>& grpIds);
+               ----------------
 
 	1.1.4) details of messages by message Id.
-           ----------------
-		int GXService::requestMessages(multimap<grpId, pair<msgId,version> >)
-                void receiveMsgs(int token, std::list<RsGxsMsg*>); // call back		
-           ----------------		
+                ----------------
+                int requestMsgs(std::list<RsGxsMsgId>& msgs);
+                ----------------
 
-	1.1.5) newest version of each message -> get version list.
+        1.1.5) newest version of each message
 
 		----------------
-		? newest version returned by default
-		int GDService::requestMsgVersions(multimap<grpId, msgId>)
-		int receiveMsgVersionList(list<uint32_t>)
+                1.1.4 : not intitialising RsGxsMsgId::version default to returning
+                newest version of message
 		----------------
 
 	1.1.6) status of message (read / unread).
 
 		----------------
-		returned with msgs see 1.1.2 & 1.1.3
+                returned with msg data
+                int flagMsgRead(const RsGxsMsgId& msgId, bool read)
+
 		----------------
 
 	1.1.7) access to Identity associated with Group and Messages
@@ -64,62 +57,58 @@ Please not all request* functions have a receive pair if not noted below
 	1.1.8) updates when new groups arrive.
 
 		----------------
-		int receivedNewGrp(list<string> grpIds)
+                virtual void notifyGroupChanged(std::list<RsGxsGrpId> grpId) = 0
 		----------------
 
 	1.1.9) updates when new messages arrive.
 		----------------
-		int receivedNewMsgs(multimap<grpId, pair<msgId,version> >)
+                virtual void notifyMsgChanged(std::list<RsGxsMsgId> msgId) = 0
 		----------------
 
 	1.1.10) updates when groups / messages change.
 
 		----------------
-		int receivedNewUpdates(multimap<grpId, pair<msgId,version> >)
-		int receivedNewUpdates(map<grpId, version> >)
+                1.1.8 and 1.1.9
 		----------------
 
 	1.1.11) Search forums for Keywords.
 
 		----------------
-           int searchForum(string keyword, grpId)
-		// all msgs and grps that contain keyword
-   		int receiveSearchResult(list<RsGxsMsg*>, list<RsGxsGrp*>)
+                int requestLocalSearch(RsGxsSearch* term);
 		----------------
 
 	1.1.12) Access new (time restricted) messages.
 		----------------
-           ? explain
+                ? explain
 		----------------
 
 1.2) Creation of new material.
 	1.2.1) ability to create Groups.
 
 		----------------
-		GDService::createGroup(name, descrip, title, thumbnail);
-           //or rather user 
+                int pushGrp(std::set<RsGxsGroup*>& grp, std::string& profileName);
+                int pushGrp(std::set<RsGxsGroup*>& grp, RsIdentityExchangeService::IdentityType type, const std::set<std::string>& peers,
+                              const std::string& pseudonymName = "");
 
-   		// user needs to instantiate their top class members
-		// where RsGxpGrp is base class
-		// user provides identity to associate group to
-		bool GDService::publishGroup(const RsGxsGrp&, identity);
-		RsGixsProfile* GXIService::createIdentity(int type, string pseudonym);
-		RsGixsProfile* GXIService::getRealIdentity();
 		----------------
 
 	1.2.2) ability to create Messages.
 
-		GXService::publishMsg(const RsGxsMsg&, identity);
+                void pushMsg(std::set<RsGxsMsg*>& msg);
 
 1.3) Deletion of forums and posts.
 	1.3.1) discard forum (can't do this currently).
+                ----------------
+                done automatically by GDService based on cutoff
+                ----------------
 
 	1.3.2) delete post.
 		----------------
 		// post is removed from system and note made in db not to syn it
-		// this is cleaned from db after grp expires
-		int GXService::deleteMsg(multimap<grpId, msgId >)
-		int GXService::deleteGrp(grpId)
+                // this is cleaned from db post expires
+                // very likely to also propagate to friends
+                int requestDeleteMsg(const RsGxsMsgId& msgId);
+                int requestDeleteGrp(const RsGxsGrpId& grpId);
 		----------------
 
 	1.3.3) discard old posts.
@@ -132,13 +121,13 @@ Please not all request* functions have a receive pair if not noted below
 	1.4.1) Storage Period of subscribed forums
 
 		---------------- 		
-		int GXService::setSubscribedGrpsCutOff(uint32_t secs)
+                void setSubscribedGroupDiscardAge(uint32_t length);
 		----------------
 
 	1.4.2) Storage Period of unsubscribed forums.
 
 		---------------- 		
-		int GXService::setUnSubscribedGrpsCutOff(uint32_t secs)
+                void setUnsubscribedGrpDiscardAge(uint32_t length);
 		----------------
 
 	1.4.3) transfer unsubscribed forums and posts (yes/no)
@@ -161,12 +150,12 @@ Please not all request* functions have a receive pair if not noted below
 	1.4.5) modify read status.
 
 		---------------- 		
-		int GXService::setMsgRead(multimap<grpId, version> >)
+                int flagMsgRead(const RsGxsMsgId& msgId, bool read) ;
 		----------------
 	1.4.6) Subscribe to forums
 
 		----------------
-		bool GXService::subscribeToGroup(grpId)
+                int requestSubscribeToGrp(const RsGxsGrpId& grpId, bool subscribe);
 		----------------
  		
 1.5) Finding other forums.
@@ -180,13 +169,12 @@ Please not all request* functions have a receive pair if not noted below
 		// service will have to provide own search module (can RsGDService can 
 		// service remote search requests concurrent with GXS)
 		// module return message and groups (msgs can be marked  compile time as not 		// searchable
-		GXService::localSearch(RsGxsSearch key)
-		GXService::searchRemote(RsGxsSearch key)
+                int requestRemoteSearch(RsGxsSearch* term, uint32_t hops);
+
 		---------------- 
 	1.5.4) optional download of friends forums.
 		----------------
-		int GXService::downloadPeersGroups(sslid)
-		int GXService::downloadPeersMessage(ssld, grpId)
+                int requestPeersGrps(const std::string& sslId);
 		----------------
 
 
@@ -202,18 +190,20 @@ Please not all request* functions have a receive pair if not noted below
 2.2) Comments
 	2.2.1) Write a comment.
 		---------------- 
-		see 1.2.2. Message with required top level members	
+                see 1.2.2. RsGxsMsg with required indirection data members
+                to associate with message the comment is being made on
 		---------------- 
 
 	2.2.2) Reject (downgrade) bad comment.
 		---------------- 
-		user just needs to verify publisher sent message
-		bool GIXService::verify(Identity, data, dataLen, signature)
+                user needs to verify publisher sent downgrage message
+                bool RsGxis::bool verify(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature);
+
 		---------------- 
 	
 	2.2.3) Control Comments: Allow / Disallow, Pseudo / Authed Comments. 
 		---------------- 
-		bool GIXService::verify(Identity, data, dataLen, signature)
+                bool RsGxis::bool sign(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature);
 
 		---------------- 
 
@@ -230,7 +220,7 @@ Please not all request* functions have a receive pair if not noted below
 	3.1.2) Access to Version History. (including who edited).
 
 		---------------- 
-		// need to include list<authors> as top level RsGxsMsg 
+                // need to include std::map<version,authors> as top level RsGxsMsg
 		---------------- 
 
 	3.2) Controlling Editing Rights.
@@ -267,6 +257,7 @@ using 1.2.2, publisher sends new publish key under old private key signature, an
 		---------------- 
 		Bit more detail on search type
 		RsGxsSearch{ int searchType; const int PATTERN_TYPE, TERM_TYPE; ....}
+
 		---------------- 
 
 
@@ -318,7 +309,7 @@ using 1.2.2, publisher sends new publish key under old private key signature, an
 
 	5.1.4) Deleting Album.
 		---------------- 
-		1.3.2
+                1.3.2
 		---------------- 
 
 6) Acadeeb

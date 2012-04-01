@@ -87,15 +87,19 @@ class RsGxsSearchResult {
 
 class RsGxsMsg
 {
-        RsGxsMsgId mId;
-        std::string mMsgId;
-        std::string mOrigMsgId;
 
-        RsGxsTime mTime;
-        std::list<std::string> mHashtags;
-        std::list<RsGxsLink> mLinked;
-        std::set<uint32_t> versions;
-        RsGxsSignature mSignature;
+    RsGxsMsgId mId;
+
+    std::string mMsgId;
+    std::string mOrigMsgId;
+
+    RsGxsTime mTime;
+    std::list<std::string> mHashtags;
+    std::list<RsGxsLink> mLinked;
+    std::set<uint32_t> mVersions;
+    RsGxsSignature mPersonalSignature;
+    RsGxsSignature mPublishSignature;
+
 };
 
 /*!
@@ -144,11 +148,21 @@ public:
 
     /*!
      * Request group, not intialising version member of RsGxsGrpId
+     * results in the latest version of groups being returned
+     * @param grpIds the id/version of the group requested
+     * @return token for request
+     * @see receiveGrp()
+     */
+    int requestGrp(std::list<RsGxsGrpId>& grpIds);
+
+    /*!
+     * Request group, not intialising version member of RsGxsGrpId
      * results in the latest version of group being returned
      * @param grpIds the id/version of the group requested
      * @return token for request
+     * @see receiveGrpList()
      */
-    int requestGrp(std::list<RsGxsGrpId>& grpIds);
+    int requestSubscribedGrpList();
 
     /*!
      * pulls in all grps held by peer
@@ -160,24 +174,26 @@ public:
 
 
     /*!
-     * returns IDs of groups which are still in valid time range
+     * returns Ids of groups which are still in valid time range
      * @return token for request
      */
     int requestGrpList();
 
     /*!
      * @param token the token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param grpList list of group ids associated to request token
      */
-    virtual void receiveGrpList(int token, std::list<RsGxsGrpId>& grpList) = 0;
+    virtual void receiveGrpList(int token, int errCode, std::list<RsGxsGrpId>& grpList) = 0;
 
     /*!
      * Event call back from Gxs runner
      * after requested Grp(s) have been retrieved
      * @param token the token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param grps list of groups associated to request token
      */
-    virtual void receiveGrp(int token, std::set<RsGxsGroup*>& grps) = 0;
+    virtual void receiveGrp(int token, int errCode, std::set<RsGxsGroup*>& grps) = 0;
 
     /*************** Start: Msg request receive API ********************/
 
@@ -213,7 +229,7 @@ public:
      * after request msg(s) have been received
      * @param token token to be redeemed
      */
-    virtual void receiveMsg(int token, std::set<RsGxsMsg*>& msgs) = 0;
+    virtual void receiveMsg(int token, int errCode, std::set<RsGxsMsg*>& msgs) = 0;
 
     /*!
      * request message ids for grp
@@ -226,16 +242,18 @@ public:
     /*!
      *
      * @param token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param the msgIdSet associated to request token
      */
-    virtual void receiveMsgIdList(int token, std::list<RsGxsMsgId>& msgIdList) = 0;
+    virtual void receiveMsgIdList(int token, int errCode, std::list<RsGxsMsgId>& msgIdList) = 0;
 
 
     /*!
      * @param searchToken token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param result result set
      */
-    void receivedSearchResult(int searchToken, std::set<RsGxsSearchResult*> results);
+    void receivedSearchResult(int searchToken, int errCode, std::set<RsGxsSearchResult*> results);
 
 
     /*************** End: Msg request receive API ********************/
@@ -247,7 +265,17 @@ public:
      * Pushes a RsGxsItem for publication
      * @param msg set of messages to push onto service for publication
      */
-    void pushMsg(std::set<RsGxsMsg*>& msg);
+    int pushMsg(std::set<RsGxsMsg*>& msg);
+
+    /*!
+     * Updates an already published message
+     * on your network with this one
+     * Message must be associated to an identity on
+     * publication for this to work
+     * @param msg the message to update
+     * @return
+     */
+    int updateMsg(std::set<RsGxsMsg*>& msg);
 
 
     /*!
@@ -259,15 +287,26 @@ public:
     int pushGrp(std::set<RsGxsGroup*>& grp, std::string& profileName);
 
     /*!
-     * Pushes a RsGxsGroup onto RsGxs network, associates it with an RsGixs profile to be
+     * Update an already published group with
+     * new information
+     * This increments the version number
+     * @param grp grp to update
+     * @return token to be redeemed
+     */
+    int updateGrp(std::set<RsGxsGroup*>& grp);
+
+    /*!
+     * Pushes a set of RsGxsGroups onto RsGxs network, associates it with an RsGixs profile to be
      * created given the parameters below
      * @param grp set of messages to push onto service for publication
      * @param type the type of identity to create
      * @param peers peers to share this identity with
      * @param pseudonym if type is pseudonym then uses this as the name of the pseudonym Identity
+     * @return token to be redeemed
+     * @see errorMsg
      */
-    void pushGrp(std::set<RsGxsGroup*>& grp, RsIdentityExchangeService::IdentityType type, const std::set<std::string>& peers,
-                 RsGxsGroup*& group, const std::string& pseudonymName = "");
+    int pushGrp(std::set<RsGxsGroup*>& grp, RsIdentityExchangeService::IdentityType type, const std::set<std::string>& peers,
+                 const std::string& pseudonymName = "");
 
     /*********** End: publication *****************/
 
@@ -287,10 +326,14 @@ public:
 
     /*!
      *
-     * This sets an RsGroup to be able to share file between its members
+     * This says listed group can are only ones that can
+     * share grp/msgs between themselves for grpId
      * Default behaviour on group sharing is share with between all peers
+     * @param rsGrpId list of group id sharing will be allowed
+     * @param grpId groupId that share behaviour is being set
+     * @return status token to be redeemed
      */
-    void setShareGroup(const std::list<RsGroupId>&, const RsGxsGrpId& grpId);
+    int setShareGroup(const std::list<RsGroupId>& rsGrpId, const RsGxsGrpId& grpId);
 
     /*********** End: Identity control and groups *****************/
 
@@ -319,6 +362,11 @@ public:
     int flagGroupRead(const RsGxsGrpId& grpId, bool read);
 
     /*!
+     * This marks a local message created by yourself to
+     * no longer distributed and removed
+     * Entry in db is discarded after expiration date has passed
+     * TODO: this may send a standard marker to user that message
+     * should be removed
      * @param msgId
      */
     int requestDeleteMsg(const RsGxsMsgId& msgId);
@@ -337,13 +385,15 @@ public:
      * How long to keep subscribed groups
      * @param length how long to keep group in seconds
      */
-    void setSubscirbedGroupDiscardAge(uint32_t length);
+    int setSubscribedGroupDiscardAge(uint32_t length);
 
     /*!
      * How long to keep unsubscribed groups
      * @param length how long to keep groups in seconds
+     * @return status token to be redeemed
+     * @see statusMsg()
      */
-    void setUnsubscribedGrpDiscardAge(uint32_t length);
+    int setUnsubscribedGrpDiscardAge(uint32_t length);
 
     /*!
      * How long to keep messages, group discard age supercedes this \n
@@ -364,9 +414,17 @@ public:
     /*!
      * This called by event runner on status of subscription
      * @param token the token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param gxsStatus the status of subscription request
      */
-    virtual void receiveSubscribeToGrp(int token, int gxsStatus) = 0;
+    virtual void receiveSubscribeToGrp(int token, int errCode, int gxsStatus) = 0;
+
+    /*!
+     *
+     * @param error_code
+     * @param errorMsg
+     */
+    virtual void statusMsg(int error_code, const std::string& errorMsg);
 
     /******************* End: Configuration *************************/
 
@@ -407,39 +465,56 @@ public:
     /*!
      *
      * @param term This contains the search term
-     * @param hops how many hops to search up to
+     * @param hops how many hops from your immediate peer on the network for search
+     * @param delay lenght of time search should persist (if you are online search will be saved \n
+     *        delay seconds, max is 2 days
      * @return token to redeem search
      */
-    int requestRemoteSearch(RsGxsSearch* term, uint32_t hops);
+    int requestRemoteSearchGrps(RsGxsSearch* term, uint32_t hops, uint32_t delay, bool immediate);
+
+    // Remote Search...(2 hops ?)
+    /*!
+     *
+     * @param term This contains the search term
+     * @param hops how many hops from your immediate peer on the network for search
+     * @param delay lenght of time search should persist (if you are online search will be saved \n
+     *        delay seconds, max is 2 days
+     * @return token to redeem search
+     */
+    int requestRemoteSearchMsgs(RsGxsSearch* term, uint32_t hops, uint32_t delay, bool immediate);
 
 
     /*!
      *
      * @param token
+     * @param errCode error code, can be exchanged for error string
      * @param grpIds list of grp ids
      */
-    virtual void receiveLocalSearchGrps(int token, std::list<RsGxsGrpId>& grpIds);
+    virtual void receiveLocalSearchGrps(int token, int errCode, std::list<RsGxsGrpId>& grpIds);
 
     /*!
      *
      * @param token the request token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param msgIds the message ids that contain contain search term
      */
-    virtual void receiveLocalSearchMsgs(int token, std::list<RsGxsMsgId> &msgIds) = 0;
+    virtual void receiveLocalSearchMsgs(int token, int errCode, std::list<RsGxsMsgId> &msgIds) = 0;
 
     /*!
      *
      * @param token request token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param grps
      */
-    virtual void receiveRemoteSearchGrps(int token, std::list<RsGxsGrpId>& grps) = 0;
+    virtual void receiveRemoteSearchGrps(int token, int errCode, std::list<RsGxsGrpId>& grps) = 0;
 
     /*!
      *
      * @param token the request token to be redeemed
+     * @param errCode error code, can be exchanged for error string
      * @param msgIds
      */
-    virtual void recieveRemoteSearchMsgs(int token, std::list<RsGxsMsgId>& msgs) = 0;
+    virtual void recieveRemoteSearchMsgs(int token, int errCode, std::list<RsGxsMsgId>& msgs) = 0;
 
     /*!
      * Note if parent group is not present this will be requested \n

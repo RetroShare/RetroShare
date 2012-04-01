@@ -33,9 +33,27 @@
 #include "inttypes.h"
 #include "rsgnp.h"
 
-typedef std::map<std::string, std::set<std::string> > MsgGrpId;
-typedef std::map<std::string, std::set<RsGxsSignedMessage*> > SignedMsgGrp;
+#include "gxs/rsgxs.h"
 
+
+class RsGxsSignedMsg {
+
+
+    RsGxsMsgId mMsgId;
+    RsTlvBinaryData mMsgData;
+};
+
+/*!
+ * Might be better off simply sending request codes
+ *
+ */
+class RsGxsSearch {
+
+    /*!
+     *
+     */
+    virtual int code() = 0;
+};
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -56,158 +74,100 @@ typedef std::map<std::string, std::set<RsGxsSignedMessage*> > SignedMsgGrp;
  *   - As this is the point where data is accessed by both the GNP and GXS the identities
  *     used to decrypt, encrypt and verify is handle here.
  *
- *
+ * Please note all function are blocking.
  */
 class RsGeneralDataService
 {
+
 public:
+
+    /*!
+     * Retrieves signed message
+     * @param msgGrp this contains grp and the message to retrieve
+     * @return error code
+     */
+    virtual int retrieveMsgs(const std::list<RsGxsMsgId>& msgId, std::set<RsGxsMsg*> msg, bool cache) = 0;
+
+    /*!
+     * Retrieves a group item by grpId
+     * @param grpId the ID of the group to retrieve
+     * @return error code
+     */
+    virtual int retrieveGrps(const std::list<RsGxsGrpId>& grpId, std::set<RsGxsGroup*> grp, bool cache) = 0;
+
+
+    /*!
+     * allows for more complex queries specific to the service
+     * BLOBs type columns will not be searched
+     * @param search generally stores parameters needed for query
+     * @param msgId is set with msg ids which satisfy the gxs search
+     * @return error code
+     */
+    virtual int searchMsgs(RsGxsSearch* search, std::list<RsMsgId>& msgId) = 0;
+
+    /*!
+     * allows for more complex queries specific to the associated service
+     * BLOBs type columns will not be searched
+     * @param search generally stores parameters needed for query
+     * @param msgId is set with msg ids which satisfy the gxs search
+     * @return error code
+     */
+    virtual int searchGrps(RsGxsSearch* search, std::list<RsGroupId>& grpId) = 0;
+
+    /*!
+     * @return the cache size set for this RsGeneralDataService
+     */
+    virtual uint32_t cacheSize() const;
+
+
+    /*!
+     * Stores a list signed messages into data store
+     * @param msg list of signed messages to store
+     * @return error code
+     */
+    virtual int storeMessage(std::set<RsGxsSignedMsg*> msg) = 0;
+
+    /*!
+     * Stores a list of groups in data store
+     * @param msg list of messages
+     * @return error code
+     */
+    virtual int storeGroup(std::set<RsGxsGroup*> grp) = 0;
+
+    /*!
+     * Retrieves group ids
+     * @param grpIds
+     */
+    virtual void retrieveGrpIds(std::list<std::string>& grpIds) = 0;
+
+
+    /*!
+     * Retrieves msg ids
+     */
+    virtual void retrieveMsgIds(std::list<std::string>& msgIds) = 0;
+
+
+protected:
+
 
     /*!
      * Retrieves signed message
      * @param msgGrp this contains grp and the message to retrieve
      * @return request code to be redeemed later
      */
-    virtual int request(const MsgGrpId& msgGrp) = 0;
+    virtual int retrieveMsgs(const std::list<RsGxsMsgId>& msgId, std::set<RsGxsMsg*> msg) = 0;
 
     /*!
      * Retrieves a group item by grpId
      * @param grpId the ID of the group to retrieve
      * @return request code to be redeemed later
      */
-    virtual int request(const std::string grpId) = 0;
+    virtual int retrieveGrps(const std::list<RsGxsGrpId>& grpId, std::set<RsGxsGroup*> grp) = 0;
 
-
-    /*!
-     * allows for more complex queries specific to the service
-     * Service should implement its own specific filter
-     * @param filter generally stores parameters needed for query
-     * @param cacheRequest set to true to cache the messages requested
-     * @return request code to be redeemed later
-     */
-    virtual int request(RsGxsSearch* filter, bool cacheRequest) = 0;
-
-
-    /*!
-     * stores signed message
-     * @param msgs signed messages to store
-     */
-    virtual bool store(SignedMsgGrp& msgs) = 0;
-
-    /*!
-     * Gets group and any associated meta data
-     * @param grpIds set with group Ids available from storage
-     * @return request code to be redeemed later
-     */
-    virtual int getGroups(const std::set<std::string>& grpIds) = 0;
-
-    /*!
-     * Gets list of message ids in storage
-     * @param msgIds gets message ids in storage
-     * @return request code to be redeemed later
-     */
-    virtual int getMessageIds(std::set<std::string>& msgIds) = 0;
-
-    /*!
-     * caches message for faster retrieval later
-     * @return false if caching failed, msg may not exist, false otherwise
-     */
-    virtual bool cacheMsg(const std::string& grpId, const std::string& msgId) = 0;
-
-    /*!
-     * caches all messages of this grpId for faster retrieval later
-     * @param grpId all message of this grpId are cached
-     * @return false if caching failed, msg may not exist, false otherwise
-     */
-    bool cacheGrp(const std::string& grpId) = 0;
-
-    /*!
-     * checks if msg is cached
-     * @param msgId message to check if cached
-     * @param grpId
-     * @return false if caching failed, msg may not exist, false otherwise
-     */
-    bool msgCached(const std::string& grpId, const std::string& msgId) = 0;
-
-    /*!
-     * check if messages of the grpId are cached
-     * @param grpId all message of this grpId are checked
-     * @return false if caching failed, msg may not exist, false otherwise
-     */
-    bool grpCached(const std::string& grpId) = 0;
 
 };
 
 
-/*!
- * Might be better off simply sending request codes
- *
- */
-class RsGxsSearch {
 
-    /*!
-     *
-     */
-    virtual int code() = 0;
-};
-
-/*!
- *
- * This is implemented by the concrete GXS class to represent and define how \n
- * RsGxsSignedMessage is stored and retrieved from disk \n
- * More complicated queries are enabled through the use of \n
- * RequestFilter which through rtti store generic parameters used by the RsGeneralStorageService implementation \n
- *
- *
- * The main reason for layering RsGeneralDataService between this and RsGeneralExchangeService implementer \n
- * is to avoid the overhead of storage access and while allowing a rich variety of implementations not having to \n
- * worry about efficiency \n
- */
-class RsGeneralStorageService {
-
-public:
-
-
-    /*!
-     * Retrieves signed messages from storage
-     * @param msgGrp this contains grp and the message to retrieve
-     */
-    virtual void retrieve(const MsgGrpId& msgGrp, SignedMsgGrp& result, bool decrypted) = 0;
-
-
-    /*!
-     * allows for more complex queries specific to the service
-     * Service should implement method taking case
-     * @param filter
-     */
-    virtual void retrieve(RsGxsSearch* search, SignedMsgGrp& msgs) = 0;
-
-    /*!
-     * stores signed message in internal storage
-     * @param msgs signed messages to store
-     */
-    virtual void store(SignedMsgGrp& msgs) = 0;
-
-    /*!
-     * retrieves the group ids from storage
-     * @param grpIds set with grpIds available from storage
-     */
-    virtual void getGroups(std::set<std::string>& grpIds) = 0;
-
-    /*!
-     * retrieve message in this stored in this storage
-     * @param msgIds gets message ids in storage
-     */
-    virtual bool getMessageIds(std::set<std::string>& msgIds) = 0;
-
-    /*!
-     * Use this find out if Rss i/o status
-     * @return the io status
-     */
-    virtual uint8_t getIoStat() = 0;
-
-    static uint8_t IOSTAT_READ_ONLY;
-    static uint8_t IOSTAT_READ_AND_WRITE;
-
-};
 
 #endif // RSGDP_H

@@ -141,11 +141,6 @@ public:
      */
     void vacuum();
 
-    /*!
-     * TODO: remove, do not use; for testing
-     */
-     sqlite3_stmt* getCurrStmt();
-
 public:
 
     static const int OPEN_READONLY;
@@ -156,7 +151,6 @@ private:
 
 
     sqlite3* mDb;
-    sqlite3_stmt* mCurrStmt; // TODO: remove
 
 };
 

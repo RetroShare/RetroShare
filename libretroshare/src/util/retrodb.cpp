@@ -42,7 +42,7 @@ const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
 const int RetroDb::OPEN_READWRITE_CREATE = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
 
-RetroDb::RetroDb(const std::string &dbPath, int flags) : mDb(NULL), mCurrStmt(NULL) {
+RetroDb::RetroDb(const std::string &dbPath, int flags) : mDb(NULL) {
 
     int rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, NULL);
 
