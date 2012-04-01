@@ -86,12 +86,19 @@ void ops_keydata_free(ops_keydata_t *keydata)
     keydata->packets=NULL;
     keydata->npackets=0;
 
+/*	 for(n=0;n<keydata->nsigs;++n)
+	 {
+		 ops_user_id_free(keydata->sigs[n].userid) ;
+		 ops_packet_free(keydata->sigs[n].packet) ;
+	 }*/
+	 free(keydata->sigs) ;
+
     if(keydata->type == OPS_PTAG_CT_PUBLIC_KEY)
 	ops_public_key_free(&keydata->key.pkey);
     else
 	ops_secret_key_free(&keydata->key.skey);
 
-    free(keydata);
+/*    free(keydata); */
     }
 
 // \todo check where userid pointers are copied
@@ -145,18 +152,21 @@ void ops_keydata_copy(ops_keydata_t *dst,const ops_keydata_t *src)
 
 	dst->uids = (ops_user_id_t*)ops_mallocz(src->nuids * sizeof(ops_user_id_t)) ;
 	dst->nuids = src->nuids ;
+	dst->nuids_allocated = src->nuids ;
 
 	for(n=0 ; n < src->nuids ; ++n)
 		ops_copy_userid(&dst->uids[n],&src->uids[n]) ;
 
 	dst->packets = (ops_packet_t*)ops_mallocz(src->npackets * sizeof(ops_packet_t)) ;
 	dst->npackets = src->npackets ;
+	dst->npackets_allocated = src->npackets ;
 
 	for(n=0 ; n < src->npackets ; ++n)
 		ops_copy_packet(&(dst->packets[n]),&(src->packets[n]));
 
 	dst->nsigs = src->nsigs ;
 	dst->sigs = (sigpacket_t*)ops_mallocz(src->nsigs * sizeof(sigpacket_t)) ;
+	dst->nsigs_allocated = src->nsigs ;
 
 	for(n=0 ; n < src->nsigs ; ++n)
 	{
@@ -350,6 +360,8 @@ ops_secret_key_t *ops_decrypt_secret_key_from_data(const ops_keydata_t *key,
     pinfo->rinfo.accumulate=ops_true;
 
     ops_parse(pinfo);
+
+    ops_parse_info_delete(pinfo);
 
     return arg.skey;
     }
@@ -792,6 +804,10 @@ ops_boolean_t ops_keyring_read_from_mem(ops_keyring_t *keyring, const ops_boolea
  */
 void ops_keyring_free(ops_keyring_t *keyring)
     {
+		 int n;
+		 for(n=0;n<keyring->nkeys;++n)
+			 ops_keydata_free(&keyring->keys[n]) ;
+
     free(keyring->keys);
     keyring->keys=NULL;
     keyring->nkeys=0;

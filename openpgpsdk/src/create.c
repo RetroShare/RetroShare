@@ -397,6 +397,9 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
         return ops_false;
 
     ops_writer_pop(info);
+
+	 free(crypt.encrypt_key) ;
+	 free(crypt.decrypt_key) ;
     
     return ops_true;
  }

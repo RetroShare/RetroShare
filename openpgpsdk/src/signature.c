@@ -1314,6 +1314,7 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len, const ops_
 
     // tidy up
     ops_writer_close(cinfo);
+	 free(cinfo) ;
     ops_create_signature_delete(sig);
 
     return mem;

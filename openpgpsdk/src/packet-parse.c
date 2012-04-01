@@ -1251,6 +1251,8 @@ static int parse_user_id(ops_region_t *region,ops_parse_info_t *pinfo)
 
     CBP(pinfo,OPS_PTAG_CT_USER_ID,&content);
 
+    free(C.user_id.user_id) ;
+
     return 1;
     }
 
@@ -1903,6 +1905,8 @@ static int parse_v4_signature(ops_region_t *region,ops_parse_info_t *pinfo)
         }
 
     CBP(pinfo,OPS_PTAG_CT_SIGNATURE_FOOTER,&content);
+
+    free(C.signature.info.v4_hashed_data) ;
 
     return 1;
     }
@@ -3030,6 +3034,8 @@ static int ops_parse_one_packet(ops_parse_info_t *pinfo,
 	}
     pinfo->rinfo.alength=0;
 	
+	free(C.packet.raw) ;
+
     if(r < 0)
 	return -1;
 
