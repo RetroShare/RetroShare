@@ -84,13 +84,12 @@ void MsgItem::updateItemStatic()
 	avatar->setId(mPeerId, false);
 
 	QString title;
-	QString timestamp;
 	QString srcName = QString::fromUtf8(rsPeers->getPeerName(mi.srcId).c_str());
 
 	{
 		QDateTime qtime;
 		qtime.setTime_t(mi.ts);
-		timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+		timestampLabel->setText(qtime.toString("dd.MMMM yyyy hh:mm:ss"));
 	}
 
 	if (!mIsHome)
@@ -122,7 +121,7 @@ void MsgItem::updateItemStatic()
 				break;
 		}
 	}
-	title += srcName + " @ " + timestamp;
+	title += srcName;
 
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromStdWString(mi.title));
