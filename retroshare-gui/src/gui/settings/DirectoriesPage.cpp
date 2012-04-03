@@ -49,7 +49,7 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
 
 void DirectoriesPage::clearHashCache()
 {
-	if(QMessageBox::question(this,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+	if(QMessageBox::question(this, tr("Cache cleaning confirmation"), tr("This will forget any former hash of non shared files. Do you confirm ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
 		rsFiles->clearHashCache() ;
 }
 
@@ -66,7 +66,7 @@ void DirectoriesPage::editDirectories()
 void DirectoriesPage::clickedRememberHashes(bool b)
 {
 	if (!b) {
-		if (QMessageBox::question(this,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+		if (QMessageBox::question(this,tr("Cache cleaning confirmation"), tr("This will forget any former hash of non shared files. Do you confirm ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 			ui.rememberHashesCB->setChecked(true);
 		}
 	}

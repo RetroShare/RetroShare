@@ -496,9 +496,6 @@ p, li { white-space: pre-wrap; }
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maxLength">
-               <number>14</number>
-              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>
@@ -573,9 +570,6 @@ p, li { white-space: pre-wrap; }
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="maxLength">
-               <number>14</number>
               </property>
               <property name="readOnly">
                <bool>true</bool>

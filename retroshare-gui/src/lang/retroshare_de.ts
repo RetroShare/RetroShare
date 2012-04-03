@@ -1177,7 +1177,7 @@ Bitte wähle einen zum chatten aus.</translation>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
-        <location filename="../gui/toaster/ChatLobbyToaster.ui" line="+155"/>
+        <location filename="../gui/toaster/ChatLobbyToaster.ui" line="+164"/>
         <source>Show Chat Lobby</source>
         <translation>Zeige Chat Lobbie</translation>
     </message>
@@ -1509,7 +1509,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatToaster</name>
     <message>
-        <location filename="../gui/toaster/ChatToaster.ui" line="+155"/>
+        <location filename="../gui/toaster/ChatToaster.ui" line="+161"/>
         <source>Show Chat</source>
         <translation>Zeige Chat</translation>
     </message>
@@ -1521,7 +1521,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="+131"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="+125"/>
         <source>Close</source>
         <translation>Schliessen</translation>
     </message>
@@ -3551,7 +3551,19 @@ p, li { white-space: pre-wrap; }
         <translation>Durchsuchen</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="+138"/>
+        <location filename="../gui/settings/DirectoriesPage.cpp" line="+52"/>
+        <location line="+17"/>
+        <source>Cache cleaning confirmation</source>
+        <translation>Bestätigung der Cache Bereinigung</translation>
+    </message>
+    <message>
+        <location line="-17"/>
+        <location line="+17"/>
+        <source>This will forget any former hash of non shared files. Do you confirm ?</source>
+        <translation>Du verlierst den Hashwert deiner freigegebenen Dateien. Möchtest du fortsetzen?</translation>
+    </message>
+    <message>
+        <location line="+69"/>
         <source>Set Incoming Directory</source>
         <translation>Ordner für eingehende Dateien</translation>
     </message>
@@ -6424,7 +6436,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupChatToaster</name>
     <message>
-        <location filename="../gui/toaster/GroupChatToaster.ui" line="+190"/>
+        <location filename="../gui/toaster/GroupChatToaster.ui" line="+196"/>
         <source>Show Group Chat</source>
         <translation>Zeige Gruppenchat</translation>
     </message>
@@ -8752,18 +8764,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MsgItem</name>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="+135"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="+247"/>
         <source>Remove Item</source>
         <translation>Entferne Element</translation>
     </message>
     <message>
         <location line="-20"/>
-        <location filename="../gui/feeds/MsgItem.cpp" line="+205"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="+204"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="-102"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Reply to Message</source>
         <translation>Auf die Nachricht antworten</translation>
     </message>
@@ -9454,7 +9471,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerItem</name>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="+192"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="+258"/>
         <source>Remove Item</source>
         <translation>Entferne Element</translation>
     </message>
@@ -9465,7 +9482,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+163"/>
         <source>Location:</source>
         <translation>Ort:</translation>
     </message>
@@ -9490,12 +9507,12 @@ p, li { white-space: pre-wrap; }
         <translation>Vertrauen:</translation>
     </message>
     <message>
-        <location line="-136"/>
+        <location line="-176"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+144"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
@@ -9510,7 +9527,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location line="-296"/>
+        <location line="-336"/>
         <source>Start Chat</source>
         <translation>Chat starten</translation>
     </message>
@@ -9520,7 +9537,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnelle Nachricht schreiben</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+119"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
@@ -10566,7 +10583,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Online seit:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+244"/>
+        <location line="+238"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10579,7 +10596,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Dynamisches DNS:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-331"/>
+        <location line="-325"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10631,7 +10648,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Lokale Adresse:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+75"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10644,7 +10661,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Externe Adresse:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+116"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -12031,8 +12048,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SecurityItem</name>
     <message>
-        <location filename="../gui/feeds/SecurityItem.ui" line="+167"/>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="+280"/>
+        <location filename="../gui/feeds/SecurityItem.ui" line="+284"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="+289"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -12042,7 +12059,7 @@ p, li { white-space: pre-wrap; }
         <translation>Entferne Element</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="-139"/>
         <source>Peer details</source>
         <translation>Nachbar Details</translation>
     </message>
@@ -12057,7 +12074,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freund hinzufügen</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+33"/>
         <source>Write a quick Message</source>
         <translation>Schnelle Nachricht schreiben</translation>
     </message>
@@ -12072,7 +12089,7 @@ p, li { white-space: pre-wrap; }
         <translation>Chat starten</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+83"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12122,7 +12139,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="-164"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="-173"/>
         <source>Connect Attempt</source>
         <translation>Verbindungsversuch</translation>
     </message>
@@ -12132,7 +12149,7 @@ p, li { white-space: pre-wrap; }
         <translation>Noch keine Freunde</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Unknown (Incoming) Connect Attempt</source>
         <translation>Unbekannter (eingehender) Verbindungsversuch</translation>
     </message>
@@ -12157,7 +12174,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannter Nachbar</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+97"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
