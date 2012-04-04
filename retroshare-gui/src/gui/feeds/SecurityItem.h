@@ -50,7 +50,7 @@ private slots:
 	void removeItem();
 	void toggle();
 
-	void addFriend();
+	void friendRequest();
 	void removeFriend();
 	void peerDetails();
 	void sendMsg();

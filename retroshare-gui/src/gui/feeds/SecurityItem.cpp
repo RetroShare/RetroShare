@@ -29,6 +29,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/connect/FriendRequest.h"
 #include "gui/common/AvatarDefs.h"
 
 #include "gui/notifyqt.h"
@@ -52,10 +53,10 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
     sendmsgButton->setEnabled(false);
     quickmsgButton->hide();
     chatButton->hide();
-    addFriendButton->setEnabled(false);
     removeFriendButton->setEnabled(false);
     removeFriendButton->hide();
     peerDetailsButton->setEnabled(false);
+    friendRequesttoolButton->hide();
 
     /* general ones */
     connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
@@ -69,9 +70,9 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
     connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
 
     connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
-    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-    connect(removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
-    connect(peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
+    connect( removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
+    connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
+    connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
@@ -188,8 +189,7 @@ void SecurityItem::updateItem()
 				chatButton->hide();
 				quickmsgButton->hide();
 
-                addFriendButton->setEnabled(false);
-                addFriendButton->show();
+                friendRequesttoolButton->show();
                 removeFriendButton->setEnabled(false);
                 removeFriendButton->hide();
                 peerDetailsButton->setEnabled(false);
@@ -239,15 +239,13 @@ void SecurityItem::updateItem()
 
 		if (details.accept_connection)
 		{
-			addFriendButton->setEnabled(false);
-			addFriendButton->hide();
+			friendRequesttoolButton->hide();
 			removeFriendButton->setEnabled(true);
 			removeFriendButton->show();
 		}
 		else
 		{
-			addFriendButton->setEnabled(true);
-			addFriendButton->show();
+			friendRequesttoolButton->show();
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
 		}
@@ -305,16 +303,6 @@ void SecurityItem::removeItem()
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
-void SecurityItem::addFriend()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "SecurityItem::addFriend()";
-	std::cerr << std::endl;
-#endif
-
-	ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageTrust);
-}
-
 void SecurityItem::removeFriend()
 {
 #ifdef DEBUG_ITEM
@@ -326,6 +314,17 @@ void SecurityItem::removeFriend()
 	{
 		rsPeers->removeFriend(mGpgId);
 	}
+}
+
+void SecurityItem::friendRequest()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "SecurityItem::friendReguest()";
+	std::cerr << std::endl;
+#endif
+    
+    FriendRequest *frDlg = new FriendRequest(mGpgId);
+    frDlg->show();
 }
 
 void SecurityItem::peerDetails()
