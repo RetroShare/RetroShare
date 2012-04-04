@@ -18,10 +18,12 @@ class PGPIdType
 {
 	public:
 		static const int KEY_ID_SIZE = 8 ;
-
 		PGPIdType() {}
-		PGPIdType(const std::string& hex_string) ;
-		PGPIdType(const unsigned char bytes[]) ;
+
+		static PGPIdType fromUserId_hex(const std::string& hex_string) ;
+		static PGPIdType fromFingerprint_hex(const std::string& hex_string) ;
+
+		explicit PGPIdType(const unsigned char bytes[]) ;
 
 		std::string toStdString() const ;
 		uint64_t toUInt64() const ;
@@ -29,6 +31,33 @@ class PGPIdType
 
 	private:
 		unsigned char bytes[KEY_ID_SIZE] ;
+};
+class PGPFingerprintType
+{
+	public:
+		static const int KEY_FINGERPRINT_SIZE = 20 ;
+
+		static PGPFingerprintType fromFingerprint_hex(const std::string& hex_string) ;
+		explicit PGPFingerprintType(const unsigned char bytes[]) ;
+
+		std::string toStdString() const ;
+		const unsigned char *toByteArray() const { return &bytes[0] ; }
+
+		bool operator==(const PGPFingerprintType& fp) const
+		{
+			for(int i=0;i<KEY_FINGERPRINT_SIZE;++i)
+				if(fp.bytes[i] != bytes[i])
+					return false ;
+			return true ;
+		}
+		bool operator!=(const PGPFingerprintType& fp) const
+		{
+			return !operator==(fp) ;
+		}
+
+		PGPFingerprintType() {}
+	private:
+		unsigned char bytes[KEY_FINGERPRINT_SIZE] ;
 };
 
 class PGPHandler
@@ -51,7 +80,9 @@ class PGPHandler
 		bool TrustCertificate(const PGPIdType& id, int trustlvl);
 
 		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
-		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const std::string &withfingerprint) ;
+		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
+
+		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 
 		// Debug stuff.
 		virtual void printKeys() const ;

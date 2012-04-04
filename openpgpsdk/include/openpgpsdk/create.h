@@ -43,6 +43,8 @@ struct ops_create_info
     ops_error_t *errors;	/*!< an error stack */
     };
 
+void ops_prepare_parent_info(ops_create_info_t *parent_info,
+                             ops_writer_info_t *winfo);
 ops_create_info_t *ops_create_info_new(void);
 void ops_create_info_delete(ops_create_info_t *info);
 

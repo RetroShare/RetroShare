@@ -212,6 +212,9 @@ static ops_map_t symmetric_algorithm_map[] =
     { OPS_SA_AES_192,		"AES (192-bit key)" },
     { OPS_SA_AES_256, 		"AES (256-bit key)" },
     { OPS_SA_TWOFISH, 		"Twofish(256-bit key)" },
+    { OPS_SA_CAMELLIA_128,	"Camellia (128-bit key)" },
+    { OPS_SA_CAMELLIA_192,	"Camellia (192-bit key)" },
+    { OPS_SA_CAMELLIA_256, 	"Camellia (256-bit key)" },
     { 0x00,		NULL }, /* this is the end-of-array marker */
     };
 

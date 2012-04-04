@@ -127,7 +127,6 @@ typedef enum
 #define OPS_PTAG_NF_CONTENT_TAG_SHIFT	0
 
 
-
 /** Structure to hold one parse error string. */
 typedef struct
     {
@@ -310,6 +309,9 @@ typedef enum
     OPS_SA_AES_192	=8, /*!< AES with 192-bit key */
     OPS_SA_AES_256	=9, /*!< AES with 256-bit key */
     OPS_SA_TWOFISH	=10, /*!< Twofish with 256-bit key (TWOFISH) */
+    OPS_SA_CAMELLIA_128 =11, /*!< Camellia with 128-bit key */
+    OPS_SA_CAMELLIA_192 =12, /*!< Camellia with 192-bit key */
+    OPS_SA_CAMELLIA_256 =13, /*!< Camellia with 256-bit key */
     } ops_symmetric_algorithm_t;
 
 /** Hashing Algorithm Numbers.
@@ -358,7 +360,8 @@ typedef struct
     ops_public_key_t		public_key;
     ops_s2k_usage_t		s2k_usage;
     ops_s2k_specifier_t		s2k_specifier;
-    ops_symmetric_algorithm_t	algorithm;
+    ops_symmetric_algorithm_t	algorithm;  // the algorithm used to encrypt
+    					    // the key
     ops_hash_algorithm_t	hash_algorithm;
     unsigned char		salt[OPS_SALT_SIZE];
     unsigned			octet_count;
@@ -658,8 +661,8 @@ typedef struct
 /** Signature Subpacket : Revocation Key */
 typedef struct
     {
-    unsigned char	cclass;
-    unsigned char	algid;
+    unsigned char clss;  /* class - name changed for C++ */
+    unsigned char algid;
     unsigned char fingerprint[20];
     } ops_ss_revocation_key_t;
 

@@ -34,6 +34,10 @@
 
 static int debug=0;
 
+#define LINE_LENGTH 75
+
+static const char newline[] = "\r\n";
+
 /**
  * \struct dash_escaped_arg_t
  */
@@ -164,6 +168,8 @@ ops_boolean_t ops_writer_push_clearsigned(ops_create_info_t *info,
  */
 typedef struct
     {
+    size_t chars_written;
+    ops_boolean_t writing_trailer;
     unsigned pos;
     unsigned char t;
     unsigned checksum;
@@ -171,6 +177,17 @@ typedef struct
 
 static char b64map[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 "0123456789+/";
+
+static ops_boolean_t check_newline(base64_arg_t* arg,
+                                   ops_error_t **errors,
+				   ops_writer_info_t *winfo)
+    {
+    arg->chars_written++;
+    if (!arg->writing_trailer && arg->chars_written % LINE_LENGTH == 0)
+	if (!ops_stacked_write(newline, strlen(newline), errors, winfo))
+	    return ops_false;
+    return ops_true;
+    }
 
 static ops_boolean_t base64_writer(const unsigned char *src,
 				   unsigned length,ops_error_t **errors,
@@ -209,6 +226,8 @@ static ops_boolean_t base64_writer(const unsigned char *src,
 	    arg->t+=src[n] >> 6;
 	    if(!ops_stacked_write(&b64map[arg->t],1,errors,winfo))
 		return ops_false;
+            if(!check_newline(arg, errors, winfo))
+		return ops_false;
 
 	    /* 00000000 00000000 00XXXXXX */
 	    if(!ops_stacked_write(&b64map[src[n++]&0x3f],1,errors,winfo))
@@ -216,8 +235,9 @@ static ops_boolean_t base64_writer(const unsigned char *src,
 
 	    arg->pos=0;
 	    }
-	}
-
+	if (!check_newline(arg, errors, winfo))
+	    return ops_false;
+        }
     return ops_true;
     }
 
@@ -246,7 +266,10 @@ static ops_boolean_t signature_finaliser(ops_error_t **errors,
     c[0]=arg->checksum >> 16;
     c[1]=arg->checksum >> 8;
     c[2]=arg->checksum;
-    /* push the checksum through our own writer */
+    /* push the checksum through our own writer. Turn off the
+       writing_body flag so we don't put a newline in the trailer.
+     */
+    arg->writing_trailer = ops_true;
     if(!base64_writer(c,3,errors,winfo))
 	return ops_false;
 
@@ -278,7 +301,7 @@ static ops_boolean_t linebreak_writer(const unsigned char *src,
 
 	if(arg->pos == BREAKPOS)
 	    {
-	    if(!ops_stacked_write("\r\n",2,errors,winfo))
+	    if(!ops_stacked_write(newline,strlen(newline),errors,winfo))
 		return ops_false;
 	    arg->pos=0;
 	    }
@@ -348,7 +371,10 @@ static ops_boolean_t armoured_message_finaliser(ops_error_t **errors,
     c[0]=arg->checksum >> 16;
     c[1]=arg->checksum >> 8;
     c[2]=arg->checksum;
-    /* push the checksum through our own writer */
+    /* push the checksum through our own writer. Turn off the
+       writing_body flag so we don't put a newline in the trailer.
+     */
+    arg->writing_trailer = ops_true;
     if(!base64_writer(c,3,errors,winfo))
 	return ops_false;
 
@@ -368,7 +394,7 @@ void ops_writer_push_armoured_message(ops_create_info_t *info)
     base64_arg_t *base64;
 
     ops_write(header,sizeof header-1,info);
-    ops_write("\r\n",2,info);
+    ops_write(newline,strlen(newline),info);
     base64=ops_mallocz(sizeof *base64);
     base64->checksum=CRC24_INIT;
     ops_writer_push(info,base64_writer,armoured_message_finaliser,ops_writer_generic_destroyer,base64);
@@ -421,7 +447,10 @@ static ops_boolean_t armoured_finaliser(ops_armor_type_t type, ops_error_t **err
     c[0]=arg->checksum >> 16;
     c[1]=arg->checksum >> 8;
     c[2]=arg->checksum;
-    /* push the checksum through our own writer */
+    /* push the checksum through our own writer. Turn off the
+       writing_body flag so we don't put a newline in the trailer.
+     */
+    arg->writing_trailer = ops_true;
     if(!base64_writer(c,3,errors,winfo))
 	return ops_false;
 

@@ -371,12 +371,14 @@ ops_boolean_t ops_limited_read(unsigned char *dest,size_t length,
    \ingroup Core_ReadPackets
    \brief Call ops_limited_read on next in stack
 */
-ops_boolean_t ops_stacked_limited_read(unsigned char *dest,unsigned length,
+ops_boolean_t ops_stacked_limited_read(void *dest, unsigned length,
 				       ops_region_t *region,
 				       ops_error_t **errors,
 				       ops_reader_info_t *rinfo,
 				       ops_parse_cb_info_t *cbinfo)
-    { return ops_limited_read(dest,length,region,errors,rinfo->next,cbinfo); }
+    {
+    return ops_limited_read(dest, length, region, errors, rinfo->next, cbinfo);
+    }
 
 static ops_boolean_t limited_read(unsigned char *dest,unsigned length,
 				  ops_region_t *region,ops_parse_info_t *info)
@@ -989,10 +991,6 @@ void ops_public_key_free(ops_public_key_t *p)
 	free_BN(&p->key.elgamal.g);
 	free_BN(&p->key.elgamal.y);
 	break;
-
- //case 0:
-     // nothing to free
-  //   break;
      
     default:
 	assert(0);
@@ -1251,8 +1249,6 @@ static int parse_user_id(ops_region_t *region,ops_parse_info_t *pinfo)
 
     CBP(pinfo,OPS_PTAG_CT_USER_ID,&content);
 
-    free(C.user_id.user_id) ;
-
     return 1;
     }
 
@@ -1307,6 +1303,7 @@ void ops_signature_free(ops_signature_t *sig)
     default:
 	assert(0);
 	}
+    free(sig->info.v4_hashed_data);
     }
 
 /**
@@ -1609,10 +1606,10 @@ static int parse_one_signature_subpacket(ops_signature_t *sig,
 	break;
 
     case OPS_PTAG_SS_REVOCATION_KEY:
-	/* octet 0 = class. Bit 0x80 must be set */
-	if(!limited_read (&C.ss_revocation_key.cclass,1,&subregion,pinfo))
+	/* octet 0 = clss. Bit 0x80 must be set */
+	if(!limited_read (&C.ss_revocation_key.clss,1,&subregion,pinfo))
 	    return 0;
-	if(!(C.ss_revocation_key.cclass&0x80))
+	if(!(C.ss_revocation_key.clss&0x80))
 	    {
 	    printf("Warning: OPS_PTAG_SS_REVOCATION_KEY class: "
 		   "Bit 0x80 should be set\n");
@@ -1905,8 +1902,6 @@ static int parse_v4_signature(ops_region_t *region,ops_parse_info_t *pinfo)
         }
 
     CBP(pinfo,OPS_PTAG_CT_SIGNATURE_FOOTER,&content);
-
-    free(C.signature.info.v4_hashed_data) ;
 
     return 1;
     }
@@ -2227,7 +2222,6 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
     int ret=1;
     ops_region_t encregion;
     ops_region_t *saved_region=NULL;
-    size_t checksum_length=2;
     ops_hash_t checkhash;
     int blocksize;
     ops_boolean_t crypted;
@@ -2252,8 +2246,6 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
     if(!limited_read(c,1,region,pinfo))
 	return 0;
     C.secret_key.s2k_usage=c[0];
-    if(C.secret_key.s2k_usage == OPS_S2KU_ENCRYPTED_AND_HASHED)
-	checksum_length=20;
 
     if(C.secret_key.s2k_usage == OPS_S2KU_ENCRYPTED
        || C.secret_key.s2k_usage == OPS_S2KU_ENCRYPTED_AND_HASHED)
@@ -2891,6 +2883,7 @@ static int ops_parse_one_packet(ops_parse_info_t *pinfo,
 	{
 	C.error.error="Format error (ptag bit not set)";
 	CBP(pinfo,OPS_PARSER_ERROR,&content);
+        OPS_ERROR(&pinfo->errors, OPS_E_P_UNKNOWN_TAG, C.error.error);
 	return 0;
 	}
     C.ptag.new_format=!!(*ptag&OPS_PTAG_NEW_FORMAT);
@@ -2904,7 +2897,7 @@ static int ops_parse_one_packet(ops_parse_info_t *pinfo,
 	}
     else
 	{
-	ops_boolean_t rb;
+	ops_boolean_t rb = ops_false;
 
 	C.ptag.content_tag=(*ptag&OPS_PTAG_OF_CONTENT_TAG_MASK)
 	    >> OPS_PTAG_OF_CONTENT_TAG_SHIFT;
@@ -2930,8 +2923,11 @@ static int ops_parse_one_packet(ops_parse_info_t *pinfo,
 	    break;
 	    }
 	if(!rb)
-	    return 0;
-	}
+            {
+            OPS_ERROR(&pinfo->errors, OPS_E_P, "Cannot read tag length");
+            return 0;
+            }
+        }
 
     CBP(pinfo,OPS_PARSER_PTAG,&content);
 
@@ -3028,17 +3024,17 @@ static int ops_parse_one_packet(ops_parse_info_t *pinfo,
 	{
 	C.packet.length=pinfo->rinfo.alength;
 	C.packet.raw=pinfo->rinfo.accumulated;
+        
+	CBP(pinfo,OPS_PARSER_PACKET_END,&content);
+	//free(pinfo->rinfo.accumulated);
 	pinfo->rinfo.accumulated=NULL;
 	pinfo->rinfo.asize=0;
-	CBP(pinfo,OPS_PARSER_PACKET_END,&content);
 	}
     else
        C.packet.raw = NULL ;
 
     pinfo->rinfo.alength=0;
 	
-	free(C.packet.raw) ;
-
     if(r < 0)
 	return -1;
 
@@ -3099,11 +3095,13 @@ int ops_parse(ops_parse_info_t *pinfo)
     unsigned long pktlen;
 
     do
+        // Parse until we get a return code of 0 (error) or -1 (EOF)
 	{
 	r=ops_parse_one_packet(pinfo,&pktlen);
-	} while (r != -1);
+	} while (r > 0);
 
     return pinfo->errors ? 0 : 1;
+    return r == -1 ? 0 : 1;
     }
 
 /**
@@ -3117,8 +3115,7 @@ int ops_parse(ops_parse_info_t *pinfo)
 
 int ops_parse_and_print_errors(ops_parse_info_t *pinfo)
     {
-    int r;
-    r=ops_parse(pinfo);
+    ops_parse(pinfo);
     ops_print_errors(pinfo->errors);
     return pinfo->errors ? 0 : 1;
     }

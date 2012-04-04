@@ -71,7 +71,7 @@ typedef struct
     } validate_key_cb_arg_t;
 
 /** Struct use with the validate_data_cb callback */
-typedef struct
+typedef struct validate_data_cb_arg
     {
     enum
         {

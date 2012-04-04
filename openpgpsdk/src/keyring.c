@@ -61,16 +61,8 @@ ops_keydata_t *ops_keydata_new(void)
     { return ops_mallocz(sizeof(ops_keydata_t)); }
 
 
-/**
- \ingroup HighLevel_Keyring
-
- \brief Frees keydata and its memory
-
- \param keydata Key to be freed.
-
- \note This frees the keydata itself, as well as any other memory alloc-ed by it. 
-*/
-void ops_keydata_free(ops_keydata_t *keydata)
+// Frees the content of a keydata structure, but not the keydata itself.
+static void keydata_internal_free(ops_keydata_t *keydata)
     {
     unsigned n;
 
@@ -98,7 +90,22 @@ void ops_keydata_free(ops_keydata_t *keydata)
     else
 	ops_secret_key_free(&keydata->key.skey);
 
-/*    free(keydata); */
+    }
+
+/**
+ \ingroup HighLevel_Keyring
+
+ \brief Frees keydata and its memory
+
+ \param keydata Key to be freed.
+
+ \note This frees the keydata itself, as well as any other memory
+       alloc-ed by it.
+*/
+void ops_keydata_free(ops_keydata_t *keydata)
+    {
+    keydata_internal_free(keydata);
+    free(keydata);
     }
 
 // \todo check where userid pointers are copied
@@ -420,15 +427,11 @@ const unsigned char* ops_get_user_id(const ops_keydata_t *key, unsigned index)
 
 ops_boolean_t ops_is_key_supported(const ops_keydata_t *keydata)
     {
-    if ( keydata->type == OPS_PTAG_CT_PUBLIC_KEY ) {
-        if ( keydata->key.pkey.algorithm == OPS_PKA_RSA ) {
+    if(keydata->type == OPS_PTAG_CT_PUBLIC_KEY)
+	{
+        if(keydata->key.pkey.algorithm == OPS_PKA_RSA)
             return ops_true;
         }
-    } else if ( keydata->type == OPS_PTAG_CT_PUBLIC_KEY ) {
-        if ( keydata->key.skey.algorithm == (ops_symmetric_algorithm_t)OPS_PKA_RSA ) {
-            return ops_true;
-        }
-    }
     return ops_false;
     }
 
@@ -688,9 +691,8 @@ ops_boolean_t ops_keyring_read_from_file(ops_keyring_t *keyring, const ops_boole
 
     //    ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_RAW);
     ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_PARSED);
-
-#ifdef WIN32
-    fd=open(filename,O_RDONLY|O_BINARY);
+#ifdef WINDOWS_SYS
+    fd=open(filename,O_RDONLY | O_BINARY);
 #else
     fd=open(filename,O_RDONLY);
 #endif
@@ -766,10 +768,9 @@ ops_boolean_t ops_keyring_read_from_mem(ops_keyring_t *keyring, const ops_boolea
     ops_parse_info_t *pinfo=NULL;
     ops_boolean_t res = ops_true;
 
-    pinfo=ops_parse_info_new();
+    ops_setup_memory_read(&pinfo, mem, NULL, cb_keyring_read,
+			  OPS_ACCUMULATE_NO);
     ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_PARSED);
-
-    ops_setup_memory_read(&pinfo, mem, NULL, cb_keyring_read, OPS_ACCUMULATE_NO);
 
     if (armour)
         { ops_reader_push_dearmour(pinfo); }
@@ -787,7 +788,9 @@ ops_boolean_t ops_keyring_read_from_mem(ops_keyring_t *keyring, const ops_boolea
     if (armour)
         ops_reader_pop_dearmour(pinfo);
 
-    // don't call teardown_memory_read because memory was passed in
+    // don't call teardown_memory_read because memory was passed
+    // in. But we need to free the parse_info object allocated by
+    // ops_setup_memory_read().
     ops_parse_info_delete(pinfo);
 
     return res;
@@ -804,9 +807,10 @@ ops_boolean_t ops_keyring_read_from_mem(ops_keyring_t *keyring, const ops_boolea
  */
 void ops_keyring_free(ops_keyring_t *keyring)
     {
-		 int n;
-		 for(n=0;n<keyring->nkeys;++n)
-			 ops_keydata_free(&keyring->keys[n]) ;
+    int i;
+
+    for (i = 0; i < keyring->nkeys; i++)
+        keydata_internal_free(&keyring->keys[i]);
 
     free(keyring->keys);
     keyring->keys=NULL;

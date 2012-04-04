@@ -29,37 +29,116 @@ std::string	PGPIdType::toStdString() const
 
 	return res ;
 }
+std::string	PGPFingerprintType::toStdString() const
+{
+	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
 
-PGPIdType::PGPIdType(const std::string& s)
+	std::string res ;
+
+	for(int j = 0; j < KEY_FINGERPRINT_SIZE; j++)
+	{
+		res += out[ (bytes[j]>>4) ] ;
+		res += out[ bytes[j] & 0xf ] ;
+	}
+
+	return res ;
+}
+
+
+PGPIdType PGPIdType::fromUserId_hex(const std::string& s)
 {
 	int n=0;
 	if(s.length() != KEY_ID_SIZE*2)
 		throw std::runtime_error("PGPIdType::PGPIdType: can only init from 16 chars hexadecimal string") ;
 
+	PGPIdType res ;
+
 	for(int i = 0; i < KEY_ID_SIZE; ++i)
 	{
-		bytes[i] = 0 ;
+		res.bytes[i] = 0 ;
 
 		for(int k=0;k<2;++k)
 		{
 			char b = s[n++] ;
 
 			if(b >= 'A' && b <= 'F')
-				bytes[i] += (b-'A'+10) << 4*(1-k) ;
+				res.bytes[i] += (b-'A'+10) << 4*(1-k) ;
 			else if(b >= 'a' && b <= 'f')
-				bytes[i] += (b-'a'+10) << 4*(1-k) ;
+				res.bytes[i] += (b-'a'+10) << 4*(1-k) ;
 			else if(b >= '0' && b <= '9')
-				bytes[i] += (b-'0') << 4*(1-k) ;
+				res.bytes[i] += (b-'0') << 4*(1-k) ;
 			else
 				throw std::runtime_error("PGPIdType::Sha1CheckSum: can't init from non pure hexadecimal string") ;
 		}
 	}
+	return res ;
 }
+PGPIdType PGPIdType::fromFingerprint_hex(const std::string& s)
+{
+	if(s.length() != PGPFingerprintType::KEY_FINGERPRINT_SIZE*2)
+		throw std::runtime_error("PGPIdType::PGPIdType: can only init from 40 chars hexadecimal string") ;
 
+	PGPIdType res ;
+
+	int n=PGPFingerprintType::KEY_FINGERPRINT_SIZE - PGPIdType::KEY_ID_SIZE -1;
+
+	for(int i = 0; i < PGPIdType::KEY_ID_SIZE; ++i)
+	{
+		res.bytes[i] = 0 ;
+
+		for(int k=0;k<2;++k)
+		{
+			char b = s[n++] ;
+
+			if(b >= 'A' && b <= 'F')
+				res.bytes[i] += (b-'A'+10) << 4*(1-k) ;
+			else if(b >= 'a' && b <= 'f')
+				res.bytes[i] += (b-'a'+10) << 4*(1-k) ;
+			else if(b >= '0' && b <= '9')
+				res.bytes[i] += (b-'0') << 4*(1-k) ;
+			else
+				throw std::runtime_error("PGPIdType::Sha1CheckSum: can't init from non pure hexadecimal string") ;
+		}
+	}
+	return res ;
+}
+PGPFingerprintType PGPFingerprintType::fromFingerprint_hex(const std::string& s)
+{
+	int n=0;
+	if(s.length() != PGPFingerprintType::KEY_FINGERPRINT_SIZE*2)
+		throw std::runtime_error("PGPIdType::PGPIdType: can only init from 40 chars hexadecimal string") ;
+
+	PGPFingerprintType res ;
+
+	for(int i = 0; i < PGPFingerprintType::KEY_FINGERPRINT_SIZE; ++i)
+	{
+		res.bytes[i] = 0 ;
+
+		for(int k=0;k<2;++k)
+		{
+			char b = s[n++] ;
+
+			if(b >= 'A' && b <= 'F')
+				res.bytes[i] += (b-'A'+10) << 4*(1-k) ;
+			else if(b >= 'a' && b <= 'f')
+				res.bytes[i] += (b-'a'+10) << 4*(1-k) ;
+			else if(b >= '0' && b <= '9')
+				res.bytes[i] += (b-'0') << 4*(1-k) ;
+			else
+				throw std::runtime_error("PGPIdType::Sha1CheckSum: can't init from non pure hexadecimal string") ;
+		}
+	}
+	return res ;
+}
 PGPIdType::PGPIdType(const unsigned char b[])
 {
-	memcpy(bytes,b,8) ;
+	memcpy(bytes,b,KEY_ID_SIZE) ;
 }
+PGPFingerprintType::PGPFingerprintType(const unsigned char b[])
+{
+	memcpy(bytes,b,KEY_FINGERPRINT_SIZE) ;
+}
+
 
 uint64_t PGPIdType::toUInt64() const
 {
@@ -210,7 +289,6 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo);
 
 	ops_keydata_free(key) ;
-	free(key) ;
 
 	// 3 - read the file into a keyring
 	
@@ -388,18 +466,48 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	return true ;
 }
 
-bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const std::string &withfingerprint)
+bool PGPHandler::getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const
 {
-	ops_memory_t *mem = ops_memory_new() ;
-	ops_memory_add(mem,(unsigned char *)sign,sign_len) ;
+	const ops_keydata_t *key = getPublicKey(id) ;
 
-	ops_validate_result_t *result = (ops_validate_result_t*)ops_mallocz(sizeof(ops_validate_result_t)) ;
-	ops_boolean_t res = ops_validate_mem(result, mem, ops_false, _pubring);
+	if(key == NULL)
+		return false ;
 
-	ops_validate_result_free(result) ;
+	ops_fingerprint_t f ;
+	ops_fingerprint(&f,&key->key.pkey) ; 
 
-	// no need to clear mem. It's already deleted by ops_validate_mem (weird but true).
+	fp = PGPFingerprintType(f.fingerprint) ;
 
-	return res ;
+	return true ;
+}
+
+bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& key_fingerprint)
+{
+	PGPIdType id = PGPIdType::fromFingerprint_hex(key_fingerprint.toStdString()) ;
+	const ops_keydata_t *key = getPublicKey(id) ;
+
+	if(key == NULL)
+	{
+		std::cerr << "No key returned by fingerprint " << key_fingerprint.toStdString() << ", and ID " << id.toStdString() << ", signature verification failed!" << std::endl;
+		return false ;
+	}
+
+	// Check that fingerprint is the same.
+	const ops_public_key_t *pkey = &key->key.pkey ;
+	ops_fingerprint_t fp ;
+	ops_fingerprint(&fp,pkey) ; 
+
+	if(key_fingerprint != PGPFingerprintType(fp.fingerprint))
+	{
+		std::cerr << "Key fingerprint does not match " << key_fingerprint.toStdString() << ", for ID " << id.toStdString() << ", signature verification failed!" << std::endl;
+		return false ;
+	}
+
+	ops_signature_t signature ;
+//	ops_signature_add_data(&signature,sign,sign_len) ;
+
+//	ops_boolean_t valid=check_binary_signature(data_len,data,signature,pkey) ;
+
+	return false ;
 }
 

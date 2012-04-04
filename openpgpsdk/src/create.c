@@ -103,7 +103,8 @@ ops_boolean_t ops_write_struct_user_id(ops_user_id_t *id,
  *
  * \return return value from ops_write_struct_user_id()
  */
-ops_boolean_t ops_write_user_id(const unsigned char *user_id,ops_create_info_t *info)
+ops_boolean_t ops_write_user_id(const unsigned char *user_id,
+				ops_create_info_t *info)
     {
     ops_user_id_t id;
 
@@ -204,6 +205,7 @@ static ops_boolean_t write_public_key_body(const ops_public_key_t *key,
 	    && ops_write_mpi(key->key.elgamal.y,info);
 
     default:
+	fprintf(stderr, "Unknown algorithm %d\n", key->algorithm);
 	assert(0);
 	break;
 	}
@@ -239,7 +241,8 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
     if (!ops_write_scalar(key->algorithm,1,info))
         return ops_false;
 
-    assert(key->s2k_specifier==OPS_S2KS_SIMPLE || key->s2k_specifier==OPS_S2KS_SALTED); // = 1 \todo could also be iterated-and-salted
+    assert(key->s2k_specifier==OPS_S2KS_SIMPLE
+	   || key->s2k_specifier==OPS_S2KS_SALTED); // = 1 \todo could also be iterated-and-salted
     if (!ops_write_scalar(key->s2k_specifier,1,info))
         return ops_false;
     
@@ -268,7 +271,8 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
         */
 
     default:
-        fprintf(stderr,"invalid/unsupported s2k specifier %d\n", key->s2k_specifier);
+        fprintf(stderr,"invalid/unsupported s2k specifier %d\n",
+		key->s2k_specifier);
         assert(0);
         }
 
@@ -313,7 +317,8 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
             hash.add(&hash, passphrase, pplen);
             hash.finish(&hash, hashed);
 
-            // if more in hash than is needed by session key, use the leftmost octets
+            // if more in hash than is needed by session key, use the
+	    // leftmost octets
             memcpy(session_key+(i*SHA_DIGEST_LENGTH), hashed, use);
             done += use;
             assert(done<=CAST_KEY_LENGTH);
@@ -329,7 +334,8 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
         */
 
     default:
-        fprintf(stderr,"invalid/unsupported s2k specifier %d\n", key->s2k_specifier);
+        fprintf(stderr,"invalid/unsupported s2k specifier %d\n",
+		key->s2k_specifier);
         assert(0);
         }
 
@@ -432,7 +438,9 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
    \endcode
 */
 
-ops_boolean_t ops_write_transferable_public_key(const ops_keydata_t *keydata, ops_boolean_t armoured, ops_create_info_t *info)
+ops_boolean_t ops_write_transferable_public_key(const ops_keydata_t *keydata,
+						ops_boolean_t armoured,
+						ops_create_info_t *info)
     {
     ops_boolean_t rtn;
     unsigned int i=0,j=0;
@@ -758,6 +766,47 @@ ops_boolean_t ops_write_struct_secret_key(const ops_secret_key_t *key,
     }
 
 /**
+ * \ingroup InternalAPI
+ *
+ * \brief Initialise a temporary info structure that can be used for
+ * writing to a writer's parent.
+ *
+ * This is used by writers who want to use the various ops_write functions
+ * in order to write to the parent writer.
+ * Example code:
+ * \code
+ *   ops_boolean_t writer(const unsigned char *src,
+ *                        unsigned length,
+ *                        ops_error_t **errors,
+ *                        ops_writer_info_t *winfo) {
+ *     ops_create_info_t parent;
+ *     ops_prepare_parent_info(&parent, winfo, errors);
+ *
+ *     // The ptag will be written to the parent writer
+ *     ops_write_ptag(OPS_PTAG_CT_LITERAL_DATA, &parent);
+ *
+ *     // The data is written to the parent. This line is
+       // equivalent to:
+ *     //   ops_stacked_write(src, length, errors, winfo);
+ *     ops_boolean_t result = ops_write(src, length, info);
+ *     ops_move_errors(&parent_info, errors);
+ *     return result;
+ * \endcode
+ *
+ * \note It is the responsiblity of the caller to assign space for the parent
+ * structure, typically on the stack. IOn order to report errors correctly,
+ * use ops_move_errors() after the write operation.
+ *
+ * \see ops_move_errors
+ */
+void ops_prepare_parent_info(ops_create_info_t *parent_info,
+                             ops_writer_info_t *winfo)
+    {
+    parent_info->winfo = *winfo->next;
+    parent_info->errors = NULL;
+    }
+
+/**
  * \ingroup Core_Create
  *
  * \brief Create a new ops_create_info_t structure.
@@ -791,7 +840,8 @@ void ops_create_info_delete(ops_create_info_t *info)
  \param cs Checksum to be written
  \return ops_true if OK; else ops_false
 */
-ops_boolean_t ops_calc_session_key_checksum(ops_pk_session_key_t *session_key, unsigned char cs[2])
+ops_boolean_t ops_calc_session_key_checksum(ops_pk_session_key_t *session_key,
+					    unsigned char cs[2])
     {
     unsigned int i=0;
     unsigned long checksum=0;
@@ -814,7 +864,8 @@ ops_boolean_t ops_calc_session_key_checksum(ops_pk_session_key_t *session_key, u
     //    fprintf(stderr," %2x\n",cs[1]);
     }    
 
-static ops_boolean_t create_unencoded_m_buf(ops_pk_session_key_t *session_key, unsigned char *m_buf)
+static ops_boolean_t create_unencoded_m_buf(ops_pk_session_key_t *session_key,
+					    unsigned char *m_buf)
     {
     int i=0;
     //    unsigned long checksum=0;
@@ -826,7 +877,7 @@ static ops_boolean_t create_unencoded_m_buf(ops_pk_session_key_t *session_key, u
 
     m_buf[0]=session_key->symmetric_algorithm;
 
-    assert(session_key->symmetric_algorithm==OPS_SA_CAST5);
+    assert(session_key->symmetric_algorithm == OPS_SA_CAST5);
     for (i=0; i<CAST_KEY_LENGTH; i++)
         {
         m_buf[1+i]=session_key->key[i];
@@ -898,7 +949,8 @@ ops_boolean_t encode_m_buf(const unsigned char *M, size_t mLen,
 \brief Creates an ops_pk_session_key_t struct from keydata
 \param key Keydata to use
 \return ops_pk_session_key_t struct
-\note It is the caller's responsiblity to free the returned pointer
+\note It is the caller's responsiblity to free the returned pointer. Before freeing,
+      the key must be cleared by calling ops_pk_session_key_free()
 \note Currently hard-coded to use CAST5
 \note Currently hard-coded to use RSA
 */
@@ -946,7 +998,8 @@ ops_pk_session_key_t *ops_create_pk_session_key(const ops_keydata_t *key)
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"CAST5 session key created (len=%d):\n ", CAST_KEY_LENGTH);
+        fprintf(stderr,"CAST5 session key created (len=%d):\n ",
+		CAST_KEY_LENGTH);
         for (i=0; i<CAST_KEY_LENGTH; i++)
             fprintf(stderr,"%2x ", session_key->key[i]);
         fprintf(stderr,"\n");
@@ -966,10 +1019,12 @@ ops_pk_session_key_t *ops_create_pk_session_key(const ops_keydata_t *key)
             printf("%2x ", unencoded_m_buf[i]);
         printf("\n");
         }
-    encode_m_buf(&unencoded_m_buf[0], SZ_UNENCODED_M_BUF, pub_key, &encoded_m_buf[0]);
+    encode_m_buf(&unencoded_m_buf[0], SZ_UNENCODED_M_BUF, pub_key,
+		 &encoded_m_buf[0]);
     
     // and encrypt it
-    if(!ops_rsa_encrypt_mpi(encoded_m_buf, sz_encoded_m_buf, pub_key, &session_key->parameters))
+    if(!ops_rsa_encrypt_mpi(encoded_m_buf, sz_encoded_m_buf, pub_key,
+			    &session_key->parameters))
         {
         free (encoded_m_buf);
         return NULL;
@@ -993,7 +1048,9 @@ ops_boolean_t ops_write_pk_session_key(ops_create_info_t *info,
     assert(pksk->algorithm == OPS_PKA_RSA);
 
     return ops_write_ptag(OPS_PTAG_CT_PK_SESSION_KEY, info)
-	&& ops_write_length(1 + 8 + 1 + BN_num_bytes(pksk->parameters.rsa.encrypted_m) + 2, info)
+	&& ops_write_length(1 + 8 + 1
+			    + BN_num_bytes(pksk->parameters.rsa.encrypted_m)
+			    + 2, info)
 	&& ops_write_scalar(pksk->version, 1, info)
 	&& ops_write(pksk->key_id, 8, info)
 	&& ops_write_scalar(pksk->algorithm, 1, info)
@@ -1056,9 +1113,10 @@ ops_boolean_t ops_write_literal_data_from_buf(const unsigned char *data,
 \return ops_true if OK; else ops_false
 */
 
-ops_boolean_t ops_write_literal_data_from_file(const char *filename, 
-                                     const ops_literal_data_type_t type,
-                                     ops_create_info_t *info)
+ops_boolean_t
+ops_write_literal_data_from_file(const char *filename, 
+				 const ops_literal_data_type_t type,
+				 ops_create_info_t *info)
     {
     size_t initial_size=1024;
     int fd=0;
@@ -1066,8 +1124,7 @@ ops_boolean_t ops_write_literal_data_from_file(const char *filename,
     unsigned char buf[1024];
     ops_memory_t* mem=NULL;
     size_t len=0;
-
-#ifdef WIN32
+#ifdef WINDOWS_SYS
     fd=open(filename,O_RDONLY | O_BINARY);
 #else
     fd=open(filename,O_RDONLY);
@@ -1109,7 +1166,8 @@ ops_boolean_t ops_write_literal_data_from_file(const char *filename,
    \param errnum Pointer to error
    \return new ops_memory_t pointer containing the contents of the file
    
-   \note If there was an error opening the file or reading from it, errnum is set to the cause
+   \note If there was an error opening the file or reading from it,
+   errnum is set to the cause
 
    \note It is the caller's responsibility to call ops_memory_free(mem)
 */
@@ -1122,8 +1180,7 @@ ops_memory_t* ops_write_mem_from_file(const char *filename, int* errnum)
     ops_memory_t* mem=NULL;
 
     *errnum=0;
-
-#ifdef WIN32
+#ifdef WINDOWS_SYS 
     fd=open(filename,O_RDONLY | O_BINARY);
 #else
     fd=open(filename,O_RDONLY);
@@ -1165,7 +1222,8 @@ ops_memory_t* ops_write_mem_from_file(const char *filename, int* errnum)
    \return 1 if OK; 0 if error
 */
 
-int ops_write_file_from_buf(const char *filename, const char* buf, const size_t len, const ops_boolean_t overwrite)
+int ops_write_file_from_buf(const char *filename, const char* buf,
+			    const size_t len, const ops_boolean_t overwrite)
     {
     int fd=0;
     size_t n=0;
@@ -1176,9 +1234,10 @@ int ops_write_file_from_buf(const char *filename, const char* buf, const size_t 
         flags |= O_TRUNC;
     else
         flags |= O_EXCL;
-#ifdef WIN32
+#ifdef WINDOWS_SYS
     flags |= O_BINARY;
 #endif
+
     fd=open(filename,flags, 0600);
     if (fd < 0)
         {
@@ -1212,7 +1271,7 @@ ops_boolean_t ops_write_symmetrically_encrypted_data(const unsigned char *data,
     int done=0;
     ops_crypt_t crypt_info;
     int encrypted_sz=0;// size of encrypted data
-    unsigned char *encrypted=(unsigned char *)NULL; // buffer to write encrypted data to
+    unsigned char *encrypted=NULL; // buffer to write encrypted data to
     
     // \todo assume AES256 for now
     ops_crypt_any(&crypt_info, OPS_SA_AES_256);
@@ -1246,7 +1305,8 @@ ops_boolean_t ops_write_one_pass_sig(const ops_secret_key_t* skey,
     {
     unsigned char keyid[OPS_KEY_ID_SIZE];
     if (debug)
-        { fprintf(stderr,"calling ops_keyid in write_one_pass_sig: this calls sha1_init\n"); }
+        fprintf(stderr, "calling ops_keyid in write_one_pass_sig: "
+		"this calls sha1_init\n");
     ops_keyid(keyid,&skey->public_key);
 
     return ops_write_ptag(OPS_PTAG_CT_ONE_PASS_SIGNATURE, info)

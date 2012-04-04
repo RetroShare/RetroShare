@@ -608,7 +608,8 @@ void ops_crypto_init()
 void ops_crypto_finish()
     {
     CRYPTO_cleanup_all_ex_data();
-    ERR_remove_state(0);
+    // FIXME: what should we do instead (function is deprecated)?
+    //    ERR_remove_state(0);
 #ifdef DMALLOC
     CRYPTO_mem_leaks_fp(stderr);
 #endif
@@ -632,18 +633,21 @@ const char *ops_text_from_hash(ops_hash_t *hash)
  \return ops_true if key generated successfully; otherwise ops_false
  \note It is the caller's responsibility to call ops_keydata_free(keydata)
 */
-ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e, ops_keydata_t* keydata)
+ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
+				       ops_keydata_t* keydata)
     {
     ops_secret_key_t *skey=NULL;
-    RSA *rsa=NULL;
+    RSA *rsa=RSA_new();
     BN_CTX *ctx=BN_CTX_new();
+    BIGNUM *ebn=BN_new();
 
     ops_keydata_init(keydata,OPS_PTAG_CT_SECRET_KEY);
     skey=ops_get_writable_secret_key_from_data(keydata);
 
     // generate the key pair
 
-    rsa=RSA_generate_key(numbits,e,NULL,NULL);
+    BN_set_word(ebn,e);
+    RSA_generate_key_ex(rsa,numbits,ebn,NULL);
 
     // populate ops key from ssl key
 

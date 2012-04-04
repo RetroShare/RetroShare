@@ -1123,11 +1123,11 @@ bool AuthGPGimpl::VerifySignature(const void *data, int datalen, const void *sig
 			fprintf(stderr, "AuthGPGimpl::VerifySignature() OK\n");
 #endif
 			if (withfingerprint.empty() == false && withfingerprint == sg->fpr) {
-#ifdef GPG_DEBUG
+//#ifdef GPG_DEBUG
 				fprintf(stderr, "AuthGPGimpl::VerifySignature() for the fingerprint key : ");
 				std::cerr << withfingerprint;
 				fprintf(stderr, "\n");
-#endif
+//#endif
 				valid = true;
 				break;
 			}

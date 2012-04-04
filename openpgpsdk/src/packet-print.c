@@ -496,7 +496,7 @@ static void print_text_breakdown( ops_text_t *text)
     for(i=0 ; i<text->known.used ; i++)
 	{
 	print_indent();
-	printf("%s",prefix);
+	fputs(prefix,stdout);
 	printf("%s\n",text->known.strings[i]);
 	}
 
@@ -513,7 +513,7 @@ static void print_text_breakdown( ops_text_t *text)
     for( i=0; i < text->unknown.used; i++) 
 	{
 	print_indent();
-	printf("%s",prefix);
+	fputs(prefix,stdout);
 	printf("%s\n",text->unknown.strings[i]);
 	}
 	
@@ -849,11 +849,10 @@ int ops_print_packet(const ops_parser_content_t *content_)
 	start_subpacket(content_->tag);
 	/* not yet tested */
 	printf ("  revocation key: class=0x%x",
-		content->ss_revocation_key.cclass);
-	if (content->ss_revocation_key.cclass&0x40)
+		content->ss_revocation_key.clss);
+	if (content->ss_revocation_key.clss&0x40)
 	    printf (" (sensitive)");
-	printf (", algid=0x%x",
-		content->ss_revocation_key.algid);
+	printf (", algid=0x%x", content->ss_revocation_key.algid);
 	printf(", fingerprint=");
 	hexdump(content->ss_revocation_key.fingerprint,20);
 	printf("\n");
@@ -862,8 +861,7 @@ int ops_print_packet(const ops_parser_content_t *content_)
     
     case OPS_PTAG_SS_ISSUER_KEY_ID:
 	start_subpacket(content_->tag);
-	print_hexdump("Issuer Key Id",
-		      &content->ss_issuer_key_id.key_id[0],
+	print_hexdump("Issuer Key Id", &content->ss_issuer_key_id.key_id[0],
 		      sizeof content->ss_issuer_key_id.key_id);
 	end_subpacket();
 	break;
@@ -1434,11 +1432,10 @@ static ops_parse_cb_return_t cb_list_packets(const ops_parser_content_t * conten
 	start_subpacket(content_->tag);
 	/* not yet tested */
 	printf ("  revocation key: class=0x%x",
-		content->ss_revocation_key.class);
-	if (content->ss_revocation_key.class&0x40)
+		content->ss_revocation_key.clss);
+	if (content->ss_revocation_key.clss&0x40)
 	    printf (" (sensitive)");
-	printf (", algid=0x%x",
-		content->ss_revocation_key.algid);
+	printf (", algid=0x%x", content->ss_revocation_key.algid);
 	printf(", fingerprint=");
 	hexdump(content->ss_revocation_key.fingerprint,20);
 	printf("\n");

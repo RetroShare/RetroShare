@@ -19,9 +19,12 @@
  * limitations under the License.
  */
 
+#include <openpgpsdk/compress.h>
 #include <openpgpsdk/crypto.h>
+#include <openpgpsdk/literal.h>
 #include <openpgpsdk/random.h>
 #include <openpgpsdk/readerwriter.h>
+#include <openpgpsdk/streamwriter.h>
 #include <openpgpsdk/writer_armoured.h>
 #include "parse_local.h"
 
@@ -41,8 +44,9 @@
 \return length of MPI
 \note only RSA at present
 */
-int ops_decrypt_and_unencode_mpi(unsigned char *buf,unsigned buflen,const BIGNUM *encmpi,
-		    const ops_secret_key_t *skey)
+int ops_decrypt_and_unencode_mpi(unsigned char *buf, unsigned buflen,
+				 const BIGNUM *encmpi,
+				 const ops_secret_key_t *skey)
     {
     unsigned char encmpibuf[8192];
     unsigned char mpibuf[8192];
@@ -53,7 +57,7 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf,unsigned buflen,const BIGNUM
     mpisize=BN_num_bytes(encmpi);
     /* MPI can't be more than 65,536 */
     assert(mpisize <= sizeof encmpibuf);
-    BN_bn2bin(encmpi,encmpibuf);
+    BN_bn2bin(encmpi, encmpibuf);
 
     assert(skey->public_key.algorithm == OPS_PKA_RSA);
 
@@ -65,9 +69,9 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf,unsigned buflen,const BIGNUM
     fprintf(stderr,"\n");
     */
 
-    n=ops_rsa_private_decrypt(mpibuf,encmpibuf,(BN_num_bits(encmpi)+7)/8,
-			      &skey->key.rsa,&skey->public_key.key.rsa);
-    assert(n!=-1);
+    n=ops_rsa_private_decrypt(mpibuf, encmpibuf, (BN_num_bits(encmpi)+7)/8,
+			      &skey->key.rsa, &skey->public_key.key.rsa);
+    assert(n != -1);
 
     /*
     fprintf(stderr,"decrypted encoded m buf     : ");
@@ -102,7 +106,7 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf,unsigned buflen,const BIGNUM
 
     // this is the unencoded m buf
     if((unsigned)(n-i) <= buflen)
-        memcpy(buf,mpibuf+i,n-i);
+        memcpy(buf, mpibuf+i, n-i);
 
     /*
     printf("decoded m buf:\n");
@@ -120,16 +124,17 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf,unsigned buflen,const BIGNUM
 \brief RSA-encrypt an MPI
 */
 ops_boolean_t ops_rsa_encrypt_mpi(const unsigned char *encoded_m_buf,
-                              const size_t sz_encoded_m_buf,
-			      const ops_public_key_t *pkey,
-			      ops_pk_session_key_parameters_t *skp)
+				  const size_t sz_encoded_m_buf,
+				  const ops_public_key_t *pkey,
+				  ops_pk_session_key_parameters_t *skp)
     {
     assert(sz_encoded_m_buf==(size_t) BN_num_bytes(pkey->key.rsa.n));
 
     unsigned char encmpibuf[8192];
     int n=0;
 
-    n=ops_rsa_public_encrypt(encmpibuf, encoded_m_buf, sz_encoded_m_buf, &pkey->key.rsa);
+    n=ops_rsa_public_encrypt(encmpibuf, encoded_m_buf, sz_encoded_m_buf,
+			     &pkey->key.rsa);
     assert(n!=-1);
 
     if(n <= 0)
@@ -151,7 +156,8 @@ ops_boolean_t ops_rsa_encrypt_mpi(const unsigned char *encoded_m_buf,
 #define MAXBUF 1024
 
 static ops_parse_cb_return_t
-callback_write_parsed(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo);
+callback_write_parsed(const ops_parser_content_t *content_,
+		      ops_parse_cb_info_t *cbinfo);
 
 /**
 \ingroup HighLevel_Crypto
@@ -163,17 +169,20 @@ Encrypt a file
 \param allow_overwrite Allow output file to be overwrwritten if it exists
 \return ops_true if OK; else ops_false
 */
-ops_boolean_t ops_encrypt_file(const char* input_filename, const char* output_filename, const ops_keydata_t *pub_key, const ops_boolean_t use_armour, const ops_boolean_t allow_overwrite)
+ops_boolean_t ops_encrypt_file(const char* input_filename,
+			       const char* output_filename,
+			       const ops_keydata_t *pub_key,
+			       const ops_boolean_t use_armour,
+			       const ops_boolean_t allow_overwrite)
     {
     int fd_in=0;
     int fd_out=0;
 
     ops_create_info_t *cinfo;
-
-#ifdef WIN32
-    fd_in=open(input_filename,O_RDONLY | O_BINARY);
+#ifdef WINDOWS_SYS
+    fd_in=open(input_filename, O_RDONLY | O_BINARY);
 #else
-    fd_in=open(input_filename,O_RDONLY);
+    fd_in=open(input_filename, O_RDONLY );
 #endif
     if(fd_in < 0)
         {
@@ -190,35 +199,74 @@ ops_boolean_t ops_encrypt_file(const char* input_filename, const char* output_fi
         ops_writer_push_armoured_message(cinfo);
 
     // Push the encrypted writer
-    ops_writer_push_encrypt_se_ip(cinfo,pub_key);
+    ops_writer_push_stream_encrypt_se_ip(cinfo, pub_key);
+    ops_writer_push_literal(cinfo);
 
     // Do the writing
 
-    unsigned char* buf=NULL;
-    size_t bufsz=16;
-    int done=0;
+    unsigned buffer[10240];
     for (;;)
         {
-        buf=realloc(buf,done+bufsz);
-        
-	    int n=0;
+	int n=0;
 
-	    n=read(fd_in,buf+done,bufsz);
-	    if (!n)
-		    break;
-	    assert(n>=0);
-        done+=n;
+	n=read(fd_in, buffer, sizeof buffer);
+	if (!n)
+	    break;
+	assert(n >= 0);
+
+	// FIXME: apparently writing can't fail.
+	ops_write(buffer, n, cinfo);
         }
 
-    // This does the writing
-    ops_write(buf,done,cinfo);
 
     // tidy up
     close(fd_in);
-    free(buf);
-    ops_teardown_file_write(cinfo,fd_out);
+    ops_teardown_file_write(cinfo, fd_out);
 
     return ops_true;
+    }
+
+/**
+   \ingroup HighLevel_Crypto
+   Encrypt a compressed, signed stream.
+   \param cinfo the structure describing where the output will be written.
+   \param public_key the key used to encrypt the data
+   \param secret_key the key used to sign the data. If NULL, the data
+          will not be signed
+   \param compress If true, compress the stream before encrypting
+   \param use_armour Write armoured text, if set
+   \see ops_setup_file_write
+
+   Example Code:
+   \code
+    const char* filename = "armour_nocompress_sign.asc";
+    ops_create_info_t *info;
+    int fd = ops_setup_file_write(&info, filename, ops_true);
+    if (fd < 0) {
+      fprintf(stderr, "Cannot write to %s\n", filename);
+      return -1;
+    }
+    ops_encrypt_stream(info, public_key, secret_key, ops_false, ops_true);
+    ops_write(cleartext, strlen(cleartext), info);
+    ops_writer_close(info);
+    ops_create_info_delete(info);
+   \endcode
+*/
+extern void ops_encrypt_stream(ops_create_info_t* cinfo,
+                               const ops_keydata_t* public_key,
+                               const ops_secret_key_t* secret_key,
+                               const ops_boolean_t compress,
+                               const ops_boolean_t use_armour)
+    {
+    if (use_armour)
+	ops_writer_push_armoured_message(cinfo);
+    ops_writer_push_stream_encrypt_se_ip(cinfo, public_key);
+    if (compress)
+	ops_writer_push_compressed(cinfo);
+    if (secret_key != NULL)
+	ops_writer_push_signed(cinfo, OPS_SIG_BINARY, secret_key);
+    else
+	ops_writer_push_literal(cinfo);
     }
 
 /**
@@ -232,7 +280,12 @@ ops_boolean_t ops_encrypt_file(const char* input_filename, const char* output_fi
    \param cb_get_passphrase Callback to use to get passphrase
 */
 
-ops_boolean_t ops_decrypt_file(const char* input_filename, const char* output_filename, ops_keyring_t* keyring, const ops_boolean_t use_armour, const ops_boolean_t allow_overwrite, ops_parse_cb_t* cb_get_passphrase)
+ops_boolean_t ops_decrypt_file(const char* input_filename,
+			       const char* output_filename,
+			       ops_keyring_t* keyring,
+			       const ops_boolean_t use_armour,
+			       const ops_boolean_t allow_overwrite,
+			       ops_parse_cb_t* cb_get_passphrase)
     {
     int fd_in=0;
     int fd_out=0;
@@ -243,9 +296,9 @@ ops_boolean_t ops_decrypt_file(const char* input_filename, const char* output_fi
 
     // setup for reading from given input file
     fd_in=ops_setup_file_read(&pinfo, input_filename, 
-                        NULL,
-                        callback_write_parsed,
-                        ops_false);
+			      NULL,
+			      callback_write_parsed,
+			      ops_false);
     if (fd_in < 0)
         {
         perror(input_filename);
@@ -256,12 +309,13 @@ ops_boolean_t ops_decrypt_file(const char* input_filename, const char* output_fi
 
     if (output_filename)
         {
-        fd_out=ops_setup_file_write(&pinfo->cbinfo.cinfo, output_filename, allow_overwrite);
+        fd_out=ops_setup_file_write(&pinfo->cbinfo.cinfo, output_filename,
+				    allow_overwrite);
 
         if (fd_out < 0)
             { 
             perror(output_filename); 
-            ops_teardown_file_read(pinfo,fd_in);
+            ops_teardown_file_read(pinfo, fd_in);
             return ops_false;
             }
         }
@@ -269,26 +323,29 @@ ops_boolean_t ops_decrypt_file(const char* input_filename, const char* output_fi
         {
         int suffixlen=4;
         char *defaultsuffix=".decrypted";
-        const char *suffix=input_filename+strlen((char *)input_filename)-suffixlen;
-        if (!strcmp(suffix,".gpg") || !strcmp(suffix,".asc"))
+        const char *suffix=input_filename+strlen(input_filename)-suffixlen;
+        if (!strcmp(suffix, ".gpg") || !strcmp(suffix, ".asc"))
             {
             myfilename=ops_mallocz(strlen(input_filename)-suffixlen+1);
-            strncpy(myfilename,input_filename,strlen(input_filename)-suffixlen);
+            strncpy(myfilename, input_filename,
+		    strlen(input_filename)-suffixlen);
             }
         else
             {
             unsigned filenamelen=strlen(input_filename)+strlen(defaultsuffix)+1;
             myfilename=ops_mallocz(filenamelen);
-            snprintf(myfilename,filenamelen,"%s%s",input_filename,defaultsuffix);
+            snprintf(myfilename, filenamelen, "%s%s", input_filename,
+		     defaultsuffix);
             }
 
-        fd_out=ops_setup_file_write(&pinfo->cbinfo.cinfo, myfilename, allow_overwrite);
+        fd_out=ops_setup_file_write(&pinfo->cbinfo.cinfo, myfilename,
+				    allow_overwrite);
         
         if (fd_out < 0)
             { 
             perror(myfilename); 
             free(myfilename);
-            ops_teardown_file_read(pinfo,fd_in);
+            ops_teardown_file_read(pinfo, fd_in);
             return ops_false;
             }
 
@@ -325,9 +382,11 @@ ops_boolean_t ops_decrypt_file(const char* input_filename, const char* output_fi
     }
 
 static ops_parse_cb_return_t
-callback_write_parsed(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)
+callback_write_parsed(const ops_parser_content_t *content_,
+		      ops_parse_cb_info_t *cbinfo)
     {
-    ops_parser_content_union_t* content=(ops_parser_content_union_t *)&content_->content;
+    ops_parser_content_union_t* content
+	=(ops_parser_content_union_t *)&content_->content;
     static ops_boolean_t skipping;
     //    ops_boolean_t write=ops_true;
 
@@ -350,26 +409,26 @@ callback_write_parsed(const ops_parser_content_t *content_,ops_parse_cb_info_t *
 	    puts("Skipping...");
 	    skipping=ops_true;
 	    }
-	fwrite(content->unarmoured_text.data,1,
-	       content->unarmoured_text.length,stdout);
+	fwrite(content->unarmoured_text.data, 1,
+	       content->unarmoured_text.length, stdout);
 	break;
 
     case OPS_PTAG_CT_PK_SESSION_KEY:
-        return callback_pk_session_key(content_,cbinfo);
+        return callback_pk_session_key(content_, cbinfo);
         break;
 
     case OPS_PARSER_CMD_GET_SECRET_KEY:
-        return callback_cmd_get_secret_key(content_,cbinfo);
+        return callback_cmd_get_secret_key(content_, cbinfo);
         break;
 
     case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
         //        return callback_cmd_get_secret_key_passphrase(content_,cbinfo);
-        return cbinfo->cryptinfo.cb_get_passphrase(content_,cbinfo);
+        return cbinfo->cryptinfo.cb_get_passphrase(content_, cbinfo);
         break;
 
     case OPS_PTAG_CT_LITERAL_DATA_BODY:
-        return callback_literal_data(content_,cbinfo);
-		break;
+        return callback_literal_data(content_, cbinfo);
+	break;
 
     case OPS_PTAG_CT_ARMOUR_HEADER:
     case OPS_PTAG_CT_ARMOUR_TRAILER:

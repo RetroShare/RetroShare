@@ -12,7 +12,7 @@ int main(int argc,char *argv[])
 {
 	// test pgp ids.
 	//
-	PGPIdType id("3e5b22140ef56abb") ;
+	PGPIdType id = PGPIdType::fromUserId_hex("3e5b22140ef56abb") ;
 
 	std::cerr << "Id is : " << std::hex << id.toUInt64() << std::endl;
 	std::cerr << "Id st : " << id.toStdString() << std::endl;
@@ -55,7 +55,7 @@ int main(int argc,char *argv[])
 	else
 		std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
 
-	PGPIdType id2(std::string("618E54CF7670FF5E")) ;
+	PGPIdType id2 = PGPIdType::fromUserId_hex("618E54CF7670FF5E") ;
 	std::cerr << "Now extracting key " << id2.toStdString() << " from keyring:" << std::endl ;
 	std::string cert = pgph.SaveCertificateToString(id2,false) ;
 
@@ -87,7 +87,11 @@ int main(int argc,char *argv[])
  
 	std::cerr << "Now verifying signature..." << std::endl;
 
-	if(!pgph.VerifySignBin(test_bin,13,sign,signlen,""))
+	PGPFingerprintType fingerprint ;
+	if(!pgph.getKeyFingerprint(newid,fingerprint) )
+		std::cerr << "Cannot find fingerprint of key id " << newid.toStdString() << std::endl;
+
+	if(!pgph.VerifySignBin(test_bin,13,sign,signlen,fingerprint))
 		std::cerr << "Signature verification failed." << std::endl;
 	else
 		std::cerr << "Signature verification worked!" << std::endl;

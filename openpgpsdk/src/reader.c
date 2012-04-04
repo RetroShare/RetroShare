@@ -81,7 +81,9 @@ void ops_reader_push(ops_parse_info_t *pinfo,ops_reader_t *reader,ops_reader_des
 void ops_reader_pop(ops_parse_info_t *pinfo)
     { 
     ops_reader_info_t *next=pinfo->rinfo.next;
-
+    // We are about to overwrite pinfo->rinfo, so free any data in the
+    // old rinfo structure first.
+    free(pinfo->rinfo.accumulated);
     pinfo->rinfo=*next;
     free(next);
     }

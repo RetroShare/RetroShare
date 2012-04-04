@@ -41,6 +41,8 @@ SOURCES += accumulate.c \
            validate.c \
            writer.c \
            writer_armour.c \
+           writer_partial.c \
+           writer_literal.c \
            writer_encrypt.c \
            writer_encrypt_se_ip.c \
            writer_fd.c \

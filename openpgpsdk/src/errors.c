@@ -208,4 +208,26 @@ void ops_free_errors(ops_error_t *errstack)
     }
 }
 
+/**
+\ingroup InternalAPI
+\brief Moves errors from a create info structure to another error stack.
+
+The error stack wil be moved from the source structure to the destination
+stack. If the destination already has errors defined, the errors will
+be appended.
+*/
+void ops_move_errors(ops_create_info_t *source, ops_error_t **dest)
+    {
+    if (*dest == NULL)
+        *dest = source->errors;
+    else
+	{
+	ops_error_t *last = *dest;
+	while(last->next != NULL)
+	    last = last->next;
+        last->next = source->errors;
+	}
+    source->errors = NULL;
+    }
+
 // EOF

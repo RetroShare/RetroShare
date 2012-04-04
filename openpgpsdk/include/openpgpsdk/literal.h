@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2008 Nominet UK (www.nic.uk)
+ * Copyright (c) 2005-2009 Nominet UK (www.nic.uk)
  * All rights reserved.
  * Contributors: Ben Laurie, Rachel Willmer. The Contributors have asserted
  * their moral rights under the UK Copyright Design and Patents Act 1988 to
@@ -19,12 +19,17 @@
  * limitations under the License.
  */
 
-#ifndef __OPS_STREAMWRITER_H__
-#define __OPS_STREAMWRITER_H__
+#ifndef __OPS_LITERAL_H__
+#define __OPS_LITERAL_H__
 
-#include <openpgpsdk/readerwriter.h>
 
-void ops_writer_push_stream_encrypt_se_ip(ops_create_info_t *cinfo,
-                                          const ops_keydata_t *pub_key);
+ops_boolean_t write_literal_header(ops_create_info_t *info,
+                                   void *header_data);
 
-#endif /*__OPS_STREAMWRITER_H__*/
+void ops_writer_push_literal(ops_create_info_t *info);
+void ops_writer_push_literal_with_opts(ops_create_info_t *info,
+				       unsigned int buf_size);
+
+#endif /* __OPS_LITERAL_H__ */
+
+// EOF

@@ -321,6 +321,7 @@ ops_validate_key_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cb
     case OPS_PARSER_PTAG:
     case OPS_PTAG_CT_SIGNATURE_HEADER:
     case OPS_PARSER_PACKET_END:
+    case OPS_PTAG_CT_TRUST:
 	break;
 
  case OPS_PARSER_CMD_GET_SK_PASSPHRASE:

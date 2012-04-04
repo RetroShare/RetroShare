@@ -24,9 +24,12 @@
 #include <assert.h>
 #include <openssl/cast.h>
 #ifndef OPENSSL_NO_IDEA
-#include <openssl/idea.h>
+# include <openssl/idea.h>
 #endif
 #include <openssl/aes.h>
+#ifndef OPENSSL_NO_CAMELLIA
+# include <openssl/camellia.h>
+#endif
 #include <openssl/des.h>
 #include "parse_local.h"
 
@@ -278,6 +281,138 @@ static const ops_crypt_t aes256=
     TRAILER
     };
 
+#ifndef OPENSSL_NO_CAMELLIA
+
+// CAMELLIA with 128-bit key
+
+#define KEYBITS_CAMELLIA128 128
+
+static void camellia128_init(ops_crypt_t *crypt)
+    {
+    if (crypt->encrypt_key)
+        free(crypt->encrypt_key);
+    crypt->encrypt_key=malloc(sizeof(CAMELLIA_KEY));
+    if (Camellia_set_key(crypt->key,KEYBITS_CAMELLIA128,crypt->encrypt_key))
+        fprintf(stderr,"camellia128_init: Error setting encrypt_key\n");
+
+    if (crypt->decrypt_key)
+        free(crypt->decrypt_key);
+    crypt->decrypt_key=malloc(sizeof(CAMELLIA_KEY));
+    if (Camellia_set_key(crypt->key,KEYBITS_CAMELLIA128,crypt->decrypt_key))
+        fprintf(stderr,"camellia128_init: Error setting decrypt_key\n");
+    }
+
+static void camellia_block_encrypt(ops_crypt_t *crypt,void *out,const void *in)
+    { Camellia_encrypt(in,out,crypt->encrypt_key); }
+
+static void camellia_block_decrypt(ops_crypt_t *crypt,void *out,const void *in)
+    { Camellia_decrypt(in,out,crypt->decrypt_key); }
+
+static void camellia_cfb_encrypt(ops_crypt_t *crypt,void *out,const void *in, size_t count)
+    { 
+    Camellia_cfb128_encrypt(in,out,count,
+                       crypt->encrypt_key, crypt->iv, (int *)&crypt->num,
+                       CAMELLIA_ENCRYPT); 
+    }
+
+static void camellia_cfb_decrypt(ops_crypt_t *crypt,void *out,const void *in, size_t count)
+    { 
+    Camellia_cfb128_encrypt(in,out,count,
+                       crypt->encrypt_key, crypt->iv, (int *)&crypt->num,
+                       CAMELLIA_DECRYPT); 
+    }
+
+static const ops_crypt_t camellia128=
+    {
+    OPS_SA_CAMELLIA_128,
+    CAMELLIA_BLOCK_SIZE,
+    KEYBITS_CAMELLIA128/8,
+    std_set_iv,
+    std_set_key,
+    camellia128_init,
+    std_resync,
+    camellia_block_encrypt,
+    camellia_block_decrypt,
+    camellia_cfb_encrypt,
+    camellia_cfb_decrypt,
+    std_finish,
+    TRAILER
+    };
+
+// CAMELLIA with 192-bit key
+
+#define KEYBITS_CAMELLIA192 192
+
+static void camellia192_init(ops_crypt_t *crypt)
+    {
+    if (crypt->encrypt_key)
+        free(crypt->encrypt_key);
+    crypt->encrypt_key=malloc(sizeof(CAMELLIA_KEY));
+    if (Camellia_set_key(crypt->key,KEYBITS_CAMELLIA192,crypt->encrypt_key))
+        fprintf(stderr,"camellia192_init: Error setting encrypt_key\n");
+
+    if (crypt->decrypt_key)
+        free(crypt->decrypt_key);
+    crypt->decrypt_key=malloc(sizeof(CAMELLIA_KEY));
+    if (Camellia_set_key(crypt->key,KEYBITS_CAMELLIA192,crypt->decrypt_key))
+        fprintf(stderr,"camellia192_init: Error setting decrypt_key\n");
+    }
+
+static const ops_crypt_t camellia192=
+    {
+    OPS_SA_CAMELLIA_192,
+    CAMELLIA_BLOCK_SIZE,
+    KEYBITS_CAMELLIA192/8,
+    std_set_iv,
+    std_set_key,
+    camellia192_init,
+    std_resync,
+    camellia_block_encrypt,
+    camellia_block_decrypt,
+    camellia_cfb_encrypt,
+    camellia_cfb_decrypt,
+    std_finish,
+    TRAILER
+    };
+
+// CAMELLIA with 256-bit key
+
+#define KEYBITS_CAMELLIA256 256
+
+static void camellia256_init(ops_crypt_t *crypt)
+    {
+    if (crypt->encrypt_key)
+        free(crypt->encrypt_key);
+    crypt->encrypt_key=malloc(sizeof(CAMELLIA_KEY));
+    if (Camellia_set_key(crypt->key,KEYBITS_CAMELLIA256,crypt->encrypt_key))
+        fprintf(stderr,"camellia256_init: Error setting encrypt_key\n");
+
+    if (crypt->decrypt_key)
+        free(crypt->decrypt_key);
+    crypt->decrypt_key=malloc(sizeof(CAMELLIA_KEY));
+    if (Camellia_set_key(crypt->key,KEYBITS_CAMELLIA256,crypt->decrypt_key))
+        fprintf(stderr,"camellia256_init: Error setting decrypt_key\n");
+    }
+
+static const ops_crypt_t camellia256=
+    {
+    OPS_SA_CAMELLIA_256,
+    CAMELLIA_BLOCK_SIZE,
+    KEYBITS_CAMELLIA256/8,
+    std_set_iv,
+    std_set_key,
+    camellia256_init,
+    std_resync,
+    camellia_block_encrypt,
+    camellia_block_decrypt,
+    camellia_cfb_encrypt,
+    camellia_cfb_decrypt,
+    std_finish,
+    TRAILER
+    };
+
+#endif  // ndef OPENSSL_NO_CAMELLIA
+
 // Triple DES
 
 static void tripledes_init(ops_crypt_t *crypt)
@@ -309,20 +444,28 @@ static void tripledes_block_decrypt(ops_crypt_t *crypt,void *out,
     DES_ecb3_encrypt((void *)in,out,&keys[0],&keys[1],&keys[2],DES_DECRYPT);
     }
 
-static void tripledes_cfb_encrypt(ops_crypt_t *crypt ATTRIBUTE_UNUSED,void *out ATTRIBUTE_UNUSED,const void *in ATTRIBUTE_UNUSED, size_t count ATTRIBUTE_UNUSED)
+static void tripledes_cfb_encrypt(ops_crypt_t *crypt ATTRIBUTE_UNUSED,
+				  void *out ATTRIBUTE_UNUSED,
+				  const void *in ATTRIBUTE_UNUSED,
+				  size_t count ATTRIBUTE_UNUSED)
     { 
     DES_key_schedule *keys=crypt->encrypt_key;
     DES_ede3_cfb64_encrypt(in,out,count,
-                           &keys[0],&keys[1],&keys[2], (DES_cblock *)crypt->iv, (int *)&crypt->num,
-                       DES_ENCRYPT); 
+                           &keys[0],&keys[1],&keys[2],
+			   (DES_cblock *)crypt->iv, (int *)&crypt->num,
+			   DES_ENCRYPT); 
     }
 
-static void tripledes_cfb_decrypt(ops_crypt_t *crypt ATTRIBUTE_UNUSED,void *out ATTRIBUTE_UNUSED,const void *in ATTRIBUTE_UNUSED, size_t count ATTRIBUTE_UNUSED)
+static void tripledes_cfb_decrypt(ops_crypt_t *crypt ATTRIBUTE_UNUSED,
+				  void *out ATTRIBUTE_UNUSED,
+				  const void *in ATTRIBUTE_UNUSED,
+				  size_t count ATTRIBUTE_UNUSED)
     { 
     DES_key_schedule *keys=crypt->encrypt_key;
     DES_ede3_cfb64_encrypt(in,out,count,
-                           &keys[0],&keys[1],&keys[2], (DES_cblock *)crypt->iv, (int *)&crypt->num,
-                       DES_DECRYPT); 
+                           &keys[0],&keys[1],&keys[2],
+			   (DES_cblock *)crypt->iv, (int *)&crypt->num,
+			   DES_DECRYPT); 
     }
 
 static const ops_crypt_t tripledes=
@@ -360,11 +503,23 @@ static const ops_crypt_t *get_proto(ops_symmetric_algorithm_t alg)
     case OPS_SA_AES_256:
 	return &aes256;
 
+#ifndef OPENSSL_NO_CAMELLIA
+    case OPS_SA_CAMELLIA_128:
+	return &camellia128;
+
+    case OPS_SA_CAMELLIA_192:
+	return &camellia192;
+
+    case OPS_SA_CAMELLIA_256:
+	return &camellia256;
+#endif  // ndef OPENSSL_NO_CAMELLIA
+
     case OPS_SA_TRIPLEDES:
 	return &tripledes;
 
     default:
-        fprintf(stderr,"Unknown algorithm: %d (%s)\n",alg,ops_show_symmetric_algorithm(alg));
+        fprintf(stderr,"Unknown algorithm: %d (%s)\n",alg,
+		ops_show_symmetric_algorithm(alg));
         //	assert(0);
 	}
 
@@ -483,6 +638,9 @@ ops_boolean_t ops_is_sa_supported(ops_symmetric_algorithm_t alg)
         {
     case OPS_SA_AES_128:
     case OPS_SA_AES_256:
+    case OPS_SA_CAMELLIA_128:
+    case OPS_SA_CAMELLIA_192:
+    case OPS_SA_CAMELLIA_256:
     case OPS_SA_CAST5:
     case OPS_SA_TRIPLEDES:
 #ifndef OPENSSL_NO_IDEA
