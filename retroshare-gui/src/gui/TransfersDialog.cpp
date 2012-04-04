@@ -28,6 +28,7 @@
 #include <QTreeView>
 #include <QShortcut>
 #include <QFileInfo>
+#include <QDir>
 #include <QMessageBox>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/RsCollectionFile.h>
@@ -576,9 +577,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 		if (addOpenFileOption)
 			contextMnu.addAction( openfileAct);
 
-#ifndef WIN32		
 		contextMnu.addAction( previewfileAct);
-#endif		
 		contextMnu.addAction( openfolderAct);
 		contextMnu.addAction( detailsfileAct);
 		contextMnu.addSeparator();
@@ -1404,58 +1403,42 @@ void TransfersDialog::previewTransfer()
 		break;
 	}
 
-	size_t pos = info.fname.find_last_of('.');
-	if (pos == std::string::npos) 
-		return;	/* can't identify type of file */
-
 	/* check if the file is a media file */
-	if (!misc::isPreviewable(info.fname.substr(pos + 1).c_str())) return;
+	if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(info.fname.c_str())).suffix())) return;
 
 	/* make path for downloaded or downloading files */
-	bool complete = false;
-	std::string path;
+	QFileInfo fileInfo;
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
-		path = info.path + "/" + info.fname;
-		complete = true;
+		fileInfo = QFileInfo(QString::fromUtf8(info.path.c_str()), QString::fromUtf8(info.fname.c_str()));
 	} else {
-		path = rsFiles->getPartialsDirectory() + "/" + info.hash;
+		fileInfo = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(info.hash.c_str()));
+
+		QString linkName = QFileInfo(QDir::temp(), QString::fromUtf8(info.fname.c_str())).absoluteFilePath();
+		if (QFile::link(fileInfo.absoluteFilePath(), linkName)) {
+			fileInfo.setFile(linkName);
+		} else {
+			std::cerr << "previewTransfer(): can't create link for file " << fileInfo.absoluteFilePath().toStdString() << std::endl;
+			QMessageBox::warning(this, tr("File preview"), tr("Can't create link for file %1.").arg(fileInfo.absoluteFilePath()));
+			return;
+		}
 	}
 
-#ifndef WIN32
-	if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(QString::fromUtf8(path.c_str())))) 
-		QMessageBox::warning(this, tr("File preview"), tr("File %1 preview failed.").arg(QString::fromUtf8(path.c_str())));
-#else
+	bool previewStarted = false;
 	/* open or preview them with a suitable application */
-	QFileInfo qinfo;
-	if (complete) {
-		qinfo.setFile(QString::fromUtf8(path.c_str()));
-		if (qinfo.exists()) {
-			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-				std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
-			}
-		}
+	if (fileInfo.exists() && RsUrlHandler::openUrl(QUrl::fromLocalFile(fileInfo.absoluteFilePath()))) {
+		previewStarted = true;
 	} else {
-		QString linkName = QString::fromUtf8(path.c_str()) +
-							QString::fromUtf8(info.fname.substr(info.fname.find_last_of('.')).c_str());
-		if (QFile::link(QString::fromUtf8(path.c_str()), linkName)) {
-			qinfo.setFile(linkName);
-			if (qinfo.exists()) {
-				if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-					std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
-				}
-			}
-			/* wait for the file to open then remove the link */
-#ifdef WIN32
-			Sleep(2000);
-#else
-			sleep(2);
-#endif
-			QFile::remove(linkName);
-		} else {
-			std::cerr << "previewTransfer(): can't create link for file " << path << std::endl;
-		}
+		QMessageBox::warning(this, tr("File preview"), tr("File %1 preview failed.").arg(fileInfo.absoluteFilePath()));
+		std::cerr << "previewTransfer(): can't preview file " << fileInfo.absoluteFilePath().toStdString() << std::endl;
 	}
-#endif
+
+	if (info.downloadStatus != FT_STATE_COMPLETE) {
+		if (previewStarted) {
+			/* wait for the file to open then remove the link */
+			QMessageBox::information(this, tr("File preview"), tr("Click OK when program terminates!"));
+		}
+		QFile::remove(fileInfo.absoluteFilePath());
+	}
 }
 
 void TransfersDialog::openTransfer()

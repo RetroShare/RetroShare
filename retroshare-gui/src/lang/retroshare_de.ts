@@ -5106,6 +5106,156 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendRequest</name>
+    <message>
+        <location filename="../gui/connect/FriendRequest.ui" line="+14"/>
+        <source>Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+69"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Peer Info</source>
+        <translation type="unfinished">Nachbar Info</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Peer ID</source>
+        <translation type="unfinished">Peer ID</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>RetroShare ID</source>
+        <translation type="unfinished">RetroShare ID</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Your trust in this peer is:</source>
+        <translation type="unfinished">Dein Vertrauen zu diesem Nachbar ist:</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>None </source>
+        <translation type="unfinished">Nicht </translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Marginal </source>
+        <translation type="unfinished">Geringfügig </translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Full </source>
+        <translation type="unfinished">Voll </translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Sign GPG Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Einen Schlüssel eines Freundes zu unterzeichnen zeigt deinen anderen Freunden, daß du ihm vertraust. Nur unterzeichnete Freunde erhalten Informationen über deine vertrauten Freunde.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Das Unterzeichnen eines Schlüssels kann nicht rückgängig gemacht werden, so nutze es weise.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Sign GPG key</source>
+        <translation type="unfinished">Unterzeichne GPG Schlüssel</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Accept Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/FriendRequest.cpp" line="+76"/>
+        <location line="+102"/>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <location line="-101"/>
+        <location line="+102"/>
+        <source>Error : cannot get peer details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-64"/>
+        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
+        <translation type="unfinished">Du hast das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von Dir.</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Your trust in this peer is full.</source>
+        <translation type="unfinished">Du vertraust diesem Nachbarn voll.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Your trust in this peer is marginal.</source>
+        <translation type="unfinished">Du vertraust diesem Nachbarn geringfügig.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Your trust in this peer is none.</source>
+        <translation type="unfinished">Du vertraust diesem Nachbarn nicht.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Your trust in this peer is not set.</source>
+        <translation type="unfinished">Dein Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Signature Failure</source>
+        <translation type="unfinished">Signatur Fehler</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Maybe password is wrong</source>
+        <translation type="unfinished">Vielleicht ist das Passwort falsch</translation>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Form</source>
@@ -12048,8 +12198,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SecurityItem</name>
     <message>
-        <location filename="../gui/feeds/SecurityItem.ui" line="+284"/>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="+289"/>
+        <location filename="../gui/feeds/SecurityItem.ui" line="+303"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="+287"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -12059,19 +12209,23 @@ p, li { white-space: pre-wrap; }
         <translation>Entferne Element</translation>
     </message>
     <message>
-        <location line="-139"/>
+        <location line="-135"/>
         <source>Peer details</source>
         <translation>Nachbar Details</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-23"/>
+        <source>Accept Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
         <source>Deny friend</source>
         <translation>Blockiere Freund</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Make friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="obsolete">Freund hinzufügen</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -12089,7 +12243,7 @@ p, li { white-space: pre-wrap; }
         <translation>Chat starten</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -12139,7 +12293,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="-173"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="-170"/>
         <source>Connect Attempt</source>
         <translation>Verbindungsversuch</translation>
     </message>
@@ -12174,17 +12328,17 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannter Nachbar</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+94"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+32"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+87"/>
         <source>Quick Message</source>
         <translation>Schnelle Nachrricht</translation>
     </message>
@@ -13983,7 +14137,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+345"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+346"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -14186,7 +14340,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+368"/>
+        <location line="+366"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -14212,7 +14366,15 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn der Hash der heruntergeladenen Daten
+nicht zum Hash der Quelle paßt, sind die Daten
+wahrscheinlich korrupt.
+
+RetroShare wird die Quelle nach detaillierten
+Informationen  fragen, die vorhandenen Daten
+vergleichen und korrupte Blöcke erneut herunterladen.
+
+Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -14225,17 +14387,29 @@ Try to be patient!</source>
         <translation>Details:</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+186"/>
+        <location line="+10"/>
+        <location line="+7"/>
         <source>File preview</source>
         <translation>Datei Vorschau</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-17"/>
+        <source>Can&apos;t create link for file %1.</source>
+        <translation>Konnte Verknüpfung für Datei %1 nicht erstellen.</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>File %1 preview failed.</source>
         <translation>Datei %1 Vorschau fehlgeschlagen.</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+7"/>
+        <source>Click OK when program terminates!</source>
+        <translation>Drücke OK sobald das Programm beendet ist!</translation>
+    </message>
+    <message>
+        <location line="+33"/>
         <source>Open Transfer</source>
         <translation>Öffne Übertragung</translation>
     </message>
@@ -14245,12 +14419,12 @@ Try to be patient!</source>
         <translation>Datei %1 ist nicht komplett. Wenn es eine Media Datei ist dann versuche &quot;Vorschau&quot;.</translation>
     </message>
     <message>
-        <location line="-381"/>
+        <location line="-365"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-914"/>
+        <location line="-912"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -14298,30 +14472,30 @@ Try to be patient!</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+508"/>
+        <location line="+506"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-506"/>
-        <location line="+507"/>
+        <location line="-504"/>
+        <location line="+505"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-507"/>
-        <location line="+506"/>
+        <location line="-505"/>
+        <location line="+504"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-396"/>
+        <location line="-394"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+233"/>
+        <location line="+231"/>
         <location line="+143"/>
         <location line="+140"/>
         <source>Failed</source>
@@ -14374,7 +14548,7 @@ Try to be patient!</source>
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-534"/>
+        <location line="-532"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>
