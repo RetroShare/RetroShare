@@ -97,8 +97,7 @@ private slots:
     void changedViewBox();
 
     void filterColumnChanged();
-    void filterRegExpChanged();
-    void clearFilter();
+    void filterItems(const QString &text);
 
     void generateMassData();
 
@@ -127,8 +126,7 @@ private:
     void processSettings(bool bLoad);
     void togglethreadview_internal();
 
-    void FilterItems();
-    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn);
+    bool filterItem(QTreeWidgetItem *pItem, const QString &text, int filterColumn);
 
     bool m_bProcessSettings;
     bool inMsgAsReadUnread;

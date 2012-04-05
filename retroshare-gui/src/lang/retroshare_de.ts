@@ -4433,7 +4433,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+294"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+291"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -4545,7 +4545,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1359"/>
+        <location line="-1357"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4583,12 +4583,12 @@ p, li { white-space: pre-wrap; }
         <translation>Thema:</translation>
     </message>
     <message>
-        <location line="+344"/>
+        <location line="+295"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="-525"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
@@ -4621,29 +4621,29 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+39"/>
-        <location line="+306"/>
+        <location line="+257"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location line="-320"/>
-        <location line="+325"/>
+        <location line="-271"/>
+        <location line="+276"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location line="-403"/>
+        <location line="-354"/>
         <source>Forum:</source>
         <translation>Forum:</translation>
     </message>
     <message>
         <location line="+97"/>
-        <location line="+311"/>
+        <location line="+262"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location line="-306"/>
+        <location line="-257"/>
         <source>Signed</source>
         <translation>Unterzeichnet</translation>
     </message>
@@ -4680,7 +4680,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nächste ungelesene</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+49"/>
+        <source>Search forums</source>
+        <translation>Suche Foren</translation>
+    </message>
+    <message>
+        <location line="+56"/>
         <source>Reply Message</source>
         <translation>Auf Beitrag antworten</translation>
     </message>
@@ -4690,12 +4695,12 @@ p, li { white-space: pre-wrap; }
         <translation>Lade</translation>
     </message>
     <message>
-        <location line="-568"/>
+        <location line="-519"/>
         <source>Create Forum</source>
         <translation>Forum erstellen</translation>
     </message>
     <message>
-        <location line="+614"/>
+        <location line="+565"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -4705,31 +4710,29 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+151"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+149"/>
         <location line="+1129"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="-221"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Suche Foren&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+31"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location filename="../gui/ForumsDialog.ui" line="-133"/>
         <source>Content</source>
         <translation>Inhalt</translation>
     </message>
@@ -4755,7 +4758,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1501"/>
+        <location line="+1477"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -5272,9 +5275,8 @@ p, li { white-space: pre-wrap; }
         <translation>Suche Freunde</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
 </context>
 <context>
@@ -6622,12 +6624,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupTreeWidget</name>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.ui" line="+117"/>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="+105"/>
         <source>Enter a Keyword here</source>
         <translation>Gib einen Suchbegriff ein</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+14"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
@@ -6637,12 +6639,11 @@ p, li { white-space: pre-wrap; }
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.cpp" line="+173"/>
+        <location filename="../gui/common/GroupTreeWidget.cpp" line="+170"/>
         <source>Sort by Name</source>
         <translation>Sortiere nach Name</translation>
     </message>
@@ -6657,7 +6658,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sortiere nach letztem Beitrag</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+104"/>
         <source>Private Key Available</source>
         <translation>Privater Schlüssel verfügbar</translation>
     </message>
@@ -7127,13 +7128,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Nachrichtenverlauf&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+66"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+32"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+383"/>
+        <location line="+61"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+364"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -8442,12 +8442,12 @@ p, li { white-space: pre-wrap; }
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+576"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+615"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+610"/>
         <source>New Message</source>
         <translation>Neue Nachricht</translation>
     </message>
     <message>
-        <location line="+802"/>
+        <location line="+762"/>
         <source>Reply to Message</source>
         <translation>Antworten nur an Absender</translation>
     </message>
@@ -8468,19 +8468,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="-409"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-402"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-398"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
         <location line="-5"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+735"/>
+        <location line="+731"/>
         <source>From</source>
         <translation>Von</translation>
     </message>
     <message>
-        <location line="-325"/>
+        <location line="-285"/>
         <source>Reply</source>
         <translation>Antworten</translation>
     </message>
@@ -8535,27 +8535,26 @@ p, li { white-space: pre-wrap; }
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location line="+69"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+60"/>
         <source>Attachments</source>
         <translation>Anhänge</translation>
     </message>
     <message>
         <location line="+175"/>
         <location filename="../gui/MessagesDialog.cpp" line="-63"/>
-        <location line="+835"/>
+        <location line="+824"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-841"/>
-        <location line="+854"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-830"/>
+        <location line="+843"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -8567,7 +8566,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-854"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-843"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
     </message>
@@ -8620,12 +8619,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-410"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-686"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-682"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
     <message>
-        <location line="-140"/>
+        <location line="-100"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -8635,7 +8634,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gewählte Nachricht weiterleiten</translation>
     </message>
     <message>
-        <location line="+178"/>
+        <location line="+174"/>
         <source>Starred</source>
         <translation>Gekennzeichnet</translation>
     </message>
@@ -8655,12 +8654,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichten entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+577"/>
+        <location filename="../gui/MessagesDialog.ui" line="+537"/>
         <source>Forward Message</source>
         <translation>Weiterleiten</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-397"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-393"/>
         <source>Click to sort by attachments</source>
         <translation>Klicken, um nach Anhang zu sortieren</translation>
     </message>
@@ -8676,12 +8675,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <location line="+727"/>
+        <location line="+723"/>
         <source>Click to sort by from</source>
         <translation>Klicken, um nach Von zu sortieren</translation>
     </message>
     <message>
-        <location line="-726"/>
+        <location line="-722"/>
         <source>Click to sort by date</source>
         <translation>Klicken, um nach Datum zu sortieren</translation>
     </message>
@@ -8691,13 +8690,13 @@ p, li { white-space: pre-wrap; }
         <translation>Klicken, um nach Schlagwörter zu sortieren</translation>
     </message>
     <message>
-        <location line="+728"/>
+        <location line="+724"/>
         <source>Click to sort by to</source>
         <translation>Klicken, um nach Empfänger zu sortieren</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="-9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-685"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-681"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
     </message>
@@ -8717,14 +8716,14 @@ p, li { white-space: pre-wrap; }
         <location line="+11"/>
         <location line="+3"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+88"/>
+        <location line="+84"/>
         <source>Tags</source>
         <translation>Schlagwörter</translation>
     </message>
     <message>
         <location line="+172"/>
         <location filename="../gui/MessagesDialog.cpp" line="+598"/>
-        <location line="+881"/>
+        <location line="+870"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
@@ -8735,7 +8734,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1204"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1193"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
     </message>
@@ -8761,28 +8760,28 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+245"/>
-        <location line="+870"/>
+        <location line="+859"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
     </message>
     <message>
-        <location line="-820"/>
+        <location line="-809"/>
         <source>To</source>
         <translation>An</translation>
     </message>
     <message>
-        <location line="-726"/>
+        <location line="-722"/>
         <source>Click to sort by star</source>
         <translation>Klicken, um nach Kennzeichnung zu sortieren</translation>
     </message>
     <message>
-        <location line="+701"/>
+        <location line="+697"/>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
         <translation>Es sind keine gekennzeichneten Nachrichten vorhanden. Durch die Kennzeichnung kannst du Nachrichten mit einem speziellen Status versehen, sodass sie leichter zu finden sind. Klicke zum Kennzeichnen einer Nachricht auf den hellgrauen Stern neben der jeweiligen Nachricht.</translation>
     </message>
     <message>
-        <location line="+765"/>
+        <location line="+754"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -8889,9 +8888,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Verstecke offline Freunde</translation>
     </message>
     <message>
-        <location line="+24"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
         <source>Sort by State</source>
@@ -8902,7 +8900,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location line="-290"/>
+        <location line="-266"/>
         <source>RetroShare Messenger</source>
         <translation></translation>
     </message>
@@ -9051,7 +9049,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+461"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+458"/>
         <source>Personal signature</source>
         <translation>Persönliche Unterschrift</translation>
     </message>
@@ -9089,40 +9087,39 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="+114"/>
-        <location line="+171"/>
+        <location line="+126"/>
         <location line="+226"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location line="-392"/>
-        <location line="+397"/>
+        <location line="-347"/>
+        <location line="+352"/>
         <source>Did I authenticated peer</source>
         <translation>Habe ich den Peer authentifiziert</translation>
     </message>
     <message>
-        <location line="-394"/>
+        <location line="-349"/>
         <source>Did I sign his gpg key</source>
         <translation>Habe ich seinen GPG Schlüssel unterzeichnet</translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+394"/>
+        <location line="+349"/>
         <source>Cert Id</source>
         <translation>ID des Zertifikates</translation>
     </message>
     <message>
-        <location line="-310"/>
+        <location line="-265"/>
         <source>Search Network</source>
         <translation>Netzwerksuche</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Clear Filter</source>
-        <translation>Filter leeren</translation>
+        <translation type="obsolete">Filter leeren</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+47"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9175,13 +9172,13 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle ein neues Profil</translation>
     </message>
     <message>
-        <location line="-563"/>
+        <location line="-518"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
     <message>
         <location line="+91"/>
-        <location line="+394"/>
+        <location line="+349"/>
         <source>Did peer authenticated me</source>
         <translation>Hat mich der Peer authentifiziert</translation>
     </message>
@@ -9231,7 +9228,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-326"/>
+        <location line="-324"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
     </message>
@@ -9241,7 +9238,7 @@ p, li { white-space: pre-wrap; }
         <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
-        <location line="+402"/>
+        <location line="+400"/>
         <source>yourself</source>
         <translation>selbst</translation>
     </message>
@@ -9281,7 +9278,7 @@ p, li { white-space: pre-wrap; }
         <translation>Setze Tabs Form Dreieck</translation>
     </message>
     <message>
-        <location line="-378"/>
+        <location line="-333"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9294,7 +9291,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Netzwerk&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+55"/>
         <source>Peer ID</source>
         <translation>Peer ID</translation>
     </message>
@@ -11592,12 +11589,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+12"/>
         <source>Down</source>
-        <translation type="unfinished">Runter</translation>
+        <translation>Runter</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Up</source>
-        <translation type="unfinished">Hoch</translation>
+        <translation>Hoch</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
@@ -11933,28 +11930,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+1161"/>
+        <location filename="../gui/SearchDialog.ui" line="+1070"/>
         <source>Sources</source>
         <translation>Quellen</translation>
     </message>
     <message>
-        <location line="-170"/>
+        <location line="-125"/>
         <source>Results</source>
         <translation>Ergebnisse</translation>
     </message>
     <message>
-        <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+285"/>
+        <location line="+274"/>
+        <location filename="../gui/SearchDialog.cpp" line="+278"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-186"/>
+        <location line="-476"/>
         <source>Enter a keyword here (at least 3 char long)</source>
         <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location filename="../gui/SearchDialog.cpp" line="+2"/>
         <location line="+144"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
@@ -11980,7 +11977,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+397"/>
+        <location line="+390"/>
         <location line="+68"/>
         <source>Folder</source>
         <translation>Ordner</translation>
@@ -11991,7 +11988,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="-718"/>
+        <location filename="../gui/SearchDialog.ui" line="-151"/>
         <source>Any</source>
         <translation>Alle</translation>
     </message>
@@ -12006,17 +12003,16 @@ p, li { white-space: pre-wrap; }
         <translation>Video</translation>
     </message>
     <message>
-        <location line="+94"/>
         <source>Enter a Keyword here</source>
-        <translation>Gib einen Suchbegriff ein</translation>
+        <translation type="obsolete">Gib einen Suchbegriff ein</translation>
     </message>
     <message>
-        <location line="+285"/>
+        <location line="+333"/>
         <source>Filter Search Result</source>
         <translation>Filter Suchergebnis</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+72"/>
         <source>Filename</source>
         <translation>Dateiname</translation>
     </message>
@@ -12031,7 +12027,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-190"/>
+        <location line="-145"/>
         <source>KeyWords</source>
         <translation>Schlüsselwörter</translation>
     </message>
@@ -12041,7 +12037,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-931"/>
+        <location filename="../gui/SearchDialog.cpp" line="-924"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -12063,7 +12059,7 @@ p, li { white-space: pre-wrap; }
         <translation>Diese Funktion ist noch nicht eingebaut.</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+160"/>
+        <location filename="../gui/SearchDialog.ui" line="+115"/>
         <source>Size</source>
         <translation>Größe</translation>
     </message>
@@ -12073,7 +12069,7 @@ p, li { white-space: pre-wrap; }
         <translation>Typ</translation>
     </message>
     <message>
-        <location line="-565"/>
+        <location line="-474"/>
         <source>Archive</source>
         <translation>Archiv</translation>
     </message>
@@ -12103,7 +12099,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+136"/>
         <source>Start Search</source>
         <translation>Starte Suche</translation>
     </message>
@@ -12113,12 +12109,11 @@ p, li { white-space: pre-wrap; }
         <translation>Suchen</translation>
     </message>
     <message>
-        <location line="+192"/>
         <source>Clear Filter</source>
-        <translation>Filter leeren</translation>
+        <translation type="obsolete">Filter leeren</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+198"/>
         <source>File Name</source>
         <translation>Dateiname</translation>
     </message>
@@ -12175,12 +12170,11 @@ p, li { white-space: pre-wrap; }
         <translation>Begrenze Anzahl der Resultate auf :</translation>
     </message>
     <message>
-        <location line="-613"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="-450"/>
         <source>Advanced Search</source>
         <translation>Erweiterte Suche</translation>
     </message>
@@ -12190,7 +12184,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitert</translation>
     </message>
     <message>
-        <location line="+294"/>
+        <location line="+249"/>
         <source>Close All Search Results</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -13088,7 +13082,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Soundereignisse</translation>
     </message>
     <message>
-        <location filename="../gui/settings/SoundPage.cpp" line="+53"/>
+        <location filename="../gui/settings/SoundPage.cpp" line="+51"/>
         <source>Event</source>
         <translation>Ereignis</translation>
     </message>
@@ -13103,7 +13097,7 @@ p, li { white-space: pre-wrap; }
         <translation>Online</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+44"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
@@ -13124,7 +13118,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Eingehend</translation>
     </message>
     <message>
-        <location line="-48"/>
+        <location line="-42"/>
         <source>Chatmessage</source>
         <translation>Chatnachricht</translation>
     </message>
@@ -13146,12 +13140,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Suche Foren&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/settings/SoundPage.ui" line="+549"/>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location filename="../gui/settings/SoundPage.ui" line="+534"/>
         <source>Event:</source>
         <translation>Ereignis:</translation>
     </message>

@@ -56,8 +56,7 @@ private slots:
 
     void historyChanged(uint msgId, int type);
 
-    void filterRegExpChanged();
-    void clearFilter();
+    void filterChanged(const QString& text);
 
     void itemSelectionChanged();
     void customContextMenuRequested(QPoint pos);
@@ -73,7 +72,7 @@ private:
 
     QListWidgetItem *createItem(HistoryMsg& msg);
     void fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg);
-    void filterItems(QListWidgetItem *item = NULL);
+    void filterItems(const QString &text, QListWidgetItem *item = NULL);
 
     void getSelectedItems(std::list<uint32_t> &items);
 

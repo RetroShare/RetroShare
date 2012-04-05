@@ -1806,12 +1806,12 @@ void FriendList::setBigName(bool bigName)
 /**
  * Hides all items that don't contain sPattern in the name column.
  */
-void FriendList::filterItems(const QString &sPattern)
+void FriendList::filterItems(const QString &text)
 {
-    filterText = sPattern;
-    int nCount = ui->peerTreeWidget->topLevelItemCount();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FriendList::filterItem(ui->peerTreeWidget->topLevelItem(nIndex), sPattern);
+    filterText = text;
+    int count = ui->peerTreeWidget->topLevelItemCount();
+    for (int index = 0; index < count; index++) {
+        FriendList::filterItem(ui->peerTreeWidget->topLevelItem(index), filterText);
     }
 
     QTreeWidgetItem *c = getCurrentPeer();
@@ -1821,31 +1821,31 @@ void FriendList::filterItems(const QString &sPattern)
     }
 }
 
-bool FriendList::filterItem(QTreeWidgetItem *pItem, const QString &sPattern)
+bool FriendList::filterItem(QTreeWidgetItem *item, const QString &text)
 {
-    bool bVisible = true;
+    bool visible = true;
 
-    if (sPattern.isEmpty() == false) {
-        if (pItem->text(0).contains(sPattern, Qt::CaseInsensitive) == false) {
-            bVisible = false;
+    if (text.isEmpty() == false) {
+        if (item->text(0).contains(text, Qt::CaseInsensitive) == false) {
+            visible = false;
         }
     }
 
-    int nVisibleChildCount = 0;
-    int nCount = pItem->childCount();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        if (FriendList::filterItem(pItem->child(nIndex), sPattern)) {
-            nVisibleChildCount++;
+    int visibleChildCount = 0;
+    int count = item->childCount();
+    for (int index = 0; index < count; index++) {
+        if (FriendList::filterItem(item->child(index), text)) {
+            visibleChildCount++;
         }
     }
 
-    if (bVisible || nVisibleChildCount) {
-        pItem->setHidden(false);
+    if (visible || visibleChildCount) {
+        item->setHidden(false);
     } else {
-        pItem->setHidden(true);
+        item->setHidden(true);
     }
 
-    return (bVisible || nVisibleChildCount);
+    return (visible || visibleChildCount);
 }
 
 /**

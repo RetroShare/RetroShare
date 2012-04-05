@@ -94,36 +94,19 @@ border: 1px solid #CCCCCC;}
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLineEdit" name="filterText">
+         <widget class="LineEditClear" name="filterLineEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>1677777</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Enter a Keyword here</string>
           </property>
-          <property name="styleSheet">
-           <string notr="true">QLineEdit#searchLine{
-border: none;}
-</string>
-          </property>
          </widget>
         </item>
-        <item row="0" column="3">
+        <item row="0" column="2">
          <widget class="QComboBox" name="filterCombo">
           <property name="minimumSize">
            <size>
@@ -141,46 +124,6 @@ border: none;}
             <string>Description</string>
            </property>
           </item>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="clearFilter">
-          <property name="minimumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="toolTip">
-           <string>Reset</string>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton
-{
- border-image: url(:/images/closenormal.png) 
-}
-                                
-QPushButton:hover 
-{
-border-image: url(:/images/closehover.png) 
-}
-                                
-QPushButton:pressed  {
-border-image: url(:/images/closepressed.png) 
-}</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
          </widget>
         </item>
        </layout>
@@ -225,12 +168,6 @@ border-image: url(:/images/closepressed.png)
      <attribute name="headerStretchLastSection">
       <bool>false</bool>
      </attribute>
-     <attribute name="headerVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="headerStretchLastSection">
-      <bool>false</bool>
-     </attribute>
      <column>
       <property name="text">
        <string notr="true">1</string>
@@ -240,6 +177,13 @@ border-image: url(:/images/closepressed.png)
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

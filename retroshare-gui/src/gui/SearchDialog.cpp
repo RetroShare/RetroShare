@@ -96,7 +96,6 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 	 _queueIsAlreadyTakenCareOf = false ;
     ui.lineEdit->setFocus();
-    ui.lineEdit->setToolTip(tr("Enter a keyword here (at least 3 char long)"));
 
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
@@ -115,8 +114,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.pushButtonsearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
     connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
-    connect( ui.resetButton, SIGNAL(clicked()), this, SLOT(clearKeyword()));
-    connect( ui.lineEdit, SIGNAL( textChanged(const QString &)), this, SLOT(togglereset()));
 
     connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));
 
@@ -125,9 +122,8 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSearchResults(int)));
     
-	connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
     connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
-	connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -174,9 +170,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
-
-    ui.resetButton->hide();
-	ui.clearButton->hide();
 
     /* Set initial size the splitter */
     QList<int> sizes;
@@ -485,13 +478,6 @@ void SearchDialog::searchRemoveAll()
 	ui.searchSummaryWidget->clear();
 	ui.FileTypeComboBox->setCurrentIndex(0);
 	nextSearchId = 1;
-}
-
-/** clear keywords and ComboBox **/
-void SearchDialog::clearKeyword()
-{
- 	ui.lineEdit->clear();
- 	ui.lineEdit->setFocus();
 }
 
 void SearchDialog::copySearchLink()
@@ -870,8 +856,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		}
 	}
 	
-	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-		FilterItems();
+	if (ui.filterLineEdit->text().isEmpty() == false) {
+		filterItems(ui.filterLineEdit->text());
 	}
 }
 
@@ -924,8 +910,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 
     selectSearchResults();
     
-	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-		FilterItems();
+    if (ui.filterLineEdit->text().isEmpty() == false) {
+        filterItems(ui.filterLineEdit->text());
 	}
 // TODO: check for duplicate directories
 }
@@ -1147,8 +1133,8 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	/* select this search result */
 	selectSearchResults();
 	
-	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-		FilterItems();
+    if (ui.filterLineEdit->text().isEmpty() == false) {
+        filterItems(ui.filterLineEdit->text());
 	}
 }
 
@@ -1222,7 +1208,7 @@ void SearchDialog::selectSearchResults(int index)
 		}
 	}
 	ui.searchResultWidget->update();
-	ui.filterPatternLineEdit->clear();
+	ui.filterLineEdit->clear();
 }
 
 void SearchDialog::setIconAndType(QTreeWidgetItem *item, const QString& filename)
@@ -1280,21 +1266,6 @@ void SearchDialog::sendLinkTo( )
     nMsgDialog->show();
 
     /* window will destroy itself! */
-}
-
-void SearchDialog::togglereset()
-{
-    QString text = ui.lineEdit->text();
-    
-    if (text.isEmpty())
-    {
-      ui.resetButton->hide();
-    }
-    else
-    {
-      ui.resetButton->show();
-    }
-    
 }
 
 // not in use for the moment
@@ -1359,69 +1330,44 @@ void SearchDialog::onComboIndexChanged(int index)
     }
 }
 
-/* clear Filter */
-void SearchDialog::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
-}
-
-void SearchDialog::filterRegExpChanged()
-{
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearButton->hide();
-    } else {
-        ui.clearButton->show();
-    }
-
-    FilterItems();
-}
-
 void SearchDialog::filterColumnChanged()
 {
-
-     FilterItems();
-
+    filterItems(ui.filterLineEdit->text());
 }
 
-void SearchDialog::FilterItems()
+void SearchDialog::filterItems(const QString &text)
 {
-    QString sPattern = ui.filterPatternLineEdit->text();
-    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
-    int nCount = ui.searchResultWidget->topLevelItemCount ();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FilterItem(ui.searchResultWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    int count = ui.searchResultWidget->topLevelItemCount ();
+    for (int index = 0; index < count; index++) {
+        filterItem(ui.searchResultWidget->topLevelItem(index), text, filterColumn);
     }
-
 }
 
-bool SearchDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn)
+bool SearchDialog::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
 {
-    bool bVisible = true;
+    bool visible = true;
 
-    if (sPattern.isEmpty() == false) {
-        if (pItem->text(nFilterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
-            bVisible = false;
+    if (text.isEmpty() == false) {
+        if (item->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
+            visible = false;
         }
     }
 
-    int nVisibleChildCount = 0;
-    int nCount = pItem->childCount();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        if (FilterItem(pItem->child(nIndex), sPattern, nFilterColumn)) {
-            nVisibleChildCount++;
+    int visibleChildCount = 0;
+    int count = item->childCount();
+    for (int index = 0; index < count; index++) {
+        if (filterItem(item->child(index), text, filterColumn)) {
+            visibleChildCount++;
         }
     }
 
-    if (bVisible || nVisibleChildCount) {
-        pItem->setHidden(false);
+    if (visible || visibleChildCount) {
+        item->setHidden(false);
     } else {
-        pItem->setHidden(true);
+        item->setHidden(true);
     }
 
-    return (bVisible || nVisibleChildCount);
+    return (visible || visibleChildCount);
 }

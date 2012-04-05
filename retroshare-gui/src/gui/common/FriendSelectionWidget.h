@@ -76,14 +76,12 @@ signals:
 private slots:
 	void fillList();
 	void peerStatusChanged(const QString& peerId, int status);
-	void filterChanged();
-	void clearFilter();
+	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void itemChanged(QTreeWidgetItem *item, int column);
 
 private:
-	void filterItems();
 	bool filterItem(QTreeWidgetItem *item, const QString &text);
 
 	void selectedIds(IdType idType, std::list<std::string> &ids, bool onlyDirectSelected);

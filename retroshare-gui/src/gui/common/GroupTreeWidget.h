@@ -90,12 +90,11 @@ private slots:
 	void customContextMenuRequested(const QPoint &pos);
 	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void filterChanged();
-	void clearFilter();
 
 	void sort();
 
 private:
-	void calculateScore(QTreeWidgetItem *item);
+	void calculateScore(QTreeWidgetItem *item, const QString &filterText);
 	void resort(QTreeWidgetItem *categoryItem);
 
 private:

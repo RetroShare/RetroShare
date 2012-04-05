@@ -275,51 +275,9 @@ subcontrol-position: bottom right;
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="filterPatternLineEdit">
+          <widget class="LineEditClear" name="filterLineEdit">
            <property name="toolTip">
             <string>Search Friends</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="clearButton">
-           <property name="minimumSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>MS Shell Dlg 2</family>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>Reset</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton
-{
- border-image: url(:/images/closenormal.png) 
-}
-                                
-QPushButton:hover 
-{
-border-image: url(:/images/closehover.png) 
-}
-                                
-QPushButton:pressed  {
-border-image: url(:/images/closepressed.png) 
-}</string>
-           </property>
-           <property name="text">
-            <string/>
            </property>
           </widget>
          </item>
@@ -381,6 +339,11 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
   <customwidget>
    <class>AvatarWidget</class>
    <extends>QWidget</extends>

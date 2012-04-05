@@ -90,9 +90,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
     connect( ui.unvalidGPGkeyWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
 
-    connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
-    connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
 
@@ -182,8 +181,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     updateNetworkStatus();
     loadtabsettings();
     
-    ui.clearButton->hide();
-
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -564,8 +561,8 @@ void NetworkDialog::insertConnect()
 	connectWidget->update(); /* update display */
 	ui.unvalidGPGkeyWidget->update(); /* update display */
 
-	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-		FilterItems();
+	if (ui.filterLineEdit->text().isEmpty() == false) {
+		filterItems(ui.filterLineEdit->text());
 	}
 
 }
@@ -841,72 +838,48 @@ void NetworkDialog::loadtabsettings()
   Settings->endGroup();
 }
 
-/* clear Filter */
-void NetworkDialog::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
-}
-
-void NetworkDialog::filterRegExpChanged()
-{
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearButton->hide();
-    } else {
-        ui.clearButton->show();
-    }
-
-    FilterItems();
-}
-
 void NetworkDialog::filterColumnChanged()
 {
-
-     FilterItems();
-
+    filterItems(ui.filterLineEdit->text());
 }
 
-void NetworkDialog::FilterItems()
+void NetworkDialog::filterItems(const QString &text)
 {
-    QString sPattern = ui.filterPatternLineEdit->text();
-    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
-    int nCount = ui.connecttreeWidget->topLevelItemCount ();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FilterItem(ui.connecttreeWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    int count = ui.connecttreeWidget->topLevelItemCount ();
+    for (int index = 0; index < count; index++) {
+        filterItem(ui.connecttreeWidget->topLevelItem(index), text, filterColumn);
     }
-    nCount = ui.unvalidGPGkeyWidget->topLevelItemCount ();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FilterItem(ui.unvalidGPGkeyWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    count = ui.unvalidGPGkeyWidget->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < count; nIndex++) {
+        filterItem(ui.unvalidGPGkeyWidget->topLevelItem(nIndex), text, filterColumn);
     }
 }
 
-bool NetworkDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn)
+bool NetworkDialog::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
 {
-    bool bVisible = true;
+    bool visible = true;
 
-    if (sPattern.isEmpty() == false) {
-        if (pItem->text(nFilterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
-            bVisible = false;
+    if (text.isEmpty() == false) {
+        if (item->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
+            visible = false;
         }
     }
 
-    int nVisibleChildCount = 0;
-    int nCount = pItem->childCount();
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        if (FilterItem(pItem->child(nIndex), sPattern, nFilterColumn)) {
-            nVisibleChildCount++;
+    int visibleChildCount = 0;
+    int count = item->childCount();
+    for (int index = 0; index < count; index++) {
+        if (filterItem(item->child(index), text, filterColumn)) {
+            visibleChildCount++;
         }
     }
 
-    if (bVisible || nVisibleChildCount) {
-        pItem->setHidden(false);
+    if (visible || visibleChildCount) {
+        item->setHidden(false);
     } else {
-        pItem->setHidden(true);
+        item->setHidden(true);
     }
 
-    return (bVisible || nVisibleChildCount);
+    return (visible || visibleChildCount);
 }

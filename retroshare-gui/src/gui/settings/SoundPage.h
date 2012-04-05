@@ -49,7 +49,6 @@ public:
 private slots:
 	void eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void filenameChanged(QString filename);
-	void clearButtonClicked();
 	void browseButtonClicked();
 	void playButtonClicked();
 

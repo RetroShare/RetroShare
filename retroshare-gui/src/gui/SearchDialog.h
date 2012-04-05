@@ -81,19 +81,12 @@ private slots:
 
     void selectSearchResults(int index = -1);
 
-    void clearKeyword();
-    
     void sendLinkTo();
     
-    void togglereset();
-
     void onComboIndexChanged(int index);
 
 	void filterColumnChanged();
-	void filterRegExpChanged();
-	void clearFilter();
-
-
+	void filterItems(const QString &text);
 
 private:
 /** render the results to the tree widget display */
@@ -105,8 +98,6 @@ private:
 	 void setIconAndType(QTreeWidgetItem *item, const QString& filename);
 	 void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
 	 void getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds);
-
-
 
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;
@@ -129,8 +120,7 @@ private:
 
 	void processSettings(bool bLoad);
 
-	void FilterItems();
-	bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
+	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
     bool m_bProcessSettings;
 

@@ -42,11 +42,9 @@ SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
 
 	connect(ui.eventTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(eventChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(ui.filenameEdit, SIGNAL(textChanged(QString)), this, SLOT(filenameChanged(QString)));
-	connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearButtonClicked()));
 	connect(ui.browseButton, SIGNAL(clicked()), this, SLOT(browseButtonClicked()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
 
-	ui.clearButton->hide();
 	ui.eventTreeWidget->setColumnCount(COLUMN_COUNT);
 
 	QTreeWidgetItem *headerItem = ui.eventTreeWidget->headerItem();
@@ -147,17 +145,11 @@ void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem */*previo
 void SoundPage::filenameChanged(QString filename)
 {
 	ui.playButton->setEnabled(!filename.isEmpty());
-	ui.clearButton->setVisible(!filename.isEmpty());
 
 	QTreeWidgetItem *item = ui.eventTreeWidget->currentItem();
 	if (item) {
 		item->setText(COLUMN_FILENAME, filename);
 	}
-}
-
-void SoundPage::clearButtonClicked()
-{
-	ui.filenameEdit->clear();
 }
 
 void SoundPage::browseButtonClicked()

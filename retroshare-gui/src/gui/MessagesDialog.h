@@ -77,10 +77,9 @@ private slots:
 
   void buttonStyle();
   
-  void filterRegExpChanged();
+  void filterChanged(const QString &text);
   void filterColumnChanged();
   
-  void clearFilter();
   void tagAboutToShow();
   void tagSet(int tagId, bool set);
   void tagRemoveAll();

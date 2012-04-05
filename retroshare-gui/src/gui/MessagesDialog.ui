@@ -900,47 +900,7 @@ border: 1px solid #CCCCCC;}</string>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="filterPatternLineEdit"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="clearButton">
-          <property name="minimumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="toolTip">
-           <string>Reset</string>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton
-{
- border-image: url(:/images/closenormal.png) 
-}
-                                
-QPushButton:hover 
-{
-border-image: url(:/images/closehover.png) 
-}
-                                
-QPushButton:pressed  {
-border-image: url(:/images/closepressed.png) 
-}</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="LineEditClear" name="filterLineEdit"/>
         </item>
        </layout>
       </item>
@@ -1398,6 +1358,11 @@ padding: 4px;
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
   <customwidget>
    <class>RSTabWidget</class>
    <extends>QTabWidget</extends>

@@ -102,16 +102,13 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, Q
 
     connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
 
-    connect(ui.clearFilterButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
     connect(ui.copyButton, SIGNAL(clicked()), SLOT(copyMessage()));
     connect(ui.removeButton, SIGNAL(clicked()), SLOT(removeMessages()));
 
     connect(ui.listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
-
-    ui.clearFilterButton->hide();
 
     // embed smileys ?
     if (m_isPrivateChat) {
@@ -166,7 +163,7 @@ void ImHistoryBrowser::createThreadFinished()
             // clear list
             m_createThread->m_items.clear();
 
-            filterRegExpChanged();
+            filterChanged(ui.filterLineEdit->text());
 
             // dummy call for set buttons
             itemSelectionChanged();
@@ -217,7 +214,7 @@ void ImHistoryBrowser::historyAdd(HistoryMsg& msg)
     QListWidgetItem *itemWidget = createItem(msg);
     if (itemWidget) {
         ui.listWidget->addItem(itemWidget);
-        filterItems(itemWidget);
+        filterItems(ui.filterLineEdit->text(), itemWidget);
     }
 }
 
@@ -290,29 +287,13 @@ QListWidgetItem *ImHistoryBrowser::createItem(HistoryMsg& msg)
     return itemWidget;
 }
 
-void ImHistoryBrowser::filterRegExpChanged()
+void ImHistoryBrowser::filterChanged(const QString &text)
 {
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearFilterButton->hide();
-    } else {
-        ui.clearFilterButton->show();
-    }
-
-    filterItems();
+    filterItems(text);
 }
 
-void ImHistoryBrowser::clearFilter()
+void ImHistoryBrowser::filterItems(const QString &text, QListWidgetItem *item)
 {
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
-}
-
-void ImHistoryBrowser::filterItems(QListWidgetItem *item)
-{
-    QString text = ui.filterPatternLineEdit->text();
-
     if (item == NULL) {
         int count = ui.listWidget->count();
         for (int i = 0; i < count; i++) {

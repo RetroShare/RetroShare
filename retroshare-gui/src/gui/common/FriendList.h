@@ -56,7 +56,7 @@ public:
     virtual void updateDisplay();
 
 public slots:
-    void filterItems(const QString &sPattern);
+    void filterItems(const QString &text);
 
     void setBigName(bool bigName); // show customStateString in second line of the name cell
     void setShowGroups(bool show);
@@ -89,7 +89,7 @@ private:
     std::set<std::string> *openPeers;
 
     QTreeWidgetItem *getCurrentPeer() const;
-    static bool filterItem(QTreeWidgetItem *pItem, const QString &sPattern);
+    static bool filterItem(QTreeWidgetItem *item, const QString &text);
     void updateHeader();
     void initializeHeader(bool afterLoadSettings);
     void getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string> &sslIds);

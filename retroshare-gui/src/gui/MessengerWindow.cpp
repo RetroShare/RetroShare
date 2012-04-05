@@ -112,10 +112,9 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
     connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
 #endif // MINIMAL_RSGUI
-    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
 
 #ifndef MINIMAL_RSGUI
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
@@ -184,8 +183,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     loadmystatusmessage();
 #endif // MINIMAL_RSGUI
-
-    ui.clearButton->hide();
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -284,24 +281,3 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
 }
 
 #endif // MINIMAL_RSGUI
-
-/* clear Filter */
-void MessengerWindow::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
-}
-
-void MessengerWindow::filterRegExpChanged()
-{
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearButton->hide();
-    } else {
-        ui.clearButton->show();
-    }
-
-    ui.friendList->filterItems(text);
-}

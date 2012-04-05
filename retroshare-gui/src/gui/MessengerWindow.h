@@ -65,11 +65,6 @@ private slots:
     void savestatusmessage();
 #endif // MINIMAL_RSGUI
 
-    void filterRegExpChanged();
-    void clearFilter();
-
-signals:
-
 private:
     static MessengerWindow *_instance;
 

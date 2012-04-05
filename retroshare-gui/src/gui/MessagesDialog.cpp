@@ -172,8 +172,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
     ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
 
-    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
@@ -258,12 +257,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     //viewmenu->addAction(ui.actionTextUnderIcon);
     ui.viewtoolButton->setMenu(viewmenu);
 
-    ui.filterPatternLineEdit->setMinimumWidth(20);
-
     //setting default filter by column as subject
     proxyModel->setFilterKeyColumn(FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex()));
-
-    ui.clearButton->hide();
 
     // load settings
     processSettings(true);
@@ -1568,21 +1563,10 @@ void MessagesDialog::buttonStyle()
     setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
 }
 
-void MessagesDialog::filterRegExpChanged()
+void MessagesDialog::filterChanged(const QString& text)
 {
-    QRegExp regExp(ui.filterPatternLineEdit->text(),  Qt::CaseInsensitive , QRegExp::FixedString);
+    QRegExp regExp(text, Qt::CaseInsensitive, QRegExp::FixedString);
     proxyModel->setFilterRegExp(regExp);
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty())
-    {
-        ui.clearButton->hide();
-    }
-    else
-    {
-        ui.clearButton->show();
-    }
 }
 
 void MessagesDialog::filterColumnChanged()
@@ -1800,13 +1784,6 @@ void MessagesDialog::updateMessageSummaryList()
             break;
         }
     }
-}
-
-/** clear Filter **/
-void MessagesDialog::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
 }
 
 void MessagesDialog::tagAboutToShow()

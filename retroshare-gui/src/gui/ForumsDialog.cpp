@@ -158,8 +158,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
-    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
     connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
@@ -200,8 +199,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     otherForums = ui.forumTreeWidget->addCategoryItem(tr("Other Forums"), QIcon(IMAGE_FOLDERYELLOW), false);
 
     lastViewType = -1;
-
-    ui.clearButton->hide();
 
     // load settings
     processSettings(true);
@@ -818,8 +815,8 @@ void ForumsDialog::fillThreadFinished()
             }
             thread->itemToExpand.clear();
 
-            if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-                FilterItems();
+            if (ui.filterLineEdit->text().isEmpty() == false) {
+                filterItems(ui.filterLineEdit->text());
             }
 
             insertPost ();
@@ -1557,29 +1554,6 @@ void ForumsDialog::replytomessage()
     }
 }
 
-void ForumsDialog::filterRegExpChanged()
-{
-//    QRegExp regExp(ui.filterPatternLineEdit->text(),  Qt::CaseInsensitive , QRegExp::FixedString);
-//    proxyModel->setFilterRegExp(regExp);
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearButton->hide();
-    } else {
-        ui.clearButton->show();
-    }
-
-    FilterItems();
-}
-
-/* clear Filter */
-void ForumsDialog::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
-}
-
 void ForumsDialog::changedViewBox()
 {
     if (m_bProcessSettings) {
@@ -1603,21 +1577,20 @@ void ForumsDialog::filterColumnChanged()
         // need content ... refill
         insertThreads();
     } else {
-        FilterItems();
+        filterItems(ui.filterLineEdit->text());
     }
 
     // save index
     Settings->setValueToGroup("ForumsDialog", "filterColumn", filterColumn);
 }
 
-void ForumsDialog::FilterItems()
+void ForumsDialog::filterItems(const QString& text)
 {
-    QString sPattern = ui.filterPatternLineEdit->text();
     int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
     int nCount = ui.threadTreeWidget->topLevelItemCount ();
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FilterItem(ui.threadTreeWidget->topLevelItem(nIndex), sPattern, filterColumn);
+        filterItem(ui.threadTreeWidget->topLevelItem(nIndex), text, filterColumn);
     }
 }
 
@@ -1627,12 +1600,12 @@ void ForumsDialog::shareKey()
     shareUi.exec();
 }
 
-bool ForumsDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn)
+bool ForumsDialog::filterItem(QTreeWidgetItem *pItem, const QString &text, int filterColumn)
 {
     bool bVisible = true;
 
-    if (sPattern.isEmpty() == false) {
-        if (pItem->text(filterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
+    if (text.isEmpty() == false) {
+        if (pItem->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
             bVisible = false;
         }
     }
@@ -1640,7 +1613,7 @@ bool ForumsDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int fil
     int nVisibleChildCount = 0;
     int nCount = pItem->childCount();
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        if (FilterItem(pItem->child(nIndex), sPattern, filterColumn)) {
+        if (filterItem(pItem->child(nIndex), text, filterColumn)) {
             nVisibleChildCount++;
         }
     }

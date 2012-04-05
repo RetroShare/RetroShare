@@ -85,16 +85,13 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	connect(ui->friendList, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(itemChanged(QTreeWidgetItem*,int)));
-	connect(ui->filterEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterChanged()));
-	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
 	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillList()));
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);
-
-	ui->clearButton->hide();
 
 	// sort list by name ascending
 	ui->friendList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
@@ -285,8 +282,8 @@ void FriendSelectionWidget::fillList()
 		}
 	}
 
-	if (ui->filterEdit->text().isEmpty() == false) {
-		filterItems();
+	if (ui->filterLineEdit->text().isEmpty() == false) {
+		filterItems(ui->filterLineEdit->text());
 	}
 
 	ui->friendList->update(); /* update display */
@@ -384,26 +381,11 @@ void FriendSelectionWidget::itemChanged(QTreeWidgetItem *item, int column)
 	inItemChanged = false;
 }
 
-void FriendSelectionWidget::clearFilter()
-{
-	ui->filterEdit->clear();
-	ui->filterEdit->setFocus();
-}
-
-void FriendSelectionWidget::filterChanged()
-{
-	QString text = ui->filterEdit->text();
-
-	ui->clearButton->setVisible(!text.isEmpty());
-
-	filterItems();
-}
-
-void FriendSelectionWidget::filterItems()
+void FriendSelectionWidget::filterItems(const QString& text)
 {
 	int count = ui->friendList->topLevelItemCount();
 	for (int index = 0; index < count; index++) {
-		filterItem(ui->friendList->topLevelItem(index),ui->filterEdit->text());
+		filterItem(ui->friendList->topLevelItem(index), text);
 	}
 }
 

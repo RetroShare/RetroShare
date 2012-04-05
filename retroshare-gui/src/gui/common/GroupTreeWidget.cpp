@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QMenu>
+#include <QPushButton>
 
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
@@ -62,8 +63,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	compareRole->setRole(COLUMN_DATA, ROLE_NAME);
 
 	/* Connect signals */
-	connect(ui->clearFilter, SIGNAL(clicked()), this, SLOT(clearFilter()));
-	connect(ui->filterText, SIGNAL(textChanged(const QString &)), this, SLOT(filterChanged()));
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged()));
 	connect(ui->filterCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(filterChanged()));
 
 	connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
@@ -83,9 +83,6 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	header->resizeSection(COLUMN_NAME, 170);
 	header->setResizeMode(COLUMN_POPULARITY, QHeaderView::Fixed);
 	header->resizeSection(COLUMN_POPULARITY, 25);
-
-	/* Initialize filter */
-	ui->clearFilter->hide();
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -239,6 +236,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		return;
 	}
 
+	QString filterText = ui->filterLineEdit->text();
+
 	/* Iterate all items */
 	QList<GroupItemInfo>::const_iterator it;
 	for (it = itemList.begin(); it != itemList.end(); it++) {
@@ -294,7 +293,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setForeground(COLUMN_NAME, brush);
 
 		/* Calculate score */
-		calculateScore(item);
+		calculateScore(item, filterText);
 	}
 
 	/* Remove all items not in list */
@@ -377,11 +376,10 @@ QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
 	return item;
 }
 
-void GroupTreeWidget::calculateScore(QTreeWidgetItem *item)
+void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filterText)
 {
 	if (item) {
 		/* Calculate one item */
-		QString filterText = ui->filterText->text();
 		int score;
 		if (filterText.isEmpty()) {
 			score = 0;
@@ -422,34 +420,14 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item)
 			continue;
 		}
 
-		calculateScore(item);
+		calculateScore(item, filterText);
 	}
 }
 
 void GroupTreeWidget::filterChanged()
 {
-	if (ui->filterText->text().isEmpty()) {
-		clearFilter();
-		return;
-	}
-
-	ui->clearFilter->setEnabled(true);
-	ui->clearFilter->show();
-
 	/* Recalculate score */
-	calculateScore(NULL);
-
-	resort(NULL);
-}
-
-void GroupTreeWidget::clearFilter()
-{
-	ui->filterText->clear();
-	ui->clearFilter->hide();
-	ui->filterText->setFocus();
-
-	/* Recalculate score */
-	calculateScore(NULL);
+	calculateScore(NULL, ui->filterLineEdit->text());
 
 	resort(NULL);
 }
@@ -458,7 +436,7 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 {
 	Qt::SortOrder order = (actionSortAscending == NULL || actionSortAscending->isChecked()) ? Qt::AscendingOrder : Qt::DescendingOrder;
 
-	if (ui->filterText->text().isEmpty() == false) {
+	if (ui->filterLineEdit->text().isEmpty() == false) {
 		compareRole->setRole(COLUMN_DATA, ROLE_SEARCH_SCORE);
 		compareRole->addRole(COLUMN_DATA, ROLE_LASTPOST);
 	} else if (actionSortByName && actionSortByName->isChecked()) {
