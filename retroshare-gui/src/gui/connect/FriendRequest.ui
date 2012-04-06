@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>414</width>
-    <height>359</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,7 @@ p, li { white-space: pre-wrap; }
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -119,7 +119,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QPushButton" name="cancelButton">
         <property name="styleSheet">
          <string notr="true">QToolButton, QPushButton, QComboBox { 
@@ -141,7 +141,7 @@ border-image: url(:/images/btn_26_hover.png) 4;
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="1" column="2">
        <widget class="QPushButton" name="applyButton">
         <property name="toolTip">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -165,13 +165,23 @@ border-image: url(:/images/btn_blue_hover.png) 4;
 }</string>
         </property>
         <property name="text">
-         <string>Accept Friend Request</string>
+         <string>Confirm</string>
         </property>
         <property name="autoDefault">
          <bool>false</bool>
         </property>
         <property name="default">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="Line" name="line">
+        <property name="windowModality">
+         <enum>Qt::NonModal</enum>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -425,6 +435,9 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
