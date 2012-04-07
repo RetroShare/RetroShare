@@ -57,7 +57,6 @@ FriendRequest::FriendRequest(const std::string& id, QWidget *parent, Qt::WFlags 
 
     connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
 
     load();
 }
@@ -89,25 +88,6 @@ void FriendRequest::load()
     ui.rsid->setToolTip(link.title());
 
     ui.avatar->setId(mId, false);
-
-
-        if (detail.accept_connection) {
-            ui.signGPGKeyCheckBox->hide();
-            //connection already accepted, propose to sign gpg key
-            if (!detail.ownsign) {
-                ui.signKeyButton->show();
-            } else {
-                ui.signKeyButton->hide();
-            }
-        } else {
-            ui.signKeyButton->hide();
-            if (!detail.ownsign) {
-                ui.signGPGKeyCheckBox->show();
-                ui.signGPGKeyCheckBox->setChecked(false);
-            } else {
-                ui.signGPGKeyCheckBox->hide();
-            }
-        }
 
         //web of trust
         if (detail.trustLvl == GPGME_VALIDITY_ULTIMATE) {
