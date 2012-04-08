@@ -634,24 +634,27 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id
 		fclose(sslPassphraseFile) ;
 		return true ;
 	}
+	fclose(sslPassphraseFile) ;
 
-	sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "w");
+	// sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "w");
 
-	if(sslPassphraseFile == NULL)
-	{
-		std::cerr << "RsLoginHandler::storeSSLPasswdIntoGPGFile(): could not write to file " << getSSLPasswdFileName(ssl_id) << std::endl;
-		return false ;
-	}
-	else
-		std::cerr << "openned sslPassphraseFile : " << getSSLPasswdFileName(ssl_id) << std::endl;
-
-	gpgme_data_t cipher;
-	gpgme_data_t plain;
-	gpgme_data_new_from_mem(&plain, ssl_passwd.c_str(), ssl_passwd.length(), 1);
-	gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
+	// if(sslPassphraseFile == NULL)
+	// {
+	// 	std::cerr << "RsLoginHandler::storeSSLPasswdIntoGPGFile(): could not write to file " << getSSLPasswdFileName(ssl_id) << std::endl;
+	// 	return false ;
+	// }
+	// else
+	// 	std::cerr << "openned sslPassphraseFile : " << getSSLPasswdFileName(ssl_id) << std::endl;
+	// 
+	// gpgme_data_t cipher;
+	// gpgme_data_t plain;
+	// gpgme_data_new_from_mem(&plain, ssl_passwd.c_str(), ssl_passwd.length(), 1);
+	// gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
 
 	bool ok ;
-	if (0 < AuthGPG::getAuthGPG()->encryptText(plain, cipher)) 
+	std::string cipher ;
+
+	if(AuthGPG::getAuthGPG()->encryptTextToFile(ssl_passwd, getSSLPasswdFileName(ssl_id))) 
 	{
 		std::cerr << "Encrypting went ok !" << std::endl;
 		ok= true ;
@@ -662,10 +665,9 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id
 		ok= false ;
 	}
 	
-	gpgme_data_release (cipher);
-	gpgme_data_release (plain);
-
-	fclose(sslPassphraseFile);
+	// gpgme_data_release (cipher);
+	// gpgme_data_release (plain);
+	// fclose(sslPassphraseFile);
 
 	return ok ;
 }
@@ -685,31 +687,34 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 
 	std::cerr << "opening sslPassphraseFile : " << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
 
-	gpgme_data_t cipher;
-	gpgme_data_t plain;
-	gpgme_data_new (&plain);
+//	gpgme_data_t cipher;
+//	gpgme_data_t plain;
+//	gpgme_data_new (&plain);
 
-	if( gpgme_data_new_from_stream (&cipher, sslPassphraseFile) != GPG_ERR_NO_ERROR)
-	{
-		std::cerr << "Error while creating stream from ssl passwd file." << std::endl ;
-		return 0 ;
-	}
-	if (0 < AuthGPG::getAuthGPG()->decryptText(cipher, plain)) 
+//	if( gpgme_data_new_from_stream (&cipher, sslPassphraseFile) != GPG_ERR_NO_ERROR)
+//	{
+//		std::cerr << "Error while creating stream from ssl passwd file." << std::endl ;
+//		return 0 ;
+//	}
+
+	std::string plain ;
+
+	if (AuthGPG::getAuthGPG()->decryptTextFromFile(plain,getSSLPasswdFileName(ssl_id))) 
 	{
 		std::cerr << "Decrypting went ok !" << std::endl;
-		gpgme_data_write (plain, "", 1);
-		sslPassword = std::string(gpgme_data_release_and_get_mem(plain, NULL));
+//		gpgme_data_write (plain, "", 1);
+//		sslPassword = std::string(gpgme_data_release_and_get_mem(plain, NULL));
 		std::cerr << "sslpassword: " << "********************" << std::endl;
-		gpgme_data_release (cipher);
-		fclose(sslPassphraseFile);
+//		gpgme_data_release (cipher);
+//		fclose(sslPassphraseFile);
 
 		return true ;
 	} 
 	else 
 	{
-		gpgme_data_release (plain);
-		gpgme_data_release (cipher);
-		fclose(sslPassphraseFile);
+//		gpgme_data_release (plain);
+//		gpgme_data_release (cipher);
+//		fclose(sslPassphraseFile);
 		sslPassword = "" ;
 		std::cerr << "Error : decrypting went wrong !" << std::endl;
 

@@ -193,5 +193,5 @@ void RsServer::rsGlobalShutDown()
 #endif
 #endif // MINIMAL_LIBRS
 
-	AuthGPGExit();
+	// AuthGPGExit();
 }

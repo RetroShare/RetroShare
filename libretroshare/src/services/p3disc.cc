@@ -865,28 +865,6 @@ void p3disc::recvDiscReply(RsDiscReply *dri)
 
 void p3disc::removeFriend(std::string /*ssl_id*/)
 {
-
-// DON'T KNOW WHY SSL IDS were saved -> the results are never used
-#if 0
-
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::removeFriend() called for : " << ssl_id << std::endl;
-#endif
-	//if we deleted the gpg_id, don't store the friend deletion as if we add back the gpg_id, we won't have the ssl friends back
-	std::string gpg_id = rsPeers->getGPGId(ssl_id);
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::removeFriend() gpg_id : " << gpg_id << std::endl;
-#endif
-	if (gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId() || rsPeers->isGPGAccepted(rsPeers->getGPGId(ssl_id))) {
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::removeFriend() storing the friend deletion." << ssl_id << std::endl;
-#endif
-		deletedSSLFriendsIds[ssl_id] = time(NULL);//just keep track of the deleted time
-		IndicateConfigChanged();
-	}
-
-#endif
-
 }
 
 /*************************************************************************************/

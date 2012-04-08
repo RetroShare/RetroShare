@@ -18,7 +18,11 @@ Compilation
 
 Project
   02   [1] determine what's missing in OpenPGP-SDK
-  03   [1] make a separate layer in RS to handle PGP. AuthPGP is too close to libretroshare.
+  03   [3] make a separate layer in RS to handle PGP. AuthPGP is too close to libretroshare.
+  04   [1] write the new AuthGPG class
+  05   [ ] consider removing thread behaviour of AuthGPG
+  06   [ ] remove callback system and services from AuthGPG, since it's not useful anymore
+  07   [ ] make all RS use GPGIdType isntead of std::string.
 
 Notes
 =====

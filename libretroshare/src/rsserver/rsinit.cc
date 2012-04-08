@@ -612,7 +612,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 */
 	/* create singletons */
 	AuthSSLInit();
-	AuthGPGInit();
+	//AuthGPGInit();
 
         AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
@@ -623,10 +623,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
 
 	/* Initialize AuthGPG */
-	if (AuthGPG::getAuthGPG()->InitAuth() == false) {
-		std::cerr << "AuthGPG::InitAuth failed" << std::endl;
-		return RS_INIT_AUTH_FAILED;
-	}
+	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {
+	// 	std::cerr << "AuthGPG::InitAuth failed" << std::endl;
+	// 	return RS_INIT_AUTH_FAILED;
+	// }
 
 	//std::list<accountId> ids;
 	std::list<accountId>::iterator it;
@@ -2314,7 +2314,7 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
+	mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
 	mConfigMgr->loadConfiguration();
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);

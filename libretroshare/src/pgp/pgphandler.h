@@ -1,3 +1,5 @@
+#pragma once
+
 // This class implements an abstract pgp handler to be used in RetroShare.
 //
 #include <stdint.h>
@@ -12,7 +14,7 @@ extern "C" {
 #include <openpgpsdk/keyring_local.h>
 }
 
-typedef std::string (*PassphraseCallback)(const std::string& display_msg) ;
+typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, const char *passphrase_info, int prev_was_bad) ;
 
 class PGPIdType
 {
@@ -81,6 +83,9 @@ class PGPHandler
 
 		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
+
+		bool encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) ;
+		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) ;
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 

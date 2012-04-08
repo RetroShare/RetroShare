@@ -80,7 +80,7 @@ PGPIdType PGPIdType::fromFingerprint_hex(const std::string& s)
 
 	PGPIdType res ;
 
-	int n=PGPFingerprintType::KEY_FINGERPRINT_SIZE - PGPIdType::KEY_ID_SIZE -1;
+	int n=2*PGPFingerprintType::KEY_FINGERPRINT_SIZE - 2*PGPIdType::KEY_ID_SIZE ;
 
 	for(int i = 0; i < PGPIdType::KEY_ID_SIZE; ++i)
 	{
@@ -237,28 +237,29 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	return true ;
 }
 
-// static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo __attribute__((unused)))
-// {
-// 	const ops_parser_content_union_t *content=&content_->content;
-// 	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
-// 	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
-// 
-// 	switch(content_->tag)
-// 	{
-// 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-// 			/*
-// 				Doing this so the test can be automated.
-// 			 */
-// 			*(content->secret_key_passphrase.passphrase)=ops_malloc_passphrase("hello");
-// 			return OPS_KEEP_MEMORY;
-// 			break;
-// 
-// 		default:
-// 			break;
-// 	}
-// 
-// 	return OPS_RELEASE_MEMORY;
-// }
+static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo __attribute__((unused)))
+{
+	const ops_parser_content_union_t *content=&content_->content;
+	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
+	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
+
+	switch(content_->tag)
+	{
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+			{
+			std::string passwd = getpass("Please enter passwd:") ;
+			*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
+			memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
+			return OPS_KEEP_MEMORY;
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	return OPS_RELEASE_MEMORY;
+}
 
 bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) 
 {
@@ -278,7 +279,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	// 1 - get a passphrase for encrypting.
 	
-	std::string passphrase = _passphrase_callback("Please enter passwd for encrypting your key : ") ;
+	std::string passphrase = _passphrase_callback(NULL,PGPIdType(key->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false) ;
 
 	// 2 - save the private key encrypted to a temporary memory buffer
 
@@ -424,6 +425,122 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	return true ;
 }
 
+bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) 
+{
+	const char* filename = "armour_nocompress_sign.asc";
+
+	ops_create_info_t *info;
+	int fd = ops_setup_file_write(&info, outfile.c_str(), ops_true);
+
+	const ops_keydata_t *public_key = getPublicKey(key_id) ;
+
+	if(public_key == NULL)
+	{
+		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
+		return false ;
+	}
+	if (fd < 0) 
+	{
+		fprintf(stderr, "Cannot write to %s\n", filename);
+		return false ;
+	}
+	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
+	ops_write(text.c_str(), text.length(), info);
+	ops_writer_close(info);
+	ops_create_info_delete(info);
+
+	return true ;
+}
+
+// ops_parse_cb_return_t pgphandler_callback_write_parsed(const ops_parser_content_t *content_, ops_parse_cb_info_t *cbinfo)
+// {
+// 	ops_parser_content_union_t* content =(ops_parser_content_union_t *)&content_->content;
+// 	static ops_boolean_t skipping;
+// 
+// 	if(content_->tag != OPS_PTAG_CT_UNARMOURED_TEXT && skipping)
+// 	{
+// 		puts("...end of skip");
+// 		skipping=ops_false;
+// 	}
+// 
+// 	switch(content_->tag)
+// 	{
+// 		case OPS_PTAG_CT_UNARMOURED_TEXT:
+// 			printf("OPS_PTAG_CT_UNARMOURED_TEXT\n");
+// 			if(!skipping)
+// 			{
+// 				puts("Skipping...");
+// 				skipping=ops_true;
+// 			}
+// 			fwrite(content->unarmoured_text.data, 1, content->unarmoured_text.length, stdout);
+// 			break;
+// 
+// 		case OPS_PTAG_CT_PK_SESSION_KEY:
+// 			return callback_pk_session_key(content_, cbinfo);
+// 			break;
+// 
+// 		case OPS_PARSER_CMD_GET_SECRET_KEY:
+// 			return callback_cmd_get_secret_key(content_, cbinfo);
+// 			break;
+// 
+// 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+// 			//        return callback_cmd_get_secret_key_passphrase(content_,cbinfo);
+// 			return cbinfo->cryptinfo.cb_get_passphrase(content_, cbinfo);
+// 			break;
+// 
+// 		case OPS_PTAG_CT_LITERAL_DATA_BODY:
+// 			return callback_literal_data(content_, cbinfo);
+// 			break;
+// 
+// 		case OPS_PTAG_CT_ARMOUR_HEADER:
+// 		case OPS_PTAG_CT_ARMOUR_TRAILER:
+// 		case OPS_PTAG_CT_ENCRYPTED_PK_SESSION_KEY:
+// 		case OPS_PTAG_CT_COMPRESSED:
+// 		case OPS_PTAG_CT_LITERAL_DATA_HEADER:
+// 		case OPS_PTAG_CT_SE_IP_DATA_BODY:
+// 		case OPS_PTAG_CT_SE_IP_DATA_HEADER:
+// 		case OPS_PTAG_CT_SE_DATA_BODY:
+// 		case OPS_PTAG_CT_SE_DATA_HEADER:
+// 
+// 			// Ignore these packets 
+// 			// They're handled in ops_parse_one_packet()
+// 			// and nothing else needs to be done
+// 			break;
+// 
+// 		default:
+// 			//        return callback_general(content_,cbinfo);
+// 			break;
+// 			//	fprintf(stderr,"Unexpected packet tag=%d (0x%x)\n",content_->tag,
+// 			//		content_->tag);
+// 			//	assert(0);
+// 	}
+// 
+// 	return OPS_RELEASE_MEMORY;
+// }
+
+bool PGPHandler::decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) 
+{
+	unsigned char *out_buf = NULL ;
+	std::string buf ;
+
+	FILE *f = fopen(inputfile.c_str(),"rb") ;
+
+	char c ;
+	while( (c = getc(f))!= EOF)
+		buf += c;
+
+	fclose(f) ;
+
+	std::cerr << "PGPHandler::decryptTextFromFile: read a file of length " << buf.length() << std::endl;
+	std::cerr << "buf=" << buf << std::endl;
+
+	int out_length ;
+	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)buf.c_str(),buf.length(),&out_buf,&out_length,_secring,ops_true,cb_get_passphrase) ;
+
+	text = std::string((char *)out_buf,out_length) ;
+	return (bool)res ;
+}
+
 bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen)
 {
 	// need to find the key and to decrypt it.
@@ -436,7 +553,7 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 		return false ;
 	}
 
-	std::string passphrase = _passphrase_callback("Please enter passwd:") ;
+	std::string passphrase = _passphrase_callback(NULL,PGPIdType(key->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
 

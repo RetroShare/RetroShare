@@ -3,9 +3,9 @@
 #include <iostream>
 #include "pgphandler.h"
 
-static std::string passphrase_callback(const std::string& what)
+static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
-	return std::string(getpass(what.c_str())) ;
+	return std::string(getpass(what)) ;
 }
 
 int main(int argc,char *argv[])
@@ -70,7 +70,8 @@ int main(int argc,char *argv[])
 	std::cerr << cert << std::endl;
 
 	std::cerr << "Testing password callback: " << std::endl;
-	std::string pass = passphrase_callback("Please enter password: ") ;
+
+	std::string pass = passphrase_callback(NULL,newid.toStdString().c_str(),"Please enter password: ",false) ;
 
 	std::cerr << "Password = \"" << pass << "\"" << std::endl;
 
@@ -95,6 +96,26 @@ int main(int argc,char *argv[])
 		std::cerr << "Signature verification failed." << std::endl;
 	else
 		std::cerr << "Signature verification worked!" << std::endl;
+
+	std::string outfile = "crypted_toto.pgp" ;
+	std::string text_to_encrypt = "this is a secret message" ;
+
+	std::cerr << "Checking encrypted file creation: streaming chain \"" << text_to_encrypt << "\" to file " << outfile << " with key " << id2.toStdString() << std::endl;
+
+	if(!pgph.encryptTextToFile(id2,text_to_encrypt,outfile))
+		std::cerr << "Encryption failed" << std::endl;
+	else
+		std::cerr << "Encryption success" << std::endl;
+
+	std::string decrypted_text = "" ;
+	outfile = "crypted_toto2.pgp" ;
+
+	if(!pgph.decryptTextFromFile(id2,decrypted_text,outfile))
+		std::cerr << "Decryption failed" << std::endl;
+	else
+		std::cerr << "Decryption success" << std::endl;
+
+	std::cerr << "Decrypted text: \"" << decrypted_text << "\"" << std::endl;
 
 	return 0 ;
 }

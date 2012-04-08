@@ -34,7 +34,7 @@
 
 static int debug=0;
 
-#define LINE_LENGTH 75
+#define LINE_LENGTH 63
 
 static const char newline[] = "\r\n";
 
