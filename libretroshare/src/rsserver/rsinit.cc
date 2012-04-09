@@ -612,15 +612,16 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 */
 	/* create singletons */
 	AuthSSLInit();
-	//AuthGPGInit();
 
-        AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
+	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
 	if(!setupBaseDir())
 		return RS_INIT_BASE_DIR_ERROR ; 
 
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
+
+	AuthGPG::init(RsInitConfig::basedir + "/pgp/retroshare_public_keyring.gpg",RsInitConfig::basedir + "/pgp/retroshare_secret_keyring.gpg");
 
 	/* Initialize AuthGPG */
 	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {

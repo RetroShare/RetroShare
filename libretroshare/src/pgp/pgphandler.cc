@@ -177,7 +177,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,Pa
 	int i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
 	{
-		_public_keyring_map[ PGPIdType(keydata->key_id).toUInt64() ] = i ;
+		initCertificateInfo(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ],keydata,i) ;
 		++i ;
 	}
 
@@ -189,11 +189,37 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,Pa
 	i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_secring,i)) != NULL )
 	{
-		_secret_keyring_map[ PGPIdType(keydata->key_id).toUInt64() ] = i ;
+		initCertificateInfo(_secret_keyring_map[ PGPIdType(keydata->key_id).toStdString() ],keydata,i) ;
 		++i ;
 	}
 
 	std::cerr << "Secring read successfully." << std::endl;
+}
+
+void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t index)
+{
+	// Parse certificate name
+	//
+	std::string namestring( (char *)keydata->uids[0].user_id ) ;
+
+	cert._name = "" ;
+	int i=0;
+	while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
+
+	std::string& next = (namestring[i] == '(')?cert._comment:cert._email ;
+	next = "" ;
+	while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
+		next += namestring[i] ;
+
+	next = (namestring[i] == '(')?cert._comment:cert._email ;
+	next = "" ;
+	while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
+		next += namestring[i] ;
+
+	cert._trustLvl = 1 ;	// to be setup accordingly
+	cert._key_index = index ;
+
+	std::cerr << __PRETTY_FUNCTION__ <<  ": unfinished!!" << std::endl;
 }
 
 PGPHandler::~PGPHandler()
@@ -209,13 +235,42 @@ PGPHandler::~PGPHandler()
 	free(_secring) ;
 }
 
-void PGPHandler::printKeys() const
+bool PGPHandler::printKeys() const
 {
-	std::cerr << "Public keyring: " << std::endl;
-	ops_keyring_list(_pubring) ;
+	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
+	{
+		std::cerr << "PGP Key: " << it->first << std::endl;
 
-	std::cerr << "Secret keyring: " << std::endl;
-	ops_keyring_list(_secring) ;
+		std::cerr << "\tName          : " <<  it->second._name << std::endl;
+		std::cerr << "\tEmail         : " <<  it->second._email << std::endl;
+		std::cerr << "\tOwnSign       : " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) << std::endl;
+		std::cerr << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) << std::endl;
+		std::cerr << "\ttrustLvl      : " <<  it->second._trustLvl << std::endl;
+		std::cerr << "\tvalidLvl      : " <<  it->second._validLvl << std::endl;
+
+		std::set<std::string>::const_iterator sit;
+		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); sit++)
+		{
+			std::cerr << "\t\tSigner ID:" << *sit << ", Name: " ;
+			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(*sit)) ;
+
+			if(info != NULL)
+				std::cerr << info->_name ;
+
+			std::cerr << std::endl ;
+		}
+	}
+	return true ;
+}
+
+const PGPCertificateInfo *PGPHandler::getCertificateInfo(const PGPIdType& id) const
+{
+	std::map<std::string,PGPCertificateInfo>::const_iterator it( _public_keyring_map.find(id.toStdString()) ) ;
+
+	if(it != _public_keyring_map.end())
+		return &it->second;
+	else
+		return NULL ;
 }
 
 bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& ids)
@@ -305,14 +360,14 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	
 	pgpId = PGPIdType(tmp_keyring->keys[0].key_id) ;
 	addNewKeyToOPSKeyring(_secring,tmp_keyring->keys[0]) ;
-	_secret_keyring_map[ pgpId.toUInt64() ] = _secring->nkeys-1 ;
+	initCertificateInfo(_secret_keyring_map[ pgpId.toStdString() ],&tmp_keyring->keys[0],_secring->nkeys-1) ;
 
 	std::cerr << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." << std::endl;
 
 	// 5 - copy the private key to the public keyring
 	
 	addNewKeyToOPSKeyring(_pubring,tmp_keyring->keys[0]) ;
-	_public_keyring_map[ pgpId.toUInt64() ] = _pubring->nkeys-1 ;
+	initCertificateInfo(_public_keyring_map[ pgpId.toStdString() ],&tmp_keyring->keys[0],_pubring->nkeys-1) ;
 
 	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
 
@@ -344,21 +399,21 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 
 const ops_keydata_t *PGPHandler::getSecretKey(const PGPIdType& id) const
 {
-	std::map<uint64_t,uint32_t>::const_iterator res = _secret_keyring_map.find(id.toUInt64()) ;
+	std::map<std::string,PGPCertificateInfo>::const_iterator res = _secret_keyring_map.find(id.toStdString()) ;
 
 	if(res == _secret_keyring_map.end())
 		return NULL ;
 	else
-		return ops_keyring_get_key_by_index(_secring,res->second) ;
+		return ops_keyring_get_key_by_index(_secring,res->second._key_index) ;
 }
 const ops_keydata_t *PGPHandler::getPublicKey(const PGPIdType& id) const
 {
-	std::map<uint64_t,uint32_t>::const_iterator res = _public_keyring_map.find(id.toUInt64()) ;
+	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id.toStdString()) ;
 
 	if(res == _public_keyring_map.end())
 		return NULL ;
 	else
-		return ops_keyring_get_key_by_index(_pubring,res->second) ;
+		return ops_keyring_get_key_by_index(_pubring,res->second._key_index) ;
 }
 
 std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include_signatures)
@@ -414,7 +469,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 		id = PGPIdType(keydata->key_id) ;
 
 		addNewKeyToOPSKeyring(_pubring,*keydata) ;
-		_public_keyring_map[id.toUInt64()] = _pubring->nkeys-1 ;
+		initCertificateInfo(_public_keyring_map[id.toStdString()],keydata,_pubring->nkeys-1) ;
 	}
 
 	std::cerr << "Added the key in the main public keyring." << std::endl;
@@ -626,5 +681,44 @@ bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned cha
 //	ops_boolean_t valid=check_binary_signature(data_len,data,signature,pkey) ;
 
 	return false ;
+}
+
+void PGPHandler::setAcceptConnexion(const PGPIdType& id,bool b)
+{
+	std::map<std::string,PGPCertificateInfo>::iterator res = _public_keyring_map.find(id.toStdString()) ;
+
+	if(res != _public_keyring_map.end())
+		if(b)
+			res->second._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ;
+		else
+			res->second._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ;
+}
+
+bool PGPHandler::getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(const PGPCertificateInfo&)) const
+{
+	list.clear() ;
+
+	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin());it!=_public_keyring_map.end();++it)
+		if( filter == NULL || (*filter)(it->second) )
+			list.push_back(PGPIdType::fromUserId_hex(it->first)) ;
+
+	return true ;
+}
+
+bool PGPHandler::isGPGId(const std::string &id)
+{
+	return _public_keyring_map.find(id) != _public_keyring_map.end() ;
+}
+
+bool PGPHandler::isGPGSigned(const std::string &id)
+{
+	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
+	return res != _public_keyring_map.end() && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
+}
+
+bool PGPHandler::isGPGAccepted(const std::string &id)
+{
+	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
+	return res != _public_keyring_map.end() && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
 }
 

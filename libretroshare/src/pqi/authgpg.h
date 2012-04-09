@@ -58,56 +58,8 @@ class RsPeerDetails;
 
 /*!
  * gpgcert is the identifier for a person.
- * It is a wrapper class for a GPGme OpenPGP certificate.
+ * It is a wrapper class for a OpenPGP certificate.
  */
-class AuthGPG;
-
-class gpgcert
-{
-	public:
-		gpgcert();
-		~gpgcert() {}
-
-		std::string id;
-		std::string name;
-		std::string email;
-
-		std::string fpr; /* fingerprint */
-		std::list<std::string> signers;
-
-		uint32_t trustLvl;
-		uint32_t validLvl;
-
-		bool ownsign;
-
-		//This is not gpg, but RS data. A gpg peer can be accepted for connecting but not signed.
-		bool accept_connection;
-
-		PGPIdType key_id ;
-
-		// Cached Certificates...
-		bool mHaveCachedCert;
-		std::string mCachedCert;
-};
-
-
-/*!
- * The certificate map type
- */
-typedef std::map<std::string, gpgcert> certmap;
-	
-//! provides basic gpg functionality
-/*!
- *
- * This provides retroshare basic gpg functionality and
- * key/web-of-trust management, also handle cert intialisation for retroshare
- */
-
-// extern void AuthGPGInit();
-// extern void AuthGPGExit();
-
-/* The real implementation! */
-
 
 class AuthGPGOperation
 {
@@ -164,7 +116,6 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
 		 */
 		virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids);
-		virtual bool    printKeys();
 
 		/*********************************************************************************/
 		/************************* STAGE 1 ***********************************************/
@@ -214,10 +165,6 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool	getGPGValidList(std::list<std::string> &ids);
 		virtual bool	getGPGAcceptedList(std::list<std::string> &ids);
 		virtual bool	getGPGSignedList(std::list<std::string> &ids);
-		virtual bool	isGPGValid(const std::string &id);
-		virtual bool	isGPGSigned(const std::string &id);
-		virtual bool	isGPGAccepted(const std::string &id);
-		virtual bool    isGPGId(const std::string &id);
 
 		/*********************************************************************************/
 		/************************* STAGE 4 ***********************************************/
@@ -230,7 +177,6 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual std::string SaveCertificateToString(const std::string &id,bool include_signatures) ;
 
 		// Cached certificates.
-		bool   cacheGPGCertificate(const std::string &id, const std::string &certificate);
 		bool   getCachedGPGCertificate(const std::string &id, std::string &certificate);
 
 		/*********************************************************************************/
@@ -265,10 +211,12 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool decryptTextFromFile(      std::string& text,const std::string& filename);
 		virtual bool encryptTextToFile  (const std::string& text,const std::string& filename);
 
+		bool getGPGFilteredList(std::list<std::string>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) ;
+
 		//END of PGP public functions
 
 		/* GPG service */
-		virtual bool addService(AuthGPGService *service) { services.push_back(service) ; return true ;}
+		virtual bool addService(AuthGPGService *service) ;
 
 	protected:
 		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring);
@@ -317,7 +265,9 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 
 		static AuthGPG *instance_gpg; // pointeur vers le singleton
 
+		RsMutex gpgMtxService;
 		RsMutex gpgMtxEngine;
+
 		/* Below is protected via the mutex */
 
 		// gpgme_engine_info_t INFO;
@@ -326,18 +276,11 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		RsMutex gpgMtxData;
 		/* Below is protected via the mutex */
 
-		certmap mKeyList;
 		time_t mStoreKeyTime;
 
-		// bool gpgmeInit;
-
 		PGPIdType mOwnGpgId;
-		gpgcert mOwnGpgCert;
 		bool gpgKeySelected;
 
-		std::map<std::string, bool> mAcceptToConnectMap;
-
-		RsMutex gpgMtxService;
 		std::list<AuthGPGService*> services ;
 
 		static AuthGPG *_instance ;
