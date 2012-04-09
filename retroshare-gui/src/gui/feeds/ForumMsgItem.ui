@@ -96,6 +96,9 @@ border-radius: 10px}</string>
           <property name="openExternalLinks">
            <bool>true</bool>
           </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          </property>
          </widget>
         </item>
        </layout>

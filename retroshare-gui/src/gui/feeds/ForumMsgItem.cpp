@@ -218,7 +218,7 @@ void ForumMsgItem::updateItemStatic()
 		}
 
 		/* header stuff */
-		subjectLabel->setText(ForumsDialog::titleFromInfo(msg));
+		subjectLabel->setText(link.toHtml());
 		//srcLabel->setText(QString::fromStdString(msg.srcId));
 	}
 
