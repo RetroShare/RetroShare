@@ -5174,7 +5174,12 @@ p, li { white-space: pre-wrap; }
         <translation>Voll </translation>
     </message>
     <message>
-        <location line="-59"/>
+        <location line="+44"/>
+        <source>You have a friend request.</source>
+        <translation>Du hast eine Freundschaftsanfrage.</translation>
+    </message>
+    <message>
+        <location line="-103"/>
         <source>Sign GPG Key</source>
         <translation>Unterzeichne GPG Schlüssel</translation>
     </message>

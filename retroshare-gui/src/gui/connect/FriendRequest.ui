@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>372</width>
-    <height>328</height>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -200,7 +200,7 @@ border-image: url(:/images/btn_blue_hover.png) 4;
       <enum>QFrame::Plain</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0" colspan="2">
+      <item row="1" column="0" colspan="2">
        <widget class="AvatarWidget" name="avatar" native="true">
         <property name="minimumSize">
          <size>
@@ -216,7 +216,7 @@ border-image: url(:/images/btn_blue_hover.png) 4;
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="1" column="2">
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
          <string>Peer Info</string>
@@ -288,7 +288,7 @@ border-image: url(:/images/btn_blue_hover.png) 4;
         </layout>
        </widget>
       </item>
-      <item row="1" column="0" colspan="3">
+      <item row="2" column="0" colspan="3">
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0" colspan="3">
          <widget class="QLabel" name="web_of_trust_label">
@@ -384,7 +384,7 @@ border-image: url(:/images/btn_blue_hover.png) 4;
         </item>
        </layout>
       </item>
-      <item row="2" column="0" colspan="3">
+      <item row="3" column="0" colspan="3">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -396,6 +396,25 @@ border-image: url(:/images/btn_blue_hover.png) 4;
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+border: 2px solid #CCCCCC;
+border-radius:6px;
+background: white;
+</string>
+        </property>
+        <property name="text">
+         <string>You have a friend request.</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -416,6 +435,7 @@ border-image: url(:/images/btn_blue_hover.png) 4;
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

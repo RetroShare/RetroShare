@@ -5116,6 +5116,10 @@ p, li { white-space: pre-wrap; }
         <source>Maybe password is wrong</source>
         <translation type="unfinished">おそらくパスワードが間違っています</translation>
     </message>
+    <message>
+        <source>You have a friend request.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendSelectionWidget</name>

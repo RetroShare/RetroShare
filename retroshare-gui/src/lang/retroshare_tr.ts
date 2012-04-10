@@ -1657,7 +1657,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">yok</translation>
     </message>
     <message>
         <source>Marginal </source>
@@ -4433,6 +4433,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Maybe password is wrong</source>
         <translation type="unfinished">Belki şifre yanlış</translation>
+    </message>
+    <message>
+        <source>You have a friend request.</source>
+        <translation>Bir arkadaşlık isteği var.</translation>
     </message>
 </context>
 <context>

@@ -4311,6 +4311,10 @@ p, li { white-space: pre-wrap; }
         <source>Maybe password is wrong</source>
         <translation type="unfinished">Probablemente la contraseña es erronea</translation>
     </message>
+    <message>
+        <source>You have a friend request.</source>
+        <translation>Usted tiene una solicitud de amigo.</translation>
+    </message>
 </context>
 <context>
     <name>FriendSelectionWidget</name>
