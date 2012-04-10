@@ -1017,6 +1017,10 @@ p, li { white-space: pre-wrap; }
         <source>Channel Feed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished">Tiedostot</translation>
+    </message>
 </context>
 <context>
     <name>ChanNewItem</name>
@@ -1343,6 +1347,13 @@ Please choose one of it to chat with.</source>
     </message>
 </context>
 <context>
+    <name>ChatLobbyToaster</name>
+    <message>
+        <source>Show Chat Lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatLobbyWidget</name>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1394,6 +1405,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[No topic provided]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1591,6 +1606,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Compact style for history</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatToaster</name>
+    <message>
+        <source>Show Chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3464,6 +3486,14 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
         <source>Directories</source>
         <translation type="unfinished">Hakemistot</translation>
     </message>
+    <message>
+        <source>Cache cleaning confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will forget any former hash of non shared files. Do you confirm ?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DiscStatus</name>
@@ -4372,7 +4402,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -4380,7 +4410,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Content</source>
@@ -4468,6 +4498,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Placeholder for missing Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search forums</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4733,6 +4767,109 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendRequest</name>
+    <message>
+        <source>Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Peru</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Info</source>
+        <translation type="unfinished">Vertaisen tiedot</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nimi</translation>
+    </message>
+    <message>
+        <source>Peer ID</source>
+        <translation type="unfinished">Vertaisen tunniste</translation>
+    </message>
+    <message>
+        <source>RetroShare ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is:</source>
+        <translation type="unfinished">Luottamuksesi vertaiseen on:</translation>
+    </message>
+    <message>
+        <source>Sign GPG Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None </source>
+        <translation type="unfinished">Nolla</translation>
+    </message>
+    <message>
+        <source>Marginal </source>
+        <translation type="unfinished">Rajallinen</translation>
+    </message>
+    <message>
+        <source>Full </source>
+        <translation type="unfinished">Täysi</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
+        <translation type="unfinished">Luottamuksesi tähän vertaiseen on äärimmäinen, se on luultavasti oma avaimesi.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation type="unfinished">Luottamuksesi tähän vertaiseen on täysi.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation type="unfinished">Luottamuksesi tähän vertaiseen on rajallinen.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation type="unfinished">Luottamuksesi tähän vertaiseen on nolla.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is not set.</source>
+        <translation type="unfinished">Luottamustasi tähän vertaiseen ei ole asetettu.</translation>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation type="unfinished">Virhe allekirjoitettaessa</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
@@ -4744,7 +4881,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
 </context>
 <context>
@@ -5095,7 +5232,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation type="obsolete">...</translation>
     </message>
 </context>
 <context>
@@ -5867,6 +6004,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GroupChatToaster</name>
+    <message>
+        <source>Show Group Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
@@ -5901,7 +6045,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Enter a Keyword here</source>
@@ -6342,7 +6486,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -8182,7 +8326,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Attachments</source>
@@ -8670,7 +8814,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation>Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
@@ -8772,6 +8916,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pending Msg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9224,7 +9372,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear Filter</source>
-        <translation type="unfinished">Tyhjennä suodatin</translation>
+        <translation type="obsolete">Tyhjennä suodatin</translation>
     </message>
     <message>
         <source>Show keys that are not validated by the GPG web of trust</source>
@@ -9456,7 +9604,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private Message</source>
-        <translation type="unfinished">Yksityinen viesti</translation>
+        <translation type="obsolete">Yksityinen viesti</translation>
     </message>
     <message>
         <source>Message</source>
@@ -9553,6 +9701,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Notify</source>
         <translation type="unfinished">Huomauta</translation>
+    </message>
+    <message>
+        <source>Group Chat</source>
+        <translation type="unfinished">Ryhmäkeskustelu</translation>
+    </message>
+    <message>
+        <source>Chat Lobby</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11376,10 +11532,6 @@ Reported error is: %2</source>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>[No topic provided]</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -11687,11 +11839,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Lataus:&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;Lataus:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Lähetys:&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;Lähetys:&lt;/strong&gt;</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation type="unfinished">Alas</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation type="unfinished">Ylös</translation>
     </message>
 </context>
 <context>
@@ -12164,7 +12324,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear Filter</source>
-        <translation type="unfinished">Tyhjennä suodatin</translation>
+        <translation type="obsolete">Tyhjennä suodatin</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -12214,11 +12374,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Enter a Keyword here</source>
-        <translation type="unfinished">Anna hakusana tähän</translation>
+        <translation type="obsolete">Anna hakusana tähän</translation>
     </message>
     <message>
         <source>Advanced Search</source>
@@ -12281,7 +12441,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Make friend</source>
-        <translation type="unfinished">Ystävysty</translation>
+        <translation type="obsolete">Ystävysty</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
@@ -12370,6 +12530,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Quick Message</source>
         <translation type="unfinished">Pikainen viesti</translation>
+    </message>
+    <message>
+        <source>Accept Friend Request</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13122,7 +13286,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Palauta asetukset</translation>
+        <translation type="obsolete">Palauta asetukset</translation>
     </message>
     <message>
         <source>Event:</source>
@@ -14319,6 +14483,14 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Needs checking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t create link for file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click OK when program terminates!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

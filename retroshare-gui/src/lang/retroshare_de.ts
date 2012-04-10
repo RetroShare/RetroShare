@@ -4315,7 +4315,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="+266"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="+269"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -5113,7 +5113,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/FriendRequest.ui" line="+14"/>
         <source>Friend Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundschaftsanfrage</translation>
     </message>
     <message>
         <location line="+69"/>
@@ -5122,55 +5122,63 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Freundschaftsanfrage&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+88"/>
+        <source>Confirm</source>
+        <translation>Bestätigen</translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>Peer Info</source>
-        <translation type="unfinished">Nachbar Info</translation>
+        <translation>Nachbar Info</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Peer ID</source>
-        <translation type="unfinished">Peer ID</translation>
+        <translation>Peer ID</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>RetroShare ID</source>
-        <translation type="unfinished">RetroShare ID</translation>
+        <translation>RetroShare ID</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+46"/>
         <source>Your trust in this peer is:</source>
-        <translation type="unfinished">Dein Vertrauen zu diesem Nachbar ist:</translation>
+        <translation>Dein Vertrauen zu diesem Nachbar ist:</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+23"/>
         <source>None </source>
-        <translation type="unfinished">Nicht </translation>
+        <translation>Nicht </translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Marginal </source>
-        <translation type="unfinished">Geringfügig </translation>
+        <translation>Geringfügig </translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Full </source>
-        <translation type="unfinished">Voll </translation>
+        <translation>Voll </translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-59"/>
         <source>Sign GPG Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterzeichne GPG Schlüssel</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -5178,7 +5186,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5187,38 +5195,36 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Das Unterzeichnen eines Schlüssels kann nicht rückgängig gemacht werden, so nutze es weise.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Sign GPG key</source>
-        <translation type="unfinished">Unterzeichne GPG Schlüssel</translation>
+        <translation type="obsolete">Unterzeichne GPG Schlüssel</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="-172"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bestätigen und Schliesen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Accept Friend Request</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/connect/FriendRequest.cpp" line="+76"/>
-        <location line="+102"/>
+        <location filename="../gui/connect/FriendRequest.cpp" line="+75"/>
+        <location line="+83"/>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-101"/>
-        <location line="+102"/>
+        <location line="-82"/>
+        <location line="+83"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10038,7 +10044,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+235"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+241"/>
         <source>Status: </source>
         <translation>Status:</translation>
     </message>
@@ -10048,7 +10054,7 @@ p, li { white-space: pre-wrap; }
         <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-84"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10061,7 +10067,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+61"/>
         <source>File name: </source>
         <translation>Dateiname:</translation>
     </message>
@@ -12210,7 +12216,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-23"/>
         <source>Accept Friend Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundschaftsanfrage bestätigen</translation>
     </message>
     <message>
         <location line="+40"/>

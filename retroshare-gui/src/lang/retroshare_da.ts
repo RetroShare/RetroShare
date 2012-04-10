@@ -974,6 +974,10 @@ Do you want to save message ?</source>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished">Filer</translation>
+    </message>
 </context>
 <context>
     <name>ChanNewItem</name>
@@ -1256,6 +1260,13 @@ Please choose one of it to chat with.</source>
     </message>
 </context>
 <context>
+    <name>ChatLobbyToaster</name>
+    <message>
+        <source>Show Chat Lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatLobbyWidget</name>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1307,6 +1318,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[No topic provided]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1492,6 +1507,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Compact style for history</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatToaster</name>
+    <message>
+        <source>Show Chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3219,6 +3241,14 @@ you plug it in.</source>
         <source>Directories</source>
         <translation type="unfinished">Mapper</translation>
     </message>
+    <message>
+        <source>Cache cleaning confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will forget any former hash of non shared files. Do you confirm ?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DiscStatus</name>
@@ -4131,18 +4161,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Content</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4204,6 +4222,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Placeholder for missing Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search forums</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4469,6 +4491,109 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendRequest</name>
+    <message>
+        <source>Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Peer ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is:</source>
+        <translation type="unfinished">Deres tillid i denne peer er:</translation>
+    </message>
+    <message>
+        <source>Sign GPG Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None </source>
+        <translation type="unfinished">Ingen</translation>
+    </message>
+    <message>
+        <source>Marginal </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full </source>
+        <translation type="unfinished">Fuld</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
+        <translation type="unfinished">Deres tillid i denne peer er ultimative, er det sikkert en nøgle, du ejer.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation type="unfinished">Deres tillid i denne peer er fuld.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation type="unfinished">Deres tillid i denne peer er marginal.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation type="unfinished">Deres tillid i denne peer er ingen.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is not set.</source>
+        <translation type="unfinished">Deres tillid i denne peer er ikke indstillet.</translation>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation type="unfinished">Måske password er forkert</translation>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
@@ -4476,10 +4601,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4719,10 +4840,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5330,6 +5447,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GroupChatToaster</name>
+    <message>
+        <source>Show Group Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
@@ -5364,10 +5488,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enter a Keyword here</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5732,10 +5852,6 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Message History&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7017,10 +7133,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Content</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7258,10 +7370,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>RetroShare Messenger</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7345,6 +7453,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pending Msg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7692,10 +7804,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Clear Filter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7931,10 +8039,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Private Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8017,6 +8121,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Notify</source>
         <translation type="unfinished">Advisér</translation>
+    </message>
+    <message>
+        <source>Group Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat Lobby</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9425,10 +9537,6 @@ Reported error is: %2</source>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>[No topic provided]</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -9682,11 +9790,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Ned:&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;Ned:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Op:&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;Op:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Down:</source>
@@ -9695,6 +9803,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Up:</source>
         <translation type="obsolete">Op:</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation type="unfinished">Ned</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation type="unfinished">Op</translation>
     </message>
 </context>
 <context>
@@ -10166,23 +10282,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter a Keyword here</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Filter Search Result</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clear Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10262,7 +10366,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Make friend</source>
-        <translation type="unfinished">Gør ven</translation>
+        <translation type="obsolete">Gør ven</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
@@ -10350,6 +10454,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Quick Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accept Friend Request</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10988,10 +11096,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Browse</source>
         <translation type="unfinished">Gennemse</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Event:</source>
@@ -12125,6 +12229,14 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Needs checking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t create link for file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click OK when program terminates!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
