@@ -712,7 +712,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Fichiers</translation>
+        <translation>Fichiers</translation>
     </message>
 </context>
 <context>
@@ -857,7 +857,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished">Partager les droits de la chaîne</translation>
+        <translation>Partager les droits de la chaîne</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -919,7 +919,7 @@ Voulez-vous lui envoyer un message à la place ?</translation>
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation type="unfinished">Votre ami(e) a plus d&apos;un emplacement.
+        <translation>Votre ami(e) a plus d&apos;un emplacement.
 Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
 </context>
@@ -963,18 +963,18 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation type="unfinished">Bienvenue dans le salon %1</translation>
+        <translation>Bienvenue dans le salon %1</translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation type="unfinished">Sujet : %1</translation>
+        <translation>Sujet : %1</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afficher le salon de chat</translation>
     </message>
 </context>
 <context>
@@ -1225,7 +1225,7 @@ p, li { white-space: pre-wrap; }
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afficher le chat</translation>
     </message>
 </context>
 <context>
@@ -2835,11 +2835,11 @@ p, li { white-space: pre-wrap; }
     <name>DirectoriesPage</name>
     <message>
         <source>Partials Directory</source>
-        <translation type="unfinished">Dossier temporaire</translation>
+        <translation>Dossier temporaire</translation>
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation type="unfinished">Dossiers partagés</translation>
+        <translation>Dossiers partagés</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
@@ -2901,15 +2901,15 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">Répertoires</translation>
+        <translation>Répertoires</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Confirmation du nettoyage du cache</translation>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cela effacera tous les anciens hash des fichiers non partagés. Confirmez-vous ?</translation>
     </message>
 </context>
 <context>
@@ -3024,7 +3024,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation>Entrez les adresses e-mail de vos amis</translation>
+        <translation>Entrez l&apos;adresse e-mail de vos amis</translation>
     </message>
     <message>
         <source>Subject:</source>
@@ -3193,7 +3193,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Associations</source>
-        <translation type="unfinished">Associations</translation>
+        <translation>Associations</translation>
     </message>
 </context>
 <context>
@@ -3299,7 +3299,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation type="unfinished">Fichier de collection RetroShare</translation>
+        <translation>Fichier de collection RetroShare</translation>
     </message>
     <message>
         <source>Subtitles</source>
@@ -3537,7 +3537,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished">Forum</translation>
+        <translation>Forum</translation>
     </message>
 </context>
 <context>
@@ -3688,7 +3688,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished">Affichage sans arborescence</translation>
+        <translation type="unfinished">Affichage à plat</translation>
     </message>
     <message>
         <source>Author</source>
@@ -3764,7 +3764,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished">Partager les droits du forum</translation>
+        <translation>Partager les droits du forum</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
@@ -3776,7 +3776,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechercher forums</translation>
     </message>
 </context>
 <context>
@@ -3898,7 +3898,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished">Salons de chat</translation>
+        <translation>Salons de chat</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -4044,7 +4044,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendRequest</name>
     <message>
         <source>Friend Request</source>
-        <translation>Demande d&apos;ami</translation>
+        <translation type="unfinished">Demande d&apos;ami</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4052,55 +4052,31 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Demande d&apos;ami&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Confirmer et fermer&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Confirmer</translation>
-    </message>
-    <message>
         <source>Peer Info</source>
-        <translation>Information du contact</translation>
+        <translation type="unfinished">Information du contact</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nom</translation>
+        <translation type="unfinished">Nom</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID du contact</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID RetroShare</translation>
     </message>
     <message>
         <source>Your trust in this peer is:</source>
         <translation type="unfinished">Votre confiance en ce contact est :</translation>
-    </message>
-    <message>
-        <source>Sign GPG Key</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>None </source>
@@ -4113,6 +4089,50 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Full </source>
         <translation type="unfinished">Totale</translation>
+    </message>
+    <message>
+        <source>Sign GPG Key</source>
+        <translation type="unfinished">Signer la clé PGP</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Signer la clé d&apos;un ami est la manière d&apos;exprimer votre confiance en cet ami, à vos autres amis. De plus, seuls les amis dont vous avez signé la clé pourront recevoir les informations sur vos autres amis de confiance.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;La signature d&apos;une clé ne peut pas être révoquer, donc faîtes attention à qui vous accordez votre confiance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign GPG key</source>
+        <translation type="obsolete">Signer la clé PGP</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accepter le demande et fermer&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Accept Friend Request</source>
+        <translation type="obsolete">Accepter la demande d&apos;ami</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4148,11 +4168,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le mot de passe est peut-être incorrect</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="unfinished">Confirmer</translation>
     </message>
     <message>
         <source>You have a friend request.</source>
-        <translation>Vous avez une demande d&apos;ami.</translation>
+        <translation type="unfinished">Vous avez une demande d&apos;ami.</translation>
     </message>
 </context>
 <context>
@@ -4258,7 +4282,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add your Avatar Picture</source>
-        <translation type="unfinished">Ajouter votre image d&apos;avatar</translation>
+        <translation>Ajouter votre image d&apos;avatar</translation>
     </message>
     <message>
         <source>A</source>
@@ -4342,11 +4366,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new Chat lobby</source>
-        <translation type="unfinished">Créer un nouveau salon de chat</translation>
+        <translation>Créer un nouveau salon de chat</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished">Salons de chat</translation>
+        <translation>Salons de chat</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
@@ -4680,7 +4704,7 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous sera demandé afin de sig
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
-        <translation type="unfinished">[obligatoire] Ce mot de passe protège votre clef PGP.</translation>
+        <translation type="unfinished">[Obligatoire] Ce mot de passe protège votre clef PGP.</translation>
     </message>
 </context>
 <context>
@@ -5033,7 +5057,7 @@ p, li { white-space: pre-wrap; }
     <name>GroupChatToaster</name>
     <message>
         <source>Show Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afficher le Chat public</translation>
     </message>
 </context>
 <context>
@@ -7292,15 +7316,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">Notifications</translation>
+        <translation>Notifications</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished">Chat public</translation>
+        <translation>Chat public</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Salons de chat</translation>
     </message>
 </context>
 <context>
@@ -7760,7 +7784,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No plugin object</source>
-        <translation type="unfinished">Pas d&apos;extension</translation>
+        <translation>Pas d&apos;extension</translation>
     </message>
     <message>
         <source>Plugins is loaded.</source>
@@ -7839,7 +7863,7 @@ comportements malveillants des extensions.</translation>
     </message>
     <message>
         <source>Set window on top</source>
-        <translation type="unfinished">Mettre la fenêtre sur le dessus</translation>
+        <translation>Mettre la fenêtre sur le dessus</translation>
     </message>
 </context>
 <context>
@@ -8626,7 +8650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished">Répertoire</translation>
+        <translation>Répertoire</translation>
     </message>
     <message>
         <source>Network Wide</source>
@@ -8708,7 +8732,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation type="unfinished">Le dossier partagé a été ajouté !</translation>
+        <translation>Le dossier partagé a été ajouté !</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
@@ -8798,11 +8822,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished">Descendre</translation>
+        <translation>Réception </translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished">Monter</translation>
+        <translation>Émission </translation>
     </message>
 </context>
 <context>
@@ -9379,7 +9403,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation>Confirmer la demande d&apos;amitié</translation>
+        <translation type="unfinished">Accepter la demande d&apos;ami</translation>
     </message>
 </context>
 <context>
@@ -9705,7 +9729,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished">Partager les droits de la chaîne</translation>
+        <translation>Partager les droits de la chaîne</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9713,7 +9737,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9741,7 +9765,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Select the Friends with which you want to Share your Channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10739,7 +10763,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Run Email program</source>
-        <translation type="unfinished">Envoyer par courrier électronique</translation>
+        <translation>Envoyer par courrier électronique</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
@@ -11174,11 +11198,11 @@ Essayez d&apos;être patient !</translation>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de créer le lien pour le fichier %1.</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cliquez sur OK lorsque le programme s&apos;arrête !</translation>
     </message>
 </context>
 <context>
@@ -11307,7 +11331,7 @@ Essayez d&apos;être patient !</translation>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation type="unfinished">Hash inconnue</translation>
+        <translation type="unfinished">Hashes inconnus</translation>
     </message>
     <message>
         <source>Tunnel id</source>
