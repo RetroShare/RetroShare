@@ -82,6 +82,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     }
 
     last_status_send_time = 0 ;
+    inChatCharFormatChanged = false;
 
     connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
@@ -116,6 +117,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
 
     connect(ui.lineEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
+    // reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
+    connect(ui.lineEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 
     connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
     connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
@@ -274,6 +277,23 @@ void FriendsDialog::contextMenu(QPoint /*point*/)
 
     contextMnu->exec(QCursor::pos());
     delete(contextMnu);
+}
+
+void FriendsDialog::chatCharFormatChanged()
+{
+    if (inChatCharFormatChanged) {
+        return;
+    }
+
+    inChatCharFormatChanged = true;
+
+    // Reset font and color before inserting a character if edit box is empty
+    // (color info disappears when the user deletes all text)
+    if (ui.lineEdit->toPlainText().isEmpty()) {
+        setColorAndFont();
+    }
+
+    inChatCharFormatChanged = false;
 }
 
 void FriendsDialog::updateDisplay()
@@ -493,8 +513,6 @@ void FriendsDialog::sendMsg()
     // workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
     // QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
     ui.lineEdit->setCurrentCharFormat(QTextCharFormat ());
-
-    setColorAndFont();
 
     /* redraw send list */
     insertSendList();

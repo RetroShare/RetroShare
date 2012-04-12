@@ -98,6 +98,7 @@ protected:
 private slots:
 	void pasteLink();
 	void contextMenu(QPoint);
+	void chatCharFormatChanged();
 
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 
@@ -149,6 +150,7 @@ private:
 	RSStyle style;
 
 	bool firstShow;
+	bool inChatCharFormatChanged;
 
 	Ui::ChatWidget *ui;
 };

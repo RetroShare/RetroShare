@@ -74,6 +74,7 @@ protected:
 private slots:
     void pasteLink() ;
     void contextMenu(QPoint) ;
+    void chatCharFormatChanged();
 
     void on_actionClear_Chat_History_triggered();
     void on_actionDelete_Chat_History_triggered();
@@ -138,6 +139,7 @@ private:
     QWidget *newsFeed;
     QColor newsFeedTabColor;
     QString newsFeedText;
+    bool inChatCharFormatChanged;
 
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;

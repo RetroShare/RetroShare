@@ -61,6 +61,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	peerStatus = 0;
 	isChatLobby = false;
 	firstShow = true;
+	inChatCharFormatChanged = false;
 
 	lastStatusSendTime = 0 ;
 
@@ -86,6 +87,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
 	connect(ui->chattextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
+	connect(ui->chattextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 
 	ui->infoframe->setVisible(false);
 	ui->statusmessagelabel->hide();
@@ -368,6 +371,23 @@ void ChatWidget::contextMenu(QPoint /*point*/)
 	delete(contextMnu);
 }
 
+void ChatWidget::chatCharFormatChanged()
+{
+	if (inChatCharFormatChanged) {
+		return;
+	}
+
+	inChatCharFormatChanged = true;
+
+	// Reset font and color before inserting a character if edit box is empty
+	// (color info disappears when the user deletes all text)
+	if (ui->chattextEdit->toPlainText().isEmpty()) {
+		setColorAndFont();
+	}
+
+	inChatCharFormatChanged = false;
+}
+
 void ChatWidget::resetStatusBar()
 {
 	ui->statusLabel->clear();
@@ -422,8 +442,6 @@ void ChatWidget::sendChat()
 	// workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
 	// QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
 	chatWidget->setCurrentCharFormat(QTextCharFormat ());
-
-	setColorAndFont();
 }
 
 void ChatWidget::on_closeInfoFrameButton_clicked()
