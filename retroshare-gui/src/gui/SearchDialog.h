@@ -80,24 +80,24 @@ private slots:
     void advancedSearch(Expression*);
 
     void selectSearchResults(int index = -1);
+    void hideOrShowSearchResult(QTreeWidgetItem* resultItem, QString currentSearchId = QString(), int fileTypeIndex = -1);
 
     void sendLinkTo();
     
-    void onComboIndexChanged(int index);
+    void selectFileType(int index);
 
-	void filterColumnChanged();
-	void filterItems(const QString &text);
+	void filterItems();
 
 private:
 /** render the results to the tree widget display */
-	 void initSearchResult(const std::string& txt,qulonglong searchId, bool advanced) ;
-   void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
-	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType = ANONYMOUS_SEARCH) ;
-	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
-         void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir);
-	 void setIconAndType(QTreeWidgetItem *item, const QString& filename);
-	 void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
-	 void getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds);
+    void initSearchResult(const QString& txt,qulonglong searchId, int fileType, bool advanced) ;
+    void resultsToTree(const QString& txt,qulonglong searchId, const std::list<DirDetails>&);
+    void insertFile(qulonglong searchId,const FileDetail &file, int searchType = ANONYMOUS_SEARCH) ;
+    void insertDirectory(const QString &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
+    void insertDirectory(const QString &txt, qulonglong searchId, const DirDetails &dir);
+    void setIconAndType(QTreeWidgetItem *item, const QString& filename);
+    void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
+    void getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds);
 
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;
