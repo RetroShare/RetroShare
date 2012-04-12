@@ -9403,7 +9403,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation type="unfinished">Accepter la demande d&apos;ami</translation>
+        <translation>Accepter la demande d&apos;ami</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9415,7 +9415,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>veut devenir ami(e) avec toi sur RetroShare</translation>
     </message>
 </context>
 <context>

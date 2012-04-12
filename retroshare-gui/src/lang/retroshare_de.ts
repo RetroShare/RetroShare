@@ -12305,7 +12305,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>möchte mit dir in RetroShare befreundet sein</translation>
     </message>
     <message>
         <location line="+4"/>

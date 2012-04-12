@@ -10253,7 +10253,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>quiere ser tu amigo en RetroShare</translation>
     </message>
 </context>
 <context>

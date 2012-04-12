@@ -198,7 +198,6 @@ void SecurityItem::updateItem()
 				chatButton->hide();
 				quickmsgButton->hide();
 
-                friendRequesttoolButton->show();
                 removeFriendButton->setEnabled(false);
                 removeFriendButton->hide();
                 peerDetailsButton->setEnabled(false);
