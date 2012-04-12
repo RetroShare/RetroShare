@@ -57,6 +57,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
     removeFriendButton->hide();
     peerDetailsButton->setEnabled(false);
     friendRequesttoolButton->hide();
+    request_label->hide();
 
     /* general ones */
     connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
@@ -110,26 +111,34 @@ void SecurityItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 	QString title;
+	QString requesttext("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
+;
 
 	switch(mType)
 	{
 		case SEC_TYPE_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
+      request_label->show();
+			request_label->setText(requesttext.arg(tr("wants to be friends with you on RetroShare")));
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_AUTH_DENIED:
 			title = tr("Not Yet Friends");
+			request_label->hide();
       avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");
+			request_label->hide();
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			break;
 		case SEC_TYPE_UNKNOWN_OUT:
 			title = tr("Unknown (Outgoing) Connect Attempt");
+			request_label->hide();
 			break;
 		default:
 			title = tr("Unknown Security Issue");
+			request_label->hide();
 			break;
 	}
 
