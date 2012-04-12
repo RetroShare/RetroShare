@@ -5129,12 +5129,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Freundschaftsanfrage&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+244"/>
         <source>Confirm</source>
         <translation>Bestätigen</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="-205"/>
         <source>Peer Info</source>
         <translation>Nachbar Info</translation>
     </message>
@@ -5154,32 +5154,28 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare ID</translation>
     </message>
     <message>
-        <location line="+46"/>
         <source>Your trust in this peer is:</source>
-        <translation>Dein Vertrauen zu diesem Nachbar ist:</translation>
+        <translation type="obsolete">Dein Vertrauen zu diesem Nachbar ist:</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>None </source>
-        <translation>Nicht </translation>
+        <translation type="obsolete">Nicht </translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Marginal </source>
-        <translation>Geringfügig </translation>
+        <translation type="obsolete">Geringfügig </translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Full </source>
-        <translation>Voll </translation>
+        <translation type="obsolete">Voll </translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+63"/>
         <source>You have a friend request.</source>
         <translation>Du hast eine Freundschaftsanfrage.</translation>
     </message>
     <message>
-        <location line="-103"/>
+        <location line="+9"/>
         <source>Sign GPG Key</source>
         <translation>Unterzeichne GPG Schlüssel</translation>
     </message>
@@ -5204,7 +5200,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Unterzeichne GPG Schlüssel</translation>
     </message>
     <message>
-        <location line="-172"/>
+        <location line="+68"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -5223,43 +5219,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/connect/FriendRequest.cpp" line="+75"/>
-        <location line="+83"/>
+        <location line="+27"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-82"/>
-        <location line="+83"/>
+        <location line="-26"/>
+        <location line="+27"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-64"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="unfinished">Du hast das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von Dir.</translation>
+        <translation type="obsolete">Du hast das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von Dir.</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Your trust in this peer is full.</source>
-        <translation type="unfinished">Du vertraust diesem Nachbarn voll.</translation>
+        <translation type="obsolete">Du vertraust diesem Nachbarn voll.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>Your trust in this peer is marginal.</source>
-        <translation type="unfinished">Du vertraust diesem Nachbarn geringfügig.</translation>
+        <translation type="obsolete">Du vertraust diesem Nachbarn geringfügig.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>Your trust in this peer is none.</source>
-        <translation type="unfinished">Du vertraust diesem Nachbarn nicht.</translation>
+        <translation type="obsolete">Du vertraust diesem Nachbarn nicht.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished">Dein Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
+        <translation type="obsolete">Dein Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+35"/>
         <source>Signature Failure</source>
         <translation type="unfinished">Signatur Fehler</translation>
     </message>
@@ -12203,8 +12194,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SecurityItem</name>
     <message>
-        <location filename="../gui/feeds/SecurityItem.ui" line="+303"/>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="+287"/>
+        <location filename="../gui/feeds/SecurityItem.ui" line="+317"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="+296"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -12219,7 +12210,16 @@ p, li { white-space: pre-wrap; }
         <translation>Nachbar Details</translation>
     </message>
     <message>
-        <location line="-23"/>
+        <location line="-80"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Accept Friend Request</source>
         <translation>Freundschaftsanfrage bestätigen</translation>
     </message>
@@ -12298,9 +12298,14 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="-170"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="-176"/>
         <source>Connect Attempt</source>
         <translation>Verbindungsversuch</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>wants to be friends with you on RetroShare</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12308,22 +12313,22 @@ p, li { white-space: pre-wrap; }
         <translation>Noch keine Freunde</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Unknown (Incoming) Connect Attempt</source>
         <translation>Unbekannter (eingehender) Verbindungsversuch</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Unknown (Outgoing) Connect Attempt</source>
         <translation>Unbekannter (ausgehender) Verbindungsversuch</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Unknown Security Issue</source>
         <translation>Unbekanntes Sicherheitsproblem</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+47"/>
         <location line="+5"/>
         <location line="+1"/>
         <location line="+1"/>

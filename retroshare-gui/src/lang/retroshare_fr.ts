@@ -4076,19 +4076,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation type="unfinished">Votre confiance en ce contact est :</translation>
+        <translation type="obsolete">Votre confiance en ce contact est :</translation>
     </message>
     <message>
         <source>None </source>
-        <translation type="unfinished">Nulle</translation>
+        <translation type="obsolete">Nulle</translation>
     </message>
     <message>
         <source>Marginal </source>
-        <translation type="unfinished">Moyenne</translation>
+        <translation type="obsolete">Moyenne</translation>
     </message>
     <message>
         <source>Full </source>
-        <translation type="unfinished">Totale</translation>
+        <translation type="obsolete">Totale</translation>
     </message>
     <message>
         <source>Sign GPG Key</source>
@@ -4144,23 +4144,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="unfinished">Vous faîtes totalement confiance à ce contact, c&apos;est probablement une de vos clés.</translation>
+        <translation type="obsolete">Vous faîtes totalement confiance à ce contact, c&apos;est probablement une de vos clés.</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
-        <translation type="unfinished">Vous faîtes totalement confiance à ce contact.</translation>
+        <translation type="obsolete">Vous faîtes totalement confiance à ce contact.</translation>
     </message>
     <message>
         <source>Your trust in this peer is marginal.</source>
-        <translation type="unfinished">Vous faîtes moyennement confiance à ce contact.</translation>
+        <translation type="obsolete">Vous faîtes moyennement confiance à ce contact.</translation>
     </message>
     <message>
         <source>Your trust in this peer is none.</source>
-        <translation type="unfinished">Vous ne faites pas confiance à ce contact.</translation>
+        <translation type="obsolete">Vous ne faites pas confiance à ce contact.</translation>
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished">Votre degré de confiance dans ce contact n&apos;est pas encore défini.</translation>
+        <translation type="obsolete">Votre degré de confiance dans ce contact n&apos;est pas encore défini.</translation>
     </message>
     <message>
         <source>Signature Failure</source>
@@ -9404,6 +9404,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Accept Friend Request</source>
         <translation type="unfinished">Accepter la demande d&apos;ami</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

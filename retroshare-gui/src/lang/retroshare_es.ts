@@ -4257,7 +4257,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation>Tu confianza en ese vecino es:</translation>
+        <translation type="obsolete">Tu confianza en ese vecino es:</translation>
     </message>
     <message>
         <source>Sign GPG Key</source>
@@ -4265,15 +4265,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None </source>
-        <translation>Ningún</translation>
+        <translation type="obsolete">Ningún</translation>
     </message>
     <message>
         <source>Marginal </source>
-        <translation>Marginal</translation>
+        <translation type="obsolete">Marginal</translation>
     </message>
     <message>
         <source>Full </source>
-        <translation>Lleno </translation>
+        <translation type="obsolete">Lleno </translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4285,23 +4285,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="unfinished">Tu confianza en este vecino es máximo, probablemente una llave GPG que te pertenece.</translation>
+        <translation type="obsolete">Tu confianza en este vecino es máximo, probablemente una llave GPG que te pertenece.</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
-        <translation type="unfinished">Tienes plena confianza en este vecino.</translation>
+        <translation type="obsolete">Tienes plena confianza en este vecino.</translation>
     </message>
     <message>
         <source>Your trust in this peer is marginal.</source>
-        <translation type="unfinished">Tienes confianza en este vecino.</translation>
+        <translation type="obsolete">Tienes confianza en este vecino.</translation>
     </message>
     <message>
         <source>Your trust in this peer is none.</source>
-        <translation type="unfinished">No tienes confianaz en este vecino.</translation>
+        <translation type="obsolete">No tienes confianaz en este vecino.</translation>
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished">No has determinado el nivel de confianza en este vecino.</translation>
+        <translation type="obsolete">No has determinado el nivel de confianza en este vecino.</translation>
     </message>
     <message>
         <source>Signature Failure</source>
@@ -10242,6 +10242,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Accept Friend Request</source>
         <translation>Confirmar solicitud de amistad</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

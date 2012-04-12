@@ -4814,7 +4814,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation type="unfinished">Luottamuksesi vertaiseen on:</translation>
+        <translation type="obsolete">Luottamuksesi vertaiseen on:</translation>
     </message>
     <message>
         <source>Sign GPG Key</source>
@@ -4822,15 +4822,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None </source>
-        <translation type="unfinished">Nolla</translation>
+        <translation type="obsolete">Nolla</translation>
     </message>
     <message>
         <source>Marginal </source>
-        <translation type="unfinished">Rajallinen</translation>
+        <translation type="obsolete">Rajallinen</translation>
     </message>
     <message>
         <source>Full </source>
-        <translation type="unfinished">Täysi</translation>
+        <translation type="obsolete">Täysi</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4842,23 +4842,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="unfinished">Luottamuksesi tähän vertaiseen on äärimmäinen, se on luultavasti oma avaimesi.</translation>
+        <translation type="obsolete">Luottamuksesi tähän vertaiseen on äärimmäinen, se on luultavasti oma avaimesi.</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
-        <translation type="unfinished">Luottamuksesi tähän vertaiseen on täysi.</translation>
+        <translation type="obsolete">Luottamuksesi tähän vertaiseen on täysi.</translation>
     </message>
     <message>
         <source>Your trust in this peer is marginal.</source>
-        <translation type="unfinished">Luottamuksesi tähän vertaiseen on rajallinen.</translation>
+        <translation type="obsolete">Luottamuksesi tähän vertaiseen on rajallinen.</translation>
     </message>
     <message>
         <source>Your trust in this peer is none.</source>
-        <translation type="unfinished">Luottamuksesi tähän vertaiseen on nolla.</translation>
+        <translation type="obsolete">Luottamuksesi tähän vertaiseen on nolla.</translation>
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished">Luottamustasi tähän vertaiseen ei ole asetettu.</translation>
+        <translation type="obsolete">Luottamustasi tähän vertaiseen ei ole asetettu.</translation>
     </message>
     <message>
         <source>Signature Failure</source>
@@ -12537,6 +12537,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

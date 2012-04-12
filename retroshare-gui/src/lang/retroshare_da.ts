@@ -4538,7 +4538,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation type="unfinished">Deres tillid i denne peer er:</translation>
+        <translation type="obsolete">Deres tillid i denne peer er:</translation>
     </message>
     <message>
         <source>Sign GPG Key</source>
@@ -4546,15 +4546,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None </source>
-        <translation type="unfinished">Ingen</translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Ingen</translation>
     </message>
     <message>
         <source>Full </source>
-        <translation type="unfinished">Fuld</translation>
+        <translation type="obsolete">Fuld</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4566,23 +4562,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="unfinished">Deres tillid i denne peer er ultimative, er det sikkert en nøgle, du ejer.</translation>
+        <translation type="obsolete">Deres tillid i denne peer er ultimative, er det sikkert en nøgle, du ejer.</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
-        <translation type="unfinished">Deres tillid i denne peer er fuld.</translation>
+        <translation type="obsolete">Deres tillid i denne peer er fuld.</translation>
     </message>
     <message>
         <source>Your trust in this peer is marginal.</source>
-        <translation type="unfinished">Deres tillid i denne peer er marginal.</translation>
+        <translation type="obsolete">Deres tillid i denne peer er marginal.</translation>
     </message>
     <message>
         <source>Your trust in this peer is none.</source>
-        <translation type="unfinished">Deres tillid i denne peer er ingen.</translation>
+        <translation type="obsolete">Deres tillid i denne peer er ingen.</translation>
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished">Deres tillid i denne peer er ikke indstillet.</translation>
+        <translation type="obsolete">Deres tillid i denne peer er ikke indstillet.</translation>
     </message>
     <message>
         <source>Signature Failure</source>
@@ -10462,6 +10458,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
