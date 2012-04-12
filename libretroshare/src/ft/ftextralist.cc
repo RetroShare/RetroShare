@@ -31,6 +31,7 @@
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
 #include <stdio.h>
+#include <unistd.h>		/* for (u)sleep() */
 
 /******
  * #define DEBUG_ELIST	1

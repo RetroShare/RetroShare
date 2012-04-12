@@ -59,6 +59,7 @@
 
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
+#include <unistd.h>		/* for (u)sleep() */
 #include <sstream>
 
 /******

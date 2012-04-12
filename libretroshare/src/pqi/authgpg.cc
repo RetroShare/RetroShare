@@ -34,6 +34,7 @@
 
 #include <util/rsdir.h>
 #include <util/pgpkey.h>
+#include <unistd.h>		/* for (u)sleep() */
 #include <iostream>
 #include <sstream>
 #include <algorithm>

@@ -30,6 +30,7 @@
 
 #include "notifytxt.h"
 
+#include <unistd.h>
 #include <iostream>
 #ifdef WINDOWS_SYS
 #include <winsock2.h>

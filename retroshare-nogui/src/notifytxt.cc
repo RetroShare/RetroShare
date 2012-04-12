@@ -27,6 +27,7 @@
 #include "notifytxt.h"
 #include <retroshare/rspeers.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <sstream>

@@ -30,6 +30,7 @@
 
 #include "tcponudp/tou.h"
 #include <sstream>
+#include <unistd.h>
 
 #include "pqi/authssl.h"
 #include <sys/time.h>

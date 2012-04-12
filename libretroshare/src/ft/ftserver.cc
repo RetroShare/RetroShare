@@ -23,6 +23,8 @@
  *
  */
 
+#include <unistd.h>		/* for (u)sleep() */
+#include <iostream>
 #include <sstream>
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -47,9 +49,6 @@ const int ftserverzone = 29539;
 #include "pqi/p3linkmgr.h"
 
 #include "serialiser/rsserviceids.h"
-
-#include <iostream>
-#include <sstream>
 
 /***
  * #define SERVER_DEBUG 1

@@ -25,6 +25,7 @@
 
 //#define P3TURTLE_DEBUG 
 
+#include <unistd.h>
 #include <stdexcept>
 #include <stdlib.h>
 #include <assert.h>

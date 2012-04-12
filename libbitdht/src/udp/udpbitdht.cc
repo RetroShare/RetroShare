@@ -31,6 +31,7 @@
 #include "bitdht/bencode.h"
 
 #include <stdlib.h>
+#include <unistd.h>		/* for usleep() */
 #include <iostream>
 #include <sstream>
 #include <iomanip>

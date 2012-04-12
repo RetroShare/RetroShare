@@ -54,6 +54,7 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
 #include "gui/notifyqt.h"
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 { 

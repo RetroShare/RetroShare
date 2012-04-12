@@ -39,6 +39,7 @@
 
 #include "util/rsdebug.h"
 #include <sstream>
+#include <unistd.h>
 
 const int pqissllistenzone = 49787;
 
