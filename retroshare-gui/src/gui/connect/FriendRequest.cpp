@@ -89,62 +89,6 @@ void FriendRequest::load()
 
     ui.avatar->setId(mId, false);
 
-        //web of trust
-        if (detail.trustLvl == GPGME_VALIDITY_ULTIMATE) {
-            //trust is ultimate, it means it's one of our own keys
-            ui.web_of_trust_label->setText(tr("Your trust in this peer is ultimate, it's probably a key you own."));
-            ui.radioButton_trust_fully->hide();
-            ui.radioButton_trust_marginnaly->hide();
-            ui.radioButton_trust_never->hide();
-        } else {
-            ui.radioButton_trust_fully->show();
-            ui.radioButton_trust_marginnaly->show();
-            ui.radioButton_trust_never->show();
-            if (detail.trustLvl == GPGME_VALIDITY_FULL) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
-                ui.radioButton_trust_fully->setChecked(true);
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-48.png"));
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-            } else if (detail.trustLvl == GPGME_VALIDITY_MARGINAL) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
-                ui.radioButton_trust_marginnaly->setChecked(true);
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-48.png"));
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-            } else if (detail.trustLvl == GPGME_VALIDITY_NEVER) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
-                ui.radioButton_trust_never->setChecked(true);
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-48.png"));
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
-            } else {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
-
-                //we have to set up the set exclusive to false in order to uncheck it all
-                ui.radioButton_trust_fully->setAutoExclusive(false);
-                ui.radioButton_trust_marginnaly->setAutoExclusive(false);
-                ui.radioButton_trust_never->setAutoExclusive(false);
-
-                ui.radioButton_trust_fully->setChecked(false);
-                ui.radioButton_trust_marginnaly->setChecked(false);
-                ui.radioButton_trust_never->setChecked(false);
-
-                ui.radioButton_trust_fully->setAutoExclusive(true);
-                ui.radioButton_trust_marginnaly->setAutoExclusive(true);
-                ui.radioButton_trust_never->setAutoExclusive(true);
-
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
-            }
-        }
-
-        if (detail.hasSignedMe) {
-            //ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my GPG key"));
-        } else {
-            //ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my GPG key"));
-        }
 }
 
 void FriendRequest::applyDialog()
@@ -161,17 +105,6 @@ void FriendRequest::applyDialog()
             return;
         }
     }
-
-    //check the GPG trustlvl
-    if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != GPGME_VALIDITY_FULL) {
-        //trust has changed to fully
-        rsPeers->trustGPGCertificate(detail.id, GPGME_VALIDITY_FULL);
-    } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != GPGME_VALIDITY_MARGINAL) {
-        rsPeers->trustGPGCertificate(detail.id, GPGME_VALIDITY_MARGINAL);
-    } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != GPGME_VALIDITY_NEVER) {
-        rsPeers->trustGPGCertificate(detail.id, GPGME_VALIDITY_NEVER);
-    }
-
 
     makeFriend();
     close();
