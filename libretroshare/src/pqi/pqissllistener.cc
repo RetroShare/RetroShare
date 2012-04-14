@@ -324,7 +324,7 @@ int	pqissllistenbase::acceptconnection()
 	{
 		std::string out;
 		rs_sprintf(out, "pqissllistenbase::acceptconnection() Error: Cannot make socket NON-Blocking: %d", err);
-		pqioutput(PQL_ERROR, pqissllistenzone, out;
+		pqioutput(PQL_ERROR, pqissllistenzone, out);
 
 		close(fd);
 		return -1;
