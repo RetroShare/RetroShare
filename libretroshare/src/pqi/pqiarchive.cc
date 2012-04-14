@@ -23,9 +23,6 @@
  *
  */
 
-
-
-
 /* This is dependent on the sslroot at the moment.
  * -> as we need to create/restore references to the Person.
  * -> and store the signatures to do this.
@@ -45,8 +42,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <sstream>
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 #include <time.h>
 
 const int pqiarchivezone = 9326;
@@ -69,19 +66,11 @@ pqiarchive::pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flags_in
 	:PQInterface(""), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in),
         nextPkt(NULL), nextPktTS(0), firstPktTS(0), initTS(0),realTime(false)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::pqiarchive()";
-          out << " Initialisation!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
-	}
+    pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::pqiarchive() Initialisation!\n");
 
 	if (!bio_in)
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::pqiarchive()";
-          out << " NULL bio, FATAL ERROR!" << std::endl;
-	  pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+	{
+	  pqioutput(PQL_ALERT, pqiarchivezone, "pqiarchive::pqiarchive() NULL bio, FATAL ERROR!\n");
 	  exit(1);
 	}
 
@@ -90,28 +79,17 @@ pqiarchive::pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flags_in
 
 pqiarchive::~pqiarchive()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::~pqiarchive()";
-          out << " Destruction!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::~pqiarchive() Destruction!\n");
 
 	if (bio_flags & BIN_FLAGS_NO_CLOSE)
 	{
-	  std::ostringstream out;
-	  out << "pqiarchive::~pqiarchive()";
-          out << " Not Closing BinInterface!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::~pqiarchive() Not Closing BinInterface!\n");
 	}
 	else if (bio)
 	{
-	  std::ostringstream out;
-	  out << "pqiarchive::~pqiarchive()";
-          out << " Deleting BinInterface!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::~pqiarchive() Deleting BinInterface!\n");
 
-	  delete bio;
+		delete bio;
 	}
 
 	if (rsSerialiser)
@@ -128,11 +106,10 @@ pqiarchive::~pqiarchive()
 // Get/Send Items.
 int	pqiarchive::SendItem(RsItem *si)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::SendItem()" << std::endl;
-	  si -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out.str());
+	{
+		std::string out = "pqiarchive::SendItem()\n";
+		si -> print_string(out);
+		pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out);
 	}
 
 	// check if this is a writing bio.
@@ -152,19 +129,12 @@ int	pqiarchive::SendItem(RsItem *si)
 
 RsItem *pqiarchive::GetItem()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::GetItem()";
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::GetItem()");
 
 	// check if this is a reading bio.
 	if (!(bio_flags & BIN_FLAGS_READABLE))
 	{
-		std::ostringstream out;
-		out << "pqiarchive::GetItem()";
-        	out << "Error Not Readable" << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, "pqiarchive::GetItem() Error Not Readable");
 		return NULL;
 	}
 
@@ -173,10 +143,7 @@ RsItem *pqiarchive::GetItem()
 	{
 		if (!readPkt(&nextPkt, &nextPktTS))
 		{
-			std::ostringstream out;
-			out << "pqiarchive::GetItem()";
-        		out << "Failed to ReadPkt" << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out.str());
+			pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, "pqiarchive::GetItem() Failed to ReadPkt");
 			return NULL;
 		}
 	}
@@ -212,11 +179,10 @@ RsItem *pqiarchive::GetItem()
 		nextPkt = NULL;
 
 		if (outPkt != NULL)
-        	{
-		  std::ostringstream out;
-		  out << "pqiarchive::GetItem() Returning:" << std::endl;
-		  outPkt -> print(out);
-		  pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out.str());
+		{
+			std::string out = "pqiarchive::GetItem() Returning:\n";
+			outPkt -> print_string(out);
+			pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out);
 		}
 		return outPkt;
 	}
@@ -226,21 +192,12 @@ RsItem *pqiarchive::GetItem()
 // // PQInterface
 int	pqiarchive::tick()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::tick()";
-	  out << std::endl;
-	}
 	return 0;
 }
 
 int	pqiarchive::status()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::status()";
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::status()");
 	return 0;
 }
 
@@ -250,22 +207,15 @@ int	pqiarchive::status()
 int	pqiarchive::writePkt(RsItem *pqi)
 {
 //	std::cerr << "writePkt, pqi->peerId()=" << pqi->PeerId() << std::endl ;
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::writePkt()";
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::writePkt()");
 
 	uint32_t pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 	if (!(rsSerialiser->serialise(pqi, ptr, &pktsize)))
 	{
-		std::ostringstream out;
-		out << "pqiarchive::writePkt() Null Pkt generated!";
-		out << std::endl;
-		out << "Caused By: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+		std::string out = "pqiarchive::writePkt() Null Pkt generated!\nCaused By:\n";
+		pqi -> print_string(out);
+		pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -277,13 +227,10 @@ int	pqiarchive::writePkt(RsItem *pqi)
 	uint32_t len = getRsItemSize(ptr);
 	if (len != pktsize)
 	{
-		std::ostringstream out;
-		out << "pqiarchive::writePkt() Length MisMatch: len: " << len;
-		out << " != pktsize: " << pktsize;
-		out << std::endl;
-		out << "Caused By: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+		std::string out;
+		rs_sprintf(out, "pqiarchive::writePkt() Length MisMatch: len: %lu != pktsize: %lu\nCaused By:\n", len, pktsize);
+		pqi -> print_string(out);
+		pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -294,12 +241,9 @@ int	pqiarchive::writePkt(RsItem *pqi)
 
 	if (!(bio->cansend()))
 	{
-		std::ostringstream out;
-		out << "pqiarchive::writePkt() BIO cannot write!";
-		out << std::endl;
-		out << "Discarding: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+		std::string out = "pqiarchive::writePkt() BIO cannot write!\nDiscarding:\n";
+		pqi -> print_string(out);
+		pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -311,14 +255,11 @@ int	pqiarchive::writePkt(RsItem *pqi)
 	// using the peerid from the item.
 	if (pqi->PeerId().length() != PQI_PEERID_LENGTH)
 	{
-		std::ostringstream out;
-		out << "pqiarchive::writePkt() Invalid peerId Length!";
-		out << std::endl;
-		out << "Found " << pqi->PeerId().length() << " instead of " << PQI_PEERID_LENGTH << std::endl ;
-		out << "pqi->PeerId() = " << pqi->PeerId() << std::endl ;
-		out << "Caused By: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+		std::string out = "pqiarchive::writePkt() Invalid peerId Length!\n";
+		rs_sprintf_append(out, "Found %ld instead of %ld\n", pqi->PeerId().length(), PQI_PEERID_LENGTH);
+		out += "pqi->PeerId() = " + pqi->PeerId() + "\nCaused By:\n";
+		pqi -> print_string(out);
+		pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -326,8 +267,7 @@ int	pqiarchive::writePkt(RsItem *pqi)
 		return 0;
 	}
 
-	std::ostringstream out;
-	out << "Writing Pkt Header" << std::endl;
+	std::string out = "Writing Pkt Header\n";
 	struct pqiarchive_header hdr;
 	hdr.type 	= PQIARCHIVE_TYPE_PQITEM;
 	hdr.length 	= len;
@@ -337,9 +277,8 @@ int	pqiarchive::writePkt(RsItem *pqi)
 	// write packet header.
 	if (sizeof(hdr) != bio->senddata(&hdr, sizeof(hdr)))
 	{
-		out << "Trouble writing header!";
-		out << std::endl;
-	  	pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+		out += "Trouble writing header!\n";
+		pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -348,14 +287,13 @@ int	pqiarchive::writePkt(RsItem *pqi)
 		return 0;
 	}
 
-	out << "Writing Pkt Body" << std::endl;
+	out += "Writing Pkt Body\n";
 
 	// write packet.
 	if ((int) len != bio->senddata(ptr, len))
 	{
-		out << "Problems with Send Data!";
-		out << std::endl;
-	  	pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+		out += "Problems with Send Data!\n";
+		pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -364,8 +302,8 @@ int	pqiarchive::writePkt(RsItem *pqi)
 		return 0;
 	}
 
-	out << " Success!" << std::endl;
-	pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out.str());
+	out += " Success!";
+	pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out);
 
 	free(ptr);
 	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -381,11 +319,7 @@ int	pqiarchive::writePkt(RsItem *pqi)
 
 int	pqiarchive::readPkt(RsItem **item_out, long *ts_out)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqiarchive::readPkt()";
-	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::readPkt()");
 
 	if ((!(bio->isactive())) || (!(bio->moretoread())))
 	{
@@ -435,11 +369,9 @@ int	pqiarchive::readPkt(RsItem **item_out, long *ts_out)
 		if (extralen != (tmplen = bio->readdata(extradata, extralen)))
 		{
 
-	  		std::ostringstream out;
-	  		out << "pqiarchive::readPkt() ";
-			out << "Error Completing Read (read ";
-			out << tmplen << "/" << extralen << ")" << std::endl;
-	  		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+			std::string out;
+			rs_sprintf(out, "pqiarchive::readPkt() Error Completing Read (read %d/%d)\n", tmplen, extralen);
+			pqioutput(PQL_ALERT, pqiarchivezone, out);
 
 			free(block);
 			return 0;

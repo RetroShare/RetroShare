@@ -30,6 +30,8 @@
 
 #include "util/rsdir.h"
 
+#include <sstream>
+
 std::string generateRandomShowId();
 
 /****
@@ -306,7 +308,7 @@ void p3PhotoService::publishPhotos()
 	std::string path = CacheSource::getCacheDir();
 	std::ostringstream out;
 	out << "photo-index-" << time(NULL) << ".pdx";
-	
+
 	std::string tmpname = out.str();
 	std::string fname = path + "/" + tmpname;
 

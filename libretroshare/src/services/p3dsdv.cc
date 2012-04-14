@@ -31,6 +31,8 @@
 #include "pqi/p3linkmgr.h"
 #include "util/rsrandom.h"
 
+#include <sstream>
+
 #include <openssl/sha.h>
 
 /****

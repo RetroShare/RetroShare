@@ -49,7 +49,7 @@ class pqiIpAddrList
 
 	// returns true if new address added.
 	bool 	updateIpAddressList(const pqiIpAddress &addr);
-	void 	printIpAddressList(std::ostream &out) const;
+	void 	printIpAddressList(std::string &out) const;
 	void    extractFromTlv(const RsTlvIpAddrSet &tlvAddrs);
 	void    loadTlv(RsTlvIpAddrSet &tlvAddrs);
 
@@ -65,7 +65,7 @@ class pqiIpAddrSet
 	bool 	updateLocalAddrs(const pqiIpAddress &addr);
 	bool 	updateExtAddrs(const pqiIpAddress &addr);
 	bool 	updateAddrs(const pqiIpAddrSet &addrs);
-	void 	printAddrs(std::ostream &out) const; 
+	void 	printAddrs(std::string &out) const;
 	pqiIpAddrList mLocal;
 	pqiIpAddrList mExt;
 };

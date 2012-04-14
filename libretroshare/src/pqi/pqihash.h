@@ -25,8 +25,8 @@
 
 #include <openssl/sha.h>
 #include <string>
-#include <sstream>
 #include <iomanip>
+#include "util/rsstring.h"
 
 class pqihash
 {
@@ -66,13 +66,11 @@ void 	Complete(std::string &hash)
 
 	SHA1_Final(sha_hash, sha_ctx);
 
-	std::ostringstream out;
+	endHash.clear();
 	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
 	{
-		out << std::setw(2) << std::setfill('0') << std::hex;
-		out << (unsigned int) (sha_hash[i]);
+		rs_sprintf_append(endHash, "%02x", (unsigned int) (sha_hash[i]));
 	}
-	endHash = out.str();
 	hash = endHash;
 	doHash = false;
 

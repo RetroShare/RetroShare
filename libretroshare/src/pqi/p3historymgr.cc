@@ -160,15 +160,11 @@ bool p3HistoryMgr::saveList(bool& cleanup, std::list<RsItem*>& saveData)
 	vitem->tlvkvs.pairs.push_back(kv);
 
 	kv.key = "PUBLIC_SAVECOUNT";
-	std::ostringstream s1;
-	s1 << mPublicSaveCount;
-	kv.value = s1.str();
+	rs_sprintf(kv.value, "%lu", mPublicSaveCount);
 	vitem->tlvkvs.pairs.push_back(kv);
 
 	kv.key = "PRIVATE_SAVECOUNT";
-	std::ostringstream s2;
-	s2 << mPrivateSaveCount;
-	kv.value = s2.str();
+	rs_sprintf(kv.value, "%lu", mPrivateSaveCount);
 	vitem->tlvkvs.pairs.push_back(kv);
 
 	saveData.push_back(vitem);

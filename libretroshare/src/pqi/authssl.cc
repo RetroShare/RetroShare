@@ -36,6 +36,7 @@
 #include "authgpg.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 
 #include "retroshare/rspeers.h" // for RsPeerDetails structure 
 
@@ -48,7 +49,6 @@
 #include <openssl/rand.h>
 #include <openssl/x509.h>
 
-#include <sstream>
 #include <iomanip>
 
 /****
@@ -380,15 +380,10 @@ bool AuthSSLimpl::SignData(const void *data, const uint32_t len, std::string &si
 	EVP_MD_CTX_destroy(mdctx);
 
 	sign.clear();	
-	std::ostringstream out;
-	out << std::hex;
 	for(uint32_t i = 0; i < signlen; i++) 
 	{
-		out << std::setw(2) << std::setfill('0');
-		out << (uint32_t) (signature[i]);
+		rs_sprintf_append(sign, "%02x", (uint32_t) (signature[i]));
 	}
-
-	sign = out.str();
 
 	return true;
 }
@@ -1172,9 +1167,7 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &add
 
 	{
 		// Hacky - adding IpAddress to SSLId.
-		std::ostringstream out;
-		out << "/" << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
-		peerId += out.str();
+		rs_sprintf(peerId, "/%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
 	}
 
 	uint32_t notifyType = 0;

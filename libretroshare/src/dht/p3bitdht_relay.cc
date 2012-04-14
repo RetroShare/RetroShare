@@ -229,33 +229,19 @@ bool p3BitDht::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 	int i;
 	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; i++)
 	{
-		std::ostringstream keyout;
-		keyout << "RELAY_CLASS" << i;
-	
-		std::string countkey = keyout.str() + "_COUNT";
-		std::string bandkey = keyout.str() + "_BANDWIDTH";
-
-		std::ostringstream countout;
-		std::ostringstream bandout;
-		countout << mRelay->getRelayClassMax(i);
-		bandout << mRelay->getRelayClassBandwidth(i);
-
-            	kv.key = countkey;
-            	kv.value = countout.str();
+		rs_sprintf(kv.key, "RELAY_CLASS%d_COUNT", i);
+		rs_sprintf(kv.value, "%d", mRelay->getRelayClassMax(i));
 		config->tlvkvs.pairs.push_back(kv);
 
-            	kv.key = bandkey;
-            	kv.value = bandout.str();
-		config->tlvkvs.pairs.push_back(kv);
+        rs_sprintf(kv.key, "RELAY_CLASS%d_BANDWIDTH", i);
+        rs_sprintf(kv.value, "%d", mRelay->getRelayClassBandwidth(i));
+        config->tlvkvs.pairs.push_back(kv);
 	}
 
 	/* add RelayMode */
 	{
-		std::ostringstream out;
-		out << mRelayMode;
-
-            	kv.key = "RELAY_MODE";
-            	kv.value = out.str();
+		kv.key = "RELAY_MODE";
+		rs_sprintf(kv.value, "%lu", mRelayMode);
 		config->tlvkvs.pairs.push_back(kv);
 	}
 
@@ -263,11 +249,8 @@ bool p3BitDht::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 	std::list<std::string>::iterator it;
 	for(i = 0, it = mRelayServerList.begin(); it != mRelayServerList.end(); it++, i++)
 	{
-		std::ostringstream key;
-		key << "RELAY_SERVER" << i;
-
-            	kv.key = key.str();
-            	kv.value = *it;
+		rs_sprintf(kv.key, "RELAY_SERVER%d", i);
+		kv.value = *it;
 		config->tlvkvs.pairs.push_back(kv);
 	}
 

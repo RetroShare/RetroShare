@@ -25,6 +25,7 @@
 
 #include <time.h>
 #include "pqi/pqiipset.h"
+#include "util/rsstring.h"
 
 bool pqiIpAddress::sameAddress(const pqiIpAddress &a) const
 {
@@ -192,16 +193,13 @@ void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs)
 
 
 
-void 	pqiIpAddrList::printIpAddressList(std::ostream &out) const
+void 	pqiIpAddrList::printIpAddressList(std::string &out) const
 {
 	std::list<pqiIpAddress>::const_iterator it;
 	time_t now = time(NULL);
 	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
 	{
-		out << rs_inet_ntoa(it->mAddr.sin_addr) << ":" 
-					<< ntohs(it->mAddr.sin_port) << " ( " 
-					<< now - it->mSeenTime << " old) " << std::endl;
-	
+		rs_sprintf_append(out, "%s:%u ( %ld old)\n", rs_inet_ntoa(it->mAddr.sin_addr).c_str(), ntohs(it->mAddr.sin_port), now - it->mSeenTime);
 	}
 	return;
 }
@@ -254,14 +252,13 @@ bool    pqiIpAddrSet::updateAddrs(const pqiIpAddrSet &addrs)
 
 
 
-void    pqiIpAddrSet::printAddrs(std::ostream &out) const
+void    pqiIpAddrSet::printAddrs(std::string &out) const
 {
-	out << "Local Addresses: ";
+	out += "Local Addresses: ";
 	mLocal.printIpAddressList(out);
-	out << std::endl;
-	out << "Ext Addresses: ";
+	out += "\nExt Addresses: ";
 	mExt.printIpAddressList(out);
-	out << std::endl;
+	out += "\n";
 }
 
 

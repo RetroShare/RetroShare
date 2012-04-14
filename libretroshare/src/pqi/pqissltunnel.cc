@@ -23,10 +23,6 @@
  *
  */
 
-
-
-
-
 #include "pqi/pqissltunnel.h"
 #include "pqi/pqinetwork.h"
 #include "pqi/p3linkmgr.h"
@@ -35,12 +31,11 @@
 
 #include "util/rsnet.h"
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 
 #include <unistd.h>
 #include <errno.h>
 #include <openssl/err.h>
-
-#include <sstream>
 
 const int pqisslzone = 37714;
 
@@ -97,11 +92,7 @@ pqissltunnel::pqissltunnel(PQInterface *parent, p3LinkMgr *cm, p3tunnel *p3t)
 	active = false;
 	waiting = TUNNEL_WAITING_NOT;
 
-  	{
-	  std::ostringstream out;
-	  out << "pqissltunnel for PeerId: " << PeerId();
-	  rslog(RSL_ALERT, pqisslzone, out.str());
-	}
+	rslog(RSL_ALERT, pqisslzone, "pqissltunnel for PeerId: " + PeerId());
 
 //        if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId()))) {
 //	  rslog(RSL_ALERT, pqisslzone,
@@ -204,27 +195,24 @@ int pqissltunnel::getConnectAddress(struct sockaddr_in &raddr) {
 bool 	pqissltunnel::connect_parameter(uint32_t type, uint32_t value)
 {
 	{
-                std::ostringstream out;
-                out << "pqissltunnel::connect_parameter() (not used) Peer: " << PeerId();
-		out << " type: " << type << "value: " << value;
-		rslog(RSL_DEBUG_ALL, pqisslzone, out.str());
+		std::string out = "pqissltunnel::connect_parameter() (not used) Peer: " + PeerId();
+		rs_sprintf_append(out, " type: %lu value: %lu", type, value);
+		rslog(RSL_DEBUG_ALL, pqisslzone, out);
 	}
 
-        if (type == NET_PARAM_CONNECT_DELAY)
+	if (type == NET_PARAM_CONNECT_DELAY)
 	{
-                std::ostringstream out;
-                out << "pqissltunnel::connect_parameter() (not used) Peer: " << PeerId();
-		out << " DELAY: " << value;
-		rslog(RSL_WARNING, pqisslzone, out.str());
+		std::string out = "pqissltunnel::connect_parameter() (not used) Peer: " + PeerId();
+		rs_sprintf_append(out, " DELAY: %lu", value);
+		rslog(RSL_WARNING, pqisslzone, out);
 
 		return true;
 	}
-        else if (type == NET_PARAM_CONNECT_TIMEOUT)
+	else if (type == NET_PARAM_CONNECT_TIMEOUT)
 	{
-                std::ostringstream out;
-                out << "pqissltunnel::connect_parameter() (not used) Peer: " << PeerId();
-		out << " TIMEOUT: " << value;
-		rslog(RSL_WARNING, pqisslzone, out.str());
+		std::string out = "pqissltunnel::connect_parameter() (not used) Peer: " + PeerId();
+		rs_sprintf_append(out, " TIMEOUT: %lu", value);
+		rslog(RSL_WARNING, pqisslzone, out);
 
 		return true;
 	}

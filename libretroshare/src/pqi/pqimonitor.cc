@@ -56,8 +56,9 @@ void    pqiConnectCbDummy::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
 	std::cerr << " addrs: ";
 	std::cerr << std::endl;
-	addrs.printAddrs(std::cerr);
-	std::cerr << std::endl;
+	std::string out;
+	addrs.printAddrs(out);
+	std::cerr << out << std::endl;
 }
 
 void    pqiConnectCbDummy::peerConnectRequest(std::string id, 

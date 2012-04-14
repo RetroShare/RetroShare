@@ -24,7 +24,6 @@
  */
 
 #include <unistd.h>
-#include <sstream>
 #include <iomanip>
 #include <stdio.h>
 #include <openssl/sha.h>
@@ -35,6 +34,7 @@
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 const int p3dhtzone = 3892;
 
 /*****
@@ -215,16 +215,15 @@ bool p3DhtMgr::setExternalInterface(
 #endif
 
 	/* Log External Interface too */
-	std::ostringstream out;
-        out << "p3DhtMgr::setExternalInterface()";
-        out << " laddr: " << rs_inet_ntoa(ownEntry.laddr.sin_addr);
-	out << " lport: " << ntohs(ownEntry.laddr.sin_port);
-        out << " raddr: " << rs_inet_ntoa(ownEntry.raddr.sin_addr);
-	out << " rport: " << ntohs(ownEntry.raddr.sin_port);
-        out << " type: " << ownEntry.type;
-        out << " state: " << ownEntry.state;
+	std::string out = "p3DhtMgr::setExternalInterface()";
+	out += " laddr: " + rs_inet_ntoa(ownEntry.laddr.sin_addr);
+	rs_sprintf_append(out, " lport: %u", ntohs(ownEntry.laddr.sin_port));
+	out += " raddr: " + rs_inet_ntoa(ownEntry.raddr.sin_addr);
+	rs_sprintf_append(out, " rport: %u", ntohs(ownEntry.raddr.sin_port));
+	rs_sprintf_append(out, " type: %lu", ownEntry.type);
+	rs_sprintf_append(out, " state: %lu", ownEntry.state);
 
-	rslog(RSL_WARNING, p3dhtzone, out.str());
+	rslog(RSL_WARNING, p3dhtzone, out);
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -329,10 +328,7 @@ bool p3DhtMgr::notifyPeer(std::string id)
 #endif
 		{
 			/* Log */
-			std::ostringstream out;
-			out << "p3DhtMgr::notifyPeer() Id: " << id;
-			out << " TO SOON - DROPPING";
-			rslog(RSL_WARNING, p3dhtzone, out.str());
+			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id + " TO SOON - DROPPING");
 		}
 		return false;
 	}
@@ -348,10 +344,7 @@ bool p3DhtMgr::notifyPeer(std::string id)
 #endif
 		{
 			/* Log */
-			std::ostringstream out;
-			out << "p3DhtMgr::notifyPeer() Id: " << id;
-			out << " PEER NOT FOUND - Trigger Search";
-			rslog(RSL_WARNING, p3dhtzone, out.str());
+			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id + " PEER NOT FOUND - Trigger Search");
 		}
 		it->second.lastTS = 0;
 	}
@@ -620,16 +613,15 @@ int p3DhtMgr::checkOwnDHTKeys()
 		
 			{
 				/* Log */
-				std::ostringstream out;
-				out << "p3DhtMgr::checkOwnDHTKeys() PUBLISH OWN ADDR:"; 
-	        		out << " hash1: " << RsUtil::BinToHex(peer.hash1);
-			        out << " laddr: " << rs_inet_ntoa(peer.laddr.sin_addr);
-				out << " :" << ntohs(peer.laddr.sin_port);
-			        out << " raddr: " << rs_inet_ntoa(peer.raddr.sin_addr);
-				out << ":" << ntohs(peer.raddr.sin_port);
-			        out << " type: " << peer.type;
+				std::string out = "p3DhtMgr::checkOwnDHTKeys() PUBLISH OWN ADDR:";
+				out += " hash1: " + RsUtil::BinToHex(peer.hash1);
+				out += " laddr: " + rs_inet_ntoa(peer.laddr.sin_addr);
+				rs_sprintf_append(out, ":%u", ntohs(peer.laddr.sin_port));
+				out += " raddr: " + rs_inet_ntoa(peer.raddr.sin_addr);
+				rs_sprintf_append(out, ":%u", ntohs(peer.raddr.sin_port));
+				rs_sprintf_append(out, " type: %lu", peer.type);
 			
-				rslog(RSL_WARNING, p3dhtzone, out.str());
+				rslog(RSL_WARNING, p3dhtzone, out);
 			}
 			
 			/* publish own key */
@@ -693,9 +685,7 @@ int p3DhtMgr::checkOwnDHTKeys()
 #endif
 				{
 					/* Log */
-					std::ostringstream out;
-					out << "p3DhtMgr::checkOwnDHTKeys() Checking for NOTIFY";
-					rslog(RSL_WARNING, p3dhtzone, out.str());
+					rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::checkOwnDHTKeys() Checking for NOTIFY");
 				}
 
 				if (dhtSearch(peer.hash1, DHT_MODE_NOTIFY))
@@ -907,9 +897,7 @@ int p3DhtMgr::checkNotifyDHT()
 #endif
 	{
 		/* Log */
-		std::ostringstream out;
-		out << "p3DhtMgr::checkNotifyDHT() Notify Request for Known Peer: " << it->first;
-		rslog(RSL_WARNING, p3dhtzone, out.str());
+		rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::checkNotifyDHT() Notify Request for Known Peer: " + it->first);
 	}
 
 	/* update timestamp */
@@ -933,9 +921,7 @@ int p3DhtMgr::checkNotifyDHT()
 #endif
 		{
 			/* Log */
-			std::ostringstream out;
-			out << "p3DhtMgr::checkNotifyDHT() POST DHT (Active Notify) for Peer: " << peer.id;
-			rslog(RSL_WARNING, p3dhtzone, out.str());
+			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::checkNotifyDHT() POST DHT (Active Notify) for Peer: " + peer.id);
 		}
 
 		dhtNotify(peer.hash1, own.hash2, "");
@@ -1117,20 +1103,18 @@ std::string p3DhtMgr::BootstrapId(uint32_t bin)
 	 * Make sure that NUM_BOOTSTRAP_BINS doesn't affect ids
 	 */
 
-	std::ostringstream genId;
-	genId << "BootstrapId";
-
 	uint32_t id = (bin % DHT_NUM_BOOTSTRAP_BINS) * 1234;
 
-	genId << id;
+	std::string genId;
+	rs_sprintf(genId, "BootstrapId%lu", id);
 
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::BootstrapId() generatedId: ";
-	std::cerr << genId.str() << std::endl;
+	std::cerr << genId << std::endl;
 #endif
 
 	/* now hash this to create a bootstrap Bin Id */
-	std::string bootId = RsUtil::HashId(genId.str(), false);
+	std::string bootId = RsUtil::HashId(genId, false);
 
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::BootstrapId() bootId: 0x";
@@ -1375,26 +1359,11 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 	/* Create a Value from addresses and type */
         /* to store the ip address and flags */
 
-	std::ostringstream out;
-	out << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_SEARCH << ": ";
-	out << "IPL="   << rs_inet_ntoa(laddr.sin_addr) << ":"  << ntohs(laddr.sin_port) << ", ";
-	out << "IPE="   << rs_inet_ntoa(raddr.sin_addr) << ":"  << ntohs(raddr.sin_port) << ", ";
-	out << "type="  << std::setw(4) << std::setfill('0') << std::hex << type << ", ";
-
-/*******
-	char valuearray[1024];
-	snprintf(valuearray, 1024, "RSDHT:%02d: IPL=%s:%d, IPE=%s:%d, type=%04X,",
-			DHT_MODE_SEARCH,
-	                rs_inet_ntoa(laddr.sin_addr),
-	                ntohs(laddr.sin_port),
-	                rs_inet_ntoa(raddr.sin_addr),
-	                ntohs(raddr.sin_port),
-	                type);
-
-	std::string value = valuearray;
-******/
-
-	std::string value = out.str();
+	std::string value;
+	rs_sprintf(value, "RSDHT:%02d: ", DHT_MODE_SEARCH);
+	rs_sprintf_append(value, "IPL=%s:%u, ", rs_inet_ntoa(laddr.sin_addr).c_str(), ntohs(laddr.sin_port));
+	rs_sprintf_append(value, "IPE=%s:%u, ", rs_inet_ntoa(raddr.sin_addr).c_str(), ntohs(raddr.sin_port));
+	rs_sprintf_append(value, "type=%04x, ", type);
 
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
@@ -1414,12 +1383,11 @@ bool p3DhtMgr::dhtNotify(std::string idhash, std::string ownIdHash, std::string 
 	std::cerr << "p3DhtMgr::dhtNotify()" << std::endl;
 #endif
 
-	std::ostringstream value;
-	value << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_NOTIFY << ":";
-	value << ownIdHash;
+	std::string value;
+	rs_sprintf(value, "RSDHT:%02d:%s", DHT_MODE_NOTIFY, ownIdHash.c_str());
 
 	/* call to the real DHT */
-	return publishDHT(idhash, value.str(), DHT_TTL_NOTIFY);
+	return publishDHT(idhash, value, DHT_TTL_NOTIFY);
 }
 
 bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t /*mode*/)
@@ -1439,12 +1407,11 @@ bool p3DhtMgr::dhtBootstrap(std::string storehash, std::string ownIdHash, std::s
 	std::cerr << "p3DhtMgr::dhtBootstrap()" << std::endl;
 #endif
 
-	std::ostringstream value;
-	value << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_BOOTSTRAP << ":";
-	value << ownIdHash;
+	std::string value;
+	rs_sprintf(value, "RSDHT:%02d:%s", DHT_MODE_BOOTSTRAP, ownIdHash.c_str());
 
 	/* call to the real DHT */
-	return publishDHT(storehash, value.str(), DHT_TTL_BOOTSTRAP);
+	return publishDHT(storehash, value, DHT_TTL_BOOTSTRAP);
 }
 
 
@@ -1544,21 +1511,21 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 				return false;
 			}
 
-                        std::ostringstream out1;
-			out1 << a1 << "." << b1 << "." << c1 << "." << d1;
-			inet_aton(out1.str().c_str(), &(laddr.sin_addr));
+			std::string out1;
+			rs_sprintf(out1, "%d.%d.%d.%d", a1, b1, c1, d1);
+			inet_aton(out1.c_str(), &(laddr.sin_addr));
 			laddr.sin_port = htons(e1);
 			laddr.sin_family = AF_INET;
 
-                        std::ostringstream out2;
-			out2 << a2 << "." << b2 << "." << c2 << "." << d2;
-			inet_aton(out2.str().c_str(), &(raddr.sin_addr));
+			std::string out2;
+			rs_sprintf(out2, "%d.%d.%d.%d", a2, b2, c2, d2);
+			inet_aton(out2.c_str(), &(raddr.sin_addr));
 			raddr.sin_port = htons(e2);
 			raddr.sin_family = AF_INET;
 
 #ifdef DHT_DEBUG
-			std::cerr << "p3DhtMgr::resultDHT() SEARCH laddr: " << out1.str() << ":" << e1;
-			std::cerr << " raddr: " << out2.str() << ":" << e2;
+			std::cerr << "p3DhtMgr::resultDHT() SEARCH laddr: " << out1 << ":" << e1;
+			std::cerr << " raddr: " << out2 << ":" << e2;
 			std::cerr << " flags: " << flags;
 			std::cerr << std::endl;
 #endif
@@ -1655,9 +1622,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 #endif
 		{
 			/* Log */
-			std::ostringstream out;
-			out << "p3DhtMgr::dhtResultNotify() NOTIFY from Id: " << it->first;
-			rslog(RSL_WARNING, p3dhtzone, out.str());
+			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::dhtResultNotify() NOTIFY from Id: " + it->first);
 		}
 
 		/* delay callback -> if they are not found */
@@ -1715,15 +1680,12 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 
 		{
 			/* Log */
-			std::ostringstream out;
-		        out << "p3DhtMgr::dhtSearchResult() for Id: " << it->first;
-		        out << " laddr: " << rs_inet_ntoa(laddr.sin_addr);
-			out << ":" << ntohs(laddr.sin_port);
-		        out << " raddr: " << rs_inet_ntoa(raddr.sin_addr);
-			out << ":" << ntohs(raddr.sin_port);
-		        out << " type: " << ownEntry.type;
+			std::string out ="p3DhtMgr::dhtSearchResult() for Id: " + it->first;
+			rs_sprintf_append(out, " laddr: %s:%u", rs_inet_ntoa(laddr.sin_addr).c_str(), ntohs(laddr.sin_port));
+			rs_sprintf_append(out, " raddr: %s:%u", rs_inet_ntoa(raddr.sin_addr).c_str(), ntohs(raddr.sin_port));
+			rs_sprintf_append(out, " type: %lu", ownEntry.type);
 		
-			rslog(RSL_WARNING, p3dhtzone, out.str());
+			rslog(RSL_WARNING, p3dhtzone, out);
 		}
 
 		/* update info .... always */

@@ -2173,10 +2173,10 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 
 std::string p3ChatService::makeVirtualPeerId(ChatLobbyId lobby_id)
 {
-	std::ostringstream os ;
-	os << "Chat Lobby 0x" << std::hex << lobby_id << std::dec ;
+	std::string s;
+	rs_sprintf(s, "Chat Lobby 0x%llx", lobby_id);
 
-	return os.str() ;
+	return s ;
 }
 
 

@@ -39,6 +39,7 @@
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 const int p3connectzone = 3431;
 
 #include "serialiser/rsconfigitems.h"
@@ -46,8 +47,6 @@ const int p3connectzone = 3431;
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
-
-#include <sstream>
 
 /* Network setup States */
 
@@ -115,15 +114,8 @@ peerConnectState::peerConnectState()
 
 std::string textPeerConnectState(peerConnectState &state)
 {
-	std::ostringstream out;
-	out << "Id: " << state.id << std::endl;
-
-
-	std::string output = out.str();
-	return output;
+    return "Id: " + state.id + "\n";
 }
-
-
 
 /*********
  * NOTES:
@@ -764,7 +756,7 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 
 #ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;
-		std::cerr << " laddr: " << rs_inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
+        std::cerr << " laddr: " << rs_inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
 		std::cerr << " type: " << type << std::endl;
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() set LinkType to: " << it->second.linkType << std::endl;
 #endif
@@ -799,9 +791,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 
 		if (id == getOwnId()) 
 		{
-			std::ostringstream out;
-			out << "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " << id;
-			rslog(RSL_ALERT, p3connectzone, out.str());
+			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " + id);
 
 			return false;
 		}
@@ -810,9 +800,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{
-			std::ostringstream out;
-			out << "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " << id;
-			rslog(RSL_ALERT, p3connectzone, out.str());
+			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " + id);
 
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::connectResult() ERROR, missing Friend " << " id: " << id << std::endl;
@@ -823,28 +811,27 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		/* now we can tell if we think we were connected - proper point to log */
 
 		{
-			std::ostringstream out;
-			out << "p3LinkMgrIMPL::connectResult() id: " << id;
+			std::string out = "p3LinkMgrIMPL::connectResult() id: " + id;
 			if (success) 
 			{
-				out << " SUCCESS ";
+				out += " SUCCESS ";
 				if (it->second.state & RS_PEER_S_CONNECTED)
 				{
-					out << " WARNING: State says: Already Connected";
+					out += " WARNING: State says: Already Connected";
 				}
 			} 
 			else 
 			{
 				if (it->second.state & RS_PEER_S_CONNECTED)
 				{
-					out << " FAILURE OF THE CONNECTION (Was Connected)";
+					out += " FAILURE OF THE CONNECTION (Was Connected)";
 				}
 				else
 				{
-					out << " FAILED ATTEMPT (Not Connected)";
+					out += " FAILED ATTEMPT (Not Connected)";
 				}
 			}
-			rslog(RSL_WARNING, p3connectzone, out.str());
+			rslog(RSL_WARNING, p3connectzone, out);
 		}
 
 
@@ -1077,16 +1064,13 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
 	{
 		/* Log */
-		std::ostringstream out;
-		out << "p3LinkMgrIMPL::peerStatus()" << " id: " << id;
-		out << " type: " << type << " flags: " << flags;
-		out << " source: " << source;
-		out << std::endl;
+		std::string out = "p3LinkMgrIMPL::peerStatus() id: " + id;
+		rs_sprintf_append(out, " type: %lu flags: %lu source: %lu\n", type, flags, source);
 		addrs.printAddrs(out);
 		
-		rslog(RSL_WARNING, p3connectzone, out.str());
+		rslog(RSL_WARNING, p3connectzone, out);
 #ifdef LINKMGR_DEBUG
-		std::cerr << out.str();
+		std::cerr << out << std::endl;
 #endif
 	}
 
@@ -1297,8 +1281,9 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	std::cerr << " type: " << type << " flags: " << flags;
 	std::cerr << " source: " << source << std::endl;
 	std::cerr << " addrs: " << std::endl;
-	addrs.printAddrs(std::cerr);
-	std::cerr << std::endl;
+	std::string out;
+	addrs.printAddrs(out);
+	std::cerr << out << std::endl;
 
 #endif
 
@@ -1341,17 +1326,16 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in rad
 #endif
 	{
 		/* Log */
-		std::ostringstream out;
-		out << "p3LinkMgrIMPL::peerConnectRequest() id: " << id;
-		out << " raddr: " << rs_inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
-		std::cerr << " proxyaddr: " << rs_inet_ntoa(proxyaddr.sin_addr) << ":" << ntohs(proxyaddr.sin_port);
-		std::cerr << " srcaddr: " << rs_inet_ntoa(srcaddr.sin_addr) << ":" << ntohs(srcaddr.sin_port);
-		out << " source: " << source;
-		out << " flags: " << flags;
-		out << " delay: " << delay;
-		out << " bandwidth: " << bandwidth;
+		std::string out = "p3LinkMgrIMPL::peerConnectRequest() id: " + id;
+		rs_sprintf_append(out, " raddr: %s:%u", rs_inet_ntoa(raddr.sin_addr).c_str(), ntohs(raddr.sin_port));
+		rs_sprintf_append(out, " proxyaddr: %s:%u", rs_inet_ntoa(proxyaddr.sin_addr).c_str(), ntohs(proxyaddr.sin_port));
+		rs_sprintf_append(out, " srcaddr: %s:%u", rs_inet_ntoa(srcaddr.sin_addr).c_str(), ntohs(srcaddr.sin_port));
+		rs_sprintf_append(out, " source: %lu", source);
+		rs_sprintf_append(out, " flags: %lu", flags);
+		rs_sprintf_append(out, " delay: %lu", delay);
+		rs_sprintf_append(out, " bandwidth: %lu", bandwidth);
 		
-		rslog(RSL_WARNING, p3connectzone, out.str());
+		rslog(RSL_WARNING, p3connectzone, out);
 	}
 
 	/******************** TCP PART *****************************/
@@ -2055,13 +2039,10 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	if (peer->connAddrs.size() > 0) 
 	{
 #ifdef LINKMGR_DEBUG
-		std::ostringstream out;
-		out << "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT! " ;
-		out << std::endl;
-		out << "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() ConnAddr Count: " << peer->connAddrs.size();
-		rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
-	    	std::cerr << out.str() << std::endl;
-
+		std::string out = "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT!\n" ;
+		rs_sprintf_append(out, "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() ConnAddr Count: %u", peer->connAddrs.size());
+		rslog(RSL_DEBUG_ALERT, p3connectzone, out);
+		std::cerr << out << std::endl;
 #endif
 
 		peer->actions |= RS_PEER_CONNECT_REQ;
@@ -2071,10 +2052,9 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	else 
 	{
 #ifdef LINKMGR_DEBUG
-		std::ostringstream out;
-		out << "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! ";
-		rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
-	    	std::cerr << out.str() << std::endl;
+		std::string out = "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT!";
+		rslog(RSL_DEBUG_ALERT, p3connectzone, out);
+		std::cerr << out << std::endl;
 #endif
 	    return false;
 	}

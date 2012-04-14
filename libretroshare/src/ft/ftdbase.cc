@@ -250,18 +250,18 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 
 	/* basic control parameters */
 	{
-		std::ostringstream s ;
-		s << rememberHashFilesDuration() ;
+		std::string s ;
+		rs_sprintf(s, "%lu", rememberHashFilesDuration()) ;
 
-		configMap[hash_cache_duration_ss] = s.str() ;
+		configMap[hash_cache_duration_ss] = s ;
 	}
 	configMap[hash_cache_ss] = rememberHashFiles()?"YES":"NO" ;
 
 	{
-		std::ostringstream s ;
-		s << watchPeriod() ;
+		std::string s ;
+		rs_sprintf(s, "%d", watchPeriod()) ;
 
-		configMap[watch_file_duration_ss] = s.str() ;
+		configMap[watch_file_duration_ss] = s ;
 	}
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();

@@ -26,15 +26,14 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 
 #include "pqi/pqistreamer.h"
 #include "pqi/pqinotify.h"
 
 #include "serialiser/rsserial.h" 
 #include "serialiser/rsbaseitems.h"  /***** For RsFileData *****/
-
 
 const int pqistreamerzone = 8221;
 
@@ -77,19 +76,11 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 	setRate(true, 0);
 	setRate(false, 0);
 
-	{
-		std::ostringstream out;
-		out << "pqistreamer::pqistreamer()";
-		out << " Initialisation!" << std::endl;
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::pqistreamer() Initialisation!");
 
 	if (!bio_in)
 	{
-		std::ostringstream out;
-		out << "pqistreamer::pqistreamer()";
-		out << " NULL bio, FATAL ERROR!" << std::endl;
-		pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+		pqioutput(PQL_ALERT, pqistreamerzone, "pqistreamer::pqistreamer() NULL bio, FATAL ERROR!");
 		exit(1);
 	}
 
@@ -102,26 +93,15 @@ pqistreamer::~pqistreamer()
 {
 	RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
 
-	{
-		std::ostringstream out;
-		out << "pqistreamer::~pqistreamer()";
-		out << " Destruction!" << std::endl;
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Destruction!");
 
 	if (bio_flags & BIN_FLAGS_NO_CLOSE)
 	{
-		std::ostringstream out;
-		out << "pqistreamer::~pqistreamer()";
-		out << " Not Closing BinInterface!" << std::endl;
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Not Closing BinInterface!");
 	}
 	else if (bio)
 	{
-		std::ostringstream out;
-		out << "pqistreamer::~pqistreamer()";
-		out << " Deleting BinInterface!" << std::endl;
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Deleting BinInterface!");
 
 		delete bio;
 	}
@@ -161,12 +141,11 @@ pqistreamer::~pqistreamer()
 int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 {
 #ifdef RSITEM_DEBUG 
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::SendItem():" << std::endl;
-	  si -> print(out);
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	    std::cerr << out.str();
+	{
+		std::string out = "pqistreamer::SendItem():\n";
+		si -> print_string(out);
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
+		std::cerr << out;
 	}
 #endif
 
@@ -175,11 +154,7 @@ int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 
 RsItem *pqistreamer::GetItem()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::GetItem()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::GetItem()");
 
 	if(incoming.empty())
 		return NULL; 
@@ -195,13 +170,10 @@ int	pqistreamer::tick()
 {
 #ifdef DEBUG_PQISTREAMER
 	{
-		std::ostringstream out;
-		out << "pqistreamer::tick()";
-		out << std::endl;
-		out << PeerId() << ": currRead/Sent: " << currRead << "/" << currSent;
-		out << std::endl;
+		std::string out = "pqistreamer::tick()\n" + PeerId();
+		rs_sprintf_append(out, ": currRead/Sent: %d/%d", currRead, currSent);
 
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
 
@@ -226,19 +198,17 @@ int	pqistreamer::tick()
 	{
 		std::list<void *>::iterator it;
 
-		std::ostringstream out;
-		out << "pqistreamer::tick() Queued Data:";
-		out << " for " << PeerId();
+		std::string out = "pqistreamer::tick() Queued Data: for " + PeerId();
 
 		if (bio->isactive())
 		{
-			out << " (active)";
+			out += " (active)";
 		}
 		else
 		{
-			out << " (waiting)";
+			out += " (waiting)";
 		}
-		out << std::endl;
+		out += "\n";
 
 		{
 			RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
@@ -249,23 +219,20 @@ int	pqistreamer::tick()
 				total += getRsItemSize(*it);
 			}
 
-			out << "\t Out Packets [" << out_pkt.size() << "] => " << total;
-			out << " bytes" << std::endl;
+			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", out_pkt.size(), total);
 
 			total = 0;
-			for(it = out_data.begin(); it != out_data.end(); it++)
+			for(it = out_pkt.begin(); it != out_pkt.end(); it++)
 			{
 				total += getRsItemSize(*it);
 			}
 
-			out << "\t Out Data    [" << out_data.size() << "] => " << total;
-			out << " bytes" << std::endl;
+			rs_sprintf_append(out, "\t Out Data    [%d] => %d bytes\n", out_pkt.size(), total);
 
-			out << "\t Incoming    [" << incoming.size() << "]";
-			out << std::endl;
+			rs_sprintf_append(out, "\t Incoming    [%d]\n", incoming.size());
 		}
 
-		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 	}
 #endif
 
@@ -279,17 +246,13 @@ int	pqistreamer::tick()
 
 int	pqistreamer::status()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::status()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::status()");
 
 	if (bio->isactive())
 	{
-		std::ostringstream out;
-		out << "Data in:" << totalRead << " out:" << totalSent;
-	  	pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+		std::string out;
+		rs_sprintf(out, "Data in:%d out:%d", totalRead, totalSent);
+		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 	}
 
 	return 0;
@@ -315,11 +278,7 @@ int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 		std::cerr << "Having file data with flags = " << bio_flags << std::endl ;
 	}
 
-	{
-		std::ostringstream out;
-		out << "pqistreamer::queue_outpqi()";
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::queue_outpqi()");
 #endif
 
 	/* decide which type of packet it is */
@@ -346,12 +305,9 @@ int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 		free(ptr);
 	}
 
-	std::ostringstream out;
-	out << "pqistreamer::queue_outpqi() Null Pkt generated!";
-	out << std::endl;
-	out << "Caused By: " << std::endl;
-	pqi -> print(out);
-	pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+	std::string out = "pqistreamer::queue_outpqi() Null Pkt generated!\nCaused By:\n";
+	pqi -> print_string(out);
+	pqioutput(PQL_ALERT, pqistreamerzone, out);
 
 	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 	{
@@ -363,11 +319,7 @@ int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 int 	pqistreamer::handleincomingitem(RsItem *pqi)
 {
 #ifdef DEBUG_PQISTREAMER
-	{
-		std::ostringstream out;
-		out << "pqistreamer::handleincomingitem()";
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincomingitem()");
 #endif
 	// timestamp last received packet.
 	mLastIncomingTs = time(NULL);
@@ -388,11 +340,7 @@ int	pqistreamer::handleoutgoing()
 	RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
 
 #ifdef DEBUG_PQISTREAMER
-	{
-		std::ostringstream out;
-		out << "pqistreamer::handleoutgoing()";
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleoutgoing()");
 #endif
 
 	int maxbytes = outAllowedBytes();
@@ -412,10 +360,9 @@ int	pqistreamer::handleoutgoing()
 			free(*it);
 			it = out_pkt.erase(it);
 #ifdef DEBUG_PQISTREAMER
-			std::ostringstream out;
-			out << "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
-			//			std::cerr << out.str() ;
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+			std::string out = "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
+			//			std::cerr << out ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
 		}
 
@@ -481,11 +428,10 @@ int	pqistreamer::handleoutgoing()
 
 			if (len != (ss = bio->senddata(pkt_wpending, len)))
 			{
-				std::ostringstream out;
-				out << "Problems with Send Data! (only " << ss << " bytes sent" << ", total pkt size=" << len ;
-				out << std::endl;
-//				std::cerr << out.str() ;
-				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+				std::string out;
+				rs_sprintf(out, "Problems with Send Data! (only %d bytes sent, total pkt size=%d)", ss, len);
+//				std::cerr << out << std::endl ;
+				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 
 				outSentBytes(sentbytes);
 				// pkt_wpending will kept til next time.
@@ -518,11 +464,7 @@ int pqistreamer::handleincoming()
 	static const int max_failed_read_attempts = 2000 ;
 
 #ifdef DEBUG_PQISTREAMER
-	{
-		std::ostringstream out;
-		out << "pqistreamer::handleincoming()";
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming()");
 #endif
 
 	if(!(bio->isactive()))
@@ -589,10 +531,9 @@ start_packet_read:
 			else // tmplen > 0
 			{
 				// strange case....This should never happen as partial reads are handled by pqissl below.
-				std::ostringstream out;
-				out << "pqistreamer::handleincoming() Incomplete ";
-				out << "(Strange) read of " << tmplen << " bytes";
-				pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+				std::string out = "pqistreamer::handleincoming() Incomplete ";
+				rs_sprintf_append(out, "(Strange) read of %d bytes", tmplen);
+				pqioutput(PQL_ALERT, pqistreamerzone, out);
 #ifdef DEBUG_PQISTREAMER
 				std::cerr << "[" << (void*)pthread_self() << "] " << "given up 3" << std::endl ;
 #endif
@@ -600,11 +541,11 @@ start_packet_read:
 			}
 		}
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "block 0 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " 
+		std::cerr << "[" << (void*)pthread_self() << "] " << "block 0 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " "
 							<< (int)(((unsigned char*)block)[3]) << " "
-							<< (int)(((unsigned char*)block)[4]) << " " 
-							<< (int)(((unsigned char*)block)[5]) << " " 
-							<< (int)(((unsigned char*)block)[6]) << " " 
+							<< (int)(((unsigned char*)block)[4]) << " "
+							<< (int)(((unsigned char*)block)[5]) << " "
+							<< (int)(((unsigned char*)block)[6]) << " "
 							<< (int)(((unsigned char*)block)[7]) << " " << std::endl ;
 #endif
 
@@ -621,11 +562,11 @@ continue_packet:
                 std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet getRsItemSize(block) = " << getRsItemSize(block) << std::endl ;
                 std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet extralen = " << extralen << std::endl ;
 
-                std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
+				std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
 		std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " << (int)(((unsigned char*)block)[3])  << " "
-							<< (int)(((unsigned char*)block)[4]) << " " 
-							<< (int)(((unsigned char*)block)[5]) << " " 
-							<< (int)(((unsigned char*)block)[6]) << " " 
+							<< (int)(((unsigned char*)block)[4]) << " "
+							<< (int)(((unsigned char*)block)[5]) << " "
+							<< (int)(((unsigned char*)block)[6]) << " "
 							<< (int)(((unsigned char*)block)[7]) << " " << std::endl ;
 #endif
 		if (extralen > maxlen - blen)
@@ -638,38 +579,37 @@ continue_packet:
 				std::string title =
 					"Warning: Bad Packet Read";
 
-				std::ostringstream msgout;
-				msgout <<  "               **** WARNING ****     \n";
-				msgout <<  "Retroshare has caught a BAD Packet Read";
-				msgout <<  "\n";
-				msgout <<  "This is normally caused by connecting to an";
-				msgout <<  " OLD version of Retroshare";
-				msgout <<  "\n";
-				msgout <<  "(M:" << maxlen << " B:" << blen << " E:" << extralen << ")\n";
-				msgout <<  "\n";
-				msgout << "block = " 
-							<< (int)(((unsigned char*)block)[0]) << " " 
-							<< (int)(((unsigned char*)block)[1]) << " " 
-							<< (int)(((unsigned char*)block)[2]) << " " 
-							<< (int)(((unsigned char*)block)[3]) << " " 
-							<< (int)(((unsigned char*)block)[4]) << " " 
-							<< (int)(((unsigned char*)block)[5]) << " " 
-							<< (int)(((unsigned char*)block)[6]) << " " 
-							<< (int)(((unsigned char*)block)[7]) << "\n" ;
-				msgout <<  "\n";
-				msgout <<  "Please get your friends to upgrade to the latest version";
-				msgout <<  "\n";
-				msgout <<  "\n";
-				msgout <<  "If you are sure the error was not caused by an old version";
-				msgout <<  "\n";
-				msgout <<  "Please report the problem to Retroshare's developers";
-				msgout <<  "\n";
+				std::string msg;
+				msg =   "               **** WARNING ****     \n";
+				msg +=  "Retroshare has caught a BAD Packet Read";
+				msg +=  "\n";
+				msg +=  "This is normally caused by connecting to an";
+				msg +=  " OLD version of Retroshare";
+				msg +=  "\n";
+				rs_sprintf_append(msg, "(M:%d B:%d E:%d)\n", maxlen, blen, extralen);
+				msg +=  "\n";
+				rs_sprintf_append(msg, "block = %d %d %d %d %d %d %d %d\n",
+							(int)(((unsigned char*)block)[0]),
+							(int)(((unsigned char*)block)[1]),
+							(int)(((unsigned char*)block)[2]),
+							(int)(((unsigned char*)block)[3]),
+							(int)(((unsigned char*)block)[4]),
+							(int)(((unsigned char*)block)[5]),
+							(int)(((unsigned char*)block)[6]),
+							(int)(((unsigned char*)block)[7])) ;
+				msg +=  "\n";
+				msg +=  "Please get your friends to upgrade to the latest version";
+				msg +=  "\n";
+				msg +=  "\n";
+				msg +=  "If you are sure the error was not caused by an old version";
+				msg +=  "\n";
+				msg +=  "Please report the problem to Retroshare's developers";
+				msg +=  "\n";
 
-				std::string msg = msgout.str();
 				notify->AddLogMessage(0, RS_SYS_WARNING, title, msg);
 
 				std::cerr << "pqistreamer::handle_incoming() ERROR: Read Packet too Big" << std::endl;
-				std::cerr << msgout.str();
+				std::cerr << msg;
 				std::cerr << std::endl;
 
 			}
@@ -703,43 +643,39 @@ continue_packet:
 
 				if(++failed_read_attempts > max_failed_read_attempts)
 				{
-					std::ostringstream out;
-					out << "Error Completing Read (read ";
-					out << tmplen << "/" << extralen << ")" << std::endl;
-					std::cerr << out.str() ;
-					pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+					std::string out;
+					rs_sprintf(out, "Error Completing Read (read %d/%d)", tmplen, extralen);
+					std::cerr << out << std::endl ;
+					pqioutput(PQL_ALERT, pqistreamerzone, out);
 
 					pqiNotify *notify = getPqiNotify();
 					if (notify)
 					{
 						std::string title = "Warning: Error Completing Read";
 
-						std::ostringstream msgout;
-						msgout <<  "               **** WARNING ****     \n";
-						msgout <<  "Retroshare has experienced an unexpected Read ERROR";
-						msgout <<  "\n";
-						msgout <<  "(M:" << maxlen << " B:" << blen;
-						msgout <<  " E:" << extralen << " R:" << tmplen << ")\n";
-						msgout <<  "\n";
-						msgout <<  "Note: this error might as well happen (rarely) when a peer disconnects in between a transmission of a large packet." << std::endl;
-						msgout <<  "If it happens manny time, please contact the developers, and send them these numbers:";
-						msgout <<  "\n";
+						std::string msgout;
+						msgout =   "               **** WARNING ****     \n";
+						msgout +=  "Retroshare has experienced an unexpected Read ERROR";
+						msgout +=  "\n";
+						rs_sprintf_append(msgout, "(M:%d B:%d E:%d R:%d)\n", maxlen, blen, extralen, tmplen);
+						msgout +=  "\n";
+						msgout +=  "Note: this error might as well happen (rarely) when a peer disconnects in between a transmission of a large packet.\n";
+						msgout +=  "If it happens manny time, please contact the developers, and send them these numbers:";
+						msgout +=  "\n";
 
-						msgout << "block = " 
-							<< (int)(((unsigned char*)block)[0]) << " " 
-							<< (int)(((unsigned char*)block)[1]) << " " 
-							<< (int)(((unsigned char*)block)[2]) << " " 
-							<< (int)(((unsigned char*)block)[3]) << " "
-							<< (int)(((unsigned char*)block)[4]) << " " 
-							<< (int)(((unsigned char*)block)[5]) << " " 
-							<< (int)(((unsigned char*)block)[6]) << " " 
-							<< (int)(((unsigned char*)block)[7]) << " "
-							<< std::endl ;
-
+						rs_sprintf_append(msgout, "block = %d %d %d %d %d %d %d %d\n",
+							(int)(((unsigned char*)block)[0]),
+							(int)(((unsigned char*)block)[1]),
+							(int)(((unsigned char*)block)[2]),
+							(int)(((unsigned char*)block)[3]),
+							(int)(((unsigned char*)block)[4]),
+							(int)(((unsigned char*)block)[5]),
+							(int)(((unsigned char*)block)[6]),
+							(int)(((unsigned char*)block)[7]));
 
 						//notify->AddSysMessage(0, RS_SYS_WARNING, title, msgout.str());
 
-						std::cerr << msgout.str() << std::endl;
+						std::cerr << msgout << std::endl;
 					}
 
 					bio->close();	
@@ -759,9 +695,9 @@ continue_packet:
 #ifdef DEBUG_PQISTREAMER
 		std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
 		std::cerr << "[" << (void*)pthread_self() << "] " << "block 2 : " << (int)(((unsigned char*)extradata)[0]) << " " << (int)(((unsigned char*)extradata)[1]) << " " << (int)(((unsigned char*)extradata)[2]) << " " << (int)(((unsigned char*)extradata)[3])  << " "
-							<< (int)(((unsigned char*)extradata)[4]) << " " 
-							<< (int)(((unsigned char*)extradata)[5]) << " " 
-							<< (int)(((unsigned char*)extradata)[6]) << " " 
+							<< (int)(((unsigned char*)extradata)[4]) << " "
+							<< (int)(((unsigned char*)extradata)[5]) << " "
+							<< (int)(((unsigned char*)extradata)[6]) << " "
 							<< (int)(((unsigned char*)extradata)[7]) << " " << std::endl ;
 #endif
 
@@ -771,11 +707,10 @@ continue_packet:
 
 		// create packet, based on header.
 		{
-                        std::ostringstream out;
-                        out << "Read Data Block -> Incoming Pkt(";
-                        out << blen + extralen << ")" << std::endl;
-                        //std::cerr << out.str() ;
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+			std::string out;
+			rs_sprintf(out, "Read Data Block -> Incoming Pkt(%d)", blen + extralen);
+			//std::cerr << out ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 		}
 
                 //		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
@@ -823,11 +758,7 @@ continue_packet:
 
 float   pqistreamer::outTimeSlice()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::outTimeSlice()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::outTimeSlice()");
 
 	//fixme("pqistreamer::outTimeSlice()", 1);
 	return 1;
@@ -860,12 +791,10 @@ int     pqistreamer::outAllowedBytes()
 
 	currSentTS = t;
 
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::outAllowedBytes() is ";
-	  out << maxout - currSent << "/";
-	  out << maxout;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::string out;
+		rs_sprintf(out, "pqistreamer::outAllowedBytes() is %d/%d", maxout - currSent, maxout);
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 
 
@@ -898,12 +827,10 @@ int     pqistreamer::inAllowedBytes()
 
 	currReadTS = t;
 
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::inAllowedBytes() is ";
-	  out << maxin - currRead << "/";
-	  out << maxin;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::string out;
+		rs_sprintf(out, "pqistreamer::inAllowedBytes() is %d/%d", maxin - currRead, maxin);
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 
 
@@ -916,11 +843,10 @@ static const float AVG_FRAC = 0.8; // for low pass filter.
 
 void    pqistreamer::outSentBytes(int outb)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::outSentBytes(): ";
-	  out << outb << "@" << getRate(false) << "kB/s" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::string out;
+		rs_sprintf(out, "pqistreamer::outSentBytes(): %d@%gkB/s", outb, getRate(false));
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 
 
@@ -967,11 +893,10 @@ void    pqistreamer::outSentBytes(int outb)
 
 void    pqistreamer::inReadBytes(int inb)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::inReadBytes(): ";
-	  out << inb << "@" << getRate(true) << "kB/s" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::string out;
+		rs_sprintf(out, "pqistreamer::inReadBytes(): %d@%gkB/s", inb, getRate(true));
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 
 	totalRead += inb;

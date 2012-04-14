@@ -38,6 +38,7 @@
 //#include "util/dnsresolver.h"
 
 #include "util/rsprint.h"
+#include "util/rsstring.h"
 #include "util/rsdebug.h"
 const int p3peermgrzone = 9531;
 
@@ -46,9 +47,6 @@ const int p3peermgrzone = 9531;
 
 #include "retroshare/rsiface.h" // Needed for rsicontrol (should remove this dependancy)
 #include "retroshare/rspeers.h" // Needed for Group Parameters.
-
-
-#include <sstream>
 
 /* Network setup States */
 
@@ -89,17 +87,13 @@ peerState::peerState()
 
 std::string textPeerConnectState(peerState &state)
 {
-	std::ostringstream out;
-	out << "Id: " << state.id << std::endl;
-	out << "NetMode: " << state.netMode << std::endl;
-	out << "VisState: " << state.visState << std::endl;
-	out << "laddr: " << rs_inet_ntoa(state.localaddr.sin_addr)
-		<< ":" << ntohs(state.localaddr.sin_port) << std::endl;
-	out << "eaddr: " << rs_inet_ntoa(state.serveraddr.sin_addr)
-		<< ":" << ntohs(state.serveraddr.sin_port) << std::endl;
+	std::string out = "Id: " + state.id + "\n";
+	rs_sprintf_append(out, "NetMode: %lu\n", state.netMode);
+	rs_sprintf_append(out, "VisState: %lu\n", state.visState);
+	rs_sprintf_append(out, "laddr: %s:%u\n", rs_inet_ntoa(state.localaddr.sin_addr).c_str(), ntohs(state.localaddr.sin_port));
+	rs_sprintf_append(out, "eaddr: %s:%u\n", rs_inet_ntoa(state.serveraddr.sin_addr).c_str(), ntohs(state.serveraddr.sin_port));
 
-	std::string output = out.str();
-	return output;
+	return out;
 }
 
 
@@ -166,11 +160,9 @@ void p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::ostringstream out;
-		out << "p3PeerMgr::setOwnVisState()";
-		out << "Existing vis: " << mOwnState.visState;
-		out << "Input vis: " << visState;
-        	rslog(RSL_WARNING, p3peermgrzone, out.str());
+		std::string out;
+		rs_sprintf(out, "p3PeerMgr::setOwnVisState() Existing vis: %lu Input vis: %lu", mOwnState.visState, visState);
+		rslog(RSL_WARNING, p3peermgrzone, out);
 
 #ifdef PEER_DEBUG
 		std::cerr << out.str() << std::endl;
@@ -1126,11 +1118,9 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
 bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 {
 	{
-		std::ostringstream out;
-		out << "p3PeerMgr::setVisState(";
-		out << id;
-		out << ", " << visState << ")";
-        	rslog(RSL_WARNING, p3peermgrzone, out.str());
+		std::string out;
+		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %lu)", id.c_str(), visState);
+		rslog(RSL_WARNING, p3peermgrzone, out);
 	}
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
@@ -1514,9 +1504,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			} else {
 				uint32_t groupId = atoi((*groupIt)->id.c_str());
 				if (groupId == 0) {
-					std::ostringstream out;
-					out << (lastGroupId++);
-					(*groupIt)->id = out.str();
+					rs_sprintf((*groupIt)->id, "%lu", lastGroupId++);
 				}
 			}
 		}
@@ -1585,9 +1573,7 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 		RsPeerGroupItem *groupItem = new RsPeerGroupItem;
 		groupItem->set(groupInfo);
 
-		std::ostringstream out;
-		out << (++lastGroupId);
-		groupItem->id = out.str();
+		rs_sprintf(groupItem->id, "%lu", ++lastGroupId);
 
 		// remove standard flag
 		groupItem->flag &= ~RS_GROUP_FLAG_STANDARD;

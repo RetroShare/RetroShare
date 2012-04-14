@@ -23,8 +23,6 @@
  *
  */
 
-#include <sstream>
-
 #include "util/rsdebug.h"
 
 #include "pqi/pqisslpersongrp.h"
@@ -59,11 +57,7 @@ pqilistener * pqisslpersongrp::createListener(struct sockaddr_in laddr)
 
 pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 {
-	{
-		std::ostringstream out;
-		out << "pqipersongrp::createPerson() PeerId: " << id;
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id);
 
 	pqiperson *pqip = new pqiperson(id, this);
 	pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);

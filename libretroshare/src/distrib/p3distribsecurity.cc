@@ -28,6 +28,7 @@
 #include "retroshare/rsdistrib.h"
 #include "retroshare/rspeers.h"
 
+#include <sstream>
 
 p3DistribSecurity::p3DistribSecurity()
 {

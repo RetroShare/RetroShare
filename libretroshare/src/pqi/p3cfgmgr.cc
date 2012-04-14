@@ -33,6 +33,7 @@
 #include "pqi/pqinotify.h"
 #include <errno.h>
 #include <util/rsdiscspace.h>
+#include "util/rsstring.h"
 
 #include "serialiser/rsconfigitems.h"
 
@@ -180,11 +181,7 @@ void p3ConfigMgr::globalSaveConfig()
 		}
 
 		RsTlvKeyValue kv;
-		{
-			std::ostringstream out;
-			out << it->first;
-			kv.key = out.str();
-		}
+		rs_sprintf(kv.key, "%lu", it->first);
 		kv.value = it->second->Hash();
 		item->tlvkvs.pairs.push_back(kv);
 	}
