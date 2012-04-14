@@ -33,6 +33,7 @@
 #include "pqi/sslfns.h"
 #include "pqi/pqi_base.h"
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -649,17 +650,16 @@ bool getX509id(X509 *x509, std::string &xid) {
 
 	// else copy in the first CERTSIGNLEN.
 	unsigned char *signdata = ASN1_STRING_data(signature);
-	
-        std::ostringstream id;
+
+	xid.clear();
 	/* switched to the other end of the signature. for
 	 * more randomness
 	 */
 	for(int i = signlen - CERTSIGNLEN; i < signlen; i++)
 	{
-		id << std::hex << std::setw(2) << std::setfill('0') 
-			<< (uint16_t) (((uint8_t *) (signdata))[i]);
+		rs_sprintf_append(xid, "%02x", (uint16_t) (((uint8_t *) (signdata))[i]));
 	}
-	xid = id.str();
+
 	return true;
 }
 
@@ -875,8 +875,7 @@ std::string getX509Info(X509 *cert)
 
 /********** SSL ERROR STUFF ******************************************/
 
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, 
-		std::ostream &out)
+int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string &out)
 {
 	(void) ssl; /* remove unused parameter warnings */
 
@@ -919,9 +918,7 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2,
 	{
 		mainreason =  std::string("SSL_ERROR_SSL");
 	}
-	out << "RetVal(" << retval;
-	out << ") -> SSL Error: " << mainreason << std::endl;
-	out << "\t + ERR Error: " << ERR_error_string(err2, NULL) << std::endl;
+	rs_sprintf_append(out, "RetVal(%d) -> SSL Error: %s\n\t + ERR Error: %s\n", retval, mainreason.c_str(), ERR_error_string(err2, NULL));
 	return 1;
 }
 

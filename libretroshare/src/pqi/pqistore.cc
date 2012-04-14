@@ -45,8 +45,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <sstream>
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 
 // 
 // #define PQISTORE_DEBUG
@@ -58,20 +58,12 @@ pqistore::pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bi
 	:PQInterface(""), rsSerialiser(rss), bio_flags(bio_flags_in),
         nextPkt(NULL), mSrcId(srcId), bio(bio_in)
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistore::pqistore()";
-          out << " Initialisation!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::pqistore() Initialisation!");
 
 	if (!bio_in)
-        {
-	  std::ostringstream out;
-	  out << "pqistore::pqistore()";
-          out << " NULL bio, FATAL ERROR!" << std::endl;
-	  pqioutput(PQL_ALERT, pqistorezone, out.str());
-	  exit(1);
+	{
+		pqioutput(PQL_ALERT, pqistorezone, "pqistore::pqistore() NULL bio, FATAL ERROR!");
+		exit(1);
 	}
 
 	return;
@@ -79,28 +71,17 @@ pqistore::pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bi
 
 pqistore::~pqistore()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistore::~pqistore()";
-          out << " Destruction!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::~pqistore() Destruction!");
 
 	if (bio_flags & BIN_FLAGS_NO_CLOSE)
 	{
-	  std::ostringstream out;
-	  out << "pqistore::~pqistore()";
-          out << " Not Closing BinInterface!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::~pqistore() Not Closing BinInterface!;");
 	}
 	else if (bio)
 	{
-	  std::ostringstream out;
-	  out << "pqistore::~pqistore()";
-          out << " Deleting BinInterface!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
+		pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::~pqistore() Deleting BinInterface!");
 
-	  delete bio;
+		delete bio;
 	}
 
 	if (rsSerialiser)
@@ -119,10 +100,9 @@ int	pqistore::SendItem(RsItem *si)
 {
 #ifdef PQISTORE_DEBUG
         {
-	  std::ostringstream out;
-	  out << "pqistore::SendItem()" << std::endl;
+      std::string out = "pqistore::SendItem()\n";
 	  si -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 	}
 #endif
 
@@ -144,21 +124,14 @@ int	pqistore::SendItem(RsItem *si)
 RsItem *pqistore::GetItem()
 {
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::GetItem()";
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::GetItem()");
 #endif
 
 	// check if this is a reading bio.
 	if (!(bio_flags & BIN_FLAGS_READABLE))
 	{
 #ifdef PQISTORE_DEBUG
-		std::ostringstream out;
-		out << "pqistore::GetItem()";
-        	out << "Error Not Readable" << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqistorezone, "pqistore::GetItem() Error Not Readable");
 #endif
 		return NULL;
 	}
@@ -168,10 +141,7 @@ RsItem *pqistore::GetItem()
 	{
 		if (!readPkt(&nextPkt))
 		{
-			std::ostringstream out;
-			out << "pqistore::GetItem()";
-        		out << "Failed to ReadPkt" << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+			pqioutput(PQL_DEBUG_BASIC, pqistorezone, "pqistore::GetItem() Failed to ReadPkt");
 			return NULL;
 		}
 	}
@@ -184,10 +154,9 @@ RsItem *pqistore::GetItem()
 #ifdef PQISTORE_DEBUG
 	if (outPkt != NULL)
 	{
-		std::ostringstream out;
-		out << "pqistore::GetItem() Returning:" << std::endl;
+		std::string out = "pqistore::GetItem() Returning:\n";
 		outPkt -> print(out);
-		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 	}
 #endif
 	return outPkt;
@@ -200,11 +169,7 @@ RsItem *pqistore::GetItem()
 int	pqistore::tick()
 {
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::tick()";
-	  out << std::endl;
-	}
+	std::cerr << "pqistore::tick()" << std::endl;
 #endif
 	return 0;
 }
@@ -212,11 +177,7 @@ int	pqistore::tick()
 int	pqistore::status()
 {
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::status()";
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::status()");
 #endif
 	return 0;
 }
@@ -228,11 +189,7 @@ int	pqistore::writePkt(RsItem *pqi)
 {
 //	std::cerr << "writePkt, pqi->peerId()=" << pqi->PeerId() << std::endl ;
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::writePkt()";
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::writePkt()");
 #endif
 
 	uint32_t pktsize = rsSerialiser->size(pqi);
@@ -240,12 +197,9 @@ int	pqistore::writePkt(RsItem *pqi)
 	if (!(rsSerialiser->serialise(pqi, ptr, &pktsize)))
 	{
 #ifdef PQISTORE_DEBUG
-		std::ostringstream out;
-		out << "pqistore::writePkt() Null Pkt generated!";
-		out << std::endl;
-		out << "Caused By: " << std::endl;
+		std::string out = "pqistore::writePkt() Null Pkt generated!\nCaused By:\n";
 		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqistorezone, out.str());
+		pqioutput(PQL_ALERT, pqistorezone, out);
 #endif
 
 		free(ptr);
@@ -258,13 +212,10 @@ int	pqistore::writePkt(RsItem *pqi)
 	uint32_t len = getRsItemSize(ptr);
 	if (len != pktsize)
 	{
-		std::ostringstream out;
-		out << "pqistore::writePkt() Length MisMatch: len: " << len;
-		out << " != pktsize: " << pktsize;
-		out << std::endl;
-		out << "Caused By: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqistorezone, out.str());
+		std::string out;
+		rs_sprintf(out, "pqistore::writePkt() Length MisMatch: len: %u!= pktsize: %u\nCaused By:\n", len, pktsize);
+		pqi -> print_string(out);
+		pqioutput(PQL_ALERT, pqistorezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -275,12 +226,10 @@ int	pqistore::writePkt(RsItem *pqi)
 
 	if (!(bio->cansend()))
 	{
-		std::ostringstream out;
-		out << "pqistore::writePkt() BIO cannot write!";
-		out << std::endl;
-		out << "Discarding: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqistorezone, out.str());
+		std::string out;
+		rs_sprintf(out, "pqistore::writePkt() BIO cannot write!\niscarding:\n");
+		pqi -> print_string(out);
+		pqioutput(PQL_ALERT, pqistorezone, out);
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -290,16 +239,14 @@ int	pqistore::writePkt(RsItem *pqi)
 	}
 
 #ifdef PQISTORE_DEBUG
-	std::ostringstream out;
-	out << "Writing Pkt Body" << std::endl;
+	std::string out = "Writing Pkt Body";
 #endif
 	// write packet.
 	if (len != (uint32_t) bio->senddata(ptr, len))
 	{
 #ifdef PQISTORE_DEBUG
-		out << "Problems with Send Data!";
-		out << std::endl;
-	  	pqioutput(PQL_ALERT, pqistorezone, out.str());
+		out += " Problems with Send Data!";
+		pqioutput(PQL_ALERT, pqistorezone, out);
 #endif
 
 		free(ptr);
@@ -310,8 +257,8 @@ int	pqistore::writePkt(RsItem *pqi)
 	}
 
 #ifdef PQISTORE_DEBUG
-	out << " Success!" << std::endl;
-	pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+	out += " Success!";
+	pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 #endif
 
 	free(ptr);
@@ -328,11 +275,7 @@ int	pqistore::writePkt(RsItem *pqi)
 int     pqistore::readPkt(RsItem **item_out)
 {
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::readPkt()";
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::readPkt()");
 #endif
 
 	if ((!(bio->isactive())) || (!(bio->moretoread())))
@@ -353,8 +296,7 @@ int     pqistore::readPkt(RsItem **item_out)
 	// read the basic block (minimum packet size)
 	if (blen != (tmplen = bio->readdata(block, blen)))
 	{
-	  	pqioutput(PQL_WARNING, pqistorezone, 
-	  		"pqistore::readPkt() bad read(2)");
+		pqioutput(PQL_WARNING, pqistorezone, "pqistore::readPkt() bad read(2)");
 
 		free(block);
 		return 0;
@@ -379,12 +321,9 @@ int     pqistore::readPkt(RsItem **item_out)
 
 		if (extralen != (tmplen = bio->readdata(extradata, extralen)))
 		{
-
-	  		std::ostringstream out;
-	  		out << "pqistore::readPkt() ";
-			out << "Error Completing Read (read ";
-			out << tmplen << "/" << extralen << ")" << std::endl;
-	  		pqioutput(PQL_ALERT, pqistorezone, out.str());
+			std::string out;
+			rs_sprintf(out, "pqistore::readPkt() Error Completing Read (read %d/%d)", tmplen, extralen);
+			pqioutput(PQL_ALERT, pqistorezone, out);
 
 			free(block);
 			return 0;
@@ -401,8 +340,7 @@ int     pqistore::readPkt(RsItem **item_out)
 
 	if (item == NULL)
 	{
-	  	pqioutput(PQL_ALERT, pqistorezone, 
-		  "pqistore::readPkt() Failed to create Item from store!");
+		pqioutput(PQL_ALERT, pqistorezone, "pqistore::readPkt() Failed to create Item from store!");
 		return 0;
 	}
 
@@ -480,20 +418,13 @@ bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
 RsItem *pqiSSLstore::GetItem()
 {
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::GetItem()";
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::GetItem()");
 #endif
 
 	// check if this is a reading bio.
 	if (!(bio_flags & BIN_FLAGS_READABLE))
 	{
-		std::ostringstream out;
-		out << "pqistore::GetItem()";
-        	out << "Error Not Readable" << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqistorezone, "pqistore::GetItem() Error Not Readable");
 		return NULL;
 	}
 
@@ -502,10 +433,7 @@ RsItem *pqiSSLstore::GetItem()
 	{
 		if (!readPkt(&nextPkt))
 		{
-			std::ostringstream out;
-			out << "pqistore::GetItem()";
-        		out << "Failed to ReadPkt" << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+			pqioutput(PQL_DEBUG_BASIC, pqistorezone, "pqistore::GetItem() Failed to ReadPkt");
 			return NULL;
 		}
 	}
@@ -517,11 +445,11 @@ RsItem *pqiSSLstore::GetItem()
 
 #ifdef PQISTORE_DEBUG
 	if (outPkt != NULL)
-        {
-	  std::ostringstream out;
-	  out << "pqistore::GetItem() Returning:" << std::endl;
-	  outPkt -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+	{
+		std::string out;
+		rs_sprintf(out, "pqistore::GetItem() Returning:\n");
+		outPkt -> print(out);
+		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 	}
 #endif
 	return outPkt;
@@ -531,11 +459,7 @@ RsItem *pqiSSLstore::GetItem()
 int     pqiSSLstore::readPkt(RsItem **item_out)
 {
 #ifdef PQISTORE_DEBUG
-        {
-	  std::ostringstream out;
-	  out << "pqistore::readPkt()";
-	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
-	}
+	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::readPkt()");
 #endif
 
 	if ((!(enc_bio->isactive())) || (!(enc_bio->moretoread())))
@@ -582,12 +506,9 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 
 		if (extralen != (tmplen = enc_bio->readdata(extradata, extralen)))
 		{
-
-	  		std::ostringstream out;
-	  		out << "pqistore::readPkt() ";
-			out << "Error Completing Read (read ";
-			out << tmplen << "/" << extralen << ")" << std::endl;
-	  		pqioutput(PQL_ALERT, pqistorezone, out.str());
+			std::string out;
+			rs_sprintf(out, "pqistore::readPkt() Error Completing Read (read %d/%d)", tmplen, extralen);
+			pqioutput(PQL_ALERT, pqistorezone, out);
 
 			free(block);
 			return 0;

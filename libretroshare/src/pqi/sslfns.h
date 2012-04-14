@@ -126,8 +126,7 @@ std::string getX509Info(X509 *cert);
 
 /********** SSL ERROR STUFF ******************************************/
 
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, 
-		std::ostream &out);
+int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string &out);
 
 #endif /* RS_PQI_SSL_HELPER_H */
 

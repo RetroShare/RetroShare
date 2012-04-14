@@ -27,7 +27,6 @@
 #include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
 
-#include <sstream>
 #include <stdio.h>
 
 const int pqipersongrpzone = 354;
@@ -59,13 +58,10 @@ static std::list<std::string> waitingIds;
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
 {
-        RsRawItem *pqi = NULL;
+	RsRawItem *pqi = NULL;
 	int i = 0;
-	{
-		std::ostringstream out;
-		out << "pqipersongrp::tickTunnelServer()";
-		pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, out.str());
-	}
+
+	pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, "pqipersongrp::tickTunnelServer()");
 
 	//p3ServiceServer::tick();
 
@@ -89,11 +85,8 @@ int pqipersongrp::tickServiceSend()
 {
         RsRawItem *pqi = NULL;
 	int i = 0;
-	{
-		std::ostringstream out;
-		out << "pqipersongrp::tickServiceSend()";
-		pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, out.str());
-	}
+
+	pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, "pqipersongrp::tickServiceSend()");
 
 	p3ServiceServer::tick();
 
@@ -390,11 +383,7 @@ void pqipersongrp::statusChanged()
 
 int     pqipersongrp::addPeer(std::string id)
 {
-	{
-		std::ostringstream out;
-		out << "pqipersongrp::addPeer() PeerId: " << id;
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::addPeer() PeerId: " + id);
 
 	std::cerr << "pqipersongrp::addPeer() id: " << id;
 	std::cerr << std::endl;
@@ -707,11 +696,7 @@ pqilistener * pqipersongrpDummy::createListener(struct sockaddr_in /*laddr*/)
 
 pqiperson * pqipersongrpDummy::createPerson(std::string id, pqilistener */*listener*/)
 {
-	{
-		std::ostringstream out;
-		out << "pqipersongrpDummy::createPerson() PeerId: " << id;
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrpDummy::createPerson() PeerId: " + id);
 
 	pqiperson *pqip = new pqiperson(id, this);
 

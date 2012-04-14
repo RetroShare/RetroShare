@@ -191,7 +191,7 @@ int locked_getZoneLevel(int zone)
 	return it -> second;
 }
 
-int rslog(unsigned int lvl, int zone, std::string msg)
+int rslog(unsigned int lvl, int zone, const std::string &msg)
 {
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	if ((signed) lvl <= locked_getZoneLevel(zone))

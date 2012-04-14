@@ -44,7 +44,6 @@
 
 #include <list>
 #include <string>
-#include <sstream>
 
 #include <dirent.h>
 #include <sys/types.h>
@@ -1392,14 +1391,10 @@ bool     RsInit::GenerateSSLCertificate(const std::string& gpg_id, const std::st
 	/* Flag as first time run */
 	RsInitConfig::firsttime_run = true;
 
-	{
-		std::ostringstream out;
-		out << "RetroShare has Successfully generated";
-		out << "a Certficate/Key" << std::endl;
-		out << "\tCert Located: " << cert_name << std::endl;
-		out << "\tLocated: " << key_name << std::endl;
-		std::cerr << out.str();
-	}
+	std::cerr << "RetroShare has Successfully generated a Certficate/Key" << std::endl;
+	std::cerr << "\tCert Located: " << cert_name << std::endl;
+	std::cerr << "\tLocated: " << key_name << std::endl;
+
 	return true;
 }
 
@@ -1643,13 +1638,10 @@ std::string RsInit::getHomePath()
 
 #else /* Windows */
 
-	std::ostringstream out;
 	char *h2 = getenv("HOMEDRIVE");
-	out << "getHomePath() -> $HOMEDRIVE = ";
-	out << h2 << std::endl;
+	std::cerr << "getHomePath() -> $HOMEDRIVE = " << h2 << std::endl;
 	char *h3 = getenv("HOMEPATH");
-	out << "getHomePath() -> $HOMEPATH = ";
-	out << h3 << std::endl;
+	std::cerr << "getHomePath() -> $HOMEPATH = " << h3 << std::endl;
 
 	if (h2 == NULL)
 	{
@@ -1664,8 +1656,7 @@ std::string RsInit::getHomePath()
 		home += "\\Desktop";
 	}
 
-	out << "fltkserver::getHomePath() -> " << home << std::endl;
-	std::cerr << out.str();
+	std::cerr << "fltkserver::getHomePath() -> " << home << std::endl;
 
 	// convert to FLTK desired format.
 	home = RsDirUtil::convertPathToUnix(home);

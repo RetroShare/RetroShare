@@ -96,7 +96,7 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 
 // Same def - different functions...
 
-std::ostream &showSocketError(std::ostream &out);
+void showSocketError(std::string &out);
 
 std::string socket_errorType(int err);
 int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );

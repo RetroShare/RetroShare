@@ -81,6 +81,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 		virtual ~RsItem();
 		virtual void clear() = 0;
 		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
+		void print_string(std::string &out, uint16_t indent = 0);
 
 		/* source / destination id */
 		const std::string& PeerId() const { return peerId; }

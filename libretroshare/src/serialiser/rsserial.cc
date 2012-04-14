@@ -125,7 +125,13 @@ RsItem::~RsItem()
 {
 }
 
-	
+void RsItem::print_string(std::string &out, uint16_t indent)
+{
+	std::ostringstream stream;
+	print(stream, indent);
+
+	out += stream.str();
+}
 uint32_t    RsItem::PacketId()
 {
 	return type;

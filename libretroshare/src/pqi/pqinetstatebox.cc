@@ -4,8 +4,6 @@
 #include "pqi/pqinetstatebox.h"
 #include "time.h"
 
-#include <sstream>
-
 // External Interface.
 
 void pqiNetStateBox::setAddressStunDht(struct sockaddr_in *addr, bool stable)
@@ -690,28 +688,28 @@ std::string NetStateNatHoleString(uint32_t natHole)
 
 std::string NetStateConnectModesString(uint32_t connect)
 {
-	std::ostringstream 	connOut;
+	std::string	connOut;
 	if (connect & RSNET_CONNECT_OUTGOING_TCP)
 	{
-		connOut << "TCP_OUT ";
+		connOut += "TCP_OUT ";
 	}
 	if (connect & RSNET_CONNECT_ACCEPT_TCP)
 	{
-		connOut << "TCP_IN ";
+		connOut += "TCP_IN ";
 	}
 	if (connect & RSNET_CONNECT_DIRECT_UDP)
 	{
-		connOut << "DIRECT_UDP ";
+		connOut += "DIRECT_UDP ";
 	}
 	if (connect & RSNET_CONNECT_PROXY_UDP)
 	{
-		connOut << "PROXY_UDP ";
+		connOut += "PROXY_UDP ";
 	}
 	if (connect & RSNET_CONNECT_RELAY_UDP)
 	{
-		connOut << "RELAY_UDP ";
+		connOut += "RELAY_UDP ";
 	}
-	return connOut.str();
+	return connOut;
 }
 
 

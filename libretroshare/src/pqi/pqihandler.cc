@@ -23,13 +23,10 @@
  *
  */
 
-
-
-
 #include "pqi/pqihandler.h"
 
-#include <sstream>
 #include "util/rsdebug.h"
+#include "util/rsstring.h"
 #include <stdlib.h>
 const int pqihandlerzone = 34283;
 
@@ -51,13 +48,7 @@ pqihandler::pqihandler(SecurityPolicy *Global) : pqiQoS(PQI_HANDLER_NB_PRIORITY_
 	// cannot be enabled by module.
 	globsec = Global;
 
-	{
-		std::ostringstream out;
-		out  << "New pqihandler()" << std::endl;
-		out  << "Security Policy: " << secpolicy_print(globsec);
-		out  << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
-	}
+	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "New pqihandler()\nSecurity Policy: " + secpolicy_print(globsec));
 
 	// setup minimal total+individual rates.
 	rateIndiv_out = 0.01;
@@ -171,17 +162,15 @@ int	pqihandler::status()
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	{ // for output
-		std::ostringstream out;
-		out  << "pqihandler::status() Active Modules:" << std::endl;
+		std::string out = "pqihandler::status() Active Modules:\n";
 
-	// display all interfaces...
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		out << "\tModule [" << it -> first << "] Pointer <";
-		out << (void *) ((it -> second) -> pqi) << ">" << std::endl;
-	}
+		// display all interfaces...
+		for(it = mods.begin(); it != mods.end(); it++)
+		{
+			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.c_str(), (void *) ((it -> second) -> pqi));
+		}
 
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 
 	} // end of output.
 
@@ -193,8 +182,6 @@ int	pqihandler::status()
 	}
 	return 1;
 }
-	
-
 
 bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
@@ -204,27 +191,21 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 	if (mod->peerid != mod->pqi->PeerId())
 	{
 		// ERROR!
-		std::ostringstream out;
-		out << "ERROR peerid != PeerId!" << std::endl;
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid != PeerId!");
 		return false;
 	}
 
 	if (mod->peerid == "")
 	{
 		// ERROR!
-		std::ostringstream out;
-		out << "ERROR peerid == NULL" << std::endl;
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid == NULL");
 		return false;
 	}
 
 	if (mods.find(mod->peerid) != mods.end())
 	{
 		// ERROR!
-		std::ostringstream out;
-		out << "ERROR PeerId Module already exists!" << std::endl;
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR PeerId Module already exists!");
 		return false;
 	}
 
@@ -280,12 +261,10 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 	if (allowglobal)
 	{
 		/* error */
-		std::ostringstream out;
-		out << "pqihandler::HandleSearchItem()";
-		out << " Cannot send out Global RsItem";
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		std::string out = "pqihandler::HandleSearchItem() Cannot send out Global RsItem";
+		pqioutput(PQL_ALERT, pqihandlerzone, out);
 #ifdef DEBUG_TICK
-		std::cerr << out.str();
+		std::cerr << out << std::endl;
 #endif
 		delete item;
 		return -1;
@@ -293,15 +272,13 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 
 	if (!locked_checkOutgoingRsItem(item, allowglobal))
 	{
-		std::ostringstream out;
-	  	out <<	"pqihandler::HandleRsItem() checkOutgoingPQItem";
-		out << " Failed on item: " << std::endl;
+		std::string out = "pqihandler::HandleRsItem() checkOutgoingPQItem  Failed on item: \n";
 #ifdef DEBUG_TICK
-                std::cerr << out.str();
+		std::cerr << out;
 #endif
-                item -> print(out);
+		item -> print_string(out);
 
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		pqioutput(PQL_ALERT, pqihandlerzone, out);
 		delete item;
 		return -1;
 	}
@@ -316,11 +293,10 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 	// find module.
 	if ((it = mods.find(item->PeerId())) == mods.end())
 	{
-		std::ostringstream out;
-		out << "pqihandler::HandleRsItem() Invalid chan!";
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+		std::string out = "pqihandler::HandleRsItem() Invalid chan!";
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 #ifdef DEBUG_TICK
-                std::cerr << out.str();
+		std::cerr << out << std::endl;
 #endif
 
 		delete item;
@@ -330,12 +306,10 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 	// check security... is output allowed.
 	if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
 	{
-		std::ostringstream out;
-		out << "pqihandler::HandleRsItem() sending to chan:";
-		out << it -> first << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+		std::string out = "pqihandler::HandleRsItem() sending to chan: " + it -> first;
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 #ifdef DEBUG_TICK
-                std::cerr << out.str();
+		std::cerr << out << std::endl;
 #endif
 
 		// if yes send on item.
@@ -344,12 +318,10 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 	}
 	else
 	{
-		std::ostringstream out;
-		out << "pqihandler::HandleRsItem()";
-		out << " Sec not approved";
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+		std::string out = "pqihandler::HandleRsItem() Sec not approved";
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 #ifdef DEBUG_TICK
-                std::cerr << out.str();
+		std::cerr << out << std::endl;
 #endif
 
 		delete item;
@@ -439,13 +411,12 @@ int pqihandler::locked_GetItems()
 			while((item = (mod -> pqi) -> GetItem()) != NULL)
 			{
 #ifdef RSITEM_DEBUG 
-				std::ostringstream out;
-				out << "pqihandler::GetItems() Incoming Item ";
-				out << " from: " << mod -> pqi << std::endl;
-				item -> print(out);
+				std::string out;
+				rs_sprintf(out, "pqihandler::GetItems() Incoming Item from: %p\n", mod -> pqi);
+				item -> print_string(out);
 
 				pqioutput(PQL_DEBUG_BASIC, 
-						pqihandlerzone, out.str());
+						pqihandlerzone, out);
 #endif
 
 				if (item->PeerId() != (mod->pqi)->PeerId())
@@ -465,16 +436,13 @@ int pqihandler::locked_GetItems()
 			// not allowed to recieve from here....
 			while((item = (mod -> pqi) -> GetItem()) != NULL)
 			{
-				std::ostringstream out;
-				out << "pqihandler::GetItems() Incoming Item ";
-				out << " from: " << mod -> pqi << std::endl;
-				item -> print(out);
-				out << std::endl;
-				out << "Item Not Allowed (Sec Pol). deleting!";
-				out << std::endl;
+				std::string out;
+				rs_sprintf(out, "pqihandler::GetItems() Incoming Item from: %p\n", mod -> pqi);
+				item -> print_string(out);
+				out += "\nItem Not Allowed (Sec Pol). deleting!";
 
-				pqioutput(PQL_DEBUG_BASIC, 
-						pqihandlerzone, out.str());
+				pqioutput(PQL_DEBUG_BASIC,
+						pqihandlerzone, out);
 
 				delete item;
 			}
@@ -482,9 +450,6 @@ int pqihandler::locked_GetItems()
 	}
 	return count;
 }
-
-
-
 
 void pqihandler::locked_SortnStoreItem(RsItem *item)
 {

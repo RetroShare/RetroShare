@@ -25,7 +25,7 @@
 
 #include "pqi/pqiservice.h"
 #include "util/rsdebug.h"
-#include <sstream>
+#include "util/rsstring.h"
 
 const int pqiservicezone = 60478;
 
@@ -77,16 +77,10 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 		"p3ServiceServer::incoming()");
 
 	{
-		std::ostringstream out;
-		out << "p3ServiceServer::incoming() PacketId: ";
-		out << std::hex << item -> PacketId() << std::endl;
-		out << "Looking for Service: ";
-		out << (item -> PacketId() & 0xffffff00) << std::dec << std::endl;
-
-		out << "Item:" << std::endl;
-		item -> print(out);
-		out << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+		std::string out;
+		rs_sprintf(out, "p3ServiceServer::incoming() PacketId: %x\nLooking for Service: %x\nItem:\n", item -> PacketId(), (item -> PacketId() & 0xffffff00));
+		item -> print_string(out);
+		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
 	}
 #endif
 
@@ -108,10 +102,9 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 
 	{
 #ifdef  SERVICE_DEBUG
-		std::ostringstream out;
-		out << "p3ServiceServer::incoming() Sending to";
-		out << it -> second << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+		std::string out;
+		rs_sprintf(out, "p3ServiceServer::incoming() Sending to %p", it -> second);
+		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
 #endif
 
 		return (it->second) -> receive(item);
@@ -152,14 +145,12 @@ RsRawItem *p3ServiceServer::outgoing()
 		{
 
 #ifdef  SERVICE_DEBUG
-			std::ostringstream out;
-			out << "p3ServiceServer::outgoing() Got Item From:";
-			out << rrit -> second << std::endl;
+			std::string out;
+			rs_sprintf(out, "p3ServiceServer::outgoing() Got Item From: %p\n", rrit -> second);
 
-			item -> print(out);
-			out << std::endl;
-			std::cerr << out.str();
-			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+			item -> print_string(out);
+			std::cerr << out << std::endl;
+			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
 #endif
 
 			return item;
@@ -173,14 +164,12 @@ RsRawItem *p3ServiceServer::outgoing()
 		{
 
 #ifdef  SERVICE_DEBUG
-			std::ostringstream out;
-			out << "p3ServiceServer::outgoing() Got Item From:";
-			out << rrit -> second << std::endl;
+			std::string out;
+			rs_sprintf(out, "p3ServiceServer::outgoing() Got Item From: %p\n", rrit -> second);
 
-			item -> print(out);
-			out << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
-			std::cerr << out.str();
+			item -> print_string(out);
+			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
+			std::cerr << out << std::endl;
 #endif
 
 			return item;
@@ -208,11 +197,9 @@ int	p3ServiceServer::tick()
 	{
 
 #ifdef  SERVICE_DEBUG
-		std::ostringstream out;
-		out << "p3ServiceServer::service id:" << it -> first;
-		out << " -> Service: " << it -> second;
-		out << std::endl;
-		pqioutput(PQL_DEBUG_ALL, pqiservicezone, out.str());
+		std::string out;
+		rs_sprintf(out, "p3ServiceServer::service id: %u -> Service: %p", it -> first, it -> second);
+		pqioutput(PQL_DEBUG_ALL, pqiservicezone, out);
 #endif
 
 		// now we should actually tick the service.

@@ -35,7 +35,7 @@
 #include <unistd.h>
 
 #include "util/rsdebug.h"
-#include <sstream>
+#include "util/rsstring.h"
 #include <iomanip>
 static const int pqinetzone = 96184;
 
@@ -56,12 +56,10 @@ int errno;
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 
-std::ostream &showSocketError(std::ostream &out)
+void showSocketError(std::string &out)
 {
 	int err = errno;
-	out << "\tSocket Error(" << err << ") : ";
-	out << socket_errorType(err) << std::endl;
-	return out;
+	rs_sprintf_append(out, "\tSocket Error(%d) : %s\n", err, socket_errorType(err).c_str());
 }
 
 std::string socket_errorType(int err)
@@ -178,10 +176,9 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 
 		if(ioctl(sock, SIOCGIFADDR, &ifreq) != 0)
 		{
-			std::ostringstream out;
-			out << "Cannot Determine Address for Iface: ";
-			out << ifptr -> if_name << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+			std::string out;
+			rs_sprintf(out, "Cannot Determine Address for Iface: %s", ifptr -> if_name);
+			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
 		}
 		else
 		{
@@ -189,12 +186,9 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 				(struct sockaddr_in *) &ifreq.ifr_addr;
 			std::string astr =rs_inet_ntoa(aptr -> sin_addr);
 
-			std::ostringstream out;
-			out << "Iface: ";
-			out << ifptr -> if_name << std::endl;
-			out << " Address: " << astr;
-			out << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+			std::string out;
+			rs_sprintf(out, "Iface: %s\n Address: %s", ifptr -> if_name, astr.c_str());
+			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
 
 			// Now check wether the interface is up and running. If not, we don't use it!!
 			//
@@ -223,12 +217,10 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
 
-std::ostream &showSocketError(std::ostream &out)
+void showSocketError(std::string &out)
 {
 	int err = WSAGetLastError();
-	out << "\tSocket Error(" << err << ") : ";
-	out << socket_errorType(err) << std::endl;
-	return out;
+	rs_sprintf_append(out, "\tSocket Error(%d) : %s\n", err, socket_errorType(err).c_str());
 }
 
 
@@ -356,13 +348,11 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 
 	for(unsigned int i = 0; i < iptable -> dwNumEntries; i++)
 	{
-		std::ostringstream out;
+		std::string out;
 
-		out << "Iface(" << iptable->table[i].dwIndex << ") ";
 		addr.s_addr = iptable->table[i].dwAddr;
-		out << " => " << rs_inet_ntoa(addr);
-		out << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+		rs_sprintf(out, "Iface(%ld) => %s\n", iptable->table[i].dwIndex, rs_inet_ntoa(addr).c_str());
+		pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
 
 		addrs.push_back(addr);
 	}
@@ -501,12 +491,9 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 )
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 )
 {
 #ifdef NET_DEBUG
-	std::ostringstream out;
-	out << "inaddr_cmp(" << rs_inet_ntoa(addr1.sin_addr);
-	out << "-" << addr1.sin_addr.s_addr;
-	out << "," << rs_inet_ntoa(addr2.sin_addr);
-	out << "-" << addr2.sin_addr.s_addr << ")" << std::endl;
-	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+	std::string out;
+	rs_sprintf(out, "inaddr_cmp(%s-%lu,%s-%lu)", rs_inet_ntoa(addr1.sin_addr).c_str(), addr1.sin_addr.s_addr, rs_inet_ntoa(addr2.sin_addr).c_str(), addr2.sin_addr.s_addr);
+	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
 #endif
 
 
@@ -525,13 +512,9 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 	struct in_addr inaddr_tmp;
 	inaddr_tmp.s_addr = addr2;
 
-	std::ostringstream out;
-	out << "inaddr_cmp2(" << rs_inet_ntoa(addr1.sin_addr);
-	out << " vs " << rs_inet_ntoa(inaddr_tmp);
-	out << " /or/ ";
-	out << std::hex << std::setw(10) << addr1.sin_addr.s_addr;
-	out << " vs "   << std::setw(10) << addr2 << ")" << std::endl;
-	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+	std::string out;
+	rs_sprintf(out, "inaddr_cmp2(%s vs %s /or/ %10x vs %10x)", rs_inet_ntoa(addr1.sin_addr).c_str(), rs_inet_ntoa(inaddr_tmp).c_str(), addr1.sin_addr.s_addr, addr2);
+	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
 #endif
 
 	if (addr1.sin_addr.s_addr == addr2)
