@@ -28,8 +28,6 @@
 #include "retroshare/rsdistrib.h"
 #include "retroshare/rspeers.h"
 
-#include <sstream>
-
 p3DistribSecurity::p3DistribSecurity()
 {
 }
@@ -203,15 +201,13 @@ std::string p3DistribSecurity::getBinDataSign(void *data, int len)
 		len = CERTSIGNLEN;
 	}
 
-        std::ostringstream id;
-        for(uint32_t i = 0; i < CERTSIGNLEN; i++)
-        {
-		id << std::hex << std::setw(2) << std::setfill('0')
-			<< (uint16_t) (((uint8_t *) (tmp))[i]);
+	std::string id;
+	for(uint32_t i = 0; i < CERTSIGNLEN; i++)
+	{
+		rs_sprintf(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
 	}
-        std::string Id = id.str();
 
-	return Id;
+	return id;
 }
 
 
@@ -364,15 +360,13 @@ std::string p3DistribSecurity::getRsaKeySign(RSA *pubkey)
 		len = CERTSIGNLEN;
 	}
 
-        std::ostringstream id;
-        for(uint32_t i = 0; i < CERTSIGNLEN; i++)
-        {
-		id << std::hex << std::setw(2) << std::setfill('0')
-			<< (uint16_t) (((uint8_t *) (tmp))[i]);
+	std::string id;
+	for(uint32_t i = 0; i < CERTSIGNLEN; i++)
+	{
+		rs_sprintf(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
 	}
-        std::string rsaId = id.str();
 
-	return rsaId;
+	return id;
 }
 
 

@@ -30,17 +30,16 @@
 #include <unistd.h>
 
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 #include "pqi/pqinotify.h"
 #include "retroshare/rstypes.h"
 #include "rsthreads.h"
-#include <string>
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
 #include <dirent.h>
 #include <openssl/sha.h>
 #include <iomanip>
-#include <sstream>
 
 #include <fstream>
 #include <stdexcept>
@@ -665,13 +664,13 @@ bool Sha1CheckSum::operator==(const Sha1CheckSum& s) const
 
 std::string Sha1CheckSum::toStdString() const
 {
-	std::ostringstream tmpout;
+	std::string tmpout;
 
 	for(int i = 0; i < 5; i++)
 		for(int j = 0; j < 4; j++)
-			tmpout << std::setw(2) << std::setfill('0') << std::hex << ((fourbytes[i] >> (8*j)) & 0xff ) ;
-	
-	return tmpout.str() ;
+			rs_sprintf_append(tmpout, "%02x", ((fourbytes[i] >> (8*j)) & 0xff ));
+
+	return tmpout;
 }
 
 Sha1CheckSum::Sha1CheckSum(const uint8_t *buf)
@@ -767,7 +766,7 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
     // search last backup
     int nLast;
     for (nLast = nCount; nLast >= 1; nLast--) {
-        std::ostringstream sStream;
+        std::ostringstream sStream; // please do not use std::ostringstream
         sStream << sFilename << nLast << ".bak";
 
         if (GetFileAttributesA (sStream.str ().c_str ()) != -1) {
@@ -777,7 +776,7 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
 
     // delete max backup
     if (nLast == nCount) {
-        std::ostringstream sStream;
+        std::ostringstream sStream; // please do not use std::ostringstream
         sStream << sFilename << nCount << ".bak";
         if (DeleteFileA (sStream.str ().c_str ()) == FALSE) {
             getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File delete error", "Error while deleting file " + sStream.str ());
@@ -788,9 +787,9 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
 
     // rename backups
     for (int nIndex = nLast; nIndex >= 1; nIndex--) {
-        std::ostringstream sStream;
+        std::ostringstream sStream; // please do not use std::ostringstream
         sStream << sFilename << nIndex << ".bak";
-        std::ostringstream sStream1;
+        std::ostringstream sStream1; // please do not use std::ostringstream
         sStream1 << sFilename << nIndex + 1 << ".bak";
 
         if (renameFile (sStream.str (), sStream1.str ()) == false) {
@@ -800,7 +799,7 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
     }
 
     // copy backup
-    std::ostringstream sStream;
+    std::ostringstream sStream; // please do not use std::ostringstream
     sStream << sFilename << 1 << ".bak";
     if (CopyFileA (sFilename.c_str (), sStream.str ().c_str (), FALSE) == FALSE) {
         getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + sFilename + " to " + sStream.str ());
@@ -1201,7 +1200,7 @@ bool RsDirUtil::getWideFileHash(std::wstring filepath,
 
 	SHA1_Final(&sha_buf[0], sha_ctx);
 
-        std::ostringstream tmpout;
+		std::ostringstream tmpout; // please do not use std::ostringstream
 	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
 	{
 		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);

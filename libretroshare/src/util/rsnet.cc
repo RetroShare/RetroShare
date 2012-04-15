@@ -25,8 +25,7 @@
 
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
-#include <string.h>
-#include <sstream>
+#include "util/rsstring.h"
 
 #ifdef WINDOWS_SYS
 #else
@@ -141,12 +140,8 @@ std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 
 std::string rs_inet_ntoa(struct in_addr in)
 {
-	std::ostringstream str;
+	std::string str;
 	uint8_t *bytes = (uint8_t *) &(in.s_addr);
-	str << (int) bytes[0] << ".";
-	str << (int) bytes[1] << ".";
-	str << (int) bytes[2] << ".";
-	str << (int) bytes[3];
-	return str.str();
+	rs_sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
+	return str;
 }
-

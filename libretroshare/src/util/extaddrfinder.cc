@@ -1,6 +1,7 @@
 #include "extaddrfinder.h"
 
 #include "pqi/pqinetwork.h"
+#include "util/rsstring.h"
 
 #ifndef WIN32
 #include <netdb.h>
@@ -8,7 +9,6 @@
 
 #include <string.h>
 #include <string>
-#include <sstream>
 #include <iostream>
 #include <set>
 #include <vector>
@@ -43,9 +43,9 @@ static std::string scan_ip(const std::string& text)
 
 		if(a < 256 && b<256 && c<256 && d<256)
 		{
-			std::ostringstream o ;
-			o << a << "." << b << "." << c << "." << d ;
-			return o.str();
+			std::string s ;
+			rs_sprintf(s, "%u.%u.%u.%u", a, b, c, d) ;
+			return s;
 		}
 	}
 	return "" ;

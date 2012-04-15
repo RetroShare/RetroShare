@@ -35,7 +35,6 @@
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <algorithm>
-#include <sstream>
 #include <fstream>
 
 #include "retroshare/rsdistrib.h"
@@ -1130,10 +1129,9 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 	/* create filename */
 	std::string path = CacheSource::getCacheDir();
-	std::ostringstream out;
-	out << "grpdist-t" << CacheSource::getCacheType() << "-msgs-" << time(NULL) << ".dist"; 
 
-	std::string tmpname = out.str();
+	std::string tmpname;
+	rs_sprintf(tmpname, "grpdist-t%u-msgs-%ld.dist", CacheSource::getCacheType(), time(NULL));
 	std::string filename = path + "/" + tmpname ;
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
@@ -1183,14 +1181,14 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
-		std::ostringstream errlog;
+		std::string errlog;
 		ok &= false;
 #ifdef WIN32
-		errlog << "Error " << GetLastError() ;
+		rs_sprintf(errlog, "Error %u", GetLastError());
 #else
-		errlog << "Error " << errno ;
+		rs_sprintf(errlog, "Error %d", errno);
 #endif
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
 	}
 
 	/* indicate not to save for a while */
@@ -1230,10 +1228,9 @@ void 	p3GroupDistrib::publishDistribGroups()
 
 	/* create filename */
 	std::string path = CacheSource::getCacheDir();
-	std::ostringstream out;
-	out << "grpdist-t" << CacheSource::getCacheType() << "-grps-" << time(NULL) << ".dist"; 
 
-	std::string tmpname = out.str();
+	std::string tmpname;
+	rs_sprintf(tmpname, "grpdist-t%u-grps-%ld.dist", CacheSource::getCacheType(), time(NULL));
 	std::string filename = path + "/" + tmpname;
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
 	std::string tempPeerId; // to store actual id temporarily
@@ -1333,13 +1330,13 @@ void 	p3GroupDistrib::publishDistribGroups()
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
-		std::ostringstream errlog;
+		std::string errlog;
 #ifdef WIN32
-		errlog << "Error " << GetLastError() ;
+		rs_sprintf(errlog, "Error %u", GetLastError());
 #else
-		errlog << "Error " << errno ;
+		rs_sprintf(errlog, "Error %d", errno);
 #endif
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
 	}
 
 	/* push file to CacheSource */
@@ -2155,13 +2152,13 @@ bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
-		std::ostringstream errlog;
+		std::string errlog;
 #ifdef WIN32
-		errlog << "Error " << GetLastError() ;
+		rs_sprintf(errlog, "Error %u", GetLastError());
 #else
-		errlog << "Error " << errno ;
+		rs_sprintf(errlog, "Error %d", errno);
 #endif
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
 		return false;
 	}
 

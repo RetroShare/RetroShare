@@ -25,34 +25,40 @@
  */
 
 #include "util/rsprint.h"
+#include "util/rsstring.h"
 #include <iomanip>
-#include <sstream>
 #include <openssl/sha.h>
+#include <sys/time.h>
 
-std::string RsUtil::BinToHex(std::string bin)
+#ifdef WINDOWS_SYS
+#include <time.h>
+#include <sys/timeb.h>
+#endif
+
+std::string RsUtil::BinToHex(const std::string &bin)
 {
 	return BinToHex(bin.c_str(), bin.length());
 }
 
 std::string RsUtil::BinToHex(const char *arr, const uint32_t len)
 {
-        std::ostringstream out;
+	std::string out;
 
-        for(uint32_t j = 0; j < len; j++)
-        {
-		out << std::hex << std::setw(2) << std::setfill('0') << (int32_t) (((const uint8_t *) arr)[j]);
-        }
-        return out.str();
+	for(uint32_t j = 0; j < len; j++)
+	{
+		rs_sprintf_append(out, "%02x", (int32_t) (((const uint8_t *) arr)[j]));
+	}
+
+	return out;
 }
 
-
-std::string RsUtil::HashId(std::string id, bool reverse)
+std::string RsUtil::HashId(const std::string &id, bool reverse)
 {
 	std::string hash;
 	std::string tohash;
 	if (reverse)
 	{	
-		std::string::reverse_iterator rit;
+		std::string::const_reverse_iterator rit;
 		for(rit = id.rbegin(); rit != id.rend(); rit++)
 		{
 			tohash += (*rit);
@@ -81,43 +87,24 @@ std::string RsUtil::HashId(std::string id, bool reverse)
 	return hash;
 }
 
-
-
-
-#ifdef WINDOWS_SYS
-#include <time.h>
-#include <sys/timeb.h>
-#endif
-
-#include <sys/time.h>
-#include <sstream>
-#include <iomanip>
-
-static double getCurrentTS();
+//static double getCurrentTS()
+//{
+//#ifndef WINDOWS_SYS
+//	struct timeval cts_tmp;
+//	gettimeofday(&cts_tmp, NULL);
+//	double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+//#else
+//	struct _timeb timebuf;
+//	_ftime( &timebuf);
+//	double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+//#endif
+//	return cts;
+//}
 
 // Little fn to get current timestamp in an independent manner.
-std::string RsUtil::AccurateTimeString()
-{
-	std::ostringstream out;
-	out << std::setprecision(15) << getCurrentTS();
-	return out.str();
-}
-
-static double getCurrentTS()
-{
-
-#ifndef WINDOWS_SYS
-        struct timeval cts_tmp;
-        gettimeofday(&cts_tmp, NULL);
-        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
-#else
-        struct _timeb timebuf;
-        _ftime( &timebuf);
-        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
-#endif
-        return cts;
-}
-
-
-
-
+//std::string RsUtil::AccurateTimeString()
+//{
+//	std::ostringstream out; // please do not use std::stringstream
+//	out << std::setprecision(15) << getCurrentTS();
+//	return out.str();
+//}

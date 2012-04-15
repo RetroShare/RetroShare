@@ -29,7 +29,6 @@
 #include "retroshare/rsplugin.h"
 
 #include "tcponudp/tou.h"
-#include <sstream>
 #include <unistd.h>
 
 #include "pqi/authssl.h"
@@ -258,15 +257,12 @@ void 	RsServer::run()
 		double cycleTime = endCycleTs - ts;
 		if (cycleTime > WARN_BIG_CYCLE_TIME)
 		{
-			std::ostringstream out;
-			out << "RsServer::run() WARNING Excessively Long Cycle Time: " << cycleTime;
-			out << " secs => Please DEBUG";
-			std::cerr << out.str() << std::endl;
+			std::string out;
+			rs_sprintf(out, "RsServer::run() WARNING Excessively Long Cycle Time: %g secs => Please DEBUG", cycleTime);
+			std::cerr << out << std::endl;
 
-			rslog(RSL_ALERT, rsserverzone, out.str());
+			rslog(RSL_ALERT, rsserverzone, out);
 		}
 	}
 	return;
 }
-
-

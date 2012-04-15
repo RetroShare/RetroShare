@@ -38,7 +38,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
+#include <sstream> // for std::istringstream
 
 #include <gpgme.h>
 
@@ -60,7 +60,7 @@ RsPeers *rsPeers = NULL;
  * #define P3PEERS_DEBUG 1
  *******/
 
-int ensureExtension(std::string &name, std::string def_ext);
+//int ensureExtension(std::string &name, std::string def_ext);
 
 std::string RsPeerTrustString(uint32_t trustLvl)
 {
@@ -116,14 +116,6 @@ std::string RsPeerNetModeString(uint32_t netModel)
 		str = "Unknown NetMode";
 	}
 	return str;
-}
-
-
-std::string RsPeerLastConnectString(uint32_t lastConnect)
-{
-	std::ostringstream out;
-	out << lastConnect << " secs ago";
-	return out.str();
 }
 
 
@@ -305,16 +297,16 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
 			it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
 	{
-	    std::ostringstream toto;
-            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back("L:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+		std::string toto;
+		rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
+		d.ipAddressList.push_back("L:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
 	}
 	for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
 			it != ps.ipAddrs.mExt.mAddrs.end(); it++)
 	{
-	    std::ostringstream toto;
-            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back("E:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+		std::string toto;
+		rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
+		d.ipAddressList.push_back("E:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
 	}
 
 
@@ -388,16 +380,10 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TUNNEL;
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
-
-			std::ostringstream str;
-			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
-			d.connectStateString = str.str();
+			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
-
-			std::ostringstream str;
-			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
-			d.connectStateString = str.str();
+			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
 		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
@@ -477,14 +463,14 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
 			it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
 	{
-	    std::ostringstream toto;
+		std::ostringstream toto; // please do not use std::ostringstream
             toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
             d.ipAddressList.push_back("L:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
 	for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
 			it != ps.ipAddrs.mExt.mAddrs.end(); it++)
 	{
-	    std::ostringstream toto;
+		std::ostringstream toto; // please do not use std::ostringstream
             toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
             d.ipAddressList.push_back("E:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
@@ -575,13 +561,13 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
 
-			std::ostringstream str;
+			std::ostringstream str; // please do not use std::ostringstream
 			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
 			d.connectStateString = str.str();
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
 
-			std::ostringstream str;
+			std::ostringstream str; // please do not use std::ostringstream
 			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
 			d.connectStateString = str.str();
 		}
@@ -1040,13 +1026,9 @@ p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
 				  invite += CERT_SSL_ID + Detail.id + ";";
 				  invite += CERT_LOCATION + Detail.location + ";\n";
 				  invite += CERT_LOCAL_IP + Detail.localAddr + ":";
-				  std::ostringstream out;
-				  out << Detail.localPort;
-				  invite += out.str() + ";";
+				  rs_sprintf_append(invite, "%u;", Detail.localPort);
 				  invite += CERT_EXT_IP + Detail.extAddr + ":";
-				  std::ostringstream out2;
-				  out2 << Detail.extPort;
-				  invite += out2.str() + ";";
+				  rs_sprintf_append(invite, "%u;", Detail.extPort);
 				  if (!Detail.dyndns.empty()) {
 					  invite += "\n" + CERT_DYNDNS + Detail.dyndns + ";";
 				  }
@@ -1348,38 +1330,36 @@ bool 	p3Peers::trustGPGCertificate(const std::string &id, uint32_t trustlvl)
 }
 
 
-int ensureExtension(std::string &name, std::string def_ext)
-{
-	/* if it has an extension, don't change */
-	int len = name.length();
-	int extpos = name.find_last_of('.');
+//int ensureExtension(std::string &name, std::string def_ext)
+//{
+//	/* if it has an extension, don't change */
+//	int len = name.length();
+//	int extpos = name.find_last_of('.');
 	
-	std::ostringstream out;
-	out << "ensureExtension() name: " << name << std::endl;
-	out << "\t\t extpos: " << extpos;
-	out << " len: " << len << std::endl;
+//	std::string out;
+//	rs_sprintf_append(out, "ensureExtension() name: %s\n\t\t extpos: %d len: \n", name.c_str(), extpos, len);
 	
-	/* check that the '.' has between 1 and 4 char after it (an extension) */
-	if ((extpos > 0) && (extpos < len - 1) && (extpos + 6 > len))
-	{
-		/* extension there */
-		std::string curext = name.substr(extpos, len);
-		out << "ensureExtension() curext: " << curext << std::endl;
-		std::cerr << out.str();
-		return 0;
-	}
+//	/* check that the '.' has between 1 and 4 char after it (an extension) */
+//	if ((extpos > 0) && (extpos < len - 1) && (extpos + 6 > len))
+//	{
+//		/* extension there */
+//		std::string curext = name.substr(extpos, len);
+//		out += "ensureExtension() curext: " + curext;
+//		std::cerr << out << std::endl;
+//		return 0;
+//	}
 	
-	if (extpos != len - 1)
-	{
-		name += ".";
-	}
-	name += def_ext;
+//	if (extpos != len - 1)
+//	{
+//		name += ".";
+//	}
+//	name += def_ext;
 	
-	out << "ensureExtension() added ext: " << name << std::endl;
+//	out += "ensureExtension() added ext: " + name;
 	
-	std::cerr << out.str();
-	return 1;
-}
+//	std::cerr << out << std::endl;
+//	return 1;
+//}
 
 	/* Group Stuff */
 bool p3Peers::addGroup(RsGroupInfo &groupInfo)

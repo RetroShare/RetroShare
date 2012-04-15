@@ -572,9 +572,7 @@ bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	RsTlvKeyValue kv;
 	kv.key = "TURTLE_CONFIG_MAX_TR_RATE" ;
 
-	std::ostringstream s ;
-	s << _max_tr_up_rate;
-	kv.value = s.str() ;
+	rs_sprintf(kv.value, "%g", _max_tr_up_rate);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	lst.push_back(vitem) ;
@@ -2270,8 +2268,6 @@ bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
 
 static std::string printFloatNumber(float num,bool friendly=false)
 {
-	std::ostringstream out ;
-
 	if(friendly)
 	{
 		char tmp[100] ;
@@ -2286,8 +2282,9 @@ static std::string printFloatNumber(float num,bool friendly=false)
 	}
 	else
 	{
-		out << num ;
-		return out.str() ;
+		std::string out ;
+		rs_sprintf(out, "%g", num) ;
+		return out ;
 	}
 }
 static std::string printNumber(uint64_t num,bool hex=false)
@@ -2304,9 +2301,9 @@ static std::string printNumber(uint64_t num,bool hex=false)
 	}
 	else
 	{
-		std::ostringstream out ;
-		out << num ;
-		return out.str() ;
+		std::string out ;
+		rs_sprintf(out, "%lld", num) ;
+		return out ;
 	}
 }
 
