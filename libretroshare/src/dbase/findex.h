@@ -33,8 +33,6 @@
 #include <stdint.h>
 #include "retroshare/rstypes.h"
 
-class ostream;
-
 /******************************************************************************************
  * The Key Data Types for the File Index:
 
@@ -89,7 +87,7 @@ class FileEntry: public RsMemoryManagement::SmallObject
 	virtual ~FileEntry() { return; }
 	virtual uint32_t type() const { return DIR_TYPE_FILE ; }
 
-virtual int print(std::ostream &out);
+virtual int print(std::string &out);
 
 	/* Data */
 	std::string name; 
@@ -142,11 +140,11 @@ DirEntry *	findDirectory(const std::string& path);
 int	 	updateDirectories(const std::string& path, int pop, int modtime);
 
 		/* output */
-int 		print(std::ostream &out);
+int 		print(std::string &out);
 
-int 		saveEntry(std::ostringstream &out);
-void writeDirInfo(std::ostringstream&);
-void writeFileInfo(std::ostringstream&);
+int 		saveEntry(std::string &out);
+void writeDirInfo(std::string&);
+void writeFileInfo(std::string&);
 
 	/* Data */
 	std::string path;    /* full path (includes name) */
@@ -227,7 +225,7 @@ class FileIndex
 		int	cleanOldEntries(time_t old);  /* removes entries older than old */
 
 		/* debug */
-		int	printFileIndex(std::ostream &out);
+		int	printFileIndex(std::string &out);
 
 		/* load/save to file */
 		int 	loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size);

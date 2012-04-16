@@ -34,7 +34,7 @@
 #include <errno.h>
 
 #include <iostream>
-#include <sstream>
+#include <sstream> // for std::istringstream
 #include <iomanip>
 
 #include <dirent.h>
@@ -915,10 +915,10 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			// rather send a completion ratio based on the size of files vs/ total size.
 			//
 			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
-			std::ostringstream tmpout;
-			tmpout << cnt+1 << "/" << n_files << " (" << friendlyUnit(size) << " - " << int(size/double(total_size)*100.0) << "%) : " << fe.name ;
+			std::string tmpout;
+			rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", cnt+1, n_files, friendlyUnit(size).c_str(), int(size/double(total_size)*100.0), fe.name.c_str()) ;
 
-			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout.str()) ;
+			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 
 			std::string real_path = RsDirUtil::makePath(to_hash[i].realpath, fe.name);
 
@@ -991,14 +991,12 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	// Two files are saved: one with only browsable dirs, which will be shared by the cache system,
 	// and one with the complete file collection.
 	//
-	std::ostringstream out;
-	out << "fc-own-" << time(NULL) << ".rsfb";
-	std::string tmpname_browsable = out.str();
+	std::string tmpname_browsable;
+	rs_sprintf(tmpname_browsable, "fc-own-%ld.rsfb", time(NULL));
 	std::string fname_browsable = path + "/" + tmpname_browsable;
 
-	std::ostringstream out2;
-	out2 << "fc-own-" << time(NULL) << ".rsfc";
-	std::string tmpname_total = out2.str();
+	std::string tmpname_total;
+	rs_sprintf(tmpname_total, "fc-own-%ld.rsfc", time(NULL));
 	std::string fname_total = path + "/" + tmpname_total;
 
 #ifdef FIM_DEBUG
@@ -1232,9 +1230,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 			std::string tst_dir = top_dir;
 			if (i > 0)
 			{
-				std::ostringstream out;
-				out << "-" << i;
-				tst_dir += out.str();
+				rs_sprintf_append(tst_dir, "-%d", i);
 			}
 			if (directoryMap.end()== (cit=directoryMap.find(tst_dir)))
 			{

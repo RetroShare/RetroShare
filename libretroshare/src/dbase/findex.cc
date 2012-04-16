@@ -25,12 +25,13 @@
 #include "dbase/findex.h"
 #include "retroshare/rsexpr.h"
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 
 #include <assert.h>
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
-#include <sstream>
+#include <sstream> // for std::stringstream
 #include <tr1/unordered_set>
 #include <iomanip>
 #include <fstream>
@@ -476,34 +477,27 @@ FileEntry *DirEntry::updateFile(const FileEntry& fe, time_t utime)
 }
 
 
-int FileEntry::print(std::ostream &out)
+int FileEntry::print(std::string &out)
 {
 	/* print this dir, then subdirs, then files */
 
-	out << "file ";
-	out << std::setw(3) << std::setfill('0') << row;
-	out << " [" << updtime << "/" << modtime << "] : ";
+	rs_sprintf_append(out, "file %03d [%ld/%ld] : ", row, updtime, modtime);
 
 	if (parent)
-		out << parent->path;
+		out += parent->path;
 	else
-		out << "[MISSING PARENT]";
+		out += "[MISSING PARENT]";
 
-	out << " " << name;
-	out << "  [ s: " << size << " ] ==> ";
-	out << "  [ " << hash << " ]";
-        out << std::endl;
+	rs_sprintf_append(out, " %s  [ s: %lld ] ==>   [ %s ]\n", name.c_str(), size, hash.c_str());
+
 	return 1;
 }
 
 
-int DirEntry::print(std::ostream &out)
+int DirEntry::print(std::string &out)
 {
 	/* print this dir, then subdirs, then files */
-	out << "dir  ";
-	out << std::setw(3) << std::setfill('0') << row;
-	out << " [" << updtime << "] : " << path;
-	out << std::endl;
+	rs_sprintf_append(out, "dir  %03d [%ld] : %s\n", row, updtime, path.c_str());
 
 	std::map<std::string, DirEntry *>::iterator it;
 	for(it = subdirs.begin(); it != subdirs.end(); it++)
@@ -710,9 +704,9 @@ int	FileIndex::cleanOldEntries(time_t old)  /* removes entries older than old */
 
 
 
-int     FileIndex::printFileIndex(std::ostream &out)
+int     FileIndex::printFileIndex(std::string &out)
 {
-	out << "FileIndex::printFileIndex()" << std::endl;
+	out += "FileIndex::printFileIndex()\n";
 	root->print(out);
 	return 1;
 }
@@ -747,13 +741,13 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 	SHA1_Final(&sha_buf[0], sha_ctx);
 	delete sha_ctx;
 
-	std::ostringstream tmpout;
+	std::string tmpout;
 	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
 	{
-		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
+		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
 	}
 
-	if (expectedHash != "" && expectedHash != tmpout.str())
+	if (expectedHash != "" && expectedHash != tmpout)
 	{
 #ifdef FI_DEBUG
 		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
@@ -923,19 +917,19 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::string filenametmp = filename + ".tmp" ;
-	std::ostringstream oss;
+	std::string s;
 
 	size = 0 ;
 	fileHash = "" ;
 
 	/* print version and header */
-	oss << "# FileIndex version 0.1" << std::endl;
-	oss << "# Dir: d name, path, parent, size, modtime, pop, updtime;" << std::endl;
-	oss << "# File: f name, hash, size, modtime, pop, updtime;" << std::endl;
-	oss << "#" << std::endl;
+	s += "# FileIndex version 0.1\n";
+	s += "# Dir: d name, path, parent, size, modtime, pop, updtime;\n";
+	s += "# File: f name, hash, size, modtime, pop, updtime;\n";
+	s += "#\n";
 
 	/* begin recusion */
-	root->writeDirInfo(oss) ;
+	root->writeDirInfo(s) ;
 
 	std::map<std::string, DirEntry *>::iterator it;
 	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
@@ -954,28 +948,26 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 #ifdef FI_DEBUG
 			std::cerr << "  will be saved." << std::endl ;
 #endif
-			(it->second)->saveEntry(oss);
+			(it->second)->saveEntry(s);
 		}
 	}
 
-	root->writeFileInfo(oss) ;	// this should never do anything
+	root->writeFileInfo(s) ;	// this should never do anything
 
 	/* signal to pop directory from stack in loadIndex() */
-	oss << "-" << std::endl;
+	s += "-\n";
 
 	/* calculate sha1 hash */
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	SHA1_Init(sha_ctx);
-	SHA1_Update(sha_ctx, oss.str().c_str(), oss.str().length());
+	SHA1_Update(sha_ctx, s.c_str(), s.length());
 	SHA1_Final(&sha_buf[0], sha_ctx);
 	delete sha_ctx;
 
-	std::ostringstream tmpout;
 	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
 	{
-		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
+		rs_sprintf_append(fileHash, "%02x", (unsigned int) (sha_buf[i]));
 	}
-	fileHash = tmpout.str();
 
 	/* finally, save to file */
 
@@ -985,7 +977,7 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 		std::cerr << "FileIndex::saveIndex error opening file for writting: " << filename << ". Giving up." << std::endl;
 		return 0;
 	}
-	fprintf(file,"%s",oss.str().c_str()) ;
+	fprintf(file,"%s",s.c_str()) ;
 
 	fclose(file);
 
@@ -1023,49 +1015,49 @@ std::string FixName(const std::string& _in)
 	return in;
 }
 
-void DirEntry::writeDirInfo(std::ostringstream& oss)
+void DirEntry::writeDirInfo(std::string& s)
 {
 	/* print node info */
-	oss << "d";
-	oss << FixName(name) << FILE_CACHE_SEPARATOR_CHAR ;
-	oss << FixName(path) << FILE_CACHE_SEPARATOR_CHAR ;
-	oss << size << FILE_CACHE_SEPARATOR_CHAR ;
-	oss << modtime << FILE_CACHE_SEPARATOR_CHAR ;
-	oss << pop << FILE_CACHE_SEPARATOR_CHAR ;
-	oss << updtime << FILE_CACHE_SEPARATOR_CHAR  << std::endl;
+	rs_sprintf_append(s, "d%s%c%s%c%lld%c%ld%c%d%c%ld%c\n",
+					  FixName(name).c_str(), FILE_CACHE_SEPARATOR_CHAR,
+					  FixName(path).c_str(), FILE_CACHE_SEPARATOR_CHAR,
+					  size, FILE_CACHE_SEPARATOR_CHAR,
+					  modtime, FILE_CACHE_SEPARATOR_CHAR,
+					  pop, FILE_CACHE_SEPARATOR_CHAR,
+					  updtime, FILE_CACHE_SEPARATOR_CHAR);
 }
 
-void DirEntry::writeFileInfo(std::ostringstream& oss)
+void DirEntry::writeFileInfo(std::string& s)
 {
 	/* print file info */
 	std::map<std::string, FileEntry *>::iterator fit;
 	for(fit = files.begin(); fit != files.end(); fit++)
 	{
-		oss << "f";
-		oss << FixName((fit->second)->name) << FILE_CACHE_SEPARATOR_CHAR ;
-		oss << (fit->second)->hash << FILE_CACHE_SEPARATOR_CHAR ;
-		oss << (fit->second)->size << FILE_CACHE_SEPARATOR_CHAR ;
-		oss << (fit->second)->modtime << FILE_CACHE_SEPARATOR_CHAR ;
-		oss << (fit->second)->pop << FILE_CACHE_SEPARATOR_CHAR ;
-		oss << (fit->second)->updtime << FILE_CACHE_SEPARATOR_CHAR << std::endl;
+		rs_sprintf_append(s, "f%s%c%s%c%lld%c%ld%c%d%c%ld%c\n",
+						  FixName((fit->second)->name).c_str(), FILE_CACHE_SEPARATOR_CHAR,
+						  (fit->second)->hash.c_str(), FILE_CACHE_SEPARATOR_CHAR,
+						  (fit->second)->size, FILE_CACHE_SEPARATOR_CHAR,
+						  (fit->second)->modtime, FILE_CACHE_SEPARATOR_CHAR,
+						  (fit->second)->pop, FILE_CACHE_SEPARATOR_CHAR,
+						  (fit->second)->updtime, FILE_CACHE_SEPARATOR_CHAR);
 	}
 }
 
 /* recusive function for traversing the dir tree in preorder */
-int DirEntry::saveEntry(std::ostringstream &oss)
+int DirEntry::saveEntry(std::string &s)
 {
-	writeDirInfo(oss) ;
+	writeDirInfo(s) ;
 
 	std::map<std::string, DirEntry *>::iterator it;
 	for(it = subdirs.begin(); it != subdirs.end(); it++)
 	{
-		(it->second)->saveEntry(oss);
+		(it->second)->saveEntry(s);
 	}
 
-	writeFileInfo(oss) ;
+	writeFileInfo(s) ;
 
 	/* signal to pop directory from stack in loadIndex() */
-	oss << "-" << std::endl;
+	s += "-\n";
 	return 1;
 }
 

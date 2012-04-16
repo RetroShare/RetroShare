@@ -218,7 +218,6 @@ void p3Ranking::publishMsgs(bool own)
 #endif
 
 	std::string path = CacheSource::getCacheDir();
-	std::ostringstream out;
 	uint16_t subid;
 
 
@@ -226,21 +225,21 @@ void p3Ranking::publishMsgs(bool own)
 	 * publishing own or friends...
 	 */
 
+	/* determine filename */
+	std::string tmpname;
 	if (own)
 	{
 		/* setup to publish own messages */
-		out << "rank-links-" << time(NULL) << ".rsrl";
+		rs_sprintf(tmpname, "rank-links-%ld.rsrl", time(NULL));
 		subid = 1;
 	}
 	else
 	{
 		/* setup to publish friend messages */
-		out << "rank-friend-links-" << time(NULL) << ".rsrl";
+		rs_sprintf(tmpname, "rank-friend-links-%ld.rsrl", time(NULL));
 		subid = 2;
 	}
 
-	/* determine filename */
-	std::string tmpname = out.str();
 	std::string fname = path + "/" + tmpname;
 
 #ifdef RANK_DEBUG
@@ -1100,29 +1099,26 @@ pqistore *createStore(std::string file, std::string src, bool reading)
 
 std::string generateRandomLinkId()
 {
-	std::ostringstream out;
-	out << std::hex;
+	std::string out;
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 	/* 4 bytes per random number: 4 x 4 = 16 bytes */
 	for(int i = 0; i < 4; i++)
 	{
-		out << std::setw(8) << std::setfill('0');
 		uint32_t rint = random();
-		out << rint;
+		rs_sprintf_append(out, "%08x", rint);
 	}
 #else
 	srand(time(NULL));
 	/* 2 bytes per random number: 8 x 2 = 16 bytes */
 	for(int i = 0; i < 8; i++)
 	{
-		out << std::setw(4) << std::setfill('0');
 		uint16_t rint = rand(); /* only gives 16 bits */
-		out << rint;
+		rs_sprintf_append(out, "%04x", rint);
 	}
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return out.str();
+	return out;
 }
 	
 

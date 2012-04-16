@@ -32,6 +32,7 @@
 #include <serialiser/rsserial.h>
 #include <serialiser/rsconfigitems.h>
 
+#include <sstream> // for std::istringstream
 
 #include "services/p3vors.h"
 #include "services/rsvoipitems.h"
@@ -643,9 +644,7 @@ RsTlvKeyValue p3VoRS::push_int_value(const std::string& key,int value)
 {
 	RsTlvKeyValue kv ;
 	kv.key = key ;
-	std::ostringstream s ;
-	s << value;
-	kv.value = s.str() ;
+	rs_sprintf(kv.value, "%d", value);
 
 	return kv ;
 }
