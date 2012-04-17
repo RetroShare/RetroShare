@@ -204,7 +204,7 @@ std::string p3DistribSecurity::getBinDataSign(void *data, int len)
 	std::string id;
 	for(uint32_t i = 0; i < CERTSIGNLEN; i++)
 	{
-		rs_sprintf(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
+		rs_sprintf_append(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
 	}
 
 	return id;
@@ -363,7 +363,7 @@ std::string p3DistribSecurity::getRsaKeySign(RSA *pubkey)
 	std::string id;
 	for(uint32_t i = 0; i < CERTSIGNLEN; i++)
 	{
-		rs_sprintf(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
+		rs_sprintf_append(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
 	}
 
 	return id;
