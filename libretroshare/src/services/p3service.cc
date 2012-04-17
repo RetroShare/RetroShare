@@ -24,8 +24,8 @@
  */
 
 #include "pqi/pqi.h"
+#include "util/rsstring.h"
 #include "services/p3service.h"
-#include <sstream>
 #include <iomanip>
 
 /*****
@@ -226,29 +226,27 @@ RsRawItem *p3Service::send()
 
 std::string generateRandomServiceId()
 {
-	std::ostringstream out;
-	out << std::hex;
+	std::string out;
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 	/* 4 bytes per random number: 4 x 4 = 16 bytes */
 	for(int i = 0; i < 4; i++)
 	{
-		out << std::setw(8) << std::setfill('0');
 		uint32_t rint = random();
-		out << rint;
+		rs_sprintf_append(out, "%08x", rint);
 	}
 #else
 	srand(time(NULL));
 	/* 2 bytes per random number: 8 x 2 = 16 bytes */
 	for(int i = 0; i < 8; i++)
 	{
-		out << std::setw(4) << std::setfill('0');
 		uint16_t rint = rand(); /* only gives 16 bits */
-		out << rint;
+		rs_sprintf_append(out, "%04x", rint);
 	}
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return out.str();
+	return out;
 }
 	
 

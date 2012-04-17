@@ -571,14 +571,12 @@ void p3disc::sendOwnVersion(std::string to)
 
 void p3disc::sendHeartbeat(std::string to)
 {
-        {
-                std::ostringstream out;
-                out << "p3disc::sendHeartbeat()";
-                out << " to : " << to;
+    {
+                std::string out = "p3disc::sendHeartbeat() to : " + to;
 #ifdef P3DISC_DEBUG
-                std::cerr << out.str() << std::endl;
+                std::cerr << out << std::endl;
 #endif
-		rslog(RSL_WARNING, pqidisczone, out.str());
+        rslog(RSL_WARNING, pqidisczone, out);
         }
 
 
@@ -1168,6 +1166,7 @@ void p3disc::getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCoun
 	}
 }
 
+#ifdef UNUSED_CODE
 int p3disc::idServers()
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -1176,56 +1175,36 @@ int p3disc::idServers()
 	std::map<std::string, autoserver>::iterator sit;
 	int cts = time(NULL);
 
-	std::ostringstream out;
-	out << "::::AutoDiscovery Neighbours::::" << std::endl;
+	std::string out = "::::AutoDiscovery Neighbours::::\n";
 	for(nit = neighbours.begin(); nit != neighbours.end(); nit++)
 	{
-		out << "Neighbour: " << (nit->second).id;
-		out << std::endl;
-		out << "-> LocalAddr: ";
-		out <<  rs_inet_ntoa(nit->second.localAddr.sin_addr);
-		out << ":" << ntohs(nit->second.localAddr.sin_port) << std::endl;
-		out << "-> RemoteAddr: ";
-		out <<  rs_inet_ntoa(nit->second.remoteAddr.sin_addr);
-		out << ":" << ntohs(nit->second.remoteAddr.sin_port) << std::endl;
-		out << "  Last Contact: ";
-		out << cts - (nit->second.ts) << " sec ago";
-		out << std::endl;
+		out += "Neighbour: " + (nit->second).id + "\n";
+		rs_sprintf_append(out, "-> LocalAddr: %s:%u\n", rs_inet_ntoa(nit->second.localAddr.sin_addr).c_str(), ntohs(nit->second.localAddr.sin_port));
+		rs_sprintf_append(out, "-> RemoteAddr: %s:%u\n", rs_inet_ntoa(nit->second.remoteAddr.sin_addr).c_str(), ntohs(nit->second.remoteAddr.sin_port));
+		rs_sprintf_append(out, "  Last Contact: %ld sec ago\n", cts - (nit->second.ts));
 
-		out << " -->DiscFlags: 0x" << std::hex << nit->second.discFlags;
-		out << std::dec << std::endl;
+		rs_sprintf_append(out, " -->DiscFlags: 0x%x\n", nit->second.discFlags);
 
 		for(sit = (nit->second.neighbour_of).begin();
 				sit != (nit->second.neighbour_of).end(); sit++)
 		{
-			out << "\tConnected via: " << (sit->first);
-			out << std::endl;
-			out << "\t\tLocalAddr: ";
-			out <<  rs_inet_ntoa(sit->second.localAddr.sin_addr);
-			out <<":"<< ntohs(sit->second.localAddr.sin_port);
-			out << std::endl;
-			out << "\t\tRemoteAddr: ";
-			out <<  rs_inet_ntoa(sit->second.remoteAddr.sin_addr);
-			out <<":"<< ntohs(sit->second.remoteAddr.sin_port);
+			out += "\tConnected via: " + (sit->first) + "\n";
+			rs_sprintf_append(out, "\t\tLocalAddr: %s:%u\n", rs_inet_ntoa(sit->second.localAddr.sin_addr).c_str(), ntohs(sit->second.localAddr.sin_port));
+			rs_sprintf_append(out, "\t\tRemoteAddr: %s:%u\n", rs_inet_ntoa(sit->second.remoteAddr.sin_addr).c_str(), ntohs(sit->second.remoteAddr.sin_port));
 
-			out << std::endl;
-			out << "\t\tLast Contact:";
-			out << cts - (sit->second.ts) << " sec ago";
-			out << std::endl;
-			out << "\t\tDiscFlags: 0x" << std::hex << (sit->second.discFlags);
-			out << std::dec << std::endl;
+			rs_sprintf_append(out, "\t\tLast Contact: %ld sec ago\n", cts - (sit->second.ts));
+			rs_sprintf_append(out, "\t\tDiscFlags: 0x%x\n", sit->second.discFlags);
 		}
 	}
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::idServers()" << std::endl;
-	std::cerr << out.str();
-	std::cerr << std::endl;
+	std::cerr << out;
 #endif
 
 	return 1;
 }
-
+#endif
 
 // tdelta     -> trange.
 // -inf...<0	   0 (invalid)
@@ -1287,9 +1266,7 @@ bool p3disc::saveList(bool& cleanup, std::list<RsItem*>& /*lst*/)
 		{
             RsTlvKeyValue kv;
             kv.key = mapIt->first;
-            std::ostringstream time_string;
-            time_string << mapIt->second;
-            kv.value = time_string.str();
+            rs_sprintf(kv.value, "%ld", mapIt->second);
             vitem->tlvkvs.pairs.push_back(kv) ;
             #ifdef P3DISC_DEBUG
             std::cerr << "p3disc::saveList() saving : " << mapIt->first << " ; " << mapIt->second << std::endl ;

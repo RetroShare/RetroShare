@@ -37,7 +37,6 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 
-#include <sstream>
 #include <iomanip>
 #include <map>
 
@@ -156,9 +155,9 @@ void p3MsgService::processMsg(RsMsgItem *mi)
 			librs::util::ConvertUtf16ToUtf8(mi->message, message);
 			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), title, message);
 
-			std::ostringstream out;
-			out << mi->msgId;
-			notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out.str(), "", "");
+			std::string out;
+			rs_sprintf(out, "%lu", mi->msgId);
+			notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out, "", "");
 		}
 	}
 
@@ -843,9 +842,7 @@ bool    p3MsgService::getMsgParentId(const std::string &msgId, std::string &msgP
 		return false;
 	}
 
-	std::ostringstream out;
-	out << mit->second->msgParentId;
-	msgParentId = out.str();
+	rs_sprintf(msgParentId, "%lu", mit->second->msgParentId);
 	
 	return true;
 }
@@ -967,9 +964,7 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		processMsg(msg);
 
 		// return new message id
-		std::ostringstream out;
-		out << msg->msgId;
-		info.msgId = out.str();
+		rs_sprintf(info.msgId, "%lu", msg->msgId);
 	}
 
 	return true;
@@ -1011,9 +1006,7 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
             imsg[msg->msgId] = msg;
 
             // return new message id
-            std::ostringstream out;
-            out << msg->msgId;
-            info.msgId = out.str();
+            rs_sprintf(info.msgId, "%lu", msg->msgId);
         }
 
         setMsgParentId(msg->msgId, atoi(msgParentId.c_str()));
@@ -1164,10 +1157,7 @@ bool 	p3MsgService::getMessageTag(const std::string &msgId, MsgTagInfo& info)
 	std::map<uint32_t, RsMsgTags*>::iterator mit;
 
 	if(mMsgTags.end() != (mit = mMsgTags.find(mid))) {
-		std::ostringstream out;
-		out << mit->second->msgId;
-
-		info.msgId = out.str();
+		rs_sprintf(info.msgId, "%lu", mit->second->msgId);
 		info.tagIds = mit->second->tagIds;
 
 		return true;
@@ -1390,9 +1380,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	mi.srcId = msg->PeerId();
 	{
 		//msg->msgId;
-		std::ostringstream out;
-		out << msg->msgId;
-		mi.msgId = out.str();
+		rs_sprintf(mi.msgId, "%lu", msg->msgId);
 	}
 
 	std::list<std::string>::iterator pit;
@@ -1488,9 +1476,7 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.srcId = msg->PeerId();
 	{
 		//msg->msgId;
-		std::ostringstream out;
-		out << msg->msgId;
-		mis.msgId = out.str();
+		rs_sprintf(mis.msgId, "%lu", msg->msgId);
 	}
 
 	mis.title = msg->subject;

@@ -31,8 +31,6 @@
 #include "pqi/p3linkmgr.h"
 #include "util/rsrandom.h"
 
-#include <sstream>
-
 #include <openssl/sha.h>
 
 /****
@@ -653,7 +651,6 @@ int p3Dsdv::addTestService()
 
 	int rndhash1[SHA_DIGEST_LENGTH / 4];
 	int rndhash2[SHA_DIGEST_LENGTH / 4];
-	std::ostringstream rh, sh;
 	std::string realHash;
 	std::string seedHash;
 
@@ -664,35 +661,30 @@ int p3Dsdv::addTestService()
 		rndhash2[i] = RSRandom::random_u32();
 	}
 
-        for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-        {
-                rh << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) ((uint8_t *) rndhash1)[i];
-                sh << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) ((uint8_t *) rndhash2)[i];
-        }
-
-	realHash = rh.str();
-	seedHash = sh.str();
-
-        uint8_t sha_hash[SHA_DIGEST_LENGTH];
-        memset(sha_hash,0,SHA_DIGEST_LENGTH*sizeof(uint8_t)) ;
-        SHA_CTX *sha_ctx = new SHA_CTX;
-        SHA1_Init(sha_ctx);
-
-        SHA1_Update(sha_ctx, realHash.c_str(), realHash.length());
-        SHA1_Update(sha_ctx, seedHash.c_str(), seedHash.length());
-        SHA1_Final(sha_hash, sha_ctx);
-        delete sha_ctx;
-
-	std::ostringstream keystr;
-        for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-        {
-                keystr << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) (sha_hash)[i];
+	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+	{
+		rs_sprintf_append(realHash, "%02x", (uint32_t) ((uint8_t *) rndhash1)[i]);
+		rs_sprintf_append(seedHash, "%02x", (uint32_t) ((uint8_t *) rndhash2)[i]);
 	}
-	
+
+
+	uint8_t sha_hash[SHA_DIGEST_LENGTH];
+	memset(sha_hash,0,SHA_DIGEST_LENGTH*sizeof(uint8_t)) ;
+	SHA_CTX *sha_ctx = new SHA_CTX;
+	SHA1_Init(sha_ctx);
+
+	SHA1_Update(sha_ctx, realHash.c_str(), realHash.length());
+	SHA1_Update(sha_ctx, seedHash.c_str(), seedHash.length());
+	SHA1_Final(sha_hash, sha_ctx);
+	delete sha_ctx;
+
+	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+	{
+		rs_sprintf_append(testId.mHash, "%02x", (uint32_t) (sha_hash)[i]);
+	}
 
 	testId.mIdType = RSDSDV_IDTYPE_TEST;
 	testId.mAnonChunk = seedHash;
-	testId.mHash = keystr.str();
 
 	addDsdvId(&testId, realHash);
 	return 1;

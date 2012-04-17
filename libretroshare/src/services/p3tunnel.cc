@@ -29,7 +29,6 @@
 //#include "retroshare/rspeers.h"
 #include "services/p3tunnel.h"
 #include "pqi/pqissltunnel.h"
-#include <sstream>
 
 #include "pqi/authssl.h"
 #include "pqi/p3connmgr.h"
@@ -86,11 +85,9 @@ int p3tunnel::handleIncoming()
 
 		{
 #ifdef P3TUNNEL_DEBUG
-			std::ostringstream out;
-			out << "p3tunnel::handleIncoming()";
-			out << " Received Message!" << std::endl;
-			item -> print(out);
-			std::cerr << out.str();
+			std::string out = "p3tunnel::handleIncoming() Received Message!\n";
+			item -> print_string(out);
+			std::cerr << out;
 #endif
 		}
 
@@ -125,10 +122,9 @@ void p3tunnel::sendTunnelDataPrivate(std::string to, std::string sourcePeerId, s
 	// Then send message.
 	{
 #ifdef P3TUNNEL_DEBUG
-		std::ostringstream out;
-		out << "p3tunnel::sendTunnelDataPrivate() Constructing a RsTunnelItem Message!" << std::endl;
-		out << "Sending to: " << to;
-		std::cerr << out.str() << std::endl;
+		std::string out = "p3tunnel::sendTunnelDataPrivate() Constructing a RsTunnelItem Message!\n";
+		out += "Sending to: " + to;
+		std::cerr << out << std::endl;
 #endif
 	}
 

@@ -141,34 +141,6 @@ int	p3GameLauncher::status()
 /**** Interface to GUI Game Launcher ****/
 
 
-std::string generateRandomGameId()
-{
-	std::ostringstream out;
-	out << std::hex;
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-	/* 4 bytes per random number: 4 x 4 = 16 bytes */
-	for(int i = 0; i < 4; i++)
-	{
-		out << std::setw(8) << std::setfill('0');
-		uint32_t rint = random();
-		out << rint;
-	}
-#else
-	srand(time(NULL));
-	/* 2 bytes per random number: 8 x 2 = 16 bytes */
-	for(int i = 0; i < 8; i++)
-	{
-		out << std::setw(4) << std::setfill('0');
-		uint16_t rint = rand(); /* only gives 16 bits */
-		out << rint;
-	}
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	return out.str();
-}
-
 /**** GUI     Interface ****/
 
 
@@ -218,7 +190,7 @@ std::string  p3GameLauncher::newGame(uint16_t srvId, std::wstring name)
 #endif
 
 	/* generate GameId (random string) */
-	std::string gameId = generateRandomGameId();
+	std::string gameId = generateRandomServiceId();
 
 	gameStatus newGame;
 	newGame.gameId = gameId;
@@ -747,9 +719,7 @@ bool    p3GameLauncher::getGameList(std::list<RsGameInfo> &gameList)
 		info.gameId = git->first;
 		info.serverId = git->second.serverId;
 
-		std::ostringstream out;
-		out << "GameType: " << git->second.serviceId;
-		info.gameType = out.str();
+		rs_sprintf(info.gameType, "GameType: %lu", git->second.serviceId);
 
 		info.serverName = "ServerName";
 		info.numPlayers = git->second.numPlayers;

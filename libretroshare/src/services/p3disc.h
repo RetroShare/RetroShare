@@ -140,7 +140,7 @@ int     addDiscoveryData(const std::string& fromId, const std::string& aboutId,
 		const struct sockaddr_in& laddr, const struct sockaddr_in& raddr,
 		uint32_t flags, time_t ts,bool& new_info);
 
-int 	idServers();
+//int 	idServers();
 
 	private:
 

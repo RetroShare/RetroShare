@@ -30,8 +30,6 @@
 
 #include "util/rsdir.h"
 
-#include <sstream>
-
 std::string generateRandomShowId();
 
 /****
@@ -306,10 +304,9 @@ void p3PhotoService::publishPhotos()
 	/* determine filename */
 
 	std::string path = CacheSource::getCacheDir();
-	std::ostringstream out;
-	out << "photo-index-" << time(NULL) << ".pdx";
 
-	std::string tmpname = out.str();
+	std::string tmpname;
+	rs_sprintf(tmpname, "photo-index-%ld.pdx", time(NULL));
 	std::string fname = path + "/" + tmpname;
 
 #ifdef PHOTO_DEBUG
@@ -778,33 +775,30 @@ RsPhotoShowItem *p3PhotoService::locked_getShow(std::string id, std::string show
 
 std::string generateRandomShowId()
 {
-	std::ostringstream out;
-	out << std::hex;
-	
+	std::string out;
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-        /* 4 bytes per random number: 4 x 4 = 16 bytes */
-        for(int i = 0; i < 4; i++)
-        {
-                out << std::setw(8) << std::setfill('0');
-                uint32_t rint = random();
-                out << rint;
-        }
+	/* 4 bytes per random number: 4 x 4 = 16 bytes */
+	for(int i = 0; i < 4; i++)
+	{
+		uint32_t rint = random();
+		rs_sprintf_append(out, "%08x", rint);
+	}
 #else
-        srand(time(NULL));
-        /* 2 bytes per random number: 8 x 2 = 16 bytes */
-        for(int i = 0; i < 8; i++)
-        {
-                out << std::setw(4) << std::setfill('0');
-                uint16_t rint = rand(); /* only gives 16 bits */
-                out << rint;
-        }
+	srand(time(NULL));
+	/* 2 bytes per random number: 8 x 2 = 16 bytes */
+	for(int i = 0; i < 8; i++)
+	{
+		uint16_t rint = rand(); /* only gives 16 bits */
+		rs_sprintf_append(out, "%04x", rint);
+	}
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	return out.str();
+	return out;
 }
-	
+
 
 void	p3PhotoService::createDummyData()
 {
