@@ -2169,10 +2169,7 @@ void p3BitDht::Feedback_Connected(std::string pid)
 			
 	dpd->mConnectLogic.updateCb(CSB_UPDATE_CONNECTED);
 			
-	std::ostringstream msg;
-	msg << "Connected in " << dpd->mPeerConnectTS - dpd->mPeerConnectUdpTS;
-	msg << " secs";
-	dpd->mPeerConnectMsg = msg.str();
+	rs_sprintf(dpd->mPeerConnectMsg, "Connected in %ld secs", dpd->mPeerConnectTS - dpd->mPeerConnectUdpTS);
 			
 	// Remove the Connection Request.
 	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
@@ -2290,10 +2287,7 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 
 		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
 		dpd->mPeerConnectClosedTS = time(NULL);
-		std::ostringstream msg;
-		msg << "Closed, Alive for: " << dpd->mPeerConnectClosedTS - dpd->mPeerConnectTS;
-		msg << " secs";
-		dpd->mPeerConnectMsg = msg.str();
+		rs_sprintf(dpd->mPeerConnectMsg, "Closed, Alive for: %ld secs", dpd->mPeerConnectClosedTS - dpd->mPeerConnectTS);
 	}
 
 

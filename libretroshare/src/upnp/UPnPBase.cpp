@@ -29,9 +29,10 @@
 #include "UPnPBase.h"
 #include <stdio.h>
 #include <string.h>
+#include <sstream> // for std::istringstream
 
 #include <algorithm>		// For transform()
-
+#include "util/rsstring.h"
 
 #ifdef __GNUC__
 	#if __GNUC__ >= 4
@@ -71,12 +72,8 @@ m_enabled(enabled ? "1" : "0"),
 m_description(description),
 m_key()
 {
-	std::ostringstream oss;
-	oss << ex_port;
-	m_ex_port = oss.str();
-	std::ostringstream oss2;
-	oss2 << in_port;
-	m_in_port = oss2.str();
+	rs_sprintf(m_ex_port, "%d", ex_port);
+	rs_sprintf(m_in_port, "%d", in_port);
 	m_key = m_protocol + m_ex_port;
 }
 
@@ -128,7 +125,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 	(void) errorString;
 	(void) doc;
 
-	std::ostringstream msg;
+	std::string msg;
 #ifdef UPNP_DEBUG
 	if (errorString == NULL || *errorString == 0) {
 		errorString = "Not available";
@@ -159,7 +156,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 		std::cerr << std::endl;
 	}
 #endif
-	return msg.str();
+	return msg;
 }
 
 
@@ -170,8 +167,6 @@ void CUPnPLib::ProcessActionResponse(
 	/* remove unused parameter warnings */
 	(void) actionName;
 
-	std::ostringstream msg;
-	msg << "Response: ";
 	IXML_Element *root = Element_GetRootElement(RespDoc);
 	IXML_Element *child = Element_GetFirstChild(root);
 	if (child) {
@@ -491,7 +486,6 @@ m_eventSubURL(upnpLib.Element_GetChildValueByTag(service, "eventSubURL")),
 m_timeout(1801),
 m_SCPD(NULL)
 {
-	std::ostringstream msg;
 	int errcode;
 	
 	std::vector<char> vscpdURL(URLBase.length() + m_SCPDURL.length() + 1);
@@ -576,7 +570,6 @@ m_SCPD(NULL)
 //#warning Delete this code when m_WanService is no longer used.
 			upnpLib.m_ctrlPoint.SetWanService(this);
 			// Log it
-			msg.str("");
 #ifdef UPNP_DEBUG
 			std::cerr << "CUPnPService::CUPnPService() WAN Service Detected: '" <<
 				m_serviceType << "'.";
@@ -587,7 +580,6 @@ m_SCPD(NULL)
 #if 0
 //#warning Delete this code on release.
 		} else {
-			msg.str("");
 #ifdef UPNP_DEBUG
 			std::cerr << "WAN service detected again: '" <<
 				m_serviceType <<
@@ -597,7 +589,6 @@ m_SCPD(NULL)
 		}
 #endif
 	} else {
-		msg.str("");
 #ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::CUPnPService() Uninteresting service detected: '" <<
 			m_serviceType << "'. Ignoring.";
@@ -844,7 +835,6 @@ m_UDN              (upnpLib.Element_GetChildValueByTag(device, "UDN")),
 m_UPC              (upnpLib.Element_GetChildValueByTag(device, "UPC")),
 m_presentationURL  (upnpLib.Element_GetChildValueByTag(device, "presentationURL"))
 {
-	std::ostringstream msg;
 	int presURLlen = strlen(URLBase.c_str()) +
 		strlen(m_presentationURL.c_str()) + 2;
 	std::vector<char> vpresURL(presURLlen);
@@ -864,7 +854,6 @@ m_presentationURL  (upnpLib.Element_GetChildValueByTag(device, "presentationURL"
 		m_presentationURL = presURL;
 	}
 	
-	msg.str("");
 #ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPDevice::CUPnPDevice() \n    Device: "                <<
 		"\n        friendlyName: "      << m_friendlyName <<
@@ -1310,8 +1299,8 @@ bool CUPnPControlPoint::PrivateGetExternalIpAdress()
 // This function is static
 int CUPnPControlPoint::Callback(Upnp_EventType EventType, void *Event, void * /*Cookie*/)
 {
-	std::ostringstream msg;
-	std::ostringstream msg2;
+	std::string msg;
+	std::string msg2;
 	// Somehow, this is unreliable. UPNP_DISCOVERY_ADVERTISEMENT_ALIVE events
 	// happen with a wrong cookie and... boom!
 	// CUPnPControlPoint *upnpCP = static_cast<CUPnPControlPoint *>(Cookie);
@@ -1444,22 +1433,22 @@ upnpDiscovery:
 	}
 	case UPNP_EVENT_SUBSCRIBE_COMPLETE:
 		//fprintf(stderr, "Callback: UPNP_EVENT_SUBSCRIBE_COMPLETE\n");
-		msg << "error(UPNP_EVENT_SUBSCRIBE_COMPLETE): ";
+		msg += "error(UPNP_EVENT_SUBSCRIBE_COMPLETE): ";
 		goto upnpEventRenewalComplete;
 	case UPNP_EVENT_UNSUBSCRIBE_COMPLETE:
 		//fprintf(stderr, "Callback: UPNP_EVENT_UNSUBSCRIBE_COMPLETE\n");
-		msg << "error(UPNP_EVENT_UNSUBSCRIBE_COMPLETE): ";
+		msg += "error(UPNP_EVENT_UNSUBSCRIBE_COMPLETE): ";
 		goto upnpEventRenewalComplete;
 	case UPNP_EVENT_RENEWAL_COMPLETE: {
 		//fprintf(stderr, "Callback: UPNP_EVENT_RENEWAL_COMPLETE\n");
-		msg << "error(UPNP_EVENT_RENEWAL_COMPLETE): ";
+		msg += "error(UPNP_EVENT_RENEWAL_COMPLETE): ";
 upnpEventRenewalComplete:
 		struct Upnp_Event_Subscribe *es_event =
 			(struct Upnp_Event_Subscribe *)Event;
 		if (es_event->ErrCode != UPNP_E_SUCCESS) {
-			msg << "Error in Event Subscribe Callback";
+			msg += "Error in Event Subscribe Callback";
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				msg.str(), es_event->ErrCode, NULL, NULL);
+				msg, es_event->ErrCode, NULL, NULL);
 		} else {
 #if 0
 			TvCtrlPointHandleSubscribeUpdate(
@@ -1474,13 +1463,13 @@ upnpEventRenewalComplete:
 	
 	case UPNP_EVENT_AUTORENEWAL_FAILED:
 		//fprintf(stderr, "Callback: UPNP_EVENT_AUTORENEWAL_FAILED\n");
-		msg << "CUPnPControlPoint::Callback() error(UPNP_EVENT_AUTORENEWAL_FAILED): ";
-		msg2 << "UPNP_EVENT_AUTORENEWAL_FAILED: ";
+		msg += "CUPnPControlPoint::Callback() error(UPNP_EVENT_AUTORENEWAL_FAILED): ";
+		msg2 += "UPNP_EVENT_AUTORENEWAL_FAILED: ";
 		goto upnpEventSubscriptionExpired;
 	case UPNP_EVENT_SUBSCRIPTION_EXPIRED: {
 		//fprintf(stderr, "Callback: UPNP_EVENT_SUBSCRIPTION_EXPIRED\n");
-		msg << "CUPnPControlPoint::Callback() error(UPNP_EVENT_SUBSCRIPTION_EXPIRED): ";
-		msg2 << "UPNP_EVENT_SUBSCRIPTION_EXPIRED: ";
+		msg += "CUPnPControlPoint::Callback() error(UPNP_EVENT_SUBSCRIPTION_EXPIRED): ";
+		msg2 += "UPNP_EVENT_SUBSCRIPTION_EXPIRED: ";
 upnpEventSubscriptionExpired:
 		struct Upnp_Event_Subscribe *es_event =
 			(struct Upnp_Event_Subscribe *)Event;
@@ -1492,9 +1481,9 @@ upnpEventSubscriptionExpired:
 			&TimeOut,
 			newSID);
 		if (ret != UPNP_E_SUCCESS) {
-			msg << "Error Subscribing to EventURL";
+			msg += "Error Subscribing to EventURL";
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				msg.str(), es_event->ErrCode, NULL, NULL);
+				msg, es_event->ErrCode, NULL, NULL);
 		} else {
 			ServiceMap::iterator it =
 				upnpCP->m_ServiceMap.find(es_event->PublisherUrl);
@@ -1546,13 +1535,13 @@ upnpEventSubscriptionExpired:
 #ifdef UPNP_DEBUG
 		fprintf(stderr, "CUPnPControlPoint::Callback() Callback: UPNP_CONTROL_GET_VAR_COMPLETE\n");
 #endif
-		msg << "CUPnPControlPoint::Callback() error(UPNP_CONTROL_GET_VAR_COMPLETE): ";
+		msg += "CUPnPControlPoint::Callback() error(UPNP_CONTROL_GET_VAR_COMPLETE): ";
 		struct Upnp_State_Var_Complete *sv_event =
 			(struct Upnp_State_Var_Complete *)Event;
 		if (sv_event->ErrCode != UPNP_E_SUCCESS) {
-			msg << "m_UpnpGetServiceVarStatusAsync";
+			msg += "m_UpnpGetServiceVarStatusAsync";
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				msg.str(), sv_event->ErrCode, NULL, NULL);
+				msg, sv_event->ErrCode, NULL, NULL);
 		} else {
 		    //add the variable to the wanservice property map
 		    (upnpCP->m_WanService->propertyMap)[std::string(sv_event->StateVarName)] = std::string(sv_event->CurrentVal);

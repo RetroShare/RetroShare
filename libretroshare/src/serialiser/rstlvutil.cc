@@ -34,32 +34,30 @@
 /* print out a packet */
 #include <stdlib.h>
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 #include <vector>
 
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "util/utest.h"
+#include "util/rsstring.h"
 
 void displayRawPacket(std::ostream &out, void *data, uint32_t size)
 {
 	uint32_t i;
-	std::ostringstream sout;
-	sout << "DisplayRawPacket: Size: " << size;
-	sout << std::hex;
+	std::string sout;
+	rs_sprintf(sout, "DisplayRawPacket: Size: %ld", size);
+
 	for(i = 0; i < size; i++)
 	{
 		if (i % 16 == 0)
 		{
-			sout << std::endl;
+			sout += "\n";
 		}
-		sout << std::setw(2) << std::setfill('0')
-			<< (int) (((unsigned char *) data)[i]) << ":";
+		rs_sprintf_append(sout, "%02x:", (int) (((unsigned char *) data)[i]));
 	}
-	sout << std::endl;
 
-	out << sout.str();
+	out << sout << std::endl;
 }
 
 

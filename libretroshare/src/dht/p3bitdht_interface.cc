@@ -274,9 +274,7 @@ void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer)
 
 	peer.mDhtId = out.str();
 
-	std::ostringstream addr;
-	addr << rs_inet_ntoa(int_peer.mPeerId.addr.sin_addr) << ":" << ntohs(int_peer.mPeerId.addr.sin_port);
-	peer.mAddr = addr.str();
+	rs_sprintf(peer.mAddr, "%s:%u", rs_inet_ntoa(int_peer.mPeerId.addr.sin_addr).c_str(), ntohs(int_peer.mPeerId.addr.sin_port));
 
 	peer.mLastSendTime = int_peer.mLastSendTime;
 	peer.mLastRecvTime = int_peer.mLastRecvTime;
@@ -333,23 +331,9 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 
 void	convertUdpRelayEndtoRsDhtRelayEnd(RsDhtRelayEnd &end, const UdpRelayEnd &int_end)
 {
-	{
-		std::ostringstream addr;
-		addr << rs_inet_ntoa(int_end.mLocalAddr.sin_addr) << ":" << ntohs(int_end.mLocalAddr.sin_port);
-		end.mLocalAddr = addr.str();
-	}
-
-	{
-		std::ostringstream addr;
-		addr << rs_inet_ntoa(int_end.mProxyAddr.sin_addr) << ":" << ntohs(int_end.mProxyAddr.sin_port);
-		end.mProxyAddr = addr.str();
-	}
-
-	{
-		std::ostringstream addr;
-		addr << rs_inet_ntoa(int_end.mRemoteAddr.sin_addr) << ":" << ntohs(int_end.mRemoteAddr.sin_port);
-		end.mRemoteAddr = addr.str();
-	}
+	rs_sprintf(end.mLocalAddr, "%s:%u", rs_inet_ntoa(int_end.mLocalAddr.sin_addr).c_str(), ntohs(int_end.mLocalAddr.sin_port));
+	rs_sprintf(end.mProxyAddr, "%s:%u", rs_inet_ntoa(int_end.mProxyAddr.sin_addr).c_str(), ntohs(int_end.mProxyAddr.sin_port));
+	rs_sprintf(end.mRemoteAddr, "%s:%u", rs_inet_ntoa(int_end.mRemoteAddr.sin_addr).c_str(), ntohs(int_end.mRemoteAddr.sin_port));
 
 	end.mCreateTS = 0;
 	return;
@@ -357,26 +341,16 @@ void	convertUdpRelayEndtoRsDhtRelayEnd(RsDhtRelayEnd &end, const UdpRelayEnd &in
 	
 void	convertUdpRelayProxytoRsDhtRelayProxy(RsDhtRelayProxy &proxy, const UdpRelayProxy &int_proxy)
 {
-	{
-		std::ostringstream addr;
-		addr << rs_inet_ntoa(int_proxy.mAddrs.mSrcAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mSrcAddr.sin_port);
-		proxy.mSrcAddr = addr.str();
-	}
+	rs_sprintf(proxy.mSrcAddr, "%s:%u", rs_inet_ntoa(int_proxy.mAddrs.mSrcAddr.sin_addr).c_str(), ntohs(int_proxy.mAddrs.mSrcAddr.sin_port));
+	rs_sprintf(proxy.mDestAddr, "%s:%u", rs_inet_ntoa(int_proxy.mAddrs.mDestAddr.sin_addr).c_str(), ntohs(int_proxy.mAddrs.mDestAddr.sin_port));
 
-	{
-		std::ostringstream addr;
-		addr << rs_inet_ntoa(int_proxy.mAddrs.mDestAddr.sin_addr) << ":" << ntohs(int_proxy.mAddrs.mDestAddr.sin_port);
-		proxy.mDestAddr = addr.str();
-	}
-
-        proxy.mBandwidth = int_proxy.mBandwidth;
-        proxy.mRelayClass = int_proxy.mRelayClass;
-        proxy.mLastTS = int_proxy.mLastTS;
+    proxy.mBandwidth = int_proxy.mBandwidth;
+    proxy.mRelayClass = int_proxy.mRelayClass;
+    proxy.mLastTS = int_proxy.mLastTS;
 	proxy.mCreateTS = 0;
 
-        //proxy.mDataSize = int_proxy.mDataSize;
-        //proxy.mLastBandwidthTS = int_proxy.mLastBandwidthTS;
-
+    //proxy.mDataSize = int_proxy.mDataSize;
+    //proxy.mLastBandwidthTS = int_proxy.mLastBandwidthTS;
 }
 
 RsDhtPeer::RsDhtPeer()

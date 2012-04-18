@@ -26,7 +26,6 @@
 
 #include "zeroconf/p3zeroconf.h"
 #include <openssl/sha.h>
-#include <sstream>
 #include <iostream>
 
 #include "pqi/authgpg.h"
@@ -126,14 +125,9 @@ bool    p3ZeroConf::getNetworkStats(uint32_t &netsize, uint32_t &localnetsize)
 void 	p3ZeroConf::createTxtRecord()
 {
 	RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
-	std::ostringstream gpgidout;
-	std::ostringstream sslidout;
 
-	gpgidout << "gpgid=" << mOwnGpgId;	
-	sslidout << "sslid=" << mOwnSslId;	
-
-	std::string gpgid = gpgidout.str();
-	std::string sslid = sslidout.str();
+	std::string gpgid = "gpgid=" + mOwnGpgId;
+	std::string sslid = "sslid=" + mOwnSslId;
 
 	mTextRecord += (char) gpgid.length();
 	mTextRecord += gpgid;
@@ -1248,110 +1242,110 @@ int p3ZeroConf::locked_stopQueryIp()
 
 std::string displayDNSServiceError(DNSServiceErrorType errcode)
 {
-	std::ostringstream str;
+	std::string str;
 	switch(errcode)
 	{
 		default:
-			str << "kDNSServiceErr_??? UNKNOWN-CODE";
+			str = "kDNSServiceErr_??? UNKNOWN-CODE";
  			break;
 	case kDNSServiceErr_NoError:
-			str << "kDNSServiceErr_NoError";
+			str = "kDNSServiceErr_NoError";
  			break;
 	case kDNSServiceErr_Unknown:
-			str << "kDNSServiceErr_Unknown";
+			str = "kDNSServiceErr_Unknown";
  			break;
 	case kDNSServiceErr_NoSuchName:
-			str << "kDNSServiceErr_NoSuchName";
+			str = "kDNSServiceErr_NoSuchName";
  			break;
 	case kDNSServiceErr_NoMemory:
-			str << "kDNSServiceErr_NoMemory";
+			str = "kDNSServiceErr_NoMemory";
  			break;
 	case kDNSServiceErr_BadParam:
-			str << "kDNSServiceErr_BadParam";
+			str = "kDNSServiceErr_BadParam";
  			break;
 	case kDNSServiceErr_BadReference:
-			str << "kDNSServiceErr_BadReference";
+			str = "kDNSServiceErr_BadReference";
  			break;
 	case kDNSServiceErr_BadState:
-			str << "kDNSServiceErr_BadState";
+			str = "kDNSServiceErr_BadState";
  			break;
 	case kDNSServiceErr_BadFlags:
-			str << "kDNSServiceErr_BadFlags";
+			str = "kDNSServiceErr_BadFlags";
  			break;
 	case kDNSServiceErr_Unsupported:
-			str << "kDNSServiceErr_Unsupported";
+			str = "kDNSServiceErr_Unsupported";
  			break;
 	case kDNSServiceErr_NotInitialized:
-			str << "kDNSServiceErr_NotInitialized";
+			str = "kDNSServiceErr_NotInitialized";
  			break;
 	case kDNSServiceErr_AlreadyRegistered:
-			str << "kDNSServiceErr_AlreadyRegistered";
+			str = "kDNSServiceErr_AlreadyRegistered";
  			break;
 	case kDNSServiceErr_NameConflict:
-			str << "kDNSServiceErr_NameConflict";
+			str = "kDNSServiceErr_NameConflict";
  			break;
 	case kDNSServiceErr_Invalid:
-			str << "kDNSServiceErr_Invalid";
+			str = "kDNSServiceErr_Invalid";
  			break;
 	case kDNSServiceErr_Firewall:
-			str << "kDNSServiceErr_Firewall";
+			str = "kDNSServiceErr_Firewall";
  			break;
 	case kDNSServiceErr_Incompatible:
-			str << "kDNSServiceErr_Incompatible";
+			str = "kDNSServiceErr_Incompatible";
  			break;
 	case kDNSServiceErr_BadInterfaceIndex:
-			str << "kDNSServiceErr_BadInterfaceIndex";
+			str = "kDNSServiceErr_BadInterfaceIndex";
  			break;
 	case kDNSServiceErr_Refused:
-			str << "kDNSServiceErr_Refused";
+			str = "kDNSServiceErr_Refused";
  			break;
 	case kDNSServiceErr_NoSuchRecord:
-			str << "kDNSServiceErr_NoSuchRecord";
+			str = "kDNSServiceErr_NoSuchRecord";
  			break;
 	case kDNSServiceErr_NoAuth:
-			str << "kDNSServiceErr_NoAuth";
+			str = "kDNSServiceErr_NoAuth";
  			break;
 	case kDNSServiceErr_NoSuchKey:
-			str << "kDNSServiceErr_NoSuchKey";
+			str = "kDNSServiceErr_NoSuchKey";
  			break;
 	case kDNSServiceErr_NATTraversal:
-			str << "kDNSServiceErr_NATTraversal";
+			str = "kDNSServiceErr_NATTraversal";
  			break;
 	case kDNSServiceErr_DoubleNAT:
-			str << "kDNSServiceErr_DoubleNAT";
+			str = "kDNSServiceErr_DoubleNAT";
  			break;
 	case kDNSServiceErr_BadTime:
-			str << "kDNSServiceErr_BadTime";
+			str = "kDNSServiceErr_BadTime";
  			break;
 	case kDNSServiceErr_BadSig:
-			str << "kDNSServiceErr_BadSig";
+			str = "kDNSServiceErr_BadSig";
  			break;
 	case kDNSServiceErr_BadKey:
-			str << "kDNSServiceErr_BadKey";
+			str = "kDNSServiceErr_BadKey";
  			break;
 	case kDNSServiceErr_Transient:
-			str << "kDNSServiceErr_Transient";
+			str = "kDNSServiceErr_Transient";
  			break;
 	case kDNSServiceErr_ServiceNotRunning:
-			str << "kDNSServiceErr_ServiceNotRunning";
+			str = "kDNSServiceErr_ServiceNotRunning";
  			break;
 	case kDNSServiceErr_NATPortMappingUnsupported:
-			str << "kDNSServiceErr_NATPortMappingUnsupported";
+			str = "kDNSServiceErr_NATPortMappingUnsupported";
  			break;
 	case kDNSServiceErr_NATPortMappingDisabled:
-			str << "kDNSServiceErr_NATPortMappingDisabled";
+			str = "kDNSServiceErr_NATPortMappingDisabled";
  			break;
 #if 0
 	case kDNSServiceErr_NoRouter:
-			str << "kDNSServiceErr_NoRouter";
+			str = "kDNSServiceErr_NoRouter";
  			break;
 	case kDNSServiceErr_PollingMode:
-			str << "kDNSServiceErr_PollingMode";
+			str = "kDNSServiceErr_PollingMode";
  			break;
 #endif
 	}
 
-	return str.str();
+	return str;
 }
 
 

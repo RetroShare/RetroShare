@@ -27,6 +27,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsserial.h"
 #include "util/rsthreads.h"
+#include "util/rsstring.h"
 
 #include <math.h>
 #include <map>
@@ -292,11 +293,11 @@ uint32_t    RsSerialiser::size(RsItem *item)
 #ifdef  RSSERIAL_ERROR_DEBUG
 				std::cerr << "RsSerialiser::size() ERROR serialiser missing!";
 			
-				std::ostringstream out;
-				out << std::hex << item->PacketId() << std::dec;
+				std::string out;
+				rs_sprintf(out, "%x", item->PacketId());
 
 				std::cerr << "RsSerialiser::size() PacketId: ";
-				std::cerr << out.str();
+				std::cerr << out;
 				std::cerr << std::endl;
 #endif
 				return 0;
@@ -305,10 +306,9 @@ uint32_t    RsSerialiser::size(RsItem *item)
 	}
 
 #ifdef  RSSERIAL_DEBUG
-	std::ostringstream out;
-	out << std::hex << "RsSerialiser::size() Item->PacketId(): " << item->PacketId();
-	out << " matched to Serialiser Type: " << type;
-	std::cerr << out.str() << std::endl;
+	std::string out;
+	rs_sprintf(out, "RsSerialiser::size() Item->PacketId(): %x matched to Serialiser Type: %lu", item->PacketId(), type);
+	std::cerr << out << std::endl;
 #endif
 
 	return (it->second)->size(item);
@@ -333,11 +333,11 @@ bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 
 #ifdef  RSSERIAL_ERROR_DEBUG
 				std::cerr << "RsSerialiser::serialise() ERROR serialiser missing!";
-				std::ostringstream out;
-				out << std::hex << item->PacketId() << std::dec;
+				std::string out;
+				rs_sprintf(out, "%x", item->PacketId());
 
 				std::cerr << "RsSerialiser::serialise() PacketId: ";
-				std::cerr << out.str();
+				std::cerr << out;
 				std::cerr << std::endl;
 #endif
 				return false;
@@ -346,10 +346,9 @@ bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 	}
 
 #ifdef  RSSERIAL_DEBUG
-	std::ostringstream out;
-	out << std::hex << "RsSerialiser::serialise() Item->PacketId(): " << item->PacketId();
-	out << " matched to Serialiser Type: " << type;
-	std::cerr << out.str() << std::endl;
+	std::string out;
+	rs_sprintf(out, "RsSerialiser::serialise() Item->PacketId(): %x matched to Serialiser Type: %lu", item->PacketId(), type);
+	std::cerr << out << std::endl;
 #endif
 
 	return (it->second)->serialise(item, data, size);
@@ -401,12 +400,11 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 
 #ifdef  RSSERIAL_ERROR_DEBUG
 				std::cerr << "RsSerialiser::deserialise() ERROR deserialiser missing!";
-				std::ostringstream out;
-				out << std::hex << getRsItemId(data) << std::dec;
+				std::string out;
+				rs_sprintf(out, "%x", getRsItemId(data));
 
 				std::cerr << "RsSerialiser::deserialise() PacketId: ";
-				std::cerr << out.str();
-				std::cerr << std::endl;
+				std::cerr << out << std::endl;
 #endif
 				return NULL;
 			}

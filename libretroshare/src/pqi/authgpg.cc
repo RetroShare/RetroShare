@@ -907,17 +907,17 @@ std::string ProcessPGPmeError(gpgme_error_t ERR)
 	gpgme_err_code_t code = gpgme_err_code(ERR);
 	gpgme_err_source_t src = gpgme_err_source(ERR);
 
-	std::ostringstream ss ;
+	std::string s ;
 
 	if(code > 0)
 	{
-		ss << "GPGme ERROR: Code: " << code << " Source: " << src << std::endl;
-		ss << "GPGme ERROR: " << gpgme_strerror(ERR) << std::endl;
+		rs_sprintf(s, "GPGme ERROR: Code: %d Source: %d\n", code, src);
+		rs_sprintf_append(s, "GPGme ERROR: %s\n", gpgme_strerror(ERR));
 	}
 	else
 		return std::string("Unknown error") ;
 
-	return ss.str() ;
+	return s ;
 }
 
 void print_pgpme_verify_summary(unsigned int summary)
@@ -1844,9 +1844,8 @@ int	AuthGPGimpl::privateTrustCertificate(const std::string &id, int trustlvl)
 
 		gpgme_key_t trustKey = trustCert.key;
 		std::string trustString;
-		std::ostringstream trustStrOut;
-		trustStrOut << trustlvl;
-		class TrustParams sparams(trustStrOut.str());
+		rs_sprintf(trustString, "%d", trustlvl);
+		class TrustParams sparams(trustString);
 		class EditParams params(TRUST_START, &sparams);
 		gpgme_data_t out;
 		gpg_error_t ERR;
@@ -1875,11 +1874,10 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email,
                 std::string inPassphrase)
 {
-        std::ostringstream params;
-        params << "<GnupgKeyParms format=\"internal\">"<< std::endl;
+        std::string params = "<GnupgKeyParms format=\"internal\">\n";
         if (useRsa)
         {
-                params << "Key-Type: RSA"<< std::endl;
+                params += "Key-Type: RSA\n";
                 if (blen < 1024)
                 {
 #ifdef GPG_DEBUG
@@ -1888,23 +1886,23 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                         blen = 1024;
                 }
                 blen = ((blen / 512) * 512); /* make multiple of 512 */
-                params << "Key-Length: "<< blen << std::endl;
+                rs_sprintf_append(params, "Key-Length: %u\n", blen);
         }
         else
         {
-                params << "Key-Type: DSA"<< std::endl;
-                params << "Key-Length: 1024"<< std::endl;
-                params << "Subkey-Type: ELG-E"<< std::endl;
-                params << "Subkey-Length: 1024"<< std::endl;
+                params += "Key-Type: DSA\n";
+                params += "Key-Length: 1024\n";
+                params += "Subkey-Type: ELG-E\n";
+                params += "Subkey-Length: 1024\n";
         }
-        params << "Name-Real: "<< name << std::endl;
-        params << "Name-Comment: "<< comment << std::endl;
-        params << "Name-Email: "<< email << std::endl;
-        params << "Expire-Date: 0"<< std::endl;
-        params << "Passphrase: "<< inPassphrase << std::endl;
-        params << "</GnupgKeyParms>"<< std::endl;
+        params += "Name-Real: " + name + "\n";
+        params += "Name-Comment: " + comment + "\n";
+        params += "Name-Email: " + email + "\n";
+        params += "Expire-Date: 0\n";
+        params += "Passphrase: " + inPassphrase + "\n";
+        params += "</GnupgKeyParms>\n";
 
-        return params.str();
+        return params;
 }
 
 

@@ -26,7 +26,6 @@
 
 #include <map>
 #include <string>
-#include <sstream>
 #include <memory>
 #include <vector>
 #include <string.h>
@@ -194,10 +193,8 @@ CXML_List<T, XML_ELEMENT_NAME, XML_LIST_NAME>::CXML_List(
 		(*this)[upnpElement->GetKey()] = upnpElement;
 		++i;
 	}
-	std::ostringstream msg;
-	msg << "\n    " << XML_LIST_NAME << ": " <<
+	std::cerr << "\n    " << XML_LIST_NAME << ": " <<
 		i << " " << XML_ELEMENT_NAME << "s.";
-	std::cerr << msg;
 }
 
 
