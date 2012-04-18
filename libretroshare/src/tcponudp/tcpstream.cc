@@ -29,7 +29,6 @@
  
 #include "tcpstream.h"
 #include <iostream>
-#include <sstream>
 #include <assert.h>
 #include <errno.h>
 #include <math.h>
@@ -40,7 +39,7 @@
 
 /* Debugging for STATE change, and Startup SYNs */
 #include "util/rsdebug.h"
-
+#include "util/rsstring.h"
 #include "util/rsrandom.h"
 
 const int rstcpstreamzone = 28455;
@@ -173,10 +172,7 @@ int	TcpStream::connect(const struct sockaddr_in &raddr, uint32_t conn_period)
 	std::cerr << "TcpStream STATE -> TCP_SYN_SENT" << std::endl;
 #endif
 	{
-		std::ostringstream out;
-		out << "TcpStream::state => TCP_SYN_SENT";
-		out << " (Connect)";
-		rslog(RSL_WARNING,rstcpstreamzone,out.str());
+		rslog(RSL_WARNING,rstcpstreamzone,"TcpStream::state => TCP_SYN_SENT (Connect)");
 	}
 
 	tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
@@ -997,12 +993,7 @@ int 	TcpStream::recv_check()
 		 * for max efficiency
 		 */
 
-		{
-			std::ostringstream out;
-			out << "TcpStream::state => TCP_CLOSED";
-			out << " (kNoPktTimeout)";
-			rslog(RSL_WARNING, rstcpstreamzone, out.str());
-		}
+		rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_CLOSED (kNoPktTimeout)");
 
 		outStreamActive = false;
 		inStreamActive = false;
@@ -1015,11 +1006,7 @@ int 	TcpStream::recv_check()
 int	TcpStream::cleanup()
 {
 	// This shuts it all down! no matter what.
-	{
-		std::ostringstream out;
-		out << "TcpStream::cleanup() state = TCP_CLOSED";
-		rslog(RSL_WARNING, rstcpstreamzone, out.str());
-	}
+	rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::cleanup() state = TCP_CLOSED");
 	
 	outStreamActive = false;
 	inStreamActive = false;
@@ -1181,10 +1168,7 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			state = TCP_CLOSED;
 			// return incoming_TimedWait(pkt);
 			{
-				std::ostringstream out;
-				out << "TcpStream::state => TCP_CLOSED";
-				out << " (recvd TCP_TIMED_WAIT?)";
-				rslog(RSL_WARNING, rstcpstreamzone, out.str());
+				rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_CLOSED (recvd TCP_TIMED_WAIT?)");
 			}
 			break;
 	}
@@ -1257,12 +1241,8 @@ int TcpStream::incoming_Closed(TcpPacket *pkt)
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream STATE -> TCP_SYN_RCVD" << std::endl;
 #endif
-		{
-			std::ostringstream out;
-			out << "TcpStream::state => TCP_SYN_RECVD";
-			out << " (recvd SYN & !ACK)";
-			rslog(RSL_WARNING, rstcpstreamzone, out.str());
-		}
+
+		rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_SYN_RECVD (recvd SYN & !ACK)");
 	}
 
 	delete pkt;
@@ -1327,12 +1307,8 @@ int TcpStream::incoming_SynSent(TcpPacket *pkt)
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream STATE -> TCP_ESTABLISHED" << std::endl;
 #endif
-		{
-			std::ostringstream out;
-			out << "TcpStream::state => TCP_ESTABLISHED";
-			out << " (recvd SUN & ACK)";
-			rslog(RSL_WARNING, rstcpstreamzone, out.str());
-		}
+
+		rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_ESTABLISHED (recvd SUN & ACK)");
 
 		delete pkt;
 	} 
@@ -1356,12 +1332,9 @@ int TcpStream::incoming_SynRcvd(TcpPacket *pkt)
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream STATE -> TCP_CLOSED" << std::endl;
 #endif
-		{
-			std::ostringstream out;
-			out << "TcpStream::state => TCP_CLOSED";
-			out << " (recvd RST)";
-			rslog(RSL_WARNING, rstcpstreamzone, out.str());
-		}
+
+		rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_CLOSED (recvd RST)");
+
 		delete pkt;
 		return 1;
 	}
@@ -1426,13 +1399,8 @@ int TcpStream::incoming_SynRcvd(TcpPacket *pkt)
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream STATE -> TCP_ESTABLISHED" << std::endl;
 #endif
-		{
-			std::ostringstream out;
-			out << "TcpStream::state => TCP_ESTABLISHED";
-			out << " (have SYN, recvd ACK)";
-			rslog(RSL_WARNING, rstcpstreamzone, out.str());
-		}
 
+		rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_ESTABLISHED (have SYN, recvd ACK)");
 	} 
 
 	if (ackWithData)
@@ -1735,12 +1703,8 @@ int TcpStream::check_InPkts()
 					std::cerr << "TcpStream::state = TCP_CLOSE_WAIT";
 					std::cerr << std::endl;
 #endif
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_CLOSE_WAIT";
-						out << " (recvd FIN)";
-						rslog(RSL_WARNING, rstcpstreamzone, out.str());
-					}
+
+					rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_CLOSE_WAIT (recvd FIN)");
 				}
 				else if (state == TCP_FIN_WAIT_1)
 				{
@@ -1749,12 +1713,8 @@ int TcpStream::check_InPkts()
 					std::cerr << "TcpStream::state = TCP_CLOSING";
 					std::cerr << std::endl;
 #endif
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_CLOSING";
-						out << " (FIN_WAIT_1, recvd FIN)";
-						rslog(RSL_WARNING, rstcpstreamzone, out.str());
-					}
+
+					rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_CLOSING (FIN_WAIT_1, recvd FIN)");
 				}
 				else if (state == TCP_FIN_WAIT_2)
 				{
@@ -1763,12 +1723,9 @@ int TcpStream::check_InPkts()
 					std::cerr << "TcpStream::state = TCP_TIMED_WAIT";
 					std::cerr << std::endl;
 #endif
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_TIMED_WAIT";
-						out << " (FIN_WAIT_2, recvd FIN)";
-						rslog(RSL_WARNING, rstcpstreamzone, out.str());
-					}
+
+					rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_TIMED_WAIT (FIN_WAIT_2, recvd FIN)");
+
 					cleanup();
 				}
 			}
@@ -1784,12 +1741,8 @@ int TcpStream::check_InPkts()
 					std::cerr << "TcpStream::state = TCP_FIN_WAIT_2";
 					std::cerr << std::endl;
 #endif
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_FIN_WAIT_2";
-						out << " (FIN_WAIT_1, recvd ACK)";
-						rslog(RSL_WARNING, rstcpstreamzone, out.str());
-					}
+
+					rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_FIN_WAIT_2 (FIN_WAIT_1, recvd ACK)");
 				}
 				else if (state == TCP_LAST_ACK)
 				{
@@ -1798,12 +1751,9 @@ int TcpStream::check_InPkts()
 					std::cerr << "TcpStream::state = TCP_CLOSED";
 					std::cerr << std::endl;
 #endif
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_CLOSED";
-						out << " (LAST_ACK, recvd ACK)";
-						rslog(RSL_WARNING, rstcpstreamzone, out.str());
-					}
+
+					rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_CLOSED (LAST_ACK, recvd ACK)");
+
 					cleanup();
 				}
 				else if (state == TCP_CLOSING)
@@ -1813,12 +1763,9 @@ int TcpStream::check_InPkts()
 					std::cerr << "TcpStream::state = TCP_TIMED_WAIT";
 					std::cerr << std::endl;
 #endif
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_TIMED_WAIT";
-						out << " (TCP_CLOSING, recvd ACK)";
-						rslog(RSL_WARNING, rstcpstreamzone, out.str());
-					}
+
+					rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_TIMED_WAIT (TCP_CLOSING, recvd ACK)");
+
 					cleanup();
 				}
 			}
@@ -2089,12 +2036,10 @@ int TcpStream::retrans()
 					setTTL(getTTL() + 1);
 				}
 
-				std::ostringstream out;
-				out << "TcpStream::retrans() Startup SYNs ";
-				out << "retrans count: " << pkt->retrans;
-				out << " New TTL: " << getTTL();
+				std::string out;
+				rs_sprintf(out, "TcpStream::retrans() Startup SYNs retrans count: %u New TTL: %d", pkt->retrans, getTTL());
 
-				rslog(RSL_WARNING, rstcpstreamzone, out.str());
+				rslog(RSL_WARNING, rstcpstreamzone, out);
 
 #ifdef DEBUG_TCP_STREAM
 				std::cerr << out.str() << std::endl;
@@ -2128,12 +2073,8 @@ int TcpStream::retrans()
 					std::cerr << std::endl;
 #endif
 
-					{
-						std::ostringstream out;
-						out << "TcpStream::state => TCP_CLOSED";
-						out << " (Too Many Retransmits)";
-						rslog(RSL_WARNING,rstcpstreamzone,out.str());
-					}
+
+					rslog(RSL_WARNING,rstcpstreamzone,"TcpStream::state => TCP_CLOSED (Too Many Retransmits)");
 
 					outStreamActive = false;
 					inStreamActive = false;
@@ -2461,12 +2402,8 @@ int TcpStream::send()
 				std::cerr << "TcpStream::state = TCP_FIN_WAIT_1";
 				std::cerr << std::endl;
 #endif
-				{
-					std::ostringstream out;
-					out << "TcpStream::state => TCP_FIN_WAIT_1";
-					out << " (End of Stream)";
-					rslog(RSL_WARNING, rstcpstreamzone, out.str());
-				}
+
+				rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_FIN_WAIT_1 (End of Stream)");
 			}
 			else if (state == TCP_CLOSE_WAIT)
 			{
@@ -2475,12 +2412,8 @@ int TcpStream::send()
 				std::cerr << "TcpStream::state = TCP_LAST_ACK";
 				std::cerr << std::endl;
 #endif
-				{
-					std::ostringstream out;
-					out << "TcpStream::state => TCP_LAST_ACK";
-					out << " (CLOSE_WAIT, End of Stream)";
-					rslog(RSL_WARNING, rstcpstreamzone, out.str());
-				}
+
+				rslog(RSL_WARNING, rstcpstreamzone, "TcpStream::state => TCP_LAST_ACK (CLOSE_WAIT, End of Stream)");
 			}
 
 		}

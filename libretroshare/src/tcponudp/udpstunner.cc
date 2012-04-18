@@ -25,10 +25,10 @@
 
 #include "tcponudp/udpstunner.h"
 #include <iostream>
-#include <sstream>
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
+#include "util/rsstring.h"
 
 static const int STUN_TTL = 64;
 
@@ -117,7 +117,7 @@ int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since 
 
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
-	std::cerr << "UdpStunner::grabExclusiveMode();"
+	std::cerr << "UdpStunner::grabExclusiveMode()";
 	std::cerr << std::endl;
 #endif
 	
@@ -464,14 +464,12 @@ int     UdpStunner::doStun(struct sockaddr_in stun_addr)
 	}
 
 #ifdef DEBUG_UDP_STUNNER
-	std::ostringstream out;
-	out << "UdpStunner::doStun() Sent Stun Packet(" << sentlen << ") ";
-	out << " to:";
-	out << inet_ntoa(stun_addr.sin_addr) << ":" << ntohs(stun_addr.sin_port);
+	std::string out;
+	rs_sprintf(out, "UdpStunner::doStun() Sent Stun Packet(%d) to:%s:%u", sentlen, rs_inet_ntoa(stun_addr.sin_addr).c_str(), ntohs(stun_addr.sin_port));
 
-	std::cerr << out.str() << std::endl;
+	std::cerr << out << std::endl;
 
-	//pqioutput(PQL_ALERT, pqistunzone, out.str());
+	//pqioutput(PQL_ALERT, pqistunzone, out);
 #endif
 
 	return 1;
@@ -504,10 +502,9 @@ bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr)
 
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
-	std::ostringstream out;
-	out << "UdpStunner::response() Recvd a Stun Response, ext_addr: ";
-	out << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
-	std::cerr << out.str() << std::endl;
+	std::string out;
+	rs_sprintf(out, "UdpStunner::response() Recvd a Stun Response, ext_addr: %s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
+	std::cerr << out << std::endl;
 #endif
 
 	return true;
@@ -909,13 +906,11 @@ bool    UdpStunner::attemptStun()
 bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr)
 {
 #ifdef DEBUG_UDP_STUNNER
-	std::ostringstream out;
-	out << "UdpStunner::locked_recvdStun() from:";
-	out << inet_ntoa(remote.sin_addr) << ":" << ntohs(remote.sin_port);
-	out << " claiming ExtAddr is:";
-	out << inet_ntoa(extaddr.sin_addr) << ":" << ntohs(extaddr.sin_port);
+	std::string out;
+	rs_sprintf(out, "UdpStunner::locked_recvdStun() from:%s:%u", rs_inet_ntoa(remote.sin_addr).c_str(), ntohs(remote.sin_port));
+	rs_sprintf_append(out, " claiming ExtAddr is:%s:%u", rs_inet_ntoa(extaddr.sin_addr).c_str(), ntohs(extaddr.sin_port));
 
-	std::cerr << out.str() << std::endl;
+	std::cerr << out << std::endl;
 #endif
 
 #ifdef UDPSTUN_ALLOW_LOCALNET	
@@ -1016,9 +1011,8 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 bool    UdpStunner::locked_checkExternalAddress()
 {
 #ifdef DEBUG_UDP_STUNNER
-	std::ostringstream out;
-	out << "UdpStunner::locked_checkExternalAddress()";
-	std::cerr << out.str() << std::endl;
+	std::string out = "UdpStunner::locked_checkExternalAddress()";
+	std::cerr << out << std::endl;
 #endif
 
 	bool found1 = false;
@@ -1128,28 +1122,25 @@ bool    UdpStunner::locked_checkExternalAddress()
 bool    UdpStunner::locked_printStunList()
 {
 #ifdef DEBUG_UDP_STUNNER
-	std::ostringstream out;
+	std::string out = "locked_printStunList()\n";
 
 	time_t now = time(NULL);
-	out << "locked_printStunList()" << std::endl;
-	out << "\tLastSendStun: " << now - mStunLastSendStun << std::endl;
-	out << "\tLastSendAny: " << now - mStunLastSendAny << std::endl;
-	out << "\tLastRecvResp: " << now - mStunLastRecvResp << std::endl;
-	out << "\tLastRecvAny: " << now - mStunLastRecvAny << std::endl;
+	rs_sprintf_append(out, "\tLastSendStun: %ld\n", now - mStunLastSendStun);
+	rs_sprintf_append(out, "\tLastSendAny: %ld\n", now - mStunLastSendAny);
+	rs_sprintf_append(out, "\tLastRecvResp: %ld\n", now - mStunLastRecvResp);
+	rs_sprintf_append(out, "\tLastRecvAny: %ld\n", now - mStunLastRecvAny);
 
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
 	{
-		out << "id:" << RsUtil::BinToHex(it->id) << " addr: " << inet_ntoa(it->remote.sin_addr);
-		out << ":" << htons(it->remote.sin_port);
-		out << " eaddr: " << inet_ntoa(it->eaddr.sin_addr);
-		out << ":" << htons(it->eaddr.sin_port);
-		out << " failCount: " << it->failCount;
-		out << " lastSend: " << now - it->lastsend;
-		out << std::endl;
+		out += "id:" + RsUtil::BinToHex(it->id);
+		rs_sprintf_append(out, " addr: %s:%u", rs_inet_ntoa(it->remote.sin_addr).c_str(), htons(it->remote.sin_port));
+		rs_sprintf_append(out, " eaddr: %s:%u", rs_inet_ntoa(it->eaddr.sin_addr).c_str(), htons(it->eaddr.sin_port));
+		rs_sprintf_append(out, " failCount: %lu", it->failCount);
+		rs_sprintf_append(out, " lastSend: %ld\n", now - it->lastsend);
 	}
 
-	std::cerr << out.str();
+	std::cerr << out;
 #endif
 
 	return true;

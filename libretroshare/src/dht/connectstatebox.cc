@@ -27,9 +27,9 @@
 #include "retroshare/rsconfig.h"
 
 #include "util/rsrandom.h"
+#include "util/rsstring.h"
 
 #include <iostream>
-#include <sstream>
 
 /**
  *
@@ -241,22 +241,22 @@ void PeerConnectStateBox::stateMsg(std::ostream &out, std::string msg, uint32_t 
 std::string PeerConnectStateBox::connectState() const
 {
 	std::string str = StateAsString(mState);
-	std::ostringstream out;
 	time_t now = time(NULL);
-	out << str << "(" << mNoAttempts << "/" << mNoFailedAttempts << ") for " << now - mStateTS << " secs";
+	std::string out;
+	rs_sprintf(out, "%s(%lu/%lu) for %ld secs", str.c_str(), mNoAttempts, mNoFailedAttempts, now - mStateTS);
 	if ( (mState == CSB_CONNECTED) || (mState == CSB_DIRECT_ATTEMPT) ||
 		(mState == CSB_PROXY_ATTEMPT) || (mState == CSB_RELAY_ATTEMPT) ||
 		(mState == CSB_FAILED_WAIT) )
 	{
-		out << " Last Attempt: " << mAttemptLength;
+		rs_sprintf_append(out, " Last Attempt: %ld", mAttemptLength);
 	}
 	else
 	{
-		out << " LA: " << mAttemptLength;
-		out << " NextAttempt: " << mNextAttemptTS - now;
+		rs_sprintf_append(out, " LA: %ld", mAttemptLength);
+		rs_sprintf_append(out, " NextAttempt: %ld", mNextAttemptTS - now);
 	}
 
-	return out.str();
+	return out;
 }
 
 

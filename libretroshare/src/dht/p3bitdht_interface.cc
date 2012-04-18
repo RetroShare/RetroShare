@@ -149,49 +149,47 @@ int      p3BitDht::getNetFailedPeer(std::string peerId, PeerStatus &status)
 
 std::string p3BitDht::getUdpAddressString()
 {
-	std::ostringstream out;
+	std::string out;
 		
 	struct sockaddr_in extAddr;
 	uint8_t extStable;
 
 	if (mDhtStunner->externalAddr(extAddr, extStable))
 	{
-		out << " DhtExtAddr: " << rs_inet_ntoa(extAddr.sin_addr);
-		out << ":" << ntohs(extAddr.sin_port);
+		rs_sprintf_append(out, " DhtExtAddr: %s:%u", rs_inet_ntoa(extAddr.sin_addr).c_str(), ntohs(extAddr.sin_port));
 		
 		if (extStable)
 		{
-			out << " (Stable) ";
+			out += " (Stable) ";
 		}
 		else
 		{
-			out << " (Unstable) ";
+			out += " (Unstable) ";
 		}
 	}
 	else
 	{
-		out << " DhtExtAddr: Unknown ";
+		out += " DhtExtAddr: Unknown ";
 	}
 	if (mProxyStunner->externalAddr(extAddr, extStable))
 	{
-		out << " ProxyExtAddr: " << rs_inet_ntoa(extAddr.sin_addr);
-		out << ":" << ntohs(extAddr.sin_port);
+		rs_sprintf_append(out, " ProxyExtAddr: %s:%u", rs_inet_ntoa(extAddr.sin_addr).c_str(), ntohs(extAddr.sin_port));
 		
 		if (extStable)
 		{
-			out << " (Stable) ";
+			out += " (Stable) ";
 		}
 		else
 		{
-			out << " (Unstable) ";
+			out += " (Unstable) ";
 		}
 	}
 	else
 	{
-		out << " ProxyExtAddr: Unknown ";
+		out += " ProxyExtAddr: Unknown ";
 	}
 		
-	return out.str();
+	return out;
 }
 
 void    p3BitDht::updateDataRates()

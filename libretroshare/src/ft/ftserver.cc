@@ -252,20 +252,14 @@ bool ftServer::checkHash(const std::string& hash,std::string& error_string)
 
 	if(hash.length() != HASH_LENGTH)
 	{
-		std::ostringstream is ;
-		is << "Line too long : " << hash.length() << " chars, " << HASH_LENGTH << " expected." ;
-		is.flush() ;
-		error_string = is.str() ;
+		rs_sprintf(error_string, "Line too long : %u chars, %ld expected.", hash.length(), HASH_LENGTH) ;
 		return false ;
 	}
 
 	for(uint32_t i=0;i<hash.length();++i)
 		if(!((hash[i] > 47 && hash[i] < 58) || (hash[i] > 96 && hash[i] < 103)))
 		{
-			std::ostringstream is;
-			is << "unexpected char code=" << (int)hash[i] << " '" << hash[i] << "'" ;
-			is.flush() ;
-			error_string = is.str() ;
+			rs_sprintf(error_string, "unexpected char code=%d '%c'", (int)hash[i], hash[i]) ;
 			return false ;
 		}
 
@@ -1042,7 +1036,6 @@ int	ftServer::tick()
 		std::cerr << "ftServer::tick() ERROR: mP3iface == NULL";
 #endif
 
-		std::ostringstream out;
 		rslog(RSL_DEBUG_BASIC, ftserverzone,
 			"filedexserver::tick() Invalid Interface()");
 
@@ -1102,13 +1095,13 @@ bool     ftServer::handleCacheData()
 
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleCacheData() Recvd SearchResult (CacheResponse!)" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i++ == i_init)
 		{
-			out << "Recieved Search Results:" << std::endl;
+			out += "Recieved Search Results:\n";
 		}
-		ci -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		ci -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 
 		/* these go to the CacheStrapper! */
@@ -1132,10 +1125,9 @@ bool     ftServer::handleCacheData()
 	{
 #ifdef SERVER_DEBUG
 		/* just delete these */
-		std::ostringstream out;
-		out << "Requested Search:" << std::endl;
-		cr -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		std::string out = "Requested Search:\n";
+		cr -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		delete cr;
 	}
@@ -1163,10 +1155,9 @@ bool     ftServer::handleCacheData()
 			ci -> cacheSubId =  (it->second).cid.subid;
 
 #ifdef SERVER_DEBUG
-			std::ostringstream out2;
-			out2 << "Outgoing CacheStrapper Update -> RsCacheItem:" << std::endl;
-			ci -> print(out2);
-			std::cerr << out2.str() << std::endl;
+			std::string out2 = "Outgoing CacheStrapper Update -> RsCacheItem:\n";
+			ci -> print_string(out2);
+			std::cerr << out2 << std::endl;
 #endif
 
 			//rslog(RSL_DEBUG_BASIC, ftserverzone, out2.str());
@@ -1199,13 +1190,13 @@ bool    ftServer::handleFileData()
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ftFiler Request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Item:" << std::endl;
+			out += "Incoming(Net) File Item:\n";
 		}
-		fr -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fr -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 
 		i++; /* count */
@@ -1228,13 +1219,13 @@ FileInfo(ffr);
 		std::cerr << " data: " << fd->fd.binData.bin_data;
 		std::cerr << std::endl;
 
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Data:" << std::endl;
+			out += "Incoming(Net) File Data:\n";
 		}
-		fd -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fd -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 
@@ -1256,13 +1247,13 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Data:" << std::endl;
+			out += "Incoming(Net) File Data:\n";
 		}
-		fcmr -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fcmr -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 
@@ -1277,13 +1268,13 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Data:" << std::endl;
+			out += "Incoming(Net) File Data:\n";
 		}
-		fcm -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fcm -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 
@@ -1298,13 +1289,13 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Data:" << std::endl;
+			out += "Incoming(Net) File Data:\n";
 		}
-		fccrcmr -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fccrcmr -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 
@@ -1319,13 +1310,13 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Data:" << std::endl;
+			out += "Incoming(Net) File Data:\n";
 		}
-		fccrcm -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fccrcm -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 
@@ -1340,13 +1331,13 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File CRC Request:" << std::endl;
+			out += "Incoming(Net) File CRC Request:\n";
 		}
-		fscrcr -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fscrcr -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 
@@ -1361,13 +1352,13 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::ostringstream out;
+		std::string out;
 		if (i == i_init)
 		{
-			out << "Incoming(Net) File Data:" << std::endl;
+			out += "Incoming(Net) File Data:\n";
 		}
-		fscrc -> print(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+		fscrc -> print_string(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
 #endif
 		i++; /* count */
 

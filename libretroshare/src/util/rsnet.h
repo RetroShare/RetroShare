@@ -71,9 +71,6 @@ bool isLoopbackNet(const struct in_addr *addr);
 bool isPrivateNet(const struct in_addr *addr);
 bool isExternalNet(const struct in_addr *addr);
 
-/* convert addresses */
-bool getIPAddressFromString (const char *addr_str, struct in_addr *addr);
-
 std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
 
 /* thread-safe version of inet_ntoa */

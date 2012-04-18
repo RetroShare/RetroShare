@@ -60,7 +60,7 @@
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
-#include <sstream>
+#include <sstream> // for std::istringstream
 
 /******
  * #define CONTROL_DEBUG 1
@@ -1911,20 +1911,17 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	std::list<std::string>::iterator it;
 
 	/* basic control parameters */
-	std::ostringstream strn ;
-	strn << getMinPrioritizedTransfers() ;
-	configMap[min_prioritized_downl_ss] = strn.str() ;
-	std::ostringstream strm ;
-	strm << getQueueSize() ;
-	configMap[active_downloads_size_ss] = strm.str() ;
+	std::string s ;
+	rs_sprintf(s, "%lu", getMinPrioritizedTransfers()) ;
+	configMap[min_prioritized_downl_ss] = s ;
+	rs_sprintf(s, "%lu", getQueueSize()) ;
+	configMap[active_downloads_size_ss] = s ;
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
 	configMap[default_chunk_strategy_ss] = (mDefaultChunkStrategy==FileChunksInfo::CHUNK_STRATEGY_STREAMING) ? "STREAMING" : "RANDOM";
 
-	std::ostringstream s ;
-	s << RsDiscSpace::freeSpaceLimit();
-
-	configMap[free_space_limit_ss] = s.str() ;
+	rs_sprintf(s, "%lu", RsDiscSpace::freeSpaceLimit());
+	configMap[free_space_limit_ss] = s ;
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 

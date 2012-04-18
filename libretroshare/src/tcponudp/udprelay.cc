@@ -34,7 +34,7 @@
 
 #ifdef DEBUG_UDP_RELAY
 // DEBUG FUNCTION
-#include <sstream>
+#include "util/rsstring.h"
 #include <iomanip>
 int displayUdpRelayPacketHeader(const void *data, const int size);
 #endif
@@ -888,19 +888,19 @@ int displayUdpRelayPacketHeader(const void *data, const int size)
 		dsize = size;
 	}
 
-	std::ostringstream out;
-        for(int i = 0; i < dsize; i++)
-        {
+	std::string out;
+	for(int i = 0; i < dsize; i++)
+	{
 		if ((i > 0) && (i % 16 == 0))
 		{
-			out << std::endl;
+			out += "\n";
 		}
 
-                out << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) ((uint8_t*) data)[i];
-        }
+		rs_sprintf_append(out, "%02x", (uint32_t) ((uint8_t*) data)[i]);
+	}
 
 	std::cerr << "displayUdpRelayPacketHeader()" << std::endl;
-	std::cerr << out.str();
+	std::cerr << out;
 	std::cerr << std::endl;
 
 	return 1;
