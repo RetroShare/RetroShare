@@ -22,6 +22,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <string>
+
 #ifdef WIN32
 // for proper handling of %ll
 #define bd_snprintf __mingw_snprintf
@@ -31,5 +33,7 @@
 #define bd_fprintf  fprintf
 #endif
 
+int bd_sprintf(std::string &str, const char *fmt, ...);
+int bd_sprintf_append(std::string &str, const char *fmt, ...);
 
 #endif

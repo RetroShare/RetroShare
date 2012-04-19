@@ -25,9 +25,9 @@
 
 #include "udp/udplayer.h"
 #include "util/bdrandom.h"
+#include "util/bdstring.h"
 
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 #include <string.h>
 #include <stdlib.h>
@@ -113,53 +113,45 @@ bool operator<(const struct sockaddr_in &addr, const struct sockaddr_in &addr2)
 
 std::string printPkt(void *d, int size)
 {
-	std::ostringstream out;
-	out << "Packet:" << "**********************";
+	std::string out = "Packet:**********************";
 	for(int i = 0; i < size; i++)
 	{
 		if (i % 16 == 0)
-			out << std::endl;
-		out << std::hex << std::setw(2) << (unsigned int) ((unsigned char *) d)[i] << " ";
+			out += "\n";
+		bd_sprintf_append(out, "%2x ", (unsigned int) ((unsigned char *) d)[i]);
 	}
-	out << std::endl << "**********************";
-	out << std::endl;
-	return out.str();
+	out += "\n**********************\n";
+	return out;
 }
 
 
 std::string printPktOffset(unsigned int offset, void *d, unsigned int size)
 {
-	std::ostringstream out;
-	out << "Packet:" << "**********************";
-	out << std::endl;
-	out << "Offset: " << std::hex << offset << " -> " << offset + size;
-	out << std::endl;
-	out << "Packet:" << "**********************";
+	std::string out = "Packet:**********************\n";
+	bd_sprintf_append(out, "Offset: %x -> %x\n", offset, offset + size);
+	out += "Packet:**********************";
 
 	unsigned int j = offset % 16;
 	if (j != 0)
 	{
-	  out << std::endl;
-	  out << std::hex << std::setw(6) << (unsigned int) offset - j;
-	  out << ": ";
+	  out += "\n";
+	  bd_sprintf_append(out, "%6x: ", (unsigned int) offset - j);
 	  for(unsigned int i = 0; i < j; i++)
 	  {
-		out << "xx ";
+		out += "xx ";
 	  }
 	}
 	for(unsigned int i = offset; i < offset + size; i++)
 	{
 		if (i % 16 == 0)
 		{
-			out << std::endl;
-			out << std::hex << std::setw(6) << (unsigned int) i;
-			out << ": ";
+			out += "\n";
+			bd_sprintf_append(out, "%6x: ", (unsigned int) i);
 		}
-		out << std::hex << std::setw(2) << (unsigned int) ((unsigned char *) d)[i-offset] << " ";
+		bd_sprintf(out, "%2x ", (unsigned int) ((unsigned char *) d)[i-offset]);
 	}
-	out << std::endl << "**********************";
-	out << std::endl;
-	return out.str();
+	out += "\n**********************\n";
+	return out;
 }
 
 

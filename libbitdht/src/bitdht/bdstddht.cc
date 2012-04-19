@@ -27,6 +27,7 @@
 #include "bitdht/bdstddht.h"
 #include "bitdht/bdpeer.h"
 #include "util/bdrandom.h"
+#include "util/bdstring.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -177,41 +178,53 @@ int  bdStdLoadNodeId(bdNodeId *id, std::string input)
 
 std::string bdStdConvertToPrintable(std::string input)
 {
-	std::ostringstream out;
-        for(uint32_t i = 0; i < input.length(); i++)
+    std::string out;
+    for(uint32_t i = 0; i < input.length(); i++)
+    {
+        /* sensible chars */
+        if ((input[i] > 31) && (input[i] < 127))
         {
-                /* sensible chars */
-                if ((input[i] > 31) && (input[i] < 127))
-                {
-                        out << input[i];
-                }
-                else
-                {
-			out << "[0x" << std::hex << (uint32_t) input[i] << "]";
-			out << std::dec;
-                }
+                out += input[i];
         }
-	return out.str();
+        else
+        {
+            bd_sprintf_append(out, "[0x%x]", (uint32_t) input[i]);
+        }
+    }
+    return out;
 }
 
 void bdStdPrintNodeId(std::ostream &out, const bdNodeId *a)
 {
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
-	{
-		out << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) (a->data)[i];
-	}
-	out << std::dec;
-
-	return;
+	std::string s;
+	bdStdPrintNodeId(s, a, true);
+	out << s;
 }
 
+void bdStdPrintNodeId(std::string &out, const bdNodeId *a, bool append)
+{
+	if (!append)
+	{
+		out.clear();
+	}
+
+	for(int i = 0; i < BITDHT_KEY_LEN; i++)
+	{
+		bd_sprintf_append(out, "%02x", (uint32_t) (a->data)[i]);
+	}
+}
 
 void bdStdPrintId(std::ostream &out, const bdId *a)
 {
-	bdStdPrintNodeId(out, &(a->id));
-	out << " ip:" << bdnet_inet_ntoa(a->addr.sin_addr);
-	out << ":" << ntohs(a->addr.sin_port);
-	return;
+	std::string s;
+	bdStdPrintId(s, a, false);
+	out << s;
+}
+
+void bdStdPrintId(std::string &out, const bdId *a, bool append)
+{
+	bdStdPrintNodeId(out, &(a->id), append);
+	bd_sprintf_append(out, " ip:%s:%u", bdnet_inet_ntoa(a->addr.sin_addr).c_str(), ntohs(a->addr.sin_port));
 }
 
 /* returns 0-160 depending on bucket */

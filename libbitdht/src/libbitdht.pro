@@ -141,6 +141,7 @@ SOURCES += \
 	util/bdnet.cc 	 	\
 	util/bdthreads.cc  	\
 	util/bdrandom.cc  	\
+	util/bdstring.cc	\
 	udp/udplayer.cc		\
 	udp/udpstack.cc		\
 	udp/udpbitdht.cc  	\

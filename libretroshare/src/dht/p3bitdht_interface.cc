@@ -269,10 +269,7 @@ void    p3BitDht::getRelayRates(float &read, float &write, float &relay)
 
 void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer)
 {
-	std::ostringstream out;
-	bdStdPrintNodeId(out, &(int_peer.mPeerId.id));
-
-	peer.mDhtId = out.str();
+	bdStdPrintNodeId(peer.mDhtId, &(int_peer.mPeerId.id), false);
 
 	rs_sprintf(peer.mAddr, "%s:%u", rs_inet_ntoa(int_peer.mPeerId.addr.sin_addr).c_str(), ntohs(int_peer.mPeerId.addr.sin_port));
 
@@ -287,10 +284,8 @@ void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer)
 
 void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDetails &details)
 {
-	std::ostringstream out;
-	bdStdPrintId(out, &(details.mDhtId));
+	bdStdPrintId(status.mDhtId, &(details.mDhtId), false);
 
-	status.mDhtId = out.str();
 	status.mRsId = details.mRsId;
 
 	status.mPeerType = details.mPeerType;
@@ -320,9 +315,7 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 	}
 
 	//status.mPeerConnectProxyId = details.mPeerConnectProxyId;
-	std::ostringstream out2;
-	bdStdPrintId(out2, &(details.mPeerConnectProxyId));
-	status.mPeerConnectProxyId = out2.str();
+	bdStdPrintId(status.mPeerConnectProxyId, &(details.mPeerConnectProxyId), false);
 
 	status.mCbPeerMsg = details.mPeerCbMsg;
 

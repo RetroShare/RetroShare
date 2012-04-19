@@ -207,7 +207,7 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest)
 
 #ifdef WINDOWS_SYS
 // asprintf() and vasprintf() are missing in Win32
-int vasprintf(char **sptr, const char *fmt, va_list argv)
+static int vasprintf(char **sptr, const char *fmt, va_list argv)
 {
 	int wanted = __mingw_vsnprintf(*sptr = NULL, 0, fmt, argv);
 	if ((wanted > 0) && ((*sptr = (char*) malloc(wanted + 1)) != NULL)) {
@@ -217,7 +217,7 @@ int vasprintf(char **sptr, const char *fmt, va_list argv)
 	return wanted;
 }
 
-//int asprintf(char **sptr, const char *fmt, ...)
+//static int asprintf(char **sptr, const char *fmt, ...)
 //{
 //	int retval;
 //	va_list argv;

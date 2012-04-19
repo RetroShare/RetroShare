@@ -24,9 +24,9 @@
  */
 
 #include "util/bdbloom.h"
+#include "util/bdstring.h"
 
 #include <stdlib.h>
-#include <sstream>
 #include <iomanip>
 
 #if defined(_WIN32) || defined(__MINGW32__)
@@ -131,7 +131,6 @@ int bloomFilter::setFilterBits(const std::string &hex)
 std::string bloomFilter::getFilter()
 {
 	/* extract filter as a hex string */
-	std::string output;
 	int bytes = (mFilterBits / BITS_PER_BYTE);
 	if (mFilterBits % BITS_PER_BYTE)
 	{
@@ -155,15 +154,15 @@ std::string bloomFilter::getFilter()
 		}
 	}
 
-	std::ostringstream out;
+	std::string out;
 	for(int i = 0; i < bytes; i++)
 	{
-		out << std::setw(2) << std::setfill('0') << std::hex << (uint32_t) (tmparray)[i];
+		bd_sprintf_append(out, "%02lx",  (uint32_t) (tmparray)[i]);
 	}
 
 	free(tmparray);
 
-	return out.str();
+	return out;
 }
 
 void bloomFilter::setBit(int bit)

@@ -33,14 +33,13 @@
 
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
-
+#include "util/bdstring.h"
 
 #include <string.h>
 #include <stdlib.h>
 
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 
 
 #define BITDHT_QUERY_START_PEERS    10
@@ -2100,10 +2099,8 @@ void bdNode::genNewToken(bdToken *token)
 	// XXX is this a good way to do it?
 	// Variable length, from 4 chars up to lots... 10?
 	// leave for the moment, but fix.
-	std::ostringstream out;
-	out << std::setw(4) << std::setfill('0') << bdRandom::random_u32();
-
-	std::string num = out.str();
+	std::string num;
+	bd_sprintf(num, "%04lx", bdRandom::random_u32());
 	int len = num.size();
 	if (len > BITDHT_TOKEN_MAX_LEN)
 		len = BITDHT_TOKEN_MAX_LEN;
@@ -2125,9 +2122,8 @@ void bdNode::genNewTransId(bdToken *token)
 	fprintf(stderr, ")\n");
 #endif
 
-	std::ostringstream out;
-	out << std::setw(2) << std::setfill('0') << transIdCounter++;
-	std::string num = out.str();
+	std::string num;
+	bd_sprintf(num, "%02lx", transIdCounter++);
 	int len = num.size();
 	if (len > BITDHT_TOKEN_MAX_LEN)
 		len = BITDHT_TOKEN_MAX_LEN;

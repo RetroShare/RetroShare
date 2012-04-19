@@ -46,12 +46,12 @@
 #include "bitdht/bdfilter.h"
 
 #include <algorithm>
-#include <sstream>
 #include <iomanip>
 #include <string.h>
 
 #include "util/bdnet.h"
 #include "util/bdrandom.h"
+#include "util/bdstring.h"
 
 /***
  * #define DEBUG_MGR 1
@@ -601,10 +601,10 @@ void bdNodeManager::SearchForLocalNet()
 		for(i = 0; (!filterOk) && (i < MAX_FILTER_ATTEMPTS); i++)
 		{
 			bdStdRandomNodeId(&targetNodeId);
-			std::ostringstream tststr;
-			bdStdPrintNodeId(tststr, &targetNodeId);
+			std::string tststr;
+			bdStdPrintNodeId(tststr, &targetNodeId, false);
 
-			if (mBloomFilter.test(tststr.str()))
+			if (mBloomFilter.test(tststr))
 			{
 				filterOk = true;
 			}
@@ -1220,26 +1220,23 @@ int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in &
 	std::cerr << std::endl;
 	{
 		/* print the fucker... only way to catch bad ones */
-		std::ostringstream out;
+		std::string out;
 		for(int i = 0; i < size; i++)
 		{
 			if (isascii(data[i]))
 			{
-				out << data[i];
+				out += data[i];
 			}
 			else
 			{
-				out << "[";
-		                out << std::setw(2) << std::setfill('0') 
-					<< std::hex << (uint32_t) data[i];
-				out << "]";
+				bd_sprintf_append(out, "[%02lx]", (uint32_t) data[i]);
 			}
 			if ((i % 16 == 0) && (i != 0))
 			{
-				out << std::endl;
+				out += "\n";
 			}
 		}
-		std::cerr << out.str();
+		std::cerr << out;
 	}
 	std::cerr << "bdNodeManager::isBitDhtPacket() *******************************";
 	std::cerr << std::endl;
@@ -1262,26 +1259,23 @@ int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in &
 		std::cerr << std::endl;
 		{
 			/* print the fucker... only way to catch bad ones */
-			std::ostringstream out;
+			std::string out;
 			for(int i = 0; i < size; i++)
 			{
 				if (isascii(data[i]))
 				{
-					out << data[i];
+					out += data[i];
 				}
 				else
 				{
-					out << "[";
-			                out << std::setw(2) << std::setfill('0') 
-						<< std::hex << (uint32_t) data[i];
-					out << "]";
+					bd_sprintf_append(out, "[%02lx]", (uint32_t) data[i]);
 				}
 				if ((i % 16 == 0) && (i != 0))
 				{
-					out << std::endl;
+					out += "\n";
 				}
 			}
-			std::cerr << out.str();
+			std::cerr << out;
 		}
 		std::cerr << "bdNodeManager::BadPacket ******************************";
 		std::cerr << std::endl;

@@ -25,9 +25,9 @@
  */
 
 #include "bdnet.h"
+#include "bdstring.h"
 
 #include <iostream>
-#include <sstream>
 #include <stdlib.h>
 #include <string.h>
 
@@ -361,11 +361,8 @@ void    bdsockaddr_clear(struct sockaddr_in *addr)
 
 std::string bdnet_inet_ntoa(struct in_addr in)
 {
-	std::ostringstream str;
+	std::string str;
 	uint8_t *bytes = (uint8_t *) &(in.s_addr);
-	str << (int) bytes[0] << ".";
-	str << (int) bytes[1] << ".";
-	str << (int) bytes[2] << ".";
-	str << (int) bytes[3];
-	return str.str();
+	bd_sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
+	return str;
 }

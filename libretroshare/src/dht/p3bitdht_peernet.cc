@@ -167,9 +167,8 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 {
-	//std::ostringstream str;
+	//std::string str;
 	//bdStdPrintNodeId(str, &(id->id));
-	//std::string strId = str.str();
 
 	//std::cerr << "p3BitDht::dhtPeerCallback()";
 	//std::cerr << std::endl;
@@ -628,9 +627,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	/* if we get here, we are an endpoint (peer specified in peerId) */
 	
 	/* translate id into string for exclusive mode */
-	std::ostringstream idstr;
-	bdStdPrintNodeId(idstr, &(peerId.id));
-	std::string pid = idstr.str();
+	std::string pid;
+	bdStdPrintNodeId(pid, &(peerId.id), false);
 	
 	switch(cbtype)
 	{
@@ -1173,9 +1171,8 @@ int p3BitDht::doActions()
 				bool grabbedExclusivePort = false;
 
 				/* translate id into string for exclusive mode */
-				std::ostringstream idstr;
-				bdStdPrintNodeId(idstr, &(action.mDestId.id));
-				std::string pid = idstr.str();
+				std::string pid;
+				bdStdPrintNodeId(pid, &(action.mDestId.id), false);
 				
 				
 				// Parameters that will be used for the Connect Request.
@@ -2004,13 +2001,11 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 	int relayClass = UDP_RELAY_CLASS_GENERAL;
 
 #ifdef DEBUG_PEERNET
-	std::ostringstream str;
-	bdStdPrintNodeId(str, &(srcId->id));
-	std::string strId1 = str.str();
+	std::string strId1;
+	bdStdPrintNodeId(strId1, &(srcId->id), false);
 
-	str.clear();
-	bdStdPrintNodeId(str, &(destId->id));
-	std::string strId2 = str.str();
+	std::string strId2;
+	bdStdPrintNodeId(strId2, &(destId->id), false);
 #endif
 
         /* grab a socket */
@@ -2334,9 +2329,8 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 	std::cerr << std::endl;
 	
 	/* translate id into string for exclusive mode */
-	std::ostringstream idstr;
-	bdStdPrintNodeId(idstr, &(dpd->mDhtId.id));
-	std::string pid = idstr.str();
+	std::string pid;
+	bdStdPrintNodeId(pid, &(dpd->mDhtId.id), false);
 	
 	
 	if (dpd->mExclusiveProxyLock)

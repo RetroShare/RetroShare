@@ -55,7 +55,9 @@ void bdStdRandomMidId(const bdNodeId *target, const bdNodeId *other, bdNodeId *m
 int  bdStdLoadNodeId(bdNodeId *id, std::string input);
 
 void bdStdPrintId(std::ostream &out, const bdId *a);
+void bdStdPrintId(std::string &out, const bdId *a, bool append);
 void bdStdPrintNodeId(std::ostream &out, const bdNodeId *a);
+void bdStdPrintNodeId(std::string &out, const bdNodeId *a, bool append);
 
 std::string bdStdConvertToPrintable(std::string input);
 
