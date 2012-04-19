@@ -77,22 +77,28 @@ void TS_dumpState() ;
 // 	- the max number of tunnel requests per second is now enforced. It was before defaulting to
 // 	  QUEUE_LENGTH*0.1, meaning 0.5. I set it to 0.1.
 //
-static const time_t TUNNEL_REQUESTS_LIFE_TIME 	=  60 ;		/// life time for tunnel requests in the cache.
-static const time_t SEARCH_REQUESTS_LIFE_TIME 	=  60 ;		/// life time for search requests in the cache
-static const time_t REGULAR_TUNNEL_DIGGING_TIME = 300 ;		/// maximum interval between two tunnel digging campaigns.
-static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	=  60 ;		/// maximum life time of an unused tunnel.
-static const time_t EMPTY_TUNNELS_DIGGING_TIME 	=  50 ;		/// look into tunnels regularly every 50 sec.
-static const time_t TUNNEL_SPEED_ESTIMATE_LAPSE	=   5 ;		/// estimate tunnel speed every 5 seconds
-static const time_t TUNNEL_CLEANING_LAPS_TIME  	=  10 ;		/// clean tunnels every 10 secs
-static const uint32_t MAX_TUNNEL_REQS_PER_SECOND=   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
-static const uint32_t MAX_ALLOWED_SR_IN_CACHE   = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
+// update of 19-04-12:
+//    - The total number of TR per second emmited from self will be MAX_TUNNEL_REQS_PER_SECOND / TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS = 0.5
+//    - I updated forward probabilities to higher values, and min them to 1/nb_connected_friends to prevent blocking tunnels.
+//
+static const time_t TUNNEL_REQUESTS_LIFE_TIME 	         =  60 ;		/// life time for tunnel requests in the cache.
+static const time_t SEARCH_REQUESTS_LIFE_TIME 	         =  60 ;		/// life time for search requests in the cache
+static const time_t REGULAR_TUNNEL_DIGGING_TIME          = 300 ;		/// maximum interval between two tunnel digging campaigns.
+static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	         =  60 ;		/// maximum life time of an unused tunnel.
+static const time_t EMPTY_TUNNELS_DIGGING_TIME 	         =  50 ;		/// look into tunnels regularly every 50 sec.
+static const time_t TUNNEL_SPEED_ESTIMATE_LAPSE	         =   5 ;		/// estimate tunnel speed every 5 seconds
+static const time_t TUNNEL_CLEANING_LAPS_TIME  	         =  10 ;		/// clean tunnels every 10 secs
+static const time_t TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS	=   2 ;     /// Tunnel management calls every 2 secs. 
+static const uint32_t MAX_TUNNEL_REQS_PER_SECOND         =   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
+static const uint32_t MAX_ALLOWED_SR_IN_CACHE            = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
 
-static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.4f,0.15f,0.1f } ;
-static const int TUNNEL_REQUEST_PACKET_SIZE 	= 50 ;
-static const int MAX_TR_FORWARD_PER_SEC 		= 20 ;
-static const int MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT = 100 ;
-static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT =  10 ;
-static const int DISTANCE_SQUEEZING_POWER 	= 8 ;
+static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.6f,0.5,0.4f } ;
+
+static const int TUNNEL_REQUEST_PACKET_SIZE 	       = 50 ;
+static const int MAX_TR_FORWARD_PER_SEC 		       = 20 ;
+static const int MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT = 30 ;
+static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT = 10 ;
+static const int DISTANCE_SQUEEZING_POWER 	       =  8 ;
 
 p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
 	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mLinkMgr(lm), mTurtleMtx("p3turtle")
@@ -144,7 +150,7 @@ int p3turtle::tick()
 	// 	- we digg new tunnels each time a new peer connects
 	// 	- we digg new tunnels each time a new hash is asked for
 	//
-	if(now >= _last_tunnel_management_time+1)	// call every second
+	if(now >= _last_tunnel_management_time+TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS)	// call every second
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Calling tunnel management." << std::endl ;
@@ -158,7 +164,7 @@ int p3turtle::tick()
 			// Update traffic statistics. The constants are important: they allow a smooth variation of the 
 			// traffic speed, which is used to moderate tunnel requests statistics.
 			//
-			_traffic_info = _traffic_info*0.9 + _traffic_info_buffer*0.1 ;
+			_traffic_info = _traffic_info*0.9 + _traffic_info_buffer* (0.1 / (float)TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS) ;
 			_traffic_info_buffer.reset() ;
 		}
 	}
@@ -1891,6 +1897,12 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	{
 		std::list<std::string> onlineIds ;
 		mLinkMgr->getOnlineList(onlineIds);
+
+		int nb_online_ids = onlineIds.size() ;
+
+		if(forward_probability * nb_online_ids < 1.0f && nb_online_ids > 0)
+			forward_probability = 1.0f / nb_online_ids ;
+
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Forwarding tunnel request: Looking for online peers" << std::endl ;
 #endif
@@ -2315,10 +2327,18 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 	float distance_to_maximum	= std::min(100.0f,info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*_max_tr_up_rate)) ;
 	info.forward_probabilities.clear() ;
 
+	std::list<std::string> onlineIds ;
+	mLinkMgr->getOnlineList(onlineIds);
+
+	int nb_online_ids = onlineIds.size() ;
+
 	for(int i=0;i<=6;++i)
 	{
 		float corrected_distance 	= pow(distance_to_maximum,DISTANCE_SQUEEZING_POWER) ;
 		float forward_probability	= pow(depth_peer_probability[i],corrected_distance) ;
+
+		if(forward_probability * nb_online_ids < 1.0f && nb_online_ids > 0)
+			forward_probability = 1.0f / nb_online_ids ;
 
 		info.forward_probabilities.push_back(forward_probability) ;
 	}
