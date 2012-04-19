@@ -28,7 +28,6 @@
 #include "zeroconf/p3zcnatassist.h"
 
 #include <openssl/sha.h>
-#include <sstream>
 #include <iostream>
 
 //#define DEBUG_ZCNATASSIST	1

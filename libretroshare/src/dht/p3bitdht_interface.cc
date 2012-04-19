@@ -30,7 +30,6 @@
 #include "tcponudp/udpstunner.h"
 #include "bitdht/bdstddht.h"
 
-#include <sstream>
 
 void convertBdPeerToRsDhtPeer(RsDhtPeer &peer, const bdPeer &int_peer);
 void convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDetails &details);

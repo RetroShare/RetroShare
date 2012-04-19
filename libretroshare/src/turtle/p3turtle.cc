@@ -50,7 +50,7 @@
 #include <errno.h>
 #include <cmath>
 
-#include <sstream>
+#include <sstream> // for std::istringstream
 #include <stdio.h>
 
 #include "util/rsdebug.h"

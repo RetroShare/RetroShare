@@ -41,7 +41,6 @@
 #include <openssl/rand.h>
 
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 #include <string.h>
 
@@ -728,9 +727,9 @@ int	LoadCheckX509(const char *cert_file, std::string &issuerName, std::string &l
 		location = getX509LocString(x509->cert_info->subject);
 	}
 
-        #ifdef AUTHSSL_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cout << getX509Info(x509) << std::endl ;
-        #endif
+#endif
 	// clean up.
 	X509_free(x509);
 
@@ -857,21 +856,20 @@ std::string getX509CountryString(X509_NAME *name)
 }
 
 
+#ifdef AUTHSSL_DEBUG
 std::string getX509Info(X509 *cert)
 {
-	std::stringstream out;
-	long l;
+	std::string out = "X509 Certificate:\n";
 
-	out << "X509 Certificate:" << std::endl;
+	long l;
 	l=X509_get_version(cert);
-	out << "     Version: " << l+1 << "(0x" << l << ")" << std::endl;
-	out << "     Subject: " << std::endl;
-	out << "  " << getX509NameString(cert->cert_info->subject);
-	out << std::endl;
-	out << std::endl;
-	out << "     Signatures:" << std::endl;
-	return out.str();
+	rs_sprintf_append(out, "     Version: %ld(0x%ld)\n", l+1, l);
+	out += "     Subject: \n";
+	out += "  " + getX509NameString(cert->cert_info->subject) + "\n\n";
+	out += "     Signatures:\n";
+	return out;
 }
+#endif
 
 /********** SSL ERROR STUFF ******************************************/
 

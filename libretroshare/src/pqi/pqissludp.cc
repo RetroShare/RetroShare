@@ -32,7 +32,6 @@
 #include <errno.h>
 #include <openssl/err.h>
 
-#include <sstream>
 
 #include "util/rsdebug.h"
 #include "util/rsnet.h"

@@ -25,7 +25,6 @@
 
 #include "rsserver/p3discovery.h"
 #include <iostream>
-#include <sstream>
 
 RsDisc *rsDisc = NULL;
 

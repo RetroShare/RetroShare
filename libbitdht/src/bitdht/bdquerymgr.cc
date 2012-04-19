@@ -33,7 +33,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 
 
 #define BITDHT_QUERY_START_PEERS    10

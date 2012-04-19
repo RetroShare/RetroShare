@@ -31,7 +31,6 @@
 
 #include "retroshare/rstypes.h"
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 
 

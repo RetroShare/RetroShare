@@ -29,7 +29,6 @@
 #include "util/rsdir.h"
 
 #include <iostream>
-#include <sstream>
 
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;

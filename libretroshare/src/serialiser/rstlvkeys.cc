@@ -31,7 +31,6 @@
 #include "rsbaseserial.h"
 #include "util/rsprint.h"
 #include <ostream>
-#include <sstream>
 #include <iomanip>
 #include <iostream>
 

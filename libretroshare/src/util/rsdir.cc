@@ -570,7 +570,6 @@ bool RsDirUtil::hashFile(const std::string& filepath,
 
 
 #include <openssl/sha.h>
-#include <sstream>
 #include <iomanip>
 
 /* Function to hash, and get details of a file */

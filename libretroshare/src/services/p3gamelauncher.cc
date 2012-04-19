@@ -27,7 +27,6 @@
 #include "services/p3gameservice.h"
 #include "util/rsdebug.h"
 #include "pqi/p3linkmgr.h"
-#include <sstream>
 #include <iomanip>
 
 /* global variable for GUI */

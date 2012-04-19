@@ -36,7 +36,6 @@
 #include <util/pgpkey.h>
 #include <unistd.h>		/* for (u)sleep() */
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 #include "serialiser/rsconfigitems.h"
 #include "cleanupxpgp.h"

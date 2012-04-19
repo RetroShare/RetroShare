@@ -27,7 +27,6 @@
 #include "util/bdbloom.h"
 #include "bitdht/bdstddht.h"
 #include <iostream>
-#include <sstream>
 
 #define N_TESTS 100
 

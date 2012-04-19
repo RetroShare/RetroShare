@@ -1785,7 +1785,6 @@ RsTurtle *rsTurtle = NULL ;
 
 #include <list>
 #include <string>
-#include <sstream>
 
 // for blocking signals
 #include <signal.h>

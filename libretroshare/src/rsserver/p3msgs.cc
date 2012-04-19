@@ -27,7 +27,6 @@
 
 
 #include <iostream>
-#include <sstream>
 
 #include "util/rsdir.h"
 #include "util/rsdebug.h"

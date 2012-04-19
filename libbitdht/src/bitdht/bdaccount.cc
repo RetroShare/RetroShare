@@ -30,7 +30,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 
 
 #define LPF_FACTOR  (0.90)

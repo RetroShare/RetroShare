@@ -28,7 +28,6 @@
 #include "rsserver/p3face.h"
 
 #include <iostream>
-#include <sstream>
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"

@@ -459,7 +459,6 @@ class uPnPConfigData
 };
 
 #include <iostream>
-#include <sstream>
 
 #include "util/rsnet.h"
 
