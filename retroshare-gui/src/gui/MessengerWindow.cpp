@@ -36,12 +36,10 @@
 #include "MessengerWindow.h"
 #include "RsAutoUpdatePage.h"
 
-#ifndef MINIMAL_RSGUI
 #include "MainWindow.h"
 #include "ShareManager.h"
 #include "notifyqt.h"
 #include "connect/ConnectFriendWizard.h"
-#endif // MINIMAL_RSGUI
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
@@ -101,26 +99,19 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     ui.setupUi(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
-#ifdef MINIMAL_RSGUI
-    setAttribute (Qt::WA_QuitOnClose, true);
-#endif // MINIMAL_RSGUI
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
 
-#ifndef MINIMAL_RSGUI
     connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
     connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
-#endif // MINIMAL_RSGUI
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
 
-#ifndef MINIMAL_RSGUI
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
-#endif // MINIMAL_RSGUI
 
     if (expandedPeers != NULL) {
         for (std::set<std::string>::iterator peerIt = expandedPeers->begin(); peerIt != expandedPeers->end(); peerIt++) {
@@ -163,12 +154,8 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     if (rsPeers->getPeerDetails(ownId, pd)) {
         /* calculate only once */
         m_nickName = QString::fromUtf8(pd.name.c_str());
-#ifdef MINIMAL_RSGUI
-         ui.statusButton->setText(m_nickName);
-#endif
     }
 
-#ifndef MINIMAL_RSGUI
     /* Show nick and current state */
     StatusInfo statusInfo;
     rsStatus->getOwnStatus(statusInfo);
@@ -182,7 +169,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     }
 
     loadmystatusmessage();
-#endif // MINIMAL_RSGUI
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -194,12 +180,10 @@ MessengerWindow::~MessengerWindow ()
     // save settings
     processSettings(false);
 
-#ifndef MINIMAL_RSGUI
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
         pMainWindow->removeStatusObject(ui.statusButton);
     }
-#endif // MINIMAL_RSGUI
 
     _instance = NULL;
 }
@@ -211,7 +195,6 @@ void MessengerWindow::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-#ifndef MINIMAL_RSGUI
 /** Add a Friend ShortCut */
 void MessengerWindow::addFriend()
 {
@@ -219,7 +202,6 @@ void MessengerWindow::addFriend()
 
     connwiz.exec ();
 }
-#endif
 
 //============================================================================
 
@@ -248,7 +230,6 @@ LogoBar & MessengerWindow::getLogoBar() const {
         return *_rsLogoBarmessenger;
 }
 
-#ifndef MINIMAL_RSGUI
 /** Shows Share Manager */
 void MessengerWindow::openShareManager()
 {
@@ -279,5 +260,3 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
         return;
     }
 }
-
-#endif // MINIMAL_RSGUI

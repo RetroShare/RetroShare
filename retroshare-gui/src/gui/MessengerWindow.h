@@ -38,9 +38,7 @@ public:
     static void releaseInstance();
 
 public slots:
-#ifndef MINIMAL_RSGUI
     void loadmystatusmessage();
-#endif // MINIMAL_RSGUI
 
     LogoBar & getLogoBar() const;
 
@@ -53,7 +51,6 @@ protected:
     void closeEvent (QCloseEvent * event);
 
 private slots:
-#ifndef MINIMAL_RSGUI
     /** Add a new friend */
     void addFriend();
 
@@ -63,7 +60,6 @@ private slots:
     void updateOwnStatus(const QString &peer_id, int status);
 
     void savestatusmessage();
-#endif // MINIMAL_RSGUI
 
 private:
     static MessengerWindow *_instance;

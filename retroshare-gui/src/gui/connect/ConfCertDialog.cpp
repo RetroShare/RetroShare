@@ -40,10 +40,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
-
-#ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
-#endif // !MINIMAL_RSGUI
 
 static QMap<std::string, ConfCertDialog*> instances;
 
@@ -80,12 +77,10 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
-#ifndef MINIMAL_RSGUI
     MainWindow *w = MainWindow::getInstance();
     if (w) {
         connect(this, SIGNAL(configChanged()), w->getPage(MainWindow::Network), SLOT(insertConnect()));
     }
-#endif // !MINIMAL_RSGUI
 }
 
 ConfCertDialog::~ConfCertDialog()

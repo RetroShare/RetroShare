@@ -23,7 +23,6 @@
 #include <QMessageBox>
 #include <QSplashScreen>
 #include <rshare.h>
-#ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
 #include "gui/SearchDialog.h"
@@ -33,7 +32,6 @@
 #include "gui/NetworkDialog.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/QuickStartWizard.h"
-#endif // MINIMAL_RSGUI
 #include "gui/MessengerWindow.h"
 #include "gui/StartDialog.h"
 #include "gui/GenCertDialog.h"
@@ -234,13 +232,6 @@ int main(int argc, char *argv[])
 
 	RsharePeerSettings::Create();
 
-#ifdef MINIMAL_RSGUI
-	MessengerWindow::showYourself();
-
-	rshare.setQuitOnLastWindowClosed(true);
-
-	splashScreen.hide();
-#else
 	Emoticons::load();
 
 	if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool()) {
@@ -330,11 +321,9 @@ int main(int argc, char *argv[])
 	QTimer *timer = new QTimer(w);
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
 	timer->start(1000);
-#endif // MINIMAL_RSGUI
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
-#ifndef MINIMAL_RSGUI
 	delete w ;
 
 	if (eventReceiver) {
@@ -345,7 +334,6 @@ int main(int argc, char *argv[])
 
 	/* cleanup */
 	ChatDialog::cleanupChat();
-#endif // MINIMAL_RSGUI
 
 	rsicontrol->rsGlobalShutDown();
 

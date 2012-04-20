@@ -2175,11 +2175,9 @@ int RsServer::StartupRetroShare()
 
 	/* create Services */
 	ad = new p3disc(mPeerMgr, mLinkMgr, mNetMgr, pqih);
-#ifndef MINIMAL_LIBRS
 	msgSrv = new p3MsgService(mLinkMgr);
 	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
 	mStatusSrv = new p3StatusService(mLinkMgr);
-#endif // MINIMAL_LIBRS
 
 #ifndef PQI_DISABLE_TUNNEL
         p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
@@ -2193,13 +2191,9 @@ int RsServer::StartupRetroShare()
 	ftserver->connectToTurtleRouter(tr) ;
 
 	pqih -> addService(ad);
-#ifndef MINIMAL_LIBRS
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
 	pqih ->addService(mStatusSrv);
-
-#endif // MINIMAL_LIBRS
-#ifndef MINIMAL_LIBRS
 
 	mForums = new p3Forums(RS_SERVICE_TYPE_FORUM, mCacheStrapper, mCacheTransfer, localcachedir, remotecachedir, forumdir);
 
@@ -2254,8 +2248,6 @@ int RsServer::StartupRetroShare()
 	mDsdv->addTestService();
 #endif
 
-#endif // MINIMAL_LIBRS
-
 	/**************************************************************************/
 
 #ifdef RS_USE_BITDHT
@@ -2288,11 +2280,9 @@ int RsServer::StartupRetroShare()
 	mLinkMgr->addMonitor(pqih);
 	mLinkMgr->addMonitor(mCacheStrapper);
 	mLinkMgr->addMonitor(ad);
-#ifndef MINIMAL_LIBRS
 	mLinkMgr->addMonitor(msgSrv);
 	mLinkMgr->addMonitor(mStatusSrv);
 	mLinkMgr->addMonitor(chatSrv);
-#endif // MINIMAL_LIBRS
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.
@@ -2310,7 +2300,6 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
-#ifndef MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
@@ -2320,7 +2309,6 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
-#endif // MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
 	mConfigMgr->addConfiguration("p3disc.cfg", ad);
 
@@ -2429,16 +2417,13 @@ int RsServer::StartupRetroShare()
 	//getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FILES_NEW);
 
 	/* flag that the basic Caches are now in the pending Queues */
-#ifndef MINIMAL_LIBRS
 	mForums->HistoricalCachesDone();
 	mChannels->HistoricalCachesDone();
 	
 #ifdef RS_USE_BLOGS	
 	mBlogs->HistoricalCachesDone();
 #endif
-#endif // MINIMAL_LIBRS	
-	
-	
+
 	/**************************************************************************/
 	/* Add AuthGPG services */
 	/**************************************************************************/
@@ -2462,14 +2447,12 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// startup the p3distrib threads (for cache loading).
-#ifndef MINIMAL_LIBRS
 	mForums->start();
 	mChannels->start();
 
 #ifdef RS_USE_BLOGS	
 	mBlogs->start();
 #endif
-#endif // MINIMAL_LIBRS
 
 	/**************************************************************************/
 
@@ -2486,11 +2469,9 @@ int RsServer::StartupRetroShare()
 
 	/* Setup GUI Interfaces. */
 
-
 	rsDisc  = new p3Discovery(ad);
 	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, mGeneralConfig);
 
-#ifndef MINIMAL_LIBRS
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsForums = mForums;
 	rsChannels = mChannels;
@@ -2507,16 +2488,13 @@ int RsServer::StartupRetroShare()
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 #endif
-#endif // MINIMAL_LIBRS
 
-#ifndef MINIMAL_LIBRS
 	/* put a welcome message in! */
 	if (RsInitConfig::firsttime_run)
 	{
 		msgSrv->loadWelcomeMsg();
 		ftserver->shareDownloadDirectory(true);
 	}
-#endif // MINIMAL_LIBRS
 
 	// load up the help page
 	std::string helppage = RsInitConfig::basedir + "/";

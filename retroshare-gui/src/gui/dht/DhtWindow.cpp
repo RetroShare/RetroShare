@@ -69,20 +69,12 @@ DhtWindow::DhtWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     setAttribute ( Qt::WA_DeleteOnClose, true );
-#ifdef MINIMAL_RSGUI
-    setAttribute (Qt::WA_QuitOnClose, true);
-#endif // MINIMAL_RSGUI
-
 
 	// tick for gui update.
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1000);
-
-
-
 }
 
 DhtWindow::~DhtWindow()

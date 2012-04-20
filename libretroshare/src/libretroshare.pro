@@ -8,15 +8,8 @@ TARGET = retroshare
 CONFIG += test_voip 
 
 # Beware: All data of the stripped services are lost
-#CONFIG += minimal
 DEFINES *= PQI_DISABLE_TUNNEL 
 #ENABLE_CACHE_OPT
-
-minimal {
-	CONFIG -= use_blogs
-
-	DEFINES += MINIMAL_LIBRS
-}
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
@@ -629,26 +622,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/pgpkey.cc \
 			util/pugixml.cc
-
-minimal {
-	SOURCES -= rsserver/p3msgs.cc \
-			rsserver/p3status.cc \
-			rsserver/p3photo.cc
-
-	SOURCES -= serialiser/rsforumitems.cc \
-			serialiser/rsstatusitems.cc \
-			serialiser/rschannelitems.cc \
-			serialiser/rsgameitems.cc \
-			serialiser/rsphotoitems.cc
-
-	SOURCES -= services/p3forums.cc \
-			services/p3msgservice.cc \
-			services/p3statusservice.cc \
-			services/p3channels.cc \
-			services/p3gamelauncher.cc \
-			services/p3photoservice.cc
-}
-
 
 zeroconf {
 

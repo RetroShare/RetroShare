@@ -30,7 +30,6 @@
 
 #include "RsAutoUpdatePage.h"
 
-#ifndef MINIMAL_RSGUI
 #include "MainWindow.h"
 #include "toaster/OnlineToaster.h"
 #include "toaster/MessageToaster.h"
@@ -38,7 +37,6 @@
 #include "toaster/ChatToaster.h"
 #include "toaster/GroupChatToaster.h"
 #include "toaster/ChatLobbyToaster.h"
-#endif // MINIMAL_RSGUI
 
 #include "chat/ChatDialog.h"
 #include "chat/ChatWidget.h"
@@ -441,7 +439,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 
 void NotifyQt::UpdateGUI()
 {
-#ifndef MINIMAL_RSGUI
 	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
@@ -582,8 +579,6 @@ void NotifyQt::UpdateGUI()
 
 	/* Now start the waiting toasters */
 	startWaitingToasters();
-
-#endif // MINIMAL_RSGUI
 }
 		
 void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)

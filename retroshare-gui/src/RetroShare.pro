@@ -4,8 +4,6 @@ QT     += network xml script
 TEMPLATE = app
 TARGET = RetroShare
 
-#CONFIG += minimal
-
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
@@ -14,12 +12,6 @@ MOC_DIR = temp/moc
 #CONFIG += debug
 debug {
 	QMAKE_CFLAGS += -g
-}
-
-minimal {
-	CONFIG -= blogs
-
-	DEFINES += MINIMAL_RSGUI
 }
 
 INCLUDEPATH *= retroshare-gui
@@ -820,70 +812,4 @@ LIBS += -lxine
 
 DEFINES *= CHANNELS_FRAME_CATCHER
 
-}
-
-
-
-minimal {
-        SOURCES = main.cpp \
-                  rshare.cpp \
-                  gui/notifyqt.cpp \
-                  gui/MessengerWindow.cpp \
-                  gui/StartDialog.cpp \
-                  gui/GenCertDialog.cpp \
-                  gui/connect/ConfCertDialog.cpp \
-                  gui/InfoDialog.cpp \
-                  gui/help/browser/helpbrowser.cpp \
-                  gui/help/browser/helptextbrowser.cpp \
-                  gui/settings/rsettings.cpp \
-                  gui/settings/RsharePeerSettings.cpp \
-                  gui/settings/rsharesettings.cpp \
-                  gui/common/rwindow.cpp \
-                  gui/common/StatusDefs.cpp \
-                  gui/common/PeerDefs.cpp \
-                  gui/common/RSTreeWidgetItem.cpp \
-                  gui/LogoBar.cpp \
-                  gui/RsAutoUpdatePage.cpp \
-                  gui/common/vmessagebox.cpp \
-                  gui/common/html.cpp \
-                  util/RetroStyleLabel.cpp \
-                  util/log.cpp \
-                  util/win32.cpp \
-                  util/Widget.cpp \
-                  util/stringutil.cpp \
-                  lang/languagesupport.cpp
-
-        FORMS = gui/MessengerWindow.ui \
-                gui/StartDialog.ui \
-                gui/GenCertDialog.ui \
-                gui/connect/ConfCertDialog.ui \
-                gui/InfoDialog.ui \
-                gui/help/browser/helpbrowser.ui
-
-        HEADERS = rshare.h \
-                  gui/notifyqt.h \
-                  gui/MessengerWindow.h \
-                  gui/StartDialog.h \
-                  gui/GenCertDialog.h \
-                  gui/connect/ConfCertDialog.h \
-                  gui/InfoDialog.h \
-                  gui/help/browser/helpbrowser.h \
-                  gui/help/browser/helptextbrowser.h \
-                  gui/settings/rsettings.h \
-                  gui/settings/rsharesettings.h \
-                  gui/settings/RsharePeerSettings.h \
-                  gui/common/rwindow.h \
-                  gui/common/StatusDefs.h \
-                  gui/common/PeerDefs.h \
-                  gui/common/RSTreeWidgetItem.h \
-                  gui/LogoBar.h \
-                  gui/RsAutoUpdatePage.h \
-                  gui/common/vmessagebox.h \
-                  gui/common/html.h \
-                  util/RetroStyleLabel.h \
-                  util/log.h \
-                  util/win32.h \
-                  util/Widget.h \
-                  util/stringutil.h \
-                  lang/languagesupport.h
 }

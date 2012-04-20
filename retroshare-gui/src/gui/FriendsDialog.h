@@ -25,7 +25,6 @@
 #include "chat/ChatStyle.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
-#ifndef MINIMAL_RSGUI
 #include "ui_FriendsDialog.h"
 
 class QFont;
@@ -144,7 +143,5 @@ private:
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;
 };
-
-#endif // MINIMAL_RSGUI
 
 #endif
