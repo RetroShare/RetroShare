@@ -1192,9 +1192,6 @@ border: 1px solid #CCCCCC;}</string>
             <property name="value">
              <number>0</number>
             </property>
-            <property name="textVisible">
-             <bool>false</bool>
-            </property>
            </widget>
           </item>
          </layout>
@@ -1231,6 +1228,12 @@ border: 1px solid #CCCCCC;}</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GroupTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/GroupTreeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header>gui/common/LineEditClear.h</header>
@@ -1239,12 +1242,6 @@ border: 1px solid #CCCCCC;}</string>
    <class>LinkTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/LinkTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>GroupTreeWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/GroupTreeWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

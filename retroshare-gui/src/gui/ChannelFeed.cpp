@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QTimer>
 #include <QStandardItemModel>
+#include <QMessageBox>
 
 #include <iostream>
 #include <algorithm>
@@ -91,6 +92,11 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     channeloptsmenu->addAction(actionEnable_Auto_Download);
     channeloptions_Button->setMenu(channeloptsmenu);
 
+    progressLabel->hide();
+    progressBar->hide();
+
+    fillThread = NULL;
+
     //added from ahead
     updateChannelList();
     
@@ -105,6 +111,12 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
 ChannelFeed::~ChannelFeed()
 {
+    if (fillThread) {
+        fillThread->stop();
+        delete(fillThread);
+        fillThread = NULL;
+    }
+
     // save settings
     processSettings(false);
 }
@@ -187,6 +199,12 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 
     QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
     action->setEnabled(!mChannelId.empty());
+
+#ifdef CHAN_DEBUG
+    contextMnu.addSeparator();
+    action = contextMnu.addAction("Generate mass data", this, SLOT(generateMassData()));
+    action->setEnabled (!mChannelId.empty() && (ci.channelFlags & RS_DISTRIB_PUBLISH));
+#endif
 
     contextMnu.exec(QCursor::pos());
 }
@@ -424,12 +442,25 @@ static bool sortChannelMsgSummary(const ChannelMsgSummary &msg1, const ChannelMs
 
 void ChannelFeed::updateChannelMsgs()
 {
+    if (fillThread) {
+#ifdef CHAN_DEBUG
+        std::cerr << "ChannelFeed::updateChannelMsgs() stop current fill thread" << std::endl;
+#endif
+        // stop current fill thread
+        fillThread->stop();
+        delete(fillThread);
+        fillThread = NULL;
+
+        progressLabel->hide();
+        progressBar->hide();
+    }
+
     if (!rsChannels) {
         return;
     }
 
     /* replace all the messages with new ones */
-    std::list<ChanMsgItem *>::iterator mit;
+    QList<ChanMsgItem *>::iterator mit;
     for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
         delete (*mit);
     }
@@ -463,8 +494,7 @@ void ChannelFeed::updateChannelMsgs()
     iconLabel->setEnabled(true);
 
     /* set textcolor for Channel name  */
-    QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
-                       "color:#4F4F4F;\">%1</span>");
+    QString channelStr("<span style=\"font-size:22pt; font-weight:500;color:#4F4F4F;\">%1</span>");
 
     /* set Channel name */
     QString cname = QString::fromStdWString(ci.channelName);
@@ -498,17 +528,74 @@ void ChannelFeed::updateChannelMsgs()
         actionEnable_Auto_Download->setEnabled(false);
     }
 
-    std::list<ChannelMsgSummary> msgs;
-    std::list<ChannelMsgSummary>::iterator it;
-    rsChannels->getChannelMsgList(mChannelId, msgs);
+    progressLabel->show();
+    progressBar->reset();
+    progressBar->show();
 
-    msgs.sort(sortChannelMsgSummary);
+    // create fill thread
+    fillThread = new ChannelFillThread(this, mChannelId);
 
+    // connect thread
+    connect(fillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
+    connect(fillThread, SIGNAL(progress(int,int)), this, SLOT(fillThreadProgress(int,int)));
+    connect(fillThread, SIGNAL(addMsg(QString,QString)), this, SLOT(fillThreadAddMsg(QString,QString)), Qt::BlockingQueuedConnection);
 
-    for(it = msgs.begin(); it != msgs.end(); it++) {
-        ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
+#ifdef DEBUG_FORUMS
+    std::cerr << "ChannelFeed::updateChannelMsgs() Start fill thread" << std::endl;
+#endif
 
+    // start thread
+    fillThread->start();
+}
 
+void ChannelFeed::fillThreadFinished()
+{
+#ifdef DEBUG_FORUMS
+    std::cerr << "ChannelFeed::fillThreadFinished" << std::endl;
+#endif
+
+    // thread has finished
+    ChannelFillThread *thread = dynamic_cast<ChannelFillThread*>(sender());
+    if (thread) {
+        if (thread == fillThread) {
+            // current thread has finished, hide progressbar and release thread
+            progressBar->hide();
+            progressLabel->hide();
+            fillThread = NULL;
+        }
+
+        if (thread->wasStopped()) {
+            // thread was stopped
+#ifdef DEBUG_FORUMS
+            std::cerr << "ChannelFeed::fillThreadFinished Thread was stopped" << std::endl;
+#endif
+        }
+
+#ifdef DEBUG_FORUMS
+        std::cerr << "ChannelFeed::fillThreadFinished Delete thread" << std::endl;
+#endif
+
+        thread->deleteLater();
+        thread = NULL;
+    }
+
+#ifdef DEBUG_FORUMS
+    std::cerr << "ChannelFeed::fillThreadFinished done" << std::endl;
+#endif
+}
+
+void ChannelFeed::fillThreadProgress(int current, int count)
+{
+    // show fill progress
+    if (count) {
+        progressBar->setValue(current * progressBar->maximum() / count);
+    }
+}
+
+void ChannelFeed::fillThreadAddMsg(const QString &channelId, const QString &channelMsgId)
+{
+    if (sender() == fillThread) {
+        ChanMsgItem *cmi = new ChanMsgItem(this, 0, channelId.toStdString(), channelMsgId.toStdString(), true);
         mChanMsgItems.push_back(cmi);
         verticalLayout_2->addWidget(cmi);
     }
@@ -629,7 +716,7 @@ bool ChannelFeed::navigate(const std::string& channelId, const std::string& msgI
 	}
 
 	/* Search exisiting item */
-	std::list<ChanMsgItem*>::iterator mit;
+	QList<ChanMsgItem*>::iterator mit;
 	for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
 		ChanMsgItem *item = *mit;
 		if (item->msgId() == msgId) {
@@ -652,4 +739,80 @@ void ChannelFeed::setAutoDownloadButton(bool autoDl)
 	}else{
 		actionEnable_Auto_Download->setText(tr("Enable Auto-Download"));
 	}
+}
+
+void ChannelFeed::generateMassData()
+{
+#ifdef CHAN_DEBUG
+    if (mChannelId.empty ()) {
+        return;
+    }
+
+    if (QMessageBox::question(this, "Generate mass data", "Do you really want to generate mass data ?", QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+        return;
+    }
+
+    for (int thread = 1; thread < 1000; thread++) {
+        ChannelMsgInfo msgInfo;
+        msgInfo.channelId = mChannelId;
+        msgInfo.subject = QString("Test %1").arg(thread, 3, 10, QChar('0')).toStdWString();
+        msgInfo.msg = QString("That is only a test").toStdWString();
+
+        if (rsChannels->ChannelMessageSend(msgInfo) == false) {
+            return;
+        }
+    }
+#endif
+}
+
+// ForumsFillThread
+ChannelFillThread::ChannelFillThread(ChannelFeed *parent, const std::string &channelId)
+    : QThread(parent)
+{
+    stopped = false;
+    this->channelId = channelId;
+}
+
+ChannelFillThread::~ChannelFillThread()
+{
+#ifdef CHAN_DEBUG
+    std::cerr << "ChannelFillThread::~ChannelFillThread" << std::endl;
+#endif
+}
+
+void ChannelFillThread::stop()
+{
+    disconnect();
+    stopped = true;
+    QApplication::processEvents();
+    wait();
+}
+
+void ChannelFillThread::run()
+{
+#ifdef CHAN_DEBUG
+    std::cerr << "ChannelFillThread::run()" << std::endl;
+#endif
+
+    std::list<ChannelMsgSummary> msgs;
+    std::list<ChannelMsgSummary>::iterator it;
+    rsChannels->getChannelMsgList(channelId, msgs);
+
+    msgs.sort(sortChannelMsgSummary);
+
+    int count = msgs.size();
+    int pos = 0;
+
+    for (it = msgs.begin(); it != msgs.end(); it++) {
+        if (stopped) {
+            break;
+        }
+
+        emit addMsg(QString::fromStdString(channelId), QString::fromStdString(it->msgId));
+        emit progress(++pos, count);
+    }
+
+#ifdef CHAN_DEBUG
+    std::cerr << "ChannelFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
+#endif
 }

@@ -24,6 +24,7 @@
 
 #include <retroshare/rschannels.h>
 #include <QStandardItemModel>
+#include <QThread>
 #include <map>
 
 #include "mainpage.h"
@@ -35,6 +36,7 @@
 
 class ChanMsgItem;
 class QTreeWidgetItem;
+class ChannelFillThread;
 
 class ChannelFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::ChannelFeed
 {
@@ -75,6 +77,12 @@ private slots:
 
     void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 
+    void generateMassData();
+
+    void fillThreadFinished();
+    void fillThreadProgress(int current, int count);
+    void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId);
+
 private:
     void updateChannelList();
     void updateChannelMsgs();
@@ -89,14 +97,38 @@ private:
     /* Layout Pointers */
     QBoxLayout *mMsgLayout;
 
-    std::list<ChanMsgItem *> mChanMsgItems;
+    QList<ChanMsgItem *> mChanMsgItems;
     std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
 
 	QTreeWidgetItem *ownChannels;
 	QTreeWidgetItem *subcribedChannels;
 	QTreeWidgetItem *popularChannels;
 	QTreeWidgetItem *otherChannels;
+
+	ChannelFillThread *fillThread;
+};
+
+class ChannelFillThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    ChannelFillThread(ChannelFeed *parent, const std::string &channelId);
+    ~ChannelFillThread();
+
+    void run();
+    void stop();
+    bool wasStopped() { return stopped; }
+
+signals:
+    void progress(int current, int count);
+    void addMsg(const QString &channelId, const QString &channelMsgId);
+
+public:
+    std::string channelId;
+
+private:
+    volatile bool stopped;
 };
 
 #endif
-

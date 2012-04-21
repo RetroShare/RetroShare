@@ -208,11 +208,9 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ttheader->setResizeMode (COLUMN_THREAD_READ, QHeaderView::Fixed);
     ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
-    ui.progressBar->setTextVisible(true);
     ui.progressBar->hide();
     ui.progLayOutTxt->hide();
     ui.progressBarLayOut->setEnabled(false);
-
 
     fillThread = NULL;
 
@@ -495,15 +493,15 @@ void ForumsDialog::updateDisplay()
     }
 }
 
-static void CleanupItems (QList<QTreeWidgetItem *> &Items)
+static void CleanupItems (QList<QTreeWidgetItem *> &items)
 {
-    QList<QTreeWidgetItem *>::iterator Item;
-    for (Item = Items.begin (); Item != Items.end (); Item++) {
-        if (*Item) {
-            delete (*Item);
+    QList<QTreeWidgetItem *>::iterator item;
+    for (item = items.begin (); item != items.end (); item++) {
+        if (*item) {
+            delete (*item);
         }
     }
-    Items.clear();
+    items.clear();
 }
 
 void ForumsDialog::forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo)
@@ -844,7 +842,6 @@ void ForumsDialog::fillThreadProgress(int current, int count)
     if (count) {
         ui.progressBar->setValue(current * ui.progressBar->maximum() / count);
     }
-
 }
 
 void ForumsDialog::insertThreads()
@@ -858,15 +855,13 @@ void ForumsDialog::insertThreads()
 #ifdef DEBUG_FORUMS
         std::cerr << "ForumsDialog::insertThreads() stop current fill thread" << std::endl;
 #endif
-        // stop and disconnect current fill thread
-        ForumsFillThread *thread = fillThread;
+        // stop current fill thread
+        fillThread->stop();
+        delete(fillThread);
         fillThread = NULL;
 
-        // disconnect only the signal "progress", the signal "finished" is needed to delete the thread
-        thread->disconnect(this, SIGNAL(progress(int,int)));
-        thread->stop();
-
         ui.progressBar->hide();
+        ui.progLayOutTxt->hide();
     }
 
     subscribeFlags = 0;
@@ -905,6 +900,7 @@ void ForumsDialog::insertThreads()
     ui.progressBarLayOut->setEnabled(true);
 
     ui.progLayOutTxt->show();
+    ui.progressBar->reset();
     ui.progressBar->show();
 
     // create fill thread
@@ -1761,7 +1757,10 @@ ForumsFillThread::~ForumsFillThread()
 
 void ForumsFillThread::stop()
 {
+    disconnect();
     stopped = true;
+    QApplication::processEvents();
+    wait();
 }
 
 void ForumsFillThread::run()

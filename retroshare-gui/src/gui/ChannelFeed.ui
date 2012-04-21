@@ -508,7 +508,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QScrollArea" name="scrollArea">
          <property name="widgetResizable">
           <bool>true</bool>
@@ -521,8 +521,8 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>392</width>
-            <height>333</height>
+            <width>400</width>
+            <height>304</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -557,6 +557,27 @@ border-image: url(:/images/btn_26_pressed.png) 4;
           </layout>
          </widget>
         </widget>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="progressLayout">
+         <item>
+          <widget class="QLabel" name="progressLabel">
+           <property name="text">
+            <string>Loading</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="progressBar">
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>24</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

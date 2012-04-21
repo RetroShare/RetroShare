@@ -1006,18 +1006,23 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+179"/>
+        <source>Loading</source>
+        <translation>Lade</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <location line="+3"/>
         <source>Set all as read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="-255"/>
+        <location line="-276"/>
         <source>Unsubcribe To Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+84"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+86"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
@@ -1038,7 +1043,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="+116"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+55"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+66"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -1073,24 +1078,24 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+259"/>
+        <location line="+278"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="+204"/>
+        <location line="+260"/>
         <source>Disable Auto-Download</source>
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+144"/>
+        <location filename="../gui/ChannelFeed.ui" line="+165"/>
         <location line="+3"/>
         <location filename="../gui/ChannelFeed.cpp" line="+2"/>
         <source>Enable Auto-Download</source>
         <translation>Aktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="-496"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-571"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
     </message>
@@ -1620,17 +1625,17 @@ p, li { white-space: pre-wrap; }
         <translation>Schriftart auf den Standard setzen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+364"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+367"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+39"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+125"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
@@ -1911,7 +1916,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+137"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+132"/>
         <location line="+198"/>
         <location line="+28"/>
         <source>RetroShare</source>
@@ -4433,7 +4438,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+291"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+289"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -4519,7 +4524,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+583"/>
+        <location line="+580"/>
         <source>[ ... Missing Message ... ]</source>
         <translation>[ ... Fehlende Nachricht ... ]</translation>
     </message>
@@ -4545,7 +4550,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1357"/>
+        <location line="-1352"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4700,7 +4705,7 @@ p, li { white-space: pre-wrap; }
         <translation>Forum erstellen</translation>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+562"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -4710,8 +4715,8 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+149"/>
-        <location line="+1129"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+147"/>
+        <location line="+1126"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -4732,12 +4737,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="-133"/>
+        <location filename="../gui/ForumsDialog.ui" line="-130"/>
         <source>Content</source>
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1116"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1113"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -5515,7 +5520,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+98"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+99"/>
         <source>Chat lobbies</source>
         <translation>Chat Lobbies</translation>
     </message>
@@ -5530,7 +5535,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neuigkeiten</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+41"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
@@ -5648,7 +5653,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+59"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -5659,7 +5664,7 @@ p, li { white-space: pre-wrap; }
         <translation>Neuer Gruppenchat</translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+232"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Möchtest du wirklich den Nachrichtenverlauf physisch löschen?</translation>
     </message>
@@ -9570,7 +9575,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NotifyQt</name>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="+129"/>
+        <location filename="../gui/notifyqt.cpp" line="+127"/>
         <source>GPG key passphrase</source>
         <translation>GPG Schlüssel Passwort</translation>
     </message>
@@ -10040,7 +10045,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+241"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+235"/>
         <source>Status: </source>
         <translation>Status:</translation>
     </message>
@@ -10050,7 +10055,7 @@ p, li { white-space: pre-wrap; }
         <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
-        <location line="-84"/>
+        <location line="-78"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10063,7 +10068,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+55"/>
         <source>File name: </source>
         <translation>Dateiname:</translation>
     </message>
@@ -10842,7 +10847,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+86"/>
+        <location filename="../main.cpp" line="+85"/>
         <location line="+124"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
@@ -11943,7 +11948,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+274"/>
-        <location filename="../gui/SearchDialog.cpp" line="+278"/>
+        <location filename="../gui/SearchDialog.cpp" line="+279"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -11979,13 +11984,13 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+390"/>
-        <location line="+68"/>
+        <location line="+375"/>
+        <location line="+64"/>
         <source>Folder</source>
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+383"/>
+        <location line="+392"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
@@ -12039,7 +12044,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-924"/>
+        <location filename="../gui/SearchDialog.cpp" line="-914"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -12195,7 +12200,7 @@ p, li { white-space: pre-wrap; }
     <name>SecurityItem</name>
     <message>
         <location filename="../gui/feeds/SecurityItem.ui" line="+317"/>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="+296"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="+295"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -12298,7 +12303,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="-176"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="-175"/>
         <source>Connect Attempt</source>
         <translation>Verbindungsversuch</translation>
     </message>
@@ -12338,7 +12343,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannter Nachbar</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+93"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
