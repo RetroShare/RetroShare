@@ -1,6 +1,54 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - removed minimal version
+     - Improved TR routing strategy:
+        * updated base forward probabilities to larger values
+        * used a minimum FP to 1/nb_connected_friends instead of 0. This is the larger non-explosive value.
+        * changed tunnel management time to 2 secs instead of 1, setting the overall number of TR/s emmitted 
+          for all downloads to 0.5 (Should reduce the TR load for the whole network by a factor of 2).
+     - Activate DHTML in Doxygen Documentation, for Fold in/out Class hierarchy images.
+     - New Doxygen configuratin for Retroshare GUI, see at
+         http://notdefine.de/retroshare/retroshare/trunk/retroshare-gui/src/html/index.html
+     - Add missing includes "unistd.h" for compiling with gcc 4.7.0. (Patch from AC)
+     - Added a label for Connect Attempt after nickname "wants to be friends with you on RetroShare"
+     - Added "You have a friend request" label to FriendRequest Dialog
+     - Renamed "Accept Friend Request" Button to "Confirm",
+     - set correct stylesheet for new forum item
+     - Added stylesheet for the Friend Request Buttons
+     - Added new basic class for a QLineEdit with a clear button - LineEditClear.
+     - Enabled file preview on Windows.
+     - The link file to preview a not finished download is created in temp directory.
+     - Added a messagebox when preview a not finished download to remove the link file.
+     - Fixed german language
+     - Removed the max length from the ip fields in ProfileWidget to display all 15 digits.
+     - enabled disabling autodownload for channel admin (patch from asamK)
+
+  * Bugs
+     - removed all calls to std::stringstream, causing a thread data race on windows
+     - don't remove color and font when the last char is deleted from the chat text entry box (Patch from AC)
+     - Fixed, hide "Accept Friend Request" Button for Unknown Peers
+     - Improved Search Dialog (Patch from AsamK)
+        * don't add friend sources count to anonymous count each time a result for the same file is received!, this could 
+          lead to enormously large sources numbers
+        * don't readd search in summary list if it was already removed by the user
+        * don't clear the filter when new search results are added
+        * when using the file name filter only show result from the current search, not also from previous searches
+        * fixed adding only file types which were searched for, for this I created a new hidden column in summary list to store the file type
+        * fixed sorting by file size/age, pad string with '0' instead of ' ' Search feature: a quirk I've found
+        * decrease gui hanging:
+           -when adding search results temporarily disable sorting
+           -only add 250 instead of 500 items in one go
+           -don't call selectSearchResults() for each item added to the result list; instead call hideOrShowSearchResult() 
+            which only sets the hidden status of the added item, not the complete list
+           -replace std::string with QString, removes unnecessary conversions
+     - Fixed clickable links in forum message feed.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 21 apr 2012 10:00:00 +0100
+
+retroshare (0.5.3-0.5067~natty) natty; urgency=low
+
+  * Improvements
      - Added Copy Certificate Button to ProfileWidget
      - Fixed compile of VOIP on Windows with Qt >4.7
      - Modified some defaults (auto check of shared directories to 15 minutes, time to idle mode to 5 minutes)
