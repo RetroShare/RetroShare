@@ -200,24 +200,34 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 {
 	// Parse certificate name
 	//
-	std::string namestring( (char *)keydata->uids[0].user_id ) ;
 
-	cert._name = "" ;
-	int i=0;
-	while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
+	if(keydata->uids != NULL)
+	{
+		std::string namestring( (char *)keydata->uids[0].user_id ) ;
 
-	std::string& next = (namestring[i] == '(')?cert._comment:cert._email ;
-	next = "" ;
-	while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
-		next += namestring[i] ;
+		cert._name = "" ;
+		int i=0;
+		while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
 
-	next = (namestring[i] == '(')?cert._comment:cert._email ;
-	next = "" ;
-	while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
-		next += namestring[i] ;
+		std::string& next = (namestring[i] == '(')?cert._comment:cert._email ;
+		++i ;
+		next = "" ;
+		while(i < namestring.length() && namestring[i] != ')' && namestring[i] != '>') { next += namestring[i] ; ++i ;}
+
+		while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { next += namestring[i] ; ++i ;}
+		std::string& next2 = (namestring[i] == '(')?cert._comment:cert._email ;
+		++i ;
+		next2 = "" ;
+		while(i < namestring.length() && namestring[i] != ')' && namestring[i] != '>') { next2 += namestring[i] ; ++i ;}
+	}
 
 	cert._trustLvl = 1 ;	// to be setup accordingly
 	cert._key_index = index ;
+
+	ops_fingerprint_t f ;
+	ops_fingerprint(&f,&keydata->key.pkey) ; 
+
+	cert._fpr = PGPFingerprintType(f.fingerprint) ;
 
 	std::cerr << __PRETTY_FUNCTION__ <<  ": unfinished!!" << std::endl;
 }
@@ -237,6 +247,8 @@ PGPHandler::~PGPHandler()
 
 bool PGPHandler::printKeys() const
 {
+	std::cerr << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " << std::endl;
+
 	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
 	{
 		std::cerr << "PGP Key: " << it->first << std::endl;
@@ -247,6 +259,7 @@ bool PGPHandler::printKeys() const
 		std::cerr << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) << std::endl;
 		std::cerr << "\ttrustLvl      : " <<  it->second._trustLvl << std::endl;
 		std::cerr << "\tvalidLvl      : " <<  it->second._validLvl << std::endl;
+		std::cerr << "\tfingerprint   : " <<  it->second._fpr.toStdString() << std::endl;
 
 		std::set<std::string>::const_iterator sit;
 		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); sit++)
@@ -586,8 +599,8 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType& key_id,std::string& text,c
 
 	fclose(f) ;
 
-	std::cerr << "PGPHandler::decryptTextFromFile: read a file of length " << buf.length() << std::endl;
-	std::cerr << "buf=" << buf << std::endl;
+	std::cerr << "PGPHandler::decryptTextFromFile: read a file of length " << std::dec << buf.length() << std::endl;
+	std::cerr << "buf=\"" << buf << "\"" << std::endl;
 
 	int out_length ;
 	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)buf.c_str(),buf.length(),&out_buf,&out_length,_secring,ops_true,cb_get_passphrase) ;
@@ -675,6 +688,9 @@ bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned cha
 		return false ;
 	}
 
+	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << std::endl;
+	std::cerr << "Warning: signature code still unfinished!" << key_fingerprint.toStdString() << std::endl;
+
 	ops_signature_t signature ;
 //	ops_signature_add_data(&signature,sign,sign_len) ;
 
@@ -719,6 +735,6 @@ bool PGPHandler::isGPGSigned(const std::string &id)
 bool PGPHandler::isGPGAccepted(const std::string &id)
 {
 	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
-	return res != _public_keyring_map.end() && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
+	return (res != _public_keyring_map.end()) && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
 }
 
