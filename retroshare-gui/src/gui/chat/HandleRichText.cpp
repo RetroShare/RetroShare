@@ -182,7 +182,9 @@ QString formatText(const QString &text, unsigned int flag)
 	if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
 		optimizeFlag |= RSHTML_OPTIMIZEHTML_REMOVE_COLOR;
 	}
-	optimizeHtml(formattedText, optimizeFlag);
+	if (optimizeFlag) {
+		optimizeHtml(formattedText, optimizeFlag);
+	}
 
 	return formattedText;
 }

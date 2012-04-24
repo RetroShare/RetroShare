@@ -80,8 +80,7 @@ private slots:
     void generateMassData();
 
     void fillThreadFinished();
-    void fillThreadProgress(int current, int count);
-    void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId);
+    void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
 
 private:
     void updateChannelList();
@@ -121,8 +120,7 @@ public:
     bool wasStopped() { return stopped; }
 
 signals:
-    void progress(int current, int count);
-    void addMsg(const QString &channelId, const QString &channelMsgId);
+    void addMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
 
 public:
     std::string channelId;
