@@ -99,7 +99,7 @@ bool p3Channels::channelsChanged(std::list<std::string> &chanIds)
 }
 
 
-bool p3Channels::getChannelInfo(std::string cId, ChannelInfo &ci)
+bool p3Channels::getChannelInfo(const std::string &cId, ChannelInfo &ci)
 {
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
@@ -148,7 +148,7 @@ bool p3Channels::getChannelList(std::list<ChannelInfo> &channelList)
 }
 
 
-bool p3Channels::getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs)
+bool p3Channels::getChannelMsgList(const std::string &cId, std::list<ChannelMsgSummary> &msgs)
 {
 	std::list<std::string> msgIds;
 	std::list<std::string>::iterator it;
@@ -181,7 +181,7 @@ bool p3Channels::getChannelMsgList(std::string cId, std::list<ChannelMsgSummary>
 	return true;
 }
 
-bool p3Channels::getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &info)
+bool p3Channels::getChannelMessage(const std::string &cId, const std::string &mId, ChannelMsgInfo &info)
 {
 	std::list<std::string> msgIds;
 	std::list<std::string>::iterator it;
@@ -234,7 +234,7 @@ bool p3Channels::getChannelMessage(std::string cId, std::string mId, ChannelMsgI
 	return true;
 }
 
-bool p3Channels::channelRestoreKeys(std::string chId){
+bool p3Channels::channelRestoreKeys(const std::string &chId){
 
 	return p3GroupDistrib::restoreGrpKeys(chId);
 }
@@ -383,7 +383,7 @@ bool p3Channels::getMessageStatus(const std::string& cId, const std::string& mId
 	return false;
 }
 
-bool p3Channels::getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount)
+bool p3Channels::getMessageCount(const std::string &cId, unsigned int &newCount, unsigned int &unreadCount)
 {
 	newCount = 0;
 	unreadCount = 0;
@@ -462,11 +462,11 @@ bool p3Channels::getMessageCount(const std::string cId, unsigned int &newCount, 
 	return true;
 }
 
-bool p3Channels::channelExtraFileHash(std::string path, std::string /*chId*/, FileInfo& fInfo){
+bool p3Channels::channelExtraFileHash(const std::string &path, const std::string & /*chId*/, FileInfo& fInfo){
 
 	// get file name
 	std::string fname, fnameBuff;
-	std::string::reverse_iterator rit;
+	std::string::const_reverse_iterator rit;
 
 	for(rit = path.rbegin(); *rit != '/' ; rit++){
 		fnameBuff.push_back(*rit);
@@ -490,7 +490,7 @@ bool p3Channels::channelExtraFileHash(std::string path, std::string /*chId*/, Fi
 }
 
 
-bool p3Channels::channelExtraFileRemove(std::string hash, std::string chId){
+bool p3Channels::channelExtraFileRemove(const std::string &hash, const std::string &chId){
 
 	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
 
@@ -543,7 +543,7 @@ bool    p3Channels::locked_checkDistribMsg(RsDistribMsg */*msg*/)
 
 
 
-bool p3Channels::channelSubscribe(std::string cId, bool subscribe, bool autoDl)
+bool p3Channels::channelSubscribe(const std::string &cId, bool subscribe, bool autoDl)
 {
 #ifdef CHANNEL_DEBUG
         std::cerr << "p3Channels::channelSubscribe() " << cId << std::endl;
@@ -621,7 +621,7 @@ void p3Channels::removeChannelReadStatusEntry(const std::string& cId)
 	}
 
 }
-bool p3Channels::channelShareKeys(std::string chId, std::list<std::string>& peers){
+bool p3Channels::channelShareKeys(const std::string &chId, std::list<std::string>& peers){
 
 #ifdef CHANNEL_DEBUG
 	std::cerr << "p3Channels::channelShareKeys() " << chId << std::endl;
@@ -631,7 +631,7 @@ bool p3Channels::channelShareKeys(std::string chId, std::list<std::string>& peer
 
 }
 
-bool p3Channels::channelEditInfo(std::string chId, ChannelInfo& info){
+bool p3Channels::channelEditInfo(const std::string &chId, ChannelInfo& info){
 
 #ifdef CHANNEL_DEBUG
     std::cerr << "p3Channels::channelUdateInfo() " << chId << std::endl;

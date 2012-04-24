@@ -156,7 +156,7 @@ virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, 
  * @param cId channel id
  * @param ci channel info is store here
  */
-virtual bool getChannelInfo(std::string cId, ChannelInfo &ci) = 0;
+virtual bool getChannelInfo(const std::string &cId, ChannelInfo &ci) = 0;
 
 /*!
  * @param chanList populated channelinfo for all channels
@@ -168,12 +168,12 @@ virtual bool getChannelList(std::list<ChannelInfo> &chanList) = 0;
  * @param cId channel id user wants messages for
  * @param msgs summary of messages for the given cId
  */
-virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs) = 0;
+virtual bool getChannelMsgList(const std::string &cId, std::list<ChannelMsgSummary> &msgs) = 0;
 
 /*!
  * retrieve more comprehensive message info given channel id and message id
  */
-virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg) = 0;
+virtual bool getChannelMessage(const std::string &cId, const std::string &mId, ChannelMsgInfo &msg) = 0;
 
 /*!
  * set message status
@@ -198,7 +198,7 @@ virtual bool getMessageStatus(const std::string& cId, const std::string& mId, ui
  * @param newCount count of new messages
  * @param unreadCount count of unread messages
  */
-virtual	bool getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount) = 0;
+virtual	bool getMessageCount(const std::string &cId, unsigned int &newCount, unsigned int &unreadCount) = 0;
 
 /*!
  * send message contain in message info to the id indicated within it (make sure you set the channel id of the message info)
@@ -211,7 +211,7 @@ virtual	bool ChannelMessageSend(ChannelMsgInfo &info)                 = 0;
  * @param subscribe set to true if you want to subscribe and to false to unsubscribe
  * @param set true to allow autodownload of new content and false otherwise, ignored when second param is false
  */
-virtual bool channelSubscribe(std::string cId, bool subscribe, bool autoDl)	= 0;
+virtual bool channelSubscribe(const std::string &cId, bool subscribe, bool autoDl)	= 0;
 
 /*!
  * This hashes a file which is not already shared by client or his peers,
@@ -219,19 +219,19 @@ virtual bool channelSubscribe(std::string cId, bool subscribe, bool autoDl)	= 0;
  * @param path This is full path to file
  * @param channel Id
  */
-virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo) = 0;
+virtual bool channelExtraFileHash(const std::string &path, const std::string &chId, FileInfo& fInfo) = 0;
 
 /*!
  * This removes hashed extra files, and also removes channels directory copy if it exists
  * @param chId channel id
  */
-virtual bool channelExtraFileRemove(std::string hash, std::string chId) = 0;
+virtual bool channelExtraFileRemove(const std::string &hash, const std::string &chId) = 0;
 
 /*!
  * Restores channel private keys for channel in the event keys stored in configuration files are lost
  * @param chId channel id to restore keys for
  */
-virtual bool channelRestoreKeys(std::string chId) = 0;
+virtual bool channelRestoreKeys(const std::string &chId) = 0;
 
 /*!
  * shares keys with peers
@@ -239,7 +239,7 @@ virtual bool channelRestoreKeys(std::string chId) = 0;
  *@param peers  peers in this list will be sent keys
  *
  */
-virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers) = 0;
+virtual bool channelShareKeys(const std::string &chId, std::list<std::string>& peers) = 0;
 /****************************************/
 
 /*!
@@ -247,7 +247,7 @@ virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers) =
  * can only change channel image, descriptions and name
  *
  */
-virtual bool channelEditInfo(std::string chId, ChannelInfo &ci) = 0;
+virtual bool channelEditInfo(const std::string &chId, ChannelInfo &ci) = 0;
 
 
 /*!

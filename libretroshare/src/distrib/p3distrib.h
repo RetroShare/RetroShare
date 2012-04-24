@@ -324,7 +324,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
           * @param grpId the group to process request for
           * @return false if group does not exist
           */
-         bool processCacheOptReq(std::string  grpId);
+         bool processCacheOptReq(const std::string &grpId);
 
 		/*!
 		 * msg is loaded to its group and republished,

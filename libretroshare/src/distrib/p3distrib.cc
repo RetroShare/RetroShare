@@ -555,7 +555,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, const CacheData& 
 }
 
 
-bool p3GroupDistrib::processCacheOptReq(std::string  grpId)
+bool p3GroupDistrib::processCacheOptReq(const std::string &grpId)
 {
 	{
 		RsStackMutex stack(distribMtx);

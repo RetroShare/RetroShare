@@ -66,22 +66,22 @@ virtual bool channelsChanged(std::list<std::string> &chanIds);
 virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags,
 		unsigned char* pngImageData, uint32_t size);
 
-virtual bool getChannelInfo(std::string cId, ChannelInfo &ci);
+virtual bool getChannelInfo(const std::string &cId, ChannelInfo &ci);
 virtual bool getChannelList(std::list<ChannelInfo> &chanList);
-virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs);
-virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg);
+virtual bool getChannelMsgList(const std::string &cId, std::list<ChannelMsgSummary> &msgs);
+virtual bool getChannelMessage(const std::string &cId, const std::string &mId, ChannelMsgInfo &msg);
 
 virtual	bool ChannelMessageSend(ChannelMsgInfo &info);
 virtual bool setMessageStatus(const std::string& cId, const std::string& mId, const uint32_t status, const uint32_t statusMask);
 virtual bool getMessageStatus(const std::string& cId, const std::string& mId, uint32_t& status);
 
-virtual	bool getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount);
-virtual bool channelSubscribe(std::string cId, bool subscribe, bool autoDl);
-virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo);
-virtual bool channelExtraFileRemove(std::string hash, std::string chId);
-virtual bool channelRestoreKeys(std::string chId);
-virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
-virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
+virtual	bool getMessageCount(const std::string &cId, unsigned int &newCount, unsigned int &unreadCount);
+virtual bool channelSubscribe(const std::string &cId, bool subscribe, bool autoDl);
+virtual bool channelExtraFileHash(const std::string &path, const std::string &chId, FileInfo& fInfo);
+virtual bool channelExtraFileRemove(const std::string &hash, const std::string &chId);
+virtual bool channelRestoreKeys(const std::string &chId);
+virtual bool channelShareKeys(const std::string &chId, std::list<std::string>& peers);
+virtual bool channelEditInfo(const std::string &chId, ChannelInfo &ci);
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
 virtual bool channelSetAutoDl(const std::string& chId, bool autoDl);
 virtual bool channelGetAutoDl(const std::string& chId, bool& autoDl);
