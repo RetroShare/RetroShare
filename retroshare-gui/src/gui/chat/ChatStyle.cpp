@@ -139,11 +139,26 @@ void ChatStyle::styleChanged(int styleType)
     }
 }
 
+static QString getBaseDir()
+{
+    // application path
+    QString baseDir = QString::fromUtf8(RsInit::RsConfigDirectory().c_str());
+
+#ifdef WIN32
+    if (RsInit::isPortable ()) {
+        // application dir for portable version
+        baseDir = QApplication::applicationDirPath();
+    }
+#endif
+
+    return baseDir;
+}
+
 bool ChatStyle::setStylePath(const QString &stylePath, const QString &styleVariant)
 {
     m_styleType = TYPE_UNKNOWN;
 
-    m_styleDir.setPath(QApplication::applicationDirPath());
+    m_styleDir.setPath(getBaseDir());
     if (m_styleDir.cd(stylePath) == false) {
         m_styleDir = QDir("");
         m_styleVariant.clear();
@@ -410,21 +425,6 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
         return false;
     }
     return true;
-}
-
-static QString getBaseDir()
-{
-    // application path
-    QString baseDir = QString::fromUtf8(RsInit::RsConfigDirectory().c_str());
-
-#ifdef WIN32
-    if (RsInit::isPortable ()) {
-        // application dir for portable version
-        baseDir = QApplication::applicationDirPath();
-    }
-#endif
-
-    return baseDir;
 }
 
 /*static*/ bool ChatStyle::getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles)
