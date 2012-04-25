@@ -75,6 +75,8 @@ NotifyPage::save(QString &/*errmsg*/)
         notifyflags |= RS_POPUP_GROUPCHAT;
     if (ui.popup_ChatLobby->isChecked())
         notifyflags |= RS_POPUP_CHATLOBBY;
+    if (ui.popup_ConnectAttempt->isChecked())
+        notifyflags |= RS_POPUP_CONNECT_ATTEMPT;
 
     if (ui.notify_Peers->isChecked())
         newsflags |= RS_FEED_TYPE_PEER;
@@ -160,6 +162,7 @@ void NotifyPage::load()
     ui.popup_PrivateChat->setChecked(notifyflags & RS_POPUP_CHAT);
     ui.popup_GroupChat->setChecked(notifyflags & RS_POPUP_GROUPCHAT);
     ui.popup_ChatLobby->setChecked(notifyflags & RS_POPUP_CHATLOBBY);
+    ui.popup_ConnectAttempt->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 
     ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
     ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHAN);

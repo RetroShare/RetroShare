@@ -1181,6 +1181,7 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &add
 		if (incoming)
 		{
 			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
+			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, peerId);
 		}
 		else
 		{
@@ -1198,6 +1199,7 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &add
 		if (incoming)
 		{
 			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_IN;
+			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, peerId);
 		}
 		else
 		{

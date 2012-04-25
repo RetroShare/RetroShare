@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>516</width>
-    <height>425</height>
+    <height>474</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -733,6 +733,13 @@
            <widget class="QCheckBox" name="popup_ChatLobby">
             <property name="text">
              <string>Chat Lobby</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="popup_ConnectAttempt">
+            <property name="text">
+             <string>Connect attempt</string>
             </property>
            </widget>
           </item>

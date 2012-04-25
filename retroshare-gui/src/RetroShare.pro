@@ -327,6 +327,7 @@ HEADERS +=  rshare.h \
             gui/toaster/ChatToaster.h \
             gui/toaster/GroupChatToaster.h \
             gui/toaster/ChatLobbyToaster.h \
+            gui/toaster/FriendRequestToaster.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
             gui/common/RsCollectionFile.h \
@@ -462,6 +463,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/GroupChatToaster.ui \
             gui/toaster/ChatLobbyToaster.ui \
+            gui/toaster/FriendRequestToaster.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
@@ -639,6 +641,7 @@ SOURCES +=  main.cpp \
             gui/toaster/ChatToaster.cpp \
             gui/toaster/GroupChatToaster.cpp \
             gui/toaster/ChatLobbyToaster.cpp \
+            gui/toaster/FriendRequestToaster.cpp \
             gui/advsearch/advancedsearchdialog.cpp \
             gui/advsearch/expressionwidget.cpp \
             gui/advsearch/guiexprelement.cpp \

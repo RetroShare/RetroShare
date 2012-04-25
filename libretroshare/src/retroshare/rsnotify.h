@@ -40,14 +40,15 @@ const uint32_t RS_SYS_ERROR 	= 0x0001;
 const uint32_t RS_SYS_WARNING 	= 0x0002;
 const uint32_t RS_SYS_INFO 	    = 0x0004;
 
-const uint32_t RS_POPUP_MSG	        = 0x0001;
-const uint32_t RS_POPUP_CHAT	    = 0x0002;
-//const uint32_t RS_POPUP_CALL	      = 0x0004;
-const uint32_t RS_POPUP_CONNECT     = 0x0008;
-const uint32_t RS_SYSTRAY_GROUP_MSG = 0x0010;
-const uint32_t RS_POPUP_DOWNLOAD    = 0x0020;
-const uint32_t RS_POPUP_GROUPCHAT   = 0x0040;
-const uint32_t RS_POPUP_CHATLOBBY   = 0x0080;
+const uint32_t RS_POPUP_MSG             = 0x0001;
+const uint32_t RS_POPUP_CHAT            = 0x0002;
+//const uint32_t RS_POPUP_CALL          = 0x0004;
+const uint32_t RS_POPUP_CONNECT         = 0x0008;
+const uint32_t RS_SYSTRAY_GROUP_MSG     = 0x0010;
+const uint32_t RS_POPUP_DOWNLOAD        = 0x0020;
+const uint32_t RS_POPUP_GROUPCHAT       = 0x0040;
+const uint32_t RS_POPUP_CHATLOBBY       = 0x0080;
+const uint32_t RS_POPUP_CONNECT_ATTEMPT = 0x0100;
 
 /* CHAT flags are here - so they are in the same place as 
  * other Notify flags... not used by libretroshare though

@@ -118,14 +118,14 @@ void SecurityItem::updateItemStatic()
 	{
 		case SEC_TYPE_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
-      request_label->show();
-			request_label->setText(requesttext.arg(tr("wants to be friends with you on RetroShare")));
+		request_label->show();
+			request_label->setText(requesttext.arg(tr("wants to be friend with you on RetroShare")));
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_AUTH_DENIED:
 			title = tr("Not Yet Friends");
 			request_label->hide();
-      avatar->setDefaultAvatar(":images/avatar_request.png");
+	  avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");

@@ -1006,7 +1006,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+163"/>
         <source>Loading</source>
         <translation>Lade</translation>
     </message>
@@ -1017,12 +1017,12 @@ p, li { white-space: pre-wrap; }
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="-276"/>
+        <location line="-260"/>
         <source>Unsubcribe To Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+86"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+87"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
@@ -1083,19 +1083,19 @@ p, li { white-space: pre-wrap; }
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="+260"/>
+        <location line="+270"/>
         <source>Disable Auto-Download</source>
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+165"/>
+        <location filename="../gui/ChannelFeed.ui" line="+149"/>
         <location line="+3"/>
         <location filename="../gui/ChannelFeed.cpp" line="+2"/>
         <source>Enable Auto-Download</source>
         <translation>Aktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="-571"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-581"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
     </message>
@@ -4524,7 +4524,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+580"/>
+        <location line="+581"/>
         <source>[ ... Missing Message ... ]</source>
         <translation>[ ... Fehlende Nachricht ... ]</translation>
     </message>
@@ -4550,7 +4550,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1352"/>
+        <location line="-1353"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4716,7 +4716,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+147"/>
-        <location line="+1126"/>
+        <location line="+1127"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -4742,7 +4742,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1113"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1114"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4763,7 +4763,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1477"/>
+        <location line="+1478"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -5263,6 +5263,24 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>Maybe password is wrong</source>
         <translation type="unfinished">Vielleicht ist das Passwort falsch</translation>
+    </message>
+</context>
+<context>
+    <name>FriendRequestToaster</name>
+    <message>
+        <location filename="../gui/toaster/FriendRequestToaster.ui" line="+196"/>
+        <source>Accept Friend Request</source>
+        <translation>Freundschaftsanfrage bestätigen</translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/FriendRequestToaster.cpp" line="+49"/>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation>möchte mit dir in RetroShare befreundet sein</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Unknown (Incoming) Connect Attempt</source>
+        <translation>Unbekannter (eingehender) Verbindungsversuch</translation>
     </message>
 </context>
 <context>
@@ -8930,12 +8948,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="-102"/>
-        <source>TextLabel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+23"/>
+        <location line="-79"/>
         <source>Reply to Message</source>
         <translation>Auf die Nachricht antworten</translation>
     </message>
@@ -9495,6 +9508,11 @@ p, li { white-space: pre-wrap; }
         <translation>Chat Lobbie</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Connect attempt</source>
+        <translation>Verbindungsversuch</translation>
+    </message>
+    <message>
         <location line="+15"/>
         <source>Position</source>
         <translation>Position</translation>
@@ -9510,9 +9528,9 @@ p, li { white-space: pre-wrap; }
         <translation>Abstand Y</translation>
     </message>
     <message>
-        <location line="-203"/>
+        <location line="-210"/>
         <location line="+125"/>
-        <location line="+103"/>
+        <location line="+110"/>
         <source>Private Chat</source>
         <translation>Privater Chat</translation>
     </message>
@@ -9542,12 +9560,12 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Systemabschnitts-Nachricht an</translation>
     </message>
     <message>
-        <location line="-282"/>
+        <location line="-289"/>
         <source>Add feeds at end</source>
         <translation>Feeds am Ende anfügen</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.cpp" line="+197"/>
+        <location filename="../gui/settings/NotifyPage.cpp" line="+200"/>
         <source>Top Left</source>
         <translation>Oben Links</translation>
     </message>
@@ -9575,7 +9593,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NotifyQt</name>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="+127"/>
+        <location filename="../gui/notifyqt.cpp" line="+128"/>
         <source>GPG key passphrase</source>
         <translation>GPG Schlüssel Passwort</translation>
     </message>
@@ -12199,7 +12217,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SecurityItem</name>
     <message>
-        <location filename="../gui/feeds/SecurityItem.ui" line="+317"/>
+        <location filename="../gui/feeds/SecurityItem.ui" line="+313"/>
         <location filename="../gui/feeds/SecurityItem.cpp" line="+295"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
@@ -12215,16 +12233,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachbar Details</translation>
     </message>
     <message>
-        <location line="-80"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+57"/>
+        <location line="-23"/>
         <source>Accept Friend Request</source>
         <translation>Freundschaftsanfrage bestätigen</translation>
     </message>
@@ -12308,8 +12317,12 @@ p, li { white-space: pre-wrap; }
         <translation>Verbindungsversuch</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>wants to be friends with you on RetroShare</source>
+        <translation type="obsolete">möchte mit dir in RetroShare befreundet sein</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>wants to be friend with you on RetroShare</source>
         <translation>möchte mit dir in RetroShare befreundet sein</translation>
     </message>
     <message>

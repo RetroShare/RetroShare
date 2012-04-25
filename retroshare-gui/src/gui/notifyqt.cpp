@@ -37,6 +37,7 @@
 #include "toaster/ChatToaster.h"
 #include "toaster/GroupChatToaster.h"
 #include "toaster/ChatLobbyToaster.h"
+#include "toaster/FriendRequestToaster.h"
 
 #include "chat/ChatDialog.h"
 #include "chat/ChatWidget.h"
@@ -525,6 +526,15 @@ void NotifyQt::UpdateGUI()
 							break;
 						}
 						toaster = new Toaster(new ChatLobbyToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+					}
+					break;
+			case RS_POPUP_CONNECT_ATTEMPT:
+					if (popupflags & RS_POPUP_CONNECT_ATTEMPT)
+					{
+						// id = gpgid
+						// title = ssl name
+						// msg = peer id
+						toaster = new Toaster(new FriendRequestToaster(id, QString::fromUtf8(title.c_str()), msg));
 					}
 					break;
 			}
