@@ -215,21 +215,24 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 		while(i < namestring.length() && namestring[i] != ')' && namestring[i] != '>') { next += namestring[i] ; ++i ;}
 
 		while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { next += namestring[i] ; ++i ;}
-		std::string& next2 = (namestring[i] == '(')?cert._comment:cert._email ;
-		++i ;
-		next2 = "" ;
-		while(i < namestring.length() && namestring[i] != ')' && namestring[i] != '>') { next2 += namestring[i] ; ++i ;}
+
+		if(i< namestring.length())
+		{
+			std::string& next2 = (namestring[i] == '(')?cert._comment:cert._email ;
+			++i ;
+			next2 = "" ;
+			while(i < namestring.length() && namestring[i] != ')' && namestring[i] != '>') { next2 += namestring[i] ; ++i ;}
+		}
 	}
 
 	cert._trustLvl = 1 ;	// to be setup accordingly
 	cert._key_index = index ;
+	cert._flags = 0 ;
 
 	ops_fingerprint_t f ;
 	ops_fingerprint(&f,&keydata->key.pkey) ; 
 
 	cert._fpr = PGPFingerprintType(f.fingerprint) ;
-
-	std::cerr << __PRETTY_FUNCTION__ <<  ": unfinished!!" << std::endl;
 }
 
 PGPHandler::~PGPHandler()
@@ -666,7 +669,7 @@ bool PGPHandler::getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) c
 	return true ;
 }
 
-bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& key_fingerprint)
+bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_length, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& key_fingerprint)
 {
 	PGPIdType id = PGPIdType::fromFingerprint_hex(key_fingerprint.toStdString()) ;
 	const ops_keydata_t *key = getPublicKey(id) ;
@@ -689,14 +692,11 @@ bool PGPHandler::VerifySignBin(const void *data, uint32_t data_len, unsigned cha
 	}
 
 	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << std::endl;
-	std::cerr << "Warning: signature code still unfinished!" << key_fingerprint.toStdString() << std::endl;
 
-	ops_signature_t signature ;
-//	ops_signature_add_data(&signature,sign,sign_len) ;
+	std::cerr << "Verifying signature of length " << std::dec << sign_len << ", literal_length = " << literal_data_length << std::endl;
+	std::cerr << "Data: " << (char *)sign << std::endl;
 
-//	ops_boolean_t valid=check_binary_signature(data_len,data,signature,pkey) ;
-
-	return false ;
+	return ops_validate_detached_signature(literal_data,literal_data_length,sign,sign_len,key) ;
 }
 
 void PGPHandler::setAcceptConnexion(const PGPIdType& id,bool b)
