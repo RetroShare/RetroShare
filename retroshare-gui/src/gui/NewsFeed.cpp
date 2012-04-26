@@ -45,6 +45,7 @@
 
 #include "settings/rsharesettings.h"
 #include "chat/ChatDialog.h"
+#include "msgs/MessageComposer.h"
 
 const uint32_t NEWSFEED_PEERLIST = 	0x0001;
 const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
@@ -108,6 +109,9 @@ void NewsFeed::updateFeed()
 				break;
 
 			case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
+				if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT) {
+					MessageComposer::sendConnectAttemptMsg(fi.mId1, QString::fromUtf8(fi.mId3.c_str()));
+				}
 				if (flags & RS_FEED_TYPE_SECURITY)
 					addFeedItemSecurityConnectAttempt(fi);
 				break;

@@ -62,6 +62,7 @@ NotifyPage::save(QString &/*errmsg*/)
     uint traynotifyflags = 0;
     uint newsflags   = 0;
     uint chatflags   = 0;
+    uint messageflags = 0;
 
     if (ui.popup_Connect->isChecked())
         notifyflags |= RS_POPUP_CONNECT;
@@ -124,10 +125,14 @@ NotifyPage::save(QString &/*errmsg*/)
     if (ui.trayNotify_TransferCombined->isChecked())
         traynotifyflags |= TRAYNOTIFY_TRANSFERS_COMBINED;
 
+    if (ui.message_ConnectAttempt->isChecked())
+        messageflags |= RS_MESSAGE_CONNECT_ATTEMPT;
+
     Settings->setNotifyFlags(notifyflags);
     Settings->setTrayNotifyFlags(traynotifyflags);
     Settings->setNewsFeedFlags(newsflags);
     Settings->setChatFlags(chatflags);
+    Settings->setMessageFlags(messageflags);
 
     Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked());
     MainWindow::installGroupChatNotifier();
@@ -155,6 +160,7 @@ void NotifyPage::load()
     uint traynotifyflags = Settings->getTrayNotifyFlags();
     uint newsflags = Settings->getNewsFeedFlags();
     uint chatflags = Settings->getChatFlags();
+    uint messageflags = Settings->getMessageFlags();
 
     ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
     ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
@@ -176,6 +182,8 @@ void NotifyPage::load()
     ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
     ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
     ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
+
+    ui.message_ConnectAttempt->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
 

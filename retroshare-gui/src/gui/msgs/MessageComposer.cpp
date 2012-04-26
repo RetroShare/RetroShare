@@ -453,6 +453,50 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     /* window will destroy itself! */
 }
 
+void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const QString &sslName)
+{
+    if (gpgId.empty()) {
+        return;
+    }
+
+    QString title = QString("%1 %2").arg(sslName, tr("wants to be friend with you on RetroShare"));
+
+    /* search for an exisiting message in the inbox */
+    std::list<MsgInfoSummary> msgList;
+    std::list<MsgInfoSummary>::const_iterator it;
+
+    rsMsgs->getMessageSummaries(msgList);
+    for(it = msgList.begin(); it != msgList.end(); it++) {
+        if (it->msgflags & RS_MSG_TRASH) {
+            continue;
+        }
+        if ((it->msgflags & RS_MSG_BOXMASK) != RS_MSG_INBOX) {
+            continue;
+        }
+        if (it->title == title.toStdWString()) {
+            return;
+        }
+    }
+
+    /* create a message */
+    MessageComposer *msgDialog = MessageComposer::newMsg();
+    msgDialog->insertTitleText(title);
+    msgDialog->addRecipient(TO, rsPeers->getOwnId(), false);
+
+    RetroShareLink link;
+    link.createPerson(gpgId);
+    QString msgText = tr("Hi %1,<br>%2 wants to be friend with you on RetroShare.<br><br>Respond now<br>%3<br><br>Thanks.<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
+    msgDialog->insertMsgText(msgText, true);
+
+    if (msgDialog->sendMessage_internal(false)) {
+        msgDialog->close();
+        return;
+    }
+
+    msgDialog->ui.msgText->document()->setModified(false);
+    msgDialog->close();
+}
+
 void MessageComposer::closeEvent (QCloseEvent * event)
 {
     bool bClose = true;
@@ -1001,9 +1045,13 @@ void MessageComposer::insertForwardPastedText(QString msg)
     ui.msgText->document()->setModified(true);
 }
 
-void MessageComposer::insertMsgText(const QString &msg)
+void MessageComposer::insertMsgText(const QString &msg, bool asHtml)
 {
-    ui.msgText->setText(msg);
+    if (asHtml) {
+        ui.msgText->setHtml(msg);
+    } else {
+        ui.msgText->setText(msg);
+    }
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
 
@@ -1065,6 +1113,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     /* get the ids from the send list */
     std::list<std::string> peers;
     rsPeers->getFriendList(peers);
+
+    /* add own id */
+    peers.push_back(rsPeers->getOwnId());
 
     int rowCount = ui.recipientWidget->rowCount();
     int row;

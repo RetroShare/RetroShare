@@ -315,6 +315,16 @@ void RshareSettings::setTrayNotifyFlags(uint flags)
   setValue(SETTING_TRAYNOTIFY_FLAGS, flags);
 }
 
+uint RshareSettings::getMessageFlags()
+{
+    return value("MessageFlags").toUInt();
+}
+
+void RshareSettings::setMessageFlags(uint flags)
+{
+    setValue("MessageFlags", flags);
+}
+
 bool RshareSettings::getDisplayTrayGroupChat()
 {
     return value("DisplayTrayGroupChat").toBool();

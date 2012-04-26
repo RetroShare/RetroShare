@@ -50,6 +50,7 @@ public:
     static void msgFriend(const std::string &id, bool group);
     static QString recommendMessage();
     static void recommendFriend(const std::list <std::string> &sslIds, const std::string &to = "", const QString &msg = "", bool autoSend = false);
+    static void sendConnectAttemptMsg(const std::string &gpgId, const QString &sslName);
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);
@@ -63,7 +64,7 @@ public:
     void  insertPastedText(QString msg) ;
     void  insertForwardPastedText(QString msg);
     void  insertHtmlText(const QString &msg);
-    void  insertMsgText(const QString &msg);
+    void  insertMsgText(const QString &msg, bool asHtml = false);
     void  addRecipient(enumType type, const std::string &id, bool group);
     void  Create_New_Image_Tag(const QString urlremoteorlocal);
 

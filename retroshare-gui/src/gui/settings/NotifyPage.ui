@@ -666,6 +666,22 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="messageGroupBox">
+         <property name="title">
+          <string>Message</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QCheckBox" name="message_ConnectAttempt">
+            <property name="text">
+             <string>Connect attempt</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

@@ -161,6 +161,9 @@ public:
   uint getTrayNotifyFlags();
   void setTrayNotifyFlags(uint flags);
 
+  uint getMessageFlags();
+  void setMessageFlags(uint flags);
+
   bool getDisplayTrayGroupChat();
   void setDisplayTrayGroupChat(bool bValue);
 

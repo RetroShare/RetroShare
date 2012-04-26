@@ -93,6 +93,7 @@ const uint32_t RS_FEED_ITEM_CHAT_NEW		 = RS_FEED_TYPE_CHAT  | 0x0001;
 const uint32_t RS_FEED_ITEM_MESSAGE		 = RS_FEED_TYPE_MSG   | 0x0001;
 const uint32_t RS_FEED_ITEM_FILES_NEW		 = RS_FEED_TYPE_FILES | 0x0001;
 
+const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 
 class RsFeedItem
 {
