@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>404</width>
-    <height>303</height>
+    <height>294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -145,41 +145,6 @@ p, li { white-space: pre-wrap; }
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="peerid">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_rsid">
-           <property name="text">
-            <string>RetroShare ID</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="LinkTextBrowser" name="rsid">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
-           </property>
-           <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
-           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -356,13 +321,9 @@ border-image: url(:/images/btn_blue_hover.png) 4;
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>LinkTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/LinkTextBrowser.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

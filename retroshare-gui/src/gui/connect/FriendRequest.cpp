@@ -81,12 +81,6 @@ void FriendRequest::load()
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));
 
-    RetroShareLink link;
-    link.createPerson(detail.id);
-
-    ui.rsid->setText(link.toHtml());
-    ui.rsid->setToolTip(link.title());
-
     ui.avatar->setId(mId, false);
 
 }
