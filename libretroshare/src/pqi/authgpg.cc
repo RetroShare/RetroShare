@@ -585,6 +585,12 @@ bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_s
 /* import to GnuPG and other Certificates */
 bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint)
 {
+	if(withfingerprint.length() != 40)
+	{
+		std::cerr << "WARNING: Still need to implement signature verification from complete keyring." << std::endl;
+		return false ;
+	}
+
 	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,PGPFingerprintType::fromFingerprint_hex(withfingerprint)) ;
 }
 
@@ -614,6 +620,11 @@ bool    AuthGPG::GeneratePGPCertificate(const std::string& name,
 /**** These Two are common */
 std::string AuthGPG::getGPGName(const std::string &id)
 {
+	if(id.length() != 16)
+	{
+		std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
+		return std::string() ;
+	}
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
 	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(id)) ;
@@ -646,7 +657,6 @@ std::string AuthGPG::getGPGOwnId()
 
 std::string AuthGPG::getGPGOwnName()
 {
-	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 	return getGPGName(mOwnGpgId.toStdString()) ;
 }
 
@@ -706,6 +716,12 @@ bool 	AuthGPG::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER)
 bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d) 
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
+
+	if(id.length() != 16)
+	{
+		std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
+		return false ;
+	}
 
 	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(id)) ;
 

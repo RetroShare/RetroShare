@@ -691,10 +691,7 @@ bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_l
 		return false ;
 	}
 
-	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << std::endl;
-
-	std::cerr << "Verifying signature of length " << std::dec << sign_len << ", literal_length = " << literal_data_length << std::endl;
-	std::cerr << "Data: " << (char *)sign << std::endl;
+	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << ", length " << std::dec << sign_len << ", literal data length = " << literal_data_length << std::endl;
 
 	return ops_validate_detached_signature(literal_data,literal_data_length,sign,sign_len,key) ;
 }
@@ -735,6 +732,6 @@ bool PGPHandler::isGPGSigned(const std::string &id)
 bool PGPHandler::isGPGAccepted(const std::string &id)
 {
 	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
-	return (res != _public_keyring_map.end()) && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
+	return (res != _public_keyring_map.end()) && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) ;
 }
 
