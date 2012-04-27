@@ -363,13 +363,13 @@ validate_data_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinf
 			break;
 
 		case OPS_PTAG_CT_LITERAL_DATA_BODY:
-			arg->data.literal_data_body=content->literal_data_body;
+			arg->literal_data_body=content->literal_data_body;
 			arg->use=LITERAL_DATA;
 			return OPS_KEEP_MEMORY;
 			break;
 
 		case OPS_PTAG_CT_SIGNED_CLEARTEXT_BODY:
-			arg->data.signed_cleartext_body=content->signed_cleartext_body;
+			arg->signed_cleartext_body=content->signed_cleartext_body;
 			arg->use=SIGNED_CLEARTEXT;
 			return OPS_KEEP_MEMORY;
 			break;
@@ -413,14 +413,14 @@ validate_data_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinf
 					{
 						case LITERAL_DATA:
 							ops_memory_add(mem,
-									arg->data.literal_data_body.data,
-									arg->data.literal_data_body.length);
+									arg->literal_data_body.data,
+									arg->literal_data_body.length);
 							break;
 
 						case SIGNED_CLEARTEXT:
 							ops_memory_add(mem,
-									arg->data.signed_cleartext_body.data,
-									arg->data.signed_cleartext_body.length);
+									arg->signed_cleartext_body.data,
+									arg->signed_cleartext_body.length);
 							break;
 
 						default:
@@ -565,6 +565,9 @@ ops_boolean_t ops_validate_key_signatures(ops_validate_result_t *result,const op
 
 	ops_parse_info_delete(pinfo);
 
+/*	if(carg.literal_data_body.data != NULL)
+		free(carg.literal_data_body.data) ; */
+
 	if (result->invalid_count || result->unknown_signer_count || !result->valid_count)
 		return ops_false;
 	else
@@ -688,6 +691,8 @@ ops_boolean_t ops_validate_file(ops_validate_result_t *result, const char* filen
 		ops_reader_pop_dearmour(pinfo);
 	ops_teardown_file_read(pinfo, fd);
 
+	if(validate_arg.literal_data_body.data != NULL) free(validate_arg.literal_data_body.data) ;
+
 	return validate_result_status(result);
 }
 
@@ -741,6 +746,9 @@ ops_boolean_t ops_validate_mem(ops_validate_result_t *result, ops_memory_t* mem,
 		ops_reader_pop_dearmour(pinfo);
 	ops_teardown_memory_read(pinfo, mem);
 
+	if(validate_arg.literal_data_body.data != NULL) free(validate_arg.literal_data_body.data) ;
+	if(validate_arg.signed_cleartext_body.data != NULL) free(validate_arg.signed_cleartext_body.data) ;
+
 	return validate_result_status(result);
 }
 
@@ -768,12 +776,11 @@ ops_boolean_t ops_validate_detached_signature(const void *literal_data, unsigned
    validate_arg.result=result;
    validate_arg.keyring=&tmp_keyring;
 
-   int length = 8192 ;
-   if(literal_data_length < length)
-      length = literal_data_length ;
+   int length = literal_data_length ;
 
-   memcpy(validate_arg.data.literal_data_body.data,  literal_data,  length) ;
-   validate_arg.data.literal_data_body.length = length ;
+	validate_arg.literal_data_body.data = (unsigned char *)malloc(length) ;
+   memcpy(validate_arg.literal_data_body.data,  literal_data,  length) ;
+   validate_arg.literal_data_body.length = length ;
 
    // Note: Coverity incorrectly reports an error that carg.rarg
    // is never used.
@@ -796,6 +803,9 @@ ops_boolean_t ops_validate_detached_signature(const void *literal_data, unsigned
 
    ops_boolean_t res = validate_result_status(result);
    ops_validate_result_free(result) ;
+
+	if(validate_arg.literal_data_body.data != NULL) free(validate_arg.literal_data_body.data) ;
+	if(validate_arg.signed_cleartext_body.data != NULL) free(validate_arg.signed_cleartext_body.data) ;
 
    return res ;
 }

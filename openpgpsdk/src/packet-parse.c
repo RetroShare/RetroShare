@@ -2108,8 +2108,10 @@ static int parse_literal_data(ops_region_t *region,ops_parse_info_t *pinfo)
 	{
 	unsigned l=region->length-region->length_read;
 
-	if(l > sizeof C.literal_data_body.data)
-	    l=sizeof C.literal_data_body.data;
+	if(C.literal_data_body.data != NULL)
+	   free(C.literal_data_body.data) ;
+
+	C.literal_data_body.data = (unsigned char *)malloc(l) ;
 
 	if(!limited_read(C.literal_data_body.data,l,region,pinfo))
 	    return 0;

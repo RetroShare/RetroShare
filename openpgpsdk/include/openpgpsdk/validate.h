@@ -78,11 +78,11 @@ typedef struct validate_data_cb_arg
         LITERAL_DATA,
         SIGNED_CLEARTEXT
         } use; /*<! this is set to indicate what kind of data we have */
-    union
-        {
+
+
         ops_literal_data_body_t literal_data_body; /*<! Used to hold Literal Data */
         ops_signed_cleartext_body_t signed_cleartext_body; /*<! Used to hold Signed Cleartext */
-        } data; /*<! the data itself */
+
     unsigned char hash[OPS_MAX_HASH_SIZE]; /*<! the hash */
     const ops_keyring_t *keyring; /*<! keyring to use */
     validate_reader_arg_t *rarg; /*<! reader-specific arg */

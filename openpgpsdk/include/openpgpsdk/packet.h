@@ -695,7 +695,7 @@ typedef struct
 typedef struct
     {
     unsigned			length;
-    unsigned char		data[8192];
+    unsigned char		*data;//[8192];
     } ops_literal_data_body_t;
 
 /** ops_mdc_t */
@@ -741,7 +741,7 @@ typedef struct
 typedef struct
     {
     unsigned			length;
-    unsigned char		data[8192]; // \todo fix hard-coded value?
+    unsigned char		*data; // \todo fix hard-coded value?
     } ops_signed_cleartext_body_t;
 
 /** ops_signed_cleartext_trailer_t */
