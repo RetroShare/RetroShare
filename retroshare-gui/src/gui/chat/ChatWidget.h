@@ -97,6 +97,7 @@ protected:
 
 private slots:
 	void pasteLink();
+	void pasteOwnCertificateLink();
 	void contextMenu(QPoint);
 	void chatCharFormatChanged();
 

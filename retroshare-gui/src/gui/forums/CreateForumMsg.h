@@ -44,6 +44,7 @@ private slots:
     void cancelMsg();
     void pasteLink();
     void pasteLinkFull();
+    void pasteOwnCertificateLink();
 
     void smileyWidgetForums();
     void addSmileys();

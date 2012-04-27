@@ -29,6 +29,7 @@
 #include <QPushButton>
 
 #include <retroshare/rsforums.h>
+#include <retroshare/rspeers.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
@@ -75,6 +76,7 @@ void CreateForumMsg::forumMessageCostumPopupMenu( QPoint /*point*/ )
     contextMnu->addSeparator();
     QAction *pasteLinkAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
     QAction *pasteLinkFullAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste full RetroShare Link"), this, SLOT(pasteLinkFull()));
+    contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste own certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
     if (RSLinkClipboard::empty()) {
         pasteLinkAct->setDisabled (true);
@@ -244,4 +246,13 @@ void CreateForumMsg::pasteLink()
 void CreateForumMsg::pasteLinkFull()
 {
 	ui.forumMessage->insertHtml(RSLinkClipboard::toHtmlFull()) ;
+}
+
+void CreateForumMsg::pasteOwnCertificateLink()
+{
+	RetroShareLink link ;
+	std::string ownId = rsPeers->getOwnId() ;
+	if( link.createCertificate(ownId) )	{
+		ui.forumMessage->insertHtml(link.toHtml() + " ");
+	}
 }

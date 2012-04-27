@@ -357,6 +357,17 @@ void ChatWidget::pasteLink()
 	ui->chattextEdit->insertHtml(RSLinkClipboard::toHtml());
 }
 
+void ChatWidget::pasteOwnCertificateLink()
+{
+	std::cerr << "In paste own certificate link" << std::endl;
+	RetroShareLink link ;
+	std::string ownId = rsPeers->getOwnId() ;
+
+	if( link.createCertificate(ownId) )	{
+		ui->chattextEdit->insertHtml(link.toHtml() + " ");
+	}
+}
+
 void ChatWidget::contextMenu(QPoint /*point*/)
 {
 	std::cerr << "In context menu" << std::endl;
@@ -366,6 +377,7 @@ void ChatWidget::contextMenu(QPoint /*point*/)
 	contextMnu->addSeparator();
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	action->setDisabled(RSLinkClipboard::empty());
+	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste own certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
 	contextMnu->exec(QCursor::pos());
 	delete(contextMnu);
