@@ -84,27 +84,6 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char *
 	rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, password) ;
 
 	return password ;
-
-// #ifdef GPG_DEBUG2
-// 	std::cerr << "pgp_pwd_callback() got GPG passwd from gui." << std::endl;
-// #endif
-// 
-// 	if((void*)fd != NULL)
-// 	{
-// #ifndef WINDOWS_SYS
-// 		write(fd, password.c_str(), password.size());
-// 		write(fd, "\n", 1); /* needs a new line? */
-// #else
-// 		DWORD written = 0;
-// 		HANDLE winFd = (HANDLE) fd;
-// 		WriteFile(winFd, password.c_str(), password.size(), &written, NULL);
-// 		WriteFile(winFd, "\n", 1, &written, NULL); 
-// #endif
-// 	}
-// 
-// #ifdef GPG_DEBUG2
-// 	fprintf(stderr, "pgp_pwd_callback() password setted\n");
-// #endif
 }
 
 void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring)

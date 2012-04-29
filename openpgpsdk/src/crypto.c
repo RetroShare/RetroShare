@@ -506,6 +506,7 @@ callback_write_parsed(const ops_parser_content_t *content_,
         break;
 
     case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+    case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD:
         //        return callback_cmd_get_secret_key_passphrase(content_,cbinfo);
         return cbinfo->cryptinfo.cb_get_passphrase(content_, cbinfo);
         break;

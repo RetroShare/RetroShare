@@ -921,6 +921,7 @@ void ops_parser_content_free(ops_parser_content_t *c)
 	break;
 
     case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+    case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD:
 	ops_cmd_get_passphrase_free(&c->content.secret_key_passphrase);
 	break;
 

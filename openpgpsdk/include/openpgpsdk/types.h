@@ -152,6 +152,7 @@ enum ops_content_tag_t
     /* commands to the callback */
     OPS_PARSER_CMD_GET_SK_PASSPHRASE	=0x400,
     OPS_PARSER_CMD_GET_SECRET_KEY	=0x400+1,
+    OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD =0x400+2,
 
 
     /* Errors */

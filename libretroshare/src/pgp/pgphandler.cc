@@ -12,8 +12,10 @@ extern "C" {
 #include <openpgpsdk/keyring.h>
 #include <openpgpsdk/readerwriter.h>
 #include <openpgpsdk/validate.h>
+#include <openpgpsdk/../../src/parse_local.h>
 }
 #include "pgphandler.h"
+#include "retroshare/rsiface.h"		// For rsicontrol.
 
 std::string	PGPIdType::toStdString() const
 {
@@ -206,7 +208,7 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 		std::string namestring( (char *)keydata->uids[0].user_id ) ;
 
 		cert._name = "" ;
-		int i=0;
+		uint32_t i=0;
 		while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
 
 		std::string& next = (namestring[i] == '(')?cert._comment:cert._email ;
@@ -308,22 +310,30 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	return true ;
 }
 
-static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo __attribute__((unused)))
+static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)// __attribute__((unused)))
 {
 	const ops_parser_content_union_t *content=&content_->content;
 	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
 	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
 
+	bool prev_was_bad = false ;
+	
 	switch(content_->tag)
 	{
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD: prev_was_bad = true ;
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-			{
-			std::string passwd = getpass("Please enter passwd:") ;
-			*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
-			memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
-			return OPS_KEEP_MEMORY;
-			}
-			break;
+																				{
+																					std::string passwd;
+																					std::string uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) + "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
+
+																					if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, passwd) == false) 
+																						return OPS_RELEASE_MEMORY;
+
+																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
+																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
+																					return OPS_KEEP_MEMORY;
+																				}
+																				break;
 
 		default:
 			break;
@@ -701,10 +711,12 @@ void PGPHandler::setAcceptConnexion(const PGPIdType& id,bool b)
 	std::map<std::string,PGPCertificateInfo>::iterator res = _public_keyring_map.find(id.toStdString()) ;
 
 	if(res != _public_keyring_map.end())
+	{
 		if(b)
 			res->second._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ;
 		else
 			res->second._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ;
+	}
 }
 
 bool PGPHandler::getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(const PGPCertificateInfo&)) const
