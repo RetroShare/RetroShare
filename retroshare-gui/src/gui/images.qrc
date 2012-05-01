@@ -493,6 +493,7 @@
         <file>qss/chat/standard/private/hincoming.htm</file>
         <file>qss/chat/standard/private/houtgoing.htm</file>
         <file>qss/chat/standard/private/ooutgoing.htm</file>
+        <file>qss/chat/standard/private/system.htm</file>
         <file>qss/chat/standard/private/main.css</file>
         <file>qss/chat/standard/private/variants/Standard.css</file>
         <file>qss/chat/standard/public/info.xml</file>
@@ -501,6 +502,7 @@
         <file>qss/chat/standard/public/hincoming.htm</file>
         <file>qss/chat/standard/public/houtgoing.htm</file>
         <file>qss/chat/standard/public/ooutgoing.htm</file>
+        <file>qss/chat/standard/public/system.htm</file>
         <file>qss/chat/standard/public/main.css</file>
         <file>qss/chat/standard/public/variants/Standard.css</file>
         <file>qss/chat/standard/history/info.xml</file>
@@ -509,6 +511,7 @@
         <file>qss/chat/standard/history/hincoming.htm</file>
         <file>qss/chat/standard/history/houtgoing.htm</file>
         <file>qss/chat/standard/history/ooutgoing.htm</file>
+        <file>qss/chat/standard/history/system.htm</file>
         <file>qss/chat/standard/history/main.css</file>
         <file>qss/chat/standard/history/variants/Standard.css</file>
         <file>qss/chat/compact/private/info.xml</file>
@@ -517,6 +520,7 @@
         <file>qss/chat/compact/private/hincoming.htm</file>
         <file>qss/chat/compact/private/houtgoing.htm</file>
         <file>qss/chat/compact/private/ooutgoing.htm</file>
+        <file>qss/chat/compact/private/system.htm</file>
         <file>qss/chat/compact/private/main.css</file>
         <file>qss/chat/compact/private/variants/Standard.css</file>
         <file>qss/chat/compact/private/variants/Colored.css</file>
@@ -526,6 +530,7 @@
         <file>qss/chat/compact/public/hincoming.htm</file>
         <file>qss/chat/compact/public/houtgoing.htm</file>
         <file>qss/chat/compact/public/ooutgoing.htm</file>
+        <file>qss/chat/compact/public/system.htm</file>
         <file>qss/chat/compact/public/main.css</file>
         <file>qss/chat/compact/public/variants/Standard.css</file>
         <file>qss/chat/compact/public/variants/Colored.css</file>
@@ -535,6 +540,7 @@
         <file>qss/chat/compact/history/hincoming.htm</file>
         <file>qss/chat/compact/history/houtgoing.htm</file>
         <file>qss/chat/compact/history/ooutgoing.htm</file>
+        <file>qss/chat/compact/history/system.htm</file>
         <file>qss/chat/compact/history/main.css</file>
         <file>qss/chat/compact/history/variants/Standard.css</file>
         <file>smileys/amorous.png</file>

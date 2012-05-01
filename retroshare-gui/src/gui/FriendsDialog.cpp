@@ -373,7 +373,7 @@ void FriendsDialog::publicChatChanged(int type)
 
 void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message)
 {
-    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
+    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS | CHAT_FORMATMSG_OPTIMIZE;
 
     // embed smileys ?
     if (Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool()) {

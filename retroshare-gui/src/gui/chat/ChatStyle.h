@@ -33,12 +33,13 @@
 #define CHAT_FORMATMSG_EMBED_SMILEYS    1
 #define CHAT_FORMATMSG_EMBED_LINKS      2
 #define CHAT_FORMATMSG_SYSTEM           4
+#define CHAT_FORMATMSG_OPTIMIZE         8
 
 /* Flags for ChatStyle::formatText */
 #define CHAT_FORMATTEXT_EMBED_SMILEYS  1
 #define CHAT_FORMATTEXT_EMBED_LINKS    2
 
-#define FORMATMSG_COUNT  5
+#define FORMATMSG_COUNT  6
 
 class ChatStyleInfo
 {
@@ -67,6 +68,7 @@ public:
         FORMATMSG_HINCOMING = 2,
         FORMATMSG_HOUTGOING = 3,
         FORMATMSG_OOUTGOING = 4,
+        FORMATMSG_SYSTEM = 5,
         // FORMATMSG_COUNT
     };
 

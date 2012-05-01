@@ -206,11 +206,12 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
     QString nameOutgoing = tr("Outgoing");
     QDateTime timestmp = QDateTime::fromTime_t(time(NULL));
 
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history"), CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message"), CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message"), CHAT_FORMATTEXT_EMBED_SMILEYS));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message"), CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), CHAT_FORMATTEXT_EMBED_SMILEYS | CHAT_FORMATMSG_OPTIMIZE));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history"), CHAT_FORMATTEXT_EMBED_SMILEYS | CHAT_FORMATMSG_OPTIMIZE));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message"), CHAT_FORMATTEXT_EMBED_SMILEYS | CHAT_FORMATMSG_OPTIMIZE));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message"), CHAT_FORMATTEXT_EMBED_SMILEYS | CHAT_FORMATMSG_OPTIMIZE));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message"), CHAT_FORMATTEXT_EMBED_SMILEYS | CHAT_FORMATMSG_OPTIMIZE));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), timestmp, tr("System message"), CHAT_FORMATTEXT_EMBED_SMILEYS | CHAT_FORMATMSG_OPTIMIZE));
 }
 
 void ChatPage::fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)

@@ -43,6 +43,7 @@
    hincoming.htm - incoming history messages
    houtgoing.htm - outgoing history messages
    ooutgoing.htm - outgoing offline messages (private chat)
+   system.htm    - system messages
    main.css      - stylesheet
 
    variants      - directory with variants (optional)
@@ -116,7 +117,8 @@ enum enumGetStyle
     GETSTYLE_OUTGOING,
     GETSTYLE_HINCOMING,
     GETSTYLE_HOUTGOING,
-    GETSTYLE_OOUTGOING
+    GETSTYLE_OOUTGOING,
+    GETSTYLE_SYSTEM
 };
 
 /* Default constructor */
@@ -226,6 +228,9 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
     case GETSTYLE_OOUTGOING:
         fileHtml.setFileName(QFileInfo(styleDir, "ooutgoing.htm").absoluteFilePath());
         break;
+    case GETSTYLE_SYSTEM:
+        fileHtml.setFileName(QFileInfo(styleDir, "system.htm").absoluteFilePath());
+        break;
     default:
         return "";
     }
@@ -283,6 +288,9 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
         case FORMATMSG_OOUTGOING:
             style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_OOUTGOING);
             break;
+        case FORMATMSG_SYSTEM:
+            style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_SYSTEM);
+            break;
         }
 
         if (style.isEmpty()) {
@@ -299,6 +307,9 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
     }
     if (flag & CHAT_FORMATMSG_EMBED_LINKS) {
         formatFlag |= RSHTML_FORMATTEXT_EMBED_LINKS;
+    }
+    if (flag & CHAT_FORMATMSG_OPTIMIZE) {
+        formatFlag |= RSHTML_FORMATTEXT_OPTIMIZE;
     }
 
     QString msg = RsHtml::formatText(message, formatFlag);

@@ -305,7 +305,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	std::cout << "ChatWidget::addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-	unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
+	unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS | CHAT_FORMATMSG_OPTIMIZE;
 
 	// embed smileys ?
 	if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
@@ -315,6 +315,8 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	ChatStyle::enumFormatMessage type;
 	if (chatType == TYPE_OFFLINE) {
 		type = ChatStyle::FORMATMSG_OOUTGOING;
+	} else if (chatType == TYPE_SYSTEM) {
+		type = ChatStyle::FORMATMSG_SYSTEM;
 	} else if (chatType == TYPE_HISTORY) {
 		type = incoming ? ChatStyle::FORMATMSG_HINCOMING : ChatStyle::FORMATMSG_HOUTGOING;
 	} else {
