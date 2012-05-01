@@ -126,11 +126,17 @@ const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf212;
 const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
 const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
 
+/* Rs Network Exchange Service */
+const uint16_t RS_SERVICE_TYPE_NXS = 0xf300;
+
 
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 
 const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1   = 0xf401;
 const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_TEST_ID1   = 0xf402;
+
+// test
+const uint16_t RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM = 0xf403;
 
 
 
