@@ -1,11 +1,27 @@
-// COMPILE_LINE: g++ -o test_pgp_handler test_pgp_handler.cc -I../../../openpgpsdk/include  -I../ -L../lib -lretroshare ../../../openpgpsdk/lib/libops.a -lssl -lcrypto -lbz2
+// COMPILE_LINE: g++ -o test_pgp_handler test_pgp_handler.cc -I../../../openpgpsdk/include  -I../ -L../lib -lretroshare ../../../libbitdht/src/lib/libbitdht.a ../../../openpgpsdk/lib/libops.a -lgnome-keyring -lupnp -lssl -lcrypto -lbz2
 //
+#include <stdlib.h>
 #include <iostream>
 #include "pgphandler.h"
 
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
 	return std::string(getpass(what)) ;
+}
+
+static std::string stringFromBytes(unsigned char *bytes,size_t len)
+{
+	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
+
+	std::string res ;
+
+	for(int j = 0; j < len; j++)
+	{
+		res += out[ (bytes[j]>>4) ] ;
+		res += out[ bytes[j] & 0xf ] ;
+	}
+
+	return res ;
 }
 
 int main(int argc,char *argv[])
@@ -24,7 +40,9 @@ int main(int argc,char *argv[])
 	static const std::string pubring = "pubring.gpg" ;
 	static const std::string secring = "secring.gpg" ;
 
-	PGPHandler pgph(pubring,secring,&passphrase_callback) ;
+	PGPHandler::setPassphraseCallback(&passphrase_callback) ;
+	PGPHandler pgph(pubring,secring) ;
+
 	pgph.printKeys() ;
 
 	std::cerr << std::endl ;
@@ -76,26 +94,36 @@ int main(int argc,char *argv[])
 	std::cerr << "Password = \"" << pass << "\"" << std::endl;
 
 	std::cerr << "Testing signature with keypair " << newid.toStdString() << std::endl;
-	char test_bin[14] = "34f4fhuif3489" ;
 
-	unsigned char sign[100] ;
-	uint32_t signlen = 100 ;
+	static const size_t BUFF_LEN = 25 ;
+	unsigned char *test_bin = new unsigned char[BUFF_LEN] ;
+	for(size_t i=0;i<BUFF_LEN;++i)
+		test_bin[i] = rand()%26 + 'a' ;
 
-	if(!pgph.SignDataBin(newid,test_bin,13,sign,&signlen))
+	std::cerr << "Text = \"" << std::string((char *)test_bin,BUFF_LEN) << "\"" << std::endl;
+
+	unsigned char sign[1000] ;
+	uint32_t signlen = 1000 ;
+
+	if(!pgph.SignDataBin(newid,test_bin,BUFF_LEN,sign,&signlen))
 		std::cerr << "Signature error." << std::endl;
 	else
 		std::cerr << "Signature success." << std::endl;
  
+	std::cerr << "Signature length: " << signlen << std::endl;
+	std::cerr << "Signature: " << stringFromBytes(sign,signlen) << std::endl;
 	std::cerr << "Now verifying signature..." << std::endl;
 
 	PGPFingerprintType fingerprint ;
 	if(!pgph.getKeyFingerprint(newid,fingerprint) )
 		std::cerr << "Cannot find fingerprint of key id " << newid.toStdString() << std::endl;
 
-	if(!pgph.VerifySignBin(test_bin,13,sign,signlen,fingerprint))
+	if(!pgph.VerifySignBin(test_bin,BUFF_LEN,sign,signlen,fingerprint))
 		std::cerr << "Signature verification failed." << std::endl;
 	else
 		std::cerr << "Signature verification worked!" << std::endl;
+
+	delete[] test_bin ;
 
 	std::string outfile = "crypted_toto.pgp" ;
 	std::string text_to_encrypt = "this is a secret message" ;

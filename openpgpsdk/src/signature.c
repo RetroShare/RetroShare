@@ -1266,7 +1266,8 @@ void example(const ops_secret_key_t *skey)
 ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
 			   const ops_sig_type_t sig_type,
 			   const ops_secret_key_t *skey,
-			   const ops_boolean_t use_armour)
+			   const ops_boolean_t use_armour,
+				ops_boolean_t include_data)
     {
     // \todo allow choice of hash algorithams
     // enforce use of SHA1 for now
@@ -1313,7 +1314,8 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
     if (debug)
         fprintf(stderr,"** Writing out data now\n");
 
-    ops_write_literal_data_from_buf(input, input_len, ld_type, cinfo);
+	 if(include_data)
+		 ops_write_literal_data_from_buf(input, input_len, ld_type, cinfo);
 
     if (debug)
         fprintf(stderr,"** After Writing out data now\n");

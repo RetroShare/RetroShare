@@ -17,6 +17,8 @@ extern "C" {
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
 
+PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
+
 std::string	PGPIdType::toStdString() const
 {
 	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
@@ -162,9 +164,20 @@ ops_keyring_t *PGPHandler::allocateOPSKeyring()
 	return kr ;
 }
 
-PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,PassphraseCallback cb)
-	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring),_passphrase_callback(cb)
+void PGPHandler::setPassphraseCallback(PassphraseCallback cb)
 {
+	_passphrase_callback = cb ;
+}
+
+PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
+	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring)
+{
+	if(_passphrase_callback == NULL)
+	{
+		std::cerr << "WARNING: before created a PGPHandler, you need to init the passphrase callback using PGPHandler::setPassphraseCallback()" << std::endl;
+		exit(-1) ;
+	}
+		
 	// Allocate public and secret keyrings.
 	// 
 	_pubring = allocateOPSKeyring() ;
@@ -228,6 +241,7 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 	}
 
 	cert._trustLvl = 1 ;	// to be setup accordingly
+	cert._validLvl = 1 ;	// to be setup accordingly
 	cert._key_index = index ;
 	cert._flags = 0 ;
 
@@ -310,7 +324,7 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	return true ;
 }
 
-static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)// __attribute__((unused)))
+ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)// __attribute__((unused)))
 {
 	const ops_parser_content_union_t *content=&content_->content;
 	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
@@ -324,10 +338,12 @@ static ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *conte
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
 																				{
 																					std::string passwd;
-																					std::string uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) + "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
+																					std::string uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
+																					uid_hint += "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
 
-																					if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, passwd) == false) 
-																						return OPS_RELEASE_MEMORY;
+																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
+//																					if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, passwd) == false) 
+//																						return OPS_RELEASE_MEMORY;
 
 																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
 																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
@@ -646,7 +662,7 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 
 	// then do the signature.
 
-	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x10,secret_key,ops_false) ;
+	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x00,secret_key,ops_false,ops_false) ;
 
 	if(!memres)
 		return false ;

@@ -91,12 +91,13 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 	if(_instance != NULL)
 		throw std::runtime_error("AuthGPG::init() called twice!") ;
 
+	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
 	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring) ;
 }
 
 AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring)
         :p3Config(CONFIG_TYPE_AUTHGPG), 
-		   PGPHandler(path_to_public_keyring,path_to_secret_keyring,pgp_pwd_callback),
+		   PGPHandler(path_to_public_keyring,path_to_secret_keyring),
 		   gpgMtxEngine("AuthGPG-engine"), 
 			gpgMtxData("AuthGPG-data"),
 			gpgKeySelected(false), 
@@ -737,6 +738,8 @@ bool AuthGPG::getGPGFilteredList(std::list<std::string>& list,bool (*filter)(con
 
 	for(std::list<PGPIdType>::const_iterator it(ids.begin());it!=ids.end();++it)
 		list.push_back( (*it).toStdString() ) ;
+
+	return true ;
 }
 
 static bool filter_Validity(const PGPCertificateInfo& info) { return true ; } //{ return info._validLvl >= PGPCertificateInfo::GPGME_VALIDITY_MARGINAL ; }

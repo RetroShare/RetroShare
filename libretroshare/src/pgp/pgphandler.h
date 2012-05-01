@@ -93,7 +93,7 @@ class PGPCertificateInfo
 class PGPHandler
 {
 	public:
-		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring,PassphraseCallback cb) ;
+		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring) ;
 
 		virtual ~PGPHandler() ;
 
@@ -129,6 +129,9 @@ class PGPHandler
 		bool isGPGSigned(const std::string &id);
 		bool isGPGAccepted(const std::string &id);
 
+		static void setPassphraseCallback(PassphraseCallback cb) ;
+
+		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
 	private:
 		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key) ;
 		static ops_keyring_t *allocateOPSKeyring() ;
@@ -150,6 +153,6 @@ class PGPHandler
 		const std::string _pubring_path ;
 		const std::string _secring_path ;
 
-		PassphraseCallback _passphrase_callback ;
+		static PassphraseCallback _passphrase_callback ;
 };
 
