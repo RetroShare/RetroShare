@@ -1140,7 +1140,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 
 /* store for discovery */
-bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &addr, bool incoming)
+bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &/*addr*/, bool incoming)
 {
         std::string peerId = "UnknownSSLID";
 	if(!getX509id(x509, peerId)) 
@@ -1165,10 +1165,8 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &add
 	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << peerId;
 	std::cerr << std::endl;
 
-	{
-		// Hacky - adding IpAddress to SSLId.
-		rs_sprintf(peerId, "/%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
-	}
+	// Hacky - adding IpAddress to SSLId.
+//	rs_sprintf_append(peerId, "/%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
 
 	uint32_t notifyType = 0;
 

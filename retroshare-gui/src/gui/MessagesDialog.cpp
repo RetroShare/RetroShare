@@ -44,6 +44,7 @@
 #define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
+#define IMAGE_SYSTEM           ":/images/user/user_request6.png"
 
 #define COLUMN_COUNT         8
 #define COLUMN_STAR          0
@@ -72,6 +73,7 @@
 #define QUICKVIEW_TYPE_TAG     2
 
 #define QUICKVIEW_STATIC_ID_STARRED 1
+#define QUICKVIEW_STATIC_ID_SYSTEM  2
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -85,15 +87,15 @@ MessagesDialog::LockUpdate::LockUpdate (MessagesDialog *pDialog, bool bUpdate)
     m_pDialog = pDialog;
     m_bUpdate = bUpdate;
 
-    m_pDialog->m_nLockUpdate++;
+    m_pDialog->lockUpdate++;
 }
 
 MessagesDialog::LockUpdate::~LockUpdate ()
 {
-    if(--m_pDialog->m_nLockUpdate < 0)
-        m_pDialog->m_nLockUpdate = 0;
+    if(--m_pDialog->lockUpdate < 0)
+        m_pDialog->lockUpdate = 0;
 
-    if (m_bUpdate && m_pDialog->m_nLockUpdate == 0) {
+    if (m_bUpdate && m_pDialog->lockUpdate == 0) {
         m_pDialog->insertMessages();
     }
 }
@@ -150,9 +152,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    m_bProcessSettings = false;
+    inProcessSettings = false;
     inChange = false;
-    m_nLockUpdate = 0;
+    lockUpdate = 0;
 
     connect(ui.messagestreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageslistWidgetCostumPopupMenu(QPoint)));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCostumPopupMenu(QPoint)));
@@ -181,7 +183,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connectActions();
 
-    m_eListMode = LIST_NOTHING;
+    listMode = LIST_NOTHING;
 
     mCurrMsgId  = "";
 
@@ -317,7 +319,7 @@ void MessagesDialog::processSettings(bool load)
 {
     int messageTreeVersion = 2; // version number for the settings to solve problems when modifying the column count
 
-    m_bProcessSettings = true;
+    inProcessSettings = true;
 
     QHeaderView *msgwheader = ui.messagestreeView->header () ;
 
@@ -372,7 +374,7 @@ void MessagesDialog::processSettings(bool load)
         msgWidget->processSettings("MessageDialog", load);
     }
 
-    m_bProcessSettings = false;
+    inProcessSettings = false;
 }
 
 bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
@@ -404,11 +406,11 @@ void MessagesDialog::fillQuickView()
 
 	// save current selection
 	QListWidgetItem *item = ui.quickViewWidget->currentItem();
-	int nSelectedType = 0;
-	uint32_t nSelectedId = 0;
+	int selectedType = 0;
+	uint32_t selectedId = 0;
 	if (item) {
-		nSelectedType = item->data(ROLE_QUICKVIEW_TYPE).toInt();
-		nSelectedId = item->data(ROLE_QUICKVIEW_ID).toInt();
+		selectedType = item->data(ROLE_QUICKVIEW_TYPE).toInt();
+		selectedId = item->data(ROLE_QUICKVIEW_ID).toInt();
 	}
 
 	QListWidgetItem *itemToSelect = NULL;
@@ -423,7 +425,17 @@ void MessagesDialog::fillQuickView()
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_STARRED);
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
 
-	if (nSelectedType == QUICKVIEW_TYPE_STATIC && nSelectedId == QUICKVIEW_STATIC_ID_STARRED) {
+	if (selectedType == QUICKVIEW_TYPE_STATIC && selectedId == QUICKVIEW_STATIC_ID_STARRED) {
+		itemToSelect = item;
+	}
+
+	item = new QListWidgetItem(tr("System"), ui.quickViewWidget);
+	item->setIcon(QIcon(IMAGE_SYSTEM));
+	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
+	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_SYSTEM);
+	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
+
+	if (selectedType == QUICKVIEW_TYPE_STATIC && selectedId == QUICKVIEW_STATIC_ID_SYSTEM) {
 		itemToSelect = item;
 	}
 
@@ -437,7 +449,7 @@ void MessagesDialog::fillQuickView()
 		item->setData(ROLE_QUICKVIEW_ID, tag->first);
 		item->setData(ROLE_QUICKVIEW_TEXT, text); // for updateMessageSummaryList
 
-		if (nSelectedType == QUICKVIEW_TYPE_TAG && tag->first == nSelectedId) {
+		if (selectedType == QUICKVIEW_TYPE_TAG && tag->first == selectedId) {
 			itemToSelect = item;
 		}
 	}
@@ -707,7 +719,7 @@ void MessagesDialog::changeBox(int)
     MessagesModel->removeRows (0, MessagesModel->rowCount());
 
     ui.quickViewWidget->setCurrentItem(NULL);
-    m_eListMode = LIST_BOX;
+    listMode = LIST_BOX;
 
     insertMessages();
     insertMsgTxtAndFiles();
@@ -729,7 +741,7 @@ void MessagesDialog::changeQuickView(int newrow)
     MessagesModel->removeRows (0, MessagesModel->rowCount());
 
     ui.listWidget->setCurrentItem(NULL);
-    m_eListMode = LIST_QUICKVIEW;
+    listMode = LIST_QUICKVIEW;
 
     insertMessages();
     insertMsgTxtAndFiles();
@@ -739,7 +751,7 @@ void MessagesDialog::changeQuickView(int newrow)
 
 void MessagesDialog::messagesTagsChanged()
 {
-    if (m_nLockUpdate) {
+    if (lockUpdate) {
         return;
     }
 
@@ -755,7 +767,9 @@ static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
     if (msgFlags & RS_MSG_NEW) {
         item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-state-new.png"));
     } else {
-        if (msgFlags & RS_MSG_UNREAD_BY_USER) {
+        if (msgFlags & RS_MSG_USER_REQUEST) {
+            item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/user/user_request6.png"));
+        } else if (msgFlags & RS_MSG_UNREAD_BY_USER) {
             if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
                 item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
             } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
@@ -813,7 +827,7 @@ static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
 
 void MessagesDialog::insertMessages()
 {
-    if (m_nLockUpdate) {
+    if (lockUpdate) {
         return;
     }
 
@@ -822,14 +836,16 @@ void MessagesDialog::insertMessages()
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
     MessageInfo msgInfo;
-    bool bGotInfo;
+    bool gotInfo;
     QString text;
+
+    std::string ownId = rsPeers->getOwnId();
 
     rsMsgs -> getMessageSummaries(msgList);
 
     std::cerr << "MessagesDialog::insertMessages()" << std::endl;
 
-    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
     /* check the mode we are in */
     unsigned int msgbox = 0;
@@ -841,7 +857,7 @@ void MessagesDialog::insertMessages()
     QIcon boxIcon;
     QString placeholderText;
 
-    switch (m_eListMode) {
+    switch (listMode) {
     case LIST_NOTHING:
         doFill = false;
         break;
@@ -901,6 +917,9 @@ void MessagesDialog::insertMessages()
                     case QUICKVIEW_STATIC_ID_STARRED:
                         placeholderText = tr("No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.");
                         break;
+                    case QUICKVIEW_STATIC_ID_SYSTEM:
+                        placeholderText = tr("No system messages available.");
+                        break;
                     }
                     break;
                 case QUICKVIEW_TYPE_TAG:
@@ -935,7 +954,7 @@ void MessagesDialog::insertMessages()
         /* search messages */
         std::list<MsgInfoSummary> msgToShow;
         for(it = msgList.begin(); it != msgList.end(); it++) {
-            if (m_eListMode == LIST_BOX) {
+            if (listMode == LIST_BOX) {
                 if (isTrash) {
                     if ((it->msgflags & RS_MSG_TRASH) == 0) {
                         continue;
@@ -948,14 +967,17 @@ void MessagesDialog::insertMessages()
                         continue;
                     }
                 }
-            } else if (m_eListMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_TAG) {
+            } else if (listMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_TAG) {
                 MsgTagInfo tagInfo;
                 rsMsgs->getMessageTag(it->msgId, tagInfo);
                 if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), quickViewId) == tagInfo.tagIds.end()) {
                     continue;
                 }
-            } else if (m_eListMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_STATIC) {
-                if ((it->msgflags & RS_MSG_STAR) == 0) {
+            } else if (listMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_STATIC) {
+                if (quickViewId == QUICKVIEW_STATIC_ID_STARRED && (it->msgflags & RS_MSG_STAR) == 0) {
+                    continue;
+                }
+                if (quickViewId == QUICKVIEW_STATIC_ID_SYSTEM && (it->msgflags & RS_MSG_SYSTEM) == 0) {
                     continue;
                 }
             } else {
@@ -1004,7 +1026,7 @@ void MessagesDialog::insertMessages()
              *
              */
 
-            bGotInfo = false;
+            gotInfo = false;
             msgInfo = MessageInfo(); // clear
 
             // search exisisting items
@@ -1076,10 +1098,14 @@ void MessagesDialog::insertMessages()
             //  From ....
             {
                 if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) {
-                    text = QString::fromUtf8(rsPeers->getPeerName(it->srcId).c_str());
+                    if ((it->msgflags & RS_MSG_SYSTEM) && it->srcId == ownId) {
+                        text = "RetroShare";
+                    } else {
+                        text = QString::fromUtf8(rsPeers->getPeerName(it->srcId).c_str());
+                    }
                 } else {
-                    if (bGotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
-                        bGotInfo = true;
+                    if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
+                        gotInfo = true;
 
                         text.clear();
 
@@ -1164,10 +1190,10 @@ void MessagesDialog::insertMessages()
                 item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
             }
 
-            if (nFilterColumn == COLUMN_CONTENT) {
+            if (filterColumn == COLUMN_CONTENT) {
                 // need content for filter
-                if (bGotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
-                    bGotInfo = true;
+                if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
+                    gotInfo = true;
                     QTextDocument doc;
                     doc.setHtml(QString::fromStdWString(msgInfo.msg));
                     item[COLUMN_CONTENT]->setText(doc.toPlainText().replace(QString("\n"), QString(" ")));
@@ -1571,7 +1597,7 @@ void MessagesDialog::filterChanged(const QString& text)
 
 void MessagesDialog::filterColumnChanged()
 {
-    if (m_bProcessSettings) {
+    if (inProcessSettings) {
         return;
     }
 
@@ -1595,6 +1621,7 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int inboxCount = 0;
     unsigned int trashboxCount = 0;
     unsigned int starredCount = 0;
+    unsigned int systemCount = 0;
 
     /* calculating the new messages */
 //    rsMsgs->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
@@ -1619,6 +1646,10 @@ void MessagesDialog::updateMessageSummaryList()
 
         if (it->msgflags & RS_MSG_STAR) {
             starredCount++;
+        }
+
+        if (it->msgflags & RS_MSG_SYSTEM) {
+            systemCount++;
         }
 
         /* calculate box */
@@ -1776,6 +1807,9 @@ void MessagesDialog::updateMessageSummaryList()
                 switch (item->data(ROLE_QUICKVIEW_ID).toInt()) {
                 case QUICKVIEW_STATIC_ID_STARRED:
                     text += " (" + QString::number(starredCount) + ")";
+                    break;
+                case QUICKVIEW_STATIC_ID_SYSTEM:
+                    text += " (" + QString::number(systemCount) + ")";
                     break;
                 }
 

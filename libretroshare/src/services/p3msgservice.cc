@@ -56,13 +56,13 @@ const int msgservicezone = 54319;
 
 p3MsgService::p3MsgService(p3LinkMgr *lm)
 	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
-	mLinkMgr(lm), mMsgMtx("p3MsgService"), msgChanged(1), mMsgUniqueId(time(NULL))
+	mLinkMgr(lm), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
 {
 	addSerialType(new RsMsgSerialiser());
 
-        /* Initialize standard tag types */
-        if(lm)
-            initStandardTagTypes();
+	/* Initialize standard tag types */
+	if(lm)
+		initStandardTagTypes();
 }
 
 uint32_t p3MsgService::getNewUniqueMsgId()
@@ -70,35 +70,6 @@ uint32_t p3MsgService::getNewUniqueMsgId()
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 	return mMsgUniqueId++;
 }
-
-/****** Mods/Notifications ****/
-
-bool	p3MsgService::MsgsChanged()
-{
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-	bool m1 = msgChanged.Changed();
-
-	return (m1);
-}
-
-bool	p3MsgService::MsgNotifications()
-{
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-	return (msgNotifications.size() > 0);
-}
-
-bool    p3MsgService::getMessageNotifications(std::list<MsgInfoSummary> &noteList)
-{
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-	noteList = msgNotifications;
-	msgNotifications.clear();
-	
-	return (noteList.size() > 0);
-}
-
-
 
 int	p3MsgService::tick()
 {
@@ -124,31 +95,21 @@ int	p3MsgService::status()
 	return 1;
 }
 
-void p3MsgService::processMsg(RsMsgItem *mi)
+void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 {
 	mi -> recvTime = time(NULL);
 	mi -> msgId = getNewUniqueMsgId();
 
-	std::string mesg;
-
 	{
 		RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
 
-//		if (mi -> PeerId() == mLinkMgr->getOwnId())
-		if (mi->msgFlags & RS_MSG_FLAGS_OUTGOING)
+		if (incoming)
 		{
-			/* from the loopback device */
-//			mi -> msgFlags |= RS_MSG_FLAGS_OUTGOING;
-		}
-		else
-		{
-			mi -> msgFlags = RS_MSG_FLAGS_NEW;
-
 			/* from a peer */
-			MsgInfoSummary mis;
-			initRsMIS(mi, mis);
 
-			// msgNotifications.push_back(mis);
+			mi->msgFlags &= RS_MSG_FLAGS_SYSTEM; // remove flags
+			mi->msgFlags |= RS_MSG_FLAGS_NEW;
+
 			pqiNotify *notify = getPqiNotify();
 			if (notify)
 			{
@@ -162,13 +123,16 @@ void p3MsgService::processMsg(RsMsgItem *mi)
 				notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out, "", "");
 			}
 		}
+		else
+		{
+			mi->msgFlags |= RS_MSG_OUTGOING;
+		}
 
 		imsg[mi->msgId] = mi;
 		RsMsgSrcId* msi = new RsMsgSrcId();
 		msi->msgId = mi->msgId;
 		msi->srcId = mi->PeerId();
 		mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
-		msgChanged.IndicateChanged();
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 
@@ -232,8 +196,7 @@ int p3MsgService::incomingMsgs()
 
 		if(checkAndRebuildPartialMessage(mi))	// only returns true when a msg is complete.
 		{
-			mi->msgFlags = 0;
-			processMsg(mi);
+			processMsg(mi, true);
 		}
 	}
 	if(changed)
@@ -359,9 +322,6 @@ int     p3MsgService::checkOutgoingMessages()
 
 	return 0;
 }
-
-
-
 
 bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 {
@@ -576,7 +536,6 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	return true;
 }
 
-
 void p3MsgService::loadWelcomeMsg()
 {
 	/* Load Welcome Message */
@@ -637,7 +596,6 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 	}
 	return true;
 }
-
 
 bool p3MsgService::getMessage(const std::string &mId, MessageInfo &msg)
 {
@@ -935,18 +893,12 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
-	std::string ownId = mLinkMgr->getOwnId();
-
 	std::list<std::string>::const_iterator pit;
 	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
 	{
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
 		if (msg)
 		{
-			if (*pit == ownId) {
-				processMsg(msg);
-				continue;
-			}
 			sendMessage(msg);
 		}
 	}
@@ -956,10 +908,6 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
 		if (msg)
 		{
-			if (*pit == ownId) {
-				processMsg(msg);
-				continue;
-			}
 			sendMessage(msg);
 		}
 	}
@@ -969,26 +917,54 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
 		if (msg)
 		{
-			if (*pit == ownId) {
-				processMsg(msg);
-				continue;
-			}
 			sendMessage(msg);
 		}
 	}
 
 	/* send to ourselves as well */
-	RsMsgItem *msg = initMIRsMsg(info, ownId);
+	RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
 	if (msg)
 	{
 		/* use processMsg to get the new msgId */
 //		sendMessage(msg);
-		msg->msgFlags |= RS_MSG_FLAGS_OUTGOING;
-		processMsg(msg);
+		processMsg(msg, false);
 
 		// return new message id
 		rs_sprintf(info.msgId, "%lu", msg->msgId);
 	}
+
+	return true;
+}
+
+bool p3MsgService::SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag)
+{
+	if ((systemFlag & RS_MSG_SYSTEM) == 0) {
+		/* no flag specified */
+		return false;
+	}
+
+	std::string ownId = mLinkMgr->getOwnId();
+
+	RsMsgItem *msg = new RsMsgItem();
+
+	msg->PeerId(ownId);
+
+	msg->msgFlags = 0;
+
+	if (systemFlag & RS_MSG_USER_REQUEST) {
+		msg->msgFlags |= RS_MSG_FLAGS_USER_REQUEST;
+	}
+
+	msg->msgId = 0;
+	msg->sendTime = time(NULL);
+	msg->recvTime = 0;
+
+	msg->subject = title;
+	msg->message = message;
+
+	msg->msgto.ids.push_back(ownId);
+
+	processMsg(msg, true);
 
 	return true;
 }
@@ -1361,7 +1337,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 
 	/* translate flags, if we sent it... outgoing */
 	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
-	   || (msg->PeerId() == mLinkMgr->getOwnId()))
+	   /*|| (msg->PeerId() == mLinkMgr->getOwnId())*/)
 	{
 		mi.msgflags |= RS_MSG_OUTGOING;
 	}
@@ -1397,6 +1373,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	if (msg->msgFlags & RS_MSG_FLAGS_STAR)
 	{
 		mi.msgflags |= RS_MSG_STAR;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)
+	{
+		mi.msgflags |= RS_MSG_USER_REQUEST;
 	}
 
 	mi.ts = msg->sendTime;
@@ -1494,6 +1474,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	{
 		mis.msgflags |= RS_MSG_STAR;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)
+	{
+		mis.msgflags |= RS_MSG_USER_REQUEST;
+	}
 
 	mis.srcId = msg->PeerId();
 	{
@@ -1506,7 +1490,7 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.ts = msg->sendTime;
 }
 
-RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, std::string to)
+RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 {
 	RsMsgItem *msg = new RsMsgItem();
 
@@ -1551,6 +1535,12 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, std::string to)
 		mfi.name = it -> fname;
 		mfi.filesize = it -> size;
 		msg -> attachment.items.push_back(mfi);
+	}
+
+	/* translate flags from outside */
+	if (info.msgflags & RS_MSG_USER_REQUEST)
+	{
+		msg->msgFlags |= RS_MSG_FLAGS_USER_REQUEST;
 	}
 
 	//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;

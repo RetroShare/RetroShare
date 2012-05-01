@@ -361,6 +361,9 @@ const uint32_t RS_MSG_FLAGS_REPLIED        = 0x0080;
 const uint32_t RS_MSG_FLAGS_FORWARDED      = 0x0100;
 const uint32_t RS_MSG_FLAGS_STAR           = 0x0200;
 const uint32_t RS_MSG_FLAGS_PARTIAL        = 0x0400;
+// system message
+const uint32_t RS_MSG_FLAGS_USER_REQUEST   = 0x0800;
+const uint32_t RS_MSG_FLAGS_SYSTEM         = RS_MSG_FLAGS_USER_REQUEST;
 
 class RsMsgItem: public RsItem
 {

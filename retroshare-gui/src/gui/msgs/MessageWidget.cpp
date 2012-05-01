@@ -503,17 +503,23 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.dateText->setText(timestamp);
 	}
 
+	std::string ownId = rsPeers->getOwnId();
+
 	std::string srcId;
 	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
 		// outgoing message are from me
-		srcId = rsPeers->getOwnId();
+		srcId = ownId;
 	} else {
 		srcId = msgInfo.srcId;
 	}
 	link.createMessage(srcId, "");
 
-	ui.fromText->setText(link.toHtml());
-	ui.fromText->setToolTip(PeerDefs::rsidFromId(srcId));
+	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.srcId == ownId) {
+		ui.fromText->setText("RetroShare");
+	} else {
+		ui.fromText->setText(link.toHtml());
+		ui.fromText->setToolTip(PeerDefs::rsidFromId(srcId));
+	}
 
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 

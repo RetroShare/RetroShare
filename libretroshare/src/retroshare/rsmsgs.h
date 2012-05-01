@@ -54,6 +54,9 @@
 #define RS_MSG_REPLIED         0x0080   /* Message is replied */
 #define RS_MSG_FORWARDED       0x0100   /* Message is forwarded */
 #define RS_MSG_STAR            0x0200   /* Message is marked with a star */
+// system message
+#define RS_MSG_USER_REQUEST    0x0400   /* user request */
+#define RS_MSG_SYSTEM          (RS_MSG_USER_REQUEST)
 
 #define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
 #define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02
@@ -209,7 +212,8 @@ virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
 
-virtual bool MessageSend(MessageInfo &info)                 = 0;
+virtual bool MessageSend(MessageInfo &info) = 0;
+virtual bool SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag) = 0;
 virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId) = 0;
 virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
 virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;

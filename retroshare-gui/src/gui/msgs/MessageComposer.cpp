@@ -114,6 +114,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     ui.setupUi(this);
 
     m_msgType = NORMAL;
+    // needed to send system flags with reply
+    //systemFlags = 0;
 
     setupFileActions();
     setupEditActions();
@@ -453,9 +455,14 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     /* window will destroy itself! */
 }
 
-void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const QString &sslName)
+void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const std::string &sslId, const QString &sslName)
 {
     if (gpgId.empty()) {
+        return;
+    }
+
+    RetroShareLink link;
+    if (link.createUnknwonSslCertificate(sslId, gpgId) == false) {
         return;
     }
 
@@ -473,28 +480,17 @@ void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const QStr
         if ((it->msgflags & RS_MSG_BOXMASK) != RS_MSG_INBOX) {
             continue;
         }
+        if ((it->msgflags & RS_MSG_USER_REQUEST) == 0) {
+            continue;
+        }
         if (it->title == title.toStdWString()) {
             return;
         }
     }
 
     /* create a message */
-    MessageComposer *msgDialog = MessageComposer::newMsg();
-    msgDialog->insertTitleText(title);
-    msgDialog->addRecipient(TO, rsPeers->getOwnId(), false);
-
-    RetroShareLink link;
-    link.createPerson(gpgId);
     QString msgText = tr("Hi %1,<br>%2 wants to be friend with you on RetroShare.<br><br>Respond now<br>%3<br><br>Thanks.<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
-    msgDialog->insertMsgText(msgText, true);
-
-    if (msgDialog->sendMessage_internal(false)) {
-        msgDialog->close();
-        return;
-    }
-
-    msgDialog->ui.msgText->document()->setModified(false);
-    msgDialog->close();
+    rsMsgs->SystemMessage(title.toStdWString(), msgText.toStdWString(), RS_MSG_USER_REQUEST);
 }
 
 void MessageComposer::closeEvent (QCloseEvent * event)
@@ -861,6 +857,9 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
             }
         }
 
+        // needed to send system flags with reply
+        //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
+
         msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title));
 
         msgComposer->insertMsgText(QString::fromStdWString(msgInfo.msg));
@@ -950,6 +949,9 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
         }
     }
 
+    // needed to send system flags with reply
+    //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
+
     msgComposer->calculateTitle();
 
     /* window will destroy itself! */
@@ -980,6 +982,9 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     std::list<FileInfo>& files_info = msgInfo.files;
 
     msgComposer->insertFileList(files_info);
+
+    // needed to send system flags with reply
+    //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
     msgComposer->calculateTitle();
 
@@ -1083,6 +1088,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
     mi.msg =   ui.msgText->toHtml().toStdWString();
+    // needed to send system flags with reply
+    //mi.msgflags = systemFlags;
+    mi.msgflags = 0;
 
     QString text;
     RsHtml::optimizeHtml(ui.msgText, text);

@@ -110,7 +110,7 @@ void NewsFeed::updateFeed()
 
 			case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
 				if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT) {
-					MessageComposer::sendConnectAttemptMsg(fi.mId1, QString::fromUtf8(fi.mId3.c_str()));
+					MessageComposer::sendConnectAttemptMsg(fi.mId1, fi.mId2, QString::fromUtf8(fi.mId3.c_str()));
 				}
 				if (flags & RS_FEED_TYPE_SECURITY)
 					addFeedItemSecurityConnectAttempt(fi);

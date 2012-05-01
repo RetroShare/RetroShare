@@ -51,10 +51,6 @@ class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 	p3MsgService(p3LinkMgr *lm);
 
 	/* External Interface */
-bool    MsgsChanged();		/* should update display */
-bool    MsgNotifications();	/* popup - messages */
-bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
-
 bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
 bool 	getMessage(const std::string &mid, MessageInfo &msg);
 void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
@@ -67,6 +63,7 @@ bool    getMsgParentId(const std::string &msgId, std::string &msgParentId);
 bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
 
 bool    MessageSend(MessageInfo &info);
+bool    SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag);
 bool    MessageToDraft(MessageInfo &info, const std::string &msgParentId);
 bool    MessageToTrash(const std::string &mid, bool bTrash);
 
@@ -107,12 +104,12 @@ int     sendMessage(RsMsgItem *item);
 void    checkSizeAndSendMessage(RsMsgItem *msg);
 
 int 	incomingMsgs();
-void    processMsg(RsMsgItem *mi);
+void    processMsg(RsMsgItem *mi, bool incoming);
 bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
 void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
-RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
+RsMsgItem *initMIRsMsg(MessageInfo &info, const std::string &to);
 
 void    initStandardTagTypes();
 
@@ -129,16 +126,11 @@ void    initStandardTagTypes();
 
 	std::map<std::string, RsMsgItem *> _pendingPartialMessages ;
 
-		/* List of notifications to post via Toaster */
-	std::list<MsgInfoSummary> msgNotifications;
-
 	/* maps for tags types and msg tags */
 
 	std::map<uint32_t, RsMsgTagType*> mTags;
 	std::map<uint32_t, RsMsgTags*> mMsgTags;
 
-
-	Indicator msgChanged;
 	uint32_t mMsgUniqueId;
 
 	// used delete msgSrcIds after config save

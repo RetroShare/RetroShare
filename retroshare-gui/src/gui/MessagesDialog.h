@@ -126,11 +126,11 @@ private:
 
   void closeTab(const std::string &msgId);
 
-  bool m_bProcessSettings;
+  bool inProcessSettings;
   bool inChange;
-  int m_nLockUpdate; // use with LockUpdate
+  int lockUpdate; // use with LockUpdate
 
-  enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } m_eListMode;
+  enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } listMode;
 
   std::string mCurrMsgId;
 

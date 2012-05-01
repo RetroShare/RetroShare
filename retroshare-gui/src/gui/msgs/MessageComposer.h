@@ -50,7 +50,7 @@ public:
     static void msgFriend(const std::string &id, bool group);
     static QString recommendMessage();
     static void recommendFriend(const std::list <std::string> &sslIds, const std::string &to = "", const QString &msg = "", bool autoSend = false);
-    static void sendConnectAttemptMsg(const std::string &gpgId, const QString &sslName);
+    static void sendConnectAttemptMsg(const std::string &gpgId, const std::string &sslId, const QString &sslName);
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);
@@ -206,6 +206,9 @@ private:
     enumMessageType m_msgType;
     std::list<uint32_t> m_tagIds;
     QList<QLabel*> tagLabels;
+
+    // needed to send system flags with reply
+    //unsigned systemFlags;
 
     RSTreeWidgetItemCompareRole *m_compareRole;
     QCompleter *m_completer;

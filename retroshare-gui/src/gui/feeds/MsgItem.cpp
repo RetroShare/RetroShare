@@ -84,7 +84,12 @@ void MsgItem::updateItemStatic()
 	avatar->setId(mPeerId, false);
 
 	QString title;
-	QString srcName = QString::fromUtf8(rsPeers->getPeerName(mi.srcId).c_str());
+	QString srcName;
+	if ((mi.msgflags & RS_MSG_SYSTEM) && mi.srcId == rsPeers->getOwnId()) {
+		srcName = "RetroShare";
+	} else {
+		srcName = QString::fromUtf8(rsPeers->getPeerName(mi.srcId).c_str());
+	}
 
 	{
 		QDateTime qtime;

@@ -281,19 +281,19 @@ bool RetroShareLink::createPerson(const std::string& id)
     return valid();
 }
 
-bool RetroShareLink::createCertificate(const std::string& ssl_id)
+bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ssl_id,false) ;
+	std::string invite = rsPeers->GetRetroshareInvite(ssl_or_gpg_id, false) ;
 
 	if(invite == "")
 	{
-		std::cerr << "RetroShareLink::createPerson() Couldn't get retroshare invite for ssl id: " << ssl_id << std::endl;
+		std::cerr << "RetroShareLink::createPerson() Couldn't get retroshare invite for ssl id: " << ssl_or_gpg_id << std::endl;
 		return false;
 	}
 
 	RsPeerDetails detail;
-	if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
-		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
+	if (rsPeers->getPeerDetails(ssl_or_gpg_id, detail) == false) {
+		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_or_gpg_id << std::endl;
 		return false;
 	}
 
@@ -306,14 +306,20 @@ bool RetroShareLink::createCertificate(const std::string& ssl_id)
 	_type = TYPE_CERTIFICATE;
 
 	_GPGid = QString::fromStdString(detail.gpg_id).right(8);
-	_SSLid = QString::fromStdString(ssl_id) ;
+	if (detail.isOnlyGPGdetail) {
+		_SSLid.clear();
+		_location.clear();
+		_ext_ip_port.clear();
+		_loc_ip_port.clear();
+	} else {
+		_SSLid = QString::fromStdString(ssl_or_gpg_id) ;
+		_location = QString::fromUtf8(detail.location.c_str()) ;
+		_ext_ip_port = QString::fromStdString(invite).section("--EXT--",1,1) ;
+		QString lst = QString::fromStdString(invite).section("--EXT--",0,0) ;
+		_loc_ip_port = lst.section("--LOCAL--",1,1) ;
+	}
 	_GPGBase64String = gpg_base_64.replace("\n","") ;
-	_location = QString::fromUtf8(detail.location.c_str()) ;
 	_name = QString::fromUtf8(detail.name.c_str()) ;
-
-	_ext_ip_port = QString::fromStdString(invite).section("--EXT--",1,1) ;
-	QString lst = QString::fromStdString(invite).section("--EXT--",0,0) ;
-	_loc_ip_port = lst.section("--LOCAL--",1,1) ;
 
 	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
 	std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
@@ -324,6 +330,35 @@ bool RetroShareLink::createCertificate(const std::string& ssl_id)
 	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
 
 	return true;
+}
+
+bool RetroShareLink::createUnknwonSslCertificate(const std::string& sslId, const std::string& gpgId)
+{
+	// first try ssl id
+	if (createCertificate(sslId)) {
+		if (gpgId.empty() || _GPGid.toStdString() == gpgId) {
+			return true;
+		}
+		// wrong gpg id
+		return false;
+	}
+
+	// then gpg id
+	if (createCertificate(gpgId)) {
+		if (!_SSLid.isEmpty()) {
+			return false;
+		}
+		if (sslId.empty()) {
+			return true;
+		}
+		_SSLid = QString::fromStdString(sslId);
+		if (_location.isEmpty()) {
+			_location = _name;
+		}
+		return true;
+	}
+
+	return false;
 }
 
 bool RetroShareLink::createForum(const std::string& id, const std::string& msgId)
@@ -602,14 +637,22 @@ QString RetroShareLink::toString() const
 			  QUrl url ;
 			  url.setScheme(RSLINK_SCHEME);
 			  url.setHost(HOST_CERTIFICATE) ;
-			  url.addQueryItem(CERTIFICATE_SSLID, _SSLid);
+			  if (!_SSLid.isEmpty()) {
+				  url.addQueryItem(CERTIFICATE_SSLID, _SSLid);
+			  }
 			  url.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
 			  url.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
 			  url.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
-			  url.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
+			  if (!_location.isEmpty()) {
+				  url.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
+			  }
 			  url.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
-			  url.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
-			  url.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
+			  if (!_loc_ip_port.isEmpty()) {
+				  url.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
+			  }
+			  if (!_ext_ip_port.isEmpty()) {
+				  url.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
+			  }
 
 			  return url.toString();
 		  }
@@ -624,8 +667,12 @@ QString RetroShareLink::niceName() const
         return PeerDefs::rsid(name().toUtf8().constData(), hash().toStdString());
     }
 
-	 if(type() == TYPE_CERTIFICATE)
-		 return QString("RetroShare Certificate (%1, @%2)").arg(_name, _location);	// should add SSL id there
+	if(type() == TYPE_CERTIFICATE) {
+		if (_location.isEmpty()) {
+			return QString("RetroShare Certificate (%1)").arg(_name);
+		}
+		return QString("RetroShare Certificate (%1, @%2)").arg(_name, _location);	// should add SSL id there
+	}
 
     return name();
 }

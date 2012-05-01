@@ -1145,6 +1145,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
             #endif
 
             //let's parse the ssl id
+            pd.isOnlyGPGdetail = true;
             size_t parsePosition = peerInfo.find(CERT_SSL_ID);
             std::cerr << "sslid position : " << parsePosition << std::endl;
             if (parsePosition != std::string::npos) {
@@ -1155,7 +1156,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
                     std::string ssl_id = subCert.substr(0, parsePosition);
                     std::cerr << "SSL id : " << ssl_id << std::endl;
                     pd.id = ssl_id;
-                    pd.isOnlyGPGdetail = false;
+                    pd.isOnlyGPGdetail = pd.id.empty();
                 }
             }
 

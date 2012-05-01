@@ -61,7 +61,8 @@ class RetroShareLink
 		bool createChannel(const std::string& id, const std::string& msgId);
 		bool createSearch(const QString& keywords);
 		bool createMessage(const std::string& peerId, const QString& subject);
-		bool createCertificate(const std::string& peerId) ;
+		bool createCertificate(const std::string& ssl_or_gpg_id) ;
+		bool createUnknwonSslCertificate(const std::string& sslId, const std::string& gpgId = "") ;
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }

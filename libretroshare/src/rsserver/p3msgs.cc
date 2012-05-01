@@ -96,6 +96,11 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
+bool p3Msgs::SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag)
+{
+	return mMsgSrv->SystemMessage(title, message, systemFlag);
+}
+
 bool p3Msgs::MessageToDraft(MessageInfo &info, const std::string &msgParentId)
 {
 	return mMsgSrv->MessageToDraft(info, msgParentId);
