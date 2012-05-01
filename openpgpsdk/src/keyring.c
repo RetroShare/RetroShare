@@ -956,26 +956,53 @@ ops_keyring_list(const ops_keyring_t* keyring)
 static ops_parse_cb_return_t
 cb_keyring_read(const ops_parser_content_t *content_,
 		ops_parse_cb_info_t *cbinfo)
-    {
-    OPS_USED(cbinfo);
+{
+	OPS_USED(cbinfo);
 
-    switch(content_->tag)
-        {
-    case OPS_PARSER_PTAG:
-    case OPS_PTAG_CT_ENCRYPTED_SECRET_KEY: // we get these because we didn't prompt
-    case OPS_PTAG_CT_SIGNATURE_HEADER:
-    case OPS_PTAG_CT_SIGNATURE_FOOTER:
-    case OPS_PTAG_CT_SIGNATURE:
-    case OPS_PTAG_CT_TRUST:
-    case OPS_PARSER_ERRCODE:
-        break;
+	switch(content_->tag)
+	{
+		case OPS_PARSER_PTAG:
+		case OPS_PTAG_CT_ENCRYPTED_SECRET_KEY: // we get these because we didn't prompt
+		case OPS_PTAG_CT_SIGNATURE_HEADER:
+		case OPS_PTAG_CT_SIGNATURE_FOOTER:
+		case OPS_PTAG_CT_SIGNATURE:
+		case OPS_PTAG_CT_TRUST:
+		case OPS_PARSER_ERRCODE:
+			break;
 
-    default:
-	;
+		default:
+			;
 	}
 
-    return OPS_RELEASE_MEMORY;
-    }
+	return OPS_RELEASE_MEMORY;
+}
+
+ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean_t armoured,const char *filename)
+{
+	ops_create_info_t *info;
+	int fd = ops_setup_file_write(&info, filename, ops_true);
+
+	if (fd < 0) 
+	{
+		fprintf(stderr,"ops_write_keyring(): ERROR: Cannot write to %s\n",filename ) ;
+		return ops_false ;
+	}
+
+	int i;
+	for(i=0;i<keyring->nkeys;++i)
+		if(keyring->keys[i].key.pkey.algorithm  == OPS_PKA_RSA)
+			ops_write_transferable_public_key(&keyring->keys[i],armoured,info) ;
+		else
+		{
+			fprintf(stderr, "ops_write_keyring: not writing key. Algorithm not handled: ") ;
+			ops_print_public_keydata(&keyring->keys[i]);
+		}
+
+	ops_writer_close(info);
+	ops_create_info_delete(info);
+
+	return ops_true ;
+}
 
 /*\@}*/
 

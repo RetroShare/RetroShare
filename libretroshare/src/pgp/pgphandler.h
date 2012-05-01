@@ -117,8 +117,10 @@ class PGPHandler
 		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) ;
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
-
 		void setAcceptConnexion(const PGPIdType&,bool) ;
+
+		// Write keyring
+		bool writePublicKeyring(const std::string& filename) const ;
 
 		// Debug stuff.
 		virtual bool printKeys() const ;
@@ -130,18 +132,15 @@ class PGPHandler
 		bool isGPGAccepted(const std::string &id);
 
 		static void setPassphraseCallback(PassphraseCallback cb) ;
-
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
 	private:
-		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key) ;
-		static ops_keyring_t *allocateOPSKeyring() ;
-		static void addNewKeyToOPSKeyring(ops_keyring_t*, const ops_keydata_t&) ;
-
 		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
 
 		const ops_keydata_t *getPublicKey(const PGPIdType&) const ;
 		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;
 
+		// Members.
+		//
 		RsMutex pgphandlerMtx ;
 
 		ops_keyring_t *_pubring ;
@@ -153,6 +152,11 @@ class PGPHandler
 		const std::string _pubring_path ;
 		const std::string _secring_path ;
 
+		// Helper functions.
+		//
+		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key) ;
+		static ops_keyring_t *allocateOPSKeyring() ;
+		static void addNewKeyToOPSKeyring(ops_keyring_t*, const ops_keydata_t&) ;
 		static PassphraseCallback _passphrase_callback ;
 };
 

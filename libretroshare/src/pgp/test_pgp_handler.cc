@@ -43,6 +43,9 @@ int main(int argc,char *argv[])
 	PGPHandler::setPassphraseCallback(&passphrase_callback) ;
 	PGPHandler pgph(pubring,secring) ;
 
+	std::cerr << "Writing public keyring to file tmp_keyring.asc" << std::endl;
+	pgph.writePublicKeyring("tmp_keyring.asc") ;
+
 	pgph.printKeys() ;
 
 	std::cerr << std::endl ;
