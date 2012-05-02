@@ -359,6 +359,21 @@ void Rshare::resetLanguageAndStyle()
     setSheet(_args.value(ARG_GUISTYLESHEET));
 }
 
+void Rshare::loadStyleSheet(const QString &sheetName)
+{
+    QString styleSheet;
+
+    if (!sheetName.isEmpty()) {
+        /** extern Stylesheets **/
+        QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
+        if (file.open(QFile::ReadOnly)) {
+            styleSheet = QLatin1String(file.readAll());
+            file.close();
+        }
+    }
+    qApp->setStyleSheet(styleSheet);
+}
+
 /** Initialize plugins. */
 void Rshare::initPlugins()
 {

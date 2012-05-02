@@ -33,25 +33,23 @@
 AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
 
-  connect(ui.styleSheetCombo, SIGNAL(clicked()), this, SLOT(loadStyleSheet()));
+    connect(ui.styleSheetCombo, SIGNAL(clicked()), this, SLOT(loadStyleSheet()));
 
-  /* Populate combo boxes */
-  foreach (QString code, LanguageSupport::languageCodes()) {
-    ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"),
-                             LanguageSupport::languageName(code),
-                             code);
-  }
-  foreach (QString style, QStyleFactory::keys()) {
-    ui.cmboStyle->addItem(style, style.toLower());
-  }
+    /* Populate combo boxes */
+    foreach (QString code, LanguageSupport::languageCodes()) {
+        ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
+    }
+    foreach (QString style, QStyleFactory::keys()) {
+        ui.cmboStyle->addItem(style, style.toLower());
+    }
 
-  //loadStyleSheet("Default");
-  loadqss();
+    //loadStyleSheet("Default");
+    loadqss();
 
-  /* Hide platform specific features */
+    /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
@@ -93,15 +91,8 @@ AppearancePage::load()
     }
     ui.styleSheetCombo->setCurrentIndex(index);
 
-    /** load saved internal styleSheet **/
-    //QFile file(":/qss/" + (settings.getSheetName().toLower()) + ".qss");
-
     /** load saved extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + (Settings->getSheetName().toLower()) + ".qss");
-
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-    qApp->setStyleSheet(styleSheet);
+    loadStyleSheet (Settings->getSheetName());
 }
 
 void AppearancePage::on_styleSheetCombo_activated(const QString &sheetName)
@@ -111,28 +102,17 @@ void AppearancePage::on_styleSheetCombo_activated(const QString &sheetName)
 
 void AppearancePage::loadStyleSheet(const QString &sheetName)
 {
-     /** internal Stylesheets **/
-    //QFile file(":/qss/" + sheetName.toLower() + ".qss");
-
-    /** extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
-
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-
-
-    qApp->setStyleSheet(styleSheet);
-
+    Rshare::loadStyleSheet(sheetName);
 }
 
 void AppearancePage::loadqss()
 {
-
-	QFileInfoList slist = QDir(QApplication::applicationDirPath() + "/qss/").entryInfoList();
-	foreach(QFileInfo st, slist)
-	{
-	if(st.fileName() != "." && st.fileName() != ".." && st.isFile())
-	ui.styleSheetCombo->addItem(st.fileName().remove(".qss"));
-	}
-
+    QFileInfoList slist = QDir(QApplication::applicationDirPath() + "/qss/").entryInfoList();
+    // add empty entry representing "no style sheet"
+    ui.styleSheetCombo->addItem("");
+    foreach(QFileInfo st, slist)
+    {
+        if(st.fileName() != "." && st.fileName() != ".." && st.isFile())
+        ui.styleSheetCombo->addItem(st.fileName().remove(".qss"));
+    }
 }

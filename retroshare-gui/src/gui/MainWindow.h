@@ -198,7 +198,6 @@ private slots:
 
     void showMess();
     void showSettings();
-    void setStyle();
     void statusChangedMenu(QAction *pAction);
     void statusChangedComboBox(int index);
 
@@ -221,8 +220,6 @@ private:
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
-
-    void loadStyleSheet(const QString &sheetName);
 
     QString nameAndLocation;
 

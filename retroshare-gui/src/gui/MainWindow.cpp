@@ -235,7 +235,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     /* load the StyleSheet*/
-    loadStyleSheet(Rshare::stylesheet());
+    Rshare::loadStyleSheet(Rshare::stylesheet());
 
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
@@ -1345,21 +1345,6 @@ void MainWindow::toggleVisibilitycontextmenu()
         show();
 }
 
-void MainWindow::loadStyleSheet(const QString &sheetName)
-{
-    /** internal Stylesheets **/
-    //QFile file(":/qss/" + sheetName.toLower() + ".qss");
-
-    /** extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
-
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-
-    qApp->setStyleSheet(styleSheet);
-
-}
-
 void MainWindow::showabout()
 {
     AboutDialog adlg(this);
@@ -1400,18 +1385,6 @@ MainWindow::retranslateUi()
   foreach (QAction *action, ui.toolBar->actions()) {
     action->setText(tr(qPrintable(action->data().toString()), "MainWindow"));
   }
-}
-
-void MainWindow::setStyle()
-{
- QString standardSheet = "{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 <color1>, stop:1 <color2>);}";
- QColor stop1 = QColorDialog::getColor(Qt::white);
- QColor stop2 = QColorDialog::getColor(Qt::black);
- //QString widgetSheet = ".QWidget" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
- QString toolSheet = "QToolBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
- QString menuSheet = "QMenuBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
- qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
-
 }
 
 /* set status object to status value */

@@ -75,8 +75,10 @@ public:
   static bool setLanguage(QString languageCode = QString());
   /** Sets the current GUI style. */
   static bool setStyle(QString styleKey = QString());
-    /** Sets the current GUI stylesheet. */
+  /** Sets the current GUI stylesheet. */
   static bool setSheet(QString sheet = QString());
+  /** Loads stylesheet from external file **/
+  static void loadStyleSheet(const QString &sheetName);
 
   /**
    * Update Language, Style and StyleSheet.
@@ -96,7 +98,6 @@ public:
   /** Returns Rshare's application version. */
   static QString version() { return RSHARE_VERSION; }
 
-  
   /** Returns the location Rshare uses for its data files. */
   static QString dataDirectory();
   /** Returns the default location of Rshare's data directory. */
