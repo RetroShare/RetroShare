@@ -31,6 +31,14 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
 
 } } // librs::util
 
+#ifdef WIN32
+#define INT64FMT "%I64d"
+#define UINT64FMT "%I64u"
+#else
+#define INT64FMT "%lld"
+#define UINT64FMT "%llu"
+#endif
+
 int rs_sprintf(std::string &str, const char *fmt, ...);
 int rs_sprintf_append(std::string &str, const char *fmt, ...);
 

@@ -34,7 +34,6 @@
 #include <errno.h>
 
 #include <iostream>
-#include <sstream> // for std::istringstream
 #include <iomanip>
 
 #include <dirent.h>
@@ -131,9 +130,8 @@ HashCache::HashCache(const std::string& path)
 
 		f.getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
 
-		std::istringstream ss(buff) ;
 		info.size = 0 ;
-		ss >> info.size ;
+		sscanf(buff, UINT64FMT, &info.size);
 
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.time_stamp) != 1) break ;
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.modf_stamp) != 1) break ;

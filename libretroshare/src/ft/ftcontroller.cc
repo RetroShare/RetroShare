@@ -60,7 +60,6 @@
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
-#include <sstream> // for std::istringstream
 
 /******
  * #define CONTROL_DEBUG 1
@@ -2101,17 +2100,15 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 
 	if (configMap.end() != (mit = configMap.find(active_downloads_size_ss)))
 	{
-		std::istringstream i(mit->second) ;
 		int n=5 ;
-		i >> n ;
+		sscanf(mit->second.c_str(), "%d", &n);
 		std::cerr << "Note: loading active max downloads: " << n << std::endl;
 		setQueueSize(n);
 	}
 	if (configMap.end() != (mit = configMap.find(min_prioritized_downl_ss)))
 	{
-		std::istringstream i(mit->second) ;
 		int n=3 ;
-		i >> n ;
+		sscanf(mit->second.c_str(), "%d", &n);
 		std::cerr << "Note: loading min prioritized downloads: " << n << std::endl;
 		setMinPrioritizedTransfers(n);
 	}
@@ -2138,14 +2135,12 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 
 	if (configMap.end() != (mit = configMap.find(free_space_limit_ss)))
 	{
-		std::istringstream in(mit->second) ;
 		uint32_t size ;
+		if (sscanf(mit->second.c_str(), "%u", &size) == 1) {
+			std::cerr << "have read a size limit of " << size <<" MB" << std::endl ;
 
-		in >> size ;
-
-		std::cerr << "have read a size limit of " << size <<" MB" << std::endl ;
-
-		RsDiscSpace::setFreeSpaceLimit(size) ;
+			RsDiscSpace::setFreeSpaceLimit(size) ;
+		}
 	}
 	return true;
 }

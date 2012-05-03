@@ -50,7 +50,6 @@
 #include <errno.h>
 #include <cmath>
 
-#include <sstream> // for std::istringstream
 #include <stdio.h>
 
 #include "util/rsdebug.h"
@@ -605,12 +604,11 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 #ifdef CHAT_DEBUG
 					std::cerr << "Loaded config default nick name for chat: " << kit->value << std::endl ;
 #endif
-					std::istringstream is(kit->value) ;
-
 					int val ;
-					is >> val ;
-				
-					setMaxTRForwardRate(val) ;
+					if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+					{
+						setMaxTRForwardRate(val) ;
+					}
 				}
 
 		delete vitem ;

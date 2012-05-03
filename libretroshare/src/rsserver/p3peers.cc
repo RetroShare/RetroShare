@@ -38,7 +38,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream> // for std::istringstream
 
 #include <gpgme.h>
 
@@ -1192,10 +1191,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
                     if (parsePosition != std::string::npos) {
                         std::string local_port = subCert.substr(0, parsePosition);
                         std::cerr << "Local port : " << local_port << std::endl;
-                        std::istringstream instream(local_port);
-                        uint16_t local_port_int;
-                        instream >> local_port_int;
-                        pd.localPort = (local_port_int);
+                        sscanf(local_port.c_str(), "%hu", &pd.localPort);
                     }
                 }
             }
@@ -1218,10 +1214,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
                     if (parsePosition != std::string::npos) {
                         std::string ext_port = subCert.substr(0, parsePosition);
                         std::cerr << "Ext port : " << ext_port << std::endl;
-                        std::istringstream instream(ext_port);
-                        uint16_t ext_port_int;
-                        instream >> ext_port_int;
-                        pd.extPort = (ext_port_int);
+                        sscanf(ext_port.c_str(), "%hu", &pd.extPort);
                     }
                 }
             }

@@ -1304,7 +1304,7 @@ bool p3disc::loadList(std::list<RsItem*>& load)
                         std::list<RsTlvKeyValue>::iterator kit;
                         for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
 						{
-                            std::istringstream instream(kit->value);
+							std::istringstream instream(kit->value); // please do not use std::istringstream
                             time_t deleted_time_t;
                             instream >> deleted_time_t;
                             deletedSSLFriendsIds[kit->key] = deleted_time_t;

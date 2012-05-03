@@ -31,7 +31,6 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
-#include <sstream> // for std::stringstream
 #include <tr1/unordered_set>
 #include <iomanip>
 #include <fstream>
@@ -725,11 +724,11 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 
 	/* load file into memory, close file */
 	char ibuf[512];
-	std::stringstream ss;
+	std::string s;
 	while(!file.eof())
 	{
 		file.read(ibuf, 512);
-		ss.write(ibuf, file.gcount());
+		s.append(ibuf, file.gcount());
 	}
 	file.close();
 
@@ -737,7 +736,7 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	SHA1_Init(sha_ctx);
-	SHA1_Update(sha_ctx, ss.str().c_str(), ss.str().length());
+	SHA1_Update(sha_ctx, s.c_str(), s.length());
 	SHA1_Final(&sha_buf[0], sha_ctx);
 	delete sha_ctx;
 
@@ -757,17 +756,24 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 		return 0;
 	}
 
+#define FIND_NEXT(s,start,end,c) end = s.find(c, start); if (end == std::string::npos) end = s.length();
+
 	DirEntry *ndir = NULL;
 	FileEntry *nfile = NULL;
 	std::list<DirEntry *> dirlist;
 	std::string word;
 	char ch;
 
-	while(ss.get(ch))
+	std::string::size_type pos = 0;
+	while (pos < s.length())
 	{
+		ch = s[pos];
+		++pos;
 		if (ch == '-')
 		{
-			ss.ignore(256, '\n');
+			FIND_NEXT(s, pos, pos, '\n');
+			++pos;
+
 			switch(dirlist.size())
 			{
 				/* parse error: out of directory */
@@ -820,25 +826,27 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 		// Ignore comments
 		else if (ch == '#')
 		{
-			ss.ignore(256, '\n');
+			FIND_NEXT(s, pos, pos, '\n');
+			++pos;
 		}
 
 		else {
 			std::vector<std::string> tokens;
 			/* parse line */
-			while(1)
+			std::string::size_type lineend;
+			FIND_NEXT(s, pos, lineend, '\n');
+			std::string line = s.substr(pos, lineend - pos);
+			pos = lineend + 1;
+			
+			std::string::size_type start = 0;
+			while (start < line.length())
 			{
-				getline(ss, word, FILE_CACHE_SEPARATOR_CHAR);
-				if (ss.eof())
-					goto error;
-				tokens.push_back(word);
-				if (ss.peek() == '\n')
-				{
-					ss.ignore(256, '\n');
-					break;
-				}
-
+				std::string::size_type end;
+				FIND_NEXT(line, start, end, FILE_CACHE_SEPARATOR_CHAR);
+				tokens.push_back(line.substr(start, end - start));
+				start = end + 1;
 			}
+
 			/* create new file and add it to last directory*/
 			if (ch == 'f')
 			{
