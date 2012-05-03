@@ -38,11 +38,9 @@
 
 const uint8_t RS_PKT_SUBTYPE_SYNC_GRP      = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_SYNC_GRP_LIST = 0x0002;
-const uint8_t RS_PKT_SUBTYPE_GRPS_REQ      = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_GRPS_RESP     = 0x0008;
 const uint8_t RS_PKT_SUBTYPE_SYNC_MSG      = 0x0010;
 const uint8_t RS_PKT_SUBTYPE_SYNC_MSG_LIST = 0x0020;
-const uint8_t RS_PKT_SUBTYPE_MSG_REQ       = 0x0040;
 const uint8_t RS_PKT_SUBTYPE_MSG_RESP      = 0x0080;
 const uint8_t RS_PKT_SUBTYPE_SEARCH_REQ    = 0x0100;
 const uint8_t RS_PKT_SUBTYPE_SEARCH_RESP   = 0x0200;
@@ -94,22 +92,14 @@ class RsSyncGrpList : public RsNxs
 public:
     RsSynchGrpList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
 
+    static const uint8_t FLAG_REQUEST;
+    static const uint8_t FLAG_RESPONSE;
+
+    uint8_t flag; // request or response
+
     /// groups held by sending peer
-    std::map<std::string, std::list<uint32_t> > grps; // grpId/ versions pair
+    std::map<std::string, std::list<uint32_t> > grps; // grpId/ n version pair
 
-};
-
-/*!
- * Use to send to peer list grps
- * wanted to by server peer
- */
-class RsGrpReq : public RsNxs
-{
-public:
-
-    RsGrpReq(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_GRPS_REQ) { return; }
-
-    std::map<std::string, std::list<uint32_t> > grps; // grp/versions pair
 };
 
 /*!
@@ -140,6 +130,7 @@ public:
 
     std::string grpId;
     uint32_t flag;
+    uint32_t syncAge;
     uint32_t syncHash;
 };
 
@@ -151,26 +142,17 @@ class RsSyncGrpMsgList : public RsNxs
 {
 public:
 
+    static const uint8_t FLAG_RESPONSE;
+    static const uint8_t FLAG_REQUEST;
+
     RsSyncGrpMsgList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_MSG_LIST) { return; }
 
+    uint32_t flag; // response/req
     std::string grpId;
     std::map<std::string, std::list<uint32_t> > msgs; // msg/versions pairs
 
 };
 
-/*!
- * Use to request msgs from a peer
- * for a given group
- */
-class RsGrpMsgReq : public RsNxs
-{
-public:
-
-    RsGrpMsgReq(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_MSG_REQ) { return; }
-
-    std::string grpId;
-    std::map<std::string, std::list<uint32_t> > msgs;
-};
 
 /*!
  * Used to respond to a RsGrpMsgsReq
@@ -222,7 +204,7 @@ class RsNxsSerialiser : public RsSerialType
 
     virtual ~RsNxsSerialiser() { return; }
 
-    virtual uint32_t size(RsItem *);
+    virtual uint32_t size(RsItem *item);
     virtual bool serialise(RsItem *item, void *data, uint32_t *size);
     virtual RsItem* deserialise(void *data, uint32_t *size);
 
@@ -231,63 +213,52 @@ private:
 
     /* for RS_PKT_SUBTYPE_SYNC_GRP */
 
-    virtual uint32_t sizeSyncGrp(RsItem* item);
+    virtual uint32_t sizeSyncGrp(RsSyncGrp* item);
     virtual bool serialiseSyncGrp(RsSyncGrp *item, void *data, uint32_t *size);
-    virtual RsSyncGrp* deserialise(void *data, uint32_t *size);
+    virtual RsSyncGrp* deserialSyncGrp(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_SYNC_GRP_LIST */
 
-    virtual uint32_t sizeSyncGrpList(RsItem* item);
+    virtual uint32_t sizeSyncGrpList(RsSyncGrpList* item);
     virtual bool serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint32_t *size);
-    virtual RsSyncGrpList* deserialise(void *data, uint32_t *size);
-
-    /* for RS_PKT_SUBTYPE_GRPS_REQ */
-
-    virtual uint32_t sizeGrpReq(RsGrpReq* item);
-    virtual bool serialiseGrpReq(RsGrpReq *item, void *data, uint32_t *size);
-    virtual RsGrpReq* deserialise(void *data, uint32_t *size);
+    virtual RsSyncGrpList* deserialSyncGrpList(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_GRPS_RESP */
 
     virtual uint32_t sizeGrpResp(RsGrpResp* item);
     virtual bool serialiseGrpResp(RsGrpResp *item, void *data, uint32_t *size);
-    virtual RsGrpResp* deserialise(void *data, uint32_t *size);
+    virtual RsGrpResp* deserialGrpResp(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_SYNC_MSG */
 
     virtual uint32_t sizeSyncGrpMsg(RsSyncGrpMsg* item);
-    virtual bool serialiseSyncGrpMsg(RsItem *item, void *data, uint32_t *size);
-    virtual RsSyncGrpMsg* deserialise(void *data, uint32_t *size);
+    virtual bool serialiseSyncGrpMsg(RsSyncGrpMsg *item, void *data, uint32_t *size);
+    virtual RsSyncGrpMsg* deserialSyncGrpMsg(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_SYNC_MSG_LIST */
 
     virtual uint32_t sizeSynGrpMsgList(RsSyncGrpMsgList* item);
     virtual bool serialiseSynGrpMsgList(RsSyncGrpMsgList* item, void *data, uint32_t* size);
-    virtual RsSyncGrpMsgList* deserialise(void *data, uint32_t *size);
+    virtual RsSyncGrpMsgList* deserialSynGrpMsgList(void *data, uint32_t *size);
 
-    /* RS_PKT_SUBTYPE_MSG_REQ */
-
-    virtual uint32_t sizeGrpMsgReq(RsGrpMsgReq* item);
-    virtual bool serialiseGrpMsgReq(RsGrpMsgReq* item, void* data, uint32_t* size);
-    virtual RsGrpMsgReq deserialise(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_MSG_RESP */
 
     virtual uint32_t sizeGrpMsgResp(RsGrpMsgResp* item);
     virtual bool serialiseGrpMsgResp(RsGrpMsgResp* item, void* data, uint32_t* size);
-    virtual RsGrpMsgResp* deserialise(void *data, uint32_t *size);
+    virtual RsGrpMsgResp* deserialGrpMsgResp(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_SEARCH_REQ */
 
     virtual uint32_t sizeNxsSearchReq(RsNxsSearchReq* item);
     virtual bool serialiseNxsSearchReq(RsNxsSearchReq* item, void* data, uint32_t* size);
-    virtual RsNxsSearchResp* deserialise(void *data, uint32_t *size);
+    virtual RsNxsSearchResp* deserialNxsSearchReq(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_SEARCH_RESP */
 
     virtual uint32_t sizeNxsSearchResp(RsNxsSearchResp *item);
     virtual bool serialiseNxsSearchResp(RsNxsSearchResp *item, void *data, uint32_t *size);
-    virtual RsNxsSearchResp* deserialise(void *data, uint32_t *size);
+    virtual RsNxsSearchResp* deserialNxsSearchResp(void *data, uint32_t *size);
 
 };
 
