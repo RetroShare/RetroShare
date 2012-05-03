@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>775</width>
-    <height>511</height>
+    <height>485</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1025,6 +1025,12 @@ border: 1px solid #CCCCCC;}</string>
            </property>
            <item row="1" column="0">
             <widget class="QListWidget" name="listWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -1034,7 +1040,7 @@ border: 1px solid #CCCCCC;}</string>
              <property name="maximumSize">
               <size>
                <width>160</width>
-               <height>16777215</height>
+               <height>130</height>
               </size>
              </property>
              <property name="baseSize">
@@ -1133,6 +1139,12 @@ border: 1px solid #CCCCCC;}</string>
            </item>
            <item row="3" column="0">
             <widget class="QListWidget" name="quickViewWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="maximumSize">
               <size>
                <width>160</width>
@@ -1144,48 +1156,6 @@ border: 1px solid #CCCCCC;}</string>
                <width>0</width>
                <height>0</height>
               </size>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QToolButton" name="quickViewsButton">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>22</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>160</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QToolButton#quickViewsButton{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
-             </property>
-             <property name="text">
-              <string>Quick View</string>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
              </property>
             </widget>
            </item>
@@ -1237,6 +1207,43 @@ padding: 4px;
              </property>
              <property name="text">
               <string>Folders</string>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="quickViewsButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>160</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton#quickViewsButton{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+text-align: left;
+
+border: 1px solid #CCCCCC;}</string>
+             </property>
+             <property name="text">
+              <string>Quick View</string>
+             </property>
+             <property name="icon">
+              <iconset resource="images.qrc">
+               <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -1383,22 +1390,5 @@ padding: 4px;
  <resources>
   <include location="images.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>quickViewsButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>quickViewWidget</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>78</x>
-     <y>287</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>78</x>
-     <y>399</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

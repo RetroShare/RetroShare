@@ -199,11 +199,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_STAR,          Qt::Horizontal, QIcon(IMAGE_STAR_ON), Qt::DecorationRole);
 
     MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, tr("Click to sort by attachments"), Qt::ToolTipRole);
-	MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Click to sort by subject"), Qt::ToolTipRole);
-	MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, tr("Click to sort by read"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Click to sort by subject"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, tr("Click to sort by read"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("Click to sort by from"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Click to sort by date"), Qt::ToolTipRole);
-	MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Click to sort by tags"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Click to sort by tags"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_STAR,          Qt::Horizontal, tr("Click to sort by star"), Qt::ToolTipRole);
 
     proxyModel = new QSortFilterProxyModel(this);
@@ -272,6 +272,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
     msgwheader->resizeSection (COLUMN_STAR, 24);
     msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
+    msgwheader->setStretchLastSection(false);
 
     // fill folder list
     updateMessageSummaryList();
