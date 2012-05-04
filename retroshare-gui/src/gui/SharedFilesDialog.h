@@ -66,7 +66,6 @@ private slots:
   void copyLinkhtml();
   void sendLinkTo();
   void sendremoteLinkTo();
-  void sendHtmlLinkTo();
 #ifdef RS_USE_LINKS
   void sendLinkToCloud();
   void addLinkToCloud();
@@ -121,7 +120,6 @@ private:
   QAction* copyremotelinkAct;
   QAction* copylinklocalAct;
   QAction* sendlinkAct;
-  QAction* sendhtmllinkAct;
 #ifdef RS_USE_LINKS
   QAction* sendlinkCloudAct;
   QAction* addlinkCloudAct;

@@ -4555,22 +4555,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+362"/>
-        <location line="+81"/>
+        <location line="+100"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-81"/>
+        <location line="-100"/>
         <source>No Forum Selected!</source>
         <translation>Kein Forum ausgewählt!</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+61"/>
+        <source>Original Message</source>
+        <translation>Ursprüngliche Nachricht</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>From</source>
+        <translation>Von</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Sent</source>
+        <translation>Gesendet</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Subject</source>
+        <translation>Betreff</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>On %1, %2 wrote:</source>
+        <translation>Am %1, schrieb %2:</translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>You cant reply a Anonymous Author</source>
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1353"/>
+        <location line="-1372"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4783,7 +4808,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsFillThread</name>
     <message>
-        <location line="+1478"/>
+        <location line="+1497"/>
         <location line="+114"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -5251,7 +5276,7 @@ p, li { white-space: pre-wrap; }
         <location line="-20"/>
         <location line="+21"/>
         <source>Error : cannot get peer details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler : Kann Details des Freundes nicht ermitteln.</translation>
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
@@ -7403,7 +7428,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>%1 Freunde verbunden</translation>
     </message>
     <message>
-        <location line="+766"/>
+        <location line="+739"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
     </message>
@@ -7413,7 +7438,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Link ist fehlerhaft.</translation>
     </message>
     <message>
-        <location line="-774"/>
+        <location line="-747"/>
         <source>%1 friend connected</source>
         <translation>%1 Freund verbunden</translation>
     </message>
@@ -7778,12 +7803,14 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+1023"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+648"/>
+        <location line="+413"/>
         <source>To</source>
         <translation>An</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-410"/>
+        <location line="+411"/>
         <source>Cc</source>
         <translation>Cc</translation>
     </message>
@@ -7863,7 +7890,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1109"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1147"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -7894,12 +7921,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+1522"/>
+        <location line="+1560"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-1521"/>
+        <location line="-1559"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Nachricht wurde noch nicht gesendet.
@@ -7937,7 +7964,32 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>Freund-Details</translation>
     </message>
     <message>
-        <location line="+429"/>
+        <location line="+364"/>
+        <source>Original Message</source>
+        <translation>Ursprüngliche Nachricht</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>From</source>
+        <translation>Von</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Sent</source>
+        <translation>Gesendet</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Subject</source>
+        <translation>Betreff</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>On %1, %2 wrote:</source>
+        <translation>Am %1, schrieb %2:</translation>
+    </message>
+    <message>
+        <location line="+129"/>
         <source>Re:</source>
         <translation>Re:</translation>
     </message>
@@ -7947,7 +7999,7 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>Fwd:</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+48"/>
         <location line="+122"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -8138,7 +8190,7 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation type="obsolete">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-1736"/>
+        <location line="-1774"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
@@ -8496,12 +8548,12 @@ p, li { white-space: pre-wrap; }
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+576"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+622"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+623"/>
         <source>New Message</source>
         <translation>Neue Nachricht</translation>
     </message>
     <message>
-        <location line="+762"/>
+        <location line="+769"/>
         <source>Reply to Message</source>
         <translation>Antworten nur an Absender</translation>
     </message>
@@ -8521,15 +8573,15 @@ p, li { white-space: pre-wrap; }
         <translation>Nachricht entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-409"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-408"/>
+        <location filename="../gui/MessagesDialog.ui" line="-416"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-409"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
         <location line="-5"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+748"/>
+        <location line="+749"/>
         <source>From</source>
         <translation>Von</translation>
     </message>
@@ -8598,7 +8650,7 @@ p, li { white-space: pre-wrap; }
         <translation>Anhänge</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+181"/>
         <location filename="../gui/MessagesDialog.cpp" line="-66"/>
         <location line="+839"/>
         <location line="+10"/>
@@ -8625,12 +8677,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gesendet</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+120"/>
         <source>Quick View</source>
         <translation>Schnellansicht</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+57"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>Drucken...</translation>
@@ -8672,8 +8724,8 @@ p, li { white-space: pre-wrap; }
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location line="-410"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-696"/>
+        <location line="-417"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-697"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
@@ -8688,7 +8740,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gewählte Nachricht weiterleiten</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+175"/>
         <source>Starred</source>
         <translation>Gekennzeichnet</translation>
     </message>
@@ -8708,12 +8760,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichten entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+537"/>
+        <location filename="../gui/MessagesDialog.ui" line="+544"/>
         <source>Forward Message</source>
         <translation>Weiterleiten</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-403"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-404"/>
         <source>Click to sort by attachments</source>
         <translation>Klicken, um nach Anhang zu sortieren</translation>
     </message>
@@ -8729,12 +8781,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <location line="+740"/>
+        <location line="+741"/>
         <source>Click to sort by from</source>
         <translation>Klicken, um nach Von zu sortieren</translation>
     </message>
     <message>
-        <location line="-739"/>
+        <location line="-740"/>
         <source>Click to sort by date</source>
         <translation>Klicken, um nach Datum zu sortieren</translation>
     </message>
@@ -8744,7 +8796,7 @@ p, li { white-space: pre-wrap; }
         <translation>Klicken, um nach Schlagwörter zu sortieren</translation>
     </message>
     <message>
-        <location line="+226"/>
+        <location line="+227"/>
         <source>System</source>
         <translation>System</translation>
     </message>
@@ -8760,17 +8812,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="-9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-698"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-699"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
     </message>
     <message>
-        <location line="-141"/>
+        <location line="-178"/>
         <source>Total Inbox:</source>
         <translation>Posteingang gesamt:</translation>
     </message>
     <message>
-        <location line="-272"/>
+        <location line="-242"/>
         <location filename="../gui/MessagesDialog.cpp" line="-51"/>
         <source>Content</source>
         <translation>Inhalt</translation>
@@ -8780,12 +8832,12 @@ p, li { white-space: pre-wrap; }
         <location line="+11"/>
         <location line="+3"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1"/>
-        <location line="+84"/>
+        <location line="+85"/>
         <source>Tags</source>
         <translation>Schlagwörter</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+178"/>
         <location filename="../gui/MessagesDialog.cpp" line="+612"/>
         <location line="+885"/>
         <location line="+5"/>
@@ -8793,7 +8845,7 @@ p, li { white-space: pre-wrap; }
         <translation>Papierkorb</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+78"/>
         <source>Folders</source>
         <translation>Ordner</translation>
     </message>
@@ -8835,12 +8887,12 @@ p, li { white-space: pre-wrap; }
         <translation>An</translation>
     </message>
     <message>
-        <location line="-739"/>
+        <location line="-740"/>
         <source>Click to sort by star</source>
         <translation>Klicken, um nach Kennzeichnung zu sortieren</translation>
     </message>
     <message>
-        <location line="+711"/>
+        <location line="+712"/>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
         <translation>Es sind keine gekennzeichneten Nachrichten vorhanden. Durch die Kennzeichnung kannst du Nachrichten mit einem speziellen Status versehen, sodass sie leichter zu finden sind. Klicke zum Kennzeichnen einer Nachricht auf den hellgrauen Stern neben der jeweiligen Nachricht.</translation>
     </message>
@@ -12955,7 +13007,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="+984"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+389"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="+387"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -13039,22 +13091,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="-154"/>
-        <location line="+581"/>
+        <location line="+556"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-554"/>
         <source>Open Folder</source>
         <translation>Ordner öffnen</translation>
     </message>
     <message>
-        <location line="+588"/>
+        <location line="+563"/>
         <source>Set command for opening this file</source>
         <translation>Setze eine Regel zum Öffnen dieser Datei</translation>
     </message>
     <message>
-        <location line="-431"/>
+        <location line="-406"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -13074,7 +13126,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sende RetroShare Link</translation>
     </message>
     <message>
-        <location line="-178"/>
+        <location line="-176"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Kopiere RetroShare Links in die Zwischenablage</translation>
     </message>
@@ -13089,9 +13141,8 @@ p, li { white-space: pre-wrap; }
         <translation>Sende RetroShare Links</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Send retroshare Links (HTML)</source>
-        <translation>Sende RetroShare Links (HTML)</translation>
+        <translation type="obsolete">Sende RetroShare Links (HTML)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13110,19 +13161,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+171"/>
-        <location line="+391"/>
+        <location line="+366"/>
         <source>Recommend in a message to</source>
         <translation>Empfehle in einer Nachricht an</translation>
     </message>
     <message>
-        <location line="-257"/>
+        <location line="-232"/>
         <location line="+23"/>
-        <location line="+24"/>
         <source>RetroShare Link</source>
         <translation>RetroShare Link</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+79"/>
         <location line="+1"/>
         <location line="+23"/>
         <location line="+1"/>

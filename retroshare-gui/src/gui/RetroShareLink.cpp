@@ -1133,7 +1133,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 							MessageComposer *msg = MessageComposer::newMsg();
 							msg->addRecipient(MessageComposer::TO, detail.id, false);
 							if (link.subject().isEmpty() == false) {
-								msg->insertTitleText(link.subject());
+								msg->setTitleText(link.subject());
 							}
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));

@@ -1251,9 +1251,9 @@ void SearchDialog::sendLinkTo( )
         return;
     }
 
-    nMsgDialog->insertTitleText(tr("New RetroShare Link(s)"));
+    nMsgDialog->setTitleText(tr("New RetroShare Link(s)"));
+    nMsgDialog->setMsgText(RSLinkClipboard::toHtml(), true) ;
 
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml()) ;
     nMsgDialog->show();
 
     /* window will destroy itself! */

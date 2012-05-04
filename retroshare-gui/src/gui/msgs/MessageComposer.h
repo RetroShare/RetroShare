@@ -32,6 +32,7 @@ class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
+struct MessageInfo;
 
 class MessageComposer : public QMainWindow 
 {
@@ -57,16 +58,13 @@ public:
     static MessageComposer *forwardMsg(const std::string &msgId);
 
     /* worker fns */
-    void  insertFileList(const std::list<DirDetails>&);
-    void  insertFileList(const std::list<FileInfo>&);
+    void  setFileList(const std::list<DirDetails>&);
+    void  setFileList(const std::list<FileInfo>&);
     void  addFile(const FileInfo &fileInfo);
-    void  insertTitleText(const QString &title, enumMessageType type = NORMAL);
-    void  insertPastedText(QString msg) ;
-    void  insertForwardPastedText(QString msg);
-    void  insertHtmlText(const QString &msg);
-    void  insertMsgText(const QString &msg, bool asHtml = false);
+    void  setTitleText(const QString &title, enumMessageType type = NORMAL);
+    void  setQuotedMsg(const QString &msg, const QString &header);
+    void  setMsgText(const QString &msg, bool asHtml = false);
     void  addRecipient(enumType type, const std::string &id, bool group);
-    void  Create_New_Image_Tag(const QString urlremoteorlocal);
 
 public slots:
     /* actions to take.... */
@@ -145,6 +143,8 @@ private slots:
     void tagRemoveAll();
 
 private:
+    static QString buildReplyHeader(const MessageInfo &msgInfo);
+
     void processSettings(bool bLoad);
 
     void addContact(enumType type);
@@ -175,6 +175,8 @@ private:
 
     void clearTagLabels();
     void showTagLabels();
+
+    void Create_New_Image_Tag(const QString urlremoteorlocal);
 
     QAction *actionSave,
     *actionAlignLeft,

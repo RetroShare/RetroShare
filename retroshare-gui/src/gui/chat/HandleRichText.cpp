@@ -337,11 +337,10 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 			// <p>
 			if (element.tagName().toLower() == "p") {
 				// <p style="...">
-				//styleNode = element.attributes().namedItem("style");
 				if (element.attributes().size() == 1 && styleNode.isAttr()) {
-					QString value = styleNode.toAttr().value().simplified();
-					if (value == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;" ||
-						value.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
+					QString style = styleNode.toAttr().value().simplified();
+					if (style == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;" ||
+						style.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
 
 						if (addBR) {
 							// add <br> after a removed <p> before a removed <p>
@@ -354,7 +353,49 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 						removeElement(currentElement, element);
 						addBR = true;
 						continue;
-					 }
+					}
+
+					// check for blockquote (not ready)
+					// style="margin-top:12px;margin-bottom:12px;margin-left:40px;margin-right:40px;-qt-block-indent:0;text-indent:0px;"
+//					int count = 0; // should be 6
+//					QStringList styles = style.split(';');
+//					foreach (QString pair, styles) {
+//						if (!pair.trimmed().isEmpty()) {
+//							QStringList keyvalue = pair.split(':');
+//							if (keyvalue.length() == 2) {
+//								QString key = keyvalue.at(0).trimmed();
+//								QString value = keyvalue.at(1).trimmed();
+
+//								if ((key == "margin-top" || key == "margin-bottom") && value == "12px") {
+//									++count;
+//									continue;
+//								}
+//								if (key == "margin-left" || key == "margin-right") {
+//									++count;
+//									continue;
+//								}
+//								if (key == "-qt-block-indent" && value == "0") {
+//									++count;
+//									continue;
+//								}
+//								if (key == "text-indent" && value == "0px") {
+//									++count;
+//									continue;
+//								}
+//								count = 0;
+//								break;
+//							} else {
+//								count = 0;
+//								break;
+//							}
+//						}
+//					}
+//					if (count == 6) {
+//						// change to "blockquote"
+//						element.setTagName("blockquote");
+//						element.attributes().removeNamedItem("style");
+//						element.setAttribute("type", "cite");
+//					}
 				}
 				addBR = false;
 			}

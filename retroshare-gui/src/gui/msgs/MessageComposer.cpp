@@ -424,7 +424,7 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     /* create a message */
     MessageComposer *pMsgDialog = MessageComposer::newMsg();
 
-    pMsgDialog->insertTitleText(tr("Friend Recommendation(s)"));
+    pMsgDialog->setTitleText(tr("Friend Recommendation(s)"));
 
     if (!to.empty()) {
         pMsgDialog->addRecipient(TO, to, false);
@@ -433,7 +433,7 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     QString sMsgText = msg.isEmpty() ? recommendMessage() : msg;
     sMsgText += "<br><br>";
     sMsgText += recommendHtml;
-    pMsgDialog->insertMsgText(sMsgText);
+    pMsgDialog->setMsgText(sMsgText);
 
     std::list <std::string>::const_iterator peerIt;
     for (peerIt = sslIds.begin(); peerIt != sslIds.end(); peerIt++) {
@@ -675,7 +675,7 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
     }
 }
 
-void  MessageComposer::insertFileList(const std::list<DirDetails>& dir_info)
+void MessageComposer::setFileList(const std::list<DirDetails>& dir_info)
 {
     std::list<FileInfo> files_info;
     std::list<DirDetails>::const_iterator it;
@@ -690,10 +690,10 @@ void  MessageComposer::insertFileList(const std::list<DirDetails>& dir_info)
         files_info.push_back(info) ;
     }
 
-    insertFileList(files_info);
+    setFileList(files_info);
 }
 
-void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
+void MessageComposer::setFileList(const std::list<FileInfo>& files_info)
 {
     _recList.clear() ;
 
@@ -860,11 +860,9 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         // needed to send system flags with reply
         //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
-        msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title));
-
-        msgComposer->insertMsgText(QString::fromStdWString(msgInfo.msg));
-
-        msgComposer->insertFileList(msgInfo.files);
+        msgComposer->setTitleText(QString::fromStdWString(msgInfo.title));
+        msgComposer->setMsgText(QString::fromStdWString(msgInfo.msg), true);
+        msgComposer->setFileList(msgInfo.files);
 
         // get existing groups
         std::list<RsGroupInfo> groupInfoList;
@@ -912,6 +910,91 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
     return msgComposer;
 }
 
+QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
+{
+    RetroShareLink link;
+    link.createMessage(msgInfo.srcId, "");
+    QString from = link.toHtml();
+
+    QString to;
+    std::list<std::string>::const_iterator it;
+    for (it = msgInfo.msgto.begin(); it != msgInfo.msgto.end(); it++) {
+        if (link.createMessage(*it, "")) {
+            if (!to.isEmpty()) {
+                to += ", ";
+            }
+            to += link.toHtml();
+        }
+    }
+
+    QString cc;
+    for (it = msgInfo.msgcc.begin(); it != msgInfo.msgcc.end(); it++) {
+        if (link.createMessage(*it, "")) {
+            if (!cc.isEmpty()) {
+                cc += ", ";
+            }
+            cc += link.toHtml();
+        }
+    }
+
+    QDateTime qtime;
+    qtime.setTime_t(msgInfo.ts);
+
+    QString header = QString("<span>-----%1-----").arg(tr("Original Message"));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("From"), from);
+    header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("To"), to);
+
+    if (!cc.isEmpty()) {
+        header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Cc"), cc);
+    }
+
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), qtime.toString(Qt::SystemLocaleLongDate));
+    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromStdWString(msgInfo.title));
+    header += "<br>";
+
+    header += tr("On %1, %2 wrote:").arg(qtime.toString(Qt::SystemLocaleShortDate), from);
+
+    return header;
+}
+
+void MessageComposer::setQuotedMsg(const QString &msg, const QString &header)
+{
+    ui.msgText->setUndoRedoEnabled(false);
+
+    ui.msgText->setHtml(msg);
+
+    QTextBlock block = ui.msgText->document()->firstBlock();
+    while (block.isValid()) {
+        QTextCursor cursor = ui.msgText->textCursor();
+        cursor.setPosition(block.position());
+
+        QTextBlockFormat format;
+        format.setProperty(TextFormat::IsBlockQuote, true);
+        format.setLeftMargin(block.blockFormat().leftMargin() + 20);
+        format.setRightMargin(block.blockFormat().rightMargin() + 20);
+        cursor.mergeBlockFormat(format);
+
+        block = block.next();
+    }
+
+    ui.msgText->moveCursor(QTextCursor::Start);
+    ui.msgText->textCursor().insertBlock();
+    ui.msgText->moveCursor(QTextCursor::Start);
+
+    if (header.isEmpty()) {
+        ui.msgText->insertHtml("<br><br>");
+    } else {
+        ui.msgText->insertHtml("<br><br>" + header + "<br>");
+    }
+
+    ui.msgText->moveCursor(QTextCursor::Start);
+
+    ui.msgText->setUndoRedoEnabled(true);
+    ui.msgText->document()->setModified(true);
+
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+}
+
 MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 {
     MessageInfo msgInfo;
@@ -925,12 +1008,9 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 
     /* fill it in */
 
-    msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title), REPLY);
+    msgComposer->setTitleText(QString::fromStdWString(msgInfo.title), REPLY);
+    msgComposer->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
 
-    QTextDocument doc ;
-    doc.setHtml(RsHtml::toHtml(QString::fromStdWString(msgInfo.msg), false));
-
-    msgComposer->insertPastedText(doc.toPlainText());
     msgComposer->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
 
     if (all) {
@@ -972,16 +1052,12 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
 
     /* fill it in */
 
-    msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title), FORWARD);
-
-    QTextDocument doc ;
-    doc.setHtml(RsHtml::toHtml(QString::fromStdWString(msgInfo.msg), false));
-
-    msgComposer->insertForwardPastedText(doc.toPlainText());
+    msgComposer->setTitleText(QString::fromStdWString(msgInfo.title), FORWARD);
+    msgComposer->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
 
     std::list<FileInfo>& files_info = msgInfo.files;
 
-    msgComposer->insertFileList(files_info);
+    msgComposer->setFileList(files_info);
 
     // needed to send system flags with reply
     //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
@@ -993,7 +1069,7 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     return msgComposer;
 }
 
-void MessageComposer::insertTitleText(const QString &title, enumMessageType type)
+void MessageComposer::setTitleText(const QString &title, enumMessageType type)
 {
     QString titleText;
 
@@ -1020,37 +1096,7 @@ void MessageComposer::insertTitleText(const QString &title, enumMessageType type
     ui.titleEdit->setText(misc::removeNewLine(titleText));
 }
 
-void MessageComposer::insertPastedText(QString msg)
-{
-    msg.replace("\n", "\n<BR>> ");
-
-    ui.msgText->setHtml("<HTML><font color=\"blue\"> > " + msg + "</font><br><br></HTML>");
-
-    ui.msgText->setFocus( Qt::OtherFocusReason );
-
-    QTextCursor c =  ui.msgText->textCursor();
-    c.movePosition(QTextCursor::End);
-    ui.msgText->setTextCursor(c);
-
-    ui.msgText->document()->setModified(true);
-}
-
-void MessageComposer::insertForwardPastedText(QString msg)
-{
-    msg.replace("\n", "\n<BR>> ");
-
-    ui.msgText->setHtml("<HTML><blockquote [type=cite]><font color=\"blue\">> " + msg + "</font><br><br></blockquote></HTML>");
-
-    ui.msgText->setFocus( Qt::OtherFocusReason );
-
-    QTextCursor c =  ui.msgText->textCursor();
-    c.movePosition(QTextCursor::End);
-    ui.msgText->setTextCursor(c);
-
-    ui.msgText->document()->setModified(true);
-}
-
-void MessageComposer::insertMsgText(const QString &msg, bool asHtml)
+void MessageComposer::setMsgText(const QString &msg, bool asHtml)
 {
     if (asHtml) {
         ui.msgText->setHtml(msg);
@@ -1063,13 +1109,6 @@ void MessageComposer::insertMsgText(const QString &msg, bool asHtml)
     QTextCursor c =  ui.msgText->textCursor();
     c.movePosition(QTextCursor::End);
     ui.msgText->setTextCursor(c);
-
-    ui.msgText->document()->setModified(true);
-}
-
-void MessageComposer::insertHtmlText(const QString &msg)
-{
-    ui.msgText->setHtml("<a href='" + msg + "'> " + msg + "</a>");
 
     ui.msgText->document()->setModified(true);
 }
@@ -1087,14 +1126,13 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     MessageInfo mi;
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
-    mi.msg =   ui.msgText->toHtml().toStdWString();
     // needed to send system flags with reply
     //mi.msgflags = systemFlags;
     mi.msgflags = 0;
 
     QString text;
     RsHtml::optimizeHtml(ui.msgText, text);
-    mi.msg = text.toStdWString() ;
+    mi.msg = text.toStdWString();
 
     /* check for existing title */
     if (bDraftbox == false && mi.title.empty()) {

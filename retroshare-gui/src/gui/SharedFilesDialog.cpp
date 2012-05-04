@@ -222,8 +222,6 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect( copylinklocalhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
-  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links (HTML)" ), this );
-  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
 #ifdef RS_USE_LINKS
   sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
   connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
@@ -535,8 +533,8 @@ void SharedFilesDialog::sendremoteLinkTo()
     * just need to set peers
     */
     std::cerr << "SharedFilesDialog::sendremoteLinkTo()" << std::endl;
-    nMsgDialog->insertTitleText(tr("RetroShare Link"));
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml());
+    nMsgDialog->setTitleText(tr("RetroShare Link"));
+    nMsgDialog->setMsgText(RSLinkClipboard::toHtml(), true);
 
     nMsgDialog->show();
 
@@ -558,33 +556,8 @@ void SharedFilesDialog::sendLinkTo()
     * just need to set peers
     */
     std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
-    nMsgDialog->insertTitleText(tr("RetroShare Link"));
-
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml());
-
-    nMsgDialog->show();
-
-    /* window will destroy itself! */
-}
-
-void SharedFilesDialog::sendHtmlLinkTo()
-{
-    copyLinkLocal ();
-
-    /* create a message */
-    MessageComposer *nMsgDialog = MessageComposer::newMsg();
-    if (nMsgDialog == NULL) {
-        return;
-    }
-
-    /* fill it in
-    * files are receommended already
-    * just need to set peers
-    */
-    std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
-    nMsgDialog->insertTitleText(tr("RetroShare Link"));
- //   nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());// not compatible with multiple links
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml());
+    nMsgDialog->setTitleText(tr("RetroShare Link"));
+    nMsgDialog->setMsgText(RSLinkClipboard::toHtml(), true);
 
     nMsgDialog->show();
 
@@ -661,9 +634,9 @@ void SharedFilesDialog::addMsgRemoteSelected()
         return;
     }
 
-    nMsgDialog->insertFileList(files_info) ;
-    nMsgDialog->insertTitleText(tr("Recommendation(s)"));
-    nMsgDialog->insertMsgText(tr("Recommendation(s)"));
+    nMsgDialog->setFileList(files_info) ;
+    nMsgDialog->setTitleText(tr("Recommendation(s)"));
+    nMsgDialog->setMsgText(tr("Recommendation(s)"));
     nMsgDialog->show();
 
     /* window will destroy itself! */
@@ -685,9 +658,9 @@ void SharedFilesDialog::recommendFilesToMsg()
         return;
     }
 
-    nMsgDialog->insertFileList(files_info) ;
-    nMsgDialog->insertTitleText(tr("Recommendation(s)"));
-    nMsgDialog->insertMsgText(tr("Recommendation(s)"));
+    nMsgDialog->setFileList(files_info) ;
+    nMsgDialog->setTitleText(tr("Recommendation(s)"));
+    nMsgDialog->setMsgText(tr("Recommendation(s)"));
     nMsgDialog->show();
 
     /* window will destroy itself! */

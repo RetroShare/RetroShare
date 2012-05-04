@@ -1517,6 +1517,27 @@ void ForumsDialog::editForumDetails()
     editUi.exec();
 }
 
+static QString buildReplyHeader(const ForumMsgInfo &msgInfo)
+{
+    RetroShareLink link;
+    link.createMessage(msgInfo.srcId, "");
+    QString from = link.toHtml();
+
+    QDateTime qtime;
+    qtime.setTime_t(msgInfo.ts);
+
+    QString header = QString("<span>-----%1-----").arg(QApplication::translate("ForumsDialog", "Original Message"));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsDialog", "From"), from);
+
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsDialog", "Sent"), qtime.toString(Qt::SystemLocaleLongDate));
+    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("ForumsDialog", "Subject"), QString::fromStdWString(msgInfo.title));
+    header += "<br>";
+
+    header += QApplication::translate("ForumsDialog", "On %1, %2 wrote:").arg(qtime.toString(Qt::SystemLocaleShortDate), from);
+
+    return header;
+}
+
 void ForumsDialog::replytomessage()
 {
     if (mCurrForumId.empty()) {
@@ -1532,13 +1553,11 @@ void ForumsDialog::replytomessage()
     if (rsPeers->getPeerName(msgInfo.srcId) !="")
     {
         MessageComposer *nMsgDialog = MessageComposer::newMsg();
-        nMsgDialog->insertTitleText(QString::fromStdWString(msgInfo.title), MessageComposer::REPLY);
+        nMsgDialog->setTitleText(QString::fromStdWString(msgInfo.title), MessageComposer::REPLY);
 
-        QTextDocument doc ;
-        doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
-
-        nMsgDialog->insertPastedText(doc.toPlainText());
+        nMsgDialog->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
         nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
+
         nMsgDialog->show();
         nMsgDialog->activateWindow();
 
