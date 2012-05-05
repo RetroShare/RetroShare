@@ -903,6 +903,10 @@ p, li { white-space: pre-wrap; }
         <source>Set all as read</source>
         <translation>Tout marquer comme lu</translation>
     </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished">Chargement</translation>
+    </message>
 </context>
 <context>
     <name>ChatDialog</name>
@@ -1037,7 +1041,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>[No topic provided]</source>
-        <translation type="unfinished">[Sans sujet déterminé]</translation>
+        <translation>[Sans sujet déterminé]</translation>
     </message>
 </context>
 <context>
@@ -1192,6 +1196,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Chat</source>
         <translation>Chat</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation type="unfinished">Système</translation>
+    </message>
+    <message>
+        <source>System message</source>
+        <translation type="unfinished">Message système</translation>
     </message>
 </context>
 <context>
@@ -1353,6 +1365,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Reset font to default</source>
         <translation>Réinitialiser à la valeur par défaut</translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
+        <translation type="unfinished">Collez le lien de votre propre certificat</translation>
     </message>
 </context>
 <context>
@@ -2336,6 +2352,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>Ajouter un fichier supplémentaire</translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
+        <translation type="unfinished">Collez le lien de votre propre certificat</translation>
     </message>
 </context>
 <context>
@@ -4060,39 +4080,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Info</source>
-        <translation type="unfinished">Information du contact</translation>
+        <translation>Information du contact</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished">ID du contact</translation>
+        <translation>ID du contact</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished">ID RetroShare</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation type="obsolete">Votre confiance en ce contact est :</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation type="obsolete">Nulle</translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation type="obsolete">Moyenne</translation>
+        <translation type="obsolete">ID RetroShare</translation>
     </message>
     <message>
         <source>Full </source>
         <translation type="obsolete">Totale</translation>
-    </message>
-    <message>
-        <source>Sign GPG Key</source>
-        <translation type="unfinished">Signer la clé PGP</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4116,7 +4120,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Sign GPG Key</source>
+        <translation type="unfinished">Signer la clé PGP</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4136,7 +4144,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
@@ -4168,15 +4176,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished">Le mot de passe est peut-être incorrect</translation>
+        <translation>Le mot de passe est peut-être incorrect</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished">Confirmer</translation>
+        <translation>Confirmer</translation>
     </message>
     <message>
         <source>You have a friend request.</source>
-        <translation type="unfinished">Vous avez une demande d&apos;ami.</translation>
+        <translation>Vous avez une demande d&apos;ami.</translation>
+    </message>
+</context>
+<context>
+    <name>FriendRequestToaster</name>
+    <message>
+        <source>Accept Friend Request</source>
+        <translation>Accepter la demande d&apos;ami</translation>
+    </message>
+    <message>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation>veut devenir ton ami(e) sur RetroShare</translation>
+    </message>
+    <message>
+        <source>Unknown (Incoming) Connect Attempt</source>
+        <translation>Tentative de connexion (entrante) inconnue</translation>
     </message>
 </context>
 <context>
@@ -6240,6 +6263,14 @@ Voulez-vous enregistrer votre message ?</translation>
         <source>Add Extra File</source>
         <translation>Ajouter un fichier supplémentaire</translation>
     </message>
+    <message>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation type="unfinished">veut devenir ton ami(e) sur RetroShare</translation>
+    </message>
+    <message>
+        <source>Hi %1,&lt;br&gt;%2 wants to be friend with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks.&lt;br&gt;The RetroShare Team</source>
+        <translation type="unfinished">Bonjour %1,&lt;br&gt;%2 veut devenir ton ami(e) sur RetroShare.&lt;br&gt;&lt;br&gt;Répondre maintenant&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Merci.&lt;br&gt;L&apos;équipe de RetroShare</translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -6777,6 +6808,14 @@ p, li { white-space: pre-wrap; }
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
+    <message>
+        <source>System</source>
+        <translation type="unfinished">Système</translation>
+    </message>
+    <message>
+        <source>No system messages available.</source>
+        <translation type="unfinished">Aucun message système disponible.</translation>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -6849,7 +6888,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished">Etiquette</translation>
+        <translation type="obsolete">Etiquette</translation>
     </message>
 </context>
 <context>
@@ -7325,6 +7364,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Chat Lobby</source>
         <translation>Salons de chat</translation>
+    </message>
+    <message>
+        <source>Connect attempt</source>
+        <translation type="unfinished">Tentative de connexion</translation>
     </message>
 </context>
 <context>
@@ -9288,7 +9331,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search again</source>
-        <translation>Chercher à nouveau</translation>
+        <translation type="unfinished">Relancer la recherche</translation>
     </message>
 </context>
 <context>
@@ -9403,19 +9446,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation>Accepter la demande d&apos;ami</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Accepter la demande d&apos;ami</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation>veut devenir ami(e) avec toi sur RetroShare</translation>
+        <translation type="obsolete">veut devenir ami(e) avec toi sur RetroShare</translation>
+    </message>
+    <message>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation type="unfinished">veut devenir ton ami(e) sur RetroShare</translation>
     </message>
 </context>
 <context>
