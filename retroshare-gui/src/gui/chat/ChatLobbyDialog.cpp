@@ -86,6 +86,12 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 		tabWidget->addDialog(this);
 	}
 
+	/** List of muted Participants */
+	mutedParticipants = new QStringList;
+
+	// Mute a Participant
+	connect(ui.participantsList, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(changePartipationState(QListWidgetItem *)));
+	
 	// load settings
 	processSettings(true);
 }
@@ -145,6 +151,11 @@ void ChatLobbyDialog::changeNickname()
 	}
 }
 
+/**
+ * We get a new Message from a chat participant
+ * 
+ * - Ignore Messages from muted chat participants
+ */
 void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 {
 	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
@@ -152,8 +163,12 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	QString message = QString::fromStdWString(info.msg);
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
 
-	ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
-
+	if (!isParticipantMuted(name)) {
+	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+	} else {
+	  // ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (TEST BLOCKED)"), ChatWidget::TYPE_NORMAL);
+	}
+	
 	// also update peer list.
 
 	time_t now = time(NULL);
@@ -164,6 +179,11 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	}
 }
 
+/**
+ * Regenerate the QListWidget participant list of a Chat Lobby
+ * 
+ * Show unchecked Checkbox for muted Participants
+ */
 void ChatLobbyDialog::updateParticipantsList()
 {
 	ui.participantsList->clear();
@@ -176,9 +196,65 @@ void ChatLobbyDialog::updateParticipantsList()
 
 	if (it != linfos.end()) {
 		for (std::map<std::string,time_t>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {
-			ui.participantsList->addItem(QString::fromUtf8((it2->first).c_str()));
+			QString participant = QString::fromUtf8( (it2->first).c_str() );
+
+			// TE: Add Wigdet to participantsList with Checkbox, to mute Participant
+			QListWidgetItem *widgetitem = new QListWidgetItem(ui.participantsList);
+
+			if (isParticipantMuted(participant)) {
+				widgetitem->setCheckState(Qt::Unchecked);
+			} else {
+				widgetitem->setCheckState(Qt::Checked);
+			}
+			widgetitem->setText(participant);
+			widgetitem->setToolTip(tr("Uncheck to mute participant"));
+			ui.participantsList->addItem(widgetitem);
 		}
 	}
+}
+
+/**
+ * Called when a Participant in QList get Clicked / Changed
+ * 
+ * Check if the Checkbox altered and Mute User
+ * 
+ * @param QListWidgetItem Participant to check
+ */
+void ChatLobbyDialog::changePartipationState(QListWidgetItem *item)
+{
+	QString nickname = item->text();
+	
+	std::cerr << "check Partipation status for '" << nickname.toStdString() << std::endl;
+
+	if (item->checkState() == Qt::Unchecked) {
+		// Mute
+		std::cerr << " Mute " << std::endl;
+		mutedParticipants->append(nickname);
+	} else {
+		// Unmute
+		std::cerr << " UnMute " << std::endl;
+		mutedParticipants->removeOne(nickname);
+	}
+	
+	updateParticipantsList();
+}
+
+/** 
+ * Should Messages from this Nickname be muted?
+ * 
+ * @param QString nickname to check
+ */
+bool ChatLobbyDialog::isParticipantMuted(QString &participant)
+{
+	// @todo genauer match nicht nur into
+	QStringList result=mutedParticipants->filter(participant);
+	
+ 	// nickname not in Mute list
+	if (result.isEmpty()) {
+		return false;
+	}
+	return true;
+
 }
 
 void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname, const QString& str)

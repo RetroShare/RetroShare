@@ -58,15 +58,23 @@ protected:
 
 protected slots:
 	void changeNickname();
-
+	void changePartipationState(QListWidgetItem *item);
+	
 private:
 	void updateParticipantsList();
+
+	bool isParticipantMuted(QString &participant);
 
 	ChatLobbyId lobbyId;
 	time_t lastUpdateListTime;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;
+	
+	/** Ignored Users in Chatlobby */
+	QStringList *mutedParticipants;
+
+	
 };
 
 #endif
