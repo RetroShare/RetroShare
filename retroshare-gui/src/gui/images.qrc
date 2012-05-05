@@ -447,6 +447,7 @@
         <file>images/user/add_user48.png</file>
         <file>images/user/deny_user48.png</file>
         <file>images/user/friends24.png</file>
+        <file>images/user/friend_suggestion16.png</file>
         <file>images/user/identity16.png</file>
         <file>images/user/identity24.png</file>
         <file>images/user/identity24_low.png</file>
@@ -468,7 +469,7 @@
         <file>images/user/agt_forum128.png</file>
         <file>images/user/group16.png</file>
         <file>images/user/group24.png</file>
-        <file>images/user/user_request6.png</file>
+        <file>images/user/user_request16.png</file>
         <file>images/user/user_request48.png</file>
         <file>images/user/user_request_unknown48.png</file>
         <file>images/up.png</file>

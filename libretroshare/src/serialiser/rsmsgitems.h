@@ -351,19 +351,20 @@ class RsChatSerialiser: public RsSerialType
 
 /**************************************************************************/
 
-const uint32_t RS_MSG_FLAGS_OUTGOING       = 0x0001;
-const uint32_t RS_MSG_FLAGS_PENDING        = 0x0002;
-const uint32_t RS_MSG_FLAGS_DRAFT          = 0x0004;
-const uint32_t RS_MSG_FLAGS_NEW            = 0x0010;
-const uint32_t RS_MSG_FLAGS_TRASH          = 0x0020;
-const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER = 0x0040;
-const uint32_t RS_MSG_FLAGS_REPLIED        = 0x0080;
-const uint32_t RS_MSG_FLAGS_FORWARDED      = 0x0100;
-const uint32_t RS_MSG_FLAGS_STAR           = 0x0200;
-const uint32_t RS_MSG_FLAGS_PARTIAL        = 0x0400;
+const uint32_t RS_MSG_FLAGS_OUTGOING              = 0x0001;
+const uint32_t RS_MSG_FLAGS_PENDING               = 0x0002;
+const uint32_t RS_MSG_FLAGS_DRAFT                 = 0x0004;
+const uint32_t RS_MSG_FLAGS_NEW                   = 0x0010;
+const uint32_t RS_MSG_FLAGS_TRASH                 = 0x0020;
+const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER        = 0x0040;
+const uint32_t RS_MSG_FLAGS_REPLIED               = 0x0080;
+const uint32_t RS_MSG_FLAGS_FORWARDED             = 0x0100;
+const uint32_t RS_MSG_FLAGS_STAR                  = 0x0200;
+const uint32_t RS_MSG_FLAGS_PARTIAL               = 0x0400;
 // system message
-const uint32_t RS_MSG_FLAGS_USER_REQUEST   = 0x0800;
-const uint32_t RS_MSG_FLAGS_SYSTEM         = RS_MSG_FLAGS_USER_REQUEST;
+const uint32_t RS_MSG_FLAGS_USER_REQUEST          = 0x0800;
+const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x1000;
+const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 
 class RsMsgItem: public RsItem
 {

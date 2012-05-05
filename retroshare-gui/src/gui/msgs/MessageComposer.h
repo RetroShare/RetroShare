@@ -210,7 +210,7 @@ private:
     QList<QLabel*> tagLabels;
 
     // needed to send system flags with reply
-    //unsigned systemFlags;
+    unsigned msgFlags;
 
     RSTreeWidgetItemCompareRole *m_compareRole;
     QCompleter *m_completer;

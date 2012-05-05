@@ -954,6 +954,9 @@ bool p3MsgService::SystemMessage(const std::wstring &title, const std::wstring &
 	if (systemFlag & RS_MSG_USER_REQUEST) {
 		msg->msgFlags |= RS_MSG_FLAGS_USER_REQUEST;
 	}
+	if (systemFlag & RS_MSG_FRIEND_RECOMMENDATION) {
+		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
+	}
 
 	msg->msgId = 0;
 	msg->sendTime = time(NULL);
@@ -1378,6 +1381,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_USER_REQUEST;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_FRIEND_RECOMMENDATION)
+	{
+		mi.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
+	}
 
 	mi.ts = msg->sendTime;
 	mi.srcId = msg->PeerId();
@@ -1478,6 +1485,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	{
 		mis.msgflags |= RS_MSG_USER_REQUEST;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_FRIEND_RECOMMENDATION)
+	{
+		mis.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
+	}
 
 	mis.srcId = msg->PeerId();
 	{
@@ -1541,6 +1552,10 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 	if (info.msgflags & RS_MSG_USER_REQUEST)
 	{
 		msg->msgFlags |= RS_MSG_FLAGS_USER_REQUEST;
+	}
+	if (info.msgflags & RS_MSG_FRIEND_RECOMMENDATION)
+	{
+		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 	}
 
 	//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;

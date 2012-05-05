@@ -115,7 +115,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     m_msgType = NORMAL;
     // needed to send system flags with reply
-    //systemFlags = 0;
+    msgFlags = 0;
 
     setupFileActions();
     setupEditActions();
@@ -422,35 +422,36 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     }
 
     /* create a message */
-    MessageComposer *pMsgDialog = MessageComposer::newMsg();
+    MessageComposer *composer = MessageComposer::newMsg();
 
-    pMsgDialog->setTitleText(tr("Friend Recommendation(s)"));
+    composer->setTitleText(tr("You have a friend recommendation"));
+    composer->msgFlags |= RS_MSG_FRIEND_RECOMMENDATION;
 
     if (!to.empty()) {
-        pMsgDialog->addRecipient(TO, to, false);
+        composer->addRecipient(TO, to, false);
     }
 
     QString sMsgText = msg.isEmpty() ? recommendMessage() : msg;
     sMsgText += "<br><br>";
     sMsgText += recommendHtml;
-    pMsgDialog->setMsgText(sMsgText);
+    composer->setMsgText(sMsgText);
 
     std::list <std::string>::const_iterator peerIt;
     for (peerIt = sslIds.begin(); peerIt != sslIds.end(); peerIt++) {
         if (*peerIt == to) {
             continue;
         }
-        pMsgDialog->addRecipient(CC, *peerIt, false);
+        composer->addRecipient(CC, *peerIt, false);
     }
 
     if (autoSend) {
-        if (pMsgDialog->sendMessage_internal(false)) {
-            pMsgDialog->close();
+        if (composer->sendMessage_internal(false)) {
+            composer->close();
             return;
         }
     }
 
-    pMsgDialog->show();
+    composer->show();
 
     /* window will destroy itself! */
 }
@@ -858,7 +859,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         }
 
         // needed to send system flags with reply
-        //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
+        msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
         msgComposer->setTitleText(QString::fromStdWString(msgInfo.title));
         msgComposer->setMsgText(QString::fromStdWString(msgInfo.msg), true);
@@ -1030,7 +1031,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     }
 
     // needed to send system flags with reply
-    //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
+    msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
     msgComposer->calculateTitle();
 
@@ -1060,7 +1061,7 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     msgComposer->setFileList(files_info);
 
     // needed to send system flags with reply
-    //msgComposer->systemFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
+    msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
     msgComposer->calculateTitle();
 
@@ -1127,8 +1128,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
     // needed to send system flags with reply
-    //mi.msgflags = systemFlags;
-    mi.msgflags = 0;
+    mi.msgflags = msgFlags;
 
     QString text;
     RsHtml::optimizeHtml(ui.msgText, text);

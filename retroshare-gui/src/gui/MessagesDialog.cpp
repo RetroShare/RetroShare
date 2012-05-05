@@ -44,7 +44,7 @@
 #define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
-#define IMAGE_SYSTEM           ":/images/user/user_request6.png"
+#define IMAGE_SYSTEM           ":/images/user/user_request16.png"
 
 #define COLUMN_COUNT         8
 #define COLUMN_STAR          0
@@ -769,7 +769,9 @@ static void InitIconAndFont(QStandardItem *item[COLUMN_COUNT])
         item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-state-new.png"));
     } else {
         if (msgFlags & RS_MSG_USER_REQUEST) {
-            item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/user/user_request6.png"));
+            item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/user/user_request16.png"));
+        } else if (msgFlags & RS_MSG_FRIEND_RECOMMENDATION) {
+            item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/user/friend_suggestion16.png"));
         } else if (msgFlags & RS_MSG_UNREAD_BY_USER) {
             if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
                 item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
