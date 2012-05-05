@@ -29,7 +29,7 @@ RSTreeView::RSTreeView(QWidget *parent) : QTreeView(parent)
 void RSTreeView::setPlaceholderText(const QString &text)
 {
 	placeholderText = text;
-	repaint();
+	viewport()->repaint();
 }
 
 void RSTreeView::paintEvent(QPaintEvent *event)
