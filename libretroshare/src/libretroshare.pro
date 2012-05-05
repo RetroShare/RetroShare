@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib bitdht newservices 
+CONFIG += staticlib bitdht newcache# newservices
 CONFIG -= qt
 TARGET = retroshare
 
@@ -158,7 +158,7 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \
-				serialiser/rspluginitems.h \
+                                serialiser/rspluginitems.h
 
 
 HEADERS += $$PUBLIC_HEADERS
@@ -259,29 +259,32 @@ win32-x-g++ {
 
 
 win32 {
-                QMAKE_CC = g++
-                OBJECTS_DIR = temp/obj
-                MOC_DIR = temp/moc
-                DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-                DEFINES *= MINIUPNPC_VERSION=13
-                DESTDIR = lib
+        QMAKE_CC = g++
+        OBJECTS_DIR = temp/obj
+        MOC_DIR = temp/moc
+        DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
+        DEFINES *= MINIUPNPC_VERSION=13
+        DESTDIR = lib
 
-                # Switch off optimization for release version
-                QMAKE_CXXFLAGS_RELEASE -= -O2
-                QMAKE_CXXFLAGS_RELEASE += -O0
-                QMAKE_CFLAGS_RELEASE -= -O2
-                QMAKE_CFLAGS_RELEASE += -O0
+        # Switch on extra warnings
+        QMAKE_CFLAGS += -Wextra
+        QMAKE_CXXFLAGS += -Wextra
 
-                # Switch on optimization for debug version
-                #QMAKE_CXXFLAGS_DEBUG += -O2
-                #QMAKE_CFLAGS_DEBUG += -O2
+        # Switch off optimization for release version
+        QMAKE_CXXFLAGS_RELEASE -= -O2
+        QMAKE_CXXFLAGS_RELEASE += -O0
+        QMAKE_CFLAGS_RELEASE -= -O2
+        QMAKE_CFLAGS_RELEASE += -O0
 
-                DEFINES += USE_CMD_ARGS
+        # Switch on optimization for debug version
+        #QMAKE_CXXFLAGS_DEBUG += -O2
+        #QMAKE_CFLAGS_DEBUG += -O2
 
-                #miniupnp implementation files
-                HEADERS += upnp/upnputil.h
-                SOURCES += upnp/upnputil.c
+        DEFINES += USE_CMD_ARGS
 
+        #miniupnp implementation files
+        HEADERS += upnp/upnputil.h
+        SOURCES += upnp/upnputil.c
 
                 UPNPC_DIR = ../../../lib/miniupnpc-1.3
                 GPG_ERROR_DIR = ../../../lib/libgpg-error-1.7
@@ -291,8 +294,12 @@ win32 {
                 ZLIB_DIR = ../../../lib/zlib-1.2.3
                 SSL_DIR = ../../../OpenSSL
 
+        PTHREADS_DIR = ../../pthreads-w32-2-8-0-release
+        ZLIB_DIR = ../../zlib-1.2.3
+        SSL_DIR = ../../../OpenSSL
 
-                INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+
+        INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src ../../../../Libraries/sqlite/sqlite-autoconf-3070900
 }
 
 
@@ -336,6 +343,7 @@ freebsd-* {
 }
 
 ################################### COMMON stuff ##################################
+
 
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \
@@ -652,17 +660,20 @@ SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 newcache { 
 
-HEADERS += gxs/rsgxs.h \
-		gxs/rsgnp.h \
-    		gxs/rsgdp.h \
-		util/retrodb.h \
-		gxs/rsgixs.h
+HEADERS += serialiser/rsnxsitems.h
 
-SOURCES += gxs/rsgxs.cpp \
-		gxs/rsgnp.cpp \
-		gxs/rsgdp.cpp \
-		util/retrodb.cpp \
-		gxs/rsgixs.cpp 
+#gxs/rsgxs.h \
+#		gxs/rsgnp.h \
+ #   		gxs/rsgdp.h \
+#		util/retrodb.h \
+#		gxs/rsgixs.h
+
+SOURCES += serialiser/rsnxsitems.cpp
+#gxs/rsgxs.cpp \
+#		gxs/rsgnp.cpp \
+#		gxs/rsgdp.cpp \
+#		util/retrodb.cpp \
+#		gxs/rsgixs.cpp
 
 }
 
@@ -685,5 +696,4 @@ SOURCES += services/p3photoservice.cc \
 # Other Old Code.
 #	rsserver/p3photo.cc \
 }
-
 

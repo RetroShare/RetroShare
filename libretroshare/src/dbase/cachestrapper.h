@@ -27,7 +27,6 @@
 #include "pqi/p3cfgmgr.h"
 #include "pqi/pqimonitor.h"
 #include "util/rsthreads.h"
-#include "util/pugixml.h"
 
 #include <list>
 #include <map>
@@ -316,33 +315,7 @@ class CacheStore
 		 */
 		bool    locked_getStoredCache(CacheData &data);
 
-
-		//////////////// Cache Optimisation //////////////////
-
-		/**
-		 *@param id the key for determing whether this data has been cached or not
-		 *@return true if data referenced by key has been cached false otherwise
-		 */
-		bool cached(const std::string cacheId);
-
-		/**
-		 * TODO: will be abstract
-		 * The deriving class should return a document which accurately reflects its data
-		 * structure
-		 * @param cacheDoc document reflecting derving class's cache data structure
-		 */
-		virtual void updateCacheDocument(pugi::xml_document& cacheDoc);
-
-
-
-
-		//////////////// Cache Optimisation //////////////////
 		private:
-		/**
-		 * This updates the cache table with information from the xml document
-		 *
-		 */
-		void updateCacheTable();
 
 		uint16_t cacheType;    /* for checking */
 		bool     multiCache;   /* do we care about subid's */
@@ -354,14 +327,6 @@ class CacheStore
 
 		mutable RsMutex cMutex;
 		std::map<RsPeerId, CacheSet> caches;
-
-		////////////// cache optimisation ////////////////
-
-		/// whether to run in cache optimisation mode
-		bool cacheOptMode;
-
-		/// stores whether given instance of cache data has been loaded already or not
-		std::map<std::string, bool>  cacheTable;
 
 };
 

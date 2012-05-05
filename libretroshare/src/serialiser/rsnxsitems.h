@@ -38,18 +38,18 @@
 
 const uint8_t RS_PKT_SUBTYPE_SYNC_GRP      = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_SYNC_GRP_LIST = 0x0002;
-const uint8_t RS_PKT_SUBTYPE_GRPS_RESP     = 0x0008;
-const uint8_t RS_PKT_SUBTYPE_SYNC_MSG      = 0x0010;
-const uint8_t RS_PKT_SUBTYPE_SYNC_MSG_LIST = 0x0020;
-const uint8_t RS_PKT_SUBTYPE_MSG_RESP      = 0x0080;
-const uint8_t RS_PKT_SUBTYPE_SEARCH_REQ    = 0x0100;
-const uint8_t RS_PKT_SUBTYPE_SEARCH_RESP   = 0x0200;
+const uint8_t RS_PKT_SUBTYPE_GRPS_RESP     = 0x0004;
+const uint8_t RS_PKT_SUBTYPE_SYNC_MSG      = 0x0008;
+const uint8_t RS_PKT_SUBTYPE_SYNC_MSG_LIST = 0x0010;
+const uint8_t RS_PKT_SUBTYPE_MSG_RESP      = 0x0020;
+const uint8_t RS_PKT_SUBTYPE_SEARCH_REQ    = 0x0040;
+const uint8_t RS_PKT_SUBTYPE_SEARCH_RESP   = 0x0080;
 
 
 /*!
  * Base class for Network exchange service
- * Main purpose is rtti based routing of for serialisation
- * and deserialisation
+ * Main purpose is for rtti based routing used in the
+ * serialisation and deserialisation of NXS packets
  *
  * Service type is set by plugin service
  */
@@ -59,6 +59,9 @@ class RsNxs : public RsItem
 public:
     RsNxs(uint16_t servtype, uint8_t subtype)
         : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) { return; }
+
+    virtual void clear() { }
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) { return out; }
 };
 
 
@@ -67,7 +70,7 @@ public:
  * Server may advise client peer to use sync file
  * while serving his request. This results
  */
-class RsSyncGrp : RsNxs {
+class RsSyncGrp : public RsNxs {
 
 public:
 
@@ -90,7 +93,7 @@ class RsSyncGrpList : public RsNxs
 {
 
 public:
-    RsSynchGrpList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
+    RsSyncGrpList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
 
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
@@ -126,12 +129,14 @@ class RsSyncGrpMsg : public RsNxs
 
 public:
 
-    RsSyncGrpMsgs(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_MSG) {return; }
+    static const uint8_t FLAG_USE_SYNC_HASH;
+
+    RsSyncGrpMsg(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_MSG) {return; }
 
     std::string grpId;
-    uint32_t flag;
+    uint8_t flag;
     uint32_t syncAge;
-    uint32_t syncHash;
+    std::string syncHash;
 };
 
 /*!
@@ -147,7 +152,7 @@ public:
 
     RsSyncGrpMsgList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_MSG_LIST) { return; }
 
-    uint32_t flag; // response/req
+    uint8_t flag; // response/req
     std::string grpId;
     std::map<std::string, std::list<uint32_t> > msgs; // msg/versions pairs
 
@@ -174,7 +179,7 @@ class RsNxsSearchReq : public RsNxs
 {
 public:
 
-    RsNxsSearchReq(uint16_t servtype): RsNxs(servtype, RS_PKT_SUBTYPE_SEARCH_REQ) { return; }
+    RsNxsSearchReq(uint16_t servtype): RsNxs(servtype, RS_PKT_SUBTYPE_SEARCH_REQ), searchTerm(servtype) { return; }
     uint16_t token;
     RsTlvBinaryData searchTerm; // service aware of item class
 };
@@ -200,7 +205,7 @@ class RsNxsSerialiser : public RsSerialType
 {
 
     RsNxsSerialiser(uint16_t servtype) :
-            RsSerialType(RS_PKT_VERSION_SERVICE, servtype) { return; }
+            RsSerialType(RS_PKT_VERSION_SERVICE, servtype), SERVICE_TYPE(servtype) { return; }
 
     virtual ~RsNxsSerialiser() { return; }
 
@@ -237,9 +242,9 @@ private:
 
     /* RS_PKT_SUBTYPE_SYNC_MSG_LIST */
 
-    virtual uint32_t sizeSynGrpMsgList(RsSyncGrpMsgList* item);
+    virtual uint32_t sizeSyncGrpMsgList(RsSyncGrpMsgList* item);
     virtual bool serialiseSynGrpMsgList(RsSyncGrpMsgList* item, void *data, uint32_t* size);
-    virtual RsSyncGrpMsgList* deserialSynGrpMsgList(void *data, uint32_t *size);
+    virtual RsSyncGrpMsgList* deserialSyncGrpMsgList(void *data, uint32_t *size);
 
 
     /* RS_PKT_SUBTYPE_MSG_RESP */
@@ -252,7 +257,7 @@ private:
 
     virtual uint32_t sizeNxsSearchReq(RsNxsSearchReq* item);
     virtual bool serialiseNxsSearchReq(RsNxsSearchReq* item, void* data, uint32_t* size);
-    virtual RsNxsSearchResp* deserialNxsSearchReq(void *data, uint32_t *size);
+    virtual RsNxsSearchReq* deserialNxsSearchReq(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_SEARCH_RESP */
 
@@ -260,6 +265,9 @@ private:
     virtual bool serialiseNxsSearchResp(RsNxsSearchResp *item, void *data, uint32_t *size);
     virtual RsNxsSearchResp* deserialNxsSearchResp(void *data, uint32_t *size);
 
+private:
+
+    const uint16_t SERVICE_TYPE;
 };
 
 #endif // RSNXSITEMS_H
