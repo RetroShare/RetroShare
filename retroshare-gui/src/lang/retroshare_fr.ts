@@ -897,7 +897,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation>Éditer les détails de la chaîne</translation>
+        <translation type="unfinished">Modifier les détails de la chaîne</translation>
     </message>
     <message>
         <source>Set all as read</source>
@@ -3013,7 +3013,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Éditer les détails du forum</translation>
+        <translation type="unfinished">Modifier les détails du forum</translation>
     </message>
     <message>
         <source>Forum Info</source>
@@ -3189,7 +3189,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit this Association</source>
-        <translation>Éditer cette association</translation>
+        <translation type="unfinished">Modifier cette association</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
@@ -3580,7 +3580,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Éditer les détails du forum</translation>
+        <translation type="unfinished">Modifier les détails du forum</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
@@ -6718,11 +6718,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit</source>
-        <translation>Éditer</translation>
+        <translation type="unfinished">Modifier</translation>
     </message>
     <message>
         <source>Edit as new</source>
-        <translation>Éditer en tant que nouveau</translation>
+        <translation type="unfinished">Modifier en tant que nouveau</translation>
     </message>
     <message>
         <source>Remove Messages</source>
@@ -7956,7 +7956,7 @@ comportements malveillants des extensions.</translation>
     </message>
     <message>
         <source>Profile Edit</source>
-        <translation>Éditer le profil</translation>
+        <translation type="unfinished">Modifier le profil</translation>
     </message>
     <message>
         <source>Profile</source>
@@ -8031,7 +8031,7 @@ comportements malveillants des extensions.</translation>
     </message>
     <message>
         <source>Edit Profile</source>
-        <translation>Éditer le profil</translation>
+        <translation type="unfinished">Modifier le profil</translation>
     </message>
     <message>
         <source>Remove Favourite</source>
@@ -8114,7 +8114,7 @@ p, li { white-space: pre-wrap; }
     <name>ProfileWidget</name>
     <message>
         <source>Edit Personal message</source>
-        <translation>Éditer le message personnel</translation>
+        <translation type="unfinished">Modifier le message personnel</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9958,7 +9958,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation type="unfinished">Recommender dans un message pour </translation>
+        <translation type="unfinished">Recommander par messagerie</translation>
     </message>
     <message>
         <source>RetroShare Link</source>
@@ -10877,7 +10877,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation>Maximum de téléchargements simultanés:</translation>
+        <translation type="unfinished">Maximum de téléchargements simultanés :</translation>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
