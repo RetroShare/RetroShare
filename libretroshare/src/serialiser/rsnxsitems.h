@@ -53,15 +53,15 @@ const uint8_t RS_PKT_SUBTYPE_SEARCH_RESP   = 0x0080;
  *
  * Service type is set by plugin service
  */
-class RsNxs : public RsItem
+class RsNxsItem : public RsItem
 {
 
 public:
-    RsNxs(uint16_t servtype, uint8_t subtype)
+    RsNxsItem(uint16_t servtype, uint8_t subtype)
         : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) { return; }
 
-    virtual void clear() { }
-    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) { return out; }
+    virtual void clear() = 0;
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
 };
 
 
@@ -70,13 +70,16 @@ public:
  * Server may advise client peer to use sync file
  * while serving his request. This results
  */
-class RsSyncGrp : public RsNxs {
+class RsSyncGrp : public RsNxsItem {
 
 public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsSyncGrp(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_GRP) { return;}
+    RsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP) { return;}
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     uint8_t flag; // advises whether to use sync hash
     uint32_t syncAge; // how far back to sync data
@@ -85,23 +88,30 @@ public:
 
 };
 
+typedef std::map<std::string, std::list<uint32_t> > SyncList;
+
 /*!
  * Use to send to peer list of grps
  * held by server peer
  */
-class RsSyncGrpList : public RsNxs
+class RsSyncGrpList : public RsNxsItem
 {
 
 public:
-    RsSyncGrpList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
 
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
 
+    RsSyncGrpList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+
     uint8_t flag; // request or response
 
     /// groups held by sending peer
-    std::map<std::string, std::list<uint32_t> > grps; // grpId/ n version pair
+     SyncList grps; // grpId/ n version pair
 
 };
 
@@ -110,13 +120,17 @@ public:
  * Each item corresponds to a group which needs to be
  * deserialised
  */
-class RsGrpResp : public RsNxs
+class RsGrpResp : public RsNxsItem
 {
 
 public:
-    RsGrpResp(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_GRPS_RESP) { return; }
+    RsGrpResp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_GRPS_RESP) { return; }
 
-    std::list<RsTlvBinaryData> grps; /// each entry corresponds to a group item
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    std::list<RsTlvBinaryData*> grps; /// each entry corresponds to a group item
 
 };
 
@@ -124,14 +138,18 @@ public:
  * Use to request list of msg held by peer
  * for a given group
  */
-class RsSyncGrpMsg : public RsNxs
+class RsSyncGrpMsg : public RsNxsItem
 {
 
 public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsSyncGrpMsg(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_MSG) {return; }
+    RsSyncGrpMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_MSG) {return; }
+
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     std::string grpId;
     uint8_t flag;
@@ -143,18 +161,22 @@ public:
  * Use to send list msgs for a group held by
  * a peer
  */
-class RsSyncGrpMsgList : public RsNxs
+class RsSyncGrpMsgList : public RsNxsItem
 {
 public:
 
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_REQUEST;
 
-    RsSyncGrpMsgList(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SYNC_MSG_LIST) { return; }
+    RsSyncGrpMsgList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_MSG_LIST) { return; }
+
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     uint8_t flag; // response/req
     std::string grpId;
-    std::map<std::string, std::list<uint32_t> > msgs; // msg/versions pairs
+    SyncList msgs; // msg/versions pairs
 
 };
 
@@ -163,23 +185,31 @@ public:
  * Used to respond to a RsGrpMsgsReq
  * with message items satisfying request
  */
-class RsGrpMsgResp : public RsNxs
+class RsGrpMsgResp : public RsNxsItem
 {
 public:
 
-    RsGrpMsgResp(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_MSG_RESP) { return; }
+    RsGrpMsgResp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_MSG_RESP) { return; }
 
-    std::list<RsTlvBinaryData> msgs; // each entry corresponds to a message item
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    std::list<RsTlvBinaryData*> msgs; // each entry corresponds to a message item
 };
 
 /*!
  * Used to request a search of user data
  */
-class RsNxsSearchReq : public RsNxs
+class RsNxsSearchReq : public RsNxsItem
 {
 public:
 
-    RsNxsSearchReq(uint16_t servtype): RsNxs(servtype, RS_PKT_SUBTYPE_SEARCH_REQ), searchTerm(servtype) { return; }
+    RsNxsSearchReq(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_SEARCH_REQ), searchTerm(servtype) { return; }
+
+    virtual void clear() {}
+    virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
+
     uint16_t token;
     RsTlvBinaryData searchTerm; // service aware of item class
 };
@@ -189,11 +219,15 @@ public:
  * Used to respond to a RsGrpSearchReq
  * with grpId/MsgIds that satisfy search request
  */
-class RsNxsSearchResp : public RsNxs
+class RsNxsSearchResp : public RsNxsItem
 {
 public:
 
-    RsNxsSearchResp(uint16_t servtype) : RsNxs(servtype, RS_PKT_SUBTYPE_SEARCH_RESP) { return; }
+    RsNxsSearchResp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SEARCH_RESP) { return; }
+
+
+    virtual void clear() {}
+    virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
 
     uint16_t token; // search token to be redeemed
     std::list<RsTlvBinaryData> msgs; // msgs with search terms present
@@ -203,6 +237,7 @@ public:
 
 class RsNxsSerialiser : public RsSerialType
 {
+public:
 
     RsNxsSerialiser(uint16_t servtype) :
             RsSerialType(RS_PKT_VERSION_SERVICE, servtype), SERVICE_TYPE(servtype) { return; }

@@ -51,7 +51,7 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
 
 
 #ifdef RSSERIAL_DEBUG
-        std::cerr << "RsDistribSerialiser::deserialise()" << std::endl;
+        std::cerr << "RsNxsSerialiser::deserialise()" << std::endl;
 #endif
         /* get the type and size */
         uint32_t rstype = getRsItemId(data);
@@ -62,7 +62,7 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
                 return NULL; /* wrong type */
         }
 
-        switch(rstype)
+        switch(getRsItemSubType(rstype))
         {
 
         case RS_PKT_SUBTYPE_SYNC_GRP:
@@ -74,7 +74,7 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
         case RS_PKT_SUBTYPE_SYNC_MSG_LIST:
             return deserialSyncGrpMsgList(data, size);
         case RS_PKT_SUBTYPE_GRPS_RESP:
-            return deserialGrpMsgResp(data, size);
+            return deserialGrpResp(data, size);
         case RS_PKT_SUBTYPE_MSG_RESP:
             return deserialGrpMsgResp(data, size);
         case RS_PKT_SUBTYPE_SEARCH_REQ:
@@ -169,11 +169,6 @@ bool RsNxsSerialiser::serialiseSynGrpMsgList(RsSyncGrpMsgList *item, void *data,
     std::map<std::string, std::list<uint32_t> >::iterator mit =
             item->msgs.begin();
 
-    // number of msgs
-    uint32_t nMsgs = item->msgs.size();
-
-    ok &= setRawUInt32(data, *size, &offset, nMsgs);
-
     for(; mit != item->msgs.end(); mit++){
 
         // if not version contains then this
@@ -187,7 +182,7 @@ bool RsNxsSerialiser::serialiseSynGrpMsgList(RsSyncGrpMsgList *item, void *data,
         std::list<uint32_t>::iterator lit = mit->second.begin();
         for(; lit != mit->second.end(); lit++)
         {
-            ok &= setRawUInt32(data, *size, &offset, *lit);
+            ok &= SetTlvUInt32(data, *size, &offset, TLV_TYPE_UINT32_AGE, *lit);
         }
     }
 
@@ -237,15 +232,11 @@ bool RsNxsSerialiser::serialiseGrpMsgResp(RsGrpMsgResp *item, void *data, uint32
 
     /* RsSyncGrpMsgList */
 
-    // number of msgs
-    uint32_t nMsgs = item->msgs.size();
-    ok &= setRawUInt32(data, *size, &offset,nMsgs);
-
-    std::list<RsTlvBinaryData>::iterator lit = item->msgs.begin();
+    std::list<RsTlvBinaryData*>::iterator lit = item->msgs.begin();
 
     for(; lit != item->msgs.end(); lit++){
-        RsTlvBinaryData& b = *lit;
-        b.SetTlv(data, *size, &offset);
+        RsTlvBinaryData*& b = *lit;
+        b->SetTlv(data, *size, &offset);
     }
 
     if(offset != tlvsize){
@@ -269,7 +260,7 @@ bool RsNxsSerialiser::serialiseGrpMsgResp(RsGrpMsgResp *item, void *data, uint32
 bool RsNxsSerialiser::serialiseGrpResp(RsGrpResp *item, void *data, uint32_t *size){
 
 #ifdef RSSERIAL_DEBUG
-    std::cerr << "RsNxsSerialiser::serialiseGrpReq()" << std::endl;
+    std::cerr << "RsNxsSerialiser::serialiseGrpResp()" << std::endl;
 #endif
 
     uint32_t tlvsize = sizeGrpResp(item);
@@ -277,7 +268,7 @@ bool RsNxsSerialiser::serialiseGrpResp(RsGrpResp *item, void *data, uint32_t *si
 
     if(*size < tlvsize){
 #ifdef RSSERIAL_DEBUG
-        std::cerr << "RsNxsSerialiser::serialiseGrpReq()" << std::endl;
+        std::cerr << "RsNxsSerialiser::serialiseGrpResp()" << std::endl;
 #endif
         return false;
     }
@@ -291,15 +282,11 @@ bool RsNxsSerialiser::serialiseGrpResp(RsGrpResp *item, void *data, uint32_t *si
     /* skip the header */
     offset += 8;
 
-    // number of grps
-    uint32_t nGrps = item->grps.size();
-    ok &= setRawUInt32(data, *size, &offset, nGrps);
-
-    std::list<RsTlvBinaryData>::iterator lit = item->grps.begin();
+    std::list<RsTlvBinaryData*>::iterator lit = item->grps.begin();
 
     for(; lit != item->grps.end(); lit++){
-        RsTlvBinaryData& b = *lit;
-        b.SetTlv(data, *size, &offset);
+        RsTlvBinaryData*& b = *lit;
+        b->SetTlv(data, *size, &offset);
     }
 
     if(offset != tlvsize){
@@ -378,7 +365,7 @@ bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint
 
     if(*size < tlvsize){
 #ifdef RSSERIAL_DEBUG
-        std::cerr << "RsNxsSerialiser::serialiseSyncGrpList()" << std::endl;
+        std::cerr << "RsNxsSerialiser::serialiseSyncGrpList() size do not match" << std::endl;
 #endif
         return false;
     }
@@ -397,17 +384,14 @@ bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint
     std::map<std::string, std::list<uint32_t> >::iterator mit =
             item->grps.begin();
 
-    // number of grps
-    uint32_t nGrps = item->grps.size();
 
     ok &= setRawUInt8(data, *size, &offset, item->flag);
-    ok &= setRawUInt32(data, *size, &offset, nGrps);
 
     for(; mit != item->grps.end(); mit++){
 
         // if not version contains then this
         // entry is invalid
-        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, mit->first);
+        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, mit->first);
 
         uint32_t nVersions = mit->second.size();
 
@@ -416,7 +400,7 @@ bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint
         std::list<uint32_t>::iterator lit = mit->second.begin();
         for(; lit != mit->second.end(); lit++)
         {
-            ok &= setRawUInt32(data, *size, &offset, *lit);
+            ok &= SetTlvUInt32(data, *size, &offset, TLV_TYPE_UINT32_AGE, *lit);
         }
     }
 
@@ -508,7 +492,6 @@ RsGrpResp* RsNxsSerialiser::deserialGrpResp(void *data, uint32_t *size){
 
     uint32_t offset = 0;
 
-
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
             (SERVICE_TYPE != getRsItemService(rstype)) ||
             (RS_PKT_SUBTYPE_GRPS_RESP != getRsItemSubType(rstype)))
@@ -532,14 +515,25 @@ RsGrpResp* RsNxsSerialiser::deserialGrpResp(void *data, uint32_t *size){
 
     bool ok = true;
 
-    RsGrpResp* item = new RsGrpResp(getRsItemService(rstype));
-    item->grps;
+    RsGrpResp* item = new RsGrpResp(SERVICE_TYPE);
 
-    while(offset < *size){
+    /* skip the header */
+    offset += 8;
 
-        RsTlvBinaryData b(SERVICE_TYPE);
-        ok &= b.GetTlv(data, *size, &offset);
-        item->grps.push_back(b);
+    while(offset < *size && ok){
+
+        RsTlvBinaryData *b = new RsTlvBinaryData(SERVICE_TYPE);
+        ok &= b->GetTlv(data, *size, &offset);
+
+        if(ok)
+            item->grps.push_back(b);
+        else{
+            delete b;
+
+#ifdef RSSERIAL_DEBUG
+            std::cerr <<  "RsNxsSerialiser::deserialGrpResp(): Failure to deserialise binary group!" << std::endl;
+#endif
+        }
     }
 
 
@@ -602,12 +596,23 @@ RsGrpMsgResp* RsNxsSerialiser::deserialGrpMsgResp(void *data, uint32_t *size){
     bool ok = true;
 
     RsGrpMsgResp* item = new RsGrpMsgResp(getRsItemService(rstype));
+    /* skip the header */
+    offset += 8;
 
     while(offset < *size){
 
-        RsTlvBinaryData b(SERVICE_TYPE);
-        ok &= b.GetTlv(data, *size, &offset);
-        item->msgs.push_back(b);
+        RsTlvBinaryData *b = new RsTlvBinaryData(SERVICE_TYPE);
+        ok &= b->GetTlv(data, *size, &offset);
+
+        if(ok)
+            item->msgs.push_back(b);
+        else
+        {
+            delete b;
+#ifdef RSSERIAL_DEBUG
+            std::cerr <<  "RsNxsSerialiser::deserialGrpMsgResp(): Failure to deserialise binary message!" << std::endl;
+#endif
+        }
     }
 
     if (offset != rssize)
@@ -669,6 +674,8 @@ RsSyncGrp* RsNxsSerialiser::deserialSyncGrp(void *data, uint32_t *size){
     bool ok = true;
 
     RsSyncGrp* item = new RsSyncGrp(getRsItemService(rstype));
+    /* skip the header */
+    offset += 8;
 
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= getRawUInt32(data, *size, &offset, &(item->syncAge));
@@ -732,39 +739,30 @@ RsSyncGrpList* RsNxsSerialiser::deserialSyncGrpList(void *data, uint32_t *size){
 
     bool ok = true;
 
-    RsSyncGrpList* item = new RsSyncGrpList(getRsItemService(rstype));
+    RsSyncGrpList* item = new RsSyncGrpList(SERVICE_TYPE);
+    /* skip the header */
+    offset += 8;
 
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-    // now get number of grps
 
-    uint32_t nGroups = 0;
-    ok &= GetTlvUInt32(data, *size, &offset, TLV_TYPE_UINT32_SIZE, &nGroups);
-
-    for(uint32_t i  =0; i < nGroups; i++){
-        uint32_t nVersions;
-        ok &= getRawUInt32(data, *size, &offset, &nVersions);
-
-        if(!ok) break;
-
+    while((offset < rssize) && ok)
+    {
         std::string grpId;
         ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, grpId);
 
-        if(!ok) break;
+        uint32_t nVersions;
+        ok &= getRawUInt32(data, *size, &offset, &nVersions);
 
         std::list<uint32_t> verL;
-
-        for(uint32_t j  =0; j < nVersions; j++){
-
+        uint32_t verCount  = 0;
+        while((offset < rssize) && ok && (verCount < nVersions))
+        {
             uint32_t version;
-            ok &= getRawUInt32(data, *size, &offset, &version);
-
-            if(!ok) break;
-
+            ok &= GetTlvUInt32(data, *size, &offset, TLV_TYPE_UINT32_AGE, &version);
             verL.push_back(version);
-
+            verCount++;
         }
 
-        if(!ok) break;
         item->grps[grpId] = verL;
     }
 
@@ -827,40 +825,32 @@ RsSyncGrpMsgList* RsNxsSerialiser::deserialSyncGrpMsgList(void *data, uint32_t *
     bool ok = true;
 
     RsSyncGrpMsgList* item = new RsSyncGrpMsgList(getRsItemService(rstype));
+    /* skip the header */
+    offset += 8;
 
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
 
     // now get number of msgs
+    while((offset < rssize) && ok)
+    {
 
-    uint32_t nMsgs = 0;
-    ok &= getRawUInt32(data, *size, &offset, &nMsgs);
+        std::string msgId;
+        ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, msgId);
 
-    for(uint32_t i  =0; i < nMsgs; i++){
         uint32_t nVersions;
         ok &= getRawUInt32(data, *size, &offset, &nVersions);
 
-        if(!ok) break;
-
-        std::string msgId;
-        ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID,msgId);
-
-        if(!ok) break;
-
         std::list<uint32_t> verL;
-
-        for(uint32_t j  =0; j < nVersions; j++){
-
+        uint32_t verCount  = 0;
+        while((offset < rssize) && ok && (verCount < nVersions))
+        {
             uint32_t version;
-            ok &= getRawUInt32(data, *size, &offset, &version);
-
-            if(!ok) break;
-
+            ok &= GetTlvUInt32(data, *size, &offset, TLV_TYPE_UINT32_AGE, &version);
             verL.push_back(version);
-
+            verCount++;
         }
 
-        if(!ok) break;
         item->msgs[msgId] = verL;
     }
 
@@ -926,6 +916,9 @@ RsSyncGrpMsg* RsNxsSerialiser::deserialSyncGrpMsg(void *data, uint32_t *size)
 
     RsSyncGrpMsg* item = new RsSyncGrpMsg(getRsItemService(rstype));
 
+    /* skip the header */
+    offset += 8;
+
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= getRawUInt32(data, *size, &offset, &(item->syncAge));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
@@ -975,11 +968,11 @@ uint32_t RsNxsSerialiser::sizeGrpMsgResp(RsGrpMsgResp *item)
 
     uint32_t s = 8; //header size
 
-    std::list<RsTlvBinaryData>::iterator it =
+    std::list<RsTlvBinaryData*>::iterator it =
             item->msgs.begin();
 
     for(; it != item->msgs.end(); it++)
-        s += (*it).TlvSize();
+        s += (*it)->TlvSize();
 
     return s;
 }
@@ -989,11 +982,11 @@ uint32_t RsNxsSerialiser::sizeGrpResp(RsGrpResp *item)
 
     uint32_t s = 8; // header size
 
-    std::list<RsTlvBinaryData>::iterator it =
+    std::list<RsTlvBinaryData*>::iterator it =
             item->grps.begin();
 
     for(; it != item->grps.end(); it++)
-        s += (*it).TlvSize();
+        s += (*it)->TlvSize();
 
 
     return s;
@@ -1017,7 +1010,6 @@ uint32_t RsNxsSerialiser::sizeSyncGrpList(RsSyncGrpList *item)
     uint32_t s = 8; // header size
 
     s += 1; // flag
-    s += 4; // number of grps
 
     std::map<std::string, std::list<uint32_t> >::iterator mit
             = item->grps.begin();
@@ -1032,9 +1024,10 @@ uint32_t RsNxsSerialiser::sizeSyncGrpList(RsSyncGrpList *item)
                 verL.begin();
 
         for(; lit != verL.end(); lit++){
-            s += 4; // version
+            s += GetTlvUInt32Size(); // version
         }
     }
+    return s;
 }
 
 
@@ -1057,7 +1050,6 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsgList(RsSyncGrpMsgList *item)
     uint32_t s = 8; // header size
 
     s += 1; // flag
-    s += 4; // number of msgs
     s += GetTlvStringSize(item->grpId);
     std::map<std::string, std::list<uint32_t> >::iterator mit
             = item->msgs.begin();
@@ -1072,9 +1064,10 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsgList(RsSyncGrpMsgList *item)
                 verL.begin();
 
         for(; lit != verL.end(); lit++){
-            s += 4; // version
+            s += GetTlvUInt32Size(); // version
         }
     }
+    return s;
 }
 
 
@@ -1086,4 +1079,187 @@ uint32_t RsNxsSerialiser::sizeNxsSearchReq(RsNxsSearchReq *item)
 uint32_t RsNxsSerialiser::sizeNxsSearchResp(RsNxsSearchResp *item)
 {
     return 0;
+}
+
+
+/** print and clear functions **/
+
+void RsGrpMsgResp::clear()
+{
+
+    std::list<RsTlvBinaryData*>::iterator it =
+            msgs.begin();
+
+    for(; it != msgs.end(); it++)
+        (*it)->TlvClear();
+
+    msgs.clear();
+}
+
+void RsGrpResp::clear()
+{
+    std::list<RsTlvBinaryData*>::iterator it =
+            grps.begin();
+
+    for(; it != grps.end(); it++)
+        (*it)->TlvClear();
+
+    grps.clear();
+}
+
+void RsSyncGrp::clear()
+{
+    flag = 0;
+    syncAge = 0;
+    syncHash.clear();
+}
+
+void RsSyncGrpMsg::clear()
+{
+    grpId.clear();
+    flag = 0;
+    syncAge = 0;
+    syncHash.clear();
+}
+
+void RsSyncGrpList::clear()
+{
+    flag = 0;
+    grps.clear();
+}
+
+void RsSyncGrpMsgList::clear()
+{
+    flag = 0;
+    msgs.clear();
+}
+
+std::ostream& RsSyncGrp::print(std::ostream &out, uint16_t indent)
+{
+
+    printRsItemBase(out, "RsSyncGrp", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out , int_Indent);
+    out << "Hash: " << syncHash << std::endl;
+    printIndent(out , int_Indent);
+    out << "Sync Age: " << syncAge << std::endl;
+    printIndent(out , int_Indent);
+    out << "flag" << flag << std::endl;
+
+
+    printRsItemEnd(out ,"RsSyncGrp", indent);
+
+    return out;
+}
+
+std::ostream& RsSyncGrpMsg::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsSyncGrpMsg", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out , int_Indent);
+    out << "GrpId: " << grpId << std::endl;
+    printIndent(out , int_Indent);
+    out << "syncAge: " << syncAge << std::endl;
+    printIndent(out , int_Indent);
+    out << "syncHash: " << syncHash << std::endl;
+    printIndent(out , int_Indent);
+    out << "flag: " << flag << std::endl;
+
+    printRsItemEnd(out, "RsSyncGrpMsg", indent);
+    return out;
+}
+
+std::ostream& RsSyncGrpList::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsSyncGrpList", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out , int_Indent);
+    out << "flag: " << flag << std::endl;
+    printIndent(out , int_Indent);
+
+    std::map<std::string, std::list<uint32_t> >::iterator mit
+            = grps.begin();
+
+    for(; mit != grps.end(); mit++){
+
+        out << "grpId: " <<  mit->first;
+        printIndent(out , int_Indent);
+
+        const std::list<uint32_t>& verL = mit->second;
+        std::list<uint32_t>::const_iterator lit =
+                verL.begin();
+
+        for(; lit != verL.end(); lit++){
+            out << "version: " << *lit << std::endl;
+            printIndent(out , int_Indent);
+        }
+    }
+
+    printRsItemEnd(out , "RsSyncGrpList", indent);
+    return out;
+}
+
+std::ostream& RsSyncGrpMsgList::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsSyncGrpMsgList", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out , int_Indent);
+    out << "flag: " << flag << std::endl;
+    printIndent(out , int_Indent);
+    out << "grpId: " << grpId << std::endl;
+
+    std::map<std::string, std::list<uint32_t> >::iterator mit
+            = msgs.begin();
+
+    for(; mit != msgs.end(); mit++){
+
+        out << "msgId: " <<  mit->first;
+        printIndent(out , int_Indent);
+
+        const std::list<uint32_t>& verL = mit->second;
+        std::list<uint32_t>::const_iterator lit =
+                verL.begin();
+
+        for(; lit != verL.end(); lit++){
+            out << "version: " << *lit << std::endl;
+            printIndent(out , int_Indent);
+        }
+    }
+
+    printRsItemEnd(out ,"RsSyncGrpMsgList", indent);
+    return out;
+}
+
+std::ostream& RsGrpMsgResp::print(std::ostream &out, uint16_t indent){
+
+    printRsItemBase(out, "RsGrpMsgResp", indent);
+
+    std::list<RsTlvBinaryData*>::iterator it =
+            msgs.begin();
+
+    for(; it != msgs.end(); it++)
+        (*it)->print(out, indent);
+
+
+    printRsItemEnd(out, "RsGrpMsgResp", indent);
+    return out;
+}
+
+std::ostream& RsGrpResp::print(std::ostream &out, uint16_t indent){
+
+    printRsItemBase(out, "RsGrpResp", indent);
+
+    std::list<RsTlvBinaryData*>::iterator it =
+            grps.begin();
+
+    for(; it != grps.end(); it++)
+        (*it)->print(out, indent);
+
+
+    printRsItemEnd(out ,"RsGrpMsgResp", indent);
+    return out;
 }

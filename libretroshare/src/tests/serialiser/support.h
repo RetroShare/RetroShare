@@ -157,5 +157,67 @@ template<class T> int test_RsItem()
 	return 1;
 }
 
+template<class T> int test_RsItem(uint16_t servtype)
+{
+        /* make a serialisable RsTurtleItem */
 
+        RsSerialiser srl;
+
+        /* initialise */
+        T rsfi(servtype) ;
+        RsSerialType *rsfis = init_item(rsfi) ;
+
+        /* attempt to serialise it before we add it to the serialiser */
+
+        CHECK(0 == srl.size(&rsfi));
+
+        static const uint32_t MAX_BUFSIZE = 22000 ;
+
+        char *buffer = new char[MAX_BUFSIZE];
+        uint32_t sersize = MAX_BUFSIZE;
+
+        CHECK(false == srl.serialise(&rsfi, (void *) buffer, &sersize));
+
+        /* now add to serialiser */
+
+        srl.addSerialType(rsfis);
+
+        uint32_t size = srl.size(&rsfi);
+        bool done = srl.serialise(&rsfi, (void *) buffer, &sersize);
+
+        std::cerr << "test_Item() size: " << size << std::endl;
+        std::cerr << "test_Item() done: " << done << std::endl;
+        std::cerr << "test_Item() sersize: " << sersize << std::endl;
+
+        std::cerr << "test_Item() serialised:" << std::endl;
+        //displayRawPacket(std::cerr, (void *) buffer, sersize);
+
+        CHECK(done == true);
+
+        uint32_t sersize2 = sersize;
+        RsItem *output = srl.deserialise((void *) buffer, &sersize2);
+
+        CHECK(output != NULL);
+        CHECK(sersize2 == sersize);
+
+        T *outfi = dynamic_cast<T *>(output);
+
+        CHECK(outfi != NULL);
+
+        if (outfi)
+                CHECK(*outfi == rsfi) ;
+
+        sersize2 = MAX_BUFSIZE;
+        bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);
+
+        CHECK(done2) ;
+        CHECK(sersize2 == sersize);
+
+//	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
+
+        delete[] buffer ;
+        //delete rsfis;
+
+        return 1;
+}
 #endif /* SUPPORT_H_ */

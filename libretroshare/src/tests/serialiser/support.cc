@@ -223,6 +223,13 @@ void init_item(RsTlvFileItem& fi)
 	return;
 }
 
+void init_item(RsTlvBinaryData& bd){
+    bd.TlvClear();
+    std::string data;
+    randString(LARGE_STR, data);
+    bd.setBinData(data.data(), data.length());
+}
+
 void init_item(RsTlvFileSet& fSet){
 
 	randString(LARGE_STR, fSet.comment);
