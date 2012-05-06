@@ -1775,12 +1775,12 @@ void p3ChatService::sendLobbyStatusString(const ChatLobbyId& lobby_id,const std:
  * 
  * as example for updating their ChatLobby Blocklist for muted peers
  *  */
-bool p3ChatService::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id)
+bool p3ChatService::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick)
 {
 	std::string nick ;
 	getNickNameForChatLobby(lobby_id,nick) ;
 
-	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME,nick) ; 
+	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME, newnick) ; 
 	return true;
 }
 

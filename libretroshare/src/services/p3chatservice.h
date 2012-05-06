@@ -76,7 +76,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		 */
 		bool	sendPrivateChat(const std::string &id, const std::wstring &msg);
 
-		bool sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id) ;
+		bool sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) ;
 		
 		/*!
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)

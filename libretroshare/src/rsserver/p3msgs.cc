@@ -308,9 +308,9 @@ bool p3Msgs::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 	return mChatSrv->joinPublicChatLobby(lobby_id) ;
 }
 
-bool p3Msgs::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id) 
+bool p3Msgs::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) 
 {
-	return mChatSrv->sendLobbyStatusPeerChangedNickname(lobby_id) ;
+	return mChatSrv->sendLobbyStatusPeerChangedNickname(lobby_id, newnick) ;
 }
 
 

@@ -140,7 +140,6 @@ void ChatLobbyDialog::setNickname(const QString &nickname)
 // 	std::string oldNickName;
 // 	rsMsgs->getNickNameForChatLobby(lobbyId, oldNickName);
 
- 	rsMsgs->sendLobbyStatusPeerChangedNickname(lobbyId);
 	
 	rsMsgs->setNickNameForChatLobby(lobbyId, nickname.toUtf8().constData());
 	ui.chatWidget->setName(nickname);
@@ -161,6 +160,8 @@ void ChatLobbyDialog::changeNickname()
 	dialog.setTextValue(QString::fromUtf8(nickName.c_str()));
 
 	if (dialog.exec() == QDialog::Accepted) {
+		// Informate other peers of change the Nickname, to update their mute list
+		rsMsgs->sendLobbyStatusPeerChangedNickname(lobbyId, dialog.textValue().toUtf8().constData());
 		setNickname(dialog.textValue());
 	}
 }
@@ -303,7 +304,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 		ui.chatWidget->updateStatusString(nickname + " %1", str);
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to:").arg(str), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(nickname, str), ChatWidget::TYPE_SYSTEM);
 	break;
 	case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
 		//std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in lobby " << getPeerId() << std::endl;

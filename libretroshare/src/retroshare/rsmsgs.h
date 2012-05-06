@@ -265,7 +265,7 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 virtual bool joinPublicChatLobby(const ChatLobbyId& lobby_id) = 0 ;
 
 
-virtual bool  sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id) = 0 ;
+virtual bool  sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) = 0 ;
 
 
 virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;

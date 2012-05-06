@@ -171,7 +171,7 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool joinPublicChatLobby(const ChatLobbyId& id) ;
 	  
-	  virtual bool sendLobbyStatusPeerChangedNickname(const ChatLobbyId& id) ;
+	  virtual bool sendLobbyStatusPeerChangedNickname(const ChatLobbyId& id, const std::string& newnick) ;
 	  
 	  virtual void getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) ;
 	  virtual bool getVirtualPeerId(const ChatLobbyId& id,std::string& vpid) ;
