@@ -109,7 +109,7 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 {
-	emit errorOccurred(list,type,QString::fromStdString(msg)) ;
+	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
 }
 
 void NotifyQt::notifyOwnAvatarChanged()
@@ -556,19 +556,19 @@ void NotifyQt::UpdateGUI()
 			{
 				case RS_SYS_ERROR:
 					QMessageBox::critical(MainWindow::getInstance(),
-							QString::fromStdString(title), 
-							QString::fromStdString(msg));
+							QString::fromUtf8(title.c_str()),
+							QString::fromUtf8(msg.c_str()));
 					break;
 				case RS_SYS_WARNING:
 					QMessageBox::warning(MainWindow::getInstance(),
-							QString::fromStdString(title), 
-							QString::fromStdString(msg));
+							QString::fromUtf8(title.c_str()),
+							QString::fromUtf8(msg.c_str()));
 					break;
 				default:
 				case RS_SYS_INFO:
 					QMessageBox::information(MainWindow::getInstance(),
-							QString::fromStdString(title), 
-							QString::fromStdString(msg));
+							QString::fromUtf8(title.c_str()),
+							QString::fromUtf8(msg.c_str()));
 					break;
 			}
 		}
@@ -581,8 +581,8 @@ void NotifyQt::UpdateGUI()
 			{
 				case RS_SYS_ERROR:
 				case RS_SYS_WARNING:
-				case RS_SYS_INFO:		 emit logInfoChanged(QString(logMesString.c_str()));
-				default:;
+				case RS_SYS_INFO:
+					emit logInfoChanged(QString::fromUtf8(logMesString.c_str()));
 			}
 		}
 	}
