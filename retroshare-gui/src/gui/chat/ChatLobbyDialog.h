@@ -71,7 +71,7 @@ private:
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;
 	
-	/** Ignored Users in Chatlobby */
+	/** Ignored Users in Chatlobby by nickname until we had implemented Peer Ids in ver 0.6 */
 	QStringList *mutedParticipants;
 
 	

@@ -44,6 +44,9 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
 	connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
 
+	// Mute a Participant
+	connect(ui.participantsList, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(changePartipationState(QListWidgetItem *)));
+
 	ui.participantsList->sortItems(Qt::AscendingOrder);
 }
 
@@ -88,9 +91,6 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 
 	/** List of muted Participants */
 	mutedParticipants = new QStringList;
-
-	// Mute a Participant
-	connect(ui.participantsList, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(changePartipationState(QListWidgetItem *)));
 	
 	// load settings
 	processSettings(true);
@@ -129,12 +129,26 @@ void ChatLobbyDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
+/**
+ * Change your Nickname
+ * 
+ * - send a Message to all Members => later: send hidden message to clients, so they can actualize there mutedParticipants list
+ */
 void ChatLobbyDialog::setNickname(const QString &nickname)
 {
+	
+// 	std::string oldNickName;
+// 	rsMsgs->getNickNameForChatLobby(lobbyId, oldNickName);
+
+ 	rsMsgs->sendLobbyStatusPeerChangedNickname(lobbyId);
+	
 	rsMsgs->setNickNameForChatLobby(lobbyId, nickname.toUtf8().constData());
 	ui.chatWidget->setName(nickname);
 }
 
+/**
+ * Dialog: Change your Nickname in the ChatLobby
+ */
 void ChatLobbyDialog::changeNickname()
 {
 	QInputDialog dialog;
@@ -162,11 +176,15 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
 	QString message = QString::fromStdWString(info.msg);
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
+	QString rsid = QString::fromUtf8(info.rsid.c_str());
 
+	std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
+	
 	if (!isParticipantMuted(name)) {
+	  // ui.chatWidget->addChatMsg(true, name.append(" ").append(rsid), sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	} else {
-	  // ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (TEST BLOCKED)"), ChatWidget::TYPE_NORMAL);
+	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (TEST BLOCKED)"), ChatWidget::TYPE_NORMAL);
 	}
 	
 	// also update peer list.
@@ -192,6 +210,8 @@ void ChatLobbyDialog::updateParticipantsList()
 	rsMsgs->getChatLobbyList(linfos);
 
 	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
+	
+	// Set it to the current ChatLobby
 	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it);
 
 	if (it != linfos.end()) {
@@ -207,7 +227,10 @@ void ChatLobbyDialog::updateParticipantsList()
 				widgetitem->setCheckState(Qt::Checked);
 			}
 			widgetitem->setText(participant);
-			widgetitem->setToolTip(tr("Uncheck to mute participant"));
+//  			widgetitem->setToolTip(it.rsid.c_str());
+			
+ 			widgetitem->setToolTip(tr("Uncheck to mute participant"));
+			
 			ui.participantsList->addItem(widgetitem);
 		}
 	}
@@ -217,6 +240,8 @@ void ChatLobbyDialog::updateParticipantsList()
  * Called when a Participant in QList get Clicked / Changed
  * 
  * Check if the Checkbox altered and Mute User
+ * 
+ * @todo auf rsid
  * 
  * @param QListWidgetItem Participant to check
  */
@@ -236,11 +261,19 @@ void ChatLobbyDialog::changePartipationState(QListWidgetItem *item)
 		mutedParticipants->removeOne(nickname);
 	}
 	
+	mutedParticipants->removeDuplicates();
+	
 	updateParticipantsList();
 }
 
 /** 
  * Should Messages from this Nickname be muted?
+ * 
+ * At the moment it is not possible to 100% know which peer sendet the message, and only
+ * the nickname is available. So this couldn't work for 100%. So, for example,  if a peer 
+ * change his name to the name of a other peer, we couldn't block him. A real implementation 
+ * will be possible if we transfer a temporary Session ID from the sending Retroshare client
+ * version 0.6
  * 
  * @param QString nickname to check
  */
@@ -269,6 +302,9 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
 		ui.chatWidget->updateStatusString(nickname + " %1", str);
 		break;
+	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to:").arg(str), ChatWidget::TYPE_SYSTEM);
+	break;
 	case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
 		//std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in lobby " << getPeerId() << std::endl;
 		break;

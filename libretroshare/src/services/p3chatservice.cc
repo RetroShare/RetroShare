@@ -372,6 +372,7 @@ bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id)
 	return false ;
 }
 
+
 bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)
 {
 	// look into ID. Is it a peer, or a chat lobby?
@@ -1768,6 +1769,22 @@ void p3ChatService::sendLobbyStatusString(const ChatLobbyId& lobby_id,const std:
 {
 	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_STATUS,status_string) ; 
 }
+
+/** 
+ * Inform other Clients of a nickname change
+ * 
+ * as example for updating their ChatLobby Blocklist for muted peers
+ *  */
+bool p3ChatService::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id)
+{
+	std::string nick ;
+	getNickNameForChatLobby(lobby_id,nick) ;
+
+	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME,nick) ; 
+	return true;
+}
+
+
 void p3ChatService::sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id)
 {
 	std::string nick ;
@@ -2426,6 +2443,7 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	
+	
 #ifdef CHAT_DEBUG
 	std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
 #endif
@@ -2437,6 +2455,10 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 		return false;
 	}
 
+// 	// inform other user about name change
+//  	sendLobbyStatusPeerChangedNickname(lobby_id);
+
+	
 	it->second.nick_name = nick ;
 	return true ;
 }
