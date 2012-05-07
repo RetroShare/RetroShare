@@ -973,6 +973,14 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
         <source>Topic: %1</source>
         <translation>Sujet : %1</translation>
     </message>
+    <message>
+        <source>Uncheck to mute participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 changed his name to: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
@@ -3798,6 +3806,26 @@ p, li { white-space: pre-wrap; }
         <source>Search forums</source>
         <translation type="unfinished">Rechercher forums</translation>
     </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">De</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished">Eléments envoyés</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">Sujet</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4191,7 +4219,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendRequestToaster</name>
     <message>
         <source>Accept Friend Request</source>
-        <translation>Accepter la demande d&apos;ami</translation>
+        <translation type="obsolete">Accepter la demande d&apos;ami</translation>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
@@ -4200,6 +4228,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
         <translation>Tentative de connexion (entrante) inconnue</translation>
+    </message>
+    <message>
+        <source>Friend Request</source>
+        <translation>Demande d&apos;ami</translation>
+    </message>
+    <message>
+        <source>Confirm Friend Request</source>
+        <translation>Accepter la demande d&apos;ami</translation>
     </message>
 </context>
 <context>
@@ -6075,7 +6111,7 @@ Désirez-vous enregistrer le message dans les brouillons?</translation>
     </message>
     <message>
         <source>Friend Recommendation(s)</source>
-        <translation type="unfinished">Recommendation(s) d&apos;ami</translation>
+        <translation type="obsolete">Recommendation(s) d&apos;ami</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -6270,6 +6306,30 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <source>Hi %1,&lt;br&gt;%2 wants to be friend with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks.&lt;br&gt;The RetroShare Team</source>
         <translation type="unfinished">Bonjour %1,&lt;br&gt;%2 veut devenir ton ami(e) sur RetroShare.&lt;br&gt;&lt;br&gt;Répondre maintenant&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Merci.&lt;br&gt;L&apos;équipe de RetroShare</translation>
+    </message>
+    <message>
+        <source>You have a friend recommendation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">De</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished">Eléments envoyés</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">Sujet</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10002,7 +10062,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send retroshare Links (HTML)</source>
-        <translation>Envoyer le lien RetroShare (HTML)</translation>
+        <translation type="obsolete">Envoyer le lien RetroShare (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>

@@ -55,7 +55,7 @@
 /* Images for context menu icons */
 #define IMAGE_DENYFRIEND         ":/images/denied16.png"
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
-#define IMAGE_EXPORTFRIEND       ":/images/exportpeers_16x16.png"
+#define IMAGE_EXPORTFRIEND       ":/images/user/friend_suggestion16.png"
 #define IMAGE_ADDFRIEND          ":/images/user/add_user16.png"
 #define IMAGE_FRIENDINFO         ":/images/peerdetails_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"

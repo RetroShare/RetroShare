@@ -1122,7 +1122,7 @@ Bitte wähle einen zum chatten aus.</translation>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+60"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+63"/>
         <source>Welcome to lobby %1</source>
         <translation>Willkommen in der Lobby %1</translation>
     </message>
@@ -1132,23 +1132,24 @@ Bitte wähle einen zum chatten aus.</translation>
         <translation>Thema: %1</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+90"/>
         <source>Please enter your new nick name</source>
         <translation>Bitte gib deinen neuen Spitznamen ein</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+78"/>
         <source>Uncheck to mute participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+65"/>
         <location line="+3"/>
+        <location line="+6"/>
         <source>Lobby management</source>
         <translation>Lobby Verwaltung</translation>
     </message>
     <message>
-        <location line="-3"/>
+        <location line="-9"/>
         <source>%1 has left the lobby.</source>
         <translation>%1 hat die Lobby verlassen.</translation>
     </message>
@@ -1158,7 +1159,12 @@ Bitte wähle einen zum chatten aus.</translation>
         <translation>%1 hat die Lobby betreten.</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+6"/>
+        <source>%1 changed his name to: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Do you want to unsubscribe to this chat lobby?</source>
         <translation>Möchtest du diese Lobby abbestellen?</translation>
     </message>
@@ -1179,7 +1185,7 @@ Bitte wähle einen zum chatten aus.</translation>
     </message>
     <message>
         <location filename="../gui/chat/ChatLobbyDialog.ui" line="+177"/>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-175"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-199"/>
         <source>Change nick name</source>
         <translation>Ändere Spitznamen</translation>
     </message>
@@ -4463,7 +4469,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+289"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+290"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -4600,7 +4606,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1372"/>
+        <location line="-1373"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4765,7 +4771,7 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+147"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+148"/>
         <location line="+1127"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
@@ -5333,12 +5339,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/toaster/FriendRequestToaster.ui" line="+138"/>
         <source>Friend Request</source>
-        <translation type="unfinished">Freundschaftsanfrage</translation>
+        <translation>Freundschaftsanfrage</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Confirm Friend Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundschaftsanfrage bestätigen</translation>
     </message>
 </context>
 <context>
@@ -10174,7 +10180,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+235"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+241"/>
         <source>Status: </source>
         <translation>Status:</translation>
     </message>
@@ -10184,7 +10190,7 @@ p, li { white-space: pre-wrap; }
         <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-84"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10197,7 +10203,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+61"/>
         <source>File name: </source>
         <translation>Dateiname:</translation>
     </message>

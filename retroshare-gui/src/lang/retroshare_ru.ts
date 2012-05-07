@@ -1211,6 +1211,10 @@ p, li { white-space: pre-wrap; }
         <source>Disable Auto-Download</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatDialog</name>
@@ -1310,6 +1314,14 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Topic: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uncheck to mute participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 changed his name to: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1532,6 +1544,14 @@ p, li { white-space: pre-wrap; }
         <source>Chat</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1691,6 +1711,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset font to default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2825,6 +2849,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4490,6 +4518,26 @@ p, li { white-space: pre-wrap; }
         <source>Search forums</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">разослан</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">Тема</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4795,10 +4843,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RetroShare ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Your trust in this peer is:</source>
         <translation type="obsolete">Ваше доверие к этой совокупности является:</translation>
     </message>
@@ -4844,6 +4888,25 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have a friend request.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FriendRequestToaster</name>
+    <message>
+        <source>Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm Friend Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown (Incoming) Connect Attempt</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6967,10 +7030,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Friend Recommendation(s)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7146,6 +7205,38 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have a friend recommendation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hi %1,&lt;br&gt;%2 wants to be friend with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks.&lt;br&gt;The RetroShare Team</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">разослан</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">Тема</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7824,6 +7915,14 @@ p, li { white-space: pre-wrap; }
         <source>Total:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No system messages available.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessagesPopupDialog</name>
@@ -8173,10 +8272,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pending Msg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8922,6 +9017,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chat Lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect attempt</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11773,15 +11872,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#000000;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>wants to be friends with you on RetroShare</source>
+        <source>wants to be friend with you on RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12492,10 +12583,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send retroshare Links (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
