@@ -1987,14 +1987,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		rft->state = fit->second->mState;
 		fit->second->mTransfer->getFileSources(rft->allPeerIds.ids);
 
-		// just avoid uninitialised memory reads
-		rft->in = 0 ;
-		rft->cPeerId = "" ;
 		rft->transferred = fit->second->mCreator->getRecvd();
-		rft->crate = 0 ;
-		rft->lrate = 0 ;
-		rft->trate = 0 ;
-		rft->ltransfer = 0 ;
 
 		// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 		// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
@@ -2014,6 +2007,49 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		rft->chunk_strategy = fit->second->mCreator->getChunkStrategy() ;
 
 		saveData.push_back(rft);
+	}
+
+	{
+		/* Save pending list of downloads */
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		std::list<ftPendingRequest>::iterator pit;
+		for (pit = mPendingRequests.begin(); pit != mPendingRequests.end(); ++pit)
+		{
+			/* make RsFileTransfer item for save list */
+			RsFileTransfer *rft = NULL;
+
+			std::map<std::string,RsFileTransfer*>::iterator rit = mPendingChunkMaps.find(pit->mHash);
+			if (rit != mPendingChunkMaps.end()) {
+				/* use item from the not loaded pending list */
+				rft = new RsFileTransfer(*(rit->second));
+			} else {
+				rft = new RsFileTransfer();
+
+				/* what data is important? */
+
+				rft->file.name = pit->mName;
+				rft->file.hash  = pit->mHash;
+				rft->file.filesize = pit->mSize;
+				rft->file.path = RsDirUtil::removeTopDir(pit->mDest); /* remove fname */
+				rft->flags = pit->mFlags;
+				rft->allPeerIds.ids = pit->mSrcIds;
+			}
+
+			// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
+			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
+			//
+			for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+				if(mTurtle->isTurtlePeer(*sit))
+				{
+					std::list<std::string>::iterator sittmp(sit) ;
+					sit = rft->allPeerIds.ids.erase(sit) ;
+				}
+				else
+					++sit ;
+
+			saveData.push_back(rft);
+		}
 	}
 
 	/* list completed! */

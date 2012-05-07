@@ -246,7 +246,15 @@ class RsFileTransfer: public RsItem
 	public:
 		RsFileTransfer() :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG, RS_PKT_SUBTYPE_FILE_TRANSFER)
 		{ 
-			return; 
+			state = 0;
+			in = 0;
+			transferred = 0;
+			crate = 0;
+			trate = 0;
+			lrate = 0;
+			ltransfer = 0;
+			flags = 0;
+			chunk_strategy = 0;
 		}
 		virtual ~RsFileTransfer();
 		virtual void clear();
