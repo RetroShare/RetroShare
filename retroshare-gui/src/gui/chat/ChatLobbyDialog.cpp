@@ -185,7 +185,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	  // ui.chatWidget->addChatMsg(true, name.append(" ").append(rsid), sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	} else {
-	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (TEST BLOCKED)"), ChatWidget::TYPE_NORMAL);
+	  // ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (TEST BLOCKED)"), ChatWidget::TYPE_NORMAL);
 	}
 	
 	// also update peer list.
