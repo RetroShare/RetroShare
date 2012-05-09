@@ -7935,14 +7935,18 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Du hast eine Freundempfehlung</translation>
     </message>
     <message>
-        <location line="+43"/>
         <source>wants to be friend with you on RetroShare</source>
+        <translation type="obsolete">möchte mit dir in RetroShare befreundet sein</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>wants to be friends with you on RetroShare</source>
         <translation>möchte mit dir in RetroShare befreundet sein</translation>
     </message>
     <message>
         <location line="+23"/>
-        <source>Hi %1,&lt;br&gt;%2 wants to be friend with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks.&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"></translation>
+        <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
+        <translation>Hallo %1,&lt;br&gt;&lt;br&gt;%2 möchte mit dir in RetroShare befreundet sein.&lt;br&gt;&lt;br&gt;Jetzt antworten:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Grüße,&lt;br&gt;Das RetroShare Team</translation>
     </message>
     <message>
         <location line="+12"/>

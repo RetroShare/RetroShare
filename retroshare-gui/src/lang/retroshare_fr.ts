@@ -6301,11 +6301,11 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished">veut devenir ton ami(e) sur RetroShare</translation>
+        <translation type="obsolete">veut devenir ton ami(e) sur RetroShare</translation>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;%2 wants to be friend with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks.&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished">Bonjour %1,&lt;br&gt;%2 veut devenir ton ami(e) sur RetroShare.&lt;br&gt;&lt;br&gt;Répondre maintenant&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Merci.&lt;br&gt;L&apos;équipe de RetroShare</translation>
+        <translation type="obsolete">Bonjour %1,&lt;br&gt;%2 veut devenir ton ami(e) sur RetroShare.&lt;br&gt;&lt;br&gt;Répondre maintenant&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Merci.&lt;br&gt;L&apos;équipe de RetroShare</translation>
     </message>
     <message>
         <source>You have a friend recommendation</source>
@@ -6329,6 +6329,14 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
+        <translation>veut devenir ami(e) avec toi sur RetroShare</translation>
+    </message>
+    <message>
+        <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -467,7 +467,7 @@ void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const std:
         return;
     }
 
-    QString title = QString("%1 %2").arg(sslName, tr("wants to be friend with you on RetroShare"));
+    QString title = QString("%1 %2").arg(sslName, tr("wants to be friends with you on RetroShare"));
 
     /* search for an exisiting message in the inbox */
     std::list<MsgInfoSummary> msgList;
@@ -490,7 +490,7 @@ void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const std:
     }
 
     /* create a message */
-    QString msgText = tr("Hi %1,<br>%2 wants to be friend with you on RetroShare.<br><br>Respond now<br>%3<br><br>Thanks.<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
+    QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on RetroShare.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
     rsMsgs->SystemMessage(title.toStdWString(), msgText.toStdWString(), RS_MSG_USER_REQUEST);
 }
 

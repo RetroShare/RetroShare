@@ -6778,14 +6778,6 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hi %1,&lt;br&gt;%2 wants to be friend with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks.&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Original Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6803,6 +6795,14 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
