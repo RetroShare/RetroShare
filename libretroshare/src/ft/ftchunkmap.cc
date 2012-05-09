@@ -282,16 +282,26 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 	// 1 - find if this peer already has an active chunk.
 	//
 	std::map<std::string,Chunk>::iterator it = _active_chunks_feed.find(peer_id) ;
+	std::map<std::string,Chunk>::iterator falsafe_it = _active_chunks_feed.end() ;
 
 	if(it == _active_chunks_feed.end())		
 	{
 		SourceChunksInfo *sci = getSourceChunksInfo(peer_id) ;
 
-		// 0 - Look into other pending chunks and slice from here.
+		// 0 - Look into other pending chunks and slice from here. We only consider chunks with size smaller than 
+		//    the requested size,
 		//
 		for(std::map<std::string,Chunk>::iterator pit(_active_chunks_feed.begin());pit!=_active_chunks_feed.end();++pit)
 		{
-			if(sci->is_full || sci->cmap[pit->second._start / _chunk_size])
+			uint32_t c = pit->second._start / _chunk_size ;
+
+			if(!(sci->is_full || sci->cmap[c]))	// check that the chunk is available for requested peer.
+				continue ;
+
+			ChunkDownloadInfo& cdi(_slices_to_download[c]) ;
+			falsafe_it = pit ;											// let's keep this one just in case.
+
+			if(cdi._slices.rbegin() != cdi._slices.rend() && cdi._slices.rbegin()->second*0.7 <= (float)size_hint)
 			{
 				it = pit ;
 #ifdef DEBUG_FTCHUNK
@@ -299,27 +309,41 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 #endif
 				break ;
 			}
+#ifdef DEBUG_FTCHUNK
+ 		else
+			std::cerr << "*** ChunkMap::getDataChunk: Not Sharing slice " << pit->second._start << " of peer " << pit->first << " for peer " << peer_id << ", because current peer is too slow" << std::endl;
+#endif
 		}
 
-		if(it == _active_chunks_feed.end())	// nor found. Find a new chunk.
+		if(it == _active_chunks_feed.end())	// not found. Find a new chunk.
 		{
 			// 1 - select an available chunk id for this peer.
 			//
 			uint32_t c = getAvailableChunk(peer_id,source_chunk_map_needed) ;	
 
 			if(c >= _map.size()) 
-				return false ;
-
-			// 2 - add the chunk in the list of active chunks, and mark it as being downloaded
-			//
-			uint32_t soc = sizeOfChunk(c) ;
-			_active_chunks_feed[peer_id] = Chunk( c*(uint64_t)_chunk_size, soc ) ;
-			_map[c] = FileChunksInfo::CHUNK_ACTIVE ;
-			_slices_to_download[c]._remains = soc ;			// init the list of slices to download
-			it = _active_chunks_feed.find(peer_id) ;
+				if(falsafe_it != _active_chunks_feed.end())	// no chunk available. Let's see if we can still take an active--faster--chunk.
+				{
+					it = falsafe_it ;
 #ifdef DEBUG_FTCHUNK
-			std::cout << "*** ChunkMap::getDataChunk: Allocating new chunk " << c << " for peer " << peer_id << std::endl ;
+					std::cerr << "*** ChunkMap::getDataChunk: Using falsafe chunk " << it->second._start << " of peer " << it->first << " for peer " << peer_id << std::endl;
 #endif
+				}
+				else
+					return false ;		// no more availabel chunks, no falsafe case.
+			else
+			{
+				// 2 - add the chunk in the list of active chunks, and mark it as being downloaded
+				//
+				uint32_t soc = sizeOfChunk(c) ;
+				_active_chunks_feed[peer_id] = Chunk( c*(uint64_t)_chunk_size, soc ) ;
+				_map[c] = FileChunksInfo::CHUNK_ACTIVE ;
+				_slices_to_download[c]._remains = soc ;			// init the list of slices to download
+				it = _active_chunks_feed.find(peer_id) ;
+#ifdef DEBUG_FTCHUNK
+				std::cout << "*** ChunkMap::getDataChunk: Allocating new chunk " << c << " for peer " << peer_id << std::endl ;
+#endif
+			}
 		}
 	}
 #ifdef DEBUG_FTCHUNK

@@ -9,7 +9,7 @@
  ******/
 
 #define CHUNK_MAX_AGE           40
-#define MAX_FTCHUNKS_PER_PEER    5
+#define MAX_FTCHUNKS_PER_PEER   50
 
 /***********************************************************
 *
@@ -366,7 +366,7 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 
 		if(!found)
 		{
-			std::cerr << "ftFileCreator::locked_notifyReceived(): failed to find an active slice for " << offset << "+" << chunk_size << ": dropping data." << std::endl;
+			std::cerr << "ftFileCreator::locked_notifyReceived(): failed to find an active slice for " << offset << "+" << chunk_size << ", hash = " << hash << ": dropping data." << std::endl;
 			return 0; /* ignoring */
 		}
 	}
@@ -466,7 +466,7 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 	if(chunks_for_this_peer >= MAX_FTCHUNKS_PER_PEER)
 	{
 #ifdef FILE_DEBUG
-		std::cerr << "ffc::getMissingChunk() too many chunks for peer " << peer_id << std::endl ;
+		std::cerr << "ffc::getMissingChunk() too many chunks for peer " << peer_id << " for hash " << hash << ". Count = " << chunks_for_this_peer << std::endl ;
 #endif
 		return false ;
 	}
