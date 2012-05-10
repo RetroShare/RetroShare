@@ -1950,6 +1950,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 {
 	bool new_tunnel = false ;
 	TurtleFileHash new_hash ;
+	std::string new_vpid ;
 
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
@@ -2043,6 +2044,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 					new_hash = it->first ;
 
 					locked_addDistantPeer(new_hash,item->tunnel_id) ;
+					new_vpid = _local_tunnels[item->tunnel_id].vpid ; // save it for off-mutex usage.
 				}
 			if(!found)
 				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << (void*)item->tunnel_id << std::endl ;
@@ -2065,7 +2067,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 	//
 	if(new_tunnel)
 	{
-		_ft_controller->addFileSource(new_hash,_local_tunnels[item->tunnel_id].vpid) ;
+		_ft_controller->addFileSource(new_hash,new_vpid) ;
 		_ft_controller->statusChange(_online_peers) ;
 	}
 }
