@@ -38,23 +38,30 @@
 
 
 /*!
- * Base class for messages
- *
- *
+ * Base class used by client API
+ * for their messages.
+ * Main purpose is to transfer
+ * between GDS and client side GXS
  */
 class RsGxsMsg : public RsItem
 {
+public:
 
-    std::string grpId;
-    std::string msgId;
-    std::list<uint32_t> versions;
-    uint32_t flags;
-    uint32_t type;
+    RsGxsMsg() : RsItem() {}
 
 
+    std::string grpId; /// grp id
+    std::string msgId; /// message id
+    uint32_t timestamp; /// when created
+    std::string identity;
+    uint32_t flag;
 };
 
-
+/*!
+ *
+ *
+ *
+ */
 class RsGxsSignedMsg : public RsItem
 {
 
@@ -66,9 +73,14 @@ class RsGxsSignedMsg : public RsItem
     virtual void clear();
     virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
+    std::string grpId; /// group id
+    std::string msgId; /// message id
     uint32_t timestamp;
-    RsTlvBinaryData data;
-    RsTlvBinaryData signature;
+    std::string identity;
+    uint32_t flag;
+    RsTlvBinaryData* msg;
+    RsTlvBinaryData signature; // needs to be a set of signatures with bitfield flag ids
+    // set should cover idenitity and publication key
 };
 
 /*!
@@ -77,12 +89,50 @@ class RsGxsSignedMsg : public RsItem
  *
  *
  */
+class RsGxsSignedGroup
+{
+
+
+    std::string grpId;
+    std::string identity;
+    RsTlvKeySignature sign;
+    uint32_t timestamp; // UTC time
+    RsTlvBinaryData* grp;
+    uint32_t flag;
+};
+
+/*!
+ * This is the base group used by API client to exchange
+ * data
+ *
+ */
 class RsGxsGroup : public RsItem
 {
 
 
+public:
+
+    // publication type
+    static const uint32_t FLAG_GRP_TYPE_KEY_SHARED;
+    static const uint32_t FLAG_GRP_TYPE_PRIVATE_ENC;
+    static const uint32_t FLAG_GRP_TYPE_PUBLIC;
+    static const uint32_t FLAG_GRP_TYPE_MASK;
+
+    // type of msgs
+    static const uint32_t FLAG_MSGS_TYPE_SIGNED;
+    static const uint32_t FLAG_MSGS_TYPE_ANON;
+    static const uint32_t FLAG_MSGS_TYPE_MASK;
+
     RsGxsGroup(uint16_t servtype, uint8_t subtype)
-        : RsItem() { return; }
+        : RsItem(servtype) { return; }
+
+    virtual ~RsGxsGroup() { return; }
+
+    std::string grpId;
+    std::string identity; /// identity associated with group
+    uint32_t timeStamp; // UTC time
+    uint32_t flag;
+
 
 };
 
