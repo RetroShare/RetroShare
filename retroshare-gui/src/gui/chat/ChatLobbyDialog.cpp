@@ -29,6 +29,7 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
+#include <gui/common/html.h>
 
 #include <retroshare/rsnotify.h>
 
@@ -136,11 +137,6 @@ void ChatLobbyDialog::processSettings(bool load)
  */
 void ChatLobbyDialog::setNickname(const QString &nickname)
 {
-	
-// 	std::string oldNickName;
-// 	rsMsgs->getNickNameForChatLobby(lobbyId, oldNickName);
-
-	
 	rsMsgs->setNickNameForChatLobby(lobbyId, nickname.toUtf8().constData());
 	ui.chatWidget->setName(nickname);
 }
@@ -160,7 +156,7 @@ void ChatLobbyDialog::changeNickname()
 	dialog.setTextValue(QString::fromUtf8(nickName.c_str()));
 
 	if (dialog.exec() == QDialog::Accepted) {
-		// Informate other peers of change the Nickname, to update their mute list
+		// Informa other peers of change the Nickname, to update their mute list
 		rsMsgs->sendLobbyStatusPeerChangedNickname(lobbyId, dialog.textValue().toUtf8().constData());
 		setNickname(dialog.textValue());
 	}
@@ -185,7 +181,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	  // ui.chatWidget->addChatMsg(true, name.append(" ").append(rsid), sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	} else {
-	  // ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (TEST BLOCKED)"), ChatWidget::TYPE_NORMAL);
+	  // ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (BLOCKED)"), ChatWidget::TYPE_NORMAL);
 	}
 	
 	// also update peer list.
@@ -228,8 +224,6 @@ void ChatLobbyDialog::updateParticipantsList()
 				widgetitem->setCheckState(Qt::Checked);
 			}
 			widgetitem->setText(participant);
-//  			widgetitem->setToolTip(it.rsid.c_str());
-			
  			widgetitem->setToolTip(tr("Uncheck to mute participant"));
 			
 			ui.participantsList->addItem(widgetitem);
@@ -253,18 +247,48 @@ void ChatLobbyDialog::changePartipationState(QListWidgetItem *item)
 	std::cerr << "check Partipation status for '" << nickname.toStdString() << std::endl;
 
 	if (item->checkState() == Qt::Unchecked) {
-		// Mute
-		std::cerr << " Mute " << std::endl;
-		mutedParticipants->append(nickname);
+		muteParticipant(nickname);
 	} else {
-		// Unmute
-		std::cerr << " UnMute " << std::endl;
-		mutedParticipants->removeOne(nickname);
+		unMuteParticipant(nickname);
 	}
 	
 	mutedParticipants->removeDuplicates();
 	
 	updateParticipantsList();
+}
+
+void ChatLobbyDialog::muteParticipant(const QString &nickname) {
+	std::cerr << " Mute " << std::endl;
+	mutedParticipants->append(nickname);
+}
+
+void ChatLobbyDialog::unMuteParticipant(const QString &nickname) {
+	std::cerr << " UnMute " << std::endl;
+	mutedParticipants->removeAll(nickname);
+}
+
+/**
+ * Is this nickName already known in the lobby
+ */
+bool ChatLobbyDialog::isNicknameInLobby(const QString &nickname) {
+
+	std::list<ChatLobbyInfo> linfos;
+	rsMsgs->getChatLobbyList(linfos);
+
+	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
+	
+	// Set it to the current ChatLobby
+	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it);
+
+	if (it != linfos.end()) {
+		for (std::map<std::string,time_t>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {
+			QString participant = QString::fromUtf8( (it2->first).c_str() );
+			if (participant==nickname) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /** 
@@ -278,17 +302,10 @@ void ChatLobbyDialog::changePartipationState(QListWidgetItem *item)
  * 
  * @param QString nickname to check
  */
-bool ChatLobbyDialog::isParticipantMuted(QString &participant)
+bool ChatLobbyDialog::isParticipantMuted(const QString &participant)
 {
-	// @todo genauer match nicht nur into
-	QStringList result=mutedParticipants->filter(participant);
-	
- 	// nickname not in Mute list
-	if (result.isEmpty()) {
-		return false;
-	}
-	return true;
-
+ 	// nickname in Mute list
+	return mutedParticipants->contains(participant);
 }
 
 void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname, const QString& str)
@@ -305,6 +322,12 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
 		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(nickname, str), ChatWidget::TYPE_SYSTEM);
+		
+		// TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
+		if (isParticipantMuted(nickname) && !isNicknameInLobby(str)) {
+			muteParticipant(str);
+		}
+		
 	break;
 	case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
 		//std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in lobby " << getPeerId() << std::endl;

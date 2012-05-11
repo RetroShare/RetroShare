@@ -2454,10 +2454,6 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 		std::cerr << " (EE) lobby does not exist!!" << std::endl;
 		return false;
 	}
-
-// 	// inform other user about name change
-//  	sendLobbyStatusPeerChangedNickname(lobby_id);
-
 	
 	it->second.nick_name = nick ;
 	return true ;

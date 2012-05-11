@@ -63,8 +63,11 @@ protected slots:
 private:
 	void updateParticipantsList();
 
-	bool isParticipantMuted(QString &participant);
-
+	void muteParticipant(const QString &nickname);
+	void unMuteParticipant(const QString &nickname);
+	bool isParticipantMuted(const QString &participant);
+	bool isNicknameInLobby(const QString &nickname);
+	
 	ChatLobbyId lobbyId;
 	time_t lastUpdateListTime;
 
