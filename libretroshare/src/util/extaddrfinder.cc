@@ -202,39 +202,46 @@ bool ExtAddrFinder::hasValidIP(struct in_addr *addr)
 	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
 #endif
 
-	if(*_found)
 	{
+		RsStackMutex mut(_addrMtx) ;
+		if(*_found)
+		{
 #ifdef EXTADDRSEARCH_DEBUG
-		std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
+			std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
 #endif
-		*addr = *_addr;
+			*addr = *_addr;
+		}
 	}
-
-	//timeout the current ip
-	time_t delta = time(NULL) - *mFoundTS;
+	time_t delta;
+	{
+		RsStackMutex mut(_addrMtx) ;
+		//timeout the current ip
+		delta = time(NULL) - *mFoundTS;
+	}
 	if((uint32_t)delta > MAX_IP_STORE) {//launch a research
-	    if( _addrMtx.trylock())
-		    {
-			    if(!*_searching)
-			    {
-	    #ifdef EXTADDRSEARCH_DEBUG
-				    std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
-	    #endif
-				    *_searching = true ;
-				    start_request() ;
-			    }
-	    #ifdef EXTADDRSEARCH_DEBUG
-			    else
-				    std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
-	    #endif
-			    _addrMtx.unlock();
-		    }
-	    #ifdef EXTADDRSEARCH_DEBUG
-		    else
-			    std::cerr << "ExtAddrFinder: (Note) Could not acquire lock. Busy." << std::endl ;
-	    #endif
+		if( _addrMtx.trylock())
+		{
+			if(!*_searching)
+			{
+#ifdef EXTADDRSEARCH_DEBUG
+				std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
+#endif
+				*_searching = true ;
+				start_request() ;
+			}
+#ifdef EXTADDRSEARCH_DEBUG
+			else
+				std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
+#endif
+			_addrMtx.unlock();
+		}
+#ifdef EXTADDRSEARCH_DEBUG
+		else
+			std::cerr << "ExtAddrFinder: (Note) Could not acquire lock. Busy." << std::endl ;
+#endif
 	}
 
+	RsStackMutex mut(_addrMtx) ;
 	return *_found ;
 }
 
