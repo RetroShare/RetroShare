@@ -101,8 +101,8 @@ class RetroShareLink
 
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
 
-		static int process(QStringList &urls, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
-		static int process(QList<RetroShareLink> &links, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
+		static int process(const QStringList &urls, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
+		static int process(const QList<RetroShareLink> &links, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
 	private:
 		void fromString(const QString &url);

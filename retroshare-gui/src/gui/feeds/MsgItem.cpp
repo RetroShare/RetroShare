@@ -26,7 +26,7 @@
 #include "FeedHolder.h"
 #include "SubFileItem.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/chat/HandleRichText.h"
+#include "util/HandleRichText.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/notifyqt.h"
 
@@ -131,7 +131,7 @@ void MsgItem::updateItemStatic()
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromStdWString(mi.title));
 		
-	msgLabel->setText(RsHtml::formatText(QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	std::list<FileInfo>::iterator it;
 	for(it = mi.files.begin(); it != mi.files.end(); it++)

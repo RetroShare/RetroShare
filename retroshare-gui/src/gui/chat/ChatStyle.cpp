@@ -101,11 +101,11 @@
 
 #include <QApplication>
 #include <QColor>
+#include <QXmlStreamReader>
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
-#include "gui/common/Emoticons.h"
 
 #include <retroshare/rsinit.h>
 
@@ -301,19 +301,6 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
         m_style[type] = style;
     }
 
-    unsigned int formatFlag = 0;
-    if (flag & CHAT_FORMATMSG_EMBED_SMILEYS) {
-        formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
-    }
-    if (flag & CHAT_FORMATMSG_EMBED_LINKS) {
-        formatFlag |= RSHTML_FORMATTEXT_EMBED_LINKS;
-    }
-    if (flag & CHAT_FORMATMSG_OPTIMIZE) {
-        formatFlag |= RSHTML_FORMATTEXT_OPTIMIZE;
-    }
-
-    QString msg = RsHtml::formatText(message, formatFlag);
-
     QColor color;
 #ifdef COLORED_NICKNAMES
     if (flag & CHAT_FORMATMSG_SYSTEM) {
@@ -332,12 +319,14 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 
         color.setHsv(hash, 255, 150);
     }
+#else
+    Q_UNUSED(flag);
 #endif
 
     QString formatMsg = style.replace("%name%", name)
                              .replace("%date%", timestamp.date().toString("dd.MM.yyyy"))
                              .replace("%time%", timestamp.time().toString("hh:mm:ss"))
-                             .replace("%message%", msg)
+                             .replace("%message%", message)
                              .replace("%color%", color.name());
 
     return formatMsg;

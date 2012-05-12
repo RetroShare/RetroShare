@@ -28,6 +28,9 @@
 #include <QFontDialog>
 #include <QMenu>
 #include <QScrollBar>
+#include <QTextStream>
+#include <QTextCodec>
+#include <QTimer>
 
 #include "retroshare/rsinit.h"
 #include "retroshare/rsnotify.h"
@@ -55,6 +58,7 @@
 #include "RetroShareLink.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
+#include "util/HandleRichText.h"
 #include "chat/CreateLobbyDialog.h"
 #include "FriendRecommendDialog.h"
 
@@ -373,11 +377,11 @@ void FriendsDialog::publicChatChanged(int type)
 
 void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message)
 {
-    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS | CHAT_FORMATMSG_OPTIMIZE;
+    unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_OPTIMIZE;
 
     // embed smileys ?
     if (Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool()) {
-        formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
+        formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
     }
 
     ChatStyle::enumFormatMessage type;
@@ -394,10 +398,9 @@ void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name,
             type = ChatStyle::FORMATMSG_OUTGOING;
         }
     }
-    // Remove <p>'s from older RetroShare versions before 31.01.2012 (can be removed later)
-    QString optimizedMessage = message;
-    RsHtml::optimizeHtml(optimizedMessage);
-    QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, optimizedMessage, formatFlag);
+
+    QString formattedMessage = RsHtml().formatText(ui.msgText->document(), message, formatTextFlag);
+    QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, formattedMessage);
 
     ui.msgText->append(formatMsg);
 }

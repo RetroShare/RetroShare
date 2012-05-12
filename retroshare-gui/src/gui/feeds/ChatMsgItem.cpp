@@ -26,7 +26,7 @@
 #include "FeedHolder.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/chat/HandleRichText.h"
+#include "util/HandleRichText.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/settings/rsharesettings.h"
 
@@ -155,7 +155,7 @@ void ChatMsgItem::insertChat(const std::string &message)
         formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
      }
 
-    formatMsg = RsHtml::formatText(formatMsg, formatFlag);
+    formatMsg = RsHtml().formatText(NULL, formatMsg, formatFlag);
 
     chatTextlabel->setText(formatMsg);
 }

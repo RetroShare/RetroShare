@@ -31,6 +31,8 @@
 #include <QTimer>
 #include <QCompleter>
 #include <QItemDelegate>
+#include <QDateTime>
+#include <QFileInfo>
 
 #include <algorithm>
 
@@ -55,7 +57,7 @@
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"
 #include "gui/connect/ConfCertDialog.h"
-#include "gui/chat/HandleRichText.h"
+#include "util/HandleRichText.h"
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"

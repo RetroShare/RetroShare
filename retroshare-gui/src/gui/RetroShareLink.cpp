@@ -757,7 +757,7 @@ bool RetroShareLink::checkHash(const QString& hash)
     return true ;
 }
 
-static void processList(QStringList &list, const QString &textSingular, const QString &textPlural, QString &result)
+static void processList(const QStringList &list, const QString &textSingular, const QString &textPlural, QString &result)
 {
 	if (list.size() == 0) {
 		return;
@@ -768,7 +768,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 		result += "" + textPlural + ":";
 	}
 	result += "<p style='margin-left: 5px; margin-top: 0px'>";
-	QStringList::iterator it;
+	QStringList::const_iterator it;
 	for (it = list.begin(); it != list.end(); ++it) {
 		if (it != list.begin()) {
 			result += ", ";
@@ -778,9 +778,9 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 	result += "</p>";
 }
 
-/*static*/ int RetroShareLink::process(QList<RetroShareLink> &linksIn, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
+/*static*/ int RetroShareLink::process(const QList<RetroShareLink> &linksIn, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
-	QList<RetroShareLink>::iterator linkIt;
+	QList<RetroShareLink>::const_iterator linkIt;
 
 	/* filter dublicate links */
 	QList<RetroShareLink> links;
@@ -798,7 +798,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 		QStringList personAdd;
 
 		for (linkIt = links.begin(); linkIt != links.end(); linkIt++) {
-			RetroShareLink &link = *linkIt;
+			const RetroShareLink &link = *linkIt;
 
 			if (link.valid() == false) {
 				continue;
@@ -897,7 +897,7 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 	// not needed: forumFound, channelFound, messageStarted
 
 	for (linkIt = links.begin(); linkIt != links.end(); linkIt++) {
-		RetroShareLink &link = *linkIt;
+		const RetroShareLink &link = *linkIt;
 
 		if (link.valid() == false) {
 			std::cerr << " RetroShareLink::process invalid request" << std::endl;
@@ -1257,11 +1257,11 @@ static void processList(QStringList &list, const QString &textSingular, const QS
 	return 0;
 }
 
-/*static*/ int RetroShareLink::process(QStringList &urls, RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
+/*static*/ int RetroShareLink::process(const QStringList &urls, RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
 	QList<RetroShareLink> links;
 
-	for (QStringList::iterator it = urls.begin(); it != urls.end(); it++) {
+	for (QStringList::const_iterator it = urls.begin(); it != urls.end(); it++) {
 		RetroShareLink link(*it);
 		if (link.valid() && (type == RetroShareLink::TYPE_UNKNOWN || link.type() == type)) {
 			links.append(link);

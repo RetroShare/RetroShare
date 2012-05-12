@@ -30,14 +30,7 @@
 #include <QDir>
 
 /* Flags for ChatStyle::formatMessage */
-#define CHAT_FORMATMSG_EMBED_SMILEYS    1
-#define CHAT_FORMATMSG_EMBED_LINKS      2
-#define CHAT_FORMATMSG_SYSTEM           4
-#define CHAT_FORMATMSG_OPTIMIZE         8
-
-/* Flags for ChatStyle::formatText */
-#define CHAT_FORMATTEXT_EMBED_SMILEYS  1
-#define CHAT_FORMATTEXT_EMBED_LINKS    2
+#define CHAT_FORMATMSG_SYSTEM          1
 
 #define FORMATMSG_COUNT  6
 
@@ -89,7 +82,7 @@ public:
     bool setStylePath(const QString &stylePath, const QString &styleVariant);
     bool setStyleFromSettings(enumStyleType styleType);
 
-    QString formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag);
+    QString formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag = 0);
 
     static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
     static bool getAvailableVariants(const QString &stylePath, QStringList &variants);

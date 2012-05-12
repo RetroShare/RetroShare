@@ -32,6 +32,7 @@
 #include "ImHistoryBrowser.h"
 #include "IMHistoryItemDelegate.h"
 #include "IMHistoryItemPainter.h"
+#include "util/HandleRichText.h"
 
 #include "rshare.h"
 #include <retroshare/rshistory.h>
@@ -254,10 +255,10 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
 
 void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
 {
-    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
+    unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
 
     if (embedSmileys) {
-        formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
+        formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
     }
 
     ChatStyle::enumFormatMessage type;
@@ -267,8 +268,8 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
         type = ChatStyle::FORMATMSG_OUTGOING;
     }
 
-    QString messageText = QString::fromUtf8(msg.message.c_str());
-    QString formatMsg = style.formatMessage(type, QString::fromUtf8(msg.peerName.c_str()), QDateTime::fromTime_t(msg.sendTime), messageText, formatFlag);
+    QString messageText = RsHtml().formatText(NULL, QString::fromUtf8(msg.message.c_str()), formatTextFlag);
+    QString formatMsg = style.formatMessage(type, QString::fromUtf8(msg.peerName.c_str()), QDateTime::fromTime_t(msg.sendTime), messageText);
 
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);

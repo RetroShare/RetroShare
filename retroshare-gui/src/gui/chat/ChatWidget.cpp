@@ -27,6 +27,9 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QMessageBox>
+#include <QTextStream>
+#include <QTextCodec>
+#include <QTimer>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
@@ -35,11 +38,11 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/im_history/ImHistoryBrowser.h"
-#include "HandleRichText.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
 #include "util/misc.h"
+#include "util/HandleRichText.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
@@ -305,11 +308,12 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	std::cout << "ChatWidget::addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-	unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS | CHAT_FORMATMSG_OPTIMIZE;
+	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_OPTIMIZE;
+	unsigned int formatFlag = 0;
 
 	// embed smileys ?
 	if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
-		formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
+		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
 
 	ChatStyle::enumFormatMessage type;
@@ -327,7 +331,8 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		formatFlag |= CHAT_FORMATMSG_SYSTEM;
 	}
 
-	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, message, formatFlag);
+	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag);
+	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, formattedMessage, formatFlag);
 
 	ui->textBrowser->append(formatMsg);
 
@@ -732,7 +737,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 			ui->statusmessagelabel->hide();
 		} else {
 			ui->statusmessagelabel->show();
-			status_text = RsHtml::formatText(status_string, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+			status_text = RsHtml().formatText(NULL, status_string, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 			ui->statusmessagelabel->setText(status_text);
 		}
 	}

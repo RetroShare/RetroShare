@@ -21,7 +21,7 @@
 
 #include "ChatLobbyToaster.h"
 #include "gui/chat/ChatDialog.h"
-#include "gui/chat/HandleRichText.h"
+#include "util/HandleRichText.h"
 
 #include <retroshare/rsmsgs.h>
 
@@ -36,7 +36,7 @@ ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &nam
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.messageLabel->setText(RsHtml::formatText(message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+	ui.messageLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
 	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":images/user/agt_forum64.png");
 

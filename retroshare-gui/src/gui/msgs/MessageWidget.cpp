@@ -25,6 +25,9 @@
 #include <QMessageBox>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QFile>
+#include <QTextStream>
+#include <QTextCodec>
 
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
@@ -37,6 +40,7 @@
 #include "MessageWindow.h"
 #include "util/misc.h"
 #include "util/printpreview.h"
+#include "util/HandleRichText.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -50,6 +54,35 @@
 #define COLUMN_FILE_SIZE   1
 #define COLUMN_FILE_HASH   2
 #define COLUMN_FILE_COUNT  3
+
+class RsHtmlMsg : public RsHtml
+{
+public:
+	RsHtmlMsg(uint msgFlags) : RsHtml()
+	{
+		this->msgFlags = msgFlags;
+	}
+
+protected:
+	virtual void anchorTextForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &text)
+	{
+		if (link.type() == RetroShareLink::TYPE_CERTIFICATE) {
+			if (msgFlags & RS_MSG_USER_REQUEST) {
+				text = QApplication::translate("MessageWidget", "Confirm %1 as friend").arg(link.name());
+				return;
+			}
+			if (msgFlags & RS_MSG_FRIEND_RECOMMENDATION) {
+				text = QApplication::translate("MessageWidget", "Add %1 as friend").arg(link.name());
+				return;
+			}
+		}
+
+		RsHtml::anchorTextForImg(doc, element, link, text);
+	}
+
+protected:
+	uint msgFlags;
+};
 
 MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 {
@@ -523,7 +556,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 
-	text = RsHtml::formatText(QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
 	ui.msgText->setHtml(text);
 
 	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));

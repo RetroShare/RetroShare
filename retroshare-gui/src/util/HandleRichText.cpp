@@ -20,16 +20,77 @@
  ****************************************************************/
 
 #include <QTextBrowser>
+#include <QtXml>
+
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
+#include "util/ObjectPainter.h"
 
 #include <iostream>
 
-namespace RsHtml {
+/**
+ * The type of embedding we'd like to do
+ */
+enum EmbeddedType
+{
+	Ahref,		///< into <a></a>
+	Img			///< into <img/>
+};
 
-EmbedInHtmlImg defEmbedImg;
+/**
+ * Base class for storing information about a given kind of embedding.
+ *
+ * Its only constructor is protected so it is impossible to instantiate it, and
+ * at the same time derived classes have to provide a type.
+ */
+class EmbedInHtml
+{
+protected:
+	EmbedInHtml(EmbeddedType newType) : myType(newType) {}
 
-void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
+public:
+	const EmbeddedType myType;
+	QRegExp myRE;
+};
+
+/**
+ * This class is used to store information for embedding links into <a></a> tags.
+ */
+class EmbedInHtmlAhref : public EmbedInHtml
+{
+public:
+	EmbedInHtmlAhref() : EmbedInHtml(Ahref)
+	{
+		myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
+	}
+};
+
+/**
+  * This class is used to store information for embedding smileys into <img/> tags.
+  *
+  * By default the QRegExp the variables are empty, which means it must be
+  * filled at runtime, typically when the smileys set is loaded. It can be
+  * either done by hand or by using one of the helper methods available.
+  *
+  * Note: The QHash uses only *one* smiley per key (unlike soon-to-be-upgraded
+  * code out there).
+  */
+class EmbedInHtmlImg : public EmbedInHtml
+{
+public:
+	EmbedInHtmlImg() : EmbedInHtml(Img) {}
+
+	QHash<QString,QString> smileys;
+};
+
+/* global instance for embedding emoticons */
+static EmbedInHtmlImg defEmbedImg;
+
+RsHtml::RsHtml()
+{
+}
+
+void RsHtml::initEmoticons(const QHash< QString, QString >& hash)
 {
 	QString newRE;
 	for(QHash<QString,QString>::const_iterator it = hash.begin(); it != hash.end(); ++it)
@@ -37,11 +98,103 @@ void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
 			if (smile.isEmpty()) {
 				continue;
 			}
-			smileys.insert(smile, it.value());
+			defEmbedImg.smileys.insert(smile, it.value());
 			newRE += "(" + QRegExp::escape(smile) + ")|";
 		}
 	newRE.chop(1);	// remove last |
-	myRE.setPattern(newRE);
+	defEmbedImg.myRE.setPattern(newRE);
+}
+
+bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, const RetroShareLink &link)
+{
+	switch (link.type()) {
+	case RetroShareLink::TYPE_UNKNOWN:
+	case RetroShareLink::TYPE_FILE:
+	case RetroShareLink::TYPE_PERSON:
+	case RetroShareLink::TYPE_FORUM:
+	case RetroShareLink::TYPE_CHANNEL:
+	case RetroShareLink::TYPE_SEARCH:
+	case RetroShareLink::TYPE_MESSAGE:
+		// not yet implemented
+		break;
+
+	case RetroShareLink::TYPE_CERTIFICATE:
+		return true;
+	}
+
+	return false;
+}
+
+void RsHtml::anchorTextForImg(QDomDocument &/*doc*/, QDomElement &/*element*/, const RetroShareLink &link, QString &text)
+{
+	text = link.niceName();
+}
+
+void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*element*/, const RetroShareLink &link, QString &styleSheet)
+{
+	switch (link.type()) {
+	case RetroShareLink::TYPE_UNKNOWN:
+	case RetroShareLink::TYPE_FILE:
+	case RetroShareLink::TYPE_PERSON:
+	case RetroShareLink::TYPE_FORUM:
+	case RetroShareLink::TYPE_CHANNEL:
+	case RetroShareLink::TYPE_SEARCH:
+	case RetroShareLink::TYPE_MESSAGE:
+		// not yet implemented
+		break;
+
+	case RetroShareLink::TYPE_CERTIFICATE:
+		styleSheet = "";
+		break;
+	}
+}
+
+void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QTextDocument *textDocument, const RetroShareLink &link)
+{
+	if (!textDocument) {
+		return;
+	}
+
+	if (!link.valid()) {
+		return;
+	}
+
+	if (element.childNodes().length() != 1) {
+		return;
+	}
+
+	if (!canReplaceAnchor(doc, element, link)) {
+		return;
+	}
+
+	QString imgText;
+	anchorTextForImg(doc, element, link, imgText);
+
+	QString styleSheet;
+	anchorStylesheetForImg(doc, element, link, styleSheet);
+
+	QDomNode childNode = element.firstChild();
+
+
+	/* build resource name */
+	QString resourceName = QString("%1_%2.png").arg(link.type()).arg(imgText);
+
+	if (!textDocument->resource(QTextDocument::ImageResource, QUrl(resourceName)).isValid()) {
+		/* draw a button on a pixmap */
+		QPixmap pixmap;
+		ObjectPainter::drawButton(imgText, styleSheet, pixmap);
+
+		/* add the image to the resource cache of the text document */
+		textDocument->addResource(QTextDocument::ImageResource, QUrl(resourceName), QVariant(pixmap));
+	}
+
+	element.removeChild(childNode);
+
+	/* replace text of the anchor with <img> */
+	QDomElement img = doc.createElement("img");
+	img.setAttribute("src", resourceName);
+
+	element.appendChild(img);
 }
 
 /**
@@ -61,7 +214,7 @@ void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
  * @param[in,out] currentElement The current node (which is of type Element)
  * @param[in] embedInfos The regular expression and the type of embedding to use
  */
-static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos)
+void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos, ulong flag)
 {
 	if(embedInfos.myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
 		return;
@@ -75,16 +228,31 @@ static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtm
 			if(element.tagName().toLower() == "head") {
 				// skip it
 			} else if (element.tagName().toLower() == "a") {
-				// skip it, but add title if not available
-				if (element.attribute("title").isEmpty()) {
-					RetroShareLink link(element.attribute("href"));
-					QString title = link.title();
-					if (!title.isEmpty()) {
-						element.setAttribute("title", title);
+				// skip it
+				if (embedInfos.myType == Ahref) {
+					// but add title if not available
+					if (element.attribute("title").isEmpty()) {
+						RetroShareLink link(element.attribute("href"));
+						if (link.valid()) {
+							QString title = link.title();
+							if (!title.isEmpty()) {
+								element.setAttribute("title", title);
+							}
+							if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+								replaceAnchorWithImg(doc, element, textDocument, link);
+							}
+						}
+					} else {
+						if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+							RetroShareLink link(element.attribute("href"));
+							if (link.valid()) {
+								replaceAnchorWithImg(doc, element, textDocument, link);
+							}
+						}
 					}
 				}
 			} else {
-				embedHtml(doc, element, embedInfos);
+				embedHtml(textDocument, doc, element, embedInfos, flag);
 			}
 		}
 		else if(node.isText()) {
@@ -109,16 +277,22 @@ static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtm
 				switch(embedInfos.myType) {
 					case Ahref:
 							{
-								insertedTag = doc.createElement("a");
-								insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
-
 								RetroShareLink link(embedInfos.myRE.cap(0));
-								QString title = link.title();
-								if (!title.isEmpty()) {
-									insertedTag.setAttribute("title", title);
-								}
+								if (link.valid()) {
+									insertedTag = doc.createElement("a");
+									insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
 
-								insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
+									QString title = link.title();
+									if (!title.isEmpty()) {
+										insertedTag.setAttribute("title", title);
+									}
+
+									insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
+
+									if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+										replaceAnchorWithImg(doc, insertedTag, textDocument, link);
+									}
+								}
 							}
 							break;
 					case Img:
@@ -129,10 +303,13 @@ static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtm
 							}
 							break;
 				}
-				currentElement.insertBefore(insertedTag, node);
+
+				if (!insertedTag.isNull()) {
+					currentElement.insertBefore(insertedTag, node);
+					index++;
+				}
 
 				currentPos = nextPos + embedInfos.myRE.matchedLength();
-				index++;
 			}
 
 			// text after the last link, only if there's one, don't touch the index
@@ -149,7 +326,7 @@ static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtm
 	}
 }
 
-QString formatText(const QString &text, unsigned int flag)
+QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag)
 {
 	if (flag == 0 || text.isEmpty()) {
 		// nothing to do
@@ -166,11 +343,11 @@ QString formatText(const QString &text, unsigned int flag)
 
 	QDomElement body = doc.documentElement();
 	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
-		embedHtml(doc, body, defEmbedImg);
+		embedHtml(textDocument, doc, body, defEmbedImg, flag);
 	}
 	if (flag & RSHTML_FORMATTEXT_EMBED_LINKS) {
 		EmbedInHtmlAhref defEmbedAhref;
-		embedHtml(doc, body, defEmbedAhref);
+		embedHtml(textDocument, doc, body, defEmbedAhref, flag);
 	}
 
 	QString formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
@@ -217,11 +394,14 @@ static void findElements(QDomDocument& doc, QDomElement& currentElement, const Q
 	}
 }
 
-bool findAnchors(const QString &text, QStringList& urls)
+bool RsHtml::findAnchors(const QString &text, QStringList& urls)
 {
 	QDomDocument doc;
 	if (doc.setContent(text) == false) {
-		return false;
+		// convert text with QTextBrowser
+		QTextBrowser textBrowser;
+		textBrowser.setText(text);
+		doc.setContent(textBrowser.toHtml());
 	}
 
 	QDomElement body = doc.documentElement();
@@ -404,7 +584,7 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 	}
 }
 
-void optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
+void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
 {
 	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
@@ -417,7 +597,7 @@ void optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
 	optimizeHtml(text, flag);
 }
 
-void optimizeHtml(QString &text, unsigned int flag)
+void RsHtml::optimizeHtml(QString &text, unsigned int flag)
 {
 	int originalLength = text.length();
 
@@ -430,13 +610,13 @@ void optimizeHtml(QString &text, unsigned int flag)
 	}
 
 	QDomElement body = doc.documentElement();
-	optimizeHtml(doc, body, flag);
+	::optimizeHtml(doc, body, flag);
 	text = doc.toString(-1);
 
 	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
 }
 
-QString toHtml(QString text, bool realHtml)
+QString RsHtml::toHtml(QString text, bool realHtml)
 {
 	// replace "\n" from the optimized html with "<br>"
 	text.replace("\n", "<br>");
@@ -448,5 +628,3 @@ QString toHtml(QString text, bool realHtml)
 	doc.setHtml(text);
 	return doc.toHtml();
 }
-
-} // namespace RsHtml

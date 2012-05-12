@@ -19,11 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _EMOTICONS_H
 #define _EMOTICONS_H
-
-#include "gui/chat/HandleRichText.h"
 
 class QWidget;
 class QString;
@@ -35,7 +32,7 @@ public:
 
     static void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
 
-    static void formatText(QString &text);
+//    static void formatText(QString &text);
 };
 
 #endif

@@ -39,6 +39,7 @@
 #include "RetroShareLink.h"
 #include "channels/ShareKey.h"
 #include "notifyqt.h"
+#include "util/HandleRichText.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -1165,7 +1166,7 @@ void ForumsDialog::insertPost()
         }
     }
 
-    QString extraTxt = RsHtml::formatText(messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+    QString extraTxt = RsHtml().formatText(ui.postText->document(), messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(titleFromInfo(msg));

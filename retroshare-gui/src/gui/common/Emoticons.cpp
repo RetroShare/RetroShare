@@ -31,6 +31,7 @@
 #include <iostream>
 
 #include "Emoticons.h"
+#include "util/HandleRichText.h"
 
 static QHash<QString, QString> Smileys;
 
@@ -118,7 +119,7 @@ void Emoticons::load()
     }
 
     // init <img> embedder
-    RsHtml::defEmbedImg.InitFromAwkwardHash(Smileys);
+    RsHtml::initEmoticons(Smileys);
 }
 
 void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
@@ -198,13 +199,13 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     smWidget->show();
 }
 
-void Emoticons::formatText(QString &text)
-{
-    QHashIterator<QString, QString> i(Smileys);
-    while(i.hasNext()) {
-        i.next();
-        foreach (QString code, i.key().split("|")) {
-            text.replace(code, "<img src=\"" + i.value() + "\">");
-        }
-    }
-}
+//void Emoticons::formatText(QString &text)
+//{
+//    QHashIterator<QString, QString> i(Smileys);
+//    while(i.hasNext()) {
+//        i.next();
+//        foreach (QString code, i.key().split("|")) {
+//            text.replace(code, "<img src=\"" + i.value() + "\">");
+//        }
+//    }
+//}

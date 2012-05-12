@@ -25,13 +25,10 @@
  * messages, particularly embedding special information into HTML tags.
  */
 
-
 #ifndef HANDLE_RICH_TEXT_H_
 #define HANDLE_RICH_TEXT_H_
 
-
 #include <QRegExp>
-#include <QtXml>
 
 /* Flags for RsHtml::formatText */
 #define RSHTML_FORMATTEXT_EMBED_SMILEYS  1
@@ -40,92 +37,40 @@
 #define RSHTML_FORMATTEXT_REMOVE_COLOR   8
 #define RSHTML_FORMATTEXT_CLEANSTYLE     (RSHTML_FORMATTEXT_REMOVE_FONT | RSHTML_FORMATTEXT_REMOVE_COLOR)
 #define RSHTML_FORMATTEXT_OPTIMIZE      16
+#define RSHTML_FORMATTEXT_REPLACE_LINKS 32
 
 /* Flags for RsHtml::formatText */
 #define RSHTML_OPTIMIZEHTML_REMOVE_FONT    2
 #define RSHTML_OPTIMIZEHTML_REMOVE_COLOR   1
 
 class QTextEdit;
+class QTextDocument;
+class QDomDocument;
+class QDomElement;
+class EmbedInHtml;
+class RetroShareLink;
 
-namespace RsHtml {
-
-
-/**
- * The type of embedding we'd like to do
- */
-enum EmbeddedType
+class RsHtml
 {
-	Ahref,		///< into <a></a>
-	Img,		///< into <img/>
-};
+public:
+	RsHtml();
 
+	static void    initEmoticons(const QHash< QString, QString >& hash);
 
-/**
- * Base class for storing information about a given kind of embedding.
- *
- * Its only constructor is protected so it is impossible to instantiate it, and
- * at the same time derived classes have to provide a type.
- */
-class EmbedInHtml
-{
+	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag);
+	static bool    findAnchors(const QString &text, QStringList& urls);
+
+	static void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
+	static void    optimizeHtml(QString &text, unsigned int flag = 0);
+	static QString toHtml(QString text, bool realHtml = true);
+
 protected:
-	EmbedInHtml(EmbeddedType newType) :
-		myType(newType)
-	{}
+	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);
+	void replaceAnchorWithImg(QDomDocument& doc, QDomElement &element, QTextDocument *textDocument, const RetroShareLink &link);
 
-public:
-	const EmbeddedType myType;
-	QRegExp myRE;
+	virtual bool   canReplaceAnchor(QDomDocument &doc, QDomElement &element, const RetroShareLink &link);
+	virtual void   anchorTextForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &text);
+	virtual void   anchorStylesheetForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &styleSheet);
 };
-
-
-/**
- * This class is used to store information for embedding links into <a></a> tags.
- */
-class EmbedInHtmlAhref : public EmbedInHtml
-{
-public:
-	EmbedInHtmlAhref() :
-		EmbedInHtml(Ahref)
-	{
-		myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
-	}
-};
-
-
-
-/** 
-  * This class is used to store information for embedding smileys into <img/> tags.
-  *
-  * By default the QRegExp the variables are empty, which means it must be
-  * filled at runtime, typically when the smileys set is loaded. It can be
-  * either done by hand or by using one of the helper methods available.
-  *
-  * Note: The QHash uses only *one* smiley per key (unlike soon-to-be-upgraded
-  * code out there).
-  */
-class EmbedInHtmlImg : public EmbedInHtml
-{
-public:
-	EmbedInHtmlImg() :
-		EmbedInHtml(Img)
-	{}
-
-	void InitFromAwkwardHash(const QHash<QString,QString>& hash);
-
-	QHash<QString,QString> smileys;
-};
-
-extern EmbedInHtmlImg defEmbedImg;
-
-QString formatText(const QString &text, unsigned int flag);
-bool    findAnchors(const QString &text, QStringList& urls);
-
-void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
-void    optimizeHtml(QString &text, unsigned int flag = 0);
-QString toHtml(QString text, bool realHtml = true);
-
-} // namespace RsHtml
-
 
 #endif // HANDLE_RICH_TEXT_H_

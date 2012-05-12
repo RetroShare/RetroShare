@@ -1502,7 +1502,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+454"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+443"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -1646,7 +1646,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schriftart auf den Standard setzen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+380"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+385"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -4606,7 +4606,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1373"/>
+        <location line="-1372"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4771,7 +4771,7 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+148"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+147"/>
         <location line="+1127"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
@@ -5602,7 +5602,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+99"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+103"/>
         <source>Chat lobbies</source>
         <translation>Chat Lobbies</translation>
     </message>
@@ -5740,7 +5740,7 @@ p, li { white-space: pre-wrap; }
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+117"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>
@@ -7222,7 +7222,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+364"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+365"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -7673,7 +7673,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+744"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+746"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
@@ -8390,7 +8390,17 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageWidget.cpp" line="+225"/>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="+71"/>
+        <source>Confirm %1 as friend</source>
+        <translation>%1 als Freund bestätigen</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Add %1 as friend</source>
+        <translation>%1 als Freund hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+183"/>
         <source>No subject</source>
         <translation>Kein Betreff</translation>
     </message>
@@ -10184,7 +10194,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+241"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+235"/>
         <source>Status: </source>
         <translation>Status:</translation>
     </message>
@@ -10194,7 +10204,7 @@ p, li { white-space: pre-wrap; }
         <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
-        <location line="-84"/>
+        <location line="-78"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10207,7 +10217,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+55"/>
         <source>File name: </source>
         <translation>Dateiname:</translation>
     </message>

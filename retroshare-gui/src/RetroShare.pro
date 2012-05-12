@@ -263,6 +263,8 @@ HEADERS +=  rshare.h \
             util/printpreview.h \
             util/log.h \
             util/misc.h \
+            util/HandleRichText.h \
+            util/ObjectPainter.h \
             gui/bwgraph/bwgraph.h \
             gui/profile/ProfileWidget.h \
             gui/profile/StatusMessage.h \
@@ -274,7 +276,6 @@ HEADERS +=  rshare.h \
             gui/ChatLobbyWidget.h \
             gui/chat/ChatLobbyDialog.h \
             gui/chat/CreateLobbyDialog.h \
-            gui/chat/HandleRichText.h \
             gui/chat/ChatStyle.h \
             gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
@@ -545,6 +546,8 @@ SOURCES +=  main.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             util/misc.cpp \
+            util/HandleRichText.cpp \
+            util/ObjectPainter.cpp \
             gui/bwgraph/bwgraph.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
@@ -561,7 +564,6 @@ SOURCES +=  main.cpp \
             gui/ChatLobbyWidget.cpp \
             gui/chat/ChatLobbyDialog.cpp \
             gui/chat/CreateLobbyDialog.cpp \
-            gui/chat/HandleRichText.cpp \
             gui/chat/ChatStyle.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/connect/FriendRequest.cpp \
