@@ -277,17 +277,16 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				switch(embedInfos.myType) {
 					case Ahref:
 							{
+								insertedTag = doc.createElement("a");
+								insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
+								insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
+
 								RetroShareLink link(embedInfos.myRE.cap(0));
 								if (link.valid()) {
-									insertedTag = doc.createElement("a");
-									insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
-
 									QString title = link.title();
 									if (!title.isEmpty()) {
 										insertedTag.setAttribute("title", title);
 									}
-
-									insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
 
 									if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 										replaceAnchorWithImg(doc, insertedTag, textDocument, link);
@@ -304,10 +303,8 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 							break;
 				}
 
-				if (!insertedTag.isNull()) {
-					currentElement.insertBefore(insertedTag, node);
-					index++;
-				}
+				currentElement.insertBefore(insertedTag, node);
+				index++;
 
 				currentPos = nextPos + embedInfos.myRE.matchedLength();
 			}
