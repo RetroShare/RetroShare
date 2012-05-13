@@ -135,6 +135,7 @@ class PGPHandler
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
 	private:
 		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
+		void validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
 
 		const ops_keydata_t *getPublicKey(const PGPIdType&) const ;
 		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;

@@ -977,6 +977,18 @@ cb_keyring_read(const ops_parser_content_t *content_,
 	return OPS_RELEASE_MEMORY;
 }
 
+/**
+   \ingroup HighLevel_KeyringList
+
+   \brief Saves keyring to specified file
+
+   \param keyring  Keyring to save
+   \param armoured Save in ascii armoured format
+   \param output filename
+
+   \return ops_true is anything when ok
+*/
+
 ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean_t armoured,const char *filename)
 {
 	ops_create_info_t *info;
@@ -994,8 +1006,9 @@ ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean
 			ops_write_transferable_public_key(&keyring->keys[i],armoured,info) ;
 		else
 		{
-			fprintf(stderr, "ops_write_keyring: not writing key. Algorithm not handled: ") ;
+			fprintf(stdout, "ops_write_keyring: not writing key. Algorithm not handled: ") ;
 			ops_print_public_keydata(&keyring->keys[i]);
+			fprintf(stdout, "\n") ;
 		}
 
 	ops_writer_close(info);

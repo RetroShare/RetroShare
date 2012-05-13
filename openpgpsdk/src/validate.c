@@ -146,7 +146,7 @@ static void add_sig_to_valid_list(ops_validate_result_t * result, const ops_sign
 
 	// copy key ptr to array
 	start=(sizeof *sig) * (result->valid_count-1);
-	copy_signature_info(result->valid_sigs+start,sig);
+	copy_signature_info(&result->valid_sigs[result->valid_count-1],sig);
 }
 
 static void add_sig_to_invalid_list(ops_validate_result_t * result, const ops_signature_info_t *sig)
@@ -166,7 +166,7 @@ static void add_sig_to_invalid_list(ops_validate_result_t * result, const ops_si
 
 	// copy key ptr to array
 	start=(sizeof *sig) * (result->invalid_count-1);
-	copy_signature_info(result->invalid_sigs+start, sig);
+	copy_signature_info(&result->invalid_sigs[result->invalid_count-1],sig);
 }
 
 static void add_sig_to_unknown_list(ops_validate_result_t * result, const ops_signature_info_t *sig)
@@ -186,7 +186,7 @@ static void add_sig_to_unknown_list(ops_validate_result_t * result, const ops_si
 
 	// copy key id to array
 	start=OPS_KEY_ID_SIZE * (result->unknown_signer_count-1);
-	copy_signature_info(result->unknown_sigs+start, sig);
+	copy_signature_info(&result->unknown_sigs[result->unknown_signer_count-1],sig);
 }
 
 	ops_parse_cb_return_t
@@ -752,6 +752,17 @@ ops_boolean_t ops_validate_mem(ops_validate_result_t *result, ops_memory_t* mem,
 	return validate_result_status(result);
 }
 
+/**
+  \ingroup HighLevel_Verify
+  \brief Verifies the signature in a detached signature data packet, given the literal data
+  \param literal_data Literal data that is signed
+  \param literal_data_length length of the literal data that is signed
+  \param signature_packet signature packet in binary PGP format
+  \param signature_packet_length length of the signature packet
+  \param signers_key Public key of the signer to check the signature for.
+  \return ops_true if signature validates successfully; ops_false if not
+ */
+
 ops_boolean_t ops_validate_detached_signature(const void *literal_data, unsigned int literal_data_length, const unsigned char *signature_packet, unsigned int signature_packet_length,const ops_keydata_t *signers_key)
 {
    ops_validate_result_t *result = (ops_validate_result_t*)ops_mallocz(sizeof(ops_validate_result_t));
@@ -769,7 +780,7 @@ ops_boolean_t ops_validate_detached_signature(const void *literal_data, unsigned
    ops_keyring_t tmp_keyring ;
    tmp_keyring.nkeys = 1 ;
    tmp_keyring.nkeys_allocated = 1 ;
-   tmp_keyring.keys = signers_key ;
+   tmp_keyring.keys = (ops_keydata_t *)signers_key ;	// this is a const_cast, somehow
 
    memset(&validate_arg,'\0',sizeof validate_arg);
 

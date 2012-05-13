@@ -164,6 +164,39 @@ ops_keyring_t *PGPHandler::allocateOPSKeyring()
 	return kr ;
 }
 
+ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)// __attribute__((unused)))
+{
+	const ops_parser_content_union_t *content=&content_->content;
+	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
+	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
+
+	bool prev_was_bad = false ;
+	
+	switch(content_->tag)
+	{
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD: prev_was_bad = true ;
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+																				{
+																					std::string passwd;
+																					std::string uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
+																					uid_hint += "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
+
+																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
+//																					if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, passwd) == false) 
+//																						return OPS_RELEASE_MEMORY;
+
+																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
+																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
+																					return OPS_KEEP_MEMORY;
+																				}
+																				break;
+
+		default:
+			break;
+	}
+
+	return OPS_RELEASE_MEMORY;
+}
 void PGPHandler::setPassphraseCallback(PassphraseCallback cb)
 {
 	_passphrase_callback = cb ;
@@ -192,10 +225,18 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
 	int i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
 	{
-		initCertificateInfo(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ],keydata,i) ;
+		PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ]) ;
+
+		// Init all certificates.
+	
+		initCertificateInfo(cert,keydata,i) ;
+
+		// Validate signatures.
+		
+		validateAndUpdateSignatures(cert,keydata) ;
+
 		++i ;
 	}
-
 	std::cerr << "Pubring read successfully." << std::endl;
 
 	if(ops_false == ops_keyring_read_from_file(_secring, false, secring.c_str()))
@@ -209,6 +250,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
 	}
 
 	std::cerr << "Secring read successfully." << std::endl;
+
 }
 
 void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t index)
@@ -249,16 +291,21 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 	ops_fingerprint(&f,&keydata->key.pkey) ; 
 
 	cert._fpr = PGPFingerprintType(f.fingerprint) ;
+}
+
+void PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata)
+{
+	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
+	ops_boolean_t res = ops_validate_key_signatures(result,keydata,_pubring,cb_get_passphrase) ;
 
 	// Parse signers.
 	//
-	
-	for(size_t i=0;i<keydata->nsigs;++i)
-	{
-		cert.signers.insert(std::string((const char *)keydata->sigs[i].userid->user_id)) ;
 
-		std::cerr << "Signature data packet size = " << keydata->sigs[i].packet->length << std::endl;
-	}
+	if(result != NULL)
+		for(size_t i=0;i<result->valid_count;++i)
+			cert.signers.insert(PGPIdType(result->valid_sigs[i].signer_id).toStdString()) ;
+
+	ops_validate_result_free(result) ;
 }
 
 PGPHandler::~PGPHandler()
@@ -338,39 +385,7 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	return true ;
 }
 
-ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)// __attribute__((unused)))
-{
-	const ops_parser_content_union_t *content=&content_->content;
-	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
-	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
 
-	bool prev_was_bad = false ;
-	
-	switch(content_->tag)
-	{
-		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD: prev_was_bad = true ;
-		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-																				{
-																					std::string passwd;
-																					std::string uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
-																					uid_hint += "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
-
-																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
-//																					if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, passwd) == false) 
-//																						return OPS_RELEASE_MEMORY;
-
-																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
-																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
-																					return OPS_KEEP_MEMORY;
-																				}
-																				break;
-
-		default:
-			break;
-	}
-
-	return OPS_RELEASE_MEMORY;
-}
 
 bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) 
 {
@@ -432,6 +447,10 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
 	
+	// 7 - validate own signature and update certificate.
+
+	validateAndUpdateSignatures(_public_keyring_map[ pgpId.toStdString() ],getPublicKey(pgpId)) ;
+
 	return true ;
 }
 
@@ -526,6 +545,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 
 		addNewKeyToOPSKeyring(_pubring,*keydata) ;
 		initCertificateInfo(_public_keyring_map[id.toStdString()],keydata,_pubring->nkeys-1) ;
+		validateAndUpdateSignatures(_public_keyring_map[id.toStdString()],keydata) ;
 	}
 
 	std::cerr << "Added the key in the main public keyring." << std::endl;

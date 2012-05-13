@@ -408,6 +408,8 @@ ops_boolean_t ops_check_signature(const unsigned char *hash, unsigned length,
     case OPS_PKA_DSA:
 	ret=ops_dsa_verify(hash, length, &sig->info.signature.dsa,
 			   &signer->key.dsa);
+/*		fprintf(stderr,"Cannot verify DSA signature. skipping.\n") ;
+		 ret = ops_false ; */
 	break;
 
     case OPS_PKA_RSA:
@@ -1237,6 +1239,7 @@ ops_boolean_t ops_sign_file(const char* input_filename,
 \param sig_type Signature type
 \param skey Secret Key
 \param use_armour Write armoured text, if set
+\param include_data Includes the signed data in the output message. If not, creates a detached signature.
 \return New ops_memory_t struct containing signed text
 \note It is the caller's responsibility to call ops_memory_free(me)
 
