@@ -8,8 +8,8 @@
  * #define FILE_DEBUG 1
  ******/
 
-#define CHUNK_MAX_AGE           40
-#define MAX_FTCHUNKS_PER_PEER   50
+#define CHUNK_MAX_AGE           120
+#define MAX_FTCHUNKS_PER_PEER   5
 
 /***********************************************************
 *
