@@ -1006,7 +1006,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abonnieren</translation>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+169"/>
         <source>Loading</source>
         <translation>Lade</translation>
     </message>
@@ -1017,7 +1017,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="-260"/>
+        <location line="-266"/>
         <source>Unsubcribe To Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
@@ -1088,7 +1088,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+149"/>
+        <location filename="../gui/ChannelFeed.ui" line="+155"/>
         <location line="+3"/>
         <location filename="../gui/ChannelFeed.cpp" line="+2"/>
         <source>Enable Auto-Download</source>
@@ -1122,7 +1122,7 @@ Bitte wähle einen zum chatten aus.</translation>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+63"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+64"/>
         <source>Welcome to lobby %1</source>
         <translation>Willkommen in der Lobby %1</translation>
     </message>
@@ -1132,17 +1132,17 @@ Bitte wähle einen zum chatten aus.</translation>
         <translation>Thema: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+85"/>
         <source>Please enter your new nick name</source>
         <translation>Bitte gib deinen neuen Spitznamen ein</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+76"/>
         <source>Uncheck to mute participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+88"/>
         <location line="+3"/>
         <location line="+6"/>
         <source>Lobby management</source>
@@ -1164,7 +1164,7 @@ Bitte wähle einen zum chatten aus.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Do you want to unsubscribe to this chat lobby?</source>
         <translation>Möchtest du diese Lobby abbestellen?</translation>
     </message>
@@ -1185,7 +1185,7 @@ Bitte wähle einen zum chatten aus.</translation>
     </message>
     <message>
         <location filename="../gui/chat/ChatLobbyDialog.ui" line="+177"/>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-199"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-226"/>
         <source>Change nick name</source>
         <translation>Ändere Spitznamen</translation>
     </message>
@@ -4469,7 +4469,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+290"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+291"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -4606,7 +4606,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1372"/>
+        <location line="-1373"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -4771,7 +4771,7 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+147"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+148"/>
         <location line="+1127"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
@@ -7673,7 +7673,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+746"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+752"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
@@ -7692,7 +7692,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-538"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-544"/>
         <source>Send To:</source>
         <translation>Senden an:</translation>
     </message>
@@ -7823,7 +7823,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+649"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+655"/>
         <location line="+412"/>
         <source>To</source>
         <translation>An</translation>
@@ -7910,7 +7910,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1147"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1153"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -7930,7 +7930,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>&amp;Blocksatz</translation>
     </message>
     <message>
-        <location line="+205"/>
+        <location line="+186"/>
+        <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
+        <translation>Hallo, &lt;br&gt; ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt;</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>You have a friend recommendation</source>
         <translation>Du hast eine Freundempfehlung</translation>
     </message>
@@ -7939,7 +7944,17 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation type="obsolete">möchte mit dir in RetroShare befreundet sein</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+14"/>
+        <source>This friend is suggested by</source>
+        <translation>Dieser Freund wurde vorgeschlagen von</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
+        <translation>Grüße, &lt;br&gt;Das RetroShare Team</translation>
+    </message>
+    <message>
+        <location line="+34"/>
         <source>wants to be friends with you on RetroShare</source>
         <translation>möchte mit dir in RetroShare befreundet sein</translation>
     </message>
@@ -8223,9 +8238,8 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation type="obsolete">Freundempfehlung(en)</translation>
     </message>
     <message>
-        <location line="-1793"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
-        <translation>Ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt; Kopiere den Link und füge ihn in der Freundesliste ein</translation>
+        <translation type="obsolete">Ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt; Kopiere den Link und füge ihn in der Freundesliste ein</translation>
     </message>
 </context>
 <context>
@@ -10194,7 +10208,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+235"/>
+        <location filename="../gui/settings/PluginItem.ui" line="+241"/>
         <source>Status: </source>
         <translation>Status:</translation>
     </message>
@@ -10204,7 +10218,7 @@ p, li { white-space: pre-wrap; }
         <translation>Datei Prüfsumme:</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-84"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10217,7 +10231,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+61"/>
         <source>File name: </source>
         <translation>Dateiname:</translation>
     </message>

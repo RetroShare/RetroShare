@@ -6552,10 +6552,6 @@ These ways are possible to do this:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6708,6 +6704,18 @@ Do you want to save message ?</source>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
         <translation>Merhaba %1,&lt;br&gt;&lt;br&gt;%2 RetroShare&apos;ta sizinle arkadaş olmak istiyor.&lt;br&gt;&lt;br&gt;Simdi yanitla:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Teşekkürler,&lt;br&gt;The RetroShare Team</translation>
+    </message>
+    <message>
+        <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This friend is suggested by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6891,6 +6899,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm %1 as friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 as friend</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -407,7 +407,7 @@ static QString buildRecommendHtml(const std::list<std::string> &sslIds, const st
 
 QString MessageComposer::recommendMessage()
 {
-    return tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy friend link and paste to Friends list");
+    return tr("Hello,<br>I recommend a good friend of me, you can trust him too when you trust me. <br>");
 }
 
 void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, const std::string &to, const QString &msg, bool autoSend)
@@ -432,10 +432,16 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     if (!to.empty()) {
         composer->addRecipient(TO, to, false);
     }
-
+    std::string ownId = rsPeers->getOwnId();
+    RetroShareLink link;
+    link.createPerson(ownId);
+    
     QString sMsgText = msg.isEmpty() ? recommendMessage() : msg;
     sMsgText += "<br><br>";
     sMsgText += recommendHtml;
+    sMsgText += "<br>";
+    sMsgText += tr("This friend is suggested by") + " " + link.toHtml() + "<br><br>" ;      
+    sMsgText += tr("Thanks, <br>The RetroShare Team");
     composer->setMsgText(sMsgText);
 
     std::list <std::string>::const_iterator peerIt;

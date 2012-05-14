@@ -6601,7 +6601,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
-        <translation type="unfinished">Te recomiendo un amigo mío, puedes confiar en el si confias en mi. &lt;br&gt; Copia el enlace del amigo y pegalo en la lista de amigos</translation>
+        <translation type="obsolete">Te recomiendo un amigo mío, puedes confiar en el si confias en mi. &lt;br&gt; Copia el enlace del amigo y pegalo en la lista de amigos</translation>
     </message>
     <message>
         <source>Save Message</source>
@@ -6842,6 +6842,18 @@ Do you want to save message ?</source>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This friend is suggested by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -7020,6 +7032,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation type="unfinished">Archivos HTML (*.htm *.html);;Todos los archivos(*)</translation>
+    </message>
+    <message>
+        <source>Confirm %1 as friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 as friend</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
