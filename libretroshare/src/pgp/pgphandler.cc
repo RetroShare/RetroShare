@@ -23,12 +23,12 @@ std::string	PGPIdType::toStdString() const
 {
 	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
 
-	std::string res ;
+	std::string res(KEY_ID_SIZE*2,' ') ;
 
 	for(int j = 0; j < KEY_ID_SIZE; j++)
 	{
-		res += out[ (bytes[j]>>4) ] ;
-		res += out[ bytes[j] & 0xf ] ;
+		res[2*j  ] = out[ (bytes[j]>>4) ] ;
+		res[2*j+1] = out[ bytes[j] & 0xf ] ;
 	}
 
 	return res ;
@@ -37,12 +37,12 @@ std::string	PGPFingerprintType::toStdString() const
 {
 	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
 
-	std::string res ;
+	std::string res(KEY_FINGERPRINT_SIZE*2,' ') ;
 
 	for(int j = 0; j < KEY_FINGERPRINT_SIZE; j++)
 	{
-		res += out[ (bytes[j]>>4) ] ;
-		res += out[ bytes[j] & 0xf ] ;
+		res[2*j  ] = out[ (bytes[j]>>4) ] ;
+		res[2*j+1] = out[ bytes[j] & 0xf ] ;
 	}
 
 	return res ;
@@ -449,7 +449,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	
 	// 7 - validate own signature and update certificate.
 
-	validateAndUpdateSignatures(_public_keyring_map[ pgpId.toStdString() ],getPublicKey(pgpId)) ;
+//	validateAndUpdateSignatures(_public_keyring_map[ pgpId.toStdString() ],getPublicKey(pgpId)) ;
 
 	return true ;
 }

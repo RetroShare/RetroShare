@@ -958,11 +958,9 @@ ops_boolean_t ops_sign_file_as_cleartext(const char* input_filename,
     ops_boolean_t use_armour=ops_true;
 
     // open file to sign
-#ifdef WINDOWS_SYS
+
     fd_in=open(input_filename, O_RDONLY | O_BINARY);
-#else
-    fd_in=open(input_filename, O_RDONLY );
-#endif
+
     if(fd_in < 0)
         {
         return ops_false;

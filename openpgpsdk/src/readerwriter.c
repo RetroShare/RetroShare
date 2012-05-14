@@ -139,9 +139,7 @@ int ops_setup_file_write(ops_create_info_t **cinfo, const char* filename, ops_bo
         flags |= O_TRUNC;
     else
         flags |= O_EXCL;
-#ifdef WINDOWS_SYS
     flags |= O_BINARY;
-#endif
 
     fd=open(filename, flags, 0600);
     if(fd < 0)
@@ -181,11 +179,8 @@ int ops_setup_file_append(ops_create_info_t **cinfo, const char* filename)
      * initialise needed structures for writing to file
      */
 
-#ifdef WINDOWS_SYS
     fd=open(filename,O_WRONLY | O_APPEND | O_BINARY, 0600);
-#else
-    fd=open(filename,O_WRONLY | O_APPEND , 0600);
-#endif
+
     if(fd < 0)
         {
         perror(filename);
@@ -230,11 +225,8 @@ int ops_setup_file_read(ops_parse_info_t **pinfo, const char *filename,
      * initialise needed structures for reading
      */
 
-#ifdef WINDOWS_SYS
     fd=open(filename,O_RDONLY | O_BINARY);
-#else
-    fd=open(filename,O_RDONLY );
-#endif
+
     if (fd < 0)
         {
         perror(filename);

@@ -116,9 +116,11 @@ static int keydata_reader(void *dest,size_t length,ops_error_t **errors,
 	return length;
 }
 
-static void free_signature_info(ops_signature_info_t *sig)
+static void free_signature_info(ops_signature_info_t *sig,int n)
 {
-	free (sig->v4_hashed_data);
+	int i ;
+	for(i=0;i<n;++i)
+		free (sig[i].v4_hashed_data);
 	free (sig);
 }
 
@@ -145,7 +147,6 @@ static void add_sig_to_valid_list(ops_validate_result_t * result, const ops_sign
 		result->valid_sigs=realloc(result->valid_sigs, newsize);
 
 	// copy key ptr to array
-	start=(sizeof *sig) * (result->valid_count-1);
 	copy_signature_info(&result->valid_sigs[result->valid_count-1],sig);
 }
 
@@ -165,7 +166,6 @@ static void add_sig_to_invalid_list(ops_validate_result_t * result, const ops_si
 		result->invalid_sigs=realloc(result->invalid_sigs, newsize);
 
 	// copy key ptr to array
-	start=(sizeof *sig) * (result->invalid_count-1);
 	copy_signature_info(&result->invalid_sigs[result->invalid_count-1],sig);
 }
 
@@ -185,7 +185,6 @@ static void add_sig_to_unknown_list(ops_validate_result_t * result, const ops_si
 		result->unknown_sigs=realloc(result->unknown_sigs, newsize);
 
 	// copy key id to array
-	start=OPS_KEY_ID_SIZE * (result->unknown_signer_count-1);
 	copy_signature_info(&result->unknown_sigs[result->unknown_signer_count-1],sig);
 }
 
@@ -607,11 +606,11 @@ void ops_validate_result_free(ops_validate_result_t *result)
 		return;
 
 	if (result->valid_sigs)
-		free_signature_info(result->valid_sigs);
+		free_signature_info(result->valid_sigs,result->valid_count);
 	if (result->invalid_sigs)
-		free_signature_info(result->invalid_sigs);
+		free_signature_info(result->invalid_sigs,result->invalid_count);
 	if (result->unknown_sigs)
-		free_signature_info(result->unknown_sigs);
+		free_signature_info(result->unknown_sigs,result->unknown_signer_count);
 
 	free(result);
 	result=NULL;

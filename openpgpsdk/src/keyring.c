@@ -691,11 +691,9 @@ ops_boolean_t ops_keyring_read_from_file(ops_keyring_t *keyring, const ops_boole
 
     //    ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_RAW);
     ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_PARSED);
-#ifdef WINDOWS_SYS
+
     fd=open(filename,O_RDONLY | O_BINARY);
-#else
-    fd=open(filename,O_RDONLY);
-#endif
+
     if(fd < 0)
         {
         ops_parse_info_delete(pinfo);
