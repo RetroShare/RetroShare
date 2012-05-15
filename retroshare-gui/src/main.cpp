@@ -322,6 +322,8 @@ int main(int argc, char *argv[])
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
 	timer->start(1000);
 
+	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
+
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
