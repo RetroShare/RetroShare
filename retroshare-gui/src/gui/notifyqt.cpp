@@ -113,6 +113,11 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
 	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
 }
 
@@ -279,6 +284,11 @@ void NotifyQt::notifyOwnStatusMessageChanged()
 
 void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: notification of new avatar." << std::endl ;
 #endif
