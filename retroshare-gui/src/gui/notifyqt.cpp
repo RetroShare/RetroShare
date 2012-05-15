@@ -105,6 +105,10 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 	connect(runningToasterTimer, SIGNAL(timeout()), this, SLOT(runningTick()));
 	runningToasterTimer->setInterval(10); // tick 100 times a second
 	runningToasterTimer->setSingleShot(true);
+	{
+		QMutexLocker m(&_mutex) ;
+		_enabled = false ;
+	}
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -114,6 +118,12 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 
 void NotifyQt::notifyOwnAvatarChanged()
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
         #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
         #endif
@@ -145,6 +155,12 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 
 void NotifyQt::notifyDiscInfoChanged()
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that discoveryInfo changed" << std::endl ;
 #endif
@@ -154,6 +170,12 @@ void NotifyQt::notifyDiscInfoChanged()
 
 void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt::notifyDownloadComplete notified that a download is completed" << std::endl;
 #endif
@@ -163,6 +185,12 @@ void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
 
 void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	std::cerr << "Notifyqt::notifyDownloadCompleteCount " << count << std::endl;
 
 	emit downloadCompleteCountChanged(count);
@@ -170,6 +198,12 @@ void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
 
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	std::cerr << "Notifyqt:: notified that disk is full" << std::endl ;
 
 	emit diskFull(loc,size_in_mb) ;
@@ -178,6 +212,12 @@ void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 /* peer has changed the state */
 void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t state)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that peer " << peer_id << " has changed the state to " << state << std::endl;
 #endif
@@ -188,6 +228,12 @@ void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t stat
 /* one or more peers has changed the states */
 void NotifyQt::notifyPeerStatusChangedSummary()
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that one peer has changed the state" << std::endl;
 #endif
@@ -197,16 +243,34 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 void NotifyQt::notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	emit forumMsgReadSatusChanged(QString::fromStdString(forumId), QString::fromStdString(msgId), status);
 }
 
 void NotifyQt::notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	emit channelMsgReadSatusChanged(QString::fromStdString(channelId), QString::fromStdString(msgId), status);
 }
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
 #endif
@@ -223,6 +287,12 @@ void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 
 void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received custom status string notification" << std::endl ;
 #endif
@@ -231,6 +301,12 @@ void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& 
 
 void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const std::string& nickname,const std::string& str) 
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat lobby event message: lobby #" << std::hex << lobby_id  << std::dec << ", event=" << event_type << ", str=\"" << str << "\"" << std::endl ;
 #endif
@@ -239,6 +315,12 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
 #endif
@@ -247,6 +329,12 @@ void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& st
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "in notify search result..." << std::endl ;
 #endif
@@ -269,6 +357,12 @@ void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
 {
 	QString info;
 
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	switch (type) {
 	case NOTIFY_HASHTYPE_EXAMINING_FILES:
 		info = tr("Examining shared files...");
@@ -288,11 +382,22 @@ void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	emit historyChanged(msgId, type);
 }
 
 void NotifyQt::notifyListChange(int list, int type)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
 #ifdef NOTIFY_DEBUG
 	std::cerr << "NotifyQt::notifyListChange()" << std::endl;
 #endif
@@ -402,6 +507,12 @@ void NotifyQt::notifyListChange(int list, int type)
 
 void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 #ifdef NOTIFY_DEBUG
 	std::cerr << "NotifyQt::notifyListPreChange()" << std::endl;
 #endif
@@ -438,8 +549,21 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	 * uses Flags, to detect changes 
 	 */
 
+void NotifyQt::enable()
+{
+	QMutexLocker m(&_mutex) ;
+	std::cerr << "Enabling notification system" << std::endl;
+	_enabled = true ;
+}
+
 void NotifyQt::UpdateGUI()
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
@@ -593,6 +717,12 @@ void NotifyQt::UpdateGUI()
 		
 void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)
 {
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
 	emit chatStyleChanged(styleType);
 }
 

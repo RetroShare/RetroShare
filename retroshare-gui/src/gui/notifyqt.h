@@ -4,6 +4,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rsturtle.h>
 #include <QObject>
+#include <QMutex>
 //#include <QMutex>
 
 #include <string>
@@ -27,6 +28,7 @@ class NotifyQt: public QObject, public NotifyBase
 	public:
 		static NotifyQt *Create ();
 		static NotifyQt *getInstance ();
+		void enable() ;
 
 		virtual ~NotifyQt() { return; }
 
@@ -121,6 +123,9 @@ class NotifyQt: public QObject, public NotifyBase
 		QTimer *runningToasterTimer;
 //		QMutex runningToasterMutex; // for lock of the running toaster list
 		QList<Toaster*> runningToasterList;
+
+		bool _enabled ;
+		QMutex _mutex ;
 
 //		void displayNeighbours();
 //		void displayFriends();
