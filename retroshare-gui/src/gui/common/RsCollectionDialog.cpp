@@ -27,71 +27,61 @@
 #include <QKeyEvent>
 #include "RsCollectionDialog.h"
 #include "RsCollectionFile.h"
+#include "util/misc.h"
 
 RsCollectionDialog::RsCollectionDialog(const QString& CollectionFileName,const std::vector<RsCollectionFile::DLinfo>& dlinfos)
 	: _dlinfos(dlinfos),_filename(CollectionFileName)
 {
 	setupUi(this) ;
 
+	setWindowFlags(Qt::Window); // for maximize button
+	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
+
 	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_filename).completeBaseName()));
 
 	// 1 - add all elements to the list.
 
-	int row = 0;
-	_fileEntriesTW->setColumnCount(4) ;
+	_fileEntriesTW->setColumnCount(3) ;
 
-	_fileEntriesTW->setHorizontalHeaderItem(0,new QTableWidgetItem(QString())) ;
-	_fileEntriesTW->setHorizontalHeaderItem(1,new QTableWidgetItem(tr("File"))) ;
-	_fileEntriesTW->setHorizontalHeaderItem(2,new QTableWidgetItem(tr("Size"))) ;
-	_fileEntriesTW->setHorizontalHeaderItem(3,new QTableWidgetItem(tr("Hash"))) ;
+	QTreeWidgetItem *headerItem = _fileEntriesTW->headerItem();
+	headerItem->setText(0, tr("File"));
+	headerItem->setText(1, tr("Size"));
+	headerItem->setText(2, tr("Hash"));
 
-	QHeaderView *header = _fileEntriesTW->horizontalHeader();
-	header->setResizeMode(0, QHeaderView::Fixed);
+	uint32_t size = dlinfos.size();
 
-	header->setHighlightSections(false);
-
-	_cboxes.clear() ;
-	_cboxes.resize(dlinfos.size(),NULL) ;
 	uint64_t total_size ;
 	uint32_t total_files ;
 
-	for(uint32_t i=0;i<dlinfos.size();++i)
+	for(uint32_t i=0;i<size;++i)
 	{
-		_fileEntriesTW->insertRow(row) ;
+		const RsCollectionFile::DLinfo &dlinfo = dlinfos[i];
 
-		QWidget *widget = new QWidget;
+		QTreeWidgetItem *item = new QTreeWidgetItem;
 
-		QCheckBox *cb = new QCheckBox(widget);
-		cb->setChecked(true) ;
+		item->setFlags(Qt::ItemIsUserCheckable | item->flags());
+		item->setCheckState(0, Qt::Checked);
+		item->setData(0, Qt::UserRole, i);
+		item->setText(0, dlinfo.path + "/" + dlinfo.name);
+		item->setText(1, misc::friendlyUnit(dlinfo.size));
+		item->setText(2, dlinfo.hash);
 
-		QHBoxLayout *layout = new QHBoxLayout(widget);
-		layout->addWidget(cb, 0, Qt::AlignCenter);
-		layout->setSpacing(0);
-		layout->setContentsMargins(10, 0, 0, 0); // to be centered
-		widget->setLayout(layout);
+		_fileEntriesTW->addTopLevelItem(item);
 
-		connect(cb,SIGNAL(toggled(bool)),this,SLOT(updateSizes())) ;
-
-		_cboxes[i] = cb ;
-
-		_fileEntriesTW->setCellWidget(row,0,widget) ;
-		_fileEntriesTW->setItem(row,1,new QTableWidgetItem(dlinfos[i].path + "/" + dlinfos[i].name)) ;
-		_fileEntriesTW->setItem(row,2,new QTableWidgetItem(QString::number(dlinfos[i].size))) ;
-		_fileEntriesTW->setItem(row,3,new QTableWidgetItem(dlinfos[i].hash)) ;
-
-		total_size += dlinfos[i].size ;
+		total_size += dlinfo.size ;
 		total_files++ ;
-
-		++row  ;
 	}
 
 	_filename_TL->setText(_filename) ;
-	_fileEntriesTW->resizeColumnsToContents() ;
+	for (int column = 0; column < _fileEntriesTW->columnCount(); ++column) {
+		_fileEntriesTW->resizeColumnToContents(column);
+	}
 
 	updateSizes() ;
 
 	// 2 - connect necessary signals/slots
-	
+
+	connectUpdate(true);
 	connect(_selectAll_PB,SIGNAL(clicked()),this,SLOT(selectAll())) ;
 	connect(_deselectAll_PB,SIGNAL(clicked()),this,SLOT(deselectAll())) ;
 	connect(_cancel_PB,SIGNAL(clicked()),this,SLOT(cancel())) ;
@@ -107,14 +97,24 @@ bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 			if (keyEvent && keyEvent->key() == Qt::Key_Space) {
 				// Space pressed
-				QModelIndex currentIndex = _fileEntriesTW->currentIndex();
-				QModelIndex index = _fileEntriesTW->model()->index(currentIndex.row(), 0, currentIndex.parent());
-				QWidget *widget = dynamic_cast<QWidget*>(_fileEntriesTW->indexWidget(index));
-				if (widget) {
-					QCheckBox *cb = dynamic_cast<QCheckBox*>(widget->children().front());
-					if (cb) {
-						cb->toggle();
+
+				// get state of current item
+				QTreeWidgetItem *item = _fileEntriesTW->currentItem();
+				if (item) {
+					Qt::CheckState checkState = (item->checkState(0) == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+
+					connectUpdate(false);
+
+					// set state of all selected items
+					QList<QTreeWidgetItem*> selectedItems = _fileEntriesTW->selectedItems();
+					QList<QTreeWidgetItem*>::iterator it;
+					for (it = selectedItems.begin(); it != selectedItems.end(); ++it) {
+						(*it)->setCheckState(0, checkState);
 					}
+
+					updateSizes();
+
+					connectUpdate(true);
 				}
 
 				return true; // eat event
@@ -125,33 +125,67 @@ bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
 	return QDialog::eventFilter(obj, event);
 }
 
+void RsCollectionDialog::connectUpdate(bool doConnect)
+{
+	if (doConnect) {
+		connect(_fileEntriesTW, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(itemChanged(QTreeWidgetItem*,int)));
+	} else {
+		disconnect(_fileEntriesTW, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(itemChanged(QTreeWidgetItem*,int)));
+	}
+}
+
 void RsCollectionDialog::updateSizes()
 {
 	uint64_t total_size = 0 ;
 	uint32_t total_files = 0 ;
 
-	for(size_t i=0;i<_dlinfos.size();++i)
-		if(_cboxes[i]->isChecked())
-		{
-			total_size += _dlinfos[i].size ;
+	QTreeWidgetItemIterator itemIterator(_fileEntriesTW);
+	QTreeWidgetItem *item;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+
+		if (item->checkState(0) == Qt::Checked) {
+			total_size += _dlinfos[item->data(0, Qt::UserRole).toInt()].size ;
 			++total_files ;
 		}
+	}
 	_selectedFiles_TL->setText(QString::number(total_files)) ;
-	_totalSize_TL->setText(QString::number(total_size)) ;
+	_totalSize_TL->setText(misc::friendlyUnit(total_size)) ;
 }
 
-void RsCollectionDialog::selectAll() const
+void RsCollectionDialog::itemChanged(QTreeWidgetItem */*item*/, int /*column*/)
+{
+	updateSizes();
+}
+
+void RsCollectionDialog::selectDeselectAll(bool select)
+{
+	connectUpdate(false);
+
+	QTreeWidgetItemIterator itemIterator(_fileEntriesTW);
+	QTreeWidgetItem *item;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+		item->setCheckState(0, select ? Qt::Checked : Qt::Unchecked);
+	}
+
+	updateSizes();
+
+	connectUpdate(true);
+}
+
+void RsCollectionDialog::selectAll()
 {
 	std::cerr << "Selecting all !" << std::endl;
-	for(size_t i=0;i<_dlinfos.size();++i)
-		_cboxes[i]->setChecked(true) ;
+
+	selectDeselectAll(true);
 }
 
-void RsCollectionDialog::deselectAll() const
+void RsCollectionDialog::deselectAll()
 {
 	std::cerr << "Deselecting all !" << std::endl;
-	for(size_t i=0;i<_dlinfos.size();++i)
-		_cboxes[i]->setChecked(false) ;
+
+	selectDeselectAll(false);
 }
 
 void RsCollectionDialog::cancel() 
@@ -168,20 +202,26 @@ void RsCollectionDialog::download()
 
 	std::cerr << "downloading all these files:" << std::endl;
 
-	for(uint32_t i=0;i<_dlinfos.size();++i)
-		if(_cboxes[i]->isChecked()) 
-		{
-			std::cerr << _dlinfos[i].name.toStdString() << " " << _dlinfos[i].hash.toStdString() << " " << _dlinfos[i].size << " " << _dlinfos[i].path.toStdString() << std::endl;
-			QString cleanPath = dldir + _dlinfos[i].path ;
+	QTreeWidgetItemIterator itemIterator(_fileEntriesTW);
+	QTreeWidgetItem *item;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+
+		const RsCollectionFile::DLinfo &dlinfo = _dlinfos[item->data(0, Qt::UserRole).toInt()];
+
+		if (item->checkState(0) == Qt::Checked) {
+			std::cerr << dlinfo.name.toStdString() << " " << dlinfo.hash.toStdString() << " " << dlinfo.size << " " << dlinfo.path.toStdString() << std::endl;
+			QString cleanPath = dldir + dlinfo.path ;
 			std::cerr << "making directory " << cleanPath.toStdString() << std::endl;
 
 			if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
 				QMessageBox::warning(NULL,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
 
-			rsFiles->FileRequest(_dlinfos[i].name.toUtf8().constData(), _dlinfos[i].hash.toUtf8().constData(), _dlinfos[i].size, cleanPath.toUtf8().constData(), RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
+			rsFiles->FileRequest(dlinfo.name.toUtf8().constData(), dlinfo.hash.toUtf8().constData(), dlinfo.size, cleanPath.toUtf8().constData(), RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
 		}
 		else
-			std::cerr<<"Skipping file : " << _dlinfos[i].name.toStdString() << std::endl;
+			std::cerr<<"Skipping file : " << dlinfo.name.toStdString() << std::endl;
+	}
 
 	close();
 }

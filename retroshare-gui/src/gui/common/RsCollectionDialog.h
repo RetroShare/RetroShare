@@ -30,22 +30,24 @@ class RsCollectionDialog: public QDialog, public Ui::RsCollectionDialog
 {
 	Q_OBJECT
 
-	public:
-		RsCollectionDialog(const QString& filename,const std::vector<RsCollectionFile::DLinfo>& dlinfos) ;
+public:
+	RsCollectionDialog(const QString& filename,const std::vector<RsCollectionFile::DLinfo>& dlinfos) ;
 
-	public slots:
-		void download() ;
-		void selectAll() const ;
-		void deselectAll() const ;
-		void cancel() ;
-		void updateSizes() ;
+private slots:
+	void download() ;
+	void selectAll() ;
+	void deselectAll() ;
+	void cancel() ;
+	void updateSizes() ;
+	void itemChanged(QTreeWidgetItem *item, int column);
 
-	protected:
-		bool eventFilter(QObject *obj, QEvent *ev);
+protected:
+	bool eventFilter(QObject *obj, QEvent *ev);
 
-	private:
-		const std::vector<RsCollectionFile::DLinfo>& _dlinfos ;
-		std::vector<QCheckBox*> _cboxes ;
-		QString _filename ;
+private:
+	void selectDeselectAll(bool select);
+	void connectUpdate(bool doConnect);
+
+	const std::vector<RsCollectionFile::DLinfo>& _dlinfos ;
+	QString _filename ;
 };
-

@@ -98,28 +98,19 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="_fileEntriesTW">
+    <widget class="QTreeWidget" name="_fileEntriesTW">
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
-     <property name="gridStyle">
-      <enum>Qt::DotLine</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
+     <property name="rootIsDecorated">
       <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderDefaultSectionSize">
-      <number>22</number>
-     </attribute>
+     </property>
+     <property name="allColumnsShowFocus">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
