@@ -1,5 +1,55 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  * Improvements 
+     - Added threaded loading of channels (GUI).
+     - added paste own certificate to chat/forum context menu (patch from AC)
+     - Added function to mute some participants in chat lobbies
+     - Switched on optimized compile on Windows.
+     - Improved multi-source file transfer in two ways:
+         * tunnels can borrow data chunks from only slower tunnels, to prevent blocking fast tunnels
+         * inactive chunks are asked again after a longer time, to avoid wasting bandwidth asking them twice
+
+     - Added new notify on connect attempt by the local message system.
+     - Removed not needed field in FriendRequest Dialog
+     - Added new friend request toaster from defnax.
+     - Fixed base path for the external stylesteets
+     - Optimized channel loading and layout.
+     - Optimized RsCollectionDialog (still without thread).
+     - Enabled extended selection and mark with the key 'space'.
+     - Improved the default recommendation text
+     - Added a default styleSheet for the "Confirm Friend / Add as Friend" Button
+     - Moved HandleRichText from the folder "chat" to "util" and redesigned the source
+     - Extended RsHtml::formatText to replace the RetroShare links with an image and enabled 
+       this for the certificate links in the system messages (friend recommendation and user request)
+     - Added new ObjectPainter for painting a button on a pixmap
+     - Display old and new nickname to Peers during nickname change in ChatLobby.
+     - update french translation (Max Romeo)
+     - Fixed utf8 in notifyQt
+     - Improved friend recommendation
+     - Added a title label to Friend Request Toaster, little design changes
+     - Added empty entry to stylesheet-choice for "no stylesheet" and moved method "loadStyleSheet" from MainWindow to Rshare (patch from braindead)
+     - Added ability to style the system messages in chat (e.g. Lobby management)
+     - Added new message flag for system messages like friend request.
+     - Show "RetroShare" as sender of system messages to myself.
+     - Added new quick view in MessagesDialog to filter system messages.
+     - Changed RetroShare link in friend request message to certificate.
+     - Added new subject image for the system messages (defnax).
+     - Removed not used notify in message service.
+
+  * Bugs
+     - Removed data race in QObject::connect() vs. NotifyQt signals by enabling notification signals only after GUI is created
+     - Added dynamic locking function for the OpenSSL library to prevent data races.
+     - Fixed handling of html links in HandleRichText::formatText.
+     - Removed possible data race on boolean value (Not critical)
+     - Removed non-mutex-protected reference in p3turtle.cc
+     - Fixed issue with lost downloads when RetroShare exits (or crashes) during the load of the file transfer items. The pending list was not saved.
+     - Fixed bug probably responsible for random crashes in DHT code
+     - Removed usages of "std::istringstream" and "std::stringstream", which are not thread-safe.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 16 May 2012 22:30:00 +0100
+
+retroshare (0.5.3-0.5114~natty) natty; urgency=low
+
   * Improvements
      - removed minimal version
      - Improved TR routing strategy:
