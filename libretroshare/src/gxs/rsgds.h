@@ -1,5 +1,5 @@
-#ifndef RSGDP_H
-#define RSGDP_H
+#ifndef RSGDS_H
+#define RSGDS_H
 
 /*
  * libretroshare/src/gxp: gxp.h
@@ -33,27 +33,13 @@
 #include "inttypes.h"
 #include "rsgnp.h"
 
+#include "serialiser/rsgxsitems.h"
+#include "serialiser/rsnxsitems.h"
+
 #include "gxs/rsgxs.h"
 
 
-class RsGxsSignedMsg {
 
-
-    RsGxsMsgId mMsgId;
-    RsTlvBinaryData mMsgData;
-};
-
-/*!
- * Might be better off simply sending request codes
- *
- */
-class RsGxsSearch {
-
-    /*!
-     *
-     */
-    virtual int code() = 0;
-};
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -83,36 +69,52 @@ public:
 
     /*!
      * Retrieves signed message
-     * @param msgGrp this contains grp and the message to retrieve
+     * @param msgIds ids of messagesto retrieve
+     * @param msg result of msg retrieval
+     * @param cache whether to store retrieval in memory for faster later retrieval
      * @return error code
      */
-    virtual int retrieveMsgs(const std::list<RsGxsMsgId>& msgId, std::set<RsGxsMsg*> msg, bool cache) = 0;
+    virtual int retrieveMsgs(const std::list<std::string>& msgIds, std::set<RsGxsMsg*> msg, bool cache) = 0;
 
     /*!
      * Retrieves a group item by grpId
-     * @param grpId the ID of the group to retrieve
+     * @param grpId the Id of the groups to retrieve
+     * @param grp results of retrieval
+     * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGrps(const std::list<RsGxsGrpId>& grpId, std::set<RsGxsGroup*> grp, bool cache) = 0;
+    virtual int retrieveGrps(const std::list<std::string>& grpId, std::set<RsGxsGroup*>& grp, bool cache) = 0;
+
+    /*!
+     * @param grpId the id of the group to get versions for
+     * @param cache whether to store the result in memory
+     * @param errCode
+     */
+    virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsGxsGroup*>& grp, bool cache);
+
+    /*!
+     * @param msgId the id of the message to get versions for
+     * @param cache whether to store the result in memory
+     * @param errCode
+     */
+    virtual int retrieveMsgVersions(const std::string& grpId, std::set<RsGxsGroup*> grp, bool cache);
 
 
     /*!
      * allows for more complex queries specific to the service
-     * BLOBs type columns will not be searched
      * @param search generally stores parameters needed for query
      * @param msgId is set with msg ids which satisfy the gxs search
      * @return error code
      */
-    virtual int searchMsgs(RsGxsSearch* search, std::list<RsMsgId>& msgId) = 0;
+    virtual int searchMsgs(RsGxsSearch* search, std::list<RsGxsSrchResMsgCtx*>& result) = 0;
 
     /*!
      * allows for more complex queries specific to the associated service
-     * BLOBs type columns will not be searched
      * @param search generally stores parameters needed for query
      * @param msgId is set with msg ids which satisfy the gxs search
      * @return error code
      */
-    virtual int searchGrps(RsGxsSearch* search, std::list<RsGroupId>& grpId) = 0;
+    virtual int searchGrps(RsGxsSearch* search, std::list<RsGxsSrchResGrpCtx*>& result) = 0;
 
     /*!
      * @return the cache size set for this RsGeneralDataService
@@ -125,44 +127,14 @@ public:
      * @param msg list of signed messages to store
      * @return error code
      */
-    virtual int storeMessage(std::set<RsGxsSignedMsg*> msg) = 0;
+    virtual int storeMessage(std::set<RsNxsMsg*>& msg) = 0;
 
     /*!
      * Stores a list of groups in data store
      * @param msg list of messages
      * @return error code
      */
-    virtual int storeGroup(std::set<RsGxsGroup*> grp) = 0;
-
-    /*!
-     * Retrieves group ids
-     * @param grpIds
-     */
-    virtual void retrieveGrpIds(std::list<std::string>& grpIds) = 0;
-
-
-    /*!
-     * Retrieves msg ids
-     */
-    virtual void retrieveMsgIds(std::list<std::string>& msgIds) = 0;
-
-
-protected:
-
-
-    /*!
-     * Retrieves signed message
-     * @param msgGrp this contains grp and the message to retrieve
-     * @return request code to be redeemed later
-     */
-    virtual int retrieveMsgs(const std::list<RsGxsMsgId>& msgId, std::set<RsGxsMsg*> msg) = 0;
-
-    /*!
-     * Retrieves a group item by grpId
-     * @param grpId the ID of the group to retrieve
-     * @return request code to be redeemed later
-     */
-    virtual int retrieveGrps(const std::list<RsGxsGrpId>& grpId, std::set<RsGxsGroup*> grp) = 0;
+    virtual int storeGroup(std::set<RsNxsGrp*>& grp) = 0;
 
 
 };
@@ -170,4 +142,4 @@ protected:
 
 
 
-#endif // RSGDP_H
+#endif // RSGDS_H
