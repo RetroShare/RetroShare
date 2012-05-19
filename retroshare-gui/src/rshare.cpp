@@ -27,6 +27,7 @@
 #include <QTextStream>
 #include <QShortcut>
 #include <QStyleFactory>
+#include <QStyle>
 #include <gui/common/vmessagebox.h>
 #include <gui/common/html.h>
 #include <util/stringutil.h>
@@ -372,6 +373,31 @@ void Rshare::loadStyleSheet(const QString &sheetName)
         }
     }
     qApp->setStyleSheet(styleSheet);
+}
+
+void Rshare::refreshStyleSheet(QWidget *widget, bool processChildren)
+{
+	if (widget != NULL) {
+		// force widget to recalculate valid style
+		widget->style()->unpolish(widget);
+		widget->style()->polish(widget);
+		// widget might need to recalculate properties (like margins) depending on style
+		QEvent event(QEvent::StyleChange);
+		QApplication::sendEvent(widget, &event);
+		// repaint widget
+		widget->update();
+
+		if (processChildren == true) {
+			// process children recursively
+			QObjectList childList =	widget->children ();
+			for (QObjectList::Iterator it = childList.begin(); it != childList.end(); it++) {
+				QWidget *child = qobject_cast<QWidget*>(*it);
+				if (child != NULL) {
+					refreshStyleSheet(child, processChildren);
+				}
+			}
+		}
+	}
 }
 
 /** Initialize plugins. */

@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <rshare.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -33,7 +34,7 @@
 #include <algorithm>
 
 AvatarWidget::AvatarWidget(QWidget *parent) :
-	QWidget(parent), ui(new Ui::AvatarWidget)
+	QLabel(parent), ui(new Ui::AvatarWidget)
 {
 	ui->setupUi(this);
 
@@ -53,33 +54,30 @@ AvatarWidget::~AvatarWidget()
 	delete ui;
 }
 
-static bool isSmall(const QSize &size)
+QString AvatarWidget::frameState()
 {
-	if (size.width() <= 70 && size.height() <= 70) {
-		return true;
+	switch (mFrameType)
+	{
+	case NO_FRAME:
+		return "NOTHING";
+	case NORMAL_FRAME:
+		return "NORMAL";
+	case STATUS_FRAME:
+		switch (mPeerState)
+		{
+		case RS_STATUS_OFFLINE:
+			return "OFFLINE";
+		case RS_STATUS_INACTIVE:
+			return "INACTIVE";
+		case RS_STATUS_ONLINE:
+			return "ONLINE";
+		case RS_STATUS_AWAY:
+			return "AWAY";
+		case RS_STATUS_BUSY:
+			return "BUSY";
+		}
 	}
-
-	return false;
-}
-
-void AvatarWidget::resizeEvent(QResizeEvent */*event*/)
-{
-	if (mFrameType == NO_FRAME) {
-		return;
-	}
-
-	QSize widgetSize = size();
-	QSize avatarSize;
-	if (isSmall(widgetSize)) {
-		avatarSize = QSize(widgetSize.width() * 50 / 70, widgetSize.height() * 50 / 70);
-	} else {
-		avatarSize = QSize(widgetSize.width() * 96 / 116, widgetSize.height() * 96 / 116);
-	}
-	int x = (widgetSize.width() - avatarSize.width()) / 2;
-	int y = (widgetSize.height() - avatarSize.height()) / 2;
-	ui->avatarFrameLayout->setContentsMargins(x, y, x, y);
-
-	refreshStatus();
+	return "NOTHING";
 }
 
 void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
@@ -99,7 +97,6 @@ void AvatarWidget::setFrameType(FrameType type)
 	switch (mFrameType) {
 	case NO_FRAME:
 		disconnect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		ui->avatarFrameLayout->setContentsMargins(0, 0, 0, 0);
 		break;
 	case NORMAL_FRAME:
 		disconnect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
@@ -111,6 +108,7 @@ void AvatarWidget::setFrameType(FrameType type)
 
 	refreshStatus();
 	updateAvatar(QString::fromStdString(mId));
+	Rshare::refreshStyleSheet(this, false);
 }
 
 void AvatarWidget::setId(const std::string &id, bool isGpg)
@@ -120,13 +118,13 @@ void AvatarWidget::setId(const std::string &id, bool isGpg)
 
 	if (mId == rsPeers->getOwnId()) {
 		mFlag.isOwnId = true;
-		ui->avatar->setToolTip(tr("Click to change your avatar"));
+		setToolTip(tr("Click to change your avatar"));
 	}
 
-	ui->avatar->setPixmap(QPixmap());
+	setPixmap(QPixmap());
 
 	if (mId.empty()) {
-		ui->avatar->setEnabled(false);
+		setEnabled(false);
 	}
 
 	refreshStatus();
@@ -148,62 +146,25 @@ void AvatarWidget::refreshStatus()
 {
 	switch (mFrameType) {
 	case NO_FRAME:
-		ui->avatarFrame->setStyleSheet("");
-		break;
 	case NORMAL_FRAME:
-		ui->avatarFrame->setStyleSheet(isSmall(size()) ? "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-70.png); }" : "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-116.png); }");
+	{
+		Rshare::refreshStyleSheet(this, false);
 		break;
+	}
 	case STATUS_FRAME:
-		{
-			StatusInfo statusInfo;
+	{
+		StatusInfo statusInfo;
 
-			if (mFlag.isOwnId) {
-				rsStatus->getOwnStatus(statusInfo);
-			} else {
-				// No check of return value. Non existing status info is handled as offline.
-				rsStatus->getStatus(mId, statusInfo);
-			}
-			updateStatus(QString::fromStdString(statusInfo.id), statusInfo.status);
+		if (mFlag.isOwnId) {
+			rsStatus->getOwnStatus(statusInfo);
+		} else {
+			// No check of return value. Non existing status info is handled as offline.
+			rsStatus->getStatus(mId, statusInfo);
 		}
+		updateStatus(QString::fromStdString(statusInfo.id), statusInfo.status);
 		break;
 	}
-}
-
-static QString getStatusFrame(bool small, int status)
-{
-	if (small) {
-		switch (status) {
-		case RS_STATUS_OFFLINE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-offline-70.png); }";
-		case RS_STATUS_INACTIVE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-idle-70.png); }";
-		case RS_STATUS_ONLINE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-online-70.png); }";
-		case RS_STATUS_AWAY:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-away-70.png); }";
-		case RS_STATUS_BUSY:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-busy-70.png); }";
-		}
-
-		return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-70.png); }";
-	} else {
-		switch (status) {
-		case RS_STATUS_OFFLINE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-offline-116.png); }";
-		case RS_STATUS_INACTIVE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-idle-116.png); }";
-		case RS_STATUS_ONLINE:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-online-116.png); }";
-		case RS_STATUS_AWAY:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-away-116.png); }";
-		case RS_STATUS_BUSY:
-			return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-busy-116.png); }";
-		}
-
-		return "QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-116.png); }";
 	}
-
-	return "";
 }
 
 void AvatarWidget::updateStatus(const QString peerId, int status)
@@ -213,36 +174,31 @@ void AvatarWidget::updateStatus(const QString peerId, int status)
 	}
 
 	if (mId.empty()) {
-		ui->avatarFrame->setStyleSheet(getStatusFrame(isSmall(size()), RS_STATUS_OFFLINE));
-		return;
+		mPeerState = status;
+		Rshare::refreshStyleSheet(this, false);
+	} else {
+		/* set style for status */
+		if (mId == peerId.toStdString()) {
+			// the peers status has changed
+			mPeerState = status;
+			setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
+			Rshare::refreshStyleSheet(this, false);
+		}
 	}
-
-	/* set style for status */
-	if (mId == peerId.toStdString()) {
-		// the peers status has changed
-
-		ui->avatarFrame->setStyleSheet(getStatusFrame(isSmall(size()), status));
-
-		ui->avatar->setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
-
-		return;
-	}
-
-	// ignore status change
 }
 
 void AvatarWidget::updateAvatar(const QString &peerId)
 {
 	if (mId.empty()) {
 		QPixmap avatar(defaultAvatar);
-		ui->avatar->setPixmap(avatar);
+		setPixmap(avatar);
 		return;
 	}
 
 	if (mFlag.isOwnId) {
 		QPixmap avatar;
 		AvatarDefs::getOwnAvatar(avatar);
-		ui->avatar->setPixmap(avatar);
+		setPixmap(avatar);
 		return;
 	}
 
@@ -251,7 +207,7 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 			/* called from AvatarWidget with gpg id */
 			QPixmap avatar;
 			AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
-			ui->avatar->setPixmap(avatar);
+			setPixmap(avatar);
 			return;
 		}
 
@@ -265,7 +221,7 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 			/* One of the ssl ids of the gpg id */
 			QPixmap avatar;
 			AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
-			ui->avatar->setPixmap(avatar);
+			setPixmap(avatar);
 		}
 
 		return;
@@ -274,7 +230,7 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 	if (mId == peerId.toStdString()) {
 		QPixmap avatar;
 		AvatarDefs::getAvatarFromSslId(mId, avatar, defaultAvatar);
-		ui->avatar->setPixmap(avatar);
+		setPixmap(avatar);
 		return;
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>AvatarWidget</class>
- <widget class="QWidget" name="AvatarWidget">
+ <widget class="QLabel" name="AvatarWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,36 +10,21 @@
     <height>116</height>
    </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
-   <item>
-    <widget class="QFrame" name="avatarFrame">
-     <property name="styleSheet">
-      <string notr="true">QFrame#avatarFrame{ border-image:url(:/images/avatarstatus-bg-116.png); }</string>
-     </property>
-     <layout class="QHBoxLayout" name="avatarFrameLayout">
-      <property name="margin">
-       <number>10</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="avatar">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-  </layout>
+  <property name="styleSheet">
+   <string notr="true">AvatarWidget{border-width: 10px;}
+AvatarWidget[frameState=&quot;NORMAL&quot;]{border-image:url(:/images/avatarstatus-bg-116.png);}
+AvatarWidget[frameState=&quot;OFFLINE&quot;]{border-image:url(:/images/avatarstatus-bg-offline-116.png);}
+AvatarWidget[frameState=&quot;INACTIVE&quot;]{border-image:url(:/images/avatarstatus-bg-idle-116.png);}
+AvatarWidget[frameState=&quot;ONLINE&quot;]{border-image:url(:/images/avatarstatus-bg-online-116.png);}
+AvatarWidget[frameState=&quot;AWAY&quot;]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
+AvatarWidget[frameState=&quot;BUSY&quot;]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}</string>
+  </property>
+  <property name="scaledContents">
+   <bool>true</bool>
+  </property>
+  <property name="alignment">
+   <set>Qt::AlignCenter</set>
+  </property>
  </widget>
  <resources/>
  <connections/>

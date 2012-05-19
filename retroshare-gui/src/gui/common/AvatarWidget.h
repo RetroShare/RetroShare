@@ -22,15 +22,16 @@
 #ifndef AVATARWIDGET_H
 #define AVATARWIDGET_H
 
-#include <QWidget>
+#include <QLabel>
 
 namespace Ui {
 	class AvatarWidget;
 }
 
-class AvatarWidget : public QWidget
+class AvatarWidget : public QLabel
 {
 	Q_OBJECT
+	Q_PROPERTY(QString frameState READ frameState)
 
 public:
 	enum FrameType {
@@ -43,13 +44,13 @@ public:
 	AvatarWidget(QWidget *parent = 0);
 	~AvatarWidget();
 
+	QString frameState();
 	void setFrameType(FrameType type);
 	void setId(const std::string& id, bool isGpg);
 	void setOwnId();
 	void setDefaultAvatar(const QString &avatar);
 
 protected:
-	void resizeEvent(QResizeEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
@@ -69,6 +70,7 @@ private:
 		bool isGpg : 1;
 	} mFlag;
 	FrameType mFrameType;
+	uint32_t  mPeerState;
 };
 
 #endif // AVATARWIDGET_H
