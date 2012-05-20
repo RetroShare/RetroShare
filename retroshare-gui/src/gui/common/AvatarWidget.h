@@ -23,6 +23,7 @@
 #define AVATARWIDGET_H
 
 #include <QLabel>
+#include <stdint.h>
 
 namespace Ui {
 	class AvatarWidget;

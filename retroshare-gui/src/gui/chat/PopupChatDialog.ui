@@ -204,7 +204,7 @@
   <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
-   <header>gui/common/avatarwidget.h</header>
+   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
