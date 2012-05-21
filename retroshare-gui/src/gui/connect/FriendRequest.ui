@@ -317,7 +317,7 @@ border-image: url(:/images/btn_blue_hover.png) 4;
  <customwidgets>
   <customwidget>
    <class>AvatarWidget</class>
-   <extends>QWidget</extends>
+   <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
