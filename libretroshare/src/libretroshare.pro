@@ -4,7 +4,7 @@ TEMPLATE = lib
 CONFIG += staticlib bitdht newcache# newservices
 CONFIG -= qt
 TARGET = retroshare
-
+#DEFINES += RSSERIAL_DEBUG
 CONFIG += test_voip 
 
 # Beware: All data of the stripped services are lost
@@ -158,7 +158,10 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 
 HEADERS += plugins/pluginmanager.h \
 				plugins/dlfcn_win32.h \
-                                serialiser/rspluginitems.h
+                                serialiser/rspluginitems.h \
+    gxs/rsdataservice.h \
+    gxs/rsgxsflags.h \
+    gxs/rsgenexchange.h
 
 
 HEADERS += $$PUBLIC_HEADERS
@@ -660,21 +663,14 @@ SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 newcache { 
 
-HEADERS += serialiser/rsnxsitems.h
+HEADERS += serialiser/rsnxsitems.h \
+            gxs/rsgds.h \
+            gxs/rsgxs.h \
+            gxs/rsdataservice/h
 
-#gxs/rsgxs.h \
-#		gxs/rsgnp.h \
- #   		gxs/rsgdp.h \
-#		util/retrodb.h \
-#		gxs/rsgixs.h
-
-SOURCES += serialiser/rsnxsitems.cpp
-#gxs/rsgxs.cpp \
-#		gxs/rsgnp.cpp \
-#		gxs/rsgdp.cpp \
-#		util/retrodb.cpp \
-#		gxs/rsgixs.cpp
-
+SOURCES += serialiser/rsnxsitems.cc \
+                gxs/rsdataservice.cc \
+                gxs/rsgenexchange.cc
 }
 
 

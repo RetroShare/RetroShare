@@ -53,6 +53,7 @@ public:
 
     std::string grpId;
     std::string msgId;
+    RsTlvKeySignature idSign;
 };
 
 
@@ -64,9 +65,6 @@ public:
     RsTlvKeySignature adminSign;
 };
 
-typedef time_t RsGxsTime;
-typedef std::map<std::string, uint32_t> IdVersionM;
-typedef std::multimap<std::string, std::pair<std::string, uint32_t> > GrpMsgMap;
 typedef uint64_t    RsGroupId ;
 
 
@@ -162,7 +160,7 @@ public:
      * @return token for request
      * @see receiveMsg()
      */
-    int requestGrpMsgs(const std::list<string>& grpIds);
+    int requestGrpMsgs(const std::list<std::string>& grpIds);
 
     /*!
      * request latest version of messages for group

@@ -38,12 +38,19 @@
 
 const uint8_t RS_PKT_SUBTYPE_SYNC_GRP      = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_SYNC_GRP_LIST = 0x0002;
-const uint8_t RS_PKT_SUBTYPE_GRPS_RESP     = 0x0004;
+const uint8_t RS_PKT_SUBTYPE_NXS_GRP     = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_SYNC_MSG      = 0x0008;
 const uint8_t RS_PKT_SUBTYPE_SYNC_MSG_LIST = 0x0010;
-const uint8_t RS_PKT_SUBTYPE_MSG_RESP      = 0x0020;
+const uint8_t RS_PKT_SUBTYPE_NXS_MSG      = 0x0020;
 const uint8_t RS_PKT_SUBTYPE_SEARCH_REQ    = 0x0040;
-const uint8_t RS_PKT_SUBTYPE_SEARCH_RESP   = 0x0080;
+
+// possibility create second service to deal with this functionality
+
+const uint8_t RS_PKT_SUBTYPE_NXS_EXTENDED      = 0x0080; // in order to extend supported pkt subtypes
+const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_GRP   = 0x0001;
+const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_MSG   = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_GRP   = 0x0004;
+const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_MSG   = 0x0008;
 
 
 /*!
@@ -75,6 +82,7 @@ class RsSyncGrp : public RsNxsItem {
 public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
+    static const uint8_t FLAG_ONLY_CURRENT; // only send most current sycn list
 
     RsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP) { return;}
 
@@ -88,7 +96,7 @@ public:
 
 };
 
-typedef std::map<std::string, std::list<uint32_t> > SyncList;
+typedef std::map<std::string, std::list<RsTlvKeySignature> > SyncList;
 
 /*!
  * Use to send to peer list of grps
@@ -101,6 +109,7 @@ public:
 
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
+    static const uint8_t FLAG_USE_SYNC_HASH;
 
     RsSyncGrpList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
 
@@ -111,7 +120,7 @@ public:
     uint8_t flag; // request or response
 
     /// groups held by sending peer
-     SyncList grps; // grpId/ n version pair
+     SyncList grps; // grpId/ sign pair
 
 };
 
@@ -120,18 +129,25 @@ public:
  * Each item corresponds to a group which needs to be
  * deserialised
  */
-class RsGrpResp : public RsNxsItem
+class RsNxsGrp : public RsNxsItem
 {
 
 public:
-    RsGrpResp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_GRPS_RESP) { return; }
+
+    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype) { return; }
 
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    std::list<RsTlvBinaryData*> grps; /// each entry corresponds to a group item
-
+    std::string grpId; /// group Id, needed to complete version Id (ncvi)
+    uint32_t timeStamp; /// UTC time, ncvi
+    RsTlvBinaryData grp; /// actual group data
+    RsTlvKeySignature adminSign; /// signature of admin (needed to complete version Id
+    RsTlvSecurityKeySet keys;
+    std::string identity;
+    RsTlvKeySignature idSign; /// identity sign if applicable
+    uint32_t grpFlag;
 };
 
 /*!
@@ -165,9 +181,9 @@ class RsSyncGrpMsgList : public RsNxsItem
 {
 public:
 
-    static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_REQUEST;
-
+    static const uint8_t FLAG_RESPONSE;
+    static const uint8_t FLAG_USE_SYNC_HASH;
     RsSyncGrpMsgList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_MSG_LIST) { return; }
 
 
@@ -185,17 +201,27 @@ public:
  * Used to respond to a RsGrpMsgsReq
  * with message items satisfying request
  */
-class RsGrpMsgResp : public RsNxsItem
+class RsNxsMsg : public RsNxsItem
 {
 public:
 
-    RsGrpMsgResp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_MSG_RESP) { return; }
+
+
+    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype) { return; }
 
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    std::list<RsTlvBinaryData*> msgs; // each entry corresponds to a message item
+    std::string grpId; /// group id, forms part of version id
+    std::string msgId; /// msg id
+    uint32_t msgFlag;
+    uint32_t timeStamp; /// UTC time create,
+    RsTlvBinaryData msg;
+    RsTlvKeySignature publishSign; /// publish signature
+    RsTlvKeySignature idSign; /// identity signature
+    std::string identity;
+
 };
 
 /*!
@@ -205,13 +231,35 @@ class RsNxsSearchReq : public RsNxsItem
 {
 public:
 
-    RsNxsSearchReq(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_SEARCH_REQ), searchTerm(servtype) { return; }
+    RsNxsSearchReq(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_SEARCH_REQ), serviceSearchItem(servtype) { return; }
+    virtual ~RsNxsSearchReq() { return;}
 
-    virtual void clear() {}
+    virtual void clear() { return;}
     virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
 
-    uint16_t token;
-    RsTlvBinaryData searchTerm; // service aware of item class
+    uint8_t nHops; /// how many peers to jump to
+    uint32_t token; // search token
+    RsTlvBinaryData serviceSearchItem; // service aware of item class
+    uint32_t expiration; // expiration date
+};
+
+
+/*!
+ * used to extend data types processed
+ */
+class RsNxsExtended : public RsNxsItem
+{
+
+public:
+
+    RsNxsExtended(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_EXTENDED), extData(servtype) { return; }
+    virtual ~RsNxsExtended() { return; }
+
+    virtual void clear() {}
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    RsTlvBinaryData extData;
+    uint32_t type;
 };
 
 
@@ -219,20 +267,70 @@ public:
  * Used to respond to a RsGrpSearchReq
  * with grpId/MsgIds that satisfy search request
  */
-class RsNxsSearchResp : public RsNxsItem
+class RsNxsSearchResultMsg
 {
 public:
 
-    RsNxsSearchResp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SEARCH_RESP) { return; }
+    RsNxsSearchResultMsg() : context(0) { return;}
+    void clear() {}
+    std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
 
+    uint32_t token; // search token to be redeemed
+    RsTlvBinaryData context; // used by client service
+    std::string msgId;
+    std::string grpId;
+    RsTlvKeySignature idSign;
 
-    virtual void clear() {}
-    virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
-
-    uint16_t token; // search token to be redeemed
-    std::list<RsTlvBinaryData> msgs; // msgs with search terms present
-    std::list<RsTlvBinaryData> grps; // grps with search terms present
+    uint32_t expiration; // expiration date
 };
+
+/*!
+ * Used to respond to a RsGrpSearchReq
+ * with grpId/MsgIds that satisfy search request
+ */
+class RsNxsSearchResultGrp
+{
+public:
+
+    RsNxsSearchResultGrp();
+    void clear() {}
+    std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
+
+    uint32_t token; // search token to be redeemed
+
+    RsTlvBinaryData context; // used by client service
+
+    std::string grpId;
+    RsTlvKeySignature adminSign;
+
+    uint32_t expiration; // expiration date
+};
+
+
+class RsNxsDeleteMsg
+{
+public:
+
+    RsNxsDeleteMsg() { return; }
+
+    std::string msgId;
+    std::string grpId;
+    RsTlvKeySignature idSign;
+    RsTlvKeySignature deleteSign; // ( msgId + grpId + msg data ) sign //TODO: add warning not to place msgId+grpId in msg!
+
+};
+
+class RsNxsDeleteGrp
+{
+public:
+
+    RsNxsDeleteGrp() { return;}
+
+    std::string grpId;
+    RsTlvKeySignature idSign;
+    RsTlvKeySignature deleteSign; // (grpId + grp data) sign // TODO: add warning not to place grpId in msg
+};
+
 
 
 class RsNxsSerialiser : public RsSerialType
@@ -263,11 +361,11 @@ private:
     virtual bool serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint32_t *size);
     virtual RsSyncGrpList* deserialSyncGrpList(void *data, uint32_t *size);
 
-    /* for RS_PKT_SUBTYPE_GRPS_RESP */
+    /* for RS_PKT_SUBTYPE_NXS_GRP */
 
-    virtual uint32_t sizeGrpResp(RsGrpResp* item);
-    virtual bool serialiseGrpResp(RsGrpResp *item, void *data, uint32_t *size);
-    virtual RsGrpResp* deserialGrpResp(void *data, uint32_t *size);
+    virtual uint32_t sizeNxsGrp(RsNxsGrp* item);
+    virtual bool serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size);
+    virtual RsNxsGrp* deserialNxsGrp(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_SYNC_MSG */
 
@@ -281,28 +379,26 @@ private:
     virtual bool serialiseSynGrpMsgList(RsSyncGrpMsgList* item, void *data, uint32_t* size);
     virtual RsSyncGrpMsgList* deserialSyncGrpMsgList(void *data, uint32_t *size);
 
+    /* RS_PKT_SUBTYPE_NXS_MSG */
 
-    /* RS_PKT_SUBTYPE_MSG_RESP */
-
-    virtual uint32_t sizeGrpMsgResp(RsGrpMsgResp* item);
-    virtual bool serialiseGrpMsgResp(RsGrpMsgResp* item, void* data, uint32_t* size);
-    virtual RsGrpMsgResp* deserialGrpMsgResp(void *data, uint32_t *size);
+    virtual uint32_t sizeNxsMsg(RsNxsMsg* item);
+    virtual bool serialiseNxsMsg(RsNxsMsg* item, void* data, uint32_t* size);
+    virtual RsNxsMsg* deserialNxsMsg(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_SEARCH_REQ */
-
     virtual uint32_t sizeNxsSearchReq(RsNxsSearchReq* item);
     virtual bool serialiseNxsSearchReq(RsNxsSearchReq* item, void* data, uint32_t* size);
-    virtual RsNxsSearchReq* deserialNxsSearchReq(void *data, uint32_t *size);
+    virtual RsNxsSearchReq* deserialNxsSearchReq(void* data, uint32_t *size);
 
-    /* RS_PKT_SUBTYPE_SEARCH_RESP */
-
-    virtual uint32_t sizeNxsSearchResp(RsNxsSearchResp *item);
-    virtual bool serialiseNxsSearchResp(RsNxsSearchResp *item, void *data, uint32_t *size);
-    virtual RsNxsSearchResp* deserialNxsSearchResp(void *data, uint32_t *size);
+    /* RS_PKT_SUBTYPE_EXTENDED */
+    virtual RsNxsExtended* deserialNxsExtended(void* data, uint32_t *size);
+    virtual uint32_t sizeNxsExtended(RsNxsExtended* item);
+    virtual bool serialiseNxsExtended(RsNxsExtended* item, void* data, uint32_t* size);
 
 private:
 
     const uint16_t SERVICE_TYPE;
 };
+
 
 #endif // RSNXSITEMS_H

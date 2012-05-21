@@ -29,7 +29,13 @@
 
 #include "retrodb.h"
 
-#define RETRODB_DEBUG
+//#define RETRODB_DEBUG
+
+void free_blob(void* dat){
+
+    char* c = (char*) dat;
+    delete[] c;
+}
 
 const uint8_t ContentValue::BOOL_TYPE  = 1;
 const uint8_t ContentValue::DATA_TYPE = 2;
@@ -217,6 +223,8 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
     // build values part of insertion
     std::string qValues = "VALUES(";
     std::ostringstream oStrStream;
+    uint32_t index = 0;
+    std::list<RetroDbBlob> blobL;
 
     for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++){
 
@@ -246,8 +254,12 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 char* value;
                 uint32_t len;
                 cv.getAsData(key, len, value);
-                oStrStream.write(value, len);
-                qValues += "'" + oStrStream.str() + "'";
+                RetroDbBlob b;
+                b.data = value;
+                b.length = len;
+                b.index = ++index;
+                blobL.push_back(b);
+                qValues += "?"; // parameter
                 break;
             }
         case ContentValue::STRING_TYPE:
@@ -297,10 +309,81 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
 #endif
 
     // execute query
-    execSQL(sqlQuery);
+    execSQL_bind_blobs(sqlQuery, blobL);
     return true;
 }
 
+bool RetroDb::execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob> &blobs){
+
+    // prepare statement
+    sqlite3_stmt* stm = NULL;
+
+#ifdef RETRODB_DEBUG
+    std::cerr << "Query: " << query << std::endl;
+#endif
+
+    int rc = sqlite3_prepare_v2(mDb, query.c_str(), query.length(), &stm, NULL);
+
+    // check if there are any errors
+    if(rc != SQLITE_OK){
+        std::cerr << "RetroDb::execSQL(): Error preparing statement\n";
+        std::cerr << "Error code: " <<  sqlite3_errmsg(mDb)
+                  << std::endl;
+        return false;
+    }
+
+    std::list<RetroDbBlob>::iterator lit = blobs.begin();
+
+    for(; lit != blobs.end(); lit++){
+        const RetroDbBlob& b = *lit;
+        sqlite3_bind_blob(stm, b.index, b.data, b.length, free_blob);
+    }
+
+    uint32_t delta = 3;
+    time_t stamp = time(NULL), now = 0;
+    bool timeOut = false, ok = false;
+
+    while(!timeOut){
+
+        rc = sqlite3_step(stm);
+
+        if(rc == SQLITE_DONE){
+            ok = true;
+            break;
+        }
+
+        if(rc != SQLITE_BUSY){
+            ok = false;
+            break;
+        }
+
+        now = time(NULL);
+        delta = stamp - now;
+
+        if(delta > TIME_LIMIT){
+            ok = false;
+            timeOut = true;
+        }
+        // TODO add sleep so not to waste
+        // precious cycles
+    }
+
+    if(!ok){
+
+        if(rc == SQLITE_BUSY){
+            std::cerr << "RetroDb::execSQL()\n" ;
+            std::cerr << "SQL timed out!" << std::endl;
+        }else{
+            std::cerr << "RetroDb::execSQL(): Error executing statement (code: " << rc << ")\n";
+            std::cerr << "Sqlite Error msg: " <<  sqlite3_errmsg(mDb)
+                      << std::endl;
+        }
+    }
+
+    // finalise statement or else db cannot be closed
+    sqlite3_finalize(stm);
+    return ok;
+}
 
 bool RetroDb::sqlDelete(const std::string &tableName, const std::string &whereClause, const std::string &whereArgs){
 
@@ -640,7 +723,6 @@ ContentValue::ContentValue(){
 }
 
 ContentValue::~ContentValue(){
-
 
 }
 

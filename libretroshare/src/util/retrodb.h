@@ -149,6 +149,18 @@ public:
 
 private:
 
+    class RetroDbBlob{
+
+    public:
+
+        char* data;
+        uint32_t length;
+        uint32_t index;
+    };
+
+    bool execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob>& blobs);
+
+private:
 
     sqlite3* mDb;
 
@@ -260,6 +272,8 @@ public:
 
     /*!
      * Returns the value of the requested column as a String.
+     * data returned must be copied, as it is freed after RetroDb
+     * is closed or destroyed
      * @param columnIndex the zero-based index of the target column.
      * @return  the value of the column as pointer to raw data
      */

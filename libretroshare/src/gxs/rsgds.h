@@ -69,12 +69,12 @@ public:
 
     /*!
      * Retrieves signed message
-     * @param msgIds ids of messagesto retrieve
+     * @param grpId
      * @param msg result of msg retrieval
      * @param cache whether to store retrieval in memory for faster later retrieval
      * @return error code
      */
-    virtual int retrieveMsgs(const std::list<std::string>& msgIds, std::set<RsGxsMsg*> msg, bool cache) = 0;
+    virtual int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*> msg, bool cache) = 0;
 
     /*!
      * Retrieves a group item by grpId
@@ -83,22 +83,33 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGrps(const std::list<std::string>& grpId, std::set<RsGxsGroup*>& grp, bool cache) = 0;
+    virtual int retrieveGrps(std::set<std::string, RsNxsGrp*>& grp, bool cache) = 0;
 
     /*!
      * @param grpId the id of the group to get versions for
      * @param cache whether to store the result in memory
      * @param errCode
      */
-    virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsGxsGroup*>& grp, bool cache);
+    virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsNxsGrp*>& grp) = 0;
 
     /*!
      * @param msgId the id of the message to get versions for
      * @param cache whether to store the result in memory
      * @param errCode
      */
-    virtual int retrieveMsgVersions(const std::string& grpId, std::set<RsGxsGroup*> grp, bool cache);
+    virtual int retrieveMsgVersions(const std::string& grpId, const std::string msgId, std::set<RsNxsMsg*> grp) = 0;
 
+    /*!
+     * @param msgId the id of the message to retrieve
+     * @return NULL if message does not exist, or pointer to grp if found
+     */
+    virtual RsNxsMsg* retrieveMsgVersion(const RsGxsMsgId& msgId) = 0;
+
+    /*!
+     * @param grpId the id of the group to retrieve
+     * @return NULL if group does not exist or pointer to grp if found
+     */
+    virtual RsNxsGrp* retrieveGrpVersion(const RsGxsGrpId& grpId) = 0;
 
     /*!
      * allows for more complex queries specific to the service
@@ -117,10 +128,14 @@ public:
     virtual int searchGrps(RsGxsSearch* search, std::list<RsGxsSrchResGrpCtx*>& result) = 0;
 
     /*!
-     * @return the cache size set for this RsGeneralDataService
+     * @return the cache size set for this RsGeneralDataService in bytes
      */
-    virtual uint32_t cacheSize() const;
+    virtual uint32_t cacheSize() const = 0;
 
+    /*!
+     * @param size size of cache to set in bytes
+     */
+    virtual int setCacheSize(uint32_t size) = 0;
 
     /*!
      * Stores a list signed messages into data store
@@ -135,7 +150,6 @@ public:
      * @return error code
      */
     virtual int storeGroup(std::set<RsNxsGrp*>& grp) = 0;
-
 
 };
 

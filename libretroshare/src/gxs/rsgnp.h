@@ -36,42 +36,6 @@
 #include "gxs/rsgxs.h"
 #include "services/p3service.h"
 
-
-/*!
- * This is universal format for messages that is transported throughout
- * the general exchange service chain. From concrete service to
- */
-class RsGxsSignedMessage : RsItem {
-
-    uint32_t timestamp;
-    void* signature;
-    void* data;
-    uint32_t msg_flags; /* encrypted */
-    std::string msgId; /* hash of all message data */
-    std::string grpId;
-
-};
-
-/*!
- * Item for dealing
- * with grp list
- */
-class RsGxsMessageList : public RsGxsSignedMessage {
-
-};
-
-/*!
- * Item for dealing with group
- * description and msg list
- */
-class RsGxsGroup : public RsGxsSignedMessage {
-
-
-};
-
-
-typedef std::map<std::string, std::set<std::string> > PeerGrp;
-
 /*!
  * Retroshare General Network Exchange Service: \n
  * Interface:
