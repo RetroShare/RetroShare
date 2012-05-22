@@ -944,7 +944,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << "Usign this certificate:" << std::endl;
 					std::cerr << RS_Certificate.toStdString() << std::endl;
 
-					ConnectFriendWizard(NULL,RS_Certificate).exec() ;
+					ConnectFriendWizard connectFriendWizard;
+					connectFriendWizard.setCertificate(RS_Certificate);
+					connectFriendWizard.exec();
 					needNotifySuccess = false;
 				}
 				break ;

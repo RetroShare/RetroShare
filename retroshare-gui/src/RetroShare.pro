@@ -353,6 +353,7 @@ HEADERS +=  rshare.h \
             gui/common/FriendSelectionWidget.h \
             gui/common/HashBox.h \
             gui/common/LineEditClear.h \
+            gui/common/DropLineEdit.h \
             gui/common/LinkTextBrowser.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
@@ -438,6 +439,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/ChatLobbyWidget.ui \
             gui/connect/ConfCertDialog.ui \
             gui/connect/FriendRequest.ui \
+            gui/connect/ConnectFriendWizard.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
@@ -605,6 +607,7 @@ SOURCES +=  main.cpp \
             gui/common/FriendSelectionWidget.cpp \
             gui/common/HashBox.cpp \
             gui/common/LineEditClear.cpp \
+            gui/common/DropLineEdit.cpp \
             gui/common/LinkTextBrowser.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
