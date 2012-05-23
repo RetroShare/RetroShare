@@ -301,8 +301,8 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
         m_style[type] = style;
     }
 
-    QColor color;
 #ifdef COLORED_NICKNAMES
+    QColor color;
     if (flag & CHAT_FORMATMSG_SYSTEM) {
         color = Qt::darkBlue;
     } else {
@@ -326,8 +326,10 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
     QString formatMsg = style.replace("%name%", name)
                              .replace("%date%", timestamp.date().toString("dd.MM.yyyy"))
                              .replace("%time%", timestamp.time().toString("hh:mm:ss"))
-                             .replace("%message%", message)
-                             .replace("%color%", color.name());
+#ifdef COLORED_NICKNAMES
+                             .replace("%color%", color.name())
+#endif
+                             .replace("%message%", message);
 
     return formatMsg;
 }
