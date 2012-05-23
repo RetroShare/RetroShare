@@ -138,7 +138,12 @@ void ChatLobbyDialog::processSettings(bool load)
 void ChatLobbyDialog::setNickname(const QString &nickname)
 {
 	rsMsgs->setNickNameForChatLobby(lobbyId, nickname.toUtf8().constData());
-	ui.chatWidget->setName(nickname);
+
+	// get new nick name
+	std::string newNickname;
+	if (rsMsgs->getNickNameForChatLobby(lobbyId, newNickname)) {
+		ui.chatWidget->setName(QString::fromUtf8(newNickname.c_str()));
+	}
 }
 
 /**
@@ -155,9 +160,7 @@ void ChatLobbyDialog::changeNickname()
 	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
 	dialog.setTextValue(QString::fromUtf8(nickName.c_str()));
 
-	if (dialog.exec() == QDialog::Accepted) {
-		// Informa other peers of change the Nickname, to update their mute list
-		rsMsgs->sendLobbyStatusPeerChangedNickname(lobbyId, dialog.textValue().toUtf8().constData());
+	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
 		setNickname(dialog.textValue());
 	}
 }

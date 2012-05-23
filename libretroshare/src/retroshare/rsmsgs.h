@@ -251,7 +251,6 @@ virtual	bool   clearPrivateChatQueue(bool incoming, const std::string& id) = 0;
 virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
 
-
 virtual void   setCustomStateString(const std::string&  status_string) = 0 ;
 virtual std::string getCustomStateString() = 0 ;
 virtual std::string getCustomStateString(const std::string& peer_id) = 0 ;
@@ -263,11 +262,6 @@ virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
 virtual bool joinPublicChatLobby(const ChatLobbyId& lobby_id) = 0 ;
-
-
-virtual bool  sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) = 0 ;
-
-
 virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,std::string& vpid) = 0;
 virtual void getChatLobbyList(std::list<ChatLobbyInfo>& cl_info) = 0;

@@ -1557,7 +1557,8 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 #ifdef CHAT_DEBUG
 					std::cerr << "Loaded config default nick name for chat: " << kit->value << std::endl ;
 #endif
-					_default_nick_name = kit->value ;
+					if (!kit->value.empty())
+						_default_nick_name = kit->value ;
 				}
 
 		// delete unknown items
@@ -1775,13 +1776,9 @@ void p3ChatService::sendLobbyStatusString(const ChatLobbyId& lobby_id,const std:
  * 
  * as example for updating their ChatLobby Blocklist for muted peers
  *  */
-bool p3ChatService::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick)
+void p3ChatService::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick)
 {
-	std::string nick ;
-	getNickNameForChatLobby(lobby_id,nick) ;
-
 	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME, newnick) ; 
-	return true;
 }
 
 
@@ -1792,6 +1789,7 @@ void p3ChatService::sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id)
 
 	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_LEFT,nick) ; 
 }
+
 void p3ChatService::sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id)
 {
 	std::string nick ;
@@ -1799,6 +1797,7 @@ void p3ChatService::sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id)
 
 	sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_JOINED,nick) ; 
 }
+
 void p3ChatService::sendLobbyStatusKeepAlive(const ChatLobbyId& lobby_id)
 {
 	std::string nick ;
@@ -2411,12 +2410,23 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 }
 bool p3ChatService::setDefaultNickNameForChatLobby(const std::string& nick)
 {
-	_default_nick_name = nick;
+	if (nick.empty())
+	{
+		std::cerr << "Ignore empty nickname for chat lobby " << std::endl;
+		return false;
+	}
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		_default_nick_name = nick;
+	}
+
 	IndicateConfigChanged() ;
 	return true ;
 }
 bool p3ChatService::getDefaultNickNameForChatLobby(std::string& nick)
 {
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	nick = _default_nick_name ;
 	return true ;
 }
@@ -2441,21 +2451,55 @@ bool p3ChatService::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::str
 
 bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-	
-	
-#ifdef CHAT_DEBUG
-	std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
-#endif
-	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
-
-	if(it == _chat_lobbys.end())
+	if (nick.empty())
 	{
-		std::cerr << " (EE) lobby does not exist!!" << std::endl;
+		std::cerr << "Ignore empty nickname for chat lobby " << std::hex << lobby_id << std::dec << std::endl;
 		return false;
 	}
-	
-	it->second.nick_name = nick ;
+
+	// first check for change and send status peer changed nick name
+	bool changed = false;
+	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+#ifdef CHAT_DEBUG
+		std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
+#endif
+		it = _chat_lobbys.find(lobby_id) ;
+
+		if(it == _chat_lobbys.end())
+		{
+			std::cerr << " (EE) lobby does not exist!!" << std::endl;
+			return false;
+		}
+
+		if (it->second.nick_name != nick)
+		{
+			changed = true;
+		}
+	}
+
+	if (changed)
+	{
+		// Inform other peers of change the Nickname
+		sendLobbyStatusPeerChangedNickname(lobby_id, nick) ;
+
+		// set new nick name
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		it = _chat_lobbys.find(lobby_id) ;
+
+		if(it == _chat_lobbys.end())
+		{
+			std::cerr << " (EE) lobby does not exist!!" << std::endl;
+			return false;
+		}
+
+		it->second.nick_name = nick ;
+	}
+
 	return true ;
 }
 

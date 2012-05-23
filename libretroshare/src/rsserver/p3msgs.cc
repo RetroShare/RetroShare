@@ -308,12 +308,6 @@ bool p3Msgs::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 	return mChatSrv->joinPublicChatLobby(lobby_id) ;
 }
 
-bool p3Msgs::sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) 
-{
-	return mChatSrv->sendLobbyStatusPeerChangedNickname(lobby_id, newnick) ;
-}
-
-
 void p3Msgs::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) 
 {
 	mChatSrv->getListOfNearbyChatLobbies(public_lobbies) ;

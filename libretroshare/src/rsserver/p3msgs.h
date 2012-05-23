@@ -142,7 +142,6 @@ class p3Msgs: public RsMsgs
 	   */
 	  virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids);
 
-
 	  /*!
 	   * @param chats ref to list of received private chats is stored here
 	   */
@@ -168,11 +167,7 @@ class p3Msgs: public RsMsgs
 
 	  /****************************************/
 
-
 	  virtual bool joinPublicChatLobby(const ChatLobbyId& id) ;
-	  
-	  virtual bool sendLobbyStatusPeerChangedNickname(const ChatLobbyId& id, const std::string& newnick) ;
-	  
 	  virtual void getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) ;
 	  virtual bool getVirtualPeerId(const ChatLobbyId& id,std::string& vpid) ;
 	  virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) ;
