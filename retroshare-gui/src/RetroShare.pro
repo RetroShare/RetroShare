@@ -340,6 +340,7 @@ HEADERS +=  rshare.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
+            gui/common/RSListWidgetItem.h \
             gui/common/RSTreeWidgetItem.h \
             gui/common/RSTabWidget.h \
             gui/common/RSItemDelegate.h \
@@ -594,6 +595,7 @@ SOURCES +=  main.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
+            gui/common/RSListWidgetItem.cpp \
             gui/common/RSTreeWidgetItem.cpp \
             gui/common/RSTabWidget.cpp \
             gui/common/RSItemDelegate.cpp \

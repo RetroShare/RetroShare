@@ -30,6 +30,7 @@
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
 #include <gui/common/html.h>
+#include "gui/common/RSListWidgetItem.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -47,8 +48,6 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	// Mute a Participant
 	connect(ui.participantsList, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(changePartipationState(QListWidgetItem *)));
-
-	ui.participantsList->sortItems(Qt::AscendingOrder);
 }
 
 void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
@@ -205,12 +204,13 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 void ChatLobbyDialog::updateParticipantsList()
 {
 	ui.participantsList->clear();
+	ui.participantsList->setSortingEnabled(false);
 
 	std::list<ChatLobbyInfo> linfos;
 	rsMsgs->getChatLobbyList(linfos);
 
 	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
-	
+
 	// Set it to the current ChatLobby
 	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it);
 
@@ -219,7 +219,7 @@ void ChatLobbyDialog::updateParticipantsList()
 			QString participant = QString::fromUtf8( (it2->first).c_str() );
 
 			// TE: Add Wigdet to participantsList with Checkbox, to mute Participant
-			QListWidgetItem *widgetitem = new QListWidgetItem(ui.participantsList);
+			QListWidgetItem *widgetitem = new RSListWidgetItem;
 
 			if (isParticipantMuted(participant)) {
 				widgetitem->setCheckState(Qt::Unchecked);
@@ -232,6 +232,9 @@ void ChatLobbyDialog::updateParticipantsList()
 			ui.participantsList->addItem(widgetitem);
 		}
 	}
+
+	ui.participantsList->setSortingEnabled(true);
+	ui.participantsList->sortItems(Qt::AscendingOrder);
 }
 
 /**
