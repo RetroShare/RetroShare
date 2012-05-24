@@ -4,15 +4,15 @@
 #include "serialiser/rsnxsitems.h"
 
 
-RsSerialType* init_item(RsGrpResp&);
-RsSerialType* init_item(RsGrpMsgResp&);
+RsSerialType* init_item(RsNxsGrp&);
+RsSerialType* init_item(RsNxsMsg&);
 RsSerialType* init_item(RsSyncGrp&);
 RsSerialType* init_item(RsSyncGrpMsg&);
 RsSerialType* init_item(RsSyncGrpList&);
 RsSerialType* init_item(RsSyncGrpMsgList&);
 
-bool operator==(const RsGrpResp&, const RsGrpResp&);
-bool operator==(const RsGrpMsgResp&, const RsGrpMsgResp&);
+bool operator==(const RsNxsGrp&, const RsNxsGrp&);
+bool operator==(const RsNxsMsg&, const RsNxsMsg&);
 bool operator==(const RsSyncGrp&, const RsSyncGrp&);
 bool operator==(const RsSyncGrpMsg&, const RsSyncGrpMsg&);
 bool operator==(const RsSyncGrpList&, const RsSyncGrpList&);

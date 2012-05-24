@@ -5,7 +5,7 @@
 
 #include "rsgxs.h"
 
-class RsGenExchange : public RsGxsService
+class RsGenExchange // : public RsGxsService
 {
 public:
     RsGenExchange();

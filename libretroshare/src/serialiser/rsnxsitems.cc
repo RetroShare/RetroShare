@@ -1,7 +1,7 @@
 #include "rsnxsitems.h"
 #include "rsbaseserial.h"
 
-
+#define RSSERIAL_DEBUG
 const uint8_t RsSyncGrpList::FLAG_REQUEST = 0x001;
 const uint8_t RsSyncGrpList::FLAG_RESPONSE = 0x002;
 
@@ -166,27 +166,8 @@ bool RsNxsSerialiser::serialiseSynGrpMsgList(RsSyncGrpMsgList *item, void *data,
 
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-
-    SyncList::iterator mit =
-            item->msgs.begin();
-
-    for(; mit != item->msgs.end(); mit++){
-
-        // if not version contains then this
-        // entry is invalid
-        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, mit->first);
-
-        uint32_t nVersions = mit->second.size();
-
-        ok &= setRawUInt32(data, *size, &offset, nVersions);
-
-        std::list<RsTlvKeySignature>::iterator lit = mit->second.begin();
-        for(; lit != mit->second.end(); lit++)
-        {
-            RsTlvKeySignature& b = *lit;
-            b.SetTlv(data, *size, &offset);
-        }
-    }
+    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= item->idSign.SetTlv(data, *size, &offset);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -295,6 +276,7 @@ bool RsNxsSerialiser::serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size
     ok &= item->idSign.SetTlv(data, tlvsize, &offset);
     ok &= item->adminSign.SetTlv(data, tlvsize, &offset);
     ok &= item->keys.SetTlv(data, tlvsize, &offset);
+    ok &= item->grp.SetTlv(data, tlvsize, &offset);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -388,29 +370,9 @@ bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint
 
     /* RsSyncGrpList */
 
-    SyncList::iterator mit =
-            item->grps.begin();
-
-
     ok &= setRawUInt8(data, *size, &offset, item->flag);
-
-    for(; mit != item->grps.end(); mit++){
-
-        // if not version contains then this
-        // entry is invalid
-        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, mit->first);
-
-        uint32_t nVersions = mit->second.size();
-
-        ok &= setRawUInt32(data, *size, &offset, nVersions);
-
-        std::list<RsTlvKeySignature>::iterator lit = mit->second.begin();
-        for(; lit != mit->second.end(); lit++)
-        {
-            RsTlvKeySignature& b = *lit;
-            b.SetTlv(data, *size, &offset);
-        }
-    }
+    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->adminSign.SetTlv(data, *size, &offset);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -493,7 +455,7 @@ bool RsNxsSerialiser::serialiseNxsExtended(RsNxsExtended *item, void *data, uint
 RsNxsGrp* RsNxsSerialiser::deserialNxsGrp(void *data, uint32_t *size){
 
 #ifdef RSSERIAL_DEBUG
-    std::cerr << "RsNxsSerialiser::deserialGrpResp()" << std::endl;
+    std::cerr << "RsNxsSerialiser::deserialNxsGrp()" << std::endl;
 #endif
     /* get the type and size */
     uint32_t rstype = getRsItemId(data);
@@ -536,6 +498,7 @@ RsNxsGrp* RsNxsSerialiser::deserialNxsGrp(void *data, uint32_t *size){
     ok &= item->idSign.GetTlv(data, *size, &offset);
     ok &= item->adminSign.GetTlv(data, *size, &offset);
     ok &= item->keys.GetTlv(data, *size, &offset);
+    ok &= item->grp.GetTlv(data, *size, &offset);
 
     if (offset != rssize)
     {
@@ -738,24 +701,8 @@ RsSyncGrpList* RsNxsSerialiser::deserialSyncGrpList(void *data, uint32_t *size){
     offset += 8;
 
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-
-    while((offset < rssize) && ok)
-    {
-        std::string grpId;
-        ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, grpId);
-
-        uint32_t nVersions;
-        ok &= getRawUInt32(data, *size, &offset, &nVersions);
-
-        uint32_t verCount  = 0;
-        while((offset < rssize) && ok && (verCount < nVersions))
-        {
-            RsTlvKeySignature sign;
-            ok &= sign.GetTlv(data, *size, &offset);
-            item->grps[grpId].push_back(sign);
-            verCount++;
-        }
-    }
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->adminSign.GetTlv(data, *size, &offset);
 
     if (offset != rssize)
     {
@@ -821,27 +768,8 @@ RsSyncGrpMsgList* RsNxsSerialiser::deserialSyncGrpMsgList(void *data, uint32_t *
 
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-
-    // now get number of msgs
-    while((offset < rssize) && ok)
-    {
-
-        std::string msgId;
-        ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, msgId);
-
-        uint32_t nVersions;
-        ok &= getRawUInt32(data, *size, &offset, &nVersions);
-
-        uint32_t verCount  = 0;
-        while((offset < rssize) && ok && (verCount < nVersions))
-        {
-            RsTlvKeySignature sign;
-            ok &= sign.GetTlv(data, *size, &offset);
-            item->msgs[msgId].push_back(sign);
-            verCount++;
-        }
-
-    }
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= item->idSign.GetTlv(data, *size, &offset);
 
     if (offset != rssize)
     {
@@ -1002,23 +930,9 @@ uint32_t RsNxsSerialiser::sizeSyncGrpList(RsSyncGrpList *item)
 
     s += 1; // flag
 
-    std::map<std::string, std::list<RsTlvKeySignature> >::iterator mit
-            = item->grps.begin();
+    s += GetTlvStringSize(item->grpId);
+    s += item->adminSign.TlvSize();
 
-    for(; mit != item->grps.end(); mit++){
-
-        s += 4; // number of versions
-        s += GetTlvStringSize(mit->first);
-
-        std::list<RsTlvKeySignature>& verL = mit->second;
-        std::list<RsTlvKeySignature>::iterator lit =
-                verL.begin();
-
-        for(; lit != verL.end(); lit++){
-            RsTlvKeySignature& sign = *lit; // version
-            s += sign.TlvSize();
-        }
-    }
     return s;
 }
 
@@ -1043,27 +957,18 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsgList(RsSyncGrpMsgList *item)
 
     s += 1; // flag
     s += GetTlvStringSize(item->grpId);
-    std::map<std::string, std::list<RsTlvKeySignature> >::iterator mit
-            = item->msgs.begin();
+    s += GetTlvStringSize(item->msgId);
+    s += item->idSign.TlvSize();
 
-    for(; mit != item->msgs.end(); mit++){
-
-        s += 4; // number of versions
-        s += GetTlvStringSize(mit->first);
-
-        std::list<RsTlvKeySignature>& verL = mit->second;
-        std::list<RsTlvKeySignature>::iterator lit =
-                verL.begin();
-
-        for(; lit != verL.end(); lit++){
-            RsTlvKeySignature& sign = *lit; // version
-            s += sign.TlvSize();
-        }
-    }
     return s;
 }
 
 uint32_t RsNxsSerialiser::sizeNxsSearchReq(RsNxsSearchReq *item){
+    return 0;
+}
+
+uint32_t RsNxsSerialiser::sizeNxsExtended(RsNxsExtended *item){
+
     return 0;
 }
 
@@ -1112,13 +1017,16 @@ void RsSyncGrpMsg::clear()
 void RsSyncGrpList::clear()
 {
     flag = 0;
-    grps.clear();
+    adminSign.TlvClear();
+    grpId.clear();
 }
 
 void RsSyncGrpMsgList::clear()
 {
     flag = 0;
-    msgs.clear();
+    msgId.clear();
+    idSign.TlvClear();
+    grpId.clear();
 }
 
 std::ostream& RsSyncGrp::print(std::ostream &out, uint16_t indent)
@@ -1180,24 +1088,10 @@ std::ostream& RsSyncGrpList::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "flag: " << flag << std::endl;
     printIndent(out , int_Indent);
-
-    SyncList::iterator mit
-            = grps.begin();
-
-    for(; mit != grps.end(); mit++){
-
-        out << "grpId: " <<  mit->first;
-        printIndent(out , int_Indent);
-
-        std::list<RsTlvKeySignature>& verL = mit->second;
-        std::list<RsTlvKeySignature>::iterator lit =
-                verL.begin();
-
-        for(; lit != verL.end(); lit++){
-            RsTlvKeySignature& sign = *lit;
-            sign.print(out, indent);
-        }
-    }
+    out << "grpId: " << grpId << std::endl;
+    printIndent(out , int_Indent);
+    adminSign.print(out, indent);
+    printIndent(out , int_Indent);
 
     printRsItemEnd(out , "RsSyncGrpList", indent);
     return out;
@@ -1214,24 +1108,11 @@ std::ostream& RsSyncGrpMsgList::print(std::ostream &out, uint16_t indent)
     out << "flag: " << flag << std::endl;
     printIndent(out , int_Indent);
     out << "grpId: " << grpId << std::endl;
-
-    SyncList::iterator mit
-            = msgs.begin();
-
-    for(; mit != msgs.end(); mit++){
-
-        out << "msgId: " <<  mit->first;
-        printIndent(out , int_Indent);
-
-        std::list<RsTlvKeySignature>& verL = mit->second;
-        std::list<RsTlvKeySignature>::iterator lit =
-                verL.begin();
-
-        for(; lit != verL.end(); lit++){
-           RsTlvKeySignature& sign = *lit;
-           sign.print(out, indent);
-        }
-    }
+    printIndent(out , int_Indent);
+    out << "msgId: " << msgId << std::endl;
+    printIndent(out , int_Indent);
+    idSign.print(out, indent);
+    printIndent(out , int_Indent);
 
     printRsItemEnd(out ,"RsSyncGrpMsgList", indent);
     return out;

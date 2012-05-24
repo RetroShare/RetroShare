@@ -9,30 +9,43 @@ INITTEST();
 #define NUM_SYNC_MSGS 8
 #define NUM_SYNC_GRPS 5
 
-RsSerialType* init_item(RsGrpResp& rgr)
+RsSerialType* init_item(RsNxsGrp& nxg)
 {
 
-    rgr.clear();
+    randString(SHORT_STR, nxg.identity);
+    randString(SHORT_STR, nxg.grpId);
+    nxg.timeStamp = rand()%23;
+    nxg.grpFlag = rand()%242;
+    init_item(nxg.grp);
 
-    for(int i=0; i < 5; i++){
-        RsTlvBinaryData* b = new RsTlvBinaryData(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-        init_item(*b);
-        rgr.grps.push_back(b);
+    init_item(nxg.adminSign);
+    init_item(nxg.idSign);
+
+    int nKey = rand()%12;
+
+    for(int i=0; i < nKey; i++){
+        nxg.keys.groupId  = nxg.grpId;
+        std::string s;
+        RsTlvSecurityKey k;
+        init_item(k);
+        nxg.keys.keys[k.keyId] = k;
     }
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 
-RsSerialType* init_item(RsGrpMsgResp& rgmr)
+RsSerialType* init_item(RsNxsMsg& nxm)
 {
-    rgmr.clear();
+    randString(SHORT_STR, nxm.msgId);
+    randString(SHORT_STR, nxm.grpId);
+    randString(SHORT_STR, nxm.identity);
 
-    for(int i=0; i < 5; i++){
-        RsTlvBinaryData* b = new RsTlvBinaryData(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-        init_item(*b);
-        rgmr.msgs.push_back(b);
-    }
+    init_item(nxm.publishSign);
+    init_item(nxm.idSign);
+    init_item(nxm.msg);
+    nxm.msgFlag = rand()%4252;
+    nxm.timeStamp = rand()%246;
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
@@ -65,20 +78,10 @@ RsSerialType* init_item(RsSyncGrpList& rsgl)
     rsgl.clear();
 
     rsgl.flag = RsSyncGrpList::FLAG_RESPONSE;
+    randString(SHORT_STR, rsgl.grpId);
+    init_item(rsgl.adminSign);
 
-    for(int i=0; i < NUM_SYNC_GRPS; i++){
 
-        int nVers = rand()%8;
-        std::list<uint32_t> verL;
-        for(int j=0; j < nVers; j++){
-            verL.push_back(rand()%343);
-        }
-        std::string grpId;
-        randString(SHORT_STR, grpId);
-
-        std::pair<std::string, std::list<uint32_t> > p(grpId, verL);
-        rsgl.grps.insert(p);
-    }
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
@@ -88,50 +91,47 @@ RsSerialType* init_item(RsSyncGrpMsgList& rsgml)
 
     rsgml.flag = RsSyncGrpList::FLAG_RESPONSE;
     randString(SHORT_STR, rsgml.grpId);
+    randString(SHORT_STR, rsgml.msgId);
+    init_item(rsgml.idSign);
 
-    for(int i=0; i < NUM_SYNC_GRPS; i++){
-
-        int nVers = rand()%8;
-        std::list<uint32_t> verL;
-        for(int j=0; j < nVers; j++){
-            verL.push_back(rand()%343);
-        }
-        std::string msgId;
-        randString(SHORT_STR, msgId);
-
-        std::pair<std::string, std::list<uint32_t> > p(msgId, verL);
-        rsgml.msgs.insert(p);
-    }
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 
-bool operator==(const RsGrpResp& l, const RsGrpResp& r){
+bool operator==(const RsNxsGrp& l, const RsNxsGrp& r){
 
-    if(l.grps.size() != r.grps.size()) return false;
+    if(!(l.adminSign == r.adminSign)) return false;
+    if(!(l.idSign == r.idSign)) return false;
+    if(l.timeStamp != r.timeStamp) return false;
+    if(l.grpFlag != r.grpFlag) return false;
+    if(l.identity != r.identity) return false;
+    if(l.grpId != r.grpId) return false;
+    if(l.keys.groupId != r.keys.groupId) return false;
+    if(!(l.grp == r.grp) ) return false;
 
-    std::list<RsTlvBinaryData*>::const_iterator lit
-            = l.grps.begin(), rit  =
-              r.grps.begin();
+    std::map<std::string, RsTlvSecurityKey>::const_iterator mit =
+            l.keys.keys.begin(), mit_end = l.keys.keys.end();
 
-    for(; lit != l.grps.end(); lit++, rit++){
-        if(!(*(*lit) == *(*rit))) return false;
+    for(; mit != mit_end; mit++){
+        const RsTlvSecurityKey& lk = l.keys.keys.find(mit->first)->second;
+        const RsTlvSecurityKey& rk = r.keys.keys.find(mit->first)->second;
+
+        if(! ( lk == rk) ) return false;
     }
 
     return true;
 }
 
-bool operator==(const RsGrpMsgResp& l, const RsGrpMsgResp& r){
+bool operator==(const RsNxsMsg& l, const RsNxsMsg& r){
 
-    if(l.msgs.size() != r.msgs.size()) return false;
-
-    std::list<RsTlvBinaryData*>::const_iterator lit
-            = l.msgs.begin(), rit  =
-              r.msgs.begin();
-
-    for(; lit != l.msgs.end(); lit++, rit++){
-        if(!(*(*lit) == *(*rit))) return false;
-    }
+    if(l.msgId != r.msgId) return false;
+    if(l.grpId != r.grpId) return false;
+    if(l.identity != r.identity) return false;
+    if(l.timeStamp != r.timeStamp) return false;
+    if(l.msgFlag != r.msgFlag) return false;
+    if(! (l.msg == r.msg) ) return false;
+    if(! (l.publishSign == r.publishSign) ) return false;
+    if(! (l.idSign == r.idSign) ) return false;
 
     return true;
 }
@@ -160,23 +160,9 @@ bool operator==(const RsSyncGrpMsg& l, const RsSyncGrpMsg& r)
 bool operator==(const RsSyncGrpList& l, const RsSyncGrpList& r)
 {
     if(l.flag != r.flag) return false;
+    if(! (l.adminSign == r.adminSign) ) return false;
+    if(l.grpId != r.grpId) return false;
 
-    SyncList::const_iterator lit = l.grps.begin(), rit= r.grps.begin();
-
-    for(; lit != l.grps.end(); lit++, rit++){
-
-        if(lit->first != rit->first) return false;
-        const std::list<uint32_t>& lList = lit->second, &rList
-                = rit->second;
-
-        std::list<uint32_t>::const_iterator lit2 = lList.begin(), rit2
-                                   = rList.begin();
-
-        for(; lit2 != lList.end(); lit2++, rit2++){
-
-            if(*lit2 != *rit2) return false;
-        }
-    }
     return true;
 }
 
@@ -184,23 +170,8 @@ bool operator==(const RsSyncGrpMsgList& l, const RsSyncGrpMsgList& r)
 {
     if(l.flag != r.flag) return false;
     if(l.grpId != r.grpId) return false;
-
-    SyncList::const_iterator lit = l.msgs.begin(), rit= r.msgs.begin();
-
-    for(; lit != l.msgs.end(); lit++, rit++){
-
-        if(lit->first != rit->first) return false;
-        const std::list<uint32_t>& lList = lit->second, &rList
-                = rit->second;
-
-        std::list<uint32_t>::const_iterator lit2 = lList.begin(), rit2
-                                   = rList.begin();
-
-        for(; lit2 != lList.end(); lit2++, rit2++){
-
-            if(*lit2 != *rit2) return false;
-        }
-    }
+    if(l.msgId != r.msgId) return false;
+    if(! (l.idSign == r.idSign) ) return false;
 
     return true;
 }
@@ -209,8 +180,8 @@ int main()
 {
     std::cerr << "RsNxsItem Tests" << std::endl;
 
-    test_RsItem<RsGrpResp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsGrpResp");
-    test_RsItem<RsGrpMsgResp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsGrpMsgResp");
+    test_RsItem<RsNxsGrp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsGrpResp");
+    test_RsItem<RsNxsMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsGrpMsgResp");
     test_RsItem<RsSyncGrp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrp");
     test_RsItem<RsSyncGrpMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpMsg");
     test_RsItem<RsSyncGrpList>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpList");

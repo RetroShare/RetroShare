@@ -693,3 +693,4 @@ SOURCES += services/p3photoservice.cc \
 #	rsserver/p3photo.cc \
 }
 
+

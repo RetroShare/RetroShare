@@ -83,21 +83,21 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGrps(std::set<std::string, RsNxsGrp*>& grp, bool cache) = 0;
+    virtual int retrieveGrps(std::map<std::string, RsNxsGrp*>& grp, bool cache) = 0;
 
     /*!
      * @param grpId the id of the group to get versions for
      * @param cache whether to store the result in memory
      * @param errCode
      */
-    virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsNxsGrp*>& grp) = 0;
+    virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsNxsGrp*>& grp, bool cache) = 0;
 
     /*!
      * @param msgId the id of the message to get versions for
      * @param cache whether to store the result in memory
      * @param errCode
      */
-    virtual int retrieveMsgVersions(const std::string& grpId, const std::string msgId, std::set<RsNxsMsg*> grp) = 0;
+    virtual int retrieveMsgVersions(const std::string& grpId, const std::string& msgId, std::set<RsNxsMsg*>& grp, bool cache) = 0;
 
     /*!
      * @param msgId the id of the message to retrieve

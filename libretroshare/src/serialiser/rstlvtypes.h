@@ -65,6 +65,7 @@ class RsTlvBinaryData: public RsTlvItem
 {
 	public:
 	 RsTlvBinaryData(uint16_t t);
+         void operator=(const RsTlvBinaryData& b);
 virtual ~RsTlvBinaryData();
 virtual	uint32_t TlvSize();
 virtual	void	 TlvClear(); /*! Initialize fields to empty legal values ( "0", "", etc) */

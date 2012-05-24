@@ -19,7 +19,7 @@ public:
      * @param cache whether to store retrieval in memory for faster later retrieval
      * @return error code
      */
-    int retrieveMsgs(const std::string& grpId, std::map<std::string, RsGxsMsg*> msg, bool cache);
+    int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*> msg, bool cache);
 
     /*!
      * Retrieves latest version of groups for a service
@@ -28,7 +28,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGrps(std::set<std::string, RsGxsGroup*>& grp, bool cache);
+    int retrieveGrps(std::map<std::string, RsNxsGrp*>& grp, bool cache);
 
     /*!
      * Retrieves all the versions of a group
@@ -44,7 +44,7 @@ public:
      * @param msgId the id of the message to get versions for
      * @return errCode
      */
-    int retrieveMsgVersions(const std::string &grpId, const std::string msgId, std::set<RsNxsMsg *> grp, bool cache);
+    int retrieveMsgVersions(const std::string &grpId, const std::string& msgId, std::set<RsNxsMsg *>& grp, bool cache);
 
     /*!
      * @param msgId the id of the message to retrieve

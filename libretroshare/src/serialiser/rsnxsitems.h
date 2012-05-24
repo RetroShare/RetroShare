@@ -96,8 +96,6 @@ public:
 
 };
 
-typedef std::map<std::string, std::list<RsTlvKeySignature> > SyncList;
-
 /*!
  * Use to send to peer list of grps
  * held by server peer
@@ -112,6 +110,7 @@ public:
     static const uint8_t FLAG_USE_SYNC_HASH;
 
     RsSyncGrpList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
+    virtual ~RsSyncGrpList() { return; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -120,7 +119,8 @@ public:
     uint8_t flag; // request or response
 
     /// groups held by sending peer
-     SyncList grps; // grpId/ sign pair
+    RsTlvKeySignature adminSign;
+    std::string grpId;
 
 };
 
@@ -192,7 +192,8 @@ public:
 
     uint8_t flag; // response/req
     std::string grpId;
-    SyncList msgs; // msg/versions pairs
+    std::string msgId;
+    RsTlvKeySignature idSign;
 
 };
 
