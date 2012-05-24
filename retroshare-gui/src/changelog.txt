@@ -1,3 +1,193 @@
+Changes for 0.5.3c
+
+  * Improvements
+     - Added check for empty lobby nick name. Moved notify of lobby nick name change from the gui to p3ChatService. Added missing mutex locks for p3ChatService::_default_nick_name. Recompile needed.
+     - Added patch from Imanuel - Added new placeholder %style-dir% for ChatStyles.
+     - Fixed replacing of %color% in ChatStyle. It should not be replaced after %message%.
+     - Redesigned ConnectFriendWizard as ui file. Added new base class DropLineEdit. Fixed german language.
+     - Added patch from braindead: changed base-class of AvatarWidget to QLabel
+     - Switched back to not optimized compile on Windows.
+     - Added changes from braindead: - simplified avatarwidget - prepared property-dependend stylesheets
+     - updated ubuntu changelog
+     - Optimized RsCollectionDialog (still without thread). Enabled extended selection and mark with the key 'space'.
+     - main enabled notifyQt after creation of GUI
+     - forgot ifs in notifyQt
+     - removed data race in QObject::connect() vs. NotifyQt signals by enabling notification signals only after GUI is created
+     - Added dynamic locking function for the OpenSSL library. This is needed when using OpenSSL from multiple threads.
+     - Improved the default recommendation text
+     - switched chunk per peer and max chunk age to previous values, now that chunk cannot be slowed down by slower peers
+     - Added a default styleSheet for the "Confirm Friend / Add as Friend" Button
+     - Fixed handling of html links in HandleRichText::formatText.
+     - removed possible data race on boolean value (Not critical)
+     - Moved HandleRichText from the folder "chat" to "util" and redesigned the source - Extended RsHtml::formatText to replace the RetroShare links with an image and enabled this for the certificate links in the system messages (friend recommen...
+     - Improved mute feature, to update Blocklist, when the peer changes his name.
+     - removed non-mutex-protected reference
+     - Improved multi-source file transfer in two ways: - tunnels can borrow data chunks from only slower tunnels, to prevent blocking fast tunnels - tunnels can handle up to 50 data chunks at once instead of 5 Multi-source transfers are generaly ...
+     - update language strings and corrected connect attempt message
+     - Fixed issue with lost downloads when RetroShare exits (or crashes) during the load of the file transfer items. The pending list was not saved.
+     - update translation strings, changed recommend friend context menu icon
+     - Display old and new nickname to Peers during nickname change in ChatLobby.
+     - Preparation for mute Peers in the Chat Lobby.
+     - updated french translation (Max Romeo)
+     - utf8 patch for notifyqt from AsamK
+     - Fixed update (repaint) of the placeholder text of the quick view items in MessagesDialog.
+     - Friend recommendation message - renamed subject - added to system message Recompile needed 
+     - french translation update (Max. Romeo)
+     - Add the function to Mute peers in ChatLobby via checkbox.
+     - Changed style of the reply/forwarded message.
+     - Added a title label to Friend Request Toaster, little design changes.
+     - fixed bug probably responsible for random crashes in DHT code
+     - Removed hide/show Quickview function and moved Quickview little bit to the top. * Disabled to not stretch last column
+     - Switched on optimized compile on Windows.
+     - Removed usages of "std::istringstream" and "std::stringstream".
+     - Added patch from braindead - Added empty entry to stylesheet-choice for "no stylesheet" and moved method "loadStyleSheet" from MainWindow to Rshare 
+     - Added (and modified) patch from Imanuel - Added ability to style the system messages in chat (e.g. Lobby management) Fixed german language.
+     - Added new message flag for system messages like friend request. Show "RetroShare" as sender of system messages to myself. Added new quick view in MessagesDialog to filter system messages. Changed RetroShare link in friend request message to...
+     - added paste own certificate to chat/forum context menu (patch from AC)
+     - Added new notify on connect attempt by the local message system.
+     - Removed not needed field in FriendRequest Dialog
+     - Added new friend request toaster from defnax.
+     - Added patch from Imanuel - Fixed base path for the external stylesteets
+     - Optimized channel loading and layout.
+     - Changed parameter of RsChannels from "std::string" to "const std::string&". Recompile needed.  
+     - Added threaded loading of channels (GUI).
+     - added paste own certificate to chat/forum context menu (patch from AC)
+     - Added function to mute some participants in chat lobbies
+     - Switched on optimized compile on Windows.
+     - Improved multi-source file transfer in two ways:
+         * tunnels can borrow data chunks from only slower tunnels, to prevent blocking fast tunnels
+         * inactive chunks are asked again after a longer time, to avoid wasting bandwidth asking them twice
+     - Added new notify on connect attempt by the local message system.
+     - Removed not needed field in FriendRequest Dialog
+     - Added new friend request toaster from defnax.
+     - Fixed base path for the external stylesteets
+     - Optimized channel loading and layout.
+     - Optimized RsCollectionDialog (still without thread).
+     - Enabled extended selection and mark with the key 'space'.
+     - Improved the default recommendation text
+     - Added a default styleSheet for the "Confirm Friend / Add as Friend" Button
+     - Moved HandleRichText from the folder "chat" to "util" and redesigned the source
+     - Extended RsHtml::formatText to replace the RetroShare links with an image and enabled 
+       this for the certificate links in the system messages (friend recommendation and user request)
+     - Added new ObjectPainter for painting a button on a pixmap
+     - Display old and new nickname to Peers during nickname change in ChatLobby.
+     - update french translation (Max Romeo)
+     - Fixed utf8 in notifyQt
+     - Improved friend recommendation
+     - Added a title label to Friend Request Toaster, little design changes
+     - Added empty entry to stylesheet-choice for "no stylesheet" and moved method "loadStyleSheet" from MainWindow to Rshare (patch from braindead)
+     - Added ability to style the system messages in chat (e.g. Lobby management)
+     - Added new message flag for system messages like friend request.
+     - Show "RetroShare" as sender of system messages to myself.
+     - Added new quick view in MessagesDialog to filter system messages.
+     - Changed RetroShare link in friend request message to certificate.
+     - Added new subject image for the system messages (defnax).
+     - Removed not used notify in message service.
+     - removed minimal version
+     - Improved TR routing strategy:
+        * updated base forward probabilities to larger values
+        * used a minimum FP to 1/nb_connected_friends instead of 0. This is the larger non-explosive value.
+        * changed tunnel management time to 2 secs instead of 1, setting the overall number of TR/s emmitted 
+          for all downloads to 0.5 (Should reduce the TR load for the whole network by a factor of 2).
+     - Activate DHTML in Doxygen Documentation, for Fold in/out Class hierarchy images.
+     - New Doxygen configuratin for Retroshare GUI, see at
+         http://notdefine.de/retroshare/retroshare/trunk/retroshare-gui/src/html/index.html
+     - Add missing includes "unistd.h" for compiling with gcc 4.7.0. (Patch from AC)
+     - Added a label for Connect Attempt after nickname "wants to be friends with you on RetroShare"
+     - Added "You have a friend request" label to FriendRequest Dialog
+     - Renamed "Accept Friend Request" Button to "Confirm",
+     - set correct stylesheet for new forum item
+     - Added stylesheet for the Friend Request Buttons
+     - Added new basic class for a QLineEdit with a clear button - LineEditClear.
+     - Enabled file preview on Windows.
+     - The link file to preview a not finished download is created in temp directory.
+     - Added a messagebox when preview a not finished download to remove the link file.
+     - Fixed german language
+     - Removed the max length from the ip fields in ProfileWidget to display all 15 digits.
+     - enabled disabling autodownload for channel admin (patch from asamK)
+     - Added Copy Certificate Button to ProfileWidget
+     - Fixed compile of VOIP on Windows with Qt >4.7
+     - Modified some defaults (auto check of shared directories to 15 minutes, time to idle mode to 5 minutes)
+     - Added welcome message to the chat lobby
+     - Changed display of the own name in FriendsDialog from "Name (me) Location" to "Name (Location)".
+     - update new Spanish translation from Aitor
+     - Added two new functions to libretroshare for writing formatted data to std::string
+     - Added two new images from defnax to SecurityItem for SEC_TYPE_CONNECT_ATTEMPT and SEC_TYPE_UNKNOWN_IN.kkkkk
+  	  - added new toasters for private/group/lobby chat.
+     - added copy certificate button to profile widget
+     - added topics to chat lobbies. Improved CL gui
+     - added deferred checking of chunks in FT. Not fully functional yet, for backward compatibility reasons.
+     - prepared libretroshare for OpenSSL-1.0
+     - Bring the main window to foreground when receiving a link from the browser (Windows only).
+     - Fixed compilation on MacOS 10.6 (patch from K.Gupta)
+     - Update installer script, added spanish,arabic,italian,greek and portuguese language support
+     - Optimized layout of the newsfeed items.
+     - Fixed linking of the VOIP plugin on Windows (Exports all symbols from RetroShare.exe and import it in the plugins.
+        Removed the direct linking of the libretroshare and libbitdht from the plugins.)
+     - Fixed utf8 characters in the transfer tab name of plugins.
+     - Functional version of VOIP plugin.
+     - Added ability for plugins to return their own PopupChatDialog class
+     - Count the friends (gpg id's) instead of the locations (ssl id's) in the statusbar.
+     - Moved update of the friends from QTimer to signals.
+     - Combined p3LinkMgr::getFriendCount and p3LinkMgr::getOnlineCount and moved to p3PeerMgr.
+     - Fixed scroll position of the text browser in the chat dialog when the friend changes the status and the info frame is shown or hidden
+     - Reworked the start of a chat with a gpg id (doubleclick in friends tree). Removed the question to send a message when a chat 
+        with an offline friend is started. Start the chat when only one ssl id exist (online or offline) or only one ssl id is online.
+        Show a messagebox when more than one ssl ids are online or all are offline.
+     - Added check for required location during gpg key generation.
+     - added BSD specific changes
+     - made settings page system more automatic
+     - updated french translation
+     - mark local existing files in search dialog with red color
+     - started working on VOIP plugin (not finished yet)
+        * merged p3voRS code with plugin code
+        * created new interface directory retroshare-gui/src/retroshare-gui
+        * improved plugin system to allow adding settings pages from plugins
+
+  * Bugs
+     - Removed data race in QObject::connect() vs. NotifyQt signals by enabling notification signals only after GUI is created
+     - Added dynamic locking function for the OpenSSL library to prevent data races.
+     - Fixed handling of html links in HandleRichText::formatText.
+     - Removed possible data race on boolean value (Not critical)
+     - Removed non-mutex-protected reference in p3turtle.cc
+     - Fixed issue with lost downloads when RetroShare exits (or crashes) during the load of the file transfer items. The pending list was not saved.
+     - Fixed bug probably responsible for random crashes in DHT code
+     - Removed usages of "std::istringstream" and "std::stringstream", which are not thread-safe.
+     - removed all calls to std::stringstream, causing a thread data race on windows
+     - don't remove color and font when the last char is deleted from the chat text entry box (Patch from AC)
+     - Fixed, hide "Accept Friend Request" Button for Unknown Peers
+     - Improved Search Dialog (Patch from AsamK)
+        * don't add friend sources count to anonymous count each time a result for the same file is received!, this could 
+          lead to enormously large sources numbers
+        * don't readd search in summary list if it was already removed by the user
+        * don't clear the filter when new search results are added
+        * when using the file name filter only show result from the current search, not also from previous searches
+        * fixed adding only file types which were searched for, for this I created a new hidden column in summary list to store the file type
+        * fixed sorting by file size/age, pad string with '0' instead of ' ' Search feature: a quirk I've found
+        * decrease gui hanging:
+           -when adding search results temporarily disable sorting
+           -only add 250 instead of 500 items in one go
+           -don't call selectSearchResults() for each item added to the result list; instead call hideOrShowSearchResult() 
+            which only sets the hidden status of the added item, not the complete list
+           -replace std::string with QString, removes unnecessary conversions
+     - Fixed clickable links in forum message feed.
+     - Added thread safe function for inet_ntoa in libbitdht using the existing thread safe function for inet_ntoa in libretroshare
+     - Fixed deadlock when receiving a chat message with open history browser.
+     - fixed version script (Patch form AC)
+     - Fixed Download link for Email Invite
+     - Fixed utf8 in dropping links to channels (patch from AsamK)
+     - Fixed pasting cert links in the friend list (patch from AsamK)
+     - Added code to allow pasting GPG certificates missing a newline at the end (patch from AsamK)
+     - Fixed display of the location with utf8 characters in ConnectFriendWizard.
+     - Fixed icon size in forums
+     - Disabled adding new keys from friends of friends in non-discovery mode.
+     - Fixed display of friend status in chat window
+     - Fixed bug returning false while a string is expected in p3distrib
+     - fixed crash in config dialog
+     - fixed missing return value in ftcontroller.cc
+
+
+
 Changes for v0.5.3b
 
   * Improvements
