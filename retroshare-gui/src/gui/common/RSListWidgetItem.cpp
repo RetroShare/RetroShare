@@ -69,7 +69,7 @@ bool RSListWidgetItem::operator<(const QListWidgetItem &other) const
 	case 0: //integer type
 		return v1.toLongLong() < v2.toLongLong();
 	case 1: //floating point
-		return v1.toReal() < v2.toReal();
+		return v1.toDouble() < v2.toDouble();
 	}
 
 	return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
