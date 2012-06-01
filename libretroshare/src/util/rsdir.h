@@ -41,7 +41,7 @@ namespace RsDirUtil {
 std::string 	getTopDir(const std::string&);
 std::string 	getRootDir(const std::string&);
 std::string 	removeRootDir(const std::string& path);
-std::string     removeTopDir(const std::string& dir);
+void 			removeTopDir(const std::string& dir, std::string &path);
 std::string 	removeRootDirs(const std::string& path, const std::string& root);
 
 // Renames file from to file to. Files should be on the same file system.

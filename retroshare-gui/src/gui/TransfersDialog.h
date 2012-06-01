@@ -168,12 +168,10 @@ private:
 public slots:
 	// these two functions add entries to the transfers dialog, and return the row id of the entry modified/added
 	//
-    int addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime,const QString& tooltip);
-    int addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
-//    void delItem(int row);
+    int addItem(int row, const FileInfo &fileInfo, const std::map<std::string, std::string> &versions);
+    int addPeerToItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
 
     int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
-//    void delUploadItem(int row);
 
     void showFileDetails() ;
 

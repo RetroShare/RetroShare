@@ -1625,7 +1625,7 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	info.fname = it->second->mName;
 	info.flags = it->second->mFlags;
 	info.priority = SPEED_NORMAL ;
-	info.path = RsDirUtil::removeTopDir(it->second->mDestination); /* remove fname */
+	RsDirUtil::removeTopDir(it->second->mDestination, info.path); /* remove fname */
 	info.queue_position = it->second->mQueuePosition ;
 
 	/* get list of sources from transferModule */
@@ -1982,7 +1982,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		rft->file.name = fit->second->mName;
 		rft->file.hash  = fit->second->mHash;
 		rft->file.filesize = fit->second->mSize;
-		rft->file.path = RsDirUtil::removeTopDir(fit->second->mDestination); /* remove fname */
+		RsDirUtil::removeTopDir(fit->second->mDestination, rft->file.path); /* remove fname */
 		rft->flags = fit->second->mFlags;
 		rft->state = fit->second->mState;
 		fit->second->mTransfer->getFileSources(rft->allPeerIds.ids);
@@ -2031,7 +2031,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 				rft->file.name = pit->mName;
 				rft->file.hash  = pit->mHash;
 				rft->file.filesize = pit->mSize;
-				rft->file.path = RsDirUtil::removeTopDir(pit->mDest); /* remove fname */
+				RsDirUtil::removeTopDir(pit->mDest, rft->file.path); /* remove fname */
 				rft->flags = pit->mFlags;
 				rft->allPeerIds.ids = pit->mSrcIds;
 			}

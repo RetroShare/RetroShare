@@ -630,9 +630,6 @@ p, li { white-space: pre-wrap; }
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
-         <property name="acceptDrops">
-          <bool>false</bool>
-         </property>
          <property name="lineWidth">
           <number>0</number>
          </property>
@@ -655,6 +652,9 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="rootIsDecorated">
+          <bool>true</bool>
+         </property>
+         <property name="uniformRowHeights">
           <bool>true</bool>
          </property>
          <property name="sortingEnabled">
@@ -681,9 +681,9 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="uploadsTab">
        <attribute name="icon">
         <iconset resource="images.qrc">
          <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
@@ -713,7 +713,7 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="transferTab">
        <attribute name="icon">
         <iconset resource="images.qrc">
          <normaloff>:/images/blockdevice.png</normaloff>:/images/blockdevice.png</iconset>
@@ -744,8 +744,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>598</width>
-             <height>99</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
           </widget>

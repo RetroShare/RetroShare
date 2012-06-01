@@ -157,26 +157,25 @@ bool RsDirUtil::crc32File(FILE *fd, uint64_t file_size,uint32_t chunk_size, CRC3
 	return true ;
 }
 
-std::string 	RsDirUtil::removeTopDir(const std::string& dir)
+void RsDirUtil::removeTopDir(const std::string& dir, std::string& path)
 {
-	std::string rest;
+	path.clear();
 
 	/* remove the subdir: [/][dir1.../]<top>[/]
 	 */
-	int i,j;
-	int len = dir.length();
-	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--) ;
-	for(i = j; (i >= 0) && (dir[i] != '/'); i--) ;
+	int j = dir.find_last_not_of('/');
+	int i = dir.rfind('/', j);
 
 	/* remove any more slashes */
-	for(; (i >= 0) && (dir[i] == '/'); i--) ;
-
-	for(j = 0; j <= i; j++)
+	if (i > 0)
 	{
-		rest += dir[j];
+		i = dir.find_last_not_of('/', i);
 	}
 
-	return rest;
+	if (i > 0)
+	{
+		path.assign(dir, 0, i + 1);
+	}
 }
 
 std::string 	RsDirUtil::getRootDir(const std::string& dir)
