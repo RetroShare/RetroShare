@@ -26,15 +26,14 @@
    Portable version: <Application dir>/stylesheets
 
    stylesheets
-   +history
-   |-Style1
-   |-Style2
-   +private
-   |-Style1
-   |-Style2
-   +public
-   |-Style1
-   |-Style2
+   +style1
+   |-history
+   |-private
+   |-public
+   +style2
+   |-history
+   |-private
+   |-public
 
  Files and dirs of the style:
    info.xml      - description
@@ -449,7 +448,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
             standardInfo.styleDescription = tr("Compact style for group chat");
             styles.append(standardInfo);
         }
-        stylePath = "stylesheets/public";
+        stylePath = "public";
         break;
     case TYPE_PRIVATE:
         if (getStyleInfo(":/qss/chat/standard/private", ":/qss/chat/standard/private", standardInfo)) {
@@ -460,7 +459,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
             standardInfo.styleDescription = tr("Compact style for private chat");
             styles.append(standardInfo);
         }
-        stylePath = "stylesheets/private";
+        stylePath = "private";
         break;
     case TYPE_HISTORY:
         if (getStyleInfo(":/qss/chat/standard/history", ":/qss/chat/standard/history", standardInfo)) {
@@ -471,7 +470,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
             standardInfo.styleDescription = tr("Compact style for history");
             styles.append(standardInfo);
         }
-        stylePath = "stylesheets/history";
+        stylePath = "history";
         break;
     case TYPE_UNKNOWN:
     default:
@@ -479,7 +478,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     }
 
     QDir dir(baseDir);
-    if (dir.cd(stylePath) == false) {
+    if (dir.cd("stylesheets") == false) {
         // no user styles available
         return true;
     }
@@ -488,9 +487,14 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
 
     // iterate style directories and get info
-    for (QFileInfoList::iterator dir = dirList.begin(); dir != dirList.end(); dir++) {
+    for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); it++) {
+        QDir styleDir = QDir(it->absoluteFilePath());
+        if (styleDir.cd(stylePath) == false) {
+            // no user styles available
+            continue;
+        }
         ChatStyleInfo info;
-        if (getStyleInfo(dir->absoluteFilePath(), baseDir.relativeFilePath(dir->absoluteFilePath()), info)) {
+        if (getStyleInfo(styleDir.absolutePath(), baseDir.relativeFilePath(styleDir.absolutePath()), info)) {
             styles.append(info);
         }
     }
