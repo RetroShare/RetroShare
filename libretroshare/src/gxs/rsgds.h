@@ -74,7 +74,7 @@ public:
      * @param cache whether to store retrieval in memory for faster later retrieval
      * @return error code
      */
-    virtual int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*> msg, bool cache) = 0;
+    virtual int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*>& msg, bool cache) = 0;
 
     /*!
      * Retrieves a group item by grpId
@@ -128,6 +128,20 @@ public:
     virtual int searchGrps(RsGxsSearch* search, std::list<RsGxsSrchResGrpCtx*>& result) = 0;
 
     /*!
+     * remove msgs in data store listed in msgIds param
+     * @param msgIds ids of messages to be removed
+     * @return error code
+     */
+    virtual int removeMsgs(const std::list<RsGxsMsgId>& msgIds) = 0;
+
+    /*!
+     * remove groups in data store listed in grpIds param
+     * @param grpIds ids of groups to be removed
+     * @return error code
+     */
+    virtual int removeGroups(const std::list<RsGxsGrpId>& grpIds) = 0;
+
+    /*!
      * @return the cache size set for this RsGeneralDataService in bytes
      */
     virtual uint32_t cacheSize() const = 0;
@@ -150,6 +164,14 @@ public:
      * @return error code
      */
     virtual int storeGroup(std::set<RsNxsGrp*>& grp) = 0;
+
+
+    /*!
+     * Completely clear out data stored in
+     * and returns this to a state
+     * as it was when first constructed
+     */
+    virtual int resetDataStore() = 0;
 
 };
 

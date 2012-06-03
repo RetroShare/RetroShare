@@ -29,7 +29,7 @@
 
 #include "retrodb.h"
 
-//#define RETRODB_DEBUG
+#define RETRODB_DEBUG
 
 void free_blob(void* dat){
 
@@ -523,7 +523,7 @@ bool RetroCursor::moveToFirst(){
 #endif
 
     if(!isOpen())
-        return -1;
+        return false;
 
     // reset statement
     int rc = sqlite3_reset(mStmt);

@@ -19,7 +19,7 @@ public:
      * @param cache whether to store retrieval in memory for faster later retrieval
      * @return error code
      */
-    int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*> msg, bool cache);
+    int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*>& msg, bool cache);
 
     /*!
      * Retrieves latest version of groups for a service
@@ -57,6 +57,21 @@ public:
      * @return NULL if group does not exist or pointer to grp if found
      */
     RsNxsGrp* retrieveGrpVersion(const RsGxsGrpId& grpId);
+
+    /*!
+     * remove msgs in data store listed in msgIds param
+     * @param msgIds ids of messages to be removed
+     * @return error code
+     */
+    int removeMsgs(const std::list<RsGxsMsgId>& msgIds);
+
+    /*!
+     * remove groups in data store listed in grpIds param
+     * @param grpIds ids of groups to be removed
+     * @return error code
+     */
+    int removeGroups(const std::list<RsGxsGrpId>& grpIds);
+
 
     /*!
      * allows for more complex queries specific to the service
@@ -97,6 +112,13 @@ public:
      * @return error code
      */
     int storeGroup(std::set<RsNxsGrp*>& grp);
+
+    /*!
+     * Completely clear out data stored in
+     * this data store and returns this to a state
+     * as it was when first constructed
+     */
+    int resetDataStore();
 
 private:
 

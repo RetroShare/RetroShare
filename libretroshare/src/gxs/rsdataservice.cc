@@ -7,9 +7,9 @@
 
 
 // generic
-#define KEY_NXS_FILE std::string("msgFile")
+#define KEY_NXS_FILE std::string("nxsFile")
 #define KEY_NXS_FILE_OFFSET std::string("fileOffset")
-#define KEY_NXS_LEN std::string("msgLen")
+#define KEY_NXS_FILE_LEN std::string("nxsFileLen")
 #define KEY_NXS_IDENTITY std::string("identity")
 #define KEY_GRP_ID std::string("grpId")
 #define KEY_IDENTITY_SIGN std::string("idSign")
@@ -20,7 +20,6 @@
 #define KEY_ADMIN_SIGN std::string("adminSign")
 #define KEY_KEY_SET std::string("keySet")
 
-#define KEY_GRP_FILE std::string("grpFile")
 
 
 // msg table columns
@@ -29,22 +28,22 @@
 
 
 // grp col numbers
-#define COL_GRP_ID 1
-#define COL_ADMIN_SIGN 2
-#define COL_KEY_SET 10
+#define COL_GRP_ID 0
+#define COL_ADMIN_SIGN 1
+#define COL_KEY_SET 9
 
 // msg col numbers
-#define COL_MSG_ID 1
-#define COL_PUBLISH_SIGN 2
+#define COL_PUBLISH_SIGN 1
+#define COL_MSG_ID 9
 
 // generic col numbers
-#define COL_NXS_FILE 3
-#define COL_NXS_FILE_OFFSET 4
-#define COL_NXS_LEN 5
-#define COL_TIME_STAMP 6
-#define COL_NXS_FLAGS 7
-#define COL_IDENTITY_SIGN 8
-#define COL_IDENTITY 9
+#define COL_NXS_FILE 2
+#define COL_NXS_FILE_OFFSET 3
+#define COL_NXS_FILE_LEN 4
+#define COL_TIME_STAMP 5
+#define COL_NXS_FLAGS 6
+#define COL_IDENTITY_SIGN 7
+#define COL_IDENTITY 8
 
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
@@ -53,32 +52,31 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
 
 
     // initialise database
-    remove("RsFileGdp_DataBase");
     mDb = new RetroDb(dbName, RetroDb::OPEN_READWRITE_CREATE);
 
     // create table for msgs
     mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" + KEY_MSG_ID
-                 + " TEXT PRIMARY KEY ASC," + KEY_GRP_ID +  " TEXT," + KEY_NXS_FLAGS + " INT,"
+                 + " TEXT," + KEY_GRP_ID +  " TEXT," + KEY_NXS_FLAGS + " INT,"
                   + KEY_TIME_STAMP + " INT," + KEY_PUBLISH_SIGN + " BLOB," + KEY_NXS_IDENTITY + " TEXT,"
                  + KEY_IDENTITY_SIGN + " BLOB," + KEY_NXS_FILE + " TEXT,"+ KEY_NXS_FILE_OFFSET + " INT,"
-                 + KEY_NXS_LEN+ " INT);");
+                 + KEY_NXS_FILE_LEN+ " INT);");
 
     // create table for grps
     mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" + KEY_GRP_ID +
-                 " TEXT PRIMARY KEY ASC," + KEY_TIME_STAMP + " INT," +
+                 " TEXT," + KEY_TIME_STAMP + " INT," +
                  KEY_ADMIN_SIGN + " BLOB," + " BLOB," + KEY_NXS_FILE +
-                  " TEXT," + KEY_NXS_FILE_OFFSET + KEY_KEY_SET + " BLOB," + " INT," + KEY_NXS_LEN + " INT,"
+                  " TEXT," + KEY_NXS_FILE_OFFSET + " INT," + KEY_KEY_SET + " BLOB," + KEY_NXS_FILE_LEN + " INT,"
                   + KEY_NXS_IDENTITY + " TEXT," + KEY_NXS_FLAGS + " INT," + KEY_IDENTITY_SIGN + " BLOB);");
 
-
-    msgColumns.push_back(KEY_MSG_ID); msgColumns.push_back(KEY_PUBLISH_SIGN);  msgColumns.push_back(KEY_NXS_FILE);
-    msgColumns.push_back(KEY_NXS_FILE_OFFSET); msgColumns.push_back(KEY_NXS_LEN); msgColumns.push_back(KEY_TIME_STAMP);
-    msgColumns.push_back(KEY_NXS_FLAGS); msgColumns.push_back(KEY_NXS_IDENTITY); msgColumns.push_back(KEY_IDENTITY_SIGN);
+    msgColumns.push_back(KEY_GRP_ID); msgColumns.push_back(KEY_PUBLISH_SIGN);  msgColumns.push_back(KEY_NXS_FILE);
+    msgColumns.push_back(KEY_NXS_FILE_OFFSET); msgColumns.push_back(KEY_NXS_FILE_LEN); msgColumns.push_back(KEY_TIME_STAMP);
+    msgColumns.push_back(KEY_NXS_FLAGS); msgColumns.push_back(KEY_IDENTITY_SIGN); msgColumns.push_back(KEY_NXS_IDENTITY);
+    msgColumns.push_back(KEY_MSG_ID);
 
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_ADMIN_SIGN); grpColumns.push_back(KEY_NXS_FILE);
-    grpColumns.push_back(KEY_NXS_FILE_OFFSET); grpColumns.push_back(KEY_NXS_LEN); grpColumns.push_back(KEY_TIME_STAMP);
-    grpColumns.push_back(KEY_NXS_FLAGS); grpColumns.push_back(KEY_NXS_IDENTITY); grpColumns.push_back(KEY_IDENTITY_SIGN);
-    grpColumns.push_back(KEY_KEY_SET); grpColumns.push_back(KEY_GRP_FILE);
+    grpColumns.push_back(KEY_NXS_FILE_OFFSET);  grpColumns.push_back(KEY_NXS_FILE_LEN); grpColumns.push_back(KEY_TIME_STAMP);
+    grpColumns.push_back(KEY_NXS_FLAGS); grpColumns.push_back(KEY_IDENTITY_SIGN);
+    grpColumns.push_back(KEY_NXS_IDENTITY); grpColumns.push_back(KEY_KEY_SET);
 }
 
 RsDataService::~RsDataService(){
@@ -96,8 +94,8 @@ RsNxsGrp* RsDataService::getGroup(RetroCursor &c){
     RsNxsGrp* grp = new RsNxsGrp(mServType);
     bool ok = true;
 
+    // for manipulating raw data
     uint32_t offset = 0;
-    // declare members of nxsgrp
     char* data = NULL;
     uint32_t data_len = 0;
 
@@ -107,42 +105,52 @@ RsNxsGrp* RsDataService::getGroup(RetroCursor &c){
 
     // identity if any
     c.getString(COL_IDENTITY, grp->identity);
-    grp->timeStamp = c.getInt64(COL_TIME_STAMP);
+    grp->timeStamp = c.getInt32(COL_TIME_STAMP);
 
-    if(!grp->identity.empty() && ok){
+    if(!( grp->identity.empty() ) && ok){
         offset = 0;
         data = (char*)c.getData(COL_IDENTITY_SIGN, data_len);
         if(data){
-            grp->adminSign.GetTlv(data, data_len, &offset);
+
+            grp->idSign.GetTlv(data, data_len, &offset);
         }
     }
 
-    grp->grpFlag = c.getInt32(COL_NXS_FLAGS);
+    offset = 0;
+    data = (char*)c.getData(COL_ADMIN_SIGN, data_len);
+    if(data){
+        grp->adminSign.GetTlv(data, data_len, &offset);
+    }
 
+
+
+    grp->grpFlag = c.getInt32(COL_NXS_FLAGS);
 
     offset = 0; data = NULL; data_len = 0;
 
     data = (char*)c.getData(COL_KEY_SET, data_len);
     if(data){
-        ok &= grp->keys.SetTlv(data, data_len, &offset);
+        ok &= grp->keys.GetTlv(data, data_len, &offset);
     }
 
     std::string grpFile;
     c.getString(COL_NXS_FILE, grpFile);
-    data_len = c.getInt32(COL_NXS_LEN);
     ok &= !grpFile.empty();
     /* now retrieve grp data from file */
 
     if(ok){
+
+        data_len = c.getInt32(COL_NXS_FILE_LEN);
         offset = c.getInt32(COL_NXS_FILE_OFFSET);
-        std::ifstream istrm(grpFile.c_str());
-        istrm.open(grpFile.c_str(), std::ios::binary);
-        istrm.seekg(offset, std::ios::beg);
+
         char grp_data[data_len];
+        std::ifstream istrm(grpFile.c_str(), std::ios::binary);
+        istrm.seekg(offset, std::ios::beg);
         istrm.read(grp_data, data_len);
+
         istrm.close();
         offset = 0;
-        ok &= grp->grp.SetTlv(grp_data, data_len, &offset);
+        ok &= grp->grp.GetTlv(grp_data, data_len, &offset);
     }
 
     if(ok)
@@ -170,8 +178,9 @@ RsNxsMsg* RsDataService::getMessage(RetroCursor &c){
     c.getString(COL_IDENTITY, msg->identity);
 
     if(!msg->identity.empty()){
+        offset = 0;
         data = (char*)c.getData(COL_IDENTITY_SIGN, data_len);
-        msg->idSign.SetTlv(data, data_len, &offset);
+        msg->idSign.GetTlv(data, data_len, &offset);
     }
 
     msg->msgFlag = c.getInt32(COL_NXS_FLAGS);
@@ -182,26 +191,27 @@ RsNxsMsg* RsDataService::getMessage(RetroCursor &c){
 
         data = (char*)c.getData(COL_PUBLISH_SIGN, data_len);
         if(data)
-            msg->publishSign.SetTlv(data, data_len, &offset);
+            msg->publishSign.GetTlv(data, data_len, &offset);
 
     }
 
     std::string msgFile;
     c.getString(COL_NXS_FILE, msgFile);
-    data_len = c.getInt32(COL_NXS_LEN);
+    offset = c.getInt32(COL_NXS_FILE_OFFSET);
+    data_len = c.getInt32(COL_NXS_FILE_LEN);
     ok &= !msgFile.empty();
     /* now retrieve grp data from file */
 
     if(ok){
-        offset = c.getInt32(COL_NXS_FILE_OFFSET);
-        std::ifstream istrm(msgFile.c_str());
-        istrm.open(msgFile.c_str(), std::ios::binary);
+
+        char msg_data[data_len];
+        std::ifstream istrm(msgFile.c_str(), std::ios::binary);
         istrm.seekg(offset, std::ios::beg);
-        char grp_data[data_len];
-        istrm.read(grp_data, data_len);
+        istrm.read(msg_data, data_len);
+
         istrm.close();
         offset = 0;
-        ok &= msg->msg.SetTlv(grp_data, data_len, &offset);
+        ok &= msg->msg.GetTlv(msg_data, data_len, &offset);
     }
 
     if(ok)
@@ -229,13 +239,21 @@ int RsDataService::storeMessage(std::set<RsNxsMsg *> &msg){
         uint32_t offset = ostrm.tellg(); // get fill offset
 
         ContentValue cv;
+        cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
+        cv.put(KEY_NXS_FILE, msgFile);
+        cv.put(KEY_NXS_FILE_LEN, (int32_t)msgPtr->msg.TlvSize());
         cv.put(KEY_MSG_ID, msgPtr->msgId);
         cv.put(KEY_GRP_ID, msgPtr->grpId);
         char pubSignData[msgPtr->publishSign.TlvSize()];
+        offset = 0;
+        msgPtr->publishSign.SetTlv(pubSignData, msgPtr->publishSign.TlvSize(), &offset);
         cv.put(KEY_PUBLISH_SIGN, msgPtr->publishSign.TlvSize(), pubSignData);
+
 
         if(! (msgPtr->identity.empty()) ){
             char idSignData[msgPtr->idSign.TlvSize()];
+            offset = 0;
+            msgPtr->idSign.SetTlv(idSignData, msgPtr->idSign.TlvSize(), &offset);
             cv.put(KEY_IDENTITY_SIGN, msgPtr->idSign.TlvSize(), idSignData);
             cv.put(KEY_NXS_IDENTITY, msgPtr->identity);
         }
@@ -243,12 +261,12 @@ int RsDataService::storeMessage(std::set<RsNxsMsg *> &msg){
         cv.put(KEY_NXS_FLAGS, (int32_t) msgPtr->msgFlag);
         cv.put(KEY_TIME_STAMP, (int32_t) msgPtr->timeStamp);
 
+        offset = 0;
         char msgData[msgPtr->msg.TlvSize()];
         msgPtr->msg.SetTlv(msgData, msgPtr->msg.TlvSize(), &offset);
         ostrm.write(msgData, msgPtr->msg.TlvSize());
         ostrm.close();
 
-        cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
 
         mDb->sqlInsert(MSG_TABLE_NAME, "", cv);
     }
@@ -274,6 +292,9 @@ int RsDataService::storeGroup(std::set<RsNxsGrp *> &grp){
         uint32_t offset = ostrm.tellg(); // get fill offset
 
         ContentValue cv;
+        cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
+        cv.put(KEY_NXS_FILE_LEN, (int32_t)grpPtr->grp.TlvSize());
+        cv.put(KEY_NXS_FILE, grpFile);
         cv.put(KEY_GRP_ID, grpPtr->grpId);
         cv.put(KEY_NXS_FLAGS, (int32_t)grpPtr->grpFlag);
         cv.put(KEY_TIME_STAMP, (int32_t)grpPtr->timeStamp);
@@ -282,21 +303,30 @@ int RsDataService::storeGroup(std::set<RsNxsGrp *> &grp){
             cv.put(KEY_NXS_IDENTITY, grpPtr->identity);
 
             char idSignData[grpPtr->idSign.TlvSize()];
+            offset = 0;
+            grpPtr->idSign.SetTlv(idSignData, grpPtr->idSign.TlvSize(), &offset);
             cv.put(KEY_IDENTITY_SIGN, grpPtr->idSign.TlvSize(), idSignData);
+            std::string wat(idSignData, grpPtr->idSign.TlvSize());
+            std::cerr << wat << std::endl;
         }
 
         char adminSignData[grpPtr->adminSign.TlvSize()];
+        offset = 0;
         grpPtr->adminSign.SetTlv(adminSignData, grpPtr->adminSign.TlvSize(), &offset);
         cv.put(KEY_ADMIN_SIGN, grpPtr->adminSign.TlvSize(), adminSignData);
 
+        offset = 0;
         char keySetData[grpPtr->keys.TlvSize()];
         grpPtr->keys.SetTlv(keySetData, grpPtr->keys.TlvSize(), &offset);
         cv.put(KEY_KEY_SET, grpPtr->keys.TlvSize(), keySetData);
 
+        offset = 0;
         char grpData[grpPtr->grp.TlvSize()];
         grpPtr->grp.SetTlv(grpData, grpPtr->grp.TlvSize(), &offset);
         ostrm.write(grpData, grpPtr->grp.TlvSize());
         ostrm.close();
+
+        mDb->sqlInsert(GRP_TABLE_NAME, "", cv);
     }
 
     return mDb->execSQL("COMMIT;");
@@ -313,21 +343,21 @@ int RsDataService::retrieveGrps(std::map<std::string, RsNxsGrp*> &grp, bool cach
         while(valid){
             RsNxsGrp* g = getGroup(*c);
 
-
             // only add the latest grp info
-            bool exists = grp.find(g->grpId) != grp.end();
-            if(exists){
+            if(g){
+                bool exists = grp.find(g->grpId) != grp.end();
+                if(exists){
 
-                if(grp[g->grpId]->timeStamp < g->timeStamp){
-                    delete grp[g->grpId];
-                    grp[g->grpId] = g;
+                    if(grp[g->grpId]->timeStamp < g->timeStamp){
+                        delete grp[g->grpId];
+                        grp[g->grpId] = g;
+                    }else{
+                        delete g;
+                    }
                 }else{
-                    delete g;
+                    grp[g->grpId] = g;
                 }
-            }else{
-                grp[g->grpId] = g;
             }
-
             valid = c->moveToNext();
         }
 
@@ -338,9 +368,9 @@ int RsDataService::retrieveGrps(std::map<std::string, RsNxsGrp*> &grp, bool cach
     }
 }
 
-int RsDataService::retrieveMsgs(const std::string &grpId, std::map<std::string, RsNxsMsg *> msg, bool cache){
+int RsDataService::retrieveMsgs(const std::string &grpId, std::map<std::string, RsNxsMsg *>& msg, bool cache){
 
-    RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "=" + grpId, "");
+    RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
 
     if(c){
 
@@ -348,20 +378,23 @@ int RsDataService::retrieveMsgs(const std::string &grpId, std::map<std::string, 
         while(valid){
             RsNxsMsg* m = getMessage(*c);
 
-            // only add the latest grp info
-            bool exists = msg.find(m->msgId) != msg.end();
-            if(exists){
+            if(m){
+                // only add the latest grp info
+                bool exists = msg.find(m->msgId) != msg.end();
+                if(exists){
 
-                if(msg[m->msgId]->timeStamp < m->timeStamp){
-                    delete msg[m->msgId];
-                    msg[m->msgId] = m;
+                    if(msg[m->msgId]->timeStamp < m->timeStamp){
+                        delete msg[m->msgId];
+                        msg[m->msgId] = m;
+                    }else{
+                        delete m;
+                    }
                 }else{
-                    delete m;
+                    msg[m->msgId] = m;
                 }
-            }else{
-                msg[m->msgId] = m;
-            }
 
+
+            }
             valid = c->moveToNext();
         }
 
@@ -486,6 +519,19 @@ RsNxsMsg* RsDataService::retrieveMsgVersion(const RsGxsMsgId &msgId){
 
 
     return msg;
+}
+
+int RsDataService::resetDataStore(){
+
+}
+
+int RsDataService::removeGroups(const std::list<RsGxsGrpId> &grpIds){
+
+    return 0;
+}
+
+int RsDataService::removeMsgs(const std::list<RsGxsMsgId> &msgIds){
+    return 0;
 }
 
 uint32_t RsDataService::cacheSize() const {

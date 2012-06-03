@@ -82,7 +82,7 @@ class RsSyncGrp : public RsNxsItem {
 public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
-    static const uint8_t FLAG_ONLY_CURRENT; // only send most current sycn list
+    static const uint8_t FLAG_ONLY_CURRENT; // only send most current version of grps / ignores sync hash
 
     RsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP) { return;}
 
@@ -92,6 +92,35 @@ public:
     uint8_t flag; // advises whether to use sync hash
     uint32_t syncAge; // how far back to sync data
     std::string syncHash; // use to determine if changes that have occured since last hash
+
+
+};
+
+
+
+/*!
+ * This RsNxsItem is for use in enabling transactions
+ * in order to guaranttee a collection of item have been
+ * received
+ */
+class RsNxsTransac : public RsNxsItem {
+
+
+public:
+
+    /** transaction **/
+    static const uint16_t FLAG_BEGIN_P1;
+    static const uint16_t FLAG_BEGIN_P2;
+    static const uint16_t FLAG_END_P1;
+    static const uint16_t FLAG_END_P2;
+    static const uint16_t FLAG_CANCEL;
+
+    /** transaction type **/
+    static const uint16_t FLAG_TYPE_GRP_LIST_RESP;
+    static const uint16_t FLAG_TYPE_MSG_LIST_RESP;
+    static const uint16_t FLAG_TYPE_GRP_LIST_REQ;
+    static const uint16_t FLAG_TYPE_
+
 
 
 };
