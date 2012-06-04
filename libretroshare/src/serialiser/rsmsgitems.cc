@@ -1098,6 +1098,7 @@ RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t /*size*/)
             offset += image_size ;
         }else{
             ok = false;
+            std::cerr << "offset+image_size exceeds rssize" << std::endl;
         }
 
 	if (offset != rssize)
