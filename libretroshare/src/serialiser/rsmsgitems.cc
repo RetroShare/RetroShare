@@ -1091,9 +1091,14 @@ RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t /*size*/)
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset,&image_size);
 
-	image_data = new unsigned char[image_size] ;
-	memcpy(image_data,(void*)((unsigned char*)data+offset),image_size) ;
-	offset += image_size ;
+        // ensure invalid image length does not overflow data
+        if( (offset + image_size) <= rssize){
+            image_data = new unsigned char[image_size] ;
+            memcpy(image_data,(void*)((unsigned char*)data+offset),image_size) ;
+            offset += image_size ;
+        }else{
+            ok = false;
+        }
 
 	if (offset != rssize)
 		std::cerr << "Size error while deserializing." << std::endl ;
