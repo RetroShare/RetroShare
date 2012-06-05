@@ -42,7 +42,8 @@ const uint8_t RS_PKT_SUBTYPE_NXS_GRP     = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_SYNC_MSG      = 0x0008;
 const uint8_t RS_PKT_SUBTYPE_SYNC_MSG_LIST = 0x0010;
 const uint8_t RS_PKT_SUBTYPE_NXS_MSG      = 0x0020;
-const uint8_t RS_PKT_SUBTYPE_SEARCH_REQ    = 0x0040;
+const uint8_t RS_PKT_SUBTYPE_NXS_TRANS      = 0x0040;
+
 
 // possibility create second service to deal with this functionality
 
@@ -51,6 +52,7 @@ const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_GRP   = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_MSG   = 0x0002;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_GRP   = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_MSG   = 0x0008;
+const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_REQ    = 0x0010;
 
 
 /*!
@@ -105,7 +107,6 @@ public:
  */
 class RsNxsTransac : public RsNxsItem {
 
-
 public:
 
     /** transaction **/
@@ -114,15 +115,29 @@ public:
     static const uint16_t FLAG_END_P1;
     static const uint16_t FLAG_END_P2;
     static const uint16_t FLAG_CANCEL;
+    static const uint16_t FLAG_FAIL_NUM;
+    static const uint16_t FLAG_FAIL_TIMEOUT;
+    static const uint16_t FLAG_FAIL_FULL;
+
 
     /** transaction type **/
     static const uint16_t FLAG_TYPE_GRP_LIST_RESP;
     static const uint16_t FLAG_TYPE_MSG_LIST_RESP;
     static const uint16_t FLAG_TYPE_GRP_LIST_REQ;
-    static const uint16_t FLAG_TYPE_
+    static const uint16_t FLAG_TYPE_MSG_LIST_REQ;
+    static const uint16_t FLAG_TYPE_GRPS;
+    static const uint16_t FLAG_TYPE_MSGS;
 
+    RsNxsTransac(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANS) { return; }
+    virtual ~RsNxsTransac() { return ; }
 
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
+    uint16_t transactFlag;
+    uint32_t nItems;
+    uint32_t timeout;
+    uint32_t transactionId;
 };
 
 /*!
@@ -261,7 +276,7 @@ class RsNxsSearchReq : public RsNxsItem
 {
 public:
 
-    RsNxsSearchReq(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_SEARCH_REQ), serviceSearchItem(servtype) { return; }
+    RsNxsSearchReq(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_EXT_SEARCH_REQ), serviceSearchItem(servtype) { return; }
     virtual ~RsNxsSearchReq() { return;}
 
     virtual void clear() { return;}
@@ -415,10 +430,10 @@ private:
     virtual bool serialiseNxsMsg(RsNxsMsg* item, void* data, uint32_t* size);
     virtual RsNxsMsg* deserialNxsMsg(void *data, uint32_t *size);
 
-    /* RS_PKT_SUBTYPE_SEARCH_REQ */
-    virtual uint32_t sizeNxsSearchReq(RsNxsSearchReq* item);
-    virtual bool serialiseNxsSearchReq(RsNxsSearchReq* item, void* data, uint32_t* size);
-    virtual RsNxsSearchReq* deserialNxsSearchReq(void* data, uint32_t *size);
+    /* RS_PKT_SUBTYPE_NXS_TRANS */
+    virtual uint32_t sizeNxsTrans(RsNxsTransac* item);
+    virtual bool serialiseNxsTrans(RsNxsTransac* item, void* data, uint32_t* size);
+    virtual RsNxsTransac* deserialNxsTrans(void* data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_EXTENDED */
     virtual RsNxsExtended* deserialNxsExtended(void* data, uint32_t *size);

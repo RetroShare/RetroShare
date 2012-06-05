@@ -2,20 +2,22 @@
 #define RSDATASERVICE_TEST_H
 
 #include "util/rsthreads.h"
+#include "serialiser/rsnxsitems.h"
+#include "gxs/rsgds.h"
 
-bool test_messageStoresAndRetrieve();
-bool test_messageVersionRetrieve();
+void test_messageStoresAndRetrieve();
+void test_messageVersionRetrieve();
 
-bool test_groupStoreAndRetrieve();
-bool test_groupVersionRetrieve();
+void test_groupStoreAndRetrieve();
+void test_groupVersionRetrieve();
 
-bool test_storeAndDeleteGroup();
-bool test_storeAndDeleteMessage();
+void test_storeAndDeleteGroup();
+void test_storeAndDeleteMessage();
 
-bool test_searchMsg();
-bool test_searchGrp();
+void test_searchMsg();
+void test_searchGrp();
 
-bool test_multiThreaded();
+void test_multiThreaded();
 
 class DataReadWrite : RsThread
 {
@@ -24,6 +26,9 @@ class DataReadWrite : RsThread
 
 };
 
-bool test_cacheSize();
+void test_cacheSize();
+
+void init_item(RsNxsGrp*);
+void init_item(RsNxsMsg*);
 
 #endif // RSDATASERVICE_TEST_H

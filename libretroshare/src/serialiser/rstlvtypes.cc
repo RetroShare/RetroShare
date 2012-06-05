@@ -76,6 +76,12 @@ RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
 	return;
 }
 
+RsTlvBinaryData::RsTlvBinaryData(const RsTlvBinaryData &b)
+    : tlvtype(b.tlvtype), bin_data(NULL), bin_len(0) {
+
+    setBinData(b.bin_data, b.bin_len);
+}
+
 RsTlvBinaryData::~RsTlvBinaryData()
 {
 	TlvClear();

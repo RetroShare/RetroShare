@@ -21,28 +21,32 @@ uint32_t RsNxsSerialiser::size(RsItem *item) {
     RsSyncGrpList* sgl;
     RsSyncGrpMsg* sgm;
     RsSyncGrpMsgList* sgml;
+    RsNxsTransac* ntx;
 
 
     if((sg = dynamic_cast<RsSyncGrp*>(item))  != NULL)
     {
-        sizeSyncGrp(sg);
+        return sizeSyncGrp(sg);
 
-    }else if ((sgl = dynamic_cast<RsSyncGrpList*>(item)) != NULL)
+    }else if(( ntx = dynamic_cast<RsNxsTransac*>(item)) != NULL){
+        return sizeNxsTrans(ntx);
+    }
+    else if ((sgl = dynamic_cast<RsSyncGrpList*>(item)) != NULL)
     {
-        sizeSyncGrpList(sgl);
+        return sizeSyncGrpList(sgl);
 
     }else if ((sgm = dynamic_cast<RsSyncGrpMsg*>(item)) != NULL)
     {
-        sizeSyncGrpMsg(sgm);
+        return sizeSyncGrpMsg(sgm);
     }else if ((sgml = dynamic_cast<RsSyncGrpMsgList*>(item)) != NULL)
     {
-        sizeSyncGrpMsgList(sgml);
+        return sizeSyncGrpMsgList(sgml);
     }else if((ngp = dynamic_cast<RsNxsGrp*>(item)) != NULL)
     {
-        sizeNxsGrp(ngp);
+        return sizeNxsGrp(ngp);
     }else if((nmg = dynamic_cast<RsNxsMsg*>(item)) != NULL)
     {
-        sizeNxsMsg(nmg);
+        return sizeNxsMsg(nmg);
     }
 }
 
@@ -77,6 +81,8 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
             return deserialNxsGrp(data, size);
         case RS_PKT_SUBTYPE_NXS_MSG:
             return deserialNxsMsg(data, size);
+        case RS_PKT_SUBTYPE_NXS_TRANS:
+            return deserialNxsTrans(data, size);
         case RS_PKT_SUBTYPE_NXS_EXTENDED:
             return deserialNxsExtended(data, size);
         default:
@@ -102,10 +108,15 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     RsSyncGrpMsg* sgm;
     RsSyncGrpMsgList* sgml;
     RsNxsExtended* nxt;
+    RsNxsTransac* ntx;
 
     if((sg = dynamic_cast<RsSyncGrp*>(item))  != NULL)
     {
         return serialiseSyncGrp(sg, data, size);
+
+    }else if ((ntx = dynamic_cast<RsNxsTransac*>(item)) != NULL)
+    {
+        return serialiseNxsTrans(ntx, data, size);
 
     }else if ((sgl = dynamic_cast<RsSyncGrpList*>(item)) != NULL)
     {
@@ -157,7 +168,7 @@ bool RsNxsSerialiser::serialiseSynGrpMsgList(RsSyncGrpMsgList *item, void *data,
 
     bool ok = true;
 
-    ok = setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
     /* skip the header */
     offset += 8;
@@ -208,7 +219,7 @@ bool RsNxsSerialiser::serialiseNxsMsg(RsNxsMsg *item, void *data, uint32_t *size
 
     bool ok = true;
 
-    ok = setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
     /* skip the header */
     offset += 8;
@@ -262,7 +273,7 @@ bool RsNxsSerialiser::serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size
 
     bool ok = true;
 
-    ok = setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
     /* skip the header */
     offset += 8;
@@ -316,7 +327,7 @@ bool RsNxsSerialiser::serialiseSyncGrp(RsSyncGrp *item, void *data, uint32_t *si
 
     bool ok = true;
 
-    ok = setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
     /* skip the header */
     offset += 8;
@@ -343,6 +354,55 @@ bool RsNxsSerialiser::serialiseSyncGrp(RsSyncGrp *item, void *data, uint32_t *si
 }
 
 
+bool RsNxsSerialiser::serialiseNxsTrans(RsNxsTransac *item, void *data, uint32_t *size){
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsNxsSerialiser::serialiseNxsTrans()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeNxsTrans(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsNxsSerialiser::serialiseNxsTrans() size do not match" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= setRawUInt16(data, *size, &offset, item->transactFlag);
+    ok &= setRawUInt32(data, *size, &offset, item->nItems);
+    ok &= setRawUInt32(data, *size, &offset, item->timeout);
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
+
+
+
+    if(offset != tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsNxsSerialiser::serialiseNxsTrans() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef RSSERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsNxsSerialiser::serialiseNxsTrans() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
 bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint32_t *size)
 {
 #ifdef RSSERIAL_DEBUG
@@ -363,7 +423,7 @@ bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint
 
     bool ok = true;
 
-    ok = setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
     /* skip the header */
     offset += 8;
@@ -411,7 +471,7 @@ bool RsNxsSerialiser::serialiseSyncGrpMsg(RsSyncGrpMsg *item, void *data, uint32
 
     bool ok = true;
 
-    ok = setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
     /* skip the header */
     offset += 8;
@@ -436,11 +496,6 @@ bool RsNxsSerialiser::serialiseSyncGrpMsg(RsSyncGrpMsg *item, void *data, uint32
 #endif
 
     return ok;
-}
-
-// TODO: need to finalise search term members
-bool RsNxsSerialiser::serialiseNxsSearchReq(RsNxsSearchReq *item, void *data, uint32_t *size){
-    return false;
 }
 
 
@@ -726,6 +781,74 @@ RsSyncGrpList* RsNxsSerialiser::deserialSyncGrpList(void *data, uint32_t *size){
     return item;
 }
 
+RsNxsTransac* RsNxsSerialiser::deserialNxsTrans(void *data, uint32_t *size){
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsNxsSerialiser::deserialNxsTrans()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (SERVICE_TYPE != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_NXS_TRANS != getRsItemSubType(rstype)))
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsTrans() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialSyncGrpMsgList( FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    /* skip the header */
+    offset += 8;
+
+    bool ok = true;
+
+    RsNxsTransac* item = new RsNxsTransac(SERVICE_TYPE);
+
+    ok &= getRawUInt16(data, *size, &offset, &(item->transactFlag));
+    ok &= getRawUInt32(data, *size, &offset, &(item->nItems));
+    ok &= getRawUInt32(data, *size, &offset, &(item->timeout));
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionId));
+
+    if (offset != rssize)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsTrans() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsTrans() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+
+
+}
 
 RsSyncGrpMsgList* RsNxsSerialiser::deserialSyncGrpMsgList(void *data, uint32_t *size){
 
@@ -864,11 +987,6 @@ RsSyncGrpMsg* RsNxsSerialiser::deserialSyncGrpMsg(void *data, uint32_t *size)
 }
 
 
-RsNxsSearchReq* RsNxsSerialiser::deserialNxsSearchReq(void *data, uint32_t *size)
-{
-    return NULL;
-}
-
 RsNxsExtended* RsNxsSerialiser::deserialNxsExtended(void *data, uint32_t *size){
     return NULL;
 }
@@ -963,8 +1081,15 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsgList(RsSyncGrpMsgList *item)
     return s;
 }
 
-uint32_t RsNxsSerialiser::sizeNxsSearchReq(RsNxsSearchReq *item){
-    return 0;
+uint32_t RsNxsSerialiser::sizeNxsTrans(RsNxsTransac *item){
+
+    uint32_t s = 8; // header size
+    s += 2; // flag
+    s += 4; // nMsgs
+    s += 4; // timeout
+    s += 4; // transaction id
+
+    return s;
 }
 
 uint32_t RsNxsSerialiser::sizeNxsExtended(RsNxsExtended *item){
@@ -1027,6 +1152,13 @@ void RsSyncGrpMsgList::clear()
     msgId.clear();
     idSign.TlvClear();
     grpId.clear();
+}
+
+void RsNxsTransac::clear(){
+    transactFlag = 0;
+    nItems = 0;
+    timeout = 0;
+    transactionId = 0;
 }
 
 std::ostream& RsSyncGrp::print(std::ostream &out, uint16_t indent)
@@ -1162,5 +1294,24 @@ std::ostream& RsNxsMsg::print(std::ostream &out, uint16_t indent){
     idSign.print(out, indent);
 
     printRsItemEnd(out ,"RsNxsMsg", indent);
+    return out;
+}
+
+
+std::ostream& RsNxsTransac::print(std::ostream &out, uint16_t indent){
+
+    printRsItemBase(out, "RsNxsTransac", indent);
+    uint16_t int_Indent = indent + 2;
+
+    out << "transactFlag: " << transactFlag << std::endl;
+    printIndent(out , int_Indent);
+    out << "nItems: " << nItems << std::endl;
+    printIndent(out , int_Indent);
+    out << "timeout: " << timeout << std::endl;
+    printIndent(out , int_Indent);
+    out << "transactionId: " << transactionId << std::endl;
+    printIndent(out , int_Indent);
+
+    printRsItemEnd(out ,"RsNxsTransac", indent);
     return out;
 }

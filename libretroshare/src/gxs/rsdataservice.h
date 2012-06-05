@@ -117,6 +117,7 @@ public:
      * Completely clear out data stored in
      * this data store and returns this to a state
      * as it was when first constructed
+     * This also clears any data store items created in service directory
      */
     int resetDataStore();
 
@@ -125,6 +126,7 @@ private:
 
     RsNxsMsg* getMessage(RetroCursor& c);
     RsNxsGrp* getGroup(RetroCursor& c);
+    void initialise();
 
 private:
 

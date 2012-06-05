@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib bitdht newcache# newservices
+CONFIG += staticlib bitdht newcache newservices
 CONFIG -= qt
 TARGET = retroshare
 #DEFINES += RSSERIAL_DEBUG

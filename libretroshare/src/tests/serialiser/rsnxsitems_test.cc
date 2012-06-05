@@ -97,6 +97,17 @@ RsSerialType* init_item(RsSyncGrpMsgList& rsgml)
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
+RsSerialType* init_item(RsNxsTransac& rstx){
+
+    rstx.clear();
+
+    rstx.timeout = rand()%14141;
+    rstx.transactFlag = rand()%2424;
+    rstx.nItems = rand()%33132;
+    rstx.transactionId = rand()%242112;
+
+    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+}
 
 bool operator==(const RsNxsGrp& l, const RsNxsGrp& r){
 
@@ -176,6 +187,17 @@ bool operator==(const RsSyncGrpMsgList& l, const RsSyncGrpMsgList& r)
     return true;
 }
 
+bool operator==(const RsNxsTransac& l, const RsNxsTransac& r){
+
+    if(l.transactFlag != r.transactFlag) return false;
+    if(l.transactionId != r.transactionId) return false;
+    if(l.timeout != r.timeout) return false;
+    if(l.nItems != r.nItems) return false;
+
+
+    return true;
+}
+
 int main()
 {
     std::cerr << "RsNxsItem Tests" << std::endl;
@@ -186,6 +208,7 @@ int main()
     test_RsItem<RsSyncGrpMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpMsg");
     test_RsItem<RsSyncGrpList>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpList");
     test_RsItem<RsSyncGrpMsgList>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpMsgList");
+    test_RsItem<RsNxsTransac>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsNxsTransac");
 
     FINALREPORT("RsNxsItem Tests");
 

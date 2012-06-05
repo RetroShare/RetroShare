@@ -67,6 +67,7 @@ class RsGeneralDataService
 
 public:
 
+    virtual ~RsGeneralDataService(){return;};
     /*!
      * Retrieves signed message
      * @param grpId

@@ -47,7 +47,7 @@
  * The interface is sparse as this service is mostly making the requests to other GXS components
  *
  * Groups:
- *   - As this is where exchanges occur between peers, this is also where groups relationships
+ *   - As this is where exchanges occur between peers, this is also where group's relationships
  *     should get resolved as far as
  *   - Per implemented GXS there are a set of rules which will determine whether data is transferred
  *     between any set of groups
@@ -62,12 +62,13 @@ public:
 
     /*!
      * Use this to set how far back synchronisation of messages should take place
-     * @param range how far back from current time to synchronise with other peers
+     * @param age the max age a sync item can to be allowed in a synchronisation
      */
-    virtual void setTimeRange(uint64_t range) = 0;
+    virtual void setSyncAge(uint32_t age) = 0;
 
     /*!
-     * requests all the groups contained by a peer
+     * Explicitly requests all the groups contained by a peer
+     * Circumvents polling of peers for message
      * @param peerId id of peer
      */
     virtual void requestGroupsOfPeer(const std::string& peerId) = 0;
