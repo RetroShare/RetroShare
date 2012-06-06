@@ -19,141 +19,6 @@ extern "C" {
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
-std::string	PGPIdType::toStdString() const
-{
-	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
-
-	std::string res(KEY_ID_SIZE*2,' ') ;
-
-	for(int j = 0; j < KEY_ID_SIZE; j++)
-	{
-		res[2*j  ] = out[ (bytes[j]>>4) ] ;
-		res[2*j+1] = out[ bytes[j] & 0xf ] ;
-	}
-
-	return res ;
-}
-std::string	PGPFingerprintType::toStdString() const
-{
-	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
-
-	std::string res(KEY_FINGERPRINT_SIZE*2,' ') ;
-
-	for(int j = 0; j < KEY_FINGERPRINT_SIZE; j++)
-	{
-		res[2*j  ] = out[ (bytes[j]>>4) ] ;
-		res[2*j+1] = out[ bytes[j] & 0xf ] ;
-	}
-
-	return res ;
-}
-
-
-PGPIdType PGPIdType::fromUserId_hex(const std::string& s)
-{
-	int n=0;
-	if(s.length() != KEY_ID_SIZE*2)
-		throw std::runtime_error("PGPIdType::PGPIdType: can only init from 16 chars hexadecimal string") ;
-
-	PGPIdType res ;
-
-	for(int i = 0; i < KEY_ID_SIZE; ++i)
-	{
-		res.bytes[i] = 0 ;
-
-		for(int k=0;k<2;++k)
-		{
-			char b = s[n++] ;
-
-			if(b >= 'A' && b <= 'F')
-				res.bytes[i] += (b-'A'+10) << 4*(1-k) ;
-			else if(b >= 'a' && b <= 'f')
-				res.bytes[i] += (b-'a'+10) << 4*(1-k) ;
-			else if(b >= '0' && b <= '9')
-				res.bytes[i] += (b-'0') << 4*(1-k) ;
-			else
-				throw std::runtime_error("PGPIdType::Sha1CheckSum: can't init from non pure hexadecimal string") ;
-		}
-	}
-	return res ;
-}
-PGPIdType PGPIdType::fromFingerprint_hex(const std::string& s)
-{
-	if(s.length() != PGPFingerprintType::KEY_FINGERPRINT_SIZE*2)
-		throw std::runtime_error("PGPIdType::PGPIdType: can only init from 40 chars hexadecimal string") ;
-
-	PGPIdType res ;
-
-	int n=2*PGPFingerprintType::KEY_FINGERPRINT_SIZE - 2*PGPIdType::KEY_ID_SIZE ;
-
-	for(int i = 0; i < PGPIdType::KEY_ID_SIZE; ++i)
-	{
-		res.bytes[i] = 0 ;
-
-		for(int k=0;k<2;++k)
-		{
-			char b = s[n++] ;
-
-			if(b >= 'A' && b <= 'F')
-				res.bytes[i] += (b-'A'+10) << 4*(1-k) ;
-			else if(b >= 'a' && b <= 'f')
-				res.bytes[i] += (b-'a'+10) << 4*(1-k) ;
-			else if(b >= '0' && b <= '9')
-				res.bytes[i] += (b-'0') << 4*(1-k) ;
-			else
-				throw std::runtime_error("PGPIdType::Sha1CheckSum: can't init from non pure hexadecimal string") ;
-		}
-	}
-	return res ;
-}
-PGPFingerprintType PGPFingerprintType::fromFingerprint_hex(const std::string& s)
-{
-	int n=0;
-	if(s.length() != PGPFingerprintType::KEY_FINGERPRINT_SIZE*2)
-		throw std::runtime_error("PGPIdType::PGPIdType: can only init from 40 chars hexadecimal string") ;
-
-	PGPFingerprintType res ;
-
-	for(int i = 0; i < PGPFingerprintType::KEY_FINGERPRINT_SIZE; ++i)
-	{
-		res.bytes[i] = 0 ;
-
-		for(int k=0;k<2;++k)
-		{
-			char b = s[n++] ;
-
-			if(b >= 'A' && b <= 'F')
-				res.bytes[i] += (b-'A'+10) << 4*(1-k) ;
-			else if(b >= 'a' && b <= 'f')
-				res.bytes[i] += (b-'a'+10) << 4*(1-k) ;
-			else if(b >= '0' && b <= '9')
-				res.bytes[i] += (b-'0') << 4*(1-k) ;
-			else
-				throw std::runtime_error("PGPIdType::Sha1CheckSum: can't init from non pure hexadecimal string") ;
-		}
-	}
-	return res ;
-}
-PGPIdType::PGPIdType(const unsigned char b[])
-{
-	memcpy(bytes,b,KEY_ID_SIZE) ;
-}
-PGPFingerprintType::PGPFingerprintType(const unsigned char b[])
-{
-	memcpy(bytes,b,KEY_FINGERPRINT_SIZE) ;
-}
-
-
-uint64_t PGPIdType::toUInt64() const
-{
-	uint64_t res = 0  ;
-
-	for(int i=0;i<KEY_ID_SIZE;++i)
-		res = (res << 8) + bytes[i] ;
-
-	return res ;
-}
-
 ops_keyring_t *PGPHandler::allocateOPSKeyring() 
 {
 	ops_keyring_t *kr = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
@@ -342,7 +207,7 @@ bool PGPHandler::printKeys() const
 		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); sit++)
 		{
 			std::cerr << "\t\tSigner ID:" << *sit << ", Name: " ;
-			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(*sit)) ;
+			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(*sit)) ;
 
 			if(info != NULL)
 				std::cerr << info->_name ;
@@ -668,7 +533,7 @@ bool PGPHandler::getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) c
 
 bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_length, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& key_fingerprint)
 {
-	PGPIdType id = PGPIdType::fromFingerprint_hex(key_fingerprint.toStdString()) ;
+	PGPIdType id = PGPIdType(key_fingerprint.toByteArray() + PGPFingerprintType::SIZE_IN_BYTES - PGPIdType::SIZE_IN_BYTES) ;
 	const ops_keydata_t *key = getPublicKey(id) ;
 
 	if(key == NULL)
@@ -712,7 +577,7 @@ bool PGPHandler::getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(co
 
 	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin());it!=_public_keyring_map.end();++it)
 		if( filter == NULL || (*filter)(it->second) )
-			list.push_back(PGPIdType::fromUserId_hex(it->first)) ;
+			list.push_back(PGPIdType(it->first)) ;
 
 	return true ;
 }

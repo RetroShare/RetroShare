@@ -28,9 +28,9 @@ int main(int argc,char *argv[])
 {
 	// test pgp ids.
 	//
-	PGPIdType id = PGPIdType::fromUserId_hex("3e5b22140ef56abb") ;
+	PGPIdType id = PGPIdType(std::string("3e5b22140ef56abb")) ;
 
-	std::cerr << "Id is : " << std::hex << id.toUInt64() << std::endl;
+	//std::cerr << "Id is : " << std::hex << id.toUInt64() << std::endl;
 	std::cerr << "Id st : " << id.toStdString() << std::endl;
 
 	// test PGPHandler
@@ -76,7 +76,7 @@ int main(int argc,char *argv[])
 	else
 		std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
 
-	PGPIdType id2 = PGPIdType::fromUserId_hex("618E54CF7670FF5E") ;
+	PGPIdType id2 = PGPIdType(std::string("618E54CF7670FF5E")) ;
 	std::cerr << "Now extracting key " << id2.toStdString() << " from keyring:" << std::endl ;
 	std::string cert = pgph.SaveCertificateToString(id2,false) ;
 

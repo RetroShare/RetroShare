@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 #include <util/rsthreads.h>
+#include <util/rsid.h>
 
 extern "C" {
 #include <openpgpsdk/types.h>
@@ -15,55 +16,13 @@ extern "C" {
 #include <openpgpsdk/keyring_local.h>
 }
 
+static const int KEY_ID_SIZE          =  8 ;
+static const int KEY_FINGERPRINT_SIZE = 20 ;
+
 typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, const char *passphrase_info, int prev_was_bad) ;
 
-class PGPIdType
-{
-	public:
-		static const int KEY_ID_SIZE = 8 ;
-		PGPIdType() {}
-
-		static PGPIdType fromUserId_hex(const std::string& hex_string) ;
-		static PGPIdType fromFingerprint_hex(const std::string& hex_string) ;
-
-		explicit PGPIdType(const unsigned char bytes[]) ;
-
-		std::string toStdString() const ;
-		uint64_t toUInt64() const ;
-		const unsigned char *toByteArray() const { return &bytes[0] ; }
-
-	private:
-		unsigned char bytes[KEY_ID_SIZE] ;
-		std::string _string_id ;
-};
-class PGPFingerprintType
-{
-	public:
-		static const int KEY_FINGERPRINT_SIZE = 20 ;
-
-		static PGPFingerprintType fromFingerprint_hex(const std::string& hex_string) ;
-		explicit PGPFingerprintType(const unsigned char bytes[]) ;
-
-		std::string toStdString() const ;
-		const unsigned char *toByteArray() const { return &bytes[0] ; }
-
-		bool operator==(const PGPFingerprintType& fp) const
-		{
-			for(int i=0;i<KEY_FINGERPRINT_SIZE;++i)
-				if(fp.bytes[i] != bytes[i])
-					return false ;
-			return true ;
-		}
-		bool operator!=(const PGPFingerprintType& fp) const
-		{
-			return !operator==(fp) ;
-		}
-
-		PGPFingerprintType() {}
-	private:
-		unsigned char bytes[KEY_FINGERPRINT_SIZE] ;
-		std::string _string_id ;
-};
+typedef t_RsGenericIdType<KEY_ID_SIZE> 			 PGPIdType;
+typedef t_RsGenericIdType<KEY_FINGERPRINT_SIZE>  PGPFingerprintType ;
 
 class PGPCertificateInfo
 {
