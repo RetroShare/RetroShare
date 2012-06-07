@@ -36,11 +36,11 @@
 #include "serialiser/rstlvkeys.h"
 
 
-const uint8_t RS_PKT_SUBTYPE_SYNC_GRP      = 0x0001;
-const uint8_t RS_PKT_SUBTYPE_SYNC_GRP_LIST = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP      = 0x0001;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM = 0x0002;
 const uint8_t RS_PKT_SUBTYPE_NXS_GRP     = 0x0004;
-const uint8_t RS_PKT_SUBTYPE_SYNC_MSG      = 0x0008;
-const uint8_t RS_PKT_SUBTYPE_SYNC_MSG_LIST = 0x0010;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM      = 0x0008;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG = 0x0010;
 const uint8_t RS_PKT_SUBTYPE_NXS_MSG      = 0x0020;
 const uint8_t RS_PKT_SUBTYPE_NXS_TRANS      = 0x0040;
 
@@ -67,10 +67,12 @@ class RsNxsItem : public RsItem
 
 public:
     RsNxsItem(uint16_t servtype, uint8_t subtype)
-        : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) { return; }
+        : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype), transactionNumber(0) { return; }
 
     virtual void clear() = 0;
     virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
+
+    uint32_t transactionNumber; // set to zero if this is not a transaction item
 };
 
 
@@ -79,14 +81,14 @@ public:
  * Server may advise client peer to use sync file
  * while serving his request. This results
  */
-class RsSyncGrp : public RsNxsItem {
+class RsNxsSyncGrp : public RsNxsItem {
 
 public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
     static const uint8_t FLAG_ONLY_CURRENT; // only send most current version of grps / ignores sync hash
 
-    RsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP) { return;}
+    RsNxsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP) { return;}
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -112,12 +114,11 @@ public:
     /** transaction **/
     static const uint16_t FLAG_BEGIN_P1;
     static const uint16_t FLAG_BEGIN_P2;
-    static const uint16_t FLAG_END_P1;
-    static const uint16_t FLAG_END_P2;
+    static const uint16_t FLAG_END_SUCCESS;
     static const uint16_t FLAG_CANCEL;
-    static const uint16_t FLAG_FAIL_NUM;
-    static const uint16_t FLAG_FAIL_TIMEOUT;
-    static const uint16_t FLAG_FAIL_FULL;
+    static const uint16_t FLAG_END_FAIL_NUM;
+    static const uint16_t FLAG_END_FAIL_TIMEOUT;
+    static const uint16_t FLAG_END_FAIL_FULL;
 
 
     /** transaction type **/
@@ -144,7 +145,7 @@ public:
  * Use to send to peer list of grps
  * held by server peer
  */
-class RsSyncGrpList : public RsNxsItem
+class RsNxsSyncGrpItem : public RsNxsItem
 {
 
 public:
@@ -153,8 +154,8 @@ public:
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsSyncGrpList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_GRP_LIST) { return ; }
-    virtual ~RsSyncGrpList() { return; }
+    RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { return ; }
+    virtual ~RsNxsSyncGrpList() { return; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -198,14 +199,14 @@ public:
  * Use to request list of msg held by peer
  * for a given group
  */
-class RsSyncGrpMsg : public RsNxsItem
+class RsNxsSyncMsg : public RsNxsItem
 {
 
 public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsSyncGrpMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_MSG) {return; }
+    RsNxsSyncMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG) {return; }
 
 
     virtual void clear();
@@ -221,15 +222,14 @@ public:
  * Use to send list msgs for a group held by
  * a peer
  */
-class RsSyncGrpMsgList : public RsNxsItem
+class RsNxsSyncMsgItem : public RsNxsItem
 {
 public:
 
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
-    RsSyncGrpMsgList(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_SYNC_MSG_LIST) { return; }
-
+    RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { return; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -237,7 +237,6 @@ public:
     uint8_t flag; // response/req
     std::string grpId;
     std::string msgId;
-    RsTlvKeySignature idSign;
 
 };
 
@@ -250,8 +249,6 @@ class RsNxsMsg : public RsNxsItem
 {
 public:
 
-
-
     RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype) { return; }
 
 
@@ -260,6 +257,7 @@ public:
 
     std::string grpId; /// group id, forms part of version id
     std::string msgId; /// msg id
+    std::string originalMsgId;
     uint32_t msgFlag;
     uint32_t timeStamp; /// UTC time create,
     RsTlvBinaryData msg;
@@ -360,7 +358,6 @@ public:
 
     std::string msgId;
     std::string grpId;
-    RsTlvKeySignature idSign;
     RsTlvKeySignature deleteSign; // ( msgId + grpId + msg data ) sign //TODO: add warning not to place msgId+grpId in msg!
 
 };
@@ -396,15 +393,15 @@ private:
 
     /* for RS_PKT_SUBTYPE_SYNC_GRP */
 
-    virtual uint32_t sizeSyncGrp(RsSyncGrp* item);
-    virtual bool serialiseSyncGrp(RsSyncGrp *item, void *data, uint32_t *size);
-    virtual RsSyncGrp* deserialSyncGrp(void *data, uint32_t *size);
+    virtual uint32_t sizeNxsSyncGrp(RsNxsSyncGrp* item);
+    virtual bool serialiseNxsSyncGrp(RsNxsSyncGrp *item, void *data, uint32_t *size);
+    virtual RsNxsSyncGrp* deserialNxsSyncGrp(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_SYNC_GRP_LIST */
 
-    virtual uint32_t sizeSyncGrpList(RsSyncGrpList* item);
-    virtual bool serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint32_t *size);
-    virtual RsSyncGrpList* deserialSyncGrpList(void *data, uint32_t *size);
+    virtual uint32_t sizeSyncGrpList(RsNxsSyncGrpItem* item);
+    virtual bool serialiseNxsSyncGrpList(RsNxsSyncGrpItem *item, void *data, uint32_t *size);
+    virtual RsNxsSyncGrpItem* deserialNxsSyncGrpList(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_NXS_GRP */
 

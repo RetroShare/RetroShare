@@ -39,6 +39,9 @@
 #include <map>
 
 #include "serialiser/rsgxsitems.h"
+#include "rsnxsobserver.h"
+#include "rsnxs.h"
+#include "rsgds.h"
 
 #define GXS_STATUS_GRP_NOT_FOUND 1                /* request resulted in grp not found error */
 #define GXS_STATUS_MSG_NOT_FOUND 2                /* request resulted in msg not found */
@@ -105,15 +108,22 @@ public:
  *       - all data is received via call back \n
  *       - therefore interface to UI should not be based on being alerted to msg availability \n
  */
-class RsGxsService
+class RsGxsService : public RsNxsObserver
 {
 
 public:
 
-    RsGxsService(RsGxsSearchModule* mod);
+    RsGxsService(RsGeneralDataService* gds, RsNetworkExchangeService* ns);
     virtual ~RsGxsService();
 
     /***************** Group request receive API ********************/
+
+    /*!
+     * It is critical this service implements
+     * this function and returns a valid service id
+     * @return the service type of the Gxs Service
+     */
+    virtual uint16_t getServiceType() const = 0;
 
     /*!
      * Request group, not intialising version member of RsGxsGrpId
@@ -290,6 +300,7 @@ public:
 
     /******************* Start: Configuration *************************/
 
+
     /*!
      * How long to keep subscribed groups
      * @param length how long to keep group in seconds
@@ -319,6 +330,8 @@ public:
      * @return token to redeem
      */
     int requestSubscribeToGrp(const std::string& grpId, bool subscribe);
+
+public:
 
     /*!
      * This called by event runner on status of subscription
@@ -370,29 +383,6 @@ public:
      */
     int requestLocalSearch(RsGxsSearch* term);
 
-    // Remote Search...(2 hops ?)
-    /*!
-     *
-     * @param term This contains the search term
-     * @param hops how many hops from your immediate peer on the network for search
-     * @param delay lenght of time search should persist (if you are online search will be saved \n
-     *        delay seconds, max is 2 days
-     * @return token to redeem search
-     */
-    int requestRemoteSearchGrps(RsGxsSearch* term, uint32_t hops, uint32_t delay, bool immediate);
-
-    // Remote Search...(2 hops ?)
-    /*!
-     *
-     * @param term This contains the search term
-     * @param hops how many hops from your immediate peer on the network for search
-     * @param delay lenght of time search should persist (if you are online search will be saved \n
-     *        delay seconds, max is 2 days
-     * @return token to redeem search
-     */
-    int requestRemoteSearchMsgs(RsGxsSearch* term, uint32_t hops, uint32_t delay, bool immediate);
-
-
     /*!
      *
      * @param token
@@ -425,6 +415,33 @@ public:
      */
     virtual void recieveRemoteSearchMsgs(int token, int errCode, std::list<RsGxsMsg*>& msgs) = 0;
 
+    /* the following are protected to prevent RsGxsNetService calling below
+     * and causing infinite recursion
+     */
+
+    // Remote Search...(2 hops ?)
+    /*!
+     *
+     * @param term This contains the search term
+     * @param hops how many hops from your immediate peer on the network for search
+     * @param delay lenght of time search should persist (if you are online search will be saved \n
+     *        delay seconds, max is 2 days
+     * @return token to redeem search
+     */
+    int requestRemoteSearchGrps(RsGxsSearch* term, uint32_t hops, uint32_t delay, bool immediate);
+
+    // Remote Search...(2 hops ?)
+    /*!
+     *
+     * @param term This contains the search term
+     * @param hops how many hops from your immediate peer on the network for search
+     * @param delay lenght of time search should persist (if you are online search will be saved \n
+     *        delay seconds, max is 2 days
+     * @return token to redeem search
+     */
+    int requestRemoteSearchMsgs(RsGxsSearch* term, uint32_t hops, uint32_t delay, bool immediate);
+
+
     /*!
      * Note if parent group is not present this will be requested \n
      * by the event runner
@@ -432,14 +449,14 @@ public:
      * @return token to be redeemed
      * @see receiveMsg()
      */
-    virtual int requestRemoteMsg(std::list<RsGxsMsgId>& msgIds);
+    int requestRemoteMsg(std::list<RsGxsMsgId>& msgIds);
 
     /*!
      * @param grpIds the ids of the group being requested
      * @return token to be redeemed
      * @see receiveGrp()
      */
-    virtual int requestRemoteGrp(std::list<RsGxsGrpId>& grpIds);
+    int requestRemoteGrp(std::list<RsGxsGrpId>& grpIds);
 
     /****************** End: Search from event runner ***************/
 

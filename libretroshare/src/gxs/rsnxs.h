@@ -56,7 +56,7 @@
  *  2 transfers only between group
  *   - the also group matrix settings which is by default everyone can transfer to each other
  */
-class RsNetworktExchangeService : public p3Service
+class RsNetworkExchangeService : public p3Service
 {
 public:
 

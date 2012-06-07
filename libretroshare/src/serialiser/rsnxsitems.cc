@@ -69,13 +69,13 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
         switch(getRsItemSubType(rstype))
         {
 
-        case RS_PKT_SUBTYPE_SYNC_GRP:
+        case RS_PKT_SUBTYPE_NXS_SYNC_GRP:
             return deserialSyncGrp(data, size);
-        case RS_PKT_SUBTYPE_SYNC_GRP_LIST:
+        case RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM:
             return deserialSyncGrpList(data, size);
-        case RS_PKT_SUBTYPE_SYNC_MSG:
+        case RS_PKT_SUBTYPE_NXS_SYNC_MSG:
             return deserialSyncGrpMsg(data, size);
-        case RS_PKT_SUBTYPE_SYNC_MSG_LIST:
+        case RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM:
             return deserialSyncGrpMsgList(data, size);
         case RS_PKT_SUBTYPE_NXS_GRP:
             return deserialNxsGrp(data, size);
@@ -175,6 +175,7 @@ bool RsNxsSerialiser::serialiseSynGrpMsgList(RsSyncGrpMsgList *item, void *data,
 
     /* RsSyncGrpMsgList */
 
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
@@ -279,7 +280,7 @@ bool RsNxsSerialiser::serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size
     offset += 8;
 
     // grp id
-
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->identity);
     ok &= setRawUInt32(data, tlvsize, &offset, item->grpFlag);
@@ -332,6 +333,7 @@ bool RsNxsSerialiser::serialiseSyncGrp(RsSyncGrp *item, void *data, uint32_t *si
     /* skip the header */
     offset += 8;
 
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= setRawUInt32(data, *size, &offset, item->syncAge);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
@@ -379,6 +381,7 @@ bool RsNxsSerialiser::serialiseNxsTrans(RsNxsTransac *item, void *data, uint32_t
     /* skip the header */
     offset += 8;
 
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
     ok &= setRawUInt16(data, *size, &offset, item->transactFlag);
     ok &= setRawUInt32(data, *size, &offset, item->nItems);
     ok &= setRawUInt32(data, *size, &offset, item->timeout);
@@ -430,6 +433,7 @@ bool RsNxsSerialiser::serialiseSyncGrpList(RsSyncGrpList *item, void *data, uint
 
     /* RsSyncGrpList */
 
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= item->adminSign.SetTlv(data, *size, &offset);
@@ -476,6 +480,7 @@ bool RsNxsSerialiser::serialiseSyncGrpMsg(RsSyncGrpMsg *item, void *data, uint32
     /* skip the header */
     offset += 8;
 
+    ok &= setRawUInt32(data, *size, &offset, item->transactionId);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= setRawUInt32(data, *size, &offset, item->syncAge);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
@@ -546,6 +551,7 @@ RsNxsGrp* RsNxsSerialiser::deserialNxsGrp(void *data, uint32_t *size){
     /* skip the header */
     offset += 8;
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->identity);
     ok &= getRawUInt32(data, *size, &offset, &(item->grpFlag));
@@ -618,6 +624,7 @@ RsNxsMsg* RsNxsSerialiser::deserialNxsMsg(void *data, uint32_t *size){
 
     offset += 8;
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->identity);
@@ -664,7 +671,7 @@ RsSyncGrp* RsNxsSerialiser::deserialSyncGrp(void *data, uint32_t *size){
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
             (SERVICE_TYPE != getRsItemService(rstype)) ||
-            (RS_PKT_SUBTYPE_SYNC_GRP != getRsItemSubType(rstype)))
+            (RS_PKT_SUBTYPE_NXS_SYNC_GRP != getRsItemSubType(rstype)))
     {
 #ifdef RSSERIAL_DEBUG
             std::cerr << "RsNxsSerialiser::deserialSyncGrp() FAIL wrong type" << std::endl;
@@ -689,6 +696,7 @@ RsSyncGrp* RsNxsSerialiser::deserialSyncGrp(void *data, uint32_t *size){
     /* skip the header */
     offset += 8;
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= getRawUInt32(data, *size, &offset, &(item->syncAge));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
@@ -730,7 +738,7 @@ RsSyncGrpList* RsNxsSerialiser::deserialSyncGrpList(void *data, uint32_t *size){
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
             (SERVICE_TYPE != getRsItemService(rstype)) ||
-            (RS_PKT_SUBTYPE_SYNC_GRP_LIST != getRsItemSubType(rstype)))
+            (RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM != getRsItemSubType(rstype)))
     {
 #ifdef RSSERIAL_DEBUG
             std::cerr << "RsNxsSerialiser::deserialSyncGrpList() FAIL wrong type" << std::endl;
@@ -755,6 +763,7 @@ RsSyncGrpList* RsNxsSerialiser::deserialSyncGrpList(void *data, uint32_t *size){
     /* skip the header */
     offset += 8;
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= item->adminSign.GetTlv(data, *size, &offset);
@@ -821,6 +830,7 @@ RsNxsTransac* RsNxsSerialiser::deserialNxsTrans(void *data, uint32_t *size){
 
     RsNxsTransac* item = new RsNxsTransac(SERVICE_TYPE);
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt16(data, *size, &offset, &(item->transactFlag));
     ok &= getRawUInt32(data, *size, &offset, &(item->nItems));
     ok &= getRawUInt32(data, *size, &offset, &(item->timeout));
@@ -889,6 +899,7 @@ RsSyncGrpMsgList* RsNxsSerialiser::deserialSyncGrpMsgList(void *data, uint32_t *
     /* skip the header */
     offset += 8;
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
@@ -959,6 +970,7 @@ RsSyncGrpMsg* RsNxsSerialiser::deserialSyncGrpMsg(void *data, uint32_t *size)
     /* skip the header */
     offset += 8;
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= getRawUInt32(data, *size, &offset, &(item->syncAge));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
@@ -1017,6 +1029,7 @@ uint32_t RsNxsSerialiser::sizeNxsGrp(RsNxsGrp *item)
 {
     uint32_t s = 8; // header size
 
+    s += 4; // transaction number
     s += GetTlvStringSize(item->grpId);
     s += GetTlvStringSize(item->identity);
     s += 4; // grpFlag
@@ -1034,6 +1047,7 @@ uint32_t RsNxsSerialiser::sizeSyncGrp(RsSyncGrp *item)
 {
     uint32_t s = 8; // header size
 
+    s += 4; // transaction number
     s += 1; // flag
     s += 4; // sync age
     s += GetTlvStringSize(item->syncHash);
@@ -1046,8 +1060,8 @@ uint32_t RsNxsSerialiser::sizeSyncGrpList(RsSyncGrpList *item)
 {
     uint32_t s = 8; // header size
 
+    s += 4; // transaction number
     s += 1; // flag
-
     s += GetTlvStringSize(item->grpId);
     s += item->adminSign.TlvSize();
 
@@ -1060,6 +1074,7 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsg(RsSyncGrpMsg *item)
 
     uint32_t s = 8;
 
+    s += 4; // transaction number
     s += 1; // flag
     s += 4; // age
     s += GetTlvStringSize(item->grpId);
@@ -1073,6 +1088,7 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsgList(RsSyncGrpMsgList *item)
 {
     uint32_t s = 8; // header size
 
+    s += 4; // transaction number
     s += 1; // flag
     s += GetTlvStringSize(item->grpId);
     s += GetTlvStringSize(item->msgId);
@@ -1084,6 +1100,8 @@ uint32_t RsNxsSerialiser::sizeSyncGrpMsgList(RsSyncGrpMsgList *item)
 uint32_t RsNxsSerialiser::sizeNxsTrans(RsNxsTransac *item){
 
     uint32_t s = 8; // header size
+
+    s += 4; // transaction number
     s += 2; // flag
     s += 4; // nMsgs
     s += 4; // timeout
