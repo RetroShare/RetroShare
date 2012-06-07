@@ -26,6 +26,7 @@
 #include <sstream>
 #include <memory.h>
 #include <time.h>
+#include <inttypes.h>
 
 #include "retrodb.h"
 
