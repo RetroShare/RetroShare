@@ -46,6 +46,11 @@
 
 
 
+#define RSID_REQ_IDLIST		1
+#define RSID_REQ_IDDETAILS	2
+#define RSID_REQ_IDLISTDATA	3
+#define RSID_REQ_IDEDIT		4
+
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent)
 : MainPage(parent)
@@ -71,14 +76,14 @@ IdDialog::IdDialog(QWidget *parent)
 	timer->start(1000);
 
 	rsIdentity->generateDummyData();
-
+	mWaitingForRequest = false;
 }
 
 void IdDialog::ListTypeToggled(bool checked)
 {
         if (checked)
         {
-                insertIdList();
+                requestIdList();
         }
 }
 
@@ -91,116 +96,103 @@ void IdDialog::updateSelection()
 
 	if (!item)
 	{
-		/* blank it all - and fix buttons */
-		ui.lineEdit_Nickname->setText("");
-		ui.lineEdit_KeyId->setText("");
-		ui.lineEdit_GpgHash->setText("");
-		ui.lineEdit_GpgId->setText("");
-		ui.lineEdit_GpgName->setText("");
-		ui.lineEdit_GpgEmail->setText("");
-
-		ui.pushButton_Reputation->setEnabled(false);
-		ui.pushButton_Delete->setEnabled(false);
-		ui.pushButton_EditId->setEnabled(false);
-		ui.pushButton_NewId->setEnabled(true);
+		blankSelection();
 	}
 	else
 	{
-		/* get details from libretroshare */
-		RsIdData data;
-		if (!rsIdentity->getIdentity(item->text(RSID_COL_KEYID).toStdString(), data))
-		{
-			ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
-			return;
-		}
-
-                /* get GPG Details from rsPeers */
-                std::string gpgid  = rsPeers->getGPGOwnId();
-                RsPeerDetails details;
-                rsPeers->getPeerDetails(gpgid, details);
-
-                ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
-                ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
-                ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
-                ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
-                ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
-                ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
-
-		if (data.mIdType & RSID_RELATION_YOURSELF)
-		{
-			ui.radioButton_IdYourself->setChecked(true);
-		}
-		else if (data.mIdType & RSID_TYPE_PSEUDONYM)
-		{
-			ui.radioButton_IdPseudo->setChecked(true);
-		}
-		else if (data.mIdType & RSID_RELATION_FRIEND)
-		{
-			ui.radioButton_IdFriend->setChecked(true);
-		}
-		else if (data.mIdType & RSID_RELATION_FOF)
-		{
-			ui.radioButton_IdFOF->setChecked(true);
-		}
-		else 
-		{
-			ui.radioButton_IdOther->setChecked(true);
-		}
-
-		ui.pushButton_NewId->setEnabled(true);
-		if (data.mIdType & RSID_RELATION_YOURSELF)
-		{
-			ui.pushButton_Reputation->setEnabled(false);
-			ui.pushButton_Delete->setEnabled(true);
-			ui.pushButton_EditId->setEnabled(true);
-		}
-		else
-		{
-			ui.pushButton_Reputation->setEnabled(true);
-			ui.pushButton_Delete->setEnabled(false);
-			ui.pushButton_EditId->setEnabled(false);
-		}
+		std::string id = item->text(RSID_COL_KEYID).toStdString();
+		requestIdDetails(id);
 	}
 }
 
-#if 0
 
-void IdDialog::notifySelection(PulseItem *item, int ptype)
+void IdDialog::blankSelection()
 {
-        std::cerr << "IdDialog::notifySelection() from : " << ptype << " " << item;
-        std::cerr << std::endl;
+	/* blank it all - and fix buttons */
+	ui.lineEdit_Nickname->setText("");
+	ui.lineEdit_KeyId->setText("");
+	ui.lineEdit_GpgHash->setText("");
+	ui.lineEdit_GpgId->setText("");
+	ui.lineEdit_GpgName->setText("");
+	ui.lineEdit_GpgEmail->setText("");
 
-	notifyPulseSelection(item);
-
-	switch(ptype)
-	{
-		default:
-		case PHOTO_ITEM_TYPE_ALBUM:
-			notifyAlbumSelection(item);
-			break;
-		case PHOTO_ITEM_TYPE_PHOTO:
-			notifyPhotoSelection(item);
-			break;
-	}
+	ui.pushButton_Reputation->setEnabled(false);
+	ui.pushButton_Delete->setEnabled(false);
+	ui.pushButton_EditId->setEnabled(false);
+	ui.pushButton_NewId->setEnabled(true);
 }
 
-void IdDialog::notifyPulseSelection(PulseItem *item)
+
+void IdDialog::requestIdDetails(std::string &id)
 {
-	std::cerr << "IdDialog::notifyPulseSelection() from : " << item;
-	std::cerr << std::endl;
-	
-	if (mPulseSelected)
-	{
-		std::cerr << "IdDialog::notifyPulseSelection() unselecting old one : " << mPulseSelected;
-		std::cerr << std::endl;
-	
-		mPulseSelected->setSelected(false);
-	}
-	
-	mPulseSelected = item;
+	uint32_t token;
+
+	std::list<std::string> ids;
+	ids.push_back(id);
+		
+	rsIdentity->requestIdentities(token, ids);
+	lockForRequest(token, RSID_REQ_IDDETAILS);
+
 }
 
-#endif
+
+void IdDialog::insertIdDetails(uint32_t token)
+{
+	/* get details from libretroshare */
+	RsIdData data;
+	if (!rsIdentity->getIdentity(token, data))
+	{
+		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
+		return;
+	}
+
+	/* get GPG Details from rsPeers */
+	std::string gpgid  = rsPeers->getGPGOwnId();
+	RsPeerDetails details;
+	rsPeers->getPeerDetails(gpgid, details);
+	
+	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
+	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
+	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
+	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
+	ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
+	ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
+	
+	if (data.mIdType & RSID_RELATION_YOURSELF)
+	{
+		ui.radioButton_IdYourself->setChecked(true);
+	}
+	else if (data.mIdType & RSID_TYPE_PSEUDONYM)
+	{
+		ui.radioButton_IdPseudo->setChecked(true);
+	}
+	else if (data.mIdType & RSID_RELATION_FRIEND)
+	{
+		ui.radioButton_IdFriend->setChecked(true);
+	}
+	else if (data.mIdType & RSID_RELATION_FOF)
+	{
+		ui.radioButton_IdFOF->setChecked(true);
+	}
+	else 
+	{
+		ui.radioButton_IdOther->setChecked(true);
+	}
+	
+	ui.pushButton_NewId->setEnabled(true);
+	if (data.mIdType & RSID_RELATION_YOURSELF)
+	{
+		ui.pushButton_Reputation->setEnabled(false);
+		ui.pushButton_Delete->setEnabled(true);
+		ui.pushButton_EditId->setEnabled(true);
+	}
+	else
+	{
+		ui.pushButton_Reputation->setEnabled(true);
+		ui.pushButton_Delete->setEnabled(false);
+		ui.pushButton_EditId->setEnabled(false);
+	}
+}
 
 void IdDialog::checkUpdate()
 {
@@ -208,15 +200,15 @@ void IdDialog::checkUpdate()
 	if (!rsIdentity)
 		return;
 
+	checkForRequest();
+
 	if (rsIdentity->updated())
 	{
-		insertIdList();
+		requestIdList();
 	}
 	return;
 }
 
-
-/*************** New Photo Dialog ***************/
 
 void IdDialog::OpenOrShowAddDialog()
 {
@@ -251,97 +243,58 @@ void IdDialog::OpenOrShowEditDialog()
 	}
 
 	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-	mEditDialog->setupExistingId(keyId);
-
-	mEditDialog->show();
+	requestIdEdit(keyId);
 }
 
 
-bool IdDialog::matchesAlbumFilter(const RsPhotoAlbum &album)
+void IdDialog::requestIdEdit(std::string &id)
 {
+	uint32_t token;
 
-	return true;
-}
+	std::list<std::string> ids;
+	ids.push_back(id);
+		
+	rsIdentity->requestIdentities(token, ids);
+	lockForRequest(token, RSID_REQ_IDEDIT);
 
-double IdDialog::AlbumScore(const RsPhotoAlbum &album)
-{
-	return 1;
-}
-
-
-bool IdDialog::matchesPhotoFilter(const RsPhotoPhoto &photo)
-{
-
-	return true;
-}
-
-double IdDialog::PhotoScore(const RsPhotoPhoto &photo)
-{
-	return 1;
 }
 
 
-bool IdDialog::FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count)
+void IdDialog::showIdEdit(uint32_t token)
 {
-#if 0
-	std::multimap<double, std::string> sortedAlbums;
-	std::multimap<double, std::string>::iterator sit;
-	std::list<std::string>::const_iterator it;
+	if (mEditDialog)
+	{
+		mEditDialog->setupExistingId(token);
+
+		mEditDialog->show();
+	}
+}
+
+
+
+void IdDialog::requestIdList()
+{
+	uint32_t token;
+
+	rsIdentity->requestIdentityList(token);
 	
-	for(it = albumIds.begin(); it != albumIds.end(); it++)
-	{
-		RsPhotoAlbum album;
-		rsPhoto->getAlbum(*it, album);
-
-		if (matchesAlbumFilter(album))
-		{
-			double score = AlbumScore(album);
-
-			sortedAlbums.insert(std::make_pair(score, *it));
-		}
-	}
-
-	int i;
-	for (sit = sortedAlbums.begin(), i = 0; (sit != sortedAlbums.end()) && (i < count); sit++, i++)
-	{
-		filteredAlbumIds.push_back(sit->second);
-	}
-#endif
-	return true;
+	lockForRequest(token, RSID_REQ_IDLIST);
 }
 
 
-bool IdDialog::FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count)
+void IdDialog::requestIdData(std::list<std::string> &ids)
 {
-#if 0
-	std::multimap<double, std::string> sortedPhotos;
-	std::multimap<double, std::string>::iterator sit;
-	std::list<std::string>::const_iterator it;
+	uint32_t token;
 
-	int i = 0;
-	for(it = photoIds.begin(); it != photoIds.end(); it++, i++)
-	{
-		RsPhotoPhoto photo;
-		rsPhoto->getPhoto(*it, photo);
-
-		if (matchesPhotoFilter(photo))
-		{
-			double score = i; //PhotoScore(album);
-			sortedPhotos.insert(std::make_pair(score, *it));
-		}
-	}
-
-	for (sit = sortedPhotos.begin(), i = 0; (sit != sortedPhotos.end()) && (i < count); sit++, i++)
-	{
-		filteredPhotoIds.push_back(sit->second);
-	}
-#endif
-	return true;
+	rsIdentity->requestIdentities(token, ids);
+	
+	lockForRequest(token, RSID_REQ_IDLISTDATA);
 }
 
 
 
-void IdDialog::insertIdList()
+
+void IdDialog::insertIdList(uint32_t token)
 {
 	QTreeWidget *tree = ui.treeWidget_IdList;
 
@@ -356,15 +309,13 @@ void IdDialog::insertIdList()
 	bool acceptFriends = ui.radioButton_ListFriends->isChecked();
 	bool acceptOthers = ui.radioButton_ListOthers->isChecked();
 
-	rsIdentity->getIdentityList(ids);
+	//rsIdentity->getIdentityList(ids);
 
-	for(it = ids.begin(); it != ids.end(); it++)
+	//for(it = ids.begin(); it != ids.end(); it++)
+	//{
+	RsIdData data;
+	while(rsIdentity->getIdentity(token, data))
 	{
-		RsIdData data;
-		if (!rsIdentity->getIdentity(*it, data))
-		{
-			continue;
-		}
 
 		/* do filtering */
 		bool ok = false;
@@ -430,202 +381,99 @@ void IdDialog::insertIdList()
 
 
 
-
-void IdDialog::insertPhotosForSelectedAlbum()
+void IdDialog::lockForRequest(uint32_t token, uint32_t reqtype)
 {
-#if 0
-	std::cerr << "IdDialog::insertPhotosForSelectedAlbum()";
+
+	/* store token for later results retrival */
+	if (mWaitingForRequest)
+	{
+		std::cerr << "IdDialog::lockForRequest() LOCKED ALREADY - BIG ERROR";
+		std::cerr << std::endl;
+	}
+	
+	mWaitingForRequest = true;
+	mRequestToken = token;
+	mRequestType = reqtype;
+
+	std::cerr << "IdDialog::lockForRequest() Token: " << token << " ReqType: " << reqtype;
 	std::cerr << std::endl;
 
-	clearPhotos();
+}
 
-	std::list<std::string> albumIds;
-	if (mAlbumSelected)
+
+void IdDialog::checkForRequest()
+{
+
+	if (mWaitingForRequest)
 	{
-		albumIds.push_back(mAlbumSelected->mDetails.mAlbumId);
+		/* check token */
+		if (4 == rsIdentity->requestStatus(mRequestToken))
+			loadRequest();
+	}
+}
 
-		std::cerr << "IdDialog::insertPhotosForSelectedAlbum() AlbumId: " << mAlbumSelected->mDetails.mAlbumId;
+
+void IdDialog::loadRequest()
+{
+	if (!mWaitingForRequest)
+	{
+		std::cerr << "IdDialog::loadRequest() NOT LOCKED - BIG ERROR";
 		std::cerr << std::endl;
 	}
 
-	insertPhotosForAlbum(albumIds);
-#endif
-}
+	/* unlock gui */
+	mWaitingForRequest = false;
 
 
-void IdDialog::addAlbum(const std::string &id)
-{
-#if 0
-	RsPhotoAlbum album;
-	rsPhoto->getAlbum(id, album);
-
-
-	RsPhotoThumbnail thumbnail;
-	rsPhoto->getAlbumThumbnail(id, thumbnail);
-
-	std::cerr << " IdDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
-
-	PulseItem *item = new PulseItem(this, album, thumbnail);
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	alayout->addWidget(item);
-#endif
-}
-
-void IdDialog::clearAlbums()
-{
-#if 0
-	std::cerr << "IdDialog::clearAlbums()" << std::endl;
-
-	std::list<PulseItem *> photoItems;
-	std::list<PulseItem *>::iterator pit;
-	
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-        int count = alayout->count();
-	for(int i = 0; i < count; i++)
+	switch (mRequestType)
 	{
-		QLayoutItem *litem = alayout->itemAt(i);
-		if (!litem)
+		case RSID_REQ_IDLIST:
 		{
-			std::cerr << "IdDialog::clearAlbums() missing litem";
+			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDLIST";
 			std::cerr << std::endl;
-			continue;
-		}
-		
-		PulseItem *item = dynamic_cast<PulseItem *>(litem->widget());
-		if (item)
-		{
-			std::cerr << "IdDialog::clearAlbums() item: " << item;
-			std::cerr << std::endl;
-		
-			photoItems.push_back(item);
-		}
-		else
-		{
-			std::cerr << "IdDialog::clearAlbums() Found Child, which is not a PulseItem???";
-			std::cerr << std::endl;
-		}
-	}
-	
-	for(pit = photoItems.begin(); pit != photoItems.end(); pit++)
-	{
-		PulseItem *item = *pit;
-		alayout->removeWidget(item);
-		delete item;
-	}
-	mAlbumSelected = NULL;
-#endif
-}
 
-void IdDialog::clearPhotos()
-{
-#if 0
-	std::cerr << "IdDialog::clearPhotos()" << std::endl;
+			std::list<std::string> ids;
+			rsIdentity->getIdentityList(mRequestToken, ids);
+	
+			/* request data - straight away */	
 
-	std::list<PulseItem *> photoItems;
-	std::list<PulseItem *>::iterator pit;
-	
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
-        int count = alayout->count();
-	for(int i = 0; i < count; i++)
-	{
-		QLayoutItem *litem = alayout->itemAt(i);
-		if (!litem)
-		{
-			std::cerr << "IdDialog::clearPhotos() missing litem";
-			std::cerr << std::endl;
-			continue;
+			requestIdData(ids);
 		}
-		
-		PulseItem *item = dynamic_cast<PulseItem *>(litem->widget());
-		if (item)
+		break;
+
+		case RSID_REQ_IDLISTDATA:
 		{
-			std::cerr << "IdDialog::clearPhotos() item: " << item;
+			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDLISTDATA";
 			std::cerr << std::endl;
-		
-			photoItems.push_back(item);
+			insertIdList(mRequestToken);
 		}
-		else
+		break;
+
+
+		case RSID_REQ_IDDETAILS:
 		{
-			std::cerr << "IdDialog::clearPhotos() Found Child, which is not a PulseItem???";
+			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDDETAILS";
 			std::cerr << std::endl;
+			insertIdDetails(mRequestToken);
 		}
+		break;
+
+		case RSID_REQ_IDEDIT:
+		{
+			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDEDIT";
+			std::cerr << std::endl;
+			showIdEdit(mRequestToken);
+		}
+		break;
+
+		default:
+		break;
 	}
-	
-	for(pit = photoItems.begin(); pit != photoItems.end(); pit++)
-	{
-		PulseItem *item = *pit;
-		alayout->removeWidget(item);
-		delete item;
-	}
-	
-	mPhotoSelected = NULL;
-#endif	
-	
 }
 
 
-void IdDialog::insertPhotosForAlbum(const std::list<std::string> &albumIds)
-{
-#if 0
-	/* clear it all */
-	clearPhotos();
-	//ui.photoLayout->clear();
-
-	/* create a list of albums */
-
-	std::list<std::string> ids;
-	std::list<std::string> photoIds;
-	std::list<std::string> filteredPhotoIds;
-	std::list<std::string>::const_iterator it;
-
-	for(it = albumIds.begin(); it != albumIds.end(); it++)
-	{
-		rsPhoto->getPhotoList(*it, photoIds);
-	}
-
-	/* Filter Albums */ /* Sort Albums */
-#define MAX_PHOTOS 50
-	
-	int count = MAX_PHOTOS;
-
-	FilterNSortPhotos(photoIds, filteredPhotoIds, MAX_PHOTOS);
-
-	for(it = filteredPhotoIds.begin(); it != filteredPhotoIds.end(); it++)
-	{
-		addPhoto(*it);
-	}
-#endif
-}
 
 
-void IdDialog::addPhoto(const std::string &id)
-{
-#if 0
-	RsPhotoPhoto photo;
-	rsPhoto->getPhoto(id,photo);
 
-	RsPhotoThumbnail thumbnail;
-	rsPhoto->getPhotoThumbnail(id, thumbnail);
-
-	std::cerr << "IdDialog::addPhoto() AlbumId: " << photo.mAlbumId;
-	std::cerr << " PhotoId: " << photo.mId;
-	std::cerr << std::endl;
-
-	PulseItem *item = new PulseItem(this, photo, thumbnail);
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
-	alayout->addWidget(item);
-#endif
-}
-
-
-#if 0
-void IdDialog::deletePulseItem(PulseItem *item, uint32_t type)
-{
-
-
-	return;
-}
-
-#endif
 
 

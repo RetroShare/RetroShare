@@ -98,16 +98,17 @@ void IdEditDialog::updateIdType(bool pseudo)
 }
 
 
-void IdEditDialog::setupExistingId(std::string keyId)
+void IdEditDialog::setupExistingId(uint32_t token)
 {
 	ui.checkBox_NewId->setChecked(false);
 	ui.checkBox_NewId->setEnabled(false);
 	ui.radioButton_GpgId->setEnabled(false);
 	ui.radioButton_Pseudo->setEnabled(false);
 
-	RsIdData data;
-	if (!rsIdentity->getIdentity(keyId, data))
-	{
+        /* get details from libretroshare */
+        RsIdData data;
+        if (!rsIdentity->getIdentity(token, data))
+        {
 		ui.lineEdit_KeyId->setText("ERROR KEYID INVALID");
 		ui.lineEdit_Nickname->setText("");
 

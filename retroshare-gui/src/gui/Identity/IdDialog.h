@@ -53,34 +53,26 @@ private slots:
 
 private:
 
-	void insertIdList();
+	void blankSelection();
+	void requestIdDetails(std::string &id);
+	void insertIdDetails(uint32_t token);
 
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
+	void requestIdList();
+	void requestIdData(std::list<std::string> &ids);
+	void insertIdList(uint32_t token);
 
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
+	void requestIdEdit(std::string &id);
+	void showIdEdit(uint32_t token);
 
-	/* Grunt work of setting up the GUI */
-
-	bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	void insertAlbums();
-	void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-	void insertPhotosForSelectedAlbum();
-
-	void addAlbum(const std::string &id);
-	void addPhoto(const std::string &id);
-
-	void clearAlbums();
-	void clearPhotos();
+	void lockForRequest(uint32_t token, uint32_t reqtype);
+	void checkForRequest();
+	void loadRequest();
 
 	IdEditDialog *mEditDialog;
 
-	//PulseItem *mPulseSelected;
+	bool mWaitingForRequest;
+	uint32_t mRequestToken;
+	uint32_t mRequestType;
 
 	/* UI - from Designer */
 	Ui::IdDialog ui;

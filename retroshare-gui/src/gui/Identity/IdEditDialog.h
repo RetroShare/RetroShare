@@ -26,6 +26,8 @@
 
 #include "ui_IdEditDialog.h"
 
+#include <inttypes.h>
+
 class IdEditDialog : public QWidget
 {
   Q_OBJECT
@@ -34,7 +36,7 @@ public:
 	IdEditDialog(QWidget *parent = 0);
 
 	void setupNewId(bool pseudo);
-	void setupExistingId(std::string keyId);
+	void setupExistingId(uint32_t token);
 
 private slots:
 
