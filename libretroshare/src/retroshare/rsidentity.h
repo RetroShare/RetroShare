@@ -98,22 +98,33 @@ class RsIdentity
 	RsIdentity()  { return; }
 virtual ~RsIdentity() { return; }
 
-	/* changed? */
+
+        /* changed? */
 virtual bool updated() = 0;
 
+        /* Interface now a request / poll / answer system */
 
-virtual bool getIdentityList(std::list<std::string> &ids) = 0;
+        /* Data Requests */
+virtual bool requestIdentityList(uint32_t &token) = 0;
+virtual bool requestIdentities(uint32_t &token, const std::list<std::string> &ids) = 0;
+virtual bool requestIdReputations(uint32_t &token, const std::list<std::string> &ids) = 0;
+virtual bool requestIdPeerOpinion(uint32_t &token, const std::string &aboutId, const std::string &peerId) = 0;
+//virtual bool requestIdGpgDetails(uint32_t &token, const std::list<std::string> &ids) = 0;
 
-virtual bool getIdentity(const std::string &id, RsIdData &data) = 0;
-virtual bool getIdReputation(const std::string &id, RsIdReputation &reputation) = 0;
-virtual bool getIdPeerOpinion(const std::string &aboutid, const std::string &peerid, RsIdOpinion &opinion) = 0;
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token) = 0;
 
-virtual bool getGpgIdDetails(const std::string &id, std::string &gpgName, std::string &gpgEmail) = 0;
+        /* Retrieve Data */
+virtual bool getIdentityList(const uint32_t token, std::list<std::string> &ids) = 0;
+virtual bool getIdentity(const uint32_t token, RsIdData &data) = 0;
+virtual bool getIdReputation(const uint32_t token, RsIdReputation &reputation) = 0;
+virtual bool getIdPeerOpinion(const uint32_t token, RsIdOpinion &opinion) = 0;
 
-/* details are updated in group - to choose GroupID */
+        /* Updates */
 virtual bool updateIdentity(RsIdData &data) = 0;
 virtual bool updateOpinion(RsIdOpinion &opinion) = 0;
 
+	/* TEMP */
 virtual void generateDummyData() = 0;
 };
 

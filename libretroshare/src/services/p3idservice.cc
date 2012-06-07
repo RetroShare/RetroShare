@@ -33,11 +33,16 @@
  * #define ID_DEBUG 1
  ****/
 
+#define ID_REQUEST_LIST		0x0001
+#define ID_REQUEST_IDENTITY	0x0002
+#define ID_REQUEST_REPUTATION	0x0003
+#define ID_REQUEST_OPINION	0x0004
+
 RsIdentity *rsIdentity = NULL;
 
 
 p3IdService::p3IdService(uint16_t type)
-	:p3Service(type), mIdMtx("p3IdService"), mUpdated(true)
+	:p3GxsService(type), mIdMtx("p3IdService"), mUpdated(true)
 {
      	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	return;
@@ -49,6 +54,8 @@ int	p3IdService::tick()
 	std::cerr << "p3IdService::tick()";
 	std::cerr << std::endl;
 	
+	fakeprocessrequests();
+
 	return 0;
 }
 
@@ -64,6 +71,252 @@ bool p3IdService::updated()
 	return false;
 }
 
+
+        /* Data Requests */
+bool p3IdService::requestIdentityList(uint32_t &token)
+{
+	generateToken(token);
+	std::list<std::string> ids;
+	storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_GROUPS | ID_REQUEST_LIST, ids);
+
+	return true;
+}
+
+bool p3IdService::requestIdentities(uint32_t &token, const std::list<std::string> &ids)
+{
+	generateToken(token);
+	storeRequest(token, GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_GROUPS | ID_REQUEST_IDENTITY, ids);
+
+	return true;
+}
+
+bool p3IdService::requestIdReputations(uint32_t &token, const std::list<std::string> &ids)
+{
+	generateToken(token);
+
+	// request msg Ids from Groups.
+	storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | ID_REQUEST_REPUTATION, ids);
+
+	// Once they arrive, we need to get the Messages to workout reputation.
+
+	return true;
+}
+
+bool p3IdService::requestIdPeerOpinion(uint32_t &token, const std::string &aboutId, const std::string &peerId)
+{
+	generateToken(token);
+
+	// request msg Ids from Groups.
+	std::list<std::string> ids;
+	ids.push_back(aboutId);
+	ids.push_back(peerId);
+	storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | ID_REQUEST_OPINION, ids);
+
+	// Once they arrive, we search through the message to find the exact need to get the Messages to workout reputation.
+
+	return true;
+}
+
+        /* Poll */
+uint32_t p3IdService::requestStatus(const uint32_t token)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	/* handle cases which need multiple steps */
+	if (reqtype & ID_REQUEST_OPINION)
+	{
+
+
+
+	}
+	else if (reqtype & ID_REQUEST_REPUTATION)
+	{
+
+
+
+	}
+
+	return status;
+}
+
+
+        /* Retrieve Data */
+	/* For the moment, these don't get real data, just check if the request has been deemed completed
+	 */
+bool p3IdService::getIdentityList(const uint32_t token, std::list<std::string> &ids)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	if (reqtype != (GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_GROUPS | ID_REQUEST_LIST))
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	bool ans = InternalgetIdentityList(ids);
+
+	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+
+	return ans;
+}
+
+bool p3IdService::getIdentity(const uint32_t token, RsIdData &data)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	if (reqtype != (GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_GROUPS | ID_REQUEST_IDENTITY))
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+
+	bool ans = InternalgetIdentity(id, data);
+	return ans;
+}
+
+bool p3IdService::getIdReputation(const uint32_t token, RsIdReputation &reputation)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	if (reqtype != (GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | ID_REQUEST_REPUTATION))
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		std::cerr << "p3IdService::getIdReputation() List Fully Popped" << std::endl;
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+
+	bool ans = InternalgetIdReputation(id, reputation);
+	return ans;
+}
+
+
+bool p3IdService::getIdPeerOpinion(const uint32_t token, RsIdOpinion &opinion)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	if (reqtype != (GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | ID_REQUEST_OPINION))
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3IdService ERROR" << std::endl;
+		return false;
+	}
+
+	std::string aboutid;
+	std::string peerid;
+	popRequestList(token, aboutid);
+	popRequestList(token, peerid);
+
+	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+
+	bool ans = InternalgetIdPeerOpinion(aboutid, peerid, opinion);
+	return ans;
+
+}
+
+#define MAX_REQUEST_AGE 60
+
+bool p3IdService::fakeprocessrequests()
+{
+	std::list<uint32_t>::iterator it;
+	std::list<uint32_t> tokens;
+
+	tokenList(tokens);
+
+	time_t now = time(NULL);
+	for(it = tokens.begin(); it != tokens.end(); it++)
+	{
+		uint32_t status;
+		uint32_t reqtype;
+		uint32_t token = *it;
+		time_t   ts;
+		checkRequestStatus(token, status, reqtype, ts);
+	
+		std::cerr << "p3IdService::fakeprocessrequests() Token: " << token << " Status: " << status << " ReqType: " << reqtype << "Age: " << now - ts << std::endl;
+
+		if (status == GXS_REQUEST_STATUS_PENDING)
+		{
+			updateRequestStatus(token, GXS_REQUEST_STATUS_PARTIAL);
+		}
+		else if (status == GXS_REQUEST_STATUS_PARTIAL)
+		{
+			updateRequestStatus(token, GXS_REQUEST_STATUS_COMPLETE);
+		}
+		else if (status == GXS_REQUEST_STATUS_DONE)
+		{
+			std::cerr << "p3IdService::fakeprocessrequests() Clearing Done Request Token: " << token;
+			std::cerr << std::endl;
+			clearRequest(token);
+		}
+		else if (now - ts > MAX_REQUEST_AGE)
+		{
+			std::cerr << "p3IdService::fakeprocessrequests() Clearing Old Request Token: " << token;
+			std::cerr << std::endl;
+			clearRequest(token);
+		}
+	}
+
+	return true;
+}
+		
+
+
+
+#if 0
+
 bool p3IdService::getGpgIdDetails(const std::string &id, std::string &gpgName, std::string &gpgEmail)
 {
 	gpgName = "aGpgName";
@@ -72,7 +325,9 @@ bool p3IdService::getGpgIdDetails(const std::string &id, std::string &gpgName, s
 	return true;
 }
 
-bool p3IdService::getIdentityList(std::list<std::string> &ids)
+#endif
+
+bool p3IdService::InternalgetIdentityList(std::list<std::string> &ids)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
@@ -85,7 +340,7 @@ bool p3IdService::getIdentityList(std::list<std::string> &ids)
 	return false;
 }
 
-bool p3IdService::getIdentity(const std::string &id, RsIdData &data)
+bool p3IdService::InternalgetIdentity(const std::string &id, RsIdData &data)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	
@@ -100,7 +355,7 @@ bool p3IdService::getIdentity(const std::string &id, RsIdData &data)
 	return true;
 }
 
-bool p3IdService::getIdReputation(const std::string &id, RsIdReputation &reputation)
+bool p3IdService::InternalgetIdReputation(const std::string &id, RsIdReputation &reputation)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	
@@ -116,7 +371,7 @@ bool p3IdService::getIdReputation(const std::string &id, RsIdReputation &reputat
 }
 
 
-bool p3IdService::getIdPeerOpinion(const std::string &aboutid, const std::string &peerId, RsIdOpinion &opinion)
+bool p3IdService::InternalgetIdPeerOpinion(const std::string &aboutid, const std::string &peerId, RsIdOpinion &opinion)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	

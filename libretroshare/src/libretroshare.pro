@@ -683,11 +683,13 @@ HEADERS += services/p3photoservice.h \
 		retroshare/rswiki.h \
 		services/p3idservice.h \
 		retroshare/rsidentity.h \
+		services/p3gxsservice.h \
 
 SOURCES += services/p3photoservice.cc \
 		serialiser/rsphotoitems.cc \
 		services/p3wikiservice.cc \
 		services/p3idservice.cc \
+		services/p3gxsservice.cc \
 
 # Other Old Code.
 #	rsserver/p3photo.cc \
