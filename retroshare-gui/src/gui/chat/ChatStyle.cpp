@@ -260,7 +260,7 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
             css += "\n" + cssVariant;
         }
 
-        style.replace("%css-style%", css).replace("%style-dir%", styleDir.absolutePath());
+        style.replace("%css-style%", css).replace("%style-dir%", "file:///" + styleDir.absolutePath());
     }
 
     return style;

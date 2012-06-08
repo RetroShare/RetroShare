@@ -696,94 +696,68 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="+738"/>
         <source>Certificate files</source>
-        <translation>Zertifikat-Dateien</translation>
+        <translation type="obsolete">Zertifikat-Dateien</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Use PGP certificates saved in files.</source>
-        <translation>Nutze in Dateien gespeicherte PGP Zertifikate.</translation>
+        <translation type="obsolete">Nutze in Dateien gespeicherte PGP Zertifikate.</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation>Du musst eine Datei mit deinem Zertifikat erstellen und deinem Freund zukommen lassen. Alternativ kannst Du auch eine Datei verwenden, die Du zuvor erstellt hast.</translation>
+        <translation type="obsolete">Du musst eine Datei mit deinem Zertifikat erstellen und deinem Freund zukommen lassen. Alternativ kannst Du auch eine Datei verwenden, die Du zuvor erstellt hast.</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Export my certificate...</source>
-        <translation>Exportiere mein Zertifikat...</translation>
+        <translation type="obsolete">Exportiere mein Zertifikat...</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="obsolete">Durchsuchen</translation>
     </message>
     <message>
-        <location line="+19"/>
         <source>Select Certificate</source>
-        <translation>Zertifikat auswählen</translation>
+        <translation type="obsolete">Zertifikat auswählen</translation>
     </message>
     <message>
-        <location line="+24"/>
         <source>Please choose a filename</source>
-        <translation>Bitte wähle einen Dateinamen</translation>
+        <translation type="obsolete">Bitte wähle einen Dateinamen</translation>
     </message>
     <message>
-        <location line="-7"/>
-        <location line="+16"/>
-        <location line="+4"/>
-        <location line="+6"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-9"/>
         <source>Certificate file successfully created</source>
-        <translation>Zertifikat-Datei erfolgreich erstellt</translation>
+        <translation type="obsolete">Zertifikat-Datei erfolgreich erstellt</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <location line="+6"/>
         <source>Sorry, certificate file creation failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="obsolete">Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+83"/>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation>Fehler beim Laden des Zertifikats : Etwas stimmt nicht mit %1</translation>
+        <translation type="obsolete">Fehler beim Laden des Zertifikats : Etwas stimmt nicht mit %1</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation>Fehler beim Laden des Zertifikats: Datei %1 nicht gefunden</translation>
+        <translation type="obsolete">Fehler beim Laden des Zertifikats: Datei %1 nicht gefunden</translation>
     </message>
     <message>
-        <location line="-164"/>
         <source>Import friend&apos;s certificate...</source>
-        <translation>Importiere Zertifikat eines Freundes...</translation>
+        <translation type="obsolete">Importiere Zertifikat eines Freundes...</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation>Gib die Datei mit dem Zertifikat ein oder ziehe sie per Drag&apos;n&apos;Drop in das Fenster ziehen </translation>
+        <translation type="obsolete">Gib die Datei mit dem Zertifikat ein oder ziehe sie per Drag&apos;n&apos;Drop in das Fenster ziehen </translation>
     </message>
     <message>
-        <location line="+26"/>
-        <location line="+25"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
+        <translation type="obsolete">RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-8"/>
         <source>Sorry, create certificate failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="obsolete">Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+113"/>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation>Fehler beim Laden des Zertifikats: Datei %1 konnte nicht gelesen werden</translation>
+        <translation type="obsolete">Fehler beim Laden des Zertifikats: Datei %1 konnte nicht gelesen werden</translation>
     </message>
 </context>
 <context>
@@ -1122,7 +1096,7 @@ Bitte wähle einen zum chatten aus.</translation>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+64"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+63"/>
         <source>Welcome to lobby %1</source>
         <translation>Willkommen in der Lobby %1</translation>
     </message>
@@ -1132,17 +1106,17 @@ Bitte wähle einen zum chatten aus.</translation>
         <translation>Thema: %1</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+90"/>
         <source>Please enter your new nick name</source>
         <translation>Bitte gib deinen neuen Spitznamen ein</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+75"/>
         <source>Uncheck to mute participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+91"/>
         <location line="+3"/>
         <location line="+6"/>
         <source>Lobby management</source>
@@ -1161,7 +1135,7 @@ Bitte wähle einen zum chatten aus.</translation>
     <message>
         <location line="+6"/>
         <source>%1 changed his name to: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ändert seinen Namen zu: %2</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1185,7 +1159,7 @@ Bitte wähle einen zum chatten aus.</translation>
     </message>
     <message>
         <location filename="../gui/chat/ChatLobbyDialog.ui" line="+177"/>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-226"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="-228"/>
         <source>Change nick name</source>
         <translation>Ändere Spitznamen</translation>
     </message>
@@ -1502,7 +1476,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+443"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+444"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -1714,69 +1688,56 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="+49"/>
         <source>Make Friend</source>
-        <translation>Als Freund wählen</translation>
+        <translation type="obsolete">Als Freund wählen</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Details about your friend : </source>
-        <translation>Details zu Ihrem Freund:</translation>
+        <translation type="obsolete">Details zu Ihrem Freund:</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Key validity:</source>
-        <translation>Schlüssel Echtheit:</translation>
+        <translation type="obsolete">Schlüssel Echtheit:</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Email:</source>
-        <translation>Email:</translation>
+        <translation type="obsolete">Email:</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="obsolete">Optionen</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Add friend to group:</source>
-        <translation>Freund zur Gruppe hinzufügen:</translation>
+        <translation type="obsolete">Freund zur Gruppe hinzufügen:</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>Authentifiziere Freund (GPG Schlüssel unterzeichnen)</translation>
+        <translation type="obsolete">Authentifiziere Freund (GPG Schlüssel unterzeichnen)</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Add as friend to connect with</source>
-        <translation>Füge als Freund hinzu, zu dem verbunden wird</translation>
+        <translation type="obsolete">Füge als Freund hinzu, zu dem verbunden wird</translation>
     </message>
     <message>
-        <location line="+114"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation>Ihr Freund ist bereits registriert. Das nochmalige Hinzufügen ändert nur seine IP.</translation>
+        <translation type="obsolete">Ihr Freund ist bereits registriert. Das nochmalige Hinzufügen ändert nur seine IP.</translation>
     </message>
     <message>
-        <location line="-158"/>
         <source>Peer details</source>
-        <translation>Nachbar Details</translation>
+        <translation type="obsolete">Nachbar Details</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="obsolete">Name:</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Loc:</source>
-        <translation>Ort:</translation>
+        <translation type="obsolete">Ort:</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Signers</source>
-        <translation>Unterzeichner</translation>
+        <translation type="obsolete">Unterzeichner</translation>
     </message>
 </context>
 <context>
@@ -2041,8 +2002,8 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+87"/>
-        <location line="+201"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+115"/>
+        <location line="+183"/>
         <source>Certificate Load Failed</source>
         <translation>Das Zertifikat konnte nicht geladen werden</translation>
     </message>
@@ -2184,17 +2145,17 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
     <message>
         <location line="+0"/>
         <location line="+19"/>
-        <location line="+17"/>
+        <location line="+19"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-17"/>
+        <location line="-19"/>
         <source>Select Certificate</source>
         <translation>Zertifikat auswählen</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Sorry, create certificate failed</source>
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
@@ -2227,7 +2188,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
     <message>
         <location line="+8"/>
         <source>Add a new Friend</source>
-        <translation>Fügen einen neuen Freund hinzu</translation>
+        <translation>Füge einen neuen Freund hinzu</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2279,7 +2240,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <location line="+49"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-199"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-201"/>
         <source>Include signatures</source>
         <translation>Signaturen einschließen</translation>
     </message>
@@ -2492,14 +2453,12 @@ Die folgenden Wege sind möglich:</translation>
 <context>
     <name>ConnectFriendWizard1</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="-883"/>
         <source>Certificate Load Failed</source>
-        <translation type="unfinished">Das Zertifikat konnte nicht geladen werden</translation>
+        <translation type="obsolete">Das Zertifikat konnte nicht geladen werden</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Connect Friend Wizard</source>
-        <translation type="unfinished">Assistent um sich zu einem Freund zu verbinden</translation>
+        <translation type="obsolete">Assistent um sich zu einem Freund zu verbinden</translation>
     </message>
 </context>
 <context>
@@ -4244,34 +4203,28 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="+1142"/>
         <source>Invite Friends by Email</source>
-        <translation>Lade Freunde per Email ein</translation>
+        <translation type="obsolete">Lade Freunde per Email ein</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation>Gib die Email Adressen Deined Freundes an (mehrere Adressen müssen mit Semikolon getrennt werden)</translation>
+        <translation type="obsolete">Gib die Email Adressen Deined Freundes an (mehrere Adressen müssen mit Semikolon getrennt werden)</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Your friends&apos; email addresses:</source>
-        <translation>Email Adresse Deines Freundes:</translation>
+        <translation type="obsolete">Email Adresse Deines Freundes:</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Enter Friends Email addresses</source>
-        <translation>Gib die Email Adresse Deines Freundes ein</translation>
+        <translation type="obsolete">Gib die Email Adresse Deines Freundes ein</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Subject:</source>
-        <translation>Betreff:</translation>
+        <translation type="obsolete">Betreff:</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>RetroShare Invitation</source>
-        <translation>RetroShare Einladung</translation>
+        <translation type="obsolete">RetroShare Einladung</translation>
     </message>
     <message>
         <source>Friend invites you to check out RetroShare</source>
@@ -4288,14 +4241,12 @@ Bis bald in RetroShare!</translation>
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location line="-343"/>
         <source>Sorry, some error appeared</source>
-        <translation>Entschuldigung, es trat ein Fehler auf</translation>
+        <translation type="obsolete">Entschuldigung, es trat ein Fehler auf</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Here is the error message: </source>
-        <translation>Dies ist die Fehlermeldung: </translation>
+        <translation type="obsolete">Dies ist die Fehlermeldung: </translation>
     </message>
 </context>
 <context>
@@ -4670,59 +4621,44 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FofPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="-384"/>
         <source>Friends of friends</source>
-        <translation>Freunde von Freunden</translation>
+        <translation type="obsolete">Freunde von Freunden</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Select now who you want to make friends with.</source>
-        <translation>Wählen Sie nun aus, wen Sie zu Ihren Freundne hinzufügen möchten.</translation>
+        <translation type="obsolete">Wählen Sie nun aus, wen Sie zu Ihren Freundne hinzufügen möchten.</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Show me: </source>
-        <translation>Zeige mir: </translation>
+        <translation type="obsolete">Zeige mir: </translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Any peer I&apos;ve not signed</source>
-        <translation>Jeden Peer, den ich nicht unterzeichnet habe</translation>
+        <translation type="obsolete">Jeden Peer, den ich nicht unterzeichnet habe</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Friends of my friends who already trust me</source>
-        <translation>Freunde meiner Freunde, welche mir schon vertrauen</translation>
+        <translation type="obsolete">Freunde meiner Freunde, welche mir schon vertrauen</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Signed peers showing as denied</source>
-        <translation>Unterzeichnete Peers, die geblockt sind</translation>
+        <translation type="obsolete">Unterzeichnete Peers, die geblockt sind</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Peer name</source>
-        <translation>Peer Name</translation>
+        <translation type="obsolete">Peer Name</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Also signed by</source>
-        <translation>Auch unterzeichnet von</translation>
+        <translation type="obsolete">Auch unterzeichnet von</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Peer id</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+2"/>
         <source>Make friend with these peers</source>
-        <translation>Füge diese Peers zu deinen Freunden hinzu</translation>
+        <translation type="obsolete">Füge diese Peers zu deinen Freunden hinzu</translation>
     </message>
     <message>
-        <location line="+101"/>
         <source>*** None ***</source>
-        <translation>*** Keine ***</translation>
+        <translation type="obsolete">*** Keine ***</translation>
     </message>
 </context>
 <context>
@@ -7759,49 +7695,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IntroPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="-462"/>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation>&amp;Füge ausgewählte Freunde Deiner Freunde hinzu</translation>
+        <translation type="obsolete">&amp;Füge ausgewählte Freunde Deiner Freunde hinzu</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Add a new Friend</source>
-        <translation>Fügen einen neuen Freund hinzu</translation>
+        <translation type="obsolete">Fügen einen neuen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.
 These ways are possible to do this:</source>
-        <translation>Dieser Assistent hilft Dir, Dich mit einem Freund im RetroShare-Netzwerk zu verbinden.
+        <translation type="obsolete">Dieser Assistent hilft Dir, Dich mit einem Freund im RetroShare-Netzwerk zu verbinden.
 Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Enter the certificate manually</source>
-        <translation>Gib das Zertifikat &amp;manuell ein</translation>
+        <translation type="obsolete">Gib das Zertifikat &amp;manuell ein</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation>&amp;Du hast eine Datei mit einem Zertifikat deines Freund bekommen</translation>
+        <translation type="obsolete">&amp;Du hast eine Datei mit einem Zertifikat deines Freund bekommen</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation>Gib die RetroShare &amp;ID manuell ein</translation>
+        <translation type="obsolete">Gib die RetroShare &amp;ID manuell ein</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare) </source>
-        <translation>&amp;Sende eine Einladung per Email
+        <translation type="obsolete">&amp;Sende eine Einladung per Email
 (Er/Sie erhält eine Email mit der Anleitung zum Herunterladen von RetroShare)</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+246"/>
+        <location filename="../gui/MainWindow.cpp" line="+244"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
@@ -7899,7 +7828,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>%1 Freunde verbunden</translation>
     </message>
     <message>
-        <location line="+746"/>
+        <location line="+739"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
     </message>
@@ -7909,23 +7838,23 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Link ist fehlerhaft.</translation>
     </message>
     <message>
-        <location line="-754"/>
+        <location line="-747"/>
         <source>%1 friend connected</source>
         <translation>%1 Freund verbunden</translation>
     </message>
     <message>
-        <location line="+414"/>
+        <location line="+407"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="+89"/>
-        <location filename="../gui/MainWindow.cpp" line="-800"/>
+        <location filename="../gui/MainWindow.ui" line="+88"/>
+        <location filename="../gui/MainWindow.cpp" line="-793"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+833"/>
+        <location filename="../gui/MainWindow.cpp" line="+826"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -7935,28 +7864,27 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-822"/>
+        <location line="-815"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="-75"/>
+        <location filename="../gui/MainWindow.ui" line="-74"/>
         <source>MainWindow</source>
         <translation>Hauptfenster</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+53"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+77"/>
         <source>Add a Friend Wizard</source>
         <translation>Assistent zum Hinzufügen von Freunden</translation>
     </message>
     <message>
-        <location line="-68"/>
+        <location line="+9"/>
         <source>Add Share</source>
         <translation>Dateien freigeben</translation>
     </message>
@@ -7965,11 +7893,6 @@ Die folgenden Wege sind möglich:</translation>
         <location line="+3"/>
         <source>Quick Start Wizard</source>
         <translation>Schnellstart Assistent</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Add Friend 1</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="-209"/>
@@ -7982,7 +7905,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Dateien</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="-47"/>
+        <location filename="../gui/MainWindow.ui" line="-38"/>
         <source>Messenger</source>
         <translation>Messenger</translation>
     </message>
@@ -8063,12 +7986,12 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-71"/>
+        <location line="-70"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+240"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -8083,7 +8006,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation></translation>
     </message>
     <message>
-        <location line="+937"/>
+        <location line="+930"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Möchtest du RetroShare wirklich beenden?</translation>
     </message>
@@ -8093,7 +8016,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-819"/>
+        <location line="-812"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -11630,7 +11553,7 @@ und den Assistent zum Hinzufügen von Freunden zu starten.
         <translation>Bestätigung</translation>
     </message>
     <message>
-        <location line="+334"/>
+        <location line="+336"/>
         <source>%1 of %2 RetroShare links processed.</source>
         <translation>%1 von %2 RetroShare Links verarbeitet.</translation>
     </message>
@@ -12088,7 +12011,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Welcome to RetroShare!&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This QuickStart wizard can help you configure your RetorShare in a few simple steps.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This QuickStart wizard can help you configure your RetroShare in a few simple steps.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If you&apos;re a more advanced user, you can access the full range of RetroShare&apos;s options via the ToolBar. Click Exit to close the wizard at any time.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
@@ -12501,34 +12424,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsidPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="+981"/>
         <source>RetroShare ID</source>
-        <translation>RetroShare ID</translation>
+        <translation type="obsolete">RetroShare ID</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation>Benutze die RetroShare ID um Freunde aus deinem Netzwerk hinzuzufügen.</translation>
+        <translation type="obsolete">Benutze die RetroShare ID um Freunde aus deinem Netzwerk hinzuzufügen.</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Add Friends RetroShare ID...</source>
-        <translation>Füge die RetroShare ID des Freundes ein...</translation>
+        <translation type="obsolete">Füge die RetroShare ID des Freundes ein...</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Paste Friends RetroShare ID in the box below </source>
-        <translation>Füge die RetroShare ID eines Freunde in das Feld ein</translation>
+        <translation type="obsolete">Füge die RetroShare ID eines Freunde in das Feld ein</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
-        <translation>Füge die RetroShare ID eines Freundes ein, Beispiel Peer@BDE8D16A46D938CF </translation>
+        <translation type="obsolete">Füge die RetroShare ID eines Freundes ein, Beispiel Peer@BDE8D16A46D938CF </translation>
     </message>
     <message>
-        <location line="+44"/>
         <source>This Peer %1 is not available in your Network</source>
-        <translation>Der Nutzer %1 ist nicht in deinem Netzwerk verfügbar</translation>
+        <translation type="obsolete">Der Nutzer %1 ist nicht in deinem Netzwerk verfügbar</translation>
     </message>
 </context>
 <context>
@@ -14564,114 +14481,88 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TextPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard1.cpp" line="-993"/>
         <source>Use text representation of the PGP certificates.</source>
-        <translation>Verwende diesen Text als PGP Zertifikat.</translation>
+        <translation type="obsolete">Verwende diesen Text als PGP Zertifikat.</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation>Der folgende Text ist Ihr PGP Zertifikat. Sie können es zu Ihrem Freund geben </translation>
+        <translation type="obsolete">Der folgende Text ist Ihr PGP Zertifikat. Sie können es zu Ihrem Freund geben </translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Include signatures</source>
-        <translation>Signaturen einschließen</translation>
+        <translation type="obsolete">Signaturen einschließen</translation>
     </message>
     <message>
-        <location line="+19"/>
         <source>Save your Cert into a File</source>
-        <translation>Zertifikat als Datei speichern</translation>
+        <translation type="obsolete">Zertifikat als Datei speichern</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>Bitte füge das PGP-Zertifikat von Ihre Freunde in das Feld unten ein</translation>
+        <translation type="obsolete">Bitte füge das PGP-Zertifikat von Ihre Freunde in das Feld unten ein</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Clean certificate</source>
-        <translation>Bereinige Zertifikat</translation>
+        <translation type="obsolete">Bereinige Zertifikat</translation>
     </message>
     <message>
-        <location line="+76"/>
         <source>No or misspelled BEGIN tag found</source>
-        <translation>Kein oder fehlerhaften BEGIN Tag gefunden</translation>
+        <translation type="obsolete">Kein oder fehlerhaften BEGIN Tag gefunden</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>No or misspelled END tag found</source>
-        <translation>Kein oder fehlerhaften END Tag gefunden</translation>
+        <translation type="obsolete">Kein oder fehlerhaften END Tag gefunden</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation>Keine Prüfsumme (die letzten 5 Zeichen sollten durch das Zeichen &apos;=&apos; getrennt sein) oder keinen Zeilenumbruch nach der Tag Zeile gefunden (z.:b die Zeile die mit &quot;Version:&quot; beginnt)</translation>
+        <translation type="obsolete">Keine Prüfsumme (die letzten 5 Zeichen sollten durch das Zeichen &apos;=&apos; getrennt sein) oder keinen Zeilenumbruch nach der Tag Zeile gefunden (z.:b die Zeile die mit &quot;Version:&quot; beginnt)</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation>Unbekannter Fehler. Dein Zertifikat ist vermutlich kein Zertifikat.</translation>
+        <translation type="obsolete">Unbekannter Fehler. Dein Zertifikat ist vermutlich kein Zertifikat.</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Certificate cleaning error</source>
-        <translation>Fehler beim Bereinigen des Zertifikats</translation>
+        <translation type="obsolete">Fehler beim Bereinigen des Zertifikats</translation>
     </message>
     <message>
-        <location line="+59"/>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation type="obsolete">Speichern unter...</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
+        <translation type="obsolete">RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-43"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation>Du kannst diesen Text kopieren und an deinen Freund per Email senden oder über einen anderen Weg zukommen lassen</translation>
+        <translation type="obsolete">Du kannst diesen Text kopieren und an deinen Freund per Email senden oder über einen anderen Weg zukommen lassen</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-206"/>
         <source>Text certificate</source>
-        <translation>Text-Zertifikat</translation>
+        <translation type="obsolete">Text-Zertifikat</translation>
     </message>
     <message>
-        <location line="+37"/>
         <source>Copy your Cert to Clipboard</source>
-        <translation>Kopiere dein Zertifikat in die Zwischenablage</translation>
+        <translation type="obsolete">Kopiere dein Zertifikat in die Zwischenablage</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Run Email program</source>
-        <translation>Starte das Standard-Emailprogramm</translation>
+        <translation type="obsolete">Starte das Standard-Emailprogramm</translation>
     </message>
     <message>
-        <location line="+137"/>
         <source>Connect Friend Help</source>
-        <translation>Verbindungshilfe</translation>
+        <translation type="obsolete">Verbindungshilfe</translation>
     </message>
     <message>
-        <location line="+90"/>
         <source>Certificate Load Failed</source>
-        <translation>Das Zertifikat konnte nicht geladen werden</translation>
+        <translation type="obsolete">Das Zertifikat konnte nicht geladen werden</translation>
     </message>
     <message>
-        <location line="-75"/>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Dein Zertiifkat ist in in die Zwischenablage kopiert worden</translation>
+        <translation type="obsolete">Dein Zertiifkat ist in in die Zwischenablage kopiert worden</translation>
     </message>
     <message>
-        <location line="-60"/>
         <source>RetroShare Invite</source>
-        <translation>RetroShare Einladung</translation>
+        <translation type="obsolete">RetroShare Einladung</translation>
     </message>
 </context>
 <context>
@@ -14764,7 +14655,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+346"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+348"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -14774,7 +14665,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-167"/>
+        <location line="-169"/>
         <location line="+59"/>
         <source>Status</source>
         <translation>Status</translation>
@@ -14892,7 +14783,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+135"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -14967,7 +14858,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+366"/>
+        <location line="+110"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -14977,12 +14868,12 @@ p, li { white-space: pre-wrap; }
         <translation>Pausiert</translation>
     </message>
     <message>
-        <location line="-137"/>
+        <location line="+212"/>
         <source>Transferring</source>
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="-172"/>
         <source>If the hash of the downloaded data does
 not correspond to the hash announced
 by the file source. The data is likely 
@@ -15004,7 +14895,7 @@ vergleichen und korrupte Blöcke erneut herunterladen.
 Bitte habe etwas Geduld!</translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+449"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -15051,7 +14942,7 @@ Bitte habe etwas Geduld!</translation>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-912"/>
+        <location line="-911"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -15088,7 +14979,7 @@ Bitte habe etwas Geduld!</translation>
         <translation>Router Anfragen</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+60"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -15099,83 +14990,83 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+506"/>
+        <location line="+249"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-504"/>
-        <location line="+505"/>
+        <location line="-247"/>
+        <location line="+248"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-505"/>
-        <location line="+504"/>
+        <location line="-248"/>
+        <location line="+247"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-394"/>
+        <location line="-137"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+231"/>
-        <location line="+143"/>
-        <location line="+140"/>
+        <location line="+118"/>
+        <location line="+206"/>
+        <location line="+187"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-279"/>
-        <location line="+140"/>
-        <location line="+140"/>
+        <location line="-392"/>
+        <location line="+209"/>
+        <location line="+184"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-139"/>
-        <location line="+140"/>
+        <location line="-392"/>
+        <location line="+393"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location line="-139"/>
+        <location line="-392"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
-        <location line="-130"/>
-        <location line="+131"/>
-        <location line="+140"/>
+        <location line="+1"/>
+        <location line="+218"/>
+        <location line="+175"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location line="-137"/>
+        <location line="-390"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+84"/>
         <source>version: </source>
         <translation>Version: </translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+304"/>
         <source>Uploading</source>
         <translation>Hochladend</translation>
     </message>
     <message>
-        <location line="-136"/>
+        <location line="-389"/>
         <source>Checking...</source>
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-532"/>
+        <location line="-276"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>
