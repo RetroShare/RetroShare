@@ -914,12 +914,14 @@ identities {
 
 	HEADERS += gui/Identity/IdDialog.h \
 		gui/Identity/IdEditDialog.h \
+                  util/TokenQueue.h \
 
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 
 	SOURCES += gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
+                  util/TokenQueue.cpp \
 
 }
 

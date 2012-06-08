@@ -39,7 +39,7 @@
  ****/
 
 /** Constructor */
-PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail)
+PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album)
 :QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_ALBUM) 
 {
 	setupUi(this);
@@ -48,13 +48,13 @@ PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album, const RsPho
 
 	mDetails = *( (RsPhotoPhoto *) &(album));
 	updateAlbumText(album);
-	updateImage(thumbnail);
+	updateImage(album.mThumbnail);
 
 	setSelected(false);
 }
 
 
-PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail)
+PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo)
 :QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_PHOTO) 
 {
 	setupUi(this);
@@ -64,7 +64,7 @@ PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPho
 	mDetails = *( (RsPhotoPhoto *) &(photo));
 
 	updatePhotoText(photo);
-	updateImage(thumbnail);
+	updateImage(photo.mThumbnail);
 
 	setSelected(false);
 }

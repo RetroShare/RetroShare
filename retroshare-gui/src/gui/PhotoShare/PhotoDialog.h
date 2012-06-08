@@ -33,8 +33,9 @@
 
 #include "gui/PhotoShare/PhotoItem.h"
 #include "gui/PhotoShare/PhotoAddDialog.h"
+#include "util/TokenQueue.h"
 
-class PhotoDialog : public MainPage, public PhotoHolder 
+class PhotoDialog : public MainPage, public PhotoHolder, public TokenResponse 
 {
   Q_OBJECT
 
@@ -54,6 +55,18 @@ private slots:
 
 private:
 
+	/* Request Response Functions for loading data */
+	void requestAlbumList();
+	void requestAlbumData(const std::list<std::string> &ids);
+	void requestPhotoList(const std::string &albumId);
+	void requestPhotoData(const std::list<std::string> &photoIds);
+	
+	void loadAlbumList(const uint32_t &token);
+	bool loadAlbumData(const uint32_t &token);
+	void loadPhotoList(const uint32_t &token);
+	void loadPhotoData(const uint32_t &token);
+	
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 
 	/* TODO: These functions must be filled in for proper filtering to work 
@@ -67,14 +80,15 @@ private:
 
 	/* Grunt work of setting up the GUI */
 
-	bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	void insertAlbums();
-	void insertPhotosForAlbum(const std::list<std::string> &albumIds);
+	//bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
+	//bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
+	//void insertAlbums();
+	//void insertPhotosForAlbum(const std::list<std::string> &albumIds);
+
 	void insertPhotosForSelectedAlbum();
 
-	void addAlbum(const std::string &id);
-	void addPhoto(const std::string &id);
+	void addAlbum(const RsPhotoAlbum &album);
+	void addPhoto(const RsPhotoPhoto &photo);
 
 	void clearAlbums();
 	void clearPhotos();
@@ -83,6 +97,8 @@ private:
 
 	PhotoItem *mAlbumSelected;
 	PhotoItem *mPhotoSelected;
+
+	TokenQueue *mPhotoQueue;
 
 	/* UI - from Designer */
 	Ui::PhotoDialog ui;

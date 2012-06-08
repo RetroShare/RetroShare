@@ -74,6 +74,9 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 	timer->start(1000);
 
 
+	/* setup TokenQueue */
+	mPhotoQueue = new TokenQueue(rsPhoto, this);
+
 }
 
 
@@ -137,7 +140,8 @@ void PhotoDialog::checkUpdate()
 
 	if (rsPhoto->updated())
 	{
-		insertAlbums();
+		//insertAlbums();
+		requestAlbumList();
 	}
 
 	return;
@@ -183,93 +187,6 @@ double PhotoDialog::PhotoScore(const RsPhotoPhoto &photo)
 	return 1;
 }
 
-
-bool PhotoDialog::FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count)
-{
-	std::multimap<double, std::string> sortedAlbums;
-	std::multimap<double, std::string>::iterator sit;
-	std::list<std::string>::const_iterator it;
-	
-	for(it = albumIds.begin(); it != albumIds.end(); it++)
-	{
-		RsPhotoAlbum album;
-		rsPhoto->getAlbum(*it, album);
-
-		if (matchesAlbumFilter(album))
-		{
-			double score = AlbumScore(album);
-
-			sortedAlbums.insert(std::make_pair(score, *it));
-		}
-	}
-
-	int i;
-	for (sit = sortedAlbums.begin(), i = 0; (sit != sortedAlbums.end()) && (i < count); sit++, i++)
-	{
-		filteredAlbumIds.push_back(sit->second);
-	}
-
-	return true;
-}
-
-
-bool PhotoDialog::FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count)
-{
-	std::multimap<double, std::string> sortedPhotos;
-	std::multimap<double, std::string>::iterator sit;
-	std::list<std::string>::const_iterator it;
-
-	int i = 0;
-	for(it = photoIds.begin(); it != photoIds.end(); it++, i++)
-	{
-		RsPhotoPhoto photo;
-		rsPhoto->getPhoto(*it, photo);
-
-		if (matchesPhotoFilter(photo))
-		{
-			double score = i; //PhotoScore(album);
-			sortedPhotos.insert(std::make_pair(score, *it));
-		}
-	}
-
-	for (sit = sortedPhotos.begin(), i = 0; (sit != sortedPhotos.end()) && (i < count); sit++, i++)
-	{
-		filteredPhotoIds.push_back(sit->second);
-	}
-	return true;
-}
-
-
-
-void PhotoDialog::insertAlbums()
-{
-	/* clear it all */
-	clearAlbums();
-	//ui.albumLayout->clear();
-
-	/* create a list of albums */
-
-
-	std::list<std::string> albumIds;
-	std::list<std::string> filteredAlbumIds;
-	std::list<std::string>::iterator it;
-
-	rsPhoto->getAlbumList(albumIds);
-
-	/* Filter Albums */ /* Sort Albums */
-#define MAX_ALBUMS 50
-
-	int count = MAX_ALBUMS;
-	FilterNSortAlbums(albumIds, filteredAlbumIds, count);
-
-	for(it = filteredAlbumIds.begin(); it != filteredAlbumIds.end(); it++)
-	{
-		addAlbum(*it);
-	}
-
-	insertPhotosForAlbum(filteredAlbumIds);
-}
-
 void PhotoDialog::insertPhotosForSelectedAlbum()
 {
 	std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum()";
@@ -277,35 +194,19 @@ void PhotoDialog::insertPhotosForSelectedAlbum()
 
 	clearPhotos();
 
-	std::list<std::string> albumIds;
+	//std::list<std::string> albumIds;
 	if (mAlbumSelected)
 	{
-		albumIds.push_back(mAlbumSelected->mDetails.mAlbumId);
+		std::string albumId = mAlbumSelected->mDetails.mAlbumId;
+		//albumIds.push_back(albumId);
 
-		std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum() AlbumId: " << mAlbumSelected->mDetails.mAlbumId;
+		std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum() AlbumId: " << albumId;
 		std::cerr << std::endl;
+		requestPhotoList(albumId);
 	}
-
-	insertPhotosForAlbum(albumIds);
+	//requestPhotoList(albumIds);
 }
 
-
-void PhotoDialog::addAlbum(const std::string &id)
-{
-
-	RsPhotoAlbum album;
-	rsPhoto->getAlbum(id, album);
-
-
-	RsPhotoThumbnail thumbnail;
-	rsPhoto->getAlbumThumbnail(id, thumbnail);
-
-	std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
-
-	PhotoItem *item = new PhotoItem(this, album, thumbnail);
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	alayout->addWidget(item);
-}
 
 void PhotoDialog::clearAlbums()
 {
@@ -397,6 +298,230 @@ void PhotoDialog::clearPhotos()
 	
 }
 
+void PhotoDialog::addAlbum(const RsPhotoAlbum &album)
+{
+	std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
+
+	PhotoItem *item = new PhotoItem(this, album);
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+	alayout->addWidget(item);
+}
+
+
+void PhotoDialog::addPhoto(const RsPhotoPhoto &photo)
+{
+	std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mAlbumId;
+	std::cerr << " PhotoId: " << photo.mId;
+	std::cerr << std::endl;
+
+	PhotoItem *item = new PhotoItem(this, photo);
+	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
+	alayout->addWidget(item);
+
+}
+
+void PhotoDialog::deletePhotoItem(PhotoItem *item, uint32_t type)
+{
+
+
+	return;
+}
+
+
+/**************************** Request / Response Filling of Data ************************/
+
+
+void PhotoDialog::requestAlbumList()
+{
+
+	std::list<std::string> ids;
+	mPhotoQueue->genericRequest(TOKENREQ_GROUPLIST, ids, 0);
+}
+
+
+void PhotoDialog::loadAlbumList(const uint32_t &token)
+{
+	std::cerr << "PhotoDialog::loadAlbumList()";
+	std::cerr << std::endl;
+
+	std::list<std::string> albumIds;
+	rsPhoto->getAlbumList(token, albumIds);
+
+	requestAlbumData(albumIds);
+
+	clearPhotos();
+
+	std::list<std::string>::iterator it;
+	for(it = albumIds.begin(); it != albumIds.end(); it++)
+	{
+		requestPhotoList(*it);
+	}
+
+}
+
+
+void PhotoDialog::requestAlbumData(const std::list<std::string> &ids)
+{
+	mPhotoQueue->genericRequest(TOKENREQ_GROUPDATA, ids, 0);
+}
+
+
+bool PhotoDialog::loadAlbumData(const uint32_t &token)
+{
+	std::cerr << "PhotoDialog::loadAlbumData()";
+	std::cerr << std::endl;
+
+	clearAlbums();
+
+	bool moreData = true;
+	while(moreData)
+	{
+		RsPhotoAlbum album;
+		if (rsPhoto->getAlbum(token, album))
+		{
+			std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
+
+			PhotoItem *item = new PhotoItem(this, album);
+			QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+			alayout->addWidget(item);
+		}
+		else
+		{
+			moreData = false;
+		}
+	}
+
+	return true;
+}
+
+
+void PhotoDialog::requestPhotoList(const std::string &albumId)
+{
+
+	std::list<std::string> ids;
+	ids.push_back(albumId);
+	mPhotoQueue->genericRequest(TOKENREQ_MSGLIST, ids, 0);
+}
+
+
+
+
+void PhotoDialog::loadPhotoList(const uint32_t &token)
+{
+	std::cerr << "PhotoDialog::loadPhotoList()";
+	std::cerr << std::endl;
+
+
+	std::list<std::string> photoIds;
+
+	rsPhoto->getPhotoList(token, photoIds);
+	requestPhotoData(photoIds);
+}
+
+
+void PhotoDialog::requestPhotoData(const std::list<std::string> &photoIds)
+{
+	mPhotoQueue->genericRequest(TOKENREQ_MSGDATA, photoIds, 0);
+}
+
+
+void PhotoDialog::loadPhotoData(const uint32_t &token)
+{
+	std::cerr << "PhotoDialog::loadPhotoData()";
+	std::cerr << std::endl;
+
+	bool moreData = true;
+	while(moreData)
+	{
+		RsPhotoPhoto photo;
+
+		if (rsPhoto->getPhoto(token, photo))
+		{
+
+			std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mAlbumId;
+			std::cerr << " PhotoId: " << photo.mId;
+			std::cerr << std::endl;
+
+			PhotoItem *item = new PhotoItem(this, photo);
+			QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
+			alayout->addWidget(item);
+		}
+		else
+		{
+			moreData = false;
+		}
+	}
+}
+
+
+/********************************/
+
+void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "PhotoDialog::loadRequest()";
+	std::cerr << std::endl;
+
+	if (queue == mPhotoQueue)
+	{
+		/* now switch on req */
+		switch(req.mType)
+		{
+			case TOKENREQ_GROUPLIST:
+				loadAlbumList(req.mToken);
+				break;
+			case TOKENREQ_GROUPDATA:
+				loadAlbumData(req.mToken);
+				break;
+			case TOKENREQ_MSGLIST:
+				loadPhotoList(req.mToken);
+				break;
+			case TOKENREQ_MSGDATA:
+				loadPhotoData(req.mToken);
+				break;
+			default:
+				std::cerr << "PhotoDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
+				break;
+		}
+	}
+}
+
+
+/**************************** Request / Response Filling of Data ************************/
+
+
+// OLD STUFF THAT CANNOT BE USED WITH NEW REQ/RESP
+#if 0
+
+
+void PhotoDialog::insertAlbums()
+{
+	/* clear it all */
+	clearAlbums();
+	//ui.albumLayout->clear();
+
+	/* create a list of albums */
+
+
+	std::list<std::string> albumIds;
+	std::list<std::string> filteredAlbumIds;
+	std::list<std::string>::iterator it;
+
+	rsPhoto->getAlbumList(albumIds);
+
+	/* Filter Albums */ /* Sort Albums */
+#define MAX_ALBUMS 50
+
+	int count = MAX_ALBUMS;
+	FilterNSortAlbums(albumIds, filteredAlbumIds, count);
+
+	for(it = filteredAlbumIds.begin(); it != filteredAlbumIds.end(); it++)
+	{
+		addAlbum(*it);
+	}
+
+	insertPhotosForAlbum(filteredAlbumIds);
+}
 
 void PhotoDialog::insertPhotosForAlbum(const std::list<std::string> &albumIds)
 {
@@ -430,32 +555,79 @@ void PhotoDialog::insertPhotosForAlbum(const std::list<std::string> &albumIds)
 }
 
 
-void PhotoDialog::addPhoto(const std::string &id)
+void PhotoDialog::insertPhotosForSelectedAlbum()
 {
-
-	RsPhotoPhoto photo;
-	rsPhoto->getPhoto(id,photo);
-
-	RsPhotoThumbnail thumbnail;
-	rsPhoto->getPhotoThumbnail(id, thumbnail);
-
-	std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mAlbumId;
-	std::cerr << " PhotoId: " << photo.mId;
+	std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum()";
 	std::cerr << std::endl;
 
-	PhotoItem *item = new PhotoItem(this, photo, thumbnail);
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
-	alayout->addWidget(item);
+	clearPhotos();
 
+	std::list<std::string> albumIds;
+	if (mAlbumSelected)
+	{
+		albumIds.push_back(mAlbumSelected->mDetails.mAlbumId);
+
+		std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum() AlbumId: " << mAlbumSelected->mDetails.mAlbumId;
+		std::cerr << std::endl;
+	}
+
+	insertPhotosForAlbum(albumIds);
 }
 
-
-void PhotoDialog::deletePhotoItem(PhotoItem *item, uint32_t type)
+bool PhotoDialog::FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count)
 {
+	std::multimap<double, std::string> sortedAlbums;
+	std::multimap<double, std::string>::iterator sit;
+	std::list<std::string>::const_iterator it;
+	
+	for(it = albumIds.begin(); it != albumIds.end(); it++)
+	{
+		RsPhotoAlbum album;
+		rsPhoto->getAlbum(*it, album);
 
+		if (matchesAlbumFilter(album))
+		{
+			double score = AlbumScore(album);
 
-	return;
+			sortedAlbums.insert(std::make_pair(score, *it));
+		}
+	}
+
+	int i;
+	for (sit = sortedAlbums.begin(), i = 0; (sit != sortedAlbums.end()) && (i < count); sit++, i++)
+	{
+		filteredAlbumIds.push_back(sit->second);
+	}
+
+	return true;
 }
 
 
+bool PhotoDialog::FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count)
+{
+	std::multimap<double, std::string> sortedPhotos;
+	std::multimap<double, std::string>::iterator sit;
+	std::list<std::string>::const_iterator it;
+
+	int i = 0;
+	for(it = photoIds.begin(); it != photoIds.end(); it++, i++)
+	{
+		RsPhotoPhoto photo;
+		rsPhoto->getPhoto(*it, photo);
+
+		if (matchesPhotoFilter(photo))
+		{
+			double score = i; //PhotoScore(album);
+			sortedPhotos.insert(std::make_pair(score, *it));
+		}
+	}
+
+	for (sit = sortedPhotos.begin(), i = 0; (sit != sortedPhotos.end()) && (i < count); sit++, i++)
+	{
+		filteredPhotoIds.push_back(sit->second);
+	}
+	return true;
+}
+
+#endif
 

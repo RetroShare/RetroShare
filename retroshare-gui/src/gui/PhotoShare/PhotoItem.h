@@ -47,8 +47,8 @@ class PhotoItem : public QWidget, private Ui::PhotoItem
   Q_OBJECT
 
 public:
-	PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail);
-	PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail);
+	PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album);
+	PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo);
 	PhotoItem(PhotoHolder *parent, std::string url); // for new photos.
 
 	bool getPhotoThumbnail(RsPhotoThumbnail &nail);

@@ -100,7 +100,6 @@ void PhotoAddDialog::publishAlbum()
 
 
 	RsPhotoAlbum album;
-	RsPhotoThumbnail albumThumb;
 
 	album.mShareOptions.mShareType = 0;
 	album.mShareOptions.mShareGroupId = "unknown";
@@ -114,7 +113,7 @@ void PhotoAddDialog::publishAlbum()
 	album.mWhere = ui.lineEdit_Where->text().toStdString();
 	album.mWhen = ui.lineEdit_When->text().toStdString();
 
-	if (rsPhoto->submitAlbumDetails(album, albumThumb))
+	if (rsPhoto->submitAlbumDetails(album))
 	{
 		/* now have path and album id */
 		int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
@@ -122,10 +121,9 @@ void PhotoAddDialog::publishAlbum()
 		for(int i = 0; i < photoCount; i++)
 		{
 			RsPhotoPhoto photo;
-			RsPhotoThumbnail thumbnail;
 			PhotoItem *item = ui.scrollAreaWidgetContents->getPhotoIdx(i);
 			photo = item->mDetails;
-			item->getPhotoThumbnail(thumbnail);
+			item->getPhotoThumbnail(photo.mThumbnail);
 	
 			photo.mAlbumId = album.mAlbumId;
 			photo.mOrder = i;
@@ -139,7 +137,7 @@ void PhotoAddDialog::publishAlbum()
 			/* save image to album path */
 			photo.path = "unknown";
 
-			rsPhoto->submitPhoto(photo, thumbnail);
+			rsPhoto->submitPhoto(photo);
 		}
 	}
 
