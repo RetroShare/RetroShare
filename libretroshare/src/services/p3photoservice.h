@@ -26,7 +26,7 @@
 #ifndef P3_PHOTO_SERVICE_HEADER
 #define P3_PHOTO_SERVICE_HEADER
 
-#include "services/p3service.h"
+#include "services/p3gxsservice.h"
 #include "retroshare/rsphoto.h"
 
 #include <map>
@@ -47,6 +47,7 @@
  *
  */
 
+#if 0
 class PhotoAlbum
 {
 	public:
@@ -61,9 +62,11 @@ class PhotoAlbum
         std::map<std::string, RsPhotoThumbnail> mNails;
 };
 
+#endif
 
 
-class p3PhotoService: public p3Service, public RsPhoto
+
+class p3PhotoService: public p3GxsService, public RsPhoto
 {
 	public:
 
@@ -77,6 +80,36 @@ virtual int	tick();
 /************* Extern Interface *******/
 
 virtual bool updated();
+
+
+virtual bool requestAlbumList(uint32_t &token);
+virtual bool requestPhotoList(uint32_t &token, const std::list<std::string> &albumids);
+
+virtual bool requestAlbums(uint32_t &token, const std::list<std::string> &albumids);
+virtual bool requestPhotos(uint32_t &token, const std::list<std::string> &photoids);
+
+virtual bool getAlbumList(const uint32_t &token, std::list<std::string> &albums);
+virtual bool getPhotoList(const uint32_t &token, std::list<std::string> &photos);
+
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
+
+/* details are updated in album - to choose Album ID, and storage path */
+virtual bool submitAlbumDetails(RsPhotoAlbum &album);
+virtual bool submitPhoto(RsPhotoPhoto &photo);
+
+	/* Poll */
+virtual uint32_t requestStatus(const uint32_t token);
+
+bool fakeprocessrequests();
+
+bool InternalgetAlbumList(std::list<std::string> &album);
+bool InternalgetPhotoList(const std::string &albumid, std::list<std::string> &photoIds);
+bool InternalgetAlbum(const std::string &albumid, RsPhotoAlbum &album);
+bool InternalgetPhoto(const std::string &photoid, RsPhotoPhoto &photo);
+
+#if 0
+virtual bool updated();
 virtual bool getAlbumList(std::list<std::string> &album);
 
 virtual bool getAlbum(const std::string &albumid, RsPhotoAlbum &album);
@@ -88,6 +121,7 @@ virtual bool getAlbumThumbnail(const std::string &albumid, RsPhotoThumbnail &thu
 /* details are updated in album - to choose Album ID, and storage path */
 virtual bool submitAlbumDetails(RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail);
 virtual bool submitPhoto(RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail);
+#endif
 
 	private:
 
@@ -101,10 +135,7 @@ std::string genRandomId();
 
 	std::map<std::string, std::list<std::string > > mAlbumToPhotos;
 	std::map<std::string, RsPhotoPhoto> mPhotos;
-	std::map<std::string, RsPhotoThumbnail *> mPhotoThumbnails;
-
 	std::map<std::string, RsPhotoAlbum> mAlbums;
-	std::map<std::string, RsPhotoThumbnail *> mAlbumThumbnails;
 
 };
 

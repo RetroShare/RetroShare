@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <retroshare/rsidentity.h>
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhoto;
@@ -39,6 +40,20 @@ extern RsPhoto *rsPhoto;
 #define RSPHOTO_MODE_NEW	1
 #define RSPHOTO_MODE_OWN	2
 #define RSPHOTO_MODE_REMOTE	3
+
+class RsPhotoThumbnail
+{
+	public:
+		RsPhotoThumbnail()
+		:data(NULL), size(0), type("N/A") { return; }
+
+	bool copyFrom(const RsPhotoThumbnail &nail);
+
+	// Holds Thumbnail image.
+	uint8_t *data;
+	int size;
+	std::string type;
+};
 
 class RsPhotoPhoto
 {
@@ -59,6 +74,8 @@ class RsPhotoPhoto
 	std::string mHashTags;
 
 	int mOrder;
+
+	RsPhotoThumbnail mThumbnail;
 
 	int mMode;
 	std::string path; // if in Mode NEW.
@@ -83,22 +100,8 @@ class RsPhotoAlbum: public RsPhotoPhoto
 	RsPhotoAlbumShare mShareOptions;
 };
 
-class RsPhotoThumbnail
-{
-	public:
-		RsPhotoThumbnail()
-		:data(NULL), size(0), type("N/A") { return; }
 
-	bool copyFrom(const RsPhotoThumbnail &nail);
-
-	// Holds Thumbnail image.
-	uint8_t *data;
-	int size;
-	std::string type;
-};
-
-
-class RsPhoto
+class RsPhoto: public RsTokenService
 {
 	public:
 
@@ -108,17 +111,33 @@ virtual ~RsPhoto() { return; }
 	/* changed? */
 virtual bool updated() = 0;
 
-virtual bool getAlbumList(std::list<std::string> &album) = 0;
 
-virtual bool getAlbum(const std::string &albumid, RsPhotoAlbum &album) = 0;
-virtual bool getPhoto(const std::string &photoid, RsPhotoPhoto &photo) = 0;
-virtual bool getPhotoList(const std::string &albumid, std::list<std::string> &photoIds) = 0;
-virtual bool getPhotoThumbnail(const std::string &photoid, RsPhotoThumbnail &thumbnail) = 0;
-virtual bool getAlbumThumbnail(const std::string &albumid, RsPhotoThumbnail &thumbnail) = 0;
+virtual bool requestAlbumList(uint32_t &token) = 0;
+virtual bool requestPhotoList(uint32_t &token, const std::list<std::string> &albumids) = 0;
+
+virtual bool requestAlbums(uint32_t &token, const std::list<std::string> &albumids) = 0;
+virtual bool requestPhotos(uint32_t &token, const std::list<std::string> &photoids) = 0;
+
+virtual bool getAlbumList(const uint32_t &token, std::list<std::string> &albums) = 0;
+virtual bool getPhotoList(const uint32_t &token, std::list<std::string> &photos) = 0;
+
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
 
 /* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail) = 0;
-virtual bool submitPhoto(RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail) = 0;
+virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
+virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
+
+
+        /* Data Requests (from RsTokenService) */
+virtual bool requestGroupList(uint32_t &token) { return requestAlbumList(token); }
+virtual bool requestGroupData(uint32_t &token, const std::list<std::string> &ids) { return requestAlbums(token, ids); }
+virtual bool requestMsgList(uint32_t &token, const std::list<std::string> &ids) { return requestPhotoList(token, ids); }
+virtual bool requestMsgData(uint32_t &token, const std::list<std::string> &ids) { return requestPhotos(token, ids); }
+
+
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token) = 0;
 
 };
 

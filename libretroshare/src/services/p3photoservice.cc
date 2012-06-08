@@ -33,18 +33,24 @@
 RsPhoto *rsPhoto = NULL;
 
 
-
+#if 0
 PhotoAlbum::PhotoAlbum()
 {
 	return;
 }
+#endif
+
+#define PHOTO_REQUEST_ALBUMLIST		1
+#define PHOTO_REQUEST_PHOTOLIST		2
+#define PHOTO_REQUEST_ALBUMS		3
+#define PHOTO_REQUEST_PHOTOS		4
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
 p3PhotoService::p3PhotoService(uint16_t type)
-	:p3Service(type), mPhotoMtx("p3PhotoService"), mUpdated(true)
+	:p3GxsService(type), mPhotoMtx("p3PhotoService"), mUpdated(true)
 {
      	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 	return;
@@ -55,6 +61,8 @@ int	p3PhotoService::tick()
 {
 	std::cerr << "p3PhotoService::tick()";
 	std::cerr << std::endl;
+
+	fakeprocessrequests();
 	
 	return 0;
 }
@@ -71,7 +79,237 @@ bool p3PhotoService::updated()
 	return false;
 }
 
-bool p3PhotoService::getAlbumList(std::list<std::string> &album)
+
+bool p3PhotoService::requestAlbumList(uint32_t &token)
+{
+
+	generateToken(token);
+	std::cerr << "p3PhotoService::requestAlbumList() gets Token: " << token << std::endl;
+
+	std::list<std::string> ids;
+	storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_GROUPS | PHOTO_REQUEST_ALBUMLIST, ids);
+
+	return true;
+}
+
+
+bool p3PhotoService::requestPhotoList(uint32_t &token, const std::list<std::string> &albumids)
+{
+
+	generateToken(token);
+	std::cerr << "p3PhotoService::requestPhotoList() gets Token: " << token << std::endl;
+	storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | PHOTO_REQUEST_PHOTOLIST, albumids);
+
+	return true;
+}
+
+
+bool p3PhotoService::requestAlbums(uint32_t &token, const std::list<std::string> &albumids)
+{
+	generateToken(token);
+	std::cerr << "p3PhotoService::requestAlbums() gets Token: " << token << std::endl;
+	storeRequest(token, GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_GROUPS | PHOTO_REQUEST_ALBUMS, albumids);
+
+	return true;
+}
+
+bool p3PhotoService::requestPhotos(uint32_t &token, const std::list<std::string> &photoids)
+{
+
+	generateToken(token);
+	std::cerr << "p3PhotoService::requestPhotos() gets Token: " << token << std::endl;
+	storeRequest(token, GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_MSGS | PHOTO_REQUEST_PHOTOS, photoids);
+
+	return true;
+}
+
+
+bool p3PhotoService::getAlbumList(const uint32_t &token, std::list<std::string> &albums)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_GROUPS | PHOTO_REQUEST_ALBUMLIST))
+	{
+		std::cerr << "p3PhotoService::getAlbumList() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3PhotoService::getAlbumList() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	bool ans = InternalgetAlbumList(albums);
+	
+	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+	
+	return ans;
+}
+
+bool p3PhotoService::getPhotoList(const uint32_t &token, std::list<std::string> &photos)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | PHOTO_REQUEST_PHOTOLIST))
+	{
+		std::cerr << "p3PhotoService::getPhotoList() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3PhotoService::getPhotoList() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+	
+	bool ans = InternalgetPhotoList(id, photos);
+
+	// Only one Album at a time -> so finish it!	
+	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+	
+	return ans;
+}
+
+bool p3PhotoService::getAlbum(const uint32_t &token, RsPhotoAlbum &album)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_GROUPS | PHOTO_REQUEST_ALBUMS))
+	{
+		std::cerr << "p3PhotoService::getAlbum() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3PhotoService::getAlbum() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+	
+	bool ans = InternalgetAlbum(id, album);
+	return ans;
+
+}
+
+bool p3PhotoService::getPhoto(const uint32_t &token, RsPhotoPhoto &photo)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_MSGS | PHOTO_REQUEST_PHOTOS))
+	{
+		std::cerr << "p3PhotoService::getPhoto() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3PhotoService::getPhoto() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+	
+	bool ans = InternalgetPhoto(id, photo);
+	return ans;
+}
+
+        /* Poll */
+uint32_t p3PhotoService::requestStatus(const uint32_t token)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	return status;
+}
+
+
+#define MAX_REQUEST_AGE 60
+
+bool p3PhotoService::fakeprocessrequests()
+	{
+	std::list<uint32_t>::iterator it;
+	std::list<uint32_t> tokens;
+	
+	tokenList(tokens);
+	
+	time_t now = time(NULL);
+	for(it = tokens.begin(); it != tokens.end(); it++)
+	{
+		uint32_t status;
+		uint32_t reqtype;
+		uint32_t token = *it;
+		time_t   ts;
+		checkRequestStatus(token, status, reqtype, ts);
+		
+		std::cerr << "p3PhotoService::fakeprocessrequests() Token: " << token << " Status: " << status << " ReqType: " << reqtype << "Age: " << now - ts << std::endl;
+		
+		if (status == GXS_REQUEST_STATUS_PENDING)
+		{
+			updateRequestStatus(token, GXS_REQUEST_STATUS_PARTIAL);
+		}
+		else if (status == GXS_REQUEST_STATUS_PARTIAL)
+		{
+			updateRequestStatus(token, GXS_REQUEST_STATUS_COMPLETE);
+		}
+		else if (status == GXS_REQUEST_STATUS_DONE)
+		{
+			std::cerr << "p3PhotoService::fakeprocessrequests() Clearing Done Request Token: " << token;
+			std::cerr << std::endl;
+			clearRequest(token);
+		}
+		else if (now - ts > MAX_REQUEST_AGE)
+		{
+			std::cerr << "p3PhotoService::fakeprocessrequests() Clearing Old Request Token: " << token;
+			std::cerr << std::endl;
+			clearRequest(token);
+		}
+	}
+	
+	return true;
+}
+
+
+
+/******************* INTERNALS UNTIL ITS PROPERLY LINKED IN ************************/
+
+bool p3PhotoService::InternalgetAlbumList(std::list<std::string> &album)
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
@@ -84,7 +322,7 @@ bool p3PhotoService::getAlbumList(std::list<std::string> &album)
 	return false;
 }
 
-bool p3PhotoService::getAlbum(const std::string &albumid, RsPhotoAlbum &album)
+bool p3PhotoService::InternalgetAlbum(const std::string &albumid, RsPhotoAlbum &album)
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 	
@@ -99,7 +337,7 @@ bool p3PhotoService::getAlbum(const std::string &albumid, RsPhotoAlbum &album)
 	return true;
 }
 
-bool p3PhotoService::getPhoto(const std::string &photoid, RsPhotoPhoto &photo)
+bool p3PhotoService::InternalgetPhoto(const std::string &photoid, RsPhotoPhoto &photo)
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 	
@@ -114,7 +352,7 @@ bool p3PhotoService::getPhoto(const std::string &photoid, RsPhotoPhoto &photo)
 	return true;
 }
 
-bool p3PhotoService::getPhotoList(const std::string &albumid, std::list<std::string> &photoIds)
+bool p3PhotoService::InternalgetPhotoList(const std::string &albumid, std::list<std::string> &photoIds)
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
@@ -133,6 +371,76 @@ bool p3PhotoService::getPhotoList(const std::string &albumid, std::list<std::str
 	return true;
 }
 
+/* details are updated in album - to choose Album ID, and storage path */
+bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album)
+{
+	/* check if its a modification or a new album */
+
+
+	/* add to database */
+
+	/* check if its a mod or new photo */
+	if (album.mId.empty())
+	{
+		/* new photo */
+
+		/* generate a temp id */
+		album.mAlbumId = genRandomId();
+	}
+
+	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
+
+	mUpdated = true;
+
+	/* add / modify */
+	mAlbums[album.mAlbumId] = album;
+
+	return true;
+}
+
+
+bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo)
+{
+	if (photo.mAlbumId.empty())
+	{
+		/* new photo */
+		std::cerr << "p3PhotoService::submitPhoto() Missing AlbumID: ERROR";
+		std::cerr << std::endl;
+		return false;
+	}
+	
+	/* check if its a mod or new photo */
+	if (photo.mId.empty())
+	{
+		/* new photo */
+
+		/* generate a temp id */
+		photo.mId = genRandomId();
+	}
+
+	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
+
+	mUpdated = true;
+
+	std::map<std::string, std::list<std::string> >::iterator it;
+	it = mAlbumToPhotos.find(photo.mAlbumId);
+	if (it == mAlbumToPhotos.end())
+	{
+		std::list<std::string> emptyList;
+		mAlbumToPhotos[photo.mAlbumId] = emptyList;
+
+		it = mAlbumToPhotos.find(photo.mAlbumId);
+	}
+	
+	it->second.push_back(photo.mId);
+		
+	/* add / modify */
+	mPhotos[photo.mId] = photo;
+
+	return true;
+}
+
+#if 0
 bool p3PhotoService::getPhotoThumbnail(const std::string &photoid, RsPhotoThumbnail &thumbnail)
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
@@ -164,7 +472,6 @@ bool p3PhotoService::getAlbumThumbnail(const std::string &albumid, RsPhotoThumbn
 	thumbnail = *(it->second);
 	return true;
 }
-
 
 /* details are updated in album - to choose Album ID, and storage path */
 bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail)
@@ -244,6 +551,7 @@ bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo, const RsPhotoThumbnail &th
 	
 	return true;
 }
+#endif
 	
 std::string p3PhotoService::genRandomId()
 {

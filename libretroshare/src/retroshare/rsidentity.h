@@ -30,6 +30,33 @@
 #include <string>
 #include <list>
 
+
+/********** Generic Token Request Interface ***********************
+ * This is packaged here, as most TokenServices will require ID Services too.
+ * The requests can be generic, but the reponses are service specific (dependent on data types).
+ */
+
+class RsTokenService
+{
+	public:
+
+	RsTokenService()  { return; }
+virtual ~RsTokenService() { return; }
+
+        /* Data Requests */
+virtual bool requestGroupList(uint32_t &token) = 0;
+virtual bool requestGroupData(uint32_t &token, const std::list<std::string> &ids) = 0;
+virtual bool requestMsgList(uint32_t &token, const std::list<std::string> &ids) = 0;
+virtual bool requestMsgData(uint32_t &token, const std::list<std::string> &ids) = 0;
+
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token) = 0;
+
+};
+
+
+
+
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
 extern RsIdentity *rsIdentity;
