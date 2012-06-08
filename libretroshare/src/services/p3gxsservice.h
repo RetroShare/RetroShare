@@ -84,6 +84,7 @@ bool    checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &re
 	// special ones for testing (not in final design)
 bool    tokenList(std::list<uint32_t> &tokens);
 bool    popRequestList(const uint32_t &token, std::string &id);
+bool    fakeprocessrequests();
 
 	private:
 

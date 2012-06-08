@@ -36,6 +36,24 @@
  * The requests can be generic, but the reponses are service specific (dependent on data types).
  */
 
+// This bit will be filled out over time.
+#define RS_TOKREQOPT_MSG_VERSIONS	0x0001
+#define RS_TOKREQOPT_MSG_ORIGMSG	0x0002
+#define RS_TOKREQOPT_MSG_LATEST		0x0003
+
+#define RS_TOKREQOPT_MSG_THREAD		0x0004
+#define RS_TOKREQOPT_MSG_PARENT		0x0005
+
+class RsTokReqOptions
+{
+	public:
+	RsTokReqOptions() { mOptions = 0; mBefore = 0; mAfter = 0; }
+
+	uint32_t mOptions;
+	time_t   mBefore;
+	time_t   mAfter;
+};
+
 class RsTokenService
 {
 	public:
@@ -44,10 +62,12 @@ class RsTokenService
 virtual ~RsTokenService() { return; }
 
         /* Data Requests */
-virtual bool requestGroupList(uint32_t &token) = 0;
-virtual bool requestGroupData(uint32_t &token, const std::list<std::string> &ids) = 0;
-virtual bool requestMsgList(uint32_t &token, const std::list<std::string> &ids) = 0;
-virtual bool requestMsgData(uint32_t &token, const std::list<std::string> &ids) = 0;
+virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts) = 0;
+virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
+virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
+
+virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds) = 0;
+virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds) = 0;
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token) = 0;

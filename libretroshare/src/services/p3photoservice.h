@@ -81,16 +81,22 @@ virtual int	tick();
 
 virtual bool updated();
 
+        /* Data Requests (from RsTokenService) */
+virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts);
+virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
 
-virtual bool requestAlbumList(uint32_t &token);
-virtual bool requestPhotoList(uint32_t &token, const std::list<std::string> &albumids);
+virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds);
+virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds);
 
-virtual bool requestAlbums(uint32_t &token, const std::list<std::string> &albumids);
-virtual bool requestPhotos(uint32_t &token, const std::list<std::string> &photoids);
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token);
 
-virtual bool getAlbumList(const uint32_t &token, std::list<std::string> &albums);
-virtual bool getPhotoList(const uint32_t &token, std::list<std::string> &photos);
+        /* Generic List Data */
+virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
+virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds);
 
+        /* Specific Service Data */
 virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
 virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
 
@@ -98,10 +104,6 @@ virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
 virtual bool submitAlbumDetails(RsPhotoAlbum &album);
 virtual bool submitPhoto(RsPhotoPhoto &photo);
 
-	/* Poll */
-virtual uint32_t requestStatus(const uint32_t token);
-
-bool fakeprocessrequests();
 
 bool InternalgetAlbumList(std::list<std::string> &album);
 bool InternalgetPhotoList(const std::string &albumid, std::list<std::string> &photoIds);

@@ -33,13 +33,22 @@
 
 RsWiki *rsWiki = NULL;
 
+#define WIKI_REQUEST_GROUPLIST		0x0001
+#define WIKI_REQUEST_MSGLIST 		0x0002
+#define WIKI_REQUEST_GROUPS    		0x0004
+#define WIKI_REQUEST_MSGS          	0x0008
+
+#define WIKI_REQUEST_PAGEVERSIONS	0x0010
+#define WIKI_REQUEST_ORIGPAGE		0x0020
+#define WIKI_REQUEST_LATESTPAGE		0x0040
+
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
 p3WikiService::p3WikiService(uint16_t type)
-	:p3Service(type), mWikiMtx("p3WikiService"), mUpdated(true)
+	:p3GxsService(type), mWikiMtx("p3WikiService"), mUpdated(true)
 {
      	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 	return;
@@ -51,6 +60,8 @@ int	p3WikiService::tick()
 	std::cerr << "p3WikiService::tick()";
 	std::cerr << std::endl;
 	
+	fakeprocessrequests();
+
 	return 0;
 }
 
@@ -66,7 +77,245 @@ bool p3WikiService::updated()
 	return false;
 }
 
-bool p3WikiService::getGroupList(std::list<std::string> &groups)
+
+
+/***********************************************************************************************/
+
+       /* Data Requests */
+bool p3WikiService::requestGroupList(     uint32_t &token, const RsTokReqOptions &opts)
+{
+        generateToken(token);
+        std::cerr << "p3WikiService::requestGroupList() gets Token: " << token << std::endl;
+
+        std::list<std::string> ids;
+        storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_GROUPS | WIKI_REQUEST_GROUPLIST, ids);
+
+        return true;
+}
+
+
+bool p3WikiService::requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+{
+        generateToken(token);
+        std::cerr << "p3WikiService::requestMsgList() gets Token: " << token << std::endl;
+        storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | WIKI_REQUEST_ORIGPAGE, groupIds);
+
+        return true;
+}
+
+bool p3WikiService::requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
+{
+        generateToken(token);
+        std::cerr << "p3WikiService::requestMsgRelatedList() gets Token: " << token << std::endl;
+
+	// Look at opts to set the flags.
+	uint32_t optFlags = 0;
+	if (opts.mOptions == RS_TOKREQOPT_MSG_VERSIONS)
+	{
+		optFlags = WIKI_REQUEST_PAGEVERSIONS;
+	}
+	else if (opts.mOptions == RS_TOKREQOPT_MSG_LATEST)
+	{
+		optFlags = WIKI_REQUEST_LATESTPAGE;
+	}
+
+        storeRequest(token, GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_MSGS | optFlags, msgIds);
+
+        return true;
+}
+
+
+bool p3WikiService::requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds)
+{
+        generateToken(token);
+        std::cerr << "p3WikiService::requestGroupData() gets Token: " << token << std::endl;
+        storeRequest(token, GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_GROUPS | WIKI_REQUEST_GROUPS, groupIds);
+
+        return true;
+}
+
+bool p3WikiService::requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds)
+{
+        generateToken(token);
+        std::cerr << "p3WikiService::requestMsgData() gets Token: " << token << std::endl;
+        storeRequest(token, GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_MSGS | WIKI_REQUEST_MSGS, msgIds);
+
+        return true;
+}
+
+/**************** Return Data *************/
+
+bool p3WikiService::getGroupList(const uint32_t &token, std::list<std::string> &groupIds)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_LIST | GXS_REQUEST_TYPE_GROUPS | WIKI_REQUEST_GROUPLIST))
+	{
+		std::cerr << "p3WikiService::getGroupList() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3WikiService::getGroupList() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	bool ans = InternalgetGroupList(groupIds);
+
+	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+
+	return ans;
+}
+	
+bool p3WikiService::getMsgList(const uint32_t &token, std::list<std::string> &msgIds)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	// MULTIPLY TYPES MATCH HERE....
+	if (!((reqtype & GXS_REQUEST_TYPE_LIST) && (reqtype & GXS_REQUEST_TYPE_MSGS)))
+	{
+		std::cerr << "p3WikiService::getMsgList() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3WikiService::getMsgList() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	std::string id;
+	bool ans = false;
+	while (popRequestList(token, id))
+	{
+		std::cerr << "p3WikiService::getMsgList() Processing Id: " << id << std::endl;
+		if (reqtype & WIKI_REQUEST_PAGEVERSIONS)
+		{
+			std::cerr << "p3WikiService::getMsgList() get PAGEVERSIONS" << std::endl;
+			if (InternalgetPageVersions(id, msgIds))
+			{
+				ans = true;
+			}
+		}
+		else if (reqtype & WIKI_REQUEST_ORIGPAGE)
+		{
+			std::cerr << "p3WikiService::getMsgList() get ORIGPAGE" << std::endl;
+			if (InternalgetOrigPageList(id, msgIds))
+			{
+				ans = true;
+			}
+		}
+		else if (reqtype & WIKI_REQUEST_LATESTPAGE)
+		{
+			std::cerr << "p3WikiService::getMsgList() get LATESTPAGE" << std::endl;
+			std::string latestpage;
+			if (InternalgetLatestPage(id, latestpage))
+			{
+				msgIds.push_back(latestpage);
+				ans = true;
+			}
+		}
+		else
+		{
+			std::cerr << "p3WikiService::getMsgList() ERROR Invalid Request Type" << std::endl;
+			return false;
+		}
+	
+	}
+	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+	return ans;
+}
+	
+	
+bool p3WikiService::getGroupData(const uint32_t &token, RsWikiGroup &group)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_GROUPS | WIKI_REQUEST_GROUPS))
+	{
+		std::cerr << "p3WikiService::getGroupData() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3WikiService::getGroupData() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+	
+	bool ans = InternalgetGroup(id, group);
+	return ans;
+}
+
+
+bool p3WikiService::getMsgData(const uint32_t &token, RsWikiPage &page)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+	
+	if (reqtype != (GXS_REQUEST_TYPE_DATA | GXS_REQUEST_TYPE_MSGS | WIKI_REQUEST_MSGS))
+	{
+		std::cerr << "p3WikiService::getMsgData() ERROR Type Wrong" << std::endl;
+		return false;
+	}
+	
+	if (status != GXS_REQUEST_STATUS_COMPLETE)
+	{
+		std::cerr << "p3WikiService::getMsgData() ERROR Status Incomplete" << std::endl;
+		return false;
+	}
+	
+	std::string id;
+	if (!popRequestList(token, id))
+	{
+		/* finished */
+		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+		return false;
+	}
+	
+	bool ans = InternalgetPage(id, page);
+	return ans;
+}
+
+        /* Poll */
+uint32_t p3WikiService::requestStatus(const uint32_t token)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, ts);
+
+	return status;
+}
+
+
+
+
+
+/****************** INTERNALS ***********************/
+
+
+bool p3WikiService::InternalgetGroupList(std::list<std::string> &groups)
 {
 	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 
@@ -79,7 +328,7 @@ bool p3WikiService::getGroupList(std::list<std::string> &groups)
 	return false;
 }
 
-bool p3WikiService::getGroup(const std::string &groupid, RsWikiGroup &group)
+bool p3WikiService::InternalgetGroup(const std::string &groupid, RsWikiGroup &group)
 {
 	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 	
@@ -96,7 +345,7 @@ bool p3WikiService::getGroup(const std::string &groupid, RsWikiGroup &group)
 
 
 
-bool p3WikiService::getPage(const std::string &pageid, RsWikiPage &page)
+bool p3WikiService::InternalgetPage(const std::string &pageid, RsWikiPage &page)
 {
 	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 	
@@ -112,7 +361,7 @@ bool p3WikiService::getPage(const std::string &pageid, RsWikiPage &page)
 }
 
 
-bool p3WikiService::getLatestPage(const std::string &origPageId, std::string &pageId)
+bool p3WikiService::InternalgetLatestPage(const std::string &origPageId, std::string &pageId)
 {
 	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 	
@@ -128,7 +377,7 @@ bool p3WikiService::getLatestPage(const std::string &origPageId, std::string &pa
 }
 
 
-bool p3WikiService::getPageVersions(const std::string &origPageId, std::list<std::string> &pageIds)
+bool p3WikiService::InternalgetPageVersions(const std::string &origPageId, std::list<std::string> &pageIds)
 {
 	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 
@@ -148,7 +397,7 @@ bool p3WikiService::getPageVersions(const std::string &origPageId, std::list<std
 }
 
 
-bool p3WikiService::getOrigPageList(const std::string &groupid, std::list<std::string> &pageIds)
+bool p3WikiService::InternalgetOrigPageList(const std::string &groupid, std::list<std::string> &pageIds)
 {
 	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 

@@ -111,7 +111,31 @@ virtual ~RsPhoto() { return; }
 	/* changed? */
 virtual bool updated() = 0;
 
+        /* Data Requests (from RsTokenService) */
+//virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts) = 0;
+//virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
+//virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
 
+//virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds) = 0;
+//virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds) = 0;
+
+        /* Poll */
+//virtual uint32_t requestStatus(const uint32_t token) = 0;
+
+	/* Generic List Data */
+virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds) = 0;
+virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds) = 0;
+
+	/* Specific Service Data */
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
+
+/* details are updated in album - to choose Album ID, and storage path */
+virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
+virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
+
+
+#if 0
 virtual bool requestAlbumList(uint32_t &token) = 0;
 virtual bool requestPhotoList(uint32_t &token, const std::list<std::string> &albumids) = 0;
 
@@ -121,23 +145,15 @@ virtual bool requestPhotos(uint32_t &token, const std::list<std::string> &photoi
 virtual bool getAlbumList(const uint32_t &token, std::list<std::string> &albums) = 0;
 virtual bool getPhotoList(const uint32_t &token, std::list<std::string> &photos) = 0;
 
-virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
-virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
-
-/* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
-virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
 
 
-        /* Data Requests (from RsTokenService) */
 virtual bool requestGroupList(uint32_t &token) { return requestAlbumList(token); }
 virtual bool requestGroupData(uint32_t &token, const std::list<std::string> &ids) { return requestAlbums(token, ids); }
 virtual bool requestMsgList(uint32_t &token, const std::list<std::string> &ids) { return requestPhotoList(token, ids); }
 virtual bool requestMsgData(uint32_t &token, const std::list<std::string> &ids) { return requestPhotos(token, ids); }
+#endif
 
 
-        /* Poll */
-virtual uint32_t requestStatus(const uint32_t token) = 0;
 
 };
 

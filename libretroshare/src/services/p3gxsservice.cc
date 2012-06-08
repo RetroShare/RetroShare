@@ -193,3 +193,50 @@ bool    p3GxsService::popRequestList(const uint32_t &token, std::string &id)
 }
 
 
+#define MAX_REQUEST_AGE 10
+
+bool 	p3GxsService::fakeprocessrequests()
+        {
+        std::list<uint32_t>::iterator it;
+        std::list<uint32_t> tokens;
+
+        tokenList(tokens);
+
+        time_t now = time(NULL);
+        for(it = tokens.begin(); it != tokens.end(); it++)
+        {
+                uint32_t status;
+                uint32_t reqtype;
+                uint32_t token = *it;
+                time_t   ts;
+                checkRequestStatus(token, status, reqtype, ts);
+
+                std::cerr << "p3GxsService::fakeprocessrequests() Token: " << token << " Status: " << status << " ReqType: " << reqtype << "Age: " << now - ts << std::endl;
+
+                if (status == GXS_REQUEST_STATUS_PENDING)
+                {
+                        updateRequestStatus(token, GXS_REQUEST_STATUS_PARTIAL);
+                }
+                else if (status == GXS_REQUEST_STATUS_PARTIAL)
+                {
+                        updateRequestStatus(token, GXS_REQUEST_STATUS_COMPLETE);
+                }
+                else if (status == GXS_REQUEST_STATUS_DONE)
+                {
+                        std::cerr << "p3GxsService::fakeprocessrequests() Clearing Done Request Token: " << token;
+                        std::cerr << std::endl;
+                        clearRequest(token);
+                }
+                else if (now - ts > MAX_REQUEST_AGE)
+                {
+                        std::cerr << "p3GxsService::fakeprocessrequests() Clearing Old Request Token: " << token;
+                        std::cerr << std::endl;
+                        clearRequest(token);
+                }
+        }
+
+        return true;
+}
+
+
+

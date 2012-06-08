@@ -26,7 +26,7 @@
 #ifndef P3_WIKI_SERVICE_HEADER
 #define P3_WIKI_SERVICE_HEADER
 
-#include "services/p3service.h"
+#include "services/p3gxsservice.h"
 
 #include "retroshare/rswiki.h"
 
@@ -48,7 +48,7 @@
  *
  */
 
-class p3WikiService: public p3Service, public RsWiki
+class p3WikiService: public p3GxsService, public RsWiki
 {
 	public:
 
@@ -58,8 +58,32 @@ virtual int	tick();
 
 	public:
 
-// NEW INTERFACE.
-/************* Extern Interface *******/
+
+virtual bool updated();
+
+        /* Data Requests */
+virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts);
+virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+
+virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds);
+virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds);
+
+virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
+virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds);
+
+virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group);
+virtual bool getMsgData(const uint32_t &token, RsWikiPage &page);
+
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token);
+
+virtual bool createGroup(RsWikiGroup &group);
+virtual bool createPage(RsWikiPage &page);
+
+
+/************* Old Extern Interface *******/
+#if 0
 
 virtual bool updated();
 virtual bool getGroupList(std::list<std::string> &group);
@@ -73,7 +97,16 @@ virtual bool getLatestPage(const std::string &origPageId, std::string &page);
 virtual bool createGroup(RsWikiGroup &group);
 virtual bool createPage(RsWikiPage &page);
 
+#endif
+
 	private:
+
+virtual bool InternalgetGroupList(std::list<std::string> &group);
+virtual bool InternalgetGroup(const std::string &groupid, RsWikiGroup &group);
+virtual bool InternalgetPage(const std::string &pageid, RsWikiPage &page);
+virtual bool InternalgetPageVersions(const std::string &origPageId, std::list<std::string> &pages);
+virtual bool InternalgetOrigPageList(const std::string &groupid, std::list<std::string> &pageIds);
+virtual bool InternalgetLatestPage(const std::string &origPageId, std::string &page);
 
 std::string genRandomId();
 
