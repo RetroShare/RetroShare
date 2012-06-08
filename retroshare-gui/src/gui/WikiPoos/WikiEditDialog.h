@@ -27,17 +27,19 @@
 #include "ui_WikiEditDialog.h"
 
 #include <retroshare/rswiki.h>
+#include "util/TokenQueue.h"
 
-class WikiEditDialog : public QWidget
+class WikiEditDialog : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	WikiEditDialog(QWidget *parent = 0);
 
-void 	setGroup(RsWikiGroup &group);
-void 	setPreviousPage(RsWikiPage &page);
 void 	setNewPage();
+
+void 	setupData(const std::string &groupId, const std::string &pageId);
+void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
@@ -47,12 +49,21 @@ void 	submitEdit();
 
 private:
 
+void 	setGroup(RsWikiGroup &group);
+void 	setPreviousPage(RsWikiPage &page);
+
+void 	requestPage(const std::string &msgId);
+void 	loadPage(const uint32_t &token);
+void 	requestGroup(const std::string &groupId);
+void 	loadGroup(const uint32_t &token);
+
         bool mNewPage;
 	RsWikiGroup mWikiGroup;
 	RsWikiPage mWikiPage;
 
 	Ui::WikiEditDialog ui;
 
+	TokenQueue *mWikiQueue;
 };
 
 #endif

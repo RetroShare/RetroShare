@@ -39,13 +39,13 @@ TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
 	return;
 }
 
-bool TokenQueue::genericRequest(uint32_t basictype, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueue::genericRequest(uint32_t basictype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
 {
 	uint32_t token;
 	switch(basictype)
 	{
 		case TOKENREQ_GROUPLIST:
-			mService->requestGroupList(token);
+			mService->requestGroupList(token, opts);
 			break;
 
 		case TOKENREQ_GROUPDATA:
@@ -53,7 +53,11 @@ bool TokenQueue::genericRequest(uint32_t basictype, std::list<std::string> ids, 
 			break;
 
 		case TOKENREQ_MSGLIST:
-			mService->requestMsgList(token, ids);
+			mService->requestMsgList(token, opts, ids);
+			break;
+
+		case TOKENREQ_MSGRELATEDLIST:
+			mService->requestMsgRelatedList(token, opts, ids);
 			break;
 
 		case TOKENREQ_MSGDATA:

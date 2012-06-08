@@ -29,17 +29,21 @@
 
 #include <retroshare/rswiki.h>
 
+#include "util/TokenQueue.h"
+
 #include <map>
 
 class WikiAddDialog;
 class WikiEditDialog;
 
-class WikiDialog : public MainPage
+class WikiDialog : public MainPage, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	WikiDialog(QWidget *parent = 0);
+
+void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
@@ -58,13 +62,40 @@ void    clearGroupTree();
 void    clearModsTree();
 
 void 	insertWikiGroups();
-void 	insertModsForPage(std::string &origPageId);
+void 	insertModsForPage(const std::string &origPageId);
 
 void 	updateWikiPage(const RsWikiPage &page);
-	
+
+bool 	getSelectedPage(std::string &pageId, std::string &origPageId);	
 std::string getSelectedPage();
 std::string getSelectedGroup();
 std::string getSelectedMod();
+
+
+
+void 	requestGroupList();
+void 	loadGroupList(const uint32_t &token);
+void 	requestGroupData(const std::list<std::string> &groupIds);
+void 	loadGroupData(const uint32_t &token);
+void 	requestOriginalPages(const std::list<std::string> &groupIds);
+void 	loadOriginalPages(const uint32_t &token);
+void 	requestLatestPages(const std::list<std::string> &msgIds);
+void 	loadLatestPages(const uint32_t &token);
+void 	requestPages(const std::list<std::string> &msgIds);
+void 	loadPages(const uint32_t &token);
+
+
+void 	requestModPageList(const std::string &origMsgId);
+void 	loadModPageList(const uint32_t &token);
+void 	requestModPages(const std::list<std::string> &msgIds);
+void 	loadModPages(const uint32_t &token);
+
+void 	requestWikiPage(const std::string &msgId);
+void 	loadWikiPage(const uint32_t &token);
+
+
+	TokenQueue *mWikiQueue;
+
 
 	WikiAddDialog *mAddPageDialog;
 	WikiAddDialog *mAddGroupDialog;

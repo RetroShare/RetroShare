@@ -39,7 +39,8 @@
 #define TOKENREQ_GROUPLIST	1
 #define TOKENREQ_GROUPDATA	2
 #define TOKENREQ_MSGLIST	3
-#define TOKENREQ_MSGDATA	4
+#define TOKENREQ_MSGRELATEDLIST	4
+#define TOKENREQ_MSGDATA	5
 
 
 class TokenQueue;
@@ -71,7 +72,7 @@ public:
 	TokenQueue(RsTokenService *service, TokenResponse *resp);
 
 	/* generic handling of token / response update behaviour */
-	bool genericRequest(uint32_t basictype, std::list<std::string> ids, uint32_t usertype);
+	bool genericRequest(uint32_t basictype, const RsTokReqOptions &opt, std::list<std::string> ids, uint32_t usertype);
 	void queueRequest(uint32_t token, uint32_t basictype, uint32_t usertype);
 	bool checkForRequest(uint32_t token);
 	void loadRequest(const TokenRequest &req);

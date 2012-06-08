@@ -41,6 +41,15 @@
 
 #define WIKI_DEBUG 1
 
+#define WIKIDIALOG_LISTING_GROUPLIST		1
+#define WIKIDIALOG_LISTING_GROUPDATA		2
+#define WIKIDIALOG_LISTING_ORIGINALPAGES	3
+#define WIKIDIALOG_LISTING_LATESTPAGES		4
+#define WIKIDIALOG_LISTING_PAGES		5
+#define WIKIDIALOG_MOD_LIST			6
+#define WIKIDIALOG_MOD_PAGES			7
+#define WIKIDIALOG_WIKI_PAGE			8
+
 
 /** Constructor */
 WikiDialog::WikiDialog(QWidget *parent)
@@ -64,6 +73,8 @@ WikiDialog::WikiDialog(QWidget *parent)
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
+	/* setup TokenQueue */
+	mWikiQueue = new TokenQueue(rsWiki, this);
 
 }
 
@@ -100,6 +111,7 @@ void WikiDialog::OpenOrShowAddPageDialog()
 	std::cerr << "WikiDialog::OpenOrShowAddPageDialog() GroupId: " << groupId;
 	std::cerr << std::endl;
 
+#if 0
 	RsWikiGroup group;
 	if (!rsWiki->getGroup(groupId, group))
 	{
@@ -107,8 +119,10 @@ void WikiDialog::OpenOrShowAddPageDialog()
 		std::cerr << std::endl;
 	}
 
-
 	mEditDialog->setGroup(group);
+#endif
+
+	mEditDialog->setupData(groupId, "");
 	mEditDialog->setNewPage();
 
 	mEditDialog->show();
@@ -139,10 +153,13 @@ void WikiDialog::OpenOrShowEditDialog()
 		return;
 	}
 
-	std::string pageId = getSelectedPage();
 	std::string modId = getSelectedMod();
 	std::string realPageId;
-	if (pageId == "")
+
+	std::string pageId;
+	std::string origPageId;
+
+	if (!getSelectedPage(pageId, origPageId))
 	{
 		std::cerr << "WikiDialog::OpenOrShowAddPageDialog() No PageId selected";
 		std::cerr << std::endl;
@@ -164,6 +181,7 @@ void WikiDialog::OpenOrShowEditDialog()
 		mEditDialog = new WikiEditDialog(NULL);
 	}
 
+#if 0
 	RsWikiGroup group;
 	rsWiki->getGroup(groupId, group);
 	mEditDialog->setGroup(group);
@@ -171,6 +189,8 @@ void WikiDialog::OpenOrShowEditDialog()
 	RsWikiPage page;
 	rsWiki->getPage(realPageId, page);
 	mEditDialog->setPreviousPage(page);
+#endif
+	mEditDialog->setupData(groupId, realPageId);
 
 	mEditDialog->show();
 }
@@ -180,7 +200,10 @@ void WikiDialog::OpenOrShowEditDialog()
 void WikiDialog::groupTreeChanged()
 {
 	/* */
-	std::string pageId = getSelectedPage();
+	std::string pageId;
+	std::string origPageId;
+
+	getSelectedPage(pageId, origPageId);
 	if (pageId == mPageSelected)
 	{
 		return; /* nothing changed */
@@ -195,14 +218,11 @@ void WikiDialog::groupTreeChanged()
 		return;
 	}
 
-	clearModsTree();
-	RsWikiPage page;
 
-	if (rsWiki->getPage(pageId, page))
-	{
-		insertModsForPage(page.mOrigPageId);
-		updateWikiPage(page);
-	}
+	clearModsTree();
+
+	insertModsForPage(origPageId);
+	requestWikiPage(pageId);
 }
 
 void WikiDialog::modTreeChanged()
@@ -220,11 +240,7 @@ void WikiDialog::modTreeChanged()
 		return;
 	}
 
-	RsWikiPage page;
-	if (rsWiki->getPage(pageId, page))
-	{
-		updateWikiPage(page);
-	}
+	requestWikiPage(pageId);
 }
 
 
@@ -260,6 +276,8 @@ void 	WikiDialog::clearModsTree()
 #define WIKI_GROUP_COL_ORIGPAGEID	2
 
 
+#if 0
+#########################################################
 void WikiDialog::insertWikiGroups()
 {
 
@@ -332,11 +350,12 @@ void WikiDialog::insertWikiGroups()
 		}
 	}
 }
+#########################################################
+#endif
 
 
-std::string WikiDialog::getSelectedPage()
+bool WikiDialog::getSelectedPage(std::string &pageId, std::string &origPageId)
 {
-	std::string pageId;
 #ifdef WIKI_DEBUG 
 	std::cerr << "WikiDialog::getSelectedPage()" << std::endl;
 #endif
@@ -350,7 +369,7 @@ std::string WikiDialog::getSelectedPage()
 #ifdef WIKI_DEBUG 
 		std::cerr << "WikiDialog::getSelectedPage() Nothing selected" << std::endl;
 #endif
-		return pageId;
+		return false;
 	}
 
 	QTreeWidgetItem *parent = item->parent();
@@ -360,16 +379,18 @@ std::string WikiDialog::getSelectedPage()
 #ifdef WIKI_DEBUG 
 		std::cerr << "WikiDialog::getSelectedPage() No Parent -> Group Selected" << std::endl;
 #endif
-		return pageId;
+		return false;
 	}
 
 
 	/* check if it has changed */
 	pageId = item->text(WIKI_GROUP_COL_PAGEID).toStdString();
+	origPageId = item->text(WIKI_GROUP_COL_ORIGPAGEID).toStdString();
+
 #ifdef WIKI_DEBUG 
 	std::cerr << "WikiDialog::getSelectedPage() PageId: " << pageId << std::endl;
 #endif
-	return pageId;
+	return true;
 }
 
 
@@ -414,6 +435,8 @@ std::string WikiDialog::getSelectedGroup()
 #define WIKI_MODS_COL_ORIGPAGEID	0
 #define WIKI_MODS_COL_PAGEID		1
 
+#if 0
+#########################################################
 void WikiDialog::insertModsForPage(std::string &origPageId)
 {
 	/* clear it all */
@@ -439,6 +462,8 @@ void WikiDialog::insertModsForPage(std::string &origPageId)
 		ui.treeWidget_Mods->addTopLevelItem(modItem);
 	}
 }
+#########################################################
+#endif
 
 
 
@@ -467,5 +492,391 @@ std::string WikiDialog::getSelectedMod()
 #endif
 	return pageId;
 }
+
+/************************** Request / Response *************************/
+/*** Loading Main Index ***/
+
+void WikiDialog::insertWikiGroups()
+{
+	requestGroupList();
+}
+
+
+void WikiDialog::requestGroupList()
+{
+	std::cerr << "WikiDialog::requestGroupList()";
+	std::cerr << std::endl;
+
+	std::list<std::string> ids;
+	RsTokReqOptions opts;
+	mWikiQueue->genericRequest(TOKENREQ_GROUPLIST, opts, ids, WIKIDIALOG_LISTING_GROUPLIST);
+}
+
+void WikiDialog::loadGroupList(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadGroupList()";
+	std::cerr << std::endl;
+	
+	std::list<std::string> groupIds;
+	rsWiki->getGroupList(token, groupIds);
+
+	if (groupIds.size() > 0)
+	{	
+		requestGroupData(groupIds);
+	}
+	else
+	{
+		std::cerr << "WikiDialog::loadGroupList() ERROR No Groups...";
+		std::cerr << std::endl;
+	}
+}
+
+void WikiDialog::requestGroupData(const std::list<std::string> &groupIds)
+{
+	RsTokReqOptions opts;
+	mWikiQueue->genericRequest(TOKENREQ_GROUPDATA, opts, groupIds, WIKIDIALOG_LISTING_GROUPDATA);
+}
+
+void WikiDialog::loadGroupData(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadGroupData()";
+	std::cerr << std::endl;
+
+	clearGroupTree();
+
+        bool moreData = true;
+        while(moreData)
+        {
+		RsWikiGroup group;
+                if (rsWiki->getGroupData(token, group))
+                {
+			/* Add Widget, and request Pages */
+
+                        std::cerr << "WikiDialog::addGroup() GroupId: " << group.mGroupId;
+			std::cerr << " Group: " << group.mName;
+			std::cerr << std::endl;
+
+			QTreeWidgetItem *groupItem = new QTreeWidgetItem(NULL);
+			groupItem->setText(WIKI_GROUP_COL_GROUPNAME, QString::fromStdString(group.mName));
+			groupItem->setText(WIKI_GROUP_COL_GROUPID, QString::fromStdString(group.mGroupId));
+			ui.treeWidget_Pages->addTopLevelItem(groupItem);
+
+			/* request pages */
+			std::list<std::string> groupIds;	
+			groupIds.push_back(group.mGroupId);
+
+			requestOriginalPages(groupIds);
+                }
+                else
+                {
+                        moreData = false;
+                }
+        }
+        //return true;
+}
+
+void WikiDialog::requestOriginalPages(const std::list<std::string> &groupIds)
+{
+	RsTokReqOptions opts;
+	opts.mOptions = RS_TOKREQOPT_MSG_ORIGMSG;
+	mWikiQueue->genericRequest(TOKENREQ_MSGLIST, opts, groupIds, WIKIDIALOG_LISTING_ORIGINALPAGES);
+}
+
+void WikiDialog::loadOriginalPages(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadOriginalPages()";
+	std::cerr << std::endl;
+
+	/* translate into latest pages */
+	std::list<std::string> msgIds;
+        if (rsWiki->getMsgList(token, msgIds))
+	{
+		std::cerr << "WikiDialog::loadOriginalPages() Loaded " << msgIds.size();
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "WikiDialog::loadOriginalPages() ERROR No Data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	requestLatestPages(msgIds);
+
+}
+
+void WikiDialog::requestLatestPages(const std::list<std::string> &msgIds)
+{
+	RsTokReqOptions opts;
+	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+	mWikiQueue->genericRequest(TOKENREQ_MSGRELATEDLIST, opts, msgIds, WIKIDIALOG_LISTING_LATESTPAGES);
+}
+
+void WikiDialog::loadLatestPages(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadLatestPages()";
+	std::cerr << std::endl;
+
+	std::list<std::string> msgIds;
+        if (rsWiki->getMsgList(token, msgIds))
+	{
+		std::cerr << "WikiDialog::loadLatestPages() Loaded " << msgIds.size();
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "WikiDialog::loadLatestPages() ERROR No Data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	/* request actual data */
+	requestPages(msgIds);
+
+}
+
+void WikiDialog::requestPages(const std::list<std::string> &msgIds)
+{
+	RsTokReqOptions opts;
+	mWikiQueue->genericRequest(TOKENREQ_MSGDATA, opts, msgIds, WIKIDIALOG_LISTING_PAGES);
+}
+
+void WikiDialog::loadPages(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadLatestPages()";
+	std::cerr << std::endl;
+
+	/* find parent in GUI Tree - stick children */
+
+	QTreeWidgetItem *groupItem = NULL;
+
+
+        bool moreData = true;
+        while(moreData)
+        {
+                RsWikiPage page;
+                if (rsWiki->getMsgData(token, page))
+                {
+			if (!groupItem)
+			{
+				/* find the entry */
+        			int itemCount = ui.treeWidget_Pages->topLevelItemCount();
+        			for (int nIndex = 0; nIndex < itemCount;) 
+        			{
+					QTreeWidgetItem *tmpItem = ui.treeWidget_Pages->topLevelItem(nIndex);
+                			std::string tmpid = tmpItem->data(WIKI_GROUP_COL_GROUPID, 
+							Qt::DisplayRole).toString().toStdString();
+					if (tmpid == page.mGroupId)
+					{
+                				groupItem = tmpItem;
+						break;
+					}
+				}
+
+				if (!groupItem)
+				{
+					/* error */
+					std::cerr << "WikiDialog::loadPages() ERROR Unable to find group";
+					std::cerr << std::endl;
+					return;
+				}
+			}
+						
+
+                        std::cerr << "WikiDialog::loadPages() PageId: " << page.mPageId;
+			std::cerr << " Page: " << page.mName;
+			std::cerr << std::endl;
+
+			QTreeWidgetItem *pageItem = new QTreeWidgetItem(NULL);
+			pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mName));
+			pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mPageId));
+			pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mOrigPageId));
+
+			groupItem->addChild(pageItem);
+
+                }
+                else
+                {
+                        moreData = false;
+                }
+        }
+        //return true;
+}
+
+
+/***** Mods *****/
+
+void WikiDialog::insertModsForPage(const std::string &origPageId)
+{
+	requestModPageList(origPageId);
+}
+
+void WikiDialog::requestModPageList(const std::string &origMsgId)
+{
+	RsTokReqOptions opts;
+	opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
+
+	std::list<std::string> msgIds;
+	msgIds.push_back(origMsgId);
+
+	mWikiQueue->genericRequest(TOKENREQ_MSGRELATEDLIST, opts, msgIds, WIKIDIALOG_MOD_LIST);
+}
+
+
+void WikiDialog::loadModPageList(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadModPages()";
+	std::cerr << std::endl;
+
+	/* translate into latest pages */
+	std::list<std::string> msgIds;
+        if (rsWiki->getMsgList(token, msgIds))
+	{
+		std::cerr << "WikiDialog::loadModPageList() Loaded " << msgIds.size();
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "WikiDialog::loadModPageList() ERROR No Data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	requestModPages(msgIds);
+
+}
+
+void WikiDialog::requestModPages(const std::list<std::string> &msgIds)
+{
+	RsTokReqOptions opts;
+	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+	mWikiQueue->genericRequest(TOKENREQ_MSGDATA, opts, msgIds, WIKIDIALOG_MOD_PAGES);
+}
+
+
+void WikiDialog::loadModPages(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadModPages()";
+	std::cerr << std::endl;
+
+        bool moreData = true;
+        while(moreData)
+        {
+                RsWikiPage page;
+                if (rsWiki->getMsgData(token, page))
+                {
+                        std::cerr << "WikiDialog::loadModPages() PageId: " << page.mPageId;
+			std::cerr << " Page: " << page.mName;
+			std::cerr << std::endl;
+
+			QTreeWidgetItem *modItem = new QTreeWidgetItem(NULL);
+			modItem->setText(WIKI_MODS_COL_ORIGPAGEID, QString::fromStdString(page.mOrigPageId));
+			modItem->setText(WIKI_MODS_COL_PAGEID, QString::fromStdString(page.mPageId));
+			ui.treeWidget_Mods->addTopLevelItem(modItem);
+
+                }
+                else
+                {
+                        moreData = false;
+                }
+        }
+}
+
+
+
+/***** Wiki *****/
+
+
+void WikiDialog::requestWikiPage(const std::string &msgId)
+{
+	RsTokReqOptions opts;
+
+	std::list<std::string> msgIds;
+	msgIds.push_back(msgId);
+
+	mWikiQueue->genericRequest(TOKENREQ_MSGDATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
+}
+
+
+void WikiDialog::loadWikiPage(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadModPages()";
+	std::cerr << std::endl;
+
+	// Should only have one WikiPage....
+        bool moreData = true;
+        while(moreData)
+        {
+                RsWikiPage page;
+                if (rsWiki->getMsgData(token, page))
+                {
+                        std::cerr << "WikiDialog::loadModPages() PageId: " << page.mPageId;
+			std::cerr << " Page: " << page.mName;
+			std::cerr << std::endl;
+
+			updateWikiPage(page);
+                }
+                else
+                {
+                        moreData = false;
+                }
+        }
+}
+
+
+
+void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "WikiDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+	
+	if (queue == mWikiQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+			case WIKIDIALOG_LISTING_GROUPLIST:
+				loadGroupList(req.mToken);
+				break;
+
+			case WIKIDIALOG_LISTING_GROUPDATA:
+				loadGroupData(req.mToken);
+				break;
+
+			case WIKIDIALOG_LISTING_ORIGINALPAGES:
+				loadOriginalPages(req.mToken);
+				break;
+
+			case WIKIDIALOG_LISTING_LATESTPAGES:
+				loadLatestPages(req.mToken);
+				break;
+
+			case WIKIDIALOG_LISTING_PAGES:
+				loadPages(req.mToken);
+				break;
+
+			case WIKIDIALOG_MOD_LIST:
+				loadModPageList(req.mToken);
+				break;
+
+			case WIKIDIALOG_MOD_PAGES:
+				loadModPages(req.mToken);
+				break;
+
+			case WIKIDIALOG_WIKI_PAGE:
+				loadWikiPage(req.mToken);
+				break;
+
+			default:
+				std::cerr << "PhotoDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
+				break;
+		}
+	}
+}
+	
+	
+	
+	
 
 

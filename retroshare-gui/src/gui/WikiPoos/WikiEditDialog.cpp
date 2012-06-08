@@ -36,6 +36,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.pushButton_Revert, SIGNAL( clicked( void ) ), this, SLOT( revertEdit( void ) ) );
 	connect(ui.pushButton_Submit, SIGNAL( clicked( void ) ), this, SLOT( submitEdit( void ) ) );
 
+	mWikiQueue = new TokenQueue(rsWiki, this);
 }
 
 void WikiEditDialog::setGroup(RsWikiGroup &group)
@@ -106,5 +107,94 @@ void WikiEditDialog::submitEdit()
 	rsWiki->createPage(mWikiPage);
 	hide();
 }
+
+void WikiEditDialog::setupData(const std::string &groupId, const std::string &pageId)
+{
+	if (groupId != "")
+	{
+		requestGroup(groupId);
+	}
+
+	if (pageId != "")
+	{
+		requestPage(pageId);
+	}
+}
+
+
+/***** Request / Response for Data **********/
+
+void WikiEditDialog::requestGroup(const std::string &groupId)
+{
+        std::cerr << "WikiEditDialog::requestGroup()";
+        std::cerr << std::endl;
+
+        std::list<std::string> ids;
+	ids.push_back(groupId);
+
+        RsTokReqOptions opts;
+        mWikiQueue->genericRequest(TOKENREQ_GROUPDATA, opts, ids, 0);
+}
+
+void WikiEditDialog::loadGroup(const uint32_t &token)
+{
+        std::cerr << "WikiEditDialog::loadGroup()";
+        std::cerr << std::endl;
+
+	RsWikiGroup group;
+	if (rsWiki->getGroupData(token, group))
+	{
+		setGroup(group);
+	}
+}
+
+void WikiEditDialog::requestPage(const std::string &msgId)
+{
+        std::cerr << "WikiEditDialog::requestGroup()";
+        std::cerr << std::endl;
+
+        std::list<std::string> ids;
+	ids.push_back(msgId);
+        RsTokReqOptions opts;
+        mWikiQueue->genericRequest(TOKENREQ_MSGDATA, opts, ids, 0);
+}
+
+void WikiEditDialog::loadPage(const uint32_t &token)
+{
+        std::cerr << "WikiEditDialog::loadPage()";
+        std::cerr << std::endl;
+
+	RsWikiPage page;
+	if (rsWiki->getMsgData(token, page))
+	{
+		setPreviousPage(page);
+	}
+}
+
+void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "WikiEditDialog::loadRequest()";
+	std::cerr << std::endl;
+		
+	if (queue == mWikiQueue)
+	{
+		/* now switch on req */
+		switch(req.mType)
+		{
+		case TOKENREQ_GROUPDATA:
+			loadGroup(req.mToken);
+			break;
+		case TOKENREQ_MSGDATA:
+			loadPage(req.mToken);
+			break;
+		default:
+			std::cerr << "WikiEditDialog::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << std::endl;
+		break;
+		}
+	}
+}
+
+
 
 

@@ -335,7 +335,8 @@ void PhotoDialog::requestAlbumList()
 {
 
 	std::list<std::string> ids;
-	mPhotoQueue->genericRequest(TOKENREQ_GROUPLIST, ids, 0);
+	RsTokReqOptions opts;
+	mPhotoQueue->genericRequest(TOKENREQ_GROUPLIST, opts, ids, 0);
 }
 
 
@@ -345,7 +346,7 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 	std::cerr << std::endl;
 
 	std::list<std::string> albumIds;
-	rsPhoto->getAlbumList(token, albumIds);
+	rsPhoto->getGroupList(token, albumIds);
 
 	requestAlbumData(albumIds);
 
@@ -362,7 +363,8 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 
 void PhotoDialog::requestAlbumData(const std::list<std::string> &ids)
 {
-	mPhotoQueue->genericRequest(TOKENREQ_GROUPDATA, ids, 0);
+	RsTokReqOptions opts;
+	mPhotoQueue->genericRequest(TOKENREQ_GROUPDATA, opts, ids, 0);
 }
 
 
@@ -400,7 +402,8 @@ void PhotoDialog::requestPhotoList(const std::string &albumId)
 
 	std::list<std::string> ids;
 	ids.push_back(albumId);
-	mPhotoQueue->genericRequest(TOKENREQ_MSGLIST, ids, 0);
+	RsTokReqOptions opts;
+	mPhotoQueue->genericRequest(TOKENREQ_MSGLIST, opts, ids, 0);
 }
 
 
@@ -414,14 +417,15 @@ void PhotoDialog::loadPhotoList(const uint32_t &token)
 
 	std::list<std::string> photoIds;
 
-	rsPhoto->getPhotoList(token, photoIds);
+	rsPhoto->getMsgList(token, photoIds);
 	requestPhotoData(photoIds);
 }
 
 
 void PhotoDialog::requestPhotoData(const std::list<std::string> &photoIds)
 {
-	mPhotoQueue->genericRequest(TOKENREQ_MSGDATA, photoIds, 0);
+	RsTokReqOptions opts;
+	mPhotoQueue->genericRequest(TOKENREQ_MSGDATA, opts, photoIds, 0);
 }
 
 
