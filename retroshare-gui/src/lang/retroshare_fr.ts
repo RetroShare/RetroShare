@@ -2547,7 +2547,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inclure les signatures</translation>
     </message>
     <message>
-        <source>copy RetroShare link to clipboard</source>
+        <source>Copy RetroShare link to clipboard</source>
         <translation>Copier le lien RetroShare dans le presse-papier</translation>
     </message>
     <message>

@@ -2699,7 +2699,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>copy RetroShare link to clipboard</source>
+        <source>Copy RetroShare link to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

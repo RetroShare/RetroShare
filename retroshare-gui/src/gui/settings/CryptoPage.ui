@@ -572,7 +572,7 @@ p, li { white-space: pre-wrap; }
    <item row="2" column="0" colspan="2">
     <widget class="QPushButton" name="_copyLink_PB">
      <property name="text">
-      <string>copy RetroShare link to clipboard</string>
+      <string>Copy RetroShare link to clipboard</string>
      </property>
     </widget>
    </item>

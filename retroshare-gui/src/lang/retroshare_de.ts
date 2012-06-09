@@ -3605,7 +3605,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
-        <source>copy RetroShare link to clipboard</source>
+        <source>Copy RetroShare link to clipboard</source>
         <translation>Kopiere RetroShare Link in die Zwischenablage</translation>
     </message>
     <message>
