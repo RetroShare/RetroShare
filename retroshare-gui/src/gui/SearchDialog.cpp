@@ -33,6 +33,7 @@
 #include "gui/common/FilesDefs.h"
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
+#include "common/RSTreeWidgetItem.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -55,6 +56,7 @@
 #define SS_DATA_COL         SS_TEXT_COL
 
 #define ROLE_KEYWORDS       Qt::UserRole
+#define ROLE_SORT           Qt::UserRole + 1
 
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
 
@@ -125,6 +127,13 @@ SearchDialog::SearchDialog(QWidget *parent)
     
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems()));
     connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterItems()));
+
+    compareSummaryRole = new RSTreeWidgetItemCompareRole;
+    compareSummaryRole->setRole(SS_COUNT_COL, ROLE_SORT);
+
+    compareResultRole = new RSTreeWidgetItemCompareRole;
+    compareResultRole->setRole(SR_SIZE_COL, ROLE_SORT);
+    compareResultRole->setRole(SR_AGE_COL, ROLE_SORT);
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -200,6 +209,13 @@ SearchDialog::~SearchDialog()
 {
     // save settings
     processSettings(false);
+
+    if (compareSummaryRole) {
+        delete(compareSummaryRole);
+    }
+    if (compareResultRole) {
+        delete(compareResultRole);
+    }
 }
 
 void SearchDialog::processSettings(bool bLoad)
@@ -545,13 +561,14 @@ void SearchDialog::initSearchResult(const QString& txt, qulonglong searchId, int
 {
 	QString sid_hexa = QString::number(searchId,16) ;
 
-	QTreeWidgetItem *item2 = new QTreeWidgetItem();
+	QTreeWidgetItem *item2 = new RSTreeWidgetItem(compareSummaryRole);
 	if (fileType == FILETYPE_IDX_ANY) {
 		item2->setText(SS_TEXT_COL, txt);
 	} else {
 		item2->setText(SS_TEXT_COL, txt + " (" + ui.FileTypeComboBox->itemText(fileType) + ")");
 	}
 	item2->setText(SS_COUNT_COL, QString::number(0));
+	item2->setData(SS_COUNT_COL, ROLE_SORT, 0);
 	item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 	item2->setText(SS_FILE_TYPE_COL, QString::number(fileType));
 
@@ -749,19 +766,16 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 
 	if (dir.type == DIR_TYPE_FILE)
 	{
-		QTreeWidgetItem *child;
-		if (item == NULL) {
-			child = new QTreeWidgetItem(ui.searchResultWidget);
-		} else {
-			child = new QTreeWidgetItem(item);
-		}
+		QTreeWidgetItem *child = new RSTreeWidgetItem(compareResultRole);
 
 		/* translate search result for a file */
 		
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-		child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));	// very important for sorting
-		child->setText(SR_AGE_COL, QString("%1").arg(dir.age,15,10));
+		child->setText(SR_SIZE_COL, QString::number(dir.count));
+		child->setData(SR_SIZE_COL, ROLE_SORT, dir.count);
+		child->setText(SR_AGE_COL, QString::number(dir.age));
+		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		
 		child->setText(SR_ID_COL, QString::number(1));
@@ -778,25 +792,20 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 	}
 	else
 	{ /* it is a directory */
-		QTreeWidgetItem *child;
-		if (item == NULL) {
-			child = new QTreeWidgetItem(ui.searchResultWidget);
-		} else {
-			child = new QTreeWidgetItem(item);
-		}
-    
+		QTreeWidgetItem *child = new RSTreeWidgetItem(compareResultRole);
+
 		child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-		//child->setText(SR_SIZE_COL, misc::toQString(dir.count));
-		child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,15,10));	// very important for sorting
-		child->setText(SR_AGE_COL, QString("%1").arg(dir.age,15,10));
+		child->setText(SR_SIZE_COL, QString::number(dir.count));
+		child->setData(SR_SIZE_COL, ROLE_SORT, dir.count);
+		child->setText(SR_AGE_COL, QString::number(dir.age));
+		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
 		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		child->setText(SR_TYPE_COL, tr("Folder"));
-
 
 		if (item == NULL) {
 			ui.searchResultWidget->addTopLevelItem(child);
@@ -813,14 +822,16 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 					// increment result since every item is new
 					int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
 					ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
+					ui.searchSummaryWidget->topLevelItem(i)->setData(SS_COUNT_COL, ROLE_SORT, s+1);
 					found = true ;
 				}
 			}
 			if(!found)
 			{
-				QTreeWidgetItem *item2 = new QTreeWidgetItem();
+				QTreeWidgetItem *item2 = new RSTreeWidgetItem(compareSummaryRole);
 				item2->setText(SS_TEXT_COL, txt);
 				item2->setText(SS_COUNT_COL, QString::number(1));
+				item2->setData(SS_COUNT_COL, ROLE_SORT, 1);
 				item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
 				item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
@@ -848,13 +859,15 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 	return ; // Remove this statement to allow adding directories to the search results.
 
     QString sid_hexa = QString::number(searchId,16) ;
-    QTreeWidgetItem *child = new QTreeWidgetItem(ui.searchResultWidget);
+    QTreeWidgetItem *child = new RSTreeWidgetItem(compareResultRole);
 
     child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
     child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
     child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-	 child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));	// very important for sorting
-	 child->setText(SR_AGE_COL, QString("%1").arg(dir.min_age,15,10));
+    child->setText(SR_SIZE_COL, QString::number(dir.count));
+    child->setData(SR_SIZE_COL, ROLE_SORT, dir.count);
+    child->setText(SR_AGE_COL, QString::number(dir.min_age));
+    child->setData(SR_AGE_COL, ROLE_SORT, dir.min_age);
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
     child->setText(SR_ID_COL, QString::number(1));
     child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
@@ -875,14 +888,16 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
                     // increment result since every item is new
                     int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
                     ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
+                    ui.searchSummaryWidget->topLevelItem(i)->setData(SS_COUNT_COL, ROLE_SORT, s+1);
                     found = true ;
             }
     }
     if(!found)
     {
-            QTreeWidgetItem *item2 = new QTreeWidgetItem();
+            RSTreeWidgetItem *item2 = new RSTreeWidgetItem(compareSummaryRole);
             item2->setText(SS_TEXT_COL, txt);
             item2->setText(SS_COUNT_COL, QString::number(1));
+            item2->setData(SS_COUNT_COL, ROLE_SORT, 1);
             item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
             item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
@@ -1041,7 +1056,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		/* translate search results */
 		
-		QTreeWidgetItem *item = new QTreeWidgetItem();
+		QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
 		item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
 		item->setText(SR_HASH_COL, QString::fromStdString(file.hash));
 
@@ -1051,8 +1066,10 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		 * to facilitate downloads we need to save the file size too
 		 */
 
-		item->setText(SR_SIZE_COL, QString::number(file.size).rightJustified(15, '0'));	// very important for sorting
-		item->setText(SR_AGE_COL, QString::number(file.age).rightJustified(15, '0'));
+		item->setText(SR_SIZE_COL, QString::number(file.size));
+		item->setData(SR_SIZE_COL, ROLE_SORT, file.size);
+		item->setText(SR_AGE_COL, QString::number(file.age));
+		item->setData(SR_AGE_COL, ROLE_SORT, file.age);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		if(searchType == FRIEND_SEARCH)
 		{
@@ -1108,6 +1125,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	{
 		int s = ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->text(SS_COUNT_COL).toInt() ;
 		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setText(SS_COUNT_COL,QString::number(s+1));
+		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setData(SS_COUNT_COL, ROLE_SORT, s+1);
 	}
 }
 

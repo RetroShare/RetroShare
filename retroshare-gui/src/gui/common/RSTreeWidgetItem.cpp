@@ -65,12 +65,22 @@ RSTreeWidgetItem::RSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRol
     m_compareRole = compareRole;
 }
 
+RSTreeWidgetItem::RSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *view, int type) : QTreeWidgetItem(view, type)
+{
+    m_compareRole = compareRole;
+}
+
 RSTreeWidgetItem::RSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *view, const QStringList &strings, int type) : QTreeWidgetItem(view, strings, type)
 {
     m_compareRole = compareRole;
 }
 
 RSTreeWidgetItem::RSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *view, QTreeWidgetItem *after, int type) : QTreeWidgetItem(view, after, type)
+{
+    m_compareRole = compareRole;
+}
+
+RSTreeWidgetItem::RSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent, int type) : QTreeWidgetItem(parent, type)
 {
     m_compareRole = compareRole;
 }

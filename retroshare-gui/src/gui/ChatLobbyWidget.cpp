@@ -86,6 +86,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 
 ChatLobbyWidget::~ChatLobbyWidget()
 {
+	if (compareRole) {
+		delete(compareRole);
+	}
 }
 
 void ChatLobbyWidget::lobbyTreeWidgetCostumPopupMenu()

@@ -28,6 +28,7 @@
 
 class AdvancedSearchDialog;
 class Expression;
+class RSTreeWidgetItemCompareRole;
 
 #define FRIEND_SEARCH 1
 #define ANONYMOUS_SEARCH 2
@@ -125,6 +126,9 @@ private:
     bool m_bProcessSettings;
 
     int nextSearchId;
+
+    RSTreeWidgetItemCompareRole *compareSummaryRole;
+    RSTreeWidgetItemCompareRole *compareResultRole;
 
 /** Qt Designer generated object */
     Ui::SearchDialog ui;
