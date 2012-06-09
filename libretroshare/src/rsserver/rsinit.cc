@@ -198,7 +198,7 @@ bool RsInitConfig::udpListenerOnly;
 
 
 /* Uses private class - so must be hidden */
-static bool getAvailableAccounts(std::list<accountId> &ids);
+static bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts);
 static bool checkAccount(std::string accountdir, accountId &id);
 
 static std::string toUpperCase(const std::string& s)
@@ -612,7 +612,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 */
 	/* create singletons */
 	AuthSSLInit();
-
 	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
@@ -621,7 +620,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
 
-	AuthGPG::init(RsInitConfig::basedir + "/pgp/retroshare_public_keyring.gpg",RsInitConfig::basedir + "/pgp/retroshare_secret_keyring.gpg");
+	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;
+	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
+		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
+
+	AuthGPG::init(pgp_dir + "/retroshare_public_keyring.gpg",pgp_dir + "/retroshare_secret_keyring.gpg");
 
 	/* Initialize AuthGPG */
 	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {
@@ -631,9 +634,14 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	//std::list<accountId> ids;
 	std::list<accountId>::iterator it;
-	getAvailableAccounts(RsInitConfig::accountIds);
+	int failing_accounts ;
 
-        // if a different user id has been passed to cmd line check for that instead
+	getAvailableAccounts(RsInitConfig::accountIds,failing_accounts);
+
+	if(failing_accounts > 0 && RsInitConfig::accountIds.empty())
+		return RS_INIT_NO_KEYRING ;
+
+	// if a different user id has been passed to cmd line check for that instead
 
 	std::string lower_case_user_string = toLowerCase(prefUserString) ;
 	std::string upper_case_user_string = toUpperCase(prefUserString) ;
@@ -703,6 +711,36 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 }
 
 /**************************** Access Functions for Init Data **************************/
+
+bool RsInit::copyGnuPGKeyrings()
+{
+	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;
+	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
+		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
+
+#ifdef WINDOWS_SYS
+	std::cerr << "CRITICAL: UNIMPLEMENTED SECTION FOR WINDOWS - Press ^C to abort" << std::endl;
+	while(true)
+		Sleep(10000) ;
+#else
+	// We need a specific part for MacOS and Linux as well
+	std::string source_public_keyring = RsInitConfig::basedir + "/../.gnupg/pubring.gpg" ;
+	std::string source_secret_keyring = RsInitConfig::basedir + "/../.gnupg/secring.gpg" ;
+#endif
+
+	if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))
+	{
+		std::cerr << "Cannot copy pub keyring " << source_public_keyring << " to destination file " << pgp_dir + "/retroshare_public_keyring.pgp" << std::endl;
+		return false ;
+	}
+	if(!RsDirUtil::copyFile(source_secret_keyring,pgp_dir + "/retroshare_secret_keyring.gpg"))
+	{
+		std::cerr << "Cannot copy sec keyring " << source_secret_keyring << " to destination file " << pgp_dir + "/retroshare_secret_keyring.pgp" << std::endl;
+		return false ;
+	}
+
+	return true ;
+}
 
 bool     RsInit::getPreferedAccountId(std::string &id)
 {
@@ -941,8 +979,9 @@ std::string RsInit::getRetroshareDataDirectory()
 
 
 /* directories with valid certificates in the expected location */
-bool getAvailableAccounts(std::list<accountId> &ids)
+bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts)
 {
+	failing_accounts = 0 ;
 	/* get the directories */
 	std::list<std::string> directories;
 	std::list<std::string>::iterator it;
@@ -1025,6 +1064,8 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 #endif
 			ids.push_back(tmpId);
 		}
+		else
+			++failing_accounts ;
 	}
 	return true;
 }
@@ -1065,7 +1106,10 @@ static bool checkAccount(std::string accountdir, accountId &id)
                 #ifdef GPG_DEBUG
                 std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
                 #endif
-                RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail);
+
+					 if(! RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail))
+						 return false ;
+
                 #ifdef GPG_DEBUG
                 std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
                 std::cerr << " email: " << id.pgpEmail << std::endl;
@@ -1103,8 +1147,14 @@ int      RsInit::GetPGPLoginDetails(const std::string& id, std::string &name, st
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
         #endif
 
-        name = AuthGPG::getAuthGPG()->getGPGName(id);
-        email = AuthGPG::getAuthGPG()->getGPGEmail(id);
+		  bool ok = true ;
+        name = AuthGPG::getAuthGPG()->getGPGName(id,&ok);
+		  if(!ok)
+			  return 0 ;
+        email = AuthGPG::getAuthGPG()->getGPGEmail(id,&ok);
+		  if(!ok)
+			  return 0 ;
+
         if (name != "") {
             return 1;
         } else {

@@ -81,10 +81,27 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
 	_pubring = allocateOPSKeyring() ;
 	_secring = allocateOPSKeyring() ;
 
+	// Check that the file exists. If not, create a void keyring.
+	
+	FILE *ftest ;
+	ftest = fopen(pubring.c_str(),"rb") ;
+	bool pubring_exist = (ftest != NULL) ;
+	if(ftest != NULL)
+		fclose(ftest) ;
+	ftest = fopen(secring.c_str(),"rb") ;
+	bool secring_exist = (ftest != NULL) ;
+	if(ftest != NULL)
+		fclose(ftest) ;
+
 	// Read public and secret keyrings from supplied files.
 	//
-	if(ops_false == ops_keyring_read_from_file(_pubring, false, pubring.c_str()))
-		throw std::runtime_error("PGPHandler::readKeyRing(): cannot read pubring.") ;
+	if(pubring_exist)
+	{
+		if(ops_false == ops_keyring_read_from_file(_pubring, false, pubring.c_str()))
+			throw std::runtime_error("PGPHandler::readKeyRing(): cannot read pubring. File corrupted.") ;
+	}
+	else
+		std::cerr << "pubring file \"" << pubring << "\" not found. Creating a void keyring." << std::endl;
 
 	const ops_keydata_t *keydata ;
 	int i=0 ;
@@ -104,8 +121,13 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
 	}
 	std::cerr << "Pubring read successfully." << std::endl;
 
-	if(ops_false == ops_keyring_read_from_file(_secring, false, secring.c_str()))
-		throw std::runtime_error("PGPHandler::readKeyRing(): cannot read secring.") ;
+	if(secring_exist)
+	{
+		if(ops_false == ops_keyring_read_from_file(_secring, false, secring.c_str()))
+			throw std::runtime_error("PGPHandler::readKeyRing(): cannot read secring. File corrupted.") ;
+	}
+	else
+		std::cerr << "secring file \"" << secring << "\" not found. Creating a void keyring." << std::endl;
 
 	i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_secring,i)) != NULL )

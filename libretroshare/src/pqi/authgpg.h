@@ -152,8 +152,8 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * provide access to details in cache list.
 		 *
 		 ****/
-		virtual std::string getGPGName(const std::string &pgp_id);
-		virtual std::string getGPGEmail(const std::string &pgp_id);
+		virtual std::string getGPGName(const std::string &pgp_id,bool *success = NULL);
+		virtual std::string getGPGEmail(const std::string &pgp_id,bool *success = NULL);
 
 		/* PGP web of trust management */
 		virtual std::string getGPGOwnId();

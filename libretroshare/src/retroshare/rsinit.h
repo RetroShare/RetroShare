@@ -32,6 +32,7 @@
 // Initialize failed, result < 0
 #define RS_INIT_AUTH_FAILED    -1 // AuthGPG::InitAuth failed
 #define RS_INIT_BASE_DIR_ERROR -2 // AuthGPG::InitAuth failed
+#define RS_INIT_NO_KEYRING     -3 // Keyring is empty. Need to import it.
 
 
 /****
@@ -86,6 +87,9 @@ class RsInit
 		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
 		static int 	GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
 		static bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
+
+		// copies existing gnupg keyrings to the new place of the OpenPGP-SDK version. Returns true on success.
+		static bool copyGnuPGKeyrings() ;
 
 		/*!
 		 * Login GGP

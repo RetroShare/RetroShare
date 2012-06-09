@@ -89,7 +89,10 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char *
 void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring)
 {
 	if(_instance != NULL)
-		throw std::runtime_error("AuthGPG::init() called twice!") ;
+	{
+		delete _instance ;
+		std::cerr << "AuthGPG::init() called twice!" << std::endl ;
+	}
 
 	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
 	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring) ;
@@ -598,7 +601,7 @@ bool    AuthGPG::GeneratePGPCertificate(const std::string& name,
 }
 
 /**** These Two are common */
-std::string AuthGPG::getGPGName(const std::string &id)
+std::string AuthGPG::getGPGName(const std::string &id,bool *success)
 {
 	if(id.length() != 16)
 	{
@@ -610,21 +613,33 @@ std::string AuthGPG::getGPGName(const std::string &id)
 	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
 
 	if(info != NULL)
+	{
+		if(success != NULL) *success = true ;
 		return info->_name ;
+	}
 	else
+	{
+		if(success != NULL) *success = false ;
 		return "[Unknown PGP Cert name]" ;
+	}
 }
 
 /**** These Two are common */
-std::string AuthGPG::getGPGEmail(const std::string &id)
+std::string AuthGPG::getGPGEmail(const std::string &id,bool *success)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
 
 	if(info != NULL)
+	{
+		if(success != NULL) *success = true ;
 		return info->_email ;
+	}
 	else
+	{
+		if(success != NULL) *success = false ;
 		return "[Unknown PGP Cert email]" ;
+	}
 }
 
 /**** GPG versions ***/
