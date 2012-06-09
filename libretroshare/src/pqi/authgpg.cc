@@ -137,7 +137,7 @@ int AuthGPG::GPGInit(const std::string &ownId)
 {
 	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;
 
-	mOwnGpgId = PGPIdType::fromUserId_hex(ownId);
+	mOwnGpgId = PGPIdType(ownId);
 
 	//force the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
 	privateTrustCertificate(ownId, 5);
@@ -571,7 +571,7 @@ bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, un
 		return false ;
 	}
 
-	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,PGPFingerprintType::fromFingerprint_hex(withfingerprint)) ;
+	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,PGPFingerprintType(withfingerprint)) ;
 }
 
 
@@ -607,7 +607,7 @@ std::string AuthGPG::getGPGName(const std::string &id)
 	}
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(id)) ;
+	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
 
 	if(info != NULL)
 		return info->_name ;
@@ -619,7 +619,7 @@ std::string AuthGPG::getGPGName(const std::string &id)
 std::string AuthGPG::getGPGEmail(const std::string &id)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(id)) ;
+	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
 
 	if(info != NULL)
 		return info->_email ;
@@ -703,7 +703,7 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 		return false ;
 	}
 
-	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType::fromUserId_hex(id)) ;
+	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
 
 	if(pc == NULL)
 		return false ;
@@ -764,7 +764,7 @@ bool	AuthGPG::getGPGSignedList(std::list<std::string> &ids)
 bool	AuthGPG::getCachedGPGCertificate(const std::string &id, std::string &certificate)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	certificate = PGPHandler::SaveCertificateToString(PGPIdType::fromUserId_hex(id),false) ;
+	certificate = PGPHandler::SaveCertificateToString(PGPIdType(id),false) ;
 
 #ifdef LIMIT_CERTIFICATE_SIZE
 	std::string cleaned_key ;
@@ -795,7 +795,7 @@ std::string AuthGPG::SaveCertificateToString(const std::string &id,bool include_
 
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
-	std::string tmp = PGPHandler::SaveCertificateToString(PGPIdType::fromUserId_hex(id),include_signatures) ;
+	std::string tmp = PGPHandler::SaveCertificateToString(PGPIdType(id),include_signatures) ;
 
 	// Try to remove signatures manually.
 	//
@@ -843,7 +843,7 @@ bool AuthGPG::AllowConnection(const std::string &gpg_id, bool accept)
 	/* Was a "Reload Certificates" here -> be shouldn't be needed -> and very expensive, try without. */
 	{
 		RsStackMutex stack(gpgMtxData);
-		PGPHandler::setAcceptConnexion(PGPIdType::fromUserId_hex(gpg_id),accept) ;
+		PGPHandler::setAcceptConnexion(PGPIdType(gpg_id),accept) ;
 	}
 
 	IndicateConfigChanged();
@@ -1661,7 +1661,7 @@ bool AuthGPG::loadList(std::list<RsItem*>& load)
 			std::list<RsTlvKeyValue>::iterator kit;
 			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
 				if (kit->key != mOwnGpgId.toStdString()) 
-					PGPHandler::setAcceptConnexion(PGPIdType::fromUserId_hex(kit->key), (kit->value == "TRUE"));
+					PGPHandler::setAcceptConnexion(PGPIdType(kit->key), (kit->value == "TRUE"));
 		}
 		delete (*it);
 	}
