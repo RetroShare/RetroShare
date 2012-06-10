@@ -29,7 +29,7 @@
 #include <string.h>
 
 #include <openpgpsdk/configure.h>
-#ifdef HAVE_ALLOCA_H
+#if HAVE_ALLOCA_H
 # include <alloca.h>
 #endif
 

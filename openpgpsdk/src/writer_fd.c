@@ -22,9 +22,11 @@
 /** \file
  */
 
+#ifndef WIN32
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#endif
 
 #include <openpgpsdk/create.h>
 

@@ -110,6 +110,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 	public:
 
 		static void init(const std::string& path_to_pubring, const std::string& path_to_secring);
+		static void exit();
 		static AuthGPG *getAuthGPG() { return _instance ; }
 
 		/**

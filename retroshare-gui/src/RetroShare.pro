@@ -114,6 +114,7 @@ win32 {
 	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../../openpgpsdk/lib/libops.a -lbz2
 	LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht

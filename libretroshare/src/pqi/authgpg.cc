@@ -90,12 +90,22 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 {
 	if(_instance != NULL)
 	{
-		delete _instance ;
+		exit();
 		std::cerr << "AuthGPG::init() called twice!" << std::endl ;
 	}
 
 	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
 	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring) ;
+}
+
+void AuthGPG::exit()
+{
+	if(_instance != NULL)
+	{
+		_instance->join();
+		delete _instance ;
+		_instance = NULL;
+	}
 }
 
 AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring)

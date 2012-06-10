@@ -254,7 +254,7 @@ void RsInit::InitRsConfig()
 
 #ifdef WINDOWS_SYS
 	// test for portable version
-	if (GetFileAttributes (L"gpg.exe") != (DWORD) -1 && GetFileAttributes (L"gpgme-w32spawn.exe") != (DWORD) -1) {
+	if (GetFileAttributes(L"portable") != (DWORD) -1) {
 		// use portable version
 		RsInitConfig::portable = true;
 	}
@@ -718,14 +718,22 @@ bool RsInit::copyGnuPGKeyrings()
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
+	std::string source_public_keyring;
+	std::string source_secret_keyring;
+
 #ifdef WINDOWS_SYS
-	std::cerr << "CRITICAL: UNIMPLEMENTED SECTION FOR WINDOWS - Press ^C to abort" << std::endl;
-	while(true)
-		Sleep(10000) ;
+	if (RsInit::isPortable())
+	{
+		source_public_keyring = RsInit::RsConfigDirectory() + "/gnupg/pubring.gpg";
+		source_secret_keyring = RsInit::RsConfigDirectory() + "/gnupg/secring.gpg" ;
+	} else {
+		source_public_keyring = RsInitConfig::basedir + "/../gnupg/pubring.gpg" ;
+		source_secret_keyring = RsInitConfig::basedir + "/../gnupg/secring.gpg" ;
+	}
 #else
 	// We need a specific part for MacOS and Linux as well
-	std::string source_public_keyring = RsInitConfig::basedir + "/../.gnupg/pubring.gpg" ;
-	std::string source_secret_keyring = RsInitConfig::basedir + "/../.gnupg/secring.gpg" ;
+	source_public_keyring = RsInitConfig::basedir + "/../.gnupg/pubring.gpg" ;
+	source_secret_keyring = RsInitConfig::basedir + "/../.gnupg/secring.gpg" ;
 #endif
 
 	if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))

@@ -10,6 +10,16 @@ DESTDIR = ../lib
 DEPENDPATH += .
 INCLUDEPATH += . ../include
 
+#################################### Windows #####################################
+
+win32 {
+	SSL_DIR = ../../../../OpenSSL
+	ZLIB_DIR = ../../../zlib-1.2.3
+	BZIP_DIR = ../../../bzip2-1.0.6
+
+	INCLUDEPATH += . $${SSL_DIR}/include $${ZLIB_DIR} $${BZIP_DIR}
+}
+
 # Input
 HEADERS += keyring_local.h parse_local.h
 SOURCES += accumulate.c \
