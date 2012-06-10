@@ -773,7 +773,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		child->setText(SR_SIZE_COL, QString::number(dir.count));
-		child->setData(SR_SIZE_COL, ROLE_SORT, dir.count);
+		child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
 		child->setText(SR_AGE_COL, QString::number(dir.age));
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -798,7 +798,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		child->setText(SR_SIZE_COL, QString::number(dir.count));
-		child->setData(SR_SIZE_COL, ROLE_SORT, dir.count);
+		child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
 		child->setText(SR_AGE_COL, QString::number(dir.age));
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -865,7 +865,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
     child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
     child->setText(SR_SIZE_COL, QString::number(dir.count));
-    child->setData(SR_SIZE_COL, ROLE_SORT, dir.count);
+    child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
     child->setText(SR_AGE_COL, QString::number(dir.min_age));
     child->setData(SR_AGE_COL, ROLE_SORT, dir.min_age);
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
