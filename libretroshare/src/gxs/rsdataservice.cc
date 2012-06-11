@@ -25,6 +25,7 @@
 // msg table columns
 #define KEY_PUBLISH_SIGN std::string("publishSign")
 #define KEY_MSG_ID std::string("msgId")
+#define KEY_ORIG_MSG_ID std::string("origMsgId")
 
 
 // grp col numbers
@@ -35,6 +36,7 @@
 // msg col numbers
 #define COL_PUBLISH_SIGN 1
 #define COL_MSG_ID 9
+#define COL_ORIG_MSG_ID 10
 
 // generic col numbers
 #define COL_NXS_FILE 2
@@ -57,7 +59,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     msgColumns.push_back(KEY_GRP_ID); msgColumns.push_back(KEY_PUBLISH_SIGN);  msgColumns.push_back(KEY_NXS_FILE);
     msgColumns.push_back(KEY_NXS_FILE_OFFSET); msgColumns.push_back(KEY_NXS_FILE_LEN); msgColumns.push_back(KEY_TIME_STAMP);
     msgColumns.push_back(KEY_NXS_FLAGS); msgColumns.push_back(KEY_IDENTITY_SIGN); msgColumns.push_back(KEY_NXS_IDENTITY);
-    msgColumns.push_back(KEY_MSG_ID);
+    msgColumns.push_back(KEY_MSG_ID); msgColumns.push_back(KEY_ORIG_MSG_ID);
 
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_ADMIN_SIGN); grpColumns.push_back(KEY_NXS_FILE);
     grpColumns.push_back(KEY_NXS_FILE_OFFSET);  grpColumns.push_back(KEY_NXS_FILE_LEN); grpColumns.push_back(KEY_TIME_STAMP);
@@ -77,7 +79,7 @@ void RsDataService::initialise(){
 
     // create table for msgs
     mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" + KEY_MSG_ID
-                 + " TEXT," + KEY_GRP_ID +  " TEXT," + KEY_NXS_FLAGS + " INT,"
+                 + " TEXT," + KEY_GRP_ID +  " TEXT," + KEY_NXS_FLAGS + " INT,"  + KEY_ORIG_MSG_ID +  " TEXT,"
                   + KEY_TIME_STAMP + " INT," + KEY_PUBLISH_SIGN + " BLOB," + KEY_NXS_IDENTITY + " TEXT,"
                  + KEY_IDENTITY_SIGN + " BLOB," + KEY_NXS_FILE + " TEXT,"+ KEY_NXS_FILE_OFFSET + " INT,"
                  + KEY_NXS_FILE_LEN+ " INT);");
@@ -412,34 +414,6 @@ int RsDataService::retrieveMsgs(const std::string &grpId, std::map<std::string, 
     }
 }
 
-int RsDataService::retrieveMsgVersions(const std::string &grpId, const std::string& msgId,
-                                       std::set<RsNxsMsg *>& msg, bool cache){
-
-
-    std::string selection = KEY_GRP_ID + "='" + grpId + "' and " + KEY_MSG_ID + "='" + msgId + "'";
-    RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, selection, "");
-
-
-    if(c){
-
-        bool valid = c->moveToFirst();
-        while(valid){
-            RsNxsMsg* m = getMessage(*c);
-
-            if(m)
-                msg.insert(m);
-
-            valid = c->moveToNext();
-        }
-
-        delete c;
-        return 1;
-    }else{
-        return 0;
-    }
-
-}
-
 int RsDataService::retrieveGrpVersions(const std::string &grpId, std::set<RsNxsGrp *> &grp, bool cache){
 
     std::string selection = KEY_GRP_ID + "='" + grpId + "'";
@@ -496,37 +470,6 @@ RsNxsGrp* RsDataService::retrieveGrpVersion(const RsGxsGrpId &grpId){
     return grp;
 }
 
-RsNxsMsg* RsDataService::retrieveMsgVersion(const RsGxsMsgId &msgId){
-
-    std::set<RsNxsMsg*> msgs;
-    retrieveMsgVersions(msgId.grpId, msgId.msgId, msgs, false);
-    RsNxsMsg* msg = NULL;
-
-    if(!msgs.empty()){
-
-        std::set<RsNxsMsg*>::iterator sit = msgs.begin();
-
-        for(; sit != msgs.end(); sit++){
-
-            msg = *sit;
-            if(0 == memcmp(msg->idSign.signData.bin_data, msgId.idSign.signData.bin_data,
-                       msg->idSign.signData.bin_len))
-                break;
-
-            msg = NULL;
-        }
-
-        if(msg){
-            msgs.erase(msg);
-
-            for(sit = msgs.begin(); sit != msgs.end(); sit++)
-                delete *sit;
-        }
-    }
-
-
-    return msg;
-}
 
 int RsDataService::resetDataStore(){
 

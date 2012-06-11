@@ -165,7 +165,7 @@ template<class T> int test_RsItem(uint16_t servtype)
 
         /* initialise */
         T rsfi(servtype) ;
-        RsSerialType *rsfis = init_item(rsfi) ;
+        RsSerialType *rsfis = init_item(rsfi) ; // deleted on destruction of srl
 
         /* attempt to serialise it before we add it to the serialiser */
 
@@ -216,7 +216,6 @@ template<class T> int test_RsItem(uint16_t servtype)
 //	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
 
         delete[] buffer ;
-        //delete rsfis;
 
         return 1;
 }

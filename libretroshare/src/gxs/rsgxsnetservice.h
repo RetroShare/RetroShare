@@ -16,16 +16,20 @@
 /*!
  * This represents a transaction made
  * with the NxsNetService in all states
- * of operation untill completion
+ * of operation until completion
  */
 class NxsTransaction
 {
 
 public:
 
-    static const uint8_t FLAG_STATE_RECEIVING;
-    static const uint8_t FLAG_STATE_DONE;
-    static const uint8_t FLGA_STATE_COMPLETED;
+	static const uint8_t FLAG_STATE_STARTING; // when
+    static const uint8_t FLAG_STATE_RECEIVING; // begin receiving items for incoming trans
+    static const uint8_t FLAG_STATE_SENDING; // begin sending items for outgoing trans
+    static const uint8_t FLAG_STATE_COMPLETED;
+    static const uint8_t FLAG_STATE_FAILED;
+    static const uint8_t FLAG_STATE_WAITING_CONFIRM;
+
 
     NxsTransaction();
     ~NxsTransaction();
@@ -44,6 +48,20 @@ public:
     RsNxsTransac* mTransaction;
     std::list<RsNxsItem*> mItems; // items received or sent
 };
+
+class NxsGrpSyncTrans : public NxsTransaction {
+
+public:
+
+};
+
+class NxsMsgSyncTrans : public NxsTransaction {
+
+public:
+	std::string mGrpId;
+};
+
+
 
 /// keep track of transaction number
 typedef std::map<uint32_t, NxsTransaction*> TransactionIdMap;
@@ -84,7 +102,7 @@ public:
      * Circumvents polling of peers for message
      * @param peerId id of peer
      */
-    void requestGroupsOfPeer(const std::string& peerId);
+    void requestGroupsOfPeer(const std::string& peerId){ return;}
 
     /*!
      * get messages of a peer for a given group id, this circumvents the normal
@@ -92,7 +110,7 @@ public:
      * @param peerId Id of peer
      * @param grpId id of group to request messages for
      */
-    void requestMessagesOfPeer(const std::string& peerId, const RsGroupId& grpId);
+    void requestMessagesOfPeer(const std::string& peerId, const RsGxsGrpId& grpId){ return; }
 
     /*!
      * subscribes the associated service to this group. This RsNetworktExchangeService
@@ -100,7 +118,7 @@ public:
      * @param grpId the id of the group to subscribe to
      * @param subscribe set to true to subscribe or false to unsubscribe
      */
-    void subscribeToGroup(const RsGroupId& grpId, bool subscribe);
+    void subscribeToGroup(const std::string& grpId, bool subscribe);
 
     /*!
      * Initiates a search through the network
@@ -109,7 +127,7 @@ public:
      * @param hops how far into friend tree for search
      * @return search token that can be redeemed later, implementation should indicate how this should be used
      */
-    int searchMsgs(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0);
+    int searchMsgs(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0){ return 0;}
 
     /*!
      * Initiates a search of groups through the network which goes
@@ -118,7 +136,7 @@ public:
      * @param hops number of hops deep into peer network
      * @return search token that can be redeemed later
      */
-    int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0);
+    int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0){ return 0;}
 
 
     /*!
@@ -135,7 +153,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    int requestMsg(const std::list<RsGxsMsgId>& msgId, uint8_t hops);
+    int requestMsg(const std::string& msgId, uint8_t hops){ return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -143,7 +161,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<RsGxsGrpId>& grpId, uint8_t hops);
+    int requestGrp(const std::list<RsGxsGrpId>& grpId, uint8_t hops){ return 0;}
 
 
 
@@ -152,7 +170,7 @@ public:
     /*!
      * initiates synchronisation
      */
-    void tick();
+    int tick();
 
     /*!
      * Processes transactions and job queue
@@ -168,25 +186,34 @@ private:
     void recvNxsItemQueue();
 
     /*!
-     * Processes active tansaction map
+     * Processes synchronisation requests. If request is valid this generates
+     * msg/grp response transaction with sending peer
+     */
+    void processSyncRequests();
+
+
+    /** S: Transaction processing **/
+
+    /*!
+     * These process transactions which are in a wait state
+     * Also moves transaction which have been completed to
+     * the completed transactions list
      */
     void processTransactions();
 
     /*!
-     * Process completed transaction map
+     * Process completed transaction, which either simply
+     * retires a transaction or additionally generates a response
+     * to the completed transaction
      */
-    void processCompleteTransactions();
+    void processCompletedTransactions();
+
 
     /*!
-     * Processes synchronisation requests
+     * Process a transaction item, assumes a general lock
+     * @param item the transaction item to process
      */
-    void processSyncRequests();
-
-    /*!
-     * This adds a transaction to
-     * @param
-     */
-    void locked_addTransaction(NxsTransaction* trans);
+    bool locked_processTransac(RsNxsTransac* item);
 
     /*!
      * This adds a transaction
@@ -197,21 +224,72 @@ private:
      */
     void locked_completeTransaction(NxsTransaction* trans);
 
+    /*!
+     * This retrieves a unique transaction id that
+     * can be used in an outgoing transaction
+     */
     uint32_t getTransactionId();
 
+    /*!
+     * This attempts to push the transaction id counter back if you have
+     * active outgoing transactions in play
+     */
     bool attemptRecoverIds();
 
-    /** item handlers **/
+    /*!
+     * The cb listener is the owner of the grps
+     * @param grps
+     */
+    void notifyListenerGrps(std::list<RsNxsGrp*>& grps);
 
-    void handleTransactionContent(RsNxsItem*);
+    /*!
+     * The cb listener is the owner of the msgs
+     * @param msgs
+     */
+    void notifyListenerMsgs(std::list<RsNxsMsg*>& msgs);
 
-    void handleRecvSyncGroup(RsSyncGrp*);
+    /*!
+     * @param tr transaction responsible for generating msg request
+     */
+	void genReqMsgTransaction(NxsTransaction* tr);
 
-    void handleRecvSyncMessage(RsNxsItem*);
+    /*!
+     * @param tr transaction responsible for generating grp request
+     */
+	void genReqGrpTransaction(NxsTransaction* tr);
 
-    void handleRecvTransaction(RsNxsItem*);
+	/*!
+	 * @param tr transaction to add
+	 */
+	bool locked_addTransaction(NxsTransaction* tr);
 
-    /** item handlers **/
+	void cleanTransactionItems(NxsTransaction* tr) const;
+
+	/** E: Transaction processing **/
+
+    /** S: item handlers **/
+
+    /*!
+     * This attempts handles transaction items
+     * ownership of item is left with callee if this method returns false
+     * @param item transaction item to handle
+     * @return false if transaction could not be handled, ownership of item is left with callee
+     */
+    bool handleTransaction(RsNxsItem* item);
+
+    /*!
+     * Handles an nxs item for group synchronisation
+     * @param item contaims grp sync info
+     */
+    void handleRecvSyncGroup(RsNxsSyncGrp* item);
+
+    /*!
+     * Handles an nxs item for msgs synchronisation
+     * @param item contaims msg sync info
+     */
+    void handleRecvSyncMessage(RsNxsSyncMsg* item);
+
+    /** E: item handlers **/
 
 
 private:
@@ -219,7 +297,7 @@ private:
     /*** transactions ***/
 
     /// active transactions
-    TransactionsPeerMap mInTransactions;
+    TransactionsPeerMap mTransactions;
 
     /// completed transactions
     std::list<NxsTransaction*> mComplTransactions;
@@ -230,17 +308,17 @@ private:
     /*** transactions ***/
 
     /*** synchronisation ***/
-    std::list<RsSyncGrp*> mSyncGrp;
-    std::list<RsSyncGrpMsg*> mSyncMsg;
+    std::list<RsNxsSyncGrp*> mSyncGrp;
+    std::list<RsNxsSyncMsg*> mSyncMsg;
     /*** synchronisation ***/
 
     RsNxsObserver* mObserver;
     RsGeneralDataService* mDataStore;
     uint16_t mServType;
+    uint32_t mTransactionTimeOut;
 
-
-    /// for transaction members
-    RsMutex mTransMutex;
+    std::string mOwnId;
+;
     /// for other members save transactions
     RsMutex mNxsMutex;
 

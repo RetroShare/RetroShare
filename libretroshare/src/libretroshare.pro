@@ -666,11 +666,13 @@ newcache {
 HEADERS += serialiser/rsnxsitems.h \
             gxs/rsgds.h \
             gxs/rsgxs.h \
-            gxs/rsdataservice/h
+            gxs/rsdataservice/h \
+            gxs/rsgxsnetservice.h
 
 SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
-                gxs/rsgenexchange.cc
+                gxs/rsgenexchange.cc \
+            gxs/rsgxsnetservice.cc
 }
 
 

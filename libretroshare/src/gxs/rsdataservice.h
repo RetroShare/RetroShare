@@ -39,20 +39,6 @@ public:
     int retrieveGrpVersions(const std::string &grpId, std::set<RsNxsGrp *> &grp, bool cache);
 
     /*!
-     * retrieves all the versions of a message for a group
-     * @param grpId the id of the group message belongs to
-     * @param msgId the id of the message to get versions for
-     * @return errCode
-     */
-    int retrieveMsgVersions(const std::string &grpId, const std::string& msgId, std::set<RsNxsMsg *>& grp, bool cache);
-
-    /*!
-     * @param msgId the id of the message to retrieve
-     * @return NULL if message does not exist, or pointer to grp if found
-     */
-    RsNxsMsg* retrieveMsgVersion(const RsGxsMsgId& msgId);
-
-    /*!
      * @param grpId the id of the group to retrieve
      * @return NULL if group does not exist or pointer to grp if found
      */

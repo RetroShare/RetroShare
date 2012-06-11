@@ -88,7 +88,7 @@ public:
     static const uint8_t FLAG_USE_SYNC_HASH;
     static const uint8_t FLAG_ONLY_CURRENT; // only send most current version of grps / ignores sync hash
 
-    RsNxsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP) { return;}
+    RsNxsSyncGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP) { clear(); return;}
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -111,6 +111,9 @@ class RsNxsTransac : public RsNxsItem {
 
 public:
 
+	static const uint16_t FLAG_TRANS_MASK = 0xf;
+	static const uint16_t FLAG_TYPE_MASK = 0xff;
+
     /** transaction **/
     static const uint16_t FLAG_BEGIN_P1;
     static const uint16_t FLAG_BEGIN_P2;
@@ -129,7 +132,7 @@ public:
     static const uint16_t FLAG_TYPE_GRPS;
     static const uint16_t FLAG_TYPE_MSGS;
 
-    RsNxsTransac(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANS) { return; }
+    RsNxsTransac(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANS) { clear(); return; }
     virtual ~RsNxsTransac() { return ; }
 
     virtual void clear();
@@ -138,7 +141,6 @@ public:
     uint16_t transactFlag;
     uint32_t nItems;
     uint32_t timeout;
-    uint32_t transactionId;
 };
 
 /*!
@@ -154,8 +156,8 @@ public:
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { return ; }
-    virtual ~RsNxsSyncGrpList() { return; }
+    RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { clear(); return ; }
+    virtual ~RsNxsSyncGrpItem() { return; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -179,7 +181,7 @@ class RsNxsGrp : public RsNxsItem
 
 public:
 
-    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype) { return; }
+    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype) { clear(); return; }
 
 
     virtual void clear();
@@ -206,7 +208,7 @@ public:
 
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsNxsSyncMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG) {return; }
+    RsNxsSyncMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG) { clear(); return; }
 
 
     virtual void clear();
@@ -229,7 +231,7 @@ public:
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
-    RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { return; }
+    RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { clear(); return; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -249,7 +251,7 @@ class RsNxsMsg : public RsNxsItem
 {
 public:
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype) { return; }
+    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype) { clear(); return; }
 
 
     virtual void clear();
@@ -397,11 +399,11 @@ private:
     virtual bool serialiseNxsSyncGrp(RsNxsSyncGrp *item, void *data, uint32_t *size);
     virtual RsNxsSyncGrp* deserialNxsSyncGrp(void *data, uint32_t *size);
 
-    /* for RS_PKT_SUBTYPE_SYNC_GRP_LIST */
+    /* for RS_PKT_SUBTYPE_SYNC_GRP_ITEM */
 
-    virtual uint32_t sizeSyncGrpList(RsNxsSyncGrpItem* item);
-    virtual bool serialiseNxsSyncGrpList(RsNxsSyncGrpItem *item, void *data, uint32_t *size);
-    virtual RsNxsSyncGrpItem* deserialNxsSyncGrpList(void *data, uint32_t *size);
+    virtual uint32_t sizeNxsSyncGrpItem(RsNxsSyncGrpItem* item);
+    virtual bool serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data, uint32_t *size);
+    virtual RsNxsSyncGrpItem* deserialNxsSyncGrpItem(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_NXS_GRP */
 
@@ -411,15 +413,15 @@ private:
 
     /* for RS_PKT_SUBTYPE_SYNC_MSG */
 
-    virtual uint32_t sizeSyncGrpMsg(RsSyncGrpMsg* item);
-    virtual bool serialiseSyncGrpMsg(RsSyncGrpMsg *item, void *data, uint32_t *size);
-    virtual RsSyncGrpMsg* deserialSyncGrpMsg(void *data, uint32_t *size);
+    virtual uint32_t sizeNxsSyncMsg(RsNxsSyncMsg* item);
+    virtual bool serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32_t *size);
+    virtual RsNxsSyncMsg* deserialNxsSyncMsg(void *data, uint32_t *size);
 
-    /* RS_PKT_SUBTYPE_SYNC_MSG_LIST */
+    /* RS_PKT_SUBTYPE_SYNC_MSG_ITEM */
 
-    virtual uint32_t sizeSyncGrpMsgList(RsSyncGrpMsgList* item);
-    virtual bool serialiseSynGrpMsgList(RsSyncGrpMsgList* item, void *data, uint32_t* size);
-    virtual RsSyncGrpMsgList* deserialSyncGrpMsgList(void *data, uint32_t *size);
+    virtual uint32_t sizeNxsSyncMsgItem(RsNxsSyncMsgItem* item);
+    virtual bool serialiseNxsSynMsgItem(RsNxsSyncMsgItem* item, void *data, uint32_t* size);
+    virtual RsNxsSyncMsgItem* deserialNxsSyncMsgItem(void *data, uint32_t *size);
 
     /* RS_PKT_SUBTYPE_NXS_MSG */
 
@@ -440,6 +442,26 @@ private:
 private:
 
     const uint16_t SERVICE_TYPE;
+};
+
+
+
+class RsGxsMsgId {
+
+public:
+
+    std::string grpId;
+    std::string msgId;
+    RsTlvKeySignature idSign;
+};
+
+
+class RsGxsGrpId {
+
+public:
+
+    std::string grpId;
+    RsTlvKeySignature adminSign;
 };
 
 

@@ -21,8 +21,6 @@ int main()
 
     test_messageStoresAndRetrieve(); REPORT("test_messageStoresAndRetrieve");
 
-    test_messageVersionRetrieve(); REPORT("test_messageVersionRetrieve");
-
     test_groupVersionRetrieve(); REPORT("test_groupVersionRetrieve");
 
     FINALREPORT("RsDataService Tests");
@@ -138,48 +136,6 @@ void test_messageStoresAndRetrieve(){
     tearDown();
 }
 
-void test_messageVersionRetrieve(){
-
-    setUp();
-
-    // place two messages in store and attempt to retrieve them
-    std::set<RsNxsMsg*> s;
-    RsNxsMsg* msg1 = new RsNxsMsg(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);;
-    RsNxsMsg* msg2 = new RsNxsMsg(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);;
-    RsNxsMsg* msg3 = new RsNxsMsg(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);;
-    std::string grpId;
-    randString(SHORT_STR, grpId);
-    msg1->grpId = grpId;
-    msg2->grpId = grpId;
-    msg3->grpId = grpId;
-    init_item(msg1);
-    init_item(msg2);
-    init_item(msg3);
-    s.insert(msg1); s.insert(msg2); s.insert(msg3);
-
-    dStore->storeMessage(s);
-
-    RsGxsMsgId msgId;
-    msgId.grpId = msg2->grpId;
-    msgId.idSign = msg2->idSign;
-    msgId.msgId = msg2->msgId;
-    RsNxsMsg* msg2_r = dStore->retrieveMsgVersion(msgId);
-
-    CHECK(msg2_r != NULL);
-
-    if(msg2_r)
-        CHECK(*msg2 == *msg2_r);
-
-    delete msg1;
-    delete msg2;
-    delete msg3;
-    delete msg2_r;
-
-    std::string msgFile = grpId + "-msgs";
-    remove(msgFile.c_str());
-
-    tearDown();
-}
 
 void test_groupVersionRetrieve(){
 

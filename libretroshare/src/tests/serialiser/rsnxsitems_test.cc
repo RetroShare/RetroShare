@@ -15,6 +15,7 @@ RsSerialType* init_item(RsNxsGrp& nxg)
     randString(SHORT_STR, nxg.identity);
     randString(SHORT_STR, nxg.grpId);
     nxg.timeStamp = rand()%23;
+    nxg.transactionNumber = rand()%23;
     nxg.grpFlag = rand()%242;
     init_item(nxg.grp);
 
@@ -46,38 +47,41 @@ RsSerialType* init_item(RsNxsMsg& nxm)
     init_item(nxm.msg);
     nxm.msgFlag = rand()%4252;
     nxm.timeStamp = rand()%246;
+    nxm.transactionNumber = rand()%23;
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsSyncGrp& rsg)
+RsSerialType* init_item(RsNxsSyncGrp& rsg)
 {
     rsg.clear();
 
-    rsg.flag = RsSyncGrp::FLAG_USE_SYNC_HASH;
+    rsg.flag = RsNxsSyncGrp::FLAG_USE_SYNC_HASH;
     rsg.syncAge = rand()%2423;
     randString(3124,rsg.syncHash);
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsSyncGrpMsg& rsgm)
+RsSerialType* init_item(RsNxsSyncMsg& rsgm)
 {
     rsgm.clear();
 
-    rsgm.flag = RsSyncGrpMsg::FLAG_USE_SYNC_HASH;
+    rsgm.flag = RsNxsSyncMsg::FLAG_USE_SYNC_HASH;
     rsgm.syncAge = rand()%24232;
+    rsgm.transactionNumber = rand()%23;
     randString(SHORT_STR, rsgm.grpId);
     randString(SHORT_STR, rsgm.syncHash);
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsSyncGrpList& rsgl)
+RsSerialType* init_item(RsNxsSyncGrpItem& rsgl)
 {
     rsgl.clear();
 
-    rsgl.flag = RsSyncGrpList::FLAG_RESPONSE;
+    rsgl.flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+    rsgl.transactionNumber = rand()%23;
     randString(SHORT_STR, rsgl.grpId);
     init_item(rsgl.adminSign);
 
@@ -85,14 +89,14 @@ RsSerialType* init_item(RsSyncGrpList& rsgl)
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsSyncGrpMsgList& rsgml)
+RsSerialType* init_item(RsNxsSyncMsgItem& rsgml)
 {
     rsgml.clear();
 
-    rsgml.flag = RsSyncGrpList::FLAG_RESPONSE;
+    rsgml.flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+    rsgml.transactionNumber = rand()%23;
     randString(SHORT_STR, rsgml.grpId);
     randString(SHORT_STR, rsgml.msgId);
-    init_item(rsgml.idSign);
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
@@ -104,7 +108,7 @@ RsSerialType* init_item(RsNxsTransac& rstx){
     rstx.timeout = rand()%14141;
     rstx.transactFlag = rand()%2424;
     rstx.nItems = rand()%33132;
-    rstx.transactionId = rand()%242112;
+    rstx.transactionNumber = rand()%242112;
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
@@ -119,6 +123,7 @@ bool operator==(const RsNxsGrp& l, const RsNxsGrp& r){
     if(l.grpId != r.grpId) return false;
     if(l.keys.groupId != r.keys.groupId) return false;
     if(!(l.grp == r.grp) ) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     std::map<std::string, RsTlvSecurityKey>::const_iterator mit =
             l.keys.keys.begin(), mit_end = l.keys.keys.end();
@@ -143,46 +148,50 @@ bool operator==(const RsNxsMsg& l, const RsNxsMsg& r){
     if(! (l.msg == r.msg) ) return false;
     if(! (l.publishSign == r.publishSign) ) return false;
     if(! (l.idSign == r.idSign) ) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
 
-bool operator==(const RsSyncGrp& l, const RsSyncGrp& r)
+bool operator==(const RsNxsSyncGrp& l, const RsNxsSyncGrp& r)
 {
 
     if(l.syncHash != r.syncHash) return false;
     if(l.flag != r.flag) return false;
     if(l.syncAge != r.syncAge) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
 
-bool operator==(const RsSyncGrpMsg& l, const RsSyncGrpMsg& r)
+bool operator==(const RsNxsSyncMsg& l, const RsNxsSyncMsg& r)
 {
 
     if(l.flag != r.flag) return false;
     if(l.syncAge != r.syncAge) return false;
     if(l.syncHash != r.syncHash) return false;
     if(l.grpId != r.grpId) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
 
-bool operator==(const RsSyncGrpList& l, const RsSyncGrpList& r)
+bool operator==(const RsNxsSyncGrpItem& l, const RsNxsSyncGrpItem& r)
 {
     if(l.flag != r.flag) return false;
     if(! (l.adminSign == r.adminSign) ) return false;
     if(l.grpId != r.grpId) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
 
-bool operator==(const RsSyncGrpMsgList& l, const RsSyncGrpMsgList& r)
+bool operator==(const RsNxsSyncMsgItem& l, const RsNxsSyncMsgItem& r)
 {
     if(l.flag != r.flag) return false;
     if(l.grpId != r.grpId) return false;
     if(l.msgId != r.msgId) return false;
-    if(! (l.idSign == r.idSign) ) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
@@ -190,7 +199,7 @@ bool operator==(const RsSyncGrpMsgList& l, const RsSyncGrpMsgList& r)
 bool operator==(const RsNxsTransac& l, const RsNxsTransac& r){
 
     if(l.transactFlag != r.transactFlag) return false;
-    if(l.transactionId != r.transactionId) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
     if(l.timeout != r.timeout) return false;
     if(l.nItems != r.nItems) return false;
 
@@ -204,10 +213,10 @@ int main()
 
     test_RsItem<RsNxsGrp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsGrpResp");
     test_RsItem<RsNxsMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsGrpMsgResp");
-    test_RsItem<RsSyncGrp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrp");
-    test_RsItem<RsSyncGrpMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpMsg");
-    test_RsItem<RsSyncGrpList>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpList");
-    test_RsItem<RsSyncGrpMsgList>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsSyncGrpMsgList");
+    test_RsItem<RsNxsSyncGrp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsNxsSyncGrp");
+    test_RsItem<RsNxsSyncMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsNxsSyncMsg");
+    test_RsItem<RsNxsSyncGrpItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsNxsSyncGrpItem");
+    test_RsItem<RsNxsSyncMsgItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsNxsSyncMsgItem");
     test_RsItem<RsNxsTransac>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM); REPORT("Serialise/Deserialise RsNxsTransac");
 
     FINALREPORT("RsNxsItem Tests");

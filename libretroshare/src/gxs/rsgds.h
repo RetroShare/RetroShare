@@ -31,14 +31,21 @@
 #include <string>
 
 #include "inttypes.h"
-#include "rsgnp.h"
 
 #include "serialiser/rsgxsitems.h"
 #include "serialiser/rsnxsitems.h"
 
-#include "gxs/rsgxs.h"
 
+class RsGxsSearchModule  {
 
+public:
+
+	virtual ~RsGxsSearchModule();
+
+    virtual bool searchMsg(const RsGxsSearch&, RsGxsMsg* msg) = 0;
+    virtual bool searchGroup(const RsGxsSearch&, RsGxsGroup* grp) = 0;
+
+};
 
 
 /*!
@@ -92,19 +99,6 @@ public:
      * @param errCode
      */
     virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsNxsGrp*>& grp, bool cache) = 0;
-
-    /*!
-     * @param msgId the id of the message to get versions for
-     * @param cache whether to store the result in memory
-     * @param errCode
-     */
-    virtual int retrieveMsgVersions(const std::string& grpId, const std::string& msgId, std::set<RsNxsMsg*>& grp, bool cache) = 0;
-
-    /*!
-     * @param msgId the id of the message to retrieve
-     * @return NULL if message does not exist, or pointer to grp if found
-     */
-    virtual RsNxsMsg* retrieveMsgVersion(const RsGxsMsgId& msgId) = 0;
 
     /*!
      * @param grpId the id of the group to retrieve

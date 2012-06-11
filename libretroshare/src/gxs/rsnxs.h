@@ -33,8 +33,8 @@
 #include <list>
 #include <map>
 
-#include "gxs/rsgxs.h"
 #include "services/p3service.h"
+#include "rsgds.h"
 
 /*!
  * Retroshare General Network Exchange Service: \n
@@ -60,6 +60,8 @@ class RsNetworkExchangeService : public p3Service
 {
 public:
 
+	RsNetworkExchangeService();
+
     /*!
      * Use this to set how far back synchronisation of messages should take place
      * @param age the max age a sync item can to be allowed in a synchronisation
@@ -79,7 +81,7 @@ public:
      * @param peerId Id of peer
      * @param grpId id of group to request messages for
      */
-    virtual void requestMessagesOfPeer(const std::string& peerId, const RsGroupId& grpId);
+    virtual void requestMessagesOfPeer(const std::string& peerId, const RsGxsGrpId& grpId) = 0;
 
     /*!
      * subscribes the associated service to this group. This RsNetworktExchangeService
@@ -87,7 +89,7 @@ public:
      * @param grpId the id of the group to subscribe to
      * @param subscribe set to true to subscribe or false to unsubscribe
      */
-    virtual void subscribeToGroup(const RsGroupId& grpId, bool subscribe) = 0;
+    virtual void subscribeToGroup(const std::string& grpId, bool subscribe) = 0;
 
     /*!
      * Initiates a search through the network
@@ -122,7 +124,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    virtual int requestMsg(const std::list<RsGxsMsgId>& msgId, uint8_t hops) = 0;
+    virtual int requestMsg(const std::string& msgId, uint8_t hops) = 0;
 
     /*!
      * Request for this group is sent through to peers on your network

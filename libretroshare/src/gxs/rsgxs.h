@@ -48,37 +48,8 @@
 #define GXS_STATUS_ERROR 3                        /* request is in error */
 #define GXS_STATUS_OK 4                           /* request was successful */
 
-
-
-class RsGxsMsgId {
-
-public:
-
-    std::string grpId;
-    std::string msgId;
-    RsTlvKeySignature idSign;
-};
-
-
-class RsGxsGrpId {
-
-public:
-
-    std::string grpId;
-    RsTlvKeySignature adminSign;
-};
-
 typedef uint64_t    RsGroupId ;
 
-
-class RsGxsSearchModule  {
-
-public:
-
-    virtual bool searchMsg(const RsGxsSearch&, RsGxsMsg* msg) = 0;
-    virtual bool searchGroup(const RsGxsSearch&, RsGxsGroup* grp) = 0;
-
-};
 
 
 /*!
