@@ -288,12 +288,19 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, co
 
     file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks);
 
-    if (file.isEmpty() == false) {
-        lastDir = QFileInfo(file).absoluteDir().absolutePath();
-        Settings->setLastDir(type, lastDir);
-    }
+    if (file.isEmpty())
+        return false;
 
-    return !file.isEmpty();
+    lastDir = QFileInfo(file).absoluteDir().absolutePath();
+    Settings->setLastDir(type, lastDir);
+
+#ifdef WINDOWS_SYS
+    // fix bug in Qt for Windows Vista and higher, convert path from native separators
+    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based))
+        file = QDir::fromNativeSeparators(file);
+#endif
+
+    return true;
 }
 
 bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QStringList &files)
@@ -302,12 +309,21 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, c
 
     files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks);
 
-    if (files.isEmpty() == false) {
-        lastDir = QFileInfo(*files.begin()).absoluteDir().absolutePath();
-        Settings->setLastDir(type, lastDir);
-    }
+    if (files.isEmpty())
+        return false;
 
-    return !files.isEmpty();
+    lastDir = QFileInfo(*files.begin()).absoluteDir().absolutePath();
+    Settings->setLastDir(type, lastDir);
+
+#ifdef WINDOWS_SYS
+    // fix bug in Qt for Windows Vista and higher, convert path from native separators
+    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based))
+        for (QStringList::iterator file = files.begin(); file != files.end(); file++) {
+            (*file) = QDir::fromNativeSeparators(*file);
+        }
+#endif
+
+    return true;
 }
 
 bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file)
@@ -316,10 +332,11 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type, co
 
     file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter);
 
-    if (file.isEmpty() == false) {
-        lastDir = QFileInfo(file).absoluteDir().absolutePath();
-        Settings->setLastDir(type, lastDir);
-    }
+    if (file.isEmpty())
+        return false;
 
-    return !file.isEmpty();
+    lastDir = QFileInfo(file).absoluteDir().absolutePath();
+    Settings->setLastDir(type, lastDir);
+
+    return true;
 }
