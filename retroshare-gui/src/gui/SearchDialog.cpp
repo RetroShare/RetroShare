@@ -1067,7 +1067,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		 */
 
 		item->setText(SR_SIZE_COL, QString::number(file.size));
-		item->setData(SR_SIZE_COL, ROLE_SORT, file.size);
+		item->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) file.size);
 		item->setText(SR_AGE_COL, QString::number(file.age));
 		item->setData(SR_AGE_COL, ROLE_SORT, file.age);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
