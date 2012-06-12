@@ -16,6 +16,7 @@ extern "C" {
 }
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
+#include "util/rsdir.h"		// For rsicontrol.
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
@@ -67,9 +68,14 @@ void PGPHandler::setPassphraseCallback(PassphraseCallback cb)
 	_passphrase_callback = cb ;
 }
 
-PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
-	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring)
+PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,const std::string& pgp_lock_filename)
+	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring),_pgp_lock_filename(pgp_lock_filename)
 {
+	_pubring_changed = false ;
+	_secring_changed = false ;
+
+	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+
 	if(_passphrase_callback == NULL)
 	{
 		std::cerr << "WARNING: before created a PGPHandler, you need to init the passphrase callback using PGPHandler::setPassphraseCallback()" << std::endl;
@@ -137,7 +143,6 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring)
 	}
 
 	std::cerr << "Secring read successfully." << std::endl;
-
 }
 
 void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t index)
@@ -338,6 +343,9 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 //	validateAndUpdateSignatures(_public_keyring_map[ pgpId.toStdString() ],getPublicKey(pgpId)) ;
 
+	_pubring_changed = true ;
+	_secring_changed = true ;
+
 	return true ;
 }
 
@@ -440,12 +448,25 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
 
+	_pubring_changed = true ;
+
 	return true ;
 }
 
-bool PGPHandler::writePublicKeyring(const std::string& outfilename) const
+bool PGPHandler::writePublicKeyring() 
 {
-	return ops_write_keyring_to_file(_pubring,ops_false,outfilename.c_str()) ;
+	RsStackFileLock flck(_pgp_lock_filename) ; // locks access to pgp directory
+
+	_pubring_changed = false ;
+	return ops_write_keyring_to_file(_pubring,ops_false,_pubring_path.c_str()) ;
+}
+
+bool PGPHandler::writeSecretKeyring() 
+{
+	RsStackFileLock flck(_pgp_lock_filename) ; // locks access to pgp directory
+
+	_secring_changed = false ;
+	return ops_write_keyring_to_file(_secring,ops_false,_secring_path.c_str()) ;
 }
 
 bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) 

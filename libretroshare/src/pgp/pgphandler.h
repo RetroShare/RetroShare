@@ -52,7 +52,7 @@ class PGPCertificateInfo
 class PGPHandler
 {
 	public:
-		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring) ;
+		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring, const std::string& pgp_lock_file) ;
 
 		virtual ~PGPHandler() ;
 
@@ -79,10 +79,11 @@ class PGPHandler
 		void setAcceptConnexion(const PGPIdType&,bool) ;
 
 		// Write keyring
-		bool writePublicKeyring(const std::string& filename) const ;
+		bool publicKeyringChanged() const { return _pubring_changed ; }
+		bool secretKeyringChanged() const { return _secring_changed ; }
 
-		// Debug stuff.
-		virtual bool printKeys() const ;
+		bool writeSecretKeyring() ;
+		bool writePublicKeyring() ;
 
 		const PGPCertificateInfo *getCertificateInfo(const PGPIdType& id) const ;
 
@@ -92,6 +93,10 @@ class PGPHandler
 
 		static void setPassphraseCallback(PassphraseCallback cb) ;
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
+
+		// Debug stuff.
+		virtual bool printKeys() const ;
+
 	private:
 		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
 		void validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
@@ -111,6 +116,10 @@ class PGPHandler
 
 		const std::string _pubring_path ;
 		const std::string _secring_path ;
+		const std::string _pgp_lock_filename ;
+
+		bool _pubring_changed ;
+		bool _secring_changed ;
 
 		// Helper functions.
 		//

@@ -86,7 +86,7 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char *
 	return password ;
 }
 
-void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring)
+void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& pgp_lock_file)
 {
 	if(_instance != NULL)
 	{
@@ -95,7 +95,7 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 	}
 
 	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
-	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring) ;
+	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring,pgp_lock_file) ;
 }
 
 void AuthGPG::exit()
@@ -108,9 +108,9 @@ void AuthGPG::exit()
 	}
 }
 
-AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring)
+AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& pgp_lock_file)
         :p3Config(CONFIG_TYPE_AUTHGPG), 
-		   PGPHandler(path_to_public_keyring,path_to_secret_keyring),
+		   PGPHandler(path_to_public_keyring,path_to_secret_keyring,pgp_lock_file),
 		   gpgMtxEngine("AuthGPG-engine"), 
 			gpgMtxData("AuthGPG-data"),
 			gpgKeySelected(false), 

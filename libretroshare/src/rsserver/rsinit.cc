@@ -624,7 +624,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
-	AuthGPG::init(pgp_dir + "/retroshare_public_keyring.gpg",pgp_dir + "/retroshare_secret_keyring.gpg");
+	AuthGPG::init(pgp_dir + "/retroshare_public_keyring.gpg",pgp_dir + "/retroshare_secret_keyring.gpg",pgp_dir + "/lock");
 
 	/* Initialize AuthGPG */
 	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {
@@ -1183,75 +1183,9 @@ int      RsInit::GetPGPLoginDetails(const std::string& id, std::string &name, st
 int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath)
 {
 	const std::string lockFile = accountDir + "/" + "lock";
-
 	lockFilePath = lockFile;
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-	if(RsInitConfig::lockHandle != -1)
-		close(RsInitConfig::lockHandle);
 
-	// open the file in write mode, create it if necessary, truncate it (it should be empty)
-	RsInitConfig::lockHandle = open(lockFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC,
-						S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-
-	if(RsInitConfig::lockHandle == -1)
-	{
-		std::cerr << "Could not open lock file " << lockFile.c_str() << std::flush;
-		perror(NULL);
-		return 2;
-	}
-
-	// see "man fcntl" for the details, in short: non blocking lock creation on the whole file contents
-	struct flock lockDetails;
-	lockDetails.l_type = F_WRLCK;
-	lockDetails.l_whence = SEEK_SET;
-	lockDetails.l_start = 0;
-	lockDetails.l_len = 0;
-
-	if(fcntl(RsInitConfig::lockHandle, F_SETLK, &lockDetails) == -1)
-	{
-		int fcntlErr = errno;
-		std::cerr << "Could not request lock on file " << lockFile.c_str() << std::flush;
-		perror(NULL);
-
-		// there's no lock so let's release the file handle immediately
-		close(RsInitConfig::lockHandle);
-		RsInitConfig::lockHandle = -1;
-
-		if(fcntlErr == EACCES || fcntlErr == EAGAIN)
-			return 1;
-		else
-			return 2;
-	}
-
-	return 0;
-#else
-	if (RsInitConfig::lockHandle) {
-		CloseHandle(RsInitConfig::lockHandle);
-	}
-
-	std::wstring wlockFile;
-	librs::util::ConvertUtf8ToUtf16(lockFile, wlockFile);
-
-	// open the file in write mode, create it if necessary
-	RsInitConfig::lockHandle = CreateFile(wlockFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-
-	if (RsInitConfig::lockHandle == INVALID_HANDLE_VALUE) {
-		DWORD lasterror = GetLastError();
-
-		std::cerr << "Could not open lock file " << lockFile.c_str() << std::endl;
-		std::cerr << "Last error: " << lasterror << std::endl << std::flush;
-		perror(NULL);
-
-		if (lasterror == ERROR_SHARING_VIOLATION || lasterror == ERROR_ACCESS_DENIED) {
-			return 1;
-		}
-		return 2;
-	}
-
-	return 0;
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+	return RsDirUtil::createLockFile(lockFile,RsInitConfig::lockHandle) ;
 }
 
 /*
@@ -1260,21 +1194,7 @@ int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lock
  */
 void	RsInit::UnlockConfigDirectory()
 {
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-	if(RsInitConfig::lockHandle != -1)
-	{
-		close(RsInitConfig::lockHandle);
-		RsInitConfig::lockHandle = -1;
-	}
-#else
-	if(RsInitConfig::lockHandle)
-	{
-		CloseHandle(RsInitConfig::lockHandle);
-		RsInitConfig::lockHandle = NULL;
-	}
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+	RsDirUtil::releaseLockFile(RsInitConfig::lockHandle) ;
 }
 
 
