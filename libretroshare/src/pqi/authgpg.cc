@@ -1635,6 +1635,8 @@ bool AuthGPG::saveList(bool& cleanup, std::list<RsItem*>& lst)
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::saveList() called" << std::endl ;
 #endif
+	std::list<std::string> ids ;	
+	getGPGAcceptedList(ids) ;				// needs to be done before the lock
 
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
@@ -1643,17 +1645,13 @@ bool AuthGPG::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	// Now save config for network digging strategies
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 
-	std::list<std::string> ids ;
-	getGPGAllList(ids) ;
-	
-	std::map<std::string, bool>::iterator mapIt;
 	for (std::list<std::string>::const_iterator it(ids.begin()); it != ids.end(); ++it) 
 		if((*it) != mOwnGpgId.toStdString()) // skip our own id.
 		{
 			RsTlvKeyValue kv;
-			kv.key = mapIt->first;
+			kv.key = *it ;
 #ifdef GPG_DEBUG
-			std::cerr << "AuthGPG::saveList() called (mapIt->second) : " << (mapIt->second) << std::endl ;
+			std::cerr << "AuthGPG::saveList() called (it->second) : " << (it->second) << std::endl ;
 #endif
 			kv.value = "TRUE";
 			vitem->tlvkvs.pairs.push_back(kv) ;
