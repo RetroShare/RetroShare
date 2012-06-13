@@ -585,6 +585,12 @@ ops_boolean_t ops_write_struct_public_key(const ops_public_key_t *key,
     {
     assert(key->version == 4);
 
+    if(key->algorithm != OPS_PKA_RSA)
+	 {
+		 fprintf(stderr,"\nUnhandled key algorithm %d\n",key->algorithm);
+		 return ops_false ;
+	 }
+
     return ops_write_ptag(OPS_PTAG_CT_PUBLIC_KEY,info)
 	&& ops_write_length(1+4+1+public_key_length(key),info)
 	&& write_public_key_body(key,info);
@@ -905,7 +911,11 @@ ops_boolean_t encode_m_buf(const unsigned char *M, size_t mLen,
 
     // implementation of EME-PKCS1-v1_5-ENCODE, as defined in OpenPGP RFC
     
-    assert(pkey->algorithm == OPS_PKA_RSA);
+    if(pkey->algorithm != OPS_PKA_RSA)
+	 {
+		 fprintf(stderr,"\nUnhandled key algorithm %d\n",pkey->algorithm);
+		 return ops_false ;
+	 }
 
     k=BN_num_bytes(pkey->key.rsa.n);
     assert(mLen <= k-11);

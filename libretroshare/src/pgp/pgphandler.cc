@@ -357,7 +357,9 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&cinfo, &buf, 0);
 
-   ops_write_transferable_public_key(key,armoured,cinfo);
+   if(ops_write_transferable_public_key(key,armoured,cinfo) != ops_true)
+		return "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." ;
+
 	ops_writer_close(cinfo) ;
 
 	std::string akey((char *)ops_memory_get_data(buf),ops_memory_get_length(buf)) ;
