@@ -27,19 +27,21 @@
 #include "gui/mainpage.h"
 #include "ui_IdDialog.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rsidentity.h>
 
 #include <map>
 
 #include "gui/Identity/IdEditDialog.h"
-//#include "gui/TheWire/PulseAddDialog.h"
+#include "util/TokenQueue.h"
 
-class IdDialog : public MainPage
+class IdDialog : public MainPage, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	IdDialog(QWidget *parent = 0);
+
+void    loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
@@ -64,15 +66,9 @@ private:
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
 
-	void lockForRequest(uint32_t token, uint32_t reqtype);
-	void checkForRequest();
-	void loadRequest();
-
 	IdEditDialog *mEditDialog;
 
-	bool mWaitingForRequest;
-	uint32_t mRequestToken;
-	uint32_t mRequestType;
+	TokenQueue *mIdQueue;
 
 	/* UI - from Designer */
 	Ui::IdDialog ui;

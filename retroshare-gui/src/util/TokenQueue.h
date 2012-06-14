@@ -35,13 +35,9 @@
 
 #define COMPLETED_REQUEST	4
 
-
-#define TOKENREQ_GROUPLIST	1
-#define TOKENREQ_GROUPDATA	2
-#define TOKENREQ_MSGLIST	3
-#define TOKENREQ_MSGRELATEDLIST	4
-#define TOKENREQ_MSGDATA	5
-
+#define TOKENREQ_GROUPINFO	1
+#define TOKENREQ_MSGINFO	2
+#define TOKENREQ_MSGRELATEDINFO	3
 
 class TokenQueue;
 
@@ -50,6 +46,7 @@ class TokenRequest
 	public:
 	uint32_t mToken;
 	uint32_t mType;
+	uint32_t mAnsType;
 	uint32_t mUserType;
 	struct timeval mRequestTs;
 	struct timeval mPollTs;
@@ -72,8 +69,15 @@ public:
 	TokenQueue(RsTokenService *service, TokenResponse *resp);
 
 	/* generic handling of token / response update behaviour */
-	bool genericRequest(uint32_t basictype, const RsTokReqOptions &opt, std::list<std::string> ids, uint32_t usertype);
-	void queueRequest(uint32_t token, uint32_t basictype, uint32_t usertype);
+	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+							std::list<std::string> ids, uint32_t usertype);
+	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+							std::list<std::string> ids, uint32_t usertype);
+	bool requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+							std::list<std::string> ids, uint32_t usertype);
+	bool cancelRequest(const uint32_t token);
+
+	void queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype);
 	bool checkForRequest(uint32_t token);
 	void loadRequest(const TokenRequest &req);
 
@@ -94,4 +98,5 @@ private:
 };
 
 #endif
+
 

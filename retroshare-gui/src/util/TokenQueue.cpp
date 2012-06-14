@@ -34,54 +34,49 @@
 TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
 :QWidget(NULL), mService(service), mResponder(resp)
 {
-	//mTrigger = new QTimer(this);
-	//mTrigger->connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()));
 	return;
 }
 
-bool TokenQueue::genericRequest(uint32_t basictype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
 {
-	uint32_t token;
-	switch(basictype)
-	{
-		case TOKENREQ_GROUPLIST:
-			mService->requestGroupList(token, opts);
-			break;
-
-		case TOKENREQ_GROUPDATA:
-			mService->requestGroupData(token, ids);
-			break;
-
-		case TOKENREQ_MSGLIST:
-			mService->requestMsgList(token, opts, ids);
-			break;
-
-		case TOKENREQ_MSGRELATEDLIST:
-			mService->requestMsgRelatedList(token, opts, ids);
-			break;
-
-		case TOKENREQ_MSGDATA:
-			mService->requestMsgData(token, ids);
-			break;
-
-		default:
-			return false;
-	}
-
-	queueRequest(token, basictype, usertype);
+	uint32_t basictype = TOKENREQ_GROUPINFO;
+	mService->requestGroupInfo(token, anstype, opts, ids);
+	queueRequest(token, basictype, anstype, usertype);
 
 	return true;
 }
 
 
-void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t usertype)
+bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
 {
-	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype << " UserType: " << usertype;
+	uint32_t basictype = TOKENREQ_MSGINFO;
+	mService->requestMsgInfo(token, anstype, opts, ids);
+	queueRequest(token, basictype, anstype, usertype);
+
+	return true;
+}
+
+
+bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+{
+	uint32_t basictype = TOKENREQ_MSGRELATEDINFO;
+	mService->requestMsgRelatedInfo(token, anstype, opts, ids);
+	queueRequest(token, basictype, anstype, usertype);
+
+	return true;
+}
+
+
+void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
+{
+	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
+	std::cerr << " AnsType: " << anstype << " UserType: " << usertype;
 	std::cerr << std::endl;
 
 	TokenRequest req;
 	req.mToken = token;
 	req.mType = basictype;
+	req.mAnsType = anstype;
 	req.mUserType = usertype;
 
 	gettimeofday(&req.mRequestTs, NULL);
@@ -143,9 +138,9 @@ bool TokenQueue::checkForRequest(uint32_t token)
 
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
-	std::cerr << "TokenQueue::loadRequest() Dummy Function - please Implement";
-	std::cerr << std::endl;
-	std::cerr << "Token: " << req.mToken << " Type: " << req.mType << " UserType: " << req.mUserType;
+	std::cerr << "TokenQueue::loadRequest(): ";
+	std::cerr << "Token: " << req.mToken << " Type: " << req.mType;
+	std::cerr << " AnsType: " << req.mAnsType << " UserType: " << req.mUserType;
 	std::cerr << std::endl;
 
 	mResponder->loadRequest(this, req);
@@ -153,6 +148,32 @@ void TokenQueue::loadRequest(const TokenRequest &req)
 	return;
 }
 
+
+bool TokenQueue::cancelRequest(const uint32_t token)
+{
+	/* cancel at lower level first */
+	mService->cancelRequest(token);
+
+	std::list<TokenRequest>::iterator it;
+
+	for(it = mRequests.begin(); it != mRequests.end(); it++)
+	{
+		if (it->mToken == token)
+		{
+			mRequests.erase(it);
+
+			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
+			std::cerr << std::endl;
+
+			return true;
+		}
+	}
+
+	std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
+	std::cerr << std::endl;
+
+	return false;
+}
 
 
 

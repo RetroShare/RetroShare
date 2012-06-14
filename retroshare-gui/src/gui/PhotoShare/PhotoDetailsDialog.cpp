@@ -60,14 +60,28 @@ void PhotoDetailsDialog::refreshDetails()
 
 	//ui.comboBox_Category= mPhotoItem->mDetails.mCaption;
 
-	ui.lineEdit_Caption->setText(QString::fromStdString(mPhotoItem->mDetails.mCaption));
-	ui.textEdit_Description->setText(QString::fromStdString(mPhotoItem->mDetails.mDescription));
-	ui.lineEdit_Photographer->setText(QString::fromStdString(mPhotoItem->mDetails.mPhotographer));
-	ui.lineEdit_Where->setText(QString::fromStdString(mPhotoItem->mDetails.mWhere));
-	ui.lineEdit_When->setText(QString::fromStdString(mPhotoItem->mDetails.mWhen));
-	ui.lineEdit_Other->setText(QString::fromStdString(mPhotoItem->mDetails.mOther));
-	ui.lineEdit_Title->setText(QString::fromStdString(mPhotoItem->mDetails.mTitle));
-	ui.lineEdit_HashTags->setText(QString::fromStdString(mPhotoItem->mDetails.mHashTags));
+	if (mPhotoItem->mIsPhoto)
+	{
+		ui.lineEdit_Caption->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mCaption));
+		ui.textEdit_Description->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mDescription));
+		ui.lineEdit_Photographer->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mPhotographer));
+		ui.lineEdit_Where->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mWhere));
+		ui.lineEdit_When->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mWhen));
+		ui.lineEdit_Other->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mOther));
+		ui.lineEdit_Title->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mMeta.mMsgName));
+		ui.lineEdit_HashTags->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mHashTags));
+	}
+	else
+	{
+		ui.lineEdit_Caption->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mCaption));
+		ui.textEdit_Description->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mDescription));
+		ui.lineEdit_Photographer->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mPhotographer));
+		ui.lineEdit_Where->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mWhere));
+		ui.lineEdit_When->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mWhen));
+		ui.lineEdit_Other->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mOther));
+		ui.lineEdit_Title->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mMeta.mGroupName));
+		ui.lineEdit_HashTags->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mHashTags));
+	}
 
 	const QPixmap *qtn = mPhotoItem->getPixmap();
 	QPixmap cpy(*qtn);
@@ -111,14 +125,28 @@ void PhotoDetailsDialog::saveDetails()
 
 	//mPhotoItem->mDetails.mCaption = ui.comboBox_Category;
 
-	mPhotoItem->mDetails.mCaption = ui.lineEdit_Caption->text().toStdString();
-	mPhotoItem->mDetails.mDescription = ui.textEdit_Description->toPlainText().toStdString();
-	mPhotoItem->mDetails.mPhotographer = ui.lineEdit_Photographer->text().toStdString();
-	mPhotoItem->mDetails.mWhere = ui.lineEdit_Where->text().toStdString();
-	mPhotoItem->mDetails.mWhen = ui.lineEdit_When->text().toStdString();
-	mPhotoItem->mDetails.mOther = ui.lineEdit_Other->text().toStdString();
-	mPhotoItem->mDetails.mTitle = ui.lineEdit_Title->text().toStdString();
-	mPhotoItem->mDetails.mHashTags = ui.lineEdit_HashTags->text().toStdString();
+	if (mPhotoItem->mIsPhoto)
+	{
+		mPhotoItem->mPhotoDetails.mCaption = ui.lineEdit_Caption->text().toStdString();
+		mPhotoItem->mPhotoDetails.mDescription = ui.textEdit_Description->toPlainText().toStdString();
+		mPhotoItem->mPhotoDetails.mPhotographer = ui.lineEdit_Photographer->text().toStdString();
+		mPhotoItem->mPhotoDetails.mWhere = ui.lineEdit_Where->text().toStdString();
+		mPhotoItem->mPhotoDetails.mWhen = ui.lineEdit_When->text().toStdString();
+		mPhotoItem->mPhotoDetails.mOther = ui.lineEdit_Other->text().toStdString();
+		mPhotoItem->mPhotoDetails.mMeta.mMsgName = ui.lineEdit_Title->text().toStdString();
+		mPhotoItem->mPhotoDetails.mHashTags = ui.lineEdit_HashTags->text().toStdString();
+	}
+	else
+	{
+		mPhotoItem->mAlbumDetails.mCaption = ui.lineEdit_Caption->text().toStdString();
+		mPhotoItem->mAlbumDetails.mDescription = ui.textEdit_Description->toPlainText().toStdString();
+		mPhotoItem->mAlbumDetails.mPhotographer = ui.lineEdit_Photographer->text().toStdString();
+		mPhotoItem->mAlbumDetails.mWhere = ui.lineEdit_Where->text().toStdString();
+		mPhotoItem->mAlbumDetails.mWhen = ui.lineEdit_When->text().toStdString();
+		mPhotoItem->mAlbumDetails.mOther = ui.lineEdit_Other->text().toStdString();
+		mPhotoItem->mAlbumDetails.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
+		mPhotoItem->mAlbumDetails.mHashTags = ui.lineEdit_HashTags->text().toStdString();
+	}
 
         //QPixmap qtn = mPhotoItem->getPixmap();
 	//ui.label_Photo->setPixmap(qtn);

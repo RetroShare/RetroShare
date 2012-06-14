@@ -36,6 +36,7 @@
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/TheWire/WireDialog.h"
 #include "gui/Identity/IdDialog.h"
+#include "gui/ForumsV2Dialog.h"
 
 //#include "GamesDialog.h"
 //#include "CalDialog.h"
@@ -55,7 +56,7 @@
 #define IMAGE_CALENDAR          ":/images/calendar.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-
+#define IMAGE_FORUMSV2            ":/images/konversation.png"
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -91,7 +92,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     //ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
     //                  createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
 
-
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
@@ -107,6 +107,10 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     WireDialog *wireDialog = NULL;
     ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
+
+    ForumsV2Dialog *forumsV2Dialog = NULL;
+    ui.stackPages->add(forumsV2Dialog = new ForumsV2Dialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_FORUMSV2), tr("ForumsV2"), grp));
 
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
@@ -142,7 +146,7 @@ void ApplicationWindow::show()
         QMainWindow::show();
     } else {
         QMainWindow::activateWindow();
-        setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+        setWindowState(windowState() & (~Qt::WindowMinimized | Qt::WindowActive));
         QMainWindow::raise();
     }
 }

@@ -35,6 +35,9 @@
  * #define ID_DEBUG 1
  *****/
 
+// Data Requests.
+#define IDDIALOG_IDLIST		1
+#define IDDIALOG_IDDETAILS	2
 
 /****************************************************************
  */
@@ -76,7 +79,9 @@ IdDialog::IdDialog(QWidget *parent)
 	timer->start(1000);
 
 	rsIdentity->generateDummyData();
-	mWaitingForRequest = false;
+
+	mIdQueue = new TokenQueue(rsIdentity, this);
+
 }
 
 void IdDialog::ListTypeToggled(bool checked)
@@ -123,24 +128,25 @@ void IdDialog::blankSelection()
 }
 
 
+
+
 void IdDialog::requestIdDetails(std::string &id)
 {
+	RsTokReqOptions opts;
+
 	uint32_t token;
+	std::list<std::string> groupIds;
+	groupIds.push_back(id);
 
-	std::list<std::string> ids;
-	ids.push_back(id);
-		
-	rsIdentity->requestIdentities(token, ids);
-	lockForRequest(token, RSID_REQ_IDDETAILS);
-
+        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
 }
 
 
 void IdDialog::insertIdDetails(uint32_t token)
 {
 	/* get details from libretroshare */
-	RsIdData data;
-	if (!rsIdentity->getIdentity(token, data))
+	RsIdGroup data;
+	if (!rsIdentity->getGroupData(token, data))
 	{
 		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
 		return;
@@ -151,8 +157,10 @@ void IdDialog::insertIdDetails(uint32_t token)
 	RsPeerDetails details;
 	rsPeers->getPeerDetails(gpgid, details);
 	
-	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
-	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
+	//ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
+	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
+	//ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
+	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
 	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
 	ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
@@ -200,8 +208,6 @@ void IdDialog::checkUpdate()
 	if (!rsIdentity)
 		return;
 
-	checkForRequest();
-
 	if (rsIdentity->updated())
 	{
 		requestIdList();
@@ -243,55 +249,23 @@ void IdDialog::OpenOrShowEditDialog()
 	}
 
 	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-	requestIdEdit(keyId);
-}
 
-
-void IdDialog::requestIdEdit(std::string &id)
-{
-	uint32_t token;
-
-	std::list<std::string> ids;
-	ids.push_back(id);
-		
-	rsIdentity->requestIdentities(token, ids);
-	lockForRequest(token, RSID_REQ_IDEDIT);
-
-}
-
-
-void IdDialog::showIdEdit(uint32_t token)
-{
 	if (mEditDialog)
 	{
-		mEditDialog->setupExistingId(token);
-
+		mEditDialog->setupExistingId(keyId);
 		mEditDialog->show();
 	}
 }
 
-
-
 void IdDialog::requestIdList()
 {
+	RsTokReqOptions opts;
+
 	uint32_t token;
+	std::list<std::string> groupIds;
 
-	rsIdentity->requestIdentityList(token);
-	
-	lockForRequest(token, RSID_REQ_IDLIST);
+        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDLIST);
 }
-
-
-void IdDialog::requestIdData(std::list<std::string> &ids)
-{
-	uint32_t token;
-
-	rsIdentity->requestIdentities(token, ids);
-	
-	lockForRequest(token, RSID_REQ_IDLISTDATA);
-}
-
-
 
 
 void IdDialog::insertIdList(uint32_t token)
@@ -313,8 +287,8 @@ void IdDialog::insertIdList(uint32_t token)
 
 	//for(it = ids.begin(); it != ids.end(); it++)
 	//{
-	RsIdData data;
-	while(rsIdentity->getIdentity(token, data))
+	RsIdGroup data;
+	while(rsIdentity->getGroupData(token, data))
 	{
 
 		/* do filtering */
@@ -367,8 +341,10 @@ void IdDialog::insertIdList(uint32_t token)
 
 
 		QTreeWidgetItem *item = new QTreeWidgetItem(NULL);
-		item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mNickname));
-		item->setText(RSID_COL_KEYID, QString::fromStdString(data.mKeyId));
+		//item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mNickname));
+		//item->setText(RSID_COL_KEYID, QString::fromStdString(data.mKeyId));
+		item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mMeta.mGroupName));
+		item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId));
 		item->setText(RSID_COL_IDTYPE, QString::fromStdString(rsIdTypeToString(data.mIdType)));
 
                 tree->addTopLevelItem(item);
@@ -378,102 +354,29 @@ void IdDialog::insertIdList(uint32_t token)
 	updateSelection();
 }
 
-
-
-
-void IdDialog::lockForRequest(uint32_t token, uint32_t reqtype)
+void IdDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-
-	/* store token for later results retrival */
-	if (mWaitingForRequest)
+        std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
+        std::cerr << std::endl;
+		
+	switch(req.mUserType)
 	{
-		std::cerr << "IdDialog::lockForRequest() LOCKED ALREADY - BIG ERROR";
-		std::cerr << std::endl;
-	}
-	
-	mWaitingForRequest = true;
-	mRequestToken = token;
-	mRequestType = reqtype;
-
-	std::cerr << "IdDialog::lockForRequest() Token: " << token << " ReqType: " << reqtype;
-	std::cerr << std::endl;
-
-}
-
-
-void IdDialog::checkForRequest()
-{
-
-	if (mWaitingForRequest)
-	{
-		/* check token */
-		if (4 == rsIdentity->requestStatus(mRequestToken))
-			loadRequest();
-	}
-}
-
-
-void IdDialog::loadRequest()
-{
-	if (!mWaitingForRequest)
-	{
-		std::cerr << "IdDialog::loadRequest() NOT LOCKED - BIG ERROR";
-		std::cerr << std::endl;
-	}
-
-	/* unlock gui */
-	mWaitingForRequest = false;
-
-
-	switch (mRequestType)
-	{
-		case RSID_REQ_IDLIST:
-		{
-			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDLIST";
-			std::cerr << std::endl;
-
-			std::list<std::string> ids;
-			rsIdentity->getIdentityList(mRequestToken, ids);
-	
-			/* request data - straight away */	
-
-			requestIdData(ids);
-		}
-		break;
-
-		case RSID_REQ_IDLISTDATA:
-		{
-			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDLISTDATA";
-			std::cerr << std::endl;
-			insertIdList(mRequestToken);
-		}
-		break;
-
-
-		case RSID_REQ_IDDETAILS:
-		{
-			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDDETAILS";
-			std::cerr << std::endl;
-			insertIdDetails(mRequestToken);
-		}
-		break;
-
-		case RSID_REQ_IDEDIT:
-		{
-			std::cerr << "IdDialog::loadRequest() RSID_REQ_IDEDIT";
-			std::cerr << std::endl;
-			showIdEdit(mRequestToken);
-		}
-		break;
-
+		case IDDIALOG_IDLIST:
+			insertIdList(req.mToken);
+			break;
+		
+		case IDDIALOG_IDDETAILS:
+			insertIdDetails(req.mToken);
+			break;
+		
 		default:
-		break;
+        		std::cerr << "IdDialog::loadRequest() ERROR";
+        		std::cerr << std::endl;
+			break;
+
 	}
 }
 
-
-
-
-
+		
 
 

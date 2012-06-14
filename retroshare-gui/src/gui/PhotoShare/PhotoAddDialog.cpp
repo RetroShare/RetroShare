@@ -107,7 +107,7 @@ void PhotoAddDialog::publishAlbum()
 	album.mShareOptions.mCommentMode = 0;
 	album.mShareOptions.mResizeMode = 0;
 
-	album.mTitle = ui.lineEdit_Title->text().toStdString();
+	album.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
 	album.mCategory = "Unknown";
 	album.mCaption = ui.lineEdit_Caption->text().toStdString();
 	album.mWhere = ui.lineEdit_Where->text().toStdString();
@@ -122,10 +122,17 @@ void PhotoAddDialog::publishAlbum()
 		{
 			RsPhotoPhoto photo;
 			PhotoItem *item = ui.scrollAreaWidgetContents->getPhotoIdx(i);
-			photo = item->mDetails;
+
+			if (!item->mIsPhoto)
+			{
+				std::cerr << "PhotoAddDialog::publishAlbum() MAJOR ERROR!";
+        			std::cerr << std::endl;
+			}
+
+			photo = item->mPhotoDetails;
 			item->getPhotoThumbnail(photo.mThumbnail);
 	
-			photo.mAlbumId = album.mAlbumId;
+			photo.mMeta.mGroupId = album.mMeta.mGroupId;
 			photo.mOrder = i;
 
 			/* scale photo if needed */

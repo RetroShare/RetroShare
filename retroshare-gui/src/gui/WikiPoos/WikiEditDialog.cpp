@@ -43,7 +43,7 @@ void WikiEditDialog::setGroup(RsWikiGroup &group)
 {
 	mWikiGroup = group;
 
-	ui.lineEdit_Group->setText(QString::fromStdString(mWikiGroup.mName));
+	ui.lineEdit_Group->setText(QString::fromStdString(mWikiGroup.mMeta.mGroupName));
 }
 
 
@@ -52,8 +52,8 @@ void WikiEditDialog::setPreviousPage(RsWikiPage &page)
 	mNewPage = false;
 	mWikiPage = page;
 
-	ui.lineEdit_Page->setText(QString::fromStdString(mWikiPage.mName));
-	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiPage.mPageId));
+	ui.lineEdit_Page->setText(QString::fromStdString(mWikiPage.mMeta.mMsgName));
+	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiPage.mMeta.mMsgId));
 	ui.textEdit->setPlainText(QString::fromStdString(mWikiPage.mPage));
 }
 
@@ -90,18 +90,18 @@ void WikiEditDialog::submitEdit()
 {
 	if (mNewPage)
 	{
-		mWikiPage.mGroupId = mWikiGroup.mGroupId;
-		mWikiPage.mOrigPageId = "";
-		mWikiPage.mPageId = "";
+		mWikiPage.mMeta.mGroupId = mWikiGroup.mMeta.mGroupId;
+		mWikiPage.mMeta.mOrigMsgId = "";
+		mWikiPage.mMeta.mMsgId = "";
 		mWikiPage.mPrevId = "";
 	}
 	else
 	{
-		mWikiPage.mPrevId = mWikiPage.mPageId;
-		mWikiPage.mPageId = "";
+		mWikiPage.mPrevId = mWikiPage.mMeta.mMsgId;
+		mWikiPage.mMeta.mMsgId = "";
 	}
 
-	mWikiPage.mName = ui.lineEdit_Page->text().toStdString();
+	mWikiPage.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
 	mWikiPage.mPage = ui.textEdit->toPlainText().toStdString();
 
 	rsWiki->createPage(mWikiPage);
@@ -133,7 +133,8 @@ void WikiEditDialog::requestGroup(const std::string &groupId)
 	ids.push_back(groupId);
 
         RsTokReqOptions opts;
-        mWikiQueue->genericRequest(TOKENREQ_GROUPDATA, opts, ids, 0);
+	uint32_t token;
+        mWikiQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
 
 void WikiEditDialog::loadGroup(const uint32_t &token)
@@ -156,7 +157,9 @@ void WikiEditDialog::requestPage(const std::string &msgId)
         std::list<std::string> ids;
 	ids.push_back(msgId);
         RsTokReqOptions opts;
-        mWikiQueue->genericRequest(TOKENREQ_MSGDATA, opts, ids, 0);
+
+	uint32_t token;
+        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
 
 void WikiEditDialog::loadPage(const uint32_t &token)
@@ -181,10 +184,10 @@ void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		/* now switch on req */
 		switch(req.mType)
 		{
-		case TOKENREQ_GROUPDATA:
+		case TOKENREQ_GROUPINFO:
 			loadGroup(req.mToken);
 			break;
-		case TOKENREQ_MSGDATA:
+		case TOKENREQ_MSGRELATEDINFO:
 			loadPage(req.mToken);
 			break;
 		default:

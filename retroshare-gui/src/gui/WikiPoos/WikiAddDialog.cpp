@@ -61,7 +61,7 @@ void WikiAddDialog::createGroup()
 	group.mShareOptions.mCommentMode = 0;
 	group.mShareOptions.mResizeMode = 0;
 
-	group.mName = ui.lineEdit_Name->text().toStdString();
+	group.mMeta.mGroupName = ui.lineEdit_Name->text().toStdString();
 	group.mCategory = "Unknown";
 
 	rsWiki->createGroup(group);

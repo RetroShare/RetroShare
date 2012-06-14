@@ -1,7 +1,9 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht 
-CONFIG += photoshare wikipoos 
+CONFIG += photoshare 
+CONFIG += wikipoos 
 CONFIG += thewire 
 CONFIG += identities
+CONFIG += forumsv2 
 CONFIG += unfinished 
 
 QT     += network xml script 
@@ -912,16 +914,38 @@ thewire {
 
 identities {
 
-	HEADERS += gui/Identity/IdDialog.h \
+	HEADERS += util/TokenQueue.h \
+		gui/Identity/IdDialog.h \
 		gui/Identity/IdEditDialog.h \
-                  util/TokenQueue.h \
 
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 
-	SOURCES += gui/Identity/IdDialog.cpp \
+	SOURCES += util/TokenQueue.cpp \
+		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
-                  util/TokenQueue.cpp \
 
 }
 
+
+forumsv2 {
+
+	HEADERS += gui/ForumsV2Dialog.h \
+            gui/forumsv2/ForumV2Details.h \
+            gui/forumsv2/EditForumV2Details.h \
+            gui/forumsv2/CreateForumV2.h \
+            gui/forumsv2/CreateForumV2Msg.h \
+
+	FORMS += gui/ForumsV2Dialog.ui \
+            gui/forumsv2/ForumV2Details.ui \
+            gui/forumsv2/EditForumV2Details.ui \
+            gui/forumsv2/CreateForumV2.ui \
+            gui/forumsv2/CreateForumV2Msg.ui \
+
+	SOURCES += gui/ForumsV2Dialog.cpp \
+            gui/forumsv2/ForumV2Details.cpp \
+            gui/forumsv2/EditForumV2Details.cpp \
+            gui/forumsv2/CreateForumV2.cpp \
+            gui/forumsv2/CreateForumV2Msg.cpp \
+
+}

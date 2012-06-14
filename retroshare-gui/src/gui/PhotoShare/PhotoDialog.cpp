@@ -197,7 +197,13 @@ void PhotoDialog::insertPhotosForSelectedAlbum()
 	//std::list<std::string> albumIds;
 	if (mAlbumSelected)
 	{
-		std::string albumId = mAlbumSelected->mDetails.mAlbumId;
+		if (mAlbumSelected->mIsPhoto)
+		{
+			std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum() MAJOR ERROR!";
+			std::cerr << std::endl;
+		}
+
+		std::string albumId = mAlbumSelected->mAlbumDetails.mMeta.mGroupId;
 		//albumIds.push_back(albumId);
 
 		std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum() AlbumId: " << albumId;
@@ -300,7 +306,7 @@ void PhotoDialog::clearPhotos()
 
 void PhotoDialog::addAlbum(const RsPhotoAlbum &album)
 {
-	std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
+	std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
 
 	PhotoItem *item = new PhotoItem(this, album);
 	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
@@ -310,8 +316,8 @@ void PhotoDialog::addAlbum(const RsPhotoAlbum &album)
 
 void PhotoDialog::addPhoto(const RsPhotoPhoto &photo)
 {
-	std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mAlbumId;
-	std::cerr << " PhotoId: " << photo.mId;
+	std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mMeta.mGroupId;
+	std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
 	std::cerr << std::endl;
 
 	PhotoItem *item = new PhotoItem(this, photo);
@@ -336,7 +342,8 @@ void PhotoDialog::requestAlbumList()
 
 	std::list<std::string> ids;
 	RsTokReqOptions opts;
-	mPhotoQueue->genericRequest(TOKENREQ_GROUPLIST, opts, ids, 0);
+	uint32_t token;
+	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
 }
 
 
@@ -364,7 +371,8 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 void PhotoDialog::requestAlbumData(const std::list<std::string> &ids)
 {
 	RsTokReqOptions opts;
-	mPhotoQueue->genericRequest(TOKENREQ_GROUPDATA, opts, ids, 0);
+	uint32_t token;
+	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
 
 
@@ -381,7 +389,7 @@ bool PhotoDialog::loadAlbumData(const uint32_t &token)
 		RsPhotoAlbum album;
 		if (rsPhoto->getAlbum(token, album))
 		{
-			std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
+			std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
 
 			PhotoItem *item = new PhotoItem(this, album);
 			QLayout *alayout = ui.scrollAreaWidgetContents->layout();
@@ -403,7 +411,8 @@ void PhotoDialog::requestPhotoList(const std::string &albumId)
 	std::list<std::string> ids;
 	ids.push_back(albumId);
 	RsTokReqOptions opts;
-	mPhotoQueue->genericRequest(TOKENREQ_MSGLIST, opts, ids, 0);
+	uint32_t token;
+	mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
 }
 
 
@@ -425,7 +434,8 @@ void PhotoDialog::loadPhotoList(const uint32_t &token)
 void PhotoDialog::requestPhotoData(const std::list<std::string> &photoIds)
 {
 	RsTokReqOptions opts;
-	mPhotoQueue->genericRequest(TOKENREQ_MSGDATA, opts, photoIds, 0);
+	uint32_t token;
+	mPhotoQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, photoIds, 0);
 }
 
 
@@ -442,8 +452,8 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
 		if (rsPhoto->getPhoto(token, photo))
 		{
 
-			std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mAlbumId;
-			std::cerr << " PhotoId: " << photo.mId;
+			std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mMeta.mGroupId;
+			std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
 			std::cerr << std::endl;
 
 			PhotoItem *item = new PhotoItem(this, photo);
@@ -470,17 +480,47 @@ void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 		/* now switch on req */
 		switch(req.mType)
 		{
-			case TOKENREQ_GROUPLIST:
-				loadAlbumList(req.mToken);
+			case TOKENREQ_GROUPINFO:
+				switch(req.mAnsType)
+				{
+					case RS_TOKREQ_ANSTYPE_LIST:
+						loadAlbumList(req.mToken);
+						break;
+					case RS_TOKREQ_ANSTYPE_DATA:
+						loadAlbumData(req.mToken);
+						break;
+					default:
+						std::cerr << "PhotoDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+						std::cerr << std::endl;
+						break;
+				}
 				break;
-			case TOKENREQ_GROUPDATA:
-				loadAlbumData(req.mToken);
+			case TOKENREQ_MSGINFO:
+				switch(req.mAnsType)
+				{
+					case RS_TOKREQ_ANSTYPE_LIST:
+						loadPhotoList(req.mToken);
+						break;
+					//case RS_TOKREQ_ANSTYPE_DATA:
+					//	loadPhotoData(req.mToken);
+					//	break;
+					default:
+						std::cerr << "PhotoDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
+						std::cerr << std::endl;
+						break;
+				}
 				break;
-			case TOKENREQ_MSGLIST:
-				loadPhotoList(req.mToken);
-				break;
-			case TOKENREQ_MSGDATA:
-				loadPhotoData(req.mToken);
+			case TOKENREQ_MSGRELATEDINFO:
+				switch(req.mAnsType)
+				{
+					case RS_TOKREQ_ANSTYPE_DATA:
+						loadPhotoData(req.mToken);
+						break;
+					default:
+						std::cerr << "PhotoDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
+						std::cerr << std::endl;
+						break;
+				}
 				break;
 			default:
 				std::cerr << "PhotoDialog::loadRequest() ERROR: INVALID TYPE";

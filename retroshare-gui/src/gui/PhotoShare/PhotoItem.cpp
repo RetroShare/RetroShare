@@ -46,7 +46,8 @@ PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album)
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	mDetails = *( (RsPhotoPhoto *) &(album));
+	mIsPhoto = false;
+	mAlbumDetails = album;
 	updateAlbumText(album);
 	updateImage(album.mThumbnail);
 
@@ -61,7 +62,8 @@ PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo)
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	mDetails = *( (RsPhotoPhoto *) &(photo));
+	mIsPhoto = true;
+	mPhotoDetails = photo;
 
 	updatePhotoText(photo);
 	updateImage(photo.mThumbnail);
@@ -79,6 +81,8 @@ PhotoItem::PhotoItem(PhotoHolder *parent, std::string path) // for new photos.
 
 	QString dummyString("dummytext");
 	titleLabel->setText(QString("NEW PHOTO"));
+
+	mIsPhoto = true;
 
 	fromBoldLabel->setText(QString("From:"));
 	fromLabel->setText(QString("Ourselves"));

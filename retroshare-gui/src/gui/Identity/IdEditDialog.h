@@ -28,7 +28,9 @@
 
 #include <inttypes.h>
 
-class IdEditDialog : public QWidget
+#include "util/TokenQueue.h"
+
+class IdEditDialog : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
@@ -36,7 +38,10 @@ public:
 	IdEditDialog(QWidget *parent = 0);
 
 	void setupNewId(bool pseudo);
-	void setupExistingId(uint32_t token);
+	void setupExistingId(std::string keyId);
+	void loadExistingId(uint32_t token);
+
+void    loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
@@ -52,6 +57,7 @@ protected:
 
 	Ui::IdEditDialog ui;
 
+	TokenQueue *mIdQueue;
 };
 
 #endif

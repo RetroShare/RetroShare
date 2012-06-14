@@ -61,7 +61,9 @@ public:
 	const QPixmap *getPixmap();
 
 	// details are public - so that can be easily edited.
-	RsPhotoPhoto mDetails;
+	bool mIsPhoto;
+	RsPhotoPhoto mPhotoDetails;
+	RsPhotoAlbum mAlbumDetails;
 
 //private slots:
 

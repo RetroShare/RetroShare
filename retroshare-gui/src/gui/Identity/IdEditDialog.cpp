@@ -22,11 +22,14 @@
  */
 
 #include "gui/Identity/IdEditDialog.h"
+#include "util/TokenQueue.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
 
 #include <iostream>
+
+#define IDEDITDIALOG_LOADID	1
 
 /** Constructor */
 IdEditDialog::IdEditDialog(QWidget *parent)
@@ -39,6 +42,7 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.pushButton_Update, SIGNAL( clicked( void ) ), this, SLOT( updateId( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelId( void ) ) );
 
+	mIdQueue = new TokenQueue(rsIdentity, this);
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
@@ -98,7 +102,19 @@ void IdEditDialog::updateIdType(bool pseudo)
 }
 
 
-void IdEditDialog::setupExistingId(uint32_t token)
+void IdEditDialog::setupExistingId(std::string keyId)
+{
+        RsTokReqOptions opts;
+
+        std::list<std::string> groupIds;
+        groupIds.push_back(keyId);
+
+        uint32_t token;
+        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
+}
+
+
+void IdEditDialog::loadExistingId(uint32_t token)
 {
 	ui.checkBox_NewId->setChecked(false);
 	ui.checkBox_NewId->setEnabled(false);
@@ -106,8 +122,8 @@ void IdEditDialog::setupExistingId(uint32_t token)
 	ui.radioButton_Pseudo->setEnabled(false);
 
         /* get details from libretroshare */
-        RsIdData data;
-        if (!rsIdentity->getIdentity(token, data))
+        RsIdGroup data;
+        if (!rsIdentity->getGroupData(token, data))
         {
 		ui.lineEdit_KeyId->setText("ERROR KEYID INVALID");
 		ui.lineEdit_Nickname->setText("");
@@ -133,8 +149,10 @@ void IdEditDialog::setupExistingId(uint32_t token)
 	// force - incase it wasn't triggered.
 	IdTypeToggled(true);
 
-	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
-        ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
+	//ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
+        //ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
+	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
+        ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 
 	if (pseudo)
 	{
@@ -166,12 +184,12 @@ void IdEditDialog::setupExistingId(uint32_t token)
 
 void IdEditDialog::updateId()
 {
-	RsIdData rid;
+	RsIdGroup rid;
 	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
 
-	rid.mNickname = ui.lineEdit_Nickname->text().toStdString();
+	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toStdString();
 
-	if (rid.mNickname.size() < 2)
+	if (rid.mMeta.mGroupName.size() < 2)
 	{
 		std::cerr << "IdEditDialog::updateId() Nickname too short";
 		std::cerr << std::endl;
@@ -181,11 +199,11 @@ void IdEditDialog::updateId()
 	rid.mIdType = RSID_RELATION_YOURSELF;
 	if (ui.checkBox_NewId->isChecked())
 	{
-		rid.mKeyId = "";
+		rid.mMeta.mGroupId = "";
 	}
 	else
 	{
-		rid.mKeyId = ui.lineEdit_KeyId->text().toStdString();
+		rid.mMeta.mGroupId = ui.lineEdit_KeyId->text().toStdString();
 	}
 
 	if (ui.radioButton_GpgId->isChecked())
@@ -207,7 +225,8 @@ void IdEditDialog::updateId()
 		rid.mGpgEmail = "";
 	}
 
-	rsIdentity->updateIdentity(rid);
+	// TODO.
+	//rsIdentity->updateIdentity(rid);
 
 	hide();
 	return;
@@ -224,5 +243,14 @@ void IdEditDialog::clearDialog()
 	return;
 }
 
+
+void IdEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+	
+	// only one here!
+	loadExistingId(req.mToken);
+}
 
 	
