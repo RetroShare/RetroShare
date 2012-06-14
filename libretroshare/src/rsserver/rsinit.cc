@@ -93,11 +93,7 @@ class RsInitConfig
 		/* for certificate creation */
                 //static std::string gpgPasswd;
 
-#ifndef WINDOWS_SYS
-		static int lockHandle;
-#else
-		static HANDLE lockHandle;
-#endif
+		static rs_lock_handle_t lockHandle;
 
 		/* These fields are needed for login */
                 static std::string loginId;
@@ -152,11 +148,7 @@ static const int SSLPWD_LEN = 64;
 std::list<accountId> RsInitConfig::accountIds;
 std::string RsInitConfig::preferedId;
 
-#ifndef WINDOWS_SYS
-	int RsInitConfig::lockHandle;
-#else
-	HANDLE RsInitConfig::lockHandle;
-#endif
+rs_lock_handle_t RsInitConfig::lockHandle;
 
 std::string RsInitConfig::configDir;
 std::string RsInitConfig::load_cert;

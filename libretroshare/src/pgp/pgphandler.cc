@@ -509,6 +509,11 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType& key_id,std::string& text,c
 
 	FILE *f = fopen(inputfile.c_str(),"rb") ;
 
+	if (f == NULL)
+	{
+		return false;
+	}
+
 	char c ;
 	while( (c = getc(f))!= EOF)
 		buf += c;
@@ -522,6 +527,7 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType& key_id,std::string& text,c
 	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)buf.c_str(),buf.length(),&out_buf,&out_length,_secring,ops_true,cb_get_passphrase) ;
 
 	text = std::string((char *)out_buf,out_length) ;
+	free (out_buf);
 	return (bool)res ;
 }
 

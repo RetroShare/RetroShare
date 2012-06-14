@@ -684,6 +684,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 		std::cerr << "No password provided, and no sslPassphraseFile : " << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
 		return 0;
 	} 
+	fclose(sslPassphraseFile);
 
 	std::cerr << "opening sslPassphraseFile : " << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
 

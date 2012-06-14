@@ -852,7 +852,7 @@ std::string RsDirUtil::makePath(const std::string &path1, const std::string &pat
 	return path;
 }
 
-int RsDirUtil::createLockFile(const std::string& lock_file_path,int& lock_handle) 
+int RsDirUtil::createLockFile(const std::string& lock_file_path, rs_lock_handle_t &lock_handle)
 {
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -926,7 +926,7 @@ int RsDirUtil::createLockFile(const std::string& lock_file_path,int& lock_handle
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 }
 
-void RsDirUtil::releaseLockFile(int lockHandle) 
+void RsDirUtil::releaseLockFile(rs_lock_handle_t lockHandle)
 {
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS

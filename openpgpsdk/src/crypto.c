@@ -308,7 +308,7 @@ ops_boolean_t ops_decrypt_memory(const unsigned char *encrypted_memory,int em_le
 
     // setup memory chunk 
 
-	 ops_memory_t *output_mem = ops_memory_new() ;
+     ops_memory_t *output_mem;
 
 	 ops_setup_memory_write(&pinfo->cbinfo.cinfo, &output_mem,0) ;
 
