@@ -44,9 +44,10 @@ class PGPCertificateInfo
 
 		uint32_t _key_index ;			// index to array of keys in the public keyring 
 
-		static const uint32_t PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION   = 0x0001 ;
-		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE  = 0x0002 ;
-		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME      = 0x0004 ;
+		static const uint32_t PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION      = 0x0001 ;
+		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE     = 0x0002 ;
+		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME         = 0x0004 ;
+		static const uint32_t PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM = 0x0008 ;	// set when the key is not RSA, so that RS avoids to use it.
 };
 
 class PGPHandler
@@ -77,6 +78,8 @@ class PGPHandler
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const PGPIdType&,bool) ;
+
+		bool isKeySupported(const PGPIdType& id) const ;
 
 		// Write keyring
 		bool publicKeyringChanged() const { return _pubring_changed ; }

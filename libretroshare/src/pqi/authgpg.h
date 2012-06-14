@@ -161,6 +161,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual std::string getGPGOwnName();
 
 		//virtual std::string getGPGOwnEmail();
+		virtual bool	isKeySupported(const std::string &id) const ;
 		virtual bool	getGPGDetails(const std::string &id, RsPeerDetails &d);
 		virtual bool	getGPGAllList(std::list<std::string> &ids);
 		virtual bool	getGPGValidList(std::list<std::string> &ids);

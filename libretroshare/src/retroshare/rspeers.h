@@ -231,6 +231,7 @@ virtual bool	getPeerDetails(const std::string &ssl_or_gpg_id, RsPeerDetails &d) 
 		/* Using PGP Ids */
 virtual std::string getGPGOwnId()				= 0;
 virtual std::string getGPGId(const std::string &sslid_or_gpgid)	= 0; //return the gpg id of the given gpg or ssl id
+virtual bool    isKeySupported(const std::string& gpg_ids)   = 0;
 virtual bool    getGPGAcceptedList(std::list<std::string> &gpg_ids)   = 0;
 virtual bool    getGPGSignedList(std::list<std::string> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
 virtual bool    getGPGValidList(std::list<std::string> &gpg_ids)   = 0;

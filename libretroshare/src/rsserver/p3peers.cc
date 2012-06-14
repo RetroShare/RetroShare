@@ -610,6 +610,10 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 }
 #endif
 
+bool p3Peers::isKeySupported(const std::string& id)
+{
+	return AuthGPG::getAuthGPG()->isKeySupported(id);
+}
 
 std::string p3Peers::getGPGName(const std::string &gpg_id)
 {

@@ -1097,38 +1097,36 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	std::string cert_name = basename + "_cert.pem";
 	std::string userName, userId;
 
-        #ifdef AUTHSSL_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
-        #endif
-
+#endif
 	bool ret = false;
 
 	/* check against authmanagers private keys */
-        if (LoadCheckX509(cert_name.c_str(), id.pgpId, id.location, id.sslId))
-        {
-        	#ifdef AUTHSSL_DEBUG
-        	std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
-        	#endif
+	if (LoadCheckX509(cert_name.c_str(), id.pgpId, id.location, id.sslId))
+	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
+		std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
+#endif
 
+		if(! RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail))
+			return false ;
 
-                #ifdef GPG_DEBUG
-                std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
-                #endif
+		if(!AuthGPG::getAuthGPG()->isKeySupported(id.pgpId))
+			return false ;
 
-					 if(! RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail))
-						 return false ;
-
-                #ifdef GPG_DEBUG
-                std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
-                std::cerr << " email: " << id.pgpEmail << std::endl;
-                #endif
-                ret = true;
-        }
-        else
-        {
-                std::cerr << "GetIssuerName FAILED!" << std::endl;
-                ret = false;
-        }
+#ifdef GPG_DEBUG
+		std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
+		std::cerr << " email: " << id.pgpEmail << std::endl;
+#endif
+		ret = true;
+	}
+	else
+	{
+		std::cerr << "GetIssuerName FAILED!" << std::endl;
+		ret = false;
+	}
 
 	return ret;
 }

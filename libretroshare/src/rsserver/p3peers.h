@@ -63,6 +63,7 @@ virtual bool	getPeerDetails(const std::string &ssl_or_gpg_id, RsPeerDetails &d);
                 /* Using PGP Ids */
 virtual std::string getGPGOwnId();
 virtual std::string getGPGId(const std::string &ssl_id);
+virtual bool    isKeySupported(const std::string& ids);
 virtual bool    getGPGAcceptedList(std::list<std::string> &ids);
 virtual bool    getGPGSignedList(std::list<std::string> &ids);
 virtual bool    getGPGValidList(std::list<std::string> &ids);

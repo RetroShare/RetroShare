@@ -140,6 +140,17 @@ void ConfCertDialog::load()
         return;
     }
 
+	 if(!rsPeers->isKeySupported(mId))
+	 {
+		 ui.make_friend_button->setEnabled(false) ;
+		 ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
+	 }
+	 else
+	 {
+		 ui.make_friend_button->setEnabled(true) ;
+		 ui.make_friend_button->setToolTip("") ;
+	 }
+
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));
 

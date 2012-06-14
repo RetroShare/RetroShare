@@ -718,6 +718,16 @@ bool 	AuthGPG::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER)
 }
 #endif
 
+bool AuthGPG::isKeySupported(const std::string& id) const
+{
+	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
+
+	if(pc == NULL)
+		return false ;
+
+	return !(pc->_flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM) ;
+}
+
 bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d) 
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/

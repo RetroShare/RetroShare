@@ -183,6 +183,9 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 	ops_fingerprint(&f,&keydata->key.pkey) ; 
 
 	cert._fpr = PGPFingerprintType(f.fingerprint) ;
+
+	if(keydata->key.pkey.algorithm != OPS_PKA_RSA)
+		cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM ;
 }
 
 void PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata)
@@ -224,7 +227,7 @@ bool PGPHandler::printKeys() const
 		std::cerr << "\tName          : " <<  it->second._name << std::endl;
 		std::cerr << "\tEmail         : " <<  it->second._email << std::endl;
 		std::cerr << "\tOwnSign       : " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) << std::endl;
-		std::cerr << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) << std::endl;
+		std::cerr << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) << std::endl;
 		std::cerr << "\ttrustLvl      : " <<  it->second._trustLvl << std::endl;
 		std::cerr << "\tvalidLvl      : " <<  it->second._validLvl << std::endl;
 		std::cerr << "\tfingerprint   : " <<  it->second._fpr.toStdString() << std::endl;
@@ -271,7 +274,10 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 		// check that the key is in the pubring as well
 
 		if(ops_keyring_find_key_by_id(_pubring,keydata->key_id) != NULL)
-			ids.push_back(PGPIdType(keydata->key_id)) ;
+			if(keydata->key.pkey.algorithm == OPS_PKA_RSA)
+				ids.push_back(PGPIdType(keydata->key_id)) ;
+			else
+				std::cerr << "Skipping keypair " << PGPIdType(keydata->key_id).toStdString() << ", unsupported algorithm: " <<  keydata->key.pkey.algorithm << std::endl;
 	}
 
 	return true ;
