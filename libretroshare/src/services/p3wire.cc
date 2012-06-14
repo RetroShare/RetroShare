@@ -1,13 +1,13 @@
 /*
- * libretroshare/src/services p3wikiservice.cc
+ * libretroshare/src/services p3wire.cc
  *
- * Wiki interface for RetroShare.
+ * Wire interface for RetroShare.
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 2.1 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,7 +23,7 @@
  *
  */
 
-#include "services/p3wikiservice.h"
+#include "services/p3wire.h"
 
 #include "util/rsrandom.h"
 
@@ -31,26 +31,26 @@
  * #define WIKI_DEBUG 1
  ****/
 
-RsWiki *rsWiki = NULL;
+RsWire *rsWire = NULL;
 
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3WikiService::p3WikiService(uint16_t type)
-	:p3GxsDataService(type, new WikiDataProxy()), mWikiMtx("p3WikiService"), mUpdated(true)
+p3Wire::p3Wire(uint16_t type)
+	:p3GxsDataService(type, new WireDataProxy()), mWireMtx("p3Wire"), mUpdated(true)
 {
-     	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
+     	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
-	mWikiProxy = (WikiDataProxy *) mProxy;
+	mWireProxy = (WireDataProxy *) mProxy;
 	return;
 }
 
 
-int	p3WikiService::tick()
+int	p3Wire::tick()
 {
-	std::cerr << "p3WikiService::tick()";
+	std::cerr << "p3Wire::tick()";
 	std::cerr << std::endl;
 
 	fakeprocessrequests();
@@ -58,9 +58,9 @@ int	p3WikiService::tick()
 	return 0;
 }
 
-bool p3WikiService::updated()
+bool p3Wire::updated()
 {
-	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
 	if (mUpdated)
 	{
@@ -73,35 +73,35 @@ bool p3WikiService::updated()
 
 
        /* Data Requests */
-bool p3WikiService::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3Wire::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3WikiService::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3Wire::requestGroupInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-bool p3WikiService::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3Wire::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3WikiService::requestMsgInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3Wire::requestMsgInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGS, groupIds);
 
 	return true;
 }
 
-bool p3WikiService::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
+bool p3Wire::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
 {
 	generateToken(token);
-	std::cerr << "p3WikiService::requestMsgRelatedInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3Wire::requestMsgRelatedInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
 
         /* Generic Lists */
-bool p3WikiService::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
+bool p3Wire::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -111,19 +111,19 @@ bool p3WikiService::getGroupList(         const uint32_t &token, std::list<std::
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3WikiService::getGroupList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3Wire::getGroupList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3WikiService::getGroupList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3Wire::getGroupList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3WikiService::getGroupList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3Wire::getGroupList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -136,7 +136,7 @@ bool p3WikiService::getGroupList(         const uint32_t &token, std::list<std::
 
 
 
-bool p3WikiService::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
+bool p3Wire::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -146,19 +146,19 @@ bool p3WikiService::getMsgList(           const uint32_t &token, std::list<std::
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3WikiService::getMsgList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3Wire::getMsgList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3WikiService::getMsgList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3Wire::getMsgList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3WikiService::getMsgList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3Wire::getMsgList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -170,7 +170,7 @@ bool p3WikiService::getMsgList(           const uint32_t &token, std::list<std::
 
 
         /* Generic Summary */
-bool p3WikiService::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
+bool p3Wire::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -180,19 +180,19 @@ bool p3WikiService::getGroupSummary(      const uint32_t &token, std::list<RsGro
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3WikiService::getGroupSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3Wire::getGroupSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3WikiService::getGroupSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3Wire::getGroupSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3WikiService::getGroupSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3Wire::getGroupSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -206,7 +206,7 @@ bool p3WikiService::getGroupSummary(      const uint32_t &token, std::list<RsGro
 	return ans;
 }
 
-bool p3WikiService::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
+bool p3Wire::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -216,19 +216,19 @@ bool p3WikiService::getMsgSummary(        const uint32_t &token, std::list<RsMsg
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3WikiService::getMsgSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3Wire::getMsgSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3WikiService::getMsgSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3Wire::getMsgSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3WikiService::getMsgSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3Wire::getMsgSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -244,7 +244,7 @@ bool p3WikiService::getMsgSummary(        const uint32_t &token, std::list<RsMsg
 
 
         /* Specific Service Data */
-bool p3WikiService::getGroupData(const uint32_t &token, RsWikiGroup &group)
+bool p3Wire::getGroupData(const uint32_t &token, RsWireGroup &group)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -255,19 +255,19 @@ bool p3WikiService::getGroupData(const uint32_t &token, RsWikiGroup &group)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3WikiService::getGroupData() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3Wire::getGroupData() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3WikiService::getGroupData() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3Wire::getGroupData() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3WikiService::getGroupData() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3Wire::getGroupData() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -279,13 +279,13 @@ bool p3WikiService::getGroupData(const uint32_t &token, RsWikiGroup &group)
 		return false;
 	}
 	
-	/* convert to RsWikiAlbum */
-	bool ans = mWikiProxy->getGroup(id, group);
+	/* convert to RsWireGroup */
+	bool ans = mWireProxy->getGroup(id, group);
 	return ans;
 }
 
 
-bool p3WikiService::getMsgData(const uint32_t &token, RsWikiPage &page)
+bool p3Wire::getMsgData(const uint32_t &token, RsWirePulse &pulse)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -296,19 +296,19 @@ bool p3WikiService::getMsgData(const uint32_t &token, RsWikiPage &page)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3WikiService::getMsgData() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3Wire::getMsgData() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3WikiService::getMsgData() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3Wire::getMsgData() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3WikiService::getMsgData() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3Wire::getMsgData() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -320,15 +320,15 @@ bool p3WikiService::getMsgData(const uint32_t &token, RsWikiPage &page)
 		return false;
 	}
 	
-	/* convert to RsWikiAlbum */
-	bool ans = mWikiProxy->getPage(id, page);
+	/* convert to RsWirePulse */
+	bool ans = mWireProxy->getPulse(id, pulse);
 	return ans;
 }
 
 
 
         /* Poll */
-uint32_t p3WikiService::requestStatus(const uint32_t token)
+uint32_t p3Wire::requestStatus(const uint32_t token)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -341,38 +341,38 @@ uint32_t p3WikiService::requestStatus(const uint32_t token)
 
 
         /* Cancel Request */
-bool p3WikiService::cancelRequest(const uint32_t &token)
+bool p3Wire::cancelRequest(const uint32_t &token)
 {
 	return clearRequest(token);
 }
 
         //////////////////////////////////////////////////////////////////////////////
         /* Functions from Forums -> need to be implemented generically */
-bool p3WikiService::groupsChanged(std::list<std::string> &groupIds)
+bool p3Wire::groupsChanged(std::list<std::string> &groupIds)
 {
 	return false;
 }
 
         // Get Message Status - is retrived via MessageSummary.
-bool p3WikiService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
+bool p3Wire::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
 	return false;
 }
 
 
         // 
-bool p3WikiService::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3Wire::groupSubscribe(const std::string &groupId, bool subscribe)
 {
 	return false;
 }
 
 
-bool p3WikiService::groupRestoreKeys(const std::string &groupId)
+bool p3Wire::groupRestoreKeys(const std::string &groupId)
 {
 	return false;
 }
 
-bool p3WikiService::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
+bool p3Wire::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
 {
 	return false;
 }
@@ -381,7 +381,7 @@ bool p3WikiService::groupShareKeys(const std::string &groupId, std::list<std::st
 /********************************************************************************************/
 
 	
-std::string p3WikiService::genRandomId()
+std::string p3Wire::genRandomId()
 {
 	std::string randomId;
 	for(int i = 0; i < 20; i++)
@@ -392,7 +392,7 @@ std::string p3WikiService::genRandomId()
 	return randomId;
 }
 	
-bool p3WikiService::createGroup(RsWikiGroup &group)
+bool p3Wire::createGroup(RsWireGroup &group)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -403,16 +403,16 @@ bool p3WikiService::createGroup(RsWikiGroup &group)
 	}
 	else
 	{
-		std::cerr << "p3WikiService::createGroup() Group with existing Id... dropping";
+		std::cerr << "p3Wire::createGroup() Group with existing Id... dropping";
 		std::cerr << std::endl;
 		return false;
 	}
 	
-	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
 	mUpdated = true;
 
-	mWikiProxy->addGroup(group);
+	mWireProxy->addGroup(group);
 
 	return true;
 }
@@ -420,47 +420,47 @@ bool p3WikiService::createGroup(RsWikiGroup &group)
 
 
 
-bool p3WikiService::createPage(RsWikiPage &page)
+bool p3Wire::createPulse(RsWirePulse &pulse)
 {
-	if (page.mMeta.mGroupId.empty())
+	if (pulse.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3WikiService::createPage() Missing PageID";
+		std::cerr << "p3Wire::createPulse() Missing PulseID";
 		std::cerr << std::endl;
 		return false;
 	}
 	
-	/* check if its a mod or new page */
-	if (page.mMeta.mOrigMsgId.empty())
+	/* check if its a mod or new pulse */
+	if (pulse.mMeta.mOrigMsgId.empty())
 	{
-		std::cerr << "p3WikiService::createPage() New Page";
+		std::cerr << "p3Wire::createPulse() New Pulse";
 		std::cerr << std::endl;
 
-		/* new page, generate a new OrigPageId */
-		page.mMeta.mOrigMsgId = genRandomId();
-		page.mMeta.mMsgId = page.mMeta.mOrigMsgId;
+		/* new pulse, generate a new OrigPulseId */
+		pulse.mMeta.mOrigMsgId = genRandomId();
+		pulse.mMeta.mMsgId = pulse.mMeta.mOrigMsgId;
 	}
 	else
 	{
-		std::cerr << "p3WikiService::createPage() Modified Page";
+		std::cerr << "p3Wire::createPulse() Modified Pulse";
 		std::cerr << std::endl;
 
-		/* mod page, keep orig page id, generate a new PageId */
-		page.mMeta.mMsgId = genRandomId();
+		/* mod pulse, keep orig pulse id, generate a new PulseId */
+		pulse.mMeta.mMsgId = genRandomId();
 	}
 
-	std::cerr << "p3WikiService::createPage() GroupId: " << page.mMeta.mGroupId;
+	std::cerr << "p3Wire::createPulse() GroupId: " << pulse.mMeta.mGroupId;
 	std::cerr << std::endl;
-	std::cerr << "p3WikiService::createPage() PageId: " << page.mMeta.mMsgId;
+	std::cerr << "p3Wire::createPulse() PulseId: " << pulse.mMeta.mMsgId;
 	std::cerr << std::endl;
-	std::cerr << "p3WikiService::createPage() OrigPageId: " << page.mMeta.mOrigMsgId;
+	std::cerr << "p3Wire::createPulse() OrigPulseId: " << pulse.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
 	mUpdated = true;
 
-	mWikiProxy->addPage(page);
+	mWireProxy->addPulse(pulse);
 
 	return true;
 }
@@ -471,62 +471,62 @@ bool p3WikiService::createPage(RsWikiPage &page)
 
 
 	
-bool WikiDataProxy::getGroup(const std::string &id, RsWikiGroup &group)
+bool WireDataProxy::getGroup(const std::string &id, RsWireGroup &group)
 {
 	void *groupData = NULL;
 	RsGroupMetaData meta;
 	if (getGroupData(id, groupData) && getGroupSummary(id, meta))
 	{
-		RsWikiGroup *pG = (RsWikiGroup *) groupData;
+		RsWireGroup *pG = (RsWireGroup *) groupData;
 		group = *pG;
 
 		// update definitive version of the metadata.
 		group.mMeta = meta;
 
-		std::cerr << "WikiDataProxy::getGroup() Id: " << id;
+		std::cerr << "WireDataProxy::getGroup() Id: " << id;
 		std::cerr << " MetaData: " << meta << " DataPointer: " << groupData;
 		std::cerr << std::endl;
 		return true;
 	}
 
-	std::cerr << "WikiDataProxy::getGroup() FAILED Id: " << id;
+	std::cerr << "WireDataProxy::getGroup() FAILED Id: " << id;
 	std::cerr << std::endl;
 
 	return false;
 }
 
-bool WikiDataProxy::getPage(const std::string &id, RsWikiPage &page)
+bool WireDataProxy::getPulse(const std::string &id, RsWirePulse &pulse)
 {
 	void *msgData = NULL;
 	RsMsgMetaData meta;
 	if (getMsgData(id, msgData) && getMsgSummary(id, meta))
 	{
-		RsWikiPage *pP = (RsWikiPage *) msgData;
+		RsWirePulse *pP = (RsWirePulse *) msgData;
 		// Shallow copy of thumbnail.
-		page = *pP;
+		pulse = *pP;
 	
 		// update definitive version of the metadata.
-		page.mMeta = meta;
+		pulse.mMeta = meta;
 
-		std::cerr << "WikiDataProxy::getPage() Id: " << id;
+		std::cerr << "WireDataProxy::getPulse() Id: " << id;
 		std::cerr << " MetaData: " << meta << " DataPointer: " << msgData;
 		std::cerr << std::endl;
 		return true;
 	}
 
-	std::cerr << "WikiDataProxy::getPage() FAILED Id: " << id;
+	std::cerr << "WireDataProxy::getPulse() FAILED Id: " << id;
 	std::cerr << std::endl;
 
 	return false;
 }
 
-bool WikiDataProxy::addGroup(const RsWikiGroup &group)
+bool WireDataProxy::addGroup(const RsWireGroup &group)
 {
 	// Make duplicate.
-	RsWikiGroup *pG = new RsWikiGroup();
+	RsWireGroup *pG = new RsWireGroup();
 	*pG = group;
 
-	std::cerr << "WikiDataProxy::addGroup()";
+	std::cerr << "WireDataProxy::addGroup()";
 	std::cerr << " MetaData: " << pG->mMeta << " DataPointer: " << pG;
 	std::cerr << std::endl;
 
@@ -534,13 +534,13 @@ bool WikiDataProxy::addGroup(const RsWikiGroup &group)
 }
 
 
-bool WikiDataProxy::addPage(const RsWikiPage &page)
+bool WireDataProxy::addPulse(const RsWirePulse &pulse)
 {
 	// Make duplicate.
-	RsWikiPage *pP = new RsWikiPage();
-	*pP = page;
+	RsWirePulse *pP = new RsWirePulse();
+	*pP = pulse;
 
-	std::cerr << "WikiDataProxy::addPage()";
+	std::cerr << "WireDataProxy::addPulse()";
 	std::cerr << " MetaData: " << pP->mMeta << " DataPointer: " << pP;
 	std::cerr << std::endl;
 
@@ -550,17 +550,17 @@ bool WikiDataProxy::addPage(const RsWikiPage &page)
 
 
         /* These Functions must be overloaded to complete the service */
-bool WikiDataProxy::convertGroupToMetaData(void *groupData, RsGroupMetaData &meta)
+bool WireDataProxy::convertGroupToMetaData(void *groupData, RsGroupMetaData &meta)
 {
-	RsWikiGroup *group = (RsWikiGroup *) groupData;
+	RsWireGroup *group = (RsWireGroup *) groupData;
 	meta = group->mMeta;
 
 	return true;
 }
 
-bool WikiDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
+bool WireDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 {
-	RsWikiPage *page = (RsWikiPage *) msgData;
+	RsWirePulse *page = (RsWirePulse *) msgData;
 	meta = page->mMeta;
 
 	return true;

@@ -1,16 +1,16 @@
-#ifndef RETROSHARE_PHOTO_GUI_INTERFACE_H
-#define RETROSHARE_PHOTO_GUI_INTERFACE_H
+#ifndef RETROSHARE_FORUMV2_GUI_INTERFACE_H
+#define RETROSHARE_FORUMV2_GUI_INTERFACE_H
 
 /*
- * libretroshare/src/retroshare: rsphoto.h
+ * libretroshare/src/retroshare: rsforumv2.h
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2008-2012 by Robert Fernie.
+ * Copyright 2012-2012 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 2.1 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,112 +29,63 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+
 #include <retroshare/rsidentity.h>
 
 /* The Main Interface Class - for information about your Peers */
-class RsPhoto;
-extern RsPhoto *rsPhoto;
+class RsForumsV2;
+extern RsForumsV2 *rsForumsV2;
 
-/******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
-
-#define RSPHOTO_MODE_NEW	1
-#define RSPHOTO_MODE_OWN	2
-#define RSPHOTO_MODE_REMOTE	3
-
-class RsPhotoThumbnail
-{
-	public:
-		RsPhotoThumbnail()
-		:data(NULL), size(0), type("N/A") { return; }
-
-	bool copyFrom(const RsPhotoThumbnail &nail);
-
-	// Holds Thumbnail image.
-	uint8_t *data;
-	int size;
-	std::string type;
-};
-
-class RsPhotoPhoto
+class RsForumV2Group
 {
 	public:
 
-	RsMsgMetaData mMeta;
-
-	// THESE ARE IN THE META DATA.
-	//std::string mAlbumId;
-	//std::string mId;
-	//std::string mTitle; // only used by Album.
-
-	std::string mCaption;
-	std::string mDescription;
-	std::string mPhotographer;
-	std::string mWhere;
-	std::string mWhen;
-	std::string mOther;
-	std::string mCategory;
-
-	std::string mHashTags;
-
-	int mOrder;
-
-	RsPhotoThumbnail mThumbnail;
-
-	int mMode;
-	std::string path; // if in Mode NEW.
-};
-
-class RsPhotoAlbumShare
-{
-	public:
-
-	uint32_t mShareType;
-	std::string mShareGroupId;
-	std::string mPublishKey;
-	uint32_t mCommentMode;
-	uint32_t mResizeMode;
-};
-
-class RsPhotoAlbum
-{
-	public:
-
+	// All the MetaData is Stored here:
 	RsGroupMetaData mMeta;
 
 	// THESE ARE IN THE META DATA.
-	//std::string mAlbumId;
-	//std::string mTitle; // only used by Album.
+	//std::string mGroupId;
+	//std::string mName;
 
-	std::string mCaption;
 	std::string mDescription;
-	std::string mPhotographer;
-	std::string mWhere;
-	std::string mWhen;
-	std::string mOther;
-	std::string mCategory;
 
-	std::string mHashTags;
-
-	RsPhotoThumbnail mThumbnail;
-
-	int mMode;
-
-	std::string mPhotoPath;
-	RsPhotoAlbumShare mShareOptions;
+	// THESE ARE CURRENTLY UNUSED.
+	//std::string mCategory;
+	//std::string mHashTags;
 };
 
-
-class RsPhoto: public RsTokenService
+class RsForumV2Msg
 {
 	public:
 
-	RsPhoto()  { return; }
-virtual ~RsPhoto() { return; }
+	// All the MetaData is Stored here:
+	RsMsgMetaData mMeta;
+
+	// THESE ARE IN THE META DATA.
+	//std::string mGroupId;
+	//std::string mMsgId;
+	//std::string mOrigMsgId;
+	//std::string mThreadId;
+	//std::string mParentId;
+	//std::string mName;      (aka. Title)
+
+	std::string mMsg; // all the text is stored here.
+
+	// THESE ARE CURRENTLY UNUSED.
+	//std::string mHashTags;
+};
+
+class RsForumsV2: public RsTokenService
+{
+	public:
+
+	RsForumsV2()  { return; }
+virtual ~RsForumsV2() { return; }
 
 	/* changed? */
 virtual bool updated() = 0;
 
-       /* Data Requests */
+        /* Data Requests */
 //virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
 //virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
 //virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
@@ -147,17 +98,15 @@ virtual bool updated() = 0;
 //virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo) = 0;
 //virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo) = 0;
 
-        /* Actual Data -> specific to Interface */
+	/* Specific Service Data */
+virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group) = 0;
+virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg) = 0;
 
 
 
-        /* Poll */
-//virtual uint32_t requestStatus(const uint32_t token) = 0;
-
-        /* Cancel Request */
-//virtual bool cancelRequest(const uint32_t &token) = 0;
-
-
+	/* FUNCTIONS THAT HAVE BEEN COPIED FROM THE ORIGINAL FORUMS....
+	 * -> TODO, Split into generic and specific functions!
+	 */
         //////////////////////////////////////////////////////////////////////////////
         /* Functions from Forums -> need to be implemented generically */
 //virtual bool groupsChanged(std::list<std::string> &groupIds) = 0;
@@ -172,15 +121,22 @@ virtual bool updated() = 0;
 //virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
 
 
-	/* Specific Service Data */
-virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
-virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
+	// ONES THAT WE ARE NOT IMPLEMENTING. (YET!)
 
-/* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
-virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
+//virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status) = 0;
+
+// THINK WE CAN GENERALISE THIS TO: a list function, and you can just count the list entries...
+// requestGroupList(groupId, UNREAD, ...)
+//virtual bool getMessageCount(const std::string &groupId, unsigned int &newCount, unsigned int &unreadCount) = 0;
+
+
+
+/* details are updated in group - to choose GroupID */
+virtual bool createGroup(RsForumV2Group &group) = 0;
+virtual bool createMsg(RsForumV2Msg &msg) = 0;
 
 };
+
 
 
 #endif

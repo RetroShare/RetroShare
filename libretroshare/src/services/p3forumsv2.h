@@ -1,5 +1,5 @@
 /*
- * libretroshare/src/services: p3wikiservice.h
+ * libretroshare/src/services: p3forumsv2.h
  *
  * Wiki interface for RetroShare.
  *
@@ -23,11 +23,12 @@
  *
  */
 
-#ifndef P3_WIKI_SERVICE_HEADER
-#define P3_WIKI_SERVICE_HEADER
+#ifndef P3_FORUMSV2_SERVICE_HEADER
+#define P3_FORUMSV2_SERVICE_HEADER
 
 #include "services/p3gxsservice.h"
-#include "retroshare/rswiki.h"
+
+#include "retroshare/rsforumsv2.h"
 
 #include <map>
 #include <string>
@@ -47,27 +48,31 @@
  *
  */
 
-class WikiDataProxy: public GxsDataProxy
+class ForumDataProxy: public GxsDataProxy
 {
-	public:
+        public:
 
-	bool getGroup(const std::string &id, RsWikiGroup &group);
-	bool getPage(const std::string &id, RsWikiPage &wiki);
+        bool getForumGroup(const std::string &id, RsForumV2Group &group);
+        bool getForumMsg(const std::string &id, RsForumV2Msg &msg);
 
-	bool addGroup(const RsWikiGroup &group);
-	bool addPage(const RsWikiPage &page);
+        bool addForumGroup(const RsForumV2Group &group);
+        bool addForumMsg(const RsForumV2Msg &msg);
 
         /* These Functions must be overloaded to complete the service */
 virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
 virtual bool convertMsgToMetaData(void *msgData, RsMsgMetaData &meta);
+
 };
 
 
-class p3WikiService: public p3GxsDataService, public RsWiki
+
+
+
+class p3ForumsV2: public p3GxsDataService, public RsForumsV2
 {
 	public:
 
-	p3WikiService(uint16_t type);
+	p3ForumsV2(uint16_t type);
 
 virtual int	tick();
 
@@ -75,6 +80,7 @@ virtual int	tick();
 
 
 virtual bool updated();
+
 
        /* Data Requests */
 virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
@@ -91,8 +97,8 @@ virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaDat
 
         /* Actual Data -> specific to Interface */
         /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group);
-virtual bool getMsgData(const uint32_t &token, RsWikiPage &page);
+virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group);
+virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg);
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token);
@@ -114,19 +120,88 @@ virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
 
-virtual bool createGroup(RsWikiGroup &group);
-virtual bool createPage(RsWikiPage &page);
+virtual bool createGroup(RsForumV2Group &group);
+virtual bool createMsg(RsForumV2Msg &msg);
+
 
 	private:
 
 std::string genRandomId();
 
-	WikiDataProxy *mWikiProxy;
+	ForumDataProxy *mForumProxy;
 
-	RsMutex mWikiMtx;
+	RsMutex mForumMtx;
+
+	/***** below here is locked *****/
 
 	bool mUpdated;
 
+
+
+
+#if 0
+
+        /* Data Requests */
+virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts);
+virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+
+virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds);
+virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds);
+
+virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
+virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds);
+
+virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group);
+virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg);
+
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token);
+
+virtual bool createGroup(RsForumV2Group &group);
+virtual bool createPage(RsForumV2Msg &msg);
+
+
+/************* Old Extern Interface *******/
+
+virtual bool updated();
+virtual bool getGroupList(std::list<std::string> &group);
+
+virtual bool getGroup(const std::string &groupid, RsWikiGroup &group);
+virtual bool getPage(const std::string &pageid, RsWikiPage &page);
+virtual bool getPageVersions(const std::string &origPageId, std::list<std::string> &pages);
+virtual bool getOrigPageList(const std::string &groupid, std::list<std::string> &pageIds);
+virtual bool getLatestPage(const std::string &origPageId, std::string &page);
+
+virtual bool createGroup(RsWikiGroup &group);
+virtual bool createPage(RsWikiPage &page);
+
+
+	private:
+
+virtual bool InternalgetGroupList(std::list<std::string> &group);
+virtual bool InternalgetGroup(const std::string &groupid, RsForumV2Group &group);
+virtual bool InternalgetPage(const std::string &pageid, RsForumV2Msg &msg);
+virtual bool InternalgetPageVersions(const std::string &origPageId, std::list<std::string> &pages);
+virtual bool InternalgetOrigPageList(const std::string &groupid, std::list<std::string> &pageIds);
+virtual bool InternalgetLatestPage(const std::string &origPageId, std::string &page);
+
+std::string genRandomId();
+
+	ForumDataProxy *mForumProxy;
+
+	RsMutex mForumMtx;
+
+	/***** below here is locked *****/
+
+	bool mUpdated;
+
+	std::map<std::string, std::list<std::string > > mGroupToOrigPages;
+	std::map<std::string, std::list<std::string > > mOrigToPageVersions;
+	std::map<std::string, std::string> mOrigPageToLatestPage;
+	std::map<std::string, RsForumV2Group> mGroups;
+	std::map<std::string, RsForumV2Msg> mPages;
+#endif
 
 };
 

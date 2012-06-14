@@ -47,26 +47,26 @@
  *
  */
 
-#if 0
-class PhotoAlbum
+
+class PhotoDataProxy: public GxsDataProxy
 {
 	public:
 
-	PhotoAlbum();
-        std::string albumid;
+	bool addAlbum(const RsPhotoAlbum &album);
+	bool addPhoto(const RsPhotoPhoto &photo);
 
-	RsPhotoAlbum mAlbum;
-	RsPhotoThumbnail mAlbumThumbnail;
+	bool getAlbum(const std::string &id, RsPhotoAlbum &album);
+	bool getPhoto(const std::string &id, RsPhotoPhoto &photo);
 
-        std::map<std::string, RsPhotoPhoto> mPhotos;
-        std::map<std::string, RsPhotoThumbnail> mNails;
+        /* These Functions must be overloaded to complete the service */
+virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
+virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
+
 };
 
-#endif
 
 
-
-class p3PhotoService: public p3GxsService, public RsPhoto
+class p3PhotoService: public p3GxsDataService, public RsPhoto
 {
 	public:
 
@@ -81,63 +81,59 @@ virtual int	tick();
 
 virtual bool updated();
 
-        /* Data Requests (from RsTokenService) */
-virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts);
-virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+       /* Data Requests */
+virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
 
-virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds);
-virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds);
+        /* Generic Lists */
+virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
+virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds);
+
+        /* Generic Summary */
+virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
+virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo);
+
+        /* Actual Data -> specific to Interface */
+        /* Specific Service Data */
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token);
 
-        /* Generic List Data */
-virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
-virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds);
+        /* Cancel Request */
+virtual bool cancelRequest(const uint32_t &token);
 
-        /* Specific Service Data */
-virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
-virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
+        //////////////////////////////////////////////////////////////////////////////
+        /* Functions from Forums -> need to be implemented generically */
+virtual bool groupsChanged(std::list<std::string> &groupIds);
+
+        // Get Message Status - is retrived via MessageSummary.
+virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
+
+        // 
+virtual bool groupSubscribe(const std::string &groupId, bool subscribe);
+
+virtual bool groupRestoreKeys(const std::string &groupId);
+virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+
 
 /* details are updated in album - to choose Album ID, and storage path */
 virtual bool submitAlbumDetails(RsPhotoAlbum &album);
 virtual bool submitPhoto(RsPhotoPhoto &photo);
 
 
-bool InternalgetAlbumList(std::list<std::string> &album);
-bool InternalgetPhotoList(const std::string &albumid, std::list<std::string> &photoIds);
-bool InternalgetAlbum(const std::string &albumid, RsPhotoAlbum &album);
-bool InternalgetPhoto(const std::string &photoid, RsPhotoPhoto &photo);
-
-#if 0
-virtual bool updated();
-virtual bool getAlbumList(std::list<std::string> &album);
-
-virtual bool getAlbum(const std::string &albumid, RsPhotoAlbum &album);
-virtual bool getPhoto(const std::string &photoid, RsPhotoPhoto &photo);
-virtual bool getPhotoList(const std::string &albumid, std::list<std::string> &photoIds);
-virtual bool getPhotoThumbnail(const std::string &photoid, RsPhotoThumbnail &thumbnail);
-virtual bool getAlbumThumbnail(const std::string &albumid, RsPhotoThumbnail &thumbnail);
-
-/* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail);
-virtual bool submitPhoto(RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail);
-#endif
 
 	private:
 
 std::string genRandomId();
 
+	PhotoDataProxy *mPhotoProxy;
+
 	RsMutex mPhotoMtx;
-
-	/***** below here is locked *****/
-
 	bool mUpdated;
 
-	std::map<std::string, std::list<std::string > > mAlbumToPhotos;
-	std::map<std::string, RsPhotoPhoto> mPhotos;
-	std::map<std::string, RsPhotoAlbum> mAlbums;
 
 };
 

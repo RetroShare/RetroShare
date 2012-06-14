@@ -51,9 +51,11 @@ class RsWikiGroup
 {
 	public:
 
-	std::string mGroupId;
+	RsGroupMetaData mMeta;
 
-	std::string mName;
+	//std::string mGroupId;
+	//std::string mName;
+
 	std::string mDescription;
 	std::string mCategory;
 
@@ -66,13 +68,17 @@ class RsWikiPage
 {
 	public:
 
+	RsMsgMetaData mMeta;
 
-	std::string mGroupId;
-	std::string mOrigPageId;
+	// IN META DATA.
+	//std::string mGroupId;
+	//std::string mOrigPageId;
+	//std::string mPageId;
+	//std::string mName;
+
+	// WE SHOULD SWITCH TO USING THREAD/PARENT IDS HERE....
 	std::string mPrevId;
-	std::string mPageId;
 
-	std::string mName;
 	std::string mPage; // all the text is stored here.
 
 	std::string mHashTags;

@@ -103,10 +103,11 @@ const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
 
  /* New Cache Services  */
+const uint16_t RS_SERVICE_TYPE_IDENTITY    = 0xf100;
 const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf101;
 const uint16_t RS_SERVICE_TYPE_WIKI        = 0xf102;
 const uint16_t RS_SERVICE_TYPE_WIRE        = 0xf103;
-const uint16_t RS_SERVICE_TYPE_IDENTITY    = 0xf103;
+const uint16_t RS_SERVICE_TYPE_FORUMSV2    = 0xf104;
 
 //const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
 //const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;

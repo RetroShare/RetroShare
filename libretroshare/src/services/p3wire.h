@@ -1,7 +1,7 @@
 /*
- * libretroshare/src/services: p3wikiservice.h
+ * libretroshare/src/services: p3wire.h
  *
- * Wiki interface for RetroShare.
+ * Wire interface for RetroShare.
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -23,39 +23,29 @@
  *
  */
 
-#ifndef P3_WIKI_SERVICE_HEADER
-#define P3_WIKI_SERVICE_HEADER
+#ifndef P3_WIRE_SERVICE_HEADER
+#define P3_WIRE_SERVICE_HEADER
 
 #include "services/p3gxsservice.h"
-#include "retroshare/rswiki.h"
+
+#include "retroshare/rswire.h"
 
 #include <map>
 #include <string>
 
 /* 
- * Wiki Service
- *
- * This is an example service for the new cache system.
- * For the moment, it will only hold data passed to it from the GUI.
- * and spew that back when asked....
- *
- * We are doing it like this - so we can check the required interface functionality.
- *
- * Expect it won't take long before it'll be properly linked into the backend!
- *
- * This will be transformed into a Plugin Service, once the basics have been worked out.
+ * Wire Service
  *
  */
-
-class WikiDataProxy: public GxsDataProxy
+class WireDataProxy: public GxsDataProxy
 {
-	public:
+        public:
 
-	bool getGroup(const std::string &id, RsWikiGroup &group);
-	bool getPage(const std::string &id, RsWikiPage &wiki);
+        bool getGroup(const std::string &id, RsWireGroup &group);
+        bool getPulse(const std::string &id, RsWirePulse &pulse);
 
-	bool addGroup(const RsWikiGroup &group);
-	bool addPage(const RsWikiPage &page);
+        bool addGroup(const RsWireGroup &group);
+        bool addPulse(const RsWirePulse &pulse);
 
         /* These Functions must be overloaded to complete the service */
 virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
@@ -63,11 +53,11 @@ virtual bool convertMsgToMetaData(void *msgData, RsMsgMetaData &meta);
 };
 
 
-class p3WikiService: public p3GxsDataService, public RsWiki
+class p3Wire: public p3GxsDataService, public RsWire
 {
 	public:
 
-	p3WikiService(uint16_t type);
+	p3Wire(uint16_t type);
 
 virtual int	tick();
 
@@ -91,8 +81,8 @@ virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaDat
 
         /* Actual Data -> specific to Interface */
         /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group);
-virtual bool getMsgData(const uint32_t &token, RsWikiPage &page);
+virtual bool getGroupData(const uint32_t &token, RsWireGroup &group);
+virtual bool getMsgData(const uint32_t &token, RsWirePulse &page);
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token);
@@ -114,19 +104,21 @@ virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
 
-virtual bool createGroup(RsWikiGroup &group);
-virtual bool createPage(RsWikiPage &page);
+virtual bool createGroup(RsWireGroup &group);
+virtual bool createPulse(RsWirePulse &pulse);
+
 
 	private:
 
 std::string genRandomId();
 
-	WikiDataProxy *mWikiProxy;
+	WireDataProxy *mWireProxy;
 
-	RsMutex mWikiMtx;
+	RsMutex mWireMtx;
+
+	/***** below here is locked *****/
 
 	bool mUpdated;
-
 
 };
 

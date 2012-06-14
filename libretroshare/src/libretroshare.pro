@@ -681,17 +681,23 @@ newservices {
 
 HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
+		services/p3gxsservice.h \
+		retroshare/rsidentity.h \
 		services/p3wikiservice.h \
 		retroshare/rswiki.h \
+		retroshare/rswire.h \
+		services/p3wire.h \
 		services/p3idservice.h \
-		retroshare/rsidentity.h \
-		services/p3gxsservice.h \
+		retroshare/rsforumsv2.h \
+		services/p3forumsv2.h \
 
 SOURCES += services/p3photoservice.cc \
 		serialiser/rsphotoitems.cc \
-		services/p3wikiservice.cc \
-		services/p3idservice.cc \
 		services/p3gxsservice.cc \
+		services/p3wikiservice.cc \
+		services/p3wire.cc \
+		services/p3idservice.cc \
+		services/p3forumsv2.cc \
 
 # Other Old Code.
 #	rsserver/p3photo.cc \

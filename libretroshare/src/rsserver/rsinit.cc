@@ -1734,7 +1734,9 @@ RsTurtle *rsTurtle = NULL ;
 
 #include "services/p3photoservice.h"
 #include "services/p3wikiservice.h"
+#include "services/p3wire.h"
 #include "services/p3idservice.h"
+#include "services/p3forumsv2.h"
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
@@ -2142,8 +2144,16 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mWikis);
 
 	// Testing New Cache Services.
+	p3Wire *mWire = new p3Wire(RS_SERVICE_TYPE_WIRE);
+	pqih -> addService(mWire);
+
+	// Testing New Cache Services.
 	p3IdService *mIdentity = new p3IdService(RS_SERVICE_TYPE_IDENTITY);
 	pqih -> addService(mIdentity);
+
+	// Testing New Cache Services.
+	//p3ForumsV2 *mForumsV2 = new p3ForumsV2(RS_SERVICE_TYPE_FORUMSV2);
+	//pqih -> addService(mForumsV2);
 
 #ifndef RS_RELEASE
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mLinkMgr);
@@ -2412,9 +2422,11 @@ int RsServer::StartupRetroShare()
 	rsChannels = mChannels;
 
 	// Testing of new cache system interfaces.
+	rsIdentity = mIdentity;
 	rsPhoto = mPhotos;
 	rsWiki = mWikis;
-	rsIdentity = mIdentity;
+	rsWire = mWire;
+	//rsForumsV2 = mForumsV2;
 
 #ifdef RS_USE_BLOGS	
 	rsBlogs = mBlogs;
