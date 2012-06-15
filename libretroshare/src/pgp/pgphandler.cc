@@ -17,6 +17,7 @@ extern "C" {
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
 #include "util/rsdir.h"		// For rsicontrol.
+#include "util/pgpkey.h"		// For rsicontrol.
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
@@ -417,6 +418,8 @@ void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& ke
 
 bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType& id,std::string& error_string)
 {
+	std::cerr << "Reading new key from string: " << std::endl;
+
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
 	ops_memory_t *mem = ops_memory_new() ;
 	ops_memory_add(mem,(unsigned char *)pgp_cert.c_str(),pgp_cert.length()) ;
@@ -436,7 +439,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	free(mem) ;
 	error_string.clear() ;
 
-	std::cerr << "Key read correctly: " << std::endl;
+	std::cerr << "  Key read correctly: " << std::endl;
 	ops_keyring_list(tmp_keyring) ;
 
 	const ops_keydata_t *keydata = NULL ;
@@ -446,12 +449,29 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	{
 		id = PGPIdType(keydata->key_id) ;
 
-		addNewKeyToOPSKeyring(_pubring,*keydata) ;
+		std::cerr << "  id: " << id.toStdString() << std::endl;
+
+		// See if the key is already in the keyring
+		const ops_keydata_t *existing_key ;
+		std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id.toStdString()) ;
+
+		if(res == _public_keyring_map.end() || (existing_key = ops_keyring_get_key_by_index(_pubring,res->second._key_index)) == NULL)
+		{
+			std::cerr << "  Key is new. Adding it to keyring" << std::endl;
+			addNewKeyToOPSKeyring(_pubring,*keydata) ; // the key is new.
+		}
+		else
+		{
+			std::cerr << "  Key exists. Merging signatures." << std::endl;
+			if(mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) )
+				_pubring_changed = true ;
+		}
+
 		initCertificateInfo(_public_keyring_map[id.toStdString()],keydata,_pubring->nkeys-1) ;
 		validateAndUpdateSignatures(_public_keyring_map[id.toStdString()],keydata) ;
 	}
 
-	std::cerr << "Added the key in the main public keyring." << std::endl;
+	std::cerr << "  Added the key in the main public keyring." << std::endl;
 	
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
@@ -655,4 +675,57 @@ bool PGPHandler::isGPGAccepted(const std::string &id)
 	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
 	return (res != _public_keyring_map.end()) && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) ;
 }
+
+// Lexicographic order on signature packets
+//
+bool operator<(const ops_packet_t& p1,const ops_packet_t& p2)
+{
+	if(p1.length < p2.length)
+		return true ;
+	if(p1.length > p2.length)
+		return false ;
+
+	for(int i=0;i<p1.length;++i)
+	{
+		if(p1.raw[i] < p2.raw[i])
+			return true ;
+		if(p1.raw[i] > p2.raw[i])
+			return false ;
+	}
+	return false ;
+}
+
+bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
+{
+	// First sort all signatures into lists to see which is new, which is not new
+
+	std::cerr << "Merging signatures for key " << PGPIdType(dst->key_id).toStdString() << std::endl;
+	std::set<ops_packet_t> dst_packets ;
+
+	for(int i=0;i<dst->npackets;++i) dst_packets.insert(dst->packets[i]) ;
+
+	std::set<ops_packet_t> to_add ;
+
+	for(int i=0;i<src->npackets;++i) 
+		if(dst_packets.find(src->packets[i]) == dst_packets.end())
+		{
+			uint8_t tag ;
+			uint32_t length ;
+
+			PGPKeyParser::read_packetHeader(src->packets[i].raw,tag,length) ;
+
+			if(tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
+				to_add.insert(src->packets[i]) ;
+			else
+				std::cerr << "  Packet with tag 0x" << std::hex << (int)(src->packets[i].raw[0]) << std::dec << " not merged, because it is not a signature." << std::endl;
+		}
+
+	for(std::set<ops_packet_t>::const_iterator it(to_add.begin());it!=to_add.end();++it)
+	{
+		std::cerr << "  Adding packet with tag 0x" << std::hex << (int)(*it).raw[0] << std::dec << std::endl;
+		ops_add_packet_to_keydata(dst,&*it) ;
+	}
+	return to_add.size() > 0 ;
+}
+
 

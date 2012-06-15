@@ -130,5 +130,6 @@ class PGPHandler
 		static ops_keyring_t *allocateOPSKeyring() ;
 		static void addNewKeyToOPSKeyring(ops_keyring_t*, const ops_keydata_t&) ;
 		static PassphraseCallback _passphrase_callback ;
+		static bool mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src) ;	// returns true if signature lists are different
 };
 

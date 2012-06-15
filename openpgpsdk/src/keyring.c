@@ -184,14 +184,7 @@ void ops_keydata_copy(ops_keydata_t *dst,const ops_keydata_t *src)
 		ops_copy_packet(dst->sigs[n].packet,src->sigs[n].packet) ;
 	}
 
-	dst->key_id[0] = src->key_id[0] ;
-	dst->key_id[1] = src->key_id[1] ;
-	dst->key_id[2] = src->key_id[2] ;
-	dst->key_id[3] = src->key_id[3] ;
-	dst->key_id[4] = src->key_id[4] ;
-	dst->key_id[5] = src->key_id[5] ;
-	dst->key_id[6] = src->key_id[6] ;
-	dst->key_id[7] = src->key_id[7] ;
+	dst->key_id = src->key_id ;
 	dst->type = src->type ;
 	dst->key = src->key ;
 	dst->fingerprint = src->fingerprint ;

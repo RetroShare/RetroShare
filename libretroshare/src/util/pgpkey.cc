@@ -9,10 +9,6 @@
 /*  #define DEBUG_PGPUTIL 1 */
 /****************************/
 
-#define PGP_PACKET_TAG_PUBLIC_KEY  6
-#define PGP_PACKET_TAG_USER_ID    13 
-#define PGP_PACKET_TAG_SIGNATURE   2 
-
 #define PGP_CRC24_INIT 0xB704CEL
 #define PGP_CRC24_POLY 0x1864CFBL
 
@@ -85,11 +81,11 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 
 			data += packet_length ;
 
-			if(packet_tag == PGP_PACKET_TAG_PUBLIC_KEY)
+			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_PUBLIC_KEY)
 				public_key = true ;
-			if(packet_tag == PGP_PACKET_TAG_USER_ID)
+			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_USER_ID)
 				user_id = true ;
-			if(packet_tag == PGP_PACKET_TAG_SIGNATURE)
+			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
 				own_signature = true ;
 
 			if(public_key && own_signature && user_id) 
