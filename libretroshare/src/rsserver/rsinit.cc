@@ -671,8 +671,9 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 		{
 			std::cerr << " * Preferred * " << std::endl;
 			userId = it->sslId;
-                        userName = it->pgpName;
+			userName = it->pgpName;
 			existingUser = true;
+			break;
 		}
 	}
 	if (!existingUser)
@@ -2079,7 +2080,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
 	ftserver = new ftServer(mPeerMgr, mLinkMgr);
-	ftserver->setP3Interface(pqih); 
+	ftserver->setP3Interface(pqih);
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
 	ftserver->SetupFtServer(&(getNotify()));

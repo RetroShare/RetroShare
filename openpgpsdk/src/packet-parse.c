@@ -2107,21 +2107,22 @@ static int parse_literal_data(ops_region_t *region,ops_parse_info_t *pinfo)
 
     while(region->length_read < region->length)
 	{
-	unsigned l=region->length-region->length_read;
+		unsigned l=region->length-region->length_read;
 
-	if(C.literal_data_body.data != NULL)
-	   free(C.literal_data_body.data) ;
+		C.literal_data_body.data = (unsigned char *)malloc(l) ;
 
-	C.literal_data_body.data = (unsigned char *)malloc(l) ;
+		if(!limited_read(C.literal_data_body.data,l,region,pinfo))
+		{
+			free(C.literal_data_body.data);
+			return 0;
+		}
 
-	if(!limited_read(C.literal_data_body.data,l,region,pinfo))
-	    return 0;
+		C.literal_data_body.length=l;
 
-	C.literal_data_body.length=l;
+		ops_parse_hash_data(pinfo,C.literal_data_body.data,l);
 
-	ops_parse_hash_data(pinfo,C.literal_data_body.data,l);
-
-	CBP(pinfo,OPS_PTAG_CT_LITERAL_DATA_BODY,&content);
+		CBP(pinfo,OPS_PTAG_CT_LITERAL_DATA_BODY,&content);
+		free(C.literal_data_body.data);
 	}
 
     return 1;
