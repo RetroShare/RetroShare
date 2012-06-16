@@ -84,14 +84,6 @@ public:
     virtual void requestMessagesOfPeer(const std::string& peerId, const RsGxsGrpId& grpId) = 0;
 
     /*!
-     * subscribes the associated service to this group. This RsNetworktExchangeService
-     * now regularly polls all peers for new messages of this group
-     * @param grpId the id of the group to subscribe to
-     * @param subscribe set to true to subscribe or false to unsubscribe
-     */
-    virtual void subscribeToGroup(const std::string& grpId, bool subscribe) = 0;
-
-    /*!
      * Initiates a search through the network
      * This returns messages which contains the search terms set in RsGxsSearch
      * @param search contains search terms of requested from service
@@ -102,7 +94,7 @@ public:
 
     /*!
      * Initiates a search of groups through the network which goes
-     * a given number of hosp deep into your friend's network
+     * a given number of hops deep into your friend network
      * @param search contains search term requested from service
      * @param hops number of hops deep into peer network
      * @return search token that can be redeemed later

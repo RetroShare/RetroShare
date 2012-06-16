@@ -37,9 +37,7 @@ void RsGxsNetService::recvNxsItemQueue(){
 
                     // accumulate
                     if(handleTransaction(ni))
-                            delete ni ;
-
-                    continue ;	// don't delete! It's handled by handleRecvChatMsgItem in some specific cases only.
+                            continue ;
                 }
 
 
@@ -84,7 +82,6 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item){
 	bool transExists = false;
 	NxsTransaction* tr = NULL;
 	uint32_t transN = item->transactionNumber;
-	bool complete = false;
 
 	if(peerTransExists)
 	{
@@ -132,10 +129,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		TransactionIdMap& transMap = mTransactions[peer];
 
 		if(transExists)
-		{
-			delete transMap[transN];
-			transMap.erase(transN);
-		}
+			return false;
 
 		// create new transaction
 		tr = new NxsTransaction();
@@ -148,11 +142,10 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 
 	}else if(item->transactFlag & RsNxsTransac::FLAG_BEGIN_P2){
 
-		// transaction must already exist
-		if(!peerTrExists || !transExists){
-			delete item;
+		// transaction does not exist
+		if(!peerTrExists || !transExists)
 			return false;
-		}
+
 
 		// this means you need to start a transaction
 		TransactionIdMap& transMap = mTransactions[mOwnId];
@@ -161,9 +154,8 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 
 	}else if(item->transactFlag & RsNxsTransac::FLAG_END_SUCCESS){
 
-		// transaction must already exist
+		// transaction does not exist
 		if(!peerTrExists || !transExists){
-			delete item;
 			return false;
 		}
 
@@ -171,22 +163,10 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		TransactionIdMap& transMap = mTransactions[mOwnId];
 		NxsTransaction* tr = transMap[transN];
 		tr->mFlag = NxsTransaction::FLAG_STATE_COMPLETED;
-	}else{  // any other flag indicates a failure
 
-		// transaction must already exist
-		if(!peerTrExists || !transExists){
-			delete item;
-			return false;
-		}
-
-		// this means you need to start a transaction
-		TransactionIdMap& transMap = mTransactions[mOwnId];
-		NxsTransaction* tr = transMap[transN];
-		tr->mFlag = NxsTransaction::FLAG_STATE_FAILED;
 	}
 
-	return true;
-
+	return false;
 }
 
 void RsGxsNetService::run(){
@@ -374,14 +354,14 @@ void RsGxsNetService::processCompletedTransactions()
 			std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 			std::list<RsNxsGrp*> grps;
 
-			for(; lit != tr->mItems.end(); lit++)
+			while(tr->mItems.size() != 0)
 			{
+				RsNxsGrp* grp = dynamic_cast<RsNxsGrp*>(tr->mItems.front());
 
-				RsNxsGrp* grp = dynamic_cast<RsNxsGrp*>(*lit);
-
-				if(grp){
-					grps.push_back(grp);
-				}else{
+				if(grp)
+					tr->mItems.pop_front();
+				else
+				{
 #ifdef NXS_NET_DEBUG
 					std::cerr << "RsGxsNetService::processCompletedTransactions(): item did not caste to grp"
 							  << std::endl;
@@ -399,26 +379,25 @@ void RsGxsNetService::processCompletedTransactions()
 			std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 			std::list<RsNxsMsg*> msgs;
 
-			for(; lit != tr->mItems.end(); lit++)
+			while(tr->mItems.size() > 0)
 			{
-				RsNxsMsg* msg = dynamic_cast<RsNxsMsg*>(*lit);
-
-				if(msg){
-					msgs.push_back(msg);
-				}else{
+				RsNxsMsg* msg = dynamic_cast<RsNxsMsg*>(tr->mItems.front());
+				if(msg)
+				{
+					tr->mItems.pop_front();
+				}else
+				{
 #ifdef NXS_NET_DEBUG
 					std::cerr << "RsGxsNetService::processCompletedTransactions(): item did not caste to msg"
 							  << std::endl;
 #endif
 				}
-
 			}
 
 			// notify listener of msgs
 			notifyListenerMsgs(msgs);
 		}
 
-		tr->mItems.clear();
 		delete tr;
 		mComplTransactions.pop_front();
 	}
@@ -607,11 +586,6 @@ void RsGxsNetService::pauseSynchronisation(bool enabled)
 
 }
 
-void RsGxsNetService::subscribeToGroup(const std::string& grpId, bool subscribe)
-{
-
-}
-
 void RsGxsNetService::setSyncAge(uint32_t age)
 {
 
@@ -620,11 +594,20 @@ void RsGxsNetService::setSyncAge(uint32_t age)
 /** NxsTransaction definition **/
 
 NxsTransaction::NxsTransaction()
-    :mTransaction(NULL), mFlag(0), mTimestamp(0) {
+    : mFlag(0), mTimestamp(0), mTransaction(NULL) {
 
 }
 
 NxsTransaction::~NxsTransaction(){
 
+	std::list<RsNxsItem*>::iterator lit = mItems.begin();
+
+	for(; lit != mItems.end(); lit++)
+	{
+		delete *lit;
+		*lit = NULL;
+	}
+
 	delete mTransaction;
+	mTransaction = NULL;
 }

@@ -17,6 +17,7 @@
  * This represents a transaction made
  * with the NxsNetService in all states
  * of operation until completion
+ *
  */
 class NxsTransaction
 {
@@ -71,7 +72,7 @@ typedef std::map<std::string, TransactionIdMap > TransactionsPeerMap;
 
 
 /*!
- *
+ * Resource use,
  *
  */
 class RsGxsNetService : public RsNetworkExchangeService, public RsThread,
@@ -111,14 +112,6 @@ public:
      * @param grpId id of group to request messages for
      */
     void requestMessagesOfPeer(const std::string& peerId, const RsGxsGrpId& grpId){ return; }
-
-    /*!
-     * subscribes the associated service to this group. This RsNetworktExchangeService
-     * now regularly polls all peers for new messages of this group
-     * @param grpId the id of the group to subscribe to
-     * @param subscribe set to true to subscribe or false to unsubscribe
-     */
-    void subscribeToGroup(const std::string& grpId, bool subscribe);
 
     /*!
      * Initiates a search through the network
