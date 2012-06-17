@@ -336,14 +336,14 @@ TransfersDialog::TransfersDialog(QWidget *parent)
    resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
    connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
+//#ifdef USE_NEW_CHUNK_CHECKING_CODE
 	// *********WARNING**********
 	// csoler: this has been suspended because it needs the file transfer to consider a file as complete only if all chunks are
 	// 			verified by hash. As users are goign to slowly switch to new checking code, this will not be readily available.
 	//
    forceCheckAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Force Check" ), this );
    connect( forceCheckAct , SIGNAL( triggered() ), this, SLOT( forceCheck() ) );
-#endif
+//#endif
 
    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
@@ -565,9 +565,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 
 		if(info.downloadStatus != FT_STATE_COMPLETE)
 		{
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
+//#ifdef USE_NEW_CHUNK_CHECKING_CODE
 			contextMnu.addAction( forceCheckAct);
-#endif
+//#endif
 			contextMnu.addAction( cancelAct);
 		}
 
@@ -1027,9 +1027,7 @@ void TransfersDialog::insertTransfers()
 			// transmit the completion info.
 			//
 			uint32_t chunk_size = 1024*1024 ;
-			uint32_t nb_chunks = (uint32_t)(info.size / (uint64_t)(chunk_size) ) ;
-			if((info.size % (uint64_t)chunk_size) != 0)
-				++nb_chunks ;
+			uint32_t nb_chunks = (uint32_t)((info.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size)) ;
 
 			uint32_t filled_chunks = pinfo.cmap.filledChunks(nb_chunks) ;
 			pinfo.type = FileProgressInfo::UPLOAD_LINE ;
@@ -1037,8 +1035,8 @@ void TransfersDialog::insertTransfers()
 
 			if(filled_chunks > 0 && nb_chunks > 0) 
 			{
-				pinfo.progress = filled_chunks*100.0/nb_chunks ;
-				completed = std::min(info.size,((uint64_t)filled_chunks)*chunk_size) ;	// we use min, because the last chunk might be smaller than chunk_size.
+				completed = pinfo.cmap.computeProgress(info.size,chunk_size) ;
+				pinfo.progress = completed / (float)info.size * 100.0f ;
 			} 
 			else 
 			{

@@ -355,12 +355,25 @@ class CompressedChunkMap
 
 		static uint32_t getCompressedSize(uint32_t size) { return (size>>5) + !!(size&31) ; }
 
-		uint32_t filledChunks(uint32_t nbchks)
+		uint32_t filledChunks(uint32_t nbchks) const
 		{
 			uint32_t res = 0 ;
 			for(uint32_t i=0;i<std::min(nbchks,(uint32_t)_map.size()*32);++i)
 				res += operator[](i) ;
 			return res ;
+		}
+		uint64_t computeProgress(uint64_t total_size,uint32_t chunk_size) const
+		{
+			if(total_size == 0)
+				return 0 ;
+
+			uint32_t nbchks = (uint32_t)((total_size + (uint64_t)chunk_size - 1) / (uint64_t)chunk_size) ;
+			uint32_t residue = total_size%chunk_size ;
+
+			if(residue && operator[](nbchks-1))
+				return (filledChunks(nbchks)-1)*chunk_size + (total_size%chunk_size) ;
+			else
+				return filledChunks(nbchks)*chunk_size ;
 		}
 		inline bool operator[](uint32_t i) const { return (_map[i >> 5] & (1 << (i & 31))) > 0 ; }
 
