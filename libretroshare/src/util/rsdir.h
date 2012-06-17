@@ -39,8 +39,7 @@ class RsThread;
 #ifndef WINDOWS_SYS
 typedef int rs_lock_handle_t;
 #else
-#include "rswin.h"
-typedef HANDLE rs_lock_handle_t;
+typedef /*HANDLE*/ void *rs_lock_handle_t;
 #endif
 
 // This is a scope guard on a given file. Works like a mutex. Is blocking.
