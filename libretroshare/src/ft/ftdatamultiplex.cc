@@ -899,7 +899,7 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const
 	std::cerr << "Computing Sha1 for chunk " << chunk_number<< " of file " << filename << ", hash=" << hash << ", size=" << filesize << std::endl;
 
 	unsigned char *buf = new unsigned char[ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE] ;
-	FILE *fd = fopen(filename.c_str(),"r") ;
+	FILE *fd = fopen(filename.c_str(),"rb") ;
 
 	if(fd == NULL)
 	{
