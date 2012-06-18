@@ -562,7 +562,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 
 		if(info.downloadStatus != FT_STATE_COMPLETE)
 		{
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
 			contextMnu.addAction( forceCheckAct);
+#endif
 			contextMnu.addAction( cancelAct);
 		}
 
