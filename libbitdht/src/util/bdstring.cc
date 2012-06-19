@@ -25,7 +25,7 @@
 #include <windows.h>
 #else
 #include <stdarg.h>
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 #include <stdio.h>
 
