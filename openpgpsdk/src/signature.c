@@ -311,7 +311,7 @@ static ops_boolean_t rsa_verify(ops_hash_algorithm_t type,
 
 		default: 
 									 fprintf(stderr,"Warning: unhandled hash type in signature verification code: %d\n",type) ;
-									 assert(0); break;
+									 return ops_false ;
 	}
 
 	if(keysize-plen-hash_length < 10)
@@ -415,35 +415,37 @@ static void hash_add_trailer(ops_hash_t *hash, const ops_signature_t *sig,
 ops_boolean_t ops_check_signature(const unsigned char *hash, unsigned length,
 				     const ops_signature_t *sig,
 				     const ops_public_key_t *signer)
-    {
-    ops_boolean_t ret;
+{
+	ops_boolean_t ret;
 
-    /*
-    printf(" hash=");
-    //    hashout[0]=0;
-    hexdump(hash,length);
-    */
+	/*
+		printf(" hash=");
+	//    hashout[0]=0;
+	hexdump(hash,length);
+	 */
 
-    switch(sig->info.key_algorithm)
+	switch(sig->info.key_algorithm)
 	{
-    case OPS_PKA_DSA:
-	ret=ops_dsa_verify(hash, length, &sig->info.signature.dsa,
-			   &signer->key.dsa);
-/*		fprintf(stderr,"Cannot verify DSA signature. skipping.\n") ;
-		 ret = ops_false ; */
-	break;
+		case OPS_PKA_DSA:
+			ret=ops_dsa_verify(hash, length, &sig->info.signature.dsa,
+					&signer->key.dsa);
+			/*		fprintf(stderr,"Cannot verify DSA signature. skipping.\n") ;
+					ret = ops_false ; */
+			break;
 
-    case OPS_PKA_RSA:
-	ret=rsa_verify(sig->info.hash_algorithm, hash, length,
-		       &sig->info.signature.rsa, &signer->key.rsa);
-	break;
+		case OPS_PKA_RSA:
+			ret=rsa_verify(sig->info.hash_algorithm, hash, length,
+					&sig->info.signature.rsa, &signer->key.rsa);
+			break;
 
-    default:
-	assert(0);
+		default:
+			fprintf(stderr,"Cannot verify signature. Unknown key signing algorithm %d. skipping.\n",sig->info.key_algorithm) ;
+			ret = ops_false ;
+
 	}
 
-    return ret;
-    }
+	return ret;
+}
 
 static ops_boolean_t hash_and_check_signature(ops_hash_t *hash,
 					      const ops_signature_t *sig,
@@ -770,87 +772,87 @@ ops_boolean_t ops_write_signature(ops_create_signature_t *sig,
 				  const ops_public_key_t *key,
 				  const ops_secret_key_t *skey,
 				  ops_create_info_t *info)
-    {
-    ops_boolean_t rtn=ops_false;
-    size_t l=ops_memory_get_length(sig->mem);
+{
+	ops_boolean_t rtn=ops_false;
+	size_t l=ops_memory_get_length(sig->mem);
 
-    // check key not decrypted
-    switch (skey->public_key.algorithm)
-        {
-    case OPS_PKA_RSA:
-    case OPS_PKA_RSA_ENCRYPT_ONLY:
-    case OPS_PKA_RSA_SIGN_ONLY:
-        assert(skey->key.rsa.d);
-        break;
+	// check key not decrypted
+	switch (skey->public_key.algorithm)
+	{
+		case OPS_PKA_RSA:
+		case OPS_PKA_RSA_ENCRYPT_ONLY:
+		case OPS_PKA_RSA_SIGN_ONLY:
+			assert(skey->key.rsa.d);
+			break;
 
-    case OPS_PKA_DSA:
-        assert(skey->key.dsa.x);
-        break;
+		case OPS_PKA_DSA:
+			assert(skey->key.dsa.x);
+			break;
 
-    default:
-        fprintf(stderr, "Unsupported algorithm %d\n",
-		skey->public_key.algorithm);
-        assert(0);
-        }
+		default:
+			fprintf(stderr, "Unsupported algorithm %d\n",
+					skey->public_key.algorithm);
+			assert(0);
+	}
 
-    assert(sig->hashed_data_length != (unsigned)-1);
+	assert(sig->hashed_data_length != (unsigned)-1);
 
-    ops_memory_place_int(sig->mem, sig->unhashed_count_offset,
-			 l-sig->unhashed_count_offset-2, 2);
+	ops_memory_place_int(sig->mem, sig->unhashed_count_offset,
+			l-sig->unhashed_count_offset-2, 2);
 
-    // add the packet from version number to end of hashed subpackets
+	// add the packet from version number to end of hashed subpackets
 
-    if (debug)
-        { fprintf(stderr, "--- Adding packet to hash from version number to"
-		  " hashed subpkts\n"); }
+	if (debug)
+	{ fprintf(stderr, "--- Adding packet to hash from version number to"
+			" hashed subpkts\n"); }
 
-    sig->hash.add(&sig->hash, ops_memory_get_data(sig->mem),
-		  sig->unhashed_count_offset);
+	sig->hash.add(&sig->hash, ops_memory_get_data(sig->mem),
+			sig->unhashed_count_offset);
 
-    // add final trailer
-    ops_hash_add_int(&sig->hash, sig->sig.info.version, 1);
-    ops_hash_add_int(&sig->hash, 0xff, 1);
-    // +6 for version, type, pk alg, hash alg, hashed subpacket length
-    ops_hash_add_int(&sig->hash, sig->hashed_data_length+6, 4);
+	// add final trailer
+	ops_hash_add_int(&sig->hash, sig->sig.info.version, 1);
+	ops_hash_add_int(&sig->hash, 0xff, 1);
+	// +6 for version, type, pk alg, hash alg, hashed subpacket length
+	ops_hash_add_int(&sig->hash, sig->hashed_data_length+6, 4);
 
-    if (debug)
-        { fprintf(stderr, "--- Finished adding packet to hash from version"
-		  " number to hashed subpkts\n"); }
+	if (debug)
+	{ fprintf(stderr, "--- Finished adding packet to hash from version"
+			" number to hashed subpkts\n"); }
 
-    // XXX: technically, we could figure out how big the signature is
-    // and write it directly to the output instead of via memory.
-    switch(skey->public_key.algorithm)
-        {
-    case OPS_PKA_RSA:
-    case OPS_PKA_RSA_ENCRYPT_ONLY:
-    case OPS_PKA_RSA_SIGN_ONLY:
-        rsa_sign(&sig->hash, &key->key.rsa, &skey->key.rsa, sig->info);
-        break;
+	// XXX: technically, we could figure out how big the signature is
+	// and write it directly to the output instead of via memory.
+	switch(skey->public_key.algorithm)
+	{
+		case OPS_PKA_RSA:
+		case OPS_PKA_RSA_ENCRYPT_ONLY:
+		case OPS_PKA_RSA_SIGN_ONLY:
+			rsa_sign(&sig->hash, &key->key.rsa, &skey->key.rsa, sig->info);
+			break;
 
-    case OPS_PKA_DSA:
-        dsa_sign(&sig->hash, &key->key.dsa, &skey->key.dsa, sig->info);
-        break;
+		case OPS_PKA_DSA:
+			dsa_sign(&sig->hash, &key->key.dsa, &skey->key.dsa, sig->info);
+			break;
 
-    default:
-        fprintf(stderr, "Unsupported algorithm %d\n",
-		skey->public_key.algorithm);
-        assert(0);
-        }
+		default:
+			fprintf(stderr, "Unsupported algorithm %d\n",
+					skey->public_key.algorithm);
+			assert(0);
+	}
 
-    rtn=ops_write_ptag(OPS_PTAG_CT_SIGNATURE, info);
-    if (rtn)
-        {
-        l=ops_memory_get_length(sig->mem);
-        rtn = ops_write_length(l, info)
-            && ops_write(ops_memory_get_data(sig->mem), l, info);
-        }
+	rtn=ops_write_ptag(OPS_PTAG_CT_SIGNATURE, info);
+	if (rtn)
+	{
+		l=ops_memory_get_length(sig->mem);
+		rtn = ops_write_length(l, info)
+			&& ops_write(ops_memory_get_data(sig->mem), l, info);
+	}
 
-    ops_memory_free(sig->mem);
+	ops_memory_free(sig->mem);
 
-    if (!rtn)
-        OPS_ERROR(&info->errors, OPS_E_W, "Cannot write signature");
-    return rtn;
-    }
+	if (!rtn)
+		OPS_ERROR(&info->errors, OPS_E_W, "Cannot write signature");
+	return rtn;
+}
 
 /**
  * \ingroup Core_Signature
