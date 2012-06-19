@@ -81,16 +81,30 @@ void ops_create_signature_delete(ops_create_signature_t *sig)
     }
 
 static unsigned char prefix_md5[]={ 0x30,0x20,0x30,0x0C,0x06,0x08,0x2A,0x86,
-				    0x48,0x86,0xF7,0x0D,0x02,0x05,0x05,0x00,
-				    0x04,0x10 };
+												0x48,0x86,0xF7,0x0D,0x02,0x05,0x05,0x00,
+												0x04,0x10 };
 
 static unsigned char prefix_sha1[]={ 0x30,0x21,0x30,0x09,0x06,0x05,0x2b,0x0E,
-				     0x03,0x02,0x1A,0x05,0x00,0x04,0x14 };
+											    0x03,0x02,0x1A,0x05,0x00,0x04,0x14 };
+
+static unsigned char prefix_sha224[]={ 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
+							                  0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x05,
+													0x00, 0x04, 0x1C };
 
 static unsigned char prefix_sha256[]={ 0x30,0x31,0x30,0x0d,0x06,0x09,0x60,0x86,
                                        0x48,0x01,0x65,0x03,0x04,0x02,0x01,0x05,
                                        0x00,0x04,0x20 };
 
+static unsigned char prefix_sha384[]={ 0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
+							                  0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05,
+													0x00, 0x04, 0x30 };
+
+static unsigned char prefix_sha512[]={ 0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
+							                  0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05,
+													0x00, 0x04, 0x40 };
+
+static unsigned char prefix_ripemd[]={ 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x24,
+							                  0x03, 0x02, 0x01, 0x05, 0x00, 0x04, 0x14 };
 /**
    \ingroup Core_Create
    implementation of EMSA-PKCS1-v1_5, as defined in OpenPGP RFC
@@ -259,81 +273,88 @@ static ops_boolean_t rsa_verify(ops_hash_algorithm_t type,
 				const unsigned char *hash, size_t hash_length,
 				const ops_rsa_signature_t *sig,
 				const ops_rsa_public_key_t *rsa)
-    {
-    unsigned char sigbuf[8192];
-    unsigned char hashbuf_from_sig[8192];
-    unsigned n;
-    unsigned keysize;
-    unsigned char *prefix;
-    int plen;
+{
+	unsigned char sigbuf[8192];
+	unsigned char hashbuf_from_sig[8192];
+	unsigned n;
+	unsigned keysize;
+	unsigned char *prefix;
+	int plen;
 
-    keysize=BN_num_bytes(rsa->n);
-    /* RSA key can't be bigger than 65535 bits, so... */
-    assert(keysize <= sizeof hashbuf_from_sig);
-    assert((unsigned)BN_num_bits(sig->sig) <= 8*sizeof sigbuf);
-    BN_bn2bin(sig->sig, sigbuf);
+	keysize=BN_num_bytes(rsa->n);
+	/* RSA key can't be bigger than 65535 bits, so... */
+	assert(keysize <= sizeof hashbuf_from_sig);
+	assert((unsigned)BN_num_bits(sig->sig) <= 8*sizeof sigbuf);
+	BN_bn2bin(sig->sig, sigbuf);
 
-    n=ops_rsa_public_decrypt(hashbuf_from_sig, sigbuf, BN_num_bytes(sig->sig),
-			     rsa);
-    int debug_len_decrypted=n;
+	n=ops_rsa_public_decrypt(hashbuf_from_sig, sigbuf, BN_num_bytes(sig->sig),
+			rsa);
+	int debug_len_decrypted=n;
 
-    if(n != keysize) // obviously, this includes error returns
-	return ops_false;
+	if(n != keysize) // obviously, this includes error returns
+		return ops_false;
 
-    // XXX: why is there a leading 0? The first byte should be 1...
-    // XXX: because the decrypt should use keysize and not sigsize?
-    if(hashbuf_from_sig[0] != 0 || hashbuf_from_sig[1] != 1)
-	return ops_false;
+	// XXX: why is there a leading 0? The first byte should be 1...
+	// XXX: because the decrypt should use keysize and not sigsize?
+	if(hashbuf_from_sig[0] != 0 || hashbuf_from_sig[1] != 1)
+		return ops_false;
 
-    switch(type)
+	switch(type)
 	{
-    case OPS_HASH_MD5: prefix=prefix_md5; plen=sizeof prefix_md5; break;
-    case OPS_HASH_SHA1: prefix=prefix_sha1; plen=sizeof prefix_sha1; break;
-    case OPS_HASH_SHA256: prefix=prefix_sha256; plen=sizeof prefix_sha256; break;
-    default: assert(0); break;
+		case OPS_HASH_MD5		: prefix=prefix_md5		; plen=sizeof prefix_md5; break;
+		case OPS_HASH_SHA1	: prefix=prefix_sha1		; plen=sizeof prefix_sha1; break;
+		case OPS_HASH_SHA224 : prefix=prefix_sha224	; plen=sizeof prefix_sha224; break;
+		case OPS_HASH_SHA256 : prefix=prefix_sha256	; plen=sizeof prefix_sha256; break;
+		case OPS_HASH_SHA384 : prefix=prefix_sha384	; plen=sizeof prefix_sha384; break;
+		case OPS_HASH_SHA512 : prefix=prefix_sha512	; plen=sizeof prefix_sha512; break;
+		case OPS_HASH_RIPEMD : prefix=prefix_ripemd	; plen=sizeof prefix_ripemd; break;
+
+		default: 
+									 fprintf(stderr,"Warning: unhandled hash type in signature verification code: %d\n",type) ;
+									 assert(0); break;
 	}
 
-    if(keysize-plen-hash_length < 10)
-	return ops_false;
+	if(keysize-plen-hash_length < 10)
+		return ops_false;
 
-    for(n=2 ; n < keysize-plen-hash_length-1 ; ++n)
-	if(hashbuf_from_sig[n] != 0xff)
-	    return ops_false;
+	for(n=2 ; n < keysize-plen-hash_length-1 ; ++n)
+		if(hashbuf_from_sig[n] != 0xff)
+			return ops_false;
 
-    if(hashbuf_from_sig[n++] != 0)
-	return ops_false;
+	if(hashbuf_from_sig[n++] != 0)
+		return ops_false;
 
-    if (debug)
-        {
-        int zz;
+	if (debug)
+	{
+		int zz;
 
-        printf("\n");
-        printf("hashbuf_from_sig\n");
-        for (zz=0; zz<debug_len_decrypted; zz++)
-            printf("%02x ", hashbuf_from_sig[n+zz]);
-        printf("\n");
-        printf("prefix\n");
-        for (zz=0; zz<plen; zz++)
-            printf("%02x ", prefix[zz]);
-        printf("\n");
+		printf("\n");
+		printf("hashbuf_from_sig\n");
+		for (zz=0; zz<debug_len_decrypted; zz++)
+			printf("%02x ", hashbuf_from_sig[n+zz]);
+		printf("\n");
+		printf("prefix\n");
+		for (zz=0; zz<plen; zz++)
+			printf("%02x ", prefix[zz]);
+		printf("\n");
 
-        printf("\n");
-        printf("hash from sig\n");
-        unsigned uu;
-        for (uu=0; uu<hash_length; uu++)
-            printf("%02x ", hashbuf_from_sig[n+plen+uu]);
-        printf("\n");
-        printf("hash passed in (should match hash from sig)\n");
-        for (uu=0; uu<hash_length; uu++)
-            printf("%02x ", hash[uu]);
-        printf("\n");
-        }
-    if(memcmp(&hashbuf_from_sig[n], prefix, plen)
-       || memcmp(&hashbuf_from_sig[n+plen], hash, hash_length))
-	return ops_false;
+		printf("\n");
+		printf("hash from sig\n");
+		unsigned uu;
+		for (uu=0; uu<hash_length; uu++)
+			printf("%02x ", hashbuf_from_sig[n+plen+uu]);
+		printf("\n");
+		printf("hash passed in (should match hash from sig)\n");
+		for (uu=0; uu<hash_length; uu++)
+			printf("%02x ", hash[uu]);
+		printf("\n");
+	}
+	if(memcmp(&hashbuf_from_sig[n], prefix, plen)
+			|| memcmp(&hashbuf_from_sig[n+plen], hash, hash_length))
+		return ops_false;
 
-    return ops_true;
-    }
+	return ops_true;
+}
 
 static void hash_add_key(ops_hash_t *hash, const ops_public_key_t *key)
     {
