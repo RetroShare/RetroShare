@@ -27,6 +27,8 @@
  * #define FT_DEBUG 1
  *****/
 
+#define USE_NEW_CHUNK_CHECKING_CODE
+
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
 
@@ -636,6 +638,8 @@ void ftTransferModule::forceCheck()
 	_crcmap_last_asked_time = 0 ;
 #else
 	mFileCreator->forceCheck() ;
+	mFlag = FT_TM_FLAG_DOWNLOADING ;	// Ask for CRC map.
+	mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 #endif
 }
 
@@ -777,7 +781,8 @@ bool ftTransferModule::checkCRC()
 				{
 					// We do as if the file is not complete. This way, it finishes properly.
 					//
-					mFlag = FT_TM_FLAG_COMPLETE ;	// Transfer is complete.
+					//mFlag = FT_TM_FLAG_COMPLETE ;	// Transfer is complete.
+					mFlag = FT_TM_FLAG_DOWNLOADING ;
 					mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 #ifdef FT_DEBUG
 					std::cerr << "ftTransferModule::checkCRC(): Done. CRC check is ok, file is complete." << std::endl ;

@@ -649,9 +649,14 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 	pinfo.progress = (fileInfo.size == 0) ? 0 : (completed * 100.0 / fileInfo.size);
 	pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
 
-	for (uint32_t i = 0; i < fcinfo.active_chunks.size(); ++i) {
-		pinfo.chunks_in_progress.push_back(fcinfo.active_chunks[i].first);
-	}
+	for (uint32_t i = 0; i < fcinfo.chunks.size(); ++i) 
+		switch(fcinfo.chunks[i])
+		{
+			case FileChunksInfo::CHUNK_CHECKING: pinfo.chunks_in_checking.push_back(i);
+															 break ;
+			case FileChunksInfo::CHUNK_ACTIVE: 	 pinfo.chunks_in_progress.push_back(i);
+															 break ;
+		}
 
 	QString tooltip;
 

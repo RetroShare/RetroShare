@@ -27,6 +27,8 @@
  * #define DEBUG_FTCHUNK 1
  *********/
 
+#define USE_NEW_CHUNK_CHECKING_CODE
+
 #ifdef DEBUG_FTCHUNK
 #include <assert.h>
 #endif
@@ -152,7 +154,14 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 		std::cerr << "*** ChunkMap::dataReceived: Chunk is complete. Removing it." << std::endl ;
 #endif
 
-		_map[n] = FileChunksInfo::CHUNK_CHECKING ;
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
+		// In this case (cache files, mainly) we rely on the final hash-checking only.
+		//
+		if(_assume_availability)
+			_map[n] = FileChunksInfo::CHUNK_DONE ;
+		else
+#endif
+			_map[n] = FileChunksInfo::CHUNK_CHECKING ;
 
 		if(n > 0 || _file_size > CHUNKMAP_FIXED_CHUNK_SIZE)	// dont' put <1MB files into checking mode. This is useless.
 			_chunks_checking_queue.push_back(n) ;
@@ -616,6 +625,13 @@ void ChunkMap::getAvailabilityMap(CompressedChunkMap& compressed_map) const
 
 void ChunkMap::forceCheck()
 {
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
+	// In this case (cache files, mainly) we rely on the final hash-checking only.
+	//
+	if(_assume_availability)
+		return ;
+#endif
+
 	for(uint32_t i=0;i<_map.size();++i)
 	{
 		_map[i] = FileChunksInfo::CHUNK_CHECKING ;

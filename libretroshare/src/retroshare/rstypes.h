@@ -34,6 +34,8 @@
 #include <string>
 #include <stdint.h>
 
+#define USE_NEW_CHUNK_CHECKING_CODE
+
 typedef std::string   RsCertId;
 typedef std::string   RsChanId;
 typedef std::string   RsMsgId;

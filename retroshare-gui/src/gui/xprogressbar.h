@@ -47,6 +47,7 @@ class FileProgressInfo
 		uint32_t nb_chunks ;
 
 		std::vector<uint32_t> chunks_in_progress ;
+		std::vector<uint32_t> chunks_in_checking ;
 
 		bool operator<(const FileProgressInfo &other) const;
 		bool operator>(const FileProgressInfo &other) const;
