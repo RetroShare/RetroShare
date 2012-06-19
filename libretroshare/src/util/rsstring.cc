@@ -26,7 +26,7 @@
 #else
 #include <vector>
 #include <stdarg.h>
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 #include <stdio.h>
 
