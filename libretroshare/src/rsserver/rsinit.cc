@@ -616,7 +616,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
-	AuthGPG::init(pgp_dir + "/retroshare_public_keyring.gpg",pgp_dir + "/retroshare_secret_keyring.gpg",pgp_dir + "/lock");
+	AuthGPG::init(	pgp_dir + "/retroshare_public_keyring.gpg",
+						pgp_dir + "/retroshare_secret_keyring.gpg",
+						pgp_dir + "/retroshare_trustdb.gpg",
+						pgp_dir + "/lock");
 
 	/* Initialize AuthGPG */
 	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {

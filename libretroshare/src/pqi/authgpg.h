@@ -109,7 +109,11 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 {
 	public:
 
-		static void init(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& pgp_lock_file);
+		static void init(	const std::string& path_to_pubring, 
+								const std::string& path_to_secring,
+								const std::string& path_to_trustdb,
+								const std::string& pgp_lock_file);
+
 		static void exit();
 		static AuthGPG *getAuthGPG() { return _instance ; }
 
@@ -221,7 +225,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool addService(AuthGPGService *service) ;
 
 	protected:
-		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& pgp_lock_file);
+		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
 		virtual ~AuthGPG();
 
 		/*****************************************************************/

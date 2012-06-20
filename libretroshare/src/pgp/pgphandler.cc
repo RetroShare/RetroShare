@@ -69,11 +69,12 @@ void PGPHandler::setPassphraseCallback(PassphraseCallback cb)
 	_passphrase_callback = cb ;
 }
 
-PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,const std::string& pgp_lock_filename)
-	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring),_pgp_lock_filename(pgp_lock_filename)
+PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,const std::string& trustdb,const std::string& pgp_lock_filename)
+	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring),_trustdb_path(trustdb),_pgp_lock_filename(pgp_lock_filename)
 {
 	_pubring_changed = false ;
 	_secring_changed = false ;
+	_trustdb_changed = false ;
 
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
@@ -144,6 +145,8 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 	}
 
 	std::cerr << "Secring read successfully." << std::endl;
+
+	locked_readPrivateTrustDatabase() ;
 }
 
 void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t index)
@@ -728,4 +731,97 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 	return to_add.size() > 0 ;
 }
 
+void PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
+{
+	if(trustlvl < 0 || trustlvl > 6)
+	{
+		std::cerr << "Invalid trust level " << trustlvl << " passed to privateTrustCertificate." << std::endl;
+		return  ;
+	}
+
+	std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.find(id.toStdString());
+
+	if(it == _public_keyring_map.end())
+	{
+		std::cerr << "(EE) Key id " << id.toStdString() << " not in the keyring. Can't setup trust level." << std::endl;
+		return  ;
+	}
+
+	if( it->second._validLvl != trustlvl )
+		_trustdb_changed = true ;
+
+	it->second._validLvl = trustlvl ;
+}
+
+struct PrivateTrustPacket
+{
+	unsigned char user_id[KEY_ID_SIZE] ;  	// pgp id in unsigned char format.
+	uint8_t trust_level ;						// trust level. From 0 to 6.
+	uint32_t flags ;								// not used yet, but who knows?
+};
+
+void PGPHandler::locked_readPrivateTrustDatabase()
+{
+	FILE *fdb = fopen(_trustdb_path.c_str(),"rb") ;
+	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
+
+	if(fdb == NULL)
+	{
+		std::cerr << "  private trust database not found. No trust info loaded." << std::endl ;
+		return ;
+	}
+	std::map<std::string,PGPCertificateInfo>::iterator it ;
+	PrivateTrustPacket trustpacket;
+
+	while(fread((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) == 1)
+	{
+		it = _public_keyring_map.find(PGPIdType(trustpacket.user_id).toStdString()) ;
+
+		if(it == _public_keyring_map.end())
+		{
+			std::cerr << "  (WW) Trust packet found for unknown key id " << PGPIdType(trustpacket.user_id).toStdString() << std::endl;
+			continue ;
+		}
+		if(trustpacket.trust_level > 6)
+		{
+			std::cerr << "  (WW) Trust packet found with unexpected trust level " << trustpacket.trust_level << std::endl;
+			continue ;
+		}
+		
+		it->second._validLvl = trustpacket.trust_level ;
+	}
+
+	fclose(fdb) ;
+}
+
+void PGPHandler::locked_writePrivateTrustDatabase()
+{
+	FILE *fdb = fopen((_trustdb_path+".tmp").c_str(),"wb") ;
+	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
+
+	if(fdb == NULL)
+	{
+		std::cerr << "  (EE) Can't open private trust database file " << _trustdb_path << " for write. Giving up!" << std::endl ;
+		return ;
+	}
+	PrivateTrustPacket trustpacket ;
+
+	for(std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
+	{
+		memcpy(&trustpacket.user_id,PGPIdType(it->first).toByteArray(),KEY_ID_SIZE) ;
+		trustpacket.trust_level = it->second._validLvl ;
+
+		if(fwrite((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) != 1)
+		{
+			std::cerr << "  (EE) Cannot write to trust database " << _trustdb_path << ". Disc full, or quota exceeded ? Leaving database untouched." << std::endl;
+			fclose(fdb) ;
+			return ;
+		}
+	}
+
+	fclose(fdb) ;
+
+	if(!RsDirUtil::renameFile(_trustdb_path+".tmp",_trustdb_path))
+		std::cerr << "  (EE) Cannot move temp file " << _trustdb_path+".tmp" << ". Bad write permissions?" << std::endl;
+}
 

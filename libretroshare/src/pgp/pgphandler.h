@@ -53,7 +53,10 @@ class PGPCertificateInfo
 class PGPHandler
 {
 	public:
-		PGPHandler(const std::string& path_to_public_keyring, const std::string& path_to_secret_keyring, const std::string& pgp_lock_file) ;
+		PGPHandler(	const std::string& path_to_public_keyring, 
+						const std::string& path_to_secret_keyring, 
+						const std::string& path_to_trust_database, 
+						const std::string& pgp_lock_file) ;
 
 		virtual ~PGPHandler() ;
 
@@ -81,6 +84,8 @@ class PGPHandler
 
 		bool isKeySupported(const PGPIdType& id) const ;
 
+		void privateTrustCertificate(const PGPIdType& id,int valid_level) ;	
+
 		// Write keyring
 		bool publicKeyringChanged() const { return _pubring_changed ; }
 		bool secretKeyringChanged() const { return _secring_changed ; }
@@ -107,6 +112,9 @@ class PGPHandler
 		const ops_keydata_t *getPublicKey(const PGPIdType&) const ;
 		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;
 
+		void locked_readPrivateTrustDatabase() ;
+		void locked_writePrivateTrustDatabase() ;
+
 		// Members.
 		//
 		RsMutex pgphandlerMtx ;
@@ -119,10 +127,12 @@ class PGPHandler
 
 		const std::string _pubring_path ;
 		const std::string _secring_path ;
+		const std::string _trustdb_path ;
 		const std::string _pgp_lock_filename ;
 
 		bool _pubring_changed ;
 		bool _secring_changed ;
+		bool _trustdb_changed ;
 
 		// Helper functions.
 		//
