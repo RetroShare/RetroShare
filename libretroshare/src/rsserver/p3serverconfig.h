@@ -49,7 +49,12 @@ virtual ~p3ServerConfig();
 
 virtual int 	getConfigNetStatus(RsConfigNetStatus &status);
 virtual int 	getConfigStartup(RsConfigStartup &params);
-virtual int 	getConfigDataRates(RsConfigDataRates &params);
+//virtual int 	getConfigDataRates(RsConfigDataRates &params);
+
+                /***** for RsConfig -> p3BandwidthControl ****/
+
+virtual int getTotalBandwidthRates(RsConfigDataRates &rates);
+virtual int getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap);
 
 	/* From RsInit */
 

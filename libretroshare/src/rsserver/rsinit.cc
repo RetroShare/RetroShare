@@ -1828,6 +1828,7 @@ RsTurtle *rsTurtle = NULL ;
 #define RS_RELEASE 	1
 
 #include "services/p3banlist.h"
+#include "services/p3bwctrl.h"
 #include "services/p3dsdv.h"
 
 
@@ -2241,6 +2242,8 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mBanList);
 	mBitDht->setupPeerSharer(mBanList);
 
+	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
+
 #ifdef RS_DSDVTEST
 	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);
 	pqih -> addService(mDsdv);
@@ -2283,6 +2286,7 @@ int RsServer::StartupRetroShare()
 	mLinkMgr->addMonitor(msgSrv);
 	mLinkMgr->addMonitor(mStatusSrv);
 	mLinkMgr->addMonitor(chatSrv);
+	mLinkMgr->addMonitor(mBwCtrl);
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.
@@ -2470,6 +2474,7 @@ int RsServer::StartupRetroShare()
 	/* Setup GUI Interfaces. */
 
 	rsDisc  = new p3Discovery(ad);
+	rsBandwidthControl = mBwCtrl;
 	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, mGeneralConfig);
 
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
@@ -2488,6 +2493,7 @@ int RsServer::StartupRetroShare()
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 #endif
+
 
 	/* put a welcome message in! */
 	if (RsInitConfig::firsttime_run)

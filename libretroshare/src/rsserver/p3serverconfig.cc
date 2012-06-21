@@ -24,6 +24,7 @@
  */
 
 #include "rsserver/p3serverconfig.h"
+#include "services/p3bwctrl.h"
 
 RsServerConfig *rsConfig = NULL;
 
@@ -107,8 +108,31 @@ int 	p3ServerConfig::getConfigStartup(RsConfigStartup &/*params*/)
 	return 0;
 }
 
+#if 0
 int 	p3ServerConfig::getConfigDataRates(RsConfigDataRates &/*params*/)
 {
+	return 0;
+}
+#endif
+
+                /***** for RsConfig -> p3BandwidthControl ****/
+
+int 	p3ServerConfig::getTotalBandwidthRates(RsConfigDataRates &rates)
+{
+	if (rsBandwidthControl)
+	{
+		return rsBandwidthControl->getTotalBandwidthRates(rates);
+	}
+	return 0;
+}
+
+
+int 	p3ServerConfig::getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap)
+{
+	if (rsBandwidthControl)
+	{
+		return rsBandwidthControl->getAllBandwidthRates(ratemap);
+	}
 	return 0;
 }
 

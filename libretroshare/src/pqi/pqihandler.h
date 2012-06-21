@@ -88,13 +88,13 @@ class pqihandler: public P3Interface, public pqiQoS
 		virtual RsRawItem *GetRsRawItem();
 
 		// rate control.
-		//indiv rate is deprecated
-		//void	setMaxIndivRate(bool in, float val);
-		//float	getMaxIndivRate(bool in);
 		void	setMaxRate(bool in, float val);
 		float	getMaxRate(bool in);
 
 		void	getCurrentRates(float &in, float &out);
+
+		// TESTING INTERFACE.
+		int     ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBwRates &totals);
 
 		bool drawFromQoS_queue() ;
 
@@ -136,25 +136,6 @@ class pqihandler: public P3Interface, public pqiQoS
 		time_t last_m ;
 		float ticks_per_sec ;
 };
-
-//inline void pqihandler::setMaxIndivRate(bool in, float val)
-//{
-//	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-//	if (in)
-//		rateIndiv_in = val;
-//	else
-//		rateIndiv_out = val;
-//	return;
-//}
-//
-//inline float pqihandler::getMaxIndivRate(bool in)
-//{
-//	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-//	if (in)
-//		return rateIndiv_in;
-//	else
-//		return rateIndiv_out;
-//}
 
 inline void pqihandler::setMaxRate(bool in, float val)
 {

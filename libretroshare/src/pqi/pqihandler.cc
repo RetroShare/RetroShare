@@ -735,6 +735,37 @@ RsRawItem *pqihandler::GetRsRawItem()
 
 static const float MIN_RATE = 0.01; // 10 B/s
 
+// NEW extern fn to extract rates.
+int     pqihandler::ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBwRates &total)
+{
+	total.mMaxRateIn = getMaxRate(true);
+	total.mMaxRateOut = getMaxRate(false);
+	total.mRateIn = 0;
+	total.mRateOut = 0;
+
+	/* Lock once rates have been retrieved */
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	std::map<std::string, SearchModule *>::iterator it;
+	for(it = mods.begin(); it != mods.end(); it++)
+	{
+		SearchModule *mod = (it -> second);
+
+		RsBwRates peerRates;
+		mod -> pqi -> getRates(peerRates);
+
+		total.mRateIn  += peerRates.mRateIn;
+		total.mRateOut += peerRates.mRateOut;
+
+		ratemap[it->first] = peerRates;
+
+	}
+
+	return 1;
+}
+
+
+
 // internal fn to send updates 
 int     pqihandler::UpdateRates()
 {

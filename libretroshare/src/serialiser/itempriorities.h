@@ -81,6 +81,10 @@ const uint8_t QOS_PRIORITY_RS_VOIP_PING               = 9 ;
 //
 const uint8_t QOS_PRIORITY_RS_BANLIST_ITEM     			= 2 ;
 
+// Bandwidth Control.
+//
+const uint8_t QOS_PRIORITY_RS_BWCTRL_ALLOWED_ITEM 		= 9 ;
+
 // Dsdv Routing
 //
 const uint8_t QOS_PRIORITY_RS_DSDV_ROUTE     			= 4 ;

@@ -53,6 +53,19 @@ int fixme(char *str, int n);
  * For controlling data rates.
  * #define DEBUG_RATECAP	1
  */
+
+class RsBwRates
+{
+	public:
+	RsBwRates()
+	:mRateIn(0), mRateOut(0), mMaxRateIn(0), mMaxRateOut(0) {return;}
+	float mRateIn;
+	float mRateOut;
+	float mMaxRateIn;
+	float mMaxRateOut;
+};
+
+
 class RateInterface
 {
 
@@ -63,6 +76,15 @@ public:
 	bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
 
 virtual	~RateInterface() { return; }
+
+virtual void    getRates(RsBwRates &rates)
+{
+	rates.mRateIn = bw_in;
+	rates.mRateOut = bw_out;
+	rates.mMaxRateIn = bwMax_in;
+	rates.mMaxRateOut = bwMax_out;
+	return;
+}
 
 virtual float	getRate(bool in)
 	{

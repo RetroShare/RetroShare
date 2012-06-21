@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <map>
 
 /* The New Config Interface Class */
 class RsServerConfig;
@@ -134,14 +135,31 @@ class RsConfigDataRates
 	public:
 	RsConfigDataRates()
 	{
-		maxDownloadDataRate = 0;
-		maxUploadDataRate = 0;
-		maxIndivDataRate = 0;
+		mRateIn = 0;
+		mRateMaxIn = 0;
+		mAllocIn = 0;
+
+		mAllocTs = 0;
+
+		mRateOut = 0;
+		mRateMaxOut = 0;
+		mAllowedOut = 0;
+
+		mAllowedTs = 0;
 	}
 
-	int	maxDownloadDataRate;     /* kb */
-	int	maxUploadDataRate;     /* kb */
-	int	maxIndivDataRate; /* kb */
+	/* all in kB/s */
+	float   mRateIn;
+	float   mRateMaxIn;
+	float   mAllocIn;
+
+	time_t	mAllocTs;
+
+	float   mRateOut;
+	float   mRateMaxOut;
+	float   mAllowedOut;
+
+	time_t	mAllowedTs;
 };
 
 
@@ -209,7 +227,9 @@ virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
 
 // NOT IMPLEMENTED YET!
 //virtual int 	getConfigStartup(RsConfigStartup &params) = 0;
-//virtual int 	getConfigDataRates(RsConfigDataRates &params) = 0;
+
+virtual int 	getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
+virtual int 	getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap) = 0;
 
 	/* From RsInit */
 

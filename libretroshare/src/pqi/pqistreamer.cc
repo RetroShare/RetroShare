@@ -849,6 +849,24 @@ void    pqistreamer::outSentBytes(int outb)
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 
+	/*** One theory for the massive delays - is that the queue here is filling up ****/
+//#define DEBUG_LAG	1
+#ifdef DEBUG_LAG
+
+#define MIN_PKTS_FOR_MSG	100
+	if (out_pkt.size() > MIN_PKTS_FOR_MSG)
+	{
+		std::cerr << "pqistreamer::outSentBytes() for: " << PeerId();
+		std::cerr << " End of Write and still " << out_pkt.size() << " pkts left";
+		std::cerr << std::endl;
+	}
+
+#endif
+	
+	
+
+
+
 
 	totalSent += outb;
 	currSent += outb;
