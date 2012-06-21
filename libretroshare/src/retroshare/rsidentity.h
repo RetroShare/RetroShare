@@ -64,6 +64,7 @@
 #define RSGXS_MSG_STATUS_MASK           0x000f
 #define RSGXS_MSG_STATUS_READ           0x0001
 #define RSGXS_MSG_STATUS_UNREAD_BY_USER 0x0002
+#define RSGXS_MSG_STATUS_PROCESSED	0x0004	// By the Service.
 
 
 
@@ -94,11 +95,16 @@ class RsGroupMetaData
 		mMsgCount = 0;
 		mLastPost = 0;
 		mGroupStatus = 0;
+	
+		//mPublishTs = 0;
 	}
 	
 	std::string mGroupId;
 	std::string mGroupName;
 	uint32_t    mGroupFlags;
+
+	time_t      mPublishTs; // Mandatory.
+	std::string mAuthorId;   // Optional.
 
 	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 

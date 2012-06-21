@@ -384,7 +384,7 @@ bool p3PhotoService::groupShareKeys(const std::string &groupId, std::list<std::s
 
 
 /* details are updated in album - to choose Album ID, and storage path */
-bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album)
+bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album, bool isNew)
 {
 	/* check if its a modification or a new album */
 
@@ -397,7 +397,14 @@ bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album)
 
 		/* generate a temp id */
 		album.mMeta.mGroupId = genRandomId();
+		// TODO.
+		//album.mMeta.mPublishTs = time(NULL);
+
+		std::cerr << "p3PhotoService::submitAlbumDetails() Generated New GroupID: " << album.mMeta.mGroupId;
+		std::cerr << std::endl;
 	}
+
+	album.mModFlags = 0; // These are always cleared.
 
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
@@ -410,7 +417,7 @@ bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album)
 }
 
 
-bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo)
+bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo, bool isNew)
 {
 	if (photo.mMeta.mGroupId.empty())
 	{
@@ -420,14 +427,28 @@ bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo)
 		return false;
 	}
 	
-	/* check if its a mod or new photo */
-	if (photo.mMeta.mMsgId.empty())
-	{
-		/* new photo */
+	/* generate a new id */
+	photo.mMeta.mMsgId = genRandomId();
+	photo.mMeta.mPublishTs = time(NULL);
 
-		/* generate a temp id */
-		photo.mMeta.mMsgId = genRandomId();
+	if (isNew)
+	{
+		/* new (Original Msg) photo */
+		photo.mMeta.mOrigMsgId = photo.mMeta.mMsgId; 
+		std::cerr << "p3PhotoService::submitPhoto() New Msg";
+		std::cerr << std::endl;
 	}
+	else
+	{
+		std::cerr << "p3PhotoService::submitPhoto() Updated Msg";
+		std::cerr << std::endl;
+	}
+
+	photo.mModFlags = 0; // These are always cleared.
+
+	std::cerr << "p3PhotoService::submitPhoto() OrigMsgId: " << photo.mMeta.mOrigMsgId;
+	std::cerr << " MsgId: " << photo.mMeta.mMsgId;
+	std::cerr << std::endl;
 
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
@@ -567,8 +588,7 @@ bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
 {
 	if (data)
 	{
-		free(data);
-		size = 0;
+		deleteImage();
 	}
 
 	if ((!nail.data) || (nail.size == 0))
@@ -583,4 +603,48 @@ bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
 
 	return true;
 }
+
+bool RsPhotoThumbnail::deleteImage()
+{
+	if (data)
+	{
+		free(data);
+		data = NULL;
+		size = 0;
+	}
+}
+
+
+
+/********************************************************************************************/
+
+RsPhotoPhoto::RsPhotoPhoto()
+	:mSetFlags(0), mOrder(0), mMode(0), mModFlags(0)
+{
+	return;
+}
+
+RsPhotoAlbum::RsPhotoAlbum()
+	:mMode(0), mSetFlags(0), mModFlags(0)
+{
+	return;
+}
+
+std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo)
+{
+	out << "RsPhotoPhoto [ ";
+	out << "Title: " << photo.mMeta.mMsgName;
+	out << "]";
+	return out;
+}
+
+
+std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
+{
+	out << "RsPhotoAlbum [ ";
+	out << "Title: " << album.mMeta.mGroupName;
+	out << "]";
+	return out;
+}
+
 

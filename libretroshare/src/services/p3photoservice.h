@@ -120,8 +120,8 @@ virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& 
 
 
 /* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album);
-virtual bool submitPhoto(RsPhotoPhoto &photo);
+virtual bool submitAlbumDetails(RsPhotoAlbum &album, bool isNew);
+virtual bool submitPhoto(RsPhotoPhoto &photo, bool isNew);
 
 
 

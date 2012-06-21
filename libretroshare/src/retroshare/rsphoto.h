@@ -47,6 +47,7 @@ class RsPhotoThumbnail
 		RsPhotoThumbnail()
 		:data(NULL), size(0), type("N/A") { return; }
 
+	bool deleteImage();
 	bool copyFrom(const RsPhotoThumbnail &nail);
 
 	// Holds Thumbnail image.
@@ -55,17 +56,38 @@ class RsPhotoThumbnail
 	std::string type;
 };
 
+
+/* If these flags are no set - the Photo inherits values from the Album
+ */
+
+#define RSPHOTO_FLAGS_ATTRIB_TITLE		0x0001
+#define RSPHOTO_FLAGS_ATTRIB_CAPTION		0x0002
+#define RSPHOTO_FLAGS_ATTRIB_DESC		0x0004
+#define RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER	0x0008
+#define RSPHOTO_FLAGS_ATTRIB_WHERE		0x0010
+#define RSPHOTO_FLAGS_ATTRIB_WHEN		0x0020
+#define RSPHOTO_FLAGS_ATTRIB_OTHER		0x0040
+#define RSPHOTO_FLAGS_ATTRIB_CATEGORY		0x0080
+#define RSPHOTO_FLAGS_ATTRIB_HASHTAGS		0x0100
+#define RSPHOTO_FLAGS_ATTRIB_ORDER		0x0200
+#define RSPHOTO_FLAGS_ATTRIB_THUMBNAIL		0x0400
+#define RSPHOTO_FLAGS_ATTRIB_MODE		0x0800
+#define RSPHOTO_FLAGS_ATTRIB_AUTHOR		0x1000 // PUSH UP ORDER
+#define RSPHOTO_FLAGS_ATTRIB_PHOTO		0x2000 // PUSH UP ORDER.
+
+
 class RsPhotoPhoto
 {
 	public:
 
 	RsMsgMetaData mMeta;
 
+	RsPhotoPhoto();
+
 	// THESE ARE IN THE META DATA.
 	//std::string mAlbumId;
 	//std::string mId;
 	//std::string mTitle; // only used by Album.
-
 	std::string mCaption;
 	std::string mDescription;
 	std::string mPhotographer;
@@ -76,12 +98,17 @@ class RsPhotoPhoto
 
 	std::string mHashTags;
 
+	uint32_t mSetFlags;
+
 	int mOrder;
 
 	RsPhotoThumbnail mThumbnail;
 
 	int mMode;
+
+	// These are not saved.
 	std::string path; // if in Mode NEW.
+	uint32_t mModFlags;
 };
 
 class RsPhotoAlbumShare
@@ -98,6 +125,7 @@ class RsPhotoAlbumShare
 class RsPhotoAlbum
 {
 	public:
+	RsPhotoAlbum();
 
 	RsGroupMetaData mMeta;
 
@@ -121,7 +149,14 @@ class RsPhotoAlbum
 
 	std::string mPhotoPath;
 	RsPhotoAlbumShare mShareOptions;
+
+	// These aren't saved.
+	uint32_t mSetFlags;
+	uint32_t mModFlags;
 };
+
+std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
+std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
 
 class RsPhoto: public RsTokenService
@@ -177,8 +212,8 @@ virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
 virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
 
 /* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
-virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
+virtual bool submitAlbumDetails(RsPhotoAlbum &album, bool isNew) = 0;
+virtual bool submitPhoto(RsPhotoPhoto &photo, bool isNew) = 0;
 
 };
 

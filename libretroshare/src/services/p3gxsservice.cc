@@ -379,43 +379,104 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 	 * 1) No Flags => All Messages in those Groups.
 	 *
 	 */
+	std::cerr << "GxsDataProxy::getMsgList()";
+	std::cerr << std::endl;
+
 
 	bool onlyOrigMsgs = false;
+	bool onlyLatestMsgs = false;
 
+	// Can only choose one of these two.
 	if (opts.mOptions & RS_TOKREQOPT_MSG_ORIGMSG)
 	{
 		onlyOrigMsgs = true;
 	}
+	else if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
+	{
+		std::cerr << "GxsDataProxy::getMsgList() REQUESTED LATEST!!!";
+		std::cerr << std::endl;
 
-	std::cerr << "GxsDataProxy::getMsgList()";
-	std::cerr << std::endl;
+		onlyLatestMsgs = true;
+	}
 
 	std::list<std::string>::const_iterator it;
 	std::map<std::string, RsMsgMetaData>::iterator mit;
 
 	for(it = groupIds.begin(); it != groupIds.end(); it++)
 	{
-		for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
+		if (onlyLatestMsgs) // THIS ONE IS HARD -> LOTS OF COMP.
 		{
-			if (mit->second.mGroupId == *it)
+			// RUN THROUGH ALL MSGS... in map origId -> TS.
+			std::map<std::string, std::pair<std::string, uint32_t> > origMsgTs;
+			std::map<std::string, std::pair<std::string, uint32_t> >::iterator oit;
+			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 			{
-				bool add = false;
-
-				if (onlyOrigMsgs)
+				if (mit->second.mGroupId != *it)
 				{
-					if (mit->second.mMsgId == mit->second.mOrigMsgId)
+					continue;
+				}
+
+				oit = origMsgTs.find(mit->second.mOrigMsgId);
+				bool addMsg = false;
+				if (oit == origMsgTs.end())
+				{
+					std::cerr << "GxsDataProxy::getMsgList() Found New OrigMsgId: ";
+					std::cerr << mit->second.mOrigMsgId;
+					std::cerr << " MsgId: " << mit->second.mMsgId;
+					std::cerr << " TS: " << mit->second.mPublishTs;
+					std::cerr << std::endl;
+
+					addMsg = true;
+				}
+				// check timestamps.
+				else if (oit->second.second < mit->second.mPublishTs)
+				{
+					std::cerr << "GxsDataProxy::getMsgList() Found Later Msg. OrigMsgId: ";
+					std::cerr << mit->second.mOrigMsgId;
+					std::cerr << " MsgId: " << mit->second.mMsgId;
+					std::cerr << " TS: " << mit->second.mPublishTs;
+
+					addMsg = true;
+				}
+
+				if (addMsg)
+				{
+					// add as latest. (overwriting if necessary)
+					origMsgTs[mit->second.mOrigMsgId] = std::make_pair(mit->second.mMsgId, mit->second.mPublishTs);
+				}
+			}
+
+			// Add the discovered Latest Msgs.
+			for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
+			{
+				outMsgIds.push_back(oit->second.first);
+			}
+
+		}
+		else	// ALL OTHER CASES.
+		{
+			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
+			{
+				if (mit->second.mGroupId == *it)
+				{
+					bool add = false;
+	
+					if (onlyOrigMsgs)
 					{
+						if (mit->second.mMsgId == mit->second.mOrigMsgId)
+						{
+							add = true;
+						}
+					}
+					else
+					{	
 						add = true;
 					}
-				}
-				else
-				{	
-					add = true;
-				}
-
-				if (add)
-				{
-					outMsgIds.push_back(mit->first);
+	
+					if (add)
+					{
+						outMsgIds.push_back(mit->first);
+					}
 				}
 			}
 		}
