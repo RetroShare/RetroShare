@@ -50,6 +50,7 @@ class PhotoDrop : public QWidget, public PhotoHolder
 public:
     PhotoDrop(QWidget *parent = 0);
     void clear();
+	void setSingleImage();
 
 virtual void deletePhotoItem(PhotoItem *, uint32_t type);
 virtual void notifySelection(PhotoItem *item, int ptype);
@@ -57,6 +58,7 @@ virtual void notifySelection(PhotoItem *item, int ptype);
 PhotoItem *getSelectedPhotoItem();
 int	getPhotoCount();
 PhotoItem *getPhotoIdx(int idx);
+void 	addPhotoItem(PhotoItem *item);
 
 public slots:
 	void moveLeft();
@@ -66,6 +68,7 @@ public slots:
 
 signals:
     void buttonStatus(uint32_t status);
+    void photosChanged();
 
 protected:
 
@@ -77,11 +80,13 @@ protected:
 	void dragMoveEvent(QDragMoveEvent *event);
 	void dropEvent(QDropEvent *event);
 
+
 private:
 	void reorderPhotos();
 
 	PhotoItem *mSelected;
 	int mColumns;
+        bool mIsSingleImageDrop; 
 };
 
 #endif

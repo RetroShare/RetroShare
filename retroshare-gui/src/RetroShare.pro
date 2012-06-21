@@ -18,9 +18,13 @@ RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
 
-#CONFIG += debug
+CONFIG += debug
 debug {
 	QMAKE_CFLAGS += -g
+    	QMAKE_CXXFLAGS -= -O2
+    	QMAKE_CXXFLAGS += -O0
+    	QMAKE_CFLAGS -= -O2
+    	QMAKE_CFLAGS += -O0
 }
 
 minimal {
@@ -863,17 +867,20 @@ photoshare {
 		gui/PhotoShare/PhotoAddDialog.h \
 		gui/PhotoShare/PhotoDetailsDialog.h \
 		gui/PhotoShare/PhotoDrop.h \
+		gui/PhotoShare/PhotoSlideShow.h \
 
 	FORMS += gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/PhotoAddDialog.ui \
 		gui/PhotoShare/PhotoDetailsDialog.ui \
+		gui/PhotoShare/PhotoSlideShow.ui \
 
 	SOURCES += gui/PhotoShare/PhotoItem.cpp \
 		gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoAddDialog.cpp \
 		gui/PhotoShare/PhotoDetailsDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
+		gui/PhotoShare/PhotoSlideShow.cpp \
 
 }
 

@@ -24,6 +24,8 @@
 #include "gui/PhotoShare/PhotoDetailsDialog.h"
 #include "gui/PhotoShare/PhotoItem.h"
 
+#include <iostream>
+
 /** Constructor */
 PhotoDetailsDialog::PhotoDetailsDialog(QWidget *parent)
 : QWidget(parent)
@@ -50,10 +52,10 @@ void PhotoDetailsDialog::setPhotoItem(PhotoItem *item)
 
 void PhotoDetailsDialog::refreshDetails()
 {
-
-	if(!mPhotoItem)
+	blankDetails();
+	if (!mPhotoItem)
 	{
-		blankDetails();
+		return;
 	}
 
 	ui.label_Headline->setText(QString("Photo Description"));
@@ -62,25 +64,126 @@ void PhotoDetailsDialog::refreshDetails()
 
 	if (mPhotoItem->mIsPhoto)
 	{
-		ui.lineEdit_Caption->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mCaption));
-		ui.textEdit_Description->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mDescription));
-		ui.lineEdit_Photographer->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mPhotographer));
-		ui.lineEdit_Where->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mWhere));
-		ui.lineEdit_When->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mWhen));
-		ui.lineEdit_Other->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mOther));
-		ui.lineEdit_Title->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mMeta.mMsgName));
-		ui.lineEdit_HashTags->setText(QString::fromStdString(mPhotoItem->mPhotoDetails.mHashTags));
+		// THIS is tedious!
+
+		RsPhotoPhoto &photo = mPhotoItem->mPhotoDetails;
+		RsPhotoAlbum &album = mPhotoItem->mAlbumDetails;
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
+		{
+			ui.lineEdit_Title->setText(QString::fromUtf8(photo.mMeta.mMsgName.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
+		{
+			ui.lineEdit_Title->setText(QString::fromUtf8(album.mMeta.mGroupName.c_str()));
+		}
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_CAPTION)
+		{
+			ui.lineEdit_Caption->setText(QString::fromUtf8(photo.mCaption.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_CAPTION)
+		{
+			ui.lineEdit_Caption->setText(QString::fromUtf8(album.mCaption.c_str()));
+		}
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_DESC)
+		{
+			ui.textEdit_Description->setText(QString::fromUtf8(photo.mDescription.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_DESC)
+		{
+			ui.textEdit_Description->setText(QString::fromUtf8(album.mDescription.c_str()));
+		}
+
+		if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER)
+		{
+			ui.lineEdit_Photographer->setText(QString::fromUtf8(photo.mPhotographer.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER)
+		{
+			ui.lineEdit_Photographer->setText(QString::fromUtf8(album.mPhotographer.c_str()));
+		}
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
+		{
+			ui.lineEdit_Where->setText(QString::fromUtf8(photo.mWhere.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
+		{
+			ui.lineEdit_Where->setText(QString::fromUtf8(album.mWhere.c_str()));
+		}
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
+		{
+			ui.lineEdit_When->setText(QString::fromUtf8(photo.mWhen.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
+		{
+			ui.lineEdit_When->setText(QString::fromUtf8(album.mWhen.c_str()));
+		}
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_OTHER)
+		{
+			ui.lineEdit_Other->setText(QString::fromUtf8(photo.mOther.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_OTHER)
+		{
+			ui.lineEdit_Other->setText(QString::fromUtf8(album.mOther.c_str()));
+		}
+
+        	if (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_HASHTAGS)
+		{
+			ui.lineEdit_HashTags->setText(QString::fromUtf8(photo.mHashTags.c_str()));
+		}
+		else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_HASHTAGS)
+		{
+			ui.lineEdit_HashTags->setText(QString::fromUtf8(album.mHashTags.c_str()));
+		}
 	}
 	else
 	{
-		ui.lineEdit_Caption->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mCaption));
-		ui.textEdit_Description->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mDescription));
-		ui.lineEdit_Photographer->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mPhotographer));
-		ui.lineEdit_Where->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mWhere));
-		ui.lineEdit_When->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mWhen));
-		ui.lineEdit_Other->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mOther));
-		ui.lineEdit_Title->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mMeta.mGroupName));
-		ui.lineEdit_HashTags->setText(QString::fromStdString(mPhotoItem->mAlbumDetails.mHashTags));
+		RsPhotoAlbum &album = mPhotoItem->mAlbumDetails;
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
+		{
+			ui.lineEdit_Title->setText(QString::fromUtf8(album.mMeta.mGroupName.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_CAPTION)
+		{
+			ui.lineEdit_Caption->setText(QString::fromUtf8(album.mCaption.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_DESC)
+		{
+			ui.textEdit_Description->setText(QString::fromUtf8(album.mDescription.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER)
+		{
+			ui.lineEdit_Photographer->setText(QString::fromUtf8(album.mPhotographer.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
+		{
+			ui.lineEdit_Where->setText(QString::fromUtf8(album.mWhere.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
+		{
+			ui.lineEdit_When->setText(QString::fromUtf8(album.mWhen.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_OTHER)
+		{
+			ui.lineEdit_Other->setText(QString::fromUtf8(album.mOther.c_str()));
+		}
+
+		if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_HASHTAGS)
+		{
+			ui.lineEdit_HashTags->setText(QString::fromUtf8(album.mHashTags.c_str()));
+		}
 	}
 
 	const QPixmap *qtn = mPhotoItem->getPixmap();
@@ -94,14 +197,14 @@ void PhotoDetailsDialog::blankDetails()
 
 	//ui.comboBox_Category= mPhotoItem->mDetails.mCaption;
 
-	ui.lineEdit_Caption->setText(QString("N/A"));
-	ui.textEdit_Description->setText(QString("N/A"));
-	ui.lineEdit_Photographer->setText(QString("N/A"));
-	ui.lineEdit_Where->setText(QString("N/A"));
-	ui.lineEdit_When->setText(QString("N/A"));
-	ui.lineEdit_Other->setText(QString("N/A"));
-	ui.lineEdit_Title->setText(QString("N/A"));
-	ui.lineEdit_HashTags->setText(QString("N/A"));
+	ui.lineEdit_Title->setText(QString(""));
+	ui.lineEdit_Caption->setText(QString(""));
+	ui.textEdit_Description->setText(QString(""));
+	ui.lineEdit_Photographer->setText(QString(""));
+	ui.lineEdit_Where->setText(QString(""));
+	ui.lineEdit_When->setText(QString(""));
+	ui.lineEdit_Other->setText(QString(""));
+	ui.lineEdit_HashTags->setText(QString(""));
 
         //QPixmap qtn = mPhotoItem->getPixmap();
 	//ui.label_Photo->setPixmap(qtn);
@@ -111,6 +214,9 @@ void PhotoDetailsDialog::blankDetails()
 void PhotoDetailsDialog::updateDetails()
 {
 	saveDetails();
+
+	// Notify Listeners.
+        editingDone();
 
 	hide();
 }
@@ -123,30 +229,290 @@ void PhotoDetailsDialog::saveDetails()
 		return;
 	}
 
-	//mPhotoItem->mDetails.mCaption = ui.comboBox_Category;
+	RsPhotoPhoto &photo = mPhotoItem->mPhotoDetails;
+	RsPhotoAlbum &album = mPhotoItem->mAlbumDetails;
 
+	std::string txt = ui.lineEdit_Title->text().toUtf8().constData();
+	bool setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE))
+	{
+		if (txt != photo.mMeta.mMsgName)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
+	{
+		if (txt != album.mMeta.mGroupName)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_TITLE;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_TITLE;
+			photo.mMeta.mMsgName = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_TITLE;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_TITLE;
+			album.mMeta.mGroupName = txt;
+		}
+	}
+
+
+	txt = ui.lineEdit_Caption->text().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_CAPTION))
+	{
+		if (txt != photo.mCaption)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_CAPTION)
+	{
+		if (txt != album.mCaption)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_CAPTION;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_CAPTION;
+			photo.mCaption = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_CAPTION;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_CAPTION;
+			album.mCaption = txt;
+		}
+	}
+
+
+	txt = ui.textEdit_Description->toPlainText().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_DESC))
+	{
+		if (txt != photo.mDescription)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_DESC)
+	{
+		if (txt != album.mDescription)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_DESC;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_DESC;
+			photo.mDescription = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_DESC;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_DESC;
+			album.mDescription = txt;
+		}
+	}
+
+
+	txt = ui.lineEdit_Photographer->text().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER))
+	{
+		if (txt != photo.mPhotographer)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER)
+	{
+		if (txt != album.mPhotographer)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER;
+			photo.mPhotographer = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER;
+			album.mPhotographer = txt;
+		}
+	}
+
+
+	txt = ui.lineEdit_Where->text().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE))
+	{
+		if (txt != photo.mWhere)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
+	{
+		if (txt != album.mWhere)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_WHERE;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_WHERE;
+			photo.mWhere = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_WHERE;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_WHERE;
+			album.mWhere = txt;
+		}
+	}
+
+	txt = ui.lineEdit_When->text().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN))
+	{
+		if (txt != photo.mWhen)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
+	{
+		if (txt != album.mWhen)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_WHEN;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_WHEN;
+			photo.mWhen = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_WHEN;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_WHEN;
+			album.mWhen = txt;
+		}
+	}
+
+
+	txt = ui.lineEdit_HashTags->text().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_HASHTAGS))
+	{
+		if (txt != photo.mHashTags)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_HASHTAGS)
+	{
+		if (txt != album.mHashTags)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_HASHTAGS;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_HASHTAGS;
+			photo.mHashTags = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_HASHTAGS;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_HASHTAGS;
+			album.mHashTags = txt;
+		}
+	}
+
+
+	txt = ui.lineEdit_Other->text().toUtf8().constData();
+	setName = false;
+	if ((mPhotoItem->mIsPhoto) && (photo.mSetFlags & RSPHOTO_FLAGS_ATTRIB_OTHER))
+	{
+		if (txt != photo.mOther)
+			setName = true;
+	}
+	else if (album.mSetFlags & RSPHOTO_FLAGS_ATTRIB_OTHER)
+	{
+		if (txt != album.mOther)
+			setName = true;
+	}
+	else if (txt.length() != 0)
+	{
+		setName = true;
+	}
+
+	if (setName)
+	{
+		if (mPhotoItem->mIsPhoto)
+		{
+        		photo.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_OTHER;
+        		photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_OTHER;
+			photo.mOther = txt;
+		}
+		else
+		{
+        		album.mSetFlags |= RSPHOTO_FLAGS_ATTRIB_OTHER;
+        		album.mModFlags |= RSPHOTO_FLAGS_ATTRIB_OTHER;
+			album.mOther = txt;
+		}
+	}
+
+
+
+	std::cerr << "PhotoDetailsDialog::saveDetails() ";
 	if (mPhotoItem->mIsPhoto)
 	{
-		mPhotoItem->mPhotoDetails.mCaption = ui.lineEdit_Caption->text().toStdString();
-		mPhotoItem->mPhotoDetails.mDescription = ui.textEdit_Description->toPlainText().toStdString();
-		mPhotoItem->mPhotoDetails.mPhotographer = ui.lineEdit_Photographer->text().toStdString();
-		mPhotoItem->mPhotoDetails.mWhere = ui.lineEdit_Where->text().toStdString();
-		mPhotoItem->mPhotoDetails.mWhen = ui.lineEdit_When->text().toStdString();
-		mPhotoItem->mPhotoDetails.mOther = ui.lineEdit_Other->text().toStdString();
-		mPhotoItem->mPhotoDetails.mMeta.mMsgName = ui.lineEdit_Title->text().toStdString();
-		mPhotoItem->mPhotoDetails.mHashTags = ui.lineEdit_HashTags->text().toStdString();
+		std::cerr << " photo.mSetFlags: " << mPhotoItem->mPhotoDetails.mSetFlags;
+		std::cerr << " photo.mModFlags: " << mPhotoItem->mPhotoDetails.mModFlags;
 	}
-	else
-	{
-		mPhotoItem->mAlbumDetails.mCaption = ui.lineEdit_Caption->text().toStdString();
-		mPhotoItem->mAlbumDetails.mDescription = ui.textEdit_Description->toPlainText().toStdString();
-		mPhotoItem->mAlbumDetails.mPhotographer = ui.lineEdit_Photographer->text().toStdString();
-		mPhotoItem->mAlbumDetails.mWhere = ui.lineEdit_Where->text().toStdString();
-		mPhotoItem->mAlbumDetails.mWhen = ui.lineEdit_When->text().toStdString();
-		mPhotoItem->mAlbumDetails.mOther = ui.lineEdit_Other->text().toStdString();
-		mPhotoItem->mAlbumDetails.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
-		mPhotoItem->mAlbumDetails.mHashTags = ui.lineEdit_HashTags->text().toStdString();
-	}
+	std::cerr << " album.mSetFlags: " << mPhotoItem->mAlbumDetails.mSetFlags;
+	std::cerr << " album.mModFlags: " << mPhotoItem->mAlbumDetails.mModFlags;
+	std::cerr << std::endl;
 
         //QPixmap qtn = mPhotoItem->getPixmap();
 	//ui.label_Photo->setPixmap(qtn);

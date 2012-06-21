@@ -37,10 +37,19 @@ PhotoAddDialog::PhotoAddDialog(QWidget *parent)
 	connect(ui.pushButton_ShiftLeft, SIGNAL( clicked( void ) ), ui.scrollAreaWidgetContents, SLOT( moveLeft( void ) ) );
 	connect(ui.pushButton_ShiftRight, SIGNAL( clicked( void ) ), ui.scrollAreaWidgetContents, SLOT( moveRight( void ) ) );
 	connect(ui.pushButton_EditPhotoDetails, SIGNAL( clicked( void ) ), this, SLOT( showPhotoDetails( void ) ) );
+	connect(ui.pushButton_EditAlbumDetails, SIGNAL( clicked( void ) ), this, SLOT( showAlbumDetails( void ) ) );
+	connect(ui.pushButton_DeleteAlbum, SIGNAL( clicked( void ) ), this, SLOT( deleteAlbum( void ) ) );
+	connect(ui.pushButton_DeletePhoto, SIGNAL( clicked( void ) ), this, SLOT( deletePhoto( void ) ) );
 
 	connect(ui.pushButton_Publish, SIGNAL( clicked( void ) ), this, SLOT( publishAlbum( void ) ) );
 
 	mPhotoDetails = NULL;
+
+	mPhotoQueue = new TokenQueue(rsPhoto, this);
+
+	ui.AlbumDrop->setSingleImage();
+	connect(ui.AlbumDrop, SIGNAL( photosChanged( void ) ), this, SLOT( albumImageChanged( void ) ) );
+	connect(ui.scrollAreaWidgetContents, SIGNAL( photosChanged( void ) ), this, SLOT( photoImageChanged( void ) ) );
 
 }
 
@@ -72,22 +81,211 @@ void PhotoAddDialog::updateMoveButtons(uint32_t status)
 }
 
 
+bool PhotoAddDialog::updateAlbumDetails(const RsPhotoAlbum &album)
+{
+        std::cerr << "PhotoAddDialog::updateAlbumDetails()";
+	std::cerr << " (Copy data to mAlbumData + Add PhotoItem)";
+        std::cerr << std::endl;
+	// cleanup old image first.
+	mAlbumData.mThumbnail.deleteImage();
+	mAlbumData = album;
+
+	// copy photo too.
+	mAlbumData.mThumbnail.data = 0;
+	mAlbumData.mThumbnail.copyFrom(album.mThumbnail);
+
+	/* show iterate through all the photos and update them too  - except normally they haven't arrived yet */
+
+	ui.lineEdit_Title->setText(QString::fromUtf8(album.mMeta.mGroupName.c_str()));
+	ui.lineEdit_Caption->setText(QString::fromUtf8(album.mCaption.c_str()));
+	ui.lineEdit_Where->setText(QString::fromUtf8(album.mWhere.c_str()));
+	ui.lineEdit_When->setText(QString::fromUtf8(album.mWhen.c_str()));
+
+	PhotoItem *item = new PhotoItem(NULL, mAlbumData);
+	ui.AlbumDrop->addPhotoItem(item);
+
+	// called via callback AlbumChanged.
+	//setAlbumDataToPhotos();
+	return true;
+}
+
+
+bool PhotoAddDialog::setAlbumDataToPhotos()
+{
+        std::cerr << "PhotoAddDialog::setAlbumDataToPhotos()";
+        std::cerr << std::endl;
+
+	int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
+
+	for(int i = 0; i < photoCount; i++)
+	{
+		PhotoItem *item = ui.scrollAreaWidgetContents->getPhotoIdx(i);
+		item->updateAlbumText(mAlbumData);
+	}
+	return true;
+}
+
+
 void PhotoAddDialog::showPhotoDetails()
 {
         std::cerr << "PhotoAddDialog::showPhotoDetails()";
         std::cerr << std::endl;
 
-	if (!mPhotoDetails)
-	{
-		mPhotoDetails = new PhotoDetailsDialog(NULL);
-	}
-
 	PhotoItem *item = ui.scrollAreaWidgetContents->getSelectedPhotoItem();
-
-	mPhotoDetails->setPhotoItem(item);
-	mPhotoDetails->show();
+	if (item)
+	{
+		if (!mPhotoDetails)
+		{
+			mPhotoDetails = new PhotoDetailsDialog(NULL);
+			connect(mPhotoDetails, SIGNAL( editingDone( void ) ), this, SLOT( editingStageDone( void ) ) );
+		}
+		mPhotoDetails->setPhotoItem(item);
+		mPhotoDetails->show();
+		mEditingModeAlbum = false;
+	}
 }
 
+
+void PhotoAddDialog::showAlbumDetails()
+{
+        std::cerr << "PhotoAddDialog::showAlbumDetails()";
+        std::cerr << std::endl;
+
+
+	/* grab the image from the AlbumDrop */
+	PhotoItem *item = NULL;
+	if (ui.AlbumDrop->getPhotoCount() > 0)
+	{
+		item = ui.AlbumDrop->getPhotoIdx(0);
+	}
+
+	if (item)
+	{
+		if (!mPhotoDetails)
+		{
+			mPhotoDetails = new PhotoDetailsDialog(NULL);
+			connect(mPhotoDetails, SIGNAL( editingDone( void ) ), this, SLOT( editingStageDone( void ) ) );
+		}
+		mPhotoDetails->setPhotoItem(item);
+		mPhotoDetails->show();
+		mEditingModeAlbum = true;
+	}
+	else
+	{
+        	std::cerr << "PhotoAddDialog::showAlbumDetails() PhotoItem Invalid";
+        	std::cerr << std::endl;
+	}
+}
+
+/* Callback when AlbumDrop gets new image */
+void PhotoAddDialog::albumImageChanged()
+{
+        std::cerr << "PhotoAddDialog::albumImageChanged()";
+        std::cerr << std::endl;
+
+	/* must update the data from the reference stuff */
+	PhotoItem *item = NULL;
+	if (ui.AlbumDrop->getPhotoCount() > 0)
+	{
+		item = ui.AlbumDrop->getPhotoIdx(0);
+	}
+
+	if (!item)
+	{
+        	std::cerr << "PhotoAddDialog::albumImageChanged() ERROR no Album PhotoItem";
+        	std::cerr << std::endl;
+		return;
+	}
+
+        std::cerr << "PhotoAddDialog::albumImageChanged() PRE: AlbumDrop: " << item->mAlbumDetails;
+        std::cerr << std::endl;
+        std::cerr << "PhotoAddDialog::albumImageChanged() PRE: mAlbumData: " << mAlbumData;
+        std::cerr << std::endl;
+	
+
+	item->mIsPhoto = false; // Force to Album mode.
+
+	/* now AlbumDrop has the image, but AlbumData has the other stuff */
+
+	item->getPhotoThumbnail(mAlbumData.mThumbnail);
+	item->updateAlbumText(mAlbumData);
+
+
+
+	/* if we are in editing mode -> update it */
+	if ((mEditingModeAlbum) && (mPhotoDetails))
+	{
+        	std::cerr << "PhotoAddDialog::albumImageChanged() Updating PhotoDetails -> PhotoItem";
+        	std::cerr << std::endl;
+		mPhotoDetails->setPhotoItem(item);
+	}
+
+        std::cerr << "PhotoAddDialog::albumImageChanged() POST: AlbumDrop: " << item->mAlbumDetails;
+        std::cerr << std::endl;
+        std::cerr << "PhotoAddDialog::albumImageChanged() POST: mAlbumData: " << mAlbumData;
+        std::cerr << std::endl;
+	
+}
+
+
+/* This is called back once PhotoDetailsDialog Finishes */
+void PhotoAddDialog::editingStageDone()
+{
+        std::cerr << "PhotoAddDialog::editingStageDone()";
+        std::cerr << std::endl;
+
+	if (mEditingModeAlbum)
+	{
+		/* need to resolve Album Data, repopulate entries 
+		 */
+
+		/* grab the image from the AlbumDrop (This is where PhotoDetailsDialog stores the data) */
+		PhotoItem *item = NULL;
+		if (ui.AlbumDrop->getPhotoCount() > 0)
+		{
+			item = ui.AlbumDrop->getPhotoIdx(0);
+		}
+
+		if (!item)
+		{
+        		std::cerr << "PhotoAddDialog::editingStageDone() ERROR no Album PhotoItem";
+        		std::cerr << std::endl;
+		}
+
+		/* Total Hack here Copy from AlbumDrop to Reference Data */
+
+		// cleanup old image first.
+		mAlbumData.mThumbnail.deleteImage();
+		mAlbumData = item->mAlbumDetails;
+		item->getPhotoThumbnail(mAlbumData.mThumbnail);
+
+		// Push Back data -> to trigger Text Update.
+		item->updateAlbumText(mAlbumData);
+		mEditingModeAlbum = false;
+
+		// Update GUI too.
+		ui.lineEdit_Title->setText(QString::fromUtf8(mAlbumData.mMeta.mGroupName.c_str()));
+		ui.lineEdit_Caption->setText(QString::fromUtf8(mAlbumData.mCaption.c_str()));
+		ui.lineEdit_Where->setText(QString::fromUtf8(mAlbumData.mWhere.c_str()));
+		ui.lineEdit_When->setText(QString::fromUtf8(mAlbumData.mWhen.c_str()));
+
+	}
+	else
+	{
+        	std::cerr << "PhotoAddDialog::editingStageDone() ERROR not EditingModeAlbum";
+        	std::cerr << std::endl;
+	}
+
+	// This forces item update -> though the AlbumUpdate is only needed if we edited Album.
+	setAlbumDataToPhotos();
+}
+
+
+/* Callback when PhotoDrop gets new image */
+void PhotoAddDialog::photoImageChanged()
+{
+	setAlbumDataToPhotos();
+}
 
 
 
@@ -98,8 +296,8 @@ void PhotoAddDialog::publishAlbum()
 
 	/* we need to iterate through each photoItem, and extract the details */
 
-
-	RsPhotoAlbum album;
+	RsPhotoAlbum album = mAlbumData;
+	album.mThumbnail.data = 0;
 
 	album.mShareOptions.mShareType = 0;
 	album.mShareOptions.mShareGroupId = "unknown";
@@ -107,13 +305,38 @@ void PhotoAddDialog::publishAlbum()
 	album.mShareOptions.mCommentMode = 0;
 	album.mShareOptions.mResizeMode = 0;
 
-	album.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
-	album.mCategory = "Unknown";
-	album.mCaption = ui.lineEdit_Caption->text().toStdString();
-	album.mWhere = ui.lineEdit_Where->text().toStdString();
-	album.mWhen = ui.lineEdit_When->text().toStdString();
+	//album.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
+	//album.mCategory = "Unknown";
+	//album.mCaption = ui.lineEdit_Caption->text().toStdString();
+	//album.mWhere = ui.lineEdit_Where->text().toStdString();
+	//album.mWhen = ui.lineEdit_When->text().toStdString();
 
-	if (rsPhoto->submitAlbumDetails(album))
+	/* grab the image from the AlbumDrop */
+	if (ui.AlbumDrop->getPhotoCount() > 0)
+	{
+		PhotoItem *item = ui.AlbumDrop->getPhotoIdx(0);
+		item->getPhotoThumbnail(album.mThumbnail);
+	}
+
+	bool isAlbumOk = false;
+
+	// For the moment, only submit albums Once.
+	if (mAlbumEdit)
+	{
+        	std::cerr << "PhotoAddDialog::publishAlbum() AlbumEdit Mode";
+        	std::cerr << std::endl;
+
+		isAlbumOk = true;
+	}
+	else if (rsPhoto->submitAlbumDetails(album, true))
+	{
+        	std::cerr << "PhotoAddDialog::publishAlbum() New Album Mode";
+        	std::cerr << std::endl;
+
+		isAlbumOk = true;
+	}
+
+	if (isAlbumOk)
 	{
 		/* now have path and album id */
 		int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
@@ -130,10 +353,40 @@ void PhotoAddDialog::publishAlbum()
 			}
 
 			photo = item->mPhotoDetails;
+			photo.mThumbnail.data = 0; // do proper data copy.
 			item->getPhotoThumbnail(photo.mThumbnail);
-	
-			photo.mMeta.mGroupId = album.mMeta.mGroupId;
+
+			bool isNewPhoto = false;	
+			bool isModifiedPhoto = false;	
+
+			if (mAlbumEdit)
+			{
+				// can have modFlags and be New... so the order is important.
+				if (photo.mMeta.mGroupId.length() < 1)
+				{
+					/* new photo - flag in mods */
+					photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTO;
+					photo.mMeta.mGroupId = album.mMeta.mGroupId;
+					isNewPhoto = true;
+				}
+				else if (photo.mModFlags)
+				{
+					isModifiedPhoto = true;
+				}
+			}
+			else
+			{
+				/* new album - update GroupId, all photos are new */
+				photo.mMeta.mGroupId = album.mMeta.mGroupId;
+				isNewPhoto = true;
+			}
+
 			photo.mOrder = i;
+
+			std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ")";
+			std::cerr << " mSetFlags: " << photo.mSetFlags;
+			std::cerr << " mModFlags: " << photo.mModFlags;
+        		std::cerr << std::endl;
 
 			/* scale photo if needed */
 			if (album.mShareOptions.mResizeMode)
@@ -144,13 +397,42 @@ void PhotoAddDialog::publishAlbum()
 			/* save image to album path */
 			photo.path = "unknown";
 
-			rsPhoto->submitPhoto(photo);
+			std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ") ";
+			if (isNewPhoto)
+			{
+				std::cerr << "Is a New Photo";
+				rsPhoto->submitPhoto(photo, true);
+			}
+			else if (isModifiedPhoto)
+			{
+				std::cerr << "Is Updated";
+				rsPhoto->submitPhoto(photo, false);
+			}
+			else
+			{
+				std::cerr << "Is Unchanged";
+			}
+        		std::cerr << std::endl;
 		}
 	}
 
 	clearDialog();
 
 	hide();
+}
+
+
+void PhotoAddDialog::deleteAlbum()
+{
+	std::cerr << "PhotoAddDialog::deleteAlbum() Not Implemented Yet";
+	std::cerr << std::endl;
+}
+
+
+void PhotoAddDialog::deletePhoto()
+{
+	std::cerr << "PhotoAddDialog::deletePhoto() Not Implemented Yet";
+	std::cerr << std::endl;
 }
 
 
@@ -162,6 +444,122 @@ void PhotoAddDialog::clearDialog()
 	ui.lineEdit_When->setText(QString("When"));
 
 	ui.scrollAreaWidgetContents->clearPhotos();
+	ui.AlbumDrop->clearPhotos();
+
+	/* clean up album image */
+	mAlbumData.mThumbnail.deleteImage();
+
+	RsPhotoAlbum emptyAlbum;
+	mAlbumData = emptyAlbum;
+
+	/* add empty image */
+	PhotoItem *item = new PhotoItem(NULL, mAlbumData);
+	ui.AlbumDrop->addPhotoItem(item);
+
+	mAlbumEdit = false;
 }
 
+
+void PhotoAddDialog::loadAlbum(const std::string &albumId)
+{
+	/* much like main load fns */
+	clearDialog();
+	mAlbumEdit = true;
+
+	RsTokReqOptions opts;
+	uint32_t token;
+	std::list<std::string> albumIds;
+	albumIds.push_back(albumId);
+
+	// We need both Album and Photo Data.
+
+	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
+
+}
+
+
+bool PhotoAddDialog::loadPhotoData(const uint32_t &token)
+{
+	std::cerr << "PhotoAddDialog::loadPhotoData()";
+	std::cerr << std::endl;
 	
+	bool moreData = true;
+	while(moreData)
+	{
+		RsPhotoPhoto photo;
+		
+		if (rsPhoto->getPhoto(token, photo))
+		{
+			std::cerr << "PhotoDialog::addAddPhoto() AlbumId: " << photo.mMeta.mGroupId;
+			std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
+			std::cerr << std::endl;
+
+			PhotoItem *item = new PhotoItem(NULL, photo, mAlbumData);
+			ui.scrollAreaWidgetContents->addPhotoItem(item);
+			
+		}
+		else
+		{
+			moreData = false;
+		}
+	}
+	return true;
+}
+
+bool PhotoAddDialog::loadAlbumData(const uint32_t &token)
+{
+	std::cerr << "PhotoAddDialog::loadAlbumData()";
+	std::cerr << std::endl;
+			
+	bool moreData = true;
+	while(moreData)
+	{
+		RsPhotoAlbum album;
+		if (rsPhoto->getAlbum(token, album))
+		{
+			std::cerr << " PhotoAddDialog::loadAlbumData() AlbumId: " << album.mMeta.mGroupId << std::endl;
+			updateAlbumDetails(album);
+
+			RsTokReqOptions opts;
+			opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+			uint32_t token;
+			std::list<std::string> albumIds;
+			albumIds.push_back(album.mMeta.mGroupId);
+			mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
+		}
+		else
+		{
+			moreData = false;
+		}
+	}
+	return true;
+}
+
+
+void PhotoAddDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "PhotoDialog::loadRequest()";
+	std::cerr << std::endl;
+		
+	if (queue == mPhotoQueue)
+	{
+		/* now switch on req */
+		switch(req.mType)
+		{
+			case TOKENREQ_GROUPINFO:
+				loadAlbumData(req.mToken);
+				break;
+			case TOKENREQ_MSGINFO:
+				loadPhotoData(req.mToken);
+				break;
+			default:
+				std::cerr << "PhotoAddDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+				std::cerr << std::endl;
+				break; 
+		}
+	}
+}
+
+
+
+

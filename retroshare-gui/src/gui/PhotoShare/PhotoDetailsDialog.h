@@ -37,6 +37,9 @@ public:
 
 void	setPhotoItem(PhotoItem *item);
 
+signals:
+	void editingDone();
+
 private:
 void	saveDetails();
 void	refreshDetails();

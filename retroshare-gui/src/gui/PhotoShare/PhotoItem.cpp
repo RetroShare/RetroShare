@@ -47,15 +47,15 @@ PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	mIsPhoto = false;
-	mAlbumDetails = album;
-	updateAlbumText(album);
+	setDummyText();
+	updateAlbumText(album); // saves: mAlbumDetails = album;
 	updateImage(album.mThumbnail);
 
 	setSelected(false);
 }
 
 
-PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo)
+PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPhotoAlbum &album)
 :QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_PHOTO) 
 {
 	setupUi(this);
@@ -63,9 +63,11 @@ PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	mIsPhoto = true;
-	mPhotoDetails = photo;
 
-	updatePhotoText(photo);
+	setDummyText();
+	updatePhotoText(photo); // saves: mPhotoDetails = photo;
+	updateAlbumText(album); // saves: mAlbumDetails = album;
+
 	updateImage(photo.mThumbnail);
 
 	setSelected(false);
@@ -79,19 +81,8 @@ PhotoItem::PhotoItem(PhotoHolder *parent, std::string path) // for new photos.
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	QString dummyString("dummytext");
-	titleLabel->setText(QString("NEW PHOTO"));
-
+	setDummyText();
 	mIsPhoto = true;
-
-	fromBoldLabel->setText(QString("From:"));
-	fromLabel->setText(QString("Ourselves"));
-
-	statusBoldLabel->setText(QString("Status:"));
-	statusLabel->setText(QString("new photo"));
-
-	dateBoldLabel->setText(QString("Date:"));
-	dateLabel->setText(QString("now"));
 
 	int width = 120;
 	int height = 120;
@@ -102,45 +93,93 @@ PhotoItem::PhotoItem(PhotoHolder *parent, std::string path) // for new photos.
 	setSelected(false);
 }
 
+void PhotoItem::updateParent(PhotoHolder *parent) // for external construction.
+{
+	mParent = parent;
+}
+
+
+void PhotoItem::setDummyText()
+{
+	titleLabel->setText(QString("Unknown"));
+	fromBoldLabel->setText(QString("By:"));
+	fromLabel->setText(QString("Unknown"));
+	statusBoldLabel->setText(QString("Where:"));
+	statusLabel->setText(QString("Unknown"));
+	dateBoldLabel->setText(QString("When:"));
+	dateLabel->setText(QString("Unknown"));
+}
+
+
 void PhotoItem::updateAlbumText(const RsPhotoAlbum &album)
 {
-	QString dummyString("dummytext");
-	titleLabel->setText(QString("TITLE"));
-
-	fromBoldLabel->setText(QString("From:"));
-	fromLabel->setText(QString("Unknown"));
-
-	statusBoldLabel->setText(QString("Status:"));
-	statusLabel->setText(QString("new photo"));
-
-	dateBoldLabel->setText(QString("Date:"));
-	dateLabel->setText(QString("now"));
-
-	//QDateTime qtime;
-	//qtime.setTime_t(msg.ts);
-	//QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-	//timestamplabel->setText(timestamp);
-
-	dateBoldLabel->setText(dummyString);
-	dateLabel->setText(dummyString);
-
+	mAlbumDetails = album;
+	mAlbumDetails.mThumbnail.data = 0;
+	updateText();
 }
 
 void PhotoItem::updatePhotoText(const RsPhotoPhoto &photo)
 {
-	QString dummyString("dummytext");
-	titleLabel->setText(QString("TITLE"));
-
-	fromBoldLabel->setText(QString("From:"));
-	fromLabel->setText(QString("Unknown"));
-
-	statusBoldLabel->setText(QString("Status:"));
-	statusLabel->setText(QString("new photo"));
-
-	dateBoldLabel->setText(QString("Date:"));
-	dateLabel->setText(QString("now"));
+	// Save new Photo details.
+	mPhotoDetails = photo;
+	mPhotoDetails.mThumbnail.data = 0;
+	updateText();
 }
 
+
+
+void PhotoItem::updateText()
+{
+	// SET Album Values first -> then overwrite with Photo Values.
+	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
+	{
+		titleLabel->setText(QString::fromUtf8(mAlbumDetails.mMeta.mGroupName.c_str()));
+	}
+
+	// This needs to be fixed!! TODO
+	fromLabel->setText(QString::fromStdString(mAlbumDetails.mMeta.mGroupId));
+	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_AUTHOR)
+	{
+		// This needs to be fixed!! TODO
+		fromLabel->setText(QString::fromStdString(mAlbumDetails.mMeta.mGroupId));
+	}
+
+	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
+	{
+		statusLabel->setText(QString::fromUtf8(mAlbumDetails.mWhere.c_str()));
+	}
+
+	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
+	{
+		dateLabel->setText(QString::fromUtf8(mAlbumDetails.mWhen.c_str()));
+	}
+	
+		// NOW Photo Bits.
+	if (mIsPhoto)
+	{
+		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
+		{
+			titleLabel->setText(QString::fromUtf8(mPhotoDetails.mMeta.mMsgName.c_str()));
+		}
+	
+		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_AUTHOR)
+		{
+			// This needs to be fixed!! TODO
+			fromLabel->setText(QString::fromStdString(mPhotoDetails.mMeta.mAuthorId));
+		}
+	
+		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
+		{
+			statusLabel->setText(QString::fromUtf8(mPhotoDetails.mWhere.c_str()));
+		}
+	
+		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
+		{
+			dateLabel->setText(QString::fromUtf8(mPhotoDetails.mWhen.c_str()));
+		}
+	}
+	
+}
 
 void PhotoItem::updateImage(const RsPhotoThumbnail &thumbnail)
 {

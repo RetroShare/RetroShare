@@ -122,8 +122,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>746</width>
-         <height>227</height>
+         <width>754</width>
+         <height>234</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -165,8 +165,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>746</width>
-         <height>227</height>
+         <width>754</width>
+         <height>233</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -194,13 +194,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QToolButton" name="toolButton_RemovePicture">
-       <property name="text">
-        <string>Remove Picture</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="toolButton_SlideShow">
        <property name="text">
         <string>Slide Show</string>
@@ -211,13 +204,6 @@
       <widget class="QToolButton" name="toolButton_EditAlbum">
        <property name="text">
         <string>Edit Album</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="toolButton_EditPictureDetails">
-       <property name="text">
-        <string>Edit Picture Details</string>
        </property>
       </widget>
      </item>

@@ -57,6 +57,8 @@ PhotoDrop::PhotoDrop(QWidget *parent)
     : QWidget(parent)
 {
 	setAcceptDrops(true);
+	mIsSingleImageDrop = false;
+
 	mSelected = NULL;
         checkMoveButtons();
 	reorderPhotos();
@@ -82,6 +84,11 @@ void PhotoDrop::notifySelection(PhotoItem *item, int ptype)
 
 void PhotoDrop::clear()
 {
+}
+
+void PhotoDrop::setSingleImage()
+{
+	mIsSingleImageDrop = true;
 }
 
 
@@ -248,6 +255,11 @@ void PhotoDrop::reorderPhotos()
 	}
 	int space = width();
 	mColumns = space / minWidth;
+	// incase its too thin!
+	if (mColumns < 1)
+	{
+		mColumns = 1;
+	}
 
 	std::cerr << "PhotoDrop::reorderPhotos() minWidth: " << minWidth << " space: " << space;
 	std::cerr << " columns: " << mColumns;
@@ -627,11 +639,15 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 
 			PhotoItem *item = new PhotoItem(this, localpath.toStdString());
 
+			addPhotoItem(item);
 			//mPhotos.push_back(item);
-			layout()->addWidget(item);
+			//layout()->addWidget(item);
 		}
         	event->setDropAction(Qt::CopyAction);
         	event->accept();
+
+		// Notify Listeners. (only happens for drop - not programmatically added).
+		photosChanged();
 	}
 	else
 	{
@@ -641,6 +657,7 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 	}
 
         checkMoveButtons();
+
 }
 
 void PhotoDrop::mousePressEvent(QMouseEvent *event)
@@ -654,4 +671,22 @@ void PhotoDrop::mousePressEvent(QMouseEvent *event)
 	QWidget::mousePressEvent(event);
 }
 
+
+
+void PhotoDrop::addPhotoItem(PhotoItem *item)
+{
+	std::cerr << "PhotoDrop::addPhotoItem()";
+	std::cerr << std::endl;
+
+	if (mIsSingleImageDrop)
+	{
+		clearPhotos();
+	}
+
+	item->updateParent(this);
+	layout()->addWidget(item);
+	
+        //checkMoveButtons();
+
+}
 

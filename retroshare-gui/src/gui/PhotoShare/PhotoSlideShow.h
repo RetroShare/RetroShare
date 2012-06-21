@@ -21,22 +21,20 @@
  *
  */
 
-#ifndef MRK_PHOTO_ADD_DIALOG_H
-#define MRK_PHOTO_ADD_DIALOG_H
+#ifndef MRK_PHOTO_SLIDE_SHOW_H
+#define MRK_PHOTO_SLIDE_SHOW_H
 
-#include "ui_PhotoAddDialog.h"
+#include "ui_PhotoSlideShow.h"
 
 #include <retroshare/rsphoto.h>
 #include "util/TokenQueue.h"
 
-class PhotoDetailsDialog;
-
-class PhotoAddDialog : public QWidget, public TokenResponse
+class PhotoSlideShow : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
 public:
-	PhotoAddDialog(QWidget *parent = 0);
+	PhotoSlideShow(QWidget *parent = 0);
 
 	void loadAlbum(const std::string &albumId);
 virtual	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -45,34 +43,50 @@ virtual	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void showPhotoDetails();
-	void showAlbumDetails();
-	void editingStageDone();
+	void moveLeft();
+	void moveRight();
+	void StartStop();
+	void timerEvent();
+	void closeShow();
 
-        // From PhotoDrops...
-        void albumImageChanged();
-        void photoImageChanged();
-	void updateMoveButtons(uint32_t status);
 
-	void publishAlbum();
-
-	void deleteAlbum();
-	void deletePhoto();
 private:
 
-	bool updateAlbumDetails(const RsPhotoAlbum &album);
-	bool setAlbumDataToPhotos();
+	void loadImage();
+	void updateMoveButtons(uint32_t status);
+
 	bool loadPhotoData(const uint32_t &token);
 	bool loadAlbumData(const uint32_t &token);
+
+//protected:
+
+	std::map<std::string, RsPhotoPhoto *> mPhotos;
+	std::map<int, std::string> mPhotoOrder;
+
+	bool mRunning;
+	int mImageIdx;
+	bool mShotActive;
+
 	TokenQueue *mPhotoQueue;
-protected:
 
-	bool mAlbumEdit; // Editing or New.
-	bool mEditingModeAlbum; // Changing Album or Photo Details.
-	RsPhotoAlbum mAlbumData; 
-	PhotoDetailsDialog *mPhotoDetails;
-	Ui::PhotoAddDialog ui;
-
+	Ui::PhotoSlideShow ui;
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -30,6 +30,7 @@
 #include <sstream>
 
 #include <QTimer>
+#include <QMessageBox>
 
 /******
  * #define PHOTO_DEBUG 1
@@ -66,8 +67,11 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 	mAddDialog = NULL;
 	mAlbumSelected = NULL;
 	mPhotoSelected = NULL;
+	mSlideShow = NULL;
 
 	connect( ui.toolButton_NewAlbum, SIGNAL(clicked()), this, SLOT(OpenOrShowPhotoAddDialog()));
+	connect( ui.toolButton_EditAlbum, SIGNAL(clicked()), this, SLOT(OpenPhotoEditDialog()));
+	connect( ui.toolButton_SlideShow, SIGNAL(clicked()), this, SLOT(OpenSlideShow()));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -150,6 +154,45 @@ void PhotoDialog::checkUpdate()
 
 /*************** New Photo Dialog ***************/
 
+void PhotoDialog::OpenSlideShow()
+{
+
+	// TODO.
+	if (!mAlbumSelected)
+	{
+		// ALERT. 
+	 	int ret = QMessageBox::information(this, tr("PhotoShare"),
+                                tr("Please select an album before\n"
+                                   "requesting to edit it!"), 
+                                QMessageBox::Ok);
+		return;
+	}
+
+	if (mAlbumSelected->mIsPhoto)
+	{
+		std::cerr << "PhotoDialog::OpenPhotoEditDialog() MAJOR ERROR!";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::string albumId = mAlbumSelected->mAlbumDetails.mMeta.mGroupId;
+
+	if (mSlideShow)
+	{
+		mSlideShow->show();
+	}
+	else
+	{
+		mSlideShow = new PhotoSlideShow(NULL);
+		mSlideShow->show();
+	}
+	mSlideShow->loadAlbum(albumId);
+
+}
+
+
+/*************** New Photo Dialog ***************/
+
 void PhotoDialog::OpenOrShowPhotoAddDialog()
 {
 	if (mAddDialog)
@@ -161,6 +204,50 @@ void PhotoDialog::OpenOrShowPhotoAddDialog()
 		mAddDialog = new PhotoAddDialog(NULL);
 		mAddDialog->show();
 	}
+	mAddDialog->clearDialog();
+}
+
+
+/*************** Edit Photo Dialog ***************/
+
+void PhotoDialog::OpenPhotoEditDialog()
+{
+	/* check if we have an album selected */
+	// THE TWO MessageBoxes - should be handled by disabling the Button!.
+	// TODO.
+	if (!mAlbumSelected)
+	{
+		// ALERT. 
+	 	int ret = QMessageBox::information(this, tr("PhotoShare"),
+                                tr("Please select an album before\n"
+                                   "requesting to edit it!"), 
+                                QMessageBox::Ok);
+		return;
+	}
+
+	if (mAlbumSelected->mIsPhoto)
+	{
+		std::cerr << "PhotoDialog::OpenPhotoEditDialog() MAJOR ERROR!";
+		std::cerr << std::endl;
+	}
+
+	std::string albumId = mAlbumSelected->mAlbumDetails.mMeta.mGroupId;
+#if 0
+	uint32_t flags = mAlbumSelected->mAlbumDetails.mMeta.mGroupFlags;
+
+	if (!(flags & OWN))
+	{
+		// ALERT. 
+	 	int ret = QMessageBox::information(this, tr("PhotoShare"),
+                                tr("Cannot Edit Someone Else's Album"),
+                                QMessageBox::Ok);
+		return;
+	}
+#endif
+		
+	OpenOrShowPhotoAddDialog();
+	mAddDialog->loadAlbum(albumId);
+
 }
 
 
@@ -320,7 +407,10 @@ void PhotoDialog::addPhoto(const RsPhotoPhoto &photo)
 	std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
 	std::cerr << std::endl;
 
-	PhotoItem *item = new PhotoItem(this, photo);
+	RsPhotoAlbum dummyAlbum;
+	dummyAlbum.mSetFlags = 0;
+
+	PhotoItem *item = new PhotoItem(this, photo, dummyAlbum);
 	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
 	alayout->addWidget(item);
 
@@ -411,6 +501,7 @@ void PhotoDialog::requestPhotoList(const std::string &albumId)
 	std::list<std::string> ids;
 	ids.push_back(albumId);
 	RsTokReqOptions opts;
+	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 	uint32_t token;
 	mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
 }
@@ -452,13 +543,11 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
 		if (rsPhoto->getPhoto(token, photo))
 		{
 
-			std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mMeta.mGroupId;
+			std::cerr << "PhotoDialog::loadPhotoData() AlbumId: " << photo.mMeta.mGroupId;
 			std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
 			std::cerr << std::endl;
 
-			PhotoItem *item = new PhotoItem(this, photo);
-			QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
-			alayout->addWidget(item);
+			addPhoto(photo);
 		}
 		else
 		{

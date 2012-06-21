@@ -48,9 +48,14 @@ class PhotoItem : public QWidget, private Ui::PhotoItem
 
 public:
 	PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album);
-	PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo);
+	PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPhotoAlbum &album);
 	PhotoItem(PhotoHolder *parent, std::string url); // for new photos.
 
+	void setDummyText();
+	void updateParent(PhotoHolder *parent); // for external construction.
+	void updateAlbumText(const RsPhotoAlbum &album);
+	void updatePhotoText(const RsPhotoPhoto &photo);
+	void updateText();
 	bool getPhotoThumbnail(RsPhotoThumbnail &nail);
 
 	void removeItem();
@@ -62,6 +67,7 @@ public:
 
 	// details are public - so that can be easily edited.
 	bool mIsPhoto;
+	bool mWasModified;
 	RsPhotoPhoto mPhotoDetails;
 	RsPhotoAlbum mAlbumDetails;
 
@@ -72,8 +78,6 @@ protected:
 	void mousePressEvent(QMouseEvent *event);
 
 private:
-	void updateAlbumText(const RsPhotoAlbum &album);
-	void updatePhotoText(const RsPhotoPhoto &photo);
 	void updateImage(const RsPhotoThumbnail &thumbnail);
 
 	PhotoHolder *mParent;

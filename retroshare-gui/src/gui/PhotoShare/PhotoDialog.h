@@ -33,6 +33,7 @@
 
 #include "gui/PhotoShare/PhotoItem.h"
 #include "gui/PhotoShare/PhotoAddDialog.h"
+#include "gui/PhotoShare/PhotoSlideShow.h"
 #include "util/TokenQueue.h"
 
 class PhotoDialog : public MainPage, public PhotoHolder, public TokenResponse 
@@ -52,7 +53,8 @@ private slots:
 
 	void checkUpdate();
 	void OpenOrShowPhotoAddDialog();
-
+	void OpenPhotoEditDialog();
+	void OpenSlideShow();
 private:
 
 	/* Request Response Functions for loading data */
@@ -94,6 +96,7 @@ private:
 	void clearPhotos();
 
 	PhotoAddDialog *mAddDialog;
+	PhotoSlideShow *mSlideShow;
 
 	PhotoItem *mAlbumSelected;
 	PhotoItem *mPhotoSelected;
