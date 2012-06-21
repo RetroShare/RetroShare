@@ -165,6 +165,10 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 
 		if(n > 0 || _file_size > CHUNKMAP_FIXED_CHUNK_SIZE)	// dont' put <1MB files into checking mode. This is useless.
 			_chunks_checking_queue.push_back(n) ;
+#ifdef USE_NEW_CHUNK_CHECKING_CODE
+		else
+			_map[n] = FileChunksInfo::CHUNK_DONE ;
+#endif
 
 		_slices_to_download.erase(itc) ;
 
