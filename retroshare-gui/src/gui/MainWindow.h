@@ -181,6 +181,7 @@ private slots:
     void addFriend();
     void showMessengerWindow();
     void showDhtWindow();
+    void showBwCtrlWindow();
 
 #ifdef UNFINISHED    
     void showApplWindow();

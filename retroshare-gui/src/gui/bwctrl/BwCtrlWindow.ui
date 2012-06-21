@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BwCtrlWindow</class>
+ <widget class="QMainWindow" name="BwCtrlWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>927</width>
+    <height>777</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Bandwidth Control WIndow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
+    <normaloff>:/images/dht16.png</normaloff>:/images/dht16.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="bwSummaryLabel">
+      <property name="text">
+       <string>BandWidth Measurements</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTreeWidget" name="bwTreeWidget">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>In (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InAllocated (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Allocated Sent</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Out (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutAllowed (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Allowed Recvd</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>927</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
+ <connections/>
+</ui>

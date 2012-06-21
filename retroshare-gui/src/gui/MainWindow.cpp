@@ -99,12 +99,18 @@
 /****
  *
  * #define USE_DHTWINDOW	1
+ * #define USE_BWCTRLWINDOW	1
  *
  ****/
 #define USE_DHTWINDOW	1
+#define USE_BWCTRLWINDOW	1
 
 #ifdef USE_DHTWINDOW
 #include "dht/DhtWindow.h"
+#endif
+
+#ifdef USE_BWCTRLWINDOW
+#include "bwctrl/BwCtrlWindow.h"
 #endif
 
 #define FONT        QFont("Arial", 9)
@@ -440,6 +446,9 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
 #ifdef USE_DHTWINDOW
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("DHT Details"), this, SLOT(showDhtWindow()));
+#endif
+#ifdef USE_BWCTRLWINDOW
+    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Bandwidth Details"), this, SLOT(showBwCtrlWindow()));
 #endif
 
 #ifdef UNFINISHED
@@ -1202,6 +1211,15 @@ void MainWindow::showDhtWindow()
 {
 #ifdef USE_DHTWINDOW
     DhtWindow::showYourself();
+#endif
+}
+
+
+/** Shows Bandwitch Control window */
+void MainWindow::showBwCtrlWindow()
+{
+#ifdef USE_BWCTRLWINDOW
+    BwCtrlWindow::showYourself();
 #endif
 }
 
