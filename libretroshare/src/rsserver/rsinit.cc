@@ -2243,6 +2243,7 @@ int RsServer::StartupRetroShare()
 	mBitDht->setupPeerSharer(mBanList);
 
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
+	pqih -> addService(mBwCtrl); 
 
 #ifdef RS_DSDVTEST
 	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);

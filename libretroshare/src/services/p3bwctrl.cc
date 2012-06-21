@@ -165,6 +165,8 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 		rateMap.erase(it);
 	}
 
+	printRateInfo_locked(std::cerr);
+
 	/* any left over rateMaps ... are bad! (or not active - more likely) */
 	return true;
 }
@@ -264,12 +266,22 @@ int p3BandwidthControl::printRateInfo_locked(std::ostream &out)
 	out << std::endl;
 	
 	//time_t now = time(NULL);
+	out << "Totals: ";
+	out << " In: " << mTotalRates.mRateIn;
+	out << " MaxIn: " << mTotalRates.mMaxRateIn;
+	out << " Out: " << mTotalRates.mRateOut;
+	out << " MaxOut: " << mTotalRates.mMaxRateOut;
+	out << std::endl;
 
 	std::map<std::string, BwCtrlData>::iterator bit;
 	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
 	{
-		//out << " Age: " << now - it->second.mTs;
-		//out << std::endl;
+		out << "\t" << bit->first;
+		out << " In: " << bit->second.mRates.mRateIn;
+		out << " MaxIn: " << bit->second.mRates.mMaxRateIn;
+		out << " Out: " << bit->second.mRates.mRateOut;
+		out << " MaxOut: " << bit->second.mRates.mMaxRateOut;
+		out << std::endl;
 	}			
 	return true ;
 }
