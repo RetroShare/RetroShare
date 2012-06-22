@@ -56,6 +56,11 @@
       </column>
       <column>
        <property name="text">
+        <string>InQueue</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>InAllocated (KB/s)</string>
        </property>
       </column>
@@ -72,6 +77,11 @@
       <column>
        <property name="text">
         <string>OutMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutQueue</string>
        </property>
       </column>
       <column>

@@ -138,13 +138,15 @@ void BwCtrlWindow::updateBandwidth()
 
 #define PTW_COL_IN_RATE			2
 #define PTW_COL_IN_MAX			3
-#define PTW_COL_IN_ALLOC		4
-#define PTW_COL_IN_ALLOC_SENT		5
+#define PTW_COL_IN_QUEUE		4
+#define PTW_COL_IN_ALLOC		5
+#define PTW_COL_IN_ALLOC_SENT		6
 
-#define PTW_COL_OUT_RATE		6
-#define PTW_COL_OUT_MAX			7
-#define PTW_COL_OUT_ALLOC		8
-#define PTW_COL_OUT_ALLOC_SENT		9
+#define PTW_COL_OUT_RATE		7
+#define PTW_COL_OUT_MAX			8
+#define PTW_COL_OUT_QUEUE		9
+#define PTW_COL_OUT_ALLOC		10
+#define PTW_COL_OUT_ALLOC_SENT		11
 
 	peerTreeWidget->clear();
 
@@ -165,11 +167,13 @@ void BwCtrlWindow::updateBandwidth()
 
 	item -> setData(PTW_COL_IN_RATE, Qt::DisplayRole, QString::number(totalRates.mRateIn));
 	item -> setData(PTW_COL_IN_MAX, Qt::DisplayRole, QString::number(totalRates.mRateMaxIn));
+	item -> setData(PTW_COL_IN_QUEUE, Qt::DisplayRole, QString::number(totalRates.mQueueIn));
 	item -> setData(PTW_COL_IN_ALLOC, Qt::DisplayRole, QString("N/A"));
 	item -> setData(PTW_COL_IN_ALLOC_SENT, Qt::DisplayRole, QString("N/A"));
 
 	item -> setData(PTW_COL_OUT_RATE, Qt::DisplayRole, QString::number(totalRates.mRateOut));
 	item -> setData(PTW_COL_OUT_MAX, Qt::DisplayRole, QString::number(totalRates.mRateMaxOut));
+	item -> setData(PTW_COL_OUT_QUEUE, Qt::DisplayRole, QString::number(totalRates.mQueueOut));
 	item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString("N/A"));
 	item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString("N/A"));
 
@@ -206,11 +210,13 @@ void BwCtrlWindow::updateBandwidth()
 
 		peer_item -> setData(PTW_COL_IN_RATE, Qt::DisplayRole, QString::number(it->second.mRateIn));
 		peer_item -> setData(PTW_COL_IN_MAX, Qt::DisplayRole, QString::number(it->second.mRateMaxIn));
+		peer_item -> setData(PTW_COL_IN_QUEUE, Qt::DisplayRole, QString::number(it->second.mQueueIn));
 		peer_item -> setData(PTW_COL_IN_ALLOC, Qt::DisplayRole, QString::number(it->second.mAllocIn));
 		peer_item -> setData(PTW_COL_IN_ALLOC_SENT, Qt::DisplayRole, QString::number(now - it->second.mAllocTs));
 
 		peer_item -> setData(PTW_COL_OUT_RATE, Qt::DisplayRole, QString::number(it->second.mRateOut));
 		peer_item -> setData(PTW_COL_OUT_MAX, Qt::DisplayRole, QString::number(it->second.mRateMaxOut));
+		peer_item -> setData(PTW_COL_OUT_QUEUE, Qt::DisplayRole, QString::number(it->second.mQueueOut));
 		peer_item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString::number(it->second.mAllowedOut));
 		peer_item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString::number(now - it->second.mAllowedTs));
 
