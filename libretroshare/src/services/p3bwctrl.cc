@@ -225,6 +225,9 @@ int  p3BandwidthControl::getTotalBandwidthRates(RsConfigDataRates &rates)
 	rates.mAllowedOut = 0;
 	rates.mAllowedTs = 0;
 
+	rates.mQueueIn = mTotalRates.mQueueIn;
+	rates.mQueueOut = mTotalRates.mQueueOut;
+
 	return 1;
 }
 
@@ -247,6 +250,9 @@ int p3BandwidthControl::getAllBandwidthRates(std::map<std::string, RsConfigDataR
 
 		rates.mAllowedOut = bit->second.mAllowedOut / 1000.0;
 		rates.mAllowedTs = bit->second.mLastRecvd;
+
+        	rates.mQueueIn = bit->second.mRates.mQueueIn;
+        	rates.mQueueOut = bit->second.mRates.mQueueOut;
 
 		ratemap[bit->first] = rates;
 	}			

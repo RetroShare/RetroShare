@@ -146,6 +146,9 @@ class RsConfigDataRates
 		mAllowedOut = 0;
 
 		mAllowedTs = 0;
+
+		mQueueIn = 0;
+		mQueueOut = 0;
 	}
 
 	/* all in kB/s */
@@ -160,6 +163,9 @@ class RsConfigDataRates
 	float   mAllowedOut;
 
 	time_t	mAllowedTs;
+
+	int 	mQueueIn;
+	int	mQueueOut;
 };
 
 

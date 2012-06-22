@@ -59,7 +59,8 @@ class pqistreamer: public PQInterface
 		virtual int     status();
 
 		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
-
+		virtual void    getRates(RsBwRates &rates);
+		virtual int     getQueueSize(bool in); // extracting data.
 	private:
 		/* Implementation */
 

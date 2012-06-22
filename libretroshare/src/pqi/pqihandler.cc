@@ -742,6 +742,8 @@ int     pqihandler::ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBw
 	total.mMaxRateOut = getMaxRate(false);
 	total.mRateIn = 0;
 	total.mRateOut = 0;
+	total.mQueueIn = 0;
+	total.mQueueOut = 0;
 
 	/* Lock once rates have been retrieved */
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
@@ -756,6 +758,8 @@ int     pqihandler::ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBw
 
 		total.mRateIn  += peerRates.mRateIn;
 		total.mRateOut += peerRates.mRateOut;
+		total.mQueueIn  += peerRates.mQueueIn;
+		total.mQueueOut += peerRates.mQueueOut;
 
 		ratemap[it->first] = peerRates;
 

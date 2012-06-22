@@ -924,3 +924,18 @@ void    pqistreamer::inReadBytes(int inb)
 	return;
 }
 
+int     pqistreamer::getQueueSize(bool in)
+{
+	if (in)
+		return incoming.size();
+	return out_pkt.size();
+}
+
+void    pqistreamer::getRates(RsBwRates &rates)
+{
+	RateInterface::getRates(rates);
+	rates.mQueueIn = incoming.size();	
+	rates.mQueueOut = out_pkt.size();
+}
+
+

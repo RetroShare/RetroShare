@@ -58,11 +58,13 @@ class RsBwRates
 {
 	public:
 	RsBwRates()
-	:mRateIn(0), mRateOut(0), mMaxRateIn(0), mMaxRateOut(0) {return;}
+	:mRateIn(0), mRateOut(0), mMaxRateIn(0), mMaxRateOut(0), mQueueIn(0), mQueueOut(0) {return;}
 	float mRateIn;
 	float mRateOut;
 	float mMaxRateIn;
 	float mMaxRateOut;
+	int   mQueueIn;
+	int   mQueueOut;
 };
 
 
@@ -86,6 +88,7 @@ virtual void    getRates(RsBwRates &rates)
 	return;
 }
 
+virtual int     getQueueSize(bool /* in */) { return 0;}
 virtual float	getRate(bool in)
 	{
 	if (in)

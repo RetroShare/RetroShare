@@ -452,6 +452,23 @@ pqiconnect	*pqiperson::getKid(uint32_t type)
 	}
 }
 
+void    pqiperson::getRates(RsBwRates &rates)
+{
+	// get the rate from the active one.
+	if ((!active) || (activepqi == NULL))
+		return;
+	activepqi -> getRates(rates);
+}
+
+int     pqiperson::getQueueSize(bool in)
+{
+	// get the rate from the active one.
+	if ((!active) || (activepqi == NULL))
+		return 0;
+	return activepqi -> getQueueSize(in);
+}
+
+
 float   pqiperson::getRate(bool in)
 {
 	// get the rate from the active one.

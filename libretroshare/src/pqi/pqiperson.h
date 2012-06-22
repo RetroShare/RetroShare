@@ -136,6 +136,8 @@ virtual int	tick();
 int 	notifyEvent(NetInterface *ni, int event);
 
 // PQInterface for rate control overloaded....
+virtual int     getQueueSize(bool in);
+virtual void    getRates(RsBwRates &rates);
 virtual float   getRate(bool in);
 virtual void    setMaxRate(bool in, float val);
 virtual void    setRateCap(float val_in, float val_out);
