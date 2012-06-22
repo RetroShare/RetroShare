@@ -217,9 +217,83 @@ void BwCtrlWindow::updateBandwidth()
 		peer_item -> setData(PTW_COL_OUT_RATE, Qt::DisplayRole, QString::number(it->second.mRateOut));
 		peer_item -> setData(PTW_COL_OUT_MAX, Qt::DisplayRole, QString::number(it->second.mRateMaxOut));
 		peer_item -> setData(PTW_COL_OUT_QUEUE, Qt::DisplayRole, QString::number(it->second.mQueueOut));
-		peer_item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString::number(it->second.mAllowedOut));
-		peer_item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString::number(now - it->second.mAllowedTs));
+		if (it->second.mAllowedTs != 0)
+		{
+			peer_item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString::number(it->second.mAllowedOut));
+			peer_item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString::number(now - it->second.mAllowedTs));
+		}
+		else
+		{
+			peer_item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString("N/A"));
+			peer_item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString("N/A"));
+		}
 
+
+		/* colour the columns */
+		if (it->second.mAllowedTs != 0)
+		{
+			if (it->second.mAllowedOut < it->second.mRateOut)
+			{	
+				/* RED */
+				QColor bc("#ff4444"); // red
+				peer_item -> setBackground(PTW_COL_OUT_RATE,QBrush(bc));
+	
+			}
+			else if (it->second.mAllowedOut < it->second.mRateMaxOut)
+			{
+				/* YELLOW */
+				QColor bc("#ffff66"); // yellow
+				peer_item -> setBackground(PTW_COL_OUT_MAX,QBrush(bc));
+	
+			}
+			else
+			{
+				/* GREEN */
+				QColor bc("#44ff44");//bright green
+				peer_item -> setBackground(PTW_COL_OUT_ALLOC,QBrush(bc));
+			}
+		}
+		else
+		{
+			/* GRAY */
+			QColor bc("#444444");// gray
+			peer_item -> setBackground(PTW_COL_OUT_ALLOC,QBrush(bc));
+			peer_item -> setBackground(PTW_COL_OUT_ALLOC_SENT,QBrush(bc));
+
+		}
+
+		/* queueOut */
+#define QUEUE_RED	10000
+#define QUEUE_ORANGE	2000
+#define QUEUE_YELLOW	500
+
+		if (it->second.mQueueOut > QUEUE_RED)
+		{	
+			/* RED */
+			QColor bc("#ff4444"); // red
+			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+	
+		}
+		else if (it->second.mQueueOut > QUEUE_ORANGE)
+		{
+			/* ORANGE */
+			QColor bc("#ff9900"); //orange
+			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+
+		}
+		else if (it->second.mQueueOut > QUEUE_YELLOW)
+		{
+			/* YELLOW */
+			QColor bc("#ffff66"); // yellow
+			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+
+		}
+		else
+		{
+			/* GREEN */
+			QColor bc("#44ff44");//bright green
+			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+		}
 	}
 }
 
