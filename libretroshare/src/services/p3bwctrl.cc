@@ -149,7 +149,7 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 
 		if (updatePeer)
 		{
-#define ALLOC_FACTOR (0.9)
+#define ALLOC_FACTOR (1.0)
 			// save value sent,
 			bit->second.mAllocated = ALLOC_FACTOR * 1000.0 * it->second.mMaxRateIn;
 			bit->second.mLastSend = now;
