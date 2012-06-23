@@ -32,10 +32,11 @@
 //   \alpha is a constant that is not necessarily an integer, but strictly > 1.
 // - the set of possible priority levels is finite, and pre-determined.
 //
+#pragma once
+
+#include <stdint.h>
 #include <vector>
 #include <list>
-
-class RsItem ;
 
 class pqiQoS
 {
@@ -45,18 +46,18 @@ class pqiQoS
 		class ItemQueue 
 		{
 			public:
-				RsItem *pop() 
+				void *pop() 
 				{
 					if(_items.empty())
 						return NULL ;
 
-					RsItem *item = _items.front() ;
+					void *item = _items.front() ;
 					_items.pop_front() ;
 
 					return item ;
 				}
 
-				void push(RsItem *item) 
+				void push(void *item) 
 				{
 					_items.push_back(item) ;
 				}
@@ -64,20 +65,25 @@ class pqiQoS
 				float _threshold ;
 				float _counter ;
 				float _inc ;
-				std::list<RsItem*> _items ;
+				std::list<void*> _items ;
 		};
 
 		// This function pops items from the queue, y order of priority
 		//
-		RsItem *out_rsItem() ;
+		void *out_rsItem() ;
 
 		// This function is used to queue items.
 		//
-		void in_rsItem(RsItem *item) ;
+		void in_rsItem(void *item,int priority) ;
 
 		void print() const ;
 		uint64_t qos_queue_size() const { return _nb_items ; }
 
+		// kills all waiting items.
+		void clear() ;
+
+		void computeTotalItemSize() const ;
+		int debug_computeTotalItemSize() const ;
 	private:
 		// This vector stores the lists of items with equal priorities.
 		//

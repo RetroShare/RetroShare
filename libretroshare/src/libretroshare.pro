@@ -400,6 +400,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissludp.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
+			pqi/pqiqosstreamer.h \
 			pqi/sslfns.h \
 			pqi/pqinetstatebox.h 
 
@@ -533,6 +534,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissludp.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
+			pqi/pqiqosstreamer.cc \
 			pqi/sslfns.cc \
 			pqi/pqinetstatebox.cc 
 

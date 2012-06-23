@@ -22,6 +22,17 @@ for(int i=((int)nb_levels)-1;i>=0;--i,c *= alpha)
 	}
 }
 
+void pqiQoS::clear()
+{
+	void *item ;
+
+	for(int i=0;i<_item_queues.size();++i)
+		while( (item = _item_queues[i].pop()) != NULL)
+			free(item) ;
+
+	_nb_items = 0 ;
+}
+
 void pqiQoS::print() const
 {
 	std::cerr << "pqiQoS: " << _item_queues.size() << " levels, alpha=" << _alpha ;
@@ -32,19 +43,19 @@ void pqiQoS::print() const
 	std::cerr << std::endl;
 }
 
-void pqiQoS::in_rsItem(RsItem *item)
+void pqiQoS::in_rsItem(void *ptr,int priority)
 {
-	if(item->priority_level() >= _item_queues.size())
+	if(priority >= _item_queues.size())
 	{
-		std::cerr << "pqiQoS::in_rsRawItem() ****Warning****: priority " << item->priority_level() << " out of scope [0," << _item_queues.size()-1 << "]. Priority will be clamped to maximum value." << std::endl;
-		item->setPriorityLevel(_item_queues.size()-1) ;
+		std::cerr << "pqiQoS::in_rsRawItem() ****Warning****: priority " << priority << " out of scope [0," << _item_queues.size()-1 << "]. Priority will be clamped to maximum value." << std::endl;
+		priority = _item_queues.size()-1 ;
 	}
 
-	_item_queues[item->priority_level()].push(item) ;
+	_item_queues[priority].push(ptr) ;
 	++_nb_items ;
 }
 
-RsItem *pqiQoS::out_rsItem()
+void *pqiQoS::out_rsItem()
 {
 	// Go through the queues. Increment counters.
 

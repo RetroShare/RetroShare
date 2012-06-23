@@ -43,15 +43,15 @@ static const int CONNECT_FAILED       = 5;
 
 static const int HEARTBEAT_REPEAT_TIME = 5;
 
-#include "pqi/pqistreamer.h"
+#include "pqi/pqiqosstreamer.h"
 
-class pqiconnect: public pqistreamer, public NetInterface
+class pqiconnect: public pqiQoSstreamer, public NetInterface
 {
 public:
 	pqiconnect(RsSerialiser *rss, NetBinInterface *ni_in)
-	:pqistreamer(rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
-	NetInterface(NULL, ni_in->PeerId()), // No need for callback
-	 ni(ni_in) 
+			:pqiQoSstreamer(rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
+			 NetInterface(NULL, ni_in->PeerId()), // No need for callback
+	 		 ni(ni_in) 
 	{ 
 		if (!ni_in)
 		{

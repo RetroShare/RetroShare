@@ -61,17 +61,26 @@ class pqistreamer: public PQInterface
 		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
-	private:
+	protected:
 		/* Implementation */
 
+		// These methods are redefined in pqiQoSstreamer
+		//
+		virtual void locked_storeInOutputQueue(void *ptr,int priority) ;
+		virtual int out_queue_size() const ;
+		virtual void locked_clear_out_queue() ;
+		virtual int locked_compute_out_pkt_size() const ;
+		virtual void *locked_pop_out_data() ;
+
+	private:
 		// to filter functions - detect filecancel/data and act!
-		int	queue_outpqi(      RsItem *i,uint32_t& serialized_size);
-		int 	handleincomingitem(RsItem *i);
+		int queue_outpqi(RsItem *i,uint32_t& serialized_size);
+		int handleincomingitem(RsItem *i);
 
 		// ticked regularly (manages out queues and sending
 		// via above interfaces.
-		int	handleoutgoing();
-		int	handleincoming();
+		virtual int	handleoutgoing();
+		virtual int	handleincoming();
 
 		// Bandwidth/Streaming Management.
 		float	outTimeSlice();
@@ -123,6 +132,5 @@ class pqistreamer: public PQInterface
 
 
 };
-
 
 #endif //MRK_PQI_STREAMER_HEADER

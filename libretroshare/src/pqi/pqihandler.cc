@@ -37,9 +37,8 @@ static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
 #define DEBUG_TICK 1
 #define RSITEM_DEBUG 1
 ****/
-//#define DEBUG_QOS 1
 
-pqihandler::pqihandler(SecurityPolicy *Global) : pqiQoS(PQI_HANDLER_NB_PRIORITY_LEVELS,PQI_HANDLER_NB_PRIORITY_RATIO),coreMtx("pqihandler")
+pqihandler::pqihandler(SecurityPolicy *Global) : coreMtx("pqihandler")
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
@@ -90,62 +89,17 @@ int	pqihandler::tick()
 		}
 	}
 
-	// send items from QoS queue
-
-	moreToTick |= drawFromQoS_queue() ;
-
 	UpdateRates();
 	return moreToTick;
-}
-
-bool pqihandler::drawFromQoS_queue()
-{
-	float avail_out = getMaxRate(false) * 1024 / ticks_per_sec ;
-
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-
-	++nb_ticks ;
-	time_t now = time(NULL) ;
-	if(last_m + 3 < now)
-	{
-		ticks_per_sec = nb_ticks / (float)(now - last_m) ;
-		nb_ticks = 0 ;
-		last_m = now ;
-	}
-#ifdef DEBUG_QOS
-	std::cerr << "ticks per sec: " << ticks_per_sec << ", max rate in bytes/s = " << avail_out*ticks_per_sec << ", avail out per tick= " << avail_out << std::endl;
-#endif
-
-	uint64_t total_bytes_sent = 0 ;
-	RsItem *item ;
-
-	while( total_bytes_sent < avail_out && (item = out_rsItem()) != NULL)
-	{
-		//
-		uint32_t size ;
-		locked_HandleRsItem(item, 0, size);
-		total_bytes_sent += size ;
-#ifdef DEBUG_QOS
-		std::cerr << "treating item " << (void*)item << ", priority " << (int)item->priority_level() << ", size=" << size << ", total = " << total_bytes_sent << ", queue size = " << qos_queue_size() << std::endl;
-#endif
-	}
-#ifdef DEBUG_QOS
-	assert(total_bytes_sent >= avail_out || qos_queue_size() == 0) ;
-	std::cerr << "total bytes sent = " << total_bytes_sent << ", " ;
-	if(qos_queue_size() > 0) 
-		std::cerr << "Queue still has " << qos_queue_size() << " elements." << std::endl;
-	else
-		std::cerr << "Queue is empty." << std::endl;
-#endif
-
-	return (qos_queue_size() > 0) ;
 }
 
 
 bool pqihandler::queueOutRsItem(RsItem *item)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	in_rsItem(item) ;
+
+	uint32_t size ;
+	locked_HandleRsItem(item, 0, size);
 
 #ifdef DEBUG_QOS
 	if(item->priority_level() == QOS_PRIORITY_UNKNOWN)
@@ -380,7 +334,7 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "pqihandler::SendRsRawItem()");
 
-	// queue the item into the QoS 
+	// directly send item to streamers
 	
 	return queueOutRsItem(ns) ;
 }

@@ -46,7 +46,7 @@ class SearchModule
 // Presents a P3 Face to the world!
 // and funnels data through to a PQInterface.
 //
-class pqihandler: public P3Interface, public pqiQoS
+class pqihandler: public P3Interface
 {
 	public:
 		pqihandler(SecurityPolicy *Global);
@@ -95,8 +95,6 @@ class pqihandler: public P3Interface, public pqiQoS
 
 		// TESTING INTERFACE.
 		int     ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBwRates &totals);
-
-		bool drawFromQoS_queue() ;
 
 	protected:
 		/* check to be overloaded by those that can

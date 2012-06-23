@@ -111,12 +111,7 @@ pqistreamer::~pqistreamer()
 		delete rsSerialiser;
 
 	// clean up outgoing. (cntrl packets)
-	while(out_pkt.size() > 0)
-	{
-		void *pkt = out_pkt.front();
-		out_pkt.pop_front();
-		free(pkt);
-	}
+	locked_clear_out_queue() ;
 
 	if (pkt_wpending)
 	{
@@ -126,7 +121,7 @@ pqistreamer::~pqistreamer()
 
 	free(pkt_rpending);
 
-	// clean up outgoing.
+	// clean up incoming.
 	while(incoming.size() > 0)
 	{
 		RsItem *i = incoming.front();
@@ -212,23 +207,9 @@ int	pqistreamer::tick()
 
 		{
 			RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
-			int total = 0;
+			int total = compute_out_pkt_size() ;
 
-			for(it = out_pkt.begin(); it != out_pkt.end(); it++)
-			{
-				total += getRsItemSize(*it);
-			}
-
-			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", out_pkt.size(), total);
-
-			total = 0;
-			for(it = out_pkt.begin(); it != out_pkt.end(); it++)
-			{
-				total += getRsItemSize(*it);
-			}
-
-			rs_sprintf_append(out, "\t Out Data    [%d] => %d bytes\n", out_pkt.size(), total);
-
+			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", out_queue_size(), total);
 			rs_sprintf_append(out, "\t Incoming    [%d]\n", incoming.size());
 		}
 
@@ -237,7 +218,7 @@ int	pqistreamer::tick()
 #endif
 
 	/* if there is more stuff in the queues */
-	if ((incoming.size() > 0) || (out_pkt.size() > 0))
+	if ((incoming.size() > 0) || (out_queue_size() > 0))
 	{
 		return 1;
 	}
@@ -258,6 +239,10 @@ int	pqistreamer::status()
 	return 0;
 }
 
+void pqistreamer::locked_storeInOutputQueue(void *ptr,int)
+{
+	out_pkt.push_back(ptr);
+}
 //
 /**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
 
@@ -291,7 +276,7 @@ int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 #endif
 	if (rsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
-		out_pkt.push_back(ptr);
+		locked_storeInOutputQueue(ptr,pqi->priority_level()) ;
 
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 		{
@@ -355,16 +340,7 @@ int	pqistreamer::handleoutgoing()
 	if (!(bio->isactive()))
 	{
 		/* if we are not active - clear anything in the queues. */
-		for(it = out_pkt.begin(); it != out_pkt.end(); )
-		{
-			free(*it);
-			it = out_pkt.erase(it);
-#ifdef DEBUG_PQISTREAMER
-			std::string out = "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
-			//			std::cerr << out ;
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
-#endif
-		}
+		locked_clear_out_queue() ;
 
 		/* also remove the pending packets */
 		if (pkt_wpending)
@@ -407,15 +383,7 @@ int	pqistreamer::handleoutgoing()
 		// send a out_pkt., else send out_data. unless
 		// there is a pending packet.
 		if (!pkt_wpending)
-			if (out_pkt.size() > 0)
-			{
-				pkt_wpending = *(out_pkt.begin()); 
-				out_pkt.pop_front();
-#ifdef DEBUG_TRANSFERS
-				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_pkt queue";
-				std::cerr << std::endl;
-#endif
-			}
+			pkt_wpending = locked_pop_out_data() ;
 
 		if (pkt_wpending)
 		{
@@ -854,10 +822,10 @@ void    pqistreamer::outSentBytes(int outb)
 #ifdef DEBUG_LAG
 
 #define MIN_PKTS_FOR_MSG	100
-	if (out_pkt.size() > MIN_PKTS_FOR_MSG)
+	if (out_queue_size() > MIN_PKTS_FOR_MSG)
 	{
 		std::cerr << "pqistreamer::outSentBytes() for: " << PeerId();
-		std::cerr << " End of Write and still " << out_pkt.size() << " pkts left";
+		std::cerr << " End of Write and still " << out_queue_size() << " pkts left";
 		std::cerr << std::endl;
 	}
 
@@ -928,14 +896,61 @@ int     pqistreamer::getQueueSize(bool in)
 {
 	if (in)
 		return incoming.size();
-	return out_pkt.size();
+	return out_queue_size();
 }
 
 void    pqistreamer::getRates(RsBwRates &rates)
 {
 	RateInterface::getRates(rates);
 	rates.mQueueIn = incoming.size();	
-	rates.mQueueOut = out_pkt.size();
+	rates.mQueueOut = out_queue_size();
 }
 
+int pqistreamer::out_queue_size() const
+{
+	// Warning: because out_pkt is a list, calling size
+	//	is O(n) ! Makign algorithms pretty inefficient. We should record how many
+	//	items get stored and discarded to have a proper size value at any time
+	//
+	return out_pkt.size() ; 
+}
 
+void pqistreamer::locked_clear_out_queue()
+{
+	for(std::list<void*>::iterator it = out_pkt.begin(); it != out_pkt.end(); )
+	{
+		free(*it);
+		it = out_pkt.erase(it);
+#ifdef DEBUG_PQISTREAMER
+		std::string out = "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
+		//			std::cerr << out ;
+		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
+#endif
+	}
+}
+
+int pqistreamer::locked_compute_out_pkt_size() const
+{
+	int total = 0 ;
+
+	for(std::list<void*>::const_iterator it = out_pkt.begin(); it != out_pkt.end(); ++it)
+		total += getRsItemSize(*it);
+
+	return total ;
+}
+
+void *pqistreamer::locked_pop_out_data() 
+{
+	void *res = NULL ;
+
+	if (!out_pkt.empty())
+	{
+		res = *(out_pkt.begin()); 
+		out_pkt.pop_front();
+#ifdef DEBUG_TRANSFERS
+		std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_pkt queue";
+		std::cerr << std::endl;
+#endif
+	}
+	return res ;
+}
