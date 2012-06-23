@@ -37,14 +37,14 @@ QString misc::friendlyUnit(float val)
     if(val < 0) {
         return tr("Unknown", "Unknown (size)");
     }
-    const QString units[4] = {tr(" B", "bytes"), tr(" KiB", "kibibytes (1024 bytes)"), tr(" MiB", "mebibytes (1024 kibibytes)"), tr(" GiB", "gibibytes (1024 mibibytes)")};
+    const QString units[5] = {tr(" B", "bytes"), tr(" KB", "kilobytes (1024 bytes)"), tr(" MiB", "megabytes (1024 kilobytes)"), tr(" GB", "gigabytes (1024 megabytes)"), tr(" TB,", "terabytes (1024 gigabytes)") };
     for(unsigned int i=0; i<5; ++i) {
         if (val < 1024.) {
             return QString(QByteArray::number(val, 'f', 1)) + units[i];
         }
         val /= 1024.;
     }
-    return  QString(QByteArray::number(val, 'f', 1)) + tr(" TiB", "tebibytes (1024 gibibytes)");
+    return  QString(QByteArray::number(val, 'f', 1)) + tr(" TB", "terabytes (1024 gigabytes)");
 }
 
 bool misc::isPreviewable(QString extension)
