@@ -49,6 +49,7 @@
 #define TCP_MAX_WIN		65500
 #define TCP_ALIVE_TIMEOUT	15      /* 15 sec ... < 20 sec UDP state limit on some firewalls */
 #define TCP_RETRANS_TIMEOUT	1	/* 1 sec (Initial value) */
+#define TCP_RETRANS_MAX_TIMEOUT	15	/* 15 secs */
 #define kNoPktTimeout		60	/* 1 min */
 
 
@@ -117,6 +118,9 @@ bool 	ridle(); /* read idle */
 uint32 	wbytes();
 uint32 	rbytes();
 
+	/* Exposed for debugging */
+int     dumpstate(std::ostream &out);
+
 	private: 
 
 	/* Internal Functions - use the Mutex (not reentrant) */
@@ -128,6 +132,9 @@ bool 	isOldSequence(uint32 tst, uint32 curr);
 	RsMutex tcpMtx;
 
 	/* Internal Functions - only called inside mutex protection */
+
+int     dumpstate_locked(std::ostream &out);
+int     status_locked(std::ostream &out);
 
 int	cleanup();
 
@@ -158,6 +165,14 @@ void 	setRemoteAddress(const struct sockaddr_in &raddr);
 
 int	getTTL() { return ttl; }
 void	setTTL(int t) { ttl = t; }
+
+/* retransmission */
+void 	startRetransmitTimer();
+void 	restartRetransmitTimer();
+void 	stopRetransmitTimer();
+void 	resetRetransmitTimer();
+void 	incRetransmitTimeout();
+
 
 /* data counting */
 uint32 	int_wbytes();
@@ -195,12 +210,15 @@ uint32 	int_rbytes();
 
 	uint32 inAckno; /* next expected */
 	uint32 inWinSize; /* allowing other to send */
-	uint32 rrt;
 
 	/* some (initially) consts */
 	uint32 maxWinSize;
 	uint32 keepAliveTimeout;
+
+	/* retransmit */
+	bool   retransTimerOn;
 	double retransTimeout;
+	double retransTimerTs;
 
 	/* some timers */
 	double keepAliveTimer;
