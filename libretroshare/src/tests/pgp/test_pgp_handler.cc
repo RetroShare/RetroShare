@@ -2,7 +2,7 @@
 //
 #include <stdlib.h>
 #include <iostream>
-#include "pgphandler.h"
+#include <pgp/pgphandler.h>
 
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
@@ -39,12 +39,14 @@ int main(int argc,char *argv[])
 
 	static const std::string pubring = "pubring.gpg" ;
 	static const std::string secring = "secring.gpg" ;
+	static const std::string trustdb = "trustdb.gpg" ;
+	static const std::string lockfile = "lock" ;
 
 	PGPHandler::setPassphraseCallback(&passphrase_callback) ;
-	PGPHandler pgph(pubring,secring) ;
+	PGPHandler pgph(pubring,secring,trustdb,lockfile) ;
 
-	std::cerr << "Writing public keyring to file tmp_keyring.asc" << std::endl;
-	pgph.writePublicKeyring("tmp_keyring.asc") ;
+//	std::cerr << "Writing public keyring to file tmp_keyring.asc" << std::endl;
+//	pgph.writePublicKeyring("tmp_keyring.asc") ;
 
 	pgph.printKeys() ;
 

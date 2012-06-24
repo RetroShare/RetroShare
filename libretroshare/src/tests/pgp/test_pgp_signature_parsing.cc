@@ -2,7 +2,7 @@
 //
 #include <stdlib.h>
 #include <iostream>
-#include "pgphandler.h"
+#include <pgp/pgphandler.h>
 
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
@@ -28,20 +28,21 @@ int main(int argc,char *argv[])
 {
 	// test pgp ids.
 	//
-	PGPIdType id = PGPIdType::fromUserId_hex("3e5b22140ef56abb") ;
+	PGPIdType id("3e5b22140ef56abb") ;
 
-	std::cerr << "Id is : " << std::hex << id.toUInt64() << std::endl;
 	std::cerr << "Id st : " << id.toStdString() << std::endl;
 
 	// test PGPHandler
 	//
 	// 0 - init
 
-	static const std::string pubring = "globo.gpg" ;
-	static const std::string secring = "globo.gpg" ;
+	static const std::string pubring = "pubring.gpg" ;
+	static const std::string secring = "secring.gpg" ;
+	static const std::string trustdb = "trustdb.gpg" ;
+	static const std::string lockfil = "lock" ;
 
 	PGPHandler::setPassphraseCallback(&passphrase_callback) ;
-	PGPHandler pgph(pubring,secring) ;
+	PGPHandler pgph(pubring,secring,trustdb,lockfil) ;
 
 	pgph.printKeys() ;
 }
