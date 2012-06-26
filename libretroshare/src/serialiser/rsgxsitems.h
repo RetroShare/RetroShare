@@ -34,6 +34,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
+#include "gxs/rsgxsdata.h"
 
 
 
@@ -50,25 +51,7 @@ public:
     RsGxsMsg() : RsItem(0) {}
     virtual ~RsGxsMsg(){ return; }
 
-
-    /***** Don not serialise or set these members *****/
-
-    std::string grpId; /// group id
-    std::string msgId; /// message id
-    uint32_t timeStamp; /// UTC time when created
-    std::string identity; /// identity associated with (no id means no signed)
-
-    /*!
-     * The purpose of the flag is to note
-     * If this message is an edit (note that edits only applies to
-     * signed msgs)
-     */
-    uint32_t msgFlag;
-
-    /***** Don not serialise or set these members *****/
-
 };
-
 
 /*!
  * Base class used by client API
@@ -82,21 +65,12 @@ class RsGxsGroup : public RsItem
 
 public:
 
-
-
     /*** type of msgs ***/
 
     RsGxsGroup(uint16_t servtype, uint8_t subtype)
         : RsItem(servtype) { return; }
 
     virtual ~RsGxsGroup() { return; }
-
-
-    std::string grpId; /// group id
-    std::string identity; /// identity associated with group
-    uint32_t timeStamp; /// UTC time
-    bool subscribed;
-    bool read;
 
     /*!
      * Three thing flag represents:

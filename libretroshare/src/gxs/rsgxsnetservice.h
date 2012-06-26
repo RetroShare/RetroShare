@@ -111,7 +111,7 @@ public:
      * @param peerId Id of peer
      * @param grpId id of group to request messages for
      */
-    void requestMessagesOfPeer(const std::string& peerId, const RsGxsGrpId& grpId){ return; }
+    void requestMessagesOfPeer(const std::string& peerId, const std::string& grpId){ return; }
 
     /*!
      * Initiates a search through the network
@@ -154,7 +154,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<RsGxsGrpId>& grpId, uint8_t hops){ return 0;}
+    int requestGrp(const std::list<std::string>& grpId, uint8_t hops){ return 0;}
 
 
 

@@ -415,6 +415,7 @@ void RsGxsNetService::genReqMsgTransaction(NxsTransaction* tr)
 
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
+        // first get item list sent from transaction
 	for(; lit != tr->mItems.end(); lit++)
 	{
 		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
@@ -424,7 +425,7 @@ void RsGxsNetService::genReqMsgTransaction(NxsTransaction* tr)
 		}else
 		{
 #ifdef NXS_NET_DEBUG
-			std::cerr << "RsGxsNetService::genReqMsgTransaction(): item failed to caste to RsNxsSyncMsgItem* "
+                        std::cerr << "RsGxsNetService::genReqMsgTransaction(): item failed cast to RsNxsSyncMsgItem* "
 					  << std::endl;
 #endif
 			delete item;
@@ -432,22 +433,36 @@ void RsGxsNetService::genReqMsgTransaction(NxsTransaction* tr)
 		}
 	}
 
-	RsNxsSyncMsgItem* item = msgItemL.front();
-	const std::string& grpId = item->grpId;
-	std::map<std::string, RsNxsMsg*> msgMap;
-	mDataStore->retrieveMsgs(grpId, msgMap, false);
 
-	// now do compare and add loop
-	std::list<RsNxsSyncMsgItem*>::iterator llit = msgItemL.begin();
-	std::list<RsNxsItem*> reqList;
+        // get grp id for this transaction
+        RsNxsSyncMsgItem* item = msgItemL.front();
+        const std::string& grpId = item->grpId;
+        std::vector<std::string> grpIdV;
+        grpIdV.push_back(grpId);
+        GxsMsgMetaResult result;
+        mDataStore->retrieveGxsMsgMetaData(grpIdV, result);
+        std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
 
+        std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
+        std::set<std::string> msgIdSet;
+
+        // put ids in set for each searching
+        for(; vit != msgMetaV.end(); vit++)
+            msgIdSet.insert((*vit)->mMsgId);
+
+        // get unique id for this transaction
 	uint32_t transN = getTransactionId();
+
+
+        // now do compare and add loop
+        std::list<RsNxsSyncMsgItem*>::iterator llit = msgItemL.begin();
+        std::list<RsNxsItem*> reqList;
 
 	for(; llit != msgItemL.end(); llit++)
 	{
 		const std::string& msgId = (*llit)->msgId;
 
-		if(msgMap.find(msgId) == msgMap.end()){
+                if(msgIdSet.find(msgId) == msgIdSet.end()){
 			RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
 			msgItem->grpId = grpId;
 			msgItem->msgId = msgId;
@@ -506,8 +521,8 @@ void RsGxsNetService::genReqGrpTransaction(NxsTransaction* tr)
 
 	RsNxsSyncGrpItem* item = grpItemL.front();
 	const std::string& grpId = item->grpId;
-	std::map<std::string, RsNxsGrp*> grpMap;
-	mDataStore->retrieveGrps(grpMap, false);
+        std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
+        mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
 	// now do compare and add loop
 	std::list<RsNxsSyncGrpItem*>::iterator llit = grpItemL.begin();
@@ -519,7 +534,7 @@ void RsGxsNetService::genReqGrpTransaction(NxsTransaction* tr)
 	{
 		const std::string& grpId = (*llit)->grpId;
 
-		if(grpMap.find(grpId) == grpMap.end()){
+                if(grpMetaMap.find(grpId) == grpMetaMap.end()){
 			RsNxsSyncGrpItem* grpItem = new RsNxsSyncGrpItem(mServType);
 
 			grpItem->grpId = grpId;

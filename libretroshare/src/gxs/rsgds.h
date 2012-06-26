@@ -34,6 +34,7 @@
 
 #include "serialiser/rsgxsitems.h"
 #include "serialiser/rsnxsitems.h"
+#include "gxs/rsgxsdata.h"
 
 
 class RsGxsSearchModule  {
@@ -47,6 +48,17 @@ public:
 
 };
 
+class MsgLocMetaData {
+
+};
+
+class GrpLocMetaData {
+
+};
+
+typedef std::map<std::string, std::set<std::string> > GxsMsgReq; // <grpId, msgIds>
+typedef std::map<std::string, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
+typedef std::map<std::string, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -74,67 +86,54 @@ class RsGeneralDataService
 
 public:
 
-    virtual ~RsGeneralDataService(){return;};
-    /*!
-     * Retrieves signed message
-     * @param grpId
-     * @param msg result of msg retrieval
-     * @param cache whether to store retrieval in memory for faster later retrieval
-     * @return error code
-     */
-    virtual int retrieveMsgs(const std::string& grpId, std::map<std::string, RsNxsMsg*>& msg, bool cache) = 0;
+    virtual ~RsGeneralDataService(){return;}
 
     /*!
-     * Retrieves a group item by grpId
-     * @param grpId the Id of the groups to retrieve
-     * @param grp results of retrieval
+     * Retrieves all msgs
+     * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
+     * @param msg result of msg retrieval
+     * @param cache whether to store results of this retrieval in memory for faster later retrieval
+     * @return error code
+     */
+    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache) = 0;
+
+    /*!
+     * Retrieves all groups stored
+     * @param grp retrieved groups
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGrps(std::map<std::string, RsNxsGrp*>& grp, bool cache) = 0;
+    virtual int retrieveNxsGrps(std::map<std::string, RsNxsGrp*>& grp, bool cache) = 0;
 
     /*!
-     * @param grpId the id of the group to get versions for
-     * @param cache whether to store the result in memory
-     * @param errCode
-     */
-    virtual int retrieveGrpVersions(const std::string& grpId, std::set<RsNxsGrp*>& grp, bool cache) = 0;
-
-    /*!
-     * @param grpId the id of the group to retrieve
-     * @return NULL if group does not exist or pointer to grp if found
-     */
-    virtual RsNxsGrp* retrieveGrpVersion(const RsGxsGrpId& grpId) = 0;
-
-    /*!
-     * allows for more complex queries specific to the service
-     * @param search generally stores parameters needed for query
-     * @param msgId is set with msg ids which satisfy the gxs search
+     * Retrieves meta data of all groups stored (most current versions only)
+     * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int searchMsgs(RsGxsSearch* search, std::list<RsGxsSrchResMsgCtx*>& result) = 0;
+    virtual int retrieveGxsGrpMetaData(std::map<std::string, RsGxsGrpMetaData*>& grp) = 0;
 
     /*!
-     * allows for more complex queries specific to the associated service
-     * @param search generally stores parameters needed for query
-     * @param msgId is set with msg ids which satisfy the gxs search
+     * Retrieves meta data of all groups stored (most current versions only)
+     * @param grpIds grpIds for which to retrieve meta data
+     * @param msgMeta meta data result as map of grpIds to array of metadata for that grpId
+     * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int searchGrps(RsGxsSearch* search, std::list<RsGxsSrchResGrpCtx*>& result) = 0;
+    virtual int retrieveGxsMsgMetaData(const std::vector<std::string>& grpIds, GxsMsgMetaResult& msgMeta) = 0;
 
     /*!
      * remove msgs in data store listed in msgIds param
      * @param msgIds ids of messages to be removed
      * @return error code
      */
-    virtual int removeMsgs(const std::list<RsGxsMsgId>& msgIds) = 0;
+    virtual int removeMsgs(const std::string grpId, const std::vector<std::string>& msgIds) = 0;
 
     /*!
      * remove groups in data store listed in grpIds param
      * @param grpIds ids of groups to be removed
      * @return error code
      */
-    virtual int removeGroups(const std::list<RsGxsGrpId>& grpIds) = 0;
+    virtual int removeGroups(const std::vector<std::string>& grpIds) = 0;
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -147,18 +146,29 @@ public:
     virtual int setCacheSize(uint32_t size) = 0;
 
     /*!
-     * Stores a list signed messages into data store
-     * @param msg list of signed messages to store
+     * Stores a list of signed messages into data store
+     * @param msg map of message and decoded meta data information
      * @return error code
      */
-    virtual int storeMessage(std::set<RsNxsMsg*>& msg) = 0;
+    virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msg);
 
     /*!
      * Stores a list of groups in data store
-     * @param msg list of messages
+     * @param grp map of group and decoded meta data
      * @return error code
      */
-    virtual int storeGroup(std::set<RsNxsGrp*>& grp) = 0;
+    virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grp);
+
+
+    /*!
+     * @param metaData
+     */
+    virtual int updateMessageMetaData(MsgLocMetaData* metaData) = 0;
+
+    /*!
+     * @param metaData
+     */
+    virtual int updateGroupMetaData(GrpLocMetaData* meta) = 0;
 
 
     /*!

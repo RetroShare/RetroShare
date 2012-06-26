@@ -157,11 +157,9 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsconfig.h
 
 HEADERS += plugins/pluginmanager.h \
-				plugins/dlfcn_win32.h \
-                                serialiser/rspluginitems.h \
-    gxs/rsdataservice.h \
-    gxs/rsgxsflags.h \
-    gxs/rsgenexchange.h
+        plugins/dlfcn_win32.h \
+        serialiser/rspluginitems.h \
+    gxs/rsgxsdata.h
 
 
 HEADERS += $$PUBLIC_HEADERS
@@ -666,8 +664,12 @@ newcache {
 HEADERS += serialiser/rsnxsitems.h \
             gxs/rsgds.h \
             gxs/rsgxs.h \
-            gxs/rsdataservice/h \
-            gxs/rsgxsnetservice.h
+            gxs/rsdataservice.h \
+            gxs/rsgxsnetservice.h \
+            gxs/rsgxsflags.h \
+            gxs/rsgenexchange.h \
+            gxs/rsgenexchange.h \
+            gxs/rsnxsobserver.h
 
 SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
@@ -703,4 +705,9 @@ SOURCES += services/p3photoservice.cc \
 #	rsserver/p3photo.cc \
 }
 
+SOURCES += \
 
+SOURCES +=
+
+SOURCES += \
+    gxs/rsgxsdata.cc

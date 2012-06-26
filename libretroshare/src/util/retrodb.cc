@@ -724,7 +724,8 @@ ContentValue::ContentValue(){
 }
 
 ContentValue::~ContentValue(){
-
+    // release resources held in data
+    clearData();
 }
 
 ContentValue::ContentValue(ContentValue &from){
@@ -861,46 +862,51 @@ void ContentValue::put(const std::string &key, uint32_t len, const char* value){
 
 bool ContentValue::getAsBool(const std::string &key, bool& value) const{
 
-    if(mKvBool.find(key) == mKvBool.end())
+    std::map<std::string, bool>::const_iterator it;
+    if((it = mKvBool.find(key)) == mKvBool.end())
         return false;
 
-  value = mKvBool.at(key);
+  value = it->second;
   return true;
 }
 
 bool ContentValue::getAsInt32(const std::string &key, int32_t& value) const{
 
-    if(mKvInt32.find(key) == mKvInt32.end())
+    std::map<std::string, int32_t>::const_iterator it;
+    if((it = mKvInt32.find(key)) == mKvInt32.end())
         return false;
 
-    value = mKvInt32.at(key);
+    value = it->second;
     return true;
 }
 
 bool ContentValue::getAsInt64(const std::string &key, int64_t& value) const{
 
-    if(mKvInt64.find(key) == mKvInt64.end())
+    std::map<std::string, int64_t>::const_iterator it;
+    if((it = mKvInt64.find(key)) == mKvInt64.end())
         return false;
 
-    value = mKvInt64.at(key);
+    value = it->second;
     return true;
 }
 
 bool ContentValue::getAsString(const std::string &key, std::string &value) const{
 
-    if(mKvString.find(key) == mKvString.end())
+    std::map<std::string, std::string>::const_iterator it;
+    if((it = mKvString.find(key)) == mKvString.end())
         return false;
 
-    value = mKvString.at(key);
+    value = it->second;
     return true;
 }
 
 bool ContentValue::getAsData(const std::string& key, uint32_t &len, char*& value) const{
 
-    if(mKvData.find(key) == mKvData.end())
+    std::map<std::string, std::pair<uint32_t, char*> >::const_iterator it;
+    if((it = mKvData.find(key)) == mKvData.end())
         return false;
 
-    const std::pair<uint32_t, char*> &kvRef = mKvData.at(key);
+    const std::pair<uint32_t, char*> &kvRef = it->second;
 
     len = kvRef.first;
     value = kvRef.second;
@@ -909,10 +915,11 @@ bool ContentValue::getAsData(const std::string& key, uint32_t &len, char*& value
 
 bool ContentValue::getAsDouble(const std::string &key, double& value) const{
 
-    if(mKvDouble.find(key) == mKvDouble.end())
+    std::map<std::string, double>::const_iterator it;
+    if((it = mKvDouble.find(key)) == mKvDouble.end())
         return false;
 
-    value = mKvDouble.at(key);
+    value = it->second;
     return true;
 }
 

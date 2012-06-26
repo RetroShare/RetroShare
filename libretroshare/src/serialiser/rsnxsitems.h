@@ -111,8 +111,8 @@ class RsNxsTransac : public RsNxsItem {
 
 public:
 
-	static const uint16_t FLAG_TRANS_MASK = 0xf;
-	static const uint16_t FLAG_TYPE_MASK = 0xff;
+    static const uint16_t FLAG_TRANS_MASK = 0xf;
+    static const uint16_t FLAG_TYPE_MASK = 0xff;
 
     /** transaction **/
     static const uint16_t FLAG_BEGIN_P1;
@@ -165,8 +165,9 @@ public:
 
     uint8_t flag; // request or response
 
-    /// groups held by sending peer
-    RsTlvKeySignature adminSign;
+    uint32_t publishTs; // to compare to Ts of receiving peer's grp of same id
+
+    /// grpId of grp held by sending peer
     std::string grpId;
 
 };
@@ -181,20 +182,22 @@ class RsNxsGrp : public RsNxsItem
 
 public:
 
-    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype) { clear(); return; }
+    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype), meta(servtype) { clear(); return; }
 
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     std::string grpId; /// group Id, needed to complete version Id (ncvi)
-    uint32_t timeStamp; /// UTC time, ncvi
+
     RsTlvBinaryData grp; /// actual group data
-    RsTlvKeySignature adminSign; /// signature of admin (needed to complete version Id
-    RsTlvSecurityKeySet keys;
-    std::string identity;
-    RsTlvKeySignature idSign; /// identity sign if applicable
-    uint32_t grpFlag;
+
+    /*!
+     * This should contains all the data
+     * which is not specific to the Gxs service data
+     */
+    RsTlvBinaryData meta;
+
 };
 
 /*!
@@ -251,21 +254,25 @@ class RsNxsMsg : public RsNxsItem
 {
 public:
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype) { clear(); return; }
-
+    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype), meta(servtype) { clear(); return; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     std::string grpId; /// group id, forms part of version id
     std::string msgId; /// msg id
-    std::string originalMsgId;
-    uint32_t msgFlag;
-    uint32_t timeStamp; /// UTC time create,
+
+    /*!
+     * This should contains all the data
+     * which is not specific to the Gxs service data
+     */
+    RsTlvBinaryData meta;
+
+    /*!
+     * This contains Gxs specific data
+     * only client of API knows who to decode this
+     */
     RsTlvBinaryData msg;
-    RsTlvKeySignature publishSign; /// publish signature
-    RsTlvKeySignature idSign; /// identity signature
-    std::string identity;
 
 };
 
@@ -442,26 +449,6 @@ private:
 private:
 
     const uint16_t SERVICE_TYPE;
-};
-
-
-
-class RsGxsMsgId {
-
-public:
-
-    std::string grpId;
-    std::string msgId;
-    RsTlvKeySignature idSign;
-};
-
-
-class RsGxsGrpId {
-
-public:
-
-    std::string grpId;
-    RsTlvKeySignature adminSign;
 };
 
 

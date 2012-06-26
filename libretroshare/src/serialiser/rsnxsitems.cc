@@ -232,14 +232,9 @@ bool RsNxsSerialiser::serialiseNxsMsg(RsNxsMsg *item, void *data, uint32_t *size
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, item->msgId);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, item->originalMsgId);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->identity);
-    ok &= setRawUInt32(data, tlvsize, &offset, item->timeStamp);
-    ok &= setRawUInt32(data, tlvsize, &offset, item->msgFlag);
-    ok &= item->idSign.SetTlv(data, tlvsize, &offset);
-    ok &= item->publishSign.SetTlv(data, tlvsize, &offset);
     ok &= item->msg.SetTlv(data, tlvsize, &offset);
+    ok &= item->meta.SetTlv(data, *size, &offset);
 
 
     if(offset != tlvsize){
@@ -288,13 +283,8 @@ bool RsNxsSerialiser::serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size
     // grp id
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->identity);
-    ok &= setRawUInt32(data, tlvsize, &offset, item->grpFlag);
-    ok &= setRawUInt32(data, tlvsize, &offset, item->timeStamp);
-    ok &= item->idSign.SetTlv(data, tlvsize, &offset);
-    ok &= item->adminSign.SetTlv(data, tlvsize, &offset);
-    ok &= item->keys.SetTlv(data, tlvsize, &offset);
     ok &= item->grp.SetTlv(data, tlvsize, &offset);
+    ok &= item->meta.SetTlv(data, *size, &offset);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -422,7 +412,7 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
 
     if(*size < tlvsize){
 #ifdef RSSERIAL_DEBUG
-        std::cerr << "RsNxsSerialiser::serialiseNxsSyncGrpItem() size do not match" << std::endl;
+        std::cerr << "RsNxsSerialiser::serialiseNxsSyncm() size do not match" << std::endl;
 #endif
         return false;
     }
@@ -436,16 +426,16 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
     /* skip the header */
     offset += 8;
 
-    /* RsNxsSyncGrpItem */
+    /* RsNxsSyncm */
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-    ok &= item->adminSign.SetTlv(data, *size, &offset);
+    ok &= setRawUInt32(data, *size, &offset, item->publishTs);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
-        std::cerr << "RsNxsSerialiser::serialiseNxsSyncGrpItem( FAIL Size Error! " << std::endl;
+        std::cerr << "RsNxsSerialiser::serialiseNxsSyncm( FAIL Size Error! " << std::endl;
 #endif
         ok = false;
     }
@@ -453,7 +443,7 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
 #ifdef RSSERIAL_DEBUG
     if (!ok)
     {
-        std::cerr << "RsNxsSerialiser::serialiseNxsSyncGrpItem() NOK" << std::endl;
+        std::cerr << "RsNxsSerialiser::serialiseNxsSyncm() NOK" << std::endl;
     }
 #endif
 
@@ -558,13 +548,8 @@ RsNxsGrp* RsNxsSerialiser::deserialNxsGrp(void *data, uint32_t *size){
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->identity);
-    ok &= getRawUInt32(data, *size, &offset, &(item->grpFlag));
-    ok &= getRawUInt32(data, *size, &offset, &(item->timeStamp));
-    ok &= item->idSign.GetTlv(data, *size, &offset);
-    ok &= item->adminSign.GetTlv(data, *size, &offset);
-    ok &= item->keys.GetTlv(data, *size, &offset);
     ok &= item->grp.GetTlv(data, *size, &offset);
+    ok &= item->meta.GetTlv(data, *size, &offset);
 
     if (offset != rssize)
     {
@@ -631,14 +616,9 @@ RsNxsMsg* RsNxsSerialiser::deserialNxsMsg(void *data, uint32_t *size){
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->originalMsgId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->identity);
-    ok &= getRawUInt32(data, *size, &offset, &(item->timeStamp));
-    ok &= getRawUInt32(data, *size, &offset, &(item->msgFlag));
-    ok &= item->idSign.GetTlv(data, *size, &offset);
-    ok &= item->publishSign.GetTlv(data, *size, &offset);
-    ok &= item->msg.GetTlv(data, *size, &offset);;
+    ok &= item->msg.GetTlv(data, *size, &offset);
+    ok &= item->meta.GetTlv(data, *size, &offset);
 
     if (offset != rssize)
     {
@@ -772,7 +752,7 @@ RsNxsSyncGrpItem* RsNxsSerialiser::deserialNxsSyncGrpItem(void *data, uint32_t *
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-    ok &= item->adminSign.GetTlv(data, *size, &offset);
+    ok &= getRawUInt32(data, *size, &offset, &(item->publishTs));
 
     if (offset != rssize)
     {
@@ -1020,13 +1000,8 @@ uint32_t RsNxsSerialiser::sizeNxsMsg(RsNxsMsg *item)
     s += 4; // transaction number
     s += GetTlvStringSize(item->grpId);
     s += GetTlvStringSize(item->msgId);
-    s += GetTlvStringSize(item->identity);
-    s += GetTlvStringSize(item->originalMsgId);
-    s += 4; // msgFlag
-    s += 4; // timeStamp
-    s += item->publishSign.TlvSize();
-    s += item->idSign.TlvSize();
     s += item->msg.TlvSize();
+    s += item->meta.TlvSize();
 
     return s;
 }
@@ -1037,13 +1012,8 @@ uint32_t RsNxsSerialiser::sizeNxsGrp(RsNxsGrp *item)
 
     s += 4; // transaction number
     s += GetTlvStringSize(item->grpId);
-    s += GetTlvStringSize(item->identity);
-    s += 4; // grpFlag
-    s += 4; // timestamp
-    s += item->adminSign.TlvSize();
-    s += item->idSign.TlvSize();
-    s += item->keys.TlvSize();
     s += item->grp.TlvSize();
+    s += item->meta.TlvSize();
 
     return s;
 }
@@ -1067,9 +1037,9 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrpItem(RsNxsSyncGrpItem *item)
     uint32_t s = 8; // header size
 
     s += 4; // transaction number
+    s += 4; // publishTs
     s += 1; // flag
     s += GetTlvStringSize(item->grpId);
-    s += item->adminSign.TlvSize();
 
     return s;
 }
@@ -1124,27 +1094,16 @@ uint32_t RsNxsSerialiser::sizeNxsExtended(RsNxsExtended *item){
 
 void RsNxsMsg::clear()
 {
+
     msg.TlvClear();
-    grpId.clear();
-    msgId.clear();
-    msgFlag = 0;
-    timeStamp = 0;
-    publishSign.TlvClear();
-    idSign.TlvClear();
-    identity.clear();
-    originalMsgId.clear();
+    meta.TlvClear();
 }
 
 void RsNxsGrp::clear()
 {
     grpId.clear();
-    timeStamp = 0;
     grp.TlvClear();
-    adminSign.TlvClear();
-    keys.TlvClear();
-    identity.clear();
-    grpFlag = 0;
-    idSign.TlvClear();
+    meta.TlvClear();
 }
 
 void RsNxsSyncGrp::clear()
@@ -1165,7 +1124,7 @@ void RsNxsSyncMsg::clear()
 void RsNxsSyncGrpItem::clear()
 {
     flag = 0;
-    adminSign.TlvClear();
+    publishTs = 0;
     grpId.clear();
 }
 
@@ -1209,7 +1168,7 @@ std::ostream& RsNxsExtended::print(std::ostream &out, uint16_t indent){
     printIndent(out , int_Indent);
     out << "type: " << type << std::endl;
     printIndent(out , int_Indent);
-    extData.print(out, indent);
+    extData.print(out, int_Indent);
 
     printRsItemEnd(out ,"RsNxsExtended", indent);
 
@@ -1244,8 +1203,7 @@ std::ostream& RsNxsSyncGrpItem::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "grpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
-    adminSign.print(out, indent);
-    printIndent(out , int_Indent);
+    out << "publishTs: " << publishTs << std::endl;
 
     printRsItemEnd(out , "RsNxsSyncGrpItem", indent);
     return out;
@@ -1277,17 +1235,10 @@ std::ostream& RsNxsGrp::print(std::ostream &out, uint16_t indent){
 
     out << "grpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
-    out << "timeStamp: " << timeStamp << std::endl;
-    printIndent(out , int_Indent);
-    out << "identity: " << identity << std::endl;
-    printIndent(out , int_Indent);
-    out << "grpFlag: " << grpFlag << std::endl;
-    out << "adminSign: " << std::endl;
-    adminSign.print(out, indent);
-    out << "idSign: " << std::endl;
-    idSign.print(out, indent);
-    out << "keys: " << std::endl;
-    keys.print(out, indent);
+    out << "grp: " << std::endl;
+    grp.print(out, int_Indent);
+    out << "meta: " << std::endl;
+    meta.print(out, int_Indent);
 
     printRsItemEnd(out, "RsNxsGrp", indent);
     return out;
@@ -1302,16 +1253,10 @@ std::ostream& RsNxsMsg::print(std::ostream &out, uint16_t indent){
     printIndent(out , int_Indent);
     out << "grpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
-    out << "msgFlag: " << msgFlag << std::endl;
-    printIndent(out , int_Indent);
-    out << "identity: " << identity << std::endl;
-    printIndent(out , int_Indent);
-    out << "timeStamp: " << timeStamp << std::endl;
-    printIndent(out , int_Indent);
-    out << "pub sign: " << std::endl;
-    publishSign.print(out, indent);
-    out << "id sign: " << std::endl;
-    idSign.print(out, indent);
+    out << "msg: " << std::endl;
+    msg.print(out, indent);
+    out << "meta: " << std::endl;
+    meta.print(out, int_Indent);
 
     printRsItemEnd(out ,"RsNxsMsg", indent);
     return out;
