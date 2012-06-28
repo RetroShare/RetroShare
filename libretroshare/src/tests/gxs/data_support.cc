@@ -4,78 +4,90 @@
 
 bool operator==(const RsNxsGrp& l, const RsNxsGrp& r){
 
-    if(!(l.adminSign == r.adminSign)) return false;
-    if(!(l.idSign == r.idSign)) return false;
-    if(l.timeStamp != r.timeStamp) return false;
-    if(l.grpFlag != r.grpFlag) return false;
-    if(l.identity != r.identity) return false;
     if(l.grpId != r.grpId) return false;
-    if(l.keys.groupId != r.keys.groupId) return false;
     if(!(l.grp == r.grp) ) return false;
-
-    std::map<std::string, RsTlvSecurityKey>::const_iterator mit =
-            l.keys.keys.begin(), mit_end = l.keys.keys.end();
-
-    for(; mit != mit_end; mit++){
-        const RsTlvSecurityKey& lk = l.keys.keys.find(mit->first)->second;
-        const RsTlvSecurityKey& rk = r.keys.keys.find(mit->first)->second;
-
-        if(! ( lk == rk) ) return false;
-    }
+    if(!(l.meta == r.meta) ) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
 
 bool operator==(const RsNxsMsg& l, const RsNxsMsg& r){
 
+
     if(l.msgId != r.msgId) return false;
     if(l.grpId != r.grpId) return false;
-    if(l.identity != r.identity) return false;
-    if(l.timeStamp != r.timeStamp) return false;
-    if(l.msgFlag != r.msgFlag) return false;
     if(! (l.msg == r.msg) ) return false;
-    if(! (l.publishSign == r.publishSign) ) return false;
-    if(! (l.idSign == r.idSign) ) return false;
+    if(! (l.meta == r.meta) ) return false;
+    if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
 }
 
 
-void init_item(RsNxsGrp* nxg)
+void init_item(RsNxsGrp& nxg)
 {
 
-    randString(SHORT_STR, nxg->identity);
-    randString(SHORT_STR, nxg->grpId);
-    nxg->timeStamp = rand()%23;
-    nxg->grpFlag = rand()%242;
-    init_item(nxg->grp);
+    nxg.clear();
 
-    init_item(nxg->adminSign);
-    init_item(nxg->idSign);
-
-    int nKey = rand()%12;
-    nxg->keys.groupId  = nxg->grpId;
-    for(int i=0; i < nKey; i++){
-        RsTlvSecurityKey k;
-        init_item(k);
-        nxg->keys.keys[k.keyId] = k;
-    }
-
+    randString(SHORT_STR, nxg.grpId);
+    nxg.transactionNumber = rand()%23;
+    init_item(nxg.grp);
+    init_item(nxg.meta);
     return;
 }
 
 
-void init_item(RsNxsMsg* nxm)
-{
-    randString(SHORT_STR, nxm->msgId);
-    randString(SHORT_STR, nxm->grpId);
-    randString(SHORT_STR, nxm->identity);
 
-    init_item(nxm->publishSign);
-    init_item(nxm->idSign);
-    init_item(nxm->msg);
-    nxm->msgFlag = rand()%4252;
-    nxm->timeStamp = rand()%246;
+
+
+void init_item(RsNxsMsg& nxm)
+{
+    nxm.clear();
+
+    randString(SHORT_STR, nxm.msgId);
+    randString(SHORT_STR, nxm.grpId);
+    init_item(nxm.msg);
+    init_item(nxm.meta);
+    nxm.transactionNumber = rand()%23;
 
     return;
+}
+
+void init_item(RsGxsGrpMetaData* metaGrp)
+{
+
+    randString(SHORT_STR, metaGrp->mGroupId);
+    randString(SHORT_STR, metaGrp->mOrigGrpId);
+    randString(SHORT_STR, metaGrp->mAuthorId);
+    randString(SHORT_STR, metaGrp->mGroupName);
+
+    init_item(metaGrp->adminSign);
+    init_item(metaGrp->keys);
+    init_item(metaGrp->idSign);
+
+    metaGrp->mPublishTs = rand()%3452;
+    metaGrp->mGroupFlags = rand()%43;
+
+
+}
+
+void init_item(RsGxsMsgMetaData* metaMsg)
+{
+
+    randString(SHORT_STR, metaMsg->mGroupId);
+    randString(SHORT_STR, metaMsg->mMsgId);
+    randString(SHORT_STR, metaMsg->mThreadId);
+    randString(SHORT_STR, metaMsg->mParentId);
+    randString(SHORT_STR, metaMsg->mAuthorId);
+    randString(SHORT_STR, metaMsg->mOrigMsgId);
+    randString(SHORT_STR, metaMsg->mMsgName);
+
+    init_item(metaMsg->pubSign);
+    init_item(metaMsg->idSign);
+
+    metaMsg->mPublishTs = rand()%313;
+    metaMsg->mMsgFlags = rand()%224;
+    metaMsg->mMsgStatus = rand()%4242;
+    metaMsg->mChildTs = rand()%221;
 }

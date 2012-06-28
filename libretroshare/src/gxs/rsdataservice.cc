@@ -90,7 +90,7 @@
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
                              RsGxsSearchModule *mod)
-    : mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType){
+    : RsGeneralDataService(), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType){
 
     initialise();
 

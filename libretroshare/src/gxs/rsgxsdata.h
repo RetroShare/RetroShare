@@ -16,6 +16,7 @@ public:
     bool deserialise(void *data, uint32_t &pktsize);
     bool serialise(void* data, uint32_t &pktsize);
     uint32_t serial_size();
+    void clear();
 
 
     std::string mGroupId;
@@ -55,6 +56,7 @@ public:
     bool deserialise(void *data, uint32_t *size);
     bool serialise(void* data, uint32_t *size);
     uint32_t serial_size();
+    void clear();
 
     std::string mGroupId;
     std::string mMsgId;

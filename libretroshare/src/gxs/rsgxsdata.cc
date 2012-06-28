@@ -24,6 +24,25 @@ uint32_t RsGxsGrpMetaData::serial_size()
     return s;
 }
 
+void RsGxsGrpMetaData::clear(){
+
+    mGroupId.clear();
+    mOrigGrpId.clear();
+    mAuthorId.clear();
+    mGroupName.clear();
+    mPublishTs = 0;
+    mGroupFlags = 0;
+    mPop = 0;
+    mMsgCount = 0;
+    mGroupStatus = 0;
+    mLastPost = 0;
+    mSubscribeFlags = 0;
+
+    adminSign.TlvClear();
+    keys.TlvClear();
+    idSign.TlvClear();
+}
+
 bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
 {
 
@@ -70,22 +89,26 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
 
     bool ok = true ;
 
-    ok &= rssize != pktsize;
+    ok &= rssize == pktsize;
 
     if(!ok) return false;
 
     ok &= GetTlvString(data, pktsize, &offset, 0, mGroupId);
     ok &= GetTlvString(data, pktsize, &offset, 0, mOrigGrpId);
-    ok &= GetTlvString(data, pktsize, &offset, 0, mOrigGrpId);
+    ok &= GetTlvString(data, pktsize, &offset, 0, mGroupName);
     ok &= getRawUInt32(data, pktsize, &offset, &mGroupFlags);
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
     ok &= GetTlvString(data, pktsize, &offset, 0, mAuthorId);
 
     ok &= adminSign.GetTlv(data, pktsize, &offset);
-    ok &= keys.SetTlv(data, pktsize, &offset);
-    ok &= idSign.SetTlv(data, pktsize, &offset);
+    ok &= keys.GetTlv(data, pktsize, &offset);
+    ok &= idSign.GetTlv(data, pktsize, &offset);
 
     return ok;
+}
+
+RsGxsMsgMetaData::RsGxsMsgMetaData(){
+
 }
 
 uint32_t RsGxsMsgMetaData::serial_size()
@@ -98,6 +121,7 @@ uint32_t RsGxsMsgMetaData::serial_size()
     s += GetTlvStringSize(mThreadId);
     s += GetTlvStringSize(mParentId);
     s += GetTlvStringSize(mOrigMsgId);
+    s += GetTlvStringSize(mAuthorId);
 
     s += pubSign.TlvSize();
     s += idSign.TlvSize();
@@ -106,6 +130,25 @@ uint32_t RsGxsMsgMetaData::serial_size()
     s += 4;
 
     return s;
+}
+
+void RsGxsMsgMetaData::clear()
+{
+    mGroupId.clear();
+    mMsgId.clear();
+    mThreadId.clear();
+    mParentId.clear();
+    mAuthorId.clear();
+    mOrigMsgId.clear();
+    mMsgName.clear();
+
+    pubSign.TlvClear();
+    idSign.TlvClear();
+
+    mPublishTs = 0;
+    mMsgFlags = 0;
+    mMsgStatus = 0;
+    mChildTs = 0;
 }
 
 bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
@@ -136,6 +179,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     ok &= SetTlvString(data, *size, &offset, 0, mThreadId);
     ok &= SetTlvString(data, *size, &offset, 0, mParentId);
     ok &= SetTlvString(data, *size, &offset, 0, mOrigMsgId);
+    ok &= SetTlvString(data, *size, &offset, 0, mAuthorId);
 
     ok &= pubSign.SetTlv(data, *size, &offset);
     ok &= idSign.SetTlv(data, *size, &offset);
@@ -154,7 +198,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
     bool ok = true ;
 
-    ok &= rssize != *size;
+    ok &= rssize == *size;
 
     if(!ok) return false;
 
@@ -163,6 +207,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
     ok &= GetTlvString(data, *size, &offset, 0, mThreadId);
     ok &= GetTlvString(data, *size, &offset, 0, mParentId);
     ok &= GetTlvString(data, *size, &offset, 0, mOrigMsgId);
+    ok &= GetTlvString(data, *size, &offset, 0, mAuthorId);
 
     ok &= pubSign.GetTlv(data, *size, &offset);
     ok &= idSign.GetTlv(data, *size, &offset);

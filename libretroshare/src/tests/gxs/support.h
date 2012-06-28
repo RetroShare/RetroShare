@@ -63,6 +63,7 @@ void init_item(RsTlvHashSet&);
 void init_item(RsTlvPeerIdSet&);
 void init_item(RsTlvImage&);
 void init_item(RsTlvPeerIdSet&);
+void init_item(RsTlvSecurityKeySet& );
 
 bool operator==(const RsTlvSecurityKey&, const RsTlvSecurityKey& );
 bool operator==(const RsTlvKeySignature&, const RsTlvKeySignature& );
@@ -72,6 +73,7 @@ bool operator==(const RsTlvFileSet&, const RsTlvFileSet& );
 bool operator==(const RsTlvHashSet&, const RsTlvHashSet&);
 bool operator==(const RsTlvImage&, const RsTlvImage& );
 bool operator==(const RsTlvPeerIdSet& , const RsTlvPeerIdSet& );
+bool operator==(const RsTlvSecurityKeySet& , const RsTlvSecurityKeySet& );
 
 
 

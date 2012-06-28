@@ -60,6 +60,37 @@ void randString(const uint32_t length, std::wstring& outStr)
 	return;
 }
 
+void init_item(RsTlvSecurityKeySet& ks)
+{
+    int n = rand()%24;
+    randString(SHORT_STR, ks.groupId);
+    for(int i=1; i<n; i++)
+    {
+        std::string a_str;
+        randString(SHORT_STR, a_str);
+
+        RsTlvSecurityKey& a_key = ks.keys[a_str];
+        init_item(a_key);
+        a_key.keyId = a_str;
+    }
+}
+
+bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
+{
+
+    if(l.groupId != r.groupId) return false;
+
+    std::map<std::string, RsTlvSecurityKey>::const_iterator l_cit = l.keys.begin(),
+    r_cit = r.keys.begin();
+
+    for(; l_cit != l.keys.end(); l_cit++, r_cit++){
+        if(l_cit->first != r_cit->first) return false;
+        if(!(l_cit->second == r_cit->second)) return false;
+    }
+
+    return true;
+}
+
 bool operator==(const RsTlvSecurityKey& sk1, const RsTlvSecurityKey& sk2)
 {
 

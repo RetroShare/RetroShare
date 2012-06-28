@@ -86,6 +86,7 @@ class RsGeneralDataService
 
 public:
 
+    RsGeneralDataService(){}
     virtual ~RsGeneralDataService(){return;}
 
     /*!
@@ -150,14 +151,14 @@ public:
      * @param msg map of message and decoded meta data information
      * @return error code
      */
-    virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msg);
+    virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msg) = 0;
 
     /*!
      * Stores a list of groups in data store
      * @param grp map of group and decoded meta data
      * @return error code
      */
-    virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grp);
+    virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grp) = 0;
 
 
     /*!
