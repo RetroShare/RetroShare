@@ -220,195 +220,195 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
                                            const unsigned char* passphrase,
                                            const size_t pplen,
 					   ops_create_info_t *info)
-    {
-    /* RFC4880 Section 5.5.3 Secret-Key Packet Formats */
+{
+	/* RFC4880 Section 5.5.3 Secret-Key Packet Formats */
 
-    ops_crypt_t crypt;
-    ops_hash_t hash;
-    unsigned char hashed[OPS_SHA1_HASH_SIZE];
-    unsigned char session_key[CAST_KEY_LENGTH];
-    unsigned int done=0;
-    unsigned int i=0;
+	ops_crypt_t crypt;
+	ops_hash_t hash;
+	unsigned char hashed[OPS_SHA1_HASH_SIZE];
+	unsigned char session_key[CAST_KEY_LENGTH];
+	unsigned int done=0;
+	unsigned int i=0;
 
-    if(!write_public_key_body(&key->public_key,info))
-	return ops_false;
+	if(!write_public_key_body(&key->public_key,info))
+		return ops_false;
 
-    assert(key->s2k_usage==OPS_S2KU_ENCRYPTED_AND_HASHED); /* = 254 */
-    if(!ops_write_scalar(key->s2k_usage,1,info))
-	return ops_false;
-    
-    assert(key->algorithm==OPS_SA_CAST5);
-    if (!ops_write_scalar(key->algorithm,1,info))
-        return ops_false;
+	assert(key->s2k_usage==OPS_S2KU_ENCRYPTED_AND_HASHED); /* = 254 */
+	if(!ops_write_scalar(key->s2k_usage,1,info))
+		return ops_false;
 
-    assert(key->s2k_specifier==OPS_S2KS_SIMPLE
-	   || key->s2k_specifier==OPS_S2KS_SALTED); // = 1 \todo could also be iterated-and-salted
-    if (!ops_write_scalar(key->s2k_specifier,1,info))
-        return ops_false;
-    
-    assert(key->hash_algorithm==OPS_HASH_SHA1);
-    if (!ops_write_scalar(key->hash_algorithm,1,info))
-        return ops_false;
-    
-    switch(key->s2k_specifier)
-        {
-    case OPS_S2KS_SIMPLE:
-        // nothing more to do
-        break;
+	assert(key->algorithm==OPS_SA_CAST5);
+	if (!ops_write_scalar(key->algorithm,1,info))
+		return ops_false;
 
-    case OPS_S2KS_SALTED:
-        // 8-octet salt value
-        ops_random((void *)&key->salt[0],OPS_SALT_SIZE);
-        if (!ops_write(key->salt, OPS_SALT_SIZE, info))
-            return ops_false;
-        break;
+	assert(key->s2k_specifier==OPS_S2KS_SIMPLE
+			|| key->s2k_specifier==OPS_S2KS_SALTED); // = 1 \todo could also be iterated-and-salted
+	if (!ops_write_scalar(key->s2k_specifier,1,info))
+		return ops_false;
 
-        /* \todo
-    case OPS_S2KS_ITERATED_AND_SALTED:
-    // 8-octet salt value
-    // 1-octet count
-        break;
-        */
+	assert(key->hash_algorithm==OPS_HASH_SHA1);
+	if (!ops_write_scalar(key->hash_algorithm,1,info))
+		return ops_false;
 
-    default:
-        fprintf(stderr,"invalid/unsupported s2k specifier %d\n",
-		key->s2k_specifier);
-        assert(0);
-        }
-
-    if (!ops_write(&key->iv[0],ops_block_size(key->algorithm),info))
-        return ops_false;
-    
-    /* create the session key for encrypting the algorithm-specific fields */
-
-    switch(key->s2k_specifier)
-        {
-    case OPS_S2KS_SIMPLE:
-    case OPS_S2KS_SALTED:
-        // RFC4880: section 3.7.1.1 and 3.7.1.2
-
-        done=0;
-        for (i=0; done<CAST_KEY_LENGTH; i++ )
-            {
-            unsigned int j=0;
-            unsigned char zero=0;
-            int needed=CAST_KEY_LENGTH-done;
-            int use= needed < SHA_DIGEST_LENGTH ? needed : SHA_DIGEST_LENGTH;
-
-            ops_hash_any(&hash, key->hash_algorithm);
-            hash.init(&hash);
-            
-            // preload if iterating 
-            for (j=0; j<i; j++)
-                {
-                /* 
-                   Coverity shows a DEADCODE error on this line.
-                   This is expected since the hardcoded use of
-                   SHA1 and CAST5 means that it will not used.
-                   This will change however when other algorithms are
-                   supported.
-                */
-                hash.add(&hash, &zero, 1);
-                }
-
-            if (key->s2k_specifier==OPS_S2KS_SALTED)
-                { hash.add(&hash, key->salt, OPS_SALT_SIZE); }
-
-            hash.add(&hash, passphrase, pplen);
-            hash.finish(&hash, hashed);
-
-            // if more in hash than is needed by session key, use the
-	    // leftmost octets
-            memcpy(session_key+(i*SHA_DIGEST_LENGTH), hashed, use);
-            done += use;
-            assert(done<=CAST_KEY_LENGTH);
-            }
-
-        break;
-
-        /* \todo
-    case OPS_S2KS_ITERATED_AND_SALTED:
-    // 8-octet salt value
-    // 1-octet count
-        break;
-        */
-
-    default:
-        fprintf(stderr,"invalid/unsupported s2k specifier %d\n",
-		key->s2k_specifier);
-        assert(0);
-        }
-
-    /* use this session key to encrypt */
-
-    ops_crypt_any(&crypt,key->algorithm);
-    crypt.set_iv(&crypt, key->iv);
-    crypt.set_key(&crypt, session_key);
-    ops_encrypt_init(&crypt);
-
-    if (debug)
-        {
-        unsigned int i=0;
-        fprintf(stderr,"\nWRITING:\niv=");
-        for (i=0; i<ops_block_size(key->algorithm); i++)
-            {
-            fprintf(stderr, "%02x ", key->iv[i]);
-            }
-        fprintf(stderr,"\n");
-
-        fprintf(stderr,"key=");
-        for (i=0; i<CAST_KEY_LENGTH; i++)
-            {
-            fprintf(stderr, "%02x ", session_key[i]);
-            }
-        fprintf(stderr,"\n");
-
-        //ops_print_secret_key(OPS_PTAG_CT_SECRET_KEY,key);
-
-        fprintf(stderr,"turning encryption on...\n");
-        }
-
-    ops_writer_push_encrypt_crypt(info, &crypt);
-
-    switch(key->public_key.algorithm)
+	switch(key->s2k_specifier)
 	{
-	//    case OPS_PKA_DSA:
-	//	return ops_write_mpi(key->key.dsa.x,info);
+		case OPS_S2KS_SIMPLE:
+			// nothing more to do
+			break;
 
-    case OPS_PKA_RSA:
-    case OPS_PKA_RSA_ENCRYPT_ONLY:
-    case OPS_PKA_RSA_SIGN_ONLY:
+		case OPS_S2KS_SALTED:
+			// 8-octet salt value
+			ops_random((void *)&key->salt[0],OPS_SALT_SIZE);
+			if (!ops_write(key->salt, OPS_SALT_SIZE, info))
+				return ops_false;
+			break;
 
-	if(!ops_write_mpi(key->key.rsa.d,info)
-	   || !ops_write_mpi(key->key.rsa.p,info)
-	   || !ops_write_mpi(key->key.rsa.q,info)
-	   || !ops_write_mpi(key->key.rsa.u,info))
-        {
-        if (debug)
-            { fprintf(stderr,"4 x mpi not written - problem\n"); }
-	    return ops_false;
-        }
+			/* \todo
+				case OPS_S2KS_ITERATED_AND_SALTED:
+			// 8-octet salt value
+			// 1-octet count
+			break;
+			 */
 
-	break;
-
-	//    case OPS_PKA_ELGAMAL:
-	//	return ops_write_mpi(key->key.elgamal.x,info);
-
-    default:
-	assert(0);
-	break;
+		default:
+			fprintf(stderr,"invalid/unsupported s2k specifier %d\n",
+					key->s2k_specifier);
+			assert(0);
 	}
 
-    if(!ops_write(key->checkhash, OPS_CHECKHASH_SIZE, info))
-        return ops_false;
+	if (!ops_write(&key->iv[0],ops_block_size(key->algorithm),info))
+		return ops_false;
 
-    ops_writer_pop(info);
+	/* create the session key for encrypting the algorithm-specific fields */
 
-	 free(crypt.encrypt_key) ;
-	 free(crypt.decrypt_key) ;
-    
-    return ops_true;
- }
+	switch(key->s2k_specifier)
+	{
+		case OPS_S2KS_SIMPLE:
+		case OPS_S2KS_SALTED:
+			// RFC4880: section 3.7.1.1 and 3.7.1.2
+
+			done=0;
+			for (i=0; done<CAST_KEY_LENGTH; i++ )
+			{
+				unsigned int j=0;
+				unsigned char zero=0;
+				int needed=CAST_KEY_LENGTH-done;
+				int use= needed < SHA_DIGEST_LENGTH ? needed : SHA_DIGEST_LENGTH;
+
+				ops_hash_any(&hash, key->hash_algorithm);
+				hash.init(&hash);
+
+				// preload if iterating 
+				for (j=0; j<i; j++)
+				{
+					/* 
+						Coverity shows a DEADCODE error on this line.
+						This is expected since the hardcoded use of
+						SHA1 and CAST5 means that it will not used.
+						This will change however when other algorithms are
+						supported.
+					 */
+					hash.add(&hash, &zero, 1);
+				}
+
+				if (key->s2k_specifier==OPS_S2KS_SALTED)
+				{ hash.add(&hash, key->salt, OPS_SALT_SIZE); }
+
+				hash.add(&hash, passphrase, pplen);
+				hash.finish(&hash, hashed);
+
+				// if more in hash than is needed by session key, use the
+				// leftmost octets
+				memcpy(session_key+(i*SHA_DIGEST_LENGTH), hashed, use);
+				done += use;
+				assert(done<=CAST_KEY_LENGTH);
+			}
+
+			break;
+
+			/* \todo
+				case OPS_S2KS_ITERATED_AND_SALTED:
+			// 8-octet salt value
+			// 1-octet count
+			break;
+			 */
+
+		default:
+			fprintf(stderr,"invalid/unsupported s2k specifier %d\n",
+					key->s2k_specifier);
+			assert(0);
+	}
+
+	/* use this session key to encrypt */
+
+	ops_crypt_any(&crypt,key->algorithm);
+	crypt.set_iv(&crypt, key->iv);
+	crypt.set_key(&crypt, session_key);
+	ops_encrypt_init(&crypt);
+
+	if (debug)
+	{
+		unsigned int i=0;
+		fprintf(stderr,"\nWRITING:\niv=");
+		for (i=0; i<ops_block_size(key->algorithm); i++)
+		{
+			fprintf(stderr, "%02x ", key->iv[i]);
+		}
+		fprintf(stderr,"\n");
+
+		fprintf(stderr,"key=");
+		for (i=0; i<CAST_KEY_LENGTH; i++)
+		{
+			fprintf(stderr, "%02x ", session_key[i]);
+		}
+		fprintf(stderr,"\n");
+
+		//ops_print_secret_key(OPS_PTAG_CT_SECRET_KEY,key);
+
+		fprintf(stderr,"turning encryption on...\n");
+	}
+
+	ops_writer_push_encrypt_crypt(info, &crypt);
+
+	switch(key->public_key.algorithm)
+	{
+		//    case OPS_PKA_DSA:
+		//	return ops_write_mpi(key->key.dsa.x,info);
+
+		case OPS_PKA_RSA:
+		case OPS_PKA_RSA_ENCRYPT_ONLY:
+		case OPS_PKA_RSA_SIGN_ONLY:
+
+			if(!ops_write_mpi(key->key.rsa.d,info)
+					|| !ops_write_mpi(key->key.rsa.p,info)
+					|| !ops_write_mpi(key->key.rsa.q,info)
+					|| !ops_write_mpi(key->key.rsa.u,info))
+			{
+				if (debug)
+				{ fprintf(stderr,"4 x mpi not written - problem\n"); }
+				return ops_false;
+			}
+
+			break;
+
+			//    case OPS_PKA_ELGAMAL:
+			//	return ops_write_mpi(key->key.elgamal.x,info);
+
+		default:
+			assert(0);
+			break;
+	}
+
+	if(!ops_write(key->checkhash, OPS_CHECKHASH_SIZE, info))
+		return ops_false;
+
+	ops_writer_pop(info);
+
+	free(crypt.encrypt_key) ;
+	free(crypt.decrypt_key) ;
+
+	return ops_true;
+}
 
 
 /**

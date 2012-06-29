@@ -48,6 +48,12 @@ class PGPCertificateInfo
 		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE     = 0x0002 ;
 		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME         = 0x0004 ;
 		static const uint32_t PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM = 0x0008 ;	// set when the key is not RSA, so that RS avoids to use it.
+
+		static const uint8_t PGP_CERTIFICATE_TRUST_UNDEFINED  = 0x00 ;
+		static const uint8_t PGP_CERTIFICATE_TRUST_NEVER      = 0x02 ;
+		static const uint8_t PGP_CERTIFICATE_TRUST_MARGINALLY = 0x03 ;
+		static const uint8_t PGP_CERTIFICATE_TRUST_FULLY      = 0x04 ;
+		static const uint8_t PGP_CERTIFICATE_TRUST_ULTIMATE   = 0x05 ;
 };
 
 class PGPHandler
@@ -84,7 +90,7 @@ class PGPHandler
 
 		bool isKeySupported(const PGPIdType& id) const ;
 
-		void privateTrustCertificate(const PGPIdType& id,int valid_level) ;	
+		bool privateTrustCertificate(const PGPIdType& id,int valid_level) ;	
 
 		// Write keyring
 		bool publicKeyringChanged() const { return _pubring_changed ; }
@@ -105,6 +111,15 @@ class PGPHandler
 		// Debug stuff.
 		virtual bool printKeys() const ;
 
+		// Syncs the keyrings and trust database between memory and disk. The algorithm is:
+		// 1 - lock the keyrings
+		// 2 - compare file modification dates with last writing date
+		// 		- if file is modified, load it, and merge with memory
+		// 3 - look into memory modification flags
+		// 		- if flag says keyring has changed, write to disk
+		//
+		bool syncDatabase() ;
+
 	private:
 		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
 		void validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
@@ -113,7 +128,14 @@ class PGPHandler
 		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;
 
 		void locked_readPrivateTrustDatabase() ;
-		void locked_writePrivateTrustDatabase() ;
+		bool locked_writePrivateTrustDatabase() ;
+
+		bool locked_syncPublicKeyring() ;
+		bool locked_syncSecretKeyring() ;
+		bool locked_syncTrustDatabase() ;
+
+		void mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<std::string,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
+		bool addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
 
 		// Members.
 		//
@@ -133,6 +155,10 @@ class PGPHandler
 		bool _pubring_changed ;
 		bool _secring_changed ;
 		bool _trustdb_changed ;
+
+		time_t _pubring_last_update_time ;
+		time_t _secring_last_update_time ;
+		time_t _trustdb_last_update_time ;
 
 		// Helper functions.
 		//

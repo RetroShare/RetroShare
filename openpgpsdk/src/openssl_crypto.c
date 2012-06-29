@@ -393,6 +393,12 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     osig->r=sig->r;
     osig->s=sig->s;
 
+	 if(BN_num_bits(dsa->q) != 160)
+	 {
+		 fprintf(stderr,"(WW) ops_dsa_verify: openssl does only supports 'q' of 160 bits. Current is %d bits.\n",BN_num_bits(dsa->q)) ;
+		 return ops_false ;
+	 }
+
     odsa=DSA_new();
     odsa->p=dsa->p;
     odsa->q=dsa->q;

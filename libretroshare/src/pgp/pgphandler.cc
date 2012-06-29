@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 extern "C" {
 #include <openpgpsdk/util.h>
@@ -16,8 +17,10 @@ extern "C" {
 }
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
-#include "util/rsdir.h"		// For rsicontrol.
-#include "util/pgpkey.h"		// For rsicontrol.
+#include "util/rsdir.h"		
+#include "util/pgpkey.h"
+
+#define DEBUG_PGPHANDLER
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
@@ -127,6 +130,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 
 		++i ;
 	}
+	_pubring_last_update_time = time(NULL) ;
 	std::cerr << "Pubring read successfully." << std::endl;
 
 	if(secring_exist)
@@ -143,6 +147,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 		initCertificateInfo(_secret_keyring_map[ PGPIdType(keydata->key_id).toStdString() ],keydata,i) ;
 		++i ;
 	}
+	_secring_last_update_time = time(NULL) ;
 
 	std::cerr << "Secring read successfully." << std::endl;
 
@@ -197,6 +202,9 @@ void PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_
 	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
 	ops_boolean_t res = ops_validate_key_signatures(result,keydata,_pubring,cb_get_passphrase) ;
 
+	if(res == ops_false)
+		std::cerr << "(EE) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+
 	// Parse signers.
 	//
 
@@ -209,7 +217,9 @@ void PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_
 
 PGPHandler::~PGPHandler()
 {
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Freeing PGPHandler. Deleting keyrings." << std::endl;
+#endif
 
 	// no need to free the the _map_ elements. They will be freed by the following calls:
 	//
@@ -222,7 +232,9 @@ PGPHandler::~PGPHandler()
 
 bool PGPHandler::printKeys() const
 {
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " << std::endl;
+#endif
 
 	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
 	{
@@ -274,20 +286,18 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	int i=0 ;
 
 	while( (keydata = ops_keyring_get_key_by_index(_secring,i++)) != NULL )
-	{
-		// check that the key is in the pubring as well
-
-		if(ops_keyring_find_key_by_id(_pubring,keydata->key_id) != NULL)
+		if(ops_keyring_find_key_by_id(_pubring,keydata->key_id) != NULL) // check that the key is in the pubring as well
+		{
 			if(keydata->key.pkey.algorithm == OPS_PKA_RSA)
 				ids.push_back(PGPIdType(keydata->key_id)) ;
+#ifdef DEBUG_PGPHANDLER
 			else
 				std::cerr << "Skipping keypair " << PGPIdType(keydata->key_id).toStdString() << ", unsupported algorithm: " <<  keydata->key.pkey.algorithm << std::endl;
-	}
+#endif
+		}
 
 	return true ;
 }
-
-
 
 bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) 
 {
@@ -324,7 +334,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring() ;
 	if(! ops_keyring_read_from_mem(tmp_keyring, ops_false, buf))
 	{
-		std::cerr << "Cannot re-read key from memory!!" << std::endl;
+		std::cerr << "(EE) Cannot re-read key from memory!!" << std::endl;
 		return false ;
 	}
 	ops_teardown_memory_write(cinfo,buf);	// cleanup memory
@@ -335,14 +345,18 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	addNewKeyToOPSKeyring(_secring,tmp_keyring->keys[0]) ;
 	initCertificateInfo(_secret_keyring_map[ pgpId.toStdString() ],&tmp_keyring->keys[0],_secring->nkeys-1) ;
 
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." << std::endl;
+#endif
 
 	// 5 - copy the private key to the public keyring
 	
 	addNewKeyToOPSKeyring(_pubring,tmp_keyring->keys[0]) ;
 	initCertificateInfo(_public_keyring_map[ pgpId.toStdString() ],&tmp_keyring->keys[0],_pubring->nkeys-1) ;
 
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
+#endif
 
 	// 6 - clean
 
@@ -421,7 +435,9 @@ void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& ke
 
 bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType& id,std::string& error_string)
 {
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Reading new key from string: " << std::endl;
+#endif
 
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
 	ops_memory_t *mem = ops_memory_new() ;
@@ -442,39 +458,21 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	free(mem) ;
 	error_string.clear() ;
 
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "  Key read correctly: " << std::endl;
+#endif
 	ops_keyring_list(tmp_keyring) ;
 
 	const ops_keydata_t *keydata = NULL ;
 	int i=0 ;
 
 	while( (keydata = ops_keyring_get_key_by_index(tmp_keyring,i++)) != NULL )
-	{
-		id = PGPIdType(keydata->key_id) ;
+		if(addOrMergeKey(_pubring,_public_keyring_map,keydata)) 
+			_pubring_changed = true ;
 
-		std::cerr << "  id: " << id.toStdString() << std::endl;
-
-		// See if the key is already in the keyring
-		const ops_keydata_t *existing_key ;
-		std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id.toStdString()) ;
-
-		if(res == _public_keyring_map.end() || (existing_key = ops_keyring_get_key_by_index(_pubring,res->second._key_index)) == NULL)
-		{
-			std::cerr << "  Key is new. Adding it to keyring" << std::endl;
-			addNewKeyToOPSKeyring(_pubring,*keydata) ; // the key is new.
-		}
-		else
-		{
-			std::cerr << "  Key exists. Merging signatures." << std::endl;
-			if(mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) )
-				_pubring_changed = true ;
-		}
-
-		initCertificateInfo(_public_keyring_map[id.toStdString()],keydata,_pubring->nkeys-1) ;
-		validateAndUpdateSignatures(_public_keyring_map[id.toStdString()],keydata) ;
-	}
-
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "  Added the key in the main public keyring." << std::endl;
+#endif
 	
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
@@ -484,20 +482,56 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	return true ;
 }
 
-bool PGPHandler::writePublicKeyring() 
+bool PGPHandler::addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata)
 {
-	RsStackFileLock flck(_pgp_lock_filename) ; // locks access to pgp directory
+	bool ret = false ;
+	PGPIdType id(keydata->key_id) ;
 
-	_pubring_changed = false ;
-	return ops_write_keyring_to_file(_pubring,ops_false,_pubring_path.c_str()) ;
-}
+#ifdef DEBUG_PGPHANDLER
+	std::cerr << "AddOrMergeKey():" << std::endl;
+	std::cerr << "  id: " << id.toStdString() << std::endl;
+#endif
 
-bool PGPHandler::writeSecretKeyring() 
-{
-	RsStackFileLock flck(_pgp_lock_filename) ; // locks access to pgp directory
+	// See if the key is already in the keyring
+	const ops_keydata_t *existing_key = NULL;
+	std::map<std::string,PGPCertificateInfo>::const_iterator res = kmap.find(id.toStdString()) ;
 
-	_secring_changed = false ;
-	return ops_write_keyring_to_file(_secring,ops_false,_secring_path.c_str()) ;
+	// Checks that
+	// 	- the key is referenced by keyid
+	// 	- the map is initialized
+	// 	- the fingerprint matches!
+	//
+	if(res == kmap.end() || (existing_key = ops_keyring_get_key_by_index(keyring,res->second._key_index)) == NULL)
+	{
+#ifdef DEBUG_PGPHANDLER
+		std::cerr << "  Key is new. Adding it to keyring" << std::endl;
+#endif
+		addNewKeyToOPSKeyring(keyring,*keydata) ; // the key is new.
+		initCertificateInfo(kmap[id.toStdString()],keydata,keyring->nkeys-1) ;
+		existing_key = &(keyring->keys[keyring->nkeys-1]) ;
+		ret = true ;
+	}
+	else
+	{
+		if(memcmp(existing_key->fingerprint.fingerprint, keydata->fingerprint.fingerprint,KEY_FINGERPRINT_SIZE))
+		{
+			std::cerr << "(EE) attempt to merge key with identical id, but different fingerprint!" << std::endl;
+			return false ;
+		}
+
+#ifdef DEBUG_PGPHANDLER
+		std::cerr << "  Key exists. Merging signatures." << std::endl;
+#endif
+		ret = mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) ;
+
+		if(ret)
+			initCertificateInfo(kmap[id.toStdString()],existing_key,res->second._key_index) ;
+	}
+
+	if(ret)
+		validateAndUpdateSignatures(kmap[id.toStdString()],existing_key) ;
+
+	return ret ;
 }
 
 bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) 
@@ -543,8 +577,10 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType& key_id,std::string& text,c
 
 	fclose(f) ;
 
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "PGPHandler::decryptTextFromFile: read a file of length " << std::dec << buf.length() << std::endl;
 	std::cerr << "buf=\"" << buf << "\"" << std::endl;
+#endif
 
 	int out_length ;
 	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)buf.c_str(),buf.length(),&out_buf,&out_length,_secring,ops_true,cb_get_passphrase) ;
@@ -633,7 +669,9 @@ bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_l
 		return false ;
 	}
 
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << ", length " << std::dec << sign_len << ", literal data length = " << literal_data_length << std::endl;
+#endif
 
 	return ops_validate_detached_signature(literal_data,literal_data_length,sign,sign_len,key) ;
 }
@@ -688,7 +726,7 @@ bool operator<(const ops_packet_t& p1,const ops_packet_t& p2)
 	if(p1.length > p2.length)
 		return false ;
 
-	for(int i=0;i<p1.length;++i)
+	for(uint32_t i=0;i<p1.length;++i)
 	{
 		if(p1.raw[i] < p2.raw[i])
 			return true ;
@@ -702,14 +740,16 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 {
 	// First sort all signatures into lists to see which is new, which is not new
 
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "Merging signatures for key " << PGPIdType(dst->key_id).toStdString() << std::endl;
+#endif
 	std::set<ops_packet_t> dst_packets ;
 
-	for(int i=0;i<dst->npackets;++i) dst_packets.insert(dst->packets[i]) ;
+	for(uint32_t i=0;i<dst->npackets;++i) dst_packets.insert(dst->packets[i]) ;
 
 	std::set<ops_packet_t> to_add ;
 
-	for(int i=0;i<src->npackets;++i) 
+	for(uint32_t i=0;i<src->npackets;++i) 
 		if(dst_packets.find(src->packets[i]) == dst_packets.end())
 		{
 			uint8_t tag ;
@@ -719,24 +759,28 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 
 			if(tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
 				to_add.insert(src->packets[i]) ;
+#ifdef DEBUG_PGPHANDLER
 			else
 				std::cerr << "  Packet with tag 0x" << std::hex << (int)(src->packets[i].raw[0]) << std::dec << " not merged, because it is not a signature." << std::endl;
+#endif
 		}
 
 	for(std::set<ops_packet_t>::const_iterator it(to_add.begin());it!=to_add.end();++it)
 	{
+#ifdef DEBUG_PGPHANDLER
 		std::cerr << "  Adding packet with tag 0x" << std::hex << (int)(*it).raw[0] << std::dec << std::endl;
+#endif
 		ops_add_packet_to_keydata(dst,&*it) ;
 	}
 	return to_add.size() > 0 ;
 }
 
-void PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
+bool PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
 {
-	if(trustlvl < 0 || trustlvl > 6)
+	if(trustlvl < 0 || trustlvl >= 6 || trustlvl == 1)
 	{
 		std::cerr << "Invalid trust level " << trustlvl << " passed to privateTrustCertificate." << std::endl;
-		return  ;
+		return false ;
 	}
 
 	std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.find(id.toStdString());
@@ -744,13 +788,15 @@ void PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
 	if(it == _public_keyring_map.end())
 	{
 		std::cerr << "(EE) Key id " << id.toStdString() << " not in the keyring. Can't setup trust level." << std::endl;
-		return  ;
+		return false ;
 	}
 
-	if( it->second._validLvl != trustlvl )
+	if( it->second._validLvl != (int)trustlvl )
 		_trustdb_changed = true ;
 
 	it->second._validLvl = trustlvl ;
+
+	return true ;
 }
 
 struct PrivateTrustPacket
@@ -763,7 +809,9 @@ struct PrivateTrustPacket
 void PGPHandler::locked_readPrivateTrustDatabase()
 {
 	FILE *fdb = fopen(_trustdb_path.c_str(),"rb") ;
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
+#endif
 
 	if(fdb == NULL)
 	{
@@ -794,15 +842,17 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 	fclose(fdb) ;
 }
 
-void PGPHandler::locked_writePrivateTrustDatabase()
+bool PGPHandler::locked_writePrivateTrustDatabase()
 {
 	FILE *fdb = fopen((_trustdb_path+".tmp").c_str(),"wb") ;
+#ifdef DEBUG_PGPHANDLER
 	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
+#endif
 
 	if(fdb == NULL)
 	{
 		std::cerr << "  (EE) Can't open private trust database file " << _trustdb_path << " for write. Giving up!" << std::endl ;
-		return ;
+		return false;
 	}
 	PrivateTrustPacket trustpacket ;
 
@@ -815,13 +865,182 @@ void PGPHandler::locked_writePrivateTrustDatabase()
 		{
 			std::cerr << "  (EE) Cannot write to trust database " << _trustdb_path << ". Disc full, or quota exceeded ? Leaving database untouched." << std::endl;
 			fclose(fdb) ;
-			return ;
+			return false;
 		}
 	}
 
 	fclose(fdb) ;
 
 	if(!RsDirUtil::renameFile(_trustdb_path+".tmp",_trustdb_path))
+	{
 		std::cerr << "  (EE) Cannot move temp file " << _trustdb_path+".tmp" << ". Bad write permissions?" << std::endl;
+		return false ;
+	}
+	else
+		return true ;
 }
+
+bool PGPHandler::syncDatabase()
+{
+	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+
+#ifdef DEBUG_PGPHANDLER
+	std::cerr << "Sync-ing keyrings." << std::endl;
+#endif
+	locked_syncPublicKeyring() ;
+	locked_syncSecretKeyring() ;
+	
+	// Now sync the trust database as well.
+	//
+	locked_syncTrustDatabase() ;
+
+#ifdef DEBUG_PGPHANDLER
+	std::cerr << "Done. " << std::endl;
+#endif
+	return true ;
+}
+
+bool PGPHandler::locked_syncPublicKeyring()
+{
+	struct stat64 buf ;
+#ifdef WINDOWS_SYS
+	std::wstring wfullname;
+	librs::util::ConvertUtf8ToUtf16(_pubring_path, wfullname);
+	if(-1 == _wstati64(wfullname.c_str(), &buf))
+#else
+		if(-1 == stat64(_pubring_path.c_str(), &buf))
+#endif
+		{
+			std::cerr << "PGPHandler::syncDatabase(): can't stat file " << _pubring_path << ". Can't sync public keyring." << std::endl;
+			return false;
+		}
+
+	if(_pubring_last_update_time < buf.st_mtime)
+	{
+		std::cerr << "Detected change on disk of public keyring. Merging!" << std::endl ;
+
+		mergeKeyringFromDisk(_pubring,_public_keyring_map,_pubring_path) ;
+		_pubring_last_update_time = buf.st_mtime ;
+	}
+
+	// Now check if the pubring was locally modified, which needs saving it again
+	if(_pubring_changed)
+	{
+		std::cerr << "Local changes in public keyring. Writing to disk..." << std::endl;
+		if(!ops_write_keyring_to_file(_pubring,ops_false,_pubring_path.c_str())) 
+			std::cerr << "Cannot write public keyring. Disk full? Disk quota exceeded?" << std::endl;
+		else
+		{
+			std::cerr << "Done." << std::endl;
+			_pubring_last_update_time = time(NULL) ;	// should we get this value from the disk instead??
+			_pubring_changed = false ;
+		}
+	}
+	return true ;
+}
+
+bool PGPHandler::locked_syncSecretKeyring()
+{
+	struct stat64 buf ;
+#ifdef WINDOWS_SYS
+	librs::util::ConvertUtf8ToUtf16(_secring_path, wfullname);
+	if(-1 == _wstati64(wfullname.c_str(), &buf))
+#else
+		if(-1 == stat64(_secring_path.c_str(), &buf))
+#endif
+		{
+			std::cerr << "PGPHandler::syncDatabase(): can't stat file " << _secring_path << ". Can't sync secret keyring." << std::endl;
+			return false;
+		}
+#ifdef TODO
+	if(_secring_last_update_time < buf.st_mtime)
+	{
+		std::cerr << "Detected change on disk of secret keyring. " << std::endl ;
+		secring_changed_on_disk = true ;
+
+		mergeKeyringFromDisk(_secring,_secret_keyring_map,_secring_path) ;
+		_secring_last_update_time = buf.st_mtime ;
+	}
+#endif
+	if(_secring_changed)
+	{
+		std::cerr << "Local changes in secret keyring. Writing to disk..." << std::endl;
+		if(!ops_write_keyring_to_file(_secring,ops_false,_secring_path.c_str())) 
+		{
+			std::cerr << "Cannot write secret keyring. Disk full? Disk quota exceeded?" << std::endl;
+			return false ;
+		}
+		else
+		{
+			std::cerr << "Done." << std::endl;
+			_secring_last_update_time = time(NULL) ;	// should we get this value from the disk instead??
+			_secring_changed = false ;
+		}
+	}
+	return true ;
+}
+bool PGPHandler::locked_syncTrustDatabase()
+{
+	struct stat64 buf ;
+	std::wstring wfullname;
+#ifdef WINDOWS_SYS
+	librs::util::ConvertUtf8ToUtf16(_trustdb_path, wfullname);
+	if(-1 == _wstati64(wfullname.c_str(), &buf))
+#else
+		if(-1 == stat64(_trustdb_path.c_str(), &buf))
+#endif
+		{
+			std::cerr << "PGPHandler::syncDatabase(): can't stat file " << _trustdb_path << ". Will force write it." << std::endl;
+			_trustdb_changed = true ;	// we force write of trust database if it does not exist.
+		}
+
+	if(_trustdb_last_update_time < buf.st_mtime)
+	{
+		std::cerr << "Detected change on disk of trust database. " << std::endl ;
+
+		locked_readPrivateTrustDatabase();
+		_trustdb_last_update_time = time(NULL) ;
+	}
+
+	if(_trustdb_changed)
+	{
+		std::cerr << "Local changes in trust database. Writing to disk..." << std::endl;
+		if(!locked_writePrivateTrustDatabase())
+			std::cerr << "Cannot write trust database. Disk full? Disk quota exceeded?" << std::endl;
+		else
+		{
+			std::cerr << "Done." << std::endl;
+			_trustdb_last_update_time = time(NULL) ;
+			_trustdb_changed = false ;
+		}
+	}
+	return true ;
+}
+void PGPHandler::mergeKeyringFromDisk(	ops_keyring_t *keyring,
+													std::map<std::string,PGPCertificateInfo>& kmap,
+													const std::string& keyring_file)
+{
+#ifdef DEBUG_PGPHANDLER
+	std::cerr << "Merging keyring " << keyring_file << " from disk to memory." << std::endl;
+#endif
+
+	// 1 - load keyring into a temporary keyring list.
+	ops_keyring_t *tmp_keyring = PGPHandler::allocateOPSKeyring() ;
+
+	if(ops_false == ops_keyring_read_from_file(tmp_keyring, false, keyring_file.c_str()))
+	{
+		std::cerr << "PGPHandler::mergeKeyringFromDisk(): cannot read keyring. File corrupted?" ;
+		ops_keyring_free(tmp_keyring) ;
+		return ;
+	}
+
+	// 2 - load new keys and merge existing key signatures
+
+	for(int i=0;i<tmp_keyring->nkeys;++i)
+		addOrMergeKey(keyring,kmap,&tmp_keyring->keys[i]) ;// we dont' account for the return value. This is disk merging, not local changes.	
+
+	// 4 - clean
+	ops_keyring_free(tmp_keyring) ;
+}
+
 
