@@ -634,7 +634,6 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id
 		fclose(sslPassphraseFile) ;
 		return true ;
 	}
-	fclose(sslPassphraseFile) ;
 
 	// sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "w");
 
