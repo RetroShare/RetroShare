@@ -304,6 +304,8 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 
 bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, PGPIdType& pgpId, std::string& errString) 
 {
+	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+
 	static const int KEY_NUMBITS = 2048 ;
 
 	// 1 - generate keypair - RSA-2048
@@ -357,19 +359,15 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	// 5 - add key to secret keyring on disk.
 	
+	cinfo = NULL ;
+	int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
+
+	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{
-		RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
-
-		cinfo = NULL ;
-		int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
-
-		if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
-		{
-			std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
-			return false ;
-		}
-		ops_teardown_file_write(cinfo,fd) ;
+		std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
+		return false ;
 	}
+	ops_teardown_file_write(cinfo,fd) ;
 
 	// 6 - copy the public key to the public keyring
 	
@@ -390,8 +388,11 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	}
 	ops_teardown_memory_write(cinfo,buf2);	// cleanup memory
 
-	addNewKeyToOPSKeyring(_pubring,tmp_pubring->keys[0]) ;
-	initCertificateInfo(_public_keyring_map[ pgpId.toStdString() ],&tmp_pubring->keys[0],_pubring->nkeys-1) ;
+	if(!addOrMergeKey(_pubring,_public_keyring_map,&tmp_pubring->keys[0])) 
+	{
+		std::cerr << "(EE) Cannot add new key to keyring. Conflict in GPG ids?" << std::endl;
+		return false ;
+	}
 
 	ops_keyring_free(tmp_pubring) ;
 	free(tmp_pubring) ;
@@ -402,7 +403,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	// 7 - clean
 	ops_keydata_free(key) ;
 
-	// 8 - Update flags.
+	// 8 - Update some flags.
 
 	_pubring_changed = true ;
 	privateTrustCertificate(pgpId,PGPCertificateInfo::PGP_CERTIFICATE_TRUST_ULTIMATE) ;
@@ -505,12 +506,17 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 
 	while( (keydata = ops_keyring_get_key_by_index(tmp_keyring,i++)) != NULL )
 		if(addOrMergeKey(_pubring,_public_keyring_map,keydata)) 
+		{
 			_pubring_changed = true ;
-
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "  Added the key in the main public keyring." << std::endl;
+			std::cerr << "  Added the key in the main public keyring." << std::endl;
 #endif
+		}
+		else
+			std::cerr << "Key already in public keyring." << std::endl;
 	
+	id = PGPIdType(tmp_keyring->keys[0].key_id) ;
+
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
 
