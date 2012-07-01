@@ -303,7 +303,7 @@ win32 {
 	ZLIB_DIR = ../../../zlib-1.2.3
 	SSL_DIR = ../../../../OpenSSL
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/include
+	OPENPGPSDK_DIR = ../../openpgpsdk/src
 	INCLUDEPATH *= $${OPENPGPSDK_DIR}
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src

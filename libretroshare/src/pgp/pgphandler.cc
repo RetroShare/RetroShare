@@ -6,6 +6,10 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#ifdef WINDOWS_SYS
+#include "util/rsstring.h"
+#endif
+
 extern "C" {
 #include <openpgpsdk/util.h>
 #include <openpgpsdk/crypto.h>
@@ -952,6 +956,7 @@ bool PGPHandler::locked_syncSecretKeyring()
 {
 	struct stat64 buf ;
 #ifdef WINDOWS_SYS
+	std::wstring wfullname;
 	librs::util::ConvertUtf8ToUtf16(_secring_path, wfullname);
 	if(-1 == _wstati64(wfullname.c_str(), &buf))
 #else

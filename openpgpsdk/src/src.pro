@@ -21,7 +21,7 @@ win32 {
 	ZLIB_DIR = ../../../zlib-1.2.3
 	BZIP_DIR = ../../../bzip2-1.0.6
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${ZLIB_DIR} $${BZIP_DIR}
+	INCLUDEPATH += $${SSL_DIR}/include $${ZLIB_DIR} $${BZIP_DIR}
 }
 
 # Input
