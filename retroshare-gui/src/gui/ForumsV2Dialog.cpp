@@ -141,6 +141,12 @@ ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
     m_bProcessSettings = false;
     subscribeFlags = 0;
 
+
+	/* Setup Queue */
+        mForumQueue = new TokenQueue(rsForumsV2, this);
+
+
+
     connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
@@ -478,7 +484,8 @@ void ForumsV2Dialog::updateDisplay()
     if (!rsForumsV2)
         return;
 
-    if (rsForumsV2->groupsChanged(forumIds))
+	// TODO groupsChanged... HACK XXX.
+    if ((rsForumsV2->groupsChanged(forumIds)) || (rsForumsV2->updated()))
     {
         /* update Forums List */
         insertForums();
@@ -1812,6 +1819,9 @@ void ForumsV2Dialog::requestGroupSummary_CurrentForum(const std::string &forumId
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
 
+        std::cerr << "ForumsV2Dialog::requestGroupSummary_CurrentForum(" << forumId << ")";
+        std::cerr << std::endl;
+
 	uint32_t token;	
 	mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, FORUMSV2DIALOG_CURRENTFORUM);
 }
@@ -1845,10 +1855,16 @@ void ForumsV2Dialog::loadGroupSummary_CurrentForum(const uint32_t &token)
 
 void ForumsV2Dialog::loadCurrentForumThreads(const std::string &forumId)
 {
+
+        std::cerr << "ForumsV2Dialog::loadCurrentForumThreads(" << forumId << ")";
+        std::cerr << std::endl;
+
 	/* if already active -> kill current loading */
 	if (mThreadLoading)
 	{
 		/* Cleanup */
+        	std::cerr << "ForumsV2Dialog::loadCurrentForumThreads() Cleanup old Threads";
+        	std::cerr << std::endl;
 
 		/* Wipe Widget Tree */
 		mThreadLoad.Items.clear();
@@ -1857,6 +1873,9 @@ void ForumsV2Dialog::loadCurrentForumThreads(const std::string &forumId)
 		std::map<uint32_t, QTreeWidgetItem *>::iterator it;
 		for(it = mThreadLoad.MsgTokens.begin(); it != mThreadLoad.MsgTokens.end(); it++)
 		{
+        		std::cerr << "ForumsV2Dialog::loadCurrentForumThreads() Canceling Request: " << it->first;
+        		std::cerr << std::endl;
+
 			mForumQueue->cancelRequest(it->first);
 		}
 
@@ -1865,6 +1884,9 @@ void ForumsV2Dialog::loadCurrentForumThreads(const std::string &forumId)
 	}
 
 	/* initiate loading */
+        std::cerr << "ForumsV2Dialog::loadCurrentForumThreads() Initiating Loading";
+        std::cerr << std::endl;
+
 	mThreadLoading = true;
 
 	mThreadLoad.ForumId = mCurrForumId;
@@ -1912,6 +1934,9 @@ void ForumsV2Dialog::requestGroupThreadData_InsertThreads(const std::string &for
 	
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
+
+        std::cerr << "ForumsV2Dialog::requestGroupThreadData_InsertThreads(" << forumId << ")";
+        std::cerr << std::endl;
 
 	uint32_t token;	
 	mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, FORUMSV2DIALOG_INSERTTHREADS);
@@ -2045,6 +2070,9 @@ void ForumsV2Dialog::requestChildData_InsertThreads(uint32_t &token, const std::
 	std::list<std::string> msgIds;
 	msgIds.push_back(parentId);
 
+        std::cerr << "ForumsV2Dialog::requestChildData_InsertThreads(" << parentId << ")";
+        std::cerr << std::endl;
+
 	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMSV2DIALOG_INSERTCHILD);
 }
 
@@ -2157,6 +2185,10 @@ void ForumsV2Dialog::requestMsgData_InsertPost(const std::string &msgId)
 	std::list<std::string> msgIds;
 	msgIds.push_back(msgId);
 
+        std::cerr << "ForumsV2Dialog::requestMsgData_InsertPost(" << msgId << ")";
+        std::cerr << std::endl;
+
+
 	uint32_t token;	
 	mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
 }
@@ -2189,6 +2221,9 @@ void ForumsV2Dialog::requestMsgData_ReplyMessage(const std::string &msgId)
 	
 	std::list<std::string> msgIds;
 	msgIds.push_back(msgId);
+
+        std::cerr << "ForumsV2Dialog::requestMsgData_ReplyMessage(" << msgId << ")";
+        std::cerr << std::endl;
 
 	uint32_t token;	
 	mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_REPLY_MESSAGE);

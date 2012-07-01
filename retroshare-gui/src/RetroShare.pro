@@ -4,6 +4,7 @@ CONFIG += wikipoos
 CONFIG += thewire 
 CONFIG += identities
 CONFIG += forumsv2 
+CONFIG += posted 
 CONFIG += unfinished 
 
 QT     += network xml script 
@@ -954,5 +955,25 @@ forumsv2 {
             gui/forumsv2/EditForumV2Details.cpp \
             gui/forumsv2/CreateForumV2.cpp \
             gui/forumsv2/CreateForumV2Msg.cpp \
+
+}
+
+
+posted {
+
+	HEADERS += gui/Posted/PostedDialog.h \
+            gui/Posted/PostedListDialog.h \
+            gui/Posted/PostedItem.h \
+            gui/Posted/PostedComments.h \
+
+	FORMS += gui/Posted/PostedDialog.ui \
+            gui/Posted/PostedListDialog.ui \
+            gui/Posted/PostedItem.ui \
+            gui/Posted/PostedComments.ui \
+
+	SOURCES += gui/Posted/PostedDialog.cpp \
+            gui/Posted/PostedListDialog.cpp \
+            gui/Posted/PostedItem.cpp \
+            gui/Posted/PostedComments.cpp \
 
 }

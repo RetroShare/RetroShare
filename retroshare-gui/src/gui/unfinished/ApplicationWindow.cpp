@@ -37,6 +37,7 @@
 #include "gui/TheWire/WireDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/ForumsV2Dialog.h"
+#include "gui/Posted/PostedDialog.h"
 
 //#include "GamesDialog.h"
 //#include "CalDialog.h"
@@ -111,6 +112,11 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ForumsV2Dialog *forumsV2Dialog = NULL;
     ui.stackPages->add(forumsV2Dialog = new ForumsV2Dialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_FORUMSV2), tr("ForumsV2"), grp));
+
+    PostedDialog *postedDialog = NULL;
+    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
+
 
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
