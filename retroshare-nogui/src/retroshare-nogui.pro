@@ -15,6 +15,7 @@ linux-* {
 	}
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lgpgme -lupnp -lixml -lgnome-keyring
 }
 
@@ -55,7 +56,7 @@ win32 {
 	MOC_DIR = temp/moc
 
     LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/lib/libops.a -lbz2
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
     LIBS += -L"../../../lib" -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
