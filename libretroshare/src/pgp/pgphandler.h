@@ -93,8 +93,6 @@ class PGPHandler
 		bool privateTrustCertificate(const PGPIdType& id,int valid_level) ;	
 
 		// Write keyring
-		bool publicKeyringChanged() const { return _pubring_changed ; }
-		bool secretKeyringChanged() const { return _secring_changed ; }
 
 		bool writeSecretKeyring() ;
 		bool writePublicKeyring() ;
@@ -131,8 +129,8 @@ class PGPHandler
 		bool locked_writePrivateTrustDatabase() ;
 
 		bool locked_syncPublicKeyring() ;
-		bool locked_syncSecretKeyring() ;
 		bool locked_syncTrustDatabase() ;
+		//bool locked_syncSecretKeyring() ;
 
 		void mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<std::string,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
 		bool addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
@@ -153,8 +151,8 @@ class PGPHandler
 		const std::string _pgp_lock_filename ;
 
 		bool _pubring_changed ;
-		bool _secring_changed ;
 		bool _trustdb_changed ;
+		//bool _secring_changed ;
 
 		time_t _pubring_last_update_time ;
 		time_t _secring_last_update_time ;

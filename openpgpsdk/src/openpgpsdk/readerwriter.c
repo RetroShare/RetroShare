@@ -221,7 +221,7 @@ int ops_setup_file_append(ops_create_info_t **cinfo, const char* filename)
      * initialise needed structures for writing to file
      */
 
-    fd=open(filename,O_WRONLY | O_APPEND | O_BINARY, 0600);
+    fd=open(filename,O_WRONLY | O_APPEND | O_BINARY | O_CREAT, 0600);
 
     if(fd < 0)
         {
