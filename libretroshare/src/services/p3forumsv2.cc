@@ -26,6 +26,7 @@
 #include "services/p3forumsv2.h"
 
 #include "util/rsrandom.h"
+#include <stdio.h>
 
 /****
  * #define FORUMV2_DEBUG 1
@@ -42,9 +43,14 @@ RsForumsV2 *rsForumsV2 = NULL;
 p3ForumsV2::p3ForumsV2(uint16_t type)
 	:p3GxsDataService(type, new ForumDataProxy()), mForumMtx("p3ForumsV2"), mUpdated(true)
 {
-     	RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
+	{
+     		RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
 
-	mForumProxy = (ForumDataProxy *) mProxy;
+		mForumProxy = (ForumDataProxy *) mProxy;
+	}
+
+	generateDummyData();
+
 	return;
 }
 
@@ -586,14 +592,13 @@ bool ForumDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 /********************************************************************************************/
 
 
-#if 0
 
 bool p3ForumsV2::generateDummyData()
 {
 	/* so we want to generate 100's of forums */
-#define MAX_FORUMS 100
-#define MAX_THREADS 1000
-#define MAX_MSGS 10000
+#define MAX_FORUMS 10 //100
+#define MAX_THREADS 10 //1000
+#define MAX_MSGS 100 //10000
 
 	std::list<RsForumV2Group> mGroups;
 	std::list<RsForumV2Group>::iterator git;
@@ -601,11 +606,25 @@ bool p3ForumsV2::generateDummyData()
 	std::list<RsForumV2Msg> mMsgs;
 	std::list<RsForumV2Msg>::iterator mit;
 
-	for(int i = 0; i < MAX_FORUMS; i++)
+#define DUMMY_NAME_MAX_LEN		10000
+	char name[DUMMY_NAME_MAX_LEN];
+	int i, j;
+	time_t now = time(NULL);
+
+	for(i = 0; i < MAX_FORUMS; i++)
 	{
 		/* generate a new forum */
 		RsForumV2Group forum;
 
+		/* generate a temp id */
+		forum.mMeta.mGroupId = genRandomId();
+
+		snprintf(name, DUMMY_NAME_MAX_LEN, "TestForum_%d", i+1);
+
+		forum.mMeta.mGroupId = genRandomId();
+		forum.mMeta.mGroupName = name;
+
+		forum.mMeta.mPublishTs = now - (RSRandom::random_f32() * 100000);
 		/* key fields to fill in:
 		 * GroupId.
 		 * Name.
@@ -613,11 +632,33 @@ bool p3ForumsV2::generateDummyData()
 		 * Pop.
 		 */
 
+
+
 		/* use probability to decide which are subscribed / own / popularity.
 		 */
 
+		float rnd = RSRandom::random_f32();
+		if (rnd < 0.1)
+		{
+			forum.mMeta.mSubscribeFlags = RS_DISTRIB_ADMIN;
+
+		}
+		else if (rnd < 0.3)
+		{
+			forum.mMeta.mSubscribeFlags = RS_DISTRIB_SUBSCRIBED;
+		}
+		else
+		{
+			forum.mMeta.mSubscribeFlags = 0;
+		}
+
+		forum.mMeta.mPop = (int) (RSRandom::random_f32() * 10.0);
 
 		mGroups.push_back(forum);
+
+
+		//std::cerr << "p3ForumsV2::generateDummyData() Generated Forum: " << forum.mMeta;
+		//std::cerr << std::endl;
 	}
 
 
@@ -628,7 +669,7 @@ bool p3ForumsV2::generateDummyData()
 		/* rotate the Forum Groups Around, then pick one.
 		 */
 
-		int rnd;
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
 
 		for(j = 0; j < rnd; j++)
 		{
@@ -653,8 +694,23 @@ bool p3ForumsV2::generateDummyData()
 		 *
 		 * ChildTS ????
 		 */
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => ThreadMsg_%d", forum.mMeta.mGroupName.c_str(), i+1);
+		msg.mMeta.mMsgName = name;
+
+		msg.mMeta.mGroupId = forum.mMeta.mGroupId;
+		msg.mMeta.mMsgId = genRandomId();
+		msg.mMeta.mOrigMsgId = msg.mMeta.mMsgId;
+		msg.mMeta.mThreadId = msg.mMeta.mMsgId;
+		msg.mMeta.mParentId = "";
+
+		msg.mMeta.mPublishTs = forum.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (msg.mMeta.mPublishTs > now)
+			msg.mMeta.mPublishTs = now - 1;
 
 		mMsgs.push_back(msg);
+
+		//std::cerr << "p3ForumsV2::generateDummyData() Generated Thread: " << msg.mMeta;
+		//std::cerr << std::endl;
 		
 	}
 
@@ -665,7 +721,7 @@ bool p3ForumsV2::generateDummyData()
 		/* rotate the Forum Groups Around, then pick one.
 		 */
 
-		int rnd;
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
 
 		for(j = 0; j < rnd; j++)
 		{
@@ -690,25 +746,44 @@ bool p3ForumsV2::generateDummyData()
 		 *
 		 * ChildTS ????
 		 */
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => Msg_%d", parent.mMeta.mMsgName.c_str(), i+1);
+		msg.mMeta.mMsgName = name;
+		msg.mMsg = name;
 
+		msg.mMeta.mGroupId = parent.mMeta.mGroupId;
+		msg.mMeta.mMsgId = genRandomId();
+		msg.mMeta.mOrigMsgId = msg.mMeta.mMsgId;
+		msg.mMeta.mThreadId = parent.mMeta.mThreadId;
+		msg.mMeta.mParentId = parent.mMeta.mOrigMsgId;
 
-		
+		msg.mMeta.mPublishTs = parent.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (msg.mMeta.mPublishTs > now)
+			msg.mMeta.mPublishTs = now - 1;
+
+		mMsgs.push_back(msg);
+
+		//std::cerr << "p3ForumsV2::generateDummyData() Generated Child Msg: " << msg.mMeta;
+		//std::cerr << std::endl;
+
 	}
 
 
+	mUpdated = true;
 
 	/* Then - at the end, we push them all into the Proxy */
 	for(git = mGroups.begin(); git != mGroups.end(); git++)
 	{
 		/* pushback */
+		mForumProxy->addForumGroup(*git);
+
 	}
 
 	for(mit = mMsgs.begin(); mit != mMsgs.end(); mit++)
 	{
 		/* pushback */
+		mForumProxy->addForumMsg(*mit);
 	}
 
+	return true;
 }
-
-#endif
 

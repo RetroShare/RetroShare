@@ -127,6 +127,7 @@ virtual bool createMsg(RsForumV2Msg &msg);
 	private:
 
 std::string genRandomId();
+bool 	generateDummyData();
 
 	ForumDataProxy *mForumProxy;
 

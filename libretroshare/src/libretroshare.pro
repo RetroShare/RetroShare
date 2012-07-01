@@ -692,6 +692,8 @@ HEADERS += services/p3photoservice.h \
 		services/p3idservice.h \
 		retroshare/rsforumsv2.h \
 		services/p3forumsv2.h \
+		retroshare/rsposted.h \
+		services/p3posted.h \
 
 SOURCES += services/p3photoservice.cc \
 		serialiser/rsphotoitems.cc \
@@ -700,6 +702,7 @@ SOURCES += services/p3photoservice.cc \
 		services/p3wire.cc \
 		services/p3idservice.cc \
 		services/p3forumsv2.cc \
+		services/p3posted.cc \
 
 # Other Old Code.
 #	rsserver/p3photo.cc \

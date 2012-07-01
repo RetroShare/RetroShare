@@ -385,18 +385,27 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 
 	bool onlyOrigMsgs = false;
 	bool onlyLatestMsgs = false;
+	bool onlyThreadHeadMsgs = false;
 
 	// Can only choose one of these two.
 	if (opts.mOptions & RS_TOKREQOPT_MSG_ORIGMSG)
 	{
+		std::cerr << "GxsDataProxy::getMsgList() MSG_ORIGMSG";
+		std::cerr << std::endl;
 		onlyOrigMsgs = true;
 	}
 	else if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
 	{
-		std::cerr << "GxsDataProxy::getMsgList() REQUESTED LATEST!!!";
+		std::cerr << "GxsDataProxy::getMsgList() MSG_LATEST";
 		std::cerr << std::endl;
-
 		onlyLatestMsgs = true;
+	}
+
+	if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
+	{
+		std::cerr << "GxsDataProxy::getMsgList() MSG_THREAD";
+		std::cerr << std::endl;
+		onlyThreadHeadMsgs = true;
 	}
 
 	std::list<std::string>::const_iterator it;
@@ -415,6 +424,16 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 				{
 					continue;
 				}
+
+				/* if we are grabbing thread Head... then parentId == empty. */
+				if (onlyThreadHeadMsgs)
+				{
+					if (!(mit->second.mParentId.empty()))
+					{
+						continue;
+					}
+				}
+
 
 				oit = origMsgTs.find(mit->second.mOrigMsgId);
 				bool addMsg = false;
@@ -460,6 +479,16 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 				if (mit->second.mGroupId == *it)
 				{
 					bool add = false;
+
+					/* if we are grabbing thread Head... then parentId == empty. */
+					if (onlyThreadHeadMsgs)
+					{
+						if (!(mit->second.mParentId.empty()))
+						{
+							continue;
+						}
+					}
+
 	
 					if (onlyOrigMsgs)
 					{
@@ -498,18 +527,50 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	bool onlyLatestMsgs = false;
 	bool onlyAllVersions = false;
+	bool onlyChildMsgs = false;
+
 	if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
 	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_LATEST";
+		std::cerr << std::endl;
 		onlyLatestMsgs = true;
 	}
 	else if (opts.mOptions & RS_TOKREQOPT_MSG_VERSIONS)
 	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_VERSIONS";
+		std::cerr << std::endl;
 		onlyAllVersions = true;
 	}
 
-	/* FALL BACK OPTION */
-	if ((!onlyLatestMsgs) && (!onlyAllVersions))
+	if (opts.mOptions & RS_TOKREQOPT_MSG_PARENT)
 	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_PARENTS";
+		std::cerr << std::endl;
+		onlyChildMsgs = true;
+	}
+
+	if (onlyAllVersions && onlyChildMsgs)
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	if ((!onlyLatestMsgs) && onlyChildMsgs)
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+
+	/* FALL BACK OPTION */
+	if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs))
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() FALLBACK -> NO FLAGS -> JUST COPY";
+		std::cerr << std::endl;
 		/* just copy */
 		outMsgIds = msgIds;
 
@@ -532,22 +593,75 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 		if (onlyLatestMsgs)
 		{
-			/* first guess is potentially better than Orig (can't be worse!) */
-			time_t latestTs = mit->second.mPublishTs;
-			std::string latestMsgId = mit->second.mMsgId;
-			
-			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
+			if (onlyChildMsgs)
 			{
-				if (mit->second.mOrigMsgId == origMsgId)
+				// RUN THROUGH ALL MSGS... in map origId -> TS.
+				std::map<std::string, std::pair<std::string, uint32_t> > origMsgTs;
+				std::map<std::string, std::pair<std::string, uint32_t> >::iterator oit;
+				for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 				{
-					if (mit->second.mPublishTs > latestTs)
+					// skip msgs that aren't children.
+					if (mit->second.mParentId != origMsgId)
 					{
-						latestTs = mit->second.mPublishTs;
-						latestMsgId = mit->first;
+						continue;
+					}
+	
+					oit = origMsgTs.find(mit->second.mOrigMsgId);
+					bool addMsg = false;
+					if (oit == origMsgTs.end())
+					{
+						std::cerr << "GxsDataProxy::getMsgList() Found New OrigMsgId: ";
+						std::cerr << mit->second.mOrigMsgId;
+						std::cerr << " MsgId: " << mit->second.mMsgId;
+						std::cerr << " TS: " << mit->second.mPublishTs;
+						std::cerr << std::endl;
+	
+						addMsg = true;
+					}
+					// check timestamps.
+					else if (oit->second.second < mit->second.mPublishTs)
+					{
+						std::cerr << "GxsDataProxy::getMsgList() Found Later Msg. OrigMsgId: ";
+						std::cerr << mit->second.mOrigMsgId;
+						std::cerr << " MsgId: " << mit->second.mMsgId;
+						std::cerr << " TS: " << mit->second.mPublishTs;
+	
+						addMsg = true;
+					}
+	
+					if (addMsg)
+					{
+						// add as latest. (overwriting if necessary)
+						origMsgTs[mit->second.mOrigMsgId] = std::make_pair(mit->second.mMsgId, mit->second.mPublishTs);
 					}
 				}
+	
+				// Add the discovered Latest Msgs.
+				for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
+				{
+					outMsgIds.push_back(oit->second.first);
+				}
 			}
-			outMsgIds.push_back(latestMsgId);
+			else
+			{
+
+				/* first guess is potentially better than Orig (can't be worse!) */
+				time_t latestTs = mit->second.mPublishTs;
+				std::string latestMsgId = mit->second.mMsgId;
+
+				for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
+				{
+					if (mit->second.mOrigMsgId == origMsgId)
+					{
+						if (mit->second.mPublishTs > latestTs)
+						{
+							latestTs = mit->second.mPublishTs;
+							latestMsgId = mit->first;
+						}
+					}
+				}
+				outMsgIds.push_back(latestMsgId);
+			}
 		}
 		else if (onlyAllVersions)
 		{
@@ -934,7 +1048,8 @@ std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
 
 std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta)
 {
-	out << "[ GroupId: " << meta.mGroupId << " MsgId: " << meta.mMsgId << " Name: " << meta.mMsgName << " ]";
+	out << "[ GroupId: " << meta.mGroupId << " MsgId: " << meta.mMsgId;
+	out << " Name: " << meta.mMsgName;
 	out << " OrigMsgId: " << meta.mOrigMsgId;
 	out << " ThreadId: " << meta.mThreadId;
 	out << " ParentId: " << meta.mParentId;
