@@ -81,7 +81,6 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 {
 	_pubring_changed = false ;
 	_trustdb_changed = false ;
-	//_secring_changed = false ;
 
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
@@ -356,19 +355,23 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	ops_keyring_free(tmp_secring) ;
 	free(tmp_secring) ;
 
-	// 3 - add key to secret keyring on disk.
+	// 5 - add key to secret keyring on disk.
 	
-	cinfo = NULL ;
-	int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
-	
-	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{
-		std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
-		return false ;
-	}
-	ops_teardown_file_write(cinfo,fd) ;
+		RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
-	// 5 - copy the public key to the public keyring
+		cinfo = NULL ;
+		int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
+
+		if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
+		{
+			std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
+			return false ;
+		}
+		ops_teardown_file_write(cinfo,fd) ;
+	}
+
+	// 6 - copy the public key to the public keyring
 	
 	ops_memory_t *buf2 = NULL ;
    ops_setup_memory_write(&cinfo, &buf2, 0);
@@ -396,13 +399,13 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
 #endif
 
-	// 6 - clean
+	// 7 - clean
 	ops_keydata_free(key) ;
 
-	// 7 - Update flags.
+	// 8 - Update flags.
 
 	_pubring_changed = true ;
-	//_secring_changed = true ;
+	privateTrustCertificate(pgpId,PGPCertificateInfo::PGP_CERTIFICATE_TRUST_ULTIMATE) ;
 
 	return true ;
 }
@@ -976,53 +979,6 @@ bool PGPHandler::locked_syncPublicKeyring()
 	}
 	return true ;
 }
-
-#ifdef TO_BE_REMOVED
-bool PGPHandler::locked_syncSecretKeyring()
-{
-	struct stat64 buf ;
-#ifdef WINDOWS_SYS
-	std::wstring wfullname;
-	librs::util::ConvertUtf8ToUtf16(_secring_path, wfullname);
-	if(-1 == _wstati64(wfullname.c_str(), &buf))
-#else
-	if(-1 == stat64(_secring_path.c_str(), &buf))
-#endif
-		std::cerr << "PGPHandler::syncDatabase(): can't stat file " << _secring_path << ". Can't sync secret keyring." << std::endl;
-
-#ifdef TODO
-	if(_secring_last_update_time < buf.st_mtime)
-	{
-		std::cerr << "Detected change on disk of secret keyring. " << std::endl ;
-		secring_changed_on_disk = true ;
-
-		mergeKeyringFromDisk(_secring,_secret_keyring_map,_secring_path) ;
-		_secring_last_update_time = buf.st_mtime ;
-	}
-#endif
-	if(_secring_changed)
-	{
-		std::cerr << "Local changes in secret keyring. Writing to disk..." << std::endl;
-
-  fd=ops_setup_file_append(&cinfo, secring_name);
-  ops_write_transferable_secret_key(keydata, passphrase, pplen, ARMOUR_NO, cinfo);
-  ops_teardown_file_write(cinfo,fd)
-
-		if(!ops_write_keyring_to_file(_secring,ops_false,_secring_path.c_str())) 
-		{
-			std::cerr << "Cannot write secret keyring. Disk full? Disk quota exceeded?" << std::endl;
-			return false ;
-		}
-		else
-		{
-			std::cerr << "Done." << std::endl;
-			_secring_last_update_time = time(NULL) ;	// should we get this value from the disk instead??
-			_secring_changed = false ;
-		}
-	}
-	return true ;
-}
-#endif
 
 bool PGPHandler::locked_syncTrustDatabase()
 {
