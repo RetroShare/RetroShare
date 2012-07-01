@@ -183,7 +183,7 @@ linux-* {
 	INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
 	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/include
+	OPENPGPSDK_DIR = ../../openpgpsdk/src
 	INCLUDEPATH *= $${OPENPGPSDK_DIR}
 
 	DESTDIR = lib

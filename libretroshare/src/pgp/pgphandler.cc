@@ -13,7 +13,7 @@ extern "C" {
 #include <openpgpsdk/keyring.h>
 #include <openpgpsdk/readerwriter.h>
 #include <openpgpsdk/validate.h>
-#include <openpgpsdk/../../src/parse_local.h>
+#include <openpgpsdk/parse_local.h>
 }
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.

@@ -35,10 +35,10 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/lib/libops.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/lib/libops.a -lbz2
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
@@ -114,7 +114,7 @@ win32 {
 	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/lib/libops.a -lbz2
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
