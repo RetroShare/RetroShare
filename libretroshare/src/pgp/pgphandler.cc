@@ -200,7 +200,7 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 		cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM ;
 }
 
-void PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata)
+bool PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata)
 {
 	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
 	ops_boolean_t res = ops_validate_key_signatures(result,keydata,_pubring,cb_get_passphrase) ;
@@ -208,14 +208,26 @@ void PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_
 	if(res == ops_false)
 		std::cerr << "(EE) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
 
+	bool ret = false ;
+
 	// Parse signers.
 	//
 
 	if(result != NULL)
 		for(size_t i=0;i<result->valid_count;++i)
-			cert.signers.insert(PGPIdType(result->valid_sigs[i].signer_id).toStdString()) ;
+		{
+			std::string signer_str = PGPIdType(result->valid_sigs[i].signer_id).toStdString() ;
+
+			if(cert.signers.find(signer_str) == cert.signers.end())
+			{
+				cert.signers.insert(signer_str) ;
+				ret = true ;
+			}
+		}
 
 	ops_validate_result_free(result) ;
+
+	return ret ;
 }
 
 PGPHandler::~PGPHandler()
@@ -369,43 +381,32 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	}
 	ops_teardown_file_write(cinfo,fd) ;
 
-	// 6 - copy the public key to the public keyring
+	// 6 - copy the public key to the public keyring on disk
 	
-	ops_memory_t *buf2 = NULL ;
-   ops_setup_memory_write(&cinfo, &buf2, 0);
+	cinfo = NULL ;
+	fd=ops_setup_file_append(&cinfo, _pubring_path.c_str());
 
 	if(!ops_write_transferable_public_key(key, ops_false, cinfo))
 	{
 		std::cerr << "(EE) Cannot encode secret key to memory!!" << std::endl;
 		return false ;
 	}
-
-	ops_keyring_t *tmp_pubring = allocateOPSKeyring() ;
-	if(! ops_keyring_read_from_mem(tmp_pubring, ops_false, buf2))
-	{
-		std::cerr << "(EE) Cannot re-read key from memory!!" << std::endl;
-		return false ;
-	}
-	ops_teardown_memory_write(cinfo,buf2);	// cleanup memory
-
-	if(!addOrMergeKey(_pubring,_public_keyring_map,&tmp_pubring->keys[0])) 
-	{
-		std::cerr << "(EE) Cannot add new key to keyring. Conflict in GPG ids?" << std::endl;
-		return false ;
-	}
-
-	ops_keyring_free(tmp_pubring) ;
-	free(tmp_pubring) ;
-#ifdef DEBUG_PGPHANDLER
-	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
-#endif
+	ops_teardown_file_write(cinfo,fd) ;
 
 	// 7 - clean
 	ops_keydata_free(key) ;
 
-	// 8 - Update some flags.
+	// 8 - re-read the key from the public keyring, and add it to memory.
 
-	_pubring_changed = true ;
+	_pubring_last_update_time = 0 ; // force update pubring from disk.
+	locked_syncPublicKeyring() ;	
+
+#ifdef DEBUG_PGPHANDLER
+	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
+#endif
+
+	// 9 - Update some flags.
+
 	privateTrustCertificate(pgpId,PGPCertificateInfo::PGP_CERTIFICATE_TRUST_ULTIMATE) ;
 
 	return true ;

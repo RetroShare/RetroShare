@@ -120,7 +120,10 @@ class PGPHandler
 
 	private:
 		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
-		void validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
+
+		// Returns true if the signatures have been updated
+		//
+		bool validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
 
 		const ops_keydata_t *getPublicKey(const PGPIdType&) const ;
 		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;
@@ -130,7 +133,6 @@ class PGPHandler
 
 		bool locked_syncPublicKeyring() ;
 		bool locked_syncTrustDatabase() ;
-		//bool locked_syncSecretKeyring() ;
 
 		void mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<std::string,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
 		bool addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
@@ -152,7 +154,6 @@ class PGPHandler
 
 		bool _pubring_changed ;
 		bool _trustdb_changed ;
-		//bool _secring_changed ;
 
 		time_t _pubring_last_update_time ;
 		time_t _secring_last_update_time ;

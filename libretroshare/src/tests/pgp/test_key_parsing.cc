@@ -40,7 +40,13 @@ int main(int argc,char *argv[])
 			throw std::runtime_error("PGPHandler::readKeyRing(): cannot read key file. File corrupted, or missing/superfluous armour parameter.") ;
 
 		for(int i=0;i<kr->nkeys;++i)
+		{
+			ops_print_public_keydata(&kr->keys[i]) ;
 			ops_print_public_keydata_verbose(&kr->keys[i]) ;
+			ops_print_public_key(&kr->keys[i].key.pkey) ;
+		}
+
+		ops_list_packets(const_cast<char *>(keyfile.c_str()),armoured,kr,NULL) ;
 
 		return 0 ;
 	}
