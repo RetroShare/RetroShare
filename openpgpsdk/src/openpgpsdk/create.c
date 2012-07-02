@@ -441,55 +441,78 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
 ops_boolean_t ops_write_transferable_public_key(const ops_keydata_t *keydata,
 						ops_boolean_t armoured,
 						ops_create_info_t *info)
-    {
-    ops_boolean_t rtn;
-    unsigned int i=0,j=0;
+{
+	ops_boolean_t rtn;
+	unsigned int i=0,j=0;
 
-    if (armoured)
-        { ops_writer_push_armoured(info, OPS_PGP_PUBLIC_KEY_BLOCK); }
+	if (armoured)
+	{ ops_writer_push_armoured(info, OPS_PGP_PUBLIC_KEY_BLOCK); }
 
-    // public key
-    rtn=ops_write_struct_public_key(&keydata->key.skey.public_key,info);
-    if (rtn!=ops_true)
-        return rtn;
+	// public key
+	rtn=ops_write_struct_public_key(&keydata->key.skey.public_key,info);
+	if (rtn!=ops_true)
+		return rtn;
 
-    // TODO: revocation signatures go here
+	// TODO: revocation signatures go here
 
-    // user ids and corresponding signatures
-    for (i=0; i<keydata->nuids; i++)
-        {
-        ops_user_id_t* uid=&keydata->uids[i];
+	// user ids and corresponding signatures
+	for (i=0; i<keydata->nuids; i++)
+	{
+		ops_user_id_t* uid=&keydata->uids[i];
 
-        rtn=ops_write_struct_user_id(uid, info);
+		rtn=ops_write_struct_user_id(uid, info);
 
-        if (!rtn)
-            return rtn;
+		if (!rtn)
+			return rtn;
 
-        // find signature for this packet if it exists
-        for (j=0; j<keydata->nsigs; j++)
-            {
-            sigpacket_t* sig=&keydata->sigs[i];
-            if (!strcmp((char *)sig->userid->user_id, (char *)uid->user_id))
-                {
-                rtn=ops_write(sig->packet->raw, sig->packet->length, info);
-                if (!rtn)
-                    return !rtn;
-                }
-            }
-        }
+		// find signature for this packet if it exists
+		for (j=0; j<keydata->nsigs; j++)
+		{
+			sigpacket_t* sig=&keydata->sigs[i];
+			if (!strcmp((char *)sig->userid->user_id, (char *)uid->user_id))
+			{
+				rtn=ops_write(sig->packet->raw, sig->packet->length, info);
+				if (!rtn)
+					return !rtn;
+			}
+		}
+	}
 
-        // TODO: user attributes and corresponding signatures
+	// TODO: user attributes and corresponding signatures
 
-        // subkey packets and corresponding signatures and optional revocation
+	// subkey packets and corresponding signatures and optional revocation
 
-    if (armoured)
-        { 
-        writer_info_finalise(&info->errors, &info->winfo);
-        ops_writer_pop(info); 
-        }
+	if (armoured)
+	{ 
+		writer_info_finalise(&info->errors, &info->winfo);
+		ops_writer_pop(info); 
+	}
 
-    return rtn;
-    }
+	return rtn;
+}
+
+ops_boolean_t ops_write_transferable_public_key_from_packet_data(const ops_keydata_t *keydata,
+						ops_boolean_t armoured,
+						ops_create_info_t *info)
+{
+	ops_boolean_t rtn = ops_true;
+	unsigned int i=0,j=0;
+
+	if (armoured)
+	{ ops_writer_push_armoured(info, OPS_PGP_PUBLIC_KEY_BLOCK); }
+
+	for(i=0;i<keydata->npackets;++i)
+		if(!ops_write(keydata->packets[i].raw, keydata->packets[i].length, info))
+			return ops_false ;
+
+	if (armoured)
+	{ 
+		writer_info_finalise(&info->errors, &info->winfo);
+		ops_writer_pop(info); 
+	}
+
+	return rtn;
+}
 
 /**
    \ingroup HighLevel_KeyWrite

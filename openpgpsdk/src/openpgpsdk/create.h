@@ -78,6 +78,8 @@ ops_boolean_t ops_write_pk_session_key(ops_create_info_t *info,
 				       ops_pk_session_key_t *pksk);
 ops_boolean_t ops_write_transferable_public_key(const ops_keydata_t *key, ops_boolean_t armoured, ops_create_info_t *info);
 ops_boolean_t ops_write_transferable_secret_key(const ops_keydata_t *key, const unsigned char* passphrase, const size_t pplen, ops_boolean_t armoured, ops_create_info_t *info);
+ops_boolean_t ops_write_transferable_public_key_from_packet_data(const ops_keydata_t *keydata, ops_boolean_t armoured, ops_create_info_t *info);
+
 
 #endif /*OPS_CREATE_H*/
 
