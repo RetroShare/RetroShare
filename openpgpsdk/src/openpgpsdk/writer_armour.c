@@ -34,7 +34,7 @@
 
 static int debug=0;
 
-#define LINE_LENGTH 63
+#define LINE_LENGTH 64
 
 static const char newline[] = "\r\n";
 
@@ -284,7 +284,7 @@ typedef struct
     unsigned pos;
     } linebreak_arg_t;
 
-#define BREAKPOS	64
+#define BREAKPOS	65
 
 static ops_boolean_t linebreak_writer(const unsigned char *src,
 					 unsigned length,
