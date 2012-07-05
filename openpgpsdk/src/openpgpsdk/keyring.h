@@ -63,7 +63,7 @@ ops_secret_key_t *ops_decrypt_secret_key_from_data(const ops_keydata_t *key,
 
 ops_boolean_t ops_keyring_read_from_file(ops_keyring_t *keyring, const ops_boolean_t armour, const char *filename);
 ops_boolean_t ops_keyring_read_from_mem(ops_keyring_t *keyring, const ops_boolean_t armour, ops_memory_t *mem);
-ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean_t armoured,const char *filename);
+ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean_t armoured,const char *filename,ops_boolean_t write_all_packets);
 
 char *ops_malloc_passphrase(char *passphrase);
 char *ops_get_passphrase(void);
@@ -83,6 +83,7 @@ ops_packet_t* ops_add_packet_to_keydata(ops_keydata_t* keydata, const ops_packet
 void ops_add_signed_userid_to_keydata(ops_keydata_t* keydata, const ops_user_id_t* userid, const ops_packet_t* packet);
 
 ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_user_id_t* userid);
+ops_boolean_t ops_sign_key(ops_keydata_t* keydata_to_sign, ops_user_id_t* userid,const unsigned char *signers_key_id,ops_secret_key_t *signers_key);
 
 ops_keydata_t *ops_keydata_new(void);
 void ops_keydata_init(ops_keydata_t* keydata, const ops_content_tag_t type);

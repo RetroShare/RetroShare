@@ -608,6 +608,59 @@ ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_u
 
 /**
 \ingroup Core_Keys
+\brief Add signature to given key
+\return ops_true if OK; else ops_false
+*/
+ops_boolean_t ops_sign_key(ops_keydata_t* keydata, ops_user_id_t* userid,const unsigned char *signers_key_id,ops_secret_key_t *signers_key)
+{
+/*	ops_memory_t* mem_userid=NULL; */
+	ops_create_info_t* cinfo_userid=NULL;
+
+	ops_memory_t* mem_sig=NULL;
+	ops_create_info_t* cinfo_sig=NULL;
+
+	ops_create_signature_t *sig=NULL;
+
+	/*
+	 * create signature packet for this userid
+	 */
+
+	// create userid pkt
+/*	ops_setup_memory_write(&cinfo_userid, &mem_userid, 128);    */
+/* ops_write_struct_user_id(userid, cinfo_userid);             */
+
+	// create sig for this pkt
+
+	sig=ops_create_signature_new();
+	ops_signature_start_key_signature(sig, &keydata->key.skey.public_key, userid, OPS_CERT_POSITIVE);
+	ops_signature_add_creation_time(sig,time(NULL)); 
+	ops_signature_add_issuer_key_id(sig,signers_key_id);
+/*	ops_signature_add_primary_user_id(sig, ops_true); */
+	ops_signature_hashed_subpackets_end(sig);
+
+	ops_setup_memory_write(&cinfo_sig, &mem_sig, 128);
+	ops_write_signature(sig,&signers_key->public_key,signers_key, cinfo_sig);
+
+	// add this packet to keydata
+
+	ops_packet_t sigpacket;
+	sigpacket.length=ops_memory_get_length(mem_sig);
+	sigpacket.raw=ops_memory_get_data(mem_sig);
+
+	// add userid to keydata
+	ops_add_signed_userid_to_keydata(keydata, userid, &sigpacket);
+
+	// cleanup
+	ops_create_signature_delete(sig);
+/*	ops_create_info_delete(cinfo_userid); */
+	ops_create_info_delete(cinfo_sig);
+/*	ops_memory_free(mem_userid);*/
+	ops_memory_free(mem_sig);
+
+	return ops_true;
+}
+/**
+\ingroup Core_Keys
 \brief Initialise ops_keydata_t
 \param keydata Keydata to initialise
 \param type OPS_PTAG_CT_PUBLIC_KEY or OPS_PTAG_CT_SECRET_KEY
@@ -987,7 +1040,7 @@ cb_keyring_read(const ops_parser_content_t *content_,
    \return ops_true is anything when ok
 */
 
-ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean_t armoured,const char *filename)
+ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean_t armoured,const char *filename,ops_boolean_t write_all_packets)
 {
 	ops_create_info_t *info;
 	int fd = ops_setup_file_write(&info, filename, ops_true);
@@ -1001,7 +1054,10 @@ ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean
 	int i;
 	for(i=0;i<keyring->nkeys;++i)
 		if(keyring->keys[i].key.pkey.algorithm  == OPS_PKA_RSA)
-			ops_write_transferable_public_key(&keyring->keys[i],armoured,info) ;
+			if(write_all_packets)
+				ops_write_transferable_public_key_from_packet_data(&keyring->keys[i],armoured,info) ;
+			else
+				ops_write_transferable_public_key(&keyring->keys[i],armoured,info) ;
 		else
 		{
 			fprintf(stdout, "ops_write_keyring: not writing key. Algorithm not handled: ") ;

@@ -642,7 +642,7 @@ bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *s
 
 int	AuthGPG::privateSignCertificate(const std::string &id)
 {
-	std::cerr << __PRETTY_FUNCTION__ << ": To be implemented." << std::endl;
+	return PGPHandler::privateSignCertificate(mOwnGpgId,PGPIdType(id)) ;
 
 //	/* The key should be in Others list and not in Peers list ?? 
 //	 * Once the key is signed, it moves from Others to Peers list ??? 
@@ -696,8 +696,6 @@ int	AuthGPG::privateSignCertificate(const std::string &id)
 //
 //	gpgme_data_release(out);
 //	gpgme_signers_clear(CTX);
-
-	return 1;
 }
 
 /* revoke the signature on Certificate */

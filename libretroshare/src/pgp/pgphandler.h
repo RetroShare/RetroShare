@@ -77,10 +77,9 @@ class PGPHandler
 		bool LoadCertificateFromString(const std::string& pem, PGPIdType& gpg_id, std::string& error_string);
 		std::string SaveCertificateToString(const PGPIdType& id,bool include_signatures) ;
 
-		bool TrustCertificate(const PGPIdType& id, int trustlvl);
-
 		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
+		bool privateSignCertificate(const PGPIdType& own_id,const PGPIdType& id_of_key_to_sign) ;
 
 		bool encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) ;
 		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) ;
@@ -88,14 +87,14 @@ class PGPHandler
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const PGPIdType&,bool) ;
 
-		bool isKeySupported(const PGPIdType& id) const ;
+		//bool isKeySupported(const PGPIdType& id) const ;
 
 		bool privateTrustCertificate(const PGPIdType& id,int valid_level) ;	
 
 		// Write keyring
 
-		bool writeSecretKeyring() ;
-		bool writePublicKeyring() ;
+		//bool writeSecretKeyring() ;
+		//bool writePublicKeyring() ;
 
 		const PGPCertificateInfo *getCertificateInfo(const PGPIdType& id) const ;
 
@@ -139,7 +138,7 @@ class PGPHandler
 
 		// Members.
 		//
-		RsMutex pgphandlerMtx ;
+		mutable RsMutex pgphandlerMtx ;
 
 		ops_keyring_t *_pubring ;
 		ops_keyring_t *_secring ;
