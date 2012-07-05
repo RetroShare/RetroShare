@@ -56,7 +56,7 @@
  *  2 transfers only between group
  *   - the also group matrix settings which is by default everyone can transfer to each other
  */
-class RsNetworkExchangeService : public p3Service
+class RsNetworkExchangeService
 {
 public:
 
@@ -90,7 +90,7 @@ public:
      * @param hops how far into friend tree for search
      * @return search token that can be redeemed later, implementation should indicate how this should be used
      */
-    virtual int searchMsgs(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
+    //virtual int searchMsgs(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
 
     /*!
      * Initiates a search of groups through the network which goes
@@ -99,7 +99,7 @@ public:
      * @param hops number of hops deep into peer network
      * @return search token that can be redeemed later
      */
-    virtual int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
+    //virtual int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
 
 
     /*!

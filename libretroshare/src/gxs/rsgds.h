@@ -43,8 +43,6 @@ public:
 
 	virtual ~RsGxsSearchModule();
 
-    virtual bool searchMsg(const RsGxsSearch&, RsGxsMsg* msg) = 0;
-    virtual bool searchGroup(const RsGxsSearch&, RsGxsGroup* grp) = 0;
 
 };
 

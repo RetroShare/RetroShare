@@ -15,6 +15,9 @@ void test_storeAndDeleteMessage();
 void test_searchMsg();
 void test_searchGrp();
 
+bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r);
+bool operator ==(const RsGxsMsgMetaData& l, const RsGxsMsgMetaData& r);
+
 void test_multiThreaded();
 
 class DataReadWrite : RsThread

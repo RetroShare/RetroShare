@@ -158,8 +158,8 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 
 HEADERS += plugins/pluginmanager.h \
         plugins/dlfcn_win32.h \
-        serialiser/rspluginitems.h \
-    gxs/rsgxsdata.h
+        serialiser/rspluginitems.h
+
 
 
 HEADERS += $$PUBLIC_HEADERS
@@ -668,13 +668,14 @@ HEADERS += serialiser/rsnxsitems.h \
             gxs/rsgxsnetservice.h \
             gxs/rsgxsflags.h \
             gxs/rsgenexchange.h \
-            gxs/rsgenexchange.h \
-            gxs/rsnxsobserver.h
+            gxs/rsnxsobserver.h \
+            gxs/rsgxsdata.h \
 
 SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
                 gxs/rsgenexchange.cc \
-            gxs/rsgxsnetservice.cc
+            gxs/rsgxsnetservice.cc \
+            gxs/rsgxsdata.cc
 }
 
 
@@ -708,9 +709,23 @@ SOURCES += services/p3photoservice.cc \
 #	rsserver/p3photo.cc \
 }
 
-SOURCES += \
+# very temporary will restore back
+even_newer_cache_modules {
 
-SOURCES +=
+HEADERS += \
+    serialiser/rsgxsitems.h \
+    services/p3photoserviceV2.h \
+    retroshare/rsphotoV2.h \
+    gxs/rstokenservice.h \
+    gxs/rsgxsdataaccess.h \
+    retroshare/rsgxsservice.h
+
+
 
 SOURCES += \
-    gxs/rsgxsdata.cc
+    services/p3photoserviceV2.cc
+
+SOURCES += \
+    gxs/rsgxsdataaccess.cpp
+
+}

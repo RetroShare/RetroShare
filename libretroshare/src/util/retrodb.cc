@@ -36,6 +36,8 @@ void free_blob(void* dat){
 
     char* c = (char*) dat;
     delete[] c;
+    dat = NULL;
+
 }
 
 const uint8_t ContentValue::BOOL_TYPE  = 1;
@@ -337,7 +339,7 @@ bool RetroDb::execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob
 
     for(; lit != blobs.end(); lit++){
         const RetroDbBlob& b = *lit;
-        sqlite3_bind_blob(stm, b.index, b.data, b.length, free_blob);
+        sqlite3_bind_blob(stm, b.index, b.data, b.length, NULL);
     }
 
     uint32_t delta = 3;

@@ -83,5 +83,4 @@ public:
 
 
 
-
 #endif // RSGXSMETA_H

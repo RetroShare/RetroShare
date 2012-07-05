@@ -69,7 +69,11 @@ void init_item(RsGxsGrpMetaData* metaGrp)
     metaGrp->mPublishTs = rand()%3452;
     metaGrp->mGroupFlags = rand()%43;
 
-
+    metaGrp->mGroupStatus = rand()%313;
+    metaGrp->mSubscribeFlags = rand()%2251;
+    metaGrp->mMsgCount = rand()%2421;
+    metaGrp->mLastPost = rand()%2211;
+    metaGrp->mPop = rand()%5262;
 }
 
 void init_item(RsGxsMsgMetaData* metaMsg)

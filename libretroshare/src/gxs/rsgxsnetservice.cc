@@ -1,9 +1,9 @@
 #include "rsgxsnetservice.h"
 
-RsGxsNetService::RsGxsNetService(uint16_t servType,
-                                 RsGeneralDataService *gds, RsNxsObserver *nxsObs)
-                                     : p3Config(servType), mServType(servType), mDataStore(gds),
-                                       mObserver(nxsObs), mNxsMutex("RsGxsNetService")
+RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
+                                 RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs)
+                                     : p3Config(servType), p3ThreadedService(servType), mServType(servType), mDataStore(gds),
+                                       mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr)
 
 {
 }

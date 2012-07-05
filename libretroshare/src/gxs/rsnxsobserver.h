@@ -6,7 +6,7 @@
  *
  * Observer, interface for RetroShare.
  *
- * Copyright 2011-2011 by Robert Fernie, Evi-Parker Christopher
+ * Copyright 2011-2012 by Robert Fernie, Evi-Parker Christopher
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,12 +42,12 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::set<RsNxsMsg*> messages);
+    virtual void notifyNewMessages(std::vector<RsNxsMsg*> messages) = 0;
 
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewGroups(std::set<RsNxsGrp*>& groups);
+    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups) = 0;
 
 
 

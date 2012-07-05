@@ -26,98 +26,114 @@
  *
  */
 
-
-#include <map>
-
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
-#include "gxs/rsgxsdata.h"
 
 
-
-/*!
- * Base class used by client API
- * for messages.
- * Main purpose is for msg flows
- * between GDS and GXS API clients
- */
-class RsGxsMsg : public RsItem
+class RsGxsGrpItem : public RsItem
 {
-public:
-
-    RsGxsMsg() : RsItem(0) {}
-    virtual ~RsGxsMsg(){ return; }
-
-};
-
-/*!
- * Base class used by client API
- * for groups.
- * Main purpose is for msg flows
- * between GDS and GXS API clients
- */
-class RsGxsGroup : public RsItem
-{
-
 
 public:
 
-    /*** type of msgs ***/
+    RsGxsGrpItem() : RsItem(0) { return; }
+    virtual ~RsGxsGrpItem(){}
 
-    RsGxsGroup(uint16_t servtype, uint8_t subtype)
-        : RsItem(servtype) { return; }
-
-    virtual ~RsGxsGroup() { return; }
-
-    /*!
-     * Three thing flag represents:
-     * Is it signed by identity?
-     * Group type (private, public, restricted)
-     * msgs allowed (signed and anon)
-     */
-    uint32_t grpFlag;
-
-    /*****                          *****/
-
+    // must be serialised
+    std::string mAuthorId;
+    std::string mGrpId;
 
 };
 
-
-class RsGxsSearch : public RsItem {
-
-    RsGxsSearch(uint32_t servtype) : RsItem(servtype) { return ; }
-    virtual ~RsGxsSearch() { return;}
-
-};
-
-class RsGxsSrchResMsgCtx : public RsItem {
-
-    RsGxsSrchResMsgCtx(uint32_t servtype) : RsItem(servtype) { return; }
-    virtual ~RsGxsSrchResMsgCtx() {return; }
-    std::string msgId;
-    RsTlvKeySignature sign;
-
-};
-
-class RsGxsSrchResGrpCtx : public RsItem {
-
-    RsGxsSrchResGrpCtx(uint32_t servtype) : RsItem(servtype) { return; }
-    virtual ~RsGxsSrchResGrpCtx() {return; }
-    std::string msgId;
-    RsTlvKeySignature sign;
-
-};
-
-class RsGxsSerialiser : public RsSerialType
+class RsGxsMsgItem : public RsItem
 {
-public:
 
-    RsGxsSerialiser(uint32_t servtype) : RsSerialType(servtype) { return; }
-    virtual ~RsGxsSerialiser() { return; }
+public:
+    RsGxsMsgItem() : RsItem(0) { return; }
+    virtual ~RsGxsMsgItem(){}
+
+    // must be serialised
+    std::string mAuthorId;
+    std::string mMsgId;
+    std::string mGrpId;
+
 };
+
+
+class RsGroupMetaData
+{
+        public:
+
+        RsGroupMetaData()
+        {
+                mGroupFlags = 0;
+                mSubscribeFlags = 0;
+
+                mPop = 0;
+                mMsgCount = 0;
+                mLastPost = 0;
+                mGroupStatus = 0;
+
+                //mPublishTs = 0;
+        }
+
+        std::string mGroupId;
+        std::string mGroupName;
+        uint32_t    mGroupFlags;
+
+        time_t      mPublishTs; // Mandatory.
+        std::string mAuthorId;   // Optional.
+
+        // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
+
+        uint32_t    mSubscribeFlags;
+
+        uint32_t    mPop; // HOW DO WE DO THIS NOW.
+        uint32_t    mMsgCount; // ???
+        time_t      mLastPost; // ???
+
+        uint32_t    mGroupStatus;
+
+};
+
+
+
+
+class RsMsgMetaData
+{
+        public:
+
+        RsMsgMetaData()
+        {
+                mPublishTs = 0;
+                mMsgFlags = 0;
+                mMsgStatus = 0;
+                mChildTs = 0;
+        }
+
+        std::string mGroupId;
+        std::string mMsgId;
+
+        std::string mThreadId;
+        std::string mParentId;
+        std::string mOrigMsgId;
+
+        std::string mAuthorId;
+
+        std::string mMsgName;
+        time_t      mPublishTs;
+
+        uint32_t    mMsgFlags; // Whats this for?
+
+        // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
+        // normally READ / UNREAD flags. LOCAL Data.
+        uint32_t    mMsgStatus;
+        time_t      mChildTs;
+
+};
+
 
 
 #endif // RSGXSITEMS_H

@@ -7,7 +7,7 @@
 #include "rsnxs.h"
 #include "rsgds.h"
 #include "rsnxsobserver.h"
-
+#include "pqi/p3linkmgr.h"
 #include "serialiser/rsnxsitems.h"
 
 #include "pqi/p3cfgmgr.h"
@@ -24,7 +24,7 @@ class NxsTransaction
 
 public:
 
-	static const uint8_t FLAG_STATE_STARTING; // when
+    static const uint8_t FLAG_STATE_STARTING; // when
     static const uint8_t FLAG_STATE_RECEIVING; // begin receiving items for incoming trans
     static const uint8_t FLAG_STATE_SENDING; // begin sending items for outgoing trans
     static const uint8_t FLAG_STATE_COMPLETED;
@@ -50,18 +50,29 @@ public:
     std::list<RsNxsItem*> mItems; // items received or sent
 };
 
-class NxsGrpSyncTrans : public NxsTransaction {
+
+class RsNxsNetMgr
+{
+
 
 public:
 
+    virtual std::string getOwnId() = 0;
+    virtual void getOnlineList(std::set<std::string>& ssl_peers) = 0;
+
 };
 
-class NxsMsgSyncTrans : public NxsTransaction {
+//class RsNxsNetMgrImpl : public RsNxsNetMgrImpl
+//{
 
-public:
-	std::string mGrpId;
-};
+//public:
 
+//    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
+
+//    std::string getOwnId();
+//    void getOnlineList(std::set<std::string>& ssl_peers);
+
+//};
 
 
 /// keep track of transaction number
@@ -72,10 +83,9 @@ typedef std::map<std::string, TransactionIdMap > TransactionsPeerMap;
 
 
 /*!
- * Resource use,
- *
+ * Resource use
  */
-class RsGxsNetService : public RsNetworkExchangeService, public RsThread,
+class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService,
     public p3Config
 {
 public:
@@ -87,7 +97,7 @@ public:
      * @param nxsObs observer will be notified whenever new messages/grps
      * arrive
      */
-    RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsObserver* nxsObs = NULL);
+    RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsNetMgr* netMgr, RsNxsObserver* nxsObs = NULL);
 
 public:
 
@@ -112,25 +122,6 @@ public:
      * @param grpId id of group to request messages for
      */
     void requestMessagesOfPeer(const std::string& peerId, const std::string& grpId){ return; }
-
-    /*!
-     * Initiates a search through the network
-     * This returns messages which contains the search terms set in RsGxsSearch
-     * @param search contains search terms of requested from service
-     * @param hops how far into friend tree for search
-     * @return search token that can be redeemed later, implementation should indicate how this should be used
-     */
-    int searchMsgs(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0){ return 0;}
-
-    /*!
-     * Initiates a search of groups through the network which goes
-     * a given number of hosp deep into your friend's network
-     * @param search contains search term requested from service
-     * @param hops number of hops deep into peer network
-     * @return search token that can be redeemed later
-     */
-    int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0){ return 0;}
-
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -311,7 +302,9 @@ private:
     uint32_t mTransactionTimeOut;
 
     std::string mOwnId;
-;
+
+    RsNxsNetMgr* mNetMgr;
+
     /// for other members save transactions
     RsMutex mNxsMutex;
 

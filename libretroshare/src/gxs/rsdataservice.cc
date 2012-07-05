@@ -12,6 +12,7 @@
 #define KEY_NXS_FILE_LEN std::string("nxsFileLen")
 #define KEY_NXS_IDENTITY std::string("identity")
 #define KEY_GRP_ID std::string("grpId")
+#define KEY_ORIG_GRP_ID std::string("origGrpId")
 #define KEY_IDENTITY_SIGN std::string("idSign")
 #define KEY_TIME_STAMP std::string("timeStamp")
 #define KEY_NXS_FLAGS std::string("flags")
@@ -65,9 +66,10 @@
 #define COL_GRP_SUBCR_FLAG 7
 #define COL_GRP_POP 8
 #define COL_MSG_COUNT 9
-#define COL_GRP_STATUS 11
-#define COL_GRP_NAME 12
-#define COL_GRP_LAST_POST 13
+#define COL_GRP_STATUS 10
+#define COL_GRP_NAME 11
+#define COL_GRP_LAST_POST 12
+#define COL_ORIG_GRP_ID 13
 
 // msg col numbers
 #define COL_PUBLISH_SIGN 5
@@ -110,7 +112,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     grpMetaColumns.push_back(KEY_IDENTITY_SIGN); grpMetaColumns.push_back(KEY_NXS_IDENTITY); grpMetaColumns.push_back(KEY_ADMIN_SIGN);
     grpMetaColumns.push_back(KEY_KEY_SET); grpMetaColumns.push_back(KEY_GRP_SUBCR_FLAG); grpMetaColumns.push_back(KEY_GRP_POP);
     grpMetaColumns.push_back(KEY_MSG_COUNT); grpMetaColumns.push_back(KEY_GRP_STATUS); grpMetaColumns.push_back(KEY_GRP_NAME);
-    grpMetaColumns.push_back(KEY_GRP_LAST_POST);
+    grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID);
 
     // for retrieving actual grp data
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_FILE); grpColumns.push_back(KEY_NXS_FILE_OFFSET);
@@ -128,23 +130,45 @@ void RsDataService::initialise(){
     mDb = new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE);
 
     // create table for msg data
-    mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" + KEY_MSG_ID
-                 + " TEXT," + KEY_GRP_ID +  " TEXT," + KEY_NXS_FLAGS + " INT,"  + KEY_ORIG_MSG_ID +  " TEXT,"
-                  + KEY_TIME_STAMP + " INT," + KEY_PUBLISH_SIGN + " BLOB," + KEY_NXS_IDENTITY + " TEXT,"
-                 + KEY_IDENTITY_SIGN + " BLOB," + KEY_NXS_FILE + " TEXT,"+ KEY_NXS_FILE_OFFSET + " INT,"
-                 + KEY_MSG_STATUS + " INT," + KEY_CHILD_TS + " INT,"+ KEY_NXS_META + " BLOB,"
-                 + KEY_MSG_THREAD_ID + " TEXT," + KEY_MSG_PARENT_ID + " TEXT,"+ KEY_MSG_NAME + " TEXT,"
-                 + KEY_NXS_FILE_LEN+ " INT);");
+    mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" +
+                 KEY_MSG_ID + " TEXT," +
+                 KEY_GRP_ID +  " TEXT," +
+                 KEY_NXS_FLAGS + " INT,"  +
+                 KEY_ORIG_MSG_ID +  " TEXT," +
+                 KEY_TIME_STAMP + " INT," +
+                 KEY_PUBLISH_SIGN + " BLOB," +
+                 KEY_NXS_IDENTITY + " TEXT," +
+                 KEY_IDENTITY_SIGN + " BLOB," +
+                 KEY_NXS_FILE + " TEXT,"+
+                 KEY_NXS_FILE_OFFSET + " INT," +
+                 KEY_MSG_STATUS + " INT," +
+                 KEY_CHILD_TS + " INT," +
+                 KEY_NXS_META + " BLOB," +
+                 KEY_MSG_THREAD_ID + " TEXT," +
+                 KEY_MSG_PARENT_ID + " TEXT,"+
+                 KEY_MSG_NAME + " TEXT," +
+                 KEY_NXS_FILE_LEN + " INT);");
 
     // create table for grp data
-    mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" + KEY_GRP_ID +
-                 " TEXT," + KEY_TIME_STAMP + " INT," +
-                 KEY_ADMIN_SIGN + " BLOB," + " BLOB," + KEY_NXS_FILE +
-                  " TEXT," + KEY_NXS_FILE_OFFSET + " INT," + KEY_KEY_SET + " BLOB," + KEY_NXS_FILE_LEN + " INT,"
-                   + KEY_NXS_META + " BLOB," + KEY_GRP_NAME + " TEXT," + KEY_GRP_LAST_POST + " INT,"
-                    + KEY_GRP_LAST_POST + " INT," + KEY_GRP_POP + " INT," + KEY_MSG_COUNT + " INT,"
-                    + KEY_GRP_SUBCR_FLAG + " INT," + KEY_GRP_STATUS + " INT,"
-                  + KEY_NXS_IDENTITY + " TEXT," + KEY_NXS_FLAGS + " INT," + KEY_IDENTITY_SIGN + " BLOB);");
+    mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" +
+                 KEY_GRP_ID + " TEXT," +
+                 KEY_TIME_STAMP + " INT," +
+                 KEY_ADMIN_SIGN + " BLOB," + " BLOB," +
+                 KEY_NXS_FILE + " TEXT," +
+                 KEY_NXS_FILE_OFFSET + " INT," +
+                 KEY_KEY_SET + " BLOB," +
+                 KEY_NXS_FILE_LEN + " INT," +
+                 KEY_NXS_META + " BLOB," +
+                 KEY_GRP_NAME + " TEXT," +
+                 KEY_GRP_LAST_POST + " INT," +
+                 KEY_GRP_POP + " INT," +
+                 KEY_MSG_COUNT + " INT," +
+                 KEY_GRP_SUBCR_FLAG + " INT," +
+                 KEY_GRP_STATUS + " INT," +
+                 KEY_NXS_IDENTITY + " TEXT," +
+                 KEY_ORIG_GRP_ID + " TEXT," +
+                 KEY_NXS_FLAGS + " INT," +
+                 KEY_IDENTITY_SIGN + " BLOB);");
 
 }
 
@@ -154,7 +178,7 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
 
     bool ok = true;
 
-    // for manipulating raw data
+    // for extracting raw data
     uint32_t offset = 0;
     char* data = NULL;
     uint32_t data_len = 0;
@@ -165,14 +189,15 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
     // required definition of a group
     ok &= !grpMeta->mGroupId.empty();
 
-    // identity if any
+
     c.getString(COL_IDENTITY, grpMeta->mAuthorId);
     c.getString(COL_GRP_NAME, grpMeta->mGroupName);
+    c.getString(COL_ORIG_GRP_ID, grpMeta->mOrigGrpId);
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
     grpMeta->mGroupFlags = c.getInt32(COL_NXS_FLAGS);
 
-
+    // identity if any
     if(!grpMeta->mAuthorId.empty() && ok){
         offset = 0;
         data = (char*)c.getData(COL_IDENTITY_SIGN, data_len);
@@ -215,7 +240,6 @@ RsNxsGrp* RsDataService::getGroup(RetroCursor &c)
      * grpId, pub admin and pub publish key
      * necessary for successful group
      */
-
     RsNxsGrp* grp = new RsNxsGrp(mServType);
     bool ok = true;
 
@@ -295,6 +319,7 @@ RsGxsMsgMetaData* RsDataService::getMsgMeta(RetroCursor &c)
     msgMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
 
     offset = 0; data_len = 0;
+
     if(ok){
 
         data = (char*)c.getData(COL_PUBLISH_SIGN, data_len);
@@ -419,6 +444,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
 
         cv.put(KEY_MSG_PARENT_ID, msgMetaPtr->mParentId);
         cv.put(KEY_MSG_THREAD_ID, msgMetaPtr->mThreadId);
+        cv.put(KEY_ORIG_MSG_ID, msgMetaPtr->mOrigMsgId);
         cv.put(KEY_MSG_NAME, msgMetaPtr->mMsgName);
 
         // now local meta
@@ -466,7 +492,9 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
         cv.put(KEY_NXS_FILE_LEN, (int32_t)grpPtr->grp.TlvSize());
         cv.put(KEY_NXS_FILE, grpFile);
-        cv.put(KEY_GRP_ID, grpMetaPtr->mGroupId);
+        cv.put(KEY_GRP_ID, grpPtr->grpId);
+        cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
+        cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId);
         cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
         cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
 
@@ -560,6 +588,8 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
             if(c)
                 retrieveMessages(c, msgSet);
+
+            delete c;
         }else{
 
             // request each grp
@@ -567,12 +597,18 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
             for(; sit!=msgIdSet.end();sit++){
                 const std::string& msgId = *sit;
-                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId + "','" + msgId + "'", "");
-                retrieveMessages(c, msgSet);
+                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId
+                                               + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");
+
+                if(c)
+                    retrieveMessages(c, msgSet);
+
+                delete c;
             }
         }
 
         msg[grpId] = msgSet;
+        msgSet.clear();
     }
 }
 
@@ -621,6 +657,7 @@ int RsDataService::retrieveGxsMsgMetaData(const std::vector<std::string> &grpIds
 
             msgMeta[grpId] = meta;
         }
+        delete c;
 
     }
     return 1;
@@ -645,6 +682,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<std::string, RsGxsGrpMetaData
             valid = c->moveToNext();
         }
     }
+    delete c;
 
     return 1;
 }
