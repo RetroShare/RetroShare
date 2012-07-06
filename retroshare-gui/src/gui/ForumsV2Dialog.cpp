@@ -92,12 +92,6 @@
 
 #define ROLE_THREAD_COUNT           3
 
-#define IS_UNREAD(status) ((status & RSGXS_MSG_STATUS_READ) == 0 || (status & RSGXS_MSG_STATUS_UNREAD_BY_USER))
-#define IS_FORUM_ADMIN(subscribeFlags) (subscribeFlags & RS_DISTRIB_ADMIN)
-#define IS_FORUM_SUBSCRIBED(subscribeFlags) (subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED))
-
-
-
 
 static int FilterColumnFromComboBox(int nIndex)
 {
@@ -292,10 +286,10 @@ void ForumsV2Dialog::forumListCustomPopupMenu( QPoint /*point*/ )
     QMenu contextMnu( this );
 
     QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
-    action->setDisabled (mCurrForumId.empty() || IS_FORUM_SUBSCRIBED(subscribeFlags));
+    action->setDisabled (mCurrForumId.empty() || IS_GROUP_SUBSCRIBED(subscribeFlags));
 
     action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
-    action->setEnabled (!mCurrForumId.empty() && IS_FORUM_SUBSCRIBED(subscribeFlags));
+    action->setEnabled (!mCurrForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
     contextMnu.addSeparator();
 
@@ -305,16 +299,16 @@ void ForumsV2Dialog::forumListCustomPopupMenu( QPoint /*point*/ )
     action->setEnabled (!mCurrForumId.empty ());
 
     action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
-    action->setEnabled (!mCurrForumId.empty () && IS_FORUM_ADMIN(subscribeFlags));
+    action->setEnabled (!mCurrForumId.empty () && IS_GROUP_ADMIN(subscribeFlags));
 
     QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
     connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
-    shareKeyAct->setEnabled(!mCurrForumId.empty() && IS_FORUM_ADMIN(subscribeFlags));
+    shareKeyAct->setEnabled(!mCurrForumId.empty() && IS_GROUP_ADMIN(subscribeFlags));
     contextMnu.addAction( shareKeyAct);
 
     QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
     connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
-    restoreKeysAct->setEnabled(!mCurrForumId.empty() && !IS_FORUM_ADMIN(subscribeFlags));
+    restoreKeysAct->setEnabled(!mCurrForumId.empty() && !IS_GROUP_ADMIN(subscribeFlags));
     contextMnu.addAction( restoreKeysAct);
 
     action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyForumLink()));
@@ -323,15 +317,15 @@ void ForumsV2Dialog::forumListCustomPopupMenu( QPoint /*point*/ )
     contextMnu.addSeparator();
 
     action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsReadAll()));
-    action->setEnabled (!mCurrForumId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
+    action->setEnabled (!mCurrForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
     action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
-    action->setEnabled (!mCurrForumId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
+    action->setEnabled (!mCurrForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 #ifdef DEBUG_FORUMS
     contextMnu.addSeparator();
     action = contextMnu.addAction("Generate mass data", this, SLOT(generateMassData()));
-    action->setEnabled (!mCurrForumId.empty() && IS_FORUM_SUBSCRIBED(subscribeFlags));
+    action->setEnabled (!mCurrForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 #endif
 
     contextMnu.exec(QCursor::pos());
@@ -349,7 +343,7 @@ void ForumsV2Dialog::threadListCustomPopupMenu( QPoint /*point*/ )
     connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), &contextMnu );
-    newthreadAct->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags));
+    newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(subscribeFlags));
     connect( newthreadAct , SIGNAL( triggered() ), this, SLOT( createthread() ) );
 
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), &contextMnu );
@@ -373,7 +367,7 @@ void ForumsV2Dialog::threadListCustomPopupMenu( QPoint /*point*/ )
     QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
     connect(markMsgAsUnreadChildren , SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-    if (IS_FORUM_SUBSCRIBED(subscribeFlags)) {
+    if (IS_GROUP_SUBSCRIBED(subscribeFlags)) {
         QList<QTreeWidgetItem*> Rows;
         QList<QTreeWidgetItem*> RowsRead;
         QList<QTreeWidgetItem*> RowsUnread;
@@ -484,6 +478,7 @@ void ForumsV2Dialog::updateDisplay()
     if (!rsForumsV2)
         return;
 
+#if 0
 	// TODO groupsChanged... HACK XXX.
     if ((rsForumsV2->groupsChanged(forumIds)) || (rsForumsV2->updated()))
     {
@@ -496,6 +491,16 @@ void ForumsV2Dialog::updateDisplay()
             /* update threads as well */
             insertThreads();
         }
+    }
+#endif
+
+    /* The proper version (above) can be done with a data request -> TODO */
+    if (rsForumsV2->updated())
+    {
+        /* update Forums List */
+        insertForums();
+        /* update threads as well */
+        insertThreads();
     }
 }
 
@@ -560,9 +565,9 @@ void ForumsV2Dialog::insertForumsData(const std::list<RsGroupMetaData> &forumLis
         GroupItemInfo groupItemInfo;
         forumInfoToGroupItemInfo(*it, groupItemInfo);
 
-        if (flags & RS_DISTRIB_ADMIN) {
+        if (flags & RSGXS_GROUP_SUBSCRIBE_ADMIN) {
             adminList.push_back(groupItemInfo);
-        } else if (flags & RS_DISTRIB_SUBSCRIBED) {
+        } else if (flags & RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED) {
 			/* subscribed forum */
             subList.push_back(groupItemInfo);
         } else {
@@ -629,7 +634,7 @@ void ForumsV2Dialog::changedThread ()
 
 void ForumsV2Dialog::clickedThread (QTreeWidgetItem *item, int column)
 {
-    if (mCurrForumId.empty() || !IS_FORUM_SUBSCRIBED(subscribeFlags)) {
+    if (mCurrForumId.empty() || !IS_GROUP_SUBSCRIBED(subscribeFlags)) {
         return;
     }
 
@@ -641,7 +646,7 @@ void ForumsV2Dialog::clickedThread (QTreeWidgetItem *item, int column)
         QList<QTreeWidgetItem*> Rows;
         Rows.append(item);
         uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-        setMsgAsReadUnread(Rows, IS_UNREAD(status));
+        setMsgAsReadUnread(Rows, IS_MSG_UNREAD(status));
         return;
     }
 }
@@ -650,7 +655,7 @@ void ForumsV2Dialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRe
 {
     uint32_t status = pItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-    bool bUnread = IS_UNREAD(status);
+    bool bUnread = IS_MSG_UNREAD(status);
     bool missing = pItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
 
     // set icon
@@ -684,7 +689,7 @@ void ForumsV2Dialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRe
     for (int i = 0; i < COLUMN_THREAD_COUNT; i++) {
         QFont qf = pItem->font(i);
 
-        if (!IS_FORUM_SUBSCRIBED(subscribeFlags)) {
+        if (!IS_GROUP_SUBSCRIBED(subscribeFlags)) {
             qf.setBold(false);
             pItem->setTextColor(i, Qt::black);
         } else if (bUnread) {
@@ -805,7 +810,7 @@ void ForumsV2Dialog::fillThreadFinished()
 	insertPost ();
 	CalculateIconsAndFonts();
 	
-	ui.newthreadButton->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags));
+	ui.newthreadButton->setEnabled (IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	mThreadLoading = false;
 
@@ -944,7 +949,7 @@ void ForumsV2Dialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool expa
         }
 
         uint32_t status = Thread->data (COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-        if (expandNewMessages && IS_UNREAD(status)) {
+        if (expandNewMessages && IS_MSG_UNREAD(status)) {
             QTreeWidgetItem *pParent = Thread;
             while ((pParent = pParent->parent()) != NULL) {
                 if (std::find(itemToExpand.begin(), itemToExpand.end(), pParent) == itemToExpand.end()) {
@@ -1027,7 +1032,7 @@ void ForumsV2Dialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewP
         }
 
         uint32_t status = Child->data (COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-        if (expandNewMessages && IS_UNREAD(status)) {
+        if (expandNewMessages && IS_MSG_UNREAD(status)) {
             QTreeWidgetItem *pParent = Child;
             while ((pParent = pParent->parent()) != NULL) {
                 if (std::find(itemToExpand.begin(), itemToExpand.end(), pParent) == itemToExpand.end()) {
@@ -1064,7 +1069,7 @@ void ForumsV2Dialog::insertPost()
 		return;
     }
 
-    ui.newmessageButton->setEnabled (IS_FORUM_SUBSCRIBED(subscribeFlags) && mCurrThreadId.empty() == false);
+    ui.newmessageButton->setEnabled (IS_GROUP_SUBSCRIBED(subscribeFlags) && mCurrThreadId.empty() == false);
 
 	/* blank text, incase we get nothing */
     ui.postText->setText("");
@@ -1185,7 +1190,7 @@ void ForumsV2Dialog::nextUnreadMessage()
     do
     {
         uint32_t status = currentItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-        if( IS_UNREAD(status) )
+        if( IS_MSG_UNREAD(status) )
         {
             ui.threadTreeWidget->setCurrentItem(currentItem);
             return;
@@ -1222,7 +1227,7 @@ int ForumsV2Dialog::getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QT
         if (pRows) pRows->append(*it);
         if (pRowsRead || pRowsUnread) {
             uint32_t status = (*it)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-            if (IS_UNREAD(status)) {
+            if (IS_MSG_UNREAD(status)) {
                 if (pRowsUnread) pRowsUnread->append(*it);
             } else {
                 if (pRowsRead) pRowsRead->append(*it);
@@ -1281,7 +1286,7 @@ void ForumsV2Dialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRea
 
 void ForumsV2Dialog::markMsgAsReadUnread (bool bRead, bool bChildren, bool bForum)
 {
-    if (mCurrForumId.empty() || !IS_FORUM_SUBSCRIBED(subscribeFlags)) {
+    if (mCurrForumId.empty() || !IS_GROUP_SUBSCRIBED(subscribeFlags)) {
         return;
     }
 
@@ -1305,7 +1310,7 @@ void ForumsV2Dialog::markMsgAsReadUnread (bool bRead, bool bChildren, bool bForu
 
             /* add only items with the right state or with not RSGXS_MSG_STATUS_READ */
             uint32_t status = pRow->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-             if (IS_UNREAD(status) == bRead || (status & RSGXS_MSG_STATUS_READ) == 0) {
+             if (IS_MSG_UNREAD(status) == bRead || (status & RSGXS_MSG_STATUS_READ) == 0) {
                 AllRows.append(pRow);
             }
 
@@ -1436,7 +1441,7 @@ void ForumsV2Dialog::newforum()
 
 void ForumsV2Dialog::createmessage()
 {
-    if (mCurrForumId.empty () || !IS_FORUM_SUBSCRIBED(subscribeFlags)) {
+    if (mCurrForumId.empty () || !IS_GROUP_SUBSCRIBED(subscribeFlags)) {
         return;
     }
 
@@ -1480,7 +1485,14 @@ void ForumsV2Dialog::forumSubscribe(bool subscribe)
             return;
     }
 
-    rsForumsV2->groupSubscribe(mCurrForumId, subscribe);
+    uint32_t flags = RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
+    if (!subscribe)
+    {
+	flags = 0;
+    }
+
+    rsForumsV2->setGroupSubscribeFlags(mCurrForumId, flags, RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED);
+
 }
 
 void ForumsV2Dialog::showForumDetails()
@@ -2023,7 +2035,7 @@ bool ForumsV2Dialog::convertMsgToThreadWidget(const RsForumV2Msg &msgInfo, std::
         item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgInfo.mMeta.mMsgId));
 
 #if 0
-        if (IS_FORUM_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {
+        if (IS_GROUP_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {
             rsForumsV2->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
         } else {
             // show message as read
@@ -2154,7 +2166,7 @@ void ForumsV2Dialog::loadForumChildMsg(const RsForumV2Msg &msg, QTreeWidgetItem 
 	mThreadLoad.MsgTokens[token] = child;
 
 	// Leave this here... BUT IT WILL NEED TO BE FIXED.
-	if (mThreadLoad.FillComplete && mThreadLoad.ExpandNewMessages && IS_UNREAD(msg.mMeta.mMsgStatus)) 
+	if (mThreadLoad.FillComplete && mThreadLoad.ExpandNewMessages && IS_MSG_UNREAD(msg.mMeta.mMsgStatus)) 
 	{
 		QTreeWidgetItem *pParent = child;
 		while ((pParent = pParent->parent()) != NULL) 

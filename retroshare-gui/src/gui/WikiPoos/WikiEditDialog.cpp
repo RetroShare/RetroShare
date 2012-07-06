@@ -104,7 +104,9 @@ void WikiEditDialog::submitEdit()
 	mWikiPage.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
 	mWikiPage.mPage = ui.textEdit->toPlainText().toStdString();
 
-	rsWiki->createPage(mWikiPage);
+	uint32_t token;
+	bool  isNew = mNewPage;
+	rsWiki->createPage(token, mWikiPage, isNew);
 	hide();
 }
 

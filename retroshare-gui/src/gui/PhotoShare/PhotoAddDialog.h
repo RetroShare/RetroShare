@@ -59,10 +59,14 @@ private slots:
 	void deletePhoto();
 private:
 
+	void publishPhotos(std::string albumId);
+
 	bool updateAlbumDetails(const RsPhotoAlbum &album);
 	bool setAlbumDataToPhotos();
 	bool loadPhotoData(const uint32_t &token);
 	bool loadAlbumData(const uint32_t &token);
+	bool loadCreatedAlbum(const uint32_t &token);
+
 	TokenQueue *mPhotoQueue;
 protected:
 

@@ -147,6 +147,7 @@ void PostedListDialog::updateDisplay()
         return;
 
 	// TODO groupsChanged... HACK XXX.
+#if 0
     if ((rsPosted->groupsChanged(groupIds)) || (rsPosted->updated()))
     {
         /* update Forums List */
@@ -159,6 +160,15 @@ void PostedListDialog::updateDisplay()
             insertThreads();
         }
     }
+#endif
+
+    if (rsPosted->updated())
+    {
+        /* update Forums List */
+        insertGroups();
+        insertThreads();
+    }
+
 }
 
 void PostedListDialog::changedTopic(const QString &id)

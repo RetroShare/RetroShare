@@ -64,7 +64,12 @@ void WikiAddDialog::createGroup()
 	group.mMeta.mGroupName = ui.lineEdit_Name->text().toStdString();
 	group.mCategory = "Unknown";
 
-	rsWiki->createGroup(group);
+	uint32_t token;
+	bool isNew = true;
+	// Don't worry about getting the response?
+	rsWiki->createGroup(token, group, isNew);
+
+
 	clearDialog();
 	hide();
 }

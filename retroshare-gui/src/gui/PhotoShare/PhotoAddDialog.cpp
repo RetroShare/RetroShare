@@ -318,102 +318,113 @@ void PhotoAddDialog::publishAlbum()
 		item->getPhotoThumbnail(album.mThumbnail);
 	}
 
-	bool isAlbumOk = false;
-
 	// For the moment, only submit albums Once.
 	if (mAlbumEdit)
 	{
         	std::cerr << "PhotoAddDialog::publishAlbum() AlbumEdit Mode";
         	std::cerr << std::endl;
 
-		isAlbumOk = true;
-	}
-	else if (rsPhoto->submitAlbumDetails(album, true))
-	{
-        	std::cerr << "PhotoAddDialog::publishAlbum() New Album Mode";
-        	std::cerr << std::endl;
-
-		isAlbumOk = true;
+		/* call publishPhotos directly */
+		publishPhotos(album.mMeta.mGroupId);
 	}
 
-	if (isAlbumOk)
-	{
-		/* now have path and album id */
-		int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
 
-		for(int i = 0; i < photoCount; i++)
+        std::cerr << "PhotoAddDialog::publishAlbum() New Album Mode Submitting.....";
+        std::cerr << std::endl;
+
+	uint32_t token;
+	rsPhoto->submitAlbumDetails(token, album, true);
+
+	// tell tokenQueue to expect results from submission.
+	mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_SUMMARY, 0);
+
+}
+
+
+
+
+void PhotoAddDialog::publishPhotos(std::string albumId)
+{
+	/* now have path and album id */
+	int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
+
+	for(int i = 0; i < photoCount; i++)
+	{
+		RsPhotoPhoto photo;
+		PhotoItem *item = ui.scrollAreaWidgetContents->getPhotoIdx(i);
+
+		if (!item->mIsPhoto)
 		{
-			RsPhotoPhoto photo;
-			PhotoItem *item = ui.scrollAreaWidgetContents->getPhotoIdx(i);
-
-			if (!item->mIsPhoto)
-			{
-				std::cerr << "PhotoAddDialog::publishAlbum() MAJOR ERROR!";
+			std::cerr << "PhotoAddDialog::publishAlbum() MAJOR ERROR!";
         			std::cerr << std::endl;
-			}
+		}
 
-			photo = item->mPhotoDetails;
-			photo.mThumbnail.data = 0; // do proper data copy.
-			item->getPhotoThumbnail(photo.mThumbnail);
+		photo = item->mPhotoDetails;
+		photo.mThumbnail.data = 0; // do proper data copy.
+		item->getPhotoThumbnail(photo.mThumbnail);
 
-			bool isNewPhoto = false;	
-			bool isModifiedPhoto = false;	
+		bool isNewPhoto = false;	
+		bool isModifiedPhoto = false;	
 
-			if (mAlbumEdit)
+		if (mAlbumEdit)
+		{
+			// can have modFlags and be New... so the order is important.
+			if (photo.mMeta.mGroupId.length() < 1)
 			{
-				// can have modFlags and be New... so the order is important.
-				if (photo.mMeta.mGroupId.length() < 1)
-				{
-					/* new photo - flag in mods */
-					photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTO;
-					photo.mMeta.mGroupId = album.mMeta.mGroupId;
-					isNewPhoto = true;
-				}
-				else if (photo.mModFlags)
-				{
-					isModifiedPhoto = true;
-				}
-			}
-			else
-			{
-				/* new album - update GroupId, all photos are new */
-				photo.mMeta.mGroupId = album.mMeta.mGroupId;
+				/* new photo - flag in mods */
+				photo.mModFlags |= RSPHOTO_FLAGS_ATTRIB_PHOTO;
+				photo.mMeta.mGroupId = albumId;
 				isNewPhoto = true;
 			}
-
-			photo.mOrder = i;
-
-			std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ")";
-			std::cerr << " mSetFlags: " << photo.mSetFlags;
-			std::cerr << " mModFlags: " << photo.mModFlags;
-        		std::cerr << std::endl;
-
-			/* scale photo if needed */
-			if (album.mShareOptions.mResizeMode)
+			else if (photo.mModFlags)
 			{
-				/* */
-
+				isModifiedPhoto = true;
 			}
-			/* save image to album path */
-			photo.path = "unknown";
-
-			std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ") ";
-			if (isNewPhoto)
-			{
-				std::cerr << "Is a New Photo";
-				rsPhoto->submitPhoto(photo, true);
-			}
-			else if (isModifiedPhoto)
-			{
-				std::cerr << "Is Updated";
-				rsPhoto->submitPhoto(photo, false);
-			}
-			else
-			{
-				std::cerr << "Is Unchanged";
-			}
-        		std::cerr << std::endl;
 		}
+		else
+		{
+			/* new album - update GroupId, all photos are new */
+			photo.mMeta.mGroupId = albumId;
+			isNewPhoto = true;
+		}
+
+		photo.mOrder = i;
+
+		std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ")";
+		std::cerr << " mSetFlags: " << photo.mSetFlags;
+		std::cerr << " mModFlags: " << photo.mModFlags;
+        		std::cerr << std::endl;
+
+#if 0
+		/* scale photo if needed */
+		if (album.mShareOptions.mResizeMode)
+		{
+			/* */
+
+		}
+#endif
+
+		/* save image to album path */
+		photo.path = "unknown";
+
+		std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ") ";
+
+		uint32_t token;
+		if (isNewPhoto)
+		{
+			std::cerr << "Is a New Photo";
+			rsPhoto->submitPhoto(token, photo, true);
+		}
+		else if (isModifiedPhoto)
+		{
+			std::cerr << "Is Updated";
+			rsPhoto->submitPhoto(token, photo, false);
+		}
+		else
+		{
+			std::cerr << "Is Unchanged";
+		}
+        	std::cerr << std::endl;
 	}
 
 	clearDialog();
@@ -535,6 +546,34 @@ bool PhotoAddDialog::loadAlbumData(const uint32_t &token)
 	return true;
 }
 
+bool PhotoAddDialog::loadCreatedAlbum(const uint32_t &token)
+{
+	std::cerr << "PhotoAddDialog::loadCreatedAlbum()";
+	std::cerr << std::endl;
+			
+	std::list<RsGroupMetaData> groupInfo;
+	if (!rsPhoto->getGroupSummary(token, groupInfo))
+	{
+		std::cerr << "PhotoAddDialog::loadCreatedAlbum() ERROR Getting MetaData";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (groupInfo.size() != 1)
+	{
+		std::cerr << "PhotoAddDialog::loadCreatedAlbum() ERROR Too much Info";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::cerr << "PhotoAddDialog::loadCreatedAlbum() publishing Photos";
+	std::cerr << std::endl;
+
+	publishPhotos(groupInfo.front().mGroupId);
+
+	return true;
+}
+
 
 void PhotoAddDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
@@ -547,13 +586,24 @@ void PhotoAddDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		switch(req.mType)
 		{
 			case TOKENREQ_GROUPINFO:
-				loadAlbumData(req.mToken);
+				switch(req.mAnsType)
+				{
+					case RS_TOKREQ_ANSTYPE_DATA:
+						loadAlbumData(req.mToken);
+						break;
+					case RS_TOKREQ_ANSTYPE_SUMMARY:
+						loadCreatedAlbum(req.mToken);
+						break;
+					default:
+						std::cerr << "PhotoAddDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+						std::cerr << std::endl;
+				}
 				break;
 			case TOKENREQ_MSGINFO:
 				loadPhotoData(req.mToken);
 				break;
 			default:
-				std::cerr << "PhotoAddDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+				std::cerr << "PhotoAddDialog::loadRequest() ERROR: INVALID TYPE";
 				std::cerr << std::endl;
 				break; 
 		}
