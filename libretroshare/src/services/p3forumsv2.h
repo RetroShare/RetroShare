@@ -34,17 +34,6 @@
 #include <string>
 
 /* 
- * Wiki Service
- *
- * This is an example service for the new cache system.
- * For the moment, it will only hold data passed to it from the GUI.
- * and spew that back when asked....
- *
- * We are doing it like this - so we can check the required interface functionality.
- *
- * Expect it won't take long before it'll be properly linked into the backend!
- *
- * This will be transformed into a Plugin Service, once the basics have been worked out.
  *
  */
 
@@ -107,22 +96,17 @@ virtual uint32_t requestStatus(const uint32_t token);
 virtual bool cancelRequest(const uint32_t &token);
 
         //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-virtual bool groupsChanged(std::list<std::string> &groupIds);
-
-        // Get Message Status - is retrived via MessageSummary.
 virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-
-        // 
-virtual bool groupSubscribe(const std::string &groupId, bool subscribe);
+virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
+virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
 
 virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
-
-virtual bool createGroup(RsForumV2Group &group);
-virtual bool createMsg(RsForumV2Msg &msg);
-
+virtual bool createGroup(uint32_t &token, RsForumV2Group &group, bool isNew);
+virtual bool createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew);
 
 	private:
 
@@ -136,73 +120,6 @@ bool 	generateDummyData();
 	/***** below here is locked *****/
 
 	bool mUpdated;
-
-
-
-
-#if 0
-
-        /* Data Requests */
-virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts);
-virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
-
-virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds);
-virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds);
-
-virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
-virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds);
-
-virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group);
-virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg);
-
-        /* Poll */
-virtual uint32_t requestStatus(const uint32_t token);
-
-virtual bool createGroup(RsForumV2Group &group);
-virtual bool createPage(RsForumV2Msg &msg);
-
-
-/************* Old Extern Interface *******/
-
-virtual bool updated();
-virtual bool getGroupList(std::list<std::string> &group);
-
-virtual bool getGroup(const std::string &groupid, RsWikiGroup &group);
-virtual bool getPage(const std::string &pageid, RsWikiPage &page);
-virtual bool getPageVersions(const std::string &origPageId, std::list<std::string> &pages);
-virtual bool getOrigPageList(const std::string &groupid, std::list<std::string> &pageIds);
-virtual bool getLatestPage(const std::string &origPageId, std::string &page);
-
-virtual bool createGroup(RsWikiGroup &group);
-virtual bool createPage(RsWikiPage &page);
-
-
-	private:
-
-virtual bool InternalgetGroupList(std::list<std::string> &group);
-virtual bool InternalgetGroup(const std::string &groupid, RsForumV2Group &group);
-virtual bool InternalgetPage(const std::string &pageid, RsForumV2Msg &msg);
-virtual bool InternalgetPageVersions(const std::string &origPageId, std::list<std::string> &pages);
-virtual bool InternalgetOrigPageList(const std::string &groupid, std::list<std::string> &pageIds);
-virtual bool InternalgetLatestPage(const std::string &origPageId, std::string &page);
-
-std::string genRandomId();
-
-	ForumDataProxy *mForumProxy;
-
-	RsMutex mForumMtx;
-
-	/***** below here is locked *****/
-
-	bool mUpdated;
-
-	std::map<std::string, std::list<std::string > > mGroupToOrigPages;
-	std::map<std::string, std::list<std::string > > mOrigToPageVersions;
-	std::map<std::string, std::string> mOrigPageToLatestPage;
-	std::map<std::string, RsForumV2Group> mGroups;
-	std::map<std::string, RsForumV2Msg> mPages;
-#endif
 
 };
 

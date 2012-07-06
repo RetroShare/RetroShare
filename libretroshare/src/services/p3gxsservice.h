@@ -114,6 +114,10 @@ virtual bool getMsgList(       uint32_t &token, const RsTokReqOptions &opts, con
 virtual bool getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds, std::list<std::string> &outMsgIds);
 
 
+	/* This functions return a token - which can be used to retrieve the RsGroupMetaData, later
+	 * This is required, as signatures and keys might have to be generated in the background
+	 * Though at the moment: for this test system it won't change anything? FIXME.
+	 */
 virtual bool createGroup(void *groupData);
 virtual bool createMsg(void *msgData);
 
@@ -135,6 +139,26 @@ virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
 
 	bool isUniqueGroup(const std::string &groupId);
 	bool isUniqueMsg(const std::string &msgId);
+
+
+	/* Handle Status & Subscribe Modes */
+// This is removed as redundant - use getGroupList - with OptFlags to find these.
+//virtual bool requestGroupsChanged(uint32_t &token); //std::list<std::string> &groupIds);
+
+        // Get Message Status - is retrived via MessageSummary.
+	// These operations could have a token, but for the moment we are going to assume
+	// they are async and always succeed - (or fail silently).
+virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+
+virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
+virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
+
+	protected:
+
+	bool filterGroupList(const RsTokReqOptions &opts, std::list<std::string> &groupIds);
+	bool filterMsgList(const RsTokReqOptions &opts, std::list<std::string> &msgIds);
 
 
 	RsMutex mDataMtx;

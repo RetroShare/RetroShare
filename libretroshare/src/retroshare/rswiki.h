@@ -91,42 +91,12 @@ class RsWiki: public RsTokenService
 	RsWiki()  { return; }
 virtual ~RsWiki() { return; }
 
-	/* changed? */
-virtual bool updated() = 0;
-
-        /* Data Requests (from RsTokenService) */
-//virtual bool requestGroupList(     uint32_t &token, const RsTokReqOptions &opts) = 0;
-//virtual bool requestMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
-//virtual bool requestMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
-
-//virtual bool requestGroupData(     uint32_t &token, const std::list<std::string> &groupIds) = 0;
-//virtual bool requestMsgData(       uint32_t &token, const std::list<std::string> &msgIds) = 0;
-
-        /* Poll */
-//virtual uint32_t requestStatus(const uint32_t token) = 0;
-
-	/* Generic List Data */
-virtual bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds) = 0;
-virtual bool getMsgList(const uint32_t &token, std::list<std::string> &msgIds) = 0;
-
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group) = 0;
 virtual bool getMsgData(const uint32_t &token, RsWikiPage &page) = 0;
 
-
-
-/* details are updated in group - to choose GroupID */
-virtual bool createGroup(RsWikiGroup &group) = 0;
-virtual bool createPage(RsWikiPage &page) = 0;
-
-#if 0
-virtual bool getGroupList(std::list<std::string> &groups) = 0;
-virtual bool getGroup(const std::string &groupid, RsWikiGroup &group) = 0;
-virtual bool getPage(const std::string &pageid, RsWikiPage &page) = 0;
-virtual bool getPageVersions(const std::string &origPageId, std::list<std::string> &pages) = 0;
-virtual bool getOrigPageList(const std::string &groupid, std::list<std::string> &pageIds) = 0;
-virtual bool getLatestPage(const std::string &origPageId, std::string &pageId) = 0;
-#endif
+virtual bool createGroup(uint32_t &token, RsWikiGroup &group, bool isNew) = 0;
+virtual bool createPage(uint32_t &token, RsWikiPage &page, bool isNew) = 0;
 
 
 };

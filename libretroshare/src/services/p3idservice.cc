@@ -354,23 +354,29 @@ bool p3IdService::cancelRequest(const uint32_t &token)
 }
 
         //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-bool p3IdService::groupsChanged(std::list<std::string> &groupIds)
-{
-	return false;
-}
-
-        // Get Message Status - is retrived via MessageSummary.
 bool p3IdService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mIdProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-
-        // 
-bool p3IdService::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3IdService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mIdProxy->setGroupStatus(groupId, status, statusMask);
+}
+
+bool p3IdService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+	return mIdProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
+}
+
+bool p3IdService::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+        return mIdProxy->setMessageServiceString(msgId, str);
+}
+
+bool p3IdService::setGroupServiceString(const std::string &grpId, const std::string &str)
+{
+        return mIdProxy->setGroupServiceString(grpId, str);
 }
 
 
@@ -399,7 +405,7 @@ std::string p3IdService::genRandomId()
 	return randomId;
 }
 	
-bool p3IdService::createGroup(RsIdGroup &group)
+bool    p3IdService::createGroup(uint32_t &token, RsIdGroup &group, bool isNew)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -414,12 +420,24 @@ bool p3IdService::createGroup(RsIdGroup &group)
 		std::cerr << std::endl;
 		return false;
 	}
+
+	{	
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+		mUpdated = true;
+		mIdProxy->addGroup(group);
+	}
+
+	// Fake a request to return the GroupMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> groupIds;
+	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
 	
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	mUpdated = true;
-
-	mIdProxy->addGroup(group);
+	std::cerr << "p3IdService::createGroup() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
+	
 
 	return true;
 }
@@ -427,7 +445,7 @@ bool p3IdService::createGroup(RsIdGroup &group)
 
 
 
-bool p3IdService::createMsg(RsIdMsg &msg)
+bool    p3IdService::createMsg(uint32_t &token, RsIdMsg &msg, bool isNew)
 {
 	if (msg.mMeta.mGroupId.empty())
 	{
@@ -463,11 +481,22 @@ bool p3IdService::createMsg(RsIdMsg &msg)
 	std::cerr << "p3IdService::createMsg() OrigMsgId: " << msg.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
-
-	mIdProxy->addMsg(msg);
+		mUpdated = true;
+		mIdProxy->addMsg(msg);
+	}
+	
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(msg.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3IdService::createMsg() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }

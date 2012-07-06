@@ -57,10 +57,10 @@ int	p3PhotoService::tick()
 	return 0;
 }
 
-bool p3PhotoService::updated()
+bool 	p3PhotoService::updated()
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
-
+	
 	if (mUpdated)
 	{
 		mUpdated = false;
@@ -68,7 +68,6 @@ bool p3PhotoService::updated()
 	}
 	return false;
 }
-
 
 
        /* Data Requests */
@@ -351,24 +350,30 @@ bool p3PhotoService::cancelRequest(const uint32_t &token)
 	return clearRequest(token);
 }
 
-        //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-bool p3PhotoService::groupsChanged(std::list<std::string> &groupIds)
-{
-	return false;
-}
 
-        // Get Message Status - is retrived via MessageSummary.
 bool p3PhotoService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mPhotoProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-
-        // 
-bool p3PhotoService::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3PhotoService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mPhotoProxy->setGroupStatus(groupId, status, statusMask);
+}
+
+bool p3PhotoService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+        return mPhotoProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
+}
+
+bool p3PhotoService::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+	return mPhotoProxy->setMessageServiceString(msgId, str);
+}
+
+bool p3PhotoService::setGroupServiceString(const std::string &grpId, const std::string &str)
+{
+	return mPhotoProxy->setGroupServiceString(grpId, str);
 }
 
 
@@ -384,7 +389,8 @@ bool p3PhotoService::groupShareKeys(const std::string &groupId, std::list<std::s
 
 
 /* details are updated in album - to choose Album ID, and storage path */
-bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album, bool isNew)
+
+bool p3PhotoService::submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew)
 {
 	/* check if its a modification or a new album */
 
@@ -406,18 +412,29 @@ bool p3PhotoService::submitAlbumDetails(RsPhotoAlbum &album, bool isNew)
 
 	album.mModFlags = 0; // These are always cleared.
 
-	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
 
-	/* add / modify */
-	mPhotoProxy->addAlbum(album);
+		/* add / modify */
+		mPhotoProxy->addAlbum(album);
+	}
+
+	// Fake a request to return the GroupMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> groupIds;  
+	groupIds.push_back(album.mMeta.mGroupId); // It will just return this one.
+
+	std::cerr << "p3PhotoService::submitAlbumDetails() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-
-bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo, bool isNew)
+bool p3PhotoService::submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew)
 {
 	if (photo.mMeta.mGroupId.empty())
 	{
@@ -450,11 +467,22 @@ bool p3PhotoService::submitPhoto(RsPhotoPhoto &photo, bool isNew)
 	std::cerr << " MsgId: " << photo.mMeta.mMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
+		mPhotoProxy->addPhoto(photo);
+	}
 
-	mPhotoProxy->addPhoto(photo);
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;  
+	msgIds.push_back(photo.mMeta.mMsgId); // It will just return this one.
+
+	std::cerr << "p3PhotoService::submitPhoto() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
@@ -612,6 +640,7 @@ bool RsPhotoThumbnail::deleteImage()
 		data = NULL;
 		size = 0;
 	}
+	return true;
 }
 
 

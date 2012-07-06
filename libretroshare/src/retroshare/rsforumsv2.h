@@ -82,47 +82,12 @@ class RsForumsV2: public RsTokenService
 	RsForumsV2()  { return; }
 virtual ~RsForumsV2() { return; }
 
-	/* changed? */
-virtual bool updated() = 0;
-
-        /* Data Requests */
-//virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
-//virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
-//virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
-
-        /* Generic Lists */
-//virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds) = 0;
-//virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds) = 0;
-
-        /* Generic Summary */
-//virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo) = 0;
-//virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo) = 0;
-
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group) = 0;
 virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg) = 0;
 
 
-
-	/* FUNCTIONS THAT HAVE BEEN COPIED FROM THE ORIGINAL FORUMS....
-	 * -> TODO, Split into generic and specific functions!
-	 */
-        //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-//virtual bool groupsChanged(std::list<std::string> &groupIds) = 0;
-
-        // Get Message Status - is retrived via MessageSummary.
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask) = 0;
-
-        // 
-//virtual bool groupSubscribe(const std::string &groupId, bool subscribe)     = 0;
-
-//virtual bool groupRestoreKeys(const std::string &groupId) = 0;
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
-
-
 	// ONES THAT WE ARE NOT IMPLEMENTING. (YET!)
-
 //virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status) = 0;
 
 // THINK WE CAN GENERALISE THIS TO: a list function, and you can just count the list entries...
@@ -130,10 +95,9 @@ virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg) = 0;
 //virtual bool getMessageCount(const std::string &groupId, unsigned int &newCount, unsigned int &unreadCount) = 0;
 
 
-
 /* details are updated in group - to choose GroupID */
-virtual bool createGroup(RsForumV2Group &group) = 0;
-virtual bool createMsg(RsForumV2Msg &msg) = 0;
+virtual bool createGroup(uint32_t &token, RsForumV2Group &group, bool isNew) = 0;
+virtual bool createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew) = 0;
 
 };
 

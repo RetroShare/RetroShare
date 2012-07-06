@@ -166,54 +166,12 @@ class RsPhoto: public RsTokenService
 	RsPhoto()  { return; }
 virtual ~RsPhoto() { return; }
 
-	/* changed? */
-virtual bool updated() = 0;
-
-       /* Data Requests */
-//virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
-//virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
-//virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
-
-        /* Generic Lists */
-//virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds) = 0;
-//virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds) = 0;
-
-        /* Generic Summary */
-//virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo) = 0;
-//virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo) = 0;
-
-        /* Actual Data -> specific to Interface */
-
-
-
-        /* Poll */
-//virtual uint32_t requestStatus(const uint32_t token) = 0;
-
-        /* Cancel Request */
-//virtual bool cancelRequest(const uint32_t &token) = 0;
-
-
-        //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-//virtual bool groupsChanged(std::list<std::string> &groupIds) = 0;
-
-        // Get Message Status - is retrived via MessageSummary.
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask) = 0;
-
-        // 
-//virtual bool groupSubscribe(const std::string &groupId, bool subscribe)     = 0;
-
-//virtual bool groupRestoreKeys(const std::string &groupId) = 0;
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
-
-
 	/* Specific Service Data */
 virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
 virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
 
-/* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album, bool isNew) = 0;
-virtual bool submitPhoto(RsPhotoPhoto &photo, bool isNew) = 0;
+virtual bool submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew) = 0;
+virtual bool submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew) = 0;
 
 };
 

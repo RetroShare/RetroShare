@@ -27,6 +27,7 @@
 #include "util/rsrandom.h"
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 /****
  * #define POSTED_DEBUG 1
@@ -46,12 +47,29 @@ p3PostedService::p3PostedService(uint16_t type)
      		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
 		mPostedProxy = (PostedDataProxy *) mProxy;
+
+		mViewMode = RSPOSTED_VIEWMODE_HOT;
+		mViewPeriod = RSPOSTED_PERIOD_WEEK;
+		mViewStart = 0;
+		mViewCount = 50;
+
+		mProcessingRanking = false;
+		mRankingState = 0;
+		mRankingExternalToken = 0;
+		mRankingInternalToken = 0;
+
+		mLastBgCheck = 0;
+		mBgProcessing = 0;
+		mBgPhase = 0;
+		mBgToken = 0;
+	
 	}
 
 	generateDummyData();
 	return;
 }
 
+#define POSTED_BACKGROUND_PERIOD	60
 
 int	p3PostedService::tick()
 {
@@ -59,7 +77,34 @@ int	p3PostedService::tick()
 	//std::cerr << std::endl;
 
 	fakeprocessrequests();
+
 	
+	// Contine Ranking Request.
+	checkRankingRequest();
+
+	// Run Background Stuff.	
+	background_checkTokenRequest();
+
+	/* every minute - run a background check */
+	time_t now = time(NULL);
+	bool doCheck = false;
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		if (now -  mLastBgCheck > POSTED_BACKGROUND_PERIOD)
+		{
+			doCheck = true;
+			mLastBgCheck = now;
+		}
+	}
+
+	if (doCheck)
+	{
+		background_requestGroups();
+	}
+
+
+
+	// Add in new votes + comments.
 	return 0;
 }
 
@@ -287,7 +332,7 @@ bool p3PostedService::getGroup(const uint32_t &token, RsPostedGroup &group)
 		return false;
 	}
 	
-	/* convert to RsPhotoAlbum */
+	/* convert to RsPostedGroup */
 	bool ans = mPostedProxy->getGroup(id, group);
 	return ans;
 }
@@ -385,16 +430,25 @@ bool p3PostedService::getComment(const uint32_t &token, RsPostedComment &comment
 
 
         /* Poll */
+/*** 
+ * THE STANDARD ONE IS REPLACED - SO WE CAN HANDLE RANKING REQUESTS
+ * Its defined lower - next to the ranking code.
+ ***/
+
+#if 0
 uint32_t p3PostedService::requestStatus(const uint32_t token)
 {
 	uint32_t status;
 	uint32_t reqtype;
 	uint32_t anstype;
 	time_t ts;
+
 	checkRequestStatus(token, status, reqtype, anstype, ts);
 
 	return status;
 }
+
+#endif
 
 
         /* Cancel Request */
@@ -404,23 +458,32 @@ bool p3PostedService::cancelRequest(const uint32_t &token)
 }
 
         //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-bool p3PostedService::groupsChanged(std::list<std::string> &groupIds)
-{
-	return false;
-}
 
-        // Get Message Status - is retrived via MessageSummary.
+
+
 bool p3PostedService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+        return mPostedProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-
-        // 
-bool p3PostedService::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3PostedService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+        return mPostedProxy->setGroupStatus(groupId, status, statusMask);
+}
+
+bool p3PostedService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+        return mPostedProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
+}
+
+bool p3PostedService::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+        return mPostedProxy->setMessageServiceString(msgId, str);
+}
+
+bool p3PostedService::setGroupServiceString(const std::string &grpId, const std::string &str)
+{
+        return mPostedProxy->setGroupServiceString(grpId, str);
 }
 
 
@@ -435,7 +498,7 @@ bool p3PostedService::groupShareKeys(const std::string &groupId, std::list<std::
 }
 
 
-bool p3PostedService::submitGroup(RsPostedGroup &group, bool isNew)
+bool p3PostedService::submitGroup(uint32_t &token, RsPostedGroup &group, bool isNew)
 {
 	/* check if its a modification or a new album */
 
@@ -456,18 +519,28 @@ bool p3PostedService::submitGroup(RsPostedGroup &group, bool isNew)
 
 	//group.mModFlags = 0; // These are always cleared.
 
-	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
+		mPostedProxy->addGroup(group);
+	}
 
-	/* add / modify */
-	mPostedProxy->addGroup(group);
+	// Fake a request to return the GroupMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> groupIds;
+	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
+	
+	std::cerr << "p3PostedService::submitGroup() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
 
-bool p3PostedService::submitPost(RsPostedPost &post, bool isNew)
+bool p3PostedService::submitPost(uint32_t &token, RsPostedPost &post, bool isNew)
 {
 	if (post.mMeta.mGroupId.empty())
 	{
@@ -500,18 +573,29 @@ bool p3PostedService::submitPost(RsPostedPost &post, bool isNew)
 	std::cerr << " MsgId: " << post.mMeta.mMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
+		mPostedProxy->addPost(post);
+	}
 
-	mPostedProxy->addPost(post);
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(post.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3PostedService::submitPost() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
 
 
 
-bool p3PostedService::submitVote(RsPostedVote &vote, bool isNew)
+bool p3PostedService::submitVote(uint32_t &token, RsPostedVote &vote, bool isNew)
 {
 	if (vote.mMeta.mGroupId.empty())
 	{
@@ -544,18 +628,29 @@ bool p3PostedService::submitVote(RsPostedVote &vote, bool isNew)
 	std::cerr << " MsgId: " << vote.mMeta.mMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
+		mPostedProxy->addVote(vote);
+	}
 
-	mPostedProxy->addVote(vote);
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(vote.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3PostedService::submitVote() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
+
 
 	return true;
 }
 
 
-
-bool p3PostedService::submitComment(RsPostedComment &comment, bool isNew)
+bool p3PostedService::submitComment(uint32_t &token, RsPostedComment &comment, bool isNew)
 {
 	if (comment.mMeta.mGroupId.empty())
 	{
@@ -588,11 +683,22 @@ bool p3PostedService::submitComment(RsPostedComment &comment, bool isNew)
 	std::cerr << " MsgId: " << comment.mMeta.mMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
+		mPostedProxy->addComment(comment);
+	}
 
-	mPostedProxy->addComment(comment);
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(comment.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3PostedService::submitComment() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
@@ -634,7 +740,7 @@ bool PostedDataProxy::getPost(const std::string &id, RsPostedPost &post)
 	{
 		RsPostedMsg *pM = (RsPostedMsg *) msgData;
 
-		if (pM->postedType == RSPOSTED_MSG_POST)
+		if (pM->postedType == RSPOSTED_MSGTYPE_POST)
 		{
 			RsPostedPost *pP = (RsPostedPost *) pM;
 			post = *pP;
@@ -673,7 +779,7 @@ bool PostedDataProxy::getVote(const std::string &id, RsPostedVote &vote)
 	{
 		RsPostedMsg *pM = (RsPostedMsg *) msgData;
 		
-		if (pM->postedType == RSPOSTED_MSG_VOTE)
+		if (pM->postedType == RSPOSTED_MSGTYPE_VOTE)
 		{
 			RsPostedVote *pP = (RsPostedVote *) pM;
 			vote = *pP;
@@ -712,7 +818,7 @@ bool PostedDataProxy::getComment(const std::string &id, RsPostedComment &comment
 	{
 		RsPostedMsg *pM = (RsPostedMsg *) msgData;
 		
-		if (pM->postedType == RSPOSTED_MSG_COMMENT)
+		if (pM->postedType == RSPOSTED_MSGTYPE_COMMENT)
 		{
 			RsPostedComment *pP = (RsPostedComment *) pM;
 			comment = *pP;
@@ -919,12 +1025,12 @@ bool p3PostedService::generateDummyData()
 		float rnd = RSRandom::random_f32();
 		if (rnd < 0.1)
 		{
-			group.mMeta.mSubscribeFlags = RS_DISTRIB_ADMIN;
+			group.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_ADMIN;
 
 		}
 		else if (rnd < 0.3)
 		{
-			group.mMeta.mSubscribeFlags = RS_DISTRIB_SUBSCRIBED;
+			group.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
 		}
 		else
 		{
@@ -1100,3 +1206,773 @@ bool p3PostedService::generateDummyData()
 
 /********************************************************************************************/
 /********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+
+
+/* This is the part that will be kept for the final Version.
+ * we provide a processed view of the data...
+ *
+ * start off crude -> then make it efficient.
+ */
+
+
+bool p3PostedService::setViewMode(uint32_t mode)
+{
+     	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+	mViewMode = mode;
+
+	return true;
+}
+
+bool p3PostedService::setViewPeriod(uint32_t period)
+{
+     	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+	mViewPeriod = period;
+
+	return true;
+}
+
+bool p3PostedService::setViewRange(uint32_t first, uint32_t count)
+{
+     	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+	mViewStart = first;
+	mViewCount = count;
+
+	return true;
+}
+
+float p3PostedService::calcPostScore(const RsMsgMetaData &meta)
+{
+     	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+	float score = 0;
+	uint32_t votes = 0;
+	uint32_t comments = 0;
+	time_t now = time(NULL);
+	time_t age_secs = now - meta.mPublishTs;
+ 	// This is a potential problem for gaming the system... post into the future.
+	// Should fix this by discarding/hiding until ts valid XXX.
+	if (age_secs < 0)
+	{
+		age_secs = 0; 
+	}
+
+	if (!extractPostedCache(meta.mServiceString, votes, comments))
+	{
+		/* no votes/comments yet */
+	}
+
+	/* this is dependent on View Mode */
+	switch(mViewMode)
+	{
+		default:
+		case RSPOSTED_VIEWMODE_LATEST:
+		{
+			score = -age_secs; // 
+
+			break;
+		}
+		case RSPOSTED_VIEWMODE_TOP:
+		{
+			score = votes;
+			break;
+		}
+// Potentially only 
+// This is effectively HackerNews Algorithm: which is (p-1)/(t+2)^1.5, where p is votes and t is age in hours.
+		case RSPOSTED_VIEWMODE_HOT:
+		{
+#define POSTED_AGESHIFT (2.0)
+#define POSTED_AGEFACTOR (3600.0)
+			score = votes / pow(POSTED_AGESHIFT + age_secs / POSTED_AGEFACTOR, 1.5);
+			break;
+		}
+// Like HOT, but using number of Comments.
+		case RSPOSTED_VIEWMODE_COMMENTS:
+		{
+			score = comments / pow(POSTED_AGESHIFT + age_secs / POSTED_AGEFACTOR, 1.5);
+			break;
+		}
+	}
+
+	return score;
+}
+
+static uint32_t convertPeriodFlagToSeconds(uint32_t periodMode)
+{
+	float secs = 1;
+	switch(periodMode)
+	{
+		// Fallthrough all of them.
+		case RSPOSTED_PERIOD_YEAR:
+			secs *= 12;
+		case RSPOSTED_PERIOD_MONTH:
+			secs *= 4.3;  // average ~30.4 days = 4.3 weeks.
+		case RSPOSTED_PERIOD_WEEK:
+			secs *= 7;
+		case RSPOSTED_PERIOD_DAY:
+			secs *= 24;
+		case RSPOSTED_PERIOD_HOUR:
+			secs *= 3600;
+	}
+
+	return (uint32_t) secs;
+}
+
+#define POSTED_RANKINGS_INITIAL_CHECK	1
+#define POSTED_RANKINGS_DATA_REQUEST	2
+#define POSTED_RANKINGS_DATA_DONE	3
+
+        /* Poll */
+uint32_t p3PostedService::requestStatus(const uint32_t token)
+{
+	uint32_t status;
+	uint32_t reqtype;
+	uint32_t anstype;
+	time_t ts;
+
+	uint32_t int_token = token;
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		if ((mProcessingRanking) && (token == mRankingExternalToken))
+		{
+			{
+				switch(mRankingState)
+				{
+					case POSTED_RANKINGS_INITIAL_CHECK:
+						status = GXS_REQUEST_STATUS_PENDING;
+						return status;
+						break;
+					case POSTED_RANKINGS_DATA_REQUEST:
+						// Switch to real token.
+						int_token = mRankingInternalToken;
+						break;
+				}
+			}
+		}
+	}
+	
+	checkRequestStatus(int_token, status, reqtype, anstype, ts);
+
+	return status;
+}
+
+bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
+{
+	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	if (!mProcessingRanking)
+	{
+
+		return false;
+	}
+
+	if (token != mRankingExternalToken)
+	{
+
+
+		return false;
+	}
+
+	if (mRankingState != POSTED_RANKINGS_DATA_REQUEST)
+	{
+
+		return false;
+
+	}
+
+	
+	if (!getPost(mRankingInternalToken, post))
+	{
+		/* clean up */
+		mProcessingRanking = false;
+		mRankingExternalToken = 0;
+		mRankingInternalToken = 0;
+		mRankingState = POSTED_RANKINGS_DATA_DONE;
+
+		return false;
+	}
+
+	return true;
+}
+
+
+bool p3PostedService::requestRanking(uint32_t &token, std::string groupId)
+{
+	std::cerr << "p3PostedService::requestRanking()";
+	std::cerr << std::endl;
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		if (mProcessingRanking)
+		{
+			std::cerr << "p3PostedService::requestRanking() ERROR Request already running - ignoring";
+			std::cerr << std::endl;
+
+			return false;
+		}
+	}
+
+	generateToken(token);
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mProcessingRanking = true;
+		mRankingState = POSTED_RANKINGS_INITIAL_CHECK;
+		mRankingExternalToken = token;
+	}
+
+	/* now we request all the posts within the timeframe */
+
+	uint32_t posttoken; 
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; 
+
+	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+	//uint32_t age = convertPeriodFlagToSeconds(mViewPeriod);
+
+	std::list<std::string> groupIds;
+	groupIds.push_back(groupId);
+
+	requestMsgInfo(posttoken, ansType, opts, groupIds);
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mRankingInternalToken = posttoken;
+	}
+	return true;
+}
+
+bool p3PostedService::checkRankingRequest()
+{
+	uint32_t token = 0;
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		if (!mProcessingRanking)
+		{
+			return false;
+		}
+
+		if (mRankingState != POSTED_RANKINGS_INITIAL_CHECK)
+		{
+			return false;
+		}
+
+		/* here it actually running! */
+		token = mRankingInternalToken;
+	}
+
+
+	uint32_t status;
+	uint32_t reqtype;
+	uint32_t anstype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, anstype, ts);
+	
+	if (status == GXS_REQUEST_STATUS_COMPLETE)
+	{
+		processPosts();
+	}
+	return true;
+}
+
+
+bool p3PostedService::processPosts()
+{
+	std::cerr << "p3PostedService::processPosts()";
+	std::cerr << std::endl;
+
+	uint32_t token = 0;
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		if (!mProcessingRanking)
+		{
+			std::cerr << "p3PostedService::processPosts() ERROR Ranking Request not running";
+			std::cerr << std::endl;
+
+			return false;
+		}
+
+		if (mRankingState != POSTED_RANKINGS_INITIAL_CHECK)
+		{
+			std::cerr << "p3PostedService::processPosts() ERROR Ranking Request not running";
+			std::cerr << std::endl;
+
+			return false;
+		}
+		token = mRankingInternalToken;
+	}
+
+	/* extract the info -> and sort */
+	std::list<RsMsgMetaData> postList;
+	std::list<RsMsgMetaData>::const_iterator it;
+
+	if (!getMsgSummary(token, postList))
+	{
+		std::cerr << "p3PostedService::processPosts() ERROR getting postList";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::multimap<float, std::string> postMap;
+	std::multimap<float, std::string>::iterator mit;
+
+	for(it = postList.begin(); it != postList.end(); it++)
+	{
+		float score = calcPostScore(*it);
+		postMap.insert(std::make_pair(score, it->mMsgId));
+	}
+
+	/* now grab the N required, and request the data again...
+	 * -> this is what will be passed back to GUI
+	 */
+
+	std::list<std::string> msgList;
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+		unsigned int i = 0;
+		for(mit = postMap.begin(); (mit != postMap.end()) && (i < mViewStart); mit++, i++)
+		{
+			std::cerr << "p3PostedService::processPosts() Skipping PostId: " << mit->second;
+			std::cerr << " with score: " << mit->first;
+			std::cerr << std::endl;
+		}
+
+	
+		for(i = 0; (mit != postMap.end()) && (i < mViewCount); mit++, i++)
+		{
+			std::cerr << "p3PostedService::processPosts() Adding PostId: " << mit->second;
+			std::cerr << " with score: " << mit->first;
+			std::cerr << std::endl;
+			msgList.push_back(mit->second);
+		}
+	}
+
+	token = 0; 
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
+	RsTokReqOptions opts; 
+
+	requestMsgRelatedInfo(token, ansType, opts, msgList);
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mRankingState = POSTED_RANKINGS_DATA_REQUEST;
+		mRankingInternalToken = token;
+	}
+	return true;
+}
+
+
+
+/***** Background Processing ****
+ *
+ * Process Each Message - as it arrives.
+ *
+ * Update 
+ *
+ */
+
+#define POSTED_BG_REQUEST_GROUPS		1
+#define POSTED_BG_REQUEST_UNPROCESSED		2
+#define POSTED_BG_REQUEST_PARENTS		3
+#define POSTED_BG_PROCESS_VOTES			4
+
+bool p3PostedService::background_checkTokenRequest()
+{
+	uint32_t token = 0;
+	uint32_t phase = 0;
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		if (!mBgProcessing)
+		{
+			return false;
+		}
+
+		token = mBgToken;
+		phase = mBgPhase;
+	}
+
+
+	uint32_t status;
+	uint32_t reqtype;
+	uint32_t anstype;
+	time_t ts;
+	checkRequestStatus(token, status, reqtype, anstype, ts);
+	
+	if (status == GXS_REQUEST_STATUS_COMPLETE)
+	{
+		switch(phase)
+		{
+			case POSTED_BG_REQUEST_GROUPS:
+				background_requestNewMessages();
+				break;
+			case POSTED_BG_REQUEST_UNPROCESSED:
+				background_processNewMessages();
+				break;
+			case POSTED_BG_REQUEST_PARENTS:
+				background_updateVoteCounts();
+				break;
+			default:
+				break;
+		}
+	}
+	return true;
+}
+
+
+bool p3PostedService::background_requestGroups()
+{
+	std::cerr << "p3PostedService::background_requestGroups()";
+	std::cerr << std::endl;
+
+	// grab all the subscribed groups.
+	uint32_t token = 0;
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+		mBgProcessing = true;
+		mBgPhase = POSTED_BG_REQUEST_GROUPS;
+		mBgToken = 0;
+	}
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST;
+	RsTokReqOptions opts; 
+	std::list<std::string> groupIds;
+
+	opts.mSubscribeFilter = RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
+
+	requestGroupInfo(token, ansType, opts, groupIds);
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mBgToken = token;
+	}
+
+	return true;
+}
+
+
+bool p3PostedService::background_requestNewMessages()
+{
+	std::cerr << "p3PostedService::background_requestNewMessages()";
+	std::cerr << std::endl;
+
+	std::list<std::string> groupIds;
+	uint32_t token = 0;
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		token = mBgToken;
+	}
+
+	if (!getGroupList(token, groupIds))
+	{
+		std::cerr << "p3PostedService::background_requestNewMessages() ERROR";
+		std::cerr << std::endl;
+		background_cleanup();
+		return false;
+	}
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mBgPhase = POSTED_BG_REQUEST_UNPROCESSED;
+		mBgToken = 0;
+	}
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
+	RsTokReqOptions opts; 
+	token = 0;
+
+	opts.mStatusFilter = RSGXS_MSG_STATUS_UNPROCESSED;
+	opts.mStatusMask = RSGXS_MSG_STATUS_UNPROCESSED;
+
+	requestMsgInfo(token, ansType, opts, groupIds);
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mBgToken = token;
+	}
+	return true;
+}
+
+
+bool p3PostedService::background_processNewMessages()
+{
+	std::cerr << "p3PostedService::background_processNewMessages()";
+	std::cerr << std::endl;
+
+	std::list<RsMsgMetaData> newMsgList;
+	std::list<RsMsgMetaData>::iterator it;
+	uint32_t token = 0;
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		token = mBgToken;
+	}
+
+	if (!getMsgSummary(token, newMsgList))
+	{
+		std::cerr << "p3PostedService::background_processNewMessages() ERROR";
+		std::cerr << std::endl;
+		background_cleanup();
+		return false;
+	}
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mBgPhase = POSTED_BG_REQUEST_PARENTS;
+		mBgToken = 0;
+		mBgVoteMap.clear();
+		mBgCommentMap.clear();
+	}
+
+	/* loop through and sort by parents.
+	 *  - grab 
+	 */
+
+	std::list<std::string> parentList;
+
+	std::map<std::string, uint32_t>::iterator vit;
+
+	for(it = newMsgList.begin(); it != newMsgList.end(); it++)
+	{
+		std::cerr << "Found New MsgId: " << it->mMsgId;
+		std::cerr << std::endl;
+
+		/* discard threadheads */
+		if (it->mParentId.empty())
+		{
+			std::cerr << "\tIgnoring ThreadHead";
+			std::cerr << std::endl;
+		}
+		else if (it->mMsgFlags & RSPOSTED_MSGTYPE_COMMENT)
+		{
+			/* Comments are counted by Thread Id */
+			std::cerr << "\tProcessing Comment";
+			std::cerr << std::endl;
+
+			vit = mBgCommentMap.find(it->mThreadId);
+			if (vit == mBgCommentMap.end())
+			{
+				mBgCommentMap[it->mThreadId] = 1;
+
+				/* check VoteMap too before adding to parentList */
+				if (mBgVoteMap.end() == mBgVoteMap.find(it->mThreadId))
+				{
+					parentList.push_back(it->mThreadId);
+				}
+	
+				std::cerr << "\tThreadId: " << it->mThreadId;
+				std::cerr << " Comment Total: " << mBgCommentMap[it->mThreadId];
+			}
+			else
+			{
+				mBgVoteMap[it->mThreadId]++;
+				std::cerr << "\tThreadId: " << it->mThreadId;
+				std::cerr << " Comment Total: " << mBgCommentMap[it->mThreadId];
+				std::cerr << std::endl;
+			}
+		}
+		else if (it->mMsgFlags & RSPOSTED_MSGTYPE_COMMENT)
+		{
+			/* Votes are organised by Parent Id,
+			 * ie. you can vote for both Posts and Comments
+			 */
+			vit = mBgVoteMap.find(it->mParentId);
+			if (vit == mBgVoteMap.end())
+			{
+				mBgVoteMap[it->mParentId] = 1;
+
+				/* check CommentMap too before adding to parentList */
+				if (mBgCommentMap.end() == mBgCommentMap.find(it->mParentId))
+				{
+					parentList.push_back(it->mParentId);
+				}
+	
+				std::cerr << "\tParentId: " << it->mParentId;
+				std::cerr << " Vote Total: " << mBgVoteMap[it->mParentId];
+			}
+			else
+			{
+				mBgVoteMap[it->mParentId]++;
+				std::cerr << "\tParentId: " << it->mParentId;
+				std::cerr << " Vote Total: " << mBgVoteMap[it->mParentId];
+				std::cerr << std::endl;
+			}
+		}
+		else
+		{
+			/* unknown! */
+			std::cerr << "p3PostedService::background_processNewMessages() ERROR Strange NEW Message:";
+			std::cerr << std::endl;
+			std::cerr << "\t" << *it;
+			std::cerr << std::endl;
+
+		}
+	
+		/* flag each new vote as processed */
+		setMessageStatus(it->mMsgId, 0, RSGXS_MSG_STATUS_UNPROCESSED);
+	}
+
+
+	/* request the summary info from the parents */
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
+	token = 0;
+	RsTokReqOptions opts; 
+	requestMsgRelatedInfo(token, ansType, opts, parentList);
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mBgToken = token;
+	}
+	return true;
+}
+
+
+bool p3PostedService::encodePostedCache(std::string &str, uint32_t votes, uint32_t comments)
+{
+	char line[RSGXS_MAX_SERVICE_STRING];
+
+	snprintf(line, RSGXS_MAX_SERVICE_STRING, "%d %d", votes, comments);
+
+	str = line;
+	return true;
+}
+
+bool p3PostedService::extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments)
+{
+
+	uint32_t ivotes, icomments;
+	if (2 == sscanf(str.c_str(), "%d %d", &ivotes, &icomments))
+	{
+		votes = ivotes;
+		comments = icomments;
+		return true;
+	}
+
+	return false;
+}
+
+
+bool p3PostedService::background_updateVoteCounts()
+{
+	std::cerr << "p3PostedService::background_updateVoteCounts()";
+	std::cerr << std::endl;
+
+	std::list<RsMsgMetaData> parentMsgList;
+	std::list<RsMsgMetaData>::iterator it;
+
+	if (!getMsgSummary(mBgToken, parentMsgList))
+	{
+		std::cerr << "p3PostedService::background_updateVoteCounts() ERROR";
+		std::cerr << std::endl;
+		background_cleanup();
+		return false;
+	}
+
+	{
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mBgPhase = POSTED_BG_PROCESS_VOTES;
+		mBgToken = 0;
+	}
+
+	for(it = parentMsgList.begin(); it != parentMsgList.end(); it++)
+	{
+		/* extract current vote count */
+		uint32_t votes = 0;
+		uint32_t comments = 0;
+
+		if (!extractPostedCache(it->mServiceString, votes, comments))
+		{
+			if (!(it->mServiceString.empty()))
+			{
+				std::cerr << "p3PostedService::background_updateVoteCounts() Failed to extract Votes";
+				std::cerr << std::endl;
+				std::cerr << "\tFrom String: " << it->mServiceString;
+				std::cerr << std::endl;
+			}
+		}
+
+		/* find increment in votemap */
+		{
+			RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+			std::map<std::string, uint32_t>::iterator vit;
+			vit = mBgVoteMap.find(it->mMsgId);
+			if (vit != mBgVoteMap.end())
+			{
+				votes += vit->second;
+			}
+			else
+			{
+				// warning.
+				std::cerr << "p3PostedService::background_updateVoteCounts() Warning No New Votes found.";
+				std::cerr << " For MsgId: " << it->mMsgId;
+				std::cerr << std::endl;
+			}
+
+		}
+
+		{
+			RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+			std::map<std::string, uint32_t>::iterator cit;
+			cit = mBgCommentMap.find(it->mMsgId);
+			if (cit != mBgCommentMap.end())
+			{
+				comments += cit->second;
+			}
+			else
+			{
+				// warning.
+				std::cerr << "p3PostedService::background_updateVoteCounts() Warning No New Comments found.";
+				std::cerr << " For MsgId: " << it->mMsgId;
+				std::cerr << std::endl;
+			}
+
+		}
+
+		std::string str;
+		if (!encodePostedCache(str, votes, comments))
+		{
+			std::cerr << "p3PostedService::background_updateVoteCounts() Failed to encode Votes";
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "p3PostedService::background_updateVoteCounts() Encoded String: " << str;
+			std::cerr << std::endl;
+			/* store new result */
+			setMessageServiceString(it->mMsgId, str);
+		}
+	}
+
+	// DONE!.
+	background_cleanup();
+	return true;
+
+}
+
+
+bool p3PostedService::background_cleanup()
+{
+	std::cerr << "p3PostedService::background_cleanup()";
+	std::cerr << std::endl;
+
+	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+
+	// Cleanup.
+	mBgVoteMap.clear();
+	mBgCommentMap.clear();
+	mBgProcessing = false;
+	mBgToken = 0;
+
+	return true;
+}
+
+

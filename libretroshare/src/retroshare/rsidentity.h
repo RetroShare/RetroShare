@@ -49,6 +49,12 @@
 #define RS_TOKREQOPT_MSG_AUTHOR		0x0040		// MSGLIST: Messages from this AuthorId 
 
 
+// Status Filtering... should it be a different Option Field.
+#define RS_TOKREQOPT_GROUP_UPDATED	0x0100		// GROUPLIST: Groups that have been updated.
+#define RS_TOKREQOPT_MSG_UPDATED	0x0200		// MSGLIST: Msg that have been updated from specified groups.
+#define RS_TOKREQOPT_MSG_UPDATED	0x0200		// MSGLIST: Msg that have been updated from specified groups.
+
+
 
 // Read Status.
 #define RS_TOKREQOPT_READ		0x0001
@@ -60,26 +66,147 @@
 
 
 
-// TEMP FLAGS... TO FIX.
-#define RSGXS_MSG_STATUS_MASK           0x000f
-#define RSGXS_MSG_STATUS_READ           0x0001
-#define RSGXS_MSG_STATUS_UNREAD_BY_USER 0x0002
-#define RSGXS_MSG_STATUS_PROCESSED	0x0004	// By the Service.
-
-
 
 class RsTokReqOptions
 {
 	public:
-	RsTokReqOptions() { mOptions = 0; mBefore = 0; mAfter = 0; }
+	RsTokReqOptions() 
+	{ 
+		mOptions = 0; 
+		mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0; 
+		mBefore = 0; mAfter = 0; 
+	}
 
 	uint32_t mOptions;
+
+	// Request specific matches with Group / Message Status.
+	// Should be usable with any Options... applied afterwards.
+	uint32_t mStatusFilter;
+	uint32_t mStatusMask;
+
+	uint32_t mSubscribeFilter; // Only for Groups.
+
+	// Time range... again applied after Options.
 	time_t   mBefore;
 	time_t   mAfter;
 };
 
 
+/*********************************************************
+ * Documentation for Groups Definitions.
+ * 
+ * A Group is defined by:
+ *	- TWO RSA Keys. (Admin Key & Publish Key)
+ *	- Publish TS: Used to select the latest definition.
+ *
+ *	- Operating Mode:
+ *		- Circle (Public, External, Private).
+ *		- Publish Mode: Encrypted / All-Signed / Only ThreadHead / None Required.
+ *		- AuthorId: GPG Required / Any Required / Only if no Publish Signature.
+ *
+ *	- Description:
+ *		- Name & Description.
+ *		- Optional AuthorId.
+ * 
+ * Most of this information is contained inside the GroupMetaData.
+ * except for Actual Admin / Publish Keys, which are maintained internally.
+ *
+ *******
+ *      - Group Definition must be signed by Admin Key, otherwise invalid.
+ *	- Circle Definition controls distribution of Group and Messages, see section on this for more details. 
+ *	- Public parts of Keys are distributed with Definition.
+ *	- Private parts can be distributed to select people via alternative channels.
+ *      - A Message Requires at least one signature: publish or Author. This signature will be used as MsgId.
+ *
+ *	Groups will operate in the following modes:
+ *	1) Public Forum: PublishMode = None Required, AuthorId: Required.  
+ *	2) Closed Forum: PublishMode = All-Signed, AuthorId: Required.  
+ *	3) Private Forum: PublishMode = Encrypted, AuthorId: Required.  
+ *
+ *      4) Anon Channel: PublishMode = All-Signed, AuthorId: None.
+ *      5) Anon Channel with Comments: PublishMode = Only ThreadHead, AuthorId: If No Publish Signature.
+ *      6) Private Channel: PublishMode = Encrypted. 
+ *
+ *      7) Personal Photos - with comments: PublishMode = Only ThreadHead, AuthorId: Required.
+ *      8) Personal Photos - no comments: PublishMode = All-Signed, AuthorId: Required.
+ *
+ *      9 ) Public  Wiki: PublishMode = None Required, AuthorId: Required.
+ *      10) Closed  Wiki: PublishMode = All-Signed, AuthorId: Required.
+ *      11) Private Wiki: PublishMode = Encrypted, AuthorId: Required.
+ *
+ *      12) Twitter: PublishMode = Only ThreadHead, AuthorId: Required.
+ *
+ *      13) Posted: PublishMode = None Required, AuthorId: Required.
+ *
+ *
+ ******
+ *
+ * Additionally to this information. The MetaData also contains several fields which can 
+ * be used to store local information for the benefit of the service.
+ *
+ * In Particular: MsgStatus & GroupStatus inform the service if the user has read the message or if anything has changed.
+ *
+ ***/
 
+
+// Control of Publish Signatures.
+#define RSGXS_GROUP_SIGN_PUBLISH_MASK  		0x000000ff
+#define RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED 	0x00000001
+#define RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED 	0x00000002
+#define RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD	0x00000004
+#define RSGXS_GROUP_SIGN_PUBLISH_NONEREQ	0x00000008
+
+// Author Signature.
+#define RSGXS_GROUP_SIGN_AUTHOR_MASK  		0x0000ff00
+#define RSGXS_GROUP_SIGN_AUTHOR_GPG 		0x00000100
+#define RSGXS_GROUP_SIGN_AUTHOR_REQUIRED 	0x00000200
+#define RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN	0x00000400
+#define RSGXS_GROUP_SIGN_AUTHOR_NONE		0x00000800
+
+// NB: That one signature is required...
+// so some combinations are not possible. e.g.
+// SIGN_PUBLISH_NONEREQ	&& SIGN_AUTHOR_NONE is not allowed.
+// SIGN_PUBLISH_THREADHEAD && SIGN_AUTHOR_NONE is also invalid.
+
+#define RSGXS_GROUP_SIGN_RESERVED_MASK  	0xffff0000
+
+
+// STATUS FLAGS: There is space here for Service specific flags - if they so desire.
+//
+// Msgs: UNREAD_BY_USER & PROCESSED are useful.
+// Groups: NEW_MESSAGES & GROUP_UPDATED.
+
+#define RSGXS_MSG_STATUS_MASK           0x0000000f
+#define RSGXS_MSG_STATUS_READ 		0x00000001	// New or Not New
+#define RSGXS_MSG_STATUS_UNREAD_BY_USER 0x00000002
+#define RSGXS_MSG_STATUS_UNPROCESSED	0x00000004	// By the Service.
+
+#define RSGXS_MSG_STATUS_SERVICE_MASK 	0xffff0000
+
+#define RSGXS_GROUP_STATUS_MASK  	0x0000000f
+#define RSGXS_GROUP_STATUS_UPDATED 	0x00000001
+#define RSGXS_GROUP_STATUS_NEWGROUP	0x00000002	
+
+#define RSGXS_GROUP_STATUS_SERVICE_MASK 0xffff0000
+
+
+
+// Subscription Flags. (LOCAL)
+#define RSGXS_GROUP_SUBSCRIBE_MASK  		0x0000000f
+#define RSGXS_GROUP_SUBSCRIBE_ADMIN  		0x00000001
+#define RSGXS_GROUP_SUBSCRIBE_PUBLISH  		0x00000002
+#define RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED	0x00000004
+#define RSGXS_GROUP_SUBSCRIBE_MONITOR		0x00000008
+
+
+// Some MACROS for EASE OF USE. (USED BY FORUMSV2 At the moment.
+#define IS_MSG_UNREAD(status) 			((status & RSGXS_MSG_STATUS_READ) == 0 || (status & RSGXS_MSG_STATUS_UNREAD_BY_USER))
+#define IS_GROUP_ADMIN(subscribeFlags) 		(subscribeFlags & RSGXS_GROUP_SUBSCRIBE_ADMIN)
+#define IS_GROUP_SUBSCRIBED(subscribeFlags) 	(subscribeFlags & (RSGXS_GROUP_SUBSCRIBE_ADMIN | RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED))
+
+
+
+#define RSGXS_MAX_SERVICE_STRING	200 // Sensible limit for dbase usage.
 
 
 class RsGroupMetaData
@@ -89,6 +216,7 @@ class RsGroupMetaData
 	RsGroupMetaData()
 	{
 		mGroupFlags = 0;
+		mSignFlags = 0;
 		mSubscribeFlags = 0;
 
 		mPop = 0;
@@ -101,10 +229,11 @@ class RsGroupMetaData
 	
 	std::string mGroupId;
 	std::string mGroupName;
-	uint32_t    mGroupFlags;
+	uint32_t    mGroupFlags;  // Service Specific Options ????
+	uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
 	time_t      mPublishTs; // Mandatory.
-	std::string mAuthorId;   // Optional.
+	std::string mAuthorId;   // Optional. 
 
 	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -116,6 +245,7 @@ class RsGroupMetaData
 
 	uint32_t    mGroupStatus;
 
+	std::string mServiceString; // Service Specific Free-Form extra storage.
 };
 
 
@@ -145,12 +275,14 @@ class RsMsgMetaData
 	std::string mMsgName;
 	time_t      mPublishTs;
 
-	uint32_t    mMsgFlags; // Whats this for?
+	uint32_t    mMsgFlags; // Whats this for? (Optional Service Specific - e.g. flag MsgType)
 
 	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 	// normally READ / UNREAD flags. LOCAL Data.
 	uint32_t    mMsgStatus;
 	time_t      mChildTs;
+
+	std::string mServiceString; // Service Specific Free-Form extra storage.
 
 };
 
@@ -163,6 +295,9 @@ class RsTokenService
 
 	RsTokenService()  { return; }
 virtual ~RsTokenService() { return; }
+
+        /* changed? */
+virtual bool updated() = 0;
 
         /* Data Requests */
 virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
@@ -190,14 +325,21 @@ virtual bool cancelRequest(const uint32_t &token) = 0;
 
 	//////////////////////////////////////////////////////////////////////////////
 	/* Functions from Forums -> need to be implemented generically */
-virtual bool groupsChanged(std::list<std::string> &groupIds) = 0;
+	// Groups Changed is now part of requestGroupInfo request.
+//virtual bool groupsChanged(std::list<std::string> &groupIds) = 0;
 
-	// Get Message Status - is retrived via MessageSummary.
+        // Message/Group Status - is retrived via requests...
+        // These operations could have a token, but for the moment we are going to assume
+        // they are async and always succeed - (or fail silently).
 virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask) = 0;
+virtual bool setGroupStatus(const std::string &grpId, const uint32_t status, const uint32_t statusMask) = 0;
 
-	// 
-virtual bool groupSubscribe(const std::string &groupId, bool subscribe)     = 0;
+virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask) = 0;
 
+virtual bool setMessageServiceString(const std::string &msgId, const std::string &str) = 0;
+virtual bool setGroupServiceString(const std::string &grpId, const std::string &str) = 0;
+
+	// (FUTURE WORK).	
 virtual bool groupRestoreKeys(const std::string &groupId) = 0;
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
 
@@ -305,10 +447,6 @@ class RsIdentity: public RsTokenService
 virtual ~RsIdentity() { return; }
 
 
-        /* changed? */
-virtual bool updated() = 0;
-
-
 	/* INCLUDES INTERFACE FROM RS TOKEN SERVICE */
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -317,10 +455,8 @@ virtual bool updated() = 0;
 virtual bool    getGroupData(const uint32_t &token, RsIdGroup &group) = 0;
 virtual bool    getMsgData(const uint32_t &token, RsIdMsg &msg) = 0;
 
-virtual bool    createGroup(RsIdGroup &group) = 0;
-virtual bool    createMsg(RsIdMsg &msg) = 0;
-
-
+virtual bool    createGroup(uint32_t &token, RsIdGroup &group, bool isNew) = 0;
+virtual bool    createMsg(uint32_t &token, RsIdMsg &msg, bool isNew) = 0;
 
 	/* In the Identity System - You don't access the Messages Directly.
 	 * as they represent idividuals opinions....

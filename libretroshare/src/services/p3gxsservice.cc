@@ -341,6 +341,141 @@ GxsDataProxy::GxsDataProxy()
 }
 
 
+static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData &group)
+{
+	bool statusMatch = false;
+	if (opts.mStatusMask)
+	{
+		// Exact Flags match required.
+ 		if ((opts.mStatusMask & opts.mStatusFilter) == (opts.mStatusMask & group.mGroupStatus))
+		{
+			statusMatch = true;
+		}
+		else
+		{
+			std::cerr << "checkGroupFilter() Dropping Group due to !StatusMatch ";
+			std::cerr << " Mask: " << opts.mStatusMask << " StatusFilter: " << opts.mStatusFilter;
+			std::cerr << " GroupStatus: " << group.mGroupStatus << " GroupId: " << group.mGroupId;
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		// no status comparision,
+		statusMatch = true;
+	}
+
+	bool subMatch = false;
+	if (opts.mSubscribeFilter)
+	{
+		// Exact Flags match required.
+ 		if (opts.mSubscribeFilter & group.mSubscribeFlags)
+		{
+			subMatch = true;
+		}
+		else
+		{
+			std::cerr << "checkGroupFilter() Dropping Group due to !SubscribeMatch ";
+			std::cerr << " SubscribeFilter: " << opts.mSubscribeFilter;
+			std::cerr << " GroupSubscribeFlags: " << group.mSubscribeFlags << " GroupId: " << group.mGroupId;
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		// no subscribe comparision,
+		subMatch = true;
+	}
+
+	return (statusMatch && subMatch);
+}
+
+
+static bool checkMsgFilter(const RsTokReqOptions &opts, const RsMsgMetaData &msg)
+{
+	bool statusMatch = false;
+	if (opts.mStatusMask)
+	{
+		// Exact Flags match required.
+ 		if ((opts.mStatusMask & opts.mStatusFilter) == (opts.mStatusMask & msg.mMsgStatus))
+		{
+			statusMatch = true;
+		}
+		else
+		{
+			std::cerr << "checkMsgFilter() Dropping Msg due to !StatusMatch ";
+			std::cerr << " Mask: " << opts.mStatusMask << " StatusFilter: " << opts.mStatusFilter;
+			std::cerr << " MsgStatus: " << msg.mMsgStatus << " MsgId: " << msg.mMsgId;
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		// no status comparision,
+		statusMatch = true;
+	}
+	return statusMatch;
+}
+
+
+bool GxsDataProxy::filterGroupList(const RsTokReqOptions &opts, std::list<std::string> &groupIds)
+{
+	std::list<std::string>::iterator it;
+	for(it = groupIds.begin(); it != groupIds.end(); )
+	{
+		RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+		bool keep = false;
+		/* find group */
+        	std::map<std::string, RsGroupMetaData>::iterator mit;
+		mit = mGroupMetaData.find(*it);
+		if (mit != mGroupMetaData.end())
+		{
+			keep = checkGroupFilter(opts, mit->second);
+		}
+
+		if (keep)
+		{
+			it++;
+		}
+		else
+		{
+			it = groupIds.erase(it);
+		}
+	}
+	return true;
+}
+
+
+bool GxsDataProxy::filterMsgList(const RsTokReqOptions &opts, std::list<std::string> &msgIds)
+{
+	std::list<std::string>::iterator it;
+	for(it = msgIds.begin(); it != msgIds.end(); )
+	{
+		RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+		bool keep = false;
+		/* find msg */
+        	std::map<std::string, RsMsgMetaData>::iterator mit;
+		mit = mMsgMetaData.find(*it);
+		if (mit != mMsgMetaData.end())
+		{
+			keep = checkMsgFilter(opts, mit->second);
+		}
+
+		if (keep)
+		{
+			it++;
+		}
+		else
+		{
+			it = msgIds.erase(it);
+		}
+	}
+	return true;
+}
+
+
 
 bool GxsDataProxy::getGroupList(     uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds, std::list<std::string> &outGroupIds)
 {
@@ -367,6 +502,8 @@ bool GxsDataProxy::getGroupList(     uint32_t &token, const RsTokReqOptions &opt
 	{
 		outGroupIds = groupIds;
 	}
+
+	filterGroupList(opts, outGroupIds);
 
 	return true;
 }
@@ -415,9 +552,11 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 	{
 		if (onlyLatestMsgs) // THIS ONE IS HARD -> LOTS OF COMP.
 		{
+			RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
 			// RUN THROUGH ALL MSGS... in map origId -> TS.
-			std::map<std::string, std::pair<std::string, uint32_t> > origMsgTs;
-			std::map<std::string, std::pair<std::string, uint32_t> >::iterator oit;
+			std::map<std::string, std::pair<std::string, time_t> > origMsgTs;
+			std::map<std::string, std::pair<std::string, time_t> >::iterator oit;
 			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 			{
 				if (mit->second.mGroupId != *it)
@@ -474,6 +613,8 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 		}
 		else	// ALL OTHER CASES.
 		{
+			RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
 			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 			{
 				if (mit->second.mGroupId == *it)
@@ -510,6 +651,9 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 			}
 		}
 	}
+
+	filterMsgList(opts, outMsgIds);
+
 	return true;
 }
 
@@ -573,6 +717,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 		std::cerr << std::endl;
 		/* just copy */
 		outMsgIds = msgIds;
+		filterMsgList(opts, outMsgIds);
 
 		return true;
 	}
@@ -582,6 +727,8 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	for(it = msgIds.begin(); it != msgIds.end(); it++)
 	{
+		RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
 		/* getOriginal Message */
 		mit = mMsgMetaData.find(*it);
 		if (mit == mMsgMetaData.end())
@@ -596,8 +743,8 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 			if (onlyChildMsgs)
 			{
 				// RUN THROUGH ALL MSGS... in map origId -> TS.
-				std::map<std::string, std::pair<std::string, uint32_t> > origMsgTs;
-				std::map<std::string, std::pair<std::string, uint32_t> >::iterator oit;
+				std::map<std::string, std::pair<std::string, time_t> > origMsgTs;
+				std::map<std::string, std::pair<std::string, time_t> >::iterator oit;
 				for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 				{
 					// skip msgs that aren't children.
@@ -665,6 +812,8 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 		}
 		else if (onlyAllVersions)
 		{
+			RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
 			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 			{
 				if (mit->second.mOrigMsgId == origMsgId)
@@ -674,6 +823,8 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 			}
 		}
 	}
+
+	filterMsgList(opts, outMsgIds);
 
 	return true;
 }
@@ -692,6 +843,11 @@ bool GxsDataProxy::createGroup(void *groupData)
 		}
 
 		RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+
+		/* Set the Group Status Flags */
+		meta.mGroupStatus |= (RSGXS_GROUP_STATUS_UPDATED | RSGXS_GROUP_STATUS_NEWGROUP);
+
 
 		/* push into maps */
         	mGroupData[meta.mGroupId] = groupData;
@@ -720,6 +876,25 @@ bool GxsDataProxy::createMsg(void *msgData)
 
 		RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
+
+		/* find the group */
+        	std::map<std::string, RsGroupMetaData>::iterator git;
+		git = mGroupMetaData.find(meta.mGroupId);
+		if (git == mGroupMetaData.end())
+		{
+			std::cerr << "GxsDataProxy::createMsg() ERROR GroupId Doesn't exist, discarding";
+			std::cerr << std::endl;
+			return false;
+		}
+
+		/* flag the group as changed */
+		git->second.mGroupStatus |= RSGXS_GROUP_STATUS_UPDATED;
+
+		/* Set the Msg Status Flags */
+		meta.mMsgStatus |= (RSGXS_MSG_STATUS_UNREAD_BY_USER | RSGXS_MSG_STATUS_UNPROCESSED);
+
+		/* Set the Msg->GroupId Status Flags */
+
 		/* push into maps */
         	mMsgData[meta.mMsgId] = msgData;
         	mMsgMetaData[meta.mMsgId] = meta;
@@ -732,6 +907,124 @@ bool GxsDataProxy::createMsg(void *msgData)
 	return false;
 }
 
+
+        // Get Message Status - is retrived via MessageSummary.
+bool GxsDataProxy::setMessageStatus(const std::string &msgId,const uint32_t status, const uint32_t statusMask)
+{
+	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+        std::map<std::string, RsMsgMetaData>::iterator mit;
+	mit = mMsgMetaData.find(msgId);
+
+	if (mit == mMsgMetaData.end())
+	{
+		// error.
+		std::cerr << "GxsDataProxy::getMsgSummary() Error Finding MsgId: " << msgId;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		/* tweak status */
+		mit->second.mMsgStatus &= ~statusMask;
+		mit->second.mMsgStatus |= (status & statusMask);
+	}
+
+	// always return true - as this is supposed to be async operation.
+	return true;
+}
+
+bool GxsDataProxy::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
+{
+	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+        std::map<std::string, RsGroupMetaData>::iterator git;
+	git = mGroupMetaData.find(groupId);
+
+	if (git == mGroupMetaData.end())
+	{
+		// error.
+		std::cerr << "GxsDataProxy::setGroupStatus() Error Finding GroupId: " << groupId;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		/* tweak status */
+		git->second.mGroupStatus &= ~statusMask;
+		git->second.mGroupStatus |= (status & statusMask);
+	}
+
+	// always return true - as this is supposed to be async operation.
+	return true;
+}
+
+
+bool GxsDataProxy::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+        std::map<std::string, RsGroupMetaData>::iterator git;
+	git = mGroupMetaData.find(groupId);
+
+	if (git == mGroupMetaData.end())
+	{
+		// error.
+		std::cerr << "GxsDataProxy::setGroupSubscribeFlags() Error Finding GroupId: " << groupId;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		/* tweak subscribe Flags */
+		git->second.mSubscribeFlags &= ~subscribeMask;
+		git->second.mSubscribeFlags |= (subscribeFlags & subscribeMask);
+	}
+
+	// always return true - as this is supposed to be async operation.
+	return true;
+}
+
+bool GxsDataProxy::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+        std::map<std::string, RsMsgMetaData>::iterator mit;
+	mit = mMsgMetaData.find(msgId);
+
+	if (mit == mMsgMetaData.end())
+	{
+		// error.
+		std::cerr << "GxsDataProxy::setMessageServiceString() Error Finding MsgId: " << msgId;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		mit->second.mServiceString = str;
+	}
+
+	// always return true - as this is supposed to be async operation.
+	return true;
+}
+
+bool GxsDataProxy::setGroupServiceString(const std::string &groupId, const std::string &str)
+{
+	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
+
+        std::map<std::string, RsGroupMetaData>::iterator git;
+	git = mGroupMetaData.find(groupId);
+
+	if (git == mGroupMetaData.end())
+	{
+		// error.
+		std::cerr << "GxsDataProxy::setGroupServiceString() Error Finding GroupId: " << groupId;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		git->second.mServiceString = str;
+	}
+
+	// always return true - as this is supposed to be async operation.
+	return true;
+}
 
 
         /* These Functions must be overloaded to complete the service */

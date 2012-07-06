@@ -354,24 +354,32 @@ bool p3ForumsV2::cancelRequest(const uint32_t &token)
 }
 
         //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-bool p3ForumsV2::groupsChanged(std::list<std::string> &groupIds)
-{
-	return false;
-}
 
-        // Get Message Status - is retrived via MessageSummary.
 bool p3ForumsV2::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mForumProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-
-        // 
-bool p3ForumsV2::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3ForumsV2::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mForumProxy->setGroupStatus(groupId, status, statusMask);
 }
+
+bool p3ForumsV2::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+	return mForumProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
+}
+
+bool p3ForumsV2::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+	return mForumProxy->setMessageServiceString(msgId, str);
+}
+
+bool p3ForumsV2::setGroupServiceString(const std::string &grpId, const std::string &str)
+{
+	return mForumProxy->setGroupServiceString(grpId, str);
+}
+
 
 
 bool p3ForumsV2::groupRestoreKeys(const std::string &groupId)
@@ -383,20 +391,6 @@ bool p3ForumsV2::groupShareKeys(const std::string &groupId, std::list<std::strin
 {
 	return false;
 }
-
-#if 0
-/* details are updated in album - to choose Album ID, and storage path */
-bool p3ForumsV2::submitAlbumDetails(RsForumAlbum &album)
-{
-	return false;
-}
-
-bool p3ForumsV2::submitForum(RsForumForum &photo)
-{
-	return false;
-}
-
-#endif
 
 
 
@@ -415,7 +409,7 @@ std::string p3ForumsV2::genRandomId()
 	return randomId;
 }
 	
-bool p3ForumsV2::createGroup(RsForumV2Group &group)
+bool p3ForumsV2::createGroup(uint32_t &token, RsForumV2Group &group, bool isNew)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -430,20 +424,31 @@ bool p3ForumsV2::createGroup(RsForumV2Group &group)
 		std::cerr << std::endl;
 		return false;
 	}
+
+	{	
+		RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
+
+		mUpdated = true;
+		mForumProxy->addForumGroup(group);
+	}
 	
-	RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
-
-	mUpdated = true;
-
-	mForumProxy->addForumGroup(group);
-
+	// Fake a request to return the GroupMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> groupIds;
+	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
+	
+	std::cerr << "p3ForumsV2::createGroup() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
+	
 	return true;
 }
 
 
 
 
-bool p3ForumsV2::createMsg(RsForumV2Msg &msg)
+bool p3ForumsV2::createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew)
 {
 	if (msg.mMeta.mGroupId.empty())
 	{
@@ -479,11 +484,22 @@ bool p3ForumsV2::createMsg(RsForumV2Msg &msg)
 	std::cerr << "p3ForumsV2::createForumMsg() OrigMsgId: " << msg.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
-
-	mForumProxy->addForumMsg(msg);
+		mUpdated = true;
+		mForumProxy->addForumMsg(msg);
+	}
+	
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(msg.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3ForumsV2::createMsg() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
@@ -640,12 +656,12 @@ bool p3ForumsV2::generateDummyData()
 		float rnd = RSRandom::random_f32();
 		if (rnd < 0.1)
 		{
-			forum.mMeta.mSubscribeFlags = RS_DISTRIB_ADMIN;
+			forum.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_ADMIN;
 
 		}
 		else if (rnd < 0.3)
 		{
-			forum.mMeta.mSubscribeFlags = RS_DISTRIB_SUBSCRIBED;
+			forum.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
 		}
 		else
 		{

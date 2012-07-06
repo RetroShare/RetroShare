@@ -88,16 +88,13 @@ class RsWire: public RsTokenService
 	RsWire()  { return; }
 virtual ~RsWire() { return; }
 
-	/* changed? */
-virtual bool updated() = 0;
-
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, RsWireGroup &group) = 0;
 virtual bool getMsgData(const uint32_t &token, RsWirePulse &pulse) = 0;
 
 	/* Create Stuff */
-virtual bool createGroup(RsWireGroup &group) = 0;
-virtual bool createPulse(RsWirePulse &pulse) = 0;
+virtual bool createGroup(uint32_t &token, RsWireGroup &group, bool isNew) = 0;
+virtual bool createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew) = 0;
 
 };
 

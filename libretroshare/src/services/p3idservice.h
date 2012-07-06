@@ -84,6 +84,8 @@ virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaD
 virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo);
 
         /* Actual Data -> specific to Interface */
+virtual bool 	getGroupData(const uint32_t &token, RsIdGroup &group);
+virtual bool 	getMsgData(const uint32_t &token, RsIdMsg &msg);
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token);
@@ -91,69 +93,23 @@ virtual uint32_t requestStatus(const uint32_t token);
         /* Cancel Request */
 virtual bool cancelRequest(const uint32_t &token);
 
-
-        /* Functions from Forums -> need to be implemented generically */
-virtual bool groupsChanged(std::list<std::string> &groupIds);
-
-        // Get Message Status - is retrived via MessageSummary.
+        //////////////////////////////////////////////////////////////////////////////
 virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-
-        // 
-virtual bool groupSubscribe(const std::string &groupId, bool subscribe)    ;
+virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
+virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
 
 virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
-        //////////////////////////////////////////////////////////////////////////////
+virtual bool 	createGroup(uint32_t &token, RsIdGroup &group, bool isNew);
+virtual bool 	createMsg(uint32_t &token, RsIdMsg &msg, bool isNew);
 
-
-        /* Specific Service Data */
-virtual bool 	getGroupData(const uint32_t &token, RsIdGroup &group);
-virtual bool 	getMsgData(const uint32_t &token, RsIdMsg &msg);
-
-virtual bool 	createGroup(RsIdGroup &group);
-virtual bool 	createMsg(RsIdMsg &msg);
-
-	/* Interface now a request / poll / answer system */
-
-#if 0
-
-	/* Data Requests */
-virtual bool requestIdentityList(uint32_t &token);
-virtual bool requestIdentities(uint32_t &token, const std::list<std::string> &ids);
-virtual bool requestIdReputations(uint32_t &token, const std::list<std::string> &ids);
-virtual bool requestIdPeerOpinion(uint32_t &token, const std::string &aboutId, const std::string &peerId);
-//virtual bool requestIdGpgDetails(uint32_t &token, const std::list<std::string> &ids);
-
-	/* Poll */
-virtual uint32_t requestStatus(const uint32_t token);
-
-	/* Retrieve Data */
-virtual bool getIdentityList(const uint32_t token, std::list<std::string> &ids);
-virtual bool getIdentity(const uint32_t token, RsIdData &data);
-virtual bool getIdReputation(const uint32_t token, RsIdReputation &reputation);
-virtual bool getIdPeerOpinion(const uint32_t token, RsIdOpinion &opinion);
-//virtual bool getIdGpgDetails(const uint32_t token, RsIdGpgDetails &gpgData);
-
-	/* Updates */
-virtual bool updateIdentity(RsIdData &data);
-virtual bool updateOpinion(RsIdOpinion &opinion);
-
-
-
-	/* below here not part of the interface */
-bool fakeprocessrequests();
-
-virtual bool InternalgetIdentityList(std::list<std::string> &ids);
-virtual bool InternalgetIdentity(const std::string &id, RsIdData &data);
-virtual bool InternalgetIdReputation(const std::string &id, RsIdReputation &reputation);
-virtual bool InternalgetIdPeerOpinion(const std::string &aboutid, const std::string &peerid, RsIdOpinion &opinion);
-
-#endif
-
-virtual void generateDummyData();
 
 	private:
+
+virtual void generateDummyData();
 
 std::string genRandomId();
 

@@ -347,23 +347,31 @@ bool p3Wire::cancelRequest(const uint32_t &token)
 }
 
         //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-bool p3Wire::groupsChanged(std::list<std::string> &groupIds)
-{
-	return false;
-}
 
-        // Get Message Status - is retrived via MessageSummary.
 bool p3Wire::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+        return mWireProxy->setMessageStatus(msgId, status, statusMask);
 }
 
 
-        // 
-bool p3Wire::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3Wire::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+        return mWireProxy->setGroupStatus(groupId, status, statusMask);
+}
+
+bool p3Wire::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+	return mWireProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
+}
+
+bool p3Wire::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+        return mWireProxy->setMessageServiceString(msgId, str);
+}
+
+bool p3Wire::setGroupServiceString(const std::string &grpId, const std::string &str)
+{
+        return mWireProxy->setGroupServiceString(grpId, str);
 }
 
 
@@ -392,7 +400,8 @@ std::string p3Wire::genRandomId()
 	return randomId;
 }
 	
-bool p3Wire::createGroup(RsWireGroup &group)
+
+bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group, bool isNew)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -407,20 +416,31 @@ bool p3Wire::createGroup(RsWireGroup &group)
 		std::cerr << std::endl;
 		return false;
 	}
+
+	{	
+		RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
+
+		mUpdated = true;
+		mWireProxy->addGroup(group);
+	}
 	
-	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
-
-	mUpdated = true;
-
-	mWireProxy->addGroup(group);
-
+	// Fake a request to return the GroupMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> groupIds;
+	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
+	
+	std::cerr << "p3Wiree::createGroup() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
+	
 	return true;
 }
 
 
 
 
-bool p3Wire::createPulse(RsWirePulse &pulse)
+bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew)
 {
 	if (pulse.mMeta.mGroupId.empty())
 	{
@@ -456,11 +476,22 @@ bool p3Wire::createPulse(RsWirePulse &pulse)
 	std::cerr << "p3Wire::createPulse() OrigPulseId: " << pulse.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
-
-	mWireProxy->addPulse(pulse);
+		mUpdated = true;
+		mWireProxy->addPulse(pulse);
+	}
+	
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(pulse.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3Wire::createPulse() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }

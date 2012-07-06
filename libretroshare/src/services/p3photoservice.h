@@ -79,6 +79,7 @@ virtual int	tick();
 // NEW INTERFACE.
 /************* Extern Interface *******/
 
+        /* changed? */
 virtual bool updated();
 
        /* Data Requests */
@@ -106,22 +107,19 @@ virtual uint32_t requestStatus(const uint32_t token);
 virtual bool cancelRequest(const uint32_t &token);
 
         //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-virtual bool groupsChanged(std::list<std::string> &groupIds);
-
-        // Get Message Status - is retrived via MessageSummary.
 virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-
-        // 
-virtual bool groupSubscribe(const std::string &groupId, bool subscribe);
+virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
+virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
 
 virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
 
 /* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album, bool isNew);
-virtual bool submitPhoto(RsPhotoPhoto &photo, bool isNew);
+virtual bool submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew);
+virtual bool submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew);
 
 
 

@@ -53,29 +53,52 @@ class RsPostedMsg
 	uint32_t postedType;
 };
 
-#define RSPOSTED_MSG_POST		1
-#define RSPOSTED_MSG_VOTE		1
-#define RSPOSTED_MSG_COMMENT		1
+#define RSPOSTED_MSGTYPE_POST		0x0001
+#define RSPOSTED_MSGTYPE_VOTE		0x0002
+#define RSPOSTED_MSGTYPE_COMMENT	0x0004
+
+#define RSPOSTED_PERIOD_YEAR		1
+#define RSPOSTED_PERIOD_MONTH		2
+#define RSPOSTED_PERIOD_WEEK		3
+#define RSPOSTED_PERIOD_DAY		4
+#define RSPOSTED_PERIOD_HOUR		5
+
+#define RSPOSTED_VIEWMODE_LATEST	1
+#define RSPOSTED_VIEWMODE_TOP		2
+#define RSPOSTED_VIEWMODE_HOT		3
+#define RSPOSTED_VIEWMODE_COMMENTS	4
 
 
 class RsPostedPost: public RsPostedMsg
 {
 	public:
-	RsPostedPost(): RsPostedMsg(RSPOSTED_MSG_POST) { return; }
+	RsPostedPost(): RsPostedMsg(RSPOSTED_MSGTYPE_POST) 
+	{ 
+		mMeta.mMsgFlags = RSPOSTED_MSGTYPE_POST;
+		return; 
+	}
 };
 
 
 class RsPostedVote: public RsPostedMsg
 {
 	public:
-	RsPostedVote(): RsPostedMsg(RSPOSTED_MSG_VOTE) { return; }
+	RsPostedVote(): RsPostedMsg(RSPOSTED_MSGTYPE_VOTE)
+	{ 
+		mMeta.mMsgFlags = RSPOSTED_MSGTYPE_VOTE;
+		return; 
+	}
 };
 
 
 class RsPostedComment: public RsPostedMsg
 {
 	public:
-	RsPostedComment(): RsPostedMsg(RSPOSTED_MSG_COMMENT) { return; }
+	RsPostedComment(): RsPostedMsg(RSPOSTED_MSGTYPE_COMMENT) 
+	{ 
+		mMeta.mMsgFlags = RSPOSTED_MSGTYPE_COMMENT;
+		return; 
+	}
 };
 
 
@@ -92,19 +115,15 @@ class RsPosted: public RsTokenService
 	RsPosted()  { return; }
 virtual ~RsPosted() { return; }
 
-	/* changed? */
-virtual bool updated() = 0;
-
 	/* Specific Service Data */
 virtual bool getGroup(const uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool getPost(const uint32_t &token, RsPostedPost &post) = 0;
 virtual bool getComment(const uint32_t &token, RsPostedComment &comment) = 0;
 
-/* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitGroup(RsPostedGroup &group, bool isNew) = 0;
-virtual bool submitPost(RsPostedPost &post, bool isNew) = 0;
-virtual bool submitVote(RsPostedVote &vote, bool isNew) = 0;
-virtual bool submitComment(RsPostedComment &comment, bool isNew) = 0;
+virtual bool submitGroup(uint32_t &token, RsPostedGroup &group, bool isNew) = 0;
+virtual bool submitPost(uint32_t &token, RsPostedPost &post, bool isNew) = 0;
+virtual bool submitVote(uint32_t &token, RsPostedVote &vote, bool isNew) = 0;
+virtual bool submitComment(uint32_t &token, RsPostedComment &comment, bool isNew) = 0;
 
 };
 

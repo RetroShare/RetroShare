@@ -346,24 +346,31 @@ bool p3WikiService::cancelRequest(const uint32_t &token)
 	return clearRequest(token);
 }
 
-        //////////////////////////////////////////////////////////////////////////////
-        /* Functions from Forums -> need to be implemented generically */
-bool p3WikiService::groupsChanged(std::list<std::string> &groupIds)
-{
-	return false;
-}
 
-        // Get Message Status - is retrived via MessageSummary.
+        //////////////////////////////////////////////////////////////////////////////
 bool p3WikiService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mWikiProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-
-        // 
-bool p3WikiService::groupSubscribe(const std::string &groupId, bool subscribe)
+bool p3WikiService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
-	return false;
+	return mWikiProxy->setGroupStatus(groupId, status, statusMask);
+}
+
+bool p3WikiService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+{
+	return mWikiProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
+}
+
+bool p3WikiService::setMessageServiceString(const std::string &msgId, const std::string &str)
+{
+	return mWikiProxy->setMessageServiceString(msgId, str);
+}
+
+bool p3WikiService::setGroupServiceString(const std::string &grpId, const std::string &str)
+{
+	return mWikiProxy->setGroupServiceString(grpId, str);
 }
 
 
@@ -392,7 +399,7 @@ std::string p3WikiService::genRandomId()
 	return randomId;
 }
 	
-bool p3WikiService::createGroup(RsWikiGroup &group)
+bool p3WikiService::createGroup(uint32_t &token, RsWikiGroup &group, bool isNew)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -407,20 +414,30 @@ bool p3WikiService::createGroup(RsWikiGroup &group)
 		std::cerr << std::endl;
 		return false;
 	}
+
+	{	
+		RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
+
+		mUpdated = true;
+		mWikiProxy->addGroup(group);
+	}
 	
-	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
-
-	mUpdated = true;
-
-	mWikiProxy->addGroup(group);
+	// Fake a request to return the GroupMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> groupIds;
+	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
+	
+	std::cerr << "p3WikiService::createGroup() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
 
 
-
-bool p3WikiService::createPage(RsWikiPage &page)
+bool p3WikiService::createPage(uint32_t &token, RsWikiPage &page, bool isNew)
 {
 	if (page.mMeta.mGroupId.empty())
 	{
@@ -456,12 +473,23 @@ bool p3WikiService::createPage(RsWikiPage &page)
 	std::cerr << "p3WikiService::createPage() OrigPageId: " << page.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mWikiMtx); /********** STACK LOCKED MTX ******/
 
-	mUpdated = true;
+		mUpdated = true;
+		mWikiProxy->addPage(page);
+	}
 
-	mWikiProxy->addPage(page);
-
+	// Fake a request to return the MsgMetaData.
+	generateToken(token);
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts; // NULL is good.
+	std::list<std::string> msgIds;
+	msgIds.push_back(page.mMeta.mMsgId); // It will just return this one.
+	
+	std::cerr << "p3WikiService::createPage() Generating Request Token: " << token << std::endl;
+	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
+	
 	return true;
 }
 
