@@ -236,11 +236,14 @@ ops_validate_key_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cb
 
 		case OPS_PTAG_CT_SIGNATURE: // V3 sigs
 		case OPS_PTAG_CT_SIGNATURE_FOOTER: // V4 sigs
-			/*
-				printf("  type=%02x signer_id=",content->signature.type);
-				hexdump(content->signature.signer_id,
-				sizeof content->signature.signer_id);
-			 */
+			
+			if(debug)
+			{
+				printf("  type=%02x signer_id=",content->signature.info.type);
+				hexdump(content->signature.info.signer_id,
+				sizeof content->signature.info.signer_id);
+				printf("\n");
+			} 
 
 			signer=ops_keyring_find_key_by_id(arg->keyring,
 					content->signature.info.signer_id);

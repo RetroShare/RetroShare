@@ -738,7 +738,7 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 
 	// 2 - then do the signature.
 
-	bool ret = ops_sign_key(key_to_sign,&pkey->uids[0],pkey->key_id,secret_key) ;
+	bool ret = ops_sign_key(key_to_sign,pkey->key_id,secret_key) ;
 
 	// 3 - free memory
 	//

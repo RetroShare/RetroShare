@@ -83,7 +83,7 @@ ops_packet_t* ops_add_packet_to_keydata(ops_keydata_t* keydata, const ops_packet
 void ops_add_signed_userid_to_keydata(ops_keydata_t* keydata, const ops_user_id_t* userid, const ops_packet_t* packet);
 
 ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_user_id_t* userid);
-ops_boolean_t ops_sign_key(ops_keydata_t* keydata_to_sign, ops_user_id_t* userid,const unsigned char *signers_key_id,ops_secret_key_t *signers_key);
+ops_boolean_t ops_sign_key(ops_keydata_t* keydata_to_sign, const unsigned char *signers_key_id,ops_secret_key_t *signers_decrypted_private_key);
 
 ops_keydata_t *ops_keydata_new(void);
 void ops_keydata_init(ops_keydata_t* keydata, const ops_content_tag_t type);

@@ -611,7 +611,7 @@ ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_u
 \brief Add signature to given key
 \return ops_true if OK; else ops_false
 */
-ops_boolean_t ops_sign_key(ops_keydata_t* keydata, ops_user_id_t* userid,const unsigned char *signers_key_id,ops_secret_key_t *signers_key)
+ops_boolean_t ops_sign_key(ops_keydata_t* keydata, const unsigned char *signers_key_id,ops_secret_key_t *signers_key)
 {
 /*	ops_memory_t* mem_userid=NULL; */
 	ops_create_info_t* cinfo_userid=NULL;
@@ -625,17 +625,12 @@ ops_boolean_t ops_sign_key(ops_keydata_t* keydata, ops_user_id_t* userid,const u
 	 * create signature packet for this userid
 	 */
 
-	// create userid pkt
-/*	ops_setup_memory_write(&cinfo_userid, &mem_userid, 128);    */
-/* ops_write_struct_user_id(userid, cinfo_userid);             */
-
 	// create sig for this pkt
 
 	sig=ops_create_signature_new();
-	ops_signature_start_key_signature(sig, &keydata->key.skey.public_key, userid, OPS_CERT_POSITIVE);
+	ops_signature_start_key_signature(sig, &keydata->key.skey.public_key, &keydata->uids[0], OPS_CERT_GENERIC);
 	ops_signature_add_creation_time(sig,time(NULL)); 
 	ops_signature_add_issuer_key_id(sig,signers_key_id);
-/*	ops_signature_add_primary_user_id(sig, ops_true); */
 	ops_signature_hashed_subpackets_end(sig);
 
 	ops_setup_memory_write(&cinfo_sig, &mem_sig, 128);
@@ -648,13 +643,11 @@ ops_boolean_t ops_sign_key(ops_keydata_t* keydata, ops_user_id_t* userid,const u
 	sigpacket.raw=ops_memory_get_data(mem_sig);
 
 	// add userid to keydata
-	ops_add_signed_userid_to_keydata(keydata, userid, &sigpacket);
+	ops_add_packet_to_keydata(keydata, &sigpacket);
 
 	// cleanup
 	ops_create_signature_delete(sig);
-/*	ops_create_info_delete(cinfo_userid); */
 	ops_create_info_delete(cinfo_sig);
-/*	ops_memory_free(mem_userid);*/
 	ops_memory_free(mem_sig);
 
 	return ops_true;
