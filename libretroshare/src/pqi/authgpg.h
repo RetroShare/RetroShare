@@ -286,6 +286,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 
 		PGPIdType mOwnGpgId;
 		bool gpgKeySelected;
+		bool _force_sync_database ;
 
 		std::list<AuthGPGService*> services ;
 

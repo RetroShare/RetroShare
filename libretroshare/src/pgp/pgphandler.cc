@@ -747,6 +747,11 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 
 	_pubring_changed = true ;
 
+	// 4 - update signatures.
+	//
+	PGPCertificateInfo& cert(_public_keyring_map[ id_of_key_to_sign.toStdString() ]) ;
+	validateAndUpdateSignatures(cert,key_to_sign) ;
+
 	return true ;
 }
 
@@ -916,10 +921,10 @@ bool PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
 		return false ;
 	}
 
-	if( (int)it->second._validLvl != trustlvl )
+	if( (int)it->second._trustLvl != trustlvl )
 		_trustdb_changed = true ;
 
-	it->second._validLvl = trustlvl ;
+	it->second._trustLvl = trustlvl ;
 
 	return true ;
 }
@@ -945,6 +950,7 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 	}
 	std::map<std::string,PGPCertificateInfo>::iterator it ;
 	PrivateTrustPacket trustpacket;
+	int n_packets = 0 ;
 
 	while(fread((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) == 1)
 	{
@@ -961,10 +967,13 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 			continue ;
 		}
 		
-		it->second._validLvl = trustpacket.trust_level ;
+		++n_packets ;
+		it->second._trustLvl = trustpacket.trust_level ;
 	}
 
 	fclose(fdb) ;
+
+	std::cerr << "PGPHandler: Successfully read " << n_packets << " trust packets." << std::endl;
 }
 
 bool PGPHandler::locked_writePrivateTrustDatabase()
@@ -984,7 +993,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 	for(std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
 	{
 		memcpy(&trustpacket.user_id,PGPIdType(it->first).toByteArray(),KEY_ID_SIZE) ;
-		trustpacket.trust_level = it->second._validLvl ;
+		trustpacket.trust_level = it->second._trustLvl ;
 
 		if(fwrite((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) != 1)
 		{

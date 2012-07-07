@@ -18,7 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <gpgme.h>
 
 #include <QTreeWidget>
 #include <QDebug>
@@ -311,50 +310,6 @@ void NetworkDialog::copyLink()
 	RSLinkClipboard::copyLinks(urls);
 }
 
-/** Open a QFileDialog to browse for a pem/pqi file. */
-//void NetworkDialog::loadcert()
-//{
-// use misc::getOpenFileName
-//  /* Create a new input dialog, which allows users to create files, too */
-//  QFileDialog dialog (this, tr("Select a pem/pqi File"));
-//  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
-//  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
-//  dialog.setFileMode(QFileDialog::AnyFile);
-//  dialog.setReadOnly(false);
-//
-//  /* Prompt the user to select a file or create a new one */
-//  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
-//    return;
-//  }
-//  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
-//
-//  /* Check if the file exists */
-//  QFile torrcFile(filename);
-//  if (!QFileInfo(filename).exists()) {
-//    /* The given file does not exist. Should we create it? */
-//    int response = VMessageBox::question(this,
-//                     tr("File Not Found"),
-//                     tr("%1 does not exist. Would you like to create it?")
-//                                                            .arg(filename),
-//                     VMessageBox::Yes, VMessageBox::No);
-//
-//    if (response == VMessageBox::No) {
-//      /* Don't create it. Just bail. */
-//      return;
-//    }
-//    /* Attempt to create the specified file */
-//    if (!torrcFile.open(QIODevice::WriteOnly)) {
-//      VMessageBox::warning(this,
-//        tr("Failed to Create File"),
-//        tr("Unable to create %1 [%2]").arg(filename)
-//                                      .arg(torrcFile.errorString()),
-//        VMessageBox::Ok);
-//      return;
-//    }
-//  }
-//  //ui.lineTorConfig->setText(filename);
-//}
-
 void NetworkDialog::updateDisplay()
 {
 	insertConnect() ;
@@ -393,7 +348,7 @@ void NetworkDialog::insertConnect()
 	while (index < connectWidget->topLevelItemCount()) {
 		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
 		RsPeerDetails detail;
-		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < GPGME_VALIDITY_MARGINAL && !detail.accept_connection)) {
+		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection)) {
 			delete (connectWidget->takeTopLevelItem(index));
 		} else {
 			index++;
@@ -403,7 +358,7 @@ void NetworkDialog::insertConnect()
 	while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
 		std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
 		RsPeerDetails detail;
-		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= GPGME_VALIDITY_MARGINAL || detail.accept_connection) {
+		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= RS_TRUST_LVL_MARGINAL || detail.accept_connection) {
 			delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
 		} else {
 			index++;
@@ -464,12 +419,12 @@ void NetworkDialog::insertConnect()
 		else 
 			switch(detail.trustLvl)
 			{
-				case GPGME_VALIDITY_MARGINAL: item->setText(2,tr("Marginally trusted peer")) ; break;
-				case GPGME_VALIDITY_FULL:
-				case GPGME_VALIDITY_ULTIMATE: item->setText(2,tr("Fully trusted peer")) ; break ;
-				case GPGME_VALIDITY_UNKNOWN:
-				case GPGME_VALIDITY_UNDEFINED: 
-				case GPGME_VALIDITY_NEVER:
+				case RS_TRUST_LVL_MARGINAL: item->setText(2,tr("Marginally trusted peer")) ; break;
+				case RS_TRUST_LVL_FULL:
+				case RS_TRUST_LVL_ULTIMATE: item->setText(2,tr("Fully trusted peer")) ; break ;
+				case RS_TRUST_LVL_UNKNOWN:
+				case RS_TRUST_LVL_UNDEFINED: 
+				case RS_TRUST_LVL_NEVER:
 				default: 							item->setText(2,tr("Untrusted peer")) ; break ;
 			}
 
@@ -524,7 +479,7 @@ void NetworkDialog::insertConnect()
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
-		if (detail.accept_connection || detail.validLvl >= GPGME_VALIDITY_MARGINAL) 
+		if (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) 
 		{
 			/* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
 			connectWidget->addTopLevelItem(item);

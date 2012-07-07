@@ -38,12 +38,14 @@
 class RsPeers;
 extern RsPeers   *rsPeers;
 
-/* Trust Levels */
-const uint32_t RS_TRUST_LVL_NONE	= 2;
-const uint32_t RS_TRUST_LVL_MARGINAL	= 3;
-const uint32_t RS_TRUST_LVL_FULL	= 4;
-const uint32_t RS_TRUST_LVL_ULTIMATE	= 5;
+/* Trust Levels. Should be the same values than what is declared in PGPHandler.h */
 
+const uint32_t RS_TRUST_LVL_UNDEFINED  = 0;
+const uint32_t RS_TRUST_LVL_UNKNOWN    = 1;
+const uint32_t RS_TRUST_LVL_NEVER      = 2;
+const uint32_t RS_TRUST_LVL_MARGINAL   = 3;
+const uint32_t RS_TRUST_LVL_FULL	      = 4;
+const uint32_t RS_TRUST_LVL_ULTIMATE   = 5;
 
 /* Net Mode */
 const uint32_t RS_NETMODE_UDP		= 0x0001;

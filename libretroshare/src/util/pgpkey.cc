@@ -8,7 +8,6 @@
 /****************************/
 /*  #define DEBUG_PGPUTIL 1 */
 /****************************/
-#define DEBUG_PGPUTIL 1 
 
 #define PGP_CRC24_INIT 0xB704CEL
 #define PGP_CRC24_POLY 0x1864CFBL

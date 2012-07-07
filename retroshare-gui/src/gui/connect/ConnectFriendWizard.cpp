@@ -1144,7 +1144,7 @@ void ConclusionPage::initializePage() {
             case RS_TRUST_LVL_MARGINAL:
                     trustString = "Marginal";
             break;
-            case RS_TRUST_LVL_NONE:
+            case RS_TRUST_LVL_NEVER:
                     trustString = "None";
             break;
             default:

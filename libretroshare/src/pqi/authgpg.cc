@@ -107,6 +107,7 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 			gpgMtxData("AuthGPG-data"),
 			gpgKeySelected(false) 
 {
+	_force_sync_database = false ;
 	start();
 }
 
@@ -171,7 +172,7 @@ void AuthGPG::run()
         processServices();
 
         /* every ten seconds */
-        if (++count >= 100) 
+        if (++count >= 100 || _force_sync_database) 
 		  {
 			  RsStackMutex stack(gpgMtxService); /******* LOCKED ******/
 			  
@@ -182,6 +183,7 @@ void AuthGPG::run()
 			  //
 			  PGPHandler::syncDatabase() ;
 			  count = 0;
+			  _force_sync_database = false ;
         }
     }
 }
@@ -420,7 +422,7 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 	d.name = cert._name;
 	d.email = cert._email;
 	d.trustLvl = cert._trustLvl;
-	d.validLvl = cert._validLvl;
+	d.validLvl = cert._trustLvl;
 	d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
 	d.gpgSigners.clear() ;
 	for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
@@ -561,28 +563,15 @@ bool AuthGPG::AllowConnection(const std::string &gpg_id, bool accept)
 /* These take PGP Ids */
 bool AuthGPG::SignCertificateLevel0(const std::string &id)
 {
-	/* remove unused parameter warnings */
-	(void) id;
-
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::SignCertificat(" << id << ")" << std::endl;
 #endif
 
-	if (1 != privateSignCertificate(id))
-	{
-//		storeAllKeys();
-		return false;
-	}
-
-	/* reload stuff now ... */
-//	storeAllKeys();
-	return true;
+	return privateSignCertificate(id) ;
 }
 
 bool AuthGPG::RevokeCertificate(const std::string &id)
 {
-	//RsStackMutex stack(gpgMtx); /******* LOCKED ******/
-
 	/* remove unused parameter warnings */
 	(void) id;
 
@@ -596,106 +585,30 @@ bool AuthGPG::RevokeCertificate(const std::string &id)
 bool AuthGPG::TrustCertificate(const std::string &id, int trustlvl)
 {
 #ifdef GPG_DEBUG
-        std::cerr << "AuthGPG::TrustCertificate(" << id << ", " << trustlvl << ")" << std::endl;
+	std::cerr << "AuthGPG::TrustCertificate(" << id << ", " << trustlvl << ")" << std::endl;
 #endif
-        if (1 != privateTrustCertificate(id, trustlvl))
-        {
-//                storeAllKeys();
-                return false;
-        }
-
-	/* Keys are reloaded by privateTrustCertificate */
-        return true;
+	return privateTrustCertificate(id, trustlvl) ;
 }
 
-#if 0 
-/* remove otherwise will cause bugs */
-bool AuthGPG::SignData(std::string input, std::string &sign)
+bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
 {
-	return false;
+	return DoOwnSignature(data, datalen, sign, signlen);
 }
 
-bool AuthGPG::SignData(const void *data, const uint32_t len, std::string &sign)
+bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const std::string &withfingerprint) 
 {
-	return false;
+	return VerifySignature(data, datalen, sign, signlen, withfingerprint);
 }
 
-
-bool AuthGPG::SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen)
-{
-	return false;
-}
-#endif
-
-bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) {
-        return DoOwnSignature(data, datalen,
-                        sign, signlen);
-}
-
-bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const std::string &withfingerprint) {
-        return VerifySignature(data, datalen,
-                        sign, signlen, withfingerprint);
-}
-
-
-	/* Sign/Trust stuff */
+/* Sign/Trust stuff */
 
 int	AuthGPG::privateSignCertificate(const std::string &id)
 {
-	return PGPHandler::privateSignCertificate(mOwnGpgId,PGPIdType(id)) ;
+	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-//	/* The key should be in Others list and not in Peers list ?? 
-//	 * Once the key is signed, it moves from Others to Peers list ??? 
-//	 */
-//
-//	gpgcert signKey;
-//	gpgcert ownKey;
-//
-//	{
-//		RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-//		certmap::iterator it;
-//
-//		if (mKeyList.end() == (it = mKeyList.find(id)))
-//		{
-//			return false;
-//		}
-//
-//		/* grab a reference, so the key remains */
-//		gpgme_key_ref(it->second.key);
-//
-//		signKey = it->second;
-//
-//		/* grab a reference, so the key remains */
-//		gpgme_key_ref(mOwnGpgCert.key);
-//
-//		ownKey  = mOwnGpgCert;
-//	} /******* UNLOCKED ******/
-//
-//	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
-//
-//	class SignParams sparams("0");
-//	class EditParams params(SIGN_START, &sparams);
-//	gpgme_data_t out;
-//	gpg_error_t ERR;
-//
-//	if(GPG_ERR_NO_ERROR != (ERR = gpgme_data_new(&out))) {
-//		return 0;
-//	}
-//
-//	gpgme_signers_clear(CTX);
-//	if(GPG_ERR_NO_ERROR != (ERR = gpgme_signers_add(CTX, ownKey.key))) {
-//		gpgme_data_release(out);
-//		return 0;
-//	}
-//	
-//	if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey.key, keySignCallback, &params, out))) {
-//		gpgme_data_release(out);
-//		gpgme_signers_clear(CTX);
-//		return 0;	
-//	}
-//
-//	gpgme_data_release(out);
-//	gpgme_signers_clear(CTX);
+	int ret = PGPHandler::privateSignCertificate(mOwnGpgId,PGPIdType(id)) ;
+	_force_sync_database = true ;
+	return ret ;
 }
 
 /* revoke the signature on Certificate */
@@ -708,6 +621,8 @@ int	AuthGPG::privateRevokeCertificate(const std::string &/*id*/)
 
 int	AuthGPG::privateTrustCertificate(const std::string &id, int trustlvl)
 {
+	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
+
 	/* The certificate should be in Peers list ??? */	
 	if(!isGPGAccepted(id)) 
 	{
@@ -715,7 +630,9 @@ int	AuthGPG::privateTrustCertificate(const std::string &id, int trustlvl)
 		return 0;
 	}
 
-	return PGPHandler::privateTrustCertificate(PGPIdType(id),trustlvl) ;
+	int res = PGPHandler::privateTrustCertificate(PGPIdType(id),trustlvl) ;
+	_force_sync_database = true ;
+	return res ;
 }
 
 // -----------------------------------------------------------------------------------//
