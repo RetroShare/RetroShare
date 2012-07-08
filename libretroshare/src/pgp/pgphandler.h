@@ -70,6 +70,7 @@ class PGPHandler
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
 		 */
 		bool getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) const ;
+		bool haveSecretKey(const PGPIdType& id) const ;
 
 		bool availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& ids);
 		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) ;

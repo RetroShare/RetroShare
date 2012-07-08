@@ -1112,6 +1112,9 @@ static bool checkAccount(std::string accountdir, accountId &id)
 		if(!AuthGPG::getAuthGPG()->isKeySupported(id.pgpId))
 			return false ;
 
+		if(!AuthGPG::getAuthGPG()->haveSecretKey(id.pgpId))
+			return false ;
+
 #ifdef GPG_DEBUG
 		std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
 		std::cerr << " email: " << id.pgpEmail << std::endl;

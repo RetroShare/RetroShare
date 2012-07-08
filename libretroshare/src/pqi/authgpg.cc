@@ -389,7 +389,10 @@ bool	AuthGPG::getGPGAllList(std::list<std::string> &ids)
 
 	return true;
 }
-
+bool AuthGPG::haveSecretKey(const std::string& id) const
+{
+	return PGPHandler::haveSecretKey(PGPIdType(id)) ;
+}
 bool AuthGPG::isKeySupported(const std::string& id) const
 {
 	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
