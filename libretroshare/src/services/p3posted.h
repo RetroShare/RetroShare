@@ -128,12 +128,12 @@ virtual bool getRankedPost(const uint32_t &token, RsPostedPost &post);
 	// These are exposed for GUI usage.
 virtual bool encodePostedCache(std::string &str, uint32_t votes, uint32_t comments);
 virtual bool extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments);
+virtual float calcPostScore(const RsMsgMetaData &meta);
 
 	private:
 
 	// 
 bool 	checkRankingRequest();
-float 	calcPostScore(const RsMsgMetaData &meta);
 bool 	processPosts();
 
 	// background processing of Votes.
@@ -151,7 +151,8 @@ bool 	background_cleanup();
 
 
 std::string genRandomId();
-bool generateDummyData();
+bool 	generateDummyData();
+bool 	addExtraDummyData();
 
 	PostedDataProxy *mPostedProxy;
 
@@ -178,6 +179,10 @@ bool generateDummyData();
 
 	std::map<std::string, uint32_t> mBgVoteMap;	// ParentId -> Vote Count.
 	std::map<std::string, uint32_t> mBgCommentMap;  // ThreadId -> Comment Count.
+
+	// extra dummy data.
+        std::list<RsPostedVote>    mDummyLaterVotes;
+        std::list<RsPostedComment> mDummyLaterComments;
 
 
 };

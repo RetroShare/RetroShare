@@ -125,6 +125,15 @@ virtual bool submitPost(uint32_t &token, RsPostedPost &post, bool isNew) = 0;
 virtual bool submitVote(uint32_t &token, RsPostedVote &vote, bool isNew) = 0;
 virtual bool submitComment(uint32_t &token, RsPostedComment &comment, bool isNew) = 0;
 
+	// Special Ranking Request.
+virtual bool requestRanking(uint32_t &token, std::string groupId) = 0;
+virtual bool getRankedPost(const uint32_t &token, RsPostedPost &post) = 0;
+
+virtual bool extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments) = 0;
+
+	// exposed for testing...
+virtual float calcPostScore(const RsMsgMetaData &meta) = 0;
+
 };
 
 

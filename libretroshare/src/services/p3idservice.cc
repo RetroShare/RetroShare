@@ -769,8 +769,8 @@ void p3IdService::generateDummyData()
 		}
 	}
 
-#define MAX_RANDOM_GPGIDS	1000
-#define MAX_RANDOM_PSEUDOIDS	5000
+#define MAX_RANDOM_GPGIDS	10 //1000
+#define MAX_RANDOM_PSEUDOIDS	50 //5000
 
 	int nFakeGPGs = (RSRandom::random_u32() % MAX_RANDOM_GPGIDS);
 	int nFakePseudoIds = (RSRandom::random_u32() % MAX_RANDOM_PSEUDOIDS);

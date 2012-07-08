@@ -349,6 +349,11 @@ static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData 
 		// Exact Flags match required.
  		if ((opts.mStatusMask & opts.mStatusFilter) == (opts.mStatusMask & group.mGroupStatus))
 		{
+			std::cerr << "checkGroupFilter() Accepting Group as StatusMatches: ";
+			std::cerr << " Mask: " << opts.mStatusMask << " StatusFilter: " << opts.mStatusFilter;
+			std::cerr << " GroupStatus: " << group.mGroupStatus << " GroupId: " << group.mGroupId;
+			std::cerr << std::endl;
+
 			statusMatch = true;
 		}
 		else
@@ -371,6 +376,11 @@ static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData 
 		// Exact Flags match required.
  		if (opts.mSubscribeFilter & group.mSubscribeFlags)
 		{
+			std::cerr << "checkGroupFilter() Accepting Group as SubscribeMatches: ";
+			std::cerr << " SubscribeFilter: " << opts.mSubscribeFilter;
+			std::cerr << " GroupSubscribeFlags: " << group.mSubscribeFlags << " GroupId: " << group.mGroupId;
+			std::cerr << std::endl;
+
 			subMatch = true;
 		}
 		else
@@ -399,6 +409,11 @@ static bool checkMsgFilter(const RsTokReqOptions &opts, const RsMsgMetaData &msg
 		// Exact Flags match required.
  		if ((opts.mStatusMask & opts.mStatusFilter) == (opts.mStatusMask & msg.mMsgStatus))
 		{
+			std::cerr << "checkMsgFilter() Accepting Msg as StatusMatches: ";
+			std::cerr << " Mask: " << opts.mStatusMask << " StatusFilter: " << opts.mStatusFilter;
+			std::cerr << " MsgStatus: " << msg.mMsgStatus << " MsgId: " << msg.mMsgId;
+			std::cerr << std::endl;
+
 			statusMatch = true;
 		}
 		else

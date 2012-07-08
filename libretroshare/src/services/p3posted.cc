@@ -99,6 +99,7 @@ int	p3PostedService::tick()
 
 	if (doCheck)
 	{
+		addExtraDummyData();
 		background_requestGroups();
 	}
 
@@ -979,8 +980,8 @@ bool p3PostedService::generateDummyData()
 {
 #define MAX_GROUPS 10 //100
 #define MAX_POSTS 100 //1000
-#define MAX_COMMENTS 100 //10000
-#define MAX_VOTES 100 //10000
+#define MAX_COMMENTS 5000 //10000
+#define MAX_VOTES 10000 //10000
 
 	std::list<RsPostedGroup> mGroups;
 	std::list<RsPostedGroup>::iterator git;
@@ -1025,7 +1026,7 @@ bool p3PostedService::generateDummyData()
 		float rnd = RSRandom::random_f32();
 		if (rnd < 0.1)
 		{
-			group.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_ADMIN;
+			group.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_ADMIN | RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
 
 		}
 		else if (rnd < 0.3)
@@ -1190,18 +1191,66 @@ bool p3PostedService::generateDummyData()
 	for(cit = mComments.begin(); cit != mComments.end(); cit++)
 	{
 		/* pushback */
-		mPostedProxy->addComment(*cit);
+#define COMMENT_FRAC_FOR_LATER	(0.70)
+		if (RSRandom::random_f32() > COMMENT_FRAC_FOR_LATER)
+		{
+			mPostedProxy->addComment(*cit);
+		}
+		else
+		{
+			mDummyLaterComments.push_back(*cit);
+		}
 	}
 
 
 	for(vit = mVotes.begin(); vit != mVotes.end(); vit++)
 	{
 		/* pushback */
-		mPostedProxy->addVote(*vit);
+
+#define VOTE_FRAC_FOR_LATER	(0.70)
+		if (RSRandom::random_f32() > VOTE_FRAC_FOR_LATER)
+		{
+			mPostedProxy->addVote(*vit);
+		}
+		else
+		{
+			mDummyLaterVotes.push_back(*vit);
+		}
 	}
 
 	return true;
 }
+
+#define EXTRA_COMMENT_ADD	(20)
+#define EXTRA_VOTE_ADD		(50)
+
+bool p3PostedService::addExtraDummyData()
+{
+	std::cerr << "p3PostedService::addExtraDummyData()";
+	std::cerr << std::endl;
+
+	int i = 0;
+
+	std::list<RsPostedVote>::iterator vit;
+	std::list<RsPostedComment>::iterator cit;
+
+	for(cit = mDummyLaterComments.begin(); (cit != mDummyLaterComments.end()) && (i < EXTRA_COMMENT_ADD); i++)
+	{
+		mPostedProxy->addComment(*cit);
+		cit = mDummyLaterComments.erase(cit);
+	}
+
+	i = 0;
+	for(vit = mDummyLaterVotes.begin(); (vit != mDummyLaterVotes.end()) && (i < EXTRA_VOTE_ADD); i++)
+	{
+		mPostedProxy->addVote(*vit);
+		vit = mDummyLaterVotes.erase(vit);
+	}
+
+	return true;
+}
+
+
 
 
 /********************************************************************************************/
@@ -1518,7 +1567,7 @@ bool p3PostedService::processPosts()
 	}
 
 	std::multimap<float, std::string> postMap;
-	std::multimap<float, std::string>::iterator mit;
+	std::multimap<float, std::string>::reverse_iterator mit;
 
 	for(it = postList.begin(); it != postList.end(); it++)
 	{
@@ -1536,7 +1585,7 @@ bool p3PostedService::processPosts()
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
 		unsigned int i = 0;
-		for(mit = postMap.begin(); (mit != postMap.end()) && (i < mViewStart); mit++, i++)
+		for(mit = postMap.rbegin(); (mit != postMap.rend()) && (i < mViewStart); mit++, i++)
 		{
 			std::cerr << "p3PostedService::processPosts() Skipping PostId: " << mit->second;
 			std::cerr << " with score: " << mit->first;
@@ -1544,7 +1593,7 @@ bool p3PostedService::processPosts()
 		}
 
 	
-		for(i = 0; (mit != postMap.end()) && (i < mViewCount); mit++, i++)
+		for(i = 0; (mit != postMap.rend()) && (i < mViewCount); mit++, i++)
 		{
 			std::cerr << "p3PostedService::processPosts() Adding PostId: " << mit->second;
 			std::cerr << " with score: " << mit->first;
@@ -1672,7 +1721,7 @@ bool p3PostedService::background_requestNewMessages()
 
 	if (!getGroupList(token, groupIds))
 	{
-		std::cerr << "p3PostedService::background_requestNewMessages() ERROR";
+		std::cerr << "p3PostedService::background_requestNewMessages() ERROR No Group List";
 		std::cerr << std::endl;
 		background_cleanup();
 		return false;
@@ -1717,7 +1766,7 @@ bool p3PostedService::background_processNewMessages()
 
 	if (!getMsgSummary(token, newMsgList))
 	{
-		std::cerr << "p3PostedService::background_processNewMessages() ERROR";
+		std::cerr << "p3PostedService::background_processNewMessages() ERROR No New Msgs";
 		std::cerr << std::endl;
 		background_cleanup();
 		return false;
@@ -1747,13 +1796,13 @@ bool p3PostedService::background_processNewMessages()
 		/* discard threadheads */
 		if (it->mParentId.empty())
 		{
-			std::cerr << "\tIgnoring ThreadHead";
+			std::cerr << "\tIgnoring ThreadHead: " << *it;
 			std::cerr << std::endl;
 		}
 		else if (it->mMsgFlags & RSPOSTED_MSGTYPE_COMMENT)
 		{
 			/* Comments are counted by Thread Id */
-			std::cerr << "\tProcessing Comment";
+			std::cerr << "\tProcessing Comment: " << *it;
 			std::cerr << std::endl;
 
 			vit = mBgCommentMap.find(it->mThreadId);
@@ -1769,6 +1818,7 @@ bool p3PostedService::background_processNewMessages()
 	
 				std::cerr << "\tThreadId: " << it->mThreadId;
 				std::cerr << " Comment Total: " << mBgCommentMap[it->mThreadId];
+				std::cerr << std::endl;
 			}
 			else
 			{
@@ -1778,11 +1828,14 @@ bool p3PostedService::background_processNewMessages()
 				std::cerr << std::endl;
 			}
 		}
-		else if (it->mMsgFlags & RSPOSTED_MSGTYPE_COMMENT)
+		else if (it->mMsgFlags & RSPOSTED_MSGTYPE_VOTE)
 		{
 			/* Votes are organised by Parent Id,
 			 * ie. you can vote for both Posts and Comments
 			 */
+			std::cerr << "\tProcessing Vote: " << *it;
+			std::cerr << std::endl;
+
 			vit = mBgVoteMap.find(it->mParentId);
 			if (vit == mBgVoteMap.end())
 			{
@@ -1796,6 +1849,7 @@ bool p3PostedService::background_processNewMessages()
 	
 				std::cerr << "\tParentId: " << it->mParentId;
 				std::cerr << " Vote Total: " << mBgVoteMap[it->mParentId];
+				std::cerr << std::endl;
 			}
 			else
 			{
