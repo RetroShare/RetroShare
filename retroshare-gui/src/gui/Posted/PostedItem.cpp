@@ -46,10 +46,30 @@ PostedItem::PostedItem(PostedHolder *parent, const RsPostedPost &post)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-	dateLabel->setText(QString("Whenever"));
+	//dateLabel->setText(QString("Whenever"));
 	fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-	siteLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-	scoreLabel->setText(QString("1140"));
+	//siteLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
+	//scoreLabel->setText(QString("1140"));
+
+        // exposed for testing...
+	float score = rsPosted->calcPostScore(post.mMeta);
+	time_t now = time(NULL);
+
+	QString fromLabelTxt = QString(" Age: ") + QString::number(now - post.mMeta.mPublishTs);
+	fromLabelTxt += QString(" Score: ") + QString::number(score);
+	fromLabel->setText(fromLabelTxt);
+
+	uint32_t votes = 0;
+	uint32_t comments = 0;
+	rsPosted->extractPostedCache(post.mMeta.mServiceString, votes, comments);
+	scoreLabel->setText(QString::number(votes));
+	QString commentLabel = QString("Comments: ") + QString::number(comments);
+	commentLabel += QString(" Votes: ") + QString::number(votes);
+	siteLabel->setText(commentLabel);
+	
+	QDateTime ts;
+	ts.setTime_t(post.mMeta.mPublishTs);
+	dateLabel->setText(ts.toString(QString("yyyy/MM/dd hh:mm:ss")));
 
 	return;
 }

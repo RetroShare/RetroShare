@@ -281,6 +281,13 @@ void PostedListDialog::loadCurrentForumThreads(const std::string &forumId)
         std::cerr << "PostedListDialog::loadCurrentForumThreads(" << forumId << ")";
         std::cerr << std::endl;
 
+	if (forumId.empty())
+	{
+        	std::cerr << "PostedListDialog::loadCurrentForumThreads() Empty GroupId .. ignoring Req";
+        	std::cerr << std::endl;
+		return;
+	}
+
 	/* if already active -> kill current loading */
 	if (mThreadLoading)
 	{
@@ -300,20 +307,26 @@ void PostedListDialog::loadCurrentForumThreads(const std::string &forumId)
 
 
 
-void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &forumId)
+void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &groupId)
 {
 	RsTokReqOptions opts;
 
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 	
 	std::list<std::string> grpIds;
-	grpIds.push_back(forumId);
+	grpIds.push_back(groupId);
 
-        std::cerr << "PostedListDialog::requestGroupThreadData_InsertThreads(" << forumId << ")";
+        std::cerr << "PostedListDialog::requestGroupThreadData_InsertThreads(" << groupId << ")";
         std::cerr << std::endl;
 
 	uint32_t token;	
-	mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
+	//mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
+
+	// Do specific Posted Request....
+	rsPosted->requestRanking(token, groupId);
+	// get the Queue to handle response.
+        mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_DATA, POSTEDDIALOG_INSERTTHREADS);
+
 }
 
 
@@ -326,7 +339,10 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 	while(moreData)
 	{
 		RsPostedPost post;
-		if (rsPosted->getPost(token, post))
+		// Old Format.
+		//if (rsPosted->getPost(token, post))
+
+		if (rsPosted->getRankedPost(token, post))
 		{
 			std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads() MsgId: " << post.mMeta.mMsgId;
 			std::cerr << std::endl;
@@ -471,9 +487,9 @@ void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupLi
         GroupItemInfo groupItemInfo;
         groupInfoToGroupItemInfo(*it, groupItemInfo);
 
-        if (flags & RS_DISTRIB_ADMIN) {
+        if (flags & RSGXS_GROUP_SUBSCRIBE_ADMIN) {
             adminList.push_back(groupItemInfo);
-        } else if (flags & RS_DISTRIB_SUBSCRIBED) {
+        } else if (flags & RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED) {
 			/* subscribed forum */
             subList.push_back(groupItemInfo);
         } else {
