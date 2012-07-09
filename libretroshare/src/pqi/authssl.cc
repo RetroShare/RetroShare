@@ -54,7 +54,6 @@
 /****
  * #define AUTHSSL_DEBUG 1
  ***/
- #define AUTHSSL_DEBUG 1
 
 // initialisation du pointeur de singleton
 static AuthSSL *instance_ssl = NULL;

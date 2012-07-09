@@ -1327,7 +1327,8 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
 	fprintf(stderr, "** Writing out one pass sig\n");
 
     // write one_pass_sig
-    ops_write_one_pass_sig(skey, hash_alg, sig_type, cinfo);
+	 if(include_data)
+		 ops_write_one_pass_sig(skey, hash_alg, sig_type, cinfo);
 
     // hash file contents
     hash=ops_signature_get_hash(sig);

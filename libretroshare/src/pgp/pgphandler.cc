@@ -24,7 +24,7 @@ extern "C" {
 #include "util/rsdir.h"		
 #include "util/pgpkey.h"
 
-#define DEBUG_PGPHANDLER
+//#define DEBUG_PGPHANDLER 1
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
@@ -806,6 +806,9 @@ bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_l
 
 #ifdef DEBUG_PGPHANDLER
 	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << ", length " << std::dec << sign_len << ", literal data length = " << literal_data_length << std::endl;
+	std::cerr << "Signature body: " << std::endl;
+	hexdump( sign,sign_len) ;
+	std::cerr << std::endl;
 #endif
 
 	return ops_validate_detached_signature(literal_data,literal_data_length,sign,sign_len,key) ;
