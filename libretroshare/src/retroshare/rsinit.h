@@ -80,6 +80,8 @@ class RsInit
 
 		static bool	ValidateCertificate(std::string &userName) ;
 
+		static bool exportIdentity(const std::string& fname,const std::string& pgp_id) ;
+		static bool importIdentity(const std::string& fname,std::string& imported_pgp_id) ;
 
 		/*!
 		 *  Generating GPGme Account

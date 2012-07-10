@@ -172,6 +172,8 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool	getGPGValidList(std::list<std::string> &ids);
 		virtual bool	getGPGAcceptedList(std::list<std::string> &ids);
 		virtual bool	getGPGSignedList(std::list<std::string> &ids);
+		virtual bool   importProfile(const std::string& filename,std::string& gpg_id) ;
+		virtual bool   exportProfile(const std::string& filename,const std::string& gpg_id) ;
 
 		/*********************************************************************************/
 		/************************* STAGE 4 ***********************************************/

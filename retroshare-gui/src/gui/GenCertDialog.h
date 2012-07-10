@@ -42,6 +42,8 @@ private slots:
 	void genPerson();
 	//void loadPerson();
 	void selectFriend();
+	void importIdentity();
+	void exportIdentity();
 	void checkChanged(int i);
 	void infodlg();
         void newGPGKeyGenUiSetup();

@@ -22,6 +22,7 @@
 #include <rshare.h>
 #include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
+#include <retroshare/rspeers.h>
 #include "GenCertDialog.h"
 #include "InfoDialog.h"
 #include <QAbstractEventDispatcher>
@@ -45,6 +46,8 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
   
   connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
+  connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
+  connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
   connect(ui.infopushButton,SIGNAL(clicked()), this, SLOT(infodlg()));
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
@@ -65,7 +68,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
     if (RsInit::GetPGPLogins(pgpIds)) {
             for(it = pgpIds.begin(); it != pgpIds.end(); it++)
             {
-                    const QVariant & userData = QVariant(QString::fromStdString(*it));
+                    QVariant userData(QString::fromStdString(*it));
                     std::string name, email;
                     RsInit::GetPGPLoginDetails(*it, name, email);
                     std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
@@ -88,9 +91,9 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
         ui.new_gpg_key_checkbox->setChecked(true);
         ui.new_gpg_key_checkbox->hide();
         ui.progressBar->hide();
-        setWindowTitle(tr("Create new Profile"));
-        ui.genButton->setText(tr("Generate new Profile"));
-        ui.label_3->setText( titleString.arg( tr("Create a new Profile") ) ) ;
+        setWindowTitle(tr("Create new Identity"));
+        ui.genButton->setText(tr("Generate new Identity"));
+        ui.label_3->setText( titleString.arg( tr("Create a new Identity") ) ) ;
         genNewGPGKey = true;
     }
     newGPGKeyGenUiSetup();
@@ -111,9 +114,11 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->show();
         ui.genPGPuserlabel->hide();
         ui.genPGPuser->hide();
-        setWindowTitle(tr("Create new Profile"));
-        ui.genButton->setText(tr("Generate new Profile"));
-        ui.label_3->setText( titleStr.arg( tr("Create a new Profile") ) ) ;
+		  ui.exportIdentity_PB->hide() ;
+		  ui.importIdentity_PB->hide() ;
+        setWindowTitle(tr("Create new Identity"));
+        ui.genButton->setText(tr("Generate new Identity"));
+        ui.label_3->setText( titleStr.arg( tr("Create a new Identity") ) ) ;
     } else {
         genNewGPGKey = false;
         ui.name_label->hide();
@@ -124,10 +129,52 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->hide();
         ui.genPGPuserlabel->show();
         ui.genPGPuser->show();
+		  ui.exportIdentity_PB->show() ;
+		  ui.importIdentity_PB->show() ;
         setWindowTitle(tr("Create new Location"));
         ui.genButton->setText(tr("Generate new Location"));
         ui.label_3->setText( titleStr.arg( tr("Create a new Location") ) ) ;
     }
+}
+
+void GenCertDialog::exportIdentity()
+{
+	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("Retroshare Identity files (*.asc)")) ;
+
+	if(fname.isNull())
+		return ;
+
+	QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
+	std::string gpg_id = data.toString().toStdString() ;
+
+	if(RsInit::exportIdentity(fname.toStdString(),gpg_id))
+		QMessageBox::information(this,tr("Identity saved"),tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it")) ;
+	else
+		QMessageBox::information(this,tr("Identity not saved"),tr("Your identity was not saved. An error occured.")) ;
+}
+void GenCertDialog::importIdentity()
+{
+	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("Retroshare Identity files (*.asc)")) ;
+
+	if(fname.isNull())
+		return ;
+
+	std::string gpg_id ;
+
+	if(!RsInit::importIdentity(fname.toStdString(),gpg_id))
+	{
+		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly. \nCheck that it is a valid GPG key pair.")) ;
+		return ;
+	}
+
+	std::string name,email ;
+
+	RsInit::GetPGPLoginDetails(gpg_id, name, email);
+	std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
+	QVariant userData(QString::fromStdString(gpg_id));
+	QString gid = QString::fromStdString(gpg_id).right(8) ;
+	ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
+
 }
 
 void GenCertDialog::genPerson()

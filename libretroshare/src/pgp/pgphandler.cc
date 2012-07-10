@@ -434,9 +434,23 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 
 	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&cinfo, &buf, 0);
+	const unsigned char *passphrase = NULL ;
 
-   if(ops_write_transferable_public_key_from_packet_data(key,armoured,cinfo) != ops_true)
-		return "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." ;
+	if(key->type == OPS_PTAG_CT_PUBLIC_KEY)
+	{
+		if(ops_write_transferable_public_key_from_packet_data(key,armoured,cinfo) != ops_true)
+			return "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." ;
+	}
+	else if(key->type == OPS_PTAG_CT_ENCRYPTED_SECRET_KEY)
+	{
+		if(ops_write_transferable_secret_key_from_packet_data(key,armoured,cinfo) != ops_true)
+			return "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." ;
+	}
+	else
+	{
+		std::cerr << "Unhandled key type " << key->type << std::endl;
+		return "ERROR: Cannot write key. Unhandled key type. " ;
+	}
 
 	ops_writer_close(cinfo) ;
 
@@ -478,6 +492,45 @@ std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include
 	}
 
 	return makeRadixEncodedPGPKey(key) ;
+}
+
+bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& exported_key_id) const
+{
+	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+
+	const ops_keydata_t *pubkey = getPublicKey(exported_key_id) ;
+
+	if(pubkey == NULL)
+	{
+		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": not found in public keyring." << std::endl;
+		return false ;
+	}
+	const ops_keydata_t *seckey = getSecretKey(exported_key_id) ;
+
+	if(seckey == NULL)
+	{
+		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": not found in secret keyring." << std::endl;
+		return false ;
+	}
+
+	FILE *f = fopen(filename.c_str(),"w") ;
+	if(f == NULL)
+	{
+		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": file " << filename << " cannot be written. Please check for permissions, quotas, disk space." << std::endl;
+		return false ;
+	}
+
+	fprintf(f,"%s\n", makeRadixEncodedPGPKey(pubkey).c_str()) ; 
+	fprintf(f,"%s\n", makeRadixEncodedPGPKey(seckey).c_str()) ; 
+
+	fclose(f) ;
+	return true ;
+}
+
+bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& imported_key_id)
+{
+	std::cerr << "Import key not yet implemented!!" << std::endl;
+	return false ;
 }
 
 void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& key)

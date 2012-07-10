@@ -514,6 +514,33 @@ ops_boolean_t ops_write_transferable_public_key_from_packet_data(const ops_keyda
 	return rtn;
 }
 
+ops_boolean_t ops_write_transferable_secret_key_from_packet_data(const ops_keydata_t *keydata,
+						ops_boolean_t armoured,
+						ops_create_info_t *info)
+{
+	ops_boolean_t rtn = ops_true;
+	unsigned int i=0,j=0;
+
+	if(keydata->type != OPS_PTAG_CT_ENCRYPTED_SECRET_KEY)
+	{
+		fprintf(stderr,"Can only output encrypted secret keys from raw packet data. Current type is %d\n",keydata->type) ;
+		return ops_false ;
+	}
+	if (armoured)
+	{ ops_writer_push_armoured(info, OPS_PGP_PRIVATE_KEY_BLOCK); }
+
+	for(i=0;i<keydata->npackets;++i)
+		if(!ops_write(keydata->packets[i].raw, keydata->packets[i].length, info))
+			return ops_false ;
+
+	if (armoured)
+	{ 
+		writer_info_finalise(&info->errors, &info->winfo);
+		ops_writer_pop(info); 
+	}
+
+	return rtn;
+}
 /**
    \ingroup HighLevel_KeyWrite
 

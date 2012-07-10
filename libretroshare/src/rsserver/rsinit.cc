@@ -708,6 +708,16 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 /**************************** Access Functions for Init Data **************************/
 
+bool RsInit::exportIdentity(const std::string& fname,const std::string& id)
+{
+	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
+}
+
+bool RsInit::importIdentity(const std::string& fname,std::string& id)
+{
+	return AuthGPG::getAuthGPG()->importProfile(fname,id);
+}
+
 bool RsInit::copyGnuPGKeyrings()
 {
 	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;

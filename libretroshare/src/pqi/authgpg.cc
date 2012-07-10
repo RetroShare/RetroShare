@@ -292,14 +292,30 @@ bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, un
 {
 	if(withfingerprint.length() != 40)
 	{
-		std::cerr << "WARNING: Still need to implement signature verification from complete keyring." << std::endl;
+		std::cerr << "AuthGPG::VerifySignature(): no (or dammaged) fingerprint. Nor verifying signature. This is likely to be an unknown peer. fingerprint=\"" << withfingerprint << "\"." << std::endl;
 		return false ;
 	}
 
 	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,PGPFingerprintType(withfingerprint)) ;
 }
 
+bool AuthGPG::exportProfile(const std::string& fname,const std::string& exported_id) 
+{
+	return PGPHandler::exportGPGKeyPair(fname,PGPIdType(exported_id)) ;
+}
 
+bool AuthGPG::importProfile(const std::string& fname,std::string& imported_id)
+{
+	PGPIdType id ;
+
+	if(PGPHandler::importGPGKeyPair(fname,id))
+	{
+		imported_id = id.toStdString() ;
+		return true ;
+	}
+	else
+		return false ;
+}
 
 	
 bool   AuthGPG::active()
