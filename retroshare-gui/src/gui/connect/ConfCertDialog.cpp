@@ -139,7 +139,7 @@ void ConfCertDialog::load()
         return;
     }
 
-	 if(!rsPeers->isKeySupported(mId))
+    if(detail.isOnlyGPGdetail && !rsPeers->isKeySupported(mId))
 	 {
 		 ui.make_friend_button->setEnabled(false) ;
 		 ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
