@@ -357,7 +357,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{
-		std::cerr << "(EE) Cannot encode secret key to memory!!" << std::endl;
+		errString = std::string("(EE) Cannot encode secret key to memory!!") ;
 		return false ;
 	}
 
@@ -367,7 +367,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	if(! ops_keyring_read_from_mem(tmp_secring, ops_false, buf))
 	{
-		std::cerr << "(EE) Cannot re-read key from memory!!" << std::endl;
+		errString = std::string("(EE) Cannot re-read key from memory!!") ;
 		return false ;
 	}
 	ops_teardown_memory_write(cinfo,buf);	// cleanup memory
@@ -391,7 +391,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{
-		std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
+		errString= std::string("Cannot encode secret key to disk!! Disk full? Out of disk quota?") ;
 		return false ;
 	}
 	ops_teardown_file_write(cinfo,fd) ;
@@ -403,7 +403,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	if(!ops_write_transferable_public_key(key, ops_false, cinfo))
 	{
-		std::cerr << "(EE) Cannot encode secret key to memory!!" << std::endl;
+		errString=std::string("Cannot encode secret key to memory!!") ;
 		return false ;
 	}
 	ops_teardown_file_write(cinfo,fd) ;
@@ -480,7 +480,7 @@ const ops_keydata_t *PGPHandler::getPublicKey(const PGPIdType& id) const
 		return ops_keyring_get_key_by_index(_pubring,res->second._key_index) ;
 }
 
-std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include_signatures)
+std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	const ops_keydata_t *key = getPublicKey(id) ;
@@ -529,8 +529,115 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& e
 
 bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& imported_key_id)
 {
-	std::cerr << "Import key not yet implemented!!" << std::endl;
-	return false ;
+	// 1 - Test for file existance
+	//
+	FILE *ftest = fopen(filename.c_str(),"r") ;
+
+	if(ftest == NULL)
+	{
+		std::cerr << "Cannot open file " << filename << " for read. Please check access permissions." << std::endl;
+		return false ;
+	}
+
+	fclose(ftest) ;
+
+	// 2 - Read keyring from supplied file.
+	//
+	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
+
+	if(ops_false == ops_keyring_read_from_file(tmp_keyring, ops_true, filename.c_str()))
+	{
+		std::cerr << "PGPHandler::readKeyRing(): cannot read key file. File corrupted?" << std::endl ;
+		return false ;
+	}
+	if(tmp_keyring->nkeys != 2)
+	{
+		std::cerr << "PGPHandler::importKeyPair(): file does not contain a valid keypair." << std::endl ;
+		return false ;
+	}
+
+	// 3 - Test that keyring contains a valid keypair.
+	//
+	const ops_keydata_t *pubkey = NULL ;
+	const ops_keydata_t *seckey = NULL ;
+
+	if(tmp_keyring->keys[0].type == OPS_PTAG_CT_PUBLIC_KEY) 
+		pubkey = &tmp_keyring->keys[0] ;
+	else if(tmp_keyring->keys[0].type == OPS_PTAG_CT_ENCRYPTED_SECRET_KEY) 
+		seckey = &tmp_keyring->keys[0] ;
+	else
+	{
+		std::cerr << "Unrecognised key type " << tmp_keyring->keys[0].type << " in key file for key #0. Giving up." << std::endl;
+		return false ;
+	}
+	if(tmp_keyring->keys[1].type == OPS_PTAG_CT_PUBLIC_KEY) 
+		pubkey = &tmp_keyring->keys[1] ;
+	else if(tmp_keyring->keys[1].type == OPS_PTAG_CT_ENCRYPTED_SECRET_KEY) 
+		seckey = &tmp_keyring->keys[1] ;
+	else
+	{
+		std::cerr << "Unrecognised key type " << tmp_keyring->keys[1].type << " in key file for key #1. Giving up." << std::endl;
+		return false ;
+	}
+
+	if(pubkey == NULL || seckey == NULL || pubkey == seckey)
+	{
+		std::cerr << "File does not contain a public and a private key. Sorry." << std::endl;
+		return false ;
+	}
+	if(memcmp(pubkey->fingerprint.fingerprint,seckey->fingerprint.fingerprint,KEY_FINGERPRINT_SIZE) != 0)
+	{
+		std::cerr << "Public and private keys do nt have the same fingerprint. Sorry!" << std::endl;
+		return false ;
+	}
+
+	// 4 - now check self-signature for this keypair. For this we build a dummy keyring containing only the key.
+	//
+	ops_validate_result_t *result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
+
+	ops_keyring_t dummy_keyring ;
+	dummy_keyring.nkeys=1 ;
+	dummy_keyring.nkeys_allocated=1 ;
+	dummy_keyring.keys=const_cast<ops_keydata_t*>(pubkey) ;
+
+	if( (!ops_validate_key_signatures(result, const_cast<ops_keydata_t*>(pubkey), &dummy_keyring, cb_get_passphrase))  || result->valid_count != 1 || result->invalid_count > 0)
+	{
+		std::cerr << "Cannot validate self signature for the imported key. Sorry." << std::endl;
+		return false ;
+	}
+	ops_validate_result_free(result);
+
+	// 5 - All test passed. Adding key to keyring.
+	//
+	RsStackMutex mtx(pgphandlerMtx) ;					// lock access to PGP memory structures.
+
+	imported_key_id = PGPIdType(pubkey->key_id) ;
+	
+	if(getSecretKey(imported_key_id) == NULL)
+	{
+		RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+
+		ops_create_info_t *cinfo = NULL ;
+		int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
+
+		if(!ops_write_transferable_secret_key_from_packet_data(seckey,ops_false,cinfo))
+		{
+			std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
+			return false ;
+		}
+		ops_teardown_file_write(cinfo,fd) ;
+	}
+	else
+		std::cerr << "Private key already exists! Not importing it again." << std::endl;
+
+	if(addOrMergeKey(_pubring,_public_keyring_map,pubkey))
+		_pubring_changed = true ;
+
+	// 6 - clean
+	//
+	ops_keyring_free(tmp_keyring) ;
+
+	return true ;
 }
 
 void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& key)
@@ -682,7 +789,7 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 	return true ;
 }
 
-bool PGPHandler::decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) 
+bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const std::string& inputfile) 
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
@@ -799,7 +906,11 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 
 	// 2 - then do the signature.
 
-	bool ret = ops_sign_key(key_to_sign,pkey->key_id,secret_key) ;
+	if(!ops_sign_key(key_to_sign,pkey->key_id,secret_key)) 
+	{
+		std::cerr << "Key signature went wrong. Wrong passwd?" << std::endl;
+		return false ;
+	}
 
 	// 3 - free memory
 	//

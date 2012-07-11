@@ -154,7 +154,7 @@ void GenCertDialog::exportIdentity()
 }
 void GenCertDialog::importIdentity()
 {
-	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("Retroshare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("Retroshare Identity files (*.asc)")) ;
 
 	if(fname.isNull())
 		return ;
