@@ -72,7 +72,7 @@ class PGPHandler
 		bool getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) const ;
 		bool haveSecretKey(const PGPIdType& id) const ;
 
-		bool importGPGKeyPair(const std::string& filename,PGPIdType& imported_id) ;
+		bool importGPGKeyPair(const std::string& filename,PGPIdType& imported_id,std::string& import_error) ;
 		bool exportGPGKeyPair(const std::string& filename,const PGPIdType& exported_id) const ;
 
 		bool availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& ids);

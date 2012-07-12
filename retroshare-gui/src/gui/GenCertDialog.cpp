@@ -160,10 +160,11 @@ void GenCertDialog::importIdentity()
 		return ;
 
 	std::string gpg_id ;
+	std::string err_string ;
 
-	if(!RsInit::importIdentity(fname.toStdString(),gpg_id))
+	if(!RsInit::importIdentity(fname.toStdString(),gpg_id,err_string))
 	{
-		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly. \nCheck that it is a valid GPG key pair.")) ;
+		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
 		return ;
 	}
 

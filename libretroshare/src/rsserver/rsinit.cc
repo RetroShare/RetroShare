@@ -713,9 +713,9 @@ bool RsInit::exportIdentity(const std::string& fname,const std::string& id)
 	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
 }
 
-bool RsInit::importIdentity(const std::string& fname,std::string& id)
+bool RsInit::importIdentity(const std::string& fname,std::string& id,std::string& import_error)
 {
-	return AuthGPG::getAuthGPG()->importProfile(fname,id);
+	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
 }
 
 bool RsInit::copyGnuPGKeyrings()

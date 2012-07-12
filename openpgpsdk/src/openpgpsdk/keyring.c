@@ -426,14 +426,14 @@ const unsigned char* ops_get_user_id(const ops_keydata_t *key, unsigned index)
 */
 
 ops_boolean_t ops_is_key_supported(const ops_keydata_t *keydata)
-    {
-    if(keydata->type == OPS_PTAG_CT_PUBLIC_KEY)
+{
+	if(keydata->type == OPS_PTAG_CT_PUBLIC_KEY)
 	{
-        if(keydata->key.pkey.algorithm == OPS_PKA_RSA)
-            return ops_true;
-        }
-    return ops_false;
-    }
+		if(keydata->key.pkey.algorithm == OPS_PKA_RSA)
+			return ops_true;
+	}
+	return ops_false;
+}
 
 
 /** 
@@ -1046,17 +1046,17 @@ ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean
 
 	int i;
 	for(i=0;i<keyring->nkeys;++i)
-		if(keyring->keys[i].key.pkey.algorithm  == OPS_PKA_RSA)
+//		if(keyring->keys[i].key.pkey.algorithm == OPS_PKA_RSA)
 			if(write_all_packets)
 				ops_write_transferable_public_key_from_packet_data(&keyring->keys[i],armoured,info) ;
 			else
 				ops_write_transferable_public_key(&keyring->keys[i],armoured,info) ;
-		else
-		{
-			fprintf(stdout, "ops_write_keyring: not writing key. Algorithm not handled: ") ;
-			ops_print_public_keydata(&keyring->keys[i]);
-			fprintf(stdout, "\n") ;
-		}
+//		else
+//		{
+//			fprintf(stdout, "ops_write_keyring: not writing key. Algorithm not handled: ") ;
+//			ops_print_public_keydata(&keyring->keys[i]);
+//			fprintf(stdout, "\n") ;
+//		}
 
 	ops_writer_close(info);
 	ops_create_info_delete(info);

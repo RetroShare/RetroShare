@@ -304,11 +304,11 @@ bool AuthGPG::exportProfile(const std::string& fname,const std::string& exported
 	return PGPHandler::exportGPGKeyPair(fname,PGPIdType(exported_id)) ;
 }
 
-bool AuthGPG::importProfile(const std::string& fname,std::string& imported_id)
+bool AuthGPG::importProfile(const std::string& fname,std::string& imported_id,std::string& import_error)
 {
 	PGPIdType id ;
 
-	if(PGPHandler::importGPGKeyPair(fname,id))
+	if(PGPHandler::importGPGKeyPair(fname,id,import_error))
 	{
 		imported_id = id.toStdString() ;
 		return true ;

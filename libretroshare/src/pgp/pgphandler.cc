@@ -527,15 +527,17 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& e
 	return true ;
 }
 
-bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& imported_key_id)
+bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& imported_key_id,std::string& import_error)
 {
+	import_error = "" ;
+
 	// 1 - Test for file existance
 	//
 	FILE *ftest = fopen(filename.c_str(),"r") ;
 
 	if(ftest == NULL)
 	{
-		std::cerr << "Cannot open file " << filename << " for read. Please check access permissions." << std::endl;
+		import_error = "Cannot open file " + filename + " for read. Please check access permissions." ;
 		return false ;
 	}
 
@@ -547,12 +549,14 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 	if(ops_false == ops_keyring_read_from_file(tmp_keyring, ops_true, filename.c_str()))
 	{
-		std::cerr << "PGPHandler::readKeyRing(): cannot read key file. File corrupted?" << std::endl ;
+		import_error = "PGPHandler::readKeyRing(): cannot read key file. File corrupted?" ;
 		return false ;
 	}
 	if(tmp_keyring->nkeys != 2)
 	{
-		std::cerr << "PGPHandler::importKeyPair(): file does not contain a valid keypair." << std::endl ;
+		import_error = "PGPHandler::importKeyPair(): file does not contain a valid keypair." ;
+		if(tmp_keyring->nkeys > 2)
+			import_error += "\nMake sure that your key is a RSA key (DSA is not yet supported) and does not contain subkeys (not supported yet).";
 		return false ;
 	}
 
@@ -567,6 +571,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 		seckey = &tmp_keyring->keys[0] ;
 	else
 	{
+		import_error = "Unrecognised key type in key file for key #0. Giving up." ;
 		std::cerr << "Unrecognised key type " << tmp_keyring->keys[0].type << " in key file for key #0. Giving up." << std::endl;
 		return false ;
 	}
@@ -576,18 +581,24 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 		seckey = &tmp_keyring->keys[1] ;
 	else
 	{
+		import_error = "Unrecognised key type in key file for key #1. Giving up." ;
 		std::cerr << "Unrecognised key type " << tmp_keyring->keys[1].type << " in key file for key #1. Giving up." << std::endl;
 		return false ;
 	}
 
 	if(pubkey == NULL || seckey == NULL || pubkey == seckey)
 	{
-		std::cerr << "File does not contain a public and a private key. Sorry." << std::endl;
+		import_error = "File does not contain a public and a private key. Sorry." ;
 		return false ;
 	}
 	if(memcmp(pubkey->fingerprint.fingerprint,seckey->fingerprint.fingerprint,KEY_FINGERPRINT_SIZE) != 0)
 	{
-		std::cerr << "Public and private keys do nt have the same fingerprint. Sorry!" << std::endl;
+		import_error = "Public and private keys do nt have the same fingerprint. Sorry!" ;
+		return false ;
+	}
+	if(pubkey->key.pkey.version != 4)
+	{
+		import_error = "Public key is not version 4. Rejected!" ;
 		return false ;
 	}
 
@@ -602,7 +613,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 	if( (!ops_validate_key_signatures(result, const_cast<ops_keydata_t*>(pubkey), &dummy_keyring, cb_get_passphrase))  || result->valid_count != 1 || result->invalid_count > 0)
 	{
-		std::cerr << "Cannot validate self signature for the imported key. Sorry." << std::endl;
+		import_error = "Cannot validate self signature for the imported key. Sorry." ;
 		return false ;
 	}
 	ops_validate_result_free(result);
@@ -622,13 +633,13 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 		if(!ops_write_transferable_secret_key_from_packet_data(seckey,ops_false,cinfo))
 		{
-			std::cerr << "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" << std::endl;
+			import_error = "(EE) Cannot encode secret key to disk!! Disk full? Out of disk quota?" ;
 			return false ;
 		}
 		ops_teardown_file_write(cinfo,fd) ;
 	}
 	else
-		std::cerr << "Private key already exists! Not importing it again." << std::endl;
+		import_error = "Private key already exists! Not importing it again." ;
 
 	if(addOrMergeKey(_pubring,_public_keyring_map,pubkey))
 		_pubring_changed = true ;

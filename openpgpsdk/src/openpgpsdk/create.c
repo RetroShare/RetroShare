@@ -116,42 +116,54 @@ ops_boolean_t ops_write_user_id(const unsigned char *user_id,
 \ingroup Core_MPI
 */
 static unsigned mpi_length(const BIGNUM *bn)
-    {
-    return 2+(BN_num_bits(bn)+7)/8;
-    }
+{
+	return 2+(BN_num_bits(bn)+7)/8;
+}
 
 static unsigned public_key_length(const ops_public_key_t *key)
-    {
-    switch(key->algorithm)
+{
+	switch(key->algorithm)
 	{
-    case OPS_PKA_RSA:
-	return mpi_length(key->key.rsa.n)+mpi_length(key->key.rsa.e);
+		case OPS_PKA_RSA: return mpi_length(key->key.rsa.n)
+										+mpi_length(key->key.rsa.e);
 
-    default:
-	fprintf(stderr,"Bad algorithm type in key: %d\n",key->algorithm) ;
-	assert(!"unknown key algorithm");
+		case OPS_PKA_DSA: return mpi_length(key->key.dsa.p)
+										+mpi_length(key->key.dsa.q)
+										+mpi_length(key->key.dsa.g)
+										+mpi_length(key->key.dsa.y);
+		case OPS_PKA_ELGAMAL:
+								return mpi_length(key->key.elgamal.p)
+										+mpi_length(key->key.elgamal.g)
+										+mpi_length(key->key.elgamal.y) ;
+
+		default:
+			fprintf(stderr,"Bad algorithm type in key: %d\n",key->algorithm) ;
+			assert(!"unknown key algorithm");
 	}
-    /* not reached */
-    return 0;
-    }
+	/* not reached */
+	return 0;
+}
 
 static unsigned secret_key_length(const ops_secret_key_t *key)
-    {
-    int l;
+{
+	int l;
 
-    switch(key->public_key.algorithm)
+	switch(key->public_key.algorithm)
 	{
-    case OPS_PKA_RSA:
-	l=mpi_length(key->key.rsa.d)+mpi_length(key->key.rsa.p)
-	    +mpi_length(key->key.rsa.q)+mpi_length(key->key.rsa.u);
-	break;
+		case OPS_PKA_RSA: l=mpi_length(key->key.rsa.d)
+								 +mpi_length(key->key.rsa.p)
+								 +mpi_length(key->key.rsa.q)
+								 +mpi_length(key->key.rsa.u);
 
-    default:
-	assert(!"unknown key algorithm");
+		case OPS_PKA_DSA: l=mpi_length(key->key.dsa.x);
+			break;
+
+		default:
+			assert(!"unknown key algorithm");
 	}
 
-    return l+public_key_length(&key->public_key);
-    }
+	return l+public_key_length(&key->public_key);
+}
 
 /** 
  * \ingroup Core_Create
@@ -174,45 +186,44 @@ void ops_fast_create_rsa_public_key(ops_public_key_t *key,time_t time,
  * for verification - the writer doesn't allow them, though */
 static ops_boolean_t write_public_key_body(const ops_public_key_t *key,
 					   ops_create_info_t *info)
-    {
-    if(!(ops_write_scalar(key->version,1,info)
-	 && ops_write_scalar(key->creation_time,4,info)))
-	return ops_false;
+{
+	if(!(ops_write_scalar(key->version,1,info) && ops_write_scalar(key->creation_time,4,info)))
+		return ops_false;
 
-    if(key->version != 4 && !ops_write_scalar(key->days_valid,2,info))
-	return ops_false;
+	if(key->version != 4 && !ops_write_scalar(key->days_valid,2,info))
+		return ops_false;
 
-    if(!ops_write_scalar(key->algorithm,1,info))
-	return ops_false;
+	if(!ops_write_scalar(key->algorithm,1,info))
+		return ops_false;
 
-    switch(key->algorithm)
+	switch(key->algorithm)
 	{
-    case OPS_PKA_DSA:
-	return ops_write_mpi(key->key.dsa.p,info)
-	    && ops_write_mpi(key->key.dsa.q,info)
-	    && ops_write_mpi(key->key.dsa.g,info)
-	    && ops_write_mpi(key->key.dsa.y,info);
+		case OPS_PKA_DSA:
+			return ops_write_mpi(key->key.dsa.p,info)
+				&& ops_write_mpi(key->key.dsa.q,info)
+				&& ops_write_mpi(key->key.dsa.g,info)
+				&& ops_write_mpi(key->key.dsa.y,info);
 
-    case OPS_PKA_RSA:
-    case OPS_PKA_RSA_ENCRYPT_ONLY:
-    case OPS_PKA_RSA_SIGN_ONLY:
-	return ops_write_mpi(key->key.rsa.n,info)
-	    && ops_write_mpi(key->key.rsa.e,info);
+		case OPS_PKA_RSA:
+		case OPS_PKA_RSA_ENCRYPT_ONLY:
+		case OPS_PKA_RSA_SIGN_ONLY:
+			return ops_write_mpi(key->key.rsa.n,info)
+				&& ops_write_mpi(key->key.rsa.e,info);
 
-    case OPS_PKA_ELGAMAL:
-	return ops_write_mpi(key->key.elgamal.p,info)
-	    && ops_write_mpi(key->key.elgamal.g,info)
-	    && ops_write_mpi(key->key.elgamal.y,info);
+		case OPS_PKA_ELGAMAL:
+			return ops_write_mpi(key->key.elgamal.p,info)
+				&& ops_write_mpi(key->key.elgamal.g,info)
+				&& ops_write_mpi(key->key.elgamal.y,info);
 
-    default:
-	fprintf(stderr, "Unknown algorithm %d\n", key->algorithm);
-	assert(0);
-	break;
+		default:
+			fprintf(stderr, "Unknown algorithm %d\n", key->algorithm);
+			assert(0);
+			break;
 	}
 
-    /* not reached */
-    return ops_false;
-    }
+	/* not reached */
+	return ops_false;
+}
 
 /* Note that we support v3 keys here because they're needed for
  * for verification - the writer doesn't allow them, though */
@@ -372,8 +383,8 @@ static ops_boolean_t write_secret_key_body(const ops_secret_key_t *key,
 
 	switch(key->public_key.algorithm)
 	{
-		//    case OPS_PKA_DSA:
-		//	return ops_write_mpi(key->key.dsa.x,info);
+		case OPS_PKA_DSA:
+			return ops_write_mpi(key->key.dsa.x,info);
 
 		case OPS_PKA_RSA:
 		case OPS_PKA_RSA_ENCRYPT_ONLY:
@@ -632,19 +643,19 @@ ops_boolean_t ops_write_transferable_secret_key(const ops_keydata_t *keydata, co
  */
 ops_boolean_t ops_write_struct_public_key(const ops_public_key_t *key,
 					  ops_create_info_t *info)
-    {
-    assert(key->version == 4);
+{
+	assert(key->version == 4);
 
-    if(key->algorithm != OPS_PKA_RSA)
-	 {
-		 fprintf(stderr,"\nUnhandled key algorithm %d\n",key->algorithm);
-		 return ops_false ;
-	 }
+	if(key->algorithm != OPS_PKA_RSA)
+	{
+		fprintf(stderr,"\nUnhandled key algorithm %d\n",key->algorithm);
+		return ops_false ;
+	}
 
-    return ops_write_ptag(OPS_PTAG_CT_PUBLIC_KEY,info)
-	&& ops_write_length(1+4+1+public_key_length(key),info)
-	&& write_public_key_body(key,info);
-    }
+	return ops_write_ptag(OPS_PTAG_CT_PUBLIC_KEY,info)
+ 		 && ops_write_length(1+4+1+public_key_length(key),info)
+		 && write_public_key_body(key,info);
+}
 
 /**
  * \ingroup Core_WritePackets

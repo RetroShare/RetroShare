@@ -689,7 +689,7 @@ border: 1px solid #CCCCCC;}</string>
            <item row="0" column="1">
             <widget class="QComboBox" name="genPGPuser">
              <property name="toolTip">
-              <string>Your profile is associated to a GPG key</string>
+              <string>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</string>
              </property>
             </widget>
            </item>
