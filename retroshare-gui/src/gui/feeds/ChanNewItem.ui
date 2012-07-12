@@ -98,9 +98,6 @@ border-radius: 2px;}</string>
           <property name="text">
            <string notr="true">New Channel</string>
           </property>
-          <property name="openExternalLinks">
-           <bool>false</bool>
-          </property>
          </widget>
         </item>
        </layout>
@@ -240,6 +237,15 @@ border-radius: 2px;}</string>
               <property name="text">
                <string notr="true">Description 
  of Channel</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
