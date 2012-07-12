@@ -9,8 +9,25 @@ const uint8_t RsNxsSyncMsgItem::FLAG_REQUEST = 0x001;
 const uint8_t RsNxsSyncMsgItem::FLAG_RESPONSE = 0x002;
 
 const uint8_t RsNxsSyncGrp::FLAG_USE_SYNC_HASH = 0x001;
-
 const uint8_t RsNxsSyncMsg::FLAG_USE_SYNC_HASH = 0x001;
+
+/** transaction state **/
+const uint16_t RsNxsTransac::FLAG_BEGIN_P1 = 0x0001;
+const uint16_t RsNxsTransac::FLAG_BEGIN_P2 = 0x0002;
+const uint16_t RsNxsTransac::FLAG_END_SUCCESS = 0x0004;
+const uint16_t RsNxsTransac::FLAG_CANCEL = 0x0008;
+const uint16_t RsNxsTransac::FLAG_END_FAIL_NUM  = 0x0010;
+const uint16_t RsNxsTransac::FLAG_END_FAIL_TIMEOUT = 0x0020;
+const uint16_t RsNxsTransac::FLAG_END_FAIL_FULL = 0x0040;
+
+
+/** transaction type **/
+const uint16_t RsNxsTransac::FLAG_TYPE_GRP_LIST_RESP = 0x0100;
+const uint16_t RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP = 0x0200;
+const uint16_t RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ = 0x0400;
+const uint16_t RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ = 0x0800;
+const uint16_t RsNxsTransac::FLAG_TYPE_GRPS = 0x1000;
+const uint16_t RsNxsTransac::FLAG_TYPE_MSGS = 0x2000;
 
 
 uint32_t RsNxsSerialiser::size(RsItem *item) {

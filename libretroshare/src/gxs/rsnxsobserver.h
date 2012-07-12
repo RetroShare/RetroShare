@@ -42,7 +42,7 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::vector<RsNxsMsg*> messages) = 0;
+    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages) = 0;
 
     /*!
      * @param messages messages are deleted after function returns

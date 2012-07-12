@@ -60,7 +60,7 @@ class RsNetworkExchangeService
 {
 public:
 
-	RsNetworkExchangeService();
+	RsNetworkExchangeService(){ return;}
 
     /*!
      * Use this to set how far back synchronisation of messages should take place
@@ -107,7 +107,7 @@ public:
      * from peers
      * @param enabled set to false to disable pause, and true otherwise
      */
-    virtual void pauseSynchronisation(bool enabled);
+    virtual void pauseSynchronisation(bool enabled) = 0;
 
 
     /*!

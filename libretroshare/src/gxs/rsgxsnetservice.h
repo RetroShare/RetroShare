@@ -83,12 +83,23 @@ typedef std::map<std::string, TransactionIdMap > TransactionsPeerMap;
 
 
 /*!
- * Resource use
+ * This class implements the RsNetWorkExchangeService
+ * using transactions to handle synchrnisation of Nxs items between
+ * peers in a network
+ * Transactions requires the maintenance of several states between peers, and whether
+ *
+ * Thus a data structure maintains: peers, and their active transactions
+ * Then for each transaction it needs to be noted if this is an outgoing or incoming transaction
+ * Outgoing transaction are in 3 different states:
+ *   1. START 2. INITIATED 3. SENDING 4. END
+ * Incoming transaction are also in 3 different states
+ *   1. START 2. RECEIVING 3. END
  */
 class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService,
     public p3Config
 {
 public:
+
 
     /*!
      * only one observer is allowed
@@ -98,6 +109,8 @@ public:
      * arrive
      */
     RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsNetMgr* netMgr, RsNxsObserver* nxsObs = NULL);
+
+    virtual ~RsGxsNetService();
 
 public:
 
@@ -147,7 +160,13 @@ public:
      */
     int requestGrp(const std::list<std::string>& grpId, uint8_t hops){ return 0;}
 
+    /* p3Config methods */
 
+public:
+
+    bool	loadList(std::list<RsItem *>& load);
+    bool saveList(bool &cleanup, std::list<RsItem *>&);
+    RsSerialiser *setupSerialiser();
 
 public:
 
@@ -168,12 +187,6 @@ private:
      * items are deemed to be waiting in p3Service item queue
      */
     void recvNxsItemQueue();
-
-    /*!
-     * Processes synchronisation requests. If request is valid this generates
-     * msg/grp response transaction with sending peer
-     */
-    void processSyncRequests();
 
 
     /** S: Transaction processing **/
@@ -224,13 +237,13 @@ private:
      * The cb listener is the owner of the grps
      * @param grps
      */
-    void notifyListenerGrps(std::list<RsNxsGrp*>& grps);
+    //void notifyListenerGrps(std::list<RsNxsGrp*>& grps);
 
     /*!
      * The cb listener is the owner of the msgs
      * @param msgs
      */
-    void notifyListenerMsgs(std::list<RsNxsMsg*>& msgs);
+    //void notifyListenerMsgs(std::list<RsNxsMsg*>& msgs);
 
     /*!
      * @param tr transaction responsible for generating msg request
@@ -263,7 +276,9 @@ private:
 
     /*!
      * Handles an nxs item for group synchronisation
-     * @param item contaims grp sync info
+     * by startin a transaction and sending a list
+     * of groups held by user
+     * @param item contains grp sync info
      */
     void handleRecvSyncGroup(RsNxsSyncGrp* item);
 
@@ -276,6 +291,8 @@ private:
     /** E: item handlers **/
 
 
+    void syncWithPeers();
+
 private:
 
     /*** transactions ***/
@@ -286,7 +303,7 @@ private:
     /// completed transactions
     std::list<NxsTransaction*> mComplTransactions;
 
-    /// transaction id
+    /// transaction id counter
     uint32_t mTransactionN;
 
     /*** transactions ***/
@@ -307,6 +324,9 @@ private:
 
     /// for other members save transactions
     RsMutex mNxsMutex;
+
+    uint32_t mSyncTs;
+    const uint32_t mSYNC_PERIOD;
 
 };
 

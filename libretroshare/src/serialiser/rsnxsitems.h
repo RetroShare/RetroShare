@@ -114,7 +114,7 @@ public:
     static const uint16_t FLAG_TRANS_MASK = 0xf;
     static const uint16_t FLAG_TYPE_MASK = 0xff;
 
-    /** transaction **/
+    /** transaction state **/
     static const uint16_t FLAG_BEGIN_P1;
     static const uint16_t FLAG_BEGIN_P2;
     static const uint16_t FLAG_END_SUCCESS;

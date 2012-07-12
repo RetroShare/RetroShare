@@ -1,7 +1,7 @@
 #ifndef RSDATASERVICE_H
 #define RSDATASERVICE_H
 
-#include "rsgds.h"
+#include "gxs/rsgds.h"
 
 #include "util/retrodb.h"
 
