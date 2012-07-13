@@ -391,15 +391,17 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 			delete *it;
 	}
 
+	bool result = true;
+
 	if(sizeItems == offset)
 		enc_bio->senddata(data, sizeItems);
 	else
-		return false;
+		result = false;
 
 	if(data != NULL)
 		delete[] data;
 
-	return true;
+	return result;
 }
 	
 bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)

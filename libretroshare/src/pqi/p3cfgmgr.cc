@@ -310,6 +310,11 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 				<< fname_backup << " to " << fname << std::endl
 				<< sign_fname_backup << " to " << sign_fname << std::endl;
 #endif
+		if (config_buff)
+			delete[] config_buff;
+		if (sign_buff)
+			delete[] sign_buff;
+
 		return true;
 	}
 
@@ -323,6 +328,9 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3Config::backedUpFileSave()  fopen failed for file: " << fname_backup << std::endl;
 #endif
+			delete[] config_buff;
+			delete[] sign_buff;
+
 			return true;
 		}
 
@@ -755,7 +763,10 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
 
 	if(!signbio->readfromfile(signFname.c_str()))
+	{
+		delete signbio;
 		return false;
+	}
 
 	std::string signatureStored((char *) signbio->memptr(), signbio->memsize());
 
@@ -763,10 +774,10 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	std::string strHash(Hash());
 	AuthSSL::getAuthSSL()->SignData(strHash.c_str(), strHash.length(), signatureRead);
 
+	delete signbio;
+
 	if(signatureRead != signatureStored)
 		return false;
-
-	delete signbio;
 
 	return true;
 }
@@ -884,6 +895,7 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 
 		setHash("");
 
+		delete stream;
 		return false;
 	}
 
@@ -1125,6 +1137,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 		{
 			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + cfg_fname_backup + "\nIs your disc full or out of quota ?");
 			fclose(cfg_file);
+			delete[] buff;
 			return false ;
 		}
 

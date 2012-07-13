@@ -237,13 +237,18 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 
 
 		if(-1 == BinFileInterface::readdata(encryptedData, encrypDataLen))
+		{
+			delete[] encryptedData;
 			return -1;
+		}
 
 		if((encrypDataLen > 0) && (encryptedData != NULL))
 		{
-
 				if(!AuthSSL::getAuthSSL()->decrypt((void*&)(this->data), sizeData, encryptedData, encrypDataLen))
+				{
+					delete[] encryptedData;
 					return -1;
+				}
 
 				haveData = true;
 				delete[] encryptedData;
