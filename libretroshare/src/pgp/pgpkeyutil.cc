@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <util/radix64.h>
-#include "pgpkey.h"
+#include "pgpkeyutil.h"
 
 #include <iostream>
 #include <stdexcept>

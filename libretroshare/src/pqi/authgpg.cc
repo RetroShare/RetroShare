@@ -34,7 +34,7 @@
 #include "pgp/pgphandler.h"
 
 #include <util/rsdir.h>
-#include <util/pgpkey.h>
+#include <pgp/pgpkeyutil.h>
 #include <iostream>
 #include <stdexcept>
 #include <sstream>

@@ -287,7 +287,18 @@ std::string cleanUpCertificate(const std::string& badCertificate,int& error_code
 	while(currBadCertIdx < endCertStartIdx1 && (badCertificate[currBadCertIdx] == '=' || badCertificate[currBadCertIdx] == ' ' || badCertificate[currBadCertIdx] == '\n' ))
 		currBadCertIdx++ ;
 
-	cleanCertificate += "==\n=";
+	switch(cntPerLine % 4)
+	{
+		case 0: break ;
+		case 1: std::cerr<<"Certificate corrupted beyond repair: wrongnumber of chars on last line (n%4=1)"<<std::endl;		
+				  error_code = RS_PEER_CERT_CLEANING_CODE_WRONG_NUMBER;
+				  return badCertificate ;
+		case 2: cleanCertificate += "==" ;
+				  break ;
+		case 3: cleanCertificate += "=" ;
+				  break ;
+	}
+	cleanCertificate += "\n=";
 
 //	if (badCertificate[currBadCertIdx] == '=')
 //	{

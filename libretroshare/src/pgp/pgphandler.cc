@@ -22,7 +22,7 @@ extern "C" {
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
 #include "util/rsdir.h"		
-#include "util/pgpkey.h"
+#include "pgp/pgpkeyutil.h"
 
 //#define DEBUG_PGPHANDLER 1
 
@@ -434,7 +434,6 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 
 	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&cinfo, &buf, 0);
-	const unsigned char *passphrase = NULL ;
 
 	if(key->type == OPS_PTAG_CT_PUBLIC_KEY)
 	{

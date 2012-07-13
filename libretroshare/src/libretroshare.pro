@@ -378,6 +378,7 @@ HEADERS +=	ft/ftchunkmap.h \
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
+			pgp/pgpkeyutil.h \
 			pqi/cleanupxpgp.h \
 			pqi/p3cfgmgr.h \
 			pqi/p3peermgr.h \
@@ -493,7 +494,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsrandom.h \
 			util/pugiconfig.h \
 			util/radix64.h \
-			util/pgpkey.h \
 			util/pugixml.h
 
 SOURCES +=	dbase/cachestrapper.cc \
@@ -518,6 +518,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pgp/pgphandler.cc \
+			pgp/pgpkeyutil.cc \
 			pqi/cleanupxpgp.cc \
 			pqi/p3cfgmgr.cc \
 			pqi/p3peermgr.cc \
@@ -634,7 +635,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
 			util/rsrandom.cc \
-			util/pgpkey.cc \
 			util/pugixml.cc
 
 minimal {
