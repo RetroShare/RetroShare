@@ -204,7 +204,10 @@ void setAuthSSL(AuthSSL *newssl)
 
 void AuthSSLInit()
 {
-	instance_ssl = new AuthSSLimpl();
+	if (instance_ssl == NULL)
+	{
+		instance_ssl = new AuthSSLimpl();
+	}
 }
   
 AuthSSL *AuthSSL::getAuthSSL()

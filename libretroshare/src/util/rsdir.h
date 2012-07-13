@@ -36,6 +36,27 @@ class RsThread;
 
 #include <retroshare/rstypes.h>
 
+#ifndef WINDOWS_SYS
+typedef int rs_lock_handle_t;
+#else
+typedef /*HANDLE*/ void *rs_lock_handle_t;
+#endif
+
+// This is a scope guard on a given file. Works like a mutex. Is blocking.
+// We could do that in another way: derive RsMutex into RsLockFileMutex, and
+// use RsStackMutex on it transparently. Only issue: this will cost little more 
+// because of the multiple inheritance.
+//
+class RsStackFileLock
+{
+	public:
+		RsStackFileLock(const std::string& file_path) ;
+		~RsStackFileLock() ;
+
+	private:
+		rs_lock_handle_t _file_handle ;
+};
+
 namespace RsDirUtil {
 
 std::string 	getTopDir(const std::string&);
@@ -70,6 +91,15 @@ bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size
 
 Sha1CheckSum sha1sum(uint8_t *data,uint32_t size) ;
 
+// Creates a lock file with given path, and returns the lock handle
+// returns:
+// 	0: Success
+// 	1: Another instance already has the lock
+//    2 : Unexpected error
+int createLockFile(const std::string& lock_file_path, rs_lock_handle_t& lock_handle) ;
+
+// Removes the lock file with specified handle.
+void releaseLockFile(rs_lock_handle_t lockHandle) ;
 
 std::wstring 	getWideTopDir(std::wstring);
 std::wstring 	getWideRootDir(std::wstring);

@@ -27,6 +27,7 @@
 // Includes for directory creation.
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/fcntl.h>
 #include <unistd.h>
 
 #include "util/rsdir.h"
@@ -846,6 +847,118 @@ std::string RsDirUtil::makePath(const std::string &path1, const std::string &pat
 	path += path2;
 
 	return path;
+}
+
+int RsDirUtil::createLockFile(const std::string& lock_file_path, rs_lock_handle_t &lock_handle)
+{
+	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+//	Suspended. The user should make sure he's not already using the file descriptor.
+//	if(lock_handle != -1)
+//		close(lock_handle);
+
+	// open the file in write mode, create it if necessary, truncate it (it should be empty)
+	lock_handle = open(lock_file_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+
+	if(lock_handle == -1)
+	{
+		std::cerr << "Could not open lock file " << lock_file_path.c_str() << std::flush;
+		perror(NULL);
+		return 2;
+	}
+
+	// see "man fcntl" for the details, in short: non blocking lock creation on the whole file contents
+	struct flock lockDetails;
+	lockDetails.l_type = F_WRLCK;
+	lockDetails.l_whence = SEEK_SET;
+	lockDetails.l_start = 0;
+	lockDetails.l_len = 0;
+
+	if(fcntl(lock_handle, F_SETLK, &lockDetails) == -1)
+	{
+		int fcntlErr = errno;
+		std::cerr << "Could not request lock on file " << lock_file_path.c_str() << std::flush;
+		perror(NULL);
+
+		// there's no lock so let's release the file handle immediately
+		close(lock_handle);
+		lock_handle = -1;
+
+		if(fcntlErr == EACCES || fcntlErr == EAGAIN)
+			return 1;
+		else
+			return 2;
+	}
+
+	return 0;
+#else
+//	Suspended. The user should make sure he's not already using the file descriptor.
+//
+//	if (lock_handle) {
+//		CloseHandle(lock_handle);
+//	}
+
+	std::wstring wlockFile;
+	librs::util::ConvertUtf8ToUtf16(lock_file_path, wlockFile);
+
+	// open the file in write mode, create it if necessary
+	lock_handle = CreateFile(wlockFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+
+	if (lock_handle == INVALID_HANDLE_VALUE) 
+	{
+		DWORD lasterror = GetLastError();
+
+		std::cerr << "Could not open lock file " << lock_file_path.c_str() << std::endl;
+		std::cerr << "Last error: " << lasterror << std::endl << std::flush;
+		perror(NULL);
+
+		if (lasterror == ERROR_SHARING_VIOLATION || lasterror == ERROR_ACCESS_DENIED) 
+			return 1;
+		
+		return 2;
+	}
+
+	return 0;
+#endif
+	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+}
+
+void RsDirUtil::releaseLockFile(rs_lock_handle_t lockHandle)
+{
+	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+	if(lockHandle != -1)
+	{
+		close(lockHandle);
+		lockHandle = -1;
+	}
+#else
+	if(lockHandle)
+	{
+		CloseHandle(lockHandle);
+		lockHandle = 0;
+	}
+#endif
+	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+}
+
+RsStackFileLock::RsStackFileLock(const std::string& file_path)
+{
+	while(RsDirUtil::createLockFile(file_path,_file_handle))
+	{
+		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
+#ifdef WINDOWS_SYS
+		Sleep(1000) ;
+#else
+		sleep(1) ;
+#endif
+	}
+	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
+}
+RsStackFileLock::~RsStackFileLock()
+{
+	RsDirUtil::releaseLockFile(_file_handle) ;
+	std::cerr << "Released file lock with handle " << _file_handle << std::endl;
 }
 
 #if 0 // NOT ENABLED YET!

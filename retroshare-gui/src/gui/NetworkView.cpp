@@ -23,8 +23,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
 
-#include <gpgme.h>
-
 #include <deque>
 #include <set>
 #include <iostream>
@@ -160,12 +158,12 @@ void  NetworkView::updateDisplay()
 
 		switch(detail.trustLvl)
 		{
-			case GPGME_VALIDITY_MARGINAL: auth = GraphWidget::ELASTIC_NODE_AUTH_MARGINAL ; break;
-			case GPGME_VALIDITY_FULL:
-			case GPGME_VALIDITY_ULTIMATE: auth = GraphWidget::ELASTIC_NODE_AUTH_FULL ; break;
-			case GPGME_VALIDITY_UNKNOWN:
-			case GPGME_VALIDITY_UNDEFINED: 
-			case GPGME_VALIDITY_NEVER:
+			case RS_TRUST_LVL_MARGINAL: auth = GraphWidget::ELASTIC_NODE_AUTH_MARGINAL ; break;
+			case RS_TRUST_LVL_FULL:
+			case RS_TRUST_LVL_ULTIMATE: auth = GraphWidget::ELASTIC_NODE_AUTH_FULL ; break;
+			case RS_TRUST_LVL_UNKNOWN:
+			case RS_TRUST_LVL_UNDEFINED: 
+			case RS_TRUST_LVL_NEVER:
 			default: 							auth = GraphWidget::ELASTIC_NODE_AUTH_UNKNOWN ; break ;
 		}
 

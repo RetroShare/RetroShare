@@ -222,7 +222,7 @@ void ConnectFriendWizard::initializePage(int id)
 			case RS_TRUST_LVL_MARGINAL:
 				trustString = tr("Marginal");
 				break;
-			case RS_TRUST_LVL_NONE:
+			case RS_TRUST_LVL_NEVER:
 				trustString = tr("None");
 				break;
 			default:
@@ -594,10 +594,6 @@ void ConnectFriendWizard::updatePeersList(int index)
 	int row = 0;
 
 	_id_boxes.clear();
-
-#ifdef FRIEND_WIZARD_DEBUG
-	std::cerr << "FofPage::updatePeersList() updating peers list with index=" << index << std::endl;
-#endif
 
 	// We have to use this trick because signers are given by their names instead of their ids. That's a cause
 	// for some confusion when two peers have the same name.

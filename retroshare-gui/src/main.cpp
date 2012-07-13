@@ -79,22 +79,49 @@ int main(int argc, char *argv[])
 	RsInit::InitRsConfig();
 	int initResult = RsInit::InitRetroShare(argc, argv);
 
+	if(initResult == RS_INIT_NO_KEYRING)	// happens when we already have accounts, but no pgp key. This is when switching to the openpgp-sdk version.
+	{
+		QApplication dummyApp (argc, argv); // needed for QMessageBox
+
+		QMessageBox msgBox;
+		msgBox.setText(QObject::tr("This version of RetroShare is using OpenPGP-SDK. As a side effect, it's not using the system shared PGP keyring, but has it's own keyring shared by all RetroShare instances. <br><br>You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software."));
+		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Ok);
+		msgBox.setWindowIcon(QIcon(":/images/rstray3.png"));
+
+		int ret = msgBox.exec();
+
+		if(ret == QMessageBox::Cancel)
+			return 0 ;
+		if(ret == QMessageBox::Ok)
+		{
+			if(!RsInit::copyGnuPGKeyrings())
+				return 0 ; 
+
+			initResult = RsInit::InitRetroShare(argc, argv);
+		}
+		else
+			initResult = RS_INIT_OK ;
+	}
+
 	if (initResult < 0) {
 		/* Error occured */
 		QApplication dummyApp (argc, argv); // needed for QMessageBox
 		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
 		mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 
-		switch (initResult) {
-		case RS_INIT_AUTH_FAILED:
-			std::cerr << "RsInit::InitRetroShare AuthGPG::InitAuth failed" << std::endl;
-			mb.setText(QObject::tr("Inititialize failed. Wrong or missing installation of gpg."));
-			break;
-		default:
-			/* Unexpected return code */
-			std::cerr << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
-			mb.setText(QObject::tr("An unexpected error occured. Please report 'RsInit::InitRetroShare unexpected return code %1'.").arg(initResult));
-			break;
+		switch (initResult) 
+		{
+			case RS_INIT_AUTH_FAILED:
+				std::cerr << "RsInit::InitRetroShare AuthGPG::InitAuth failed" << std::endl;
+				mb.setText(QObject::tr("Inititialize failed. Wrong or missing installation of gpg."));
+				break;
+			default:
+				/* Unexpected return code */
+				std::cerr << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
+				mb.setText(QObject::tr("An unexpected error occured. Please report 'RsInit::InitRetroShare unexpected return code %1'.").arg(initResult));
+				break;
 		}
 		mb.exec();
 		return 1;

@@ -59,6 +59,7 @@ class PGPKeyManagement
 		//
 		static bool createMinimalKey(const std::string& pgp_certificate,std::string& cleaned_certificate) ;
 
+		static std::string makeArmouredKey(const unsigned char *keydata,size_t key_size,const std::string& version_string) ;
 	private:
 		// Computes the 24 bits CRC checksum necessary to all PGP data.
 		// 
@@ -70,6 +71,10 @@ class PGPKeyManagement
 class PGPKeyParser
 {
 	public:
+		static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY  =  6 ;
+		static const uint8_t PGP_PACKET_TAG_USER_ID     = 13 ;
+		static const uint8_t PGP_PACKET_TAG_SIGNATURE   =  2 ;
+
 		static uint64_t read_KeyID(unsigned char *& data) ;
 		static uint32_t read_125Size(unsigned char *& data) ;
 		static uint32_t read_partialBodyLength(unsigned char *& data) ;

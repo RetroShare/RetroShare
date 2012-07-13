@@ -92,11 +92,7 @@ class RsInitConfig
 		/* for certificate creation */
                 //static std::string gpgPasswd;
 
-#ifndef WINDOWS_SYS
-		static int lockHandle;
-#else
-		static HANDLE lockHandle;
-#endif
+		static rs_lock_handle_t lockHandle;
 
 		/* These fields are needed for login */
                 static std::string loginId;
@@ -151,11 +147,7 @@ static const int SSLPWD_LEN = 64;
 std::list<accountId> RsInitConfig::accountIds;
 std::string RsInitConfig::preferedId;
 
-#ifndef WINDOWS_SYS
-	int RsInitConfig::lockHandle;
-#else
-	HANDLE RsInitConfig::lockHandle;
-#endif
+rs_lock_handle_t RsInitConfig::lockHandle;
 
 std::string RsInitConfig::configDir;
 std::string RsInitConfig::load_cert;
@@ -197,7 +189,7 @@ bool RsInitConfig::udpListenerOnly;
 
 
 /* Uses private class - so must be hidden */
-static bool getAvailableAccounts(std::list<accountId> &ids);
+static bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts);
 static bool checkAccount(std::string accountdir, accountId &id);
 
 static std::string toUpperCase(const std::string& s)
@@ -253,7 +245,7 @@ void RsInit::InitRsConfig()
 
 #ifdef WINDOWS_SYS
 	// test for portable version
-	if (GetFileAttributes (L"gpg.exe") != (DWORD) -1 && GetFileAttributes (L"gpgme-w32spawn.exe") != (DWORD) -1) {
+	if (GetFileAttributes(L"portable") != (DWORD) -1) {
 		// use portable version
 		RsInitConfig::portable = true;
 	}
@@ -611,9 +603,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 */
 	/* create singletons */
 	AuthSSLInit();
-	AuthGPGInit();
-
-        AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
+	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
 	if(!setupBaseDir())
@@ -621,17 +611,31 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
 
+	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;
+	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
+		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
+
+	AuthGPG::init(	pgp_dir + "/retroshare_public_keyring.gpg",
+						pgp_dir + "/retroshare_secret_keyring.gpg",
+						pgp_dir + "/retroshare_trustdb.gpg",
+						pgp_dir + "/lock");
+
 	/* Initialize AuthGPG */
-	if (AuthGPG::getAuthGPG()->InitAuth() == false) {
-		std::cerr << "AuthGPG::InitAuth failed" << std::endl;
-		return RS_INIT_AUTH_FAILED;
-	}
+	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {
+	// 	std::cerr << "AuthGPG::InitAuth failed" << std::endl;
+	// 	return RS_INIT_AUTH_FAILED;
+	// }
 
 	//std::list<accountId> ids;
 	std::list<accountId>::iterator it;
-	getAvailableAccounts(RsInitConfig::accountIds);
+	int failing_accounts ;
 
-        // if a different user id has been passed to cmd line check for that instead
+	getAvailableAccounts(RsInitConfig::accountIds,failing_accounts);
+
+	if(failing_accounts > 0 && RsInitConfig::accountIds.empty())
+		return RS_INIT_NO_KEYRING ;
+
+	// if a different user id has been passed to cmd line check for that instead
 
 	std::string lower_case_user_string = toLowerCase(prefUserString) ;
 	std::string upper_case_user_string = toUpperCase(prefUserString) ;
@@ -669,8 +673,9 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 		{
 			std::cerr << " * Preferred * " << std::endl;
 			userId = it->sslId;
-                        userName = it->pgpName;
+			userName = it->pgpName;
 			existingUser = true;
+			break;
 		}
 	}
 	if (!existingUser)
@@ -701,6 +706,54 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 }
 
 /**************************** Access Functions for Init Data **************************/
+
+bool RsInit::exportIdentity(const std::string& fname,const std::string& id)
+{
+	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
+}
+
+bool RsInit::importIdentity(const std::string& fname,std::string& id,std::string& import_error)
+{
+	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
+}
+
+bool RsInit::copyGnuPGKeyrings()
+{
+	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;
+	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
+		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
+
+	std::string source_public_keyring;
+	std::string source_secret_keyring;
+
+#ifdef WINDOWS_SYS
+	if (RsInit::isPortable())
+	{
+		source_public_keyring = RsInit::RsConfigDirectory() + "/gnupg/pubring.gpg";
+		source_secret_keyring = RsInit::RsConfigDirectory() + "/gnupg/secring.gpg" ;
+	} else {
+		source_public_keyring = RsInitConfig::basedir + "/../gnupg/pubring.gpg" ;
+		source_secret_keyring = RsInitConfig::basedir + "/../gnupg/secring.gpg" ;
+	}
+#else
+	// We need a specific part for MacOS and Linux as well
+	source_public_keyring = RsInitConfig::basedir + "/../.gnupg/pubring.gpg" ;
+	source_secret_keyring = RsInitConfig::basedir + "/../.gnupg/secring.gpg" ;
+#endif
+
+	if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))
+	{
+		std::cerr << "Cannot copy pub keyring " << source_public_keyring << " to destination file " << pgp_dir + "/retroshare_public_keyring.pgp" << std::endl;
+		return false ;
+	}
+	if(!RsDirUtil::copyFile(source_secret_keyring,pgp_dir + "/retroshare_secret_keyring.gpg"))
+	{
+		std::cerr << "Cannot copy sec keyring " << source_secret_keyring << " to destination file " << pgp_dir + "/retroshare_secret_keyring.pgp" << std::endl;
+		return false ;
+	}
+
+	return true ;
+}
 
 bool     RsInit::getPreferedAccountId(std::string &id)
 {
@@ -939,8 +992,9 @@ std::string RsInit::getRetroshareDataDirectory()
 
 
 /* directories with valid certificates in the expected location */
-bool getAvailableAccounts(std::list<accountId> &ids)
+bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts)
 {
+	failing_accounts = 0 ;
 	/* get the directories */
 	std::list<std::string> directories;
 	std::list<std::string>::iterator it;
@@ -1023,6 +1077,8 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 #endif
 			ids.push_back(tmpId);
 		}
+		else
+			++failing_accounts ;
 	}
 	return true;
 }
@@ -1046,35 +1102,39 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	std::string cert_name = basename + "_cert.pem";
 	std::string userName, userId;
 
-        #ifdef AUTHSSL_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
-        #endif
-
+#endif
 	bool ret = false;
 
 	/* check against authmanagers private keys */
-        if (LoadCheckX509(cert_name.c_str(), id.pgpId, id.location, id.sslId))
-        {
-        	#ifdef AUTHSSL_DEBUG
-        	std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
-        	#endif
+	if (LoadCheckX509(cert_name.c_str(), id.pgpId, id.location, id.sslId))
+	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
+		std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
+#endif
 
+		if(! RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail))
+			return false ;
 
-                #ifdef GPG_DEBUG
-                std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
-                #endif
-                RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail);
-                #ifdef GPG_DEBUG
-                std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
-                std::cerr << " email: " << id.pgpEmail << std::endl;
-                #endif
-                ret = true;
-        }
-        else
-        {
-                std::cerr << "GetIssuerName FAILED!" << std::endl;
-                ret = false;
-        }
+		if(!AuthGPG::getAuthGPG()->isKeySupported(id.pgpId))
+			return false ;
+
+		if(!AuthGPG::getAuthGPG()->haveSecretKey(id.pgpId))
+			return false ;
+
+#ifdef GPG_DEBUG
+		std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
+		std::cerr << " email: " << id.pgpEmail << std::endl;
+#endif
+		ret = true;
+	}
+	else
+	{
+		std::cerr << "GetIssuerName FAILED!" << std::endl;
+		ret = false;
+	}
 
 	return ret;
 }
@@ -1101,8 +1161,14 @@ int      RsInit::GetPGPLoginDetails(const std::string& id, std::string &name, st
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
         #endif
 
-        name = AuthGPG::getAuthGPG()->getGPGName(id);
-        email = AuthGPG::getAuthGPG()->getGPGEmail(id);
+		  bool ok = true ;
+        name = AuthGPG::getAuthGPG()->getGPGName(id,&ok);
+		  if(!ok)
+			  return 0 ;
+        email = AuthGPG::getAuthGPG()->getGPGEmail(id,&ok);
+		  if(!ok)
+			  return 0 ;
+
         if (name != "") {
             return 1;
         } else {
@@ -1123,75 +1189,9 @@ int      RsInit::GetPGPLoginDetails(const std::string& id, std::string &name, st
 int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath)
 {
 	const std::string lockFile = accountDir + "/" + "lock";
-
 	lockFilePath = lockFile;
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-	if(RsInitConfig::lockHandle != -1)
-		close(RsInitConfig::lockHandle);
 
-	// open the file in write mode, create it if necessary, truncate it (it should be empty)
-	RsInitConfig::lockHandle = open(lockFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC,
-						S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-
-	if(RsInitConfig::lockHandle == -1)
-	{
-		std::cerr << "Could not open lock file " << lockFile.c_str() << std::flush;
-		perror(NULL);
-		return 2;
-	}
-
-	// see "man fcntl" for the details, in short: non blocking lock creation on the whole file contents
-	struct flock lockDetails;
-	lockDetails.l_type = F_WRLCK;
-	lockDetails.l_whence = SEEK_SET;
-	lockDetails.l_start = 0;
-	lockDetails.l_len = 0;
-
-	if(fcntl(RsInitConfig::lockHandle, F_SETLK, &lockDetails) == -1)
-	{
-		int fcntlErr = errno;
-		std::cerr << "Could not request lock on file " << lockFile.c_str() << std::flush;
-		perror(NULL);
-
-		// there's no lock so let's release the file handle immediately
-		close(RsInitConfig::lockHandle);
-		RsInitConfig::lockHandle = -1;
-
-		if(fcntlErr == EACCES || fcntlErr == EAGAIN)
-			return 1;
-		else
-			return 2;
-	}
-
-	return 0;
-#else
-	if (RsInitConfig::lockHandle) {
-		CloseHandle(RsInitConfig::lockHandle);
-	}
-
-	std::wstring wlockFile;
-	librs::util::ConvertUtf8ToUtf16(lockFile, wlockFile);
-
-	// open the file in write mode, create it if necessary
-	RsInitConfig::lockHandle = CreateFile(wlockFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-
-	if (RsInitConfig::lockHandle == INVALID_HANDLE_VALUE) {
-		DWORD lasterror = GetLastError();
-
-		std::cerr << "Could not open lock file " << lockFile.c_str() << std::endl;
-		std::cerr << "Last error: " << lasterror << std::endl << std::flush;
-		perror(NULL);
-
-		if (lasterror == ERROR_SHARING_VIOLATION || lasterror == ERROR_ACCESS_DENIED) {
-			return 1;
-		}
-		return 2;
-	}
-
-	return 0;
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+	return RsDirUtil::createLockFile(lockFile,RsInitConfig::lockHandle) ;
 }
 
 /*
@@ -1200,21 +1200,7 @@ int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lock
  */
 void	RsInit::UnlockConfigDirectory()
 {
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-	if(RsInitConfig::lockHandle != -1)
-	{
-		close(RsInitConfig::lockHandle);
-		RsInitConfig::lockHandle = -1;
-	}
-#else
-	if(RsInitConfig::lockHandle)
-	{
-		CloseHandle(RsInitConfig::lockHandle);
-		RsInitConfig::lockHandle = NULL;
-	}
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+	RsDirUtil::releaseLockFile(RsInitConfig::lockHandle) ;
 }
 
 
@@ -2101,7 +2087,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
 	ftserver = new ftServer(mPeerMgr, mLinkMgr);
-	ftserver->setP3Interface(pqih); 
+	ftserver->setP3Interface(pqih);
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
 	ftserver->SetupFtServer(&(getNotify()));
@@ -2299,7 +2285,7 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
+	mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
 	mConfigMgr->loadConfiguration();
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);

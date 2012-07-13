@@ -190,5 +190,5 @@ void RsServer::rsGlobalShutDown()
 	mBlogs->join();
 #endif
 
-	AuthGPGExit();
+	AuthGPG::exit();
 }

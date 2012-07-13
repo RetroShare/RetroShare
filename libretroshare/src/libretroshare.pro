@@ -176,6 +176,9 @@ linux-* {
 	INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
 	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
 
+	OPENPGPSDK_DIR = ../../openpgpsdk/src
+	INCLUDEPATH *= $${OPENPGPSDK_DIR}
+
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = g++
@@ -293,6 +296,8 @@ win32 {
 	ZLIB_DIR = ../../../zlib-1.2.3
 	SSL_DIR = ../../../../OpenSSL
 
+	OPENPGPSDK_DIR = ../../openpgpsdk/src
+	INCLUDEPATH *= $${OPENPGPSDK_DIR}
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
@@ -365,6 +370,8 @@ HEADERS +=	ft/ftchunkmap.h \
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
+			pgp/pgphandler.h \
+			pgp/pgpkeyutil.h \
 			pqi/cleanupxpgp.h \
 			pqi/p3cfgmgr.h \
 			pqi/p3peermgr.h \
@@ -483,7 +490,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsrandom.h \
 			util/pugiconfig.h \
 			util/radix64.h \
-			util/pgpkey.h \
 			util/pugixml.h
 
 SOURCES +=	dbase/cachestrapper.cc \
@@ -507,6 +513,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
+			pgp/pgphandler.cc \
+			pgp/pgpkeyutil.cc \
 			pqi/cleanupxpgp.cc \
 			pqi/p3cfgmgr.cc \
 			pqi/p3peermgr.cc \
@@ -626,7 +634,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
 			util/rsrandom.cc \
-			util/pgpkey.cc \
 			util/pugixml.cc
 
 zeroconf {

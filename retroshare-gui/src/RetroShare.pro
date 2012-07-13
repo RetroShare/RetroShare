@@ -26,16 +26,12 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	system(which gpgme-config >/dev/null 2>&1) {
-		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
-	} else {
-		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
-	}
-
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -lssl -lgpgme -lupnp -lixml -lXss -lgnome-keyring
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
@@ -110,6 +106,7 @@ win32 {
 	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht

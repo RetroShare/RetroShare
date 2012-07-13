@@ -18,7 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <gpgme.h>
 
 #include "ConfCertDialog.h"
 
@@ -134,6 +133,17 @@ void ConfCertDialog::load()
         close();
         return;
     }
+
+    if(detail.isOnlyGPGdetail && !rsPeers->isKeySupported(mId))
+	 {
+		 ui.make_friend_button->setEnabled(false) ;
+		 ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
+	 }
+	 else
+	 {
+		 ui.make_friend_button->setEnabled(true) ;
+		 ui.make_friend_button->setToolTip("") ;
+	 }
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));
@@ -252,7 +262,7 @@ void ConfCertDialog::load()
         }
 
         //web of trust
-        if (detail.trustLvl == GPGME_VALIDITY_ULTIMATE) {
+        if (detail.trustLvl == RS_TRUST_LVL_ULTIMATE) {
             //trust is ultimate, it means it's one of our own keys
             ui.web_of_trust_label->setText(tr("Your trust in this peer is ultimate, it's probably a key you own."));
             ui.radioButton_trust_fully->hide();
@@ -262,19 +272,19 @@ void ConfCertDialog::load()
             ui.radioButton_trust_fully->show();
             ui.radioButton_trust_marginnaly->show();
             ui.radioButton_trust_never->show();
-            if (detail.trustLvl == GPGME_VALIDITY_FULL) {
+            if (detail.trustLvl == RS_TRUST_LVL_FULL) {
                 ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
                 ui.radioButton_trust_fully->setChecked(true);
                 ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-48.png"));
                 ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
                 ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-            } else if (detail.trustLvl == GPGME_VALIDITY_MARGINAL) {
+            } else if (detail.trustLvl == RS_TRUST_LVL_MARGINAL) {
                 ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
                 ui.radioButton_trust_marginnaly->setChecked(true);
                 ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-48.png"));
                 ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
                 ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-            } else if (detail.trustLvl == GPGME_VALIDITY_NEVER) {
+            } else if (detail.trustLvl == RS_TRUST_LVL_NEVER) {
                 ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
                 ui.radioButton_trust_never->setChecked(true);
                 ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-48.png"));
@@ -363,13 +373,13 @@ void ConfCertDialog::applyDialog()
     }
 
     //check the GPG trustlvl
-    if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != GPGME_VALIDITY_FULL) {
+    if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != RS_TRUST_LVL_FULL) {
         //trust has changed to fully
-        rsPeers->trustGPGCertificate(detail.id, GPGME_VALIDITY_FULL);
-    } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != GPGME_VALIDITY_MARGINAL) {
-        rsPeers->trustGPGCertificate(detail.id, GPGME_VALIDITY_MARGINAL);
-    } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != GPGME_VALIDITY_NEVER) {
-        rsPeers->trustGPGCertificate(detail.id, GPGME_VALIDITY_NEVER);
+        rsPeers->trustGPGCertificate(detail.id, RS_TRUST_LVL_FULL);
+    } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != RS_TRUST_LVL_MARGINAL) {
+        rsPeers->trustGPGCertificate(detail.id, RS_TRUST_LVL_MARGINAL);
+    } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != RS_TRUST_LVL_NEVER) {
+        rsPeers->trustGPGCertificate(detail.id, RS_TRUST_LVL_NEVER);
     }
 
     if (!detail.isOnlyGPGdetail) {

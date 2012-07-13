@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <util/radix64.h>
-#include "pgpkey.h"
+#include "pgpkeyutil.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -8,10 +8,6 @@
 /****************************/
 /*  #define DEBUG_PGPUTIL 1 */
 /****************************/
-
-#define PGP_PACKET_TAG_PUBLIC_KEY  6
-#define PGP_PACKET_TAG_USER_ID    13 
-#define PGP_PACKET_TAG_SIGNATURE   2 
 
 #define PGP_CRC24_INIT 0xB704CEL
 #define PGP_CRC24_POLY 0x1864CFBL
@@ -85,11 +81,11 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 
 			data += packet_length ;
 
-			if(packet_tag == PGP_PACKET_TAG_PUBLIC_KEY)
+			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_PUBLIC_KEY)
 				public_key = true ;
-			if(packet_tag == PGP_PACKET_TAG_USER_ID)
+			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_USER_ID)
 				user_id = true ;
-			if(packet_tag == PGP_PACKET_TAG_SIGNATURE)
+			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
 				own_signature = true ;
 
 			if(public_key && own_signature && user_id) 
@@ -99,28 +95,7 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 				break ;
 		}
 
-		std::string outstring ;
-		Radix64::encode(keydata,(uint64_t)data - (uint64_t)keydata,outstring) ;
-
-		uint32_t crc = compute24bitsCRC((unsigned char *)keydata,(uint64_t)data - (uint64_t)keydata) ;
-
-		unsigned char tmp[3] = { (crc >> 16) & 0xff, (crc >> 8) & 0xff, crc & 0xff } ;
-		std::string crc_string ;
-		Radix64::encode((const char *)tmp,3,crc_string) ;
-
-#ifdef DEBUG_PGPUTIL
-		std::cerr << "After signature pruning: " << std::endl;
-		std::cerr << outstring << std::endl;
-#endif
-
-		cleaned_certificate = std::string(PGP_CERTIFICATE_START_STRING) + "\n" + version_string + "\n\n" ;
-
-		for(uint32_t i=0;i<outstring.length();i+=64)
-			cleaned_certificate += outstring.substr(i,64) + "\n" ;
-
-		cleaned_certificate += "=" + crc_string + "\n" ;
-		cleaned_certificate += std::string(PGP_CERTIFICATE_END_STRING) + "\n" ;
-
+		cleaned_certificate = makeArmouredKey((unsigned char*)keydata,(uint64_t)data - (uint64_t)keydata,version_string) ;
 		return true ;
 	}
 	catch(std::exception& e)
@@ -129,6 +104,33 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 		std::cerr << "Certificate cleaning failed: " << e.what() << std::endl;
 		return false ;
 	}
+}
+
+std::string PGPKeyManagement::makeArmouredKey(const unsigned char *keydata,size_t key_size,const std::string& version_string)
+{
+	std::string outstring ;
+	Radix64::encode((const char *)keydata,key_size,outstring) ;
+
+	uint32_t crc = compute24bitsCRC((unsigned char *)keydata,key_size) ;
+
+	unsigned char tmp[3] = { (crc >> 16) & 0xff, (crc >> 8) & 0xff, crc & 0xff } ;
+	std::string crc_string ;
+	Radix64::encode((const char *)tmp,3,crc_string) ;
+
+#ifdef DEBUG_PGPUTIL
+	std::cerr << "After signature pruning: " << std::endl;
+	std::cerr << outstring << std::endl;
+#endif
+
+	std::string certificate = std::string(PGP_CERTIFICATE_START_STRING) + "\n" + version_string + "\n\n" ;
+
+	for(uint32_t i=0;i<outstring.length();i+=64)
+		certificate += outstring.substr(i,64) + "\n" ;
+
+	certificate += "=" + crc_string + "\n" ;
+	certificate += std::string(PGP_CERTIFICATE_END_STRING) + "\n" ;
+
+	return certificate ;
 }
 
 uint32_t PGPKeyManagement::compute24bitsCRC(unsigned char *octets, size_t len)
@@ -171,6 +173,7 @@ uint32_t PGPKeyParser::read_125Size(unsigned char *& data)
 		return b1 ;
 
 	uint8_t b2 = *data ;
+	++data ;
 
 	if(b1 < 224)
 		return ((b1-192) << 8) + b2 + 192 ;
