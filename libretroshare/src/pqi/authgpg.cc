@@ -146,6 +146,7 @@ int AuthGPG::GPGInit(const std::string &ownId)
 
 	//force the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
 	privateTrustCertificate(ownId, 5);
+	updateOwnSignatureFlag(mOwnGpgId) ;
 
 	std::cerr << "AuthGPG::GPGInit finished." << std::endl;
 

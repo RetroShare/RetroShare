@@ -90,6 +90,7 @@ class PGPHandler
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const PGPIdType&,bool) ;
+		void updateOwnSignatureFlag(const PGPIdType& ownId) ;
 
 		//bool isKeySupported(const PGPIdType& id) const ;
 

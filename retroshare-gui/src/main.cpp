@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
 		QMessageBox msgBox;
 		msgBox.setText(QObject::tr("This version of RetroShare is using OpenPGP-SDK. As a side effect, it's not using the system shared PGP keyring, but has it's own keyring shared by all RetroShare instances. <br><br>You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software."));
-		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li>Ok to copy the existing keyring from gnupg (safest bet), or </li><li>Close without saving to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare). </li><li>Cancel to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
+		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
 		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Ok);
 		msgBox.setWindowIcon(QIcon(":/images/rstray3.png"));

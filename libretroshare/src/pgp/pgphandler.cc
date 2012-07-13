@@ -41,9 +41,6 @@ ops_keyring_t *PGPHandler::allocateOPSKeyring()
 ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)// __attribute__((unused)))
 {
 	const ops_parser_content_union_t *content=&content_->content;
-	//    validate_key_cb_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
-	//    ops_error_t **errors=ops_parse_cb_get_errors(cbinfo);
-
 	bool prev_was_bad = false ;
 	
 	switch(content_->tag)
@@ -56,9 +53,6 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 																					uid_hint += "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
 
 																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
-//																					if (rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad, passwd) == false) 
-//																						return OPS_RELEASE_MEMORY;
-
 																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
 																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
 																					return OPS_KEEP_MEMORY;
@@ -933,8 +927,20 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 	//
 	PGPCertificateInfo& cert(_public_keyring_map[ id_of_key_to_sign.toStdString() ]) ;
 	validateAndUpdateSignatures(cert,key_to_sign) ;
+	cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ;
 
 	return true ;
+}
+
+void PGPHandler::updateOwnSignatureFlag(const PGPIdType& own_id) 
+{
+	std::string own_id_str = own_id.toStdString();
+
+	for(std::map<std::string,PGPCertificateInfo>::iterator it=_public_keyring_map.begin();it!=_public_keyring_map.end();++it)
+		if(it->second.signers.find(own_id_str) != it->second.signers.end())
+			it->second._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ;
+		else
+			it->second._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ;
 }
 
 bool PGPHandler::getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const
