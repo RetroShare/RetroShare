@@ -397,7 +397,7 @@ bool RsNxsSerialiser::serialiseNxsTrans(RsNxsTransac *item, void *data, uint32_t
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt16(data, *size, &offset, item->transactFlag);
     ok &= setRawUInt32(data, *size, &offset, item->nItems);
-    ok &= setRawUInt32(data, *size, &offset, item->timeout);
+    ok &= setRawUInt32(data, *size, &offset, item->timestamp);
 
 
 
@@ -836,7 +836,7 @@ RsNxsTransac* RsNxsSerialiser::deserialNxsTrans(void *data, uint32_t *size){
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt16(data, *size, &offset, &(item->transactFlag));
     ok &= getRawUInt32(data, *size, &offset, &(item->nItems));
-    ok &= getRawUInt32(data, *size, &offset, &(item->timeout));
+    ok &= getRawUInt32(data, *size, &offset, &(item->timestamp));
 
     if (offset != rssize)
     {
@@ -1155,7 +1155,7 @@ void RsNxsSyncMsgItem::clear()
 void RsNxsTransac::clear(){
     transactFlag = 0;
     nItems = 0;
-    timeout = 0;
+    timestamp = 0;
     transactionNumber = 0;
 }
 
@@ -1289,7 +1289,7 @@ std::ostream& RsNxsTransac::print(std::ostream &out, uint16_t indent){
     printIndent(out , int_Indent);
     out << "nItems: " << nItems << std::endl;
     printIndent(out , int_Indent);
-    out << "timeout: " << timeout << std::endl;
+    out << "timeout: " << timestamp << std::endl;
     printIndent(out , int_Indent);
     out << "transactionNumber: " << transactionNumber << std::endl;
     printIndent(out , int_Indent);

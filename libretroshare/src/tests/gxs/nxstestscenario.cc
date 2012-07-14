@@ -88,8 +88,8 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
         init_item(*msg);
         init_item(msgMeta);
         std::pair<RsNxsMsg*, RsGxsMsgMetaData*> p(msg, msgMeta);
-        int chosen = 0;
 
+        // pick a grp at random to associate the msg to
         const std::string& grpId = grpIdList[rand()%nGrp];
         msgMeta->mMsgId = msg->msgId;
         msgMeta->mGroupId = msg->grpId = grpId;
@@ -144,4 +144,12 @@ RsGeneralDataService* NxsMessageTest::dummyDataService1()
 RsGeneralDataService* NxsMessageTest::dummyDataService2()
 {
 	return mStorePair.second;
+}
+
+void NxsMessageTest::cleanUp()
+{
+	mStorePair.first->resetDataStore();
+	mStorePair.second->resetDataStore();
+
+	return;
 }

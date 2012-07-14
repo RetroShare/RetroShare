@@ -23,10 +23,12 @@ int main()
 	createThread(hub);
 
 	// put this thread to sleep for 10 secs
-	usleep(10000);
+	sleep(10);
 
 	hub.join();
 	CHECK(hub.testsPassed());
+
+	hub.cleanUp();
 
     FINALREPORT("RsGxsNetService Tests");
 

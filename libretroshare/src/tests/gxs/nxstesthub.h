@@ -94,6 +94,7 @@ public:
     void run();
 
 
+    void cleanUp();
 private:
 
     std::pair<p3Service*, p3Service*> mServicePairs;

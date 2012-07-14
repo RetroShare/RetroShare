@@ -545,10 +545,54 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 
 int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool cache){
 
-    RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "", "");
+	if(grp.empty()){
+
+		RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "", "");
+
+		if(c)
+		{
+			std::vector<RsNxsGrp*> grps;
+
+			retrieveGroups(c, grps);
+			std::vector<RsNxsGrp*>::iterator vit = grps.begin();
+
+			for(; vit != grps.end(); vit++)
+			{
+				grp[(*vit)->grpId] = *vit;
+			}
+
+			delete c;
+		}
+
+	}else{
+
+		std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
+
+		for(; mit != grp.end(); mit++)
+		{
+			const std::string& grpId = mit->first;
+			RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "grpId='" + grpId + "'", "");
+
+			if(c)
+			{
+				std::vector<RsNxsGrp*> grps;
+				retrieveGroups(c, grps);
+				std::vector<RsNxsGrp*>::iterator vit = grps.begin();
+
+				for(; vit != grps.end(); vit++)
+				{
+					grp[(*vit)->grpId] = *vit;
+				}
+
+				delete c;
+			}
+		}
+	}
+}
+
+void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){
 
     if(c){
-
         bool valid = c->moveToFirst();
 
         while(valid){
@@ -557,15 +601,10 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
             // only add the latest grp info
             if(g)
             {
-                grp[g->grpId] = g;
+                grps.push_back(g);
             }
             valid = c->moveToNext();
         }
-
-        delete c;
-        return 1;
-    }else{
-        return 0;
     }
 }
 
@@ -704,8 +743,8 @@ int RsDataService::resetDataStore()
     for(; mit != grps.end(); mit++){
         std::string file = mServiceDir + "/" + mit->first;
         std::string msgFile = file + "-msgs";
-        remove(file.c_str());
-        remove(msgFile.c_str());
+        remove(file.c_str()); // remove group file
+        remove(msgFile.c_str()); // and remove messages file
     }
 
     mDb->closeDb();

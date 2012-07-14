@@ -86,7 +86,7 @@ RsSerialType* init_item(RsNxsTransac& rstx){
 
     rstx.clear();
 
-    rstx.timeout = rand()%14141;
+    rstx.timestamp = rand()%14141;
     rstx.transactFlag = rand()%2424;
     rstx.nItems = rand()%33132;
     rstx.transactionNumber = rand()%242112;
@@ -162,7 +162,7 @@ bool operator==(const RsNxsTransac& l, const RsNxsTransac& r){
 
     if(l.transactFlag != r.transactFlag) return false;
     if(l.transactionNumber != r.transactionNumber) return false;
-    if(l.timeout != r.timeout) return false;
+    if(l.timestamp != r.timestamp) return false;
     if(l.nItems != r.nItems) return false;
 
 

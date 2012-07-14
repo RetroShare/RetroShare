@@ -22,7 +22,8 @@ public:
     int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache);
 
     /*!
-     * Retrieves all groups stored (most current versions only)
+     * Retrieves groups, if empty, retrieves all grps, if map is not empty
+     * only retrieve entries
      * @param grp retrieved groups
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
@@ -113,6 +114,13 @@ private:
      * @param msgs messages retrieved from cursor are stored here
      */
     void retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs);
+
+    /*!
+	 * Retrieves all the msg results from a cursor
+	 * @param c cursor to result set
+	 * @param msgs messages retrieved from cursor are stored here
+	 */
+	void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& msgs);
 
     /*!
      * extracts a msg meta item from a cursor at its

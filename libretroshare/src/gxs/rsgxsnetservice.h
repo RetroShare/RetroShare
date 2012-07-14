@@ -31,12 +31,11 @@ public:
     static const uint8_t FLAG_STATE_FAILED;
     static const uint8_t FLAG_STATE_WAITING_CONFIRM;
 
-
     NxsTransaction();
     ~NxsTransaction();
 
     uint32_t mFlag; // current state of transaction
-    uint32_t mTimestamp;
+    uint32_t mTimeOut;
 
     /*!
      * this contains who we
@@ -50,10 +49,14 @@ public:
     std::list<RsNxsItem*> mItems; // items received or sent
 };
 
-
+/*!
+ * An abstraction of the net manager
+ * for retrieving Rs peers whom you will be synchronising
+ * and also you own Id
+ * Useful for testing also (abstracts away Rs's p3NetMgr)
+ */
 class RsNxsNetMgr
 {
-
 
 public:
 
@@ -205,6 +208,18 @@ private:
      */
     void processCompletedTransactions();
 
+    /*!
+     * Process transaction owned/started by user
+     * @param tr transaction to process, ownership stays with callee
+     */
+    void processCompletedOutgoingTrans(NxsTransaction* tr);
+
+    /*!
+     * Process transactions started/owned by other peers
+     * @param tr transaction to process, ownership stays with callee
+     */
+    void processCompletedIncomingTrans(NxsTransaction* tr);
+
 
     /*!
      * Process a transaction item, assumes a general lock
@@ -246,21 +261,46 @@ private:
     //void notifyListenerMsgs(std::list<RsNxsMsg*>& msgs);
 
     /*!
+     * Generates new transaction to send msg requests based on list
+     * of msgs received from peer stored in passed transaction
      * @param tr transaction responsible for generating msg request
      */
 	void genReqMsgTransaction(NxsTransaction* tr);
 
     /*!
+     * Generates new transaction to send grp requests based on list
+     * of grps received from peer stored in passed transaction
      * @param tr transaction responsible for generating grp request
      */
 	void genReqGrpTransaction(NxsTransaction* tr);
 
 	/*!
+	 * Generates new transaction to send msg data based on list
+	 * of grpids received from peer stored in passed transaction
+	 * @param tr transaction responsible for generating grp request
+	 */
+	void genSendMsgsTransaction(NxsTransaction* tr);
+
+	/*!
+	 * Generates new transaction to send grp data based on list
+	 * of grps received from peer stored in passed transaction
+	 * @param tr transaction responsible for generating grp request
+	 */
+	void genSendGrpsTransaction(NxsTransaction* tr);
+
+	/*!
+	 * convenience function to add a transaction to list
 	 * @param tr transaction to add
 	 */
 	bool locked_addTransaction(NxsTransaction* tr);
 
 	void cleanTransactionItems(NxsTransaction* tr) const;
+
+	/*!
+	 *  @param tr the transaction to check for timeout
+	 *  @return false if transaction has timed out, true otherwise
+	 */
+	bool checkTransacTimedOut(NxsTransaction* tr);
 
 	/** E: Transaction processing **/
 
@@ -316,7 +356,11 @@ private:
     RsNxsObserver* mObserver;
     RsGeneralDataService* mDataStore;
     uint16_t mServType;
+
+    // how much time must elapse before a timeout failure
+    // for an active transaction
     uint32_t mTransactionTimeOut;
+
 
     std::string mOwnId;
 

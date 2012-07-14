@@ -111,8 +111,8 @@ class RsNxsTransac : public RsNxsItem {
 
 public:
 
-    static const uint16_t FLAG_TRANS_MASK = 0xf;
-    static const uint16_t FLAG_TYPE_MASK = 0xff;
+    static const uint16_t FLAG_STATE_MASK = 0xff;
+    static const uint16_t FLAG_TYPE_MASK = 0xff00;
 
     /** transaction state **/
     static const uint16_t FLAG_BEGIN_P1;
@@ -140,7 +140,7 @@ public:
 
     uint16_t transactFlag;
     uint32_t nItems;
-    uint32_t timeout;
+    uint32_t timestamp;
 };
 
 /*!

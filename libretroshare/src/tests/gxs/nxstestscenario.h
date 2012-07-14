@@ -24,6 +24,12 @@ public:
     virtual RsGeneralDataService* dummyDataService1() = 0;
     virtual RsGeneralDataService* dummyDataService2() = 0;
 
+    /*!
+     * Call to remove files created
+     * in the test directory
+     */
+    virtual void cleanUp() = 0;
+
 
 };
 
@@ -37,6 +43,12 @@ public:
     std::string getTestName();
     RsGeneralDataService* dummyDataService1();
     RsGeneralDataService* dummyDataService2();
+
+    /*!
+     * Call to remove files created
+     * in the test directory
+     */
+    void cleanUp();
 
 public:
 

@@ -66,9 +66,12 @@ void NxsTestHub::run()
 	netServicePairs.second->join();
 }
 
+void NxsTestHub::cleanUp()
+{
+	mTestScenario->cleanUp();
+}
+
 bool NxsTestHub::testsPassed()
 {
-
-
 	return false;
 }
