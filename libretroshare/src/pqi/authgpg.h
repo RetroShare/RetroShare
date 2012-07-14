@@ -40,7 +40,6 @@
 #define RS_GPG_AUTH_HEADER
 
 #include "util/rswin.h"
-#include <gpgme.h>
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 #include "util/rsthreads.h"
@@ -296,98 +295,4 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		static AuthGPG *_instance ;
 };
 
- /*!
-  *  Sign a key
-  **/
- typedef enum
- {
-   SIGN_START,
-   SIGN_COMMAND,
-   SIGN_UIDS,
-   SIGN_SET_EXPIRE,
-   SIGN_SET_CHECK_LEVEL,
-   SIGN_ENTER_PASSPHRASE,
-   SIGN_CONFIRM,
-   SIGN_QUIT,
-   SIGN_SAVE,
-   SIGN_ERROR
- } SignState;
- 
- 
- /*!
-  *  Change the key ownertrust
-  **/
- typedef enum
- {
-   TRUST_START,
-   TRUST_COMMAND,
-   TRUST_VALUE,
-   TRUST_REALLY_ULTIMATE,
-   TRUST_QUIT,
-   TRUST_SAVE,
-   TRUST_ERROR
- } TrustState;
- 
- 
- 
- /*!
-  * This is the generic data object passed to the
-  * callback function in a gpgme_op_edit operation. 
-  * The contents of this object are modified during 
-  * each callback, to keep track of states, errors 
-  * and other data.
-  */
- class EditParams
- {
- 	public: 
- 	int state;
- 
- 	/*!
- 	 *  The return code of gpgme_op_edit() is the return value of
- 	 * the last invocation of the callback. But returning an error 
- 	 * from the callback does not abort the edit operation, so we 
- 	 * must remember any error.
- 	 */		
- 	gpg_error_t err;
- 	
- 	/// Parameters specific to the key operation
- 	void *oParams;
- 	
- 	EditParams(int state, void *oParams) {
- 		this->state = state;
- 		this->err = gpgme_error(GPG_ERR_NO_ERROR);
- 		this->oParams = oParams;
- 	}
- 			
- };
- 
- /*!
-  *  Data specific to key signing
-  **/
- class SignParams 
- {
- 	public:
- 	
-         std::string checkLvl;
- 
-         SignParams(std::string checkLvl) {
-                 this->checkLvl = checkLvl;
- 	}
- };
- 
- /*!
-  * Data specific to key signing
-  **/
- class TrustParams
- {
-         public:
- 
-         std::string trustLvl;
- 
-         TrustParams(std::string trustLvl) {
-                 this->trustLvl = trustLvl;
-         }
- };
- 
 #endif
-

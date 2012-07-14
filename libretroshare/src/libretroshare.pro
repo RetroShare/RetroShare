@@ -287,19 +287,14 @@ win32 {
 	HEADERS += upnp/upnputil.h
 	SOURCES += upnp/upnputil.c
 
-
 	UPNPC_DIR = ../../../miniupnpc-1.3
-	GPG_ERROR_DIR = ../../../libgpg-error-1.10
-	GPGME_DIR  = ../../../gpgme-1.1.8
 
 	PTHREADS_DIR = ../../../pthreads-w32-2-8-0-release
 	ZLIB_DIR = ../../../zlib-1.2.3
 	SSL_DIR = ../../../../OpenSSL
-
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	INCLUDEPATH *= $${OPENPGPSDK_DIR}
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
 }
 
 

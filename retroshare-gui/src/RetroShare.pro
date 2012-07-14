@@ -108,9 +108,9 @@ win32 {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"../../../lib"
-	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
-#    LIBS += -lws2_32
+#	LIBS += -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
@@ -123,9 +123,7 @@ win32 {
 
 	DEFINES += WINDOWS_SYS
 
-	GPG_ERROR_DIR = ../../../libgpg-error-1.10
-	GPGME_DIR  = ../../../gpgme-1.1.8
-	INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	INCLUDEPATH += .
 }
 
 ##################################### MacOS ######################################

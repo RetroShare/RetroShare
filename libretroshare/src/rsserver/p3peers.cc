@@ -39,8 +39,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <gpgme.h>
-
 const std::string CERT_SSL_ID = "--SSLID--";
 const std::string CERT_LOCATION = "--LOCATION--";
 const std::string CERT_LOCAL_IP = "--LOCAL--";
@@ -63,29 +61,28 @@ RsPeers *rsPeers = NULL;
 
 std::string RsPeerTrustString(uint32_t trustLvl)
 {
-
 	std::string str;
 
 	switch(trustLvl)
 	{
 		default:
-		case GPGME_VALIDITY_UNKNOWN:
-			str = "GPGME_VALIDITY_UNKNOWN";
+		case RS_TRUST_LVL_UNKNOWN:
+			str = "VALIDITY_UNKNOWN";
 			break;
-		case GPGME_VALIDITY_UNDEFINED:
-			str = "GPGME_VALIDITY_UNDEFINED";
+		case RS_TRUST_LVL_UNDEFINED:
+			str = "VALIDITY_UNDEFINED";
 			break;
-		case GPGME_VALIDITY_NEVER:
-			str = "GPGME_VALIDITY_NEVER";
+		case RS_TRUST_LVL_NEVER:
+			str = "VALIDITY_NEVER";
 			break;
-		case GPGME_VALIDITY_MARGINAL:
-			str = "GPGME_VALIDITY_MARGINAL";
+		case RS_TRUST_LVL_MARGINAL:
+			str = "VALIDITY_MARGINAL";
 			break;
-		case GPGME_VALIDITY_FULL:
-			str = "GPGME_VALIDITY_FULL";
+		case RS_TRUST_LVL_FULL:
+			str = "VALIDITY_FULL";
 			break;
-		case GPGME_VALIDITY_ULTIMATE:
-			str = "GPGME_VALIDITY_ULTIMATE";
+		case RS_TRUST_LVL_ULTIMATE:
+			str = "VALIDITY_ULTIMATE";
 			break;
 	}
 	return str;
