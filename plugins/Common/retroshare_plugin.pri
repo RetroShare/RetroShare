@@ -40,20 +40,17 @@ win32 {
 	SOURCES += upnp/upnputil.c
 
 	UPNPC_DIR = ../../../lib/miniupnpc-1.3
-	GPG_ERROR_DIR = ../../../lib/libgpg-error-1.10
-	GPGME_DIR  = ../../../lib/gpgme-1.1.8
-
 	PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
 	ZLIB_DIR = ../../../lib/zlib-1.2.3
 	SSL_DIR = ../../../../OpenSSL
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 
 	PRE_TARGETDEPS += ../../retroshare-gui/src/lib/libretroshare-gui.a
 	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
 
 	LIBS += -L"../../../lib"
-	LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
 	LIBS += -lole32 -lwinmm
