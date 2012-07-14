@@ -177,7 +177,7 @@ linux-* {
 	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
 
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	INCLUDEPATH *= $${OPENPGPSDK_DIR}
+	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
