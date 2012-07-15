@@ -8,15 +8,9 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	system(which gpgme-config >/dev/null 2>&1) {
-		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
-	} else {
-		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
-	}
-
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lgpgme -lupnp -lixml -lgnome-keyring
+	LIBS += -lssl -lupnp -lixml -lgnome-keyring
 }
 
 linux-g++ {
