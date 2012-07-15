@@ -154,6 +154,7 @@ static unsigned secret_key_length(const ops_secret_key_t *key)
 								 +mpi_length(key->key.rsa.p)
 								 +mpi_length(key->key.rsa.q)
 								 +mpi_length(key->key.rsa.u);
+			break ;
 
 		case OPS_PKA_DSA: l=mpi_length(key->key.dsa.x);
 			break;
