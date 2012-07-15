@@ -41,6 +41,11 @@ cd retroshare-0.5/src/libbitdht/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libbitdht/src . 2> /dev/null
 cd ../../..
 #  
+echo Checking out latest snapshot in openpgpsdk...
+cd retroshare-0.5/src/openpgpsdk/
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/openpgpsdk/src . 2> /dev/null
+cd ../../..
+#  
 echo Checking out latest snapshot in libretroshare...
 cd retroshare-0.5/src/libretroshare/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libretroshare/src . 2> /dev/null
@@ -89,6 +94,9 @@ echo "DESTDIR = ../../libbitdht/src/lib/" > /tmp/toto75299
 cat retroshare-0.5/src/libbitdht/libbitdht.pro /tmp/toto75299 > /tmp/toto752992
 cp /tmp/toto752992 retroshare-0.5/src/libbitdht/libbitdht.pro
 
+echo "DESTDIR = ../../openpgpsdk/src/lib/" > /tmp/toto75299
+cat retroshare-0.5/src/openpgpsdk/openpgpsdk.pro /tmp/toto75299 > /tmp/toto752992
+cp /tmp/toto752992 retroshare-0.5/src/openpgpsdk/openpgpsdk.pro
 #cat retroshare-gui-ext.pro >> retroshare-0.5/src/retroshare-gui/retroshare-gui.pro 
 
 #echo Building orig directory...
@@ -103,7 +111,7 @@ mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
 
 cd retroshare-0.5
 
-for i in oneiric karmic lucid maverick natty; do
+for i in precise squeeze oneiric karmic lucid maverick natty; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 

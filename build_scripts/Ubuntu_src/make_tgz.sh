@@ -7,6 +7,8 @@ rm -rf retroshare-0.5/libretroshare/
 
 rm -rf retroshare-0.5/src/libbitdht/*
 rm -rf retroshare-0.5/src/libbitdht/.svn/
+rm -rf retroshare-0.5/src/openpgpsdk/*
+rm -rf retroshare-0.5/src/openpgpsdk/.svn/
 rm -rf retroshare-0.5/src/libretroshare/*
 rm -rf retroshare-0.5/src/libretroshare/.svn/
 rm -rf retroshare-0.5/src/retroshare-gui/*
