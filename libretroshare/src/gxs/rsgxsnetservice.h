@@ -212,13 +212,13 @@ private:
      * Process transaction owned/started by user
      * @param tr transaction to process, ownership stays with callee
      */
-    void processCompletedOutgoingTrans(NxsTransaction* tr);
+    void locked_processCompletedOutgoingTrans(NxsTransaction* tr);
 
     /*!
      * Process transactions started/owned by other peers
      * @param tr transaction to process, ownership stays with callee
      */
-    void processCompletedIncomingTrans(NxsTransaction* tr);
+    void locked_processCompletedIncomingTrans(NxsTransaction* tr);
 
 
     /*!
@@ -240,7 +240,7 @@ private:
      * This retrieves a unique transaction id that
      * can be used in an outgoing transaction
      */
-    uint32_t getTransactionId();
+    uint32_t locked_getTransactionId();
 
     /*!
      * This attempts to push the transaction id counter back if you have
@@ -265,28 +265,28 @@ private:
      * of msgs received from peer stored in passed transaction
      * @param tr transaction responsible for generating msg request
      */
-	void genReqMsgTransaction(NxsTransaction* tr);
+	void locked_genReqMsgTransaction(NxsTransaction* tr);
 
     /*!
      * Generates new transaction to send grp requests based on list
      * of grps received from peer stored in passed transaction
      * @param tr transaction responsible for generating grp request
      */
-	void genReqGrpTransaction(NxsTransaction* tr);
+	void locked_genReqGrpTransaction(NxsTransaction* tr);
 
 	/*!
 	 * Generates new transaction to send msg data based on list
 	 * of grpids received from peer stored in passed transaction
 	 * @param tr transaction responsible for generating grp request
 	 */
-	void genSendMsgsTransaction(NxsTransaction* tr);
+	void locked_genSendMsgsTransaction(NxsTransaction* tr);
 
 	/*!
 	 * Generates new transaction to send grp data based on list
 	 * of grps received from peer stored in passed transaction
 	 * @param tr transaction responsible for generating grp request
 	 */
-	void genSendGrpsTransaction(NxsTransaction* tr);
+	void locked_genSendGrpsTransaction(NxsTransaction* tr);
 
 	/*!
 	 * convenience function to add a transaction to list
@@ -300,7 +300,7 @@ private:
 	 *  @param tr the transaction to check for timeout
 	 *  @return false if transaction has timed out, true otherwise
 	 */
-	bool checkTransacTimedOut(NxsTransaction* tr);
+	bool locked_checkTransacTimedOut(NxsTransaction* tr);
 
 	/** E: Transaction processing **/
 

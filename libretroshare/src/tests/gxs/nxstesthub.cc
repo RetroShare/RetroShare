@@ -3,8 +3,10 @@
 NxsTestHub::NxsTestHub(NxsTestScenario* nts) : mTestScenario(nts)
 {
 
-	netServicePairs.first = new RsGxsNetService(0, mTestScenario->dummyDataService1(), &netMgr1, mTestScenario);
-	netServicePairs.second = new RsGxsNetService(0, mTestScenario->dummyDataService2(), &netMgr2, mTestScenario);
+	netServicePairs.first = new RsGxsNetService(mTestScenario->getServiceType(),
+			mTestScenario->dummyDataService1(), &netMgr1, mTestScenario);
+	netServicePairs.second = new RsGxsNetService(mTestScenario->getServiceType(),
+			mTestScenario->dummyDataService2(), &netMgr2, mTestScenario);
 
 	mServicePairs.first = netServicePairs.first;
 	mServicePairs.second = netServicePairs.second;
@@ -28,7 +30,7 @@ void NxsTestHub::run()
 	while(isRunning()){
 
 		// make thread sleep for a couple secs
-		usleep(300);
+		usleep(3000);
 
 		p3Service* s1 = mServicePairs.first;
 		p3Service* s2 = mServicePairs.second;
@@ -36,11 +38,13 @@ void NxsTestHub::run()
 		RsItem* item = NULL;
 		while((item = s1->send()) != NULL)
 		{
+			item->PeerId("PeerB");
 			send_queue_s1.push_back(item);
 		}
 
 		while((item = s2->send()) != NULL)
 		{
+			item->PeerId("PeerA");
 			send_queue_s2.push_back(item);
 		}
 
@@ -56,7 +60,7 @@ void NxsTestHub::run()
 			send_queue_s2.pop_front();
 		}
 
-		// tick services so nxs net services processe items
+		// tick services so nxs net services process items
 		s1->tick();
 		s2->tick();
 	}

@@ -577,11 +577,13 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
 			{
 				std::vector<RsNxsGrp*> grps;
 				retrieveGroups(c, grps);
-				std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
-				for(; vit != grps.end(); vit++)
+				if(!grps.empty())
 				{
-					grp[(*vit)->grpId] = *vit;
+					RsNxsGrp* ng = grps.front();
+					grp[ng->grpId] = ng;
+				}else{
+					grp.erase(grpId);
 				}
 
 				delete c;

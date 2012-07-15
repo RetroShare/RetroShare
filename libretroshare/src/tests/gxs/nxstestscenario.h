@@ -23,6 +23,7 @@ public:
     virtual std::string getTestName() = 0;
     virtual RsGeneralDataService* dummyDataService1() = 0;
     virtual RsGeneralDataService* dummyDataService2() = 0;
+    virtual uint16_t getServiceType() = 0;
 
     /*!
      * Call to remove files created
@@ -38,9 +39,10 @@ class NxsMessageTest : public NxsTestScenario
 
 public:
 
-	NxsMessageTest();
+	NxsMessageTest(uint16_t servtype);
 	virtual ~NxsMessageTest();
     std::string getTestName();
+    uint16_t getServiceType();
     RsGeneralDataService* dummyDataService1();
     RsGeneralDataService* dummyDataService2();
 
@@ -73,6 +75,7 @@ private:
     std::pair<RsGeneralDataService*, RsGeneralDataService*> mStorePair;
     std::map<std::string, std::vector<RsNxsMsg*> > mPeerMsgs;
     std::map<std::string, std::vector<RsNxsGrp*> > mPeerGrps;
+    uint16_t mServType;
 
 };
 

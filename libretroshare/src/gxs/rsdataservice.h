@@ -23,7 +23,7 @@ public:
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
-     * only retrieve entries
+     * only retrieve entries, if entry cannot be found, it is removed from map
      * @param grp retrieved groups
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code

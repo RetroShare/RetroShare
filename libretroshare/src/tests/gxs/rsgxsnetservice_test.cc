@@ -16,7 +16,7 @@ int main()
 {
 
 	// first setup
-	NxsMessageTest msgTest;
+	NxsMessageTest msgTest(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 	NxsTestHub hub(&msgTest);
 
 	// now get things started

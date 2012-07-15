@@ -9,10 +9,11 @@
 #include "gxs/rsdataservice.h"
 #include "data_support.h"
 
-NxsMessageTest::NxsMessageTest()
+NxsMessageTest::NxsMessageTest(uint16_t servtype)
+: mServType(servtype)
 {
-	mStorePair.first = new RsDataService(".", "dStore1", 0);
-	mStorePair.second = new RsDataService(".", "dStore2", 0);
+	mStorePair.first = new RsDataService(".", "dStore1", mServType);
+	mStorePair.second = new RsDataService(".", "dStore2", mServType);
 
 	setUpDataBases();
 }
@@ -40,6 +41,11 @@ void NxsMessageTest::setUpDataBases()
 	return;
 }
 
+uint16_t NxsMessageTest::getServiceType()
+{
+	return mServType;
+}
+
 void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 {
 
@@ -51,7 +57,7 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 	for(int i = 0; i < nGrp; i++)
 	{
 		std::pair<RsNxsGrp*, RsGxsGrpMetaData*> p;
-	   grp = new RsNxsGrp(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+	   grp = new RsNxsGrp(mServType);
 	   grpMeta = new RsGxsGrpMetaData();
 	   p.first = grp;
 	   p.second = grpMeta;
@@ -83,7 +89,7 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 
     for(int i=0; i<nMsgs; i++)
     {
-        msg = new RsNxsMsg(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+        msg = new RsNxsMsg(mServType);
         msgMeta = new RsGxsMsgMetaData();
         init_item(*msg);
         init_item(msgMeta);
