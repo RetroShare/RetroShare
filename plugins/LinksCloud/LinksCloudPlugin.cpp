@@ -92,7 +92,7 @@ QTranslator* LinksCloudPlugin::qt_translator(QApplication *app, const QString& l
 		return NULL;
 	}
 
-	QTranslator* translator = new QTranslator(app);
+	QTranslator* translator = new QTranslator();
 	if (translator->load(":/lang/LinksCloud_" + languageCode + ".qm")) {
 		return translator;
 	}

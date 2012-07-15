@@ -616,6 +616,79 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BwCtrlWindow</name>
+    <message>
+        <location filename="../gui/bwctrl/BwCtrlWindow.ui" line="+17"/>
+        <source>Bandwidth Control WIndow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>BandWidth Measurements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>ID</source>
+        <translation type="unfinished">ID</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>In (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>InMax (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>InQueue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>InAllocated (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Allocated Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Out (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>OutMax (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>OutQueue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>OutAllowed (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Allowed Recvd</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CalDialog</name>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="+13"/>
@@ -827,7 +900,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanNewItem</name>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.ui" line="+175"/>
+        <location filename="../gui/feeds/ChanNewItem.ui" line="+172"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -1218,7 +1291,7 @@ p, li { white-space: pre-wrap; }
         <translation>Öffentliche Lobbies</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+24"/>
         <source>Create chat lobby</source>
         <translation>Erstelle Chat Lobby</translation>
     </message>
@@ -1903,21 +1976,27 @@ p, li { white-space: pre-wrap; }
         <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+132"/>
-        <location line="+198"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+131"/>
+        <location line="+209"/>
         <location line="+28"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-225"/>
-        <location line="+198"/>
+        <location line="-236"/>
+        <location line="+209"/>
         <location line="+28"/>
         <source>Error : cannot get peer details.</source>
         <translation>Fehler:  Kann Peer Details nicht ermitteln.</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-229"/>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+91"/>
         <source>Your key is signed by : </source>
         <translation>Ihr Schlüssel ist unterzeichnet von: </translation>
     </message>
@@ -2176,7 +2255,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+89"/>
         <source>*** None ***</source>
         <translation>*** Keine ***</translation>
     </message>
@@ -2240,7 +2319,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <location line="+49"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-201"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-197"/>
         <source>Include signatures</source>
         <translation>Signaturen einschließen</translation>
     </message>
@@ -5665,7 +5744,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bestätigen und Schliesen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/connect/FriendRequest.cpp" line="+75"/>
+        <location filename="../gui/connect/FriendRequest.cpp" line="+74"/>
         <location line="+21"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
@@ -6333,7 +6412,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+149"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+197"/>
         <location line="+23"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -6359,7 +6438,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikate (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="+668"/>
+        <location filename="../gui/GenCertDialog.ui" line="+699"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -6369,30 +6448,26 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-66"/>
-        <location line="+45"/>
+        <location line="-82"/>
         <source>Your profile is associated to a GPG key</source>
         <translation>Dein Profil ist mit einem GPG Schlüssel verbunden</translation>
     </message>
     <message>
-        <location line="+131"/>
         <source>Generate New Profile</source>
-        <translation>Generiere neues Profil</translation>
+        <translation type="obsolete">Generiere neues Profil</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+196"/>
         <source>Info</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-121"/>
+        <location line="-95"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location line="-192"/>
-        <location filename="../gui/GenCertDialog.cpp" line="-160"/>
-        <location line="+23"/>
+        <location line="-223"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -6402,17 +6477,40 @@ p, li { white-space: pre-wrap; }
         <translation>Es sieht so aus, als ob Du kein Profile (GPG Schlüssel) besitzt. Bitte fülle die Felder aus und generiere dir ein GPG Schlüssel oder nutze deinen favoritisierten GPG Schlüssel Manager.</translation>
     </message>
     <message>
-        <location line="+19"/>
         <source>Generate a new Profile</source>
-        <translation>Erstelle ein neus Profil</translation>
+        <translation type="obsolete">Erstelle ein neus Profil</translation>
     </message>
     <message>
-        <location line="+35"/>
         <source>Use Profile</source>
-        <translation>Nutze Profil</translation>
+        <translation type="obsolete">Nutze Profil</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+34"/>
+        <source>Generate a new identity</source>
+        <translation>Eine neue Identität erstellen</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Import new identity</source>
+        <translation>Eine Identität importieren</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Export selected identity</source>
+        <translation>Exportiere ausgewählte Identität</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Use identity</source>
+        <translation>Benutze Identität</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
+        <translation>Dein Profil is mit einem GPG Schlüssel verbunden. RetroShare ignoriert aktuell DSA Schlüssel.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Enter here your nickname</source>
         <translation>Gib deinen Spitznamen ein</translation>
     </message>
@@ -6441,21 +6539,26 @@ Diese Information ist für GPG erforderlich, aber du kannst durch Eingabe einer 
     </message>
     <message>
         <location line="+19"/>
-        <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same profile (gpg key).</source>
-        <translation>Nutze einen aussagekräftigen Ort (z.B. home, laptop). Dieses Feld wird genutzt um verschiedene Installationen mit dem selben Schlüssel auseinanderzuhalten.</translation>
+        <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
+        <translation>Nutze einen aussagekräftigen Ort (z.B. home, laptop). Dieses Feld wird genutzt um verschiedene Installationen mit dem selben Identität auseinanderzuhalten.</translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+26"/>
+        <source>Generate New Identity</source>
+        <translation>Neue Identität erstellen</translation>
+    </message>
+    <message>
+        <location line="+92"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Identity&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Neues Profil erstellen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Erstelle eine neue Identitä&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6465,9 +6568,69 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare benutzt GPG Schlüssel für die Identität.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst eine vorhandene Identität (GPG Schlüssel) aus der Liste benutzen oder ein neue mit diesem Dialog erstellen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten mit der selben Identität installieren. Dafür kannst du die ausgewählte Identität exportieren und auf einem anderen Computer importieren und eine neue Identität erstellen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;one with this form.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same identity. For this, just export the&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt; selected identity, and import it on the new computer, then create a new location with it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare benutzt GPG Schlüssel für die Identität.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst ein vorhandenes Identität (GPG Schlüssel) aus der Liste benutzen oder ein neues&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;mit diesem Dialog erstellen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten mit der selben Identität installieren. Dafür kannst du die&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;ausgewählte Identität exportieren und auf einem anderen Computer importieren und eine neue Identität erstellen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same profile (gpg key).</source>
+        <translation type="obsolete">Nutze einen aussagekräftigen Ort (z.B. home, laptop). Dieses Feld wird genutzt um verschiedene Installationen mit dem selben Schlüssel auseinanderzuhalten.</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Neues Profil erstellen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing profile (gpg key), or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same profile (gpg key).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -6477,57 +6640,121 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-62"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-244"/>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"></translation>
+        <translation>[Optional] Sichtbar für deine Freunde und Freunde deiner Freunde.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation type="unfinished"></translation>
+        <translation>[Benötigt] Beispiel: Home, Laptop, ...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"></translation>
+        <translation>[Benötigt] Sichtbar für deine Freunde und Freunde deiner Freunde.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>[Required] This password protects your PGP key.</source>
-        <translation type="unfinished"></translation>
+        <translation>[Benötigt] Dieses Passwort ist mit deinem PGP Schlüssel geschützt.</translation>
     </message>
     <message>
         <location line="+27"/>
-        <location line="+45"/>
+        <location line="+49"/>
         <source>Create new Location</source>
         <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
-        <location line="-44"/>
-        <location line="+45"/>
+        <location line="-48"/>
+        <location line="+49"/>
         <source>Generate new Location</source>
         <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
-        <location line="-44"/>
-        <location line="+45"/>
+        <location line="-48"/>
+        <location line="+49"/>
         <source>Create a new Location</source>
         <translation>Erstelle einen neuen Ort</translation>
     </message>
     <message>
-        <location line="-37"/>
-        <location line="+23"/>
+        <location line="-42"/>
+        <location line="+25"/>
+        <source>Create new Identity</source>
+        <translation>Erstelle neue Identität</translation>
+    </message>
+    <message>
+        <location line="-24"/>
+        <location line="+25"/>
+        <source>Generate new Identity</source>
+        <translation>Generiere neue Identität</translation>
+    </message>
+    <message>
+        <location line="-24"/>
+        <location line="+25"/>
+        <source>Create a new Identity</source>
+        <translation>Erstelle eine neue Identität</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <location line="+15"/>
+        <source>Export Identity</source>
+        <translation>Exportiere Identität</translation>
+    </message>
+    <message>
+        <location line="-15"/>
+        <location line="+15"/>
+        <source>RetroShare Identity files (*.asc)</source>
+        <translation>RetroShare Identität Dateien (*.asc)</translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>Identity saved</source>
+        <translation>Identität gespeichert</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation>Deine Identität wurde erfolgreich gespeichert
+Sie ist verschlüsselt
+
+Du kannst die Identität nun auf einen anderen Computer kopieren
+und den Import zum Laden verwenden</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Identity not saved</source>
+        <translation>Identität nicht gespeichert</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was not saved. An error occured.</source>
+        <translation>Deine Identität wurde nicht gespeichert. Ein Fehler ist aufgetreten.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Identity not loaded</source>
+        <translation>Identität nicht geladen</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was not loaded properly:</source>
+        <translation>Deine Identität wurde erfolgreich geladen:</translation>
+    </message>
+    <message>
         <source>Generate new Profile</source>
-        <translation>Generiere neues Profil</translation>
+        <translation type="obsolete">Generiere neues Profil</translation>
     </message>
     <message>
-        <location line="-22"/>
-        <location line="+23"/>
         <source>Create a new Profile</source>
-        <translation>Erstelle neues Profil</translation>
+        <translation type="obsolete">Erstelle neues Profil</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+54"/>
         <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your GPG password when asked, to sign your new key.</source>
@@ -7730,7 +7957,7 @@ Die folgenden Wege sind möglich:</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+244"/>
+        <location filename="../gui/MainWindow.cpp" line="+250"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
@@ -7773,6 +8000,11 @@ Die folgenden Wege sind möglich:</translation>
         <location line="+8"/>
         <source>DHT Details</source>
         <translation>DHT Details</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bandwidth Details</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+198"/>
@@ -7828,7 +8060,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>%1 Freunde verbunden</translation>
     </message>
     <message>
-        <location line="+739"/>
+        <location line="+748"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
     </message>
@@ -7838,23 +8070,23 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Link ist fehlerhaft.</translation>
     </message>
     <message>
-        <location line="-747"/>
+        <location line="-756"/>
         <source>%1 friend connected</source>
         <translation>%1 Freund verbunden</translation>
     </message>
     <message>
-        <location line="+407"/>
+        <location line="+416"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="+88"/>
-        <location filename="../gui/MainWindow.cpp" line="-793"/>
+        <location filename="../gui/MainWindow.cpp" line="-802"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+826"/>
+        <location filename="../gui/MainWindow.cpp" line="+835"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -7864,7 +8096,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-815"/>
+        <location line="-824"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -7895,7 +8127,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-209"/>
+        <location filename="../gui/MainWindow.cpp" line="-212"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -7915,7 +8147,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Anzeigen/Verbergen</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+30"/>
         <source>&amp;Quit</source>
         <translation>&amp;Schliessen</translation>
     </message>
@@ -7936,7 +8168,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Du hast %1 neue Nachricht</translation>
     </message>
     <message>
-        <location line="-458"/>
+        <location line="-461"/>
         <source>Bandwidth Graph</source>
         <translation>Bandbreiten-Graph</translation>
     </message>
@@ -7951,7 +8183,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+13"/>
+        <location filename="../gui/MainWindow.cpp" line="+16"/>
         <source>Minimize</source>
         <translation>Minimieren</translation>
     </message>
@@ -7961,7 +8193,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Maximieren</translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-138"/>
         <source>Unfinished</source>
         <translation>unfertig</translation>
     </message>
@@ -7971,7 +8203,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+132"/>
+        <location filename="../gui/MainWindow.cpp" line="+135"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -7981,7 +8213,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-180"/>
+        <location filename="../gui/MainWindow.cpp" line="-183"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
@@ -7996,17 +8228,17 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Öffne Nachrichten</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>Applications</source>
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-150"/>
+        <location line="-153"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+930"/>
+        <location line="+942"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Möchtest du RetroShare wirklich beenden?</translation>
     </message>
@@ -8016,7 +8248,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-812"/>
+        <location line="-824"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -9592,7 +9824,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+458"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+413"/>
         <source>Personal signature</source>
         <translation>Persönliche Unterschrift</translation>
     </message>
@@ -9736,7 +9968,7 @@ p, li { white-space: pre-wrap; }
         <translation>Leeren</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-292"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-248"/>
         <source>Deny friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -9766,12 +9998,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+223"/>
+        <location line="+179"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-324"/>
+        <location line="-280"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
     </message>
@@ -9781,7 +10013,7 @@ p, li { white-space: pre-wrap; }
         <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
-        <location line="+400"/>
+        <location line="+356"/>
         <source>yourself</source>
         <translation>selbst</translation>
     </message>
@@ -11390,19 +11622,29 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+85"/>
-        <location line="+124"/>
+        <location filename="../main.cpp" line="+87"/>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation>Diese Version von RetroShare benutzt das OpenPGP-SDK. Der Schlüsselring von GPG4Win wird nicht mehr verwendet, sondern ein eigenen Schlüsselring für alle laufenden Instanzen. &lt;br&gt;&lt;br&gt;Du scheinst keinen solchen Schlüsselring zu besitzen, obwohl Schlüssel von exisitierenden RetroShare Accounts benötigt werden. Vielleicht hast du auch gerade zu dieser Version gewechselt.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
+        <translation>Wähle zwischen:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; um den existierenden Schlüsselring von gnupg zu kopieren (sicherste Wahl), oder&lt;/li&gt;&lt;li&gt;&lt;b&gt;Verwerfen&lt;/b&gt; um mit einem neuen Schlüsselring zu starten (RetroShare legt dir einen neuen Schlüssel an oder du kannst einen vorher gespeicherten Schlüssel verwenden).&lt;/li&gt;&lt;li&gt;&lt;b&gt;Abbrechen&lt;/b&gt; um zu beenden und den Schlüsselring selbst zu kopieren (Du benötigst einige PGP-Kenntnisse&lt;/li&gt;&lt;/ul&gt;</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <location line="+126"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-119"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+113"/>
+        <location line="+114"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -12361,7 +12603,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="+275"/>
+        <location filename="../rshare.cpp" line="+277"/>
         <source>Invalid language code specified: </source>
         <translation>Ungültige Sprach-Codierung ausgewählt: </translation>
     </message>
@@ -12485,7 +12727,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+274"/>
-        <location filename="../gui/SearchDialog.cpp" line="+279"/>
+        <location filename="../gui/SearchDialog.cpp" line="+295"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -12521,13 +12763,13 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+375"/>
-        <location line="+64"/>
+        <location line="+369"/>
+        <location line="+67"/>
         <source>Folder</source>
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+392"/>
+        <location line="+397"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
@@ -12581,7 +12823,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-914"/>
+        <location filename="../gui/SearchDialog.cpp" line="-916"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -14868,7 +15110,7 @@ p, li { white-space: pre-wrap; }
         <translation>Pausiert</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+217"/>
         <source>Transferring</source>
         <translation>Übertrage</translation>
     </message>
@@ -14895,7 +15137,7 @@ vergleichen und korrupte Blöcke erneut herunterladen.
 Bitte habe etwas Geduld!</translation>
     </message>
     <message>
-        <location line="+449"/>
+        <location line="+447"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -14942,7 +15184,7 @@ Bitte habe etwas Geduld!</translation>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-911"/>
+        <location line="-914"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -15014,44 +15256,44 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <location line="+118"/>
-        <location line="+206"/>
+        <location line="+211"/>
         <location line="+187"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-392"/>
-        <location line="+209"/>
+        <location line="-397"/>
+        <location line="+214"/>
         <location line="+184"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-392"/>
-        <location line="+393"/>
+        <location line="-397"/>
+        <location line="+398"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location line="-392"/>
+        <location line="-397"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+218"/>
+        <location line="+223"/>
         <location line="+175"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location line="-390"/>
+        <location line="-395"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+89"/>
         <source>version: </source>
         <translation>Version: </translation>
     </message>
@@ -15061,7 +15303,7 @@ Bitte habe etwas Geduld!</translation>
         <translation>Hochladend</translation>
     </message>
     <message>
-        <location line="-389"/>
+        <location line="-394"/>
         <source>Checking...</source>
         <translation>Überprüfe...</translation>
     </message>
@@ -15456,27 +15698,33 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source> KiB</source>
-        <comment>kibibytes (1024 bytes)</comment>
-        <translation></translation>
+        <source> KB</source>
+        <comment>kilobytes (1024 bytes)</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <source> MiB</source>
-        <comment>mebibytes (1024 kibibytes)</comment>
-        <translation></translation>
+        <source> MB</source>
+        <comment>megabytes (1024 kilobytes)</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <source> GiB</source>
-        <comment>gibibytes (1024 mibibytes)</comment>
-        <translation></translation>
+        <source> GB</source>
+        <comment>gigabytes (1024 megabytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source> TB,</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
-        <source> TiB</source>
-        <comment>tebibytes (1024 gibibytes)</comment>
-        <translation></translation>
+        <source> TB</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+124"/>

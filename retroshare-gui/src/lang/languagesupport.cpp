@@ -170,7 +170,7 @@ LanguageSupport::translate(const QString &languageCode)
   }
 
   /* Install a translator for RetroShare's UI widgets */
-  retroshareTranslator = new QTranslator(rApp);
+  retroshareTranslator = new QTranslator();
   Q_CHECK_PTR(retroshareTranslator);
 
   bool result = true;

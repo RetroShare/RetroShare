@@ -43,6 +43,7 @@
 #include "util/EventReceiver.h"
 #include "gui/RetroShareLink.h"
 #include "gui/SoundManager.h"
+#include "lang/languagesupport.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -56,13 +57,12 @@
 
 int main(int argc, char *argv[])
 { 
+	QApplication *dummyApp = new QApplication(argc, argv); // memory leak in case of an error in main
+
 #ifdef WINDOWS_SYS
-	{
-		/* Set the current directory to the application dir,
-		   because the start dir with autostart from the registry run key is not the exe dir */
-		QApplication app(argc, argv);
-		QDir::setCurrent(QCoreApplication::applicationDirPath());
-	}
+	/* Set the current directory to the application dir,
+	   because the start dir with autostart from the registry run key is not the exe dir */
+	QDir::setCurrent(QCoreApplication::applicationDirPath());
 #endif
 
 	QStringList args = char_array_to_stringlist(argv+1, argc-1);
@@ -75,14 +75,15 @@ int main(int argc, char *argv[])
 	createRsIface(*notify);
 	createRsControl(*rsiface, *notify);
 
+	/* Translate into the desired language */
+	LanguageSupport::translate(LanguageSupport::defaultLanguageCode());
+
 	/* RetroShare Core Objects */
 	RsInit::InitRsConfig();
 	int initResult = RsInit::InitRetroShare(argc, argv);
 
 	if(initResult == RS_INIT_NO_KEYRING)	// happens when we already have accounts, but no pgp key. This is when switching to the openpgp-sdk version.
 	{
-		QApplication dummyApp (argc, argv); // needed for QMessageBox
-
 		QMessageBox msgBox;
 		msgBox.setText(QObject::tr("This version of RetroShare is using OpenPGP-SDK. As a side effect, it's not using the system shared PGP keyring, but has it's own keyring shared by all RetroShare instances. <br><br>You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software."));
 		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
@@ -107,7 +108,6 @@ int main(int argc, char *argv[])
 
 	if (initResult < 0) {
 		/* Error occured */
-		QApplication dummyApp (argc, argv); // needed for QMessageBox
 		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
 		mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 
@@ -133,6 +133,7 @@ int main(int argc, char *argv[])
 	RshareSettings::Create ();
 
 	/* Setup The GUI Stuff */
+	delete dummyApp;
 	Rshare rshare(args, argc, argv, 
 		QString::fromUtf8(RsInit::RsConfigDirectory().c_str()));
 

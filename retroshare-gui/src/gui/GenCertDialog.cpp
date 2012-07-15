@@ -145,7 +145,7 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 
 void GenCertDialog::exportIdentity()
 {
-	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("Retroshare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
 
 	if(fname.isNull())
 		return ;
@@ -160,7 +160,7 @@ void GenCertDialog::exportIdentity()
 }
 void GenCertDialog::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("Retroshare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
 
 	if(fname.isNull())
 		return ;
