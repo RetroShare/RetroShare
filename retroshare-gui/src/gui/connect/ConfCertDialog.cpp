@@ -462,8 +462,5 @@ void ConfCertDialog::showHelpDialog()
 /**< Shows the help browser and displays the given help <b>topic</b>. */
 void ConfCertDialog::showHelpDialog(const QString &topic)
 {
-    static HelpBrowser *helpBrowser = 0;
-    if (!helpBrowser)
-    helpBrowser = new HelpBrowser(this);
-    helpBrowser->showWindow(topic);
+    HelpBrowser::showWindow(topic);
 }

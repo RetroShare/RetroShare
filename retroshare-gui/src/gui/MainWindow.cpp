@@ -1380,10 +1380,7 @@ void MainWindow::showHelpDialog()
 /**< Shows the help browser and displays the given help <b>topic</b>. */
 void MainWindow::showHelpDialog(const QString &topic)
 {
-  static HelpBrowser *helpBrowser = 0;
-  if (!helpBrowser)
-    helpBrowser = new HelpBrowser(this);
-  helpBrowser->showWindow(topic);
+  HelpBrowser::showWindow(topic);
 }
 
 void MainWindow::on_actionQuick_Start_Wizard_activated()

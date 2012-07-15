@@ -50,6 +50,7 @@
 #define ROLE_TOPIC_ID        Qt::UserRole
 #define ROLE_TOPIC_QRC_PATH (Qt::UserRole+1)
 
+static HelpBrowser *helpBrowser = NULL;
 
 /** Constuctor. This will probably do more later */
 HelpBrowser::HelpBrowser(QWidget *parent)
@@ -63,6 +64,10 @@ HelpBrowser::HelpBrowser(QWidget *parent)
 #if !defined(Q_WS_WIN)
   ui.actionClose->setShortcut(QString("Ctrl+W"));
 #endif
+
+  helpBrowser = this;
+
+  setAttribute(Qt::WA_DeleteOnClose, true);
 
   /* Hide Search frame */
   ui.frmFind->setHidden(true);
@@ -101,6 +106,11 @@ HelpBrowser::HelpBrowser(QWidget *parent)
   /* Show the first help topic in the tree */
   ui.treeContents->setCurrentItem(ui.treeContents->topLevelItem(0));
   ui.treeContents->setItemExpanded(ui.treeContents->topLevelItem(0), true);
+}
+
+HelpBrowser::~HelpBrowser()
+{
+  helpBrowser = NULL;
 }
 
 /** Returns the language in which help topics should appear, or English
@@ -438,15 +448,17 @@ HelpBrowser::search()
 
 /** Overrides the default show method */
 void
-HelpBrowser::showWindow(QString topic)
+HelpBrowser::showWindow(const QString &topic)
 {
-  
   /* Bring the window to the top */
-  RWindow::showWindow();
+  if (helpBrowser == NULL) {
+    /*helpBrowser = */new HelpBrowser();
+  }
+  helpBrowser->show();
 
   /* If a topic was specified, then go ahead and display it. */
   if (!topic.isEmpty()) {
-    showTopic(topic);
+    helpBrowser->showTopic(topic);
   }
 }
 

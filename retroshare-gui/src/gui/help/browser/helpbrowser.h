@@ -45,14 +45,15 @@ class HelpBrowser : public RWindow
 {
   Q_OBJECT
 
-public:
+protected:
   /** Default constructor **/
   HelpBrowser(QWidget *parent = 0);
- 
-public slots:
+  virtual ~HelpBrowser();
+
+public:
   /** Overrides the default QWidget::show() */
-  void showWindow(QString topic = QString());
-  
+  static void showWindow(const QString &topic);
+
 private slots:
   /** Called when the user clicks "Find Next" */
   void findNext();
