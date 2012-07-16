@@ -736,19 +736,41 @@ bool RsInit::copyGnuPGKeyrings()
 		source_secret_keyring = RsInitConfig::basedir + "/../gnupg/secring.gpg" ;
 	}
 #else
-	// We need a specific part for MacOS and Linux as well
-	source_public_keyring = RsInitConfig::basedir + "/../.gnupg/pubring.gpg" ;
-	source_secret_keyring = RsInitConfig::basedir + "/../.gnupg/secring.gpg" ;
+	char *env_gnupghome = getenv("GNUPGHOME") ;
+
+	if(env_gnupghome != NULL)
+	{
+		std::cerr << "looking into $GNUPGHOME/" << std::endl;
+
+		source_public_keyring = std::string(env_gnupghome) + "/pubring.gpg" ;
+		source_secret_keyring = std::string(env_gnupghome) + "/secring.gpg" ;
+	}
+	else
+	{
+		char *env_homedir = getenv("HOME") ;
+
+		if(env_homedir != NULL)
+		{
+			std::cerr << "looking into $HOME/.gnupg/" << std::endl;
+			std::string home_dir(env_homedir) ;
+
+			// We need a specific part for MacOS and Linux as well
+			source_public_keyring = home_dir + "/.gnupg/pubring.gpg" ;
+			source_secret_keyring = home_dir + "/.gnupg/secring.gpg" ;
+		}
+		else
+			return false ;
+	}
 #endif
 
 	if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))
 	{
-		std::cerr << "Cannot copy pub keyring " << source_public_keyring << " to destination file " << pgp_dir + "/retroshare_public_keyring.pgp" << std::endl;
+		std::cerr << "Cannot copy pub keyring " << source_public_keyring << " to destination file " << pgp_dir + "/retroshare_public_keyring.gpg. If you believe your keyring is in a different place, please make the copy yourself." << std::endl;
 		return false ;
 	}
 	if(!RsDirUtil::copyFile(source_secret_keyring,pgp_dir + "/retroshare_secret_keyring.gpg"))
 	{
-		std::cerr << "Cannot copy sec keyring " << source_secret_keyring << " to destination file " << pgp_dir + "/retroshare_secret_keyring.pgp" << std::endl;
+		std::cerr << "Cannot copy sec keyring " << source_secret_keyring << " to destination file " << pgp_dir + "/retroshare_secret_keyring.gpg. your keyring is in a different place, please make the copy yourself." << std::endl;
 		return false ;
 	}
 
@@ -2023,19 +2045,19 @@ int RsServer::StartupRetroShare()
 	// NOW WE BUILD THE SECOND STACK.
 	// Create the Second UdpStack... Port should be random (but openable!).
 
-#define MIN_RANDOM_PORT 30000
-#define MAX_RANDOM_PORT 50000
+//#define MIN_RANDOM_PORT 30000
+//#define MAX_RANDOM_PORT 50000
 	
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
 
-#ifdef LOCALNET_TESTING
-	// HACK Proxy Port near Dht Port - For Relay Testing.
-	uint16_t rndport = RsInitConfig::port + 3;
-	sndladdr.sin_port = htons(rndport);
-#else
-	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
-#endif
+// #ifdef LOCALNET_TESTING
+// 	// HACK Proxy Port near Dht Port - For Relay Testing.
+// 	uint16_t rndport = RsInitConfig::port + 3;
+// 	sndladdr.sin_port = htons(rndport);
+// #else
+// 	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+// #endif
 
 #ifdef LOCALNET_TESTING
 
