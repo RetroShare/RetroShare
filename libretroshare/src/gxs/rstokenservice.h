@@ -73,15 +73,63 @@ public:
     virtual ~RsTokenService() { return; }
 
         /* Data Requests */
+
+    /*!
+     * Use this to request group related information
+     * @param token
+     * @param ansType The type of result (e.g. group data, meta, ids)
+     * @param opts
+     * @param groupIds group id to request info for. Leave empty to get info on all groups,
+     * @return
+     */
     virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
+
+    /*!
+     *
+     * @param token
+     * @param ansType
+     * @param opts
+     * @param groupIds
+     * @return
+     */
     virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
+
+    /*!
+     *
+     * @param token
+     * @param ansType
+     * @param opts
+     * @param msgIds
+     * @return
+     */
     virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
-    virtual bool requestGroupSubscribe(uint32_t &token, const std::string &groupId, bool subscribe) = 0;
+
+    /*!
+     *
+     * @param token
+     * @param ansType
+     * @param opts
+     * @param grpId
+     * @return
+     */
+    virtual bool requestGroupSubscribe(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::string &grpId) = 0;
 
         /* Poll */
+
+    /*!
+     *
+     * @param token
+     * @return
+     */
     virtual uint32_t requestStatus(const uint32_t token) = 0;
 
         /* Cancel Request */
+
+    /*!
+     *
+     * @param token
+     * @return
+     */
     virtual bool cancelRequest(const uint32_t &token) = 0;
 
 

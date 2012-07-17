@@ -10,22 +10,7 @@
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
 
-class gxsRequest
-{
-        public:
-        uint32_t token;
-        uint32_t reqTime;
 
-        uint32_t ansType;
-        uint32_t reqType;
-        RsTokReqOptions Options;
-
-        uint32_t status;
-
-        std::list<std::string> inList;
-        std::list<std::string> outList;
-        //std::map<std::string, void *> readyData;
-};
 
 /*!
  * This should form the parent class to \n
@@ -63,6 +48,8 @@ public:
     virtual ~RsGenExchange();
 
 
+    /** S: Observer implementation **/
+
     /*!
      * @param messages messages are deleted after function returns
      */
@@ -73,6 +60,7 @@ public:
      */
     void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
 
+    /** E: Observer implementation **/
 
     /*!
      * This is called by Gxs service runner
