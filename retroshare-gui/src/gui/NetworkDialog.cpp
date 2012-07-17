@@ -32,7 +32,7 @@
 #include "common/vmessagebox.h"
 #include "common/RSTreeWidgetItem.h"
 #include "NetworkDialog.h"
-#include "TrustView.h"
+//#include "TrustView.h"
 #include "NetworkView.h"
 #include "GenCertDialog.h"
 #include "connect/ConfCertDialog.h"
@@ -145,7 +145,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.connecttreeWidget->sortItems( 1, Qt::AscendingOrder );
     ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
 
-    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
+//    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
     ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
     
     ui.showUnvalidKeys->setMinimumWidth(20);
