@@ -62,11 +62,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
     connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
     connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
-    connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
-    connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
-    connect(actionsetAllAsRead, SIGNAL(triggered()), this, SLOT(setAllAsReadClicked()));
-    connect(actionEnable_Auto_Download, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
-
     connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
     /*************** Setup Left Hand Side (List of Channels) ****************/
@@ -88,11 +83,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(), true);
     popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(), false);
     otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(), false);
-
-    QMenu * channeloptsmenu = new QMenu();
-    channeloptsmenu->addAction(actionsetAllAsRead);
-    channeloptsmenu->addAction(actionEnable_Auto_Download);
-    channeloptions_Button->setMenu(channeloptsmenu);
 
     progressLabel->hide();
     progressBar->hide();
@@ -162,6 +152,17 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
     QAction *unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), &contextMnu);
     connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
 
+    QAction *setallasreadchannelAct = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Set all as read" ), &contextMnu);
+    connect( setallasreadchannelAct , SIGNAL( triggered() ), this, SLOT( setAllAsReadClicked() ) );
+
+    bool autoDl = false;
+    rsChannels->channelGetAutoDl(mChannelId, autoDl);
+
+    QAction *autochannelAct = autoDl? (new QAction(QIcon(":/images/redled.png"), tr( "Disable Auto-Download" ), &contextMnu))
+			 									: (new QAction(QIcon(":/images/start.png"),tr( "Enable Auto-Download" ), &contextMnu)) ;
+	 
+    connect( autochannelAct , SIGNAL( triggered() ), this, SLOT( toggleAutoDownload() ) );
+
     QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), &contextMnu);
     connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
@@ -187,11 +188,17 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
         contextMnu.addAction( channeldetailsAct );
         contextMnu.addAction( shareKeyAct );
         contextMnu.addAction( restoreKeysAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( autochannelAct );
+        contextMnu.addAction( setallasreadchannelAct );
     } else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
         contextMnu.addAction( unsubscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
         contextMnu.addAction( restoreKeysAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( autochannelAct );
+        contextMnu.addAction( setallasreadchannelAct );
     } else {
         contextMnu.addAction( subscribechannelAct );
         contextMnu.addSeparator();
@@ -199,6 +206,7 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
         contextMnu.addAction( restoreKeysAct );
     }
 
+	 contextMnu.addSeparator();
     QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
     action->setEnabled(!mChannelId.empty());
 
@@ -471,12 +479,6 @@ void ChannelFeed::updateChannelMsgs()
     ChannelInfo ci;
     if (!rsChannels->getChannelInfo(mChannelId, ci)) {
         postButton->setEnabled(false);
-        subscribeButton->setEnabled(false);
-        unsubscribeButton->setEnabled(false);
-        subscribeButton->hide();
-        unsubscribeButton->hide();
-        actionsetAllAsRead->setEnabled(false);
-        actionEnable_Auto_Download->setEnabled(false);
         nameLabel->setText(tr("No Channel Selected"));
         iconLabel->setPixmap(QPixmap(":/images/channels.png"));
         iconLabel->setEnabled(false);
@@ -501,21 +503,6 @@ void ChannelFeed::updateChannelMsgs()
     /* set Channel name */
     QString cname = QString::fromStdWString(ci.channelName);
     nameLabel->setText(channelStr.arg(cname));
-
-    /* do buttons */
-    if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
-        subscribeButton->setEnabled(false);
-        subscribeButton->hide();
-        unsubscribeButton->show();
-        unsubscribeButton->setEnabled(true);
-        actionsetAllAsRead->setEnabled(true);
-    } else {
-        subscribeButton->setEnabled(true);
-        subscribeButton->show();
-        unsubscribeButton->setEnabled(false);
-        unsubscribeButton->hide();
-        actionsetAllAsRead->setEnabled(false);
-    }
 
     if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
         postButton->setEnabled(true);

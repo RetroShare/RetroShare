@@ -298,100 +298,6 @@ p, li { white-space: pre-wrap; }
             <property name="rightMargin">
              <number>2</number>
             </property>
-            <item row="0" column="4">
-             <widget class="QPushButton" name="unsubscribeButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>26</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Unsubcribe To Channel</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-              </property>
-              <property name="text">
-               <string>Unsubscribe</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QPushButton" name="subscribeButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>26</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>26</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Subscribe To Channel</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-              </property>
-              <property name="text">
-               <string>Subscribe</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/konqsidebar_news16.png</normaloff>:/images/konqsidebar_news16.png</iconset>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="2">
              <spacer name="horizontalSpacer">
               <property name="orientation">
@@ -463,46 +369,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               </property>
              </widget>
             </item>
-            <item row="0" column="5">
-             <widget class="QPushButton" name="channeloptions_Button">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>26</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
          </layout>
@@ -518,7 +384,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
+            <width>395</width>
             <height>16</height>
            </rect>
           </property>
