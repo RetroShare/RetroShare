@@ -21,6 +21,14 @@ qmake libretroshare.pro
 
 mingw32-make
 
+cd ..\..\openpgpsdk\src
+
+mingw32-make clean 
+
+qmake openpgpsdk.pro
+
+mingw32-make
+
 cd ..\..\retroshare-nogui\src
 
 mingw32-make clean 
