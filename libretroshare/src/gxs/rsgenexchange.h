@@ -172,6 +172,14 @@ protected:
 
 private:
 
+    void processRecvdData();
+
+    void processRecvdMessages();
+
+    void processRecvdGroups();
+
+private:
+
     RsMutex mReqMtx;
     std::map<uint32_t, gxsRequest> mRequests;
     RsGxsDataAccess* mDataAccess;

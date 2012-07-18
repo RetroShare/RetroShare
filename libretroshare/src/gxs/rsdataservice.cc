@@ -621,10 +621,10 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         const std::string& grpId = mit->first;
 
         // if vector empty then request all messages
-        const std::set<std::string>& msgIdSet = mit->second;
+        const std::vector<std::string>& msgIdV = mit->second;
         std::vector<RsNxsMsg*> msgSet;
 
-        if(msgIdSet.empty()){
+        if(msgIdV.empty()){
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
 
             if(c)
@@ -634,9 +634,9 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         }else{
 
             // request each grp
-            std::set<std::string>::const_iterator sit = msgIdSet.begin();
+            std::vector<std::string>::const_iterator sit = msgIdV.begin();
 
-            for(; sit!=msgIdSet.end();sit++){
+            for(; sit!=msgIdV.end();sit++){
                 const std::string& msgId = *sit;
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId
                                                + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");

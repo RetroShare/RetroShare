@@ -2,7 +2,7 @@
 #define RSTOKENSERVICE_H
 
 /*
- * libretroshare/src/retroshare: rsidentity.h
+ * libretroshare/src/retroshare: rstokenservice.h
  *
  * RetroShare C++ Interface.
  *
@@ -32,6 +32,10 @@
 
 #include "serialiser/rsgxsitems.h"
 
+typedef std::map<std::string, std::vector<std::string> > GxsMsgReq;
+typedef std::map<std::string, std::vector<std::string> > GxsMsgIdResult;
+typedef std::map<std::string, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
+typedef std::map<std::string, std::vector<RsNxsMsg*> > GxsMsgDataResult;
 
 #define GXS_REQUEST_STATUS_FAILED		0
 #define GXS_REQUEST_STATUS_PENDING		1
@@ -40,14 +44,16 @@
 #define GXS_REQUEST_STATUS_COMPLETE		4
 #define GXS_REQUEST_STATUS_DONE			5 // ONCE ALL DATA RETRIEVED.
 
-#define GXS_REQUEST_TYPE_GROUPS			0x00010000
-#define GXS_REQUEST_TYPE_MSGS			0x00020000
-#define GXS_REQUEST_TYPE_MSGRELATED		0x00040000
+#define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
+#define GXS_REQUEST_TYPE_GROUP_META			0x00020000
+#define GXS_REQUEST_TYPE_GROUP_IDS			0x00040000
+#define GXS_REQUEST_TYPE_MSG_DATA			0x00080000
+#define GXS_REQUEST_TYPE_MSG_META			0x00100000
+#define GXS_REQUEST_TYPE_MSG_IDS 			0x00200000
 
 /*!
  * This class provides useful generic support for GXS style services.
  * I expect much of this will be incorporated into the base GXS.
- *
  */
 class RsTokReqOptions
 {
@@ -55,6 +61,7 @@ public:
     RsTokReqOptions() { mOptions = 0; mBefore = 0; mAfter = 0; }
 
     uint32_t mOptions;
+    uint32_t mReqType;
     time_t   mBefore;
     time_t   mAfter;
 };
@@ -93,16 +100,6 @@ public:
      * @return
      */
     virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
-
-    /*!
-     *
-     * @param token
-     * @param ansType
-     * @param opts
-     * @param msgIds
-     * @return
-     */
-    virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds) = 0;
 
     /*!
      *

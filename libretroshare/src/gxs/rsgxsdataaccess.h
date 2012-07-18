@@ -5,11 +5,6 @@
 #include "rsgds.h"
 
 
-typedef std::map<std::string, std::vector<std::string> > GxsMsgReq;
-typedef std::map<std::string, std::vector<std::string> > GxsMsgIdResult;
-typedef std::map<std::string, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
-typedef std::map<std::string, std::vector<RsNxsMsg*> > GxsMsgDataResult;
-
 class GxsRequest
 {
 
@@ -28,6 +23,7 @@ class GroupMetaReq : public GxsRequest
 {
 
 public:
+	std::list<std::string> mGroupIds;
 	std::list<RsGxsGrpMetaData*> mGroupMetaData;
 };
 
@@ -35,13 +31,25 @@ class GroupIdReq : public GxsRequest
 {
 
 public:
+	std::list<std::string> mGroupIds;
 	std::list<std::string> mGroupIdResult;
 };
+
+class GroupDataReq : public GxsRequest
+{
+
+public:
+	std::list<std::string> mGroupIds;
+	std::list<RsNxsGrp*> mGroupData;
+};
+
 
 class MsgIdReq : public GxsRequest
 {
 
 public:
+
+	GxsMsgReq mMsgIds;
 	GxsMsgIdResult mMsgIdResult;
 };
 
@@ -49,22 +57,19 @@ class MsgMetaReq : public GxsRequest
 {
 
 public:
-	std::map<std::string, std::vector<RsMsgMetaData*> >   mMsgMetaData;
+	GxsMsgReq mMsgIds;
+	GxsMsgMetaResult   mMsgMetaData;
 };
 
 class MsgDataReq : public GxsRequest
 {
 
 public:
+
+	GxsMsgReq mMsgIds;
 	GxsMsgDataResult mMsgData;
 };
 
-class GroupDataReq : public GxsRequest
-{
-
-public:
-	std::list<RsNxsGrp*> mGroupData;
-};
 
 
 class RsGxsDataAccess : public RsTokenService
@@ -95,7 +100,7 @@ public:
      * @param groupIds
      * @return
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq&);
 
     /*!
      * More involved for request of particular information for msg
@@ -171,20 +176,39 @@ private:
 
     /** helper functions to implement token service **/
 
-    bool generateToken(uint32_t &token);
+    /*!
+     * Assigns a token value to passed integer
+     * @param token is assigned a unique token value
+     */
+    void generateToken(uint32_t &token);
     GxsRequest* retrieveRequest(const uint32_t& token);
-    bool storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptions &opts,
-                      const uint32_t &type, const std::list<std::string> &ids);
-    bool storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptions &opts,
-                          const uint32_t &type, const GxsMsgReq& msgIds);
 
-    bool storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptions &opts,
-                          const uint32_t &type, const std::string& grpId);
+    /*!
+     * Add a gxs request to queue
+     * @param req gxs request to add
+     */
+    void storeRequest(GxsRequest* req);
+
+    /*!
+     * convenience function to setting members of request
+     * @param req
+     * @param token
+     * @param ansType
+     * @param opts
+     */
+    void setReq(GxsRequest* req,const uint32_t &token, const uint32_t& ansType, const RsTokReqOptions &opts) const;
+
+    /*!
+     * Remove request for request queue
+     * Request is deleted
+     * @param token the token associated to the request
+     * @return true if token successfully cleared, false if token does not exist
+     */
     bool clearRequest(const uint32_t &token);
 
+
     bool updateRequestStatus(const uint32_t &token, const uint32_t &status);
-    bool updateRequestInList(const uint32_t &token, std::list<std::string> ids);
-    bool updateRequestOutList(const uint32_t &token, std::list<std::string> ids);
+
     bool checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts);
 
             // special ones for testing (not in final design)

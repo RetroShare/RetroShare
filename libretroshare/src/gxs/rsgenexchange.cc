@@ -5,7 +5,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
                                  : mReqMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser)
 {
 
-    mDataAccess = new RsGxsDataAccess(gds, mSerialiser);
+    mDataAccess = new RsGxsDataAccess(gds);
 
 }
 
@@ -26,12 +26,13 @@ RsGenExchange::~RsGenExchange()
 
 void RsGenExchange::tick()
 {
-
+	mDataAccess->processRequests();
 }
 
 
 bool RsGenExchange::getGroupList(const uint32_t &token, std::list<std::string> &groupIds)
 {
+
 
     return false;
 }
