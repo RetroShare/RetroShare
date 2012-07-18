@@ -23,7 +23,7 @@
 #ifndef _GENCERTDIALOG_H
 #define _GENCERTDIALOG_H
 
-//#include "rsiface/rsiface.h"
+#include <retroshare/rstypes.h>
 
 #include "ui_GenCertDialog.h"
 
@@ -45,7 +45,6 @@ private slots:
 	void importIdentity();
 	void exportIdentity();
 	void checkChanged(int i);
-	void infodlg();
         void newGPGKeyGenUiSetup();
 
 private:

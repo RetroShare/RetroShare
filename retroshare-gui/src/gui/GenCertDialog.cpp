@@ -24,7 +24,6 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include "GenCertDialog.h"
-#include "InfoDialog.h"
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -48,7 +47,6 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
   connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
   connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
-  connect(ui.infopushButton,SIGNAL(clicked()), this, SLOT(infodlg()));
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 
@@ -238,7 +236,6 @@ void GenCertDialog::genPerson()
             ui.genPGPuser->hide();
             ui.location_label->hide();
             ui.location_input->hide();
-            ui.infopushButton->hide();
             ui.genButton->hide();
             ui.label_location2->hide();
 //            QMessageBox::StandardButton info = QMessageBox::information(this,
@@ -362,8 +359,3 @@ void GenCertDialog::loadCertificates()
 	}
 }
 
-void GenCertDialog::infodlg()
-{
-    InfoDialog infodialog (this);
-    infodialog.exec ();
-}

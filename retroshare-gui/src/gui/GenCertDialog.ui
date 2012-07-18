@@ -803,34 +803,17 @@ anonymous, you can use a fake email.</string>
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>210</width>
-            <height>22</height>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="infopushButton">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>26</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Info</string>
-          </property>
-          <property name="icon">
-           <iconset resource="images.qrc">
-            <normaloff>:/images/info16.png</normaloff>:/images/info16.png</iconset>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>

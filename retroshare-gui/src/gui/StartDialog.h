@@ -64,7 +64,6 @@ private slots:
 	void notSecureWarning();
 	
   void on_labelProfile_linkActivated(QString link);
-  void on_labelInfo_linkActivated(QString link);
   
 private:
 

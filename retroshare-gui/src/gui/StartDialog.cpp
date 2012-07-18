@@ -22,7 +22,6 @@
 #include <rshare.h>
 #include <retroshare/rsinit.h>
 #include "StartDialog.h"
-#include "InfoDialog.h"
 #include "LogoBar.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -192,12 +191,6 @@ void StartDialog::on_labelProfile_linkActivated(QString /*link*/)
 //    else
 //    return;                    
 
-}
-
-void StartDialog::on_labelInfo_linkActivated(QString /*link*/)
-{
-    InfoDialog infodialog (this);
-    infodialog.exec ();
 }
 
 bool StartDialog::requestedNewCert()
