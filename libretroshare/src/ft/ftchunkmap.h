@@ -185,7 +185,10 @@ class ChunkMap
 		void setChunkCheckingResult(uint32_t chunk_number, bool succeed) ;
 
 		/// returns the current list of chunks to ask for a CRC, and a proposed source for each
-		void getChunksToCheck(std::vector<std::pair<unsigned int, std::list<std::string> > >& chunks_to_ask) ;
+		void getChunksToCheck(std::vector<uint32_t>& chunks_to_ask) ;
+
+		/// Get all available sources for this chunk
+		void getSourcesList(uint32_t chunk_number,std::vector<std::string>& sources) ;
 
 		/// sets all chunks to checking state
 		void forceCheck() ;

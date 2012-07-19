@@ -86,7 +86,7 @@ class ftFileCreator: public ftFileProvider
 		// Looks into the chunkmap for downloaded chunks that have not yet been certified.
 		// For each of them, returns the chunk number and a source peer to ask the CRC to.
 		//
-		void getChunksToCheck(std::vector<std::pair<uint32_t,std::list<std::string> > >& chunks_to_ask) ;
+		void getChunksToCheck(std::vector<uint32_t>& chunks_to_ask) ;
 
 		/* 
 		 * creation functions for FileCreator 
@@ -106,6 +106,10 @@ class ftFileCreator: public ftFileProvider
 
 		// removes the designated file source from the chunkmap.
 		void removeFileSource(const std::string& peer_id) ;
+
+		// Get all available sources for this chunk
+		//
+		void getSourcesList(uint32_t chunk_number,std::vector<std::string>& sources) ;
 
 		// Returns resets the time stamp of the last data receive.
 		time_t lastRecvTimeStamp() ;

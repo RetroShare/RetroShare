@@ -431,7 +431,7 @@ bool ftTransferModule::queryInactive()
 	else
 	{
 		// request for CRCs to ask
-		std::vector<std::pair<uint32_t,std::list<std::string> > > chunks_to_ask ;
+		std::vector<uint32_t> chunks_to_ask ;
 
 #ifdef FT_DEBUG
 		std::cerr << "ftTransferModule::queryInactive() : getting chunks to check." << std::endl;

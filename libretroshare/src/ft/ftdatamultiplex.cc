@@ -499,7 +499,7 @@ bool ftDataMultiplex::recvSingleChunkCrc(const std::string& peerId, const std::s
 	// remove this chunk from the request list as well.
 	
 	Sha1CacheEntry& sha1cache(_cached_sha1maps[hash]) ;
-	std::map<uint32_t,ChunkCheckSumSourceList>::iterator it2(sha1cache._to_ask.find(chunk_number)) ;
+	std::map<uint32_t,std::pair<time_t,ChunkCheckSumSourceList> >::iterator it2(sha1cache._to_ask.find(chunk_number)) ;
 
 	if(it2 != sha1cache._to_ask.end())
 		sha1cache._to_ask.erase(it2) ;
@@ -1146,7 +1146,7 @@ bool ftDataMultiplex::sendCRC32MapRequest(const std::string& peer_id,const std::
 {
 	return mDataSend->sendCRC32MapRequest(peer_id,hash);
 }
-bool ftDataMultiplex::sendSingleChunkCRCRequests(const std::string& hash, const std::vector<std::pair<uint32_t,std::list<std::string> > >& to_ask)
+bool ftDataMultiplex::sendSingleChunkCRCRequests(const std::string& hash, const std::vector<uint32_t>& to_ask)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -1156,10 +1156,8 @@ bool ftDataMultiplex::sendSingleChunkCRCRequests(const std::string& hash, const 
 
 	for(uint32_t i=0;i<to_ask.size();++i)
 	{
-		ChunkCheckSumSourceList& list(ce._to_ask[to_ask[i].first]) ;
-
-		for(std::list<std::string>::const_iterator it(to_ask[i].second.begin());it!=to_ask[i].second.end();++it)
-			list[*it] = 0 ;
+		std::pair<time_t,ChunkCheckSumSourceList>& list(ce._to_ask[to_ask[i]]) ;
+		list.first = 0 ; // set last request time to 0
 	}
 	return true ;
 }
@@ -1171,22 +1169,87 @@ void ftDataMultiplex::handlePendingCrcRequests()
 	time_t now = time(NULL) ;
 	uint32_t n=0 ;
 
+	// Go through the list of currently handled hashes. For each of them,
+	// look for pending chunk crc requests. 
+	// 	- if the last request is too old, re-ask:
+	// 		- ask the file creator about the possible sources for this chunk => returns a list of active sources
+	//			- among active sources, pick the one that has the smallest request time stamp, in the request list.
+	//
+	// With this, only active sources are querried.
+	//
+
 	for(std::map<std::string,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();++it)
-		for(std::map<uint32_t,ChunkCheckSumSourceList>::iterator it2(it->second._to_ask.begin());it2!=it->second._to_ask.end();++it2)
-			for(std::map<std::string,time_t>::iterator it3(it2->second.begin());it3!=it2->second.end();++it3) 
-				if(it3->second + MAX_CHECKING_CHUNK_WAIT_DELAY < now) // do nothing, otherwise, ask again
+		for(std::map<uint32_t,std::pair<time_t,ChunkCheckSumSourceList> >::iterator it2(it->second._to_ask.begin());it2!=it->second._to_ask.end();++it2)
+			if(it2->second.first + MAX_CHECKING_CHUNK_WAIT_DELAY < now)	// is the last request old enough?
+			{
+#ifdef MPLEX_DEBUG
+				std::cerr << "ftDataMultiplex::handlePendingCrcRequests():  Requesting sources for chunk " << it2->first << ", hash " << it->first << std::endl;
+#endif
+				// 0 - ask which sources can be used for this chunk
+				//
+				std::map<std::string,ftClient>::const_iterator it4(mClients.find(it->first)) ;
+
+				if(it4 == mClients.end())
+					continue ;
+
+				std::vector<std::string> sources ;
+				it4->second.mCreator->getSourcesList(it2->first,sources) ;
+
+				// 1 - go through all sources. Take the oldest one.
+				//
+
+				std::string best_source ;
+				time_t oldest_timestamp = now ;
+
+				for(uint32_t i=0;i<sources.size();++i)
 				{
 #ifdef MPLEX_DEBUG
-					std::cerr << "ftDataMultiplex::handlePendingCrcRequests(): Asking crc of chunk " << it2->first << " to peer " << it3->first << " for hash " << it->first << std::endl;
+					std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    Examining source " << sources[i] << std::endl;
 #endif
-					mDataSend->sendSingleChunkCRCRequest(it3->first,it->first,it2->first);
-					it3->second = now ;
+					std::map<std::string,time_t>::const_iterator it3(it2->second.second.find(sources[i])) ;
+
+					if(it3 == it2->second.second.end()) // source not found. So this one is surely the oldest one to have been requested.
+					{
+#ifdef MPLEX_DEBUG
+						std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    not found! So using it directly." << std::endl;
+#endif
+						best_source = sources[i] ;
+						break ;
+					}
+					else if(it3->second <= oldest_timestamp) // do nothing, otherwise, ask again
+					{
+#ifdef MPLEX_DEBUG
+						std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    not found! So using it directly." << std::endl;
+#endif
+						best_source = sources[i] ;
+						oldest_timestamp = it3->second ;
+					}
+#ifdef MPLEX_DEBUG
+					else
+						std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    Source too recently used! So using it directly." << std::endl;
+#endif
+				}
+				if(best_source != "")
+				{
+#ifdef MPLEX_DEBUG
+					std::cerr << "ftDataMultiplex::handlePendingCrcRequests(): Asking crc of chunk " << it2->first << " to peer " << best_source << " for hash " << it->first << std::endl;
+#endif
+					// Use the source to ask the CRC.
+					//
+					// 	sendSingleChunkCRCRequest(peer_id, hash, chunk_id)
+					//
+					mDataSend->sendSingleChunkCRCRequest(best_source,it->first,it2->first);
+					it2->second.second[best_source] = now ;
+					it2->second.first = now ;
 
 					if(++n > MAX_SIMULTANEOUS_CRC_REQUESTS)
 						return ;
-
-					break ;	// go to next chunk. Don't ask the same chunk to multiple sources.
 				}
+#ifdef MPLEX_DEBUG
+				else
+					std::cerr << "ftDataMultiplex::handlePendingCrcRequests(): no source for chunk " << it2->first << std::endl;
+#endif
+			}
 }
 
 void ftDataMultiplex::deleteUnusedServers()

@@ -616,7 +616,14 @@ void ftFileCreator::forceCheck()
 	chunkMap.forceCheck(); 
 }
 
-void ftFileCreator::getChunksToCheck(std::vector<std::pair<uint32_t,std::list<std::string> > >& chunks_to_ask)
+void ftFileCreator::getSourcesList(uint32_t chunk_num,std::vector<std::string>& sources)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	chunkMap.getSourcesList(chunk_num,sources) ;
+}
+
+void ftFileCreator::getChunksToCheck(std::vector<uint32_t>& chunks_to_ask)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	

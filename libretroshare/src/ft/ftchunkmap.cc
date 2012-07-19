@@ -211,25 +211,13 @@ void ChunkMap::updateTotalDownloaded()
 	}
 }
 
-void ChunkMap::getChunksToCheck(std::vector<std::pair<uint32_t,std::list<std::string> > >& chunks_crc_to_ask)
+void ChunkMap::getChunksToCheck(std::vector<uint32_t>& chunks_crc_to_ask)
 {
 	chunks_crc_to_ask.clear() ;
 
 	for(uint32_t i=0;i<_chunks_checking_queue.size();)
 	{
-		std::list<std::string> peers ;
-
-		for(std::map<std::string,SourceChunksInfo>::const_iterator it2(_peers_chunks_availability.begin());it2!=_peers_chunks_availability.end();++it2)
-			if(it2->second.cmap[_chunks_checking_queue[i]])
-				peers.push_back(it2->first) ;
-
-		if(peers.empty())	// no peers => can't ask!
-		{
-			++i ;
-			continue ;
-		}
-
-		chunks_crc_to_ask.push_back(std::pair<uint32_t,std::list<std::string> >(_chunks_checking_queue[i],peers)) ;
+		chunks_crc_to_ask.push_back(_chunks_checking_queue[i]) ;
 
 		// remove that chunk from the queue
 
@@ -526,6 +514,15 @@ SourceChunksInfo *ChunkMap::getSourceChunksInfo(const std::string& peer_id)
 		it = _peers_chunks_availability.find(peer_id) ;
 	}
 	return &(it->second) ;
+}
+
+void ChunkMap::getSourcesList(uint32_t chunk_number,std::vector<std::string>& sources) 
+{
+	sources.clear() ;
+
+	for(std::map<std::string,SourceChunksInfo>::const_iterator it(_peers_chunks_availability.begin());it!=_peers_chunks_availability.end();++it)
+		if(it->second.cmap[chunk_number])
+			sources.push_back(it->first) ;
 }
 
 uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too_old) 
