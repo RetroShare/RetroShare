@@ -300,10 +300,11 @@ void p3BandwidthControl::statusChange(const std::list<pqipeer> &plist)
 	{
 		if (it->state & RS_PEER_S_FRIEND) 
 		{
+			RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
+
 			if (it->actions & RS_PEER_DISCONNECTED)
 			{
 				/* remove from map */
-				RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
 				std::map<std::string, BwCtrlData>::iterator bit;
 				bit = mBwMap.find(it->id);
 				if (bit == mBwMap.end())
