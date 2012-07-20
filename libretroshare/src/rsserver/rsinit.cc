@@ -74,6 +74,7 @@ class accountId
                 std::string location;
 };
 
+std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
 class RsInitConfig 
 {
@@ -189,8 +190,8 @@ bool RsInitConfig::udpListenerOnly;
 
 
 /* Uses private class - so must be hidden */
-static bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts);
-static bool checkAccount(std::string accountdir, accountId &id);
+static bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys);
+static bool checkAccount(std::string accountdir, accountId &id,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
 static std::string toUpperCase(const std::string& s)
 {
@@ -630,7 +631,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	std::list<accountId>::iterator it;
 	int failing_accounts ;
 
-	getAvailableAccounts(RsInitConfig::accountIds,failing_accounts);
+	getAvailableAccounts(RsInitConfig::accountIds,failing_accounts,unsupported_keys);
 
 	if(failing_accounts > 0 && RsInitConfig::accountIds.empty())
 		return RS_INIT_NO_KEYRING ;
@@ -1014,7 +1015,7 @@ std::string RsInit::getRetroshareDataDirectory()
 
 
 /* directories with valid certificates in the expected location */
-bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts)
+bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys)
 {
 	failing_accounts = 0 ;
 	/* get the directories */
@@ -1092,7 +1093,7 @@ bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts)
 #endif
 
 		accountId tmpId;
-		if (checkAccount(accountdir, tmpId))
+		if (checkAccount(accountdir, tmpId,unsupported_keys))
 		{
 #ifdef GPG_DEBUG
 			std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
@@ -1107,7 +1108,7 @@ bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts)
 
 
 
-static bool checkAccount(std::string accountdir, accountId &id)
+static bool checkAccount(std::string accountdir, accountId &id,std::map<std::string,std::vector<std::string> >& unsupported_keys)
 {
 	/* check if the cert/key file exists */
 
@@ -1140,11 +1141,15 @@ static bool checkAccount(std::string accountdir, accountId &id)
 		if(! RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail))
 			return false ;
 
-		if(!AuthGPG::getAuthGPG()->isKeySupported(id.pgpId))
-			return false ;
-
 		if(!AuthGPG::getAuthGPG()->haveSecretKey(id.pgpId))
 			return false ;
+
+		if(!AuthGPG::getAuthGPG()->isKeySupported(id.pgpId))
+		{
+			std::string keystring = id.pgpId + " " + id.pgpName + "&#60;" + id.pgpEmail ;
+			unsupported_keys[keystring].push_back("Location: " + id.location + "&nbsp;&nbsp;(" + id.sslId + ")") ;
+			return false ;
+		}
 
 #ifdef GPG_DEBUG
 		std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;

@@ -55,6 +55,37 @@
 #include "gui/notifyqt.h"
 #include <unistd.h>
 
+static void displayWarningAboutDSAKeys()
+{
+	if(RsInit::unsupported_keys.empty())
+		return ;
+
+	QMessageBox msgBox;
+
+	QString txt = QObject::tr("You appear to have locations associated to DSA keys:");
+	txt += "<UL>" ;
+	for(std::map<std::string,std::vector<std::string> >::const_iterator it(RsInit::unsupported_keys.begin());it!=RsInit::unsupported_keys.end();++it)
+	{
+		txt += "<LI>" + QString::fromStdString(it->first) ;
+		txt += "<UL>" ;
+
+		for(uint32_t i=0;i<it->second.size();++i)
+			txt += "<li>" + QString::fromStdString(it->second[i]) + "</li>" ;
+
+		txt += "</UL>" ;
+		txt += "</li>" ;
+	}
+	txt += "</UL>" ;
+
+	msgBox.setText(txt) ;
+	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We're very sorry for that."));
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+	msgBox.setWindowIcon(QIcon(":/images/rstray3.png"));
+
+	msgBox.exec();
+}
+
 int main(int argc, char *argv[])
 { 
 #ifdef WINDOWS_SYS
@@ -103,6 +134,9 @@ int main(int argc, char *argv[])
 				return 0 ; 
 
 			initResult = RsInit::InitRetroShare(argc, argv);
+
+			displayWarningAboutDSAKeys() ;
+
 		}
 		else
 			initResult = RS_INIT_OK ;
@@ -113,6 +147,8 @@ int main(int argc, char *argv[])
 		QApplication dummyApp (argc, argv); // needed for QMessageBox
 		/* Translate into the desired language */
 		LanguageSupport::translate(LanguageSupport::defaultLanguageCode());
+
+		displayWarningAboutDSAKeys();
 
 		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
 		mb.setWindowIcon(QIcon(":/images/rstray3.png"));

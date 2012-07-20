@@ -42,6 +42,8 @@
 #define RS_USE_PGPSSL 1
 
 #include <list>
+#include <map>
+#include <vector>
 
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
@@ -137,6 +139,7 @@ class RsInit
 		/* used for static install data */
 		static std::string getRetroshareDataDirectory();
 
+		static std::map<std::string,std::vector<std::string> > unsupported_keys ;
 	private:
 
 		/* PreLogin */
