@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>517</height>
+    <width>642</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -593,8 +593,8 @@ border: 1px solid #CCCCCC;}</string>
         <property name="title">
          <string/>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0" colspan="2">
           <widget class="QLabel" name="no_gpg_key_label">
            <property name="text">
             <string>It looks like you don't own any Profile (GPG keys). Please fill in the form below to generate one, or use your favorite gnupg key manager.</string>
@@ -604,7 +604,7 @@ border: 1px solid #CCCCCC;}</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="0" colspan="2">
           <widget class="QProgressBar" name="progressBar">
            <property name="maximum">
             <number>0</number>
@@ -617,7 +617,7 @@ border: 1px solid #CCCCCC;}</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="2" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QCheckBox" name="new_gpg_key_checkbox">
@@ -664,7 +664,7 @@ border: 1px solid #CCCCCC;}</string>
            </item>
           </layout>
          </item>
-         <item>
+         <item row="3" column="0">
           <widget class="QLabel" name="progress_label">
            <property name="maximumSize">
             <size>
@@ -677,131 +677,130 @@ border: 1px solid #CCCCCC;}</string>
            </property>
           </widget>
          </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="genPGPuserlabel">
-             <property name="text">
-              <string>Use identity</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="genPGPuser">
-             <property name="toolTip">
-              <string>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="name_label">
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="name_input">
-             <property name="toolTip">
-              <string>Enter here your nickname</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="email_label">
-             <property name="text">
-              <string>Email</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="email_input">
-             <property name="toolTip">
-              <string>Be careful: this email will be visible to your friends and friends 
+         <item row="4" column="0">
+          <widget class="QLabel" name="genPGPuserlabel">
+           <property name="text">
+            <string>Use identity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="genPGPuser">
+           <property name="toolTip">
+            <string>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="name_label">
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="name_input">
+           <property name="toolTip">
+            <string>Enter here your nickname</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="email_label">
+           <property name="text">
+            <string>Email</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="email_input">
+           <property name="toolTip">
+            <string>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by GPG, but to stay 
 anonymous, you can use a fake email.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="password_label">
-             <property name="toolTip">
-              <string>This Password is for GPG</string>
-             </property>
-             <property name="text">
-              <string>Password</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="password_input">
-             <property name="toolTip">
-              <string>Put a strong password here. This password protects your GPG key.</string>
-             </property>
-             <property name="inputMask">
-              <string/>
-             </property>
-             <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="location_label">
-             <property name="text">
-              <string>Location</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="location_input"/>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLabel" name="label_location2">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="lineWidth">
-              <number>1</number>
-             </property>
-             <property name="text">
-              <string>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</string>
-             </property>
-             <property name="scaledContents">
-              <bool>false</bool>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="password_label">
+           <property name="toolTip">
+            <string>This Password is for GPG</string>
+           </property>
+           <property name="text">
+            <string>Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLineEdit" name="password_input">
+           <property name="toolTip">
+            <string>Put a strong password here. This password protects your GPG key.</string>
+           </property>
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="location_label">
+           <property name="text">
+            <string>Location</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLineEdit" name="location_input"/>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLabel" name="label_location2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="text">
+            <string>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QPushButton" name="genButton">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>26</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Generate New Identity</string>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
       <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="genButton">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>26</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Generate New Identity</string>
-          </property>
-          <property name="icon">
-           <iconset resource="images.qrc">
-            <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
-          </property>
-         </widget>
-        </item>
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
