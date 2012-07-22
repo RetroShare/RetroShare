@@ -1,6 +1,31 @@
 #ifndef RSGENEXCHANGE_H
 #define RSGENEXCHANGE_H
 
+/*
+ * libretroshare/src/retroshare: rsphoto.h
+ *
+ * RetroShare C++ Interface.
+ *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include <queue>
 
 #include "rsgxs.h"
@@ -10,6 +35,9 @@
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
 
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
+typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
+typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 
 
 /*!
@@ -76,7 +104,7 @@ public:
      */
     RsTokenService* getTokenService();
 
-public:
+protected:
 
     /** data access functions **/
 
@@ -86,14 +114,14 @@ public:
      * @param groupIds
      * @return false if token cannot be redeemed, if false you may have tried to redeem when not ready
      */
-    bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
+    bool getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds);
 
     /*!
      * Retrieve msg list for a given token sectioned by group Ids
      * @param token token to be redeemed
      * @param msgIds a map of grpId -> msgList (vector)
      */
-    bool getMsgList(const uint32_t &token, std::map<std::string, std::vector<std::string> > &msgIds);
+    bool getMsgList(const uint32_t &token, GxsMsgIdResult &msgIds);
 
 
     /*!
@@ -108,7 +136,7 @@ public:
      * @param token token to be redeemed
      * @param msgInfo the meta data to be retrieved for token store here
      */
-    bool getMsgMeta(const uint32_t &token, std::map<std::string, std::vector<RsMsgMetaData> > &msgInfo);
+    bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo);
 
     /*!
      * retrieves group data associated to a request token
@@ -122,9 +150,9 @@ public:
      * @param token token to be redeemed for message item retrieval
      * @param msgItems
      */
-    bool getMsgData(const uint32_t &token, std::map<std::string, std::vector<RsGxsMsgItem*> >& msgItems);
+    bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
 
-public:
+protected:
 
     /** Modifications **/
 
@@ -147,30 +175,25 @@ public:
     bool publishMsg(RsGxsMsgItem* msgItem);
 
 
-    /*!
-     *
-     * @param grpId
-     * @param subscribe
-     * @return false subscription fails
-     */
-    bool subscribeToGroup(std::string& grpId, bool subscribe);
-
 protected:
 
     /** Notifications **/
 
     /*!
-     * This confirm this class as an abstract one that \n
+     * This confirms this class as an abstract one that \n
      * should not be instantiated \n
      * The deriving class should implement this function \n
-     * as its is called by the backend GXS system to \n
+     * as it is called by the backend GXS system to \n
      * update client of changes which should \n
-     * instigate client to retrieve new content from system
+     * instigate client to retrieve new content from the system
      * @param changes the changes that have occured to data held by this service
      */
     virtual void notifyChanges(std::vector<RsGxsChange*>& changes) = 0;
 
 private:
+
+    void operator=(std::list<RsGroupMetaData>& lMeta, std::list<RsGxsGrpMetaData*>& rGxsMeta);
+    void operator=(std::vector<RsMsgMetaData>& lMeta, std::vector<RsGxsMsgMetaData*>& rGxsMeta);
 
     void processRecvdData();
 

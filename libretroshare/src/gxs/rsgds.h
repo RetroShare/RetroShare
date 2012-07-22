@@ -54,9 +54,9 @@ class GrpLocMetaData {
 
 };
 
-typedef std::map<std::string, std::set<std::string> > GxsMsgReq; // <grpId, msgIds>
-typedef std::map<std::string, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
-typedef std::map<std::string, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq; // <grpId, msgIds>
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -102,14 +102,16 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveNxsGrps(std::map<std::string, RsNxsGrp*>& grp, bool cache) = 0;
+    virtual int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool cache) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
-     * @param cache whether to store retrieval in mem for faster later retrieval
+     *
+     * @param grp if null grpIds entries are made, only meta for those grpId are retrieved \n
+     *            , if grpId is failed to be retrieved it will be erased from map
      * @return error code
      */
-    virtual int retrieveGxsGrpMetaData(std::map<std::string, RsGxsGrpMetaData*>& grp) = 0;
+    virtual int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData*>& grp) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -125,14 +127,14 @@ public:
      * @param msgIds ids of messages to be removed
      * @return error code
      */
-    virtual int removeMsgs(const std::string grpId, const std::vector<std::string>& msgIds) = 0;
+    virtual int removeMsgs(const GxsMsgReq& msgIds) = 0;
 
     /*!
      * remove groups in data store listed in grpIds param
      * @param grpIds ids of groups to be removed
      * @return error code
      */
-    virtual int removeGroups(const std::vector<std::string>& grpIds) = 0;
+    virtual int removeGroups(const std::vector<RsGxsGroupId>& grpIds) = 0;
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes

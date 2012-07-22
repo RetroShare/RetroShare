@@ -27,7 +27,7 @@ public:
 class RsGxsGroupChange : RsGxsChange
 {
 public:
-    std::list<std::string> grpIdList;
+    std::list<RsGxsGroupId> grpIdList;
 };
 
 /*!
@@ -37,7 +37,7 @@ public:
 class RsGxsMsgChange : RsGxsChange
 {
 public:
-    std::map<std::string, std::vector<std::string> > msgChangeMap;
+    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
 };
 
 

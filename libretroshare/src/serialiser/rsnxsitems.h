@@ -198,6 +198,8 @@ public:
      */
     RsTlvBinaryData meta;
 
+    // deserialised metaData, this is not serialised
+    RsGxsMsgMetaData* metaData;
 };
 
 /*!

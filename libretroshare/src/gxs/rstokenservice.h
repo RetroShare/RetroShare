@@ -32,10 +32,10 @@
 
 #include "serialiser/rsgxsitems.h"
 
-typedef std::map<std::string, std::vector<std::string> > GxsMsgReq;
-typedef std::map<std::string, std::vector<std::string> > GxsMsgIdResult;
-typedef std::map<std::string, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
-typedef std::map<std::string, std::vector<RsNxsMsg*> > GxsMsgDataResult;
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
 
 #define GXS_REQUEST_STATUS_FAILED		0
 #define GXS_REQUEST_STATUS_PENDING		1
@@ -58,12 +58,27 @@ typedef std::map<std::string, std::vector<RsNxsMsg*> > GxsMsgDataResult;
 class RsTokReqOptions
 {
 public:
-    RsTokReqOptions() { mOptions = 0; mBefore = 0; mAfter = 0; }
+RsTokReqOptions()
+{
+	mOptions = 0;
+	mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
+	mBefore = 0; mAfter = 0; mReqType = 0;
+}
 
-    uint32_t mOptions;
-    uint32_t mReqType;
-    time_t   mBefore;
-    time_t   mAfter;
+uint32_t mOptions;
+
+// Request specific matches with Group / Message Status.
+// Should be usable with any Options... applied afterwards.
+uint32_t mStatusFilter;
+uint32_t mStatusMask;
+
+uint32_t mReqType;
+
+uint32_t mSubscribeFilter; // Only for Groups.
+
+// Time range... again applied after Options.
+time_t   mBefore;
+time_t   mAfter;
 };
 
 
@@ -89,7 +104,7 @@ public:
      * @param groupIds group id to request info for. Leave empty to get info on all groups,
      * @return
      */
-    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
+    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
 
     /*!
      *
@@ -99,33 +114,60 @@ public:
      * @param groupIds
      * @return
      */
-    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds) = 0;
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) = 0;
+
+
+
+    /*!
+     * This sets the status of the message
+     * @param msgId the message id to set status for
+     * @param status status
+     * @param statusMask the mask for the settings targetted
+     * @return true if request made successfully, false otherwise
+     */
+    virtual bool requestSetMessageStatus(uint32_t &token, const RsGxsGrpMsgIdPair &msgId,
+    		const uint32_t status, const uint32_t statusMask) = 0;
 
     /*!
      *
      * @param token
-     * @param ansType
-     * @param opts
      * @param grpId
-     * @return
+     * @param status
+     * @param statusMask
+     * @return true if request made successfully, false otherwise
      */
-    virtual bool requestGroupSubscribe(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::string &grpId) = 0;
+    virtual bool requestSetGroupStatus(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t status,
+    		const uint32_t statusMask) = 0;
 
+    /*!
+     * Use request status to find out if successfully set
+     * @param groupId
+     * @param subscribeFlags
+     * @param subscribeMask
+     * @return true if request made successfully, false otherwise
+     */
+    virtual bool requestSetGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId &groupId, uint32_t subscribeFlags, uint32_t subscribeMask) = 0;
+
+
+    	// (FUTURE WORK).
+    //virtual bool groupRestoreKeys(const std::string &groupId) = 0;
+    //virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
         /* Poll */
 
     /*!
-     *
-     * @param token
-     * @return
+     * Request the status of ongoing request. This is a blocking operation!
+     * @param token value of token to check status for
+     * @return the current status of request
      */
     virtual uint32_t requestStatus(const uint32_t token) = 0;
 
         /* Cancel Request */
 
     /*!
-     *
+     * If this function returns false, it may be that the request has completed
+     * already. Useful for very expensive request. This is a blocking operation
      * @param token
-     * @return
+     * @return false if unusuccessful, true if successful
      */
     virtual bool cancelRequest(const uint32_t &token) = 0;
 

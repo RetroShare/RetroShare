@@ -235,7 +235,6 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
 
 RsNxsGrp* RsDataService::getGroup(RetroCursor &c)
 {
-
     /*!
      * grpId, pub admin and pub publish key
      * necessary for successful group
@@ -590,6 +589,8 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
 			}
 		}
 	}
+
+	return 1;
 }
 
 void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){

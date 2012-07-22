@@ -8,6 +8,11 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 
+typedef std::string RsGxsGroupId;
+typedef std::string RsGxsMessageId;
+typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
+
+
 class RsGxsGrpMetaData
 {
 public:
@@ -19,8 +24,8 @@ public:
     void clear();
 
 
-    std::string mGroupId;
-    std::string mOrigGrpId;
+    RsGxsGroupId mGroupId;
+    RsGxsGroupId mOrigGrpId;
     std::string mGroupName;
     uint32_t    mGroupFlags;
     uint32_t    mPublishTs;
@@ -58,12 +63,12 @@ public:
     uint32_t serial_size();
     void clear();
 
-    std::string mGroupId;
-    std::string mMsgId;
+    RsGxsGroupId mGroupId;
+    RsGxsMessageId mMsgId;
 
-    std::string mThreadId;
-    std::string mParentId;
-    std::string mOrigMsgId;
+    RsGxsMessageId mThreadId;
+    RsGxsMessageId mParentId;
+    RsGxsMessageId mOrigMsgId;
     std::string mAuthorId;
 
     RsTlvKeySignature pubSign;
