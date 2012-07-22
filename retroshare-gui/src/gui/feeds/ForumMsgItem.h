@@ -43,6 +43,7 @@ private slots:
 	void removeItem();
 	void toggle();
 
+	void readAndClearItem();
 	void unsubscribeForum();
 	void subscribeForum();
 	void replyToPost();
@@ -53,6 +54,8 @@ private slots:
 	void updateItem();
 
 private:
+	void setAsRead();
+
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 	bool canReply;

@@ -47,6 +47,7 @@ private slots:
 	void removeItem();
 	void toggle();
 
+	void readAndClearItem();
 	void unsubscribeChannel();
 	void download();
 	void play();

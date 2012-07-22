@@ -836,18 +836,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+348"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+351"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+315"/>
+        <location line="-29"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+317"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="-124"/>
+        <location line="-72"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -867,22 +867,27 @@ p, li { white-space: pre-wrap; }
         <translation>Neu</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+139"/>
+        <source>Set as read and remove item</source>
+        <translation>Als gelesen markieren und Eintrag entfernen</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Unsubscribe From Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+26"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-211"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-212"/>
         <source>Channel Feed</source>
         <translation>Kanal</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+68"/>
         <source>Files</source>
         <translation>Dateien</translation>
     </message>
@@ -1038,38 +1043,35 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal erstellen</translation>
     </message>
     <message>
-        <location line="+156"/>
         <source>Unsubscribe</source>
-        <translation>Abbestellen</translation>
+        <translation type="obsolete">Abbestellen</translation>
     </message>
     <message>
-        <location line="+25"/>
         <source>Subscribe To Channel</source>
-        <translation>Kanal abonnieren</translation>
+        <translation type="obsolete">Kanal abonnieren</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Subscribe</source>
-        <translation>Abonnieren</translation>
+        <translation type="obsolete">Abonnieren</translation>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+233"/>
         <source>Loading</source>
         <translation>Lade</translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+3"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+155"/>
         <source>Set all as read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="-260"/>
         <source>Unsubcribe To Channel</source>
-        <translation>Kanal abbestellen</translation>
+        <translation type="obsolete">Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+87"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-73"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
@@ -1089,8 +1091,8 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+116"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+66"/>
+        <location filename="../gui/ChannelFeed.ui" line="-104"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+61"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -1105,7 +1107,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+14"/>
         <source>Show Channel Details</source>
         <translation>Zeige Kanal-Details</translation>
     </message>
@@ -1120,29 +1122,31 @@ p, li { white-space: pre-wrap; }
         <translation>Verteile Kanal</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+35"/>
         <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+272"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="+270"/>
+        <location line="-321"/>
+        <location line="+576"/>
         <source>Disable Auto-Download</source>
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+149"/>
+        <location filename="../gui/ChannelFeed.ui" line="+109"/>
         <location line="+3"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+2"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-575"/>
+        <location line="+577"/>
         <source>Enable Auto-Download</source>
         <translation>Aktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="-581"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-567"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
     </message>
@@ -4817,24 +4821,24 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="+269"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="+286"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="-37"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
         <location line="-85"/>
-        <location line="+183"/>
+        <location line="+200"/>
         <location line="+164"/>
         <source>Subject: </source>
         <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="-302"/>
+        <location line="-319"/>
         <source>Unsubscribe To Forum</source>
         <translation>Forum abbestellen</translation>
     </message>
@@ -4844,7 +4848,12 @@ p, li { white-space: pre-wrap; }
         <translation>Antwort</translation>
     </message>
     <message>
-        <location line="+377"/>
+        <location line="+40"/>
+        <source>Set as read and remove item</source>
+        <translation>Als gelesen markieren und Eintrag entfernen</translation>
+    </message>
+    <message>
+        <location line="+354"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
@@ -4854,7 +4863,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichnen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+92"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+93"/>
         <source>Forum Post</source>
         <translation>Beitrag</translation>
     </message>
@@ -4876,7 +4885,7 @@ p, li { white-space: pre-wrap; }
         <translation>Als Antwort auf</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+170"/>
         <source>Please give a Text Message</source>
         <translation>Bitte Nachricht eingeben</translation>
     </message>
@@ -6412,7 +6421,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+197"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+195"/>
         <location line="+23"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -6428,7 +6437,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+82"/>
         <source>Select Trusted Friend</source>
         <translation>Wähle vertrauten Freund</translation>
     </message>
@@ -6438,7 +6447,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikate (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="+699"/>
+        <location filename="../gui/GenCertDialog.ui" line="+697"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -6448,7 +6457,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-82"/>
+        <location line="-80"/>
         <source>Your profile is associated to a GPG key</source>
         <translation>Dein Profil ist mit einem GPG Schlüssel verbunden</translation>
     </message>
@@ -6457,17 +6466,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Generiere neues Profil</translation>
     </message>
     <message>
-        <location line="+196"/>
-        <source>Info</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-95"/>
+        <location line="+99"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location line="-223"/>
+        <location line="-221"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
@@ -6500,7 +6504,7 @@ p, li { white-space: pre-wrap; }
         <translation>Exportiere ausgewählte Identität</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+22"/>
         <source>Use identity</source>
         <translation>Benutze Identität</translation>
     </message>
@@ -6543,12 +6547,12 @@ Diese Information ist für GPG erforderlich, aber du kannst durch Eingabe einer 
         <translation>Nutze einen aussagekräftigen Ort (z.B. home, laptop). Dieses Feld wird genutzt um verschiedene Installationen mit dem selben Identität auseinanderzuhalten.</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+22"/>
         <source>Generate New Identity</source>
         <translation>Neue Identität erstellen</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+80"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -6640,7 +6644,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-244"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-243"/>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
         <translation>[Optional] Sichtbar für deine Freunde und Freunde deiner Freunde.</translation>
     </message>
@@ -6763,7 +6767,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
 Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu unterzeichnen.</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+119"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -7486,7 +7490,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HelpBrowser</name>
     <message>
-        <location filename="../gui/help/browser/helpbrowser.cpp" line="+127"/>
+        <location filename="../gui/help/browser/helpbrowser.cpp" line="+137"/>
         <location line="+5"/>
         <source>Error Loading Help Contents: </source>
         <translation>Fehler beim Laden des Hilfe-Inhalts:</translation>
@@ -8060,7 +8064,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>%1 Freunde verbunden</translation>
     </message>
     <message>
-        <location line="+748"/>
+        <location line="+745"/>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
     </message>
@@ -8070,7 +8074,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Link ist fehlerhaft.</translation>
     </message>
     <message>
-        <location line="-756"/>
+        <location line="-753"/>
         <source>%1 friend connected</source>
         <translation>%1 Freund verbunden</translation>
     </message>
@@ -10003,12 +10007,11 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-280"/>
         <source>Authentication matrix</source>
-        <translation>Authentifizierungsmatrix</translation>
+        <translation type="obsolete">Authentifizierungsmatrix</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-279"/>
         <source>Network View</source>
         <translation>Netzwerk Ansicht</translation>
     </message>
@@ -11622,7 +11625,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+87"/>
+        <location filename="../main.cpp" line="+65"/>
+        <source>You appear to have locations associated to DSA keys:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>Diese Version von RetroShare benutzt das OpenPGP-SDK. Der Schlüsselring von GPG4Win wird nicht mehr verwendet, sondern ein eigenen Schlüsselring für alle laufenden Instanzen. &lt;br&gt;&lt;br&gt;Du scheinst keinen solchen Schlüsselring zu besitzen, obwohl Schlüssel von exisitierenden RetroShare Accounts benötigt werden. Vielleicht hast du auch gerade zu dieser Version gewechselt.</translation>
     </message>
@@ -11632,19 +11645,19 @@ p, li { white-space: pre-wrap; }
         <translation>Wähle zwischen:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; um den existierenden Schlüsselring von gnupg zu kopieren (sicherste Wahl), oder&lt;/li&gt;&lt;li&gt;&lt;b&gt;Verwerfen&lt;/b&gt; um mit einem neuen Schlüsselring zu starten (RetroShare legt dir einen neuen Schlüssel an oder du kannst einen vorher gespeicherten Schlüssel verwenden).&lt;/li&gt;&lt;li&gt;&lt;b&gt;Abbrechen&lt;/b&gt; um zu beenden und den Schlüsselring selbst zu kopieren (Du benötigst einige PGP-Kenntnisse&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location line="+126"/>
+        <location line="+31"/>
+        <location line="+125"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-119"/>
+        <location line="-118"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+114"/>
+        <location line="+113"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -12603,7 +12616,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="+277"/>
+        <location filename="../rshare.cpp" line="+275"/>
         <source>Invalid language code specified: </source>
         <translation>Ungültige Sprach-Codierung ausgewählt: </translation>
     </message>
@@ -14001,25 +14014,24 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+192"/>
         <source>Log In</source>
         <translation>Anmelden</translation>
     </message>
     <message>
-        <location line="-35"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-24"/>
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
@@ -14051,7 +14063,7 @@ p, li { white-space: pre-wrap; }
         <translation>Passwort speichern</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-127"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -14061,7 +14073,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Anmeldung&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="+175"/>
+        <location filename="../gui/StartDialog.cpp" line="+174"/>
         <source>Login Failure</source>
         <translation>Anmeldefehler</translation>
     </message>
@@ -14103,7 +14115,7 @@ Lockdatei:
 </translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+41"/>
         <location line="+3"/>
         <location line="+2"/>
         <source>Warning</source>

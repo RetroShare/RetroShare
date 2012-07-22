@@ -54,6 +54,7 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string 
 	connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
 	/* specific */
+	connect(readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
 	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 	connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
 	connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
@@ -129,6 +130,7 @@ void ChanMsgItem::updateItemStatic()
 		clearButton->setEnabled(false);
 		unsubscribeButton->setEnabled(false);
 		clearButton->hide();
+		readAndClearButton->hide();
 		unsubscribeButton->hide();
 		copyLinkButton->show();
 
@@ -330,6 +332,17 @@ void ChanMsgItem::removeItem()
 }
 
 /*********** SPECIFIC FUNCTIONS ***********************/
+
+void ChanMsgItem::readAndClearItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "ChanMsgItem::readAndClearItem()";
+	std::cerr << std::endl;
+#endif
+
+	readToggled(false);
+	removeItem();
+}
 
 void ChanMsgItem::unsubscribeChannel()
 {

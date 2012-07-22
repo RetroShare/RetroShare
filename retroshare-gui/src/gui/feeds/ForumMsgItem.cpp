@@ -55,6 +55,7 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
 	connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
 	/* specific ones */
+	connect(readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
 	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
 	connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
 	connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
@@ -264,28 +265,7 @@ void ForumMsgItem::toggle()
 			nextFrame->show();
 		}
 
-		uint32_t status;
-		rsForums->getMessageStatus(mForumId, mPostId, status);
-
-		if (canReply) {
-			/* set always to read ... */
-			uint32_t statusNew = status | FORUM_MSG_STATUS_READ;
-
-//			bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
-//			if (setToReadOnActive) {
-				/* ... and to read by user */
-				statusNew &= ~FORUM_MSG_STATUS_UNREAD_BY_USER;
-//			} else {
-//				/* ... and to unread by user */
-//				statusNew |= FORUM_MSG_STATUS_UNREAD_BY_USER;
-//			}
-
-			if (status != statusNew) {
-				disconnect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
-				rsForums->setMessageStatus(mForumId, mPostId, statusNew, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_UNREAD_BY_USER);
-				connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
-			}
-		}
+		setAsRead();
 	}
 	else
 	{
@@ -313,6 +293,17 @@ void ForumMsgItem::removeItem()
 }
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
+
+void ForumMsgItem::readAndClearItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "ForumMsgItem::readAndClearItem()";
+	std::cerr << std::endl;
+#endif
+
+	setAsRead();
+	removeItem();
+}
 
 void ForumMsgItem::unsubscribeForum()
 {
@@ -414,6 +405,32 @@ void ForumMsgItem::forumMsgReadSatusChanged(const QString &forumId, const QStrin
 	if (mForumId == forumId.toStdString() && mPostId == msgId.toStdString()) {
 		if (status & FORUM_MSG_STATUS_READ) {
 			close();
+		}
+	}
+}
+
+void ForumMsgItem::setAsRead()
+{
+	if (canReply) {
+		uint32_t status;
+		rsForums->getMessageStatus(mForumId, mPostId, status);
+
+		/* set always to read ... */
+		uint32_t statusNew = status | FORUM_MSG_STATUS_READ;
+
+//			bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
+//			if (setToReadOnActive) {
+			/* ... and to read by user */
+			statusNew &= ~FORUM_MSG_STATUS_UNREAD_BY_USER;
+//			} else {
+//				/* ... and to unread by user */
+//				statusNew |= FORUM_MSG_STATUS_UNREAD_BY_USER;
+//			}
+
+		if (status != statusNew) {
+			disconnect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
+			rsForums->setMessageStatus(mForumId, mPostId, statusNew, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_UNREAD_BY_USER);
+			connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 		}
 	}
 }
