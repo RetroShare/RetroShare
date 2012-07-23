@@ -773,6 +773,10 @@ p, li { white-space: pre-wrap; }
         <source>Files</source>
         <translation>Fichiers</translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished">Définir comme lu et supprimer l&apos;élément</translation>
+    </message>
 </context>
 <context>
     <name>ChanNewItem</name>
@@ -868,7 +872,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe To Channel</source>
-        <translation>S&apos;abonner à la chaîne</translation>
+        <translation type="obsolete">S&apos;abonner à la chaîne</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -888,15 +892,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubcribe To Channel</source>
-        <translation>Se désabonner de la chaîne</translation>
+        <translation type="obsolete">Se désabonner de la chaîne</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Se désabonner</translation>
+        <translation type="obsolete">Se désabonner</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation>S&apos;abonner</translation>
+        <translation type="obsolete">S&apos;abonner</translation>
     </message>
     <message>
         <source>Own Channels</source>
@@ -3936,6 +3940,10 @@ p, li { white-space: pre-wrap; }
         <source>Please give a Text Message</source>
         <translation>Veuillez taper votre texte</translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished">Définir comme lu et supprimer l&apos;élément</translation>
+    </message>
 </context>
 <context>
     <name>ForumNewItem</name>
@@ -5086,7 +5094,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Info</source>
-        <translation>Aide</translation>
+        <translation type="obsolete">Aide</translation>
     </message>
     <message>
         <source>Password</source>
@@ -7641,7 +7649,7 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
     </message>
     <message>
         <source>Authentication matrix</source>
-        <translation>Matrice d&apos;authentification</translation>
+        <translation type="obsolete">Matrice d&apos;authentification</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -9202,6 +9210,14 @@ L&apos;erreur reportée est : %2 </translation>
     <message>
         <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished">Choisissez entre :&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; copier le trousseau de clés existant de gnupg (choix le plus sûr), ou &lt;/li&gt;&lt;li&gt;&lt;b&gt;de fermer sans enregistrer &lt;/b&gt; de repartir de zéro avec un trousseau de clés vide (il vous sera demandé de créer une nouvelle clé PGP pour RetroShare, ou d&apos;importer une paire de clés PGP précédemment enregistré). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Annuler&lt;/b&gt;de quitter et de fabriquer un trousseau de clés par vous-même (avoir quelques compétences PGP)&lt;/li&gt;&lt;/ul&gt;</translation>
+    </message>
+    <message>
+        <source>You appear to have locations associated to DSA keys:</source>
+        <translation type="unfinished">Vous semblez avoir des emplacements associés à des clés DSA :</translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished">Le clés DSA ne sont pas encore pris en charge par cette version de RetroShare. Tous ces emplacements seront inutilisables. Nous sommes vraiment désolé pour cela.</translation>
     </message>
 </context>
 <context>
@@ -10839,7 +10855,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
