@@ -706,7 +706,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 //		sslPassword = std::string(gpgme_data_release_and_get_mem(plain, NULL));
 		sslPassword = plain ;
 		std::cerr << "sslpassword: " << "********************" << std::endl;
-		std::cerr << "sslpassword: \"" << sslPassword << "\"" << std::endl;
+//		std::cerr << "sslpassword: \"" << sslPassword << "\"" << std::endl;
 //		gpgme_data_release (cipher);
 //		fclose(sslPassphraseFile);
 
