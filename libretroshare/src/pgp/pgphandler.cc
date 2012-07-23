@@ -807,9 +807,9 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const st
 		return false;
 	}
 
-	char c ;
-	while( (c = getc(f))!= EOF)
-		buf += c;
+	int c ;
+	while( (c = fgetc(f))!= EOF)
+		buf += (unsigned char)c;
 
 	fclose(f) ;
 
