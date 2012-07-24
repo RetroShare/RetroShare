@@ -35,6 +35,8 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 
+#include "gxs/rsgxsdata.h"
+
 
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP      = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM = 0x0002;
@@ -199,7 +201,7 @@ public:
     RsTlvBinaryData meta;
 
     // deserialised metaData, this is not serialised
-    RsGxsMsgMetaData* metaData;
+    RsGxsGrpMetaData* metaData;
 };
 
 /*!

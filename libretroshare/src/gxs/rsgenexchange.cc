@@ -2,7 +2,7 @@
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
                              RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser)
-                                 : mReqMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser)
+: mReqMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -208,6 +208,7 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *> messages)
 
 bool RsGenExchange::publishGroup(RsGxsGrpItem *grpItem)
 {
+
 
     return false;
 }

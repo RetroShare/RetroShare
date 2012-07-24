@@ -1,7 +1,9 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib bitdht newcache newservices
+CONFIG += staticlib bitdht debug newservices
+#newcache
+#  
 CONFIG -= qt
 TARGET = retroshare
 #DEFINES += RSSERIAL_DEBUG
@@ -180,7 +182,7 @@ linux-* {
 	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
 
 	DESTDIR = lib
-	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
+	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64 -frtti
 	QMAKE_CC = g++
 
 	SSL_DIR = /usr/include/openssl
@@ -658,7 +660,7 @@ SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 }
 
-
+ # new gxs cache system
 newcache { 
 
 HEADERS += serialiser/rsnxsitems.h \
@@ -670,12 +672,19 @@ HEADERS += serialiser/rsnxsitems.h \
             gxs/rsgenexchange.h \
             gxs/rsnxsobserver.h \
             gxs/rsgxsdata.h \
+            gxs/rstokenservice.h \
+            gxs/rsgxsdataaccess.h \
+    		retroshare/rsgxsservice.h \
+    		serialiser/rsgxsitems.h 
+            
 
 SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
                 gxs/rsgenexchange.cc \
             gxs/rsgxsnetservice.cc \
-            gxs/rsgxsdata.cc
+            gxs/rsgxsdata.cc \
+    		services/p3photoserviceV2.cc \
+        	gxs/rsgxsdataaccess.cc
 }
 
 
@@ -695,6 +704,9 @@ HEADERS += services/p3photoservice.h \
 		services/p3forumsv2.h \
 		retroshare/rsposted.h \
 		services/p3posted.h \
+    	services/p3photoserviceV2.h \
+    	retroshare/rsphotoV2.h \
+    	
 
 SOURCES += services/p3photoservice.cc \
 		serialiser/rsphotoitems.cc \
@@ -709,23 +721,3 @@ SOURCES += services/p3photoservice.cc \
 #	rsserver/p3photo.cc \
 }
 
-# very temporary will restore back
-even_newer_cache_modules {
-
-HEADERS += \
-    serialiser/rsgxsitems.h \
-    services/p3photoserviceV2.h \
-    retroshare/rsphotoV2.h \
-    gxs/rstokenservice.h \
-    gxs/rsgxsdataaccess.h \
-    retroshare/rsgxsservice.h
-
-
-
-SOURCES += \
-    services/p3photoserviceV2.cc
-
-SOURCES += \
-    gxs/rsgxsdataaccess.cpp
-
-}
