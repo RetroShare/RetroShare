@@ -63,6 +63,10 @@
 
 #include "tcponudp/udpstunner.h"
 
+// #define GPG_DEBUG
+// #define AUTHSSL_DEBUG
+// #define FIM_DEBUG
+
 class accountId
 {
 	public:
@@ -1012,7 +1016,14 @@ std::string RsInit::getRetroshareDataDirectory()
 }
 
 
+static bool isHexaString(const std::string& s)
+{
+	for(uint32_t i=0;i<s.length();++i)
+		if(!(s[i] >= 'A' && s[i] <= 'F' || s[i] >= '0' && s[i] <= '9' || s[i] >= 'a' && s[i] <= 'f'))
+			return false ;
 
+	return true ;
+}
 
 /* directories with valid certificates in the expected location */
 bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys)
@@ -1086,23 +1097,28 @@ bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::m
 	dirIt.closedir();
 
 	for(it = directories.begin(); it != directories.end(); it++)
-	{
-		std::string accountdir = RsInitConfig::basedir + "/" + *it;
+		if(isHexaString(*it) && (*it).length() == 32)
+		{
+			std::string accountdir = RsInitConfig::basedir + "/" + *it;
 #ifdef GPG_DEBUG
-		std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
+			std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
 #endif
 
-		accountId tmpId;
-		if (checkAccount(accountdir, tmpId,unsupported_keys))
-		{
+			accountId tmpId;
+			if (checkAccount(accountdir, tmpId,unsupported_keys))
+			{
 #ifdef GPG_DEBUG
-			std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
+				std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
 #endif
-			ids.push_back(tmpId);
+				ids.push_back(tmpId);
+			}
+			else
+				++failing_accounts ;
 		}
+#ifdef GPG_DEBUG
 		else
-			++failing_accounts ;
-	}
+			std::cerr << "Skipped non SSLid directory " << *it << std::endl;
+#endif
 	return true;
 }
 
