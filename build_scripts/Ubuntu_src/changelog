@@ -1,6 +1,102 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+      - Merged branch v0.5-OpenPGP into trunk. Please read the following important release notes:
+
+          User-level changes:
+          ==================
+          * libgpgme is not used anymore; it is replaced by a built-in piece of code called OpenPGP-SDK 
+            (http://openpgp.nominet.org.uk/cgi-bin/trac.cgi) that was improved to be used by RetroShare
+            for handling PGP keys.
+          
+          * the gnupg keyring is not used anymore. Now, RetroShare has it's own gpg keyring, shared by all instances.
+            On linux it's located in ~/.retroshare/pgp/. A lock system prevents multiple locations to read/write keyrings
+            simultaneously.
+          
+          * the trust database from gnupg is not documented, so RetroShare cannot import it. This comes from the fact that
+            the GPG standard (RFC4880) asks explicitly not to export trust information. So RetroShare has it's own 
+            trust DB shared by locations. This means you need to re-trust people. Sorry for that!
+          
+          * at start, if no keyring is found, RS will propose to copy the gnupg keyring to use your existing keys. Clicking on 
+            "OK" will do the copy, and you should find back all existing locations, except for DSA keys.
+          
+          * locations for which the suitable keypair is not in the keyring will not be displayed in the login window
+          * locations for which the suitable keypair is not a RSA/RSA key will not be displayed. RetroShare does not
+            support DSA/Elgamal keypairs yet.
+          
+          * a key import/export exchange function has been added in the certificate creation window (you go there from the login
+            window by clicking on "manage keys/locations". This allows to easily create a new location with the same pgp key on
+            another computer. To obtain a suitable keypair using gnupg, you need to concatenate the encrypted private key and the 
+            public key into an ascii file. This can be done using:
+            		gpg -a --export-secret-keys [your ID] > mykey.asc
+          		gpg -a --export [your ID] >> mykey.asc
+          
+          * importing a key with subkeys in not yet possible. Please remove subkeys before importing.
+          
+          * The code has been tested for a reasonnable amount of time, but it's not possible to prevent some new bugs 
+            to appear. Please report them asap supplying: call-stacks if possible, and terminal output. In particular,
+            openpgp has some assert()'s that should not be triggered unless RetroShare is calling it in an improper way.
+          
+          Internal changes
+          ================
+          * a specific component, PGPHandler, takes care of the interface between openpgp-sdk and RetroShare
+            openpgp-sdk is c-code, with it's own memory management, which has been kept well separated from 
+            RetroShare.
+          
+          * GPG Ids are now a specific class (not a std::string anymore) for code consistency reasons. As strings are
+            still used in many places, this requires a few conversions. In particular, AuthGPG takes strings as
+            function params and calls GPGHandler with the proper PGPIdType class. In the future, RetroShare should
+            only use PGPIdType. The same will be done for SSL ids.
+          
+          * signature cleaning is still handled by the Retroshare built-in function, not by openpgp, but we will 
+            do this later.
+          
+          Still to do
+          ===========
+          * DSA needs subkey handling, since the encryption is performed by a Elgamal subkey. Not sure this will be done.
+          * GPGIds/SSLIds cleaning (meaning replace strings by appropriate types). Lots of confusion throughout the code 
+            in retroshare-gui in particular.
+          * key removal from keyring. This is a challenge to keep locations synchronised.
+
+      - Rework of tcponudp/tcpstream should make UDP connections much more stable.
+        	* Fixed retransmit algorithm. Much more closely matched to TCP standard: http://tools.ietf.org/html/rfc2988
+        	* This increases retransmit timeouts, and reduces the number of packets resent.
+        	* Added better debugging for retrans/close as separate #defines.
+        	* Further testing is required ;)
+
+      - Added dynamic choose of sources for chunk crc requests. Fixes the bug that would let 
+        a transfer not finish if the original surce for a crc is not here anymore.
+        If you have a unfinished transfer do a force-check after restart to get back chunks that 
+        where still on verification stage.
+
+      - moved channel action menu into right click, for better consistency
+      - Enabled word wrap of the description in ChanNewItem.
+      - Added a new button in ChanMsgItem and ForumMsgItem to set the message as read (without expanding the message) and 
+        remove the item from the news feed.
+      - Redesigned ChanMsgItem.
+      - updated french translation (Max Romeo)
+      - improved build bat file (san)
+      - Moved the include folder OpenSSL to the other external includes for Windows compile.
+      - added warning for unsupported keys. It is triggered when no valid keypairs are found at start, and when unsupported 
+        keys pairs are found when copying the keyring
+      - Enabled translation (system default language) of the message box before the login to a profile.
+      - Fixed german translation.
+      - removed not needed info buttons for the infodialog
+      - desactivated TrustMatrix, by the time we decide wether it is worth keeping it, and implement a better version of it
+      - updated package building scripts for ubuntu
+
+  * Bugs
+      - fixed stupid bug in friendlyUnits() causing crashes when displaying files with size > 1TB
+      - possible fix for bug on ARM archs (reported by Ralfk)
+      - fixed possible bug due to misplaced mutex (Reported by bNK)
+      - added missign break, causing a crash when creating a new key
+      - Fixed crash when starting the help browser from friend details the second time.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 25 June 2012 21:30:00 +0100
+
+retroshare (0.5.3-0.5254~natty) natty; urgency=low
+
+  * Improvements
      - Added windows for bandwidth/display analysis in tray menu
      - Reworked tcponudp/tcpstream. Should make UDP connections much more stable
        Increses increases retransmit timeouts, and reduces the number of packets resent.
