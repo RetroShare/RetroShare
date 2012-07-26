@@ -42,7 +42,7 @@ win32 {
 	UPNPC_DIR = ../../../lib/miniupnpc-1.3
 	PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
 	ZLIB_DIR = ../../../lib/zlib-1.2.3
-	SSL_DIR = ../../../OpenSSL
+	SSL_DIR = ../../../openssl-1.0.1c
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 

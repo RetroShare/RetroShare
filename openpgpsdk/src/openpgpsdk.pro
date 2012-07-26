@@ -17,7 +17,7 @@ linux-* {
 }
 
 win32 {
-	SSL_DIR = ../../../OpenSSL
+	SSL_DIR = ../../../openssl-1.0.1c
 	ZLIB_DIR = ../../../zlib-1.2.3
 	BZIP_DIR = ../../../bzip2-1.0.6
 
