@@ -39,13 +39,15 @@
 class RsGxsPhotoAlbumItem : public RsGxsGrpItem
 {
 
-	RsGxsPhotoAlbumItem() {}
+public:
 
+	RsGxsPhotoAlbumItem() {}
 	RsPhotoAlbum album;
 };
 
 class RsGxsPhotoPhotoItem : public RsGxsMsgItem
 {
+public:
 
 	RsGxsPhotoPhotoItem() {}
 	RsPhotoPhoto photo;

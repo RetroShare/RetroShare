@@ -106,7 +106,22 @@ public:
 
 public:
 
+    /*!
+     * This adds a groups to the gxs data base, this is a blocking call
+     * Responsibility for grp still lies with callee \n
+     * If function returns successfully DataAccess can be queried for grp
+     * @param grp the group to add, responsibility grp passed lies with callee
+     * @return false if group cound not be added
+     */
     bool addGroupData(RsNxsGrp* grp);
+
+    /*!
+     * This adds a group to the gxs data base, this is a blocking call \n
+     * Responsibility for msg still lies with callee \n
+     * If function returns successfully DataAccess can be queried for msg
+     * @param msg the msg to add
+     * @return false if msg could not be added, true otherwise
+     */
     bool addMsgData(RsNxsMsg* msg);
 
 public:
@@ -202,43 +217,30 @@ private:
     bool clearRequest(const uint32_t &token);
 
     /*!
-     *
-     * @param token
-     * @param status
+     * Updates the status flag of a request
+     * @param token the token value of the request to set
+     * @param status the status to set
      * @return
      */
     bool updateRequestStatus(const uint32_t &token, const uint32_t &status);
 
     /*!
-     *
-     * @param token
-     * @param status
-     * @param reqtype
-     * @param anstype
-     * @param ts
-     * @return
+     * Use to query the status and other values of a given token
+     * @param token the toke of the request to check for
+     * @param status set to current status of request
+     * @param reqtype set to request type of request
+     * @param anstype set to to anstype of request
+     * @param ts time stamp
+     * @return false if token does not exist, true otherwise
      */
     bool checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts);
 
             // special ones for testing (not in final design)
     /*!
-     *
-     * @param tokens
-     * @return
+     * Get list of active tokens of this token service
+     * @param tokens sets to list of token contained in this tokenservice
      */
-    bool tokenList(std::list<uint32_t> &tokens);
-    bool popRequestInList(const uint32_t &token, std::string &id);
-    bool popRequestOutList(const uint32_t &token, std::string &id);
-
-
-    virtual bool getGroupList(uint32_t &token, const RsTokReqOptions &opts,
-                              const std::list<std::string> &groupIds, std::list<std::string> &outGroupIds);
-
-    virtual bool getMsgList(uint32_t &token, const RsTokReqOptions &opts,
-                            const std::list<std::string> &groupIds, std::list<std::string> &outMsgIds);
-
-    virtual bool getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts,
-                                   const std::list<std::string> &msgIds, std::list<std::string> &outMsgIds);
+    void tokenList(std::list<uint32_t> &tokens);
 
 
 private:
@@ -299,11 +301,11 @@ private:
 
 
     /*!
-     * This applies the options to the meta to find out if the message satisfies
+     * This applies the options to the meta to find out if the given message satisfies
      * them
      * @param opts options containing filters to check
      * @param meta meta containing currently defined options for msg
-     * @return true if msg meta passed all options
+     * @return true if msg meta passes all options
      */
     bool checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const;
 

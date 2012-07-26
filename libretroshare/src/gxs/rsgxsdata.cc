@@ -219,3 +219,34 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
     return ok;
 }
+
+void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
+{
+	this->mAuthorId = rMeta.mAuthorId;
+	this->mGroupFlags = rMeta.mGroupFlags;
+	this->mGroupId = rMeta.mGroupId;
+	this->mGroupStatus = rMeta.mGroupStatus ;
+	this->mLastPost = rMeta.mLastPost;
+	this->mMsgCount = rMeta.mMsgCount ;
+	this->mPop = rMeta.mPop;
+	this->mPublishTs = rMeta.mPublishTs;
+	this->mSubscribeFlags = rMeta.mSubscribeFlags;
+	this->mGroupName = rMeta.mGroupName;
+}
+
+void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)
+{
+	this->mAuthorId = rMeta.mAuthorId;
+	this->mChildTs = rMeta.mChildTs ;
+	this->mGroupId = rMeta.mGroupId;
+	this->mMsgFlags = rMeta.mMsgFlags ;
+	this->mMsgId = rMeta.mMsgId ;
+	this->mMsgName = rMeta.mMsgName;
+	this->mMsgStatus = rMeta.mMsgStatus;
+	this->mOrigMsgId = rMeta.mOrigMsgId;
+	this->mParentId = rMeta.mParentId ;
+	this->mPublishTs = rMeta.mPublishTs ;
+	this->mThreadId = rMeta.mThreadId;
+}
+
+

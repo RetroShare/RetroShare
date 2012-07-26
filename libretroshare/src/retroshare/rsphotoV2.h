@@ -158,117 +158,118 @@ class RsPhotoAlbum
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
-typedef std::map<std::string, std::vector<RsPhotoPhoto> > PhotoResult;
-typedef std::map<std::string, std::vector<RsMsgMetaData> > MsgMetaResult;
+typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
+typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 
 class RsPhotoV2
 {
-        public:
 
-        RsPhotoV2()  { return; }
-virtual ~RsPhotoV2() { return; }
+public:
 
-/*!
- * Use to enquire if groups or msgs have changed
- * @return true if msgs or groups have changed
- */
-virtual bool updated() = 0;
 
-/*!
- *
- * @param grpIds
- */
-virtual void groupsChanged(std::list<std::string>& grpIds) = 0;
+	RsPhotoV2()  { return; }
 
-/*!
- *
- * @param msgs
- */
-virtual void msgsChanged(std::map<std::string,
-                         std::vector<std::string> >& msgs) = 0;
+	virtual ~RsPhotoV2() { return; }
 
-/*!
- * To acquire a handle to token service handler
- * needed to make requests to the service
- * @return handle to token service for this gxs service
- */
-virtual RsTokenService* getTokenService() = 0;
+	/*!
+	 * Use to enquire if groups or msgs have changed
+	 * Poll regularly, particularly after a photo submission
+	 * @return true if msgs or groups have changed
+	 */
+	virtual bool updated() = 0;
 
-/* Generic Lists */
+	/*!
+	 *
+	 * @param grpIds
+	 */
+	virtual void groupsChanged(std::list<RsGroupId>& grpIds) = 0;
 
-/*!
- *
- * @param token token to be redeemed for this request
- * @param groupIds the ids return for given request token
- * @return false if request token is invalid, check token status for error report
- */
-virtual bool getGroupList(const uint32_t &token,
-                          std::list<std::string> &groupIds) = 0;
+	/*!
+	 *
+	 * @param msgs
+	 */
+	virtual void msgsChanged(GxsMsgIdResult& msgs) = 0;
 
-/*!
- * @param token token to be redeemed for this request
- * @param msgIds the ids return for given request token
- * @return false if request token is invalid, check token status for error report
- */
-virtual bool getMsgList(const uint32_t &token,
-                        std::map<std::string, std::vector<std::string> > &msgIds) = 0;
+	/*!
+	 * To acquire a handle to token service handler
+	 * needed to make requests to the service
+	 * @return handle to token service for this gxs service
+	 */
+	virtual RsTokenService* getTokenService() = 0;
 
-/* Generic Summary */
+	/* Generic Lists */
 
-/*!
- * @param token token to be redeemed for this request
- * @param groupInfo the ids returned for given request token
- * @return false if request token is invalid, check token status for error report
- */
-virtual bool getGroupSummary(const uint32_t &token,
-                             std::list<RsGroupMetaData> &groupInfo) = 0;
+	/*!
+	 *
+	 * @param token token to be redeemed for this request
+	 * @param groupIds the ids return for given request token
+	 * @return false if request token is invalid, check token status for error report
+	 */
+	virtual bool getGroupList(const uint32_t &token,
+							  std::list<RsGroupId> &groupIds) = 0;
 
-/*!
- * @param token token to be redeemed for this request
- * @param msgInfo the message metadata returned for given request token
- * @return false if request token is invalid, check token status for error report
- */
-virtual bool getMsgSummary(const uint32_t &token,
-                           MsgMetaResult &msgInfo) = 0;
+	/*!
+	 * @param token token to be redeemed for this request
+	 * @param msgIds the ids return for given request token
+	 * @return false if request token is invalid, check token status for error report
+	 */
+	virtual bool getMsgList(const uint32_t &token,
+							GxsMsgIdResult &msgIds) = 0;
 
-        /* Specific Service Data */
+	/* Generic Summary */
 
-/*!
- * @param token token to be redeemed for this request
- * @param album the album returned for given request token
- * @return false if request token is invalid, check token status for error report
- */
-virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
+	/*!
+	 * @param token token to be redeemed for group summary request
+	 * @param groupInfo the ids returned for given request token
+	 * @return false if request token is invalid, check token status for error report
+	 */
+	virtual bool getGroupSummary(const uint32_t &token,
+								 std::list<RsGroupMetaData> &groupInfo) = 0;
 
-/*!
- * @param token token to be redeemed for this request
- * @param photo the photo returned for given request token
- * @return false if request token is invalid, check token status for error report
- */
-virtual bool getPhoto(const uint32_t &token,
-                      PhotoResult &photo) = 0;
+	/*!
+	 * @param token token to be redeemed for message summary request
+	 * @param msgInfo the message metadata returned for given request token
+	 * @return false if request token is invalid, check token status for error report
+	 */
+	virtual bool getMsgSummary(const uint32_t &token,
+							   MsgMetaResult &msgInfo) = 0;
 
-/* details are updated in album - to choose Album ID, and storage path */
+			/* Specific Service Data */
 
-/*!
- * @param album
- * @param isNew
- * @return false if submission failed
- */
-virtual bool submitAlbumDetails(RsPhotoAlbum &album, bool isNew) = 0;
+	/*!
+	 * @param token token to be redeemed for album request
+	 * @param album the album returned for given request token
+	 * @return false if request token is invalid, check token status for error report
+	 */
+	virtual bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &album) = 0;
 
-/*!
- * @param photo photo to submit
- * @param isNew whether photo is new
- * @param
- */
-virtual bool submitPhoto(RsPhotoPhoto &photo, bool isNew) = 0;
+	/*!
+	 * @param token token to be redeemed for photo request
+	 * @param photo the photo returned for given request token
+	 * @return false if request token is invalid, check token status for error report
+	 */
+	virtual bool getPhoto(const uint32_t &token,
+						  PhotoResult &photo) = 0;
 
-/*!
- * @param grpId the id of the group to subscribe to
- * @param subsribe set to true to subscribe
- */
-virtual bool subscribeToAlbum(const std::string grpId, bool subscribe) = 0;
+	/* details are updated in album - to choose Album ID, and storage path */
+
+	/*!
+	 * This RsGenExchange service will be alerted to this album as \n
+	 * a new album. Do not keep the submitted album as representative, wait for
+	 * notification telling of successful submission
+	 * @param album The album to be submitted
+	 * @return false if submission failed
+	 */
+	virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
+
+	/*!
+	 * This RsGenExchange service will be alerted to this photo as \n
+	 * a new photo. Do not keep the submitted photo as representative, wait for new photo
+	 * returned
+	 * @param photo photo to submit
+	 * @return
+	 */
+	virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
 
 };
 

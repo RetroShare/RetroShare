@@ -39,7 +39,6 @@ typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 
-
 /*!
  * This should form the parent class to \n
  * all gxs services. This provides access to service's msg/grp data \n
@@ -71,7 +70,7 @@ public:
      * @param serviceSerialiser The users service needs this \n
      *        in order for gen exchange to deal with its data types
      */
-    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser);
+    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType);
 
     virtual ~RsGenExchange();
 
@@ -160,6 +159,7 @@ protected:
      * Enables publication of a group item
      * If the item exists already this is simply versioned
      * This will induce a related change message
+     * Ownership of item passes to this rsgenexchange
      * @param grpItem
      * @param
      */
@@ -169,6 +169,7 @@ protected:
      * Enables publication of a message item
      * If the item exists already this is simply versioned
      * This will induce a related a change message
+     * Ownership of item passes to this rsgenexchange
      * @param msgItem
      * @return false if msg creation failed.
      */
@@ -188,12 +189,9 @@ protected:
      * instigate client to retrieve new content from the system
      * @param changes the changes that have occured to data held by this service
      */
-    virtual void notifyChanges(std::vector<RsGxsChange*>& changes) = 0;
+    virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) = 0;
 
-private:
-
-    void operator=(std::list<RsGroupMetaData>& lMeta, std::list<RsGxsGrpMetaData*>& rGxsMeta);
-    void operator=(std::vector<RsMsgMetaData>& lMeta, std::vector<RsGxsMsgMetaData*>& rGxsMeta);
+public:
 
     void processRecvdData();
 
@@ -201,10 +199,13 @@ private:
 
     void processRecvdGroups();
 
+    void publishGrps();
+
+    void publishMsgs();
+
 private:
 
-    RsMutex mReqMtx;
-    std::map<uint32_t, gxsRequest> mRequests;
+    RsMutex mGenMtx;
     RsGxsDataAccess* mDataAccess;
     RsGeneralDataService* mDataStore;
     RsNetworkExchangeService *mNetService;
@@ -212,6 +213,14 @@ private:
 
     std::vector<RsNxsMsg*> mReceivedMsgs;
     std::vector<RsNxsGrp*> mReceivedGrps;
+
+    std::vector<RsGxsGrpItem*> mGrpsToPublish;
+    std::vector<RsGxsMsgItem*> mMsgsToPublish;
+
+    std::vector<RsGxsNotify*> mNotifications;
+
+    /// service type
+    uint16_t mServType;
 
 
 private:

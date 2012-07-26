@@ -2,15 +2,15 @@
 #define RSDATASERVICE_H
 
 #include "gxs/rsgds.h"
-
 #include "util/retrodb.h"
+
 
 class RsDataService : public RsGeneralDataService
 {
 public:
 
     RsDataService(const std::string& serviceDir, const std::string& dbName, uint16_t serviceType, RsGxsSearchModule* mod = NULL);
-    virtual ~RsDataService();
+    virtual ~RsDataService() ;
 
     /*!
      * Retrieves all msgs
@@ -25,10 +25,11 @@ public:
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
      * only retrieve entries, if entry cannot be found, it is removed from map
      * @param grp retrieved groups
+     * @param withMeta this initialise the metaData member of the nxsgroups retrieved
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveNxsGrps(std::map<std::string, RsNxsGrp*>& grp, bool cache);
+    int retrieveNxsGrps(std::map<std::string, RsNxsGrp*>& grp, bool withMeta, bool cache);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -120,7 +121,7 @@ private:
 	 * @param c cursor to result set
 	 * @param msgs messages retrieved from cursor are stored here
 	 */
-	void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& msgs);
+	void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, bool withMeta = false);
 
     /*!
      * extracts a msg meta item from a cursor at its

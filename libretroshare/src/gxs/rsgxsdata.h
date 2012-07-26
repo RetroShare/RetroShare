@@ -7,11 +7,14 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
+#include "serialiser/rsgxsitems.h"
 
 typedef std::string RsGxsGroupId;
 typedef std::string RsGxsMessageId;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
 
+class RsGroupMetaData;
+class RsMsgMetaData;
 
 class RsGxsGrpMetaData
 {
@@ -22,7 +25,7 @@ public:
     bool serialise(void* data, uint32_t &pktsize);
     uint32_t serial_size();
     void clear();
-
+    void operator =(const RsGroupMetaData& rMeta);
 
     RsGxsGroupId mGroupId;
     RsGxsGroupId mOrigGrpId;
@@ -62,6 +65,7 @@ public:
     bool serialise(void* data, uint32_t *size);
     uint32_t serial_size();
     void clear();
+    void operator =(const RsMsgMetaData& rMeta);
 
     RsGxsGroupId mGroupId;
     RsGxsMessageId mMsgId;

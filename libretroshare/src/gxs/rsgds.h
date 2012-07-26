@@ -46,10 +46,18 @@ public:
 
 };
 
+/*!
+ * This allows modification of local
+ * meta data items of a message
+ */
 class MsgLocMetaData {
 
 };
 
+/*!
+ * This allows modification of local
+ * meta data items of a group
+ */
 class GrpLocMetaData {
 
 };
@@ -99,10 +107,11 @@ public:
     /*!
      * Retrieves all groups stored
      * @param grp retrieved groups
+     * @param withMeta this initialises the meta handles nxs grps
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool cache) = 0;
+    virtual int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta, bool cache) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)

@@ -858,7 +858,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 		grps[item->grpId] = NULL;
 	}
 
-	mDataStore->retrieveNxsGrps(grps, false);
+	mDataStore->retrieveNxsGrps(grps, false, false);
 
 
 	NxsTransaction* newTr = new NxsTransaction();

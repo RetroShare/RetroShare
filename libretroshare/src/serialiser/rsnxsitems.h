@@ -184,8 +184,9 @@ class RsNxsGrp : public RsNxsItem
 
 public:
 
-    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype), meta(servtype) { clear(); return; }
-
+    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype), meta(servtype),
+    metaData(NULL) { clear(); return; }
+    virtual ~RsNxsGrp() { if(metaData) delete metaData; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -277,6 +278,8 @@ public:
      * only client of API knows who to decode this
      */
     RsTlvBinaryData msg;
+
+    RsGxsMsgMetaData* metaData;
 
 };
 

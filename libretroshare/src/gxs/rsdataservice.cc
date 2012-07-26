@@ -460,7 +460,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     }
 
     // finish transaction
-    return mDb->execSQL("COMMIT;");;
+    return mDb->execSQL("COMMIT;");
 }
 
 
@@ -542,7 +542,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     return mDb->execSQL("COMMIT;");
 }
 
-int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool cache){
+int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool withMeta, bool cache){
 
 	if(grp.empty()){
 
@@ -552,7 +552,7 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
 		{
 			std::vector<RsNxsGrp*> grps;
 
-			retrieveGroups(c, grps);
+			retrieveGroups(c, grps, withMeta);
 			std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
 			for(; vit != grps.end(); vit++)
@@ -593,7 +593,7 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
 	return 1;
 }
 
-void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){
+void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, bool withMeta){
 
     if(c){
         bool valid = c->moveToFirst();
@@ -604,6 +604,12 @@ void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps)
             // only add the latest grp info
             if(g)
             {
+            	RsGxsGrpMetaData* meta;
+
+            	if(withMeta)
+            		meta = getGrpMeta(*c);
+
+            	if(meta) g->metaData = meta;
                 grps.push_back(g);
             }
             valid = c->moveToNext();
@@ -738,7 +744,7 @@ int RsDataService::resetDataStore()
 
     std::map<std::string, RsNxsGrp*> grps;
 
-    retrieveNxsGrps(grps, false);
+    retrieveNxsGrps(grps, false, false);
     std::map<std::string, RsNxsGrp*>::iterator mit
             = grps.begin();
 

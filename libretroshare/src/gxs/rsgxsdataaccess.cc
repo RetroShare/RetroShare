@@ -51,6 +51,13 @@
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
 
+	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_FAILED = 0;
+	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_PENDING = 1;
+	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_PARTIAL = 2;
+	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_FINISHED_INCOMPLETE = 3;
+	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_COMPLETE = 4;
+	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
+
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
  : mDataStore(ds)
 {
@@ -187,7 +194,6 @@ bool RsGxsDataAccess::requestSetMessageStatus(uint32_t& token, const RsGxsGrpMsg
 		uint32_t statusMask)
 {
 
-
 	generateToken(token);
 
 	MessageSetFlagReq* req = new MessageSetFlagReq();
@@ -231,6 +237,8 @@ uint32_t RsGxsDataAccess::requestStatus(uint32_t token)
 
 
 
+
+
 bool RsGxsDataAccess::cancelRequest(const uint32_t& token)
 {
 	return clearRequest(token);
@@ -263,17 +271,21 @@ bool RsGxsDataAccess::getGroupSummary(const uint32_t& token, std::list<RsGxsGrpM
 
 		std::cerr << "RsGxsDataAccess::getGroupSummary() Unable to retrieve group summary" << std::endl;
 		return false;
-	}else{
+	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
 		GroupMetaReq* gmreq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(gmreq)
 		{
 			groupInfo = gmreq->mGroupMetaData;
+			updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupSummary() Req found, failed caste" << std::endl;
 			return false;
 		}
+	}else{
+		std::cerr << "RsGxsDataAccess::getGroupSummary() Req not ready" << std::endl;
+		return false;
 	}
 
 	return true;
@@ -288,17 +300,21 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 
 		std::cerr << "RsGxsDataAccess::getGroupData() Unable to retrieve group data" << std::endl;
 		return false;
-	}else{
+	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
 		GroupDataReq* gmreq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(gmreq)
 		{
 			grpData = gmreq->mGroupData;
+			updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupData() Req found, failed caste" << std::endl;
 			return false;
 		}
+	}else{
+		std::cerr << "RsGxsDataAccess::getGroupData() Req not ready" << std::endl;
+		return false;
 	}
 
 	return true;
@@ -312,17 +328,21 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 
 		std::cerr << "RsGxsDataAccess::getMsgData() Unable to retrieve group data" << std::endl;
 		return false;
-	}else{
+	}else if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
 		MsgDataReq* mdreq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(mdreq)
 		{
 		 msgData = mdreq->mMsgData;
+		 updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getMsgData() Req found, failed caste" << std::endl;
 			return false;
 		}
+	}else{
+		std::cerr << "RsGxsDataAccess::getMsgData() Req not ready" << std::endl;
+		return false;
 	}
 
 	return true;
@@ -336,18 +356,22 @@ bool RsGxsDataAccess::getMsgSummary(const uint32_t& token, GxsMsgMetaResult& msg
 
 		std::cerr << "RsGxsDataAccess::getMsgSummary() Unable to retrieve group data" << std::endl;
 		return false;
-	}else{
+	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
 		MsgMetaReq* mmreq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(mmreq)
 		{
 		 msgInfo = mmreq->mMsgMetaData;
+		 updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
 
 		}else{
 			std::cerr << "RsGxsDataAccess::getMsgSummary() Req found, failed caste" << std::endl;
 			return false;
 		}
+	}else{
+		std::cerr << "RsGxsDataAccess::getMsgSummary() Req not ready" << std::endl;
+		return false;
 	}
 
 	return true;
@@ -361,18 +385,22 @@ bool RsGxsDataAccess::getMsgList(const uint32_t& token, GxsMsgIdResult& msgIds)
 
 		std::cerr << "RsGxsDataAccess::getMsgList() Unable to retrieve group data" << std::endl;
 		return false;
-	}else{
+	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
 		MsgIdReq* mireq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(mireq)
 		{
 		 msgIds = mireq->mMsgIdResult;
+		 updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
 
 		}else{
 			std::cerr << "RsGxsDataAccess::getMsgList() Req found, failed caste" << std::endl;
 			return false;
 		}
+	}else{
+		std::cerr << "RsGxsDataAccess::getMsgList() Req not ready" << std::endl;
+		return false;
 	}
 
 	return true;
@@ -384,20 +412,25 @@ bool RsGxsDataAccess::getGroupList(const uint32_t& token, std::list<RsGxsGroupId
 
 	if(req == NULL){
 
-		std::cerr << "RsGxsDataAccess::getGroupList() Unable to retrieve group data" << std::endl;
+		std::cerr << "RsGxsDataAccess::getGroupList() Unable to retrieve group data,"
+				"\nRequest does not exist" << std::endl;
 		return false;
-	}else{
+	}else if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
 		GroupIdReq* gireq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(gireq)
 		{
 		 groupIds = gireq->mGroupIdResult;
+		 updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
 
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupList() Req found, failed caste" << std::endl;
 			return false;
 		}
+	}else{
+		std::cerr << "RsGxsDataAccess::getGroupList() Req not ready" << std::endl;
+		return false;
 	}
 
 	return true;
@@ -520,7 +553,7 @@ bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
 {
 
 	std::map<RsGxsGroupId, RsNxsGrp*> grpData;
-	mDataStore->retrieveNxsGrps(grpData, true);
+	mDataStore->retrieveNxsGrps(grpData, true, true);
 
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grpData.begin();
 	for(; mit != grpData.end(); mit++)
@@ -804,6 +837,59 @@ void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOption
 	}
 }
 
+
+bool RsGxsDataAccess::checkRequestStatus(const uint32_t& token,
+		uint32_t& status, uint32_t& reqtype, uint32_t& anstype, time_t& ts)
+{
+
+	GxsRequest* req = retrieveRequest(token);
+
+	RsStackMutex stack(mDataMutex);
+
+	if(!req)
+		return false;
+
+	anstype = req->ansType;
+	reqtype = req->reqType;
+	status = req->status;
+	ts = req->reqTime;
+
+	return true;
+}
+
+bool RsGxsDataAccess::addGroupData(RsNxsGrp* grp) {
+
+	RsStackMutex stack(mDataMutex);
+
+	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grpM;
+	grpM.insert(std::make_pair(grp, grp->metaData));
+	return mDataStore->storeGroup(grpM);
+}
+
+
+
+bool RsGxsDataAccess::addMsgData(RsNxsMsg* msg) {
+
+	RsStackMutex stack(mDataMutex);
+
+	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgM;
+	msgM.insert(std::make_pair(msg, msg->metaData));
+	return mDataStore->storeMessage(msgM);
+}
+
+
+
+void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens) {
+
+	RsStackMutex stack(mDataMutex);
+
+	std::map<uint32_t, GxsRequest*>::iterator mit = mRequests.begin();
+
+	for(; mit != mRequests.end(); mit++)
+	{
+		tokens.push_back(mit->first);
+	}
+}
 
 bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const
 {

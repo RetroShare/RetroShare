@@ -1,8 +1,8 @@
 #include "rsgenexchange.h"
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
-                             RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser)
-: mReqMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser)
+                             RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType)
+: mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser), mServType(servType)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -11,8 +11,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
 
 RsGenExchange::~RsGenExchange()
 {
-
-    // need to destruct in a certain order
+    // need to destruct in a certain order (prob a bad thing!)
     delete mNetService;
 
     delete mDataAccess;
@@ -27,12 +26,18 @@ RsGenExchange::~RsGenExchange()
 void RsGenExchange::tick()
 {
 	mDataAccess->processRequests();
+
+	publishGrps();
+
+	publishMsgs();
+
 }
 
 
 bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)
 {
 	return mDataAccess->getGroupList(token, groupIds);
+
 }
 
 bool RsGenExchange::getMsgList(const uint32_t &token,
@@ -45,9 +50,16 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 {
 	std::list<RsGxsGrpMetaData*> metaL;
 	bool ok = mDataAccess->getGroupSummary(token, metaL);
-	groupInfo = metaL;
 
-	std::list<RsGroupMetaData*>::iterator cit = metaL;
+	std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin();
+
+	for(; lit != metaL.end(); lit++)
+	{
+		RsGroupMetaData m = *(*lit);
+		groupInfo.push_back(m);
+	}
+
+	std::list<RsGxsGrpMetaData*>::iterator cit = metaL;
 	for(; cit != metaL.end(); cit++)
 		delete *cit;
 
@@ -92,7 +104,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 	{
 		for(; lit != nxsGrps.end(); lit++)
 		{
-			RsTlvBinaryData& data = *lit->grp;
+			RsTlvBinaryData& data = (*lit)->grp;
 			RsItem* item = mSerialiser->deserialise(data.bin_data, &data.bin_len);
 			RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
 			grpItem.push_back(gItem);
@@ -114,7 +126,7 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
 		for(; mit != msgResult.end(); mit++)
 		{
 			std::vector<RsGxsMsgItem*> gxsMsgItems;
-			RsGxsGroupId& grpId = mit->first;
+			const RsGxsGroupId& grpId = mit->first;
 			std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
 			std::vector<RsNxsMsg*>::iterator vit
 			= nxsMsgsV.begin();
@@ -134,50 +146,6 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
     return ok;
 }
 
-void RsGenExchange::operator =(std::list<RsGroupMetaData>& lMeta, std::list<RsGxsGrpMetaData*>& rGxsMeta)
-{
-	std::list<RsGxsGrpMetaData*>::const_iterator cit = rGxsMeta.begin();
-
-	for(; cit != rGxsMeta.end(); cit++)
-	{
-		const RsGxsGrpMetaData*& gxm = *cit;
-		RsGroupMetaData gm;
-		gm.mAuthorId = gxm->mAuthorId;
-		gm.mGroupFlags = gxm->mGroupFlags;
-		gm.mGroupId = gxm->mGroupId;
-		gm.mGroupStatus = gxm->mGroupStatus;
-		gm.mLastPost = gxm->mLastPost;
-		gm.mMsgCount = gxm->mMsgCount;
-		gm.mPop = gxm->mPop;
-		gm.mPublishTs = gxm->mPublishTs;
-		gm.mSubscribeFlags = gxm->mSubscribeFlags;
-		gm.mGroupName = gxm->mGroupName;
-		lMeta.push_back(gm);
-	}
-}
-
-void RsGenExchange::operator =(std::vector<RsMsgMetaData>& lMeta, std::vector<RsGxsMsgMetaData*>& rGxsMeta)
-{
-	std::vector<RsMsgMetaData*>::const_iterator vit = rGxsMeta.begin();
-
-	for(; vit != rGxsMeta.end(); vit++)
-	{
-		const RsGxsMsgMetaData*& mxm = *vit;
-		RsMsgMetaData mm;
-		mm.mAuthorId = mxm->mAuthorId;
-		mm.mChildTs = mxm->mChildTs;
-		mm.mGroupId = mxm->mGroupId;
-		mm.mMsgFlags = mxm->mMsgFlags;
-		mm.mMsgId = mxm->mMsgId;
-		mm.mMsgName = mxm->mMsgName;
-		mm.mMsgStatus = mxm->mMsgStatus;
-		mm.mOrigMsgId = mxm->mOrigMsgId;
-		mm.mParentId = mxm->mParentId;
-		mm.mPublishTs = mxm->mPublishTs;
-		mm.mThreadId = mxm->mThreadId;
-		lMeta.push_back(mm);
-	}
-}
 
 RsTokenService* RsGenExchange::getTokenService()
 {
@@ -209,11 +177,113 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *> messages)
 bool RsGenExchange::publishGroup(RsGxsGrpItem *grpItem)
 {
 
+	RsStackMutex stack(mGenMtx);
 
-    return false;
+	mGrpsToPublish.push_back(grpItem);
+
+    return true;
 }
 
 bool RsGenExchange::publishMsg(RsGxsMsgItem *msgItem)
 {
-    return false;
+
+	RsStackMutex stack(mGenMtx);
+
+	mMsgsToPublish.push_back(msgItem);
+    return true;
 }
+
+
+void RsGenExchange::publishMsgs()
+{
+	RsStackMutex stack(mGenMtx);
+
+	std::vector<RsGxsMsgItem*>::iterator vit = mMsgsToPublish.begin();
+
+	for(; vit != mMsgsToPublish.end(); )
+	{
+
+		RsNxsMsg* msg = new RsNxsMsg(mServType);
+		RsGxsMsgItem* msgItem = *vit;
+		uint32_t size = mSerialiser->size(msgItem);
+		char mData[size];
+		bool ok = mSerialiser->serialise(msgItem, mData, &size);
+
+		if(ok)
+		{
+			msg->metaData = new RsGxsMsgMetaData();
+			ok = mDataAccess->addMsgData(msg);
+
+			if(ok)
+			{
+				RsGxsMsgChange* mc = new RsGxsMsgChange();
+				mNotifications.push_back(mc);
+			}
+		}
+
+		if(!ok)
+		{
+#ifdef GEN_EXCH_DEBUG
+			std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
+#endif
+			delete msg;
+			continue;
+
+		}
+
+		delete msgItem;
+	}
+}
+
+void RsGenExchange::publishGrps()
+{
+
+	RsStackMutex stack(mGenMtx);
+
+	std::vector<RsGxsGrpItem*>::iterator vit = mGrpsToPublish.begin();
+
+	for(; vit != mGrpsToPublish.end();)
+	{
+
+		RsNxsGrp* grp = new RsNxsGrp(mServType);
+		RsGxsGrpItem* grpItem = *vit;
+		uint32_t size = mSerialiser->size(grpItem);
+
+		char gData[size];
+		bool ok = mSerialiser->serialise(grpItem, gData, &size);
+
+		if(ok)
+		{
+			grp->metaData = new RsGxsGrpMetaData();
+			ok = mDataAccess->addGroupData(grp);
+			RsGxsGroupChange* gc = RsGxsGroupChange();
+			mNotifications.push_back(gc);
+		}
+
+		if(!ok)
+		{
+
+#ifdef GEN_EXCH_DEBUG
+			std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
+#endif
+			delete grp;
+			continue;
+		}
+
+		delete grpItem;
+
+		vit = mGrpsToPublish.erase(vit);
+	}
+
+}
+void RsGenExchange::processRecvdData() {
+}
+
+
+void RsGenExchange::processRecvdMessages() {
+}
+
+
+void RsGenExchange::processRecvdGroups() {
+}
+

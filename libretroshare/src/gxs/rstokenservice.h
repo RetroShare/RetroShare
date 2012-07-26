@@ -37,13 +37,6 @@ typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
 typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
 
-#define GXS_REQUEST_STATUS_FAILED		0
-#define GXS_REQUEST_STATUS_PENDING		1
-#define GXS_REQUEST_STATUS_PARTIAL		2
-#define GXS_REQUEST_STATUS_FINISHED_INCOMPLETE	3
-#define GXS_REQUEST_STATUS_COMPLETE		4
-#define GXS_REQUEST_STATUS_DONE			5 // ONCE ALL DATA RETRIEVED.
-
 #define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
 #define GXS_REQUEST_TYPE_GROUP_META			0x00020000
 #define GXS_REQUEST_TYPE_GROUP_IDS			0x00040000
@@ -91,6 +84,15 @@ class RsTokenService
 
 public:
 
+	static const uint8_t GXS_REQUEST_STATUS_FAILED;
+	static const uint8_t GXS_REQUEST_STATUS_PENDING;
+	static const uint8_t GXS_REQUEST_STATUS_PARTIAL;
+	static const uint8_t GXS_REQUEST_STATUS_FINISHED_INCOMPLETE;
+	static const uint8_t GXS_REQUEST_STATUS_COMPLETE;
+	static const uint8_t GXS_REQUEST_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
+
+public:
+
     RsTokenService()  { return; }
     virtual ~RsTokenService() { return; }
 
@@ -98,20 +100,20 @@ public:
 
     /*!
      * Use this to request group related information
-     * @param token
+     * @param token The token returned for the request, store this value to pool for request completion
      * @param ansType The type of result (e.g. group data, meta, ids)
-     * @param opts
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds group id to request info for. Leave empty to get info on all groups,
      * @return
      */
     virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
 
     /*!
-     *
-     * @param token
-     * @param ansType
-     * @param opts
-     * @param groupIds
+     * Use this to get msg related information, store this value to pole for request completion
+     * @param token The token returned for the request
+     * @param ansType The type of result wanted
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return
      */
     virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) = 0;
@@ -129,11 +131,11 @@ public:
     		const uint32_t status, const uint32_t statusMask) = 0;
 
     /*!
-     *
-     * @param token
-     * @param grpId
-     * @param status
-     * @param statusMask
+     * Set the status of a group given by group Id
+     * @param token The token returned for this request
+     * @param grpId The Id of the group to apply status change to
+     * @param status The status to apply
+     * @param statusMask The status mask (target particular type of status)
      * @return true if request made successfully, false otherwise
      */
     virtual bool requestSetGroupStatus(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t status,
@@ -152,10 +154,14 @@ public:
     	// (FUTURE WORK).
     //virtual bool groupRestoreKeys(const std::string &groupId) = 0;
     //virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
+
         /* Poll */
 
     /*!
-     * Request the status of ongoing request. This is a blocking operation!
+     * Request the status of ongoing request.
+     * Please use this for polling as much cheaper
+     * than polling the specific service as they might
+     * not return intermediate status information
      * @param token value of token to check status for
      * @return the current status of request
      */
@@ -166,8 +172,8 @@ public:
     /*!
      * If this function returns false, it may be that the request has completed
      * already. Useful for very expensive request. This is a blocking operation
-     * @param token
-     * @return false if unusuccessful, true if successful
+     * @param token the token of the request to cancel
+     * @return false if unusuccessful in cancelling request, true if successful
      */
     virtual bool cancelRequest(const uint32_t &token) = 0;
 

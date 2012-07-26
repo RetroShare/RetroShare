@@ -32,35 +32,8 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 
-
-class RsGxsGrpItem : public RsItem
-{
-
-public:
-
-    RsGxsGrpItem() : RsItem(0) { return; }
-    virtual ~RsGxsGrpItem(){}
-
-    // must be serialised
-    std::string mAuthorId;
-    std::string mGrpId;
-
-};
-
-class RsGxsMsgItem : public RsItem
-{
-
-public:
-    RsGxsMsgItem() : RsItem(0) { return; }
-    virtual ~RsGxsMsgItem(){}
-
-    // must be serialised
-    std::string mAuthorId;
-    std::string mMsgId;
-    std::string mGrpId;
-
-};
-
+class RsGxsGrpMetaData;
+class RsGxsMsgMetaData;
 
 class RsGroupMetaData
 {
@@ -78,6 +51,20 @@ class RsGroupMetaData
 
                 //mPublishTs = 0;
         }
+
+    	void operator =(const RsGxsGrpMetaData& rGxsMeta);
+//    	{
+//    		this->mAuthorId = rGxsMeta.mAuthorId;
+//    		this->mGroupFlags = rGxsMeta.mGroupFlags;
+//    		this->mGroupId = rGxsMeta.mGroupId;
+//    		this->mGroupStatus = rGxsMeta.mGroupStatus;
+//    		this->mLastPost = rGxsMeta.mLastPost;
+//    		this->mMsgCount = rGxsMeta.mMsgCount;
+//    		this->mPop = rGxsMeta.mPop;
+//    		this->mPublishTs = rGxsMeta.mPublishTs;
+//    		this->mSubscribeFlags = rGxsMeta.mSubscribeFlags;
+//    		this->mGroupName = rGxsMeta.mGroupName;
+//    	}
 
         std::string mGroupId;
         std::string mGroupName;
@@ -113,6 +100,9 @@ class RsMsgMetaData
                 mChildTs = 0;
         }
 
+        void operator =(const RsGxsMsgMetaData& rGxsMeta);
+
+
         std::string mGroupId;
         std::string mMsgId;
 
@@ -133,6 +123,32 @@ class RsMsgMetaData
         time_t      mChildTs;
 
 };
+
+
+class RsGxsGrpItem : public RsItem
+{
+
+public:
+
+    RsGxsGrpItem() : RsItem(0) { return; }
+    virtual ~RsGxsGrpItem(){}
+
+    RsGroupMetaData meta;
+
+};
+
+class RsGxsMsgItem : public RsItem
+{
+
+public:
+    RsGxsMsgItem() : RsItem(0) { return; }
+    virtual ~RsGxsMsgItem(){}
+
+    RsMsgMetaData meta;
+
+};
+
+
 
 
 

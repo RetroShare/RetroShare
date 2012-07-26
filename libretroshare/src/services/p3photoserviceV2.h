@@ -38,6 +38,9 @@ public:
 
 public:
 
+    /*!
+     * @return
+     */
     bool updated();
 
 public:
@@ -55,7 +58,7 @@ public:
     bool getGroupList(const uint32_t &token,
                               std::list<std::string> &groupIds);
     bool getMsgList(const uint32_t &token,
-                            std::list<std::string> &msgIds);
+                            GxsMsgIdResult& msgIds);
 
     /* Generic Summary */
     bool getGroupSummary(const uint32_t &token,
@@ -65,18 +68,20 @@ public:
                                MsgMetaResult &msgInfo);
 
     /* Specific Service Data */
-    bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
-    bool getPhoto(const uint32_t &token, PhotoResult &photo);
+    bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &albums);
+    bool getPhoto(const uint32_t &token, PhotoResult &photos);
 
+private:
 
+    void operator=(RsPhoto& lPhotos, const RsGxsPhotoPhotoItem& rPhoto);
+    void operator=(RsPhotoAlbum& lAlbum, const RsGxsPhotoAlbumItem& rAlbum);
 
 public:
 
     /** Modifications **/
 
-    bool submitAlbumDetails(RsPhotoAlbum &album, bool isNew);
-    bool submitPhoto(RsPhotoPhoto &photo, bool isNew);
-    bool subscribeToAlbum(const std::string& grpId, bool subscribe);
+    bool submitAlbumDetails(RsPhotoAlbum &album);
+    bool submitPhoto(RsPhotoPhoto &photo);
 };
 
 #endif // P3PHOTOSERVICEV2_H
