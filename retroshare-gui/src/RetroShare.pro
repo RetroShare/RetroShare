@@ -1,11 +1,12 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht 
-CONFIG += photoshare 
-CONFIG += wikipoos 
-CONFIG += thewire 
-CONFIG += identities
-CONFIG += forumsv2 
-CONFIG += posted 
-CONFIG += unfinished 
+# Below is for GXS services.
+#CONFIG += photoshare 
+#CONFIG += wikipoos 
+#CONFIG += thewire 
+#CONFIG += identities
+#CONFIG += forumsv2 
+#CONFIG += posted 
+#CONFIG += unfinished 
 
 QT     += network xml script 
 
