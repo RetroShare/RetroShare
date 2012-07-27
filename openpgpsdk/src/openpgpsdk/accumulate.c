@@ -43,88 +43,85 @@ typedef struct
 /**
  * \ingroup Core_Callbacks
  */
-static ops_parse_cb_return_t
-accumulate_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)
-    {
-    accumulate_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
-    const ops_parser_content_union_t *content=&content_->content;
-    ops_keyring_t *keyring=arg->keyring;
-    ops_keydata_t *cur=NULL;
-    const ops_public_key_t *pkey;
+static ops_parse_cb_return_t accumulate_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinfo)
+{
+	accumulate_arg_t *arg=ops_parse_cb_get_arg(cbinfo);
+	const ops_parser_content_union_t *content=&content_->content;
+	ops_keyring_t *keyring=arg->keyring;
+	ops_keydata_t *cur=NULL;
+	const ops_public_key_t *pkey;
 
-    if(keyring->nkeys >= 0)
-	cur=&keyring->keys[keyring->nkeys];
+	if(keyring->nkeys >= 0)
+		cur=&keyring->keys[keyring->nkeys];
 
-    switch(content_->tag)
+	switch(content_->tag)
 	{
-    case OPS_PTAG_CT_PUBLIC_KEY:
-    case OPS_PTAG_CT_SECRET_KEY:
-    case OPS_PTAG_CT_ENCRYPTED_SECRET_KEY:
-	//	printf("New key\n");
-	++keyring->nkeys;
-	EXPAND_ARRAY(keyring,keys);
+		case OPS_PTAG_CT_PUBLIC_KEY:
+		case OPS_PTAG_CT_SECRET_KEY:
+		case OPS_PTAG_CT_ENCRYPTED_SECRET_KEY:
+			//	printf("New key\n");
+			++keyring->nkeys;
+			EXPAND_ARRAY(keyring,keys);
 
-	if(content_->tag == OPS_PTAG_CT_PUBLIC_KEY)
-	    pkey=&content->public_key;
-	else
-	    pkey=&content->secret_key.public_key;
+			if(content_->tag == OPS_PTAG_CT_PUBLIC_KEY)
+				pkey=&content->public_key;
+			else
+				pkey=&content->secret_key.public_key;
 
-	memset(&keyring->keys[keyring->nkeys],'\0',
-	       sizeof keyring->keys[keyring->nkeys]);
+			memset(&keyring->keys[keyring->nkeys],'\0', sizeof keyring->keys[keyring->nkeys]);
 
-	ops_keyid(keyring->keys[keyring->nkeys].key_id,pkey);
-	ops_fingerprint(&keyring->keys[keyring->nkeys].fingerprint,pkey);
+			ops_keyid(keyring->keys[keyring->nkeys].key_id,pkey);
+			ops_fingerprint(&keyring->keys[keyring->nkeys].fingerprint,pkey);
 
-	keyring->keys[keyring->nkeys].type=content_->tag;
+			keyring->keys[keyring->nkeys].type=content_->tag;
 
-	if(content_->tag == OPS_PTAG_CT_PUBLIC_KEY)
-	    keyring->keys[keyring->nkeys].key.pkey=*pkey;
-	else
-	    keyring->keys[keyring->nkeys].key.skey=content->secret_key;
-	return OPS_KEEP_MEMORY;
+			if(content_->tag == OPS_PTAG_CT_PUBLIC_KEY)
+				keyring->keys[keyring->nkeys].key.pkey=*pkey;
+			else
+				keyring->keys[keyring->nkeys].key.skey=content->secret_key;
+			return OPS_KEEP_MEMORY;
 
-    case OPS_PTAG_CT_USER_ID:
-	//	printf("User ID: %s\n",content->user_id.user_id);
-        if (!cur)
-            {
-            OPS_ERROR(cbinfo->errors,OPS_E_P_NO_USERID, "No user id found");
-            return OPS_KEEP_MEMORY;
-            }
-        //	assert(cur);
-	ops_add_userid_to_keydata(cur, &content->user_id);
-	free(content->user_id.user_id);
-	return OPS_KEEP_MEMORY;
+		case OPS_PTAG_CT_USER_ID:
+			//	printf("User ID: %s\n",content->user_id.user_id);
+			if (!cur)
+			{
+				OPS_ERROR(cbinfo->errors,OPS_E_P_NO_USERID, "No user id found");
+				return OPS_KEEP_MEMORY;
+			}
+			//	assert(cur);
+			ops_add_userid_to_keydata(cur, &content->user_id);
+			free(content->user_id.user_id);
+			return OPS_KEEP_MEMORY;
 
-    case OPS_PARSER_PACKET_END:
-	if(!cur)
-	    return OPS_RELEASE_MEMORY;
-	ops_add_packet_to_keydata(cur, &content->packet);
-	free(content->packet.raw);
-	return OPS_KEEP_MEMORY;
+		case OPS_PARSER_PACKET_END:
+			if(!cur)
+				return OPS_RELEASE_MEMORY;
+			ops_add_packet_to_keydata(cur, &content->packet);
+			free(content->packet.raw);
+			return OPS_KEEP_MEMORY;
 
-    case OPS_PARSER_ERROR:
-	fprintf(stderr,"Error: %s\n",content->error.error);
-	assert(0);
-	break;
+		case OPS_PARSER_ERROR:
+			fprintf(stderr,"Error: %s\n",content->error.error);
+			//assert(0);
+			break;
 
-    case OPS_PARSER_ERRCODE:
-	switch(content->errcode.errcode)
-	    {
-	default:
-	    fprintf(stderr,"parse error: %s\n",
-		    ops_errcode(content->errcode.errcode));
-	    //assert(0);
-	    }
-	break;
+		case OPS_PARSER_ERRCODE:
+			switch(content->errcode.errcode)
+			{
+				default:
+					fprintf(stderr,"parse error: %s\n", ops_errcode(content->errcode.errcode));
+					//assert(0);
+			}
+			break;
 
-    default:
-	break;
+		default:
+			break;
 	}
 
-    // XXX: we now exclude so many things, we should either drop this or
-    // do something to pass on copies of the stuff we keep
-    return ops_parse_stacked_cb(content_,cbinfo);
-    }
+	// XXX: we now exclude so many things, we should either drop this or
+	// do something to pass on copies of the stuff we keep
+	return ops_parse_stacked_cb(content_,cbinfo);
+}
 
 /**
  * \ingroup Core_Parse
