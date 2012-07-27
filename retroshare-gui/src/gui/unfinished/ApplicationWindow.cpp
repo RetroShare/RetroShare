@@ -32,10 +32,17 @@
 
 #include <retroshare/rsiface.h>
 
-#include "GamesDialog.h"
-#include "PhotoDialog.h"
-#include "CalDialog.h"
-#include "StatisticDialog.h"
+#include "gui/PhotoShare/PhotoDialog.h"
+#include "gui/WikiPoos/WikiDialog.h"
+#include "gui/TheWire/WireDialog.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/ForumsV2Dialog.h"
+#include "gui/Posted/PostedDialog.h"
+
+//#include "GamesDialog.h"
+//#include "CalDialog.h"
+//#include "PhotoDialog.h"
+//#include "StatisticDialog.h"
 
 #define FONT        QFont("Arial", 9)
 
@@ -50,7 +57,7 @@
 #define IMAGE_CALENDAR          ":/images/calendar.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-
+#define IMAGE_FORUMSV2            ":/images/konversation.png"
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -61,7 +68,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     setWindowTitle(tr("RetroShare"));
 
-    Settings->loadWidgetInformation(this);
+    //Settings->loadWidgetInformation(this);
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -70,22 +77,45 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
-    StatisticDialog *statisticDialog = NULL;
-    ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
+    //StatisticDialog *statisticDialog = NULL;
+    //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
+
+    //PhotoDialog *photoDialog = NULL;
+    //ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+    //                  createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+
+    //GamesDialog *gamesDialog = NULL;
+    //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
+
+    //CalDialog *calDialog = NULL;
+    //ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
+    //                  createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
+
+    IdDialog *idDialog = NULL;
+    ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
 
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
 
-    GamesDialog *gamesDialog = NULL;
-    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
+    WikiDialog *wikiDialog = NULL;
+    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
 
-    CalDialog *calDialog = NULL;
-    ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
+    WireDialog *wireDialog = NULL;
+    ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
 
+    ForumsV2Dialog *forumsV2Dialog = NULL;
+    ui.stackPages->add(forumsV2Dialog = new ForumsV2Dialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_FORUMSV2), tr("ForumsV2"), grp));
+
+    PostedDialog *postedDialog = NULL;
+    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
 
 
    /* Create the toolbar */
@@ -122,7 +152,7 @@ void ApplicationWindow::show()
         QMainWindow::show();
     } else {
         QMainWindow::activateWindow();
-        setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+        setWindowState(windowState() & (~Qt::WindowMinimized | Qt::WindowActive));
         QMainWindow::raise();
     }
 }
@@ -154,7 +184,7 @@ void ApplicationWindow::createActions()
 
 void ApplicationWindow::closeEvent(QCloseEvent *e)
 {
-    Settings->saveWidgetInformation(this);
+    //Settings->saveWidgetInformation(this);
 
     hide();
     e->ignore();

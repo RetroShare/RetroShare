@@ -3,7 +3,7 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2008-2008 by Robert Fernie.
+ * Copyright 2012-2012 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,116 +26,111 @@
 #ifndef P3_PHOTO_SERVICE_HEADER
 #define P3_PHOTO_SERVICE_HEADER
 
-#include "dbase/cachestrapper.h"
-#include "pqi/pqiservice.h"
-#include "pqi/pqistreamer.h"
-
-#include "serialiser/rsserial.h"
-#include "serialiser/rsphotoitems.h"
-
+#include "services/p3gxsservice.h"
 #include "retroshare/rsphoto.h"
+
+#include <map>
+#include <string>
 
 /* 
  * Photo Service
+ *
+ * This is an example service for the new cache system.
+ * For the moment, it will only hold data passed to it from the GUI.
+ * and spew that back when asked....
+ *
+ * We are doing it like this - so we can check the required interface functionality.
+ *
+ * Expect it won't take long before it'll be properly linked into the backend!
+ *
+ * This will be transformed into a Plugin Service, once the basics have been worked out.
+ *
  */
 
-class PhotoSet
+
+class PhotoDataProxy: public GxsDataProxy
 {
 	public:
 
-	PhotoSet();
-        std::string pid;
+	bool addAlbum(const RsPhotoAlbum &album);
+	bool addPhoto(const RsPhotoPhoto &photo);
 
-        std::map<std::string, RsPhotoItem *> photos;
-        std::map<std::string, RsPhotoShowItem *> shows;
+	bool getAlbum(const std::string &id, RsPhotoAlbum &album);
+	bool getPhoto(const std::string &id, RsPhotoPhoto &photo);
+
+        /* These Functions must be overloaded to complete the service */
+virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
+virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
+
 };
 
 
 
-class p3PhotoService: public CacheSource, public CacheStore
+class p3PhotoService: public p3GxsDataService, public RsPhoto
 {
 	public:
 
-	p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir);
+	p3PhotoService(uint16_t type);
 
-void	tick();
-
-/******************************* CACHE SOURCE / STORE Interface *********************/
-
-	/* overloaded functions from Cache Source */
-virtual bool    loadLocalCache(const CacheData &data);
-
-	/* overloaded functions from Cache Store */
-virtual int    loadCache(const CacheData &data);
-
-/******************************* CACHE SOURCE / STORE Interface *********************/
+virtual int	tick();
 
 	public:
 
+// NEW INTERFACE.
 /************* Extern Interface *******/
 
-	/* things changed */
-bool updated();
+        /* changed? */
+virtual bool updated();
 
-        /* access data */
-bool getPhotoList(std::string id, std::list<std::string> &hashs);
-bool getShowList(std::string id, std::list<std::string> &showIds);
-bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
-bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
+       /* Data Requests */
+virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
 
-	        /* add / delete */
-std::string createShow(std::string name);
-bool deleteShow(std::string showId);
-bool addPhotoToShow(std::string showId, std::string photoId, int16_t index);
-bool movePhotoInShow(std::string showId, std::string photoId, int16_t index);
-bool removePhotoFromShow(std::string showId, std::string photoId);
+        /* Generic Lists */
+virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
+virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds);
 
-std::string addPhoto(std::string path); /* add from file */
-bool addPhoto(std::string srcId, std::string photoId); /* add from peers photos */
-bool deletePhoto(std::string photoId);
+        /* Generic Summary */
+virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
+virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo);
 
-	        /* modify properties (TODO) */
-bool modifyShow(std::string showId, std::wstring name, std::wstring comment);
-bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment);
-bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment);
+        /* Actual Data -> specific to Interface */
+        /* Specific Service Data */
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
 
+        /* Poll */
+virtual uint32_t requestStatus(const uint32_t token);
 
+        /* Cancel Request */
+virtual bool cancelRequest(const uint32_t &token);
 
-	private:	
+        //////////////////////////////////////////////////////////////////////////////
+virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
+virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
+virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
 
-	/* cache processing */
-
-void loadPhotoIndex(std::string filename, std::string hash, std::string src);
-void availablePhoto(std::string filename, std::string hash, std::string src);
-
-bool loadPhotoItem(RsPhotoItem *item);
-bool loadPhotoShowItem(RsPhotoShowItem *item);
-void publishPhotos();
-
-
-	/* locate info */
-
-PhotoSet 	&locked_getPhotoSet(std::string id);
-RsPhotoItem 	*locked_getPhoto(std::string id, std::string photoId);
-RsPhotoShowItem *locked_getShow(std::string id, std::string showId);
+virtual bool groupRestoreKeys(const std::string &groupId);
+virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
 
-	/* test functions */
-void		createDummyData();
+/* details are updated in album - to choose Album ID, and storage path */
+virtual bool submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew);
+virtual bool submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew);
 
 
+
+	private:
+
+std::string genRandomId();
+
+	PhotoDataProxy *mPhotoProxy;
 
 	RsMutex mPhotoMtx;
-
-	/***** below here is locked *****/
-
-	bool mRepublish;
-	std::string mOwnId;
-
 	bool mUpdated;
-
-	std::map<std::string, PhotoSet> mPhotos;
 
 
 };

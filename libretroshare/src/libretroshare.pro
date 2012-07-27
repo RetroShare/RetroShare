@@ -7,6 +7,10 @@ TARGET = retroshare
 
 CONFIG += test_voip 
 
+# GXS Stuff.
+#CONFIG += newcache
+#CONFIG += newservices
+
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL 
 #ENABLE_CACHE_OPT
@@ -416,7 +420,6 @@ HEADERS +=	rsserver/p3discovery.h \
 			rsserver/p3history.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
-			rsserver/p3photo.h \
 			rsserver/p3status.h \
 			rsserver/p3serverconfig.h
 
@@ -431,7 +434,6 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsgameitems.h \
 			serialiser/rshistoryitems.h \
 			serialiser/rsmsgitems.h \
-			serialiser/rsphotoitems.h \
 			serialiser/rsserial.h \
 			serialiser/rsserviceids.h \
 			serialiser/rsserviceitems.h \
@@ -456,7 +458,6 @@ HEADERS +=	services/p3channels.h \
 			services/p3gamelauncher.h \
 			services/p3gameservice.h \
 			services/p3msgservice.h \
-			services/p3photoservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3dsdv.h \
@@ -488,9 +489,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsversion.h \
 			util/rswin.h \
 			util/rsrandom.h \
-			util/pugiconfig.h \
 			util/radix64.h \
-			util/pugixml.h
+			util/pugiconfig.h \  
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -553,7 +553,6 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3history.cc \
 			rsserver/p3msgs.cc \
 			rsserver/p3peers.cc \
-			rsserver/p3photo.cc \
 			rsserver/p3status.cc \
 			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
@@ -576,7 +575,6 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsgameitems.cc \
 			serialiser/rshistoryitems.cc \
 			serialiser/rsmsgitems.cc \
-			serialiser/rsphotoitems.cc \
 			serialiser/rsserial.cc \
 			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \
@@ -600,7 +598,6 @@ SOURCES +=	services/p3channels.cc \
 			services/p3forums.cc \
 			services/p3gamelauncher.cc \
 			services/p3msgservice.cc \
-			services/p3photoservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
 			services/p3dsdv.cc \
@@ -634,7 +631,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
 			util/rsrandom.cc \
-			util/pugixml.cc
 
 zeroconf {
 
@@ -649,7 +645,7 @@ SOURCES +=	zeroconf/p3zeroconf.cc  \
 
 # This is seperated from the above for windows/linux platforms.
 # It is acceptable to build in zeroconf and have it not work, 
-# but unacceptable to rely on Apple's libraries for Upnp when we have alternatives.
+# but unacceptable to rely on Apple's libraries for Upnp when we have alternatives. '
 
 zcnatassist {
 
@@ -660,4 +656,68 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 	DEFINES *= RS_ENABLE_ZCNATASSIST
 
 }
+
+ # new gxs cache system
+newcache { 
+
+HEADERS += serialiser/rsnxsitems.h \
+            gxs/rsgds.h \
+            gxs/rsgxs.h \
+            gxs/rsdataservice.h \
+            gxs/rsgxsnetservice.h \
+            gxs/rsgxsflags.h \
+            gxs/rsgenexchange.h \
+            gxs/rsnxsobserver.h \
+            gxs/rsgxsdata.h \
+            gxs/rstokenservice.h \
+            gxs/rsgxsdataaccess.h \
+    		retroshare/rsgxsservice.h \
+    		serialiser/rsgxsitems.h \
+		util/retrodb.h
+
+SOURCES += serialiser/rsnxsitems.cc \
+                gxs/rsdataservice.cc \
+                gxs/rsgenexchange.cc \
+            gxs/rsgxsnetservice.cc \
+            gxs/rsgxsdata.cc \
+    		services/p3photoserviceV2.cc \
+        	gxs/rsgxsdataaccess.cc \
+		util/retrodb.cc
+}
+
+
+
+newservices { 
+
+HEADERS += services/p3photoservice.h \
+		serialiser/rsphotoitems.h \
+		retroshare/rsphoto.h \
+		services/p3gxsservice.h \
+		retroshare/rsidentity.h \
+		services/p3wikiservice.h \
+		retroshare/rswiki.h \
+		retroshare/rswire.h \
+		services/p3wire.h \
+		services/p3idservice.h \
+		retroshare/rsforumsv2.h \
+		services/p3forumsv2.h \
+		retroshare/rsposted.h \
+		services/p3posted.h \
+    	services/p3photoserviceV2.h \
+    	retroshare/rsphotoV2.h \
+    	
+
+SOURCES += services/p3photoservice.cc \
+		serialiser/rsphotoitems.cc \
+		services/p3gxsservice.cc \
+		services/p3wikiservice.cc \
+		services/p3wire.cc \
+		services/p3idservice.cc \
+		services/p3forumsv2.cc \
+		services/p3posted.cc \
+
+# Other Old Code.
+#	rsserver/p3photo.cc \
+}
+
 

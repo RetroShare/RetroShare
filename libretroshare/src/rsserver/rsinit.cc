@@ -1019,7 +1019,7 @@ std::string RsInit::getRetroshareDataDirectory()
 static bool isHexaString(const std::string& s)
 {
 	for(uint32_t i=0;i<s.length();++i)
-		if(!(s[i] >= 'A' && s[i] <= 'F' || s[i] >= '0' && s[i] <= '9' || s[i] >= 'a' && s[i] <= 'f'))
+		if(!((s[i] >= 'A' && s[i] <= 'F') || (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'f')))
 			return false ;
 
 	return true ;
@@ -1800,12 +1800,20 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3gamelauncher.h"
-#include "services/p3photoservice.h"
 #include "services/p3forums.h"
 #include "services/p3channels.h"
 #include "services/p3statusservice.h"
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
+
+#ifdef ENABLE_GXS_SERVICES
+#include "services/p3photoservice.h"
+#include "services/p3wikiservice.h"
+#include "services/p3wire.h"
+#include "services/p3idservice.h"
+#include "services/p3forumsv2.h"
+#include "services/p3posted.h"
+#endif
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
@@ -1823,7 +1831,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3peers.h"
 #include "rsserver/p3msgs.h"
 #include "rsserver/p3discovery.h"
-#include "rsserver/p3photo.h"
 #include "rsserver/p3status.h"
 #include "rsserver/p3history.h"
 #include "rsserver/p3serverconfig.h"
@@ -2248,16 +2255,36 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
 
+#ifdef ENABLE_GXS_SERVICES
+	// Testing New Cache Services.
+	p3PhotoService *mPhotos = new p3PhotoService(RS_SERVICE_TYPE_PHOTO);
+	pqih -> addService(mPhotos);
+	
+	// Testing New Cache Services.
+	p3WikiService *mWikis = new p3WikiService(RS_SERVICE_TYPE_WIKI);
+	pqih -> addService(mWikis);
+	
+	// Testing New Cache Services.
+	p3Wire *mWire = new p3Wire(RS_SERVICE_TYPE_WIRE);
+	pqih -> addService(mWire);
+	
+	// Testing New Cache Services.
+	p3IdService *mIdentity = new p3IdService(RS_SERVICE_TYPE_IDENTITY);
+	pqih -> addService(mIdentity);
+	
+	// Testing New Cache Services.
+	p3ForumsV2 *mForumsV2 = new p3ForumsV2(RS_SERVICE_TYPE_FORUMSV2);
+	pqih -> addService(mForumsV2);
+	
+	// Testing New Cache Services.
+	p3PostedService *mPosted = new p3PostedService(RS_SERVICE_TYPE_POSTED);
+	pqih -> addService(mPosted);
+#endif // ENABLE_GXS_SERVICES
+
+
 #ifndef RS_RELEASE
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mLinkMgr);
 	pqih -> addService(gameLauncher);
-
-	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
-			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir);
-
-        CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
-	mCacheStrapper -> addCachePair(cp2);
 #endif
 
 #ifdef RS_VOIPTEST
@@ -2510,6 +2537,18 @@ int RsServer::StartupRetroShare()
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsForums = mForums;
 	rsChannels = mChannels;
+
+#ifdef ENABLE_GXS_SERVICES
+	// Testing of new cache system interfaces.
+	rsIdentity = mIdentity;
+	rsPhoto = mPhotos;
+	rsWiki = mWikis;
+	rsWire = mWire;
+	rsForumsV2 = mForumsV2;
+	rsPosted = mPosted;
+#endif // ENABLE_GXS_SERVICES
+
+
 #ifdef RS_USE_BLOGS	
 	rsBlogs = mBlogs;
 #endif
@@ -2518,10 +2557,8 @@ int RsServer::StartupRetroShare()
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
-	rsPhoto = new p3Photo(photoService);
 #else
 	rsGameLauncher = NULL;
-	rsPhoto = NULL;
 #endif
 
 

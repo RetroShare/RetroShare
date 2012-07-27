@@ -65,7 +65,9 @@ class RsTlvBinaryData: public RsTlvItem
 {
 	public:
 	 RsTlvBinaryData(uint16_t t);
-virtual ~RsTlvBinaryData();
+         RsTlvBinaryData(const RsTlvBinaryData& b); // as per rule of three
+         void operator=(const RsTlvBinaryData& b); // as per rule of three
+virtual ~RsTlvBinaryData(); // as per rule of three
 virtual	uint32_t TlvSize();
 virtual	void	 TlvClear(); /*! Initialize fields to empty legal values ( "0", "", etc) */
 virtual	void	 TlvShallowClear(); /*! Don't delete the binary data */

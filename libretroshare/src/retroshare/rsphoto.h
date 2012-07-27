@@ -2,11 +2,11 @@
 #define RETROSHARE_PHOTO_GUI_INTERFACE_H
 
 /*
- * libretroshare/src/rsiface: rsphoto.h
+ * libretroshare/src/retroshare: rsphoto.h
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2008-2008 by Robert Fernie.
+ * Copyright 2008-2012 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,99 +29,151 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <retroshare/rsidentity.h>
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhoto;
 extern RsPhoto *rsPhoto;
 
-class RsPhotoDetails;
-class RsPhotoShowDetails;
+/******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
 
-class RsPhotoShowInfo
+#define RSPHOTO_MODE_NEW	1
+#define RSPHOTO_MODE_OWN	2
+#define RSPHOTO_MODE_REMOTE	3
+
+class RsPhotoThumbnail
+{
+	public:
+		RsPhotoThumbnail()
+		:data(NULL), size(0), type("N/A") { return; }
+
+	bool deleteImage();
+	bool copyFrom(const RsPhotoThumbnail &nail);
+
+	// Holds Thumbnail image.
+	uint8_t *data;
+	int size;
+	std::string type;
+};
+
+
+/* If these flags are no set - the Photo inherits values from the Album
+ */
+
+#define RSPHOTO_FLAGS_ATTRIB_TITLE		0x0001
+#define RSPHOTO_FLAGS_ATTRIB_CAPTION		0x0002
+#define RSPHOTO_FLAGS_ATTRIB_DESC		0x0004
+#define RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER	0x0008
+#define RSPHOTO_FLAGS_ATTRIB_WHERE		0x0010
+#define RSPHOTO_FLAGS_ATTRIB_WHEN		0x0020
+#define RSPHOTO_FLAGS_ATTRIB_OTHER		0x0040
+#define RSPHOTO_FLAGS_ATTRIB_CATEGORY		0x0080
+#define RSPHOTO_FLAGS_ATTRIB_HASHTAGS		0x0100
+#define RSPHOTO_FLAGS_ATTRIB_ORDER		0x0200
+#define RSPHOTO_FLAGS_ATTRIB_THUMBNAIL		0x0400
+#define RSPHOTO_FLAGS_ATTRIB_MODE		0x0800
+#define RSPHOTO_FLAGS_ATTRIB_AUTHOR		0x1000 // PUSH UP ORDER
+#define RSPHOTO_FLAGS_ATTRIB_PHOTO		0x2000 // PUSH UP ORDER.
+
+
+class RsPhotoPhoto
 {
 	public:
 
-	std::string photoId;
-	std::wstring altComment;
-	uint32_t    deltaT; /* in 100ths of sec? */
+	RsMsgMetaData mMeta;
+
+	RsPhotoPhoto();
+
+	// THESE ARE IN THE META DATA.
+	//std::string mAlbumId;
+	//std::string mId;
+	//std::string mTitle; // only used by Album.
+	std::string mCaption;
+	std::string mDescription;
+	std::string mPhotographer;
+	std::string mWhere;
+	std::string mWhen;
+	std::string mOther;
+	std::string mCategory;
+
+	std::string mHashTags;
+
+	uint32_t mSetFlags;
+
+	int mOrder;
+
+	RsPhotoThumbnail mThumbnail;
+
+	int mMode;
+
+	// These are not saved.
+	std::string path; // if in Mode NEW.
+	uint32_t mModFlags;
 };
-	
-class RsPhotoShowDetails
+
+class RsPhotoAlbumShare
 {
 	public:
 
-	RsPhotoShowDetails();
-
-	std::string id;
-	std::string showid;
-
-	std::string name;
-	std::wstring location;
-	std::wstring comment;
-	std::string date;
-	std::list<RsPhotoShowInfo> photos;
+	uint32_t mShareType;
+	std::string mShareGroupId;
+	std::string mPublishKey;
+	uint32_t mCommentMode;
+	uint32_t mResizeMode;
 };
 
-/* Details class */
-class RsPhotoDetails
+class RsPhotoAlbum
 {
 	public:
+	RsPhotoAlbum();
 
-	RsPhotoDetails();
+	RsGroupMetaData mMeta;
 
-	std::string id;
-	std::string srcid;
+	// THESE ARE IN THE META DATA.
+	//std::string mAlbumId;
+	//std::string mTitle; // only used by Album.
 
-	std::string hash;
-	uint64_t size;
+	std::string mCaption;
+	std::string mDescription;
+	std::string mPhotographer;
+	std::string mWhere;
+	std::string mWhen;
+	std::string mOther;
+	std::string mCategory;
 
-	std::string name; 
-	std::wstring comment;
+	std::string mHashTags;
 
-	std::string location;
-	std::string date;
+	RsPhotoThumbnail mThumbnail;
 
-	uint32_t format;
+	int mMode;
 
-	bool isAvailable;
-	std::string path;
+	std::string mPhotoPath;
+	RsPhotoAlbumShare mShareOptions;
+
+	// These aren't saved.
+	uint32_t mSetFlags;
+	uint32_t mModFlags;
 };
 
-std::ostream &operator<<(std::ostream &out, const RsPhotoShowDetails &detail);
-std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
+std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
+std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
-class RsPhoto
+
+class RsPhoto: public RsTokenService
 {
 	public:
 
 	RsPhoto()  { return; }
 virtual ~RsPhoto() { return; }
 
-	/* changed? */
-virtual bool updated() = 0;
+	/* Specific Service Data */
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo) = 0;
 
-	/* access data */
-virtual bool getPhotoList(std::string id, std::list<std::string> &hashs) 	= 0;
-virtual bool getShowList(std::string id,  std::list<std::string> &showIds) 	= 0;
-virtual bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail) = 0;
-virtual bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail) = 0;
-
-	/* add / delete */
-virtual std::string createShow(std::string name) 				= 0; 
-virtual bool deleteShow(std::string showId)					= 0;
-virtual bool addPhotoToShow(std::string showId, std::string photoId, int16_t index) = 0;
-virtual bool movePhotoInShow(std::string showId, std::string photoId, int16_t index) = 0;
-virtual bool removePhotoFromShow(std::string showId, std::string photoId) 	= 0;
-
-virtual std::string addPhoto(std::string path) = 0; /* add from file */
-virtual bool addPhoto(std::string srcId, std::string photoId) = 0; /* add from peers photos */
-virtual bool deletePhoto(std::string photoId) = 0;
-
-	/* modify properties (TODO) */
-virtual bool modifyShow(std::string showId, std::wstring name, std::wstring comment) = 0;
-virtual bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment) = 0;
-virtual bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment) = 0;
+virtual bool submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew) = 0;
+virtual bool submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew) = 0;
 
 };
+
 
 #endif

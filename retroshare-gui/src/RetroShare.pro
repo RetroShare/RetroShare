@@ -1,4 +1,20 @@
-CONFIG += qt gui uic qrc resources uitools idle bitdht# framecatcher# blogs
+CONFIG += qt gui uic qrc resources uitools idle bitdht
+
+# Below is for GXS services.
+#CONFIG += photoshare 
+#CONFIG += wikipoos 
+#CONFIG += thewire 
+#CONFIG += identities
+#CONFIG += forumsv2 
+#CONFIG += posted 
+#CONFIG += unfinished 
+
+
+# Other Disabled Bits.
+#CONFIG += framecatcher
+#CONFIG += blogs
+
+
 QT     += network xml script 
 
 TEMPLATE = app
@@ -12,6 +28,10 @@ MOC_DIR = temp/moc
 #CONFIG += debug
 debug {
 	QMAKE_CFLAGS += -g
+	QMAKE_CXXFLAGS -= -O2
+	QMAKE_CXXFLAGS += -O0
+	QMAKE_CFLAGS -= -O2
+	QMAKE_CFLAGS += -O0
 }
 
 INCLUDEPATH *= retroshare-gui
@@ -765,42 +785,6 @@ DEFINES += BLOGS
 # DEFINES += RS_USE_LINKS
 # }
 
-unfinished {
-
-DEPENDPATH += gui/unfinished \
-
-HEADERS += gui/unfinished/ApplicationWindow.h \
-           gui/unfinished/CalDialog.h \
-           gui/unfinished/ExampleDialog.h \
-           gui/unfinished/GamesDialog.h \
-           gui/unfinished/PhotoDialog.h \
-           gui/unfinished/PhotoShow.h \
-           gui/unfinished/StatisticDialog.h \
-           gui/unfinished/profile/ProfileView.h \
-           gui/unfinished/profile/ProfileEdit.h
-
-FORMS += gui/unfinished/ApplicationWindow.ui \
-         gui/unfinished/CalDialog.ui \
-         gui/unfinished/ExampleDialog.ui \
-         gui/unfinished/GamesDialog.ui \
-         gui/unfinished/PhotoDialog.ui \
-         gui/unfinished/PhotoShow.ui \
-         gui/unfinished/StatisticDialog.ui \
-         gui/unfinished/profile/ProfileView.ui \
-         gui/unfinished/profile/ProfileEdit.ui
-
-SOURCES += gui/unfinished/ApplicationWindow.cpp \
-           gui/unfinished/CalDialog.cpp \
-           gui/unfinished/ExampleDialog.cpp \
-           gui/unfinished/GamesDialog.cpp \
-           gui/unfinished/PhotoDialog.cpp \
-           gui/unfinished/PhotoShow.cpp \
-           gui/unfinished/StatisticDialog.cpp \
-           gui/unfinished/profile/ProfileView.cpp \
-           gui/unfinished/profile/ProfileEdit.cpp
-
-          DEFINES *= UNFINISHED
-}
 
 idle {
 
@@ -819,5 +803,165 @@ SOURCES += util/framecatcher.cpp
 LIBS += -lxine
 
 DEFINES *= CHANNELS_FRAME_CATCHER
+
+}
+
+# BELOW IS GXS New Services.
+
+unfinished {
+
+DEPENDPATH += gui/unfinished \
+
+HEADERS += gui/unfinished/ApplicationWindow.h \
+           gui/unfinished/CalDialog.h \
+           gui/unfinished/ExampleDialog.h \
+           gui/unfinished/GamesDialog.h \
+
+#           gui/unfinished/profile/ProfileView.h \
+#           gui/unfinished/profile/ProfileEdit.h
+#           gui/unfinished/StatisticDialog.h \
+#           gui/unfinished/PhotoDialog.h \
+#           gui/unfinished/PhotoShow.h \
+
+FORMS += gui/unfinished/ApplicationWindow.ui \
+         gui/unfinished/CalDialog.ui \
+         gui/unfinished/ExampleDialog.ui \
+         gui/unfinished/GamesDialog.ui \
+
+#         gui/unfinished/profile/ProfileView.ui \
+#         gui/unfinished/profile/ProfileEdit.ui
+#         gui/unfinished/StatisticDialog.ui \
+#         gui/unfinished/PhotoDialog.ui \
+#         gui/unfinished/PhotoShow.ui \
+
+SOURCES += gui/unfinished/ApplicationWindow.cpp \
+           gui/unfinished/CalDialog.cpp \
+           gui/unfinished/ExampleDialog.cpp \
+           gui/unfinished/GamesDialog.cpp \
+
+#           gui/unfinished/profile/ProfileView.cpp \
+#           gui/unfinished/profile/ProfileEdit.cpp
+#           gui/unfinished/StatisticDialog.cpp \
+#           gui/unfinished/PhotoDialog.cpp \
+#           gui/unfinished/PhotoShow.cpp \
+
+          DEFINES *= UNFINISHED
+}
+
+
+photoshare {
+
+	HEADERS += gui/PhotoShare/PhotoItem.h \
+		gui/PhotoShare/PhotoDialog.h \
+		gui/PhotoShare/PhotoAddDialog.h \
+		gui/PhotoShare/PhotoDetailsDialog.h \
+		gui/PhotoShare/PhotoDrop.h \
+		gui/PhotoShare/PhotoSlideShow.h \
+
+	FORMS += gui/PhotoShare/PhotoItem.ui \
+		gui/PhotoShare/PhotoDialog.ui \
+		gui/PhotoShare/PhotoAddDialog.ui \
+		gui/PhotoShare/PhotoDetailsDialog.ui \
+		gui/PhotoShare/PhotoSlideShow.ui \
+
+	SOURCES += gui/PhotoShare/PhotoItem.cpp \
+		gui/PhotoShare/PhotoDialog.cpp \
+		gui/PhotoShare/PhotoAddDialog.cpp \
+		gui/PhotoShare/PhotoDetailsDialog.cpp \
+		gui/PhotoShare/PhotoDrop.cpp \
+		gui/PhotoShare/PhotoSlideShow.cpp \
+
+}
+
+
+wikipoos {
+
+	HEADERS += gui/WikiPoos/WikiDialog.h \
+		gui/WikiPoos/WikiAddDialog.h \
+		gui/WikiPoos/WikiEditDialog.h \
+
+	FORMS += gui/WikiPoos/WikiDialog.ui \
+		gui/WikiPoos/WikiAddDialog.ui \
+		gui/WikiPoos/WikiEditDialog.ui \
+
+	SOURCES += gui/WikiPoos/WikiDialog.cpp \
+		gui/WikiPoos/WikiAddDialog.cpp \
+		gui/WikiPoos/WikiEditDialog.cpp \
+
+}
+
+
+
+thewire {
+
+	HEADERS += gui/TheWire/PulseItem.h \
+		gui/TheWire/WireDialog.h \
+		gui/TheWire/PulseAddDialog.h \
+
+	FORMS += gui/TheWire/PulseItem.ui \
+		gui/TheWire/WireDialog.ui \
+		gui/TheWire/PulseAddDialog.ui \
+
+	SOURCES += gui/TheWire/PulseItem.cpp \
+		gui/TheWire/WireDialog.cpp \
+		gui/TheWire/PulseAddDialog.cpp \
+
+}
+
+identities {
+
+	HEADERS += util/TokenQueue.h \
+		gui/Identity/IdDialog.h \
+		gui/Identity/IdEditDialog.h \
+
+	FORMS += gui/Identity/IdDialog.ui \
+		gui/Identity/IdEditDialog.ui \
+
+	SOURCES += util/TokenQueue.cpp \
+		gui/Identity/IdDialog.cpp \
+		gui/Identity/IdEditDialog.cpp \
+
+}
+
+
+forumsv2 {
+
+	HEADERS += gui/ForumsV2Dialog.h \
+            gui/forumsv2/ForumV2Details.h \
+            gui/forumsv2/EditForumV2Details.h \
+            gui/forumsv2/CreateForumV2.h \
+            gui/forumsv2/CreateForumV2Msg.h \
+
+	FORMS += gui/ForumsV2Dialog.ui \
+            gui/forumsv2/ForumV2Details.ui \
+            gui/forumsv2/EditForumV2Details.ui \
+            gui/forumsv2/CreateForumV2.ui \
+            gui/forumsv2/CreateForumV2Msg.ui \
+
+	SOURCES += gui/ForumsV2Dialog.cpp \
+            gui/forumsv2/ForumV2Details.cpp \
+            gui/forumsv2/EditForumV2Details.cpp \
+            gui/forumsv2/CreateForumV2.cpp \
+            gui/forumsv2/CreateForumV2Msg.cpp \
+
+}
+
+
+posted {
+
+	HEADERS += gui/Posted/PostedDialog.h \
+            gui/Posted/PostedListDialog.h \
+            gui/Posted/PostedItem.h \
+            gui/Posted/PostedComments.h \
+
+	FORMS += gui/Posted/PostedDialog.ui \
+            gui/Posted/PostedListDialog.ui \
+            gui/Posted/PostedItem.ui \
+            gui/Posted/PostedComments.ui \
+
+	SOURCES += gui/Posted/PostedDialog.cpp \
+            gui/Posted/PostedListDialog.cpp \
+            gui/Posted/PostedItem.cpp \
+            gui/Posted/PostedComments.cpp \
 
 }
