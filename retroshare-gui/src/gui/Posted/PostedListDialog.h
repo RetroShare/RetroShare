@@ -24,7 +24,7 @@
 #ifndef MRK_POSTED_LIST_DIALOG_H
 #define MRK_POSTED_LIST_DIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_PostedListDialog.h"
 
 #include <retroshare/rsposted.h>
@@ -36,7 +36,7 @@
 
 #include "util/TokenQueue.h"
 
-#include "gui/RsAutoUpdatePage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 
 class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponse 
 {

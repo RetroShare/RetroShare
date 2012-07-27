@@ -24,7 +24,7 @@
 #ifndef MRK_PHOTO_DIALOG_H
 #define MRK_PHOTO_DIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_PhotoDialog.h"
 
 #include <retroshare/rsphoto.h>

@@ -24,7 +24,7 @@
 #ifndef MRK_WIKI_DIALOG_H
 #define MRK_WIKI_DIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_WikiDialog.h"
 
 #include <retroshare/rswiki.h>

@@ -24,7 +24,7 @@
 
 #include <QFileDialog>
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_ExampleDialog.h"
 
 

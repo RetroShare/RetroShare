@@ -65,8 +65,10 @@ PostedDialog::PostedDialog(QWidget *parent)
         mPostedList = new PostedListDialog(NULL);
         mPostedComments = new PostedComments(NULL);
 
-	ui.tabWidget->addTab(mPostedList, QString("List"));
-	ui.tabWidget->addTab(mPostedComments, QString("Comments"));
+	QString list("List");
+	ui.tabWidget->addTab(mPostedList, list);
+	QString comments("Comments");
+	ui.tabWidget->addTab(mPostedComments, comments);
 
 }
 

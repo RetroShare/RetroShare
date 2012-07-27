@@ -41,6 +41,8 @@
 #include "RetroShareLink.h"
 #include "channels/ShareKey.h"
 
+#include "util/HandleRichText.h"
+
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforumsv2.h>
 
@@ -1121,7 +1123,14 @@ void ForumsV2Dialog::insertPostData(const RsForumV2Msg &msg)
         }
     }
 
-    QString extraTxt = RsHtml::formatText(QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+
+#warning "THIS CODE TO BE FIXED"
+    QString extraTxt("");
+
+#if 0
+    QString info("");
+    QString extraTxt = RsHtml().formatText(QString::fromUtf8(msg.mMsg.c_str()), info, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+#endif
 
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
@@ -1545,12 +1554,18 @@ void ForumsV2Dialog::replyMessageData(const RsForumV2Msg &msg)
     if (rsPeers->getPeerName(msg.mMeta.mAuthorId) !="")
     {
         MessageComposer *nMsgDialog = MessageComposer::newMsg();
+#warning "THIS CODE TO BE FIXED"
+#if 0
         nMsgDialog->insertTitleText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()), MessageComposer::REPLY);
+#endif
 
         QTextDocument doc ;
         doc.setHtml(QString::fromUtf8(msg.mMsg.c_str())) ;
 
+#warning "THIS CODE TO BE FIXED"
+#if 0
         nMsgDialog->insertPastedText(doc.toPlainText());
+#endif
         nMsgDialog->addRecipient(MessageComposer::TO, msg.mMeta.mAuthorId, false);
         nMsgDialog->show();
         nMsgDialog->activateWindow();

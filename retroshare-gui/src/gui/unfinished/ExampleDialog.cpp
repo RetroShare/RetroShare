@@ -243,15 +243,15 @@ QTreeWidgetItem *ExampleDialog::getCurrentLine()
 	}
 
 	/* Display the columns of this item. */
-	std::ostringstream out;
-        out << "CurrentPeerItem: " << std::endl;
+	//std::ostringstream out;
+        //out << "CurrentPeerItem: " << std::endl;
 
 	for(int i = 1; i < 6; i++)
 	{
 		QString txt = item -> text(i);
-		out << "\t" << i << ":" << txt.toStdString() << std::endl;
+		//out << "\t" << i << ":" << txt.toStdString() << std::endl;
 	}
-	std::cerr << out.str();
+	//std::cerr << out.str();
 	return item;
 }
 

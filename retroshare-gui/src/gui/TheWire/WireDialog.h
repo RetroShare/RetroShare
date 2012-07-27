@@ -24,7 +24,7 @@
 #ifndef MRK_WIRE_DIALOG_H
 #define MRK_WIRE_DIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_WireDialog.h"
 
 #include <retroshare/rsphoto.h>

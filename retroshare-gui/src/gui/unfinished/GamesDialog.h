@@ -22,7 +22,7 @@
 #ifndef _GAMESDIALOG_H
 #define _GAMESDIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_GamesDialog.h"
 
 class GamesDialog : public MainPage 

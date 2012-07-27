@@ -24,7 +24,7 @@
 #ifndef MRK_IDENTITY_DIALOG_H
 #define MRK_IDENTITY_DIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_IdDialog.h"
 
 #include <retroshare/rsidentity.h>

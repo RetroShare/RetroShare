@@ -27,7 +27,7 @@
 #include <QString>
 #include <QMap>
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_CalDialog.h"
 
 class CalItem

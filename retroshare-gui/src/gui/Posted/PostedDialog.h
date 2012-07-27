@@ -24,7 +24,7 @@
 #ifndef MRK_POSTED_DIALOG_H
 #define MRK_POSTED_DIALOG_H
 
-#include "gui/mainpage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_PostedDialog.h"
 
 #include <retroshare/rsposted.h>
