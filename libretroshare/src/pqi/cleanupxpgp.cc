@@ -41,6 +41,10 @@ end tag we take care of cases like -----   END  XPGP . Here extra empty spaces h
 introduced and the actual tag should have been -----END XPGP
 */
 
+static bool is_acceptable_radix64Char(char c)
+{
+	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '+' || c == '/' ;
+}
 
 std::string cleanUpCertificate(const std::string& badCertificate,int& error_code)
 {
@@ -262,18 +266,22 @@ std::string cleanUpCertificate(const std::string& badCertificate,int& error_code
 		}
 
 		if(badCertificate[currBadCertIdx]=='=') /* checksum */
-		{
-			cntPerLine=0 ;
 			break;
-		}
+		else if(badCertificate[currBadCertIdx]=='\t')
+			currBadCertIdx++;
 		else if(badCertificate[currBadCertIdx]==' ')
 			currBadCertIdx++;
 		else if(badCertificate[currBadCertIdx]=='\n')
 			currBadCertIdx++;
-		else
+		else if(is_acceptable_radix64Char(badCertificate[currBadCertIdx]))
 		{
 			cleanCertificate += badCertificate[currBadCertIdx];
 			cntPerLine++;
+			currBadCertIdx++;
+		}
+		else
+		{
+			std::cerr << "Warning: Invalid character in radix certificate encoding: " << badCertificate[currBadCertIdx] << std::endl;
 			currBadCertIdx++;
 		}
 	}
