@@ -135,12 +135,12 @@ macx {
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-        LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+        LIBS += -lssl -lcrypto -lz 
+        #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
-
- #	LIBS += -framework CoreServices
 
     	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature
