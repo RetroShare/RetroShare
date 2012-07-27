@@ -285,6 +285,8 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_Text:
 		{
+			cleanFriendCert() ;
+
 			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
 			std::string error_string;
 
