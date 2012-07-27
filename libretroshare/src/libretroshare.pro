@@ -1,8 +1,8 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib bitdht debug newservices
-#newcache
+CONFIG += staticlib bitdht debug 
+#newcache newservices
 #  
 CONFIG -= qt
 TARGET = retroshare
@@ -482,7 +482,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rswin.h \
 			util/rsrandom.h \
                         util/pugiconfig.h \
-                        util/retrodb.h
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -675,8 +674,8 @@ HEADERS += serialiser/rsnxsitems.h \
             gxs/rstokenservice.h \
             gxs/rsgxsdataaccess.h \
     		retroshare/rsgxsservice.h \
-    		serialiser/rsgxsitems.h 
-            
+    		serialiser/rsgxsitems.h \
+		util/retrodb.h
 
 SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
@@ -684,7 +683,8 @@ SOURCES += serialiser/rsnxsitems.cc \
             gxs/rsgxsnetservice.cc \
             gxs/rsgxsdata.cc \
     		services/p3photoserviceV2.cc \
-        	gxs/rsgxsdataaccess.cc
+        	gxs/rsgxsdataaccess.cc \
+		util/retrodb.cc
 }
 
 
