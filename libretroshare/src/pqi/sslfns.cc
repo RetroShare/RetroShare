@@ -586,8 +586,10 @@ X509 *loadX509FromDER(const uint8_t *ptr, uint32_t len)
 	X509 *tmp = NULL;
 #ifdef __APPLE__
 	// This depends on which version you are compiling for... OSX10.5 doesn't have consts (old OpenSSL!)
-	unsigned char **certptr = (unsigned char **) &ptr;
-	//const unsigned char **certptr = (const unsigned char **) &ptr;
+	// With the Advent of Openpgpsdk, we are forced to move to OSX10.6 for a newer OpenSSL (probably a good thing).
+	// So we can change this around.
+	//unsigned char **certptr = (unsigned char **) &ptr;
+	const unsigned char **certptr = (const unsigned char **) &ptr;
 #else
 	const unsigned char **certptr = (const unsigned char **) &ptr;
 #endif

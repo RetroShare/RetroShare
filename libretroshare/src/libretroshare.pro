@@ -320,10 +320,15 @@ mac {
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
                 UPNPC_DIR = ../../../miniupnpc-1.0
-		GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-		GPGME_DIR  = ../../../../gpgme-1.1.8
+		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+		#GPGME_DIR  = ../../../../gpgme-1.1.8
+
+		OPENPGPSDK_DIR = ../../openpgpsdk/src
 
 		INCLUDEPATH += . $${UPNPC_DIR} 
+		INCLUDEPATH += $${OPENPGPSDK_DIR} 
+
+		#../openpgpsdk
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
