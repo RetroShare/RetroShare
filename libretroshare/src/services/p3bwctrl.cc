@@ -165,7 +165,7 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 		rateMap.erase(it);
 	}
 
-	printRateInfo_locked(std::cerr);
+	//printRateInfo_locked(std::cerr);
 
 	/* any left over rateMaps ... are bad! (or not active - more likely) */
 	return true;

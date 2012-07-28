@@ -827,8 +827,6 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 		}
 		else if (onlyAllVersions)
 		{
-			RsStackMutex stack(mDataMtx); /***** LOCKED *****/
-
 			for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 			{
 				if (mit->second.mOrigMsgId == origMsgId)
