@@ -40,7 +40,7 @@
 #include "common/PopularityDefs.h"
 #include "RetroShareLink.h"
 #include "channels/ShareKey.h"
-
+#include "notifyqt.h"
 #include "util/HandleRichText.h"
 
 #include <retroshare/rspeers.h>
@@ -62,7 +62,7 @@
 #define IMAGE_FOLDERGREEN    ":/images/folder_green.png"
 #define IMAGE_FOLDERRED      ":/images/folder_red.png"
 #define IMAGE_FOLDERYELLOW   ":/images/folder_yellow.png"
-#define IMAGE_FORUM          ":/images/konversation16.png"
+#define IMAGE_FORUM          ":/images/konversation.png"
 #define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
 #define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
 #define IMAGE_INFO           ":/images/info16.png"
@@ -136,6 +136,7 @@ ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
 
     m_bProcessSettings = false;
     subscribeFlags = 0;
+    inMsgAsReadUnread = false;
 
 
 	/* Setup Queue */
@@ -163,9 +164,10 @@ ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
-    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+
+    connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 
     /* Set initial size the splitter */
     QList<int> sizes;
@@ -204,8 +206,6 @@ ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
 
     lastViewType = -1;
 
-    ui.clearButton->hide();
-
     // load settings
     processSettings(true);
 
@@ -214,7 +214,6 @@ ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
     ttheader->setResizeMode (COLUMN_THREAD_READ, QHeaderView::Fixed);
     ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
-    ui.progressBar->setTextVisible(true);
     ui.progressBar->hide();
     ui.progLayOutTxt->hide();
     ui.progressBarLayOut->setEnabled(false);
@@ -506,15 +505,15 @@ void ForumsV2Dialog::updateDisplay()
     }
 }
 
-static void CleanupItems (QList<QTreeWidgetItem *> &Items)
+static void CleanupItems (QList<QTreeWidgetItem *> &items)
 {
-    QList<QTreeWidgetItem *>::iterator Item;
-    for (Item = Items.begin (); Item != Items.end (); Item++) {
-        if (*Item) {
-            delete (*Item);
+    QList<QTreeWidgetItem *>::iterator item;
+    for (item = items.begin (); item != items.end (); item++) {
+        if (*item) {
+            delete (*item);
         }
     }
-    Items.clear();
+    items.clear();
 }
 
 void ForumsV2Dialog::forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo)
@@ -653,6 +652,35 @@ void ForumsV2Dialog::clickedThread (QTreeWidgetItem *item, int column)
     }
 }
 
+void ForumsV2Dialog::forumMsgReadStatusChanged(const QString &forumId, const QString &msgId, int status)
+{
+    if (inMsgAsReadUnread) {
+        return;
+    }
+
+    if (forumId.toStdString() == mCurrForumId) {
+        /* Search exisiting item */
+        QTreeWidgetItemIterator itemIterator(ui.threadTreeWidget);
+        QTreeWidgetItem *item = NULL;
+        while ((item = *itemIterator) != NULL) {
+            itemIterator++;
+
+            if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString() == msgId) {
+                // update status
+                item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, status);
+
+                QTreeWidgetItem *parentItem = item;
+                while (parentItem->parent()) {
+                    parentItem = parentItem->parent();
+                }
+                CalculateIconsAndFonts(parentItem);
+                break;
+            }
+        }
+    }
+    updateMessageSummaryList(forumId.toStdString());
+}
+
 void ForumsV2Dialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren)
 {
     uint32_t status = pItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
@@ -755,6 +783,8 @@ void ForumsV2Dialog::fillThreadFinished()
 #ifdef DEBUG_FORUMS
 	std::cerr << "ForumsV2Dialog::fillThreadFinished Add messages" << std::endl;
 #endif
+            ui.threadTreeWidget->setSortingEnabled(false);
+
 		/* add all messages in! */
 	if (lastViewType != mThreadLoad.ViewType || lastForumID != mCurrForumId) 
 	{
@@ -774,8 +804,8 @@ void ForumsV2Dialog::fillThreadFinished()
 		CleanupItems (mThreadLoad.Items);
 	}
 
-		
-		
+            ui.threadTreeWidget->setSortingEnabled(true);
+
 	if (mThreadLoad.FocusMsgId.empty() == false) 
 	{
 		/* Search exisiting item */
@@ -804,9 +834,8 @@ void ForumsV2Dialog::fillThreadFinished()
 	}
 	mThreadLoad.ItemToExpand.clear();
 	
-	if (ui.filterPatternLineEdit->text().isEmpty() == false) 
-	{
-		FilterItems();
+            if (ui.filterLineEdit->text().isEmpty() == false) {
+                filterItems(ui.filterLineEdit->text());
 	}
 	
 	insertPost ();
@@ -875,6 +904,7 @@ void ForumsV2Dialog::insertForumThreads(const RsGroupMetaData &fi)
     ui.progressBarLayOut->setEnabled(true);
 
     ui.progLayOutTxt->show();
+    ui.progressBar->reset();
     ui.progressBar->show();
 
 #ifdef DEBUG_FORUMS
@@ -1045,6 +1075,25 @@ void ForumsV2Dialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewP
     }
 }
 
+QString ForumsV2Dialog::titleFromInfo(const RsMsgMetaData &meta)
+{
+    // NOTE - NOTE SURE HOW THIS WILL WORK!
+    if (meta.mMsgStatus & RS_DISTRIB_MISSING_MSG) {
+        return QApplication::translate("ForumsV2Dialog", "[ ... Missing Message ... ]");
+    }
+
+     return QString::fromUtf8(meta.mMsgName.c_str());
+}
+
+QString ForumsV2Dialog::messageFromInfo(const RsForumV2Msg &msg)
+{
+    if (msg.mMeta.mMsgStatus & RS_DISTRIB_MISSING_MSG) {
+        return QApplication::translate("ForumsV2Dialog", "Placeholder for missing Message");
+    }
+
+    return QString::fromUtf8(msg.mMsg.c_str());
+}
+
 void ForumsV2Dialog::insertPost()
 {
     if ((mCurrForumId == "") || (mCurrThreadId == ""))
@@ -1123,17 +1172,10 @@ void ForumsV2Dialog::insertPostData(const RsForumV2Msg &msg)
         }
     }
 
-
-#warning "THIS CODE TO BE FIXED"
-    QString extraTxt("");
-
-#if 0
-    QString info("");
-    QString extraTxt = RsHtml().formatText(QString::fromUtf8(msg.mMsg.c_str()), info, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-#endif
+    QString extraTxt = RsHtml().formatText(ui.postText->document(), messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
     ui.postText->setHtml(extraTxt);
-    ui.threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+    ui.threadTitle->setText(titleFromInfo(msg.mMeta));
 }
 
 
@@ -1252,6 +1294,8 @@ void ForumsV2Dialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRea
     QList<QTreeWidgetItem*>::iterator Row;
     std::list<QTreeWidgetItem*> changedItems;
 
+    inMsgAsReadUnread = true;
+
     for (Row = Rows.begin(); Row != Rows.end(); Row++) {
         if ((*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool()) {
             /* Missing message */
@@ -1284,6 +1328,8 @@ void ForumsV2Dialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRea
             }
         }
     }
+
+    inMsgAsReadUnread = false;
 
     if (changedItems.size()) {
         for (std::list<QTreeWidgetItem*>::iterator it = changedItems.begin(); it != changedItems.end(); it++) {
@@ -1530,6 +1576,27 @@ void ForumsV2Dialog::editForumDetails()
 #endif
 }
 
+static QString buildReplyHeader(const RsMsgMetaData &meta)
+{
+    RetroShareLink link;
+    link.createMessage(meta.mAuthorId, "");
+    QString from = link.toHtml();
+
+    QDateTime qtime;
+    qtime.setTime_t(meta.mPublishTs);
+
+    QString header = QString("<span>-----%1-----").arg(QApplication::translate("ForumsV2Dialog", "Original Message"));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsV2Dialog", "From"), from);
+
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsV2Dialog", "Sent"), qtime.toString(Qt::SystemLocaleLongDate));
+    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("ForumsV2Dialog", "Subject"), QString::fromUtf8(meta.mMsgName.c_str()));
+    header += "<br>";
+
+    header += QApplication::translate("ForumsV2Dialog", "On %1, %2 wrote:").arg(qtime.toString(Qt::SystemLocaleShortDate), from);
+
+    return header;
+}
+
 void ForumsV2Dialog::replytomessage()
 {
     if (mCurrForumId.empty() || mCurrThreadId.empty()) {
@@ -1554,18 +1621,10 @@ void ForumsV2Dialog::replyMessageData(const RsForumV2Msg &msg)
     if (rsPeers->getPeerName(msg.mMeta.mAuthorId) !="")
     {
         MessageComposer *nMsgDialog = MessageComposer::newMsg();
-#warning "THIS CODE TO BE FIXED"
-#if 0
-        nMsgDialog->insertTitleText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()), MessageComposer::REPLY);
-#endif
+        nMsgDialog->setTitleText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()), MessageComposer::REPLY);
 
-        QTextDocument doc ;
-        doc.setHtml(QString::fromUtf8(msg.mMsg.c_str())) ;
+        nMsgDialog->setQuotedMsg(QString::fromUtf8(msg.mMsg.c_str()), buildReplyHeader(msg.mMeta));
 
-#warning "THIS CODE TO BE FIXED"
-#if 0
-        nMsgDialog->insertPastedText(doc.toPlainText());
-#endif
         nMsgDialog->addRecipient(MessageComposer::TO, msg.mMeta.mAuthorId, false);
         nMsgDialog->show();
         nMsgDialog->activateWindow();
@@ -1576,29 +1635,6 @@ void ForumsV2Dialog::replyMessageData(const RsForumV2Msg &msg)
     {
         QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
     }
-}
-
-void ForumsV2Dialog::filterRegExpChanged()
-{
-//    QRegExp regExp(ui.filterPatternLineEdit->text(),  Qt::CaseInsensitive , QRegExp::FixedString);
-//    proxyModel->setFilterRegExp(regExp);
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if (text.isEmpty()) {
-        ui.clearButton->hide();
-    } else {
-        ui.clearButton->show();
-    }
-
-    FilterItems();
-}
-
-/* clear Filter */
-void ForumsV2Dialog::clearFilter()
-{
-    ui.filterPatternLineEdit->clear();
-    ui.filterPatternLineEdit->setFocus();
 }
 
 void ForumsV2Dialog::changedViewBox()
@@ -1624,21 +1660,20 @@ void ForumsV2Dialog::filterColumnChanged()
         // need content ... refill
         insertThreads();
     } else {
-        FilterItems();
+        filterItems(ui.filterLineEdit->text());
     }
 
     // save index
     Settings->setValueToGroup("ForumsV2Dialog", "filterColumn", filterColumn);
 }
 
-void ForumsV2Dialog::FilterItems()
+void ForumsV2Dialog::filterItems(const QString& text)
 {
-    QString sPattern = ui.filterPatternLineEdit->text();
     int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
     int nCount = ui.threadTreeWidget->topLevelItemCount ();
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        FilterItem(ui.threadTreeWidget->topLevelItem(nIndex), sPattern, filterColumn);
+        filterItem(ui.threadTreeWidget->topLevelItem(nIndex), text, filterColumn);
     }
 }
 
@@ -1648,12 +1683,12 @@ void ForumsV2Dialog::shareKey()
     shareUi.exec();
 }
 
-bool ForumsV2Dialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn)
+bool ForumsV2Dialog::filterItem(QTreeWidgetItem *pItem, const QString &text, int filterColumn)
 {
     bool bVisible = true;
 
-    if (sPattern.isEmpty() == false) {
-        if (pItem->text(filterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
+    if (text.isEmpty() == false) {
+        if (pItem->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
             bVisible = false;
         }
     }
@@ -1661,7 +1696,7 @@ bool ForumsV2Dialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int f
     int nVisibleChildCount = 0;
     int nCount = pItem->childCount();
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
-        if (FilterItem(pItem->child(nIndex), sPattern, filterColumn)) {
+        if (filterItem(pItem->child(nIndex), text, filterColumn)) {
             nVisibleChildCount++;
         }
     }
@@ -1976,6 +2011,7 @@ void ForumsV2Dialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 	std::cerr << std::endl;
 	
 	bool moreData = true;
+	bool someData = false;
 	while(moreData)
 	{
 		RsForumV2Msg msg;
@@ -1985,11 +2021,18 @@ void ForumsV2Dialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 			std::cerr << std::endl;
 		
 			loadForumBaseThread(msg);
+			someData = true;
 		}
 		else
 		{
 			moreData = false;
 		}
+	}
+
+	/* completed with no data */
+	if (!someData)
+	{
+		fillThreadFinished();
 	}
 }
 
@@ -2017,9 +2060,10 @@ bool ForumsV2Dialog::convertMsgToThreadWidget(const RsForumV2Msg &msgInfo, std::
             item->setText(COLUMN_THREAD_DATE, text);
         }
 
-        item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msgInfo.mMeta.mMsgName.c_str()));
+        item->setText(COLUMN_THREAD_TITLE, ForumsV2Dialog::titleFromInfo(msgInfo.mMeta));
 
         text = QString::fromUtf8(authorName.c_str());
+
         if (text.isEmpty())
         {
             item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
@@ -2154,7 +2198,6 @@ void ForumsV2Dialog::loadChildData_InsertThreads(const uint32_t &token)
 	}
 }
 
-
 void ForumsV2Dialog::loadForumChildMsg(const RsForumV2Msg &msg, QTreeWidgetItem *parent)
 {
         std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
@@ -2217,7 +2260,7 @@ void ForumsV2Dialog::requestMsgData_InsertPost(const std::string &msgId)
 
 
 	uint32_t token;	
-	mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
 }
 
 

@@ -130,8 +130,8 @@ private slots:
     void changedViewBox();
 
     void filterColumnChanged();
-    void filterRegExpChanged();
-    void clearFilter();
+    //void filterRegExpChanged();
+    ///void clearFilter();
 
     void generateMassData();
 
@@ -146,6 +146,12 @@ private:
     void insertPost();
 	void insertPostData(const RsForumV2Msg &msg); // Second Half.
 
+	// Utility Fns.
+	QString titleFromInfo(const RsMsgMetaData &meta);
+	QString messageFromInfo(const RsForumV2Msg &msg);
+	
+	void forumMsgReadStatusChanged(const QString &forumId, const QString &msgId, int status);
+	
     void updateMessageSummaryList(std::string forumId);
     //void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
     void forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo);
@@ -163,9 +169,8 @@ private:
     void processSettings(bool bLoad);
     void togglethreadview_internal();
 
-    void FilterItems();
-    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int filterColumn);
-
+	void filterItems(const QString& text);
+	bool filterItem(QTreeWidgetItem *pItem, const QString &text, int filterColumn);
 
 	// New Request/Response Loading Functions.
 	void insertForumsData(const std::list<RsGroupMetaData> &forumList);
@@ -215,6 +220,7 @@ private:
     int lastViewType;
     std::string lastForumID;
 
+	bool inMsgAsReadUnread;
     //ForumsV2FillThread *fillThread;
 
     // New Datatypes to replace the FillThread.
