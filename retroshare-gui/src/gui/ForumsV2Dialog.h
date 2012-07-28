@@ -80,6 +80,9 @@ public:
     /* overloaded from RsAuthUpdatePage */
     virtual void updateDisplay();
 
+	// Callback for all Loads.
+virtual	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 
@@ -198,9 +201,6 @@ private:
 
 	bool convertMsgToThreadWidget(const RsForumV2Msg &msgInfo, std::string authorName,
                                         bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
-
-	// Callback for all Loads.
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	TokenQueue *mForumQueue;
 

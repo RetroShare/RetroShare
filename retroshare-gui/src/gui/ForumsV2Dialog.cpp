@@ -127,6 +127,18 @@ static int FilterColumnToComboBox(int nIndex)
     return FilterColumnToComboBox(COLUMN_THREAD_TITLE);
 }
 
+
+/*
+ * Transformation Notes:
+ *   there are still a couple of things that the new forums differ from Old version.
+ *   these will need to be addressed in the future.
+ *     -> Missing Messages are not handled yet.
+ *     -> Child TS (for sorting) is not handled by GXS, this will probably have to be done in the GUI.
+ *     -> Need to handle IDs properly.
+ *     -> Popularity not handled in GXS yet.
+ *     -> Much more to do.
+ */
+
 /** Constructor */
 ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
@@ -1484,14 +1496,11 @@ void ForumsV2Dialog::copyMessageLink()
 	}
 }
 
-//#define DISABLE_OTHERCLASSES	1
 
 void ForumsV2Dialog::newforum()
 {
-#ifndef DISABLE_OTHERCLASSES
     CreateForumV2 cf (this);
     cf.exec ();
-#endif
 }
 
 void ForumsV2Dialog::createmessage()
@@ -1500,10 +1509,8 @@ void ForumsV2Dialog::createmessage()
         return;
     }
 
-#ifndef DISABLE_OTHERCLASSES
     CreateForumV2Msg *cfm = new CreateForumV2Msg(mCurrForumId, mCurrThreadId);
     cfm->show();
-#endif
 
     /* window will destroy itself! */
 }
@@ -1515,11 +1522,9 @@ void ForumsV2Dialog::createthread()
         return;
     }
 
-#ifndef DISABLE_OTHERCLASSES
     CreateForumV2Msg *cfm = new CreateForumV2Msg(mCurrForumId, "");
     cfm->setWindowTitle(tr("Start New Thread"));
     cfm->show();
-#endif
 
     /* window will destroy itself! */
 }

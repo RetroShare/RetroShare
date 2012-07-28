@@ -21,7 +21,7 @@
 
 #include "EditForumV2Details.h"
 
-#include <retroshare/rsforums.h>
+#include <retroshare/rsforumsV2.h>
 
 #include "util/misc.h"
 
@@ -44,23 +44,27 @@ EditForumV2Details::EditForumV2Details(std::string forumId, QWidget *parent, Qt:
 
 void EditForumV2Details::loadForum()
 {
-    if (!rsForums) {
+    if (!rsForumsV2) {
         return;
     }
 
+#warning "EditForumV2Details incomplete"
+#if 0
     ForumInfo info;
-    rsForums->getForumInfo(m_forumId, info);
+    rsForumsV2->getForumInfo(m_forumId, info);
 
     // set name
     ui.nameline->setText(QString::fromStdWString(info.forumName));
 
     // set description
     ui.DescriptiontextEdit->setText(QString::fromStdWString(info.forumDesc));
+#endif
+	
 }
 
 void EditForumV2Details::applyDialog()
 {
-    if (!rsForums) {
+    if (!rsForumsV2) {
         return;
     }
 
@@ -69,13 +73,17 @@ void EditForumV2Details::applyDialog()
         return;
     }
 
+#warning "EditForumV2Details incomplete"
+#if 0
+	
     ForumInfo info;
 
     info.forumName = misc::removeNewLine(ui.nameline->text()).toStdWString();
     info.forumDesc = ui.DescriptiontextEdit->document()->toPlainText().toStdWString();
 
-    rsForums->setForumInfo(m_forumId, info);
-
+    rsForumsV2->setForumInfo(m_forumId, info);
+#endif
+	
     /* close the Dialog after the Changes applied */
     close();
 }

@@ -25,36 +25,42 @@
 
 #include "ui_CreateForumV2.h"
 
-class CreateForumV2 : public QDialog
+#include "util/TokenQueue.h"
+
+class CreateForumV2 : public QDialog, public TokenResponse
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  CreateForumV2(QWidget *parent = 0);
+	CreateForumV2(QWidget *parent = 0);
 
-void  newForum(); /* cleanup */
+	void newForum(); /* cleanup */
 
-  /** Qt Designer generated object */
-  Ui::CreateForumV2 ui;
-
-  QPixmap picture;
+        // Callback for all Loads.
+virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
-
 	/* actions to take.... */
-void  createForum();
-void  cancelForum();
+	void createForum();
+	void cancelForum();
 
-// set private forum key share list
-void setShareList();
-
-// when user checks a person in share list checkboxes
-void togglePersonItem(QTreeWidgetItem* item, int col);
+	// set private forum key share list
+	void setShareList();
 
 private:
+	void sendShareList(std::string forumId);
+	void completeCreateNewForum(const RsGroupMetaData &newForumMeta);
+	void loadNewForumId(const uint32_t &token);
 
-std::list<std::string> mShareList;
 
+	std::list<std::string> mShareList;
+
+	QPixmap picture;
+
+	TokenQueue *mForumQueue;
+
+	/** Qt Designer generated object */
+	Ui::CreateForumV2 ui;
 };
 
 #endif

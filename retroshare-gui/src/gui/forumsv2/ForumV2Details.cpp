@@ -23,12 +23,11 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsforums.h>
+#include <retroshare/rsforumsV2.h>
 
 #include <QTime>
 #include <QDateTime>
 
-#include <sstream>
 #include <list>
 #include <iostream>
 #include <string>
@@ -91,13 +90,15 @@ void ForumV2Details::showDetails(std::string mCurrForumId)
 
 void ForumV2Details::loadDialog()
 {
-	if (!rsForums)
+	if (!rsForumsV2)
 	{
 		return;
 	}
 
+#warning "ForumV2Details Incomplete"
+#if 0
 	ForumInfo fi;
-	rsForums->getForumInfo(fId, fi);
+	rsForumsV2->getForumInfo(fId, fi);
 
 	// Set Forum Name
 	ui.nameline->setText(QString::fromStdWString(fi.forumName));
@@ -129,6 +130,8 @@ void ForumV2Details::loadDialog()
 		ui.radioButton_authd->setChecked(false);
 		ui.radioButton_anonymous->setChecked(true);
 	}
+#endif
+	
 }
 
 void ForumV2Details::applyDialog()

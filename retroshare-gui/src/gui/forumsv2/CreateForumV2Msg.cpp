@@ -28,7 +28,8 @@
 #include <QDropEvent>
 #include <QPushButton>
 
-#include <retroshare/rsforums.h>
+#include <retroshare/rsforumsV2.h>
+#include <retroshare/rspeers.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
@@ -37,6 +38,11 @@
 #include "util/misc.h"
 
 #include <sys/stat.h>
+#include <iostream>
+
+
+#define CREATEFORUMV2MSG_FORUMINFO		1
+#define CREATEFORUMV2MSG_PARENTMSG		2
 
 
 /** Constructor */
@@ -46,6 +52,9 @@ CreateForumV2Msg::CreateForumV2Msg(std::string fId, std::string pId)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
+
+	/* Setup Queue */
+	mForumQueue = new TokenQueue(rsForumsV2, this);
 
     Settings->loadWidgetInformation(this);
 
@@ -64,6 +73,9 @@ CreateForumV2Msg::CreateForumV2Msg(std::string fId, std::string pId)
     ui.hashBox->setDropWidget(this);
     ui.hashBox->setAutoHide(false);
 
+	mParentMsgLoaded = false;
+	mForumMetaLoaded = false;
+
     newMsg();
 }
 
@@ -75,6 +87,7 @@ void CreateForumV2Msg::forumMessageCostumPopupMenu( QPoint /*point*/ )
     contextMnu->addSeparator();
     QAction *pasteLinkAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
     QAction *pasteLinkFullAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste full RetroShare Link"), this, SLOT(pasteLinkFull()));
+    contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste own certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
     if (RSLinkClipboard::empty()) {
         pasteLinkAct->setDisabled (true);
@@ -88,59 +101,125 @@ void CreateForumV2Msg::forumMessageCostumPopupMenu( QPoint /*point*/ )
 void  CreateForumV2Msg::newMsg()
 {
     /* clear all */
-    ForumInfo fi;
-    if (rsForums->getForumInfo(mForumId, fi))
-    {
-        ForumMsgInfo msg;
+	mParentMsgLoaded = false;
+	mForumMetaLoaded = false;
 
-        QString name = QString::fromStdWString(fi.forumName);
-        QString subj;
-        if ((mParentId != "") && (rsForums->getForumMessage(mForumId, mParentId, msg)))
-        {
-            QString title = QString::fromStdWString(msg.title);
-            name += " " + tr("In Reply to") + ": ";
-            name += title;
+	/* request Data */
+	{
+		RsTokReqOptions opts;
+	
+		std::list<std::string> groupIds;
+		groupIds.push_back(mForumId);
+	
+		std::cerr << "ForumsV2Dialog::newMsg() Requesting Group Summary(" << mForumId << ")";
+		std::cerr << std::endl;
+	
+		uint32_t token;
+		mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEFORUMV2MSG_FORUMINFO);
 
-            QString text = title;
+	}
+	
+	if (mParentId != "")
+	{
+	
+		RsTokReqOptions opts;
+			
+		std::list<std::string> msgIds;
+		msgIds.push_back(mParentId);
+			
+		std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
+		std::cerr << std::endl;
+			
+		uint32_t token;
+		mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEFORUMV2MSG_PARENTMSG);
+	}		
+}
 
-            if (text.startsWith("Re:", Qt::CaseInsensitive))
-            {
-                subj = title;
-            }
-            else
-            {
-                subj = "Re: " + title;
-            }
 
-        }
+void  CreateForumV2Msg::saveForumInfo(const RsGroupMetaData &meta)
+{
+	mForumMeta = meta;
+	mForumMetaLoaded = true;
+	
+	loadFormInformation();
+}
 
-        ui.forumName->setText(misc::removeNewLine(name));
-        ui.forumSubject->setText(misc::removeNewLine(subj));
+void  CreateForumV2Msg::saveParentMsg(const RsForumV2Msg &msg)
+{
+	mParentMsg = msg;
+	mParentMsgLoaded = true;
+	
+	loadFormInformation();
+}
 
-        if (!ui.forumSubject->text().isEmpty())
-        {
-            ui.forumMessage->setFocus();
-        }
-        else
-        {
-            ui.forumSubject->setFocus();
-        }
-
-        if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
-        {
-            ui.signBox->setChecked(true);
-            ui.signBox->setEnabled(false);
-        }
-        else
-        {
-            /* Uncheck sign box by default for anonymous forums */
-            ui.signBox->setChecked(false);
-            ui.signBox->setEnabled(true);
-        }
-    }
+void  CreateForumV2Msg::loadFormInformation()
+{
+	if ((!mParentMsgLoaded) && (mParentId != ""))
+	{
+		std::cerr << "CreateForumV2Msg::loadMsgInformation() ParentMsg not Loaded Yet";
+		std::cerr << std::endl;
+		return;
+	}
+	
+	if (!mForumMetaLoaded)
+	{
+		std::cerr << "CreateForumV2Msg::loadMsgInformation() ForumMeta not Loaded Yet";
+		std::cerr << std::endl;
+		return;
+	}
+	
+	std::cerr << "CreateForumV2Msg::loadMsgInformation() Data Available!";
+	std::cerr << std::endl;
+	
+	QString name = QString::fromUtf8(mForumMeta.mGroupName.c_str());
+	QString subj;
+	if (mParentId != "")
+	{
+		QString title = QString::fromUtf8(mParentMsg.mMeta.mMsgName.c_str());
+		name += " " + tr("In Reply to") + ": ";
+		name += title;
+			
+		QString text = title;
+			
+		if (text.startsWith("Re:", Qt::CaseInsensitive))
+		{
+			subj = title;
+		}
+		else
+		{
+			subj = "Re: " + title;
+		}
+			
+	}
+		
+	ui.forumName->setText(misc::removeNewLine(name));
+	ui.forumSubject->setText(misc::removeNewLine(subj));
+		
+	if (!ui.forumSubject->text().isEmpty())
+	{
+		ui.forumMessage->setFocus();
+	}
+	else
+	{
+		ui.forumSubject->setFocus();
+	}
+		
+	if (mForumMeta.mGroupFlags & RS_DISTRIB_AUTHEN_REQ)
+	{
+		ui.signBox->setChecked(true);
+		ui.signBox->setEnabled(false);
+	}
+	else
+	{
+		/* Uncheck sign box by default for anonymous forums */
+		ui.signBox->setChecked(false);
+		ui.signBox->setEnabled(true);
+	}
 
     ui.forumMessage->setText("");
 }
+
+
 
 void  CreateForumV2Msg::createMsg()
 {
@@ -158,29 +237,55 @@ void  CreateForumV2Msg::createMsg()
         return; //Don't add  a empty Subject!!
     }
 
-    ForumMsgInfo msgInfo;
-
-    msgInfo.forumId = mForumId;
-    msgInfo.threadId = "";
-    msgInfo.parentId = mParentId;
-    msgInfo.msgId = "";
-
-    msgInfo.title = name.toStdWString();
-    msgInfo.msg = desc.toStdWString();
-    msgInfo.msgflags = 0;
-
-    if (ui.signBox->isChecked())
-    {
-        msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
-    }
-
-    if ((msgInfo.msg == L"") && (msgInfo.title == L""))
+	RsForumV2Msg msg;
+	msg.mMeta.mGroupId = mForumId;
+	msg.mMeta.mParentId = mParentId;
+	msg.mMeta.mMsgId = "";
+	if (mParentMsgLoaded)
+	{
+		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;
+	}
+	
+	msg.mMeta.mMsgName = std::string(name.toUtf8());
+	msg.mMsg = std::string(desc.toUtf8());
+	msg.mMeta.mMsgFlags = RS_DISTRIB_AUTHEN_REQ;
+	
+	if ((msg.mMsg == "") && (msg.mMeta.mMsgName == ""))
         return; /* do nothing */
+	
+	uint32_t token;
+	rsForumsV2->createMsg(token, msg, true);
+	close();
+	
+	
+	// Previous Info - for reference.
+	
+    //ForumMsgInfo msgInfo;
 
-    if (rsForums->ForumMessageSend(msgInfo) == true) {
-        close();
-    }
+    //msgInfo.forumId = mForumId;
+    //msgInfo.threadId = "";
+    //msgInfo.parentId = mParentId;
+    //msgInfo.msgId = "";
+
+    //msgInfo.title = name.toStdWString();
+    //msgInfo.msg = desc.toStdWString();
+    //msgInfo.msgflags = 0;
+
+    //if (ui.signBox->isChecked())
+    //{
+    //    msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
+    //}
+
+    //if ((msgInfo.msg == L"") && (msgInfo.title == L""))
+    //    return; /* do nothing */
+
+    //if (rsForumsV2->ForumMessageSend(msgInfo) == true) {
+    //    close();
+    //}
 }
+
+
+
 
 void CreateForumV2Msg::closeEvent (QCloseEvent * /*event*/)
 {
@@ -245,3 +350,75 @@ void CreateForumV2Msg::pasteLinkFull()
 {
 	ui.forumMessage->insertHtml(RSLinkClipboard::toHtmlFull()) ;
 }
+
+void CreateForumV2Msg::pasteOwnCertificateLink()
+{
+	RetroShareLink link ;
+	std::string ownId = rsPeers->getOwnId() ;
+	if( link.createCertificate(ownId) )	{
+		ui.forumMessage->insertHtml(link.toHtml() + " ");
+	}
+}
+
+
+
+
+void CreateForumV2Msg::loadForumInfo(const uint32_t &token)
+{
+	std::cerr << "CreateForumV2Msg::loadForumInfo()";
+	std::cerr << std::endl;
+	
+	std::list<RsGroupMetaData> groupInfo;
+	rsForumsV2->getGroupSummary(token, groupInfo);
+	
+	if (groupInfo.size() == 1)
+	{
+		RsGroupMetaData fi = groupInfo.front();
+		saveForumInfo(fi);
+	}
+	else
+	{
+		std::cerr << "CreateForumV2Msg::loadForumInfo() ERROR INVALID Number of Forums";
+		std::cerr << std::endl;
+	}
+}
+
+
+void CreateForumV2Msg::loadParentMsg(const uint32_t &token)
+{
+	std::cerr << "CreateForumV2Msg::loadParentMsg()";
+	std::cerr << std::endl;
+	
+	// Only grab one.... ignore more (shouldn't be any).
+	RsForumV2Msg msg;
+	rsForumsV2->getMsgData(token, msg);	
+	saveParentMsg(msg);
+}
+
+
+
+void CreateForumV2Msg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "CreateForumV2::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+	
+	if (queue == mForumQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+			case CREATEFORUMV2MSG_FORUMINFO:
+				loadForumInfo(req.mToken);
+				break;
+				
+			case CREATEFORUMV2MSG_PARENTMSG:
+				loadParentMsg(req.mToken);
+				break;
+			default:
+				std::cerr << "CreateForumV2::loadRequest() UNKNOWN UserType ";
+				std::cerr << std::endl;
+				
+		}
+	}
+}
+

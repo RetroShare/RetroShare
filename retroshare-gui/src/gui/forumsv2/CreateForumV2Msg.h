@@ -25,7 +25,12 @@
 
 #include "ui_CreateForumV2Msg.h"
 
-class CreateForumV2Msg : public QMainWindow
+#include "util/TokenQueue.h"
+
+#include <retroshare/rsforumsv2.h>
+
+
+class CreateForumV2Msg : public QMainWindow, public TokenResponse
 {
   Q_OBJECT
 
@@ -33,7 +38,8 @@ public:
     CreateForumV2Msg(std::string fId, std::string pId);
 
     void newMsg(); /* cleanup */
-
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	
 private slots:
     /** Create the context popup menu and it's submenus */
     void forumMessageCostumPopupMenu( QPoint point );
@@ -44,6 +50,7 @@ private slots:
     void cancelMsg();
     void pasteLink();
     void pasteLinkFull();
+    void pasteOwnCertificateLink();
 
     void smileyWidgetForums();
     void addSmileys();
@@ -53,8 +60,23 @@ protected:
     void closeEvent (QCloseEvent * event);
 
 private:
+	
+	void saveForumInfo(const RsGroupMetaData &meta);
+	void saveParentMsg(const RsForumV2Msg &msg);
+	void loadFormInformation();
+
+	void loadForumInfo(const uint32_t &token);
+	void loadParentMsg(const uint32_t &token);
+	
     std::string mForumId;
     std::string mParentId;
+	
+	bool mParentMsgLoaded;
+	bool mForumMetaLoaded;
+	RsForumV2Msg mParentMsg;
+	RsGroupMetaData mForumMeta;
+
+	TokenQueue *mForumQueue;
 
     /** Qt Designer generated object */
     Ui::CreateForumV2Msg ui;

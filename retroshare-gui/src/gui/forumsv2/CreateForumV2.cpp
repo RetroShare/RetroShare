@@ -27,34 +27,42 @@
 
 #include <algorithm>
 
-#include <retroshare/rsforums.h>
+#include <retroshare/rsforumsV2.h>
 #include <retroshare/rspeers.h>
+
+#include <iostream>
+
+#define CREATEFORUMSV2_NEWFORUMID	1
+
 
 /** Constructor */
 CreateForumV2::CreateForumV2(QWidget *parent)
 : QDialog(parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
-  
-  // connect up the buttons.
-  connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelForum( ) ) );
-  connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );
-  connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
-  connect( ui.keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-  	        this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-	if(!ui.pubKeyShare_cb->isChecked()){
+	mForumQueue = new TokenQueue(rsForumsV2, this);
 
+	// connect up the buttons.
+	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelForum( ) ) );
+	connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );
+	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
+
+	if (!ui.pubKeyShare_cb->isChecked()) {
 		ui.contactsdockWidget->hide();
-		this->resize(this->size().width() - ui.contactsdockWidget->size().width(),
-				this->size().height());
+		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
 
-  newForum();
+	/* initialize key share list */
+	ui.keyShareList->setHeaderText(tr("Contacts:"));
+	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.keyShareList->start();
+
+	newForum();
 }
 
-void  CreateForumV2::newForum()
+void CreateForumV2::newForum()
 {
 	/* enforce Public for the moment */
 	ui.typePublic->setChecked(true);
@@ -72,156 +80,151 @@ void  CreateForumV2::newForum()
 
 	ui.forumName->clear();
 	ui.forumDesc->clear();
+
+	ui.forumName->setFocus();
 }
 
-void CreateForumV2::togglePersonItem( QTreeWidgetItem *item, int /*col*/ )
-{
-
-        /* extract id */
-        std::string id = (item -> text(1)).toStdString();
-
-        /* get state */
-        bool checked = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
-
-        /* call control fns */
-        std::list<std::string>::iterator lit = std::find(mShareList.begin(), mShareList.end(), id);
-
-        if(checked && (lit == mShareList.end())){
-
-        	// make sure ids not added already
-        	mShareList.push_back(id);
-
-        }else
-			if(lit != mShareList.end()){
-
-        	mShareList.erase(lit);
-
-        }
-
-        return;
-}
-
-void  CreateForumV2::createForum()
+void CreateForumV2::createForum()
 {
 	QString name = misc::removeNewLine(ui.forumName->text());
 	QString desc = ui.forumDesc->toPlainText(); //toHtml();
 	uint32_t flags = 0;
 
-	if(name.isEmpty())
-	{	/* error message */
-		QMessageBox::warning(this, "RetroShare",
-							 tr("Please add a Name"),
-							 QMessageBox::Ok, QMessageBox::Ok);
+	if(name.isEmpty()) {
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
-	else
 
-	if (ui.typePublic->isChecked())
-	{
+	if (ui.typePublic->isChecked()) {
 		flags |= RS_DISTRIB_PUBLIC;
-	}
-	else if (ui.typePrivate->isChecked())
-	{
+	} else if (ui.typePrivate->isChecked()) {
 		flags |= RS_DISTRIB_PRIVATE;
-	}
-	else if (ui.typeEncrypted->isChecked())
-	{
+	} else if (ui.typeEncrypted->isChecked()) {
 		flags |= RS_DISTRIB_ENCRYPTED;
 	}
 
-	if (ui.msgAuth->isChecked())
-	{
+	if (ui.msgAuth->isChecked()) {
 		flags |= RS_DISTRIB_AUTHEN_REQ;
-	}
-	else if (ui.msgAnon->isChecked())
-	{
+	} else if (ui.msgAnon->isChecked()) {
 		flags |= RS_DISTRIB_AUTHEN_ANON;
 	}
 
-	if (rsForums)
-	{
-		std::string forumId = rsForums->createForum(name.toStdWString(),
-				desc.toStdWString(), flags);
-
-		if(ui.pubKeyShare_cb->isChecked())
-			rsForums->forumShareKeys(forumId, mShareList);
+	if (rsForumsV2) {
+		
+		
+		uint32_t token;
+		RsForumV2Group grp;
+		grp.mMeta.mGroupName = std::string(name.toUtf8());
+		grp.mDescription = std::string(desc.toUtf8());
+		grp.mMeta.mGroupFlags = flags;
+		
+		rsForumsV2->createGroup(token, grp, true);
+		
+        // get the Queue to handle response.
+        mForumQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_SUMMARY, CREATEFORUMSV2_NEWFORUMID);
+		
 	}
+}
 
+void CreateForumV2::completeCreateNewForum(const RsGroupMetaData &newForumMeta)
+{
+	sendShareList(newForumMeta.mGroupId);
+	
 	close();
 }
 
-void CreateForumV2::setShareList(){
 
-	if(ui.pubKeyShare_cb->isChecked()){
-		this->resize(this->size().width() + ui.contactsdockWidget->size().width(),
-				this->size().height());
-		ui.contactsdockWidget->show();
-
-
-		if (!rsPeers)
-		{
-			/* not ready yet! */
-			return;
-		}
-
-		std::list<std::string> peers;
-		std::list<std::string>::iterator it;
-
-		rsPeers->getFriendList(peers);
-
-	    /* get a link to the table */
-	    QTreeWidget *shareWidget = ui.keyShareList;
-
-	    QList<QTreeWidgetItem *> items;
-
-		for(it = peers.begin(); it != peers.end(); it++)
-		{
-
-			RsPeerDetails detail;
-			if (!rsPeers->getPeerDetails(*it, detail))
-			{
-				continue; /* BAD */
-			}
-
-			/* make a widget per friend */
-	        QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-			item -> setText(0, PeerDefs::nameWithLocation(detail));
-			if (detail.state & RS_PEER_STATE_CONNECTED) {
-				item -> setTextColor(0,(Qt::darkBlue));
-			}
-            item -> setSizeHint(0,  QSize( 17,17 ) );
-
-			item -> setText(1, QString::fromStdString(detail.id));
-
-			item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-			item -> setCheckState(0, Qt::Unchecked);
-
-
-			/* add to the list */
-			items.append(item);
-		}
-
-	    /* remove old items */
-		shareWidget->clear();
-		shareWidget->setColumnCount(1);
-
-		/* add the items in! */
-		shareWidget->insertTopLevelItems(0, items);
-
-		shareWidget->update(); /* update display */
-
-	}else{  // hide share widget
-		ui.contactsdockWidget->hide();
-		this->resize(this->size().width() - ui.contactsdockWidget->size().width(),
-				this->size().height());
-		mShareList.clear();
+void CreateForumV2::sendShareList(std::string forumId)
+{
+	if (!rsForumsV2)
+	{
+		std::cerr << "CreateForumV2::sendShareList() ForumsV2 not active";
+		std::cerr << std::endl;
+		return;
 	}
-
+	
+	if (ui.pubKeyShare_cb->isChecked()) 
+	{
+		std::list<std::string> shareList;
+		ui.keyShareList->selectedSslIds(shareList, false);
+		rsForumsV2->groupShareKeys(forumId, shareList);
+	}
+	close();
 }
 
 
-void  CreateForumV2::cancelForum()
+
+
+
+
+void CreateForumV2::setShareList()
+{
+	if (ui.pubKeyShare_cb->isChecked()){
+		this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
+		ui.contactsdockWidget->show();
+	} else {  // hide share widget
+		ui.contactsdockWidget->hide();
+		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
+}
+
+void CreateForumV2::cancelForum()
 {
 	close();
 }
+
+
+
+
+void CreateForumV2::loadNewForumId(const uint32_t &token)
+{
+	std::cerr << "CreateForumV2::loadNewForumId()";
+	std::cerr << std::endl;
+	
+	std::list<RsGroupMetaData> groupInfo;
+	rsForumsV2->getGroupSummary(token, groupInfo);
+	
+	if (groupInfo.size() == 1)
+	{
+		RsGroupMetaData fi = groupInfo.front();
+		completeCreateNewForum(fi);
+	}
+	else
+	{
+		std::cerr << "CreateForumV2::loadNewForumId() ERROR INVALID Number of Forums Created";
+		std::cerr << std::endl;
+	}
+}
+
+
+
+
+
+
+
+
+void CreateForumV2::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "CreateForumV2::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+	
+	if (queue == mForumQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+				
+			case CREATEFORUMSV2_NEWFORUMID:
+				loadNewForumId(req.mToken);
+				break;
+			default:
+				std::cerr << "CreateForumV2::loadRequest() UNKNOWN UserType ";
+				std::cerr << std::endl;
+				
+		}
+	}
+}
+
+		
+		
