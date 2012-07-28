@@ -558,7 +558,7 @@ void WikiDialog::loadGroupData(const uint32_t &token)
 			std::cerr << " Group: " << group.mMeta.mGroupName;
 			std::cerr << std::endl;
 
-			QTreeWidgetItem *groupItem = new QTreeWidgetItem(NULL);
+			QTreeWidgetItem *groupItem = new QTreeWidgetItem();
 			groupItem->setText(WIKI_GROUP_COL_GROUPNAME, QString::fromStdString(group.mMeta.mGroupName));
 			groupItem->setText(WIKI_GROUP_COL_GROUPID, QString::fromStdString(group.mMeta.mGroupId));
 			ui.treeWidget_Pages->addTopLevelItem(groupItem);
@@ -692,7 +692,7 @@ void WikiDialog::loadPages(const uint32_t &token)
 			std::cerr << " Page: " << page.mMeta.mMsgName;
 			std::cerr << std::endl;
 
-			QTreeWidgetItem *pageItem = new QTreeWidgetItem(NULL);
+			QTreeWidgetItem *pageItem = new QTreeWidgetItem();
 			pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mMeta.mMsgName));
 			pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
 			pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
@@ -776,7 +776,7 @@ void WikiDialog::loadModPages(const uint32_t &token)
 			std::cerr << " Page: " << page.mMeta.mMsgName;
 			std::cerr << std::endl;
 
-			QTreeWidgetItem *modItem = new QTreeWidgetItem(NULL);
+			QTreeWidgetItem *modItem = new QTreeWidgetItem();
 			modItem->setText(WIKI_MODS_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
 			modItem->setText(WIKI_MODS_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
 			ui.treeWidget_Mods->addTopLevelItem(modItem);

@@ -2163,7 +2163,7 @@ void ForumsV2Dialog::loadForumChildMsg(const RsForumV2Msg &msg, QTreeWidgetItem 
 
 	if (mThreadLoad.FlatView)
 	{
-		child = new QTreeWidgetItem(NULL); // no Parent.	
+		child = new QTreeWidgetItem(); // no Parent.	
 	}
 	else
 	{

@@ -340,7 +340,7 @@ void IdDialog::insertIdList(uint32_t token)
 		}
 
 
-		QTreeWidgetItem *item = new QTreeWidgetItem(NULL);
+		QTreeWidgetItem *item = new QTreeWidgetItem();
 		//item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mNickname));
 		//item->setText(RSID_COL_KEYID, QString::fromStdString(data.mKeyId));
 		item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mMeta.mGroupName));
