@@ -24,7 +24,7 @@ void p3PhotoServiceV2::msgsChanged(
 }
 
 
-RsTokenService* p3PhotoServiceV2::getTokenService() {
+RsTokenServiceV2* p3PhotoServiceV2::getTokenService() {
 
 	return RsGenExchange::getTokenService();
 }
@@ -70,8 +70,9 @@ bool p3PhotoServiceV2::getAlbum(const uint32_t& token, std::vector<RsPhotoAlbum>
 
 		for(; vit != grpData.end(); vit++)
 		{
-			RsGxsGrpItem* item = *vit;
-			RsPhotoAlbum album = *item;
+			RsGxsPhotoAlbumItem* item = dynamic_cast<RsGxsPhotoAlbumItem*>(*vit);
+			RsPhotoAlbum album = item->album;
+			delete item;
 			albums.push_back(album);
 		}
 	}
@@ -80,7 +81,7 @@ bool p3PhotoServiceV2::getAlbum(const uint32_t& token, std::vector<RsPhotoAlbum>
 }
 
 
-bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photo)
+bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photos)
 {
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
@@ -101,8 +102,8 @@ bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photo)
 
 				if(item)
 				{
-					RsPhotoPhoto photo = *item;
-					photo[grpId] = photo;
+					RsPhotoPhoto photo = item->photo;
+					photos[grpId].push_back(photo);
 					delete item;
 				}else
 				{
@@ -121,19 +122,7 @@ bool p3PhotoServiceV2::submitAlbumDetails(RsPhotoAlbum& album)
 	return false;
 }
 
-void p3PhotoServiceV2::operator =(RsPhoto& lPhotos,
-		const RsGxsPhotoPhotoItem& rPhoto)
-{
-	lPhotos = rPhoto.photo;
-}
 
-
-
-void p3PhotoServiceV2::operator =(RsPhotoAlbum& lAlbum,
-		const RsGxsPhotoAlbumItem& rAlbum)
-{
-	lAlbum = rAlbum.album;
-}
 
 bool p3PhotoServiceV2::submitPhoto(RsPhotoPhoto& photo)
 {

@@ -31,11 +31,7 @@
 #include <list>
 
 #include "serialiser/rsgxsitems.h"
-
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+#include "gxs/rsgxs.h"
 
 #define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
 #define GXS_REQUEST_TYPE_GROUP_META			0x00020000
@@ -79,7 +75,7 @@ time_t   mAfter;
  * A proxy class for requesting generic service data for GXS
  * This seperates the request mechanism from the actual retrieval of data
  */
-class RsTokenService
+class RsTokenServiceV2
 {
 
 public:
@@ -93,8 +89,8 @@ public:
 
 public:
 
-    RsTokenService()  { return; }
-    virtual ~RsTokenService() { return; }
+    RsTokenServiceV2()  { return; }
+    virtual ~RsTokenServiceV2() { return; }
 
         /* Data Requests */
 

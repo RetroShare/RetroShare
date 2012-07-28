@@ -101,7 +101,7 @@ public:
      * @return handle to token service handle for making
      * request to this gxs service
      */
-    RsTokenService* getTokenService();
+    RsTokenServiceV2* getTokenService();
 
 protected:
 
@@ -225,7 +225,7 @@ private:
 
 private:
 
-    std::vector<RsGxsChange*> mChanges;
+    std::vector<RsGxsNotify*> mChanges;
 };
 
 #endif // RSGENEXCHANGE_H

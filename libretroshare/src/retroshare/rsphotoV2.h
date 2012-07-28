@@ -182,7 +182,7 @@ public:
 	 *
 	 * @param grpIds
 	 */
-	virtual void groupsChanged(std::list<RsGroupId>& grpIds) = 0;
+	virtual void groupsChanged(std::list<RsGxsGroupId>& grpIds) = 0;
 
 	/*!
 	 *
@@ -195,7 +195,7 @@ public:
 	 * needed to make requests to the service
 	 * @return handle to token service for this gxs service
 	 */
-	virtual RsTokenService* getTokenService() = 0;
+	virtual RsTokenServiceV2* getTokenService() = 0;
 
 	/* Generic Lists */
 
@@ -206,7 +206,7 @@ public:
 	 * @return false if request token is invalid, check token status for error report
 	 */
 	virtual bool getGroupList(const uint32_t &token,
-							  std::list<RsGroupId> &groupIds) = 0;
+							  std::list<RsGxsGroupId> &groupIds) = 0;
 
 	/*!
 	 * @param token token to be redeemed for this request

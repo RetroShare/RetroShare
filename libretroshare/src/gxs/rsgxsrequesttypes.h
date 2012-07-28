@@ -13,6 +13,9 @@ class GxsRequest
 {
 
 public:
+
+
+	virtual ~GxsRequest() { return; }
 	uint32_t token;
 	uint32_t reqTime;
 
@@ -69,7 +72,6 @@ class MsgDataReq : public GxsRequest
 {
 
 public:
-
 	GxsMsgReq mMsgIds;
 	NxsMsgDataResult mMsgData;
 };

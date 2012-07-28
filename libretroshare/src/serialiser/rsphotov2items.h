@@ -55,6 +55,8 @@ public:
 
 class RsGxsPhotoSerialiser : public RsSerialType
 {
+public:
+
 	RsGxsPhotoSerialiser()
 	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO)
 	{ return; }

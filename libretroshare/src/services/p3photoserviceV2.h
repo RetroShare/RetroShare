@@ -53,7 +53,7 @@ public:
     void msgsChanged(std::map<std::string,
                              std::vector<std::string> >& msgs);
 
-    RsTokenService* getTokenService();
+    RsTokenServiceV2* getTokenService();
 
     bool getGroupList(const uint32_t &token,
                               std::list<std::string> &groupIds);
@@ -70,11 +70,6 @@ public:
     /* Specific Service Data */
     bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &albums);
     bool getPhoto(const uint32_t &token, PhotoResult &photos);
-
-private:
-
-    void operator=(RsPhoto& lPhotos, const RsGxsPhotoPhotoItem& rPhoto);
-    void operator=(RsPhotoAlbum& lAlbum, const RsGxsPhotoAlbumItem& rAlbum);
 
 public:
 

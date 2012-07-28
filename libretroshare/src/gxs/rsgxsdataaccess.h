@@ -31,9 +31,9 @@
 #include "rsgds.h"
 
 
-typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData> > MsgMetaFilter;
+typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
 
-class RsGxsDataAccess : public RsTokenService
+class RsGxsDataAccess : public RsTokenServiceV2
 {
 public:
     RsGxsDataAccess(RsGeneralDataService* ds);

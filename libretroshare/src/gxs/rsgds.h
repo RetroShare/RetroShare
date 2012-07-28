@@ -35,6 +35,7 @@
 #include "serialiser/rsgxsitems.h"
 #include "serialiser/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
+#include "rsgxs.h"
 
 
 class RsGxsSearchModule  {
@@ -62,9 +63,9 @@ class GrpLocMetaData {
 
 };
 
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq; // <grpId, msgIds>
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
+//typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq; // <grpId, msgIds>
+
+//typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from

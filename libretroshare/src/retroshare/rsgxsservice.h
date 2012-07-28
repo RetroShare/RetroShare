@@ -13,10 +13,10 @@
  * enumerating all possible changes
  * at the interface
  */
-class RsGxsChange
+class RsGxsNotify
 {
 public:
-    RsGxsChange(){ return; }
+    RsGxsNotify(){ return; }
 
 };
 
@@ -24,7 +24,7 @@ public:
  * Relevant to group changes
  * TODO: extent to indicate whether a meta change or actual data
  */
-class RsGxsGroupChange : RsGxsChange
+class RsGxsGroupChange : public RsGxsNotify
 {
 public:
     std::list<RsGxsGroupId> grpIdList;
@@ -34,7 +34,7 @@ public:
  * Relevant to message changes
  * TODO: extent to indicate whether a meta change or actual data
  */
-class RsGxsMsgChange : RsGxsChange
+class RsGxsMsgChange : public RsGxsNotify
 {
 public:
     std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;

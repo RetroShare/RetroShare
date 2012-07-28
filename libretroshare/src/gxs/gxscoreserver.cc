@@ -8,6 +8,7 @@
 #include "gxscoreserver.h"
 
 GxsCoreServer::GxsCoreServer()
+: mGxsMutex("GxsCoreServer")
 {
 
 }

@@ -1,5 +1,3 @@
-#include "rsgxsdataaccess.h"
-
 /*
  * libretroshare/src/retroshare: rsgxsdataaccess.cc
  *
@@ -24,6 +22,8 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
+
+#include "rsgxsdataaccess.h"
 
 // This bit will be filled out over time.
 #define RS_TOKREQOPT_MSG_VERSIONS	0x0001		// MSGRELATED: Returns All MsgIds with OrigMsgId = MsgId.
@@ -51,15 +51,15 @@
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
 
-	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_FAILED = 0;
-	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_PENDING = 1;
-	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_PARTIAL = 2;
-	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_FINISHED_INCOMPLETE = 3;
-	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_COMPLETE = 4;
-	const uint8_t RsGxsDataAccess::GXS_REQUEST_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
+	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED = 0;
+	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_PENDING = 1;
+	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_PARTIAL = 2;
+	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_FINISHED_INCOMPLETE = 3;
+	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE = 4;
+	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
 
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
- : mDataStore(ds)
+ : mDataStore(ds), mDataMutex("RsGxsDataAccess")
 {
 }
 
@@ -302,7 +302,7 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 		return false;
 	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
-		GroupDataReq* gmreq = dynamic_cast<GroupMetaReq*>(req);
+		GroupDataReq* gmreq = dynamic_cast<GroupDataReq*>(req);
 
 		if(gmreq)
 		{
@@ -330,7 +330,7 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 		return false;
 	}else if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
-		MsgDataReq* mdreq = dynamic_cast<GroupMetaReq*>(req);
+		MsgDataReq* mdreq = dynamic_cast<MsgDataReq*>(req);
 
 		if(mdreq)
 		{
@@ -358,7 +358,7 @@ bool RsGxsDataAccess::getMsgSummary(const uint32_t& token, GxsMsgMetaResult& msg
 		return false;
 	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
-		MsgMetaReq* mmreq = dynamic_cast<GroupMetaReq*>(req);
+		MsgMetaReq* mmreq = dynamic_cast<MsgMetaReq*>(req);
 
 		if(mmreq)
 		{
@@ -387,7 +387,7 @@ bool RsGxsDataAccess::getMsgList(const uint32_t& token, GxsMsgIdResult& msgIds)
 		return false;
 	}else  if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
-		MsgIdReq* mireq = dynamic_cast<GroupMetaReq*>(req);
+		MsgIdReq* mireq = dynamic_cast<MsgIdReq*>(req);
 
 		if(mireq)
 		{
@@ -417,7 +417,7 @@ bool RsGxsDataAccess::getGroupList(const uint32_t& token, std::list<RsGxsGroupId
 		return false;
 	}else if(req->token == GXS_REQUEST_STATUS_COMPLETE){
 
-		GroupIdReq* gireq = dynamic_cast<GroupMetaReq*>(req);
+		GroupIdReq* gireq = dynamic_cast<GroupIdReq*>(req);
 
 		if(gireq)
 		{
@@ -444,7 +444,7 @@ GxsRequest* RsGxsDataAccess::retrieveRequest(const uint32_t& token)
 
 	if(mRequests.find(token) == mRequests.end()) return NULL;
 
-	GxsRequest* req = mRequests;
+	GxsRequest* req = mRequests[token];
 
 	return req;
 }
@@ -692,19 +692,19 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 
 		metaFilter[grpId] = std::map<RsGxsMessageId, RsGxsMsgMetaData*>();
 
-		const std::vector<RsMsgMetaData*>& metaV = meta_it->second;
+		const std::vector<RsGxsMsgMetaData*>& metaV = meta_it->second;
 		if (onlyLatestMsgs) // THIS ONE IS HARD -> LOTS OF COMP.
 		{
-			std::vector<RsMsgMetaData*>::const_iterator vit = metaV.begin();
+			std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
 
 			// RUN THROUGH ALL MSGS... in map origId -> TS.
-			std::map<std::string, std::pair<std::string, time_t> > origMsgTs;
-			std::map<std::string, std::pair<std::string, time_t> >::iterator oit;
+			std::map<RsGxsGroupId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
+			std::map<RsGxsGroupId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
 
 			for(; vit != metaV.end(); vit++)
 			{
-				RsMsgMetaData* msgMeta = *vit;
+				RsGxsMsgMetaData* msgMeta = *vit;
 
 				/* if we are grabbing thread Head... then parentId == empty. */
 				if (onlyThreadHeadMsgs)
@@ -750,18 +750,18 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 			// Add the discovered Latest Msgs.
 			for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
 			{
-				req->mMsgIds.insert(std::make_pair(grpId, oit->second.first));
+				req->mMsgIds[grpId].push_back(oit->second.first);
 
 			}
 
 		}
 		else	// ALL OTHER CASES.
 		{
-			std::vector<RsMsgMetaData*>::const_iterator vit = metaV.begin();
+			std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
 			for(; vit != metaV.end(); vit++)
 			{
-				RsMsgMetaData* msgMeta = *vit;
+				RsGxsMsgMetaData* msgMeta = *vit;
 				bool add = false;
 
 				/* if we are grabbing thread Head... then parentId == empty. */
@@ -788,7 +788,7 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 
 				if (add)
 				{
-					req->mMsgIdResult.insert(grpId,msgMeta->mMsgId);
+					req->mMsgIdResult[grpId].push_back(msgMeta->mMsgId);
 				}
 
 			}
@@ -815,7 +815,7 @@ void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOption
 		std::vector<RsGxsMessageId>& msgs = mit->second;
 		std::vector<RsGxsMessageId>::iterator vit = msgs.begin();
 		const std::map<RsGxsMessageId, RsGxsMsgMetaData*>& meta = cit->second;
-		const std::map<RsGxsMessageId, RsGxsMsgMetaData*>::const_iterator cit2;
+		std::map<RsGxsMessageId, RsGxsMsgMetaData*>::const_iterator cit2;
 
 		for(; vit != msgs.end();)
 		{

@@ -52,14 +52,16 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 	bool ok = mDataAccess->getGroupSummary(token, metaL);
 
 	std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin();
-
+	RsGroupMetaData m;
 	for(; lit != metaL.end(); lit++)
 	{
-		RsGroupMetaData m = *(*lit);
+		RsGxsGrpMetaData& gMeta = *(*lit);
+		m = gMeta;
 		groupInfo.push_back(m);
+		delete (*lit);
 	}
 
-	std::list<RsGxsGrpMetaData*>::iterator cit = metaL;
+	std::list<RsGxsGrpMetaData*>::iterator cit = metaL.begin();
 	for(; cit != metaL.end(); cit++)
 		delete *cit;
 
@@ -79,7 +81,7 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 	for(; mit != result.end(); mit++)
 	{
 		std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
-		msgInfo[mit->first] = metaV;
+		//msgInfo[mit->first] = metaV;
 
 		std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
 
@@ -147,7 +149,7 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
 }
 
 
-RsTokenService* RsGenExchange::getTokenService()
+RsTokenServiceV2* RsGenExchange::getTokenService()
 {
     return mDataAccess;
 }
@@ -256,7 +258,7 @@ void RsGenExchange::publishGrps()
 		{
 			grp->metaData = new RsGxsGrpMetaData();
 			ok = mDataAccess->addGroupData(grp);
-			RsGxsGroupChange* gc = RsGxsGroupChange();
+			RsGxsGroupChange* gc = new RsGxsGroupChange();
 			mNotifications.push_back(gc);
 		}
 

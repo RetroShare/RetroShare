@@ -40,7 +40,11 @@
 
 #include "rsnxsobserver.h"
 
-
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
+typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 class RsGxsService : public RsNxsObserver
 {
