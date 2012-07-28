@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QBuffer>
+#include <time.h>
 
 #include "PostedItem.h"
 
