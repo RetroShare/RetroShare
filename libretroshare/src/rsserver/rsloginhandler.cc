@@ -673,7 +673,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 	{
 		std::cerr << "Decrypting went ok !" << std::endl;
 		sslPassword = plain ;
-		std::cerr << "sslpassword: " << "******************** (length = " << sslPassword.length() ")" << std::endl;
+		std::cerr << "sslpassword: " << "******************** (length = " << sslPassword.length() << ")" << std::endl;
 
 		return sslPassword.length() > 0 ;
 	} 
