@@ -41,7 +41,7 @@ static int vasprintf(char **sptr, const char *fmt, va_list argv)
 	return wanted;
 }
 
-//int asprintf(char **sptr, const char *fmt, ...)
+//static int asprintf(char **sptr, const char *fmt, ...)
 //{
 //	int retval;
 //	va_list argv;
@@ -54,15 +54,23 @@ static int vasprintf(char **sptr, const char *fmt, va_list argv)
 
 int bd_sprintf(std::string &str, const char *fmt, ...)
 {
-	char *buffer;
+	char *buffer = NULL;
 	va_list ap;
 
 	va_start(ap, fmt);
 	int retval = vasprintf(&buffer, fmt, ap);
 	va_end(ap);
 
-	str = buffer;
-	free(buffer);
+	if (retval >= 0) {
+		if (buffer) {
+			str = buffer;
+			free(buffer);
+		} else {
+			str.clear();
+		}
+	} else {
+		str.clear();
+	}
 
 	return retval;
 }
@@ -70,14 +78,18 @@ int bd_sprintf(std::string &str, const char *fmt, ...)
 int bd_sprintf_append(std::string &str, const char *fmt, ...)
 {
 	va_list ap;
-	char *ret;
+	char *buffer = NULL;
 
 	va_start(ap, fmt);
-	int retval = vasprintf(&ret, fmt, ap);
+	int retval = vasprintf(&buffer, fmt, ap);
 	va_end(ap);
 
-	str.append(ret);
-	free(ret);
+	if (retval >= 0) {
+		if (buffer) {
+			str.append(buffer);
+			free(buffer);
+		}
+	}
 
 	return retval;
 }
