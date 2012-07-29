@@ -259,7 +259,7 @@ void ForumMsgItem::toggle()
 		sendButton->setVisible(canReply);
 		signedcheckBox->setVisible(canReply);
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-		expandButton->setToolTip("Hide");
+		expandButton->setToolTip(tr("Hide"));
 		if (!mIsTop)
 		{
 			nextFrame->show();
@@ -275,7 +275,7 @@ void ForumMsgItem::toggle()
 		sendButton->hide();
 		signedcheckBox->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-		expandButton->setToolTip("Expand");
+		expandButton->setToolTip(tr("Expand"));
 	}
 }
 

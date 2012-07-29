@@ -99,18 +99,18 @@ void BlogNewItem::updateItemStatic()
 	}
 	else
 	{
-		nameLabel->setText("Unknown Blog");
+		nameLabel->setText(tr("Unknown Blog"));
 		titleLabel->setText("Blog ???");
 		descLabel->setText("");
 	}
 
 	if (mIsNew)
 	{
-		titleLabel->setText("New Blog");
+		titleLabel->setText(tr("New Blog"));
 	}
 	else
 	{
-		titleLabel->setText("Updated Blog");
+		titleLabel->setText(tr("Updated Blog"));
 	}
 
 	if (mIsHome)
@@ -144,13 +144,13 @@ void BlogNewItem::toggle()
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    expandButton->setToolTip("Hide");
+	    expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    expandButton->setToolTip("Expand");
+	    expandButton->setToolTip(tr("Expand"));
 	}
 }
 

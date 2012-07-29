@@ -91,18 +91,18 @@ void ForumNewItem::updateItemStatic()
 	}
 	else
 	{
-		nameLabel->setText("Unknown Forum");
-		titleLabel->setText("New Forum");
+		nameLabel->setText(tr("Unknown Forum"));
+		titleLabel->setText(tr("New Forum"));
 		descLabel->setText("");
 	}
 
 	if (mIsNew)
 	{
-		titleLabel->setText("New Forum");
+		titleLabel->setText(tr("New Forum"));
 	}
 	else
 	{
-		titleLabel->setText("Updated Forum");
+		titleLabel->setText(tr("Updated Forum"));
 	}
 
 	if (mIsHome)
@@ -135,13 +135,13 @@ void ForumNewItem::toggle()
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    expandButton->setToolTip("Hide");
+		expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    expandButton->setToolTip("Expand");
+		expandButton->setToolTip(tr("Expand"));
 	}
 }
 
