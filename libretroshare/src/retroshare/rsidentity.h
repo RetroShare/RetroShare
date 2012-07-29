@@ -186,6 +186,7 @@ class RsTokReqOptions
 #define RSGXS_GROUP_STATUS_MASK  	0x0000000f
 #define RSGXS_GROUP_STATUS_UPDATED 	0x00000001
 #define RSGXS_GROUP_STATUS_NEWGROUP	0x00000002	
+#define RSGXS_GROUP_STATUS_NEWMSG       0x00000004	
 
 #define RSGXS_GROUP_STATUS_SERVICE_MASK 0xffff0000
 
@@ -384,6 +385,8 @@ class RsIdGroup
 
 	std::string mGpgIdHash; // SHA(KeyId + Gpg Fingerprint) -> can only be IDed if GPG known.
 
+	// NOTE: These cannot be transmitted as part of underlying messages....
+	// Must use ServiceString.
 	bool mGpgIdKnown; // if GpgIdHash has been identified.
 	std::string mGpgId;   	// if known.
 	std::string mGpgName; 	// if known.
@@ -402,11 +405,17 @@ class RsIdMsg
 	//std::string mKeyId;  (mGroupId)
 	//std::string mPeerId; (mAuthorId) ???
 
-	int mRating;
-	int mPeersRating;
-	std::string mComment;
+	int mOpinion;
+	double mReputation;
+	//int mRating;
+	//int mPeersRating;
+	//std::string mComment;
 };
 
+
+
+std::ostream &operator<<(std::ostream &out, const RsIdGroup &meta);
+std::ostream &operator<<(std::ostream &out, const RsIdMsg &meta);
 
 
 
@@ -465,9 +474,30 @@ virtual bool    createMsg(uint32_t &token, RsIdMsg &msg, bool isNew) = 0;
 	 * Below is the additional interface to look at reputation.
 	 */
 
+	/* So we will want to cache much of the identity stuff, so that we have quick access to the results.
+	 * The following bits of data will not use the request/response interface, and should be available immediately.
+	 *
+ 	 * ID => Nickname, knownGPG, reputation.
+	 *
+	 * This will require quite a bit of data... 
+	 *       20 Bytes + 50 + 1 + 4 Bytes? (< 100 Bytes).
+	 * 		x 10,000 IDs.    => ~1 MB of cache (Good).
+	 * 		x 100,000 IDs.   => ~10 MB of cache (Good).
+	 * 		x 1,000,000 IDs. => ~100 MB of cache (Too Big).
+	 *
+	 * We also need to store quick access to your OwnIds.
+	 */
+
+//virtual uint32_t getIdDetails(const std::string &id, std::string &nickname, bool &isGpgKnown, 
+						uint32_t &ownOpinion, float &reputation);
+//virtual uint32_t getOwnIds(std::list<std::string> &ownIds);
+//virtual bool  setOpinion(const std::string &id, uint32_t opinion);
+
+
 virtual void generateDummyData() = 0;
 
 #if 0
+
         /* Data Requests */
 virtual bool requestIdentityList(uint32_t &token) = 0;
 virtual bool requestIdentities(uint32_t &token, const std::list<std::string> &ids) = 0;

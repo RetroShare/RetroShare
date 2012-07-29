@@ -891,7 +891,7 @@ bool GxsDataProxy::createMsg(void *msgData)
 
 
 		/* find the group */
-        	std::map<std::string, RsGroupMetaData>::iterator git;
+		std::map<std::string, RsGroupMetaData>::iterator git;
 		git = mGroupMetaData.find(meta.mGroupId);
 		if (git == mGroupMetaData.end())
 		{
@@ -901,7 +901,7 @@ bool GxsDataProxy::createMsg(void *msgData)
 		}
 
 		/* flag the group as changed */
-		git->second.mGroupStatus |= RSGXS_GROUP_STATUS_UPDATED;
+		git->second.mGroupStatus |= (RSGXS_GROUP_STATUS_UPDATED | RSGXS_GROUP_STATUS_NEWMSG);
 
 		/* Set the Msg Status Flags */
 		meta.mMsgStatus |= (RSGXS_MSG_STATUS_UNREAD_BY_USER | RSGXS_MSG_STATUS_UNPROCESSED);
@@ -909,8 +909,8 @@ bool GxsDataProxy::createMsg(void *msgData)
 		/* Set the Msg->GroupId Status Flags */
 
 		/* push into maps */
-        	mMsgData[meta.mMsgId] = msgData;
-        	mMsgMetaData[meta.mMsgId] = meta;
+		mMsgData[meta.mMsgId] = msgData;
+		mMsgMetaData[meta.mMsgId] = meta;
 
 		return true;
 	}

@@ -55,6 +55,37 @@ virtual bool convertMsgToMetaData(void *msgData, RsMsgMetaData &meta);
 };
 
 
+
+// INTERNAL DATA TYPES...
+// Describes data stored in GroupServiceString.
+class IdRepCumulScore
+{
+public:
+	uint32_t count;
+	uint32_t nullcount;
+	double   sum;
+	double   sumsq;
+	
+	// derived parameters:
+};
+
+
+class IdGroupServiceStrData
+{
+public:
+	IdGroupServiceStrData() { pgpIdKnown = false; }
+	bool pgpIdKnown;
+	std::string pgpId;
+	
+	uint32_t ownScore;
+	IdRepCumulScore opinion;
+	IdRepCumulScore reputation;
+	
+};
+
+#define ID_LOCAL_STATUS_FULL_CALC_FLAG	0x00010000
+#define ID_LOCAL_STATUS_INC_CALC_FLAG	0x00020000
+
 class p3IdService: public p3GxsDataService, public RsIdentity
 {
 	public:
@@ -113,12 +144,34 @@ virtual void generateDummyData();
 
 std::string genRandomId();
 
-        IdDataProxy *mIdProxy;
+	int	background_tick();
+	bool background_checkTokenRequest();
+	bool background_requestGroups();
+	bool background_requestNewMessages();
+	bool background_processNewMessages();
+	bool background_FullCalcRequest();
+	bool background_processFullCalc();
+	
+	bool background_cleanup();
+
+	bool encodeIdGroupCache(std::string &str, const IdGroupServiceStrData &data);
+	bool extractIdGroupCache(std::string &str, IdGroupServiceStrData &data);
+	
+	IdDataProxy *mIdProxy;
 
 	RsMutex mIdMtx;
 
 	/***** below here is locked *****/
-
+	bool mLastBgCheck;
+	bool mBgProcessing;
+	
+	uint32_t mBgToken;
+	uint32_t mBgPhase;
+	
+	std::map<std::string, RsGroupMetaData> mBgGroupMap;
+	std::list<std::string> mBgFullCalcGroups;
+	
+	
 	bool mUpdated;
 
 #if 0

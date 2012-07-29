@@ -61,7 +61,9 @@ int	p3IdService::tick()
 	std::cerr << std::endl;
 
 	fakeprocessrequests();
-	
+	// Disable for now.
+	// background_tick();
+
 	return 0;
 }
 
@@ -910,6 +912,16 @@ std::string rsIdTypeToString(uint32_t idtype)
  *
  * So next question, when do we need to incrementally calculate the score?
  *  .... how often do we need to recalculate everything -> this could lead to a flux of messages. 
+ *
+ *
+ * 
+ * MORE NOTES:
+ *
+ *   The Opinion Messages will have to be signed by PGP or SSL Keys, to guarantee that we don't 
+ * multiple votes per person... As the message system doesn't handle uniqueness in this respect, 
+ * we might have to do FULL_CALC for everything - This bit TODO.
+ *
+ * This will make IdService quite different to the other GXS services.
  */
 
 /************************************************************************************/
@@ -922,8 +934,6 @@ std::string rsIdTypeToString(uint32_t idtype)
  *
  * 
  */
-
-#if 0 // DISABLED FOR MERGE
 
 
 #define ID_BACKGROUND_PERIOD	60
@@ -940,7 +950,7 @@ int	p3IdService::background_tick()
 	time_t now = time(NULL);
 	bool doCheck = false;
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		if (now -  mLastBgCheck > ID_BACKGROUND_PERIOD)
 		{
 			doCheck = true;
@@ -950,7 +960,7 @@ int	p3IdService::background_tick()
 
 	if (doCheck)
 	{
-		addExtraDummyData();
+		//addExtraDummyData();
 		background_requestGroups();
 	}
 
@@ -970,18 +980,17 @@ int	p3IdService::background_tick()
  * Update 
  *
  */
-
-#define ID_BG_REQUEST_GROUPS		1
+#define ID_BG_IDLE						0
+#define ID_BG_REQUEST_GROUPS			1
 #define ID_BG_REQUEST_UNPROCESSED		2
-#define ID_BG_REQUEST_PARENTS		3
-#define ID_BG_PROCESS_VOTES			4
+#define ID_BG_REQUEST_FULLCALC			3
 
 bool p3IdService::background_checkTokenRequest()
 {
 	uint32_t token = 0;
 	uint32_t phase = 0;
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		if (!mBgProcessing)
 		{
 			return false;
@@ -1008,8 +1017,8 @@ bool p3IdService::background_checkTokenRequest()
 			case ID_BG_REQUEST_UNPROCESSED:
 				background_processNewMessages();
 				break;
-			case ID_BG_REQUEST_PARENTS:
-				background_updateVoteCounts();
+			case ID_BG_REQUEST_FULLCALC:
+				background_processFullCalc();
 				break;
 			default:
 				break;
@@ -1028,7 +1037,7 @@ bool p3IdService::background_requestGroups()
 	uint32_t token = 0;
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 		if (mBgProcessing)
 		{
@@ -1051,7 +1060,7 @@ bool p3IdService::background_requestGroups()
 
 	requestGroupInfo(token, ansType, opts, groupIds);
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mBgToken = token;
 	}
 
@@ -1065,12 +1074,14 @@ bool p3IdService::background_requestNewMessages()
 	std::cerr << "p3IdService::background_requestNewMessages()";
 	std::cerr << std::endl;
 
-	std::list<RsMsgMetaData> modGroupList;
+	std::list<RsGroupMetaData> modGroupList;
+	std::list<RsGroupMetaData>::iterator it;
+
 	std::list<std::string> groupIds;
 	uint32_t token = 0;
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		token = mBgToken;
 	}
 
@@ -1083,17 +1094,17 @@ bool p3IdService::background_requestNewMessages()
 	}
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mBgPhase = ID_BG_REQUEST_UNPROCESSED;
 		mBgToken = 0;
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
 		for(it = modGroupList.begin(); it != modGroupList.end(); it++)
 		{
-			setGroupStatus(it->mMsgId, 0, RSGXS_GROUP_STATUS_NEWMSG);
+			setGroupStatus(it->mGroupId, 0, RSGXS_GROUP_STATUS_NEWMSG);
 
 			mBgGroupMap[it->mGroupId] = *it;
-			groupIds.push_back(*it);
+			groupIds.push_back(it->mGroupId);
 		}
 	}
 
@@ -1107,7 +1118,7 @@ bool p3IdService::background_requestNewMessages()
 	requestMsgInfo(token, ansType, opts, groupIds);
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mBgToken = token;
 	}
 	return true;
@@ -1124,7 +1135,7 @@ bool p3IdService::background_processNewMessages()
 	uint32_t token = 0;
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		token = mBgToken;
 	}
 
@@ -1143,22 +1154,33 @@ bool p3IdService::background_processNewMessages()
 	 * If a message is not an original -> store groupId for requiring full analysis later.
          */
 
+	std::map<std::string, RsGroupMetaData>::iterator mit;
 	for(it = newMsgList.begin(); it != newMsgList.end(); it++)
 	{
+		std::cerr << "p3IdService::background_processNewMessages() new MsgId: " << it->mMsgId;
+		std::cerr << std::endl;
+
 		/* flag each new vote as processed */
 		setMessageStatus(it->mMsgId, 0, RSGXS_MSG_STATUS_UNPROCESSED);
 
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 		mit = mBgGroupMap.find(it->mGroupId);
 		if (mit == mBgGroupMap.end())
 		{
+			std::cerr << "p3IdService::background_processNewMessages() ERROR missing GroupId: ";
+			std::cerr << it->mGroupId;
+			std::cerr << std::endl;
+
 			/* error */
 			continue;
 		}
 
-		if (mit->mStatusFlags & FULL_CALC_FLAG)
+		if (mit->second.mGroupStatus & ID_LOCAL_STATUS_FULL_CALC_FLAG)
 		{
+			std::cerr << "p3IdService::background_processNewMessages() Group Already marked FULL_CALC";
+			std::cerr << std::endl;
+
 			/* already marked */
 			continue;
 		}
@@ -1168,7 +1190,11 @@ bool p3IdService::background_processNewMessages()
 			/*
 			 *  not original -> hard, redo calc (alt: could substract previous score)
 			 */
-			mit->mStatusFlags |= FULL_CALC_FLAG;
+
+			std::cerr << "p3IdService::background_processNewMessages() Update, mark for FULL_CALC";
+			std::cerr << std::endl;
+
+			mit->second.mGroupStatus |= ID_LOCAL_STATUS_FULL_CALC_FLAG;
 		}
 		else
 		{
@@ -1179,22 +1205,35 @@ bool p3IdService::background_processNewMessages()
 			 * - flag group as modified.
 			 */
 
-			mit->mStatusFlags |= INCREMENTAL_CALC_FLAG;
+			std::cerr << "p3IdService::background_processNewMessages() NewOpt, Try Inc Calc";
+			std::cerr << std::endl;
 
-			if (!extractIdGroupCache(const std::string &str, uint32_t &votes, uint32_t &comments))
+			mit->second.mGroupStatus |= ID_LOCAL_STATUS_INC_CALC_FLAG;
+
+			std::string serviceString;
+			IdGroupServiceStrData ssData;
+			
+			if (!extractIdGroupCache(serviceString, ssData))
 			{
 				/* error */
+				std::cerr << "p3IdService::background_processNewMessages() ERROR Extracting";
+				std::cerr << std::endl;
 			}
 
 			/* do calcs */
+			std::cerr << "p3IdService::background_processNewMessages() Extracted: ";
+			std::cerr << std::endl;
 
 			/* store it back in */
+			std::cerr << "p3IdService::background_processNewMessages() Stored: ";
+			std::cerr << std::endl;
 
-			if (!encodeIdGroupCache(std::string &str, uint32_t votes, uint32_t comments))
+			if (!encodeIdGroupCache(serviceString, ssData))
 			{
 				/* error */
+				std::cerr << "p3IdService::background_processNewMessages() ERROR Storing";
+				std::cerr << std::endl;
 			}
-
 		}
 	}
 
@@ -1205,71 +1244,108 @@ bool p3IdService::background_processNewMessages()
 	 */
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+		std::cerr << "p3IdService::background_processNewMessages() Checking Groups for Calc Type";
+		std::cerr << std::endl;
 
 		for(mit = mBgGroupMap.begin(); mit != mBgGroupMap.end(); mit++)
 		{
-			if (mit->mStatusFlags & FULL_CALC_FLAG)
+			if (mit->second.mGroupStatus & ID_LOCAL_STATUS_FULL_CALC_FLAG)
 			{
-				mBgFullCalcGroups.push_back(mit->mGroupId);
+				std::cerr << "p3IdService::background_processNewMessages() FullCalc for: ";
+				std::cerr << mit->second.mGroupId;
+				std::cerr << std::endl;
+
+				mBgFullCalcGroups.push_back(mit->second.mGroupId);
 			}
-			else if (mit->mStatusFlags & INCREMENTAL_CALC_FLAG)
+			else if (mit->second.mGroupStatus & ID_LOCAL_STATUS_INC_CALC_FLAG)
 			{
+				std::cerr << "p3IdService::background_processNewMessages() IncCalc done for: ";
+				std::cerr << mit->second.mGroupId;
+				std::cerr << std::endl;
+
 				/* set Cache */
-				setGroupServiceString(mit->mGroupId, mit->ServiceString);
+				setGroupServiceString(mit->second.mGroupId, mit->second.mServiceString);
 			}
 			else
 			{
 				/* why is it here? error. */
-
+				std::cerr << "p3IdService::background_processNewMessages() ERROR for: ";
+				std::cerr << mit->second.mGroupId;
+				std::cerr << std::endl;
 			}
 		}
 	}
 
-	return backgroundFullCalcRequest();
+	return background_FullCalcRequest();
 }
 
-class RepCumulScore
-{
-	public:
-	uint32_t count;
-	uint32_t nullcount;
-	double   sum;
-	double   sumsq;
 
-	// derived parameters:
-
-
-};
-
-bool p3IdService::encodeIdGroupCache(std::string &str, uint32_t ownScore, RepCumulScore &opinion, RepCumulScore &rep)
+bool p3IdService::encodeIdGroupCache(std::string &str, const IdGroupServiceStrData &data)
 {
 	char line[RSGXS_MAX_SERVICE_STRING];
 
-	snprintf(line, RSGXS_MAX_SERVICE_STRING, "v1 Y:%d O:%d %d %f %f R:%d %d %f %f", ownScore, 
-		opinion.count, opinion.nullcount, opinion.sum, opinion.sumsq,
-		rep.count, rep.nullcount, rep.sum, rep.sumsq);
+	snprintf(line, RSGXS_MAX_SERVICE_STRING, "v1 {%s} {Y:%d O:%d %d %f %f R:%d %d %f %f}", 
+			 data.pgpId.c_str(), data.ownScore, 
+		data.opinion.count, data.opinion.nullcount, data.opinion.sum, data.opinion.sumsq,
+		data.reputation.count, data.reputation.nullcount, data.reputation.sum, data.reputation.sumsq);
 
 	str = line;
 	return true;
 }
 
 
-bool p3IdService::extractIdGroupCache(std::string &str, uint32_t &ownScore, RepCumulScore &opinion, RepCumulScore &rep)
+bool p3IdService::extractIdGroupCache(std::string &str, IdGroupServiceStrData &data)
 {
+	char pgpline[RSGXS_MAX_SERVICE_STRING];
+	char scoreline[RSGXS_MAX_SERVICE_STRING];
+	
 	uint32_t iOwnScore;
-	RepCumulScore iOpin;
-	RepCumulScore iRep;
+	IdRepCumulScore iOpin;
+	IdRepCumulScore iRep;
 
-	if (9 == sscanf(str.c_str(), "v1 Y:%d O:%d %d %f %f R:%d %d %f %f", &iOwnScore, 
-		&(iOpin.count), &(iOpin.nullcount), &(iOpin.sum), &(iOpin.sumsq),
-		&(iRep.count), &(iRep.nullcount), &(iRep.sum), &(iRep.sumsq)));
+	// split into two parts.
+	if (2 != sscanf(str.c_str(), "v1 {%[^}]} {%[^}]", pgpline, scoreline))
 	{
-		ownScore = iOwnScore;
-		opinion = iOpin;
-		rep = iRep;
+		std::cerr << "p3IdService::extractIdGroupCache() Failed to extract Two Parts";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::cerr << "p3IdService::extractIdGroupCache() pgpline: " << pgpline;
+	std::cerr << std::endl;
+	std::cerr << "p3IdService::extractIdGroupCache() scoreline: " << scoreline;
+	std::cerr << std::endl;
+	
+	std::string pgptmp = pgpline;
+	if (pgptmp.length() > 5)
+	{
+		std::cerr << "p3IdService::extractIdGroupCache() Believe to have pgpId: " << pgptmp;
+		std::cerr << std::endl;
+		data.pgpIdKnown = true;
+		data.pgpId = pgptmp;
+	}
+	else
+	{
+		std::cerr << "p3IdService::extractIdGroupCache() Think pgpId Invalid";
+		std::cerr << std::endl;
+		data.pgpIdKnown = false;
+	}
+	
+	
+	if (9 == sscanf(scoreline, " Y:%d O:%d %d %lf %lf R:%d %d %lf %lf", &iOwnScore, 
+		&(iOpin.count), &(iOpin.nullcount), &(iOpin.sum), &(iOpin.sumsq),
+		&(iRep.count), &(iRep.nullcount), &(iRep.sum), &(iRep.sumsq)))
+	{
+		data.ownScore = iOwnScore;
+		data.opinion = iOpin;
+		data.reputation = iRep;
 		return true;
 	}
+
+	std::cerr << "p3IdService::extractIdGroupCache() Failed to extract scores";
+	std::cerr << std::endl;
 
 	return false;
 }
@@ -1283,18 +1359,19 @@ bool p3IdService::background_FullCalcRequest()
 	 *  - If empty, we are finished.
 	 *  - request all latest mesgs
 	 */
-
+	
 	std::list<std::string> groupIds;
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-		mBgPhase = ID_BG_FULLCALC_REQUEST;
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		mBgPhase = ID_BG_REQUEST_FULLCALC;
 		mBgToken = 0;
 		mBgGroupMap.clear();
 
 		if (mBgFullCalcGroups.empty())
 		{
 			/* finished! */
-			return;
+			background_cleanup();
+			return true;
 	
 		}
 	
@@ -1305,14 +1382,14 @@ bool p3IdService::background_FullCalcRequest()
 
 	/* request the summary info from the parents */
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
-	token = 0;
+	uint32_t token = 0;
 	RsTokReqOptions opts; 
-	opt.mOptions = RS_TOKREQOPT_MSG_LATEST;
+	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
 	requestMsgInfo(token, ansType, opts, groupIds);
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mBgToken = token;
 	}
 	return true;
@@ -1329,7 +1406,7 @@ bool p3IdService::background_processFullCalc()
 	std::list<RsMsgMetaData> msgList;
 	std::list<RsMsgMetaData>::iterator it;
 
-	RsIdOpinion msg;
+	RsIdMsg msg;
 
 	bool validmsgs = false;
 
@@ -1406,24 +1483,27 @@ bool p3IdService::background_processFullCalc()
 	{
 		std::string groupId = msg.mMeta.mGroupId;
 
-		std::string str;
-		if (!encodePostedCache(str, votes, comments))
+		std::string serviceString;
+		IdGroupServiceStrData ssData;
+		
+		
+		if (!encodeIdGroupCache(serviceString, ssData))
 		{
 			std::cerr << "p3IdService::background_updateVoteCounts() Failed to encode Votes";
 			std::cerr << std::endl;
 		}
 		else
 		{
-			std::cerr << "p3IdService::background_updateVoteCounts() Encoded String: " << str;
+			std::cerr << "p3IdService::background_updateVoteCounts() Encoded String: " << serviceString;
 			std::cerr << std::endl;
 			/* store new result */
-			setMessageServiceString(it->mMsgId, str);
+			setGroupServiceString(it->mMsgId, serviceString);
 		}
 	}
 
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-		mBgPhase = ID_BG_PROCESS_VOTES;
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		mBgPhase = ID_BG_IDLE;
 		mBgToken = 0;
 	}
 
@@ -1436,16 +1516,36 @@ bool p3IdService::background_cleanup()
 	std::cerr << "p3IdService::background_cleanup()";
 	std::cerr << std::endl;
 
-	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Cleanup.
-	mBgVoteMap.clear();
-	mBgCommentMap.clear();
 	mBgProcessing = false;
+	mBgPhase = ID_BG_IDLE;
 	mBgToken = 0;
-
+	mBgGroupMap.clear();
+	mBgFullCalcGroups.clear();
+	
 	return true;
 }
 
 
-#endif // DISABLED FOR MERGE.
+std::ostream &operator<<(std::ostream &out, const RsIdGroup &grp)
+{
+	out << "RsIdGroup: Meta: " << grp.mMeta;
+	out << " IdType: " << grp.mIdType << " GpgIdHash: " << grp.mGpgIdHash;
+	out << "(((Unusable: ( GpgIdKnown: " << grp.mGpgIdKnown << " GpgId: " << grp.mGpgId;
+	out << " GpgName: " << grp.mGpgName << " GpgEmail: " << grp.mGpgEmail << ") )))";
+	out << std::endl;
+	
+	return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const RsIdMsg &msg)
+{
+	out << "RsIdMsg: Meta: " << msg.mMeta;
+	//out << " IdType: " << grp.mIdType << " GpgIdHash: " << grp.mGpgIdHash;
+	out << std::endl;
+	
+	return out;
+}
+
