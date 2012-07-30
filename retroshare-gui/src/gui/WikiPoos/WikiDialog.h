@@ -55,6 +55,10 @@ private slots:
 	void groupTreeChanged();
 	void modTreeChanged();
 
+	void newGroup();
+	void showGroupDetails();
+	void editGroupDetails();
+
 private:
 
 void 	clearWikiPage();

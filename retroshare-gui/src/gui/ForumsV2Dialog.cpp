@@ -28,10 +28,9 @@
 
 #include "ForumsV2Dialog.h"
 
-#include "forumsv2/CreateForumV2.h"
+#include "gxs/ForumV2GroupDialog.h"
+
 #include "forumsv2/CreateForumV2Msg.h"
-#include "forumsv2/ForumV2Details.h"
-#include "forumsv2/EditForumV2Details.h"
 
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
@@ -1499,7 +1498,9 @@ void ForumsV2Dialog::copyMessageLink()
 
 void ForumsV2Dialog::newforum()
 {
-    CreateForumV2 cf (this);
+    ForumV2GroupDialog cf (this);
+    cf.newGroup();
+
     cf.exec ();
 }
 
@@ -1561,12 +1562,10 @@ void ForumsV2Dialog::showForumDetails()
             return;
     }
 
-#ifndef DISABLE_OTHERCLASSES
-    ForumV2Details fui;
+    ForumV2GroupDialog cf (this);
+    cf.existingGroup(mCurrForumId,  GXS_GROUP_DIALOG_SHOW_MODE);
 
-    fui.showDetails (mCurrForumId);
-    fui.exec ();
-#endif
+    cf.exec ();
 }
 
 void ForumsV2Dialog::editForumDetails()
@@ -1575,10 +1574,10 @@ void ForumsV2Dialog::editForumDetails()
             return;
     }
 
-#ifndef DISABLE_OTHERCLASSES
-    EditForumV2Details editUi(mCurrForumId, this);
-    editUi.exec();
-#endif
+    ForumV2GroupDialog cf (this);
+    cf.existingGroup(mCurrForumId,  GXS_GROUP_DIALOG_EDIT_MODE);
+
+    cf.exec ();
 }
 
 static QString buildReplyHeader(const RsMsgMetaData &meta)

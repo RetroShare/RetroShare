@@ -23,6 +23,8 @@
 
 #include "PostedListDialog.h"
 
+#include "gui/gxs/PostedGroupDialog.h"
+
 //#include <retroshare/rspeers.h>
 #include <retroshare/rsposted.h>
 
@@ -81,6 +83,18 @@ PostedListDialog::PostedListDialog(QWidget *parent)
     subscribedTopics = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Topics"), QIcon(IMAGE_FOLDERRED), true);
     popularTopics = ui.groupTreeWidget->addCategoryItem(tr("Popular Topics"), QIcon(IMAGE_FOLDERGREEN), false);
     otherTopics = ui.groupTreeWidget->addCategoryItem(tr("Other Topics"), QIcon(IMAGE_FOLDERYELLOW), false);
+
+    ui.hotSortButton->setChecked(true);
+    mSortButton = ui.hotSortButton;
+
+    connect( ui.newTopicButton, SIGNAL( clicked() ), this, SLOT( newGroup() ) );
+
+    connect( ui.hotSortButton, SIGNAL( released() ), this, SLOT( sortButtonPressed() ) );
+    connect( ui.newSortButton, SIGNAL( released() ), this, SLOT( sortButtonPressed() ) );
+    connect( ui.topSortButton, SIGNAL( released() ), this, SLOT( sortButtonPressed() ) );
+
+    connect( ui.sortGroup, SIGNAL( buttonClicked( QAbstractButton * ) ), this, SLOT( sortButtonClicked( QAbstractButton * ) ) );
+    connect( ui.periodComboBox, SIGNAL( currentIndexChanged ( int index ) ), this, SLOT( periodChanged ( int ) ) );
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -175,6 +189,122 @@ void PostedListDialog::changedTopic(const QString &id)
 {
     mCurrTopicId = id.toStdString();
     insertThreads();
+}
+
+void PostedListDialog::sortButtonPressed()
+{
+	std::cerr << "PostedListDialog::sortButtonPressed()";
+	std::cerr << std::endl;
+
+	QAbstractButton *pressed = NULL;
+	if (ui.hotSortButton->isChecked()) {
+		std::cerr << "PostedListDialog::sortButtonPressed() Hot";
+		std::cerr << std::endl;
+		pressed = ui.hotSortButton;
+	} else if (ui.newSortButton->isChecked()) {
+		std::cerr << "PostedListDialog::sortButtonPressed() New";
+		std::cerr << std::endl;
+		pressed = ui.newSortButton;
+	} else if (ui.topSortButton->isChecked()) {
+		std::cerr << "PostedListDialog::sortButtonPressed() Top";
+		std::cerr << std::endl;
+		pressed = ui.topSortButton;
+	}
+
+	if ((pressed) && (pressed != mSortButton))
+	{
+		mSortButton = pressed;
+		sortButtonClicked( mSortButton );
+		insertThreads();
+	}
+}
+
+void PostedListDialog::sortButtonClicked( QAbstractButton *button )
+{
+	std::cerr << "PostedListDialog::sortButtonClicked( From Button Group! )";
+	std::cerr << std::endl;
+
+	uint32_t sortMode = RSPOSTED_VIEWMODE_HOT;
+
+	if (button == ui.hotSortButton) {
+		sortMode = RSPOSTED_VIEWMODE_HOT;
+	} else if (button == ui.newSortButton) {
+		sortMode = RSPOSTED_VIEWMODE_LATEST;
+	} else if (button == ui.topSortButton) {
+		sortMode = RSPOSTED_VIEWMODE_TOP;
+	}
+
+	rsPosted->setViewMode(sortMode);
+}
+
+
+void PostedListDialog::periodChanged( int index )
+{
+	uint32_t periodMode = RSPOSTED_PERIOD_HOUR;
+	switch (index)
+	{
+		case 0:
+			periodMode = RSPOSTED_PERIOD_HOUR;
+			break;
+
+		case 1:
+			periodMode = RSPOSTED_PERIOD_DAY;
+			break;
+
+		default:
+		case 2:
+			periodMode = RSPOSTED_PERIOD_WEEK;
+			break;
+
+		case 3:
+			periodMode = RSPOSTED_PERIOD_MONTH;
+			break;
+
+		case 4:
+			periodMode = RSPOSTED_PERIOD_YEAR;
+			break;
+	}
+	rsPosted->setViewPeriod(periodMode);
+}
+
+
+
+/*********************** **** **** **** ***********************/
+/** New / Edit Groups          ********************************/
+/*********************** **** **** **** ***********************/
+
+void PostedListDialog::newGroup()
+{
+	PostedGroupDialog cf (this);
+	cf.newGroup();
+	
+	cf.exec ();
+}
+	
+void PostedListDialog::showGroupDetails()
+{
+	if (mCurrTopicId.empty()) 
+	{
+		return;
+	}
+	
+	PostedGroupDialog cf (this);
+	cf.existingGroup(mCurrTopicId,  GXS_GROUP_DIALOG_SHOW_MODE);
+	
+	cf.exec ();
+}
+	
+void PostedListDialog::editGroupDetails()
+{
+	if (mCurrTopicId.empty()) 
+	{
+		return;
+	}
+	
+	PostedGroupDialog cf (this);
+	cf.existingGroup(mCurrTopicId,  GXS_GROUP_DIALOG_EDIT_MODE);
+	
+	cf.exec ();
 }
 
 
@@ -292,6 +422,8 @@ void PostedListDialog::loadCurrentForumThreads(const std::string &forumId)
 	if (mThreadLoading)
 	{
 		/* Cleanup */
+		std::cerr << "Already Loading -> must Clean ... TODO, retry in a moment";
+		return;
 	}
 
 	clearPosts();

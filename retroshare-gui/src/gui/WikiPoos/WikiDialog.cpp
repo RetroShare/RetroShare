@@ -28,6 +28,8 @@
 #include "gui/WikiPoos/WikiAddDialog.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
 
+#include "gui/gxs/WikiGroupDialog.h"
+
 #include <retroshare/rswiki.h>
 
 #include <iostream>
@@ -131,6 +133,7 @@ void WikiDialog::OpenOrShowAddPageDialog()
 
 void WikiDialog::OpenOrShowAddGroupDialog()
 {
+#if 0
 	if (mAddGroupDialog)
 	{
 		mAddGroupDialog->show();
@@ -140,7 +143,57 @@ void WikiDialog::OpenOrShowAddGroupDialog()
 		mAddGroupDialog = new WikiAddDialog(NULL);
 		mAddGroupDialog->show();
 	}
+#endif
+
+	newGroup();
 }
+
+/*********************** **** **** **** ***********************/
+/** New / Edit Groups          ********************************/
+/*********************** **** **** **** ***********************/
+
+void WikiDialog::newGroup()
+{
+        WikiGroupDialog cf (this);
+        cf.newGroup();
+
+        cf.exec ();
+}
+
+void WikiDialog::showGroupDetails()
+{
+	std::string groupId = getSelectedGroup();
+	if (groupId == "")
+	{
+		std::cerr << "WikiDialog::showGroupDetails() No Group selected";
+		std::cerr << std::endl;
+		return;
+	}
+
+
+        WikiGroupDialog cf (this);
+        cf.existingGroup(groupId,  GXS_GROUP_DIALOG_SHOW_MODE);
+
+        cf.exec ();
+}
+
+void WikiDialog::editGroupDetails()
+{
+	std::string groupId = getSelectedGroup();
+	if (groupId == "")
+	{
+		std::cerr << "WikiDialog::editGroupDetails() No Group selected";
+		std::cerr << std::endl;
+		return;
+	}
+
+
+        WikiGroupDialog cf (this);
+        cf.existingGroup(groupId,  GXS_GROUP_DIALOG_EDIT_MODE);
+
+        cf.exec ();
+}
+
 
 
 void WikiDialog::OpenOrShowEditDialog()

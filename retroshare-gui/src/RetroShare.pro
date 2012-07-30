@@ -1,13 +1,14 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
-#CONFIG += photoshare 
-#CONFIG += wikipoos 
-#CONFIG += thewire 
-#CONFIG += identities
-#CONFIG += forumsv2 
-#CONFIG += posted 
-#CONFIG += unfinished 
+CONFIG += photoshare 
+CONFIG += wikipoos 
+CONFIG += thewire 
+CONFIG += identities
+CONFIG += forumsv2 
+CONFIG += posted 
+CONFIG += unfinished 
+CONFIG += gxsgui 
 
 
 # Other Disabled Bits.
@@ -963,5 +964,28 @@ posted {
             gui/Posted/PostedListDialog.cpp \
             gui/Posted/PostedItem.cpp \
             gui/Posted/PostedComments.cpp \
+
+}
+
+gxsgui {
+
+	HEADERS += gui/gxs/GxsGroupDialog.h \
+            gui/gxs/ForumV2GroupDialog.h \
+            gui/gxs/WikiGroupDialog.h \
+            gui/gxs/PostedGroupDialog.h \
+#            gui/gxs/GxsMsgDialog.h \
+#            gui/gxs/GxsCommentWidget.h \
+
+	FORMS += gui/gxs/GxsGroupDialog.ui \
+#	    gui/gxs/GxsMsgDialog.ui \
+#	    gui/gxs/GxsCommentWidget.ui \
+
+	SOURCES += gui/gxs/GxsGroupDialog.cpp \
+            gui/gxs/ForumV2GroupDialog.cpp \
+            gui/gxs/WikiGroupDialog.cpp \
+            gui/gxs/PostedGroupDialog.cpp \
+#            gui/gxs/GxsMsgDialog.cpp \
+#            gui/gxs/GxsCommentWidget.cpp \
+
 
 }

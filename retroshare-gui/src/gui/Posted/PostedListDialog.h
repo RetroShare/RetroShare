@@ -54,6 +54,15 @@ private slots:
 void 	groupListCustomPopupMenu( QPoint /*point*/ );
 void 	changedTopic(const QString &id);
 
+void 	sortButtonClicked( QAbstractButton *button );
+void 	sortButtonPressed();
+
+void 	periodChanged( int index );
+
+        void newGroup();
+        void showGroupDetails();
+        void editGroupDetails();
+
 private:
 
 void 	clearPosts();
@@ -85,6 +94,8 @@ void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &
 	QTreeWidgetItem *subscribedTopics;
 	QTreeWidgetItem *popularTopics;
 	QTreeWidgetItem *otherTopics;
+
+	QAbstractButton *mSortButton;
 
 	bool mThreadLoading;
 	std::string mCurrTopicId;
