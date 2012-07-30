@@ -73,8 +73,8 @@ p3PostedService::p3PostedService(uint16_t type)
 
 int	p3PostedService::tick()
 {
-	//std::cerr << "p3PostedService::tick()";
-	//std::cerr << std::endl;
+	std::cerr << "p3PostedService::tick()";
+	std::cerr << std::endl;
 
 	fakeprocessrequests();
 
@@ -1267,8 +1267,12 @@ bool p3PostedService::addExtraDummyData()
  */
 
 
+
 bool p3PostedService::setViewMode(uint32_t mode)
 {
+	std::cerr << "p3PostedService::setViewMode() : " << mode;
+	std::cerr << std::endl;
+
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
 	mViewMode = mode;
@@ -1278,6 +1282,9 @@ bool p3PostedService::setViewMode(uint32_t mode)
 
 bool p3PostedService::setViewPeriod(uint32_t period)
 {
+	std::cerr << "p3PostedService::setViewPeriod() : " << period;
+	std::cerr << std::endl;
+
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
 	mViewPeriod = period;
@@ -1287,6 +1294,9 @@ bool p3PostedService::setViewPeriod(uint32_t period)
 
 bool p3PostedService::setViewRange(uint32_t first, uint32_t count)
 {
+	std::cerr << "p3PostedService::setViewRange() : " << first << " +" << count;
+	std::cerr << std::endl;
+
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
 	mViewStart = first;
@@ -1563,6 +1573,7 @@ bool p3PostedService::processPosts()
 	{
 		std::cerr << "p3PostedService::processPosts() ERROR getting postList";
 		std::cerr << std::endl;
+		background_cleanup();
 		return false;
 	}
 

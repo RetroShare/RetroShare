@@ -131,6 +131,12 @@ virtual bool getRankedPost(const uint32_t &token, RsPostedPost &post) = 0;
 
 virtual bool extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments) = 0;
 
+
+	// Control Ranking Calculations.
+virtual bool setViewMode(uint32_t mode) = 0;
+virtual bool setViewPeriod(uint32_t period) = 0;
+virtual bool setViewRange(uint32_t first, uint32_t count) = 0;
+
 	// exposed for testing...
 virtual float calcPostScore(const RsMsgMetaData &meta) = 0;
 
