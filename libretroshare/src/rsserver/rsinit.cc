@@ -1806,6 +1806,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
+#define ENABLE_GXS_SERVICES	1
 #ifdef ENABLE_GXS_SERVICES
 #include "services/p3photoservice.h"
 #include "services/p3wikiservice.h"
