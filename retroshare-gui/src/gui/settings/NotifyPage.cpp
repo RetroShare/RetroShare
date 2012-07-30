@@ -134,6 +134,7 @@ NotifyPage::save(QString &/*errmsg*/)
     Settings->setChatFlags(chatflags);
     Settings->setMessageFlags(messageflags);
 
+    Settings->setDisplayTrayChatLobby(ui.systray_ChatLobby->isChecked());
     Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked());
     MainWindow::installGroupChatNotifier();
     MainWindow::installNotifyIcons();
@@ -186,6 +187,7 @@ void NotifyPage::load()
     ui.message_ConnectAttempt->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
+    ui.systray_ChatLobby->setChecked(Settings->getDisplayTrayChatLobby());
 
     ui.trayNotify_PrivateChat->setChecked(traynotifyflags & TRAYNOTIFY_PRIVATECHAT);
     ui.trayNotify_Messages->setChecked(traynotifyflags & TRAYNOTIFY_MESSAGES);

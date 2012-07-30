@@ -61,6 +61,7 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
 			if (vpid == peerId) {
 				QString msg = tr("Welcome to lobby %1").arg(QString::fromUtf8(lobbyIt->lobby_name.c_str()));
+				_lobby_name = QString(lobbyIt->lobby_name.c_str()) ;
 				if (!lobbyIt->lobby_topic.empty()) {
 					msg += "\n" + tr("Topic: %1").arg(QString::fromUtf8(lobbyIt->lobby_topic.c_str()));
 				}
@@ -179,13 +180,19 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 
 	std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
 	
-	if (!isParticipantMuted(name)) {
-	  // ui.chatWidget->addChatMsg(true, name.append(" ").append(rsid), sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+	if(!isParticipantMuted(name)) 
 	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
-	} else {
-	  // ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message.append(" (BLOCKED)"), ChatWidget::TYPE_NORMAL);
-	}
 	
+	// This is a trick to translate HTML into text.
+	QTextEdit editor;
+	editor.setHtml(message);
+	QString notifyMsg = name + ": " + editor.toPlainText();
+
+	if(notifyMsg.length() > 30)
+		MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
+	else
+		MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg);
+
 	// also update peer list.
 
 	time_t now = time(NULL);

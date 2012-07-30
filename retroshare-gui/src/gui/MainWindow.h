@@ -133,6 +133,7 @@ public:
 
     static void installGroupChatNotifier();
     static void installNotifyIcons();
+    static void displayLobbySystrayMsg(const QString&,const QString&);
 
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
     void initializeStatusObject(QObject *pObject, bool bConnect);

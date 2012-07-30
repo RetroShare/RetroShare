@@ -588,6 +588,15 @@ void MainWindow::createNotifyIcons()
 
 #undef DELETE_OBJECT
 }
+/*static*/ void MainWindow::displayLobbySystrayMsg(const QString& title,const QString& msg)
+{
+    if (_instance == NULL) 
+        return;
+
+    if(Settings->getDisplayTrayChatLobby()) 
+		 _instance->displaySystrayMsg(title,msg) ;
+}
+
 
 /*static*/ void MainWindow::installGroupChatNotifier()
 {

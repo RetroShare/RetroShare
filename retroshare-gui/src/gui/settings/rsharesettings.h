@@ -164,6 +164,8 @@ public:
   uint getMessageFlags();
   void setMessageFlags(uint flags);
 
+  bool getDisplayTrayChatLobby();
+  void setDisplayTrayChatLobby(bool bValue);
   bool getDisplayTrayGroupChat();
   void setDisplayTrayGroupChat(bool bValue);
 

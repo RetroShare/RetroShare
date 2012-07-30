@@ -69,6 +69,7 @@ private:
 	bool isNicknameInLobby(const QString &nickname);
 	
 	ChatLobbyId lobbyId;
+	QString _lobby_name ;
 	time_t lastUpdateListTime;
 
 	/** Qt Designer generated object */
