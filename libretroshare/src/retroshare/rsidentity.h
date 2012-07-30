@@ -489,7 +489,7 @@ virtual bool    createMsg(uint32_t &token, RsIdMsg &msg, bool isNew) = 0;
 	 */
 
 //virtual uint32_t getIdDetails(const std::string &id, std::string &nickname, bool &isGpgKnown, 
-						uint32_t &ownOpinion, float &reputation);
+//						uint32_t &ownOpinion, float &reputation);
 //virtual uint32_t getOwnIds(std::list<std::string> &ownIds);
 //virtual bool  setOpinion(const std::string &id, uint32_t opinion);
 
