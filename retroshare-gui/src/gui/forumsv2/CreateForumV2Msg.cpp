@@ -28,7 +28,7 @@
 #include <QDropEvent>
 #include <QPushButton>
 
-#include <retroshare/rsforumsV2.h>
+#include <retroshare/rsforumsv2.h>
 #include <retroshare/rspeers.h>
 
 #include "gui/settings/rsharesettings.h"

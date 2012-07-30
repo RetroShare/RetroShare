@@ -23,7 +23,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsforumsV2.h>
+#include <retroshare/rsforumsv2.h>
 
 #include <QTime>
 #include <QDateTime>
