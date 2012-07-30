@@ -28,6 +28,7 @@
 #include "util/rsrandom.h"
 #include <retroshare/rspeers.h>
 #include <sstream>
+#include <stdio.h>
 
 /****
  * #define ID_DEBUG 1
