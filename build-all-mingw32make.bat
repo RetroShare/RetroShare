@@ -3,7 +3,7 @@ set MINGW=%QTDIR%\mingw
 
 set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
+"c:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
 
 @echo off
 :loop1
@@ -68,7 +68,7 @@ cd ..\..\retroshare-gui\src
 
 if not %clean%x==x mingw32-make clean
 
-qmake RetroShare.pro
+qmake retroshare-gui.pro
 
 mingw32-make %%a
 
