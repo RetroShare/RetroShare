@@ -78,7 +78,7 @@ int	p3PostedService::tick()
 
 	fakeprocessrequests();
 
-	
+
 	// Contine Ranking Request.
 	checkRankingRequest();
 
@@ -425,32 +425,6 @@ bool p3PostedService::getComment(const uint32_t &token, RsPostedComment &comment
 	bool ans = mPostedProxy->getComment(id, comment);
 	return ans;
 }
-
-
-
-
-
-        /* Poll */
-/*** 
- * THE STANDARD ONE IS REPLACED - SO WE CAN HANDLE RANKING REQUESTS
- * Its defined lower - next to the ranking code.
- ***/
-
-#if 0
-uint32_t p3PostedService::requestStatus(const uint32_t token)
-{
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-
-	return status;
-}
-
-#endif
-
 
         /* Cancel Request */
 bool p3PostedService::cancelRequest(const uint32_t &token)
@@ -1384,11 +1358,15 @@ static uint32_t convertPeriodFlagToSeconds(uint32_t periodMode)
 
 #define POSTED_RANKINGS_INITIAL_CHECK	1
 #define POSTED_RANKINGS_DATA_REQUEST	2
-#define POSTED_RANKINGS_DATA_DONE	3
+#define POSTED_RANKINGS_NODATA		3
+#define POSTED_RANKINGS_DATA_DONE	4
 
         /* Poll */
 uint32_t p3PostedService::requestStatus(const uint32_t token)
 {
+	std::cerr << "p3PostedService::requestStatus() Token: " << token;
+	std::cerr << std::endl;
+
 	uint32_t status;
 	uint32_t reqtype;
 	uint32_t anstype;
@@ -1400,17 +1378,31 @@ uint32_t p3PostedService::requestStatus(const uint32_t token)
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if ((mProcessingRanking) && (token == mRankingExternalToken))
 		{
+			std::cerr << "p3PostedService::requestStatus() is RankingToken";
+			std::cerr << std::endl;
+
 			{
 				switch(mRankingState)
 				{
 					case POSTED_RANKINGS_INITIAL_CHECK:
 						status = GXS_REQUEST_STATUS_PENDING;
+						std::cerr << "p3PostedService::requestStatus() RANKING PENDING";
+						std::cerr << std::endl;
+						return status;
+						break;
+					case POSTED_RANKINGS_NODATA:
+						status = GXS_REQUEST_STATUS_COMPLETE;
+						std::cerr << "p3PostedService::requestStatus() RANKING RETURNED NO DATA";
+						std::cerr << std::endl;
 						return status;
 						break;
 					case POSTED_RANKINGS_DATA_REQUEST:
 						// Switch to real token.
 						int_token = mRankingInternalToken;
+						std::cerr << "p3PostedService::requestStatus() Flipping to Int Token: " << int_token;
+						std::cerr << std::endl;
 						break;
+					
 				}
 			}
 		}
@@ -1427,26 +1419,24 @@ bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
 	if (!mProcessingRanking)
 	{
 
+		std::cerr << "p3PostedService::getRankedPost() ERROR not processing";
+		std::cerr << std::endl;
 		return false;
 	}
 
 	if (token != mRankingExternalToken)
 	{
-
+		std::cerr << "p3PostedService::getRankedPost() ERROR wrong token";
+		std::cerr << std::endl;
 
 		return false;
 	}
 
-	if (mRankingState != POSTED_RANKINGS_DATA_REQUEST)
+	if (mRankingState == POSTED_RANKINGS_NODATA)
 	{
+		std::cerr << "p3PostedService::getRankedPost() No Data for this request - sorry";
+		std::cerr << std::endl;
 
-		return false;
-
-	}
-
-	
-	if (!getPost(mRankingInternalToken, post))
-	{
 		/* clean up */
 		mProcessingRanking = false;
 		mRankingExternalToken = 0;
@@ -1455,6 +1445,34 @@ bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
 
 		return false;
 	}
+
+	if (mRankingState != POSTED_RANKINGS_DATA_REQUEST)
+	{
+
+		std::cerr << "p3PostedService::getRankedPost() ERROR wrong state";
+		std::cerr << std::endl;
+
+		return false;
+
+	}
+
+	
+	if (!getPost(mRankingInternalToken, post))
+	{
+		std::cerr << "p3PostedService::getRankedPost() End of Posts for this token";
+		std::cerr << std::endl;
+
+		/* clean up */
+		mProcessingRanking = false;
+		mRankingExternalToken = 0;
+		mRankingInternalToken = 0;
+		mRankingState = POSTED_RANKINGS_DATA_DONE;
+
+		return false;
+	}
+
+	std::cerr << "p3PostedService::getRankedPost() Got Post";
+	std::cerr << std::endl;
 
 	return true;
 }
@@ -1500,6 +1518,8 @@ bool p3PostedService::requestRanking(uint32_t &token, std::string groupId)
 
 	{
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		std::cerr << "p3PostedService::requestRanking() Saved Internal Token: " << posttoken;
+		std::cerr << std::endl;
 		mRankingInternalToken = posttoken;
 	}
 	return true;
@@ -1512,16 +1532,23 @@ bool p3PostedService::checkRankingRequest()
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if (!mProcessingRanking)
 		{
+			//std::cerr << "p3PostedService::checkRankingRequest() Not Processing";
+			//std::cerr << std::endl;
 			return false;
 		}
 
 		if (mRankingState != POSTED_RANKINGS_INITIAL_CHECK)
 		{
+			std::cerr << "p3PostedService::checkRankingRequest() Not in Initial Check";
+			std::cerr << std::endl;
 			return false;
 		}
 
 		/* here it actually running! */
 		token = mRankingInternalToken;
+
+		std::cerr << "p3PostedService::checkRankingRequest() Running with token: " << token;
+		std::cerr << std::endl;
 	}
 
 
@@ -1529,10 +1556,23 @@ bool p3PostedService::checkRankingRequest()
 	uint32_t reqtype;
 	uint32_t anstype;
 	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
+	if (checkRequestStatus(token, status, reqtype, anstype, ts))
+	{
+		std::cerr << "p3PostedService::checkRankingRequest() checkRequestStatus => OK";
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "p3PostedService::checkRankingRequest() checkRequestStatus => ERROR";
+		std::cerr << std::endl;
+		return false;
+	}
 	
 	if (status == GXS_REQUEST_STATUS_COMPLETE)
 	{
+		std::cerr << "p3PostedService::checkRankingRequest() Init Complete => processPosts";
+		std::cerr << std::endl;
+
 		processPosts();
 	}
 	return true;
@@ -1571,9 +1611,13 @@ bool p3PostedService::processPosts()
 
 	if (!getMsgSummary(token, postList))
 	{
-		std::cerr << "p3PostedService::processPosts() ERROR getting postList";
+		std::cerr << "p3PostedService::processPosts() No Data for Request";
 		std::cerr << std::endl;
-		background_cleanup();
+
+		/* put it into a state, where the GUI will get to read an empty Queue */
+		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+		mRankingState = POSTED_RANKINGS_NODATA;
+
 		return false;
 	}
 
@@ -1623,9 +1667,17 @@ bool p3PostedService::processPosts()
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		mRankingState = POSTED_RANKINGS_DATA_REQUEST;
 		mRankingInternalToken = token;
+
+		std::cerr << "p3PostedService::processPosts() Second Stage: token: " << token;
+		std::cerr << std::endl;
 	}
 	return true;
 }
+
+
+
+
+
 
 
 
