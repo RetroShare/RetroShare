@@ -33,6 +33,7 @@
 #include "serialiser/rstlvtypes.h"
 
 #include "rsgxsitems.h"
+#include "rsphotoitems.h"
 #include "retroshare/rsphotoV2.h"
 
 
@@ -41,7 +42,13 @@ class RsGxsPhotoAlbumItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsPhotoAlbumItem() {}
+	RsGxsPhotoAlbumItem():  RsGxsGrpItem(RS_SERVICE_TYPE_PHOTO,
+			RS_PKT_SUBTYPE_PHOTO_ITEM) { return;}
+
+	virtual void clear();
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+
 	RsPhotoAlbum album;
 };
 
@@ -49,7 +56,11 @@ class RsGxsPhotoPhotoItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsPhotoPhotoItem() {}
+	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_TYPE_PHOTO,
+			RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {return; }
+
+	virtual void clear();
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsPhotoPhoto photo;
 };
 

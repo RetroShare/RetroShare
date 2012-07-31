@@ -118,22 +118,22 @@ class RsGxsGrpItem : public RsItem
 
 public:
 
-    RsGxsGrpItem() : RsItem(0) { return; }
+    RsGxsGrpItem(uint16_t service, uint8_t subtype)
+    : RsItem(RS_PKT_VERSION_SERVICE, service, subtype) { return; }
     virtual ~RsGxsGrpItem(){}
 
     RsGroupMetaData meta;
-
 };
 
 class RsGxsMsgItem : public RsItem
 {
 
 public:
-    RsGxsMsgItem() : RsItem(0) { return; }
+    RsGxsMsgItem(uint16_t service, uint8_t subtype)
+    : RsItem(RS_PKT_VERSION_SERVICE, service, subtype) { return; }
     virtual ~RsGxsMsgItem(){}
 
     RsMsgMetaData meta;
-
 };
 
 
