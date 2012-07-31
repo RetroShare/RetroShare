@@ -21,7 +21,7 @@
 
 #include "ForumV2GroupDialog.h"
 
-#include <retroshare/rsforumsV2.h>
+#include <retroshare/rsforumsv2.h>
 #include <iostream>
 
 ForumV2GroupDialog::ForumV2GroupDialog(QWidget *parent)

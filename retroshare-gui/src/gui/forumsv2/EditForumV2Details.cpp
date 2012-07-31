@@ -21,7 +21,7 @@
 
 #include "EditForumV2Details.h"
 
-#include <retroshare/rsforumsV2.h>
+#include <retroshare/rsforumsv2.h>
 
 #include "util/misc.h"
 

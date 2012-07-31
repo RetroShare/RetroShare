@@ -27,7 +27,7 @@
 
 #include <algorithm>
 
-#include <retroshare/rsforumsV2.h>
+#include <retroshare/rsforumsv2.h>
 #include <retroshare/rspeers.h>
 
 #include <iostream>

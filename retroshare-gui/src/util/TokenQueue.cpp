@@ -104,7 +104,7 @@ void TokenQueue::pollRequests()
 	std::list<TokenRequest>::iterator it;
 
 	double pollPeriod = 1.0; // max poll period.
-	for(it = mRequests.begin(); it != mRequests.end(); it++)
+	for(it = mRequests.begin(); it != mRequests.end();)
 	{
 		if (checkForRequest(it->mToken))
 		{

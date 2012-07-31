@@ -455,10 +455,11 @@ void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &g
 	//mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
 
 	// Do specific Posted Request....
-	rsPosted->requestRanking(token, groupId);
-	// get the Queue to handle response.
-        mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_DATA, POSTEDDIALOG_INSERTTHREADS);
-
+	if (rsPosted->requestRanking(token, groupId))
+	{
+		// get the Queue to handle response.
+        	mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_DATA, POSTEDDIALOG_INSERTTHREADS);
+	}
 }
 
 
