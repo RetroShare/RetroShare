@@ -117,83 +117,91 @@ static unsigned char prefix_ripemd[]={ 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B,
 ops_boolean_t encode_hash_buf(const unsigned char *M, size_t mLen,
 			      const ops_hash_algorithm_t hash_alg,
 			      unsigned char* EM)
-    {
-    // implementation of EMSA-PKCS1-v1_5, as defined in OpenPGP RFC
+{
+	// implementation of EMSA-PKCS1-v1_5, as defined in OpenPGP RFC
 
-    unsigned i;
-    int n;
-    ops_hash_t hash;
-    int hash_sz=0;
-    //    int encoded_hash_sz=0;
-    int prefix_sz=0;
-    unsigned padding_sz=0;
-    unsigned encoded_msg_sz=0;
-    unsigned char* prefix=NULL;
+	unsigned i;
+	int n;
+	ops_hash_t hash;
+	int hash_sz=0;
+	//    int encoded_hash_sz=0;
+	int prefix_sz=0;
+	unsigned padding_sz=0;
+	unsigned encoded_msg_sz=0;
+	unsigned char* prefix=NULL;
 
-    assert(hash_alg == OPS_HASH_SHA1);
+	if(hash_alg != OPS_HASH_SHA1)
+	{
+		fprintf(stderr,"encode_hash_buf: unsupported hash algorithm %x. Sorry.",hash_alg) ;
+		return ops_false ;
+	}
 
-    // 1. Apply hash function to M
+	// 1. Apply hash function to M
 
-    ops_hash_any(&hash, hash_alg);
-    hash.init(&hash);
-    hash.add(&hash, M, mLen);
+	ops_hash_any(&hash, hash_alg);
+	hash.init(&hash);
+	hash.add(&hash, M, mLen);
 
-    // \todo combine with rsa_sign
+	// \todo combine with rsa_sign
 
-    // 2. Get hash prefix
+	// 2. Get hash prefix
 
-    switch(hash_alg)
-        {
-    case OPS_HASH_SHA1:
-        prefix=prefix_sha1; 
-        prefix_sz=sizeof prefix_sha1;
-        hash_sz=OPS_SHA1_HASH_SIZE;
-	//        encoded_hash_sz=hash_sz+prefix_sz;
-        // \todo why is Ben using a PS size of 90 in rsa_sign?
-        // (keysize-hashsize-1-2)
-        padding_sz=90;
-        break;
+	switch(hash_alg)
+	{
+		case OPS_HASH_SHA1:
+			prefix=prefix_sha1; 
+			prefix_sz=sizeof prefix_sha1;
+			hash_sz=OPS_SHA1_HASH_SIZE;
+			//        encoded_hash_sz=hash_sz+prefix_sz;
+			// \todo why is Ben using a PS size of 90 in rsa_sign?
+			// (keysize-hashsize-1-2)
+			padding_sz=90;
+			break;
 
-    default:
-        assert(0);
-        }
+		default:
+			return ops_false ;	// according to the test at start, this should never happen, so no error handling is necessary.
+	}
 
-    // \todo 3. Test for len being too short
+	// \todo 3. Test for len being too short
 
-    // 4 and 5. Generate PS and EM
+	// 4 and 5. Generate PS and EM
 
-    EM[0]=0x00;
-    EM[1]=0x01;
+	EM[0]=0x00;
+	EM[1]=0x01;
 
-    for (i=0; i<padding_sz; i++)
-        EM[2+i]=0xFF;
+	for (i=0; i<padding_sz; i++)
+		EM[2+i]=0xFF;
 
-    i+=2;
+	i+=2;
 
-    EM[i++]=0x00;
+	EM[i++]=0x00;
 
-    memcpy(&EM[i], prefix, prefix_sz);
-    i+=prefix_sz;
+	memcpy(&EM[i], prefix, prefix_sz);
+	i+=prefix_sz;
 
-    // finally, write out hashed result
-    
-    n=hash.finish(&hash, &EM[i]);
-    assert(n == hash_sz);
+	// finally, write out hashed result
 
-    encoded_msg_sz=i+hash_sz-1;
+	n=hash.finish(&hash, &EM[i]);
+	if(n != hash_sz)
+	{
+		fprintf(stderr,"encode_hash_buf(): Error which hashing data. n=%d != hash_sz=%d",n,hash_sz) ;
+		return ops_false ;
+	}
 
-    // \todo test n for OK response?
+	encoded_msg_sz=i+hash_sz-1;
 
-    if (debug)
-        {
-        fprintf(stderr, "Encoded Message: \n");
-        for (i=0; i<encoded_msg_sz; i++)
-            fprintf(stderr, "%2x ", EM[i]);
-        fprintf(stderr, "\n");
-        }
+	// \todo test n for OK response?
 
-    return ops_true;
-    }
+	if (debug)
+	{
+		fprintf(stderr, "Encoded Message: \n");
+		for (i=0; i<encoded_msg_sz; i++)
+			fprintf(stderr, "%2x ", EM[i]);
+		fprintf(stderr, "\n");
+	}
+
+	return ops_true;
+}
 
 // XXX: both this and verify would be clearer if the signature were
 // treated as an MPI.
@@ -782,20 +790,32 @@ ops_boolean_t ops_write_signature(ops_create_signature_t *sig,
 		case OPS_PKA_RSA:
 		case OPS_PKA_RSA_ENCRYPT_ONLY:
 		case OPS_PKA_RSA_SIGN_ONLY:
-			assert(skey->key.rsa.d);
+			if(skey->key.rsa.d == NULL)
+			{
+				fprintf(stderr, "Malformed secret key when signing (rsa.d = 0). Can't sign.\n") ;
+				return ops_false ;
+			}
 			break;
 
 		case OPS_PKA_DSA:
-			assert(skey->key.dsa.x);
+			if(skey->key.dsa.x == NULL)
+			{
+				fprintf(stderr, "Malformed secret key when signing (dsa.x = 0). Can't sign.\n") ;
+				return ops_false ;
+			}
 			break;
 
 		default:
-			fprintf(stderr, "Unsupported algorithm %d\n",
-					skey->public_key.algorithm);
-			assert(0);
+			fprintf(stderr, "Unsupported algorithm %d when signing. Sorry.\n", skey->public_key.algorithm);
+			return ops_false ;
+			//assert(0);
 	}
 
-	assert(sig->hashed_data_length != (unsigned)-1);
+	if(sig->hashed_data_length == (unsigned)-1)
+	{
+		fprintf(stderr, "Hashed data not initialized properly when signing. Sorry.\n") ;
+		return ops_false ;
+	}
 
 	ops_memory_place_int(sig->mem, sig->unhashed_count_offset,
 			l-sig->unhashed_count_offset-2, 2);
@@ -834,9 +854,8 @@ ops_boolean_t ops_write_signature(ops_create_signature_t *sig,
 			break;
 
 		default:
-			fprintf(stderr, "Unsupported algorithm %d\n",
-					skey->public_key.algorithm);
-			assert(0);
+			fprintf(stderr, "Unsupported algorithm %d in signature\n", skey->public_key.algorithm);
+			return ops_false ;
 	}
 
 	rtn=ops_write_ptag(OPS_PTAG_CT_SIGNATURE, info);
@@ -965,93 +984,103 @@ ops_boolean_t ops_sign_file_as_cleartext(const char* input_filename,
 					 const char* output_filename,
 					 const ops_secret_key_t *skey,
 					 const ops_boolean_t overwrite)
-    {
-    // \todo allow choice of hash algorithams
-    // enforce use of SHA1 for now
+{
+	// \todo allow choice of hash algorithams
+	// enforce use of SHA1 for now
 
-    unsigned char keyid[OPS_KEY_ID_SIZE];
-    ops_create_signature_t *sig=NULL;
+	unsigned char keyid[OPS_KEY_ID_SIZE];
+	ops_create_signature_t *sig=NULL;
 
-    int fd_in=0;
-    int fd_out=0;
-    ops_create_info_t *cinfo=NULL;
-    unsigned char buf[MAXBUF];
-    //int flags=0;
-    ops_boolean_t rtn=ops_false;
-    ops_boolean_t use_armour=ops_true;
+	int fd_in=0;
+	int fd_out=0;
+	ops_create_info_t *cinfo=NULL;
+	unsigned char buf[MAXBUF];
+	//int flags=0;
+	ops_boolean_t rtn=ops_false;
+	ops_boolean_t use_armour=ops_true;
 
-    // open file to sign
+	// open file to sign
 
-    fd_in=open(input_filename, O_RDONLY | O_BINARY);
+	fd_in=open(input_filename, O_RDONLY | O_BINARY);
 
-    if(fd_in < 0)
-        {
-        return ops_false;
-        }
-    
-    // set up output file
+	if(fd_in < 0)
+	{
+		return ops_false;
+	}
 
-    fd_out=open_output_file(&cinfo, input_filename, output_filename, use_armour,
-			    overwrite);
+	// set up output file
 
-    if (fd_out < 0)
-        {
-        close(fd_in);
-        return ops_false;
-        }
+	fd_out=open_output_file(&cinfo, input_filename, output_filename, use_armour,
+			overwrite);
 
-    // set up signature
-    sig=ops_create_signature_new();
-    if (!sig)
-        {
-        close (fd_in);
-        ops_teardown_file_write(cinfo, fd_out);
-        return ops_false;
-        }
+	if (fd_out < 0)
+	{
+		close(fd_in);
+		return ops_false;
+	}
 
-    // \todo could add more error detection here
-    ops_signature_start_cleartext_signature(sig, skey,
-					    OPS_HASH_SHA1, OPS_SIG_BINARY);
-    if (!ops_writer_push_clearsigned(cinfo, sig))
-        return ops_false;
+	// set up signature
+	sig=ops_create_signature_new();
+	if (!sig)
+	{
+		close (fd_in);
+		ops_teardown_file_write(cinfo, fd_out);
+		return ops_false;
+	}
 
-    // Do the signing
+	// \todo could add more error detection here
+	ops_signature_start_cleartext_signature(sig, skey, OPS_HASH_SHA1, OPS_SIG_BINARY);
 
-    for (;;)
-        {
-        int n=0;
-    
-        n=read(fd_in, buf, sizeof(buf));
-        if (!n)
-            break;
-        assert(n>=0);
-        ops_write(buf, n, cinfo);
-        }
-    close(fd_in);
+	if (!ops_writer_push_clearsigned(cinfo, sig))
+		return ops_false;
 
-    // add signature with subpackets:
-    // - creation time
-    // - key id
-    rtn = ops_writer_switch_to_armoured_signature(cinfo)
-        && ops_signature_add_creation_time(sig, time(NULL));
-    if (!rtn)
-        {
-        ops_teardown_file_write(cinfo, fd_out);
-        return ops_false;
-        }
+	// Do the signing
 
-    ops_keyid(keyid, &skey->public_key);
+	for (;;)
+	{
+		int n=0;
 
-    rtn = ops_signature_add_issuer_key_id(sig, keyid)
-        && ops_signature_hashed_subpackets_end(sig)
-        && ops_write_signature(sig, &skey->public_key, skey, cinfo);
+		n=read(fd_in, buf, sizeof(buf));
+		if (!n)
+			break;
 
-    ops_teardown_file_write(cinfo, fd_out);
+		if(n < 0)
+		{
+			fprintf(stderr, "Read error in ops_sign_file_as_cleartext\n");
+			close(fd_in) ;
+			ops_teardown_file_write(cinfo, fd_out);
+			return ops_false ;
+			//assert(n>=0);
+		}
+		ops_write(buf, n, cinfo);
+	}
+	close(fd_in);
 
-    if (!rtn)
-        OPS_ERROR(&cinfo->errors, OPS_E_W, "Cannot sign file as cleartext");
-    return rtn;
-    }
+	// add signature with subpackets:
+	// - creation time
+	// - key id
+	rtn = ops_writer_switch_to_armoured_signature(cinfo)
+		&& ops_signature_add_creation_time(sig, time(NULL));
+
+	if (!rtn)
+	{
+		ops_teardown_file_write(cinfo, fd_out);
+		return ops_false;
+	}
+
+	ops_keyid(keyid, &skey->public_key);
+
+	rtn = ops_signature_add_issuer_key_id(sig, keyid)
+		&& ops_signature_hashed_subpackets_end(sig)
+		&& ops_write_signature(sig, &skey->public_key, skey, cinfo);
+
+	ops_teardown_file_write(cinfo, fd_out);
+
+	if (!rtn)
+		OPS_ERROR(&cinfo->errors, OPS_E_W, "Cannot sign file as cleartext");
+
+	return rtn;
+}
 
 
 /** 
@@ -1085,55 +1114,58 @@ ops_boolean_t ops_sign_file_as_cleartext(const char* input_filename,
 ops_boolean_t ops_sign_buf_as_cleartext(const char* cleartext, const size_t len,
 					ops_memory_t** signed_cleartext,
 					const ops_secret_key_t *skey)
-    {
-    ops_boolean_t rtn=ops_false;
+{
+	ops_boolean_t rtn=ops_false;
 
-    // \todo allow choice of hash algorithams
-    // enforce use of SHA1 for now
+	// \todo allow choice of hash algorithams
+	// enforce use of SHA1 for now
 
-    unsigned char keyid[OPS_KEY_ID_SIZE];
-    ops_create_signature_t *sig=NULL;
+	unsigned char keyid[OPS_KEY_ID_SIZE];
+	ops_create_signature_t *sig=NULL;
 
-    ops_create_info_t *cinfo=NULL;
-    
-    assert(*signed_cleartext == NULL);
+	ops_create_info_t *cinfo=NULL;
 
-    // set up signature
-    sig=ops_create_signature_new();
-    if (!sig)
-        return ops_false;
+	if(*signed_cleartext != NULL)
+	{
+		fprintf(stderr,"ops_sign_buf_as_cleartext: error. Variable signed_cleartext should point to NULL.\n") ;
+		return ops_false ;
+	}
 
-    // \todo could add more error detection here
-    ops_signature_start_cleartext_signature(sig, skey, OPS_HASH_SHA1,
-					    OPS_SIG_BINARY);
+	// set up signature
+	sig=ops_create_signature_new();
+	if (!sig)
+		return ops_false;
 
-    // set up output file
-    ops_setup_memory_write(&cinfo, signed_cleartext, len);
+	// \todo could add more error detection here
+	ops_signature_start_cleartext_signature(sig, skey, OPS_HASH_SHA1, OPS_SIG_BINARY);
 
-    // Do the signing
-    // add signature with subpackets:
-    // - creation time
-    // - key id
-    rtn = ops_writer_push_clearsigned(cinfo, sig)
-        && ops_write(cleartext, len, cinfo)
-        && ops_writer_switch_to_armoured_signature(cinfo)
-        && ops_signature_add_creation_time(sig, time(NULL));
+	// set up output file
+	ops_setup_memory_write(&cinfo, signed_cleartext, len);
 
-    if (!rtn)
-        return ops_false;
+	// Do the signing
+	// add signature with subpackets:
+	// - creation time
+	// - key id
+	rtn = ops_writer_push_clearsigned(cinfo, sig)
+		&& ops_write(cleartext, len, cinfo)
+		&& ops_writer_switch_to_armoured_signature(cinfo)
+		&& ops_signature_add_creation_time(sig, time(NULL));
 
-    ops_keyid(keyid, &skey->public_key);
+	if (!rtn)
+		return ops_false;
 
-    rtn = ops_signature_add_issuer_key_id(sig, keyid)
-        && ops_signature_hashed_subpackets_end(sig)
-        && ops_write_signature(sig, &skey->public_key, skey, cinfo)
-        && ops_writer_close(cinfo);
+	ops_keyid(keyid, &skey->public_key);
 
-    // Note: the calling function must free signed_cleartext
-    ops_create_info_delete(cinfo);
+	rtn = ops_signature_add_issuer_key_id(sig, keyid)
+		&& ops_signature_hashed_subpackets_end(sig)
+		&& ops_write_signature(sig, &skey->public_key, skey, cinfo)
+		&& ops_writer_close(cinfo);
 
-    return rtn;
-    }
+	// Note: the calling function must free signed_cleartext
+	ops_create_info_delete(cinfo);
+
+	return rtn;
+}
 
 /**
 \ingroup HighLevel_Sign
