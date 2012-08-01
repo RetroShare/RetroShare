@@ -264,7 +264,7 @@ void ForumsV2Dialog::processSettings(bool bLoad)
         togglethreadview_internal();
 
         // filterColumn
-        int nValue = FilterColumnToComboBox(Settings->value("filterColumn", true).toInt());
+        int nValue = FilterColumnToComboBox(Settings->value("filterColumn", COLUMN_THREAD_TITLE).toInt());
         ui.filterColumnComboBox->setCurrentIndex(nValue);
 
         // index of viewBox
