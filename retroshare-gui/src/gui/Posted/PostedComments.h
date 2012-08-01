@@ -43,6 +43,9 @@ class PostedComments: public QWidget, public TokenResponse
 public:
 	PostedComments(QWidget *parent = 0);
 
+public slots:
+        void loadComments( std::string );
+
 private:
         void loadRequest(const TokenQueue *queue, const TokenRequest &req) { return; }
 
@@ -52,6 +55,8 @@ virtual void notifySelection(PhotoItem *item, int ptype);
 
 	void notifyAlbumSelection(PhotoItem *item);
 	void notifyPhotoSelection(PhotoItem *item);
+
+
 
 private slots:
 

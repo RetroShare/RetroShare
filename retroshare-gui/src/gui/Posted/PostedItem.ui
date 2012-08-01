@@ -265,7 +265,7 @@ border-radius: 10px}</string>
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="commentButton">
           <property name="text">
            <string>View Comments</string>
           </property>

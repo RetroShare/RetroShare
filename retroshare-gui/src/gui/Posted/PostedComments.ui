@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="pushButton_3">
@@ -51,119 +51,67 @@
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox">
-       <item>
-        <property name="text">
-         <string>Today</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Yesterday</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>This Week</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>This Month</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>This Year</string>
-        </property>
-       </item>
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="text">
+        <string>Refresh</string>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="pushButton_5">
-         <property name="text">
-          <string>Refresh</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Showing 1-100</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_6">
-         <property name="text">
-          <string>Prev</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="text">
-          <string>Next</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="1">
-      <widget class="QScrollArea" name="scrollArea">
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>382</width>
-          <height>302</height>
-         </rect>
-        </property>
-       </widget>
-      </widget>
-     </item>
-     <item row="0" column="0" rowspan="2">
-      <widget class="QTreeWidget" name="treeWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="GxsCommentTreeWidget" name="treeWidget">
+     <column>
+      <property name="text">
+       <string>Stuff</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>New Column</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Yes More</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>more, more, more</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>More Stuff</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Less Stuff</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>More</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>asdf</string>
+      </property>
+     </column>
+    </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GxsCommentTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/gxs/GxsCommentTreeWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

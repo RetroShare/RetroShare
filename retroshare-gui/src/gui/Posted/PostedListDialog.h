@@ -47,7 +47,10 @@ public:
 
 virtual void deletePostedItem(PostedItem *, uint32_t ptype) { return; }
 virtual void notifySelection(PostedItem *item, int ptype) { return; }
+virtual void requestComments(std::string threadId);
 
+signals:
+        void loadComments( std::string );
 
 private slots:
 

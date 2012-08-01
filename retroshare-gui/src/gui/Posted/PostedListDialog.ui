@@ -18,6 +18,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QGroupBox" name="sortGroup">
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>-1</number>

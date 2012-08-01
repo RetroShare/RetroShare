@@ -83,7 +83,18 @@ PostedComments::PostedComments(QWidget *parent)
 	/* setup TokenQueue */
 	//mPhotoQueue = new TokenQueue(rsPhoto, this);
 
+	ui.treeWidget->setup(rsPosted);
+
 }
+
+void PostedComments::loadComments( std::string threadId )
+{
+	std::cerr << "PostedComments::loadComments(" << threadId << ")";
+	std::cerr << std::endl;
+
+	ui.treeWidget->requestComments(threadId);
+}
+
 
 #if 0
 

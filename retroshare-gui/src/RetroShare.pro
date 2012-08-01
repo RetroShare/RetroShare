@@ -973,19 +973,19 @@ gxsgui {
             gui/gxs/ForumV2GroupDialog.h \
             gui/gxs/WikiGroupDialog.h \
             gui/gxs/PostedGroupDialog.h \
+            gui/gxs/GxsCommentTreeWidget.h \
 #            gui/gxs/GxsMsgDialog.h \
-#            gui/gxs/GxsCommentWidget.h \
 
 	FORMS += gui/gxs/GxsGroupDialog.ui \
 #	    gui/gxs/GxsMsgDialog.ui \
-#	    gui/gxs/GxsCommentWidget.ui \
+#	    gui/gxs/GxsCommentTreeWidget.ui \
 
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
             gui/gxs/ForumV2GroupDialog.cpp \
             gui/gxs/WikiGroupDialog.cpp \
             gui/gxs/PostedGroupDialog.cpp \
+            gui/gxs/GxsCommentTreeWidget.cpp \
 #            gui/gxs/GxsMsgDialog.cpp \
-#            gui/gxs/GxsCommentWidget.cpp \
 
 
 }

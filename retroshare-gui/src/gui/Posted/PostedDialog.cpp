@@ -70,6 +70,7 @@ PostedDialog::PostedDialog(QWidget *parent)
 	QString comments("Comments");
 	ui.tabWidget->addTab(mPostedComments, comments);
 
+	connect(mPostedList, SIGNAL(loadComments( std::string ) ), mPostedComments, SLOT(loadComments( std::string ) ) );
 }
 
 

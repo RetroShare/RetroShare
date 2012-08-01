@@ -36,6 +36,8 @@ class PostedHolder
 	public:
 virtual void deletePostedItem(PostedItem *, uint32_t ptype) = 0;
 virtual void notifySelection(PostedItem *item, int ptype) = 0;
+
+virtual void requestComments(std::string threadId) = 0;
 };
 
 class PostedItem : public QWidget, private Ui::PostedItem
@@ -55,9 +57,16 @@ public:
 protected:
 	//void mousePressEvent(QMouseEvent *event);
 
+private slots:
+        void loadComments();
+
 private:
 	uint32_t     mType;
         bool mSelected;
+
+        std::string mThreadId;
+        PostedHolder *mParent;
+
 };
 
 

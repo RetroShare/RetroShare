@@ -185,6 +185,17 @@ void PostedListDialog::updateDisplay()
 
 }
 
+void PostedListDialog::requestComments(std::string threadId)
+{
+	/* call a signal */
+	std::cerr << "PostedListDialog::requestComments(" << threadId << ")";
+	std::cerr << std::endl;
+
+	loadComments(threadId);
+
+}
+
+
 void PostedListDialog::changedTopic(const QString &id)
 {
     mCurrTopicId = id.toStdString();

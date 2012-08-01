@@ -72,7 +72,20 @@ PostedItem::PostedItem(PostedHolder *parent, const RsPostedPost &post)
 	ts.setTime_t(post.mMeta.mPublishTs);
 	dateLabel->setText(ts.toString(QString("yyyy/MM/dd hh:mm:ss")));
 
+	mThreadId = post.mMeta.mThreadId;
+	mParent = parent;
+
+	connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
+
 	return;
+}
+
+
+void PostedItem::loadComments()
+{
+	std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
+	std::cerr << std::endl;
+	mParent->requestComments(mThreadId);
 }
 
 
