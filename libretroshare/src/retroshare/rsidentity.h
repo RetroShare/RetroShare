@@ -73,7 +73,9 @@ class RsTokReqOptions
 	RsTokReqOptions() 
 	{ 
 		mOptions = 0; 
-		mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0; 
+		mStatusFilter = 0; mStatusMask = 0; 
+		mFlagsFilter = 0; mFlagsMask = 0; 
+		mSubscribeFilter = 0; 
 		mBefore = 0; mAfter = 0; 
 	}
 
@@ -83,6 +85,10 @@ class RsTokReqOptions
 	// Should be usable with any Options... applied afterwards.
 	uint32_t mStatusFilter;
 	uint32_t mStatusMask;
+
+	// MsgFlags or GroupsFlags, depends on Request.
+	uint32_t mFlagsFilter;
+	uint32_t mFlagsMask;
 
 	uint32_t mSubscribeFilter; // Only for Groups.
 

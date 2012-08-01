@@ -953,8 +953,11 @@ std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group)
 bool p3PostedService::generateDummyData()
 {
 #define MAX_GROUPS 10 //100
-#define MAX_POSTS 100 //1000
-#define MAX_COMMENTS 5000 //10000
+#define MAX_POSTS  50 //1000
+
+#define MAX_BASE_COMMENTS 1000 //10000
+#define MAX_COMMENTS 4000 //10000
+
 #define MAX_VOTES 10000 //10000
 
 	std::list<RsPostedGroup> mGroups;
@@ -1056,7 +1059,7 @@ bool p3PostedService::generateDummyData()
 		
 	}
 
-	for(i = 0; i < MAX_COMMENTS; i++)
+	for(i = 0; i < MAX_BASE_COMMENTS; i++)
 	{
 		/* generate a base thread */
 
@@ -1073,6 +1076,56 @@ bool p3PostedService::generateDummyData()
 		}
 
 		RsPostedPost parent = mPosts.front();
+
+		/* now create a new child msg */
+
+		RsPostedComment comment;
+
+		/* fill in key data 
+		 * GroupId
+		 * MsgId
+		 * OrigMsgId
+		 * ThreadId
+		 * ParentId
+		 * PublishTS (take Forum TS + a bit ).
+		 *
+		 * ChildTS ????
+		 */
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => Comment_%d", parent.mMeta.mMsgName.c_str(), i+1);
+		comment.mMeta.mMsgName = name;
+		//comment.mMsg = name;
+
+		comment.mMeta.mGroupId = parent.mMeta.mGroupId;
+		comment.mMeta.mMsgId = genRandomId();
+		comment.mMeta.mOrigMsgId = comment.mMeta.mMsgId;
+		comment.mMeta.mThreadId = parent.mMeta.mThreadId;
+		comment.mMeta.mParentId = parent.mMeta.mOrigMsgId;
+
+		comment.mMeta.mPublishTs = parent.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (comment.mMeta.mPublishTs > now)
+			comment.mMeta.mPublishTs = now - 1;
+
+		mComments.push_back(comment);
+	}
+
+
+	for(i = 0; i < MAX_COMMENTS; i++)
+	{
+		/* generate a base thread */
+
+		/* rotate the Forum Groups Around, then pick one.
+		 */
+
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
+
+		for(j = 0; j < rnd; j++)
+		{
+			RsPostedComment head = mComments.front();
+			mComments.pop_front();
+			mComments.push_back(head);
+		}
+
+		RsPostedComment parent = mComments.front();
 
 		/* now create a new child msg */
 

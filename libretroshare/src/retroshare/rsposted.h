@@ -77,6 +77,9 @@ class RsPostedPost: public RsPostedMsg
 		mMeta.mMsgFlags = RSPOSTED_MSGTYPE_POST;
 		return; 
 	}
+
+	std::string mLink;
+	std::string mNotes;
 };
 
 
@@ -99,6 +102,8 @@ class RsPostedComment: public RsPostedMsg
 		mMeta.mMsgFlags = RSPOSTED_MSGTYPE_COMMENT;
 		return; 
 	}
+
+	std::string mComment;
 };
 
 

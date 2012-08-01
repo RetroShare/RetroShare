@@ -370,6 +370,33 @@ static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData 
 		statusMatch = true;
 	}
 
+	bool flagsMatch = false;
+	if (opts.mFlagsMask)
+	{
+		// Exact Flags match required.
+ 		if ((opts.mFlagsMask & opts.mFlagsFilter) == (opts.mFlagsMask & group.mGroupFlags))
+		{
+			std::cerr << "checkGroupFilter() Accepting Group as Flags Match: ";
+			std::cerr << " Mask: " << opts.mFlagsMask << " FlagsFilter: " << opts.mFlagsFilter;
+			std::cerr << " GroupFlags: " << group.mGroupFlags << " GroupId: " << group.mGroupId;
+			std::cerr << std::endl;
+
+			flagsMatch = true;
+		}
+		else
+		{
+			std::cerr << "checkGroupFilter() Dropping Group due to !Flags Match ";
+			std::cerr << " Mask: " << opts.mFlagsMask << " FlagsFilter: " << opts.mFlagsFilter;
+			std::cerr << " GroupFlags: " << group.mGroupFlags << " GroupId: " << group.mGroupId;
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		// no status comparision,
+		flagsMatch = true;
+	}
+
 	bool subMatch = false;
 	if (opts.mSubscribeFilter)
 	{
@@ -397,7 +424,7 @@ static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData 
 		subMatch = true;
 	}
 
-	return (statusMatch && subMatch);
+	return (statusMatch && flagsMatch && subMatch);
 }
 
 
@@ -429,7 +456,35 @@ static bool checkMsgFilter(const RsTokReqOptions &opts, const RsMsgMetaData &msg
 		// no status comparision,
 		statusMatch = true;
 	}
-	return statusMatch;
+
+	bool flagsMatch = false;
+	if (opts.mFlagsMask)
+	{
+		// Exact Flags match required.
+ 		if ((opts.mFlagsMask & opts.mFlagsFilter) == (opts.mFlagsMask & msg.mMsgFlags))
+		{
+			std::cerr << "checkMsgFilter() Accepting Msg as Flags Match: ";
+			std::cerr << " Mask: " << opts.mFlagsMask << " FlagsFilter: " << opts.mFlagsFilter;
+			std::cerr << " MsgFlags: " << msg.mMsgFlags << " MsgId: " << msg.mMsgId;
+			std::cerr << std::endl;
+
+			flagsMatch = true;
+		}
+		else
+		{
+			std::cerr << "checkMsgFilter() Dropping Msg due to !Flags Match ";
+			std::cerr << " Mask: " << opts.mFlagsMask << " FlagsFilter: " << opts.mFlagsFilter;
+			std::cerr << " MsgFlags: " << msg.mMsgFlags << " MsgId: " << msg.mMsgId;
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		// no status comparision,
+		flagsMatch = true;
+	}
+
+	return (statusMatch && flagsMatch);
 }
 
 
@@ -687,6 +742,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 	bool onlyLatestMsgs = false;
 	bool onlyAllVersions = false;
 	bool onlyChildMsgs = false;
+	bool onlyThreadMsgs = false;
 
 	if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
 	{
@@ -708,9 +764,24 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 		onlyChildMsgs = true;
 	}
 
+	if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_THREAD";
+		std::cerr << std::endl;
+		onlyThreadMsgs = true;
+	}
+
 	if (onlyAllVersions && onlyChildMsgs)
 	{
 		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	if (onlyAllVersions && onlyThreadMsgs)
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)";
 		std::cerr << std::endl;
 
 		return false;
@@ -724,9 +795,25 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 		return false;
 	}
 
+	if ((!onlyLatestMsgs) && onlyThreadMsgs)
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	if (onlyChildMsgs && onlyThreadMsgs)
+	{
+		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
 
 	/* FALL BACK OPTION */
-	if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs))
+	if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) && (!onlyThreadMsgs))
 	{
 		std::cerr << "GxsDataProxy::getMsgRelatedList() FALLBACK -> NO FLAGS -> JUST COPY";
 		std::cerr << std::endl;
@@ -755,7 +842,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 		if (onlyLatestMsgs)
 		{
-			if (onlyChildMsgs)
+			if (onlyChildMsgs || onlyThreadMsgs)
 			{
 				// RUN THROUGH ALL MSGS... in map origId -> TS.
 				std::map<std::string, std::pair<std::string, time_t> > origMsgTs;
@@ -763,16 +850,27 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 				for(mit = mMsgMetaData.begin(); mit != mMsgMetaData.end(); mit++)
 				{
 					// skip msgs that aren't children.
-					if (mit->second.mParentId != origMsgId)
+					if (onlyChildMsgs)
 					{
-						continue;
+						if (mit->second.mParentId != origMsgId)
+						{
+							continue;
+						}
+					} 
+					else /* onlyThreadMsgs */
+					{
+						if (mit->second.mThreadId != (*it))
+						{
+							continue;
+						}
 					}
+					
 	
 					oit = origMsgTs.find(mit->second.mOrigMsgId);
 					bool addMsg = false;
 					if (oit == origMsgTs.end())
 					{
-						std::cerr << "GxsDataProxy::getMsgList() Found New OrigMsgId: ";
+						std::cerr << "GxsDataProxy::getMsgRelatedList() Found New OrigMsgId: ";
 						std::cerr << mit->second.mOrigMsgId;
 						std::cerr << " MsgId: " << mit->second.mMsgId;
 						std::cerr << " TS: " << mit->second.mPublishTs;
@@ -783,7 +881,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 					// check timestamps.
 					else if (oit->second.second < mit->second.mPublishTs)
 					{
-						std::cerr << "GxsDataProxy::getMsgList() Found Later Msg. OrigMsgId: ";
+						std::cerr << "GxsDataProxy::getMsgRelatedList() Found Later Msg. OrigMsgId: ";
 						std::cerr << mit->second.mOrigMsgId;
 						std::cerr << " MsgId: " << mit->second.mMsgId;
 						std::cerr << " TS: " << mit->second.mPublishTs;
