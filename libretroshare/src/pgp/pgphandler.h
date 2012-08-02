@@ -38,6 +38,7 @@ class PGPCertificateInfo
 		uint32_t _trustLvl;
 		uint32_t _validLvl;
 		uint32_t _flags ;
+		uint32_t _type ;
 
 		PGPFingerprintType _fpr;           /* fingerprint */
 		PGPIdType          _key_id ;
@@ -54,6 +55,10 @@ class PGPCertificateInfo
 		static const uint8_t PGP_CERTIFICATE_TRUST_MARGINALLY = 0x03 ;
 		static const uint8_t PGP_CERTIFICATE_TRUST_FULLY      = 0x04 ;
 		static const uint8_t PGP_CERTIFICATE_TRUST_ULTIMATE   = 0x05 ;
+
+		static const uint8_t PGP_CERTIFICATE_TYPE_UNKNOWN = 0x00 ;
+		static const uint8_t PGP_CERTIFICATE_TYPE_DSA     = 0x01 ;
+		static const uint8_t PGP_CERTIFICATE_TYPE_RSA     = 0x02 ;
 };
 
 class PGPHandler

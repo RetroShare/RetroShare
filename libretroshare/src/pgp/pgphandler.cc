@@ -188,13 +188,22 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 	cert._key_index = index ;
 	cert._flags = 0 ;
 
+	switch(keydata->key.pkey.algorithm)
+	{
+		case OPS_PKA_RSA: cert._type = PGPCertificateInfo::PGP_CERTIFICATE_TYPE_RSA ;
+								break ;
+		case OPS_PKA_DSA: cert._type = PGPCertificateInfo::PGP_CERTIFICATE_TYPE_DSA ;
+								cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM ;
+								break ;
+		default: cert._type = PGPCertificateInfo::PGP_CERTIFICATE_TYPE_UNKNOWN ;
+								cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM ;
+								break ;
+	}
+
 	ops_fingerprint_t f ;
 	ops_fingerprint(&f,&keydata->key.pkey) ; 
 
 	cert._fpr = PGPFingerprintType(f.fingerprint) ;
-
-	if(keydata->key.pkey.algorithm != OPS_PKA_RSA)
-		cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM ;
 }
 
 bool PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata)
