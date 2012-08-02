@@ -167,6 +167,13 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 		uint32_t i=0;
 		while(i < namestring.length() && namestring[i] != '(' && namestring[i] != '<') { cert._name += namestring[i] ; ++i ;}
 
+		// trim right spaces
+		std::string::size_type found = cert._name.find_last_not_of(' ');
+		if (found != std::string::npos)
+			cert._name.erase(found + 1);
+		else
+			cert._name.clear(); // all whitespace
+
 		std::string& next = (namestring[i] == '(')?cert._comment:cert._email ;
 		++i ;
 		next = "" ;
