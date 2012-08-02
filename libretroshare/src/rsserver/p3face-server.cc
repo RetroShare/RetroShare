@@ -62,6 +62,8 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 
 	pqih = NULL;
 
+	mPluginsManager = NULL;
+
 	/* services */
 	ad = NULL;
 	msgSrv = NULL;

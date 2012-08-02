@@ -1,0 +1,113 @@
+/****************************************************************
+ *  RetroShare GUI is distributed under the following license:
+ *
+ *  Copyright (C) 2012 by Thunder
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
+ #ifndef P3_FEEDREADER
+#define P3_FEEDREADER
+
+#include "retroshare/rsplugin.h"
+#include "plugins/rspqiservice.h"
+#include "interface/rsFeedReader.h"
+#include "p3FeedReaderThread.h"
+
+class RsFeedReaderFeed;
+
+//TODO: get new id's
+const uint8_t RS_PKT_TYPE_FEEDREADER_CONFIG = 0xf0;
+const uint32_t CONFIG_TYPE_FEEDREADER = 0x0001;
+
+class p3FeedReader : public RsPQIService, public RsFeedReader
+{
+public:
+	p3FeedReader(RsPluginHandler *pgHandler);
+
+	/****************** FeedReader Interface *************/
+	virtual void stop();
+	virtual void setNotify(RsFeedReaderNotify *notify);
+
+	virtual uint32_t getStandardStorageTime();
+	virtual void     setStandardStorageTime(uint32_t storageTime);
+	virtual uint32_t getStandardUpdateInterval();
+	virtual void     setStandardUpdateInterval(uint32_t updateInterval);
+	virtual bool     getStandardProxy(std::string &proxyAddress, uint16_t &proxyPort);
+	virtual void     setStandardProxy(bool useProxy, const std::string &proxyAddress, uint16_t proxyPort);
+
+	virtual RsFeedAddResult  addFolder(const std::string parentId, const std::string &name, std::string &feedId);
+	virtual RsFeedAddResult  setFolder(const std::string &feedId, const std::string &name);
+	virtual RsFeedAddResult  addFeed(const FeedInfo &feedInfo, std::string &feedId);
+	virtual RsFeedAddResult  setFeed(const std::string &feedId, const FeedInfo &feedInfo);
+	virtual bool             removeFeed(const std::string &feedId);
+	virtual void             getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos);
+	virtual bool             getFeedInfo(const std::string &feedId, FeedInfo &feedInfo);
+	virtual bool             getMsgInfo(const std::string &feedId, const std::string &msgId, FeedMsgInfo &msgInfo);
+	virtual bool             removeMsg(const std::string &feedId, const std::string &msgId);
+	virtual bool             removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds);
+	virtual bool             getMessageCount(const std::string &feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount);
+	virtual bool             getFeedMsgList(const std::string &feedId, std::list<FeedMsgInfo> &msgInfos);
+	virtual bool             processFeed(const std::string &feedId);
+	virtual bool             setMessageRead(const std::string &feedId, const std::string &msgId, bool read);
+
+	/****************** p3Service STUFF ******************/
+	virtual int tick();
+
+	/****************** internal STUFF *******************/
+	bool getFeedToDownload(RsFeedReaderFeed &feed);
+	void onDownloadSuccess(const std::string &feedId, const std::string &content, std::string &icon);
+	void onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &error);
+	void onProcessSuccess(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs);
+	void onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result);
+
+	bool getFeedToProcess(RsFeedReaderFeed &feed);
+
+	void setFeedInfo(const std::string &feedId, const std::string &name, const std::string &description);
+
+protected:
+	/****************** p3Config STUFF *******************/
+	virtual RsSerialiser *setupSerialiser();
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+	virtual bool loadList(std::list<RsItem *>& load);
+	virtual void saveDone();
+
+private:
+	void cleanFeeds();
+	void deleteAllMsgs_locked(RsFeedReaderFeed *fi);
+
+	std::list<p3FeedReaderThread*> mThreads;
+	uint32_t mNextFeedId;
+	uint32_t mNextMsgId;
+	time_t   mLastClean;
+	RsFeedReaderNotify *mNotify;
+
+	RsMutex mFeedReaderMtx;
+	uint32_t mStandardUpdateInterval;
+	uint32_t mStandardStorageTime;
+	bool mStandardUseProxy;
+	std::string mStandardProxyAddress;
+	uint16_t mStandardProxyPort;
+	std::map<std::string, RsFeedReaderFeed*> mFeeds;
+
+	RsMutex mDownloadMutex;
+	std::list<std::string> mDownloadFeeds;
+
+	RsMutex mProcessMutex;
+	std::list<std::string> mProcessFeeds;
+};
+
+#endif 

@@ -31,6 +31,7 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
+#include "plugins/pluginmanager.h"
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
 
@@ -181,6 +182,8 @@ void RsServer::rsGlobalShutDown()
 
 	join();
 	ftserver->StopThreads();
+
+	mPluginsManager->stopPlugins();
 
 	// stop the p3distrib threads
 	mForums->join();

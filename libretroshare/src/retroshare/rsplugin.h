@@ -94,6 +94,9 @@ class RsPlugin
 		virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
 
+		// Shutdown
+		virtual void stop() {}
+
 		// Filename used for saving the specific plugin configuration. Both RsCacheService and RsPQIService
 		// derive from p3Config, which means that the service provided by the plugin can load/save its own
 		// config by deriving loadList() and saveList() from p3Config.

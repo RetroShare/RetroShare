@@ -49,6 +49,7 @@ class p3PeerMgrIMPL;
 class p3LinkMgrIMPL;
 class p3NetMgrIMPL;
 class p3HistoryMgr;
+class RsPluginManager;
 
 /* The Main Interface Class - for controlling the server */
 
@@ -160,6 +161,8 @@ class RsServer: public RsControl, public RsThread
 		p3HistoryMgr *mHistoryMgr;
 
 		pqipersongrp *pqih;
+
+		RsPluginManager *mPluginsManager;
 
 		//sslroot *sslr;
 

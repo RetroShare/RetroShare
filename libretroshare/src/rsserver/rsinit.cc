@@ -2177,7 +2177,7 @@ int RsServer::StartupRetroShare()
 														// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
 #endif
 
-	RsPluginManager *mPluginsManager = new RsPluginManager ;
+	mPluginsManager = new RsPluginManager ;
 	rsPlugins  = mPluginsManager ;
 	mConfigMgr->addConfiguration("plugins.cfg", mPluginsManager);
 
