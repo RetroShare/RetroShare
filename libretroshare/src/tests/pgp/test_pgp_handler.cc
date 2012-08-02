@@ -7,7 +7,12 @@
 
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
-	return std::string(getpass(what)) ;
+	if(prev_was_bad)
+		std::cerr << "Bad passphrase." << std::endl;
+
+	std::string wt = std::string("Please enter passphrase for key id ") + uid_info + " :";
+
+	return std::string(getpass(wt.c_str())) ;
 }
 
 static std::string stringFromBytes(unsigned char *bytes,size_t len)
@@ -260,7 +265,7 @@ int main(int argc,char *argv[])
 			std::cerr << "Encryption success" << std::endl;
 
 		std::string decrypted_text = "" ;
-		outfile = "crypted_toto2.pgp" ;
+		outfile = "crypted_toto.pgp" ;
 
 		if(!pgph.decryptTextFromFile(key_id,decrypted_text,outfile))
 			std::cerr << "Decryption failed" << std::endl;
