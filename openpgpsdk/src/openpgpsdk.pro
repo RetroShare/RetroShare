@@ -17,6 +17,16 @@ linux-* {
 }
 
 win32 {
+	# Switch off optimization for release version
+	QMAKE_CXXFLAGS_RELEASE -= -O2
+	QMAKE_CXXFLAGS_RELEASE += -O0
+	QMAKE_CFLAGS_RELEASE -= -O2
+	QMAKE_CFLAGS_RELEASE += -O0
+
+	# Switch on optimization for debug version
+	#QMAKE_CXXFLAGS_DEBUG += -O2
+	#QMAKE_CFLAGS_DEBUG += -O2
+
 	SSL_DIR = ../../../openssl-1.0.1c
 	ZLIB_DIR = ../../../zlib-1.2.3
 	BZIP_DIR = ../../../bzip2-1.0.6
