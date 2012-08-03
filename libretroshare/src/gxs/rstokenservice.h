@@ -40,6 +40,28 @@
 #define GXS_REQUEST_TYPE_MSG_META			0x00100000
 #define GXS_REQUEST_TYPE_MSG_IDS 			0x00200000
 
+
+
+// This bit will be filled out over time.
+#define RS_TOKREQOPT_MSG_VERSIONS	0x0001		// MSGRELATED: Returns All MsgIds with OrigMsgId = MsgId.
+#define RS_TOKREQOPT_MSG_ORIGMSG	0x0002		// MSGLIST: All Unique OrigMsgIds in a Group.
+#define RS_TOKREQOPT_MSG_LATEST		0x0004		// MSGLIST: All Latest MsgIds in Group. MSGRELATED: Latest MsgIds for Input Msgs.
+
+#define RS_TOKREQOPT_MSG_THREAD		0x0010		// MSGRELATED: All Msgs in Thread. MSGLIST: All Unique Thread Ids in Group.
+#define RS_TOKREQOPT_MSG_PARENT		0x0020		// MSGRELATED: All Children Msgs.
+
+#define RS_TOKREQOPT_MSG_AUTHOR		0x0040		// MSGLIST: Messages from this AuthorId
+
+// Read Status.
+#define RS_TOKREQOPT_READ		0x0001
+#define RS_TOKREQOPT_UNREAD		0x0002
+
+#define RS_TOKREQ_ANSTYPE_LIST		0x0001
+#define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
+#define RS_TOKREQ_ANSTYPE_DATA		0x0003
+
+
+
 /*!
  * This class provides useful generic support for GXS style services.
  * I expect much of this will be incorporated into the base GXS.

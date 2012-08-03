@@ -24,7 +24,7 @@
 #include "PhotoDialog.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsphoto.h>
+#include <retroshare/rsphotoV2.h>
 
 #include <iostream>
 #include <sstream>
@@ -79,7 +79,7 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 
 
 	/* setup TokenQueue */
-	mPhotoQueue = new TokenQueue(rsPhoto, this);
+        mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
 
 }
 
@@ -139,10 +139,10 @@ void PhotoDialog::notifyPhotoSelection(PhotoItem *item)
 void PhotoDialog::checkUpdate()
 {
 	/* update */
-	if (!rsPhoto)
+        if (!rsPhotoV2)
 		return;
 
-	if (rsPhoto->updated())
+        if (rsPhotoV2->updated())
 	{
 		//insertAlbums();
 		requestAlbumList();
@@ -443,7 +443,7 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 	std::cerr << std::endl;
 
 	std::list<std::string> albumIds;
-	rsPhoto->getGroupList(token, albumIds);
+        rsPhotoV2->getGroupList(token, albumIds);
 
 	requestAlbumData(albumIds);
 
@@ -458,11 +458,11 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 }
 
 
-void PhotoDialog::requestAlbumData(const std::list<std::string> &ids)
+void PhotoDialog::requestAlbumData(std::list<std::string> &ids)
 {
 	RsTokReqOptions opts;
 	uint32_t token;
-	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
+        mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
 
 
@@ -477,7 +477,8 @@ bool PhotoDialog::loadAlbumData(const uint32_t &token)
 	while(moreData)
 	{
 		RsPhotoAlbum album;
-		if (rsPhoto->getAlbum(token, album))
+                std::vector<RsPhotoAlbum> albums;
+                if (rsPhotoV2->getAlbum(token, albums))
 		{
 			std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
 
@@ -499,11 +500,12 @@ void PhotoDialog::requestPhotoList(const std::string &albumId)
 {
 
 	std::list<std::string> ids;
-	ids.push_back(albumId);
+        GxsMsgReq req;
+        req[albumId] = std::vector<RsGxsMessageId>();
 	RsTokReqOptions opts;
 	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 	uint32_t token;
-	mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
+        mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, req, 0);
 }
 
 
@@ -515,18 +517,19 @@ void PhotoDialog::loadPhotoList(const uint32_t &token)
 	std::cerr << std::endl;
 
 
-	std::list<std::string> photoIds;
+        GxsMsgIdResult res;
+        GxsMsgReq req;
 
-	rsPhoto->getMsgList(token, photoIds);
-	requestPhotoData(photoIds);
+        rsPhotoV2->getMsgList(token, res);
+        requestPhotoData(req);
 }
 
 
-void PhotoDialog::requestPhotoData(const std::list<std::string> &photoIds)
+void PhotoDialog::requestPhotoData(GxsMsgReq &photoIds)
 {
 	RsTokReqOptions opts;
 	uint32_t token;
-	mPhotoQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, photoIds, 0);
+        mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, photoIds, 0);
 }
 
 
@@ -539,8 +542,8 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
 	while(moreData)
 	{
 		RsPhotoPhoto photo;
-
-		if (rsPhoto->getPhoto(token, photo))
+                PhotoResult res;
+                if (rsPhotoV2->getPhoto(token, res))
 		{
 
 			std::cerr << "PhotoDialog::loadPhotoData() AlbumId: " << photo.mMeta.mGroupId;
@@ -559,7 +562,7 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
 
 /********************************/
 
-void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
 {
 	std::cerr << "PhotoDialog::loadRequest()";
 	std::cerr << std::endl;
@@ -640,7 +643,7 @@ void PhotoDialog::insertAlbums()
 	std::list<std::string> filteredAlbumIds;
 	std::list<std::string>::iterator it;
 
-	rsPhoto->getAlbumList(albumIds);
+        rsPhotoV2->getGroupList(token, al);
 
 	/* Filter Albums */ /* Sort Albums */
 #define MAX_ALBUMS 50

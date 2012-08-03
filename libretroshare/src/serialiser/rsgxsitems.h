@@ -57,6 +57,7 @@ class RsGroupMetaData
         std::string mGroupId;
         std::string mGroupName;
         uint32_t    mGroupFlags;
+    	uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
         time_t      mPublishTs; // Mandatory.
         std::string mAuthorId;   // Optional.
@@ -70,6 +71,7 @@ class RsGroupMetaData
         time_t      mLastPost; // ???
 
         uint32_t    mGroupStatus;
+    	std::string mServiceString; // Service Specific Free-Form extra storage.
 
 };
 
@@ -109,6 +111,7 @@ class RsMsgMetaData
         // normally READ / UNREAD flags. LOCAL Data.
         uint32_t    mMsgStatus;
         time_t      mChildTs;
+    	std::string mServiceString; // Service Specific Free-Form extra storage.
 
 };
 

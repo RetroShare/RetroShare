@@ -32,6 +32,7 @@
 #include "rsgds.h"
 #include "rsnxs.h"
 #include "rsgxsdataaccess.h"
+#include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
 
@@ -58,7 +59,7 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
  *              Also notifications are made here on receipt of new data from
  *              connected peers
  */
-class RsGenExchange : public RsGxsService
+class RsGenExchange : public RsGxsService, public RsNxsObserver
 {
 public:
 

@@ -1,7 +1,7 @@
 /*
  * Token Queue.
  *
- * Copyright 2012-2012 by Robert Fernie.
+ * Copyright 2012-2012 by Robert Fernie, Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,8 +29,10 @@
 #include <list>
 #include <string>
 #include <sys/time.h>
-#include <inttypes.h>
-#include <retroshare/rsidentity.h>
+
+#include <gxs/rstokenservice.h>
+
+
 
 #define COMPLETED_REQUEST	4
 
@@ -38,9 +40,9 @@
 #define TOKENREQ_MSGINFO	2
 #define TOKENREQ_MSGRELATEDINFO	3
 
-class TokenQueue;
+class TokenQueueV2;
 
-class TokenRequest
+class TokenRequestV2
 {
 	public:
 	uint32_t mToken;
@@ -51,34 +53,33 @@ class TokenRequest
 	struct timeval mPollTs;
 };
 
-class TokenResponse
+class TokenResponseV2
 {
 	public:
 	//virtual ~TokenResponse() { return; }
 	// These Functions are overloaded to get results out.
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) = 0;
+        virtual void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req) = 0;
 };
 
 
-class TokenQueue: public QWidget
+class TokenQueueV2: public QWidget
 {
   Q_OBJECT
 
 public:
-	TokenQueue(RsTokenService *service, TokenResponse *resp);
+        TokenQueueV2(RsTokenServiceV2 *service, TokenResponseV2 *resp);
 
 	/* generic handling of token / response update behaviour */
 	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
-							std::list<std::string> ids, uint32_t usertype);
+                                                        std::list<RsGxsGroupId>& ids, uint32_t usertype);
 	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
-							std::list<std::string> ids, uint32_t usertype);
-	bool requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
-							std::list<std::string> ids, uint32_t usertype);
+							const GxsMsgReq& ids, uint32_t usertype);
+
 	bool cancelRequest(const uint32_t token);
 
 	void queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype);
 	bool checkForRequest(uint32_t token);
-	void loadRequest(const TokenRequest &req);
+	void loadRequest(const TokenRequestV2 &req);
 
 protected:
 	void doPoll(float dt);
@@ -88,10 +89,10 @@ private slots:
 
 private:
 	/* Info for Data Requests */
-	std::list<TokenRequest> mRequests;
+	std::list<TokenRequestV2> mRequests;
 
-	RsTokenService *mService;
-	TokenResponse *mResponder;
+	RsTokenServiceV2 *mService;
+        TokenResponseV2 *mResponder;
 
 	QTimer *mTrigger;
 };

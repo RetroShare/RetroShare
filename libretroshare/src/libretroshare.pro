@@ -673,6 +673,7 @@ HEADERS += serialiser/rsnxsitems.h \
             gxs/rsgxsdataaccess.h \
     		retroshare/rsgxsservice.h \
     		serialiser/rsgxsitems.h \
+                serialiser/rsphotov2items.h \
 		util/retrodb.h
 
 SOURCES += serialiser/rsnxsitems.cc \
@@ -680,8 +681,10 @@ SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsgenexchange.cc \
             gxs/rsgxsnetservice.cc \
             gxs/rsgxsdata.cc \
+            serialiser/rsgxsitems.cc \
     		services/p3photoserviceV2.cc \
         	gxs/rsgxsdataaccess.cc \
+                serialiser/rsphotov2items.cc \
 		util/retrodb.cc
 }
 

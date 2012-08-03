@@ -32,7 +32,7 @@
 
 #include <retroshare/rsiface.h>
 
-#include "gui/PhotoShare/PhotoDialog.h"
+//#include "gui/PhotoShare/PhotoDialog.h"
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/TheWire/WireDialog.h"
 #include "gui/Identity/IdDialog.h"
@@ -97,9 +97,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
 
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+    //PhotoDialog *photoDialog = NULL;
+    //ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+     //                 createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),

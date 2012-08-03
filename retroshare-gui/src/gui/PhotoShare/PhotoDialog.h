@@ -27,16 +27,16 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_PhotoDialog.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rsphotoV2.h>
 
 #include <map>
 
 #include "gui/PhotoShare/PhotoItem.h"
 #include "gui/PhotoShare/PhotoAddDialog.h"
 #include "gui/PhotoShare/PhotoSlideShow.h"
-#include "util/TokenQueue.h"
+#include "util/TokenQueueV2.h"
 
-class PhotoDialog : public MainPage, public PhotoHolder, public TokenResponse 
+class PhotoDialog : public MainPage, public PhotoHolder, public TokenResponseV2
 {
   Q_OBJECT
 
@@ -59,16 +59,16 @@ private:
 
 	/* Request Response Functions for loading data */
 	void requestAlbumList();
-	void requestAlbumData(const std::list<std::string> &ids);
+        void requestAlbumData(std::list<std::string> &ids);
 	void requestPhotoList(const std::string &albumId);
-	void requestPhotoData(const std::list<std::string> &photoIds);
+        void requestPhotoData(GxsMsgReq &photoIds);
 	
 	void loadAlbumList(const uint32_t &token);
 	bool loadAlbumData(const uint32_t &token);
 	void loadPhotoList(const uint32_t &token);
 	void loadPhotoData(const uint32_t &token);
 	
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+        void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
 
 
 	/* TODO: These functions must be filled in for proper filtering to work 
@@ -101,7 +101,7 @@ private:
 	PhotoItem *mAlbumSelected;
 	PhotoItem *mPhotoSelected;
 
-	TokenQueue *mPhotoQueue;
+        TokenQueueV2 *mPhotoQueue;
 
 	/* UI - from Designer */
 	Ui::PhotoDialog ui;

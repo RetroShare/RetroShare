@@ -26,7 +26,7 @@
 
 #include "ui_PhotoItem.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rsphotoV2.h>
 
 class PhotoItem;
 

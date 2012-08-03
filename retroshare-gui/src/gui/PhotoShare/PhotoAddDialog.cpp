@@ -45,12 +45,11 @@ PhotoAddDialog::PhotoAddDialog(QWidget *parent)
 
 	mPhotoDetails = NULL;
 
-	mPhotoQueue = new TokenQueue(rsPhoto, this);
+        mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
 
 	ui.AlbumDrop->setSingleImage();
 	connect(ui.AlbumDrop, SIGNAL( photosChanged( void ) ), this, SLOT( albumImageChanged( void ) ) );
 	connect(ui.scrollAreaWidgetContents, SIGNAL( photosChanged( void ) ), this, SLOT( photoImageChanged( void ) ) );
-
 }
 
 
@@ -333,7 +332,7 @@ void PhotoAddDialog::publishAlbum()
         std::cerr << std::endl;
 
 	uint32_t token;
-	rsPhoto->submitAlbumDetails(token, album, true);
+        rsPhotoV2->submitAlbumDetails(album);
 
 	// tell tokenQueue to expect results from submission.
 	mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_SUMMARY, 0);
@@ -413,12 +412,12 @@ void PhotoAddDialog::publishPhotos(std::string albumId)
 		if (isNewPhoto)
 		{
 			std::cerr << "Is a New Photo";
-			rsPhoto->submitPhoto(token, photo, true);
+                        rsPhotoV2->submitPhoto(photo);
 		}
 		else if (isModifiedPhoto)
 		{
 			std::cerr << "Is Updated";
-			rsPhoto->submitPhoto(token, photo, false);
+                        rsPhotoV2->submitPhoto(photo);
 		}
 		else
 		{
@@ -479,7 +478,7 @@ void PhotoAddDialog::loadAlbum(const std::string &albumId)
 
 	RsTokReqOptions opts;
 	uint32_t token;
-	std::list<std::string> albumIds;
+        std::list<RsGxsGroupId> albumIds;
 	albumIds.push_back(albumId);
 
 	// We need both Album and Photo Data.
@@ -497,9 +496,10 @@ bool PhotoAddDialog::loadPhotoData(const uint32_t &token)
 	bool moreData = true;
 	while(moreData)
 	{
+            PhotoResult res;
 		RsPhotoPhoto photo;
 		
-		if (rsPhoto->getPhoto(token, photo))
+                if (rsPhotoV2->getPhoto(token, res))
 		{
 			std::cerr << "PhotoDialog::addAddPhoto() AlbumId: " << photo.mMeta.mGroupId;
 			std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
@@ -525,8 +525,9 @@ bool PhotoAddDialog::loadAlbumData(const uint32_t &token)
 	bool moreData = true;
 	while(moreData)
 	{
+            std::vector<RsPhotoAlbum> albums;
 		RsPhotoAlbum album;
-		if (rsPhoto->getAlbum(token, album))
+                if (rsPhotoV2->getAlbum(token, albums))
 		{
 			std::cerr << " PhotoAddDialog::loadAlbumData() AlbumId: " << album.mMeta.mGroupId << std::endl;
 			updateAlbumDetails(album);
@@ -536,7 +537,9 @@ bool PhotoAddDialog::loadAlbumData(const uint32_t &token)
 			uint32_t token;
 			std::list<std::string> albumIds;
 			albumIds.push_back(album.mMeta.mGroupId);
-			mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
+                        GxsMsgReq req;
+                        req[album.mMeta.mGroupId] = std::vector<RsGxsMessageId>();
+                        mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
 		}
 		else
 		{
@@ -552,7 +555,7 @@ bool PhotoAddDialog::loadCreatedAlbum(const uint32_t &token)
 	std::cerr << std::endl;
 			
 	std::list<RsGroupMetaData> groupInfo;
-	if (!rsPhoto->getGroupSummary(token, groupInfo))
+        if (!rsPhotoV2->getGroupSummary(token, groupInfo))
 	{
 		std::cerr << "PhotoAddDialog::loadCreatedAlbum() ERROR Getting MetaData";
 		std::cerr << std::endl;
@@ -575,7 +578,7 @@ bool PhotoAddDialog::loadCreatedAlbum(const uint32_t &token)
 }
 
 
-void PhotoAddDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PhotoAddDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
 {
 	std::cerr << "PhotoDialog::loadRequest()";
 	std::cerr << std::endl;

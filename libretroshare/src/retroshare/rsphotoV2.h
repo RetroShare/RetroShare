@@ -32,8 +32,8 @@
 #include "rsgxsservice.h"
 
 /* The Main Interface Class - for information about your Peers */
-class RsPhoto;
-extern RsPhoto *rsPhoto;
+class RsPhotoV2;
+extern RsPhotoV2 *rsPhotoV2;
 
 /******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
 

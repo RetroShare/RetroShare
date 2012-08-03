@@ -215,83 +215,84 @@ class RsTokReqOptions
 
 #define RSGXS_MAX_SERVICE_STRING	200 // Sensible limit for dbase usage.
 
+#include "serialiser/rsgxsitems.h"
 
-class RsGroupMetaData
-{
-	public:
-
-	RsGroupMetaData()
-	{
-		mGroupFlags = 0;
-		mSignFlags = 0;
-		mSubscribeFlags = 0;
-
-		mPop = 0;
-		mMsgCount = 0;
-		mLastPost = 0;
-		mGroupStatus = 0;
-	
-		//mPublishTs = 0;
-	}
-	
-	std::string mGroupId;
-	std::string mGroupName;
-	uint32_t    mGroupFlags;  // Service Specific Options ????
-	uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
-
-	time_t      mPublishTs; // Mandatory.
-	std::string mAuthorId;   // Optional. 
-
-	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
-
-	uint32_t    mSubscribeFlags;
-
-	uint32_t    mPop; // HOW DO WE DO THIS NOW.
-	uint32_t    mMsgCount; // ???
-	time_t      mLastPost; // ???
-
-	uint32_t    mGroupStatus;
-
-	std::string mServiceString; // Service Specific Free-Form extra storage.
-};
-
-
-
-
-class RsMsgMetaData
-{
-	public:
-
-	RsMsgMetaData()
-	{
-		mPublishTs = 0;
-		mMsgFlags = 0;
-		mMsgStatus = 0;
-		mChildTs = 0;
-	}
-
-	std::string mGroupId;
-	std::string mMsgId;
-
-	std::string mThreadId;
-	std::string mParentId;
-	std::string mOrigMsgId;
-
-	std::string mAuthorId;
-	
-	std::string mMsgName;
-	time_t      mPublishTs;
-
-	uint32_t    mMsgFlags; // Whats this for? (Optional Service Specific - e.g. flag MsgType)
-
-	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
-	// normally READ / UNREAD flags. LOCAL Data.
-	uint32_t    mMsgStatus;
-	time_t      mChildTs;
-
-	std::string mServiceString; // Service Specific Free-Form extra storage.
-
-};
+//class RsGroupMetaData
+//{
+//	public:
+//
+//	RsGroupMetaData()
+//	{
+//		mGroupFlags = 0;
+//		mSignFlags = 0;
+//		mSubscribeFlags = 0;
+//
+//		mPop = 0;
+//		mMsgCount = 0;
+//		mLastPost = 0;
+//		mGroupStatus = 0;
+//
+//		//mPublishTs = 0;
+//	}
+//
+//	std::string mGroupId;
+//	std::string mGroupName;
+//	uint32_t    mGroupFlags;  // Service Specific Options ????
+//	uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
+//
+//	time_t      mPublishTs; // Mandatory.
+//	std::string mAuthorId;   // Optional.
+//
+//	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
+//
+//	uint32_t    mSubscribeFlags;
+//
+//	uint32_t    mPop; // HOW DO WE DO THIS NOW.
+//	uint32_t    mMsgCount; // ???
+//	time_t      mLastPost; // ???
+//
+//	uint32_t    mGroupStatus;
+//
+//	std::string mServiceString; // Service Specific Free-Form extra storage.
+//};
+//
+//
+//
+//
+//class RsMsgMetaData
+//{
+//	public:
+//
+//	RsMsgMetaData()
+//	{
+//		mPublishTs = 0;
+//		mMsgFlags = 0;
+//		mMsgStatus = 0;
+//		mChildTs = 0;
+//	}
+//
+//	std::string mGroupId;
+//	std::string mMsgId;
+//
+//	std::string mThreadId;
+//	std::string mParentId;
+//	std::string mOrigMsgId;
+//
+//	std::string mAuthorId;
+//
+//	std::string mMsgName;
+//	time_t      mPublishTs;
+//
+//	uint32_t    mMsgFlags; // Whats this for? (Optional Service Specific - e.g. flag MsgType)
+//
+//	// BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
+//	// normally READ / UNREAD flags. LOCAL Data.
+//	uint32_t    mMsgStatus;
+//	time_t      mChildTs;
+//
+//	std::string mServiceString; // Service Specific Free-Form extra storage.
+//
+//};
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
 std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);

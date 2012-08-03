@@ -891,6 +891,21 @@ void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens) {
 	}
 }
 
+bool RsGxsDataAccess::updateRequestStatus(const uint32_t& token,
+		const uint32_t& status) {
+
+	RsStackMutex stack(mDataMutex);
+
+	GxsRequest* req = retrieveRequest(token);
+
+	if(req)
+		req->status = status;
+	else
+		return false;
+
+	return true;
+}
+
 bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const
 {
 	bool statusMatch = false;

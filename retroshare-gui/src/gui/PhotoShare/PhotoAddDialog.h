@@ -26,12 +26,12 @@
 
 #include "ui_PhotoAddDialog.h"
 
-#include <retroshare/rsphoto.h>
-#include "util/TokenQueue.h"
+#include <retroshare/rsphotoV2.h>
+#include "util/TokenQueueV2.h"
 
 class PhotoDetailsDialog;
 
-class PhotoAddDialog : public QWidget, public TokenResponse
+class PhotoAddDialog : public QWidget, public TokenResponseV2
 {
   Q_OBJECT
 
@@ -39,7 +39,7 @@ public:
 	PhotoAddDialog(QWidget *parent = 0);
 
 	void loadAlbum(const std::string &albumId);
-virtual	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+virtual	void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
 
 	void clearDialog();
 
@@ -67,7 +67,7 @@ private:
 	bool loadAlbumData(const uint32_t &token);
 	bool loadCreatedAlbum(const uint32_t &token);
 
-	TokenQueue *mPhotoQueue;
+        TokenQueueV2 *mPhotoQueue;
 protected:
 
 	bool mAlbumEdit; // Editing or New.

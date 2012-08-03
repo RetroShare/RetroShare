@@ -29,7 +29,7 @@
 
 #include "PhotoItem.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rsphotoV2.h>
 
 #include <algorithm>
 #include <iostream>

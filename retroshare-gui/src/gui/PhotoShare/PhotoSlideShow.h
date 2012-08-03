@@ -26,18 +26,19 @@
 
 #include "ui_PhotoSlideShow.h"
 
-#include <retroshare/rsphoto.h>
-#include "util/TokenQueue.h"
+#include <retroshare/rsphotoV2.h>
+#include "util/TokenQueueV2.h"
 
-class PhotoSlideShow : public QWidget, public TokenResponse
+class PhotoSlideShow : public QWidget, public TokenResponseV2
 {
   Q_OBJECT
 
 public:
 	PhotoSlideShow(QWidget *parent = 0);
+        virtual ~PhotoSlideShow();
 
 	void loadAlbum(const std::string &albumId);
-virtual	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+virtual	void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
 
 	void clearDialog();
 
@@ -67,7 +68,7 @@ private:
 	int mImageIdx;
 	bool mShotActive;
 
-	TokenQueue *mPhotoQueue;
+        TokenQueueV2 *mPhotoQueue;
 
 	Ui::PhotoSlideShow ui;
 };

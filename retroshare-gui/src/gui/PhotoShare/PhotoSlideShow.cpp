@@ -38,7 +38,7 @@ PhotoSlideShow::PhotoSlideShow(QWidget *parent)
 	connect(ui.pushButton_StartStop, SIGNAL( clicked( void ) ), this, SLOT( StartStop( void ) ) );
 	connect(ui.pushButton_Close, SIGNAL( clicked( void ) ), this, SLOT( closeShow( void ) ) );
 
-	mPhotoQueue = new TokenQueue(rsPhoto, this);
+        mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
 
 	mRunning = true;
 	mShotActive = true;
@@ -49,6 +49,9 @@ PhotoSlideShow::PhotoSlideShow(QWidget *parent)
         //QTimer::singleShot(5000, this, SLOT(timerEvent()));
 }
 
+PhotoSlideShow::~PhotoSlideShow(){
+
+}
 
 void PhotoSlideShow::showPhotoDetails()
 {
@@ -262,8 +265,9 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 	while(moreData)
 	{
 		RsPhotoPhoto photo;
+                PhotoResult res;
 		
-		if (rsPhoto->getPhoto(token, photo))
+                if (rsPhotoV2->getPhoto(token, res))
 		{
 			RsPhotoPhoto *ptr = new RsPhotoPhoto;
 			*ptr = photo;
@@ -299,7 +303,8 @@ bool PhotoSlideShow::loadAlbumData(const uint32_t &token)
 	while(moreData)
 	{
 		RsPhotoAlbum album;
-		if (rsPhoto->getAlbum(token, album))
+                std::vector<RsPhotoAlbum> res;
+                if (rsPhotoV2->getAlbum(token, res))
 		{
 			std::cerr << " PhotoSlideShow::loadAlbumData() AlbumId: " << album.mMeta.mGroupId << std::endl;
 			//updateAlbumDetails(album);
@@ -309,7 +314,9 @@ bool PhotoSlideShow::loadAlbumData(const uint32_t &token)
 			uint32_t token;
 			std::list<std::string> albumIds;
 			albumIds.push_back(album.mMeta.mGroupId);
-			mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
+                        GxsMsgReq req;
+                        req[album.mMeta.mGroupId] = std::vector<RsGxsMessageId>();
+                        mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
 		}
 		else
 		{
@@ -319,8 +326,7 @@ bool PhotoSlideShow::loadAlbumData(const uint32_t &token)
 	return true;
 }
 
-
-void PhotoSlideShow::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PhotoSlideShow::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
 {
 	std::cerr << "PhotoSlideShow::loadRequest()";
 	std::cerr << std::endl;
