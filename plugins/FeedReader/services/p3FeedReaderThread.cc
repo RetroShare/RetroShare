@@ -47,6 +47,11 @@ p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type) : Rs
 	}
 }
 
+p3FeedReaderThread::~p3FeedReaderThread()
+{
+	xmlCharEncCloseFunc((xmlCharEncodingHandlerPtr) mCharEncodingHandler);
+}
+
 /***************************************************************************/
 /****************************** Thread *************************************/
 /***************************************************************************/
@@ -119,9 +124,9 @@ static size_t writeFunctionString (void *ptr, size_t size, size_t nmemb, void *s
 
 static size_t writeFunctionBinary (void *ptr, size_t size, size_t nmemb, void *stream)
 {
-	std::vector<byte> *bytes = (std::vector<byte>*) stream;
+	std::vector<unsigned char> *bytes = (std::vector<unsigned char>*) stream;
 
-	std::vector<byte> newBytes;
+	std::vector<unsigned char> newBytes;
 	newBytes.resize(size * nmemb);
 	memcpy(newBytes.data(), ptr, newBytes.size());
 
@@ -163,7 +168,7 @@ static bool getFavicon (std::string url, const std::string &proxy, std::string &
 	if (curl) {
 		url += "/favicon.ico";
 
-		std::vector<byte> vicon;
+		std::vector<unsigned char> vicon;
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunctionBinary);
@@ -183,9 +188,9 @@ static bool getFavicon (std::string url, const std::string &proxy, std::string &
 				char *contentType = NULL;
 				curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &contentType);
 				if (contentType &&
-					(strnicmp(contentType, "image/x-icon", 12) == 0 ||
-					 strnicmp(contentType, "application/octet-stream", 24) == 0 ||
-					 strnicmp(contentType, "text/plain", 10) == 0)) {
+					(strncasecmp(contentType, "image/x-icon", 12) == 0 ||
+					 strncasecmp(contentType, "application/octet-stream", 24) == 0 ||
+					 strncasecmp(contentType, "text/plain", 10) == 0)) {
 					if (!vicon.empty()) {
 						long todo; // check it
 						//  Set up a base64 encoding BIO that writes to a memory BIO
@@ -275,10 +280,10 @@ p3FeedReaderThread::DownloadResult p3FeedReaderThread::download(const RsFeedRead
 				char *contentType = NULL;
 				curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &contentType);
 				if (contentType &&
-					(strnicmp(contentType, "text/xml", 8) == 0 ||
-					 strnicmp(contentType, "application/rss+xml", 19) == 0 ||
-					 strnicmp(contentType, "application/xml", 15) == 0 ||
-					 strnicmp(contentType, "application/xhtml+xml", 21) == 0)) {
+					(strncasecmp(contentType, "text/xml", 8) == 0 ||
+					 strncasecmp(contentType, "application/rss+xml", 19) == 0 ||
+					 strncasecmp(contentType, "application/xml", 15) == 0 ||
+					 strncasecmp(contentType, "application/xhtml+xml", 21) == 0)) {
 					/* ok */
 					result = DOWNLOAD_SUCCESS;
 				} else {
@@ -317,38 +322,18 @@ p3FeedReaderThread::DownloadResult p3FeedReaderThread::download(const RsFeedRead
 
 static bool convertOutput(xmlCharEncodingHandlerPtr charEncodingHandler, const xmlChar *output, std::string &text)
 {
-	if (!output) {
-		return false;
-	}
-
-	if (charEncodingHandler == NULL || charEncodingHandler->output == NULL) {
-		return false;
-	}
-
 	bool result = false;
-	int sizeOut = xmlStrlen(output) + 1;
-	int sizeIn = sizeOut * 2 - 1;
-	char *input = (char*) malloc(sizeIn * sizeof(char));
 
-	if (input) {
-		int temp = sizeOut - 1;
-		int ret = charEncodingHandler->output((xmlChar*) input, &sizeIn, (const xmlChar *) output, &temp);
-		if ((ret < 0) || (temp - sizeOut + 1)) {
-			if (ret < 0) {
-				std::cerr << "convertOutput: conversion wasn't successful." << std::endl;
-			} else {
-				std::cerr << "convertOutput: conversion wasn't successful. converted: " << temp << " octets." << std::endl;
-			}
-		} else {
-			text.assign(input, sizeIn);
-			result = true;
-		}
-
-		free(input);
-		input = NULL;
-	} else {
-		std::cerr << "convertOutput: no mem" << std::endl;
+	xmlBufferPtr out = xmlBufferCreate();
+	xmlBufferPtr in = xmlBufferCreateStatic((void*) output, xmlStrlen(output));
+	int ret = xmlCharEncOutFunc(charEncodingHandler, out, in);
+	if (ret >= 0) {
+		result = true;
+		text = (char*) xmlBufferContent(out);
 	}
+
+	xmlBufferFree(in);
+	xmlBufferFree(out);
 
 	return result;
 }
@@ -413,7 +398,7 @@ static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNode
 static bool getChildText(/*xmlCharEncodingHandlerPtr*/ void *charEncodingHandler, xmlNodePtr node, const char *childName, std::string &text)
 {
 	if (node == NULL || node->children == NULL) {
-		return FALSE;
+		return false;
 	}
 
 	xmlNodePtr child = findNode(node->children, childName, true);

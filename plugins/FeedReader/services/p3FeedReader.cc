@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "RsFeedReaderItems.h"
+#include "rsFeedReaderItems.h"
 #include "p3FeedReader.h"
 #include "p3FeedReaderThread.h"
 #include "serialiser/rsconfigitems.h"

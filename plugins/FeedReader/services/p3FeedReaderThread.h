@@ -56,6 +56,7 @@ public:
 
 public:
 	p3FeedReaderThread(p3FeedReader *feedReader, Type type);
+	virtual ~p3FeedReaderThread();
 
 private:
 	virtual void run();

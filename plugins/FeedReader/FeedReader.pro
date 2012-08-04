@@ -30,6 +30,14 @@ TARGET = FeedReader
 RESOURCES = gui/FeedReader_images.qrc \
 			lang/lang.qrc
 
+linux-* {
+	LIBXML2_DIR = /usr/include/libxml2
+
+	INCLUDEPATH += $${LIBXML2_DIR}
+
+	LIBS += -lcurl -lxml2
+}
+
 win32 {
 	DEFINES += CURL_STATICLIB
 

@@ -20,7 +20,7 @@
  ****************************************************************/
 
 #include <QDateTime>
-#include <QKEyEvent>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QInputDialog>
 #include <QPixmap>
