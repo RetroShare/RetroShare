@@ -40,6 +40,10 @@
 #include "introserver.h"
 #endif
 
+#ifdef RS_SSH_SERVER
+#include "ssh/rssshd.h"
+#endif
+
 /* Basic instructions for running libretroshare as background thread.
  * ******************************************************************* *
  * This allows your program to communicate with authenticated peers. 
@@ -132,6 +136,13 @@ int main(int argc, char **argv)
 				return 1;
 	}
 
+#ifdef RS_SSH_SERVER
+	// Says it must be called before all the threads are launched! */
+        // NB: this port number is not currently used.
+	RsSshd *ssh = RsSshd::InitRsSshd(22, "rs_ssh_host_rsa_key");
+        ssh->adduser("anrsuser", "test");
+#endif
+
 	/* Start-up libretroshare server threads */
 	rsServer -> StartupRetroShare();
 
@@ -139,6 +150,10 @@ int main(int argc, char **argv)
 	RsIntroServer rsIS;
 #endif
 	
+#ifdef RS_SSH_SERVER
+	ssh->start();
+#endif
+
 	/* pass control to the GUI */
 	while(1)
 	{

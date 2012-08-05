@@ -2,6 +2,7 @@ TEMPLATE = app
 TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
+#CONFIG += sshserver
 
 ################################# Linux ##########################################
 linux-* {
@@ -109,6 +110,26 @@ introserver {
 	HEADERS += introserver.h
 	SOURCES += introserver.cc
 	DEFINES *= RS_INTRO_SERVER
+}
+
+sshserver {
+	# This Requires libssh-0.5.* to compile.
+	# Modify path below to point at it.
+	# Probably will only work on Linux for the moment.
+	#
+	# Use the following commend to generate a Server RSA Key.
+	# Key should be in current directory - when run/
+	# ssh-keygen -t rsa -f rs_ssh_host_rsa_key
+        #
+        # You can connect from a standard ssh, eg: ssh -p 7022 127.0.0.1
+ 	#
+
+	INCLUDEPATH += ../../../lib/libssh-0.5.2/include/
+	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
+	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
+	HEADERS += ssh/rssshd.h
+	SOURCES += ssh/rssshd.cc
+	DEFINES *= RS_SSH_SERVER
 }
 
 
