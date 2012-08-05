@@ -20,17 +20,16 @@ REQUIREMENTS
 
 Libraries/Tools:
 	* C/C++ Compiler. 	  	  (standard on Linux/cygwin)
-	* Qt >= 4.5.x 		  	    http://qt.nokia.com/downloads/downloads#lgpl
-	* OpenSSL       	      	http://www.openssl.org/source/openssl-0.9.8k.tar.gz
+	* Qt >= 4.6.x 		  	http://qt.nokia.com/downloads/downloads#lgpl
+	* OpenSSL       	      	http://www.openssl.org/source/openssl-1.0.1c.tar.gz
 	* MiniUPnP           	  	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
-	* gpgme 		              ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
-	* libgpg-error          	ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2 
 
 Windows only:
-	* Cygwin  	          	  http://www.cygwin.com/cygwin/setup.exe (for openssl compile)
-	* MinGW/Msys package  		http://sourceforge.net/projects/mingw/files/	 (for compile gpgme,libgpg-error)
+	* Cygwin  	          	http://www.cygwin.com/cygwin/setup.exe (for compile, openssl, pthreads)
+	* MinGW/Msys package  		http://sourceforge.net/projects/mingw/files/(for compile zlib, miniupnc, bzip2)
 	* Pthreads            		http://sourceware.org/pthreads-win32/ 
 	* Zlib                		http://www.zlib.net/
+	* bzip2				http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
 	
 	Latest RetroShare sources from (SVN) sourceforge.net:	
     	svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare 
@@ -46,17 +45,12 @@ http://www.openssl.org
 Latest miniupnpc-1.3 is avaible at:
 http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
 
-Latest gpgme Library is avaible at:
-ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
-
-Latest libgpg-error Library is avaible at:
-ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
 
 Windows only:
 	pthreads: ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
 	zlib:	    http://www.zlib.net/zlib-1.2.3.tar.gz 
 =========================================================================================
-You can find here instrustions howto compile libretroshare and gui:
+You can find here instructions howto compile RetroShare:
 http://retroshare.sourceforge.net/wiki/index.php/Developers_Corner
 	
 =========================================================================================	
