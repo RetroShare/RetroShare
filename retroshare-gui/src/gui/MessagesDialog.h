@@ -39,6 +39,8 @@ public:
   /** Default Destructor */
   ~MessagesDialog();
 
+  virtual UserNotify *getUserNotify(QObject *parent);
+
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
 

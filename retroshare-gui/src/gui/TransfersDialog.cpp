@@ -48,6 +48,7 @@
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
 #include "common/RsCollectionFile.h"
+#include "transfers/TransferUserNotify.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -397,6 +398,11 @@ TransfersDialog::~TransfersDialog()
 {
     // save settings
     processSettings(false);
+}
+
+UserNotify *TransfersDialog::getUserNotify(QObject *parent)
+{
+    return new TransferUserNotify(parent);
 }
 
 void TransfersDialog::processSettings(bool bLoad)

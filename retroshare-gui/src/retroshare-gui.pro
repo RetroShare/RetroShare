@@ -244,6 +244,7 @@ HEADERS +=  rshare.h \
             gui/forums/EditForumDetails.h \
             gui/forums/CreateForum.h \
             gui/forums/CreateForumMsg.h \
+            gui/forums/ForumUserNotify.h \
             gui/NetworkView.h \
             gui/TrustView.h \
             gui/MessengerWindow.h \
@@ -302,11 +303,13 @@ HEADERS +=  rshare.h \
             gui/chat/ChatLobbyDialog.h \
             gui/chat/CreateLobbyDialog.h \
             gui/chat/ChatStyle.h \
+            gui/chat/ChatUserNotify.h \
             gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
             gui/channels/EditChanDetails.h \
             gui/channels/ShareKey.h \
+            gui/channels/ChannelUserNotify.h \
             gui/connect/ConfCertDialog.h \
             gui/connect/FriendRequest.h \
             gui/msgs/MessageComposer.h \
@@ -314,6 +317,8 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageWidget.h \
             gui/msgs/TagsMenu.h \
             gui/msgs/textformat.h \
+            gui/msgs/MessageUserNotify.h \
+            gui/transfers/TransferUserNotify.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
             gui/settings/RsharePeerSettings.h \
@@ -371,6 +376,7 @@ HEADERS +=  rshare.h \
             gui/common/LineEditClear.h \
             gui/common/DropLineEdit.h \
             gui/common/LinkTextBrowser.h \
+            gui/common/UserNotify.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -534,6 +540,7 @@ SOURCES +=  main.cpp \
             gui/forums/EditForumDetails.cpp \
             gui/forums/CreateForum.cpp \
             gui/forums/CreateForumMsg.cpp \
+            gui/forums/ForumUserNotify.cpp \
             gui/NetworkView.cpp \
             gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
@@ -586,6 +593,7 @@ SOURCES +=  main.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/channels/EditChanDetails.cpp \
             gui/channels/ShareKey.cpp \
+            gui/channels/ChannelUserNotify.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/ChatTabWidget.cpp \
@@ -595,12 +603,15 @@ SOURCES +=  main.cpp \
             gui/chat/ChatLobbyDialog.cpp \
             gui/chat/CreateLobbyDialog.cpp \
             gui/chat/ChatStyle.cpp \
+            gui/chat/ChatUserNotify.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/connect/FriendRequest.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
             gui/msgs/TagsMenu.cpp \
+            gui/msgs/MessageUserNotify.cpp \
+            gui/transfers/TransferUserNotify.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionFile.cpp \
             gui/common/RsCollectionDialog.cpp \
@@ -628,6 +639,7 @@ SOURCES +=  main.cpp \
             gui/common/LineEditClear.cpp \
             gui/common/DropLineEdit.cpp \
             gui/common/LinkTextBrowser.cpp \
+            gui/common/UserNotify.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \

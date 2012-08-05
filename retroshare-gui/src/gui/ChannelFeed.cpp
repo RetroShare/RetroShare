@@ -40,6 +40,7 @@
 #include "channels/CreateChannelMsg.h"
 #include "channels/EditChanDetails.h"
 #include "channels/ShareKey.h"
+#include "channels/ChannelUserNotify.h"
 #include "notifyqt.h"
 #include "RetroShareLink.h"
 
@@ -111,6 +112,11 @@ ChannelFeed::~ChannelFeed()
 
     // save settings
     processSettings(false);
+}
+
+UserNotify *ChannelFeed::getUserNotify(QObject *parent)
+{
+    return new ChannelUserNotify(parent);
 }
 
 void ChannelFeed::processSettings(bool load)

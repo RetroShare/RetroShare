@@ -29,6 +29,7 @@
 #include "msgs/MessageComposer.h"
 #include "msgs/MessageWidget.h"
 #include "msgs/TagsMenu.h"
+#include "msgs/MessageUserNotify.h"
 #include "settings/rsharesettings.h"
 #include "common/TagDefs.h"
 #include "common/PeerDefs.h"
@@ -314,6 +315,11 @@ MessagesDialog::~MessagesDialog()
 
     // save settings
     processSettings(false);
+}
+
+UserNotify *MessagesDialog::getUserNotify(QObject *parent)
+{
+    return new MessageUserNotify(parent);
 }
 
 void MessagesDialog::processSettings(bool load)

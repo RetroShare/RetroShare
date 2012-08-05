@@ -25,6 +25,20 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_NotifyPage.h"
 
+class UserNotify;
+
+class UserNotifySetting
+{
+public:
+    UserNotify *mUserNotify;
+    QCheckBox *mEnabledCheckBox;
+    QCheckBox *mCombinedCheckBox;
+
+public:
+    UserNotifySetting(UserNotify *userNotify, QCheckBox *enabledCheckBox, QCheckBox *combinedCheckBox)
+        : mUserNotify(userNotify), mEnabledCheckBox(enabledCheckBox), mCombinedCheckBox(combinedCheckBox) {}
+};
+
 class NotifyPage : public ConfigPage
 {
     Q_OBJECT
@@ -44,9 +58,11 @@ public:
 	 virtual QString pageName() const { return tr("Notify") ; }
 
 private slots:
-    void privatChatToggled();
+	void notifyToggled();
 
 private:
+    QList<UserNotifySetting> mUserNotifySettingList;
+
     /** Qt Designer generated object */
     Ui::NotifyPage ui;
 };

@@ -43,6 +43,8 @@ public:
     /** Default Destructor */
     ~FriendsDialog ();
 
+    virtual UserNotify *getUserNotify(QObject *parent);
+
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 
     static ChatTabWidget *getTabWidget();

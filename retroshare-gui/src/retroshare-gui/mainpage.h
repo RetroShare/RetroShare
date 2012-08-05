@@ -25,6 +25,7 @@
 
 #include <QWidget>
 
+class UserNotify;
 
 class MainPage : public QWidget
 {
@@ -33,6 +34,7 @@ public:
   MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0) : QWidget(parent, flags) {}
 
   virtual void retranslateUi() {}
+  virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
 };
 
 #endif

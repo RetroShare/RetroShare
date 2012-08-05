@@ -42,6 +42,7 @@
 #include "common/vmessagebox.h"
 #include "common/PeerDefs.h"
 #include "chat/ChatDialog.h"
+#include "chat/ChatUserNotify.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
 #include "forums/CreateForum.h"
@@ -228,6 +229,11 @@ FriendsDialog::~FriendsDialog ()
     if (this == instance) {
         instance = NULL;
     }
+}
+
+UserNotify *FriendsDialog::getUserNotify(QObject *parent)
+{
+    return new ChatUserNotify(parent);
 }
 
 void FriendsDialog::processSettings(bool bLoad)

@@ -46,6 +46,8 @@ public:
     TransfersDialog(QWidget *parent = 0);
     ~TransfersDialog();
 
+    virtual UserNotify *getUserNotify(QObject *parent);
+
 // replaced by shortcut
 //    virtual void keyPressEvent(QKeyEvent *) ;
     virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget

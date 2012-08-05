@@ -31,6 +31,7 @@
 #include "forums/CreateForumMsg.h"
 #include "forums/ForumDetails.h"
 #include "forums/EditForumDetails.h"
+#include "forums/ForumUserNotify.h"
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
 #include "common/Emoticons.h"
@@ -235,6 +236,11 @@ ForumsDialog::~ForumsDialog()
 
     // save settings
     processSettings(false);
+}
+
+UserNotify *ForumsDialog::getUserNotify(QObject *parent)
+{
+    return new ForumUserNotify(parent);
 }
 
 void ForumsDialog::processSettings(bool bLoad)

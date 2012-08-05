@@ -40,6 +40,8 @@ public:
     ForumsDialog(QWidget *parent = 0);
     ~ForumsDialog();
 
+    virtual UserNotify *getUserNotify(QObject *parent);
+
     bool navigate(const std::string& forumId, const std::string& msgId);
 
     /* overloaded from RsAuthUpdatePage */

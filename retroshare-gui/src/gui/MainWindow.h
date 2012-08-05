@@ -103,6 +103,8 @@ public:
     /** get page */
     static MainPage *getPage (Page page);
 
+    const QList<UserNotify*> &getUserNotifyList();
+
     /* A Bit of a Hack... but public variables for
     * the dialogs, so we can add them to the
     * Notify Class...
@@ -145,11 +147,6 @@ public slots:
     void postModDirectories(bool update_local);
     void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
-    void updateMessages();
-    void updateForums();
-    void updateChannels(int type);
-    void updateTransfers(int count);
-    void privateChatChanged(int list, int type);
 
     void linkActivated(const QUrl &url);
 
@@ -170,13 +167,6 @@ private slots:
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
-
-    /* default parameter for connect with the actions of the combined systray icon */
-    void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
-    void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
-    void trayIconChannelsClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
-    void trayIconChatClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
-    void trayIconTransfersClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
 
     /** Toolbar fns. */
     void addFriend();
@@ -207,12 +197,11 @@ private slots:
     void doQuit();
     
     void on_actionQuick_Start_Wizard_activated();
+    void updateTrayCombine();
 
 private:
     void createTrayIcon();
     void createNotifyIcons();
-    void updateTrayCombine();
-
     static MainWindow *_instance;
 
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
@@ -226,19 +215,10 @@ private:
     QString nameAndLocation;
 
     QSystemTrayIcon *trayIcon;
-    QSystemTrayIcon *trayIconMessages;
-    QSystemTrayIcon *trayIconForums;
-    QSystemTrayIcon *trayIconChannels;
-    QSystemTrayIcon *trayIconChat;
-    QSystemTrayIcon *trayIconTransfers;
     QMenu *notifyMenu;
     QString notifyToolTip;
-    QAction *trayActionMessages;
-    QAction *trayActionForums;
-    QAction *trayActionChannels;
-    QAction *trayActionChat;
-    QAction *trayActionTransfers;
     QAction *toggleVisibilityAction, *toolAct;
+    QList<UserNotify*> userNotifyList;
 
     PeerStatus *peerstatus;
     NATStatus *natstatus;
@@ -247,11 +227,6 @@ private:
     DiscStatus *discstatus;
     HashingStatus *hashingstatus;
     QComboBox *statusComboBox;
-
-    QAction *messageAction;
-    QAction *forumAction;
-    QAction *channelAction;
-    QAction *transferAction;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status
