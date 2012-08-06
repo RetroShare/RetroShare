@@ -75,7 +75,7 @@ QIcon MessageUserNotify::getIcon()
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/messages_new.png") : QIcon(":/images/evolution.png");
+	return hasNew ? QIcon(":/images/message_new.png") : QIcon(":/images/evolution.png");
 }
 
 unsigned int MessageUserNotify::getNewCount()

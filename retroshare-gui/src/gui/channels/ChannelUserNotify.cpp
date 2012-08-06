@@ -75,7 +75,7 @@ QIcon ChannelUserNotify::getIcon()
 
 QIcon ChannelUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/channels_new32.png") : QIcon(":/images/channels.png");
+	return hasNew ? QIcon(":/images/channels_new.png") : QIcon(":/images/channels.png");
 }
 
 unsigned int ChannelUserNotify::getNewCount()

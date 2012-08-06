@@ -75,7 +75,7 @@ QIcon ForumUserNotify::getIcon()
 
 QIcon ForumUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/konversation_new.png") : QIcon(":/images/konversation.png");
+	return hasNew ? QIcon(":/images/forums_new.png") : QIcon(":/images/konversation.png");
 }
 
 unsigned int ForumUserNotify::getNewCount()
