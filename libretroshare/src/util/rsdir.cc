@@ -351,7 +351,7 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 }
 
 
-bool	RsDirUtil::checkFile(const std::string& filename)
+bool	RsDirUtil::checkFile(const std::string& filename,bool disallow_empty_file)
 {
 	int val;
 	mode_t st_mode;
@@ -362,8 +362,8 @@ bool	RsDirUtil::checkFile(const std::string& filename)
 	val = _wstat(wfilename.c_str(), &buf);
 	st_mode = buf.st_mode;
 #else
-	struct stat buf;
-	val = stat(filename.c_str(), &buf);
+	struct stat64 buf;
+	val = stat64(filename.c_str(), &buf);
 	st_mode = buf.st_mode;
 #endif
 	if (val == -1)
@@ -383,6 +383,10 @@ bool	RsDirUtil::checkFile(const std::string& filename)
 #endif
 		return false;
 	}
+
+	if(disallow_empty_file && buf.st_size == 0)
+		return false ;
+
 	return true;
 }
 

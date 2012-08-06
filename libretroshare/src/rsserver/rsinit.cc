@@ -2013,7 +2013,7 @@ int RsServer::StartupRetroShare()
 	 * if not... copy from dataDirectory
 	 */
 
-	if (!RsDirUtil::checkFile(bootstrapfile))
+	if (!RsDirUtil::checkFile(bootstrapfile,true))
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
 		std::string installfile = RsInit::getRetroshareDataDirectory();
