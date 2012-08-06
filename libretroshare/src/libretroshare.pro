@@ -299,6 +299,11 @@ win32 {
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
+
+	newcache {
+		SQLITE_DIR = ../../../sqlite-autoconf-3071300
+		INCLUDEPATH += . $${SQLITE_DIR}
+	}
 }
 
 
