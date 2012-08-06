@@ -79,6 +79,7 @@
         <file>images/channels24.png</file>
         <file>images/channels32.png</file>
         <file>images/channels_new32.png</file>
+        <file>images/channels_new.png</file>
         <file>images/copyrslink.png</file>
         <file>images/contacts24.png</file>
         <file>images/connection.png</file>
@@ -256,6 +257,7 @@
         <file>images/kblogger.png</file>
         <file>images/hi48-app-kblogger.png</file>
         <file>images/hi64-app-kblogger.png</file>
+        <file>images/transfers_new.png</file>
         <file>images/kcmsystem24.png</file>
         <file>images/kdmconfig.png</file>
         <file>images/konsole.png</file>
@@ -267,6 +269,7 @@
         <file>images/konversation128.png</file>
         <file>images/konv_message2.png</file>
         <file>images/konversation64.png</file>
+        <file>images/forums_new.png</file>
         <file>images/ksysguard.png</file>
         <file>images/ksysguard32.png</file>
         <file>images/ktorrent.png</file>
@@ -310,6 +313,7 @@
         <file>images/message-state-header.png</file>
         <file>images/message-state-new.png</file>
         <file>images/message-news.png</file>
+        <file>images/message_new.png</file>
         <file>images/message.png</file>
         <file>images/messages_new.png</file>
         <file>images/messenger.png</file>
@@ -453,6 +457,7 @@
         <file>images/user/identity24_low.png</file>
         <file>images/user/identity32.png</file>
         <file>images/user/identity48.png</file>
+        <file>images/user/identityinfo48.png</file>
         <file>images/user/identityoffline24.png</file>
         <file>images/user/identity24away.png</file>
         <file>images/user/identity24busy.png</file>
