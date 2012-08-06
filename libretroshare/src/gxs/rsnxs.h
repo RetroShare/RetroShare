@@ -2,7 +2,7 @@
 #define RSGNP_H
 
 /*
- * libretroshare/src/gxs: rsgnp.h
+ * libretroshare/src/gxs: rsnxs.h
  *
  * Network Exchange Service interface for RetroShare.
  *

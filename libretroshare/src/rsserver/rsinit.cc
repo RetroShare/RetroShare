@@ -1807,6 +1807,15 @@ RsTurtle *rsTurtle = NULL ;
 #include "turtle/p3turtle.h"
 
 #define ENABLE_GXS_SERVICES	1
+#define ENABLE_GXS_CORE 1
+
+#ifdef ENABLE_GXS_CORE
+#include "gxs/gxscoreserver.h"
+#include "services/p3photoserviceV2.h"
+#include "gxs/rsdataservice.h"
+#include "gxs/rsgxsnetservice.h"
+#endif
+
 #ifdef ENABLE_GXS_SERVICES
 #include "services/p3photoservice.h"
 #include "services/p3wikiservice.h"
@@ -2256,6 +2265,36 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
 
+#ifdef ENABLE_GXS_CORE
+
+	p3PhotoServiceV2 *mPhotoV2 = NULL;
+
+	// first prep the core
+
+	RsGeneralDataService* photo_ds = new RsDataService("./", "photoV2_db",
+			RS_SERVICE_TYPE_PHOTO, NULL);
+
+	// TODO need net manager
+	//RsGxsNetService* photo_ns = new RsGxsNetService(
+	//		RS_SERVICE_TYPE_PHOTO, photo_ds, NULL, mPhotoV2);
+
+
+	// init gxs services
+	mPhotoV2 = new p3PhotoServiceV2(photo_ds, NULL);
+
+	GxsCoreServer* mGxsCore = new GxsCoreServer();
+	mGxsCore->addService(mPhotoV2);
+
+	// cores read start up servers !
+
+	// start nxs core core server
+	//createThread(*photo_ns);
+
+	// start up gxs core server
+	createThread(*mGxsCore);
+
+#endif
+
 #ifdef ENABLE_GXS_SERVICES
 	// Testing New Cache Services.
 	p3PhotoService *mPhotos = new p3PhotoService(RS_SERVICE_TYPE_PHOTO);
@@ -2543,6 +2582,7 @@ int RsServer::StartupRetroShare()
 	// Testing of new cache system interfaces.
 	rsIdentity = mIdentity;
 	rsPhoto = mPhotos;
+        rsPhotoV2 = mPhotoV2;
 	rsWiki = mWikis;
 	rsWire = mWire;
 	rsForumsV2 = mForumsV2;

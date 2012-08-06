@@ -1,12 +1,9 @@
-#ifndef GXSCORESERVER_H_
-#define GXSCORESERVER_H_
-
 /*
- * libretroshare/src/gxs: gxscoreserver.h
+ * libretroshare/src/test rsphotoitem_test.h
  *
- * General Data service, interface for RetroShare.
+ * Test for photo item serialisation
  *
- * Copyright 2011-2011 by Evi-Parker Christopher
+ * Copyright 2012-2012 by Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,25 +23,19 @@
  *
  */
 
+#ifndef RSPHOTOITEM_TEST_H_
+#define RSPHOTOITEM_TEST_H_
 
-#include "util/rsthreads.h"
-#include "gxs/rsgxs.h"
+#include "serialiser/rsphotov2items.h"
+#include "support.h"
 
-class GxsCoreServer : public RsThread
-{
-public:
-	GxsCoreServer();
-	~GxsCoreServer();
 
-	void run();
 
-	void addService(RsGxsService* service);
-	bool removeService(RsGxsService* service);
+RsSerialType* init_item(RsGxsPhotoAlbumItem& album);
+RsSerialType* init_item(RsGxsPhotoPhotoItem& photo);
 
-private:
+bool operator == (RsGxsPhotoAlbumItem& l, RsGxsPhotoAlbumItem& r);
+bool operator == (RsGxsPhotoPhotoItem& l, RsGxsPhotoPhotoItem& r);
+bool operator == (RsPhotoThumbnail& l, RsPhotoThumbnail& r);
 
-	std::set<RsGxsService*> mGxsServices;
-	RsMutex mGxsMutex;
-};
-
-#endif /* GXSCORESERVER_H_ */
+#endif /* RSPHOTOITEM_TEST_H_ */

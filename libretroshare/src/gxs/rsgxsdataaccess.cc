@@ -41,8 +41,6 @@
 #define RS_TOKREQOPT_MSG_UPDATED	0x0200		// MSGLIST: Msg that have been updated from specified groups.
 #define RS_TOKREQOPT_MSG_UPDATED	0x0200		// MSGLIST: Msg that have been updated from specified groups.
 
-
-
 // Read Status.
 #define RS_TOKREQOPT_READ		0x0001
 #define RS_TOKREQOPT_UNREAD		0x0002
@@ -64,7 +62,7 @@ RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
 }
 
 
-bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
+bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts,
 		const std::list<std::string> &groupIds)
 {
 	GxsRequest* req = NULL;
@@ -117,7 +115,7 @@ void RsGxsDataAccess::generateToken(uint32_t &token)
 
 
 bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-		const RsTokReqOptions &opts, const GxsMsgReq &msgIds)
+		const RsTokReqOptionsV2 &opts, const GxsMsgReq &msgIds)
 {
 
 	GxsRequest* req = NULL;
@@ -208,7 +206,7 @@ bool RsGxsDataAccess::requestSetMessageStatus(uint32_t& token, const RsGxsGrpMsg
 	return true;
 }
 
-void RsGxsDataAccess::setReq(GxsRequest* req, const uint32_t& token, const uint32_t& ansType, const RsTokReqOptions& opts) const
+void RsGxsDataAccess::setReq(GxsRequest* req, const uint32_t& token, const uint32_t& ansType, const RsTokReqOptionsV2& opts) const
 {
 	req->token = token;
 	req->ansType = ansType;
@@ -477,7 +475,7 @@ void RsGxsDataAccess::processRequests()
 			GxsRequest* req = it->second;
 			if (req->status == GXS_REQUEST_STATUS_PENDING)
 			{
-				std::cerr << "p3GxsDataService::fakeprocessrequests() Processing Token: " << req->token << " Status: "
+				std::cerr << "RsGxsDataAccess::processRequests() Processing Token: " << req->token << " Status: "
 						<< req->status << " ReqType: " << req->reqType << " Age: "
 						<< now - req->reqTime << std::endl;
 
@@ -606,13 +604,10 @@ bool RsGxsDataAccess::getGroupList(GroupIdReq* req)
 
 bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 {
-
-
 	GxsMsgResult result;
 	mDataStore->retrieveNxsMsgs(req->mMsgIds, result, true);
 
 	req->mMsgData = result;
-
 	return true;
 }
 
@@ -638,7 +633,7 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 	std::vector<RsGxsGroupId> groupIds;
 	GxsMsgReq::iterator mit = req->mMsgIds.begin();
 
-	const RsTokReqOptions& opts = req->Options;
+	const RsTokReqOptionsV2& opts = req->Options;
 
 	for(; mit != req->mMsgIds.end(); mit++)
 		groupIds.push_back(mit->first);
@@ -796,10 +791,35 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 	}
 
 	filterMsgList(req->mMsgIdResult, opts, metaFilter);
+
+	// delete the data
+	cleanseMetaFilter(metaFilter);
+
 	return true;
 }
 
-void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts,
+void RsGxsDataAccess::cleanseMetaFilter(MsgMetaFilter& filter)
+{
+	MsgMetaFilter::iterator mit = filter.begin();
+
+	for(; mit !=filter.end(); mit++)
+	{
+		std::map<RsGxsMessageId, RsGxsMsgMetaData*>& metaM =
+				mit->second;
+		std::map<RsGxsMessageId, RsGxsMsgMetaData*>::iterator mit2
+		= metaM.begin();
+
+		for(; mit2 != metaM.end(); mit2++)
+		{
+			delete mit2->second;
+		}
+	}
+
+	filter.clear();
+	return;
+}
+
+void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptionsV2& opts,
 		const MsgMetaFilter& msgMetas) const
 {
 
@@ -906,7 +926,7 @@ bool RsGxsDataAccess::updateRequestStatus(const uint32_t& token,
 	return true;
 }
 
-bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const
+bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsMsgMetaData* meta) const
 {
 	bool statusMatch = false;
 	if (opts.mStatusMask)

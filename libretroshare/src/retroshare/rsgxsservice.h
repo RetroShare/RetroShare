@@ -17,6 +17,7 @@ class RsGxsNotify
 {
 public:
     RsGxsNotify(){ return; }
+    virtual ~RsGxsNotify() {return; }
 
 };
 

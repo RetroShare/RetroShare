@@ -1,3 +1,29 @@
+
+/*
+ * libretroshare/src/gxs: rsgenexchange.cc
+ *
+ * RetroShare Gxs exchange interface.
+ *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include "rsgenexchange.h"
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
@@ -31,6 +57,9 @@ void RsGenExchange::tick()
 
 	publishMsgs();
 
+        notifyChanges(mNotifications);
+        mNotifications.clear();
+
 }
 
 
@@ -61,10 +90,6 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 		delete (*lit);
 	}
 
-	std::list<RsGxsGrpMetaData*>::iterator cit = metaL.begin();
-	for(; cit != metaL.end(); cit++)
-		delete *cit;
-
 	return ok;
 }
 
@@ -81,14 +106,20 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 	for(; mit != result.end(); mit++)
 	{
 		std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
-		//msgInfo[mit->first] = metaV;
+
+		msgInfo[mit->first] = std::vector<RsMsgMetaData>();
+		std::vector<RsMsgMetaData>& msgInfoV = msgInfo[mit->first];
 
 		std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
-
+		RsMsgMetaData meta;
 		for(; vit != metaV.end(); vit++)
 		{
+			RsGxsMsgMetaData& m = *(*vit);
+			meta = m;
+			msgInfoV.push_back(meta);
 			delete *vit;
 		}
+		metaV.clear();
 	}
 
 	return ok;
@@ -108,9 +139,13 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 		{
 			RsTlvBinaryData& data = (*lit)->grp;
 			RsItem* item = mSerialiser->deserialise(data.bin_data, &data.bin_len);
-			RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
-			grpItem.push_back(gItem);
-			delete *lit;
+
+			if(item != NULL){
+				RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
+				gItem->meta = *((*lit)->metaData);
+				grpItem.push_back(gItem);
+				delete *lit;
+			}
 		}
 	}
     return ok;
@@ -139,6 +174,7 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
 				RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
 						&msg->msg.bin_len);
 				RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
+				mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
 				gxsMsgItems.push_back(mItem);
 				delete msg;
 			}
@@ -165,7 +201,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 
 }
 
-void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *> messages)
+void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 {
     std::vector<RsNxsMsg*>::iterator vit = messages.begin();
 
@@ -180,7 +216,6 @@ bool RsGenExchange::publishGroup(RsGxsGrpItem *grpItem)
 {
 
 	RsStackMutex stack(mGenMtx);
-
 	mGrpsToPublish.push_back(grpItem);
 
     return true;
@@ -214,6 +249,7 @@ void RsGenExchange::publishMsgs()
 		if(ok)
 		{
 			msg->metaData = new RsGxsMsgMetaData();
+			*(msg->metaData) = msgItem->meta;
 			ok = mDataAccess->addMsgData(msg);
 
 			if(ok)
@@ -223,18 +259,23 @@ void RsGenExchange::publishMsgs()
 			}
 		}
 
+		// if addition failed then delete nxs message
 		if(!ok)
 		{
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
+			std::cerr << "RsGenExchange::publishMsgs() failed to serialise msg " << std::endl;
 #endif
 			delete msg;
 			continue;
 
 		}
 
-		delete msgItem;
+		delete msgItem; // delete msg item as we're done with it
 	}
+
+	// clear msg list as we're done publishing them and entries
+	// are invalid
+	mMsgsToPublish.clear();
 }
 
 void RsGenExchange::publishGrps()
@@ -257,6 +298,7 @@ void RsGenExchange::publishGrps()
 		if(ok)
 		{
 			grp->metaData = new RsGxsGrpMetaData();
+			*(grp->metaData) = grpItem->meta;
 			ok = mDataAccess->addGroupData(grp);
 			RsGxsGroupChange* gc = new RsGxsGroupChange();
 			mNotifications.push_back(gc);
@@ -277,15 +319,21 @@ void RsGenExchange::publishGrps()
 		vit = mGrpsToPublish.erase(vit);
 	}
 
+	// clear grp list as we're done publishing them and entries
+	// are invalid
+	mGrpsToPublish.clear();
 }
-void RsGenExchange::processRecvdData() {
+void RsGenExchange::processRecvdData()
+{
 }
 
 
-void RsGenExchange::processRecvdMessages() {
+void RsGenExchange::processRecvdMessages()
+{
 }
 
 
-void RsGenExchange::processRecvdGroups() {
+void RsGenExchange::processRecvdGroups()
+{
 }
 

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef MRK_TOKEN_QUEUE_H
-#define MRK_TOKEN_QUEUE_H
+#ifndef MRK_TOKEN_QUEUE_V2_H
+#define MRK_TOKEN_QUEUE_V2_H
 
 #include <QWidget>
 #include <QTimer>
@@ -70,9 +70,9 @@ public:
         TokenQueueV2(RsTokenServiceV2 *service, TokenResponseV2 *resp);
 
 	/* generic handling of token / response update behaviour */
-	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
                                                         std::list<RsGxsGroupId>& ids, uint32_t usertype);
-	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
 							const GxsMsgReq& ids, uint32_t usertype);
 
 	bool cancelRequest(const uint32_t token);

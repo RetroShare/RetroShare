@@ -108,7 +108,7 @@ public:
     /*!
      * Retrieves all groups stored
      * @param grp retrieved groups
-     * @param withMeta this initialises the meta handles nxs grps
+     * @param withMeta if true the meta handle of nxs grps is intitialised
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
@@ -130,7 +130,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGxsMsgMetaData(const std::vector<std::string>& grpIds, GxsMsgMetaResult& msgMeta) = 0;
+    virtual int retrieveGxsMsgMetaData(const std::vector<RsGxsGroupId>& grpIds, GxsMsgMetaResult& msgMeta) = 0;
 
     /*!
      * remove msgs in data store listed in msgIds param

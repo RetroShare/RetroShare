@@ -43,20 +43,23 @@ public:
      */
     bool updated();
 
+protected:
+
+    void notifyChanges(std::vector<RsGxsNotify*>& changes);
 public:
 
     /** Requests **/
 
-    void groupsChanged(std::list<std::string>& grpIds);
+    void groupsChanged(std::list<RsGxsGroupId>& grpIds);
 
 
-    void msgsChanged(std::map<std::string,
-                             std::vector<std::string> >& msgs);
+    void msgsChanged(std::map<RsGxsGroupId,
+                             std::vector<RsGxsMessageId> >& msgs);
 
     RsTokenServiceV2* getTokenService();
 
     bool getGroupList(const uint32_t &token,
-                              std::list<std::string> &groupIds);
+                              std::list<RsGxsGroupId> &groupIds);
     bool getMsgList(const uint32_t &token,
                             GxsMsgIdResult& msgIds);
 
@@ -77,6 +80,11 @@ public:
 
     bool submitAlbumDetails(RsPhotoAlbum &album);
     bool submitPhoto(RsPhotoPhoto &photo);
+
+private:
+
+    std::vector<RsGxsGroupChange*> mGroupChange;
+    std::vector<RsGxsMsgChange*> mMsgChange;
 };
 
 #endif // P3PHOTOSERVICEV2_H

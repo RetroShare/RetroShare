@@ -51,7 +51,7 @@ public:
      * @param groupIds
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &groupIds);
 
     /*!
      * For requesting info on all messages of one or more groups
@@ -61,7 +61,7 @@ public:
      * @param groupIds
      * @return
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq&);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq&);
 
     /*!
      * This sets the status of the message
@@ -206,7 +206,7 @@ private:
      * @param ansType
      * @param opts
      */
-    void setReq(GxsRequest* req,const uint32_t &token, const uint32_t& ansType, const RsTokReqOptions &opts) const;
+    void setReq(GxsRequest* req,const uint32_t &token, const uint32_t& ansType, const RsTokReqOptionsV2 &opts) const;
 
     /*!
      * Remove request for request queue
@@ -242,6 +242,11 @@ private:
      */
     void tokenList(std::list<uint32_t> &tokens);
 
+    /*!
+     * Convenience function to delete the ids
+     * @param filter the meta filter to clean
+     */
+    void cleanseMetaFilter(MsgMetaFilter& filter);
 
 private:
 
@@ -297,7 +302,7 @@ private:
      * @param opts the request options set by user
      * @param meta The accompanying meta information for msg, ids
      */
-    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
+    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptionsV2& opts, const MsgMetaFilter& meta) const;
 
 
     /*!
@@ -307,7 +312,7 @@ private:
      * @param meta meta containing currently defined options for msg
      * @return true if msg meta passes all options
      */
-    bool checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const;
+    bool checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsMsgMetaData* meta) const;
 
 private:
 

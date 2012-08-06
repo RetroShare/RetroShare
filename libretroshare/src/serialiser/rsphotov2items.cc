@@ -95,9 +95,9 @@ RsItem* RsGxsPhotoSerialiser::deserialise(void* data, uint32_t* size)
         switch(getRsItemSubType(rstype))
         {
 
-		case RS_PKT_SUBTYPE_NXS_SYNC_GRP:
+                case RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM:
 			return deserialiseGxsPhotoPhotoItem(data, size);
-		case RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM:
+                case RS_PKT_SUBTYPE_PHOTO_ITEM:
 			return deserialiseGxsPhotoAlbumItem(data, size);
 		default:
 			{
@@ -174,9 +174,9 @@ bool RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem(RsGxsPhotoAlbumItem* item,
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mWhen);
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mWhere);
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mThumbnail.type);
-	RsTlvBinaryData b(item->PacketService()); // TODO, need something more persisitent
-	b.setBinData(item->album.mThumbnail.data, item->album.mThumbnail.size);
-	b.SetTlv(item->album.mThumbnail.data, tlvsize, &offset);
+    RsTlvBinaryData b(RS_SERVICE_TYPE_PHOTO); // TODO, need something more persisitent
+    b.setBinData(item->album.mThumbnail.data, item->album.mThumbnail.size);
+    ok &= b.SetTlv(data, tlvsize, &offset);
 
     if(offset != tlvsize)
     {
@@ -340,9 +340,9 @@ bool RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item,
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mWhen);
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mWhere);
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mThumbnail.type);
-	RsTlvBinaryData b(RS_SERVICE_TYPE_PHOTO); // TODO, need something more persisitent
-	b.setBinData(item->photo.mThumbnail.data, item->photo.mThumbnail.size);
-	b.SetTlv(item->photo.mThumbnail.data, tlvsize, &offset);
+    RsTlvBinaryData b(RS_SERVICE_TYPE_PHOTO); // TODO, need something more persisitent
+    b.setBinData(item->photo.mThumbnail.data, item->photo.mThumbnail.size);
+    ok &= b.SetTlv(data, tlvsize, &offset);
 
     if(offset != tlvsize)
     {

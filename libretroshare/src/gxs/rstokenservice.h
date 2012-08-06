@@ -66,10 +66,10 @@
  * This class provides useful generic support for GXS style services.
  * I expect much of this will be incorporated into the base GXS.
  */
-class RsTokReqOptions
+class RsTokReqOptionsV2
 {
 public:
-RsTokReqOptions()
+RsTokReqOptionsV2()
 {
 	mOptions = 0;
 	mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
@@ -124,7 +124,7 @@ public:
      * @param groupIds group id to request info for. Leave empty to get info on all groups,
      * @return
      */
-    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
+    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -134,7 +134,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return
      */
-    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) = 0;
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds) = 0;
 
 
 

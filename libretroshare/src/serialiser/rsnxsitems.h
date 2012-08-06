@@ -259,7 +259,9 @@ class RsNxsMsg : public RsNxsItem
 {
 public:
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype), meta(servtype) { clear(); return; }
+    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype), meta(servtype),
+    metaData(NULL) { clear(); return; }
+    ~RsNxsMsg() { if(metaData) delete metaData; }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);

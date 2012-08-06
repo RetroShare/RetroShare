@@ -4,10 +4,7 @@
 /*
  * libretroshare/src/gxs   : rsgxs.h
  *
- * GXS  interface for RetroShare.
- * Convenience header
- *
- * Copyright 2011 Christopher Evi-Parker
+ * Copyright 2012 Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,9 +22,6 @@
  *
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
- * This is *THE* auth manager. It provides the web-of-trust via
- * gpgme, and authenticates the certificates that are managed
- * by the sublayer AuthSSL.
  *
  */
 
@@ -39,6 +33,7 @@
 #include <set>
 #include <map>
 
+/* data types used throughout Gxs from netservice to genexchange */
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;

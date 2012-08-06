@@ -53,7 +53,7 @@ testnetwork {
 }
 
 
-#CONFIG += debug
+CONFIG += debug
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -678,19 +678,21 @@ HEADERS += serialiser/rsnxsitems.h \
             gxs/rsgxsdataaccess.h \
     		retroshare/rsgxsservice.h \
     		serialiser/rsgxsitems.h \
-                serialiser/rsphotov2items.h \
-		util/retrodb.h
+            serialiser/rsphotov2items.h \
+			util/retrodb.h \
+			gxs/gxscoreserver.h
 
 SOURCES += serialiser/rsnxsitems.cc \
-                gxs/rsdataservice.cc \
-                gxs/rsgenexchange.cc \
+            gxs/rsdataservice.cc \
+            gxs/rsgenexchange.cc \
             gxs/rsgxsnetservice.cc \
             gxs/rsgxsdata.cc \
             serialiser/rsgxsitems.cc \
     		services/p3photoserviceV2.cc \
         	gxs/rsgxsdataaccess.cc \
-                serialiser/rsphotov2items.cc \
-		util/retrodb.cc
+            serialiser/rsphotov2items.cc \
+			util/retrodb.cc \
+			gxs/gxscoreserver.cc
 }
 
 

@@ -38,7 +38,7 @@ TokenQueueV2::TokenQueueV2(RsTokenServiceV2 *service, TokenResponseV2 *resp)
 	return;
 }
 
-bool TokenQueueV2::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
+bool TokenQueueV2::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_GROUPINFO;
 	mService->requestGroupInfo(token, anstype, opts, ids);
@@ -48,7 +48,7 @@ bool TokenQueueV2::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsT
 }
 
 
-bool TokenQueueV2::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const GxsMsgReq& ids, uint32_t usertype)
+bool TokenQueueV2::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts, const GxsMsgReq& ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgInfo(token, anstype, opts, ids);

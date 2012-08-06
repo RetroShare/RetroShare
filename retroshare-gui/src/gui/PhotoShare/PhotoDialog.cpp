@@ -431,7 +431,7 @@ void PhotoDialog::requestAlbumList()
 {
 
 	std::list<std::string> ids;
-	RsTokReqOptions opts;
+	RsTokReqOptionsV2 opts;
 	uint32_t token;
 	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
 }
@@ -454,13 +454,12 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 	{
 		requestPhotoList(*it);
 	}
-
 }
 
 
 void PhotoDialog::requestAlbumData(std::list<std::string> &ids)
 {
-	RsTokReqOptions opts;
+	RsTokReqOptionsV2 opts;
 	uint32_t token;
         mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
@@ -473,25 +472,21 @@ bool PhotoDialog::loadAlbumData(const uint32_t &token)
 
 	clearAlbums();
 
-	bool moreData = true;
-	while(moreData)
-	{
-		RsPhotoAlbum album;
-                std::vector<RsPhotoAlbum> albums;
-                if (rsPhotoV2->getAlbum(token, albums))
-		{
-			std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
+        std::vector<RsPhotoAlbum> albums;
+        rsPhotoV2->getAlbum(token, albums);
 
-			PhotoItem *item = new PhotoItem(this, album);
-			QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-			alayout->addWidget(item);
-		}
-		else
-		{
-			moreData = false;
-		}
-	}
+        std::vector<RsPhotoAlbum>::iterator vit = albums.begin();
 
+        for(; vit != albums.end(); vit++)
+        {
+            RsPhotoAlbum& album = *vit;
+
+            std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
+
+            PhotoItem *item = new PhotoItem(this, album);
+            QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+            alayout->addWidget(item);
+        }
 	return true;
 }
 
@@ -499,10 +494,9 @@ bool PhotoDialog::loadAlbumData(const uint32_t &token)
 void PhotoDialog::requestPhotoList(const std::string &albumId)
 {
 
-	std::list<std::string> ids;
         GxsMsgReq req;
         req[albumId] = std::vector<RsGxsMessageId>();
-	RsTokReqOptions opts;
+	RsTokReqOptionsV2 opts;
 	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 	uint32_t token;
         mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, req, 0);
@@ -527,7 +521,7 @@ void PhotoDialog::loadPhotoList(const uint32_t &token)
 
 void PhotoDialog::requestPhotoData(GxsMsgReq &photoIds)
 {
-	RsTokReqOptions opts;
+	RsTokReqOptionsV2 opts;
 	uint32_t token;
         mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, photoIds, 0);
 }
@@ -538,25 +532,25 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
 	std::cerr << "PhotoDialog::loadPhotoData()";
 	std::cerr << std::endl;
 
-	bool moreData = true;
-	while(moreData)
-	{
-		RsPhotoPhoto photo;
-                PhotoResult res;
-                if (rsPhotoV2->getPhoto(token, res))
-		{
+        PhotoResult res;
+        rsPhotoV2->getPhoto(token, res);
+        PhotoResult::iterator mit = res.begin();
 
-			std::cerr << "PhotoDialog::loadPhotoData() AlbumId: " << photo.mMeta.mGroupId;
-			std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
-			std::cerr << std::endl;
 
-			addPhoto(photo);
-		}
-		else
-		{
-			moreData = false;
-		}
-	}
+        for(; mit != res.end(); mit++)
+        {
+            std::vector<RsPhotoPhoto>& photoV = mit->second;
+            std::vector<RsPhotoPhoto>::iterator vit = photoV.begin();
+
+            for(; vit != photoV.end(); vit++)
+            {
+                RsPhotoPhoto& photo = *vit;
+                addPhoto(photo);
+                std::cerr << "PhotoDialog::loadPhotoData() AlbumId: " << photo.mMeta.mGroupId;
+                std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
+                std::cerr << std::endl;
+            }
+        }
 }
 
 

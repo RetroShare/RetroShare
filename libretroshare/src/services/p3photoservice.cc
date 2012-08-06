@@ -639,6 +639,7 @@ bool RsPhotoThumbnail::deleteImage()
 		free(data);
 		data = NULL;
 		size = 0;
+                type.clear();
 	}
 	return true;
 }

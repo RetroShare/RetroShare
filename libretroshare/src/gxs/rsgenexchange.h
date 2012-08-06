@@ -2,7 +2,7 @@
 #define RSGENEXCHANGE_H
 
 /*
- * libretroshare/src/retroshare: rsphoto.h
+ * libretroshare/src/gxs: rsgenexchange.h
  *
  * RetroShare C++ Interface.
  *
@@ -81,7 +81,7 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    void notifyNewMessages(std::vector<RsNxsMsg*> messages);
+    void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
 
     /*!
      * @param messages messages are deleted after function returns
@@ -192,17 +192,18 @@ protected:
      */
     virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) = 0;
 
-public:
+
+    void publishGrps();
+
+    void publishMsgs();
+
+private:
 
     void processRecvdData();
 
     void processRecvdMessages();
 
     void processRecvdGroups();
-
-    void publishGrps();
-
-    void publishMsgs();
 
 private:
 
