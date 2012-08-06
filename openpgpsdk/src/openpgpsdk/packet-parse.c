@@ -927,7 +927,7 @@ void ops_parser_content_free(ops_parser_content_t *c)
 
     default:
 	fprintf(stderr,"Can't free %d (0x%x)\n",c->tag,c->tag);
-	assert(0);
+	//assert(0);
 	}
     }
 
