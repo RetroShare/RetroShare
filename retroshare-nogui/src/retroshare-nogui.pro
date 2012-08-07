@@ -4,6 +4,17 @@ CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
 
+CONFIG += debug
+debug {
+        QMAKE_CFLAGS -= -O2
+        QMAKE_CFLAGS += -O0
+        QMAKE_CFLAGS += -g
+
+        QMAKE_CXXFLAGS -= -O2
+        QMAKE_CXXFLAGS += -O0
+        QMAKE_CXXFLAGS += -g
+}
+
 ################################# Linux ##########################################
 linux-* {
 	#CONFIG += version_detail_bash_script
@@ -123,12 +134,22 @@ sshserver {
         #
         # You can connect from a standard ssh, eg: ssh -p 7022 127.0.0.1
  	#
-
+	# The Menu system is available from the command-line now, 
+	# but not over SSH yet... 
+	# if it get covered by debug gunk, just press <return> to refresh.
+	#
 	INCLUDEPATH += ../../../lib/libssh-0.5.2/include/
 	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
 	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc
+
+	HEADERS += menu/menu.h \
+		menu/menus.h \
+
+	SOURCES += menu/menu.cc \
+		menu/menus.cc \
+
 	DEFINES *= RS_SSH_SERVER
 }
 

@@ -42,6 +42,10 @@
 
 #ifdef RS_SSH_SERVER
 #include "ssh/rssshd.h"
+
+#include "menu/menus.h"
+#include "menu/menutest.h"
+
 #endif
 
 /* Basic instructions for running libretroshare as background thread.
@@ -152,12 +156,17 @@ int main(int argc, char **argv)
 	
 #ifdef RS_SSH_SERVER
 	ssh->start();
+
+	Menu *baseMenu = CreateMenuStructure(notify);
+	MenuInterface *menuInterface = new MenuInterface(baseMenu);
+	MenuTest menuTest(menuInterface, std::cin, std::cout);
+
 #endif
 
 	/* pass control to the GUI */
 	while(1)
 	{
-		std::cerr << "GUI Tick()" << std::endl;
+		//std::cerr << "GUI Tick()" << std::endl;
 #ifndef WINDOWS_SYS
 		sleep(1);
 #else
@@ -167,6 +176,11 @@ int main(int argc, char **argv)
 #ifdef RS_INTRO_SERVER
 		rsIS.tick();
 #endif
+
+#ifdef RS_SSH_SERVER
+		menuTest.tick();
+#endif
+
 	}
 	return 1;
 }
