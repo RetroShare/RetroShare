@@ -52,9 +52,6 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   //ui.genName->setFocus(Qt::OtherFocusReason);
   
-  QString titleString("<span style=\"font-size:17pt; font-weight:500;"
-                               "color:white;\">%1</span>");
-
 #if QT_VERSION >= 0x040700
   ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
   ui.location_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
@@ -64,7 +61,17 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
     /* get all available pgp private certificates....
      * mark last one as default.
      */
+
+  init() ;
+}
+
+void GenCertDialog::init()
+{
     std::cerr << "Finding PGPUsers" << std::endl;
+
+	 ui.genPGPuser->clear() ;
+
+  QString titleString("<span style=\"font-size:17pt; font-weight:500;" "color:white;\">%1</span>");
 
     std::list<std::string> pgpIds;
     std::list<std::string>::iterator it;
@@ -93,7 +100,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
     } else {
         ui.no_gpg_key_label->show();
         ui.new_gpg_key_checkbox->setChecked(true);
-        ui.new_gpg_key_checkbox->hide();
+        ui.new_gpg_key_checkbox->setEnabled(false);
         ui.progressBar->hide();
         setWindowTitle(tr("Create new Identity"));
         ui.genButton->setText(tr("Generate new Identity"));
@@ -118,8 +125,11 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->show();
         ui.genPGPuserlabel->hide();
         ui.genPGPuser->hide();
-		  ui.exportIdentity_PB->hide() ;
-		  ui.importIdentity_PB->hide() ;
+
+		  if(ui.genPGPuser->count() == 0)
+			  ui.exportIdentity_PB->hide() ;
+
+//		  ui.importIdentity_PB->hide() ;
         setWindowTitle(tr("Create new Identity"));
         ui.genButton->setText(tr("Generate new Identity"));
         ui.label_3->setText( titleStr.arg( tr("Create a new Identity") ) ) ;
@@ -171,15 +181,21 @@ void GenCertDialog::importIdentity()
 		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
 		return ;
 	}
+	else
+	{
+		std::string name,email ;
 
-	std::string name,email ;
+		RsInit::GetPGPLoginDetails(gpg_id, name, email);
+		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-	RsInit::GetPGPLoginDetails(gpg_id, name, email);
-	std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
-	QVariant userData(QString::fromStdString(gpg_id));
-	QString gid = QString::fromStdString(gpg_id).right(8) ;
-	ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
+		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfuly:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id)+"\n\n"+tr("You can use it now to create a new location.")) ;
+	}
 
+	init() ;
+
+// 	QVariant userData(QString::fromStdString(gpg_id));
+// 	QString gid = QString::fromStdString(gpg_id).right(8) ;
+// 	ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
 }
 
 void GenCertDialog::genPerson()

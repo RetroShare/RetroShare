@@ -25,6 +25,7 @@ extern "C" {
 #include "pgp/pgpkeyutil.h"
 
 //#define DEBUG_PGPHANDLER 1
+//#define PGPHANDLER_DSA_SUPPORT
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
@@ -327,7 +328,11 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 	while( (keydata = ops_keyring_get_key_by_index(_secring,i++)) != NULL )
 		if(ops_keyring_find_key_by_id(_pubring,keydata->key_id) != NULL) // check that the key is in the pubring as well
 		{
+#ifdef PGPHANDLER_DSA_SUPPORT
+			if(keydata->key.pkey.algorithm == OPS_PKA_RSA || keydata->key.pkey.algorithm == OPS_PKA_DSA)
+#else
 			if(keydata->key.pkey.algorithm == OPS_PKA_RSA)
+#endif
 				ids.push_back(PGPIdType(keydata->key_id)) ;
 #ifdef DEBUG_PGPHANDLER
 			else
@@ -620,7 +625,9 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 	dummy_keyring.nkeys_allocated=1 ;
 	dummy_keyring.keys=const_cast<ops_keydata_t*>(pubkey) ;
 
-	if( (!ops_validate_key_signatures(result, const_cast<ops_keydata_t*>(pubkey), &dummy_keyring, cb_get_passphrase))  || result->valid_count != 1 || result->invalid_count > 0)
+	ops_validate_key_signatures(result, const_cast<ops_keydata_t*>(pubkey), &dummy_keyring, cb_get_passphrase) ;
+	
+	if(result->valid_count != 1 || memcmp((unsigned char*)result->valid_sigs[0].signer_id,pubkey->key_id,KEY_ID_SIZE)) 
 	{
 		import_error = "Cannot validate self signature for the imported key. Sorry." ;
 		return false ;
@@ -646,6 +653,9 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 			return false ;
 		}
 		ops_teardown_file_write(cinfo,fd) ;
+
+		addNewKeyToOPSKeyring(_secring,*seckey) ;
+		initCertificateInfo(_secret_keyring_map[ imported_key_id.toStdString() ],seckey,_secring->nkeys-1) ;
 	}
 	else
 		import_error = "Private key already exists! Not importing it again." ;
@@ -820,6 +830,7 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const st
 
 	if (f == NULL)
 	{
+		std::cerr << "Cannot open file " << inputfile << " for read." << std::endl;
 		return false;
 	}
 

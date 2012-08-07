@@ -49,6 +49,8 @@ private slots:
 
 private:
 
+		  void init() ;
+
   /** Loads the saved connectidialog settings */
   //  void loadSettings();
   void loadCertificates();
