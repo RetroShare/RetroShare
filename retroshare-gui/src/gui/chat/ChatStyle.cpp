@@ -108,7 +108,7 @@
 
 #include <retroshare/rsinit.h>
 
-//#define COLORED_NICKNAMES
+#define COLORED_NICKNAMES
 
 enum enumGetStyle
 {
