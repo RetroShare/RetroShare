@@ -254,6 +254,7 @@ void GenCertDialog::genPerson()
             ui.location_input->hide();
             ui.genButton->hide();
             ui.label_location2->hide();
+            ui.importIdentity_PB->hide();
 //            QMessageBox::StandardButton info = QMessageBox::information(this,
 //                            "Generating GPG key",
 //                            "This process can take some time (approximately one minute), please be patient after pressing the OK button",
