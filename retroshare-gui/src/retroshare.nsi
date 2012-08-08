@@ -2,15 +2,16 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.3b 4972"
-!define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
-!define QTBASE "D:\qt\2010.01"
+!define VERSION "0.5.3c"
+!define REVISION "$WCREV$"
+!define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
+!define QTBASE "H:\qt\2010.01"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES\RetroShare"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "RetroShare_${VERSION}_setup.exe"
+OutFile "RetroShare_${VERSION}_${REVISION}_setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 ; Use compression
 SetCompressor /SOLID LZMA 
@@ -247,7 +248,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_PORTUGUESEBR} "Program Files"
     LangString sec_data ${LANG_PORTUGUESEBR} "Program Skins"
-    LangString sec_shortcuts ${LANG_PORTUGUESEBRK} "Shortcuts"
+    LangString sec_shortcuts ${LANG_PORTUGUESEBR} "Shortcuts"
     LangString sec_link ${LANG_PORTUGUESEBR} "File Association"
     LangString sec_autostart ${LANG_PORTUGUESEBR} "Auto Startup"
     LangString DESC_sec_main ${LANG_PORTUGUESEBR} "Installs the RetroShare program files."
@@ -296,19 +297,17 @@ Section $(sec_main) sec_main
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
   File /r "..\..\retroshare-nogui\src\release\retroshare-nogui.exe"
-  File /r "D:\Qt\2010.01\mingw\bin\mingwm10.dll"
-  File /r "D:\Qt\2010.01\qt\bin\QtCore4.dll"
-  File /r "D:\Qt\2010.01\qt\bin\QtGui4.dll"
-  File /r "D:\Qt\2010.01\qt\bin\QtNetwork4.dll"
-  File /r "D:\Qt\2010.01\qt\bin\QtXml4.dll"
-  File /r "D:\Qt\2010.01\qt\bin\QtScript4.dll"
-  File /r "D:\Qt\2010.01\qt\bin\libgcc_s_dw2-1.dll"
-  File /r "D:\Qt\2010.01\qt\plugins\imageformats"
-  File /r "D:\Development\miniupnpc-1.3\miniupnpc.dll"
+  File /r "${QTBASE}\mingw\bin\mingwm10.dll"
+  File /r "${QTBASE}\qt\bin\QtCore4.dll"
+  File /r "${QTBASE}\qt\bin\QtGui4.dll"
+  File /r "${QTBASE}\qt\bin\QtNetwork4.dll"
+  File /r "${QTBASE}\qt\bin\QtXml4.dll"
+  File /r "${QTBASE}\qt\bin\QtScript4.dll"
+  File /r "${QTBASE}\qt\bin\libgcc_s_dw2-1.dll"
+  File /r "${QTBASE}\qt\plugins\imageformats"
   File /r  ${QTBASE}\qt\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "release\libgpg-error-0.dll"
-  File /r "release\libgpgme-11.dll"
+  File /r "H:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
   File /r /x Data "release\bdboot.txt" 
 
@@ -348,16 +347,6 @@ Section  $(sec_data) sec_data
   ;SetOutPath "$INSTDIR\style\"
   ;File /r style\*.*   
 	
-SectionEnd
-
-; These are the programs that are needed by RetroShare.
-Section -Prerequisites
-  SetOutPath $INSTDIR\Prerequisites
-  MessageBox MB_YESNO "$(InstallGPG4WIN)" /SD IDYES IDNO leave
-    File "Prerequisites\gpg4win-1.1.4.exe"
-    ExecWait "$INSTDIR\Prerequisites\gpg4win-1.1.4.exe"
-     
- leave:
 SectionEnd
 
 Section $(sec_link) sec_link
