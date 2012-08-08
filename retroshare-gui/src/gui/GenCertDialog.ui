@@ -597,7 +597,7 @@ border: 1px solid #CCCCCC;}</string>
          <item row="0" column="0" colspan="2">
           <widget class="QLabel" name="no_gpg_key_label">
            <property name="text">
-            <string>It looks like you don't own any Profile (GPG keys). Please fill in the form below to generate one, or use your favorite gnupg key manager.</string>
+            <string>It looks like you don't own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
