@@ -27,7 +27,7 @@
 TransferUserNotify::TransferUserNotify(QObject *parent) :
 	UserNotify(parent)
 {
-	newCount = 0;
+	newTransferCount = 0;
 
 	connect(NotifyQt::getInstance(), SIGNAL(downloadCompleteCountChanged(int)), this, SLOT(downloadCountChanged(int)));
 }
@@ -80,7 +80,7 @@ QIcon TransferUserNotify::getMainIcon(bool hasNew)
 
 unsigned int TransferUserNotify::getNewCount()
 {
-	return newCount;
+	return newTransferCount;
 }
 
 QString TransferUserNotify::getTrayMessage(bool plural)
@@ -100,6 +100,6 @@ void TransferUserNotify::iconClicked()
 
 void TransferUserNotify::downloadCountChanged(int count)
 {
-	newCount = count;
+	newTransferCount = count;
 	updateIcon();
 }

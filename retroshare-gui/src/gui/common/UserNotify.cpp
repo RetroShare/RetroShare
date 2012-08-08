@@ -1,18 +1,49 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2012 RetroShare Team
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
 #include <QMenu>
+#include <QToolBar>
+#include <QToolButton>
+
 #include "UserNotify.h"
 
 UserNotify::UserNotify(QObject *parent) :
 	QObject(parent)
 {
-	mMainIcon = NULL;
+	mMainToolButton = NULL;
+	mMainAction = NULL;
 	mTrayIcon = NULL;
 	mNotifyIcon = NULL;
 	newCount = 0;
 }
 
-void UserNotify::initialize(QAction *mainAction)
+void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction)
 {
-	mMainIcon = mainAction;
+	mMainAction = mainAction;
+	if (mMainAction) {
+		buttonText = mMainAction->text();
+		if (mainToolBar) {
+			mMainToolButton = dynamic_cast<QToolButton*>(mainToolBar->widgetForAction(mMainAction));
+		}
+	}
 }
 
 void UserNotify::createIcons(QMenu *notifyMenu)
@@ -46,8 +77,21 @@ void UserNotify::updateIcon()
 {
 	unsigned int count = getNewCount();
 
-	if (mMainIcon) {
-		mMainIcon->setIcon(getMainIcon(count > 0));
+	if (mMainAction) {
+		mMainAction->setIcon(getMainIcon(count > 0));
+		mMainAction->setText((count > 0) ? QString("%1 (%2)").arg(buttonText).arg(count) : buttonText);
+
+		QFont font = mMainAction->font();
+		font.setBold(count > 0);
+		mMainAction->setFont(font);
+	}
+
+	if (mMainToolButton) {
+		mMainToolButton->setStyleSheet((count > 0) ? "QToolButton { color: #E21D3A; }" : "");
+
+		QFont font = mMainToolButton->font();
+		font.setBold(count > 0);
+		mMainToolButton->setFont(font);
 	}
 
 	if (mTrayIcon) {
@@ -73,7 +117,7 @@ void UserNotify::updateIcon()
 		emit countChanged();
 	}
 
-	count = newCount;
+	newCount = count;
 }
 
 QString UserNotify::getTrayMessage(bool plural)

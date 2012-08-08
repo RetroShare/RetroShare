@@ -372,7 +372,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
         UserNotify *userNotify = notifyIt->first->getUserNotify(this);
         if (userNotify) {
-            userNotify->initialize(notifyIt->second);
+            userNotify->initialize(ui.toolBar, notifyIt->second);
             connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
             userNotifyList.push_back(userNotify);
         }
@@ -660,9 +660,9 @@ void MainWindow::postModDirectories(bool update_local)
 }
 
 /** Creates a new action associated with a config page. */
-QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *group)
+QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QActionGroup *group)
 {
-    QAction *action = new QAction(img, text, group);
+    QAction *action = new QAction(icon, text, group);
     action->setCheckable(true);
     action->setFont(FONT);
     return action;

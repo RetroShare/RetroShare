@@ -47,7 +47,7 @@ private:
 	virtual QString getNotifyMessage(bool plural);
 	virtual void iconClicked();
 
-	int newCount;
+	unsigned int newTransferCount;
 };
 
 #endif // TRANSFERUSERNOTIFY_H

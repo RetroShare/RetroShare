@@ -47,7 +47,6 @@
 #include "connect/ConnectFriendWizard.h"
 #include "forums/CreateForum.h"
 #include "gui/common/AvatarDefs.h"
-#include "gui/mainpagestack.h"
 #include "groups/CreateGroup.h"
 #include "im_history/ImHistoryBrowser.h"
 #include "MainWindow.h"

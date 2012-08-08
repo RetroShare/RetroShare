@@ -208,7 +208,7 @@ private:
     BandwidthGraph* _bandwidthGraph;
 
     /** Creates a new action for a Main page. */
-    QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
+    QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
 
