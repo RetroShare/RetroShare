@@ -51,8 +51,8 @@ uint32_t MenuInterface::process(char key)
 {
 
 #ifdef MENU_DEBUG
-	std::cerr << "MenuInterface::process(" << key << ")";
-	std::cerr << std::endl;
+	std::cout << "MenuInterface::process(" << key << ")";
+	std::cout << std::endl;
 #endif // MENU_DEBUG
 
 	/* call process on current menu */
@@ -62,8 +62,8 @@ uint32_t MenuInterface::process(char key)
 	bool showHelp = false;
 
 #ifdef MENU_DEBUG
-	std::cerr << "MenuInterface::process() currentMenu says: " << rt;
-	std::cerr << std::endl;
+	std::cout << "MenuInterface::process() currentMenu says: " << rt;
+	std::cout << std::endl;
 #endif // MENU_DEBUG
 
 	switch(rt)
@@ -92,15 +92,15 @@ uint32_t MenuInterface::process(char key)
 			/* new menu to switch to */
 			if (mCurrentMenu->selectedMenu())
 			{
-				std::cerr << "MenuInterface::process() Switching Menus";
-				std::cerr << std::endl;
+				std::cout << "MenuInterface::process() Switching Menus";
+				std::cout << std::endl;
 				mCurrentMenu = mCurrentMenu->selectedMenu();
 			}
 			else
 			{
-				std::cerr << "MenuInterface::process() ERROR";
-				std::cerr << " SelectedMenu == NULL";
-				std::cerr << std::endl;
+				std::cout << "MenuInterface::process() ERROR";
+				std::cout << " SelectedMenu == NULL";
+				std::cout << std::endl;
 			}
 			break;
 
@@ -123,7 +123,7 @@ uint32_t MenuInterface::process(char key)
 	/* HEADER */
 	for(int i = 0; i < 20; i++)
 	{
-		std::cerr << std::endl;
+		std::cout << std::endl;
 	}
 
 	/* ERROR */
@@ -145,10 +145,10 @@ uint32_t MenuInterface::process(char key)
 
 uint32_t MenuInterface::drawHeader()
 {
-	std::cerr << "=======================================================";
-	std::cerr << std::endl;
-	std::cerr << "Retroshare Terminal Menu V2.xxxx ======================";
-	std::cerr << std::endl;
+	std::cout << "=======================================================";
+	std::cout << std::endl;
+	std::cout << "Retroshare Terminal Menu V2.xxxx ======================";
+	std::cout << std::endl;
 
 	unsigned int nTotal = 0;
 	unsigned int nConnected = 0;
@@ -200,18 +200,18 @@ uint32_t MenuInterface::drawHeader()
 	float upKb = 0;
 	rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
-	std::cerr << "Friends " << nConnected << "/" << nTotal;
-	std::cerr << " Network: " << natState;
-	std::cerr << std::endl;
-	std::cerr << "Down: " << downKb << " (kB/s) ";
-	std::cerr << " Up: " << upKb << " (kB/s) ";
-	std::cerr << std::endl;
-	std::cerr << "Menu State: ";
-	tailrec_printparents(mCurrentMenu, std::cerr);
-	std::cerr << std::endl;
+	std::cout << "Friends " << nConnected << "/" << nTotal;
+	std::cout << " Network: " << natState;
+	std::cout << std::endl;
+	std::cout << "Down: " << downKb << " (kB/s) ";
+	std::cout << " Up: " << upKb << " (kB/s) ";
+	std::cout << std::endl;
+	std::cout << "Menu State: ";
+	tailrec_printparents(mCurrentMenu, std::cout);
+	std::cout << std::endl;
 
-	std::cerr << "=======================================================";
-	std::cerr << std::endl;
+	std::cout << "=======================================================";
+	std::cout << std::endl;
 
 	return 1;
 }
@@ -241,8 +241,8 @@ int Menu::addMenuItem(char key, Menu *child)
 	it = mChildren.find(key);
 	if (it != mChildren.end())
 	{
-		std::cerr << "Menu::addMenuItem() ERROR DUPLICATE MENU ITEM";
-		std::cerr << std::endl;
+		std::cout << "Menu::addMenuItem() ERROR DUPLICATE MENU ITEM";
+		std::cout << std::endl;
 		return 0;
 	}
 	mChildren[key] = child;
@@ -337,23 +337,23 @@ uint32_t Menu::process_children(char key)
 
 uint32_t Menu::drawPage()
 {
-	std::cerr << "Universal Commands ( ";
-	std::cerr << (char) MENU_KEY_QUIT << ":Quit ";
-	std::cerr << (char) MENU_KEY_HELP << ":Help ";
-	std::cerr << (char) MENU_KEY_TOP << ":Top ";
-	std::cerr << (char) MENU_KEY_UP << ":Up ";
-	std::cerr << ")";
-	std::cerr << std::endl;
+	std::cout << "Universal Commands ( ";
+	std::cout << (char) MENU_KEY_QUIT << ":Quit ";
+	std::cout << (char) MENU_KEY_HELP << ":Help ";
+	std::cout << (char) MENU_KEY_TOP << ":Top ";
+	std::cout << (char) MENU_KEY_UP << ":Up ";
+	std::cout << ")";
+	std::cout << std::endl;
 
-	std::cerr << "Specific Commands (";
+	std::cout << "Specific Commands (";
 	std::map<uint8_t, Menu *>::iterator it;
 	for(it = mChildren.begin(); it != mChildren.end(); it++)
 	{
-		std::cerr << (char) it->first << ":";
-		std::cerr << it->second->ShortFnDesc() << " ";
+		std::cout << (char) it->first << ":";
+		std::cout << it->second->ShortFnDesc() << " ";
 	}
-	std::cerr << ")";
-	std::cerr << std::endl;
+	std::cout << ")";
+	std::cout << std::endl;
 
 	return 1;
 }
@@ -361,25 +361,25 @@ uint32_t Menu::drawPage()
 
 uint32_t Menu::drawHelpPage()
 {
-	std::cerr << "Menu Help: Universal Commands are:";
-	std::cerr << std::endl;
-	std::cerr << "\tKey: " << (char) MENU_KEY_QUIT << " => Quit";
-	std::cerr << std::endl;
-	std::cerr << "\tKey: " << (char) MENU_KEY_HELP << " => Help";
-	std::cerr << std::endl;
-	std::cerr << "\tKey: " << (char) MENU_KEY_TOP << " => Top Menu";
-	std::cerr << std::endl;
-	std::cerr << "\tKey: " << (char) MENU_KEY_UP << " => Up a Menu";
-	std::cerr << std::endl;
+	std::cout << "Menu Help: Universal Commands are:";
+	std::cout << std::endl;
+	std::cout << "\tKey: " << (char) MENU_KEY_QUIT << " => Quit";
+	std::cout << std::endl;
+	std::cout << "\tKey: " << (char) MENU_KEY_HELP << " => Help";
+	std::cout << std::endl;
+	std::cout << "\tKey: " << (char) MENU_KEY_TOP << " => Top Menu";
+	std::cout << std::endl;
+	std::cout << "\tKey: " << (char) MENU_KEY_UP << " => Up a Menu";
+	std::cout << std::endl;
 
-	std::cerr << "Specific Commands are:";
-	std::cerr << std::endl;
+	std::cout << "Specific Commands are:";
+	std::cout << std::endl;
 	std::map<uint8_t, Menu *>::iterator it;
 	for(it = mChildren.begin(); it != mChildren.end(); it++)
 	{
-		std::cerr << "\tKey: " << (char) it->first << " => ";
-		std::cerr << it->second->ShortFnDesc();
-		std::cerr << std::endl;
+		std::cout << "\tKey: " << (char) it->first << " => ";
+		std::cout << it->second->ShortFnDesc();
+		std::cout << std::endl;
 	}
 
 	return 1;
@@ -395,18 +395,18 @@ uint32_t MenuList::drawPage()
 {
 	Menu::drawPage();
 
-	std::cerr << "Navigation Commands (";
-	//std::cerr << (char) MENULIST_KEY_LIST << ":List ";
-	std::cerr << (char) MENULIST_KEY_NEXT << ":Next ";
-	std::cerr << (char) MENULIST_KEY_PREV << ":Prev ";
-	std::cerr << ")";
-	std::cerr << std::endl;
+	std::cout << "Navigation Commands (";
+	//std::cout << (char) MENULIST_KEY_LIST << ":List ";
+	std::cout << (char) MENULIST_KEY_NEXT << ":Next ";
+	std::cout << (char) MENULIST_KEY_PREV << ":Prev ";
+	std::cout << ")";
+	std::cout << std::endl;
 
-	std::cerr << "MenuList::Internals ";
-	std::cerr << "ListSize: " << getListCount();
-	std::cerr << " SelectIdx: " << mSelectIdx;
-	std::cerr << " Cursor: " << mCursor;
-	std::cerr << std::endl;
+	std::cout << "MenuList::Internals ";
+	std::cout << "ListSize: " << getListCount();
+	std::cout << " SelectIdx: " << mSelectIdx;
+	std::cout << " Cursor: " << mCursor;
+	std::cout << std::endl;
 
 	int i = 0;
 
@@ -420,28 +420,28 @@ uint32_t MenuList::drawPage()
 
 	if (mSelectIdx >= 0)	
 	{
-		std::cerr << "Current Selection Idx: " << mSelectIdx << " : ";
+		std::cout << "Current Selection Idx: " << mSelectIdx << " : ";
 		std::string desc;
 		if (getEntryDesc(mSelectIdx, desc) & (desc != ""))
 		{
-			std::cerr << desc;
+			std::cout << desc;
 		}
 		else
 		{
-			std::cerr << "Missing Description";
+			std::cout << "Missing Description";
 		}
-		std::cerr << std::endl;
+		std::cout << std::endl;
 	}
 	else
 	{
-		std::cerr << "No Current Selection: Use 0 - 9 to choose an Entry";
-		std::cerr << std::endl;
+		std::cout << "No Current Selection: Use 0 - 9 to choose an Entry";
+		std::cout << std::endl;
 	}
 
 
-	std::cerr << "Showing " << startCount;
-	std::cerr << " to " << endCount << " of " << listCount << " Entries";
-	std::cerr << std::endl;
+	std::cout << "Showing " << startCount;
+	std::cout << " to " << endCount << " of " << listCount << " Entries";
+	std::cout << std::endl;
 
 	std::list<std::string>::iterator it;
 	for (it = mList.begin(); it != mList.end(); it++, i++)
@@ -451,23 +451,23 @@ uint32_t MenuList::drawPage()
 		{
 			if (i == mSelectIdx)
 			{
-				std::cerr << "SELECTED => (" << curIdx << ")  ";
+				std::cout << "SELECTED => (" << curIdx << ")  ";
 			}
 			else
 			{
-				std::cerr << "\t(" << curIdx << ")  ";
+				std::cout << "\t(" << curIdx << ")  ";
 			}
 			std::string desc;
 			if (getEntryDesc(i, desc) & (desc != ""))
 			{
-				std::cerr << desc;
+				std::cout << desc;
 			}
 			else
 			{
-				std::cerr << *it << " => ";
-				std::cerr << "Missing Description";
+				std::cout << *it << " => ";
+				std::cout << "Missing Description";
 			}
-			std::cerr << std::endl;
+			std::cout << std::endl;
 		}
 	}
 
@@ -478,23 +478,23 @@ uint32_t MenuList::drawHelpPage()
 {
 	Menu::drawPage();
 
-	std::cerr << "MenuList Help: Navigation Commands are:";
-	std::cerr << std::endl;
-	//std::cerr << "\tKey: " << (char) MENULIST_KEY_LIST << " => List";
-	//std::cerr << std::endl;
-	std::cerr << "\tKey: " << (char) MENULIST_KEY_NEXT << " => Next Page";
-	std::cerr << std::endl;
-	std::cerr << "\tKey: " << (char) MENULIST_KEY_PREV << " => Prev Page";
-	std::cerr << std::endl;
+	std::cout << "MenuList Help: Navigation Commands are:";
+	std::cout << std::endl;
+	//std::cout << "\tKey: " << (char) MENULIST_KEY_LIST << " => List";
+	//std::cout << std::endl;
+	std::cout << "\tKey: " << (char) MENULIST_KEY_NEXT << " => Next Page";
+	std::cout << std::endl;
+	std::cout << "\tKey: " << (char) MENULIST_KEY_PREV << " => Prev Page";
+	std::cout << std::endl;
 
-	std::cerr << "MenuList::drawPage() Internal Details";
-	std::cerr << std::endl;
-	std::cerr << "List Size: " << getListCount();
-	std::cerr << std::endl;
-	std::cerr << "SelectIdx: " << mSelectIdx;
-	std::cerr << std::endl;
-	std::cerr << "Cursor: " << mCursor;
-	std::cerr << std::endl;
+	std::cout << "MenuList::drawPage() Internal Details";
+	std::cout << std::endl;
+	std::cout << "List Size: " << getListCount();
+	std::cout << std::endl;
+	std::cout << "SelectIdx: " << mSelectIdx;
+	std::cout << std::endl;
+	std::cout << "Cursor: " << mCursor;
+	std::cout << std::endl;
 	return 1;
 }
 
@@ -584,13 +584,13 @@ uint32_t MenuList::list_process(char key)
 		if (mCursor + idx < getListCount())
 		{
 			mSelectIdx = mCursor + idx;
-			std::cerr << "MenuList::list_process() Selected Idx: " << mSelectIdx;
-			std::cerr << std::endl;
+			std::cout << "MenuList::list_process() Selected Idx: " << mSelectIdx;
+			std::cout << std::endl;
 		}
 		else
 		{
-			std::cerr << "MenuList::list_process() Idx Out of Range";
-			std::cerr << std::endl;
+			std::cout << "MenuList::list_process() Idx Out of Range";
+			std::cout << std::endl;
 		}
 
 		return MENU_PROCESS_DONE; /* ready for next key stroke */
@@ -717,14 +717,14 @@ uint32_t MenuOpLineInput::op()
 
 uint32_t MenuOpLineInput::process_lines(std::string input)
 {
-	std::cerr << "MenuOpLineInput::process_lines() => SHOULD BE OVERLOADED";
-	std::cerr << "Input Was: ";
-	std::cerr << std::endl;
-	std::cerr << "==================================================";
-	std::cerr << std::endl;
-	std::cerr << input;
-	std::cerr << "==================================================";
-	std::cerr << std::endl;
+	std::cout << "MenuOpLineInput::process_lines() => SHOULD BE OVERLOADED";
+	std::cout << "Input Was: ";
+	std::cout << std::endl;
+	std::cout << "==================================================";
+	std::cout << std::endl;
+	std::cout << input;
+	std::cout << "==================================================";
+	std::cout << std::endl;
 
 	return MENU_PROCESS_ERROR;
 }
@@ -746,12 +746,12 @@ uint32_t MenuOpLineInput::process(char key)
 		case MENU_PROCESS_NEEDDATA:
 			break;
 		case MENU_PROCESS_ERROR:
-			std::cerr << "MenuOpLineInput::process() => ERROR";
-			std::cerr << std::endl;
+			std::cout << "MenuOpLineInput::process() => ERROR";
+			std::cout << std::endl;
 		case MENU_PROCESS_DONE:
 			/* cleanup for next command */
-			std::cerr << "MenuOpLineInput::process() Clearing Buffer";
-			std::cerr << std::endl;
+			std::cout << "MenuOpLineInput::process() Clearing Buffer";
+			std::cout << std::endl;
 			mInput.clear();
 
 			/* go back to parent menu */

@@ -186,16 +186,16 @@ int MenuListTransfer::getEntryDesc(int idx, std::string &desc)
 	std::string hash;
 	if (!getListEntry(idx, hash))
 	{
-		std::cerr << "MenuListTransfer::getEntryDesc() No ListEntry";
-		std::cerr << std::endl;
+		std::cout << "MenuListTransfer::getEntryDesc() No ListEntry";
+		std::cout << std::endl;
 		return 0;
 	}
 
 	FileInfo info;
 	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info))
 	{
-		std::cerr << "MenuListTransfer::getEntryDesc() No FileDetails";
-		std::cerr << std::endl;
+		std::cout << "MenuListTransfer::getEntryDesc() No FileDetails";
+		std::cout << std::endl;
 		return 0;
 	}
 
@@ -302,9 +302,9 @@ int MenuListSearch::getCurrentSearchId(uint32_t &id)
 
 int MenuListSearch::storeSearch(uint32_t searchId, std::string match_string)
 {
-	std::cerr << "MenuListSearch::storeSearch(" << searchId << " => ";
-	std::cerr << match_string;
-	std::cerr << std::endl;
+	std::cout << "MenuListSearch::storeSearch(" << searchId << " => ";
+	std::cout << match_string;
+	std::cout << std::endl;
 
 	std::string strSearchId;
 	rs_sprintf(strSearchId, "%lu", searchId);
@@ -318,8 +318,8 @@ int MenuListSearch::storeSearch(uint32_t searchId, std::string match_string)
 
 int MenuListSearch::removeSearch(std::string strSearchId)
 {
-	std::cerr << "MenuListSearch::removeSearch(" << strSearchId << ")";
-	std::cerr << std::endl;
+	std::cout << "MenuListSearch::removeSearch(" << strSearchId << ")";
+	std::cout << std::endl;
 
 	std::map<std::string, uint32_t>::iterator it;
 	it = mSearchIds.find(strSearchId);
@@ -341,8 +341,8 @@ uint32_t MenuOpSearchNew::process_lines(std::string input)
 	/* launch search */
 	if (input.size() < 4)
 	{
-		std::cerr << "MenuOpSearchNew::process_lines() ERROR Input too small";
-		std::cerr << std::endl;
+		std::cout << "MenuOpSearchNew::process_lines() ERROR Input too small";
+		std::cout << std::endl;
 		return MENU_PROCESS_ERROR;
 	}
 
@@ -378,8 +378,8 @@ uint32_t MenuListSearchList::refresh()
 	MenuListSearch *mls = dynamic_cast<MenuListSearch *>(p);
 	if (!mls)
 	{
-		std::cerr << "MenuListSearchList::refresh() mls not there";
-		std::cerr << std::endl;
+		std::cout << "MenuListSearchList::refresh() mls not there";
+		std::cout << std::endl;
 		return MENU_OP_ERROR;
 	}
 
@@ -389,13 +389,13 @@ uint32_t MenuListSearchList::refresh()
 	uint32_t searchId;
 	if (!mls->getCurrentSearchId(searchId))
 	{
-		std::cerr << "MenuListSearchList::refresh() currentIdx invalid";
-		std::cerr << std::endl;
+		std::cout << "MenuListSearchList::refresh() currentIdx invalid";
+		std::cout << std::endl;
 		return MENU_OP_ERROR;
 	}
 
-	std::cerr << "MenuListSearchList::refresh() searchId: " << searchId;
-	std::cerr << std::endl;
+	std::cout << "MenuListSearchList::refresh() searchId: " << searchId;
+	std::cout << std::endl;
 
 	std::list<TurtleFileInfo>::iterator it;
 	mNotify->getSearchResults(searchId, mSearchResults);
@@ -432,8 +432,8 @@ int MenuListSearchList::downloadSelected()
 {
 	if (mSelectIdx < 0)
 	{
-		std::cerr << "MenuListSearchList::downloadSelected() Invalid Selection";
-		std::cerr << std::endl;
+		std::cout << "MenuListSearchList::downloadSelected() Invalid Selection";
+		std::cout << std::endl;
         	return MENU_ENTRY_NONE;
 	}
 
@@ -448,13 +448,13 @@ int MenuListSearchList::downloadSelected()
 		if (rsFiles -> FileRequest(it->name, it->hash, it->size, 
 				"", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 		{
-			std::cerr << "MenuListSearchList::downloadSelected() Download Started";
-			std::cerr << std::endl;
+			std::cout << "MenuListSearchList::downloadSelected() Download Started";
+			std::cout << std::endl;
 		}
 		else
 		{
-			std::cerr << "MenuListSearchList::downloadSelected() Error Starting Download";
-			std::cerr << std::endl;
+			std::cout << "MenuListSearchList::downloadSelected() Error Starting Download";
+			std::cout << std::endl;
 		}
                 return MENU_ENTRY_OKAY;
         }
@@ -469,8 +469,8 @@ uint32_t MenuOpSearchListDownload::op_basic(std::string key)
 	MenuListSearchList *mlsl = dynamic_cast<MenuListSearchList *>(p);
 	if (!mlsl)
 	{
-		std::cerr << "MenuOpSearchListDownload::op_basic() ERROR";
-		std::cerr << std::endl;
+		std::cout << "MenuOpSearchListDownload::op_basic() ERROR";
+		std::cout << std::endl;
 		return MENU_OP_ERROR;
 	}
 
