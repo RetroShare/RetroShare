@@ -7,25 +7,30 @@
 #include <map>
 #include <list>
 
-#define MENU_PROCESS_NONE	0
-#define MENU_PROCESS_TOP	1
-#define MENU_PROCESS_MENU	2
-#define MENU_PROCESS_NEEDDATA	3
-#define MENU_PROCESS_DONE	4
-#define MENU_PROCESS_QUIT	5
-#define MENU_PROCESS_SHUTDOWN	6
-#define MENU_PROCESS_HELP	7
-#define MENU_PROCESS_ERROR	8
+#include "rstermserver.h" // generic processing command.
+
+#define MENU_PROCESS_MASK	0x0fff 
+
+#define MENU_PROCESS_NONE	0x0000
+#define MENU_PROCESS_TOP	0x0001
+#define MENU_PROCESS_MENU	0x0002
+#define MENU_PROCESS_DONE	0x0004
+#define MENU_PROCESS_QUIT	0x0008
+#define MENU_PROCESS_SHUTDOWN	0x0010
+#define MENU_PROCESS_HELP	0x0020
+#define MENU_PROCESS_ERROR	0x0040
+
+#define MENU_PROCESS_NEEDDATA	0x1000 		// Able to be OR'd with ANOTHER CASE.
 
 #define MENU_KEY_QUIT	'Q'
-#define MENU_KEY_HELP	'H'
-#define MENU_KEY_TOP	'T'
-#define MENU_KEY_REPEAT	'R'
-#define MENU_KEY_UP	'U'
+#define MENU_KEY_HELP	'h'
+#define MENU_KEY_TOP	't'
+#define MENU_KEY_REPEAT	'r'
+#define MENU_KEY_UP	'u'
 
-#define MENULIST_KEY_LIST	'L'  // Don't need this.
-#define MENULIST_KEY_NEXT	'N'
-#define MENULIST_KEY_PREV	'P'
+#define MENULIST_KEY_LIST	'l'  // Don't need this.
+#define MENULIST_KEY_NEXT	'n'
+#define MENULIST_KEY_PREV	'p'
 
 #define MENU_OP_ERROR		0
 #define MENU_OP_INSTANT		1
@@ -34,6 +39,11 @@
 
 #define MENU_ENTRY_NONE		0
 #define MENU_ENTRY_OKAY		1
+
+#define MENU_DRAW_FLAGS_STD	0
+#define MENU_DRAW_FLAGS_HTML	1
+#define MENU_DRAW_FLAGS_ECHO	2
+#define MENU_DRAW_FLAGS_NOQUIT  4
 
 class Menu;
 class Screen;
@@ -49,19 +59,20 @@ virtual ~Menu();
 	Menu *selectedMenu() { return mSelectedMenu; }
 	int addMenuItem(char key, Menu *child);
 
+virtual void     reset();
 virtual uint32_t op() { return MENU_OP_SUBMENU; }  /* what type is it? returns SUBMENU, INSTANT, NEEDINPUT */
 virtual uint32_t process(char key);
 
 	// THE BIT STILL TO BE DEFINED!
 
 std::string 	ShortFnDesc() { return mShortDesc; }// Menu Text (for Help).
+virtual	uint32_t drawPage(uint32_t drawFlags, std::string &buffer); 
+virtual	uint32_t drawHelpPage(uint32_t drawFlags, std::string &buffer); 
 
 //virtual	std::string menuText() = 0;
 //virtual	std::string menuHelp() = 0;
 virtual void setOpMessage(std::string msg) { return; }
 virtual void setErrorMessage(std::string msg) { return; }
-virtual	uint32_t drawPage(); // { return 1; } //= 0;
-virtual	uint32_t drawHelpPage(); // { return 1; } //= 0;
 virtual	uint32_t showError() { return 1; } //= 0;
 virtual	uint32_t showHelp() { return 1; } //= 0;
 
@@ -92,6 +103,7 @@ class MenuList: public Menu
 public:
 	MenuList(std::string shortDesc): Menu(shortDesc) { return; }
 
+virtual void     reset();
 virtual uint32_t op();
 virtual	uint32_t process(char key);
 
@@ -103,8 +115,8 @@ virtual	uint32_t process(char key);
 virtual	int getEntryDesc(int idx, std::string &desc);
 
 	// Output.
-virtual	uint32_t drawPage(); 
-virtual	uint32_t drawHelpPage();
+virtual	uint32_t drawPage(uint32_t drawFlags, std::string &buffer); 
+virtual	uint32_t drawHelpPage(uint32_t drawFlags, std::string &buffer); 
 
 protected:
 	virtual uint32_t list_process(char key);
@@ -161,17 +173,24 @@ protected:
 
 
 
-class MenuInterface
+class MenuInterface: public RsTermServer
 {
 public:
 
-	MenuInterface(Menu *b) :mCurrentMenu(b), mBase(b) { return; }
-	uint32_t process(char key);
-	uint32_t drawHeader();
+	MenuInterface(Menu *b, uint32_t drawFlags) :mCurrentMenu(b), mBase(b), mDrawFlags(drawFlags), mInputRequired(false)  { return; }
+	uint32_t process(char key, uint32_t drawFlags, std::string &buffer); 
+	uint32_t drawHeader(uint32_t drawFlags, std::string &buffer); 
+
+	// RsTermServer Interface.
+        virtual void reset();
+        virtual int tick(bool haveInput, char keypress, std::string &output);
+
 
 private:
 	Menu *mCurrentMenu;
 	Menu *mBase;
+	uint32_t mDrawFlags;
+	bool mInputRequired;
 };
 
 

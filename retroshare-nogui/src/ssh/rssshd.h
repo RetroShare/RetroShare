@@ -34,6 +34,7 @@ clients must be made or how a client should react.
 #include <string>
 #include <map>
 
+#include "rstermserver.h"
 
 #ifndef KEYS_FOLDER
 #ifdef _WIN32
@@ -53,17 +54,22 @@ clients must be made or how a client should react.
 
 
 
-#define ALLOW_CLEARPWDS		1
+//#define ALLOW_CLEARPWDS		1
 
 class RsSshd;
 extern RsSshd *rsSshd;
+
+
+  	// TODO: NB: THIS FN DOES NOT USE A "SLOW" HASH FUNCTION.
+        // THE FIRST HALF OF THE HASH STRING IS THE SALT 
+int CheckPasswordHash(std::string pwdHashRadix64, std::string password);
+int GeneratePasswordHash(std::string saltBin, std::string password, std::string &pwdHashRadix64);
+int GenerateSalt(std::string &saltBin);
 
 class RsSshd: public RsThread
 {
 public:
 
-  	// TODO: NB: THIS FN DOES NOT USE A "SLOW" HASH FUNCTION.
-        // THE FIRST HALF OF THE HASH STRING IS THE SALT 
 int adduserpwdhash(std::string username, std::string hash);
 #ifdef ALLOW_CLEARPWDS
 int adduser(std::string username, std::string password);
@@ -74,10 +80,13 @@ int adduser(std::string username, std::string password);
 virtual void run(); /* overloaded from RsThread => called once the thread is started */
 
 // NB: This must be called EARLY before all the threads are launched.
-static  RsSshd *InitRsSshd(uint16_t port, std::string rsakeyfile);
+static  RsSshd *InitRsSshd(std::string portstr, std::string rsakeyfile);
+
+	// Terminal Handling!
+int 	setTermServer(RsTermServer *s);
 
 private:
-	RsSshd(uint16_t port); /* private constructor => so can only create with */
+	RsSshd(std::string portStr); /* private constructor => so can only create with */
 
 int 	init(std::string pathrsakey);
 
@@ -91,6 +100,9 @@ int 	authUser();
 int	setupChannel();
 int	setupShell();
 int	doEcho();
+
+	// Terminal Handling!
+int 	doTermServer();
 
 int 	cleanupSession();
 int 	cleanupAll();
@@ -109,11 +121,12 @@ int 	auth_password_basic(char *name, char *pwd);
 	uint32_t mState;
 	uint32_t mBindState;
 
-	uint16_t mPort;
+	std::string mPortStr;
 	ssh_session mSession;
 	ssh_bind mBind;
 	ssh_channel mChannel;
 
+	RsTermServer *mTermServer;
 #ifdef ALLOW_CLEARPWDS
 	std::map<std::string, std::string> mPasswords;
 #endif // ALLOW_CLEARPWDS

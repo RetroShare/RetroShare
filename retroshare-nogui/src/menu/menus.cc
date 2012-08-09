@@ -10,30 +10,30 @@
 // or L, N, P (list ops).
 // or 0-9,a-f (list selection).
 
-#define 	MENU_FRIENDS_KEY_ADD  			'A'
-#define 	MENU_FRIENDS_KEY_VIEW  			'V'
-#define 	MENU_FRIENDS_KEY_REMOVE  		'D'
-#define 	MENU_FRIENDS_KEY_CHAT  			'C'
+#define 	MENU_FRIENDS_KEY_ADD  			'a'
+#define 	MENU_FRIENDS_KEY_VIEW  			'v'
+#define 	MENU_FRIENDS_KEY_REMOVE  		'd'
+#define 	MENU_FRIENDS_KEY_CHAT  			'c'
 
-#define 	MENU_TRANSFER_KEY_STOP  		'S'
-#define 	MENU_TRANSFER_KEY_CANCEL  		'C'
+#define 	MENU_TRANSFER_KEY_STOP  		's'
+#define 	MENU_TRANSFER_KEY_CANCEL  		'c'
 
-#define 	MENU_SEARCH_KEY_ADD  			'A'
-#define 	MENU_SEARCH_KEY_REMOVE  		'D'
-#define 	MENU_SEARCH_KEY_VIEW  			'V'
-#define 	MENU_SEARCH_KEY_DOWNLOAD  		'G'
+#define 	MENU_SEARCH_KEY_ADD  			'a'
+#define 	MENU_SEARCH_KEY_REMOVE  		'd'
+#define 	MENU_SEARCH_KEY_VIEW  			'v'
+#define 	MENU_SEARCH_KEY_DOWNLOAD  		'g'
 
-#define 	MENU_FRIENDS_KEY_ADD  			'A'
-#define 	MENU_FRIENDS_KEY_VIEW  			'V'
-#define 	MENU_FRIENDS_KEY_REMOVE  		'D'
-#define 	MENU_FRIENDS_KEY_CHAT  			'C'
+#define 	MENU_FRIENDS_KEY_ADD  			'a'
+#define 	MENU_FRIENDS_KEY_VIEW  			'v'
+#define 	MENU_FRIENDS_KEY_REMOVE  		'd'
+#define 	MENU_FRIENDS_KEY_CHAT  			'c'
 
 
-#define 	MENU_TOPLEVEL_KEY_FRIENDS  		'F'
-#define 	MENU_TOPLEVEL_KEY_NETWORK  		'W'
-#define 	MENU_TOPLEVEL_KEY_TRANSFER  		'D'
-#define 	MENU_TOPLEVEL_KEY_SEARCH  		'S'
-#define 	MENU_TOPLEVEL_KEY_FORUMS  		'O'
+#define 	MENU_TOPLEVEL_KEY_FRIENDS  		'f'
+#define 	MENU_TOPLEVEL_KEY_NETWORK  		'w'
+#define 	MENU_TOPLEVEL_KEY_TRANSFER  		'd'
+#define 	MENU_TOPLEVEL_KEY_SEARCH  		's'
+#define 	MENU_TOPLEVEL_KEY_FORUMS  		'o'
 
 
 Menu *CreateMenuStructure(NotifyTxt *notify)
@@ -199,7 +199,7 @@ int MenuListTransfer::getEntryDesc(int idx, std::string &desc)
 		return 0;
 	}
 
-	float frac = (float) info.transfered / info.size;
+	float frac = 100.0 * (float) info.transfered / info.size;
 
 	if (frac != 1.0)
 	{
@@ -334,6 +334,13 @@ int MenuListSearch::removeSearch(std::string strSearchId)
 
 	return 1;
 }
+
+uint32_t MenuOpSearchNew::drawPage(uint32_t drawFlags, std::string &buffer)
+{
+        buffer += "Enter New Search Term > ";
+	return 1;
+}
+
 
 
 uint32_t MenuOpSearchNew::process_lines(std::string input)

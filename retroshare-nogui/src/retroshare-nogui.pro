@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
-#CONFIG += sshserver
+CONFIG += sshserver
 
 CONFIG += debug
 debug {
@@ -23,6 +23,7 @@ linux-* {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lgnome-keyring
+	LIBS += -lsqlite3
 }
 
 linux-g++ {
@@ -134,10 +135,12 @@ sshserver {
         #
         # You can connect from a standard ssh, eg: ssh -p 7022 127.0.0.1
  	#
-	# The Menu system is available from the command-line now, 
-	# but not over SSH yet... 
+	# The Menu system is available from the command-line (-T) and SSH (-S)
 	# if it get covered by debug gunk, just press <return> to refresh.
 	#
+	# ./retroshare-nogui -h  provides some more instructions.
+	#
+
 	INCLUDEPATH += ../../../lib/libssh-0.5.2/include/
 	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
 	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
@@ -146,6 +149,7 @@ sshserver {
 
 	HEADERS += menu/menu.h \
 		menu/menus.h \
+		rstermserver.h \
 
 	SOURCES += menu/menu.cc \
 		menu/menus.cc \

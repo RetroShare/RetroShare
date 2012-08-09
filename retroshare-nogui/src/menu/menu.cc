@@ -6,48 +6,59 @@
 
 #include <iostream>
 
+#include "util/rsstring.h"
+
 /**********************************************************
  * Menu Base Interface.
  */
 
-int tailrec_printparents(Menu *m, std::ostream &out)
+        // RsTermServer Interface.
+void MenuInterface::reset()
+{
+	mBase->reset();
+	mCurrentMenu = mBase;
+	mInputRequired = false;
+}
+
+int MenuInterface::tick(bool haveInput, char keypress, std::string &output)
+{
+	if (!haveInput)
+	{
+		/* make a harmless key */
+		keypress = ' ';
+	}
+
+	if ((mInputRequired) && (!haveInput))
+	{
+		return 1;
+	}
+
+	uint32_t rt = process(keypress, mDrawFlags, output);
+	mInputRequired = (rt == MENU_PROCESS_NEEDDATA);
+
+	if (rt == MENU_PROCESS_QUIT)
+	{
+		return -1;
+	}
+	return 1;
+}
+
+
+int tailrec_printparents(Menu *m, std::string &buffer)
 {
 	Menu *p = m->parent();
 	if (p)
 	{
-		tailrec_printparents(p, out);
+		tailrec_printparents(p, buffer);
 	}
-	out << m->ShortFnDesc() << " => ";
-
-#if 0
-	MenuList *ml = dynamic_cast<MenuList *>(m);
-	MenuOpBasicKey *mbk = dynamic_cast<MenuOpBasicKey *>(m);
-	MenuOpTwoKeys *mtk = dynamic_cast<MenuOpTwoKeys *>(m);
-
-	if (ml)
-	{
-		out << "MenuList@" << (void *) m << " ";
-	}
-	else if (mbk)
-	{
-		out << "MenuBasicKey@" << (void *) m << " ";
-	}
-	else if (mtk)
-	{
-		out << "MenuOpTwoKeys@" << (void *) m << " ";
-	}
-	else
-	{
-		out << "Menu@" << (void *) m << " ";
-	}
-#endif
-
+	buffer += m->ShortFnDesc();
+	buffer += " => ";
 	return 1;
 }
 
 
 
-uint32_t MenuInterface::process(char key)
+uint32_t MenuInterface::process(char key, uint32_t drawFlags, std::string &buffer)
 {
 
 #ifdef MENU_DEBUG
@@ -66,18 +77,23 @@ uint32_t MenuInterface::process(char key)
 	std::cout << std::endl;
 #endif // MENU_DEBUG
 
-	switch(rt)
+
+	uint32_t base_rt = (rt & MENU_PROCESS_MASK);
+	bool needData = (rt & MENU_PROCESS_NEEDDATA);
+	switch(base_rt)
 	{
 		case MENU_PROCESS_NONE:
+			if (needData)
+			{
+				/* no redraw, this could be called many times */
+				doRedraw = false;
+			}
+			break;
+
 		case MENU_PROCESS_DONE:
 			/* no changes - operation performed, or noop */
 			break;
 
-		case MENU_PROCESS_NEEDDATA:
-			/* no redraw, this could be called many times */
-			doRedraw = false;
-			break;
-			
 		case MENU_PROCESS_ERROR:
 			/* Show Error at top of Page */
 			showError = true;
@@ -114,6 +130,11 @@ uint32_t MenuInterface::process(char key)
 			break;
 	}
 
+	if (drawFlags & MENU_DRAW_FLAGS_ECHO)
+	{
+		buffer += key;
+	}
+
 	/* now we redraw, and wait for next data */
 	if (!doRedraw)
 	{
@@ -123,7 +144,7 @@ uint32_t MenuInterface::process(char key)
 	/* HEADER */
 	for(int i = 0; i < 20; i++)
 	{
-		std::cout << std::endl;
+		buffer += "\r\n";
 	}
 
 	/* ERROR */
@@ -138,17 +159,19 @@ uint32_t MenuInterface::process(char key)
 	}
 
 	/* MENU PAGE */		
-	drawHeader();
-	mCurrentMenu->drawPage();
-	return MENU_PROCESS_NEEDDATA;
+	drawHeader(drawFlags, buffer);
+	mCurrentMenu->drawPage(drawFlags, buffer);
+
+	if (needData)
+		return MENU_PROCESS_NEEDDATA;
+
+	return MENU_PROCESS_NONE;
 }
 
-uint32_t MenuInterface::drawHeader()
+uint32_t MenuInterface::drawHeader(uint32_t drawFlags, std::string &buffer)
 {
-	std::cout << "=======================================================";
-	std::cout << std::endl;
-	std::cout << "Retroshare Terminal Menu V2.xxxx ======================";
-	std::cout << std::endl;
+	buffer += "=======================================================\r\n";
+	buffer += "Retroshare Terminal Menu V2.xxxx ======================\r\n";
 
 	unsigned int nTotal = 0;
 	unsigned int nConnected = 0;
@@ -200,18 +223,19 @@ uint32_t MenuInterface::drawHeader()
 	float upKb = 0;
 	rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
-	std::cout << "Friends " << nConnected << "/" << nTotal;
-	std::cout << " Network: " << natState;
-	std::cout << std::endl;
-	std::cout << "Down: " << downKb << " (kB/s) ";
-	std::cout << " Up: " << upKb << " (kB/s) ";
-	std::cout << std::endl;
-	std::cout << "Menu State: ";
-	tailrec_printparents(mCurrentMenu, std::cout);
-	std::cout << std::endl;
+	rs_sprintf_append(buffer, "Friends %d / %d Network: %s\r\n", 
+			nConnected, nTotal, natState.c_str());
 
-	std::cout << "=======================================================";
-	std::cout << std::endl;
+	rs_sprintf_append(buffer, "Down: %2.2f Up %2.2f\r\n", downKb, upKb);
+
+	std::string menuState;
+	tailrec_printparents(mCurrentMenu, menuState);
+
+	buffer += "Menu State: ";
+	buffer += menuState;
+	buffer += "\r\n";
+
+	buffer += "=======================================================\r\n";
 
 	return 1;
 }
@@ -249,6 +273,16 @@ int Menu::addMenuItem(char key, Menu *child)
 	child->setParent(this);
 
 	return 1;
+}
+
+void Menu::reset()
+{
+	mSelectedMenu = NULL;
+        std::map<uint8_t, Menu *>::iterator it;
+	for(it = mChildren.begin(); it != mChildren.end(); it++)
+	{
+		it->second->reset();
+	}
 }
 
 
@@ -309,11 +343,11 @@ uint32_t Menu::process_children(char key)
 	/* now return, depending on type */
 	switch(it->second->op())
 	{
-		/* Think I can handle these the same! Both will call DrawPage, 
-		 * then Process on New Menu 
-		 */
-
 		case MENU_OP_NEEDDATA:
+			setSelectedMenu(it->second);
+			return MENU_PROCESS_MENU | MENU_PROCESS_NEEDDATA;
+			break;
+
 		case MENU_OP_SUBMENU:
 			setSelectedMenu(it->second);
 			return MENU_PROCESS_MENU;
@@ -335,31 +369,40 @@ uint32_t Menu::process_children(char key)
 }
 
 
-uint32_t Menu::drawPage()
+uint32_t Menu::drawPage(uint32_t drawFlags, std::string &buffer)
 {
-	std::cout << "Universal Commands ( ";
-	std::cout << (char) MENU_KEY_QUIT << ":Quit ";
-	std::cout << (char) MENU_KEY_HELP << ":Help ";
-	std::cout << (char) MENU_KEY_TOP << ":Top ";
-	std::cout << (char) MENU_KEY_UP << ":Up ";
-	std::cout << ")";
-	std::cout << std::endl;
+	buffer += "Universal Commands ( ";
+	if (!(drawFlags & MENU_DRAW_FLAGS_NOQUIT))
+	{
+		buffer += (char) MENU_KEY_QUIT;
+		buffer += ":Quit ";
+	}
+	buffer += (char) MENU_KEY_HELP;
+	buffer += ":Help ";
+	buffer += (char) MENU_KEY_TOP;
+	buffer += ":Top ";
+	buffer += (char) MENU_KEY_UP;
+	buffer += ":Up ";
+	buffer += ")";
+	buffer += "\r\n";
 
-	std::cout << "Specific Commands (";
+	buffer += "Specific Commands ( ";
 	std::map<uint8_t, Menu *>::iterator it;
 	for(it = mChildren.begin(); it != mChildren.end(); it++)
 	{
-		std::cout << (char) it->first << ":";
-		std::cout << it->second->ShortFnDesc() << " ";
+		buffer += (char) it->first;
+		buffer += ":";
+		buffer += it->second->ShortFnDesc();
+		buffer += " ";
 	}
-	std::cout << ")";
-	std::cout << std::endl;
+	buffer += ")";
+	buffer += "\r\n";
 
 	return 1;
 }
 
 
-uint32_t Menu::drawHelpPage()
+uint32_t Menu::drawHelpPage(uint32_t drawFlags, std::string &buffer)
 {
 	std::cout << "Menu Help: Universal Commands are:";
 	std::cout << std::endl;
@@ -391,22 +434,20 @@ uint32_t Menu::drawHelpPage()
  */
 
 
-uint32_t MenuList::drawPage()
+uint32_t MenuList::drawPage(uint32_t drawFlags, std::string &buffer)
 {
-	Menu::drawPage();
+	Menu::drawPage(drawFlags, buffer);
 
-	std::cout << "Navigation Commands (";
-	//std::cout << (char) MENULIST_KEY_LIST << ":List ";
-	std::cout << (char) MENULIST_KEY_NEXT << ":Next ";
-	std::cout << (char) MENULIST_KEY_PREV << ":Prev ";
-	std::cout << ")";
-	std::cout << std::endl;
+	buffer += "Navigation Commands (";
+	buffer += (char) MENULIST_KEY_NEXT;
+	buffer += ":Next ";
+	buffer += (char) MENULIST_KEY_PREV;
+	buffer += ":Prev ";
+	buffer += ")";
+	buffer += "\r\n";
 
-	std::cout << "MenuList::Internals ";
-	std::cout << "ListSize: " << getListCount();
-	std::cout << " SelectIdx: " << mSelectIdx;
-	std::cout << " Cursor: " << mCursor;
-	std::cout << std::endl;
+	rs_sprintf_append(buffer, "MenuList::Internals ListSize: %d, SelectIdx: %d Cursor: %d\r\n", 
+		getListCount(), mSelectIdx, mCursor);
 
 	int i = 0;
 
@@ -420,28 +461,28 @@ uint32_t MenuList::drawPage()
 
 	if (mSelectIdx >= 0)	
 	{
-		std::cout << "Current Selection Idx: " << mSelectIdx << " : ";
+	
+		rs_sprintf_append(buffer, "Current Selection Idx: %d : ", mSelectIdx);
 		std::string desc;
 		if (getEntryDesc(mSelectIdx, desc) & (desc != ""))
 		{
-			std::cout << desc;
+			buffer += desc;
 		}
 		else
 		{
-			std::cout << "Missing Description";
+			buffer += "Missing Description";
 		}
-		std::cout << std::endl;
+		buffer += "\r\n";
 	}
 	else
 	{
-		std::cout << "No Current Selection: Use 0 - 9 to choose an Entry";
-		std::cout << std::endl;
+		buffer += "No Current Selection: Use 0 - 9 to choose an Entry";
+		buffer += "\r\n";
 	}
 
 
-	std::cout << "Showing " << startCount;
-	std::cout << " to " << endCount << " of " << listCount << " Entries";
-	std::cout << std::endl;
+	rs_sprintf_append(buffer, "Showing %d to %d of %d Entries\r\n", 
+		startCount, endCount, listCount);
 
 	std::list<std::string>::iterator it;
 	for (it = mList.begin(); it != mList.end(); it++, i++)
@@ -451,32 +492,35 @@ uint32_t MenuList::drawPage()
 		{
 			if (i == mSelectIdx)
 			{
-				std::cout << "SELECTED => (" << curIdx << ")  ";
+				rs_sprintf_append(buffer, "SELECTED (%d)  ", curIdx);
 			}
 			else
 			{
-				std::cout << "\t(" << curIdx << ")  ";
+				rs_sprintf_append(buffer, "\t(%d)  ", curIdx);
 			}
 			std::string desc;
 			if (getEntryDesc(i, desc) & (desc != ""))
 			{
-				std::cout << desc;
+				buffer += desc;
 			}
 			else
 			{
-				std::cout << *it << " => ";
-				std::cout << "Missing Description";
+				buffer += *it;
+				buffer += " => ";
+				buffer += "Missing Description";
 			}
-			std::cout << std::endl;
+			buffer += "\r\n";
 		}
 	}
+	buffer += "\r\n";
+	buffer += "Make Your Choice > ";
 
 	return 1;
 }
 
-uint32_t MenuList::drawHelpPage()
+uint32_t MenuList::drawHelpPage(uint32_t drawFlags, std::string &buffer)
 {
-	Menu::drawPage();
+	Menu::drawHelpPage(drawFlags, buffer);
 
 	std::cout << "MenuList Help: Navigation Commands are:";
 	std::cout << std::endl;
@@ -499,11 +543,18 @@ uint32_t MenuList::drawHelpPage()
 }
 
 
+void MenuList::reset()
+{
+	Menu::reset(); // clears children too.
+
+	mList.clear();
+	mSelectIdx = -1;
+	mCursor = 0;
+}
+
 uint32_t MenuList::op()
 {
-	/* load friend list*/
 	mList.clear();
-	//rsPeers->getGpgAcceptedList(mList);
 	mSelectIdx = -1;
 	mCursor = 0;
 	
@@ -734,7 +785,7 @@ uint32_t MenuOpLineInput::process(char key)
 {
 	/* read data in and add to buffer */
 	mInput += key;
-	if (key != '\n')
+	if ((key != '\n') && (key != '\r'))
 	{
 		return MENU_PROCESS_NEEDDATA;
 	}

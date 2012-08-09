@@ -139,6 +139,9 @@ class MenuOpSearchNew: public MenuOpLineInput
 
 	MenuOpSearchNew() :MenuOpLineInput("New") { return; }
 	virtual uint32_t process_lines(std::string input);
+	virtual uint32_t drawPage(uint32_t drawFlags, std::string &buffer);
+
+
 };
 
 

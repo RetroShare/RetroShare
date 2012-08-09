@@ -30,12 +30,12 @@ clients must be made or how a client should react.
 RsSshd *rsSshd = NULL; // External Reference Variable.
 
 // NB: This must be called EARLY before all the threads are launched.
-RsSshd *RsSshd::InitRsSshd(uint16_t port, std::string rsakeyfile)
+RsSshd *RsSshd::InitRsSshd(std::string portStr, std::string rsakeyfile)
 {
 	ssh_threads_set_callbacks(ssh_threads_get_pthread());
 	ssh_init();
 
-	rsSshd = new RsSshd(port);
+	rsSshd = new RsSshd(portStr);
 	if (rsSshd->init(rsakeyfile))
 	{
 		return rsSshd;
@@ -46,12 +46,13 @@ RsSshd *RsSshd::InitRsSshd(uint16_t port, std::string rsakeyfile)
 }
 
 
-RsSshd::RsSshd(uint16_t port)
-:mSshMtx("sshMtx"), mPort(port), mChannel(0)
+RsSshd::RsSshd(std::string portStr)
+:mSshMtx("sshMtx"), mPortStr(portStr), mChannel(0)
 {
 
 	mState = RSSSHD_STATE_NULL;
     	mBindState = 0;
+        mTermServer = NULL;
 
 	return;
 }
@@ -62,13 +63,12 @@ int RsSshd::init(std::string pathrsakey)
 {
 
     mBind=ssh_bind_new();
-    mSession=ssh_new();
 
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_DSAKEY, KEYS_FOLDER "ssh_host_dsa_key");
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_RSAKEY, KEYS_FOLDER "ssh_host_rsa_key");
 
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_BINDPORT_STR, arg);
-    ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_BINDPORT_STR, "7022");
+    ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_BINDPORT_STR, mPortStr.c_str());
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_DSAKEY, arg);
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_HOSTKEY, arg);
     ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_RSAKEY, pathrsakey.c_str());
@@ -136,6 +136,7 @@ int RsSshd::listenConnect()
 		std::cerr << std::endl;
 	}
 
+    	mSession=ssh_new();
 	int r=ssh_bind_accept(mBind,mSession);
 	if(r==SSH_ERROR)
 	{
@@ -188,7 +189,8 @@ int RsSshd::interactive()
 	std::cerr << "RsSshd::interactive()";
 	std::cerr << std::endl;
 
-	doEcho();
+	doTermServer();
+	//doEcho();
 	return 1;
 }
 
@@ -337,12 +339,74 @@ int RsSshd::doEcho()
 }
 
 
+int RsSshd::setTermServer(RsTermServer *s)
+{
+	mTermServer = s;
+	return 1;
+}
+
+
+
+int RsSshd::doTermServer()
+{
+	std::cerr << "RsSshd::doTermServer()";
+	std::cerr << std::endl;
+
+	if (!mTermServer)
+	{
+		std::cerr << "RsSshd::doTermServer() ERROR Not Set";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	mTermServer->reset(); // clear everything for new user.
+
+	bool okay = true;
+	while(okay)
+	{
+		char buf;
+		int size = ssh_channel_read_nonblocking(mChannel, &buf, 1, 0);
+		bool haveInput = (size > 0);
+		std::string output;
+
+		int rt = mTermServer->tick(haveInput, buf, output);
+	
+		if (output.size() > 0)
+		{
+            		ssh_channel_write(mChannel, output.c_str(), output.size());
+		}
+
+		if (!haveInput)
+		{
+			/* have a little sleep */
+			sleep(1); //0000000); // 1/10th sec.
+			//usleep(10000000); // 1/10th sec.
+		}
+		else
+		{
+			usleep(10000); // 1/100th sec.
+		}
+
+		if (rt < 0)
+		{
+			okay = false; // exit.
+		}	
+	}
+
+	std::cerr << "RsSshd::doTermServer() Finished";
+	std::cerr << std::endl;
+
+	return 1;
+}
+
+
 int RsSshd::cleanupSession()
 {
 	std::cerr << "RsSshd::cleanupSession()";
 	std::cerr << std::endl;
 
     ssh_disconnect(mSession);
+    ssh_free(mSession);
     return 1;
 }
 
@@ -433,15 +497,17 @@ int RsSshd::auth_password_basic(char *name, char *pwd)
 }
 #endif // ALLOW_CLEARPWDS
 
-#define RSSSHD_HASH_PWD_LENGTH		40
+//#define RSSSHD_HASH_PWD_LENGTH		40
 
 int RsSshd::adduserpwdhash(std::string username, std::string hash)
 {
+#if 0
 	if (hash.length() != RSSSHD_HASH_PWD_LENGTH)
 	{
 		std::cerr << "RsSshd::adduserpwdhash() Hash Wrong Length";
 		return 0;
 	}
+#endif
 
 	if (username.length() < RSSSHD_MIN_USERNAME)
 	{
@@ -464,21 +530,18 @@ int RsSshd::adduserpwdhash(std::string username, std::string hash)
 
 int RsSshd::auth_password_hashed(char *name, char *pwd)
 {
-	std::cerr << "RsSshd::auth_password_hashed() Not Finished Yet!";
-	return 0;
-
 	std::string username(name);
 	std::string password(pwd);
 	
 	std::map<std::string, std::string>::iterator it;
-	it = mPasswords.find(username);
-	if (it == mPasswords.end())
+	it = mPwdHashs.find(username);
+	if (it == mPwdHashs.end())
 	{
 		std::cerr << "RsSshd::auth_password_hashed() Unknown username";
 		return 0;
 	}
 
-	if (it->second == password)
+	if (CheckPasswordHash(it->second, password))
 	{
 		std::cerr << "RsSshd::auth_password_hashed() logged in " << username;
 		return 1;
@@ -487,5 +550,162 @@ int RsSshd::auth_password_hashed(char *name, char *pwd)
 	std::cerr << "RsSshd::auth_password_hashed() Invalid pwd for " << username;
 	return 0;
 }
+
+#include "util/radix64.h"
+#include "util/rsrandom.h"
+#include <openssl/evp.h>
+
+#define RSSSHD_PWD_SALT_LEN 16
+#define RSSSHD_PWD_MIN_LEN 8
+
+
+#if 0
+int printHex(const char *data, int len)
+{
+	for(int i = 0; i < len; i++)
+	{
+		fprintf(stderr, "%02x", (uint8_t) data[i]);
+	}
+	return 1;
+}
+#endif
+
+
+
+int GenerateSalt(std::string &saltBin)
+{
+	/* get from random */
+	for(int i = 0; i < RSSSHD_PWD_SALT_LEN / 4; i++)
+	{
+		uint32_t rnd = RSRandom::random_u32();
+		saltBin += ((char *) &rnd)[0];
+		saltBin += ((char *) &rnd)[1];
+		saltBin += ((char *) &rnd)[2];
+		saltBin += ((char *) &rnd)[3];
+	}
+
+#if 0
+	std::cerr << "HexSalt: ";
+	printHex(saltBin.c_str(), saltBin.size());
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
+
+int GeneratePasswordHash(std::string saltBin, std::string password, std::string &pwdHashRadix64)
+{
+#if 0
+	std::cerr << "GeneratePasswordHash()";
+	std::cerr << std::endl;
+
+	std::cerr << "HexSalt: ";
+	printHex(saltBin.c_str(), saltBin.size());
+	std::cerr << std::endl;
+#endif
+
+	if (saltBin.size() != RSSSHD_PWD_SALT_LEN)
+	{
+		return 0;
+	}
+
+	if (password.size() < RSSSHD_PWD_MIN_LEN)
+	{
+		return 0;
+	}
+
+	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
+	EVP_DigestInit(ctx, EVP_sha256());
+
+	EVP_DigestUpdate(ctx, saltBin.c_str(), saltBin.size());
+	EVP_DigestUpdate(ctx, password.c_str(), password.size());
+
+
+	unsigned char hash[1024];
+	unsigned int  s = 1024 - RSSSHD_PWD_SALT_LEN;
+
+	for(int i = 0; i < RSSSHD_PWD_SALT_LEN; i++)
+	{
+		hash[i] = saltBin[i];
+	}
+
+	EVP_DigestFinal(ctx, &(hash[RSSSHD_PWD_SALT_LEN]), &s);
+
+	Radix64::encode((char *)hash, s + RSSSHD_PWD_SALT_LEN, pwdHashRadix64);
+
+#if 0
+	std::cerr << "Salt Length: " << RSSSHD_PWD_SALT_LEN;
+	std::cerr << std::endl;
+	std::cerr << "Hash Length: " << s;
+	std::cerr << std::endl;
+	std::cerr << "Total Length: " << s + RSSSHD_PWD_SALT_LEN;
+	std::cerr << std::endl;
+
+
+	std::cerr << "Encoded Length: " << pwdHashRadix64.size();
+	std::cerr << std::endl;
+
+	std::cerr << "GeneratePasswordHash() Output: " << pwdHashRadix64;
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
+
+	
+int CheckPasswordHash(std::string pwdHashRadix64, std::string password)
+{
+	char output[1024];
+	char *buf = NULL;
+	size_t len = 1024;
+	Radix64::decode(pwdHashRadix64, buf, len);
+	for(int i = 0; (i < len) && (i < 1024); i++)
+	{
+		output[i] = buf[i];
+	}
+	delete []buf;
+
+#if 0
+	std::cerr << "CheckPasswordHash() Input: " << pwdHashRadix64;
+	std::cerr << std::endl;
+	std::cerr << "Decode Length: " << len;
+	std::cerr << std::endl;
+	std::cerr << "HexDecoded: ";
+	printHex(output, len);
+	std::cerr << std::endl;
+#endif
+
+	/* first N bytes are SALT */
+	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
+	EVP_DigestInit(ctx, EVP_sha256());
+
+	EVP_DigestUpdate(ctx, output, RSSSHD_PWD_SALT_LEN);
+	EVP_DigestUpdate(ctx, password.c_str(), password.size());
+
+#if 0
+	std::cerr << "HexSalt: ";
+	printHex(output, RSSSHD_PWD_SALT_LEN);
+	std::cerr << std::endl;
+#endif
+
+	unsigned char hash[128];
+	unsigned int  s = 128;
+	EVP_DigestFinal(ctx, hash, &s);
+
+	/* Final Comparison */
+	if (s != len - RSSSHD_PWD_SALT_LEN)
+	{
+		std::cerr << "Length Mismatch";
+		return 0;
+	}
+
+	if (0 == strncmp(&(output[RSSSHD_PWD_SALT_LEN]), (char *) hash, s))
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
 
 
