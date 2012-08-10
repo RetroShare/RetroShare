@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
- #ifndef P3_FEEDREADERTHREAD
+#ifndef P3_FEEDREADERTHREAD
 #define P3_FEEDREADERTHREAD
 
 #include "util/rsthreads.h"
@@ -40,7 +40,6 @@ public:
 	enum DownloadResult
 	{
 		DOWNLOAD_SUCCESS,
-		DOWNLOAD_ERROR_INIT,
 		DOWNLOAD_ERROR,
 		DOWNLOAD_UNKNOWN_CONTENT_TYPE,
 		DOWNLOAD_NOT_FOUND,
@@ -63,6 +62,9 @@ private:
 
 	DownloadResult download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &error);
 	ProcessResult process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &error);
+
+	std::string getProxyForFeed(const RsFeedReaderFeed &feed);
+	bool processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg);
 
 	p3FeedReader *mFeedReader;
 	Type mType;

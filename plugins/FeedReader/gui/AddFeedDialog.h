@@ -50,6 +50,7 @@ private slots:
 	void useStandardUpdateIntervalToggled();
 	void useStandardProxyToggled();
 	void typeForumToggled();
+	void denyForumToggled();
 	void validate();
 	void createFeed();
 

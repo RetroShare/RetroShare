@@ -64,8 +64,10 @@ private slots:
 	void markAsReadMsg();
 	void markAsUnreadMsg();
 	void markAllAsReadMsg();
-	void copyLinkMsg();
+	void copyLinksMsg();
 	void removeMsg();
+	void openLinkMsg();
+	void copyLinkMsg();
 
 	/* FeedReaderNotify */
 	void feedChanged(const QString &feedId, int type);

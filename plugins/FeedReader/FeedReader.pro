@@ -6,6 +6,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			services/p3FeedReader.cc \
 			services/p3FeedReaderThread.cc \
 			services/rsFeedReaderItems.cc \
+			services/util/CURLWrapper.cc \
 			gui/FeedReaderDialog.cpp \
 			gui/AddFeedDialog.cpp \
 			gui/FeedReaderNotify.cpp \
@@ -16,6 +17,7 @@ HEADERS =	FeedReaderPlugin.h \
 			services/p3FeedReader.h \
 			services/p3FeedReaderThread.h \
 			services/rsFeedReaderItems.h \
+			services/util/CURLWrapper.h \
 			gui/FeedReaderDialog.h \
 			gui/AddFeedDialog.h \
 			gui/FeedReaderNotify.h \
@@ -39,7 +41,7 @@ linux-* {
 }
 
 win32 {
-	DEFINES += CURL_STATICLIB
+	DEFINES += CURL_STATICLIB LIBXML_STATIC
 
 	CURL_DIR = ../../../curl-7.26.0
 	LIBXML2_DIR = ../../../libxml2-2.8.0

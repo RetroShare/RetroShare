@@ -27,6 +27,7 @@
 #include <QPainter>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QDesktopServices>
 
 #include "FeedReaderDialog.h"
 #include "ui_FeedReaderDialog.h"
@@ -118,6 +119,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 	connect(ui->filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
+	connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(openLinkMsg()));
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggleMsgText()));
 
 	mFeedCompareRole = new RSTreeWidgetItemCompareRole;
@@ -167,6 +169,18 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 
 	/* initialize feed list */
 	ui->feedTreeWidget->sortItems(COLUMN_FEED_NAME, Qt::AscendingOrder);
+
+	/* build menu for link button */
+	QMenu *menu = new QMenu(this);
+	QAction *action = menu->addAction(tr("Open link in browser"), this, SLOT(openLinkMsg()));
+	menu->addAction(tr("Copy link to clipboard"), this, SLOT(copyLinkMsg()));
+
+	QFont font = action->font();
+	font.setBold(true);
+	action->setFont(font);
+
+	ui->linkButton->setMenu(menu);
+	ui->linkButton->setEnabled(false);
 
 	ui->msgTreeWidget->installEventFilter(this);
 }
@@ -351,7 +365,7 @@ void FeedReaderDialog::msgTreeCustomPopupMenu(QPoint /*point*/)
 
 	contextMnu.addSeparator();
 
-	action = contextMnu.addAction(QIcon(""), tr("Copy link"), this, SLOT(copyLinkMsg()));
+	action = contextMnu.addAction(QIcon(""), tr("Copy link"), this, SLOT(copyLinskMsg()));
 	action->setEnabled(!selectedItems.empty());
 
 	action = contextMnu.addAction(QIcon(""), tr("Remove"), this, SLOT(removeMsg()));
@@ -522,10 +536,14 @@ void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, FeedInfo &info)
 	case FeedInfo::WAITING:
 		break;
 	case FeedInfo::WAITING_TO_DOWNLOAD:
+		workState = tr("waiting for download");
+		break;
 	case FeedInfo::DOWNLOADING:
-		workState = tr("loading");
+		workState = tr("downloading");
 		break;
 	case FeedInfo::WAITING_TO_PROCESS:
+		workState = tr("waiting for process");
+		break;
 	case FeedInfo::PROCESSING:
 		workState = tr("processing");
 		break;
@@ -791,6 +809,7 @@ void FeedReaderDialog::msgItemChanged()
 		ui->msgTitle->clear();
 //		ui->msgLink->clear();
 		ui->msgText->clear();
+		ui->linkButton->setEnabled(false);
 		return;
 	}
 
@@ -800,6 +819,7 @@ void FeedReaderDialog::msgItemChanged()
 		ui->msgTitle->clear();
 //		ui->msgLink->clear();
 		ui->msgText->clear();
+		ui->linkButton->setEnabled(false);
 		return;
 	}
 
@@ -809,6 +829,7 @@ void FeedReaderDialog::msgItemChanged()
 		ui->msgTitle->clear();
 //		ui->msgLink->clear();
 		ui->msgText->clear();
+		ui->linkButton->setEnabled(false);
 		return;
 	}
 
@@ -832,7 +853,8 @@ void FeedReaderDialog::msgItemChanged()
 
 	ui->msgText->setHtml(msgTxt);
 	ui->msgTitle->setText(QString::fromUtf8(msgInfo.title.c_str()));
-//	ui->msgLink->setHtml(RsHtml().formatText(NULL, QString::fromUtf8(msgInfo.link.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS));
+
+	ui->linkButton->setEnabled(!msgInfo.link.empty());
 }
 
 void FeedReaderDialog::setMsgAsReadUnread(QList<QTreeWidgetItem *> &rows, bool read)
@@ -1049,7 +1071,7 @@ void FeedReaderDialog::markAllAsReadMsg()
 	setMsgAsReadUnread(items, true);
 }
 
-void FeedReaderDialog::copyLinkMsg()
+void FeedReaderDialog::copyLinksMsg()
 {
 	QString links;
 
@@ -1085,4 +1107,34 @@ void FeedReaderDialog::removeMsg()
 		msgIds.push_back((*it)->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString());
 	}
 	mFeedReader->removeMsgs(feedId, msgIds);
+}
+
+void FeedReaderDialog::copyLinkMsg()
+{
+	QTreeWidgetItem *item = ui->msgTreeWidget->currentItem();
+	if (!item) {
+		return;
+	}
+
+	QString link = item->data(COLUMN_MSG_DATA, ROLE_MSG_LINK).toString();
+	if (link.isEmpty()) {
+		return;
+	}
+
+	QApplication::clipboard()->setText(link);
+}
+
+void FeedReaderDialog::openLinkMsg()
+{
+	QTreeWidgetItem *item = ui->msgTreeWidget->currentItem();
+	if (!item) {
+		return;
+	}
+
+	QString link = item->data(COLUMN_MSG_DATA, ROLE_MSG_LINK).toString();
+	if (link.isEmpty()) {
+		return;
+	}
+
+	QDesktopServices::openUrl(QUrl(link));
 }

@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
- #ifndef P3_FEEDREADER
+#ifndef P3_FEEDREADER
 #define P3_FEEDREADER
 
 #include "retroshare/rsplugin.h"
@@ -71,7 +71,8 @@ public:
 	bool getFeedToDownload(RsFeedReaderFeed &feed);
 	void onDownloadSuccess(const std::string &feedId, const std::string &content, std::string &icon);
 	void onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &error);
-	void onProcessSuccess(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs);
+	bool onProcessSuccess_filterMsg(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs);
+	void onProcessSuccess_addMsgs(const std::string &feedId, bool result, std::list<RsFeedReaderMsg*> &msgs);
 	void onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result);
 
 	bool getFeedToProcess(RsFeedReaderFeed &feed);

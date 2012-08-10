@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
- #ifndef RETROSHARE_FEEDREADER_GUI_INTERFACE_H
+#ifndef RETROSHARE_FEEDREADER_GUI_INTERFACE_H
 #define RETROSHARE_FEEDREADER_GUI_INTERFACE_H
 
 #include <inttypes.h>
@@ -68,6 +68,8 @@ public:
 		flag.deactivated = false;
 		flag.forum = false;
 		flag.updateForumInfo = false;
+		flag.embedImages = false;
+		flag.saveCompletePage = false;
 	}
 
 	std::string  feedId;
@@ -98,6 +100,8 @@ public:
 		bool deactivated : 1;
 		bool forum : 1;
 		bool updateForumInfo : 1;
+		bool embedImages : 1;
+		bool saveCompletePage : 1;
 	} flag;
 };
 

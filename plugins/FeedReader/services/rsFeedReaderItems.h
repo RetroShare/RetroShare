@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
- #ifndef RS_FEEDREADER_ITEMS_H
+#ifndef RS_FEEDREADER_ITEMS_H
 #define RS_FEEDREADER_ITEMS_H
 
 #include "serialiser/rsserial.h"
@@ -55,6 +55,8 @@ const uint8_t RS_PKT_SUBTYPE_FEEDREADER_MSG   = 0x03;
 #define RS_FEED_FLAG_DEACTIVATED                   0x040
 #define RS_FEED_FLAG_FORUM                         0x080
 #define RS_FEED_FLAG_UPDATE_FORUM_INFO             0x100
+#define RS_FEED_FLAG_EMBED_IMAGES                  0x200
+#define RS_FEED_FLAG_SAVE_COMPLETE_PAGE            0x400
 
 class RsFeedReaderFeed : public RsItem
 {

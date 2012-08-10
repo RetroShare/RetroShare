@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>715</width>
-    <height>559</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -290,13 +290,6 @@ p, li { white-space: pre-wrap; }
           <number>6</number>
          </property>
          <item>
-          <widget class="QRadioButton" name="typeLocalRadio">
-           <property name="text">
-            <string>Local Feed</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QRadioButton" name="typeForumRadio">
@@ -322,6 +315,13 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="typeLocalRadio">
+           <property name="text">
+            <string>Local Feed</string>
+           </property>
+          </widget>
          </item>
          <item>
           <spacer name="verticalSpacer">
@@ -363,6 +363,20 @@ p, li { white-space: pre-wrap; }
           <widget class="QCheckBox" name="updateForumInfoCheckBox">
            <property name="text">
             <string>Update forum information</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="embedImagesCheckBox">
+           <property name="text">
+            <string>Embed images (experimental for local feeds)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="saveCompletePageCheckBox">
+           <property name="text">
+            <string>Save complete web page (experimental for local feeds)</string>
            </property>
           </widget>
          </item>
@@ -416,7 +430,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>urlLineEdit</tabstop>
   <tabstop>nameLineEdit</tabstop>
   <tabstop>descriptionPlainTextEdit</tabstop>
-  <tabstop>typeLocalRadio</tabstop>
   <tabstop>typeForumRadio</tabstop>
   <tabstop>forumComboBox</tabstop>
   <tabstop>activatedCheckBox</tabstop>

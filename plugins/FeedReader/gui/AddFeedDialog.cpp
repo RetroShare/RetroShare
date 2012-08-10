@@ -46,12 +46,17 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, QWidget *parent)
 	connect(ui->useStandardProxyCheckBox, SIGNAL(toggled(bool)), this, SLOT(useStandardProxyToggled()));
 	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(typeForumToggled()));
 
+	/* currently only for loacl feeds */
+	connect(ui->saveCompletePageCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumToggled()));
+	connect(ui->embedImagesCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumToggled()));
+
 	connect(ui->urlLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 	connect(ui->nameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 	connect(ui->useInfoFromFeedCheckBox, SIGNAL(toggled(bool)), this, SLOT(validate()));
+	connect(ui->typeLocalRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
+	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
 
 	ui->activatedCheckBox->setChecked(true);
-	ui->typeLocalRadio->setChecked(true);
 	ui->forumComboBox->setEnabled(false);
 	ui->useInfoFromFeedCheckBox->setChecked(true);
 	ui->updateForumInfoCheckBox->setEnabled(false);
@@ -124,6 +129,16 @@ void AddFeedDialog::typeForumToggled()
 	ui->updateForumInfoCheckBox->setEnabled(checked);
 }
 
+void AddFeedDialog::denyForumToggled()
+{
+	if (ui->saveCompletePageCheckBox->isChecked() || ui->embedImagesCheckBox->isChecked()) {
+		ui->typeForumRadio->setEnabled(false);
+		ui->typeLocalRadio->setChecked(true);
+	} else {
+		ui->typeForumRadio->setEnabled(true);
+	}
+}
+
 void AddFeedDialog::validate()
 {
 	bool ok = true;
@@ -132,6 +147,9 @@ void AddFeedDialog::validate()
 		ok = false;
 	}
 	if (ui->nameLineEdit->text().isEmpty() && !ui->useInfoFromFeedCheckBox->isChecked()) {
+		ok = false;
+	}
+	if (!ui->typeLocalRadio->isChecked() && !ui->typeForumRadio->isChecked()) {
 		ok = false;
 	}
 
@@ -196,6 +214,8 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 		ui->useInfoFromFeedCheckBox->setChecked(feedInfo.flag.infoFromFeed);
 		ui->updateForumInfoCheckBox->setChecked(feedInfo.flag.updateForumInfo);
 		ui->activatedCheckBox->setChecked(!feedInfo.flag.deactivated);
+		ui->embedImagesCheckBox->setChecked(feedInfo.flag.embedImages);
+		ui->saveCompletePageCheckBox->setChecked(feedInfo.flag.saveCompletePage);
 
 		ui->descriptionPlainTextEdit->setPlainText(QString::fromUtf8(feedInfo.description.c_str()));
 
@@ -206,6 +226,8 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 
 		if (feedInfo.flag.forum) {
 			ui->typeForumRadio->setChecked(true);
+			ui->saveCompletePageCheckBox->setEnabled(false);
+			ui->embedImagesCheckBox->setEnabled(false);
 
 			if (feedInfo.forumId.empty()) {
 				ui->forumNameLabel->setText(tr("Not yet created"));
@@ -259,13 +281,17 @@ void AddFeedDialog::createFeed()
 	feedInfo.flag.infoFromFeed = ui->useInfoFromFeedCheckBox->isChecked();
 	feedInfo.flag.updateForumInfo = ui->updateForumInfoCheckBox->isChecked() && ui->updateForumInfoCheckBox->isEnabled();
 	feedInfo.flag.deactivated = !ui->activatedCheckBox->isChecked();
+	feedInfo.flag.embedImages = ui->embedImagesCheckBox->isChecked();
+	feedInfo.flag.saveCompletePage = ui->saveCompletePageCheckBox->isChecked();
 
 	feedInfo.description = ui->descriptionPlainTextEdit->toPlainText().toUtf8().constData();
 
 	feedInfo.flag.forum = ui->typeForumRadio->isChecked();
 	if (mFeedId.empty()) {
-		/* set forum (only when create a new feed) */
-		feedInfo.forumId = ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().toStdString();
+		if (feedInfo.flag.forum) {
+			/* set forum (only when create a new feed) */
+			feedInfo.forumId = ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().toStdString();
+		}
 	}
 
 	feedInfo.flag.authentication = ui->useAuthenticationCheckBox->isChecked();
