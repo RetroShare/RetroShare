@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include "argstream.h"
+#include <pqi/cleanupxpgp.h>
 #include <pgp/rscertificate.h>
 
 int main(int argc,char *argv[])
@@ -9,8 +10,10 @@ int main(int argc,char *argv[])
 	{
 		argstream as(argc,argv) ;
 		std::string keyfile ;
+		bool clean_cert = false ;
 
 		as >> parameter('i',"input",keyfile,"input certificate file (old or new formats)",true)
+			>> option('c',"clean",clean_cert,"clean cert before parsing")
 			>> help() ;
 
 		as.defaultErrorHandling() ;
@@ -32,6 +35,24 @@ int main(int argc,char *argv[])
 		std::cerr << "==========================================" << std::endl;
 		std::cerr << res << std::endl;
 		std::cerr << "==========================================" << std::endl;
+
+		if(clean_cert)
+		{
+			std::string res2 ;
+			int err ;
+
+			res2 = cleanUpCertificate(res,err) ;
+
+			if(res2 == "")
+				std::cerr << "Error while cleaning: " << err << std::endl;
+			else
+				res = res2 ;
+
+			std::cerr << "Certificate after cleaning:" << std::endl;
+			std::cerr << "==========================================" << std::endl;
+			std::cerr << res << std::endl;
+			std::cerr << "==========================================" << std::endl;
+		}
 		std::cerr << "Parsing..." << std::endl;
 
 		RsCertificate cert(res) ;
