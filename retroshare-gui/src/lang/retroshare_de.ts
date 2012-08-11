@@ -1182,26 +1182,26 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+272"/>
+        <location line="+274"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="-321"/>
-        <location line="+576"/>
+        <location line="-323"/>
+        <location line="+578"/>
         <source>Disable Auto-Download</source>
         <translation>Deaktiviere Auto-Download</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="+109"/>
         <location line="+3"/>
-        <location filename="../gui/ChannelFeed.cpp" line="-575"/>
-        <location line="+577"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-577"/>
+        <location line="+579"/>
         <source>Enable Auto-Download</source>
         <translation>Aktiviere Auto-Download</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="-567"/>
+        <location filename="../gui/ChannelFeed.cpp" line="-569"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
     </message>
@@ -3049,12 +3049,11 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation>Erstelle einen neuen Kanal</translation>
     </message>
     <message>
-        <location line="+62"/>
         <source>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;New Channel&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Neuer Kanal&lt;/span&gt;</translation>
+        <translation type="obsolete">&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Neuer Kanal&lt;/span&gt;</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+87"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -3074,7 +3073,16 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation>Kontakte:</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.ui" line="+53"/>
+        <location filename="../gui/channels/CreateChannel.ui" line="-73"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+126"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
@@ -6833,7 +6841,7 @@ p, li { white-space: pre-wrap; }
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.cpp" line="+104"/>
+        <location filename="../gui/FriendsDialog.cpp" line="+103"/>
         <source>Chat lobbies</source>
         <translation>Chat Lobbies</translation>
     </message>
@@ -7177,7 +7185,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+195"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+211"/>
         <location line="+23"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -7193,7 +7201,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+83"/>
         <source>Select Trusted Friend</source>
         <translation>Wähle vertrauten Freund</translation>
     </message>
@@ -7203,7 +7211,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikate (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="+697"/>
+        <location filename="../gui/GenCertDialog.ui" line="+725"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -7213,7 +7221,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-80"/>
+        <location line="-93"/>
         <source>Your profile is associated to a GPG key</source>
         <translation>Dein Profil ist mit einem GPG Schlüssel verbunden</translation>
     </message>
@@ -7222,19 +7230,18 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Generiere neues Profil</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+112"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location line="-221"/>
+        <location line="-249"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or use your favorite gnupg key manager.</source>
-        <translation>Es sieht so aus, als ob Du kein Profile (GPG Schlüssel) besitzt. Bitte fülle die Felder aus und generiere dir ein GPG Schlüssel oder nutze deinen favoritisierten GPG Schlüssel Manager.</translation>
+        <translation type="obsolete">Es sieht so aus, als ob Du kein Profile (GPG Schlüssel) besitzt. Bitte fülle die Felder aus und generiere dir ein GPG Schlüssel oder nutze deinen favoritisierten GPG Schlüssel Manager.</translation>
     </message>
     <message>
         <source>Generate a new Profile</source>
@@ -7245,7 +7252,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Nutze Profil</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+97"/>
+        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
+        <translation>Es sieht so aus, als ob Du kein Profile (GPG Schlüssel) besitzt. Bitte fülle die Felder aus und generiere dir ein Profil oder bestehendes Profil importieren.</translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Generate a new identity</source>
         <translation>Eine neue Identität erstellen</translation>
     </message>
@@ -7260,7 +7272,7 @@ p, li { white-space: pre-wrap; }
         <translation>Exportiere ausgewählte Identität</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+35"/>
         <source>Use identity</source>
         <translation>Benutze Identität</translation>
     </message>
@@ -7308,7 +7320,7 @@ Diese Information ist für GPG erforderlich, aber du kannst durch Eingabe einer 
         <translation>Neue Identität erstellen</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+76"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7400,7 +7412,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten installieren und das selbe Profil (GPG Schlüssel) verwenden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-243"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-263"/>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
         <translation>[Optional] Sichtbar für deine Freunde und Freunde deiner Freunde.</translation>
     </message>
@@ -7420,38 +7432,38 @@ p, li { white-space: pre-wrap; }
         <translation>[Benötigt] Dieses Passwort ist mit deinem PGP Schlüssel geschützt.</translation>
     </message>
     <message>
-        <location line="+27"/>
-        <location line="+49"/>
+        <location line="+37"/>
+        <location line="+52"/>
         <source>Create new Location</source>
         <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
-        <location line="-48"/>
-        <location line="+49"/>
+        <location line="-51"/>
+        <location line="+52"/>
         <source>Generate new Location</source>
         <translation>Erstelle neuen Ort</translation>
     </message>
     <message>
-        <location line="-48"/>
-        <location line="+49"/>
+        <location line="-51"/>
+        <location line="+52"/>
         <source>Create a new Location</source>
         <translation>Erstelle einen neuen Ort</translation>
     </message>
     <message>
-        <location line="-42"/>
-        <location line="+25"/>
+        <location line="-45"/>
+        <location line="+28"/>
         <source>Create new Identity</source>
         <translation>Erstelle neue Identität</translation>
     </message>
     <message>
-        <location line="-24"/>
-        <location line="+25"/>
+        <location line="-27"/>
+        <location line="+28"/>
         <source>Generate new Identity</source>
         <translation>Generiere neue Identität</translation>
     </message>
     <message>
-        <location line="-24"/>
-        <location line="+25"/>
+        <location line="-27"/>
+        <location line="+28"/>
         <source>Create a new Identity</source>
         <translation>Erstelle eine neue Identität</translation>
     </message>
@@ -7506,6 +7518,21 @@ und den Import zum Laden verwenden</translation>
         <translation>Deine Identität wurde erfolgreich geladen:</translation>
     </message>
     <message>
+        <location line="+10"/>
+        <source>New identity imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was imported successfuly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>You can use it now to create a new location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Generate new Profile</source>
         <translation type="obsolete">Generiere neues Profil</translation>
     </message>
@@ -7514,7 +7541,7 @@ und den Import zum Laden verwenden</translation>
         <translation type="obsolete">Erstelle neues Profil</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+50"/>
         <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your GPG password when asked, to sign your new key.</source>
@@ -7523,7 +7550,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
 Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu unterzeichnen.</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+120"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -12843,6 +12870,154 @@ Do you want to send them a Message instead</source>
     </message>
 </context>
 <context>
+    <name>ProfileManager</name>
+    <message>
+        <location filename="../gui/ProfileManager.ui" line="+509"/>
+        <source>Profile Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+117"/>
+        <source>Generate New Identity</source>
+        <translation type="unfinished">Neue Identität erstellen</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Import new identity</source>
+        <translation type="unfinished">Eine Identität importieren</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Export selected identity</source>
+        <translation type="unfinished">Exportiere ausgewählte Identität</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Use identity</source>
+        <translation type="unfinished">Benutze Identität</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished">Dein Profil is mit einem GPG Schlüssel verbunden. RetroShare ignoriert aktuell DSA Schlüssel.</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Identities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+84"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:24pt; color:#ffffff;&quot;&gt;Profile Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProfileManager.cpp" line="+98"/>
+        <location line="+17"/>
+        <source>Export Identity</source>
+        <translation type="unfinished">Exportiere Identität</translation>
+    </message>
+    <message>
+        <location line="-17"/>
+        <location line="+17"/>
+        <source>RetroShare Identity files (*.asc)</source>
+        <translation type="unfinished">RetroShare Identität Dateien (*.asc)</translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>Identity saved</source>
+        <translation type="unfinished">Identität gespeichert</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished">Deine Identität wurde erfolgreich gespeichert
+Sie ist verschlüsselt
+
+Du kannst die Identität nun auf einen anderen Computer kopieren
+und den Import zum Laden verwenden</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Identity not saved</source>
+        <translation type="unfinished">Identität nicht gespeichert</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was not saved. An error occured.</source>
+        <translation type="unfinished">Deine Identität wurde nicht gespeichert. Ein Fehler ist aufgetreten.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Identity not loaded</source>
+        <translation type="unfinished">Identität nicht geladen</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was not loaded properly:</source>
+        <translation type="unfinished">Deine Identität wurde erfolgreich geladen:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>New identity imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Your identity was imported successfuly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>You can use it now to create a new location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Select Trusted Friend</source>
+        <translation type="unfinished">Wähle vertrauten Freund</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Certificates (*.pqi *.pem)</source>
+        <translation type="unfinished">Zertifikate (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <location line="+6"/>
+        <source>Multiple instances</source>
+        <translation type="unfinished">Mehrere Instanzen</translation>
+    </message>
+    <message>
+        <location line="-5"/>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
+        <translation type="unfinished">Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
+        <translation type="unfinished">Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Generate ID Failure</source>
+        <translation type="unfinished">Fehler beim Generieren der ID</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to Load your new Certificate!</source>
+        <translation type="unfinished">Fehler beim Laden Deines neuen Zertifikates!</translation>
+    </message>
+</context>
+<context>
     <name>ProfileView</name>
     <message>
         <source>Clear Photo</source>
@@ -12927,7 +13102,12 @@ Do you want to send them a Message instead</source>
         <translation>Kopiere Zertifikat</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+14"/>
+        <source>Profile Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -13109,7 +13289,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Adressliste&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileWidget.cpp" line="+123"/>
+        <location filename="../gui/profile/ProfileWidget.cpp" line="+125"/>
         <location line="+10"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
@@ -17201,7 +17381,7 @@ Bitte habe etwas Geduld!</translation>
 <context>
     <name>UserNotify</name>
     <message>
-        <location filename="../gui/common/UserNotify.cpp" line="+81"/>
+        <location filename="../gui/common/UserNotify.cpp" line="+125"/>
         <source>You have %1 new messages</source>
         <translation>Du hast %1 neue Nachrichten</translation>
     </message>

@@ -208,7 +208,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Statistics</source>
-        <translation type="unfinished">Estadísticas</translation>
+        <translation type="obsolete">Estadísticas</translation>
     </message>
     <message>
         <source>Photo View</source>
@@ -216,11 +216,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Games Launcher</source>
-        <translation type="unfinished">Lanzador de juegos</translation>
+        <translation type="obsolete">Lanzador de juegos</translation>
     </message>
     <message>
         <source>Shared Calendars</source>
-        <translation type="unfinished">Calendarios compartidos</translation>
+        <translation type="obsolete">Calendarios compartidos</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -229,6 +229,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Show</source>
         <translation type="unfinished">Mostrar</translation>
+    </message>
+    <message>
+        <source>Identities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wiki Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ForumsV2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted Links</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -381,6 +401,10 @@ p, li { white-space: pre-wrap; }
         <source>Play Media</source>
         <translation type="unfinished">Reproducir archivo</translation>
     </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Esconder</translation>
+    </message>
 </context>
 <context>
     <name>BlogNewItem</name>
@@ -399,6 +423,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Blog Decscription</source>
         <translation type="unfinished">Descripción del blog</translation>
+    </message>
+    <message>
+        <source>Unknown Blog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Blog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Updated Blog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Esconder</translation>
     </message>
 </context>
 <context>
@@ -590,6 +630,65 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BwCtrlWindow</name>
+    <message>
+        <source>Bandwidth Control WIndow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BandWidth Measurements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished">ID</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nombre</translation>
+    </message>
+    <message>
+        <source>In (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InMax (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InQueue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InAllocated (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allocated Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Out (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OutMax (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OutQueue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OutAllowed (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allowed Recvd</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CalDialog</name>
     <message>
         <source>Form</source>
@@ -656,71 +755,71 @@ p, li { white-space: pre-wrap; }
     <name>CertificatePage</name>
     <message>
         <source>Certificate files</source>
-        <translation type="unfinished">Archivos de certificados GPG</translation>
+        <translation type="obsolete">Archivos de certificados GPG</translation>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
-        <translation type="unfinished">Usar certificados GPG guardados en archivos.</translation>
+        <translation type="obsolete">Usar certificados GPG guardados en archivos.</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished">Tienes que crear un archivo con tu certificado GPG y mandárselo a tu amigo. También puedes usar un archivo generado anteriormente.</translation>
+        <translation type="obsolete">Tienes que crear un archivo con tu certificado GPG y mandárselo a tu amigo. También puedes usar un archivo generado anteriormente.</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished">Exportar mi certificado GPG...</translation>
+        <translation type="obsolete">Exportar mi certificado GPG...</translation>
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation type="unfinished">Importar certificado GPG de un amigo...</translation>
+        <translation type="obsolete">Importar certificado GPG de un amigo...</translation>
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation type="unfinished">Arrastra el certificado GPG de un amigo a esta ventana o especifica el directorio en el campo de abajo</translation>
+        <translation type="obsolete">Arrastra el certificado GPG de un amigo a esta ventana o especifica el directorio en el campo de abajo</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Navegar</translation>
+        <translation type="obsolete">Navegar</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation type="unfinished">Seleccionar certificado</translation>
+        <translation type="obsolete">Seleccionar certificado</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished">Certificados GPG de RetroShare (*.rsc );;Todos los archivos (*)</translation>
+        <translation type="obsolete">Certificados GPG de RetroShare (*.rsc );;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="unfinished">Lo siento, la creación del certificado GPG ha fallado</translation>
+        <translation type="obsolete">Lo siento, la creación del certificado GPG ha fallado</translation>
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation type="unfinished">Por favor elige un nombre para el archivo</translation>
+        <translation type="obsolete">Por favor elige un nombre para el archivo</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished">Certificado GPG creado con éxito</translation>
+        <translation type="obsolete">Certificado GPG creado con éxito</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="unfinished">Lo siento, la creación del archico de certificados GPG ha fallado</translation>
+        <translation type="obsolete">Lo siento, la creación del archico de certificados GPG ha fallado</translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="unfinished">Abrir certificado GPG ha fallado: algo va mal con %1 </translation>
+        <translation type="obsolete">Abrir certificado GPG ha fallado: algo va mal con %1 </translation>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished">Abrir certificado GPG ha fallado: no puedo leer del archivo %1</translation>
+        <translation type="obsolete">Abrir certificado GPG ha fallado: no puedo leer del archivo %1</translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation type="unfinished">Abrir certificado GPG ha fallado: archivo %1 no encontrado</translation>
+        <translation type="obsolete">Abrir certificado GPG ha fallado: archivo %1 no encontrado</translation>
     </message>
 </context>
 <context>
@@ -774,6 +873,10 @@ p, li { white-space: pre-wrap; }
         <source>Files</source>
         <translation type="unfinished">Archivos</translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChanNewItem</name>
@@ -804,6 +907,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Updated Channel</source>
         <translation type="unfinished">Canal actualizado</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Esconder</translation>
     </message>
 </context>
 <context>
@@ -885,19 +992,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubcribe To Channel</source>
-        <translation type="unfinished">Anular suscripción al canal</translation>
+        <translation type="obsolete">Anular suscripción al canal</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished">Anular suscripción</translation>
+        <translation type="obsolete">Anular suscripción</translation>
     </message>
     <message>
         <source>Subscribe To Channel</source>
-        <translation type="unfinished">Suscribir al canal</translation>
+        <translation type="obsolete">Suscribir al canal</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished">Suscribir</translation>
+        <translation type="obsolete">Suscribir</translation>
     </message>
     <message>
         <source>Set all to read</source>
@@ -977,6 +1084,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
+        <translation type="unfinished">Mensaje de canal</translation>
+    </message>
+</context>
+<context>
     <name>ChatDialog</name>
     <message>
         <source>Friend not Online</source>
@@ -1046,6 +1160,10 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lobby chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1324,6 +1442,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ChatUserNotify</name>
+    <message>
+        <source>Private Chat</source>
+        <translation type="unfinished">Chat privado</translation>
+    </message>
+</context>
+<context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
@@ -1458,55 +1583,55 @@ p, li { white-space: pre-wrap; }
     <name>ConclusionPage</name>
     <message>
         <source>Make Friend</source>
-        <translation type="unfinished">Hacer amigo</translation>
+        <translation type="obsolete">Hacer amigo</translation>
     </message>
     <message>
         <source>Details about your friend : </source>
-        <translation type="unfinished">Detalles de tu amigo:</translation>
+        <translation type="obsolete">Detalles de tu amigo:</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished">Detalles del vecino</translation>
+        <translation type="obsolete">Detalles del vecino</translation>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation type="unfinished">Validez de la llave:</translation>
+        <translation type="obsolete">Validez de la llave:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nombre:</translation>
+        <translation type="obsolete">Nombre:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation type="unfinished">Email:</translation>
+        <translation type="obsolete">Email:</translation>
     </message>
     <message>
         <source>Loc:</source>
-        <translation type="unfinished">Lugar:</translation>
+        <translation type="obsolete">Lugar:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation type="unfinished">Firmantes</translation>
+        <translation type="obsolete">Firmantes</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Opciones</translation>
+        <translation type="obsolete">Opciones</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation type="unfinished">Añadir amigo a grupo:</translation>
+        <translation type="obsolete">Añadir amigo a grupo:</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="unfinished">Autentificar amigo (firmar llave GPG)</translation>
+        <translation type="obsolete">Autentificar amigo (firmar llave GPG)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished">Añadir como amigo a quién connectar</translation>
+        <translation type="obsolete">Añadir como amigo a quién connectar</translation>
     </message>
     <message>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished">Parece que tu amigo ya está registrado. Volver a añadirle solamente cambiaría su dirección IP.</translation>
+        <translation type="obsolete">Parece que tu amigo ya está registrado. Volver a añadirle solamente cambiaría su dirección IP.</translation>
     </message>
 </context>
 <context>
@@ -1727,6 +1852,11 @@ p, li { white-space: pre-wrap; }
         <source>Include signatures</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
@@ -1737,6 +1867,351 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Certificate Load Failed</source>
         <translation type="unfinished">Cargar certificado ha fallado</translation>
+    </message>
+    <message>
+        <source>Add a new Friend</source>
+        <translation type="unfinished">Agregar a un amigo nuevo</translation>
+    </message>
+    <message>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Enter the certificate manually</source>
+        <translation type="unfinished">Introducir certificados &amp;manualmente</translation>
+    </message>
+    <message>
+        <source>&amp;You get a certificate file from your friend</source>
+        <translation type="unfinished">Intercambiar certificados &amp;guardados en archivos</translation>
+    </message>
+    <message>
+        <source>&amp;Make friend with selected friends of my friends</source>
+        <translation type="unfinished">&amp;Hacer amigos algunos amigos de mis amigos</translation>
+    </message>
+    <message>
+        <source>&amp;Enter RetroShare ID manually</source>
+        <translation type="unfinished">&amp;Introducir ID de RetroShare manualmente</translation>
+    </message>
+    <message>
+        <source>&amp;Send a Invitation by Email 
+ (She/He receives a email with instructions howto to download RetroShare)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text certificate</source>
+        <translation type="unfinished">Certificado de texto</translation>
+    </message>
+    <message>
+        <source>Use text representation of the PGP certificates.</source>
+        <translation type="unfinished">Usar certificados GPG de texto.</translation>
+    </message>
+    <message>
+        <source>The text below is your PGP certificate. You have to provide it to your friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy your Cert to Clipboard</source>
+        <translation type="unfinished">Copia tu certificado al portapapeles</translation>
+    </message>
+    <message>
+        <source>Save your Cert into a File</source>
+        <translation type="unfinished">Guardar certificado en un archivo</translation>
+    </message>
+    <message>
+        <source>Run Email program</source>
+        <translation type="unfinished">Abrir programa de email</translation>
+    </message>
+    <message>
+        <source>Please, paste your friends PGP certificate into the box below</source>
+        <translation type="unfinished">Por favor, pega el certificado GPG en el campo abajo</translation>
+    </message>
+    <message>
+        <source>Clean certificate</source>
+        <translation type="unfinished">Limpiar certificado GPG</translation>
+    </message>
+    <message>
+        <source>Certificate files</source>
+        <translation type="unfinished">Archivos de certificados GPG</translation>
+    </message>
+    <message>
+        <source>Use PGP certificates saved in files.</source>
+        <translation type="unfinished">Usar certificados GPG guardados en archivos.</translation>
+    </message>
+    <message>
+        <source>Import friend&apos;s certificate...</source>
+        <translation type="unfinished">Importar certificado GPG de un amigo...</translation>
+    </message>
+    <message>
+        <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
+        <translation type="unfinished">Tienes que crear un archivo con tu certificado GPG y mandárselo a tu amigo. También puedes usar un archivo generado anteriormente.</translation>
+    </message>
+    <message>
+        <source>Export my certificate...</source>
+        <translation type="unfinished">Exportar mi certificado GPG...</translation>
+    </message>
+    <message>
+        <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished">Navegar</translation>
+    </message>
+    <message>
+        <source>Friends of friends</source>
+        <translation type="unfinished">Amigos de amigos</translation>
+    </message>
+    <message>
+        <source>Select now who you want to make friends with.</source>
+        <translation type="unfinished">Elige ahora quienes quieres hacer tus amigos.</translation>
+    </message>
+    <message>
+        <source>Show me:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make friend with these peers</source>
+        <translation type="unfinished">Hacer amigos estos vecinos</translation>
+    </message>
+    <message>
+        <source>RetroShare ID</source>
+        <translation type="unfinished">ID de RetroShare</translation>
+    </message>
+    <message>
+        <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
+        <translation type="unfinished">Utiliza la ID RetroShare para agregar a amigos que están disponibles en tu red.</translation>
+    </message>
+    <message>
+        <source>Add Friends RetroShare ID...</source>
+        <translation type="unfinished">Añadir ID RetroShare del amigo...</translation>
+    </message>
+    <message>
+        <source>Paste Friends RetroShare ID in the box below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite Friends by Email</source>
+        <translation type="unfinished">Invitar a amigos por correo electrónico</translation>
+    </message>
+    <message>
+        <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
+        <translation type="unfinished">Introduce las direcciones de correo de tus amigos (múltiples direcciones separados por punto y coma)</translation>
+    </message>
+    <message>
+        <source>Your friends&apos; email addresses:</source>
+        <translation type="unfinished">Direcciones de correo de tus amigos:</translation>
+    </message>
+    <message>
+        <source>Enter Friends Email addresses</source>
+        <translation type="unfinished">Introduce la dirección de correo de tu amigo</translation>
+    </message>
+    <message>
+        <source>Subject:</source>
+        <translation type="unfinished">Asunto:</translation>
+    </message>
+    <message>
+        <source>Sorry, some error appeared</source>
+        <translation type="unfinished">Perdona, un error ha ocurrido</translation>
+    </message>
+    <message>
+        <source>Here is the error message:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make Friend</source>
+        <translation type="unfinished">Hacer amigo</translation>
+    </message>
+    <message>
+        <source>Details about your friend:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer details</source>
+        <translation type="unfinished">Detalles del vecino</translation>
+    </message>
+    <message>
+        <source>Key validity:</source>
+        <translation type="unfinished">Validez de la llave:</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished">Nombre:</translation>
+    </message>
+    <message>
+        <source>Email:</source>
+        <translation type="unfinished">Email:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation type="unfinished">Lugar:</translation>
+    </message>
+    <message>
+        <source>Signers</source>
+        <translation type="unfinished">Firmantes</translation>
+    </message>
+    <message>
+        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
+        <translation type="unfinished">Parece que tu amigo ya está registrado. Volver a añadirle solamente cambiaría su dirección IP.</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">Opciones</translation>
+    </message>
+    <message>
+        <source>Add friend to group:</source>
+        <translation type="unfinished">Añadir amigo a grupo:</translation>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign GPG Key)</source>
+        <translation type="unfinished">Autentificar amigo (firmar llave GPG)</translation>
+    </message>
+    <message>
+        <source>Add as friend to connect with</source>
+        <translation type="unfinished">Añadir como amigo a quién connectar</translation>
+    </message>
+    <message>
+        <source>Any peer I&apos;ve not signed</source>
+        <translation type="unfinished">Vecinos a quienes no he firmado las llaves GPG</translation>
+    </message>
+    <message>
+        <source>Friends of my friends who already trust me</source>
+        <translation type="unfinished">Amigos de amigos que me han firmado la llave GPG</translation>
+    </message>
+    <message>
+        <source>Signed peers showing as denied</source>
+        <translation type="unfinished">Vecinos bloqueados a quienes he firmado la llave GPG</translation>
+    </message>
+    <message>
+        <source>Peer name</source>
+        <translation type="unfinished">Nombre del vecino</translation>
+    </message>
+    <message>
+        <source>Also signed by</source>
+        <translation type="unfinished">Tambien firmado por</translation>
+    </message>
+    <message>
+        <source>Peer id</source>
+        <translation type="unfinished">ID del vecino</translation>
+    </message>
+    <message>
+        <source>RetroShare Invitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation type="unfinished">Completo</translation>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Ningún</translation>
+    </message>
+    <message>
+        <source>No Trust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:can&apos;t read from file %1 </source>
+        <translation type="unfinished">Abrir certificado GPG ha fallado: no puedo leer del archivo %1</translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:something is wrong with %1 </source>
+        <translation type="unfinished">Abrir certificado GPG ha fallado: algo va mal con %1 </translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:file %1 not found</source>
+        <translation type="unfinished">Abrir certificado GPG ha fallado: archivo %1 no encontrado</translation>
+    </message>
+    <message>
+        <source>This Peer %1 is not available in your Network</source>
+        <translation type="unfinished">Este vecino %1 no está disponible en tu red</translation>
+    </message>
+    <message>
+        <source>Remove signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Invite</source>
+        <translation type="unfinished">Invitar a RetroShare</translation>
+    </message>
+    <message>
+        <source>No or misspelled BEGIN tag found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No or misspelled END tag found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error. Your cert is probably not even a certificate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate cleaning error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Friend Help</source>
+        <translation type="unfinished">Ayuda para conectar con amigos</translation>
+    </message>
+    <message>
+        <source>You can copy this text and send it to your friend via email or some other way</source>
+        <translation type="unfinished">Puedes copiar este texto y mandarselo a un amigo por email u otro medio</translation>
+    </message>
+    <message>
+        <source>Your Cert is copied to Clipboard, paste and send it to your riend via email or some other way</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation type="unfinished">Guardar como...</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
+        <translation type="unfinished">Certificados GPG de RetroShare (*.rsc );;Todos los archivos (*)</translation>
+    </message>
+    <message>
+        <source>Select Certificate</source>
+        <translation type="unfinished">Seleccionar certificado</translation>
+    </message>
+    <message>
+        <source>Sorry, create certificate failed</source>
+        <translation type="unfinished">Lo siento, la creación del certificado GPG ha fallado</translation>
+    </message>
+    <message>
+        <source>Please choose a filename</source>
+        <translation type="unfinished">Por favor elige un nombre para el archivo</translation>
+    </message>
+    <message>
+        <source>Certificate file successfully created</source>
+        <translation type="unfinished">Certificado GPG creado con éxito</translation>
+    </message>
+    <message>
+        <source>Sorry, certificate file creation failed</source>
+        <translation type="unfinished">Lo siento, la creación del archico de certificados GPG ha fallado</translation>
+    </message>
+    <message>
+        <source>*** None ***</source>
+        <translation type="unfinished">*** Ningún ***</translation>
     </message>
 </context>
 <context>
@@ -2086,7 +2561,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;New Channel&lt;/span&gt;</source>
-        <translation type="unfinished">&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Nuevo canal&lt;/span&gt;</translation>
+        <translation type="obsolete">&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Nuevo canal&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Name</source>
@@ -2182,6 +2657,14 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Load channel logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2494,6 +2977,168 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Paste own certificate link</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateForumV2</name>
+    <message>
+        <source>Create new Forum</source>
+        <translation type="unfinished">Crear nuevo foro</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Nuevo foro&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nombre</translation>
+    </message>
+    <message>
+        <source>check peers you would like to share private publish key with</source>
+        <translation type="unfinished">Selecciona a los vecinos quienes quieres enviar la llave de publicación privada</translation>
+    </message>
+    <message>
+        <source>Share Key With</source>
+        <translation type="unfinished">Compartir llave de publicación privada con</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">Descripción</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished">Tipo:</translation>
+    </message>
+    <message>
+        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
+        <translation type="unfinished">Público - Cualquiera puede leer y escribir (Llave de publicación compartida)</translation>
+    </message>
+    <message>
+        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
+        <translation type="unfinished">Restringido - Cualquiera puede leer, publicación limitada (Llave de publicación privada)</translation>
+    </message>
+    <message>
+        <source>Private - (Private Publish Key required to view Messages)</source>
+        <translation type="unfinished">Privado - (Llave de publicación privada necesaria para leer mensajes)</translation>
+    </message>
+    <message>
+        <source>Key Sharing</source>
+        <translation type="unfinished">Compartit llaves de publicación</translation>
+    </message>
+    <message>
+        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Private Publish Key</source>
+        <translation type="unfinished">Compartir llave de publicación privada</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation type="unfinished">Mensajes permitidos</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation type="unfinished">Mensajes anónimos</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation type="unfinished">Crear</translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished">Contactos:</translation>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation type="unfinished">Por favor, añade un nombre</translation>
+    </message>
+</context>
+<context>
+    <name>CreateForumV2Msg</name>
+    <message>
+        <source>Post Forum Message</source>
+        <translation type="unfinished">Escribir mensaje de foro</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished">Foro</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">Asunto</translation>
+    </message>
+    <message>
+        <source>Attach File</source>
+        <translation type="unfinished">Adjuntar archivo</translation>
+    </message>
+    <message>
+        <source>Sign Message</source>
+        <translation type="unfinished">Firmar mensaje</translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished">Pegar enlace RetroShare</translation>
+    </message>
+    <message>
+        <source>Forum Post</source>
+        <translation type="unfinished">Mensaje de foro</translation>
+    </message>
+    <message>
+        <source>Attach files via drag and drop</source>
+        <translation type="unfinished">Añdadir archivos arrastrandolos</translation>
+    </message>
+    <message>
+        <source>You can attach files via drag and drop here in this window</source>
+        <translation type="unfinished">Puedes adjuntar archivos arrastrandolos a esta ventana</translation>
+    </message>
+    <message>
+        <source>Post Forum Msg</source>
+        <translation type="unfinished">Escribir mensaje de foro</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Cerrar</translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation type="unfinished">Pegar enlace RetroShare entero</translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation type="unfinished">Como respuesta a</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation type="unfinished">Por favor, pon un tema y escribe un mensaje</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished">Añadir otro archivo</translation>
     </message>
 </context>
 <context>
@@ -3166,26 +3811,57 @@ Puede ser ventajoso si compartes carpetas de discos duros externos,
     </message>
 </context>
 <context>
+    <name>EditForumV2Details</name>
+    <message>
+        <source>Forum Details</source>
+        <translation type="unfinished">Detalles del foro</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished">Cambiar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Forum Info</source>
+        <translation type="unfinished">Información sobre el foro</translation>
+    </message>
+    <message>
+        <source>Forum Name</source>
+        <translation type="unfinished">Nombre del foro</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished">Descripción del foro</translation>
+    </message>
+</context>
+<context>
     <name>EmailPage</name>
     <message>
         <source>Invite Friends by Email</source>
-        <translation type="unfinished">Invitar a amigos por correo electrónico</translation>
+        <translation type="obsolete">Invitar a amigos por correo electrónico</translation>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation type="unfinished">Introduce las direcciones de correo de tus amigos (múltiples direcciones separados por punto y coma)</translation>
+        <translation type="obsolete">Introduce las direcciones de correo de tus amigos (múltiples direcciones separados por punto y coma)</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation type="unfinished">Direcciones de correo de tus amigos:</translation>
+        <translation type="obsolete">Direcciones de correo de tus amigos:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation type="unfinished">Introduce la dirección de correo de tu amigo</translation>
+        <translation type="obsolete">Introduce la dirección de correo de tu amigo</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished">Asunto:</translation>
+        <translation type="obsolete">Asunto:</translation>
     </message>
     <message>
         <source>Friend invites you to check out RetroShare</source>
@@ -3198,20 +3874,16 @@ RetroShare es software libre y gratuita y su uso es seguro: No contiene ni virus
 Infórmate en la página web oficial (http://retroshare.sourceforge.net) o descarga de allí directamente la versión más reciente (http://retroshare.sourceforge.net/downloads.html)
 Hasta pronto en RetroShare!</translation>
     </message>
-    <message>
-        <source>RetroShare Invitation</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ErrorMessagePage</name>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation type="unfinished">Perdona, un error ha ocurrido</translation>
+        <translation type="obsolete">Perdona, un error ha ocurrido</translation>
     </message>
     <message>
         <source>Here is the error message: </source>
-        <translation type="unfinished">Esta es el mensaje de error: </translation>
+        <translation type="obsolete">Esta es el mensaje de error: </translation>
     </message>
 </context>
 <context>
@@ -3510,47 +4182,47 @@ p, li { white-space: pre-wrap; }
     <name>FofPage</name>
     <message>
         <source>Friends of friends</source>
-        <translation type="unfinished">Amigos de amigos</translation>
+        <translation type="obsolete">Amigos de amigos</translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation type="unfinished">Elige ahora quienes quieres hacer tus amigos.</translation>
+        <translation type="obsolete">Elige ahora quienes quieres hacer tus amigos.</translation>
     </message>
     <message>
         <source>Show me: </source>
-        <translation type="unfinished">Muesta me:</translation>
+        <translation type="obsolete">Muesta me:</translation>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation type="unfinished">Vecinos a quienes no he firmado las llaves GPG</translation>
+        <translation type="obsolete">Vecinos a quienes no he firmado las llaves GPG</translation>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation type="unfinished">Amigos de amigos que me han firmado la llave GPG</translation>
+        <translation type="obsolete">Amigos de amigos que me han firmado la llave GPG</translation>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation type="unfinished">Vecinos bloqueados a quienes he firmado la llave GPG</translation>
+        <translation type="obsolete">Vecinos bloqueados a quienes he firmado la llave GPG</translation>
     </message>
     <message>
         <source>Peer name</source>
-        <translation type="unfinished">Nombre del vecino</translation>
+        <translation type="obsolete">Nombre del vecino</translation>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation type="unfinished">Tambien firmado por</translation>
+        <translation type="obsolete">Tambien firmado por</translation>
     </message>
     <message>
         <source>Peer id</source>
-        <translation type="unfinished">ID del vecino</translation>
+        <translation type="obsolete">ID del vecino</translation>
     </message>
     <message>
         <source>Make friend with these peers</source>
-        <translation type="unfinished">Hacer amigos estos vecinos</translation>
+        <translation type="obsolete">Hacer amigos estos vecinos</translation>
     </message>
     <message>
         <source>*** None ***</source>
-        <translation type="unfinished">*** Ningún ***</translation>
+        <translation type="obsolete">*** Ningún ***</translation>
     </message>
 </context>
 <context>
@@ -3662,6 +4334,14 @@ p, li { white-space: pre-wrap; }
         <source>Please give a Text Message</source>
         <translation type="unfinished">Por favor, introduce un mensaje</translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Esconder</translation>
+    </message>
 </context>
 <context>
     <name>ForumNewItem</name>
@@ -3685,6 +4365,22 @@ p, li { white-space: pre-wrap; }
         <source>Forum Description</source>
         <translation type="unfinished">Descripción del foro</translation>
     </message>
+    <message>
+        <source>Unknown Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished">Nuevo foro</translation>
+    </message>
+    <message>
+        <source>Updated Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Esconder</translation>
+    </message>
 </context>
 <context>
     <name>ForumPage</name>
@@ -3703,6 +4399,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Forum</source>
         <translation type="unfinished">Foro</translation>
+    </message>
+</context>
+<context>
+    <name>ForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation type="unfinished">Mensaje de foro</translation>
+    </message>
+</context>
+<context>
+    <name>ForumV2Details</name>
+    <message>
+        <source>Forum Details</source>
+        <translation type="unfinished">Detalles del foro</translation>
+    </message>
+    <message>
+        <source>Forum Info</source>
+        <translation type="unfinished">Información sobre el foro</translation>
+    </message>
+    <message>
+        <source>Forum Name</source>
+        <translation type="unfinished">Nombre del foro</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation type="unfinished">Popularidad</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation type="unfinished">Última entrada</translation>
+    </message>
+    <message>
+        <source>Forum ID</source>
+        <translation type="unfinished">ID del foro</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished">Descripción del foro</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished">Seguridad</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation type="unfinished">Mensajes permitidos</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation type="unfinished">Mensajes anónimos</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Apply and Close</source>
+        <translation type="unfinished">Aplicar y cerrar</translation>
     </message>
 </context>
 <context>
@@ -3990,6 +4752,265 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>ForumsFillThread</name>
+    <message>
+        <source>Anonymous</source>
+        <translation type="unfinished">Anónimo</translation>
+    </message>
+    <message>
+        <source>signed</source>
+        <translation type="unfinished">firmado</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation type="unfinished">ningún</translation>
+    </message>
+</context>
+<context>
+    <name>ForumsV2Dialog</name>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Foros&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished">Mostrar</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation type="unfinished">Crear foro</translation>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation type="unfinished">Última entrada</translation>
+    </message>
+    <message>
+        <source>Threaded View</source>
+        <translation type="unfinished">Vista hierárquica</translation>
+    </message>
+    <message>
+        <source>Flat View</source>
+        <translation type="unfinished">Vista llana</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished">Título</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Fecha</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">Autor</translation>
+    </message>
+    <message>
+        <source>Signed</source>
+        <translation type="unfinished">Firmado</translation>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Thread</source>
+        <translation type="unfinished">Tema anterior</translation>
+    </message>
+    <message>
+        <source>Next Thread</source>
+        <translation type="unfinished">Tema siguiente</translation>
+    </message>
+    <message>
+        <source>Download all files</source>
+        <translation type="unfinished">Descargar todo</translation>
+    </message>
+    <message>
+        <source>Next unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation type="unfinished">Contenido</translation>
+    </message>
+    <message>
+        <source>Reply Message</source>
+        <translation type="unfinished">Responder a mensaje</translation>
+    </message>
+    <message>
+        <source>Start new Thread for Selected Forum</source>
+        <translation type="unfinished">Empieza un tema nuevo en el foro seleccionado</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished">Imprimir</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation type="unfinished">Vista preliminar</translation>
+    </message>
+    <message>
+        <source>Your Forums</source>
+        <translation type="unfinished">Tus foros</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation type="unfinished">Foros suscritos</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation type="unfinished">Foros populares</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation type="unfinished">Otros foros</translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation type="unfinished">Suscribir foro</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation type="unfinished">Anular suscripción del foro</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished">Nuevo foro</translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation type="unfinished">Mostrar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished">Cambiar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished">Restituir derechos de publicación para el foro</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Copiar enlace RetroShare</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished">Marcar todos como leido</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation type="unfinished">Marcar todos como no leido</translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation type="unfinished">Responder</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation type="unfinished">Empezar nuevo tema</translation>
+    </message>
+    <message>
+        <source>Reply to Author</source>
+        <translation type="unfinished">Responder al autor</translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished">Abrir todos</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished">Cerrar todos</translation>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation type="unfinished">Marcar como leido</translation>
+    </message>
+    <message>
+        <source>with children</source>
+        <translation type="unfinished">con descendientes</translation>
+    </message>
+    <message>
+        <source>Mark as unread</source>
+        <translation type="unfinished">Marcar como no leido</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">Esconder</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished">autentificado</translation>
+    </message>
+    <message>
+        <source>[ ... Missing Message ... ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Placeholder for missing Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>No Forum Selected!</source>
+        <translation type="unfinished">Ningún foro seleccionado!</translation>
+    </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">De</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished">Enviados</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">Asunto</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cant reply to a non-existant Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cant reply to an Anonymous Author</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Anonymous</source>
         <translation type="unfinished">Anónimo</translation>
@@ -4902,20 +5923,16 @@ p, li { white-space: pre-wrap; }
         <translation>Crear nuevo perfil</translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or use your favorite gnupg key manager.</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Your profile is associated to a GPG key</source>
         <translation>Tu perfil está vinculado con uns llave GPG</translation>
     </message>
     <message>
         <source>Generate a new Profile</source>
-        <translation>Generar nuevo perfil</translation>
+        <translation type="obsolete">Generar nuevo perfil</translation>
     </message>
     <message>
         <source>Use Profile</source>
-        <translation>Usar perfil</translation>
+        <translation type="obsolete">Usar perfil</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4954,15 +5971,15 @@ Esta información es necesaria para GPG, pero puedes poner una direción inventa
     </message>
     <message>
         <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same profile (gpg key).</source>
-        <translation>Introduce un lugar expresivo. P.e.: casa, laptop, etc.. Este campo se utilizará para distinguir instalaciones con el mismo perfil (la misma llave GPG).</translation>
+        <translation type="obsolete">Introduce un lugar expresivo. P.e.: casa, laptop, etc.. Este campo se utilizará para distinguir instalaciones con el mismo perfil (la misma llave GPG).</translation>
     </message>
     <message>
         <source>Generate New Profile</source>
-        <translation>Generar nuevo perfil</translation>
+        <translation type="obsolete">Generar nuevo perfil</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Información</translation>
+        <translation type="obsolete">Información</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4970,7 +5987,7 @@ Esta información es necesaria para GPG, pero puedes poner una direción inventa
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -4985,7 +6002,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing profile (gpg key), or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same profile (gpg key).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5008,11 +6025,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generate new Profile</source>
-        <translation>Generar nuevo perfil</translation>
+        <translation type="obsolete">Generar nuevo perfil</translation>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation>Crear un nuevo perfil</translation>
+        <translation type="obsolete">Crear un nuevo perfil</translation>
     </message>
     <message>
         <source>Generate GPG key Failure</source>
@@ -5076,6 +6093,118 @@ Introduce tu contraseña cuando se te pregunte para firmar tu nueva llave GPG.</
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate a new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate New Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Identity&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Identity files (*.asc)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not saved. An error occured.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not loaded properly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New identity imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was imported successfuly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new location.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5156,6 +6285,10 @@ Introduce tu contraseña cuando se te pregunte para firmar tu nueva llave GPG.</
     <message>
         <source>General</source>
         <translation type="unfinished">General</translation>
+    </message>
+    <message>
+        <source>Enable Experimental Features (Restart Required)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5829,6 +6962,164 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>IdDialog</name>
+    <message>
+        <source>Showing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends / Friends of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonyms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">Todo</translation>
+    </message>
+    <message>
+        <source>filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Tipo</translation>
+    </message>
+    <message>
+        <source>Delete ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished">Amigo</translation>
+    </message>
+    <message>
+        <source>Friend of Friend</source>
+        <translation type="unfinished">Amigo de un amigo</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Rating</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Rating</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IdEditDialog</name>
+    <message>
+        <source>Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gpg Assocated ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Create/Update ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ImHistoryBrowser</name>
     <message>
         <source>Message History</source>
@@ -5926,34 +7217,34 @@ p, li { white-space: pre-wrap; }
     <name>IntroPage</name>
     <message>
         <source>Add a new Friend</source>
-        <translation type="unfinished">Agregar a un amigo nuevo</translation>
+        <translation type="obsolete">Agregar a un amigo nuevo</translation>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.
 These ways are possible to do this:</source>
-        <translation type="unfinished">Este asistente de ayudará a conectarte con un amigo el la red de RetroShare.
+        <translation type="obsolete">Este asistente de ayudará a conectarte con un amigo el la red de RetroShare.
 Tienes las siguientes posibilidades:</translation>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation type="unfinished">Introducir certificados &amp;manualmente</translation>
+        <translation type="obsolete">Introducir certificados &amp;manualmente</translation>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation type="unfinished">Intercambiar certificados &amp;guardados en archivos</translation>
+        <translation type="obsolete">Intercambiar certificados &amp;guardados en archivos</translation>
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation type="unfinished">&amp;Hacer amigos algunos amigos de mis amigos</translation>
+        <translation type="obsolete">&amp;Hacer amigos algunos amigos de mis amigos</translation>
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation type="unfinished">&amp;Introducir ID de RetroShare manualmente</translation>
+        <translation type="obsolete">&amp;Introducir ID de RetroShare manualmente</translation>
     </message>
     <message>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare) </source>
-        <translation type="unfinished">&amp;Enviar una invitación por email
+        <translation type="obsolete">&amp;Enviar una invitación por email
 (El/ella recibirá un email con instrucciones para descargar RetroShare)</translation>
     </message>
 </context>
@@ -6314,11 +7605,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have %1 new messages</source>
-        <translation type="unfinished">Tienes %1 nuevos mensajes</translation>
+        <translation type="obsolete">Tienes %1 nuevos mensajes</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
-        <translation type="unfinished">Tienes %1 nuevo mensaje</translation>
+        <translation type="obsolete">Tienes %1 nuevo mensaje</translation>
     </message>
     <message>
         <source>%1 new messages</source>
@@ -6330,19 +7621,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have %1 completed downloads</source>
-        <translation type="unfinished">Tienes %1 descargas completas</translation>
+        <translation type="obsolete">Tienes %1 descargas completas</translation>
     </message>
     <message>
         <source>You have %1 completed download</source>
-        <translation type="unfinished">Tienes %1 descarga completa</translation>
+        <translation type="obsolete">Tienes %1 descarga completa</translation>
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation type="unfinished">%1 descargas completas</translation>
+        <translation type="obsolete">%1 descargas completas</translation>
     </message>
     <message>
         <source>%1 completed download</source>
-        <translation type="unfinished">%1 descarga completa</translation>
+        <translation type="obsolete">%1 descarga completa</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
@@ -6398,6 +7689,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DHT Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bandwidth Details</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6931,6 +8226,13 @@ Do you want to save message ?</source>
     <message>
         <source>1 new Message from</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageUserNotify</name>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished">Mensaje</translation>
     </message>
 </context>
 <context>
@@ -7753,7 +9055,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authentication matrix</source>
-        <translation type="unfinished">Matrix de autentificación</translation>
+        <translation type="obsolete">Matrix de autentificación</translation>
     </message>
     <message>
         <source>Network View</source>
@@ -7950,11 +9252,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="unfinished">Mensaje de canal</translation>
+        <translation type="obsolete">Mensaje de canal</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="unfinished">Mensaje de foro</translation>
+        <translation type="obsolete">Mensaje de foro</translation>
     </message>
     <message>
         <source>Download completed</source>
@@ -8010,7 +9312,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display systray message</source>
-        <translation type="unfinished">Mostrar mensaje en el &quot;systray&quot;</translation>
+        <translation type="obsolete">Mostrar mensaje en el &quot;systray&quot;</translation>
     </message>
     <message>
         <source>Top Left</source>
@@ -8050,6 +9352,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connect attempt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Systray message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat lobbies</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8217,191 +9527,133 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>PhotoDialog</name>
+    <name>PhotoAddDialog</name>
     <message>
-        <source>Peer</source>
-        <translation type="unfinished">Vecino</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="unfinished">Comentario</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished">Fecha</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="unfinished">Lugar</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="unfinished">Tamaño</translation>
-    </message>
-    <message>
-        <source>Update Details</source>
-        <translation type="unfinished">Actualizar detalles</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished">Descripción</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished">Quitar</translation>
-    </message>
-    <message>
-        <source>Average</source>
-        <translation type="unfinished">Normal</translation>
-    </message>
-    <message>
-        <source>Unrated</source>
-        <translation type="unfinished">Sin evaluación</translation>
-    </message>
-    <message>
-        <source>Rating</source>
-        <translation type="unfinished">Evaluación</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photo View&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Share Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Slideshow</source>
+        <source>Public</source>
+        <translation type="unfinished">Público</translation>
+    </message>
+    <message>
+        <source>All Friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Photo</source>
+        <source>Restricted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Thumb Image</source>
+        <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Image Name</source>
+        <source>University Friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PeerId</source>
+        <source>Family</source>
+        <translation type="unfinished">Familia</translation>
+    </message>
+    <message>
+        <source>This List Contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PhotoId</source>
+        <source>All your Groups</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Photo(s)</source>
+        <source>Resize Images (&lt; 1Mb)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Photo SlideShow</source>
+        <source>Resize Images (&lt; 10Mb)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Photo </source>
+        <source>Send Original Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Insert Show Lists</source>
+        <source>No Comments Allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open</source>
+        <source>Authenticated Comments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Excellent</source>
+        <source>Any Comments Allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Good</source>
+        <source>Publish with XXX Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Below avarage</source>
+        <source>Album Thumbnail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Bad</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PhotoShow</name>
-    <message>
-        <source>Location:</source>
-        <translation type="unfinished">Lugar:</translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished">Atrás</translation>
-    </message>
-    <message>
-        <source>Pause</source>
-        <translation type="unfinished">Pausar</translation>
-    </message>
-    <message>
-        <source>Forward</source>
-        <translation type="unfinished">Adelante</translation>
-    </message>
-    <message>
-        <source>Photo Show</source>
+        <source>Summary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Date:</source>
+        <source>Category:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Comment:</source>
+        <source>Travel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Display Size:</source>
+        <source>Holiday</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>320 x 320</source>
+        <source>Friends</source>
+        <translation type="unfinished">Amigos</translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished">Trabajo</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished">Aleatorio</translation>
+    </message>
+    <message>
+        <source>Caption</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>640 x 640</source>
+        <source>Where:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Full Size</source>
+        <source>Album Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Play Rate:</source>
+        <source>When</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>1 Sec</source>
+        <source>Delete Album</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>2 Sec</source>
+        <source>Edit Album Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>5 Sec</source>
+        <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>10 Sec</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>20 Sec</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1 Min</source>
+        <source>Delete Photo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8409,20 +9661,259 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save Photo</source>
+        <source>&lt;&lt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No Photo Selected</source>
+        <source>&gt;&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Start</source>
+        <source>Publish Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PhotoDetailsDialog</name>
+    <message>
+        <source>Album Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Play </source>
+        <source>Album Name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">Amigos</translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation type="unfinished">Familia</translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished">Trabajo</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished">Aleatorio</translation>
+    </message>
+    <message>
+        <source>Thumbnail
+Here
+Dummy
+Text
+1
+2
+3
+...................................</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caption:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photographer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">Descripción</translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other 1:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HashTags:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Details</source>
+        <translation type="unfinished">Actualizar detalles</translation>
+    </message>
+</context>
+<context>
+    <name>PhotoDialog</name>
+    <message>
+        <source>Peer</source>
+        <translation type="obsolete">Vecino</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="obsolete">Comentario</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Fecha</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="obsolete">Lugar</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="obsolete">Tamaño</translation>
+    </message>
+    <message>
+        <source>Update Details</source>
+        <translation type="obsolete">Actualizar detalles</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="obsolete">Descripción</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="obsolete">Quitar</translation>
+    </message>
+    <message>
+        <source>Average</source>
+        <translation type="obsolete">Normal</translation>
+    </message>
+    <message>
+        <source>Unrated</source>
+        <translation type="obsolete">Sin evaluación</translation>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation type="unfinished">Evaluación</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="unfinished">Categoría</translation>
+    </message>
+    <message>
+        <source>[ - ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ + ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slide Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PhotoShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select an album before
+requesting to edit it!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Edit Someone Else&apos;s Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PhotoItem</name>
+    <message>
+        <source>Album:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">De</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">Estado</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Fecha</translation>
+    </message>
+</context>
+<context>
+    <name>PhotoShow</name>
+    <message>
+        <source>Location:</source>
+        <translation type="obsolete">Lugar:</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation type="obsolete">Atrás</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="obsolete">Pausar</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation type="obsolete">Adelante</translation>
+    </message>
+</context>
+<context>
+    <name>PhotoSlideShow</name>
+    <message>
+        <source>Album Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop/Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Cerrar</translation>
     </message>
 </context>
 <context>
@@ -8744,6 +10235,223 @@ Quieres mandarle un mensaje email en lugar de un mensaje instantaneo?</translati
     </message>
 </context>
 <context>
+    <name>PostedComments</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formulario</translation>
+    </message>
+    <message>
+        <source>Hot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nuevo</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished">Más alto</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yesterday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing 1-100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedItem</name>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/\</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>score</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Fecha</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">De</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedListDialog</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formulario</translation>
+    </message>
+    <message>
+        <source>Hot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nuevo</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished">Más alto</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yesterday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Link Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing 1-100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation type="unfinished">Suscribir foro</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation type="unfinished">Anular suscripción del foro</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished">Nuevo foro</translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation type="unfinished">Mostrar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished">Cambiar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished">Restituir derechos de publicación para el foro</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Copiar enlace RetroShare</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished">Marcar todos como leido</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation type="unfinished">Marcar todos como no leido</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished">autentificado</translation>
+    </message>
+</context>
+<context>
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
@@ -8778,94 +10486,209 @@ Quieres mandarle un mensaje email en lugar de un mensaje instantaneo?</translati
     <name>ProfileEdit</name>
     <message>
         <source>Profile Edit</source>
-        <translation type="unfinished">Cambiar perfil</translation>
+        <translation type="obsolete">Cambiar perfil</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation type="unfinished">Perfil</translation>
+        <translation type="obsolete">Perfil</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished">Categoría</translation>
+        <translation type="obsolete">Categoría</translation>
     </message>
     <message>
         <source>Thoughts</source>
-        <translation type="unfinished">Pensamientos</translation>
+        <translation type="obsolete">Pensamientos</translation>
     </message>
     <message>
         <source>Edit Profile Category</source>
-        <translation type="unfinished">Cambiar categoría de perfil</translation>
+        <translation type="obsolete">Cambiar categoría de perfil</translation>
     </message>
     <message>
         <source>Birthday</source>
-        <translation type="unfinished">Día de cumpleaños</translation>
+        <translation type="obsolete">Día de cumpleaños</translation>
     </message>
     <message>
         <source>School</source>
-        <translation type="unfinished">Escuela</translation>
+        <translation type="obsolete">Escuela</translation>
     </message>
     <message>
         <source>University</source>
-        <translation type="unfinished">Universidad</translation>
+        <translation type="obsolete">Universidad</translation>
     </message>
     <message>
         <source>Phone Number</source>
-        <translation type="unfinished">Numero de teléfono</translation>
+        <translation type="obsolete">Numero de teléfono</translation>
     </message>
     <message>
         <source>Favourite Books</source>
-        <translation type="unfinished">Libros favoritos</translation>
+        <translation type="obsolete">Libros favoritos</translation>
     </message>
     <message>
         <source>Favourite Music</source>
-        <translation type="unfinished">Musica favorita</translation>
+        <translation type="obsolete">Musica favorita</translation>
     </message>
     <message>
         <source>Favourite Films</source>
-        <translation type="unfinished">Películas favoritas</translation>
+        <translation type="obsolete">Películas favoritas</translation>
     </message>
     <message>
         <source>or Custom Entry</source>
-        <translation type="unfinished">o otra entrada</translation>
+        <translation type="obsolete">o otra entrada</translation>
     </message>
     <message>
         <source>Add Entry</source>
-        <translation type="unfinished">Añadir entrada</translation>
+        <translation type="obsolete">Añadir entrada</translation>
     </message>
     <message>
         <source>Move</source>
-        <translation type="unfinished">Mover</translation>
+        <translation type="obsolete">Mover</translation>
     </message>
     <message>
         <source>Close Editor</source>
-        <translation type="unfinished">Cerrar editor</translation>
+        <translation type="obsolete">Cerrar editor</translation>
     </message>
     <message>
         <source>Remove Profile Entry</source>
-        <translation type="unfinished">Quitar entrada de perfil</translation>
+        <translation type="obsolete">Quitar entrada de perfil</translation>
     </message>
     <message>
         <source>Move Profile Entry Up</source>
-        <translation type="unfinished">Subir entrada de perfil</translation>
+        <translation type="obsolete">Subir entrada de perfil</translation>
     </message>
     <message>
         <source>Move Profile Entry Down</source>
-        <translation type="unfinished">Bajar entrada de perfil</translation>
+        <translation type="obsolete">Bajar entrada de perfil</translation>
+    </message>
+</context>
+<context>
+    <name>ProfileManager</name>
+    <message>
+        <source>Profile Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate New Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:24pt; color:#ffffff;&quot;&gt;Profile Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Identity files (*.asc)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not saved. An error occured.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not loaded properly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New identity imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was imported successfuly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Trusted Friend</source>
+        <translation type="unfinished">Seleccionar a amigo de confianza</translation>
+    </message>
+    <message>
+        <source>Certificates (*.pqi *.pem)</source>
+        <translation type="unfinished">Certificados (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>Multiple instances</source>
+        <translation type="unfinished">Instancias múltiples</translation>
+    </message>
+    <message>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
+        <translation type="unfinished">Una instancia de RetroShare está utilizando el mísmo perfil. Por favor cierra esa instacia</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
+        <translation type="unfinished">Un error inesperado ha ocurrido cuando ReroShare intentaba adquirir acceso unico</translation>
+    </message>
+    <message>
+        <source>Generate ID Failure</source>
+        <translation type="unfinished">Error al generar ID</translation>
+    </message>
+    <message>
+        <source>Failed to Load your new Certificate!</source>
+        <translation type="unfinished">Error al cargar tu nuevo certificado!</translation>
     </message>
 </context>
 <context>
     <name>ProfileView</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation type="obsolete">Nombre</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished">ID del vecino</translation>
+        <translation type="obsolete">ID del vecino</translation>
     </message>
     <message>
         <source>Last Post:</source>
-        <translation type="unfinished">Última entrada:</translation>
+        <translation type="obsolete">Última entrada:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8873,7 +10696,7 @@ Quieres mandarle un mensaje email en lugar de un mensaje instantaneo?</translati
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -8881,67 +10704,63 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Profile</source>
-        <translation type="unfinished">Cambiar perfil</translation>
+        <translation type="obsolete">Cambiar perfil</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished">Categoría</translation>
+        <translation type="obsolete">Categoría</translation>
     </message>
     <message>
         <source>Thoughts</source>
-        <translation type="unfinished">Pensamientos</translation>
+        <translation type="obsolete">Pensamientos</translation>
     </message>
     <message>
         <source>Favourite Files</source>
-        <translation type="unfinished">Archivos favoritos</translation>
+        <translation type="obsolete">Archivos favoritos</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished">Tamaño</translation>
+        <translation type="obsolete">Tamaño</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished">Hash</translation>
+        <translation type="obsolete">Hash</translation>
     </message>
     <message>
         <source>Close Profile</source>
-        <translation type="unfinished">Cerrar perfil</translation>
+        <translation type="obsolete">Cerrar perfil</translation>
     </message>
     <message>
         <source>Clear Photo</source>
-        <translation type="unfinished">Quitar foto</translation>
+        <translation type="obsolete">Quitar foto</translation>
     </message>
     <message>
         <source>Change Photo</source>
-        <translation type="unfinished">Cambiar foto</translation>
+        <translation type="obsolete">Cambiar foto</translation>
     </message>
     <message>
         <source>Remove Favourite</source>
-        <translation type="unfinished">Quitar favoritos</translation>
+        <translation type="obsolete">Quitar favoritos</translation>
     </message>
     <message>
         <source>Clear Favourites</source>
-        <translation type="unfinished">Quitar favoritos</translation>
+        <translation type="obsolete">Quitar favoritos</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation type="unfinished">Descargar archivo</translation>
+        <translation type="obsolete">Descargar archivo</translation>
     </message>
     <message>
         <source>Download All</source>
-        <translation type="unfinished">Dercargar todo</translation>
+        <translation type="obsolete">Dercargar todo</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation type="unfinished">Error: No se pueden obtener los detalles del vecino.</translation>
-    </message>
-    <message>
-        <source>Profile View</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Error: No se pueden obtener los detalles del vecino.</translation>
     </message>
 </context>
 <context>
@@ -9133,6 +10952,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation type="unfinished">Tu certificado se ha copiado al portapapeles. Pegalo y mandaselo a un amigo por email u otro medio</translation>
+    </message>
+    <message>
+        <source>Profile Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PulseAddDialog</name>
+    <message>
+        <source>Post From:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Pulse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL Adder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display As</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Post Pulse to Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PulseItem</name>
+    <message>
+        <source>From</source>
+        <translation type="unfinished">De</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Fecha</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
@@ -9474,6 +11359,22 @@ and open the Make Friend Wizard.
     <message>
         <source>The collection file %1 could not be openned.
 Reported error is: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You appear to have locations associated to DSA keys:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10006,27 +11907,27 @@ p, li { white-space: pre-wrap; }
     <name>RsidPage</name>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished">ID de RetroShare</translation>
+        <translation type="obsolete">ID de RetroShare</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation type="unfinished">Utiliza la ID RetroShare para agregar a amigos que están disponibles en tu red.</translation>
+        <translation type="obsolete">Utiliza la ID RetroShare para agregar a amigos que están disponibles en tu red.</translation>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation type="unfinished">Añadir ID RetroShare del amigo...</translation>
+        <translation type="obsolete">Añadir ID RetroShare del amigo...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below </source>
-        <translation type="unfinished">Pega la ID RetroShare de tu amigo en el campo abajo</translation>
+        <translation type="obsolete">Pega la ID RetroShare de tu amigo en el campo abajo</translation>
     </message>
     <message>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
-        <translation type="unfinished">Introduce la ID RetroShare de tu amigo, p.Ej. Peer@BDE8D16A46D938CF </translation>
+        <translation type="obsolete">Introduce la ID RetroShare de tu amigo, p.Ej. Peer@BDE8D16A46D938CF </translation>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation type="unfinished">Este vecino %1 no está disponible en tu red</translation>
+        <translation type="obsolete">Este vecino %1 no está disponible en tu red</translation>
     </message>
 </context>
 <context>
@@ -11108,7 +13009,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -11226,151 +13127,151 @@ lock file:
     <name>StatisticDialog</name>
     <message>
         <source>Statistics</source>
-        <translation type="unfinished">Estadística</translation>
+        <translation type="obsolete">Estadística</translation>
     </message>
     <message>
         <source>Now</source>
-        <translation type="unfinished">Ahora</translation>
+        <translation type="obsolete">Ahora</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">Transferencia</translation>
+        <translation type="obsolete">Transferencia</translation>
     </message>
     <message>
         <source>Session UL:DL Ratio:</source>
-        <translation type="unfinished">Sesión: proporción SU:DE:</translation>
+        <translation type="obsolete">Sesión: proporción SU:DE:</translation>
     </message>
     <message>
         <source>Cumulative UL:DL Ratio</source>
-        <translation type="unfinished">Proporción SU:DE cumulativa</translation>
+        <translation type="obsolete">Proporción SU:DE cumulativa</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished">Descargar</translation>
+        <translation type="obsolete">Descargar</translation>
     </message>
     <message>
         <source>Session:</source>
-        <translation type="unfinished">Sesión:</translation>
+        <translation type="obsolete">Sesión:</translation>
     </message>
     <message>
         <source>Downloaded:</source>
-        <translation type="unfinished">Recibido:</translation>
+        <translation type="obsolete">Recibido:</translation>
     </message>
     <message>
         <source>Count of Downloads:</source>
-        <translation type="unfinished">Número de descargas:</translation>
+        <translation type="obsolete">Número de descargas:</translation>
     </message>
     <message>
         <source>Overall</source>
-        <translation type="unfinished">Total</translation>
+        <translation type="obsolete">Total</translation>
     </message>
     <message>
         <source>Upload</source>
-        <translation type="unfinished">Enviando</translation>
+        <translation type="obsolete">Enviando</translation>
     </message>
     <message>
         <source>Session</source>
-        <translation type="unfinished">Sesión</translation>
+        <translation type="obsolete">Sesión</translation>
     </message>
     <message>
         <source>Uploaded:</source>
-        <translation type="unfinished">Enviado:</translation>
+        <translation type="obsolete">Enviado:</translation>
     </message>
     <message>
         <source>Count of Uploads:</source>
-        <translation type="unfinished">Número de subidas:</translation>
+        <translation type="obsolete">Número de subidas:</translation>
     </message>
     <message>
         <source>Uploaded</source>
-        <translation type="unfinished">Enviado</translation>
+        <translation type="obsolete">Enviado</translation>
     </message>
     <message>
         <source>Connections:</source>
-        <translation type="unfinished">Conexiones:</translation>
+        <translation type="obsolete">Conexiones:</translation>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="unfinished">Vecinos:</translation>
+        <translation type="obsolete">Vecinos:</translation>
     </message>
     <message>
         <source>Time Statistics</source>
-        <translation type="unfinished">Estadistica de tiempo</translation>
+        <translation type="obsolete">Estadistica de tiempo</translation>
     </message>
     <message>
         <source>Uptime</source>
-        <translation type="unfinished">Tiempo activo</translation>
+        <translation type="obsolete">Tiempo activo</translation>
     </message>
     <message>
         <source>Since:</source>
-        <translation type="unfinished">Desde:</translation>
+        <translation type="obsolete">Desde:</translation>
     </message>
     <message>
         <source>Cumulative</source>
-        <translation type="unfinished">Cumulativo</translation>
+        <translation type="obsolete">Cumulativo</translation>
     </message>
     <message>
         <source>Records</source>
-        <translation type="unfinished">Récordes</translation>
+        <translation type="obsolete">Récordes</translation>
     </message>
     <message>
         <source>Uploadspeed:</source>
-        <translation type="unfinished">Velocidad de subida:</translation>
+        <translation type="obsolete">Velocidad de subida:</translation>
     </message>
     <message>
         <source>Downloadspeed:</source>
-        <translation type="unfinished">Velocidad de descarga:</translation>
+        <translation type="obsolete">Velocidad de descarga:</translation>
     </message>
     <message>
         <source>Uptime:</source>
-        <translation type="unfinished">Tiempo activo:</translation>
+        <translation type="obsolete">Tiempo activo:</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished">Demostrar ajustes</translation>
+        <translation type="obsolete">Demostrar ajustes</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Reiniciar</translation>
+        <translation type="obsolete">Reiniciar</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished">Recibiendo</translation>
+        <translation type="obsolete">Recibiendo</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished">Enviando</translation>
+        <translation type="obsolete">Enviando</translation>
     </message>
     <message>
         <source>Always On Top</source>
-        <translation type="unfinished">Siempre encima</translation>
+        <translation type="obsolete">Siempre encima</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="unfinished">100</translation>
+        <translation type="obsolete">100</translation>
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="unfinished">% transparente</translation>
+        <translation type="obsolete">% transparente</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="unfinished">Cambia la transparencia del gráfico de tráfico de la red</translation>
+        <translation type="obsolete">Cambia la transparencia del gráfico de tráfico de la red</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Guardar</translation>
+        <translation type="obsolete">Guardar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <source>%1 days </source>
-        <translation type="unfinished">%1 días </translation>
+        <translation type="obsolete">%1 días </translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="unfinished">Esconder ajustes</translation>
+        <translation type="obsolete">Esconder ajustes</translation>
     </message>
 </context>
 <context>
@@ -11681,91 +13582,67 @@ p, li { white-space: pre-wrap; }
     <name>TextPage</name>
     <message>
         <source>Text certificate</source>
-        <translation type="unfinished">Certificado de texto</translation>
+        <translation type="obsolete">Certificado de texto</translation>
     </message>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation type="unfinished">Usar certificados GPG de texto.</translation>
+        <translation type="obsolete">Usar certificados GPG de texto.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation type="unfinished">El texto abajo es tu certificado GPG. Lo puedes mandar a tus amigos </translation>
+        <translation type="obsolete">El texto abajo es tu certificado GPG. Lo puedes mandar a tus amigos </translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished">Copia tu certificado al portapapeles</translation>
+        <translation type="obsolete">Copia tu certificado al portapapeles</translation>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation type="unfinished">Guardar certificado en un archivo</translation>
+        <translation type="obsolete">Guardar certificado en un archivo</translation>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation type="unfinished">Abrir programa de email</translation>
+        <translation type="obsolete">Abrir programa de email</translation>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="unfinished">Por favor, pega el certificado GPG en el campo abajo</translation>
+        <translation type="obsolete">Por favor, pega el certificado GPG en el campo abajo</translation>
     </message>
     <message>
         <source>Clean certificate</source>
-        <translation type="unfinished">Limpiar certificado GPG</translation>
+        <translation type="obsolete">Limpiar certificado GPG</translation>
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation type="unfinished">Invitar a RetroShare</translation>
+        <translation type="obsolete">Invitar a RetroShare</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation type="unfinished">Ayuda para conectar con amigos</translation>
+        <translation type="obsolete">Ayuda para conectar con amigos</translation>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="unfinished">Puedes copiar este texto y mandarselo a un amigo por email u otro medio</translation>
+        <translation type="obsolete">Puedes copiar este texto y mandarselo a un amigo por email u otro medio</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished">Tu certificado se ha copiado al portapapeles. Pegalo y mandaselo a un amigo por email u otro medio</translation>
+        <translation type="obsolete">Tu certificado se ha copiado al portapapeles. Pegalo y mandaselo a un amigo por email u otro medio</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Guardar como...</translation>
+        <translation type="obsolete">Guardar como...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished">Certificados GPG de RetroShare (*.rsc );;Todos los archivos (*)</translation>
+        <translation type="obsolete">Certificados GPG de RetroShare (*.rsc );;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Certificate Load Failed</source>
-        <translation type="unfinished">Cargar certificado ha fallado</translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No or misspelled BEGIN tag found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No or misspelled END tag found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate cleaning error</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cargar certificado ha fallado</translation>
     </message>
 </context>
 <context>
@@ -11850,6 +13727,29 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Transfer</source>
         <translation type="unfinished">Transferencia</translation>
+    </message>
+</context>
+<context>
+    <name>TransferUserNotify</name>
+    <message>
+        <source>Download completed</source>
+        <translation type="unfinished">Descarga completa</translation>
+    </message>
+    <message>
+        <source>You have %1 completed downloads</source>
+        <translation type="unfinished">Tienes %1 descargas completas</translation>
+    </message>
+    <message>
+        <source>You have %1 completed download</source>
+        <translation type="unfinished">Tienes %1 descarga completa</translation>
+    </message>
+    <message>
+        <source>%1 completed downloads</source>
+        <translation type="unfinished">%1 descargas completas</translation>
+    </message>
+    <message>
+        <source>%1 completed download</source>
+        <translation type="unfinished">%1 descarga completa</translation>
     </message>
 </context>
 <context>
@@ -12415,6 +14315,25 @@ Try to be patient!</source>
     </message>
 </context>
 <context>
+    <name>UserNotify</name>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation type="unfinished">Tienes %1 nuevos mensajes</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation type="unfinished">Tienes %1 nuevo mensaje</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation type="unfinished">%1 nuevos mensajes</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation type="unfinished">%1 nuevo mensaje</translation>
+    </message>
+</context>
+<context>
     <name>VMessageBox</name>
     <message>
         <source>OK</source>
@@ -12462,6 +14381,286 @@ Try to be patient!</source>
     </message>
 </context>
 <context>
+    <name>WikiAddDialog</name>
+    <message>
+        <source>Basic Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">Amigos</translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation type="unfinished">Familia</translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished">Trabajo</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished">Aleatorio</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation type="unfinished">Descripción:</translation>
+    </message>
+    <message>
+        <source>Share Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished">Público</translation>
+    </message>
+    <message>
+        <source>All Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restricted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>University Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This List Contains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All your Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authenticated Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish with XXX Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WikiDialog</name>
+    <message>
+        <source>Wiki Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Modification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt; Mod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">Editar</translation>
+    </message>
+    <message>
+        <source>Mod &gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Borrar</translation>
+    </message>
+</context>
+<context>
+    <name>WikiEditDialog</name>
+    <message>
+        <source>Wiki Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wiki Group:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Revert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WireDialog</name>
+    <message>
+        <source>TimeRange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">Todo</translation>
+    </message>
+    <message>
+        <source>Last Month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nuevo</translation>
+    </message>
+    <message>
+        <source>from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>until</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search/Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network Wide</source>
+        <translation type="unfinished">En toda la red</translation>
+    </message>
+    <message>
+        <source>Manage Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">Amigos</translation>
+    </message>
+    <message>
+        <source>Following</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CheckBox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post Pulse to Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>misc</name>
     <message>
         <source>Unknown</source>
@@ -12476,22 +14675,22 @@ Try to be patient!</source>
     <message>
         <source> KiB</source>
         <comment>kibibytes (1024 bytes)</comment>
-        <translation type="unfinished">KiB</translation>
+        <translation type="obsolete">KiB</translation>
     </message>
     <message>
         <source> MiB</source>
         <comment>mebibytes (1024 kibibytes)</comment>
-        <translation type="unfinished">MiB</translation>
+        <translation type="obsolete">MiB</translation>
     </message>
     <message>
         <source> GiB</source>
         <comment>gibibytes (1024 mibibytes)</comment>
-        <translation type="unfinished">GiB</translation>
+        <translation type="obsolete">GiB</translation>
     </message>
     <message>
         <source> TiB</source>
         <comment>tebibytes (1024 gibibytes)</comment>
-        <translation type="unfinished">TiB</translation>
+        <translation type="obsolete">TiB</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -12549,6 +14748,31 @@ Try to be patient!</source>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
         <translation type="unfinished">Imágenes (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+    </message>
+    <message>
+        <source> KB</source>
+        <comment>kilobytes (1024 bytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <comment>megabytes (1024 kilobytes)</comment>
+        <translation type="unfinished">MB</translation>
+    </message>
+    <message>
+        <source> GB</source>
+        <comment>gigabytes (1024 megabytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> TB,</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> TB</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

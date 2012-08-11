@@ -244,7 +244,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Games Launcher</source>
-        <translation type="unfinished">ゲーム ランチャ</translation>
+        <translation type="obsolete">ゲーム ランチャ</translation>
     </message>
     <message>
         <source>Photo View</source>
@@ -252,15 +252,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Calendars</source>
-        <translation type="unfinished">共有カレンダー</translation>
+        <translation type="obsolete">共有カレンダー</translation>
     </message>
     <message>
         <source>Statistics</source>
-        <translation type="unfinished">統計</translation>
+        <translation type="obsolete">統計</translation>
     </message>
     <message>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>Identities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wiki Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ForumsV2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted Links</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -472,6 +492,10 @@ p, li { white-space: pre-wrap; }
         <source>Play Media</source>
         <translation type="unfinished">メディアを再生</translation>
     </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
+    </message>
 </context>
 <context>
     <name>BlogNewItem</name>
@@ -498,6 +522,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Blog Decscription</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Blog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Blog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Updated Blog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
     </message>
 </context>
 <context>
@@ -691,6 +731,65 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BwCtrlWindow</name>
+    <message>
+        <source>Bandwidth Control WIndow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BandWidth Measurements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished">ID</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InMax (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InQueue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InAllocated (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allocated Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Out (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OutMax (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OutQueue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OutAllowed (KB/s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allowed Recvd</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CalDialog</name>
     <message>
         <source>Remove</source>
@@ -764,19 +863,19 @@ p, li { white-space: pre-wrap; }
     <name>CertificatePage</name>
     <message>
         <source>Certificate files</source>
-        <translation type="unfinished">証明書ファイル</translation>
+        <translation type="obsolete">証明書ファイル</translation>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
-        <translation type="unfinished">ファイルに保存された PGP 証明書を使用.</translation>
+        <translation type="obsolete">ファイルに保存された PGP 証明書を使用.</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished">あなたの証明書でファイルを生成する必要があり、そのファイルをあなたの友達に渡してください また、以前に生成したファイルも使用できます.</translation>
+        <translation type="obsolete">あなたの証明書でファイルを生成する必要があり、そのファイルをあなたの友達に渡してください また、以前に生成したファイルも使用できます.</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished">あなたの証明書をエクスポート...</translation>
+        <translation type="obsolete">あなたの証明書をエクスポート...</translation>
     </message>
     <message>
         <source>Specify path to your friend&apos;s certificate in the box below </source>
@@ -784,11 +883,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">ブラウズ</translation>
+        <translation type="obsolete">ブラウズ</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation type="unfinished">証明書を選択</translation>
+        <translation type="obsolete">証明書を選択</translation>
     </message>
     <message>
         <source>RetroShare Certificates (*.rsc)</source>
@@ -804,47 +903,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation type="unfinished">ファイル名を選択してください</translation>
+        <translation type="obsolete">ファイル名を選択してください</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished">RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
+        <translation type="obsolete">RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished">証明書ファイルの作成に成功しました</translation>
+        <translation type="obsolete">証明書ファイルの作成に成功しました</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="unfinished">証明書ファイルの作成に失敗しました</translation>
+        <translation type="obsolete">証明書ファイルの作成に失敗しました</translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation type="unfinished">証明書の読み込みに失敗: ファイル %1 が見つかりません</translation>
-    </message>
-    <message>
-        <source>Import friend&apos;s certificate...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sorry, create certificate failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">証明書の読み込みに失敗: ファイル %1 が見つかりません</translation>
     </message>
 </context>
 <context>
@@ -1206,6 +1285,10 @@ p, li { white-space: pre-wrap; }
         <source>Files</source>
         <translation type="unfinished">ファイル</translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChanNewItem</name>
@@ -1253,6 +1336,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Updated Channel</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
     </message>
 </context>
 <context>
@@ -1326,7 +1413,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe To Channel</source>
-        <translation type="unfinished">チャネルを購読</translation>
+        <translation type="obsolete">チャネルを購読</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1382,15 +1469,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubcribe To Channel</source>
-        <translation type="unfinished">チャネルの購読を中止</translation>
+        <translation type="obsolete">チャネルの購読を中止</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished">購読中止</translation>
+        <translation type="obsolete">購読中止</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished">購読</translation>
+        <translation type="obsolete">購読</translation>
     </message>
     <message>
         <source>Auto Download On</source>
@@ -1498,6 +1585,13 @@ Available: %3</source>
     </message>
 </context>
 <context>
+    <name>ChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
+        <translation type="unfinished">チャネル投稿</translation>
+    </message>
+</context>
+<context>
     <name>ChatDialog</name>
     <message>
         <source>Your Friend is offline 
@@ -1563,6 +1657,10 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lobby chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1841,6 +1939,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ChatUserNotify</name>
+    <message>
+        <source>Private Chat</source>
+        <translation type="unfinished">プライベート チャット</translation>
+    </message>
+</context>
+<context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
@@ -1990,55 +2095,51 @@ p, li { white-space: pre-wrap; }
     <name>ConclusionPage</name>
     <message>
         <source>Make Friend</source>
-        <translation type="unfinished">友達になる</translation>
+        <translation type="obsolete">友達になる</translation>
     </message>
     <message>
         <source>Details about your friend : </source>
-        <translation type="unfinished">友達についての詳細:</translation>
+        <translation type="obsolete">友達についての詳細:</translation>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation type="unfinished">キーの有効性:</translation>
+        <translation type="obsolete">キーの有効性:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation type="unfinished">Eメール:</translation>
+        <translation type="obsolete">Eメール:</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">オプション</translation>
+        <translation type="obsolete">オプション</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="unfinished">友達を認証する (GPG キーに署名)</translation>
+        <translation type="obsolete">友達を認証する (GPG キーに署名)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished">接続する友達として追加</translation>
+        <translation type="obsolete">接続する友達として追加</translation>
     </message>
     <message>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished">この友達はすでに登録されているようです. 追加しても IP アドレスを変更するだけかもしれません.</translation>
+        <translation type="obsolete">この友達はすでに登録されているようです. 追加しても IP アドレスを変更するだけかもしれません.</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished">ピア詳細</translation>
+        <translation type="obsolete">ピア詳細</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">名前:</translation>
+        <translation type="obsolete">名前:</translation>
     </message>
     <message>
         <source>Loc:</source>
-        <translation type="unfinished">場所:</translation>
+        <translation type="obsolete">場所:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation type="unfinished">署名者</translation>
-    </message>
-    <message>
-        <source>Add friend to group:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">署名者</translation>
     </message>
 </context>
 <context>
@@ -2301,6 +2402,11 @@ p, li { white-space: pre-wrap; }
         <source>Include signatures</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectDialog</name>
@@ -2366,6 +2472,351 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Certificate Load Failed</source>
         <translation type="unfinished">証明書の読み込みに失敗</translation>
+    </message>
+    <message>
+        <source>Add a new Friend</source>
+        <translation type="unfinished">友達を新規追加</translation>
+    </message>
+    <message>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Enter the certificate manually</source>
+        <translation type="unfinished">証明書を手動で入力 (&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;You get a certificate file from your friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Make friend with selected friends of my friends</source>
+        <translation type="unfinished">選択されたあなたの友達の友達と, 友達になる (&amp;M)</translation>
+    </message>
+    <message>
+        <source>&amp;Enter RetroShare ID manually</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Send a Invitation by Email 
+ (She/He receives a email with instructions howto to download RetroShare)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text certificate</source>
+        <translation type="unfinished">テキスト証明書</translation>
+    </message>
+    <message>
+        <source>Use text representation of the PGP certificates.</source>
+        <translation type="unfinished">テキスト形式で PGP 証明書を使用.</translation>
+    </message>
+    <message>
+        <source>The text below is your PGP certificate. You have to provide it to your friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy your Cert to Clipboard</source>
+        <translation type="unfinished">証明書をクリップボードにコピー</translation>
+    </message>
+    <message>
+        <source>Save your Cert into a File</source>
+        <translation type="unfinished">証明書をファイルに保存</translation>
+    </message>
+    <message>
+        <source>Run Email program</source>
+        <translation type="unfinished">Eメール プログラムを起動</translation>
+    </message>
+    <message>
+        <source>Please, paste your friends PGP certificate into the box below</source>
+        <translation type="unfinished">あなたの友達の PGP 証明書を下のボックスに貼り付けてください</translation>
+    </message>
+    <message>
+        <source>Clean certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate files</source>
+        <translation type="unfinished">証明書ファイル</translation>
+    </message>
+    <message>
+        <source>Use PGP certificates saved in files.</source>
+        <translation type="unfinished">ファイルに保存された PGP 証明書を使用.</translation>
+    </message>
+    <message>
+        <source>Import friend&apos;s certificate...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
+        <translation type="unfinished">あなたの証明書でファイルを生成する必要があり、そのファイルをあなたの友達に渡してください また、以前に生成したファイルも使用できます.</translation>
+    </message>
+    <message>
+        <source>Export my certificate...</source>
+        <translation type="unfinished">あなたの証明書をエクスポート...</translation>
+    </message>
+    <message>
+        <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished">ブラウズ</translation>
+    </message>
+    <message>
+        <source>Friends of friends</source>
+        <translation type="unfinished">友達の友達</translation>
+    </message>
+    <message>
+        <source>Select now who you want to make friends with.</source>
+        <translation type="unfinished">友達にしたい人を選択してください.</translation>
+    </message>
+    <message>
+        <source>Show me:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make friend with these peers</source>
+        <translation type="unfinished">これらのピアと友達になる</translation>
+    </message>
+    <message>
+        <source>RetroShare ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Friends RetroShare ID...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Friends RetroShare ID in the box below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite Friends by Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your friends&apos; email addresses:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Friends Email addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject:</source>
+        <translation type="unfinished">件名:</translation>
+    </message>
+    <message>
+        <source>Sorry, some error appeared</source>
+        <translation type="unfinished">エラーが発生しました</translation>
+    </message>
+    <message>
+        <source>Here is the error message:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make Friend</source>
+        <translation type="unfinished">友達になる</translation>
+    </message>
+    <message>
+        <source>Details about your friend:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer details</source>
+        <translation type="unfinished">ピア詳細</translation>
+    </message>
+    <message>
+        <source>Key validity:</source>
+        <translation type="unfinished">キーの有効性:</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished">名前:</translation>
+    </message>
+    <message>
+        <source>Email:</source>
+        <translation type="unfinished">Eメール:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation type="unfinished">場所:</translation>
+    </message>
+    <message>
+        <source>Signers</source>
+        <translation type="unfinished">署名者</translation>
+    </message>
+    <message>
+        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
+        <translation type="unfinished">この友達はすでに登録されているようです. 追加しても IP アドレスを変更するだけかもしれません.</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">オプション</translation>
+    </message>
+    <message>
+        <source>Add friend to group:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign GPG Key)</source>
+        <translation type="unfinished">友達を認証する (GPG キーに署名)</translation>
+    </message>
+    <message>
+        <source>Add as friend to connect with</source>
+        <translation type="unfinished">接続する友達として追加</translation>
+    </message>
+    <message>
+        <source>Any peer I&apos;ve not signed</source>
+        <translation type="unfinished">署名していないすべてのピア</translation>
+    </message>
+    <message>
+        <source>Friends of my friends who already trust me</source>
+        <translation type="unfinished">あなたの友達の友達で、すでにあなたを信頼している人</translation>
+    </message>
+    <message>
+        <source>Signed peers showing as denied</source>
+        <translation type="unfinished">署名済のピアで拒否と表示されているもの</translation>
+    </message>
+    <message>
+        <source>Peer name</source>
+        <translation type="unfinished">ピアの名前</translation>
+    </message>
+    <message>
+        <source>Also signed by</source>
+        <translation type="unfinished">署名されている </translation>
+    </message>
+    <message>
+        <source>Peer id</source>
+        <translation type="unfinished">ピア ID</translation>
+    </message>
+    <message>
+        <source>RetroShare Invitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation type="unfinished">完全</translation>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation type="unfinished">最低限</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Trust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:can&apos;t read from file %1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:something is wrong with %1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:file %1 not found</source>
+        <translation type="unfinished">証明書の読み込みに失敗: ファイル %1 が見つかりません</translation>
+    </message>
+    <message>
+        <source>This Peer %1 is not available in your Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No or misspelled BEGIN tag found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No or misspelled END tag found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error. Your cert is probably not even a certificate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate cleaning error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Friend Help</source>
+        <translation type="unfinished">友達と接続ヘルプ</translation>
+    </message>
+    <message>
+        <source>You can copy this text and send it to your friend via email or some other way</source>
+        <translation type="unfinished">このテキストをコピーしてEメールやその他の方法であなたの友達に送ることができます</translation>
+    </message>
+    <message>
+        <source>Your Cert is copied to Clipboard, paste and send it to your riend via email or some other way</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation type="unfinished">名前をつけて保存...</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
+        <translation type="unfinished">RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <source>Select Certificate</source>
+        <translation type="unfinished">証明書を選択</translation>
+    </message>
+    <message>
+        <source>Sorry, create certificate failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please choose a filename</source>
+        <translation type="unfinished">ファイル名を選択してください</translation>
+    </message>
+    <message>
+        <source>Certificate file successfully created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sorry, certificate file creation failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*** None ***</source>
+        <translation type="unfinished">*** なし ***</translation>
     </message>
 </context>
 <context>
@@ -2771,10 +3222,6 @@ Do you want to save your changes?</source>
         <translation type="unfinished">名前を追加してください</translation>
     </message>
     <message>
-        <source>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;New Channel&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2808,6 +3255,14 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Load channel logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3144,6 +3599,168 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Paste own certificate link</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateForumV2</name>
+    <message>
+        <source>Create new Forum</source>
+        <translation type="unfinished">フォーラムを新規作成</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;新規フォーラム&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>check peers you would like to share private publish key with</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Key With</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">説明</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished">種類:</translation>
+    </message>
+    <message>
+        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
+        <translation type="unfinished">パブリック - 誰でも読み書き可能 (共有公開キー)</translation>
+    </message>
+    <message>
+        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
+        <translation type="unfinished">制限付き - 誰でも読むことは可能. 公開は限定 (プライベート公開キー)</translation>
+    </message>
+    <message>
+        <source>Private - (Private Publish Key required to view Messages)</source>
+        <translation type="unfinished">プライベート - (メッセージの表示にプライベート公開キーが必要)</translation>
+    </message>
+    <message>
+        <source>Key Sharing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Private Publish Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation type="unfinished">許可されるメッセージ</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation type="unfinished">認証されたメッセージ</translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation type="unfinished">匿名のメッセージ</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation type="unfinished">作成</translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation type="unfinished">名前を追加してください</translation>
+    </message>
+</context>
+<context>
+    <name>CreateForumV2Msg</name>
+    <message>
+        <source>Post Forum Message</source>
+        <translation type="unfinished">フォーラム メッセージを投稿</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished">フォーラム</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">件名</translation>
+    </message>
+    <message>
+        <source>Attach File</source>
+        <translation type="unfinished">ファイルを添付</translation>
+    </message>
+    <message>
+        <source>Sign Message</source>
+        <translation type="unfinished">メッセージに署名</translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Post</source>
+        <translation type="unfinished">フォーラム投稿</translation>
+    </message>
+    <message>
+        <source>Attach files via drag and drop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can attach files via drag and drop here in this window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post Forum Msg</source>
+        <translation type="unfinished">フォーラム メッセージを投稿</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation type="unfinished">フォーラムの件名とフォーラムのメッセージを設定してください</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished">さらにファイルを追加</translation>
     </message>
 </context>
 <context>
@@ -3838,41 +4455,52 @@ you plug it in.</source>
     </message>
 </context>
 <context>
+    <name>EditForumV2Details</name>
+    <message>
+        <source>Forum Details</source>
+        <translation type="unfinished">フォーラムの詳細</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Info</source>
+        <translation type="unfinished">フォーラム情報</translation>
+    </message>
+    <message>
+        <source>Forum Name</source>
+        <translation type="unfinished">フォーラム名</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished">フォーラムの説明</translation>
+    </message>
+</context>
+<context>
     <name>EmailPage</name>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished">件名:</translation>
-    </message>
-    <message>
-        <source>Invite Friends by Email</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your friends&apos; email addresses:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter Friends Email addresses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare Invitation</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">件名:</translation>
     </message>
 </context>
 <context>
     <name>ErrorMessagePage</name>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation type="unfinished">エラーが発生しました</translation>
+        <translation type="obsolete">エラーが発生しました</translation>
     </message>
     <message>
         <source>Here is the error message: </source>
-        <translation type="unfinished">エラーメッセージ:</translation>
+        <translation type="obsolete">エラーメッセージ:</translation>
     </message>
 </context>
 <context>
@@ -4227,47 +4855,47 @@ p, li { white-space: pre-wrap; }
     <name>FofPage</name>
     <message>
         <source>Friends of friends</source>
-        <translation type="unfinished">友達の友達</translation>
+        <translation type="obsolete">友達の友達</translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation type="unfinished">友達にしたい人を選択してください.</translation>
+        <translation type="obsolete">友達にしたい人を選択してください.</translation>
     </message>
     <message>
         <source>Show me: </source>
-        <translation type="unfinished">以下を表示: </translation>
+        <translation type="obsolete">以下を表示: </translation>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation type="unfinished">署名していないすべてのピア</translation>
+        <translation type="obsolete">署名していないすべてのピア</translation>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation type="unfinished">あなたの友達の友達で、すでにあなたを信頼している人</translation>
+        <translation type="obsolete">あなたの友達の友達で、すでにあなたを信頼している人</translation>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation type="unfinished">署名済のピアで拒否と表示されているもの</translation>
+        <translation type="obsolete">署名済のピアで拒否と表示されているもの</translation>
     </message>
     <message>
         <source>Peer name</source>
-        <translation type="unfinished">ピアの名前</translation>
+        <translation type="obsolete">ピアの名前</translation>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation type="unfinished">署名されている </translation>
+        <translation type="obsolete">署名されている </translation>
     </message>
     <message>
         <source>Peer id</source>
-        <translation type="unfinished">ピア ID</translation>
+        <translation type="obsolete">ピア ID</translation>
     </message>
     <message>
         <source>Make friend with these peers</source>
-        <translation type="unfinished">これらのピアと友達になる</translation>
+        <translation type="obsolete">これらのピアと友達になる</translation>
     </message>
     <message>
         <source>*** None ***</source>
-        <translation type="unfinished">*** なし ***</translation>
+        <translation type="obsolete">*** なし ***</translation>
     </message>
 </context>
 <context>
@@ -4403,6 +5031,14 @@ p, li { white-space: pre-wrap; }
         <source>Please give a Text Message</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
+    </message>
 </context>
 <context>
     <name>ForumNewItem</name>
@@ -4434,6 +5070,22 @@ p, li { white-space: pre-wrap; }
         <source>Forum Description</source>
         <translation type="unfinished">フォーラムの説明</translation>
     </message>
+    <message>
+        <source>Unknown Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished">新規フォーラム</translation>
+    </message>
+    <message>
+        <source>Updated Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
+    </message>
 </context>
 <context>
     <name>ForumPage</name>
@@ -4452,6 +5104,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Forum</source>
         <translation type="unfinished">フォーラム</translation>
+    </message>
+</context>
+<context>
+    <name>ForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation type="unfinished">フォーラム投稿</translation>
+    </message>
+</context>
+<context>
+    <name>ForumV2Details</name>
+    <message>
+        <source>Forum Details</source>
+        <translation type="unfinished">フォーラムの詳細</translation>
+    </message>
+    <message>
+        <source>Forum Info</source>
+        <translation type="unfinished">フォーラム情報</translation>
+    </message>
+    <message>
+        <source>Forum Name</source>
+        <translation type="unfinished">フォーラム名</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation type="unfinished">人気度</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation type="unfinished">最新の投稿</translation>
+    </message>
+    <message>
+        <source>Forum ID</source>
+        <translation type="unfinished">フォーラム ID</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished">フォーラムの説明</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished">セキュリティ</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation type="unfinished">許可されるメッセージ</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation type="unfinished">認証されたメッセージ</translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation type="unfinished">匿名のメッセージ</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Apply and Close</source>
+        <translation type="unfinished">適用して閉じる</translation>
     </message>
 </context>
 <context>
@@ -4803,6 +5521,265 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>ForumsFillThread</name>
+    <message>
+        <source>Anonymous</source>
+        <translation type="unfinished">匿名</translation>
+    </message>
+    <message>
+        <source>signed</source>
+        <translation type="unfinished">署名済</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation type="unfinished">なし</translation>
+    </message>
+</context>
+<context>
+    <name>ForumsV2Dialog</name>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;フォーラム&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished">表示</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation type="unfinished">フォーラムを作成</translation>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation type="unfinished">最新の投稿</translation>
+    </message>
+    <message>
+        <source>Threaded View</source>
+        <translation type="unfinished">スレッド表示</translation>
+    </message>
+    <message>
+        <source>Flat View</source>
+        <translation type="unfinished">フラット表示</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished">タイトル</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">スレ主</translation>
+    </message>
+    <message>
+        <source>Signed</source>
+        <translation type="unfinished">署名済</translation>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download all files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reply Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start new Thread for Selected Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished">印刷</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation type="unfinished">印刷プレビュー</translation>
+    </message>
+    <message>
+        <source>Your Forums</source>
+        <translation type="unfinished">あなたのフォーラム</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation type="unfinished">購読済のフォーラム</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation type="unfinished">人気のフォーラム</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation type="unfinished">その他のフォーラム</translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation type="unfinished">フォーラムを購読</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation type="unfinished">フォーラムの購読を中止</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished">新規フォーラム</translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation type="unfinished">フォーラムの詳細を表示</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation type="unfinished">返信</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation type="unfinished">スレッドを新規作成</translation>
+    </message>
+    <message>
+        <source>Reply to Author</source>
+        <translation type="unfinished">スレ主に返信</translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished">すべて展開</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished">すべて折りたたみ</translation>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>with children</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished">展開</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ ... Missing Message ... ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Placeholder for missing Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished">RetroShare</translation>
+    </message>
+    <message>
+        <source>No Forum Selected!</source>
+        <translation type="unfinished">フォーラムが選択されていません!</translation>
+    </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished">件名</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cant reply to a non-existant Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cant reply to an Anonymous Author</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Anonymous</source>
         <translation type="unfinished">匿名</translation>
@@ -5656,19 +6633,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">プロファイルを新規作成</translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or use your favorite gnupg key manager.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate a new Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Your profile is associated to a GPG key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5706,29 +6671,6 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same profile (gpg key).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing profile (gpg key), or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same profile (gpg key).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>GPG Password</source>
         <translation type="obsolete">GPG パスワード</translation>
     </message>
@@ -5742,11 +6684,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generate New Profile</source>
-        <translation>新規プロファイルを生成</translation>
+        <translation type="obsolete">新規プロファイルを生成</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation type="obsolete">情報</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -5783,12 +6725,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Generate new Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create a new Profile</source>
-        <translation type="unfinished">プロファイルを新規作成</translation>
+        <translation type="obsolete">プロファイルを新規作成</translation>
     </message>
     <message>
         <source>Generate GPG key Failure</source>
@@ -5858,6 +6796,118 @@ Fill in your GPG password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate a new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate New Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Identity&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Identity files (*.asc)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not saved. An error occured.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not loaded properly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New identity imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was imported successfuly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new location.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6025,6 +7075,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>General</source>
         <translation type="unfinished">一般</translation>
+    </message>
+    <message>
+        <source>Enable Experimental Features (Restart Required)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6665,6 +7719,164 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>IdDialog</name>
+    <message>
+        <source>Showing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends / Friends of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonyms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">すべて</translation>
+    </message>
+    <message>
+        <source>filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished">友達</translation>
+    </message>
+    <message>
+        <source>Friend of Friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Rating</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Rating</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IdEditDialog</name>
+    <message>
+        <source>Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gpg Assocated ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create/Update ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ImHistoryBrowser</name>
     <message>
         <source>Reset</source>
@@ -6770,33 +7982,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation type="unfinished">選択されたあなたの友達の友達と, 友達になる (&amp;M)</translation>
+        <translation type="obsolete">選択されたあなたの友達の友達と, 友達になる (&amp;M)</translation>
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation type="unfinished">友達を新規追加</translation>
+        <translation type="obsolete">友達を新規追加</translation>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation type="unfinished">証明書を手動で入力 (&amp;E)</translation>
-    </message>
-    <message>
-        <source>This wizard will help you to connect to your friend(s) to RetroShare network.
-These ways are possible to do this:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;You get a certificate file from your friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Enter RetroShare ID manually</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Send a Invitation by Email 
- (She/He receives a email with instructions howto to download RetroShare) </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">証明書を手動で入力 (&amp;E)</translation>
     </message>
 </context>
 <context>
@@ -7211,35 +8405,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You have %1 new messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have %1 new message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 new messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have %1 completed downloads</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have %1 completed download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 completed downloads</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 completed download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7260,6 +8430,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bandwidth Details</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7809,6 +8983,13 @@ Do you want to save message to draft box?</source>
     <message>
         <source>Sub:</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageUserNotify</name>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished">メッセージ</translation>
     </message>
 </context>
 <context>
@@ -8952,7 +10133,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authentication matrix</source>
-        <translation type="unfinished">認証 マトリックス</translation>
+        <translation type="obsolete">認証 マトリックス</translation>
     </message>
     <message>
         <source>RetroShare %1 started.</source>
@@ -9386,11 +10567,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="unfinished">チャネル投稿</translation>
+        <translation type="obsolete">チャネル投稿</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="unfinished">フォーラム投稿</translation>
+        <translation type="obsolete">フォーラム投稿</translation>
     </message>
     <message>
         <source>Toasters</source>
@@ -9426,7 +10607,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display systray message</source>
-        <translation type="unfinished">システムトレイにメッセージを表示</translation>
+        <translation type="obsolete">システムトレイにメッセージを表示</translation>
     </message>
     <message>
         <source>Security</source>
@@ -9502,6 +10683,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connect attempt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Systray message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat lobbies</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10134,42 +11323,271 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PhotoAddDialog</name>
+    <message>
+        <source>Share Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished">パブリック</translation>
+    </message>
+    <message>
+        <source>All Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restricted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>University Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This List Contains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All your Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Images (&lt; 1Mb)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Images (&lt; 10Mb)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send Original Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authenticated Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish with XXX Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Album Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">友達</translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished">ランダム</translation>
+    </message>
+    <message>
+        <source>Caption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Album Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Album Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Photo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Photo Details</source>
+        <translation type="unfinished">フォト詳細を編集</translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PhotoDetailsDialog</name>
+    <message>
+        <source>Album Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Album Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">友達</translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished">ランダム</translation>
+    </message>
+    <message>
+        <source>Thumbnail
+Here
+Dummy
+Text
+1
+2
+3
+...................................</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caption:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photographer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">説明</translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other 1:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HashTags:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Details</source>
+        <translation type="unfinished">詳細をアップデート</translation>
+    </message>
+</context>
+<context>
     <name>PhotoDialog</name>
     <message>
         <source>Insert Show Lists</source>
-        <translation type="unfinished">表示リストを挿入</translation>
+        <translation type="obsolete">表示リストを挿入</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished">開く</translation>
+        <translation type="obsolete">開く</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation type="obsolete">削除</translation>
     </message>
     <message>
         <source>Excellent</source>
-        <translation type="unfinished">優秀</translation>
+        <translation type="obsolete">優秀</translation>
     </message>
     <message>
         <source>Good</source>
-        <translation type="unfinished">良好</translation>
+        <translation type="obsolete">良好</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation type="unfinished">平均的</translation>
+        <translation type="obsolete">平均的</translation>
     </message>
     <message>
         <source>Below avarage</source>
-        <translation type="unfinished">平均以下</translation>
+        <translation type="obsolete">平均以下</translation>
     </message>
     <message>
         <source>Bad</source>
-        <translation type="unfinished">不良</translation>
+        <translation type="obsolete">不良</translation>
     </message>
     <message>
         <source>Unrated</source>
-        <translation type="unfinished">未評価</translation>
+        <translation type="obsolete">未評価</translation>
     </message>
     <message>
         <source>Rating</source>
@@ -10177,15 +11595,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">日付</translation>
+        <translation type="obsolete">日付</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished">場所</translation>
+        <translation type="obsolete">場所</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished">サイズ</translation>
+        <translation type="obsolete">サイズ</translation>
     </message>
     <message>
         <source>Form</source>
@@ -10196,62 +11614,126 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photo View&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;フォト ビュー&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Peer</source>
-        <translation type="unfinished">ピア</translation>
+        <translation type="obsolete">ピア</translation>
     </message>
     <message>
         <source>Slideshow</source>
-        <translation type="unfinished">スライドショー</translation>
+        <translation type="obsolete">スライドショー</translation>
     </message>
     <message>
         <source>Photo</source>
-        <translation type="unfinished">フォト</translation>
+        <translation type="obsolete">フォト</translation>
     </message>
     <message>
         <source>Thumb Image</source>
-        <translation type="unfinished">サムネイル イメージ</translation>
+        <translation type="obsolete">サムネイル イメージ</translation>
     </message>
     <message>
         <source>Image Name</source>
-        <translation type="unfinished">イメージ名</translation>
+        <translation type="obsolete">イメージ名</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished">コメント</translation>
+        <translation type="obsolete">コメント</translation>
     </message>
     <message>
         <source>PeerId</source>
-        <translation type="unfinished">ピア ID</translation>
+        <translation type="obsolete">ピア ID</translation>
     </message>
     <message>
         <source>PhotoId</source>
-        <translation type="unfinished">フォト ID</translation>
+        <translation type="obsolete">フォト ID</translation>
     </message>
     <message>
         <source>Add Photo(s)</source>
-        <translation type="unfinished">フォトを追加</translation>
+        <translation type="obsolete">フォトを追加</translation>
     </message>
     <message>
         <source>Add Photo SlideShow</source>
-        <translation type="unfinished">フォトをスライドショーに追加</translation>
+        <translation type="obsolete">フォトをスライドショーに追加</translation>
     </message>
     <message>
         <source>Update Details</source>
-        <translation type="unfinished">詳細をアップデート</translation>
+        <translation type="obsolete">詳細をアップデート</translation>
     </message>
     <message>
         <source>Photo </source>
-        <translation type="unfinished">フォト</translation>
+        <translation type="obsolete">フォト</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">説明</translation>
+        <translation type="obsolete">説明</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="unfinished">カテゴリ</translation>
+    </message>
+    <message>
+        <source>[ - ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ + ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slide Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PhotoShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select an album before
+requesting to edit it!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Edit Someone Else&apos;s Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PhotoItem</name>
+    <message>
+        <source>Album:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10262,95 +11744,118 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished">日付:</translation>
+        <translation type="obsolete">日付:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished">場所:</translation>
+        <translation type="obsolete">場所:</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation type="unfinished">コメント:</translation>
+        <translation type="obsolete">コメント:</translation>
     </message>
     <message>
         <source>Display Size:</source>
-        <translation type="unfinished">表示サイズ:</translation>
+        <translation type="obsolete">表示サイズ:</translation>
     </message>
     <message>
         <source>Full Size</source>
-        <translation type="unfinished">フルサイズ</translation>
+        <translation type="obsolete">フルサイズ</translation>
     </message>
     <message>
         <source>Play Rate:</source>
-        <translation type="unfinished">表示速度:</translation>
+        <translation type="obsolete">表示速度:</translation>
     </message>
     <message>
         <source>1 Sec</source>
-        <translation type="unfinished">1秒</translation>
+        <translation type="obsolete">1秒</translation>
     </message>
     <message>
         <source>2 Sec</source>
-        <translation type="unfinished">2秒</translation>
+        <translation type="obsolete">2秒</translation>
     </message>
     <message>
         <source>5 Sec</source>
-        <translation type="unfinished">5秒</translation>
+        <translation type="obsolete">5秒</translation>
     </message>
     <message>
         <source>10 Sec</source>
-        <translation type="unfinished">10秒</translation>
+        <translation type="obsolete">10秒</translation>
     </message>
     <message>
         <source>20 Sec</source>
-        <translation type="unfinished">20秒</translation>
+        <translation type="obsolete">20秒</translation>
     </message>
     <message>
         <source>1 Min</source>
-        <translation type="unfinished">1分</translation>
+        <translation type="obsolete">1分</translation>
     </message>
     <message>
         <source>Edit Photo Details</source>
-        <translation type="unfinished">フォト詳細を編集</translation>
+        <translation type="obsolete">フォト詳細を編集</translation>
     </message>
     <message>
         <source>Save Photo</source>
-        <translation type="unfinished">フォトを保存</translation>
+        <translation type="obsolete">フォトを保存</translation>
     </message>
     <message>
         <source>No Photo Selected</source>
-        <translation type="unfinished">フォトが選択されていません</translation>
+        <translation type="obsolete">フォトが選択されていません</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished">最初から</translation>
+        <translation type="obsolete">最初から</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished">巻き戻し</translation>
+        <translation type="obsolete">巻き戻し</translation>
     </message>
     <message>
         <source>Photo Show</source>
-        <translation type="unfinished">フォト ショー</translation>
+        <translation type="obsolete">フォト ショー</translation>
     </message>
     <message>
         <source>Play </source>
-        <translation type="unfinished">再生</translation>
+        <translation type="obsolete">再生</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished">ポーズ</translation>
+        <translation type="obsolete">ポーズ</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished">早送り</translation>
+        <translation type="obsolete">早送り</translation>
     </message>
+</context>
+<context>
+    <name>PhotoSlideShow</name>
     <message>
-        <source>320 x 320</source>
+        <source>Album Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>640 x 640</source>
+        <source>Image</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop/Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
     </message>
 </context>
 <context>
@@ -10690,6 +12195,223 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PostedComments</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">フォーム</translation>
+    </message>
+    <message>
+        <source>Hot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新規</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished">先頭</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yesterday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished">更新</translation>
+    </message>
+    <message>
+        <source>Showing 1-100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedItem</name>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/\</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>score</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedListDialog</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">フォーム</translation>
+    </message>
+    <message>
+        <source>Hot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新規</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished">先頭</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yesterday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Link Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished">更新</translation>
+    </message>
+    <message>
+        <source>Showing 1-100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation type="unfinished">フォーラムを購読</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation type="unfinished">フォーラムの購読を中止</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished">新規フォーラム</translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation type="unfinished">フォーラムの詳細を表示</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
@@ -10724,134 +12446,249 @@ p, li { white-space: pre-wrap; }
     <name>ProfileEdit</name>
     <message>
         <source>Remove Profile Entry</source>
-        <translation type="unfinished">プロファイルのエントリーを削除</translation>
+        <translation type="obsolete">プロファイルのエントリーを削除</translation>
     </message>
     <message>
         <source>Move Profile Entry Up</source>
-        <translation type="unfinished">プロファイルのエントリーを上に移動</translation>
+        <translation type="obsolete">プロファイルのエントリーを上に移動</translation>
     </message>
     <message>
         <source>Move Profile Entry Down</source>
-        <translation type="unfinished">プロファイルのエントリーを下に移動</translation>
+        <translation type="obsolete">プロファイルのエントリーを下に移動</translation>
     </message>
     <message>
         <source>Profile Edit</source>
-        <translation type="unfinished">プロファイル編集</translation>
+        <translation type="obsolete">プロファイル編集</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation type="unfinished">プロファイル</translation>
+        <translation type="obsolete">プロファイル</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished">カテゴリ</translation>
+        <translation type="obsolete">カテゴリ</translation>
     </message>
     <message>
         <source>Thoughts</source>
-        <translation type="unfinished">目的</translation>
+        <translation type="obsolete">目的</translation>
     </message>
     <message>
         <source>Edit Profile Category</source>
-        <translation type="unfinished">プロファイルのカテゴリを編集</translation>
+        <translation type="obsolete">プロファイルのカテゴリを編集</translation>
     </message>
     <message>
         <source>Birthday</source>
-        <translation type="unfinished">誕生日</translation>
+        <translation type="obsolete">誕生日</translation>
     </message>
     <message>
         <source>School</source>
-        <translation type="unfinished">学校</translation>
+        <translation type="obsolete">学校</translation>
     </message>
     <message>
         <source>University</source>
-        <translation type="unfinished">大学</translation>
+        <translation type="obsolete">大学</translation>
     </message>
     <message>
         <source>Phone Number</source>
-        <translation type="unfinished">電話番号</translation>
+        <translation type="obsolete">電話番号</translation>
     </message>
     <message>
         <source>Favourite Books</source>
-        <translation type="unfinished">お気に入りの本</translation>
+        <translation type="obsolete">お気に入りの本</translation>
     </message>
     <message>
         <source>Favourite Music</source>
-        <translation type="unfinished">お気に入りの音楽</translation>
+        <translation type="obsolete">お気に入りの音楽</translation>
     </message>
     <message>
         <source>Favourite Films</source>
-        <translation type="unfinished">お気に入りの映画</translation>
+        <translation type="obsolete">お気に入りの映画</translation>
     </message>
     <message>
         <source>or Custom Entry</source>
-        <translation type="unfinished">カスタム エントリー</translation>
+        <translation type="obsolete">カスタム エントリー</translation>
     </message>
     <message>
         <source>Add Entry</source>
-        <translation type="unfinished">エントリーを追加</translation>
+        <translation type="obsolete">エントリーを追加</translation>
     </message>
     <message>
         <source>Move</source>
-        <translation type="unfinished">移動</translation>
+        <translation type="obsolete">移動</translation>
     </message>
     <message>
         <source>Close Editor</source>
-        <translation type="unfinished">エディタを閉じる</translation>
+        <translation type="obsolete">エディタを閉じる</translation>
+    </message>
+</context>
+<context>
+    <name>ProfileManager</name>
+    <message>
+        <source>Profile Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate New Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:24pt; color:#ffffff;&quot;&gt;Profile Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Identity files (*.asc)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not saved. An error occured.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity not loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was not loaded properly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New identity imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your identity was imported successfuly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Trusted Friend</source>
+        <translation type="unfinished">信頼している友達を選択</translation>
+    </message>
+    <message>
+        <source>Certificates (*.pqi *.pem)</source>
+        <translation type="unfinished">証明書  (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>Multiple instances</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate ID Failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Load your new Certificate!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ProfileView</name>
     <message>
         <source>Clear Photo</source>
-        <translation type="unfinished">フォトをクリア</translation>
+        <translation type="obsolete">フォトをクリア</translation>
     </message>
     <message>
         <source>Change Photo</source>
-        <translation type="unfinished">フォトを変更</translation>
+        <translation type="obsolete">フォトを変更</translation>
     </message>
     <message>
         <source>Edit Profile</source>
-        <translation type="unfinished">プロファイルを編集</translation>
+        <translation type="obsolete">プロファイルを編集</translation>
     </message>
     <message>
         <source>Remove Favourite</source>
-        <translation type="unfinished">お気に入りを削除</translation>
+        <translation type="obsolete">お気に入りを削除</translation>
     </message>
     <message>
         <source>Clear Favourites</source>
-        <translation type="unfinished">お気に入りをクリア</translation>
+        <translation type="obsolete">お気に入りをクリア</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation type="unfinished">ファイルをダウンロード</translation>
+        <translation type="obsolete">ファイルをダウンロード</translation>
     </message>
     <message>
         <source>Download All</source>
-        <translation type="unfinished">すべてダウンロード</translation>
+        <translation type="obsolete">すべてダウンロード</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation type="unfinished">エラー: ピア詳細を取得できません.</translation>
+        <translation type="obsolete">エラー: ピア詳細を取得できません.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">名前</translation>
+        <translation type="obsolete">名前</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished">ピア ID</translation>
+        <translation type="obsolete">ピア ID</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished">サイズ</translation>
+        <translation type="obsolete">サイズ</translation>
     </message>
     <message>
         <source>Profile View</source>
-        <translation type="unfinished">プロファイル表示</translation>
+        <translation type="obsolete">プロファイル表示</translation>
     </message>
     <message>
         <source>Rs ID</source>
@@ -10859,7 +12696,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Post:</source>
-        <translation type="unfinished">最新の投稿:</translation>
+        <translation type="obsolete">最新の投稿:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10867,7 +12704,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -10875,23 +12712,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished">カテゴリ</translation>
+        <translation type="obsolete">カテゴリ</translation>
     </message>
     <message>
         <source>Thoughts</source>
-        <translation type="unfinished">目的</translation>
+        <translation type="obsolete">目的</translation>
     </message>
     <message>
         <source>Favourite Files</source>
-        <translation type="unfinished">お気に入りのファイル</translation>
+        <translation type="obsolete">お気に入りのファイル</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished">ハッシュ</translation>
+        <translation type="obsolete">ハッシュ</translation>
     </message>
     <message>
         <source>Close Profile</source>
-        <translation type="unfinished">プロファイルを閉じる</translation>
+        <translation type="obsolete">プロファイルを閉じる</translation>
     </message>
 </context>
 <context>
@@ -11095,6 +12932,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Profile Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PulseAddDialog</name>
+    <message>
+        <source>Post From:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Pulse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL Adder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display As</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post Pulse to Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PulseItem</name>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
     </message>
 </context>
 <context>
@@ -11421,6 +13324,22 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You appear to have locations associated to DSA keys:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12057,33 +13976,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
         <translation>ログファイル &apos;%1&quot; が開けません: %2</translation>
-    </message>
-</context>
-<context>
-    <name>RsidPage</name>
-    <message>
-        <source>RetroShare ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Friends RetroShare ID...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste Friends RetroShare ID in the box below </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Peer %1 is not available in your Network</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13404,7 +15296,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -13485,19 +15377,19 @@ lock file:
     <name>StatisticDialog</name>
     <message>
         <source>Statistics</source>
-        <translation type="unfinished">統計</translation>
+        <translation type="obsolete">統計</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished">ダウンロード</translation>
+        <translation type="obsolete">ダウンロード</translation>
     </message>
     <message>
         <source>Session:</source>
-        <translation type="unfinished">セッション:</translation>
+        <translation type="obsolete">セッション:</translation>
     </message>
     <message>
         <source>Downloaded:</source>
-        <translation type="unfinished">ダウンロード済:</translation>
+        <translation type="obsolete">ダウンロード済:</translation>
     </message>
     <message>
         <source>Average Downloadspeed:</source>
@@ -13505,23 +15397,23 @@ lock file:
     </message>
     <message>
         <source>Count of Downloads:</source>
-        <translation type="unfinished">ダウンロード数:</translation>
+        <translation type="obsolete">ダウンロード数:</translation>
     </message>
     <message>
         <source>Overall</source>
-        <translation type="unfinished">全体</translation>
+        <translation type="obsolete">全体</translation>
     </message>
     <message>
         <source>Upload</source>
-        <translation type="unfinished">アップロード</translation>
+        <translation type="obsolete">アップロード</translation>
     </message>
     <message>
         <source>Session</source>
-        <translation type="unfinished">セッション</translation>
+        <translation type="obsolete">セッション</translation>
     </message>
     <message>
         <source>Uploaded:</source>
-        <translation type="unfinished">アップロード済:</translation>
+        <translation type="obsolete">アップロード済:</translation>
     </message>
     <message>
         <source>Average Uploadspeed:</source>
@@ -13529,19 +15421,19 @@ lock file:
     </message>
     <message>
         <source>Count of Uploads:</source>
-        <translation type="unfinished">アップロード数:</translation>
+        <translation type="obsolete">アップロード数:</translation>
     </message>
     <message>
         <source>Uploaded</source>
-        <translation type="unfinished">アップロード済</translation>
+        <translation type="obsolete">アップロード済</translation>
     </message>
     <message>
         <source>Connections:</source>
-        <translation type="unfinished">接続:</translation>
+        <translation type="obsolete">接続:</translation>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="unfinished">ピア:</translation>
+        <translation type="obsolete">ピア:</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -13549,7 +15441,7 @@ lock file:
     </message>
     <message>
         <source>Uptime:</source>
-        <translation type="unfinished">経過時間:</translation>
+        <translation type="obsolete">経過時間:</translation>
     </message>
     <message>
         <source>Overall:</source>
@@ -13557,63 +15449,63 @@ lock file:
     </message>
     <message>
         <source>Uptime</source>
-        <translation type="unfinished">経過時間</translation>
+        <translation type="obsolete">経過時間</translation>
     </message>
     <message>
         <source>Records</source>
-        <translation type="unfinished">記録</translation>
+        <translation type="obsolete">記録</translation>
     </message>
     <message>
         <source>Uploadspeed:</source>
-        <translation type="unfinished">アップロード速度:</translation>
+        <translation type="obsolete">アップロード速度:</translation>
     </message>
     <message>
         <source>Downloadspeed:</source>
-        <translation type="unfinished">ダウンロード速度:</translation>
+        <translation type="obsolete">ダウンロード速度:</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished">設定を表示</translation>
+        <translation type="obsolete">設定を表示</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">リセット</translation>
+        <translation type="obsolete">リセット</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished">受信速度</translation>
+        <translation type="obsolete">受信速度</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished">送信速度</translation>
+        <translation type="obsolete">送信速度</translation>
     </message>
     <message>
         <source>Always On Top</source>
-        <translation type="unfinished">常に最前面に表示</translation>
+        <translation type="obsolete">常に最前面に表示</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="unfinished">100</translation>
+        <translation type="obsolete">100</translation>
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="unfinished">% 不透明</translation>
+        <translation type="obsolete">% 不透明</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="unfinished">帯域グラフの透明度を変更</translation>
+        <translation type="obsolete">帯域グラフの透明度を変更</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">保存</translation>
+        <translation type="obsolete">保存</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル </translation>
+        <translation type="obsolete">キャンセル </translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="unfinished">設定を非表示</translation>
+        <translation type="obsolete">設定を非表示</translation>
     </message>
     <message>
         <source>%1 KIB</source>
@@ -13629,35 +15521,35 @@ lock file:
     </message>
     <message>
         <source>%1 days </source>
-        <translation type="unfinished">%1 日</translation>
+        <translation type="obsolete">%1 日</translation>
     </message>
     <message>
         <source>Now</source>
-        <translation type="unfinished">現在</translation>
+        <translation type="obsolete">現在</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">転送</translation>
+        <translation type="obsolete">転送</translation>
     </message>
     <message>
         <source>Session UL:DL Ratio:</source>
-        <translation type="unfinished">セッションの UL:DL 比:</translation>
+        <translation type="obsolete">セッションの UL:DL 比:</translation>
     </message>
     <message>
         <source>Cumulative UL:DL Ratio</source>
-        <translation type="unfinished">累積 UL: DL 比</translation>
+        <translation type="obsolete">累積 UL: DL 比</translation>
     </message>
     <message>
         <source>Time Statistics</source>
-        <translation type="unfinished">時間統計</translation>
+        <translation type="obsolete">時間統計</translation>
     </message>
     <message>
         <source>Since:</source>
-        <translation type="unfinished">開始:</translation>
+        <translation type="obsolete">開始:</translation>
     </message>
     <message>
         <source>Cumulative</source>
-        <translation type="unfinished">累積</translation>
+        <translation type="obsolete">累積</translation>
     </message>
 </context>
 <context>
@@ -13984,15 +15876,15 @@ p, li { white-space: pre-wrap; }
     <name>TextPage</name>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation type="unfinished">テキスト形式で PGP 証明書を使用.</translation>
+        <translation type="obsolete">テキスト形式で PGP 証明書を使用.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation type="unfinished">下記テキストはあなたのPGP証明書です. あなたの友達に渡してください </translation>
+        <translation type="obsolete">下記テキストはあなたのPGP証明書です. あなたの友達に渡してください </translation>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="unfinished">あなたの友達の PGP 証明書を下のボックスに貼り付けてください</translation>
+        <translation type="obsolete">あなたの友達の PGP 証明書を下のボックスに貼り付けてください</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to yourfriend via email or some other way</source>
@@ -14000,79 +15892,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="unfinished">このテキストをコピーしてEメールやその他の方法であなたの友達に送ることができます</translation>
+        <translation type="obsolete">このテキストをコピーしてEメールやその他の方法であなたの友達に送ることができます</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation type="obsolete">RetroShare</translation>
     </message>
     <message>
         <source>Text certificate</source>
-        <translation type="unfinished">テキスト証明書</translation>
+        <translation type="obsolete">テキスト証明書</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished">証明書をクリップボードにコピー</translation>
+        <translation type="obsolete">証明書をクリップボードにコピー</translation>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation type="unfinished">証明書をファイルに保存</translation>
+        <translation type="obsolete">証明書をファイルに保存</translation>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation type="unfinished">Eメール プログラムを起動</translation>
+        <translation type="obsolete">Eメール プログラムを起動</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation type="unfinished">友達と接続ヘルプ</translation>
+        <translation type="obsolete">友達と接続ヘルプ</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">名前をつけて保存...</translation>
+        <translation type="obsolete">名前をつけて保存...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished">RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
+        <translation type="obsolete">RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
     </message>
     <message>
         <source>Certificate Load Failed</source>
-        <translation type="unfinished">証明書の読み込みに失敗</translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clean certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare Invite</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No or misspelled BEGIN tag found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No or misspelled END tag found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate cleaning error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">証明書の読み込みに失敗</translation>
     </message>
 </context>
 <context>
@@ -14191,6 +16047,29 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TransferUserNotify</name>
+    <message>
+        <source>Download completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have %1 completed downloads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have %1 completed download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 completed downloads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 completed download</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14824,6 +16703,25 @@ Try to be patient!</source>
     </message>
 </context>
 <context>
+    <name>UserNotify</name>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>VMessageBox</name>
     <message>
         <source>OK</source>
@@ -14871,6 +16769,286 @@ Try to be patient!</source>
     </message>
 </context>
 <context>
+    <name>WikiAddDialog</name>
+    <message>
+        <source>Basic Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">友達</translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished">ランダム</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished">パブリック</translation>
+    </message>
+    <message>
+        <source>All Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restricted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>University Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This List Contains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All your Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authenticated Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish with XXX Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WikiDialog</name>
+    <message>
+        <source>Wiki Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Modification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt; Mod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mod &gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">消去</translation>
+    </message>
+</context>
+<context>
+    <name>WikiEditDialog</name>
+    <message>
+        <source>Wiki Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wiki Group:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Revert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WireDialog</name>
+    <message>
+        <source>TimeRange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">すべて</translation>
+    </message>
+    <message>
+        <source>Last Month</source>
+        <translation type="unfinished">先月</translation>
+    </message>
+    <message>
+        <source>Last Week</source>
+        <translation type="unfinished">先週</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新規</translation>
+    </message>
+    <message>
+        <source>from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>until</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search/Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network Wide</source>
+        <translation type="unfinished">ネットワーク全体</translation>
+    </message>
+    <message>
+        <source>Manage Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished">友達</translation>
+    </message>
+    <message>
+        <source>Following</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CheckBox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post Pulse to Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>misc</name>
     <message>
         <source>Unknown</source>
@@ -14880,22 +17058,22 @@ Try to be patient!</source>
     <message>
         <source> KiB</source>
         <comment>kibibytes (1024 bytes)</comment>
-        <translation type="unfinished">KB/s</translation>
+        <translation type="obsolete">KB/s</translation>
     </message>
     <message>
         <source> MiB</source>
         <comment>mebibytes (1024 kibibytes)</comment>
-        <translation type="unfinished">MB</translation>
+        <translation type="obsolete">MB</translation>
     </message>
     <message>
         <source> GiB</source>
         <comment>gibibytes (1024 mibibytes)</comment>
-        <translation type="unfinished">GB</translation>
+        <translation type="obsolete">GB</translation>
     </message>
     <message>
         <source> TiB</source>
         <comment>tebibytes (1024 gibibytes)</comment>
-        <translation type="unfinished">TB</translation>
+        <translation type="obsolete">TB</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -14972,6 +17150,31 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> KB</source>
+        <comment>kilobytes (1024 bytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <comment>megabytes (1024 kilobytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> GB</source>
+        <comment>gigabytes (1024 megabytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> TB,</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> TB</source>
+        <comment>terabytes (1024 gigabytes)</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
