@@ -112,7 +112,7 @@ std::string RsCertificate::toStdString() const
 RsCertificate::RsCertificate(const std::string& str)
 	: 
 	location_name(""), 
-	pgp_version(""),
+	pgp_version("Version: OpenPGP:SDK v0.9"),
 		dns_name("")
 {
 	std::string err_string ;
