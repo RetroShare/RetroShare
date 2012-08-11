@@ -10,12 +10,15 @@ OPENPGP_INCLUDE_DIR = ../../../../openpgpsdk/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = test_pgp_handler.o test_pgp_signature_parsing.o test_key_parsing.o
-TESTS    = test_pgp_handler test_pgp_signature_parsing test_key_parsing
+TESTOBJ  = test_pgp_handler.o test_pgp_signature_parsing.o test_key_parsing.o test_certificate.o
+TESTS    = test_pgp_handler test_pgp_signature_parsing test_key_parsing test_certificate
 
 #rsbaseitem_test
 
 all: tests
+
+test_certificate : test_certificate.o
+	$(CC) $(CFLAGS) -o test_certificate test_certificate.o $(OBJ) $(LIBS) -L../../../../openpgpsdk/src/lib/ -lops -lbz2
 
 test_pgp_handler : test_pgp_handler.o
 	$(CC) $(CFLAGS) -o test_pgp_handler test_pgp_handler.o $(OBJ) $(LIBS) -L../../../../openpgpsdk/src/lib/ -lops -lbz2

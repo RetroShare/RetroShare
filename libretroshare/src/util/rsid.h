@@ -27,6 +27,7 @@
 //
 #include <stdexcept>
 #include <string>
+#include <stdint.h>
 
 template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 {

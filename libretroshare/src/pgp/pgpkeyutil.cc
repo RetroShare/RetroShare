@@ -24,28 +24,8 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 	{
 		// 0 - Extract Radix64 portion of the certificate
 		//
-		int n = pgp_certificate.length() ;
-		int i=0 ;
-		std::string version_string = "" ;
-
-		while(i < n && pgp_certificate[i] != '\n') ++i ;	// remove first part -----BEGIN PGP CERTIFICATE-----
-		++i ;
-		while(i < n && pgp_certificate[i] != '\n') version_string += pgp_certificate[i++] ;	// remove first part Version: [fdfdfdf]
-		++i ;
-		while(i < n && pgp_certificate[i] != '\n') ++i ;	// remove blank line
-
-		++i ;
-
-		int j=n-1 ;
-
-		while(j>0 && pgp_certificate[j] != '=' && j>=i) --j ;
-
-		std::string radix_cert = pgp_certificate.substr(i,j-i) ;
-
-#ifdef DEBUG_PGPUTIL
-		std::cerr << "extracted radix cert: " << std::endl;
-		std::cerr << radix_cert ;
-#endif
+		std::string version_string ;
+		std::string radix_cert = PGPKeyParser::extractRadixPartFromArmouredKey(pgp_certificate,version_string) ;
 
 		// 1 - Convert armored key into binary key
 		//
@@ -106,6 +86,34 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 	}
 }
 
+std::string PGPKeyParser::extractRadixPartFromArmouredKey(const std::string& pgp_certificate,std::string& version_string)
+{
+	int n = pgp_certificate.length() ;
+	int i=0 ;
+	version_string = "" ;
+
+	while(i < n && pgp_certificate[i] != '\n') ++i ;	// remove first part -----BEGIN PGP CERTIFICATE-----
+	++i ;
+	while(i < n && pgp_certificate[i] != '\n') version_string += pgp_certificate[i++] ;	// remove first part Version: [fdfdfdf]
+	++i ;
+	while(i < n && pgp_certificate[i] != '\n') ++i ;	// remove blank line
+
+	++i ;
+
+	int j=n-1 ;
+
+	while(j>0 && pgp_certificate[j] != '=' && j>=i) --j ;
+
+	std::string radix_cert = pgp_certificate.substr(i,j-i) ;
+
+#ifdef DEBUG_PGPUTIL
+	std::cerr << "extracted radix cert: " << std::endl;
+	std::cerr << radix_cert ;
+#endif
+	return radix_cert ;
+}
+
+
 std::string PGPKeyManagement::makeArmouredKey(const unsigned char *keydata,size_t key_size,const std::string& version_string)
 {
 	std::string outstring ;
@@ -162,6 +170,29 @@ uint64_t PGPKeyParser::read_KeyID(unsigned char *& data)
 	val |= uint64_t( *data ) <<  0 ; ++data ;
 
 	return val ;
+}
+
+uint32_t PGPKeyParser::write_125Size(unsigned char *data,uint32_t size)
+{
+	if(size < 192)
+	{
+		data[0] = size ;
+		return 1;
+	}
+
+	if(size < 8384)
+	{
+		data[0] = (size >> 8) + 192 ;
+		data[1] = (size & 255) - 192 ;
+	}
+
+	data[0] = 0xff ;
+	data[1] = (size >> 24) & 255 ;
+	data[2] = (size >> 16) & 255 ;
+	data[3] = (size >>  8) & 255 ;
+	data[4] = (size      ) & 255 ;
+
+	return 5 ;
 }
 
 uint32_t PGPKeyParser::read_125Size(unsigned char *& data)

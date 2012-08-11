@@ -75,10 +75,20 @@ class PGPKeyParser
 		static const uint8_t PGP_PACKET_TAG_USER_ID     = 13 ;
 		static const uint8_t PGP_PACKET_TAG_SIGNATURE   =  2 ;
 
+		// These functions read and move the data pointer to the next byte after the read section.
+		//
 		static uint64_t read_KeyID(unsigned char *& data) ;
 		static uint32_t read_125Size(unsigned char *& data) ;
 		static uint32_t read_partialBodyLength(unsigned char *& data) ;
 		static void     read_packetHeader(unsigned char *& data,uint8_t& packet_tag,uint32_t& packet_length) ;
+
+		// These functions write, and indicate how many bytes where written.
+		//
+		static uint32_t write_125Size(unsigned char *data,uint32_t size) ;
+
+		// Helper functions
+		//
+		static std::string extractRadixPartFromArmouredKey(const std::string& pgp_cert,std::string& version_string);
 };
 
 
