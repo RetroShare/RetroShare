@@ -1,6 +1,38 @@
 retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - improved GenCertDialog logic, showing import buttons only when necessary, enabled 
+       key import when no key is present
+     - show count of new messages in the toolbar
+     - improved chat dialog (enabled colored nicknames)
+     - Reworked notification code in system tray.
+     - Added a base class and a possibility for the main dialogs and the plugins (derived from MainPage) to provide a notifier.
+     - added systray notifications for chat lobbies.
+     - Enabled some more translations in news feed items and fixed german translation.
+     - Removed not needed file "Thumbs.db" in skin directory.
+     - improved pgp cleaning function
+
+  * Bugs
+     - fixed a few bugs in cert creation window:
+        * private key was not correctly added to private keyring
+        * self signature validation was reported unsuccessful when unknown signatures where found
+     - fixed re-copy of dht bootstrap file when the file is empty
+     - fixed up memory leak in openpgp
+     - Trim right spaces from certificate name.
+     - removed a couple of assert that could crash RS
+     - Fixed bad default value for filter column in ForumsDialog
+     - return false when ssl passphrase is of length 0. This should not happen, unless the file is void, since openpgp does not complain about decrypting empty files
+     - added auto-clean of certificates at load time. Removes many errors.
+     - fixed bug due to misinterpreting non SSLid drectories as potential locations
+
+  * Ongoing developments
+     - merged GXS branch into trunk. No visible changes to the end user for now.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 25 June 2012 21:30:00 +0100
+
+retroshare (0.5.3-0.5327~natty) natty; urgency=low
+
+  * Improvements
       - Merged branch v0.5-OpenPGP into trunk. Please read the following important release notes:
 
           User-level changes:
