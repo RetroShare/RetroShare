@@ -24,7 +24,13 @@
  *
  */
 
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
+
 #include "rsgenexchange.h"
+#include "gxssecurity.h"
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
                              RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType)
@@ -60,6 +66,30 @@ void RsGenExchange::tick()
         notifyChanges(mNotifications);
         mNotifications.clear();
 
+}
+
+void RsGenExchange::createGroup(RsNxsGrp *grp)
+{
+    /* create Keys */
+    RSA *rsa_admin = RSA_generate_key(2048, 65537, NULL, NULL);
+    RSA *rsa_admin_pub = RSAPublicKey_dup(rsa_admin);
+
+
+    /* set keys */
+    RsTlvSecurityKey adminKey;
+    GxsSecurity::setRSAPublicKey(adminKey, rsa_admin_pub);
+
+    adminKey.startTS = time(NULL);
+    adminKey.endTS = 0; /* no end */
+    RsGxsGrpMetaData* meta = grp->metaData;
+    meta->keys.keys[adminKey.keyId] = adminKey;
+    meta->mGroupId = adminKey.keyId;
+    grp->grpId = meta->mGroupId;
+
+    adminKey.TlvClear();
+
+    // free the private key for now, as it is not in use
+    RSA_free(rsa_admin);
 }
 
 
@@ -125,7 +155,7 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 	return ok;
 }
 
-bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem *> grpItem)
+bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem *>& grpItem)
 {
 
 	std::list<RsNxsGrp*> nxsGrps;
@@ -294,13 +324,16 @@ void RsGenExchange::publishGrps()
 
 		char gData[size];
 		bool ok = mSerialiser->serialise(grpItem, gData, &size);
+                grp->grp.setBinData(gData, size);
 
 		if(ok)
 		{
 			grp->metaData = new RsGxsGrpMetaData();
 			*(grp->metaData) = grpItem->meta;
+                        createGroup(grp);
 			ok = mDataAccess->addGroupData(grp);
 			RsGxsGroupChange* gc = new RsGxsGroupChange();
+                        gc->grpIdList.push_back(grp->grpId);
 			mNotifications.push_back(gc);
 		}
 

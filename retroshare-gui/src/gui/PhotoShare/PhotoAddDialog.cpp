@@ -331,11 +331,7 @@ void PhotoAddDialog::publishAlbum()
         std::cerr << "PhotoAddDialog::publishAlbum() New Album Mode Submitting.....";
         std::cerr << std::endl;
 
-	uint32_t token;
         rsPhotoV2->submitAlbumDetails(album);
-
-	// tell tokenQueue to expect results from submission.
-	mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_SUMMARY, 0);
 
 }
 
@@ -408,7 +404,6 @@ void PhotoAddDialog::publishPhotos(std::string albumId)
 
 		std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ") ";
 
-		uint32_t token;
 		if (isNewPhoto)
 		{
 			std::cerr << "Is a New Photo";

@@ -143,7 +143,7 @@ protected:
      * @param token token to be redeemed for grpitem retrieval
      * @param grpItem the items to be retrieved for token are stored here
      */
-    bool getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem*> grpItem);
+    bool getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem*>& grpItem);
 
     /*!
      * retrieves message data associated to a request token
@@ -193,9 +193,7 @@ protected:
     virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) = 0;
 
 
-    void publishGrps();
 
-    void publishMsgs();
 
 private:
 
@@ -204,6 +202,12 @@ private:
     void processRecvdMessages();
 
     void processRecvdGroups();
+
+    void publishGrps();
+
+    void publishMsgs();
+
+    void createGroup(RsNxsGrp* grp);
 
 private:
 

@@ -191,7 +191,7 @@ private:
      * @param token the value of the token for the request object handle wanted
      * @return the request associated to this token
      */
-    GxsRequest* retrieveRequest(const uint32_t& token);
+    GxsRequest* locked_retrieveRequest(const uint32_t& token);
 
     /*!
      * Add a gxs request to queue
@@ -222,7 +222,7 @@ private:
      * @param status the status to set
      * @return
      */
-    bool updateRequestStatus(const uint32_t &token, const uint32_t &status);
+    bool locked_updateRequestStatus(const uint32_t &token, const uint32_t &status);
 
     /*!
      * Use to query the status and other values of a given token

@@ -13,12 +13,6 @@ bool p3PhotoServiceV2::updated()
 {
         bool changed =  (!mGroupChange.empty() || !mMsgChange.empty());
 
-        std::list<RsGxsGroupId> gL;
-        std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-
-        groupsChanged(gL);
-        msgsChanged(msgs);
-
         return changed;
 }
 

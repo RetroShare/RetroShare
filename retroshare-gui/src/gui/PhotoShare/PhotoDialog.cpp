@@ -145,7 +145,15 @@ void PhotoDialog::checkUpdate()
         if (rsPhotoV2->updated())
 	{
 		//insertAlbums();
-		requestAlbumList();
+            std::list<std::string> grpIds;
+            rsPhotoV2->groupsChanged(grpIds);
+            if(!grpIds.empty())
+                requestAlbumList(grpIds);
+
+            GxsMsgIdResult res;
+            rsPhotoV2->msgsChanged(res);
+            if(!res.empty())
+                requestPhotoList(res);
 	}
 
 	return;
@@ -427,13 +435,21 @@ void PhotoDialog::deletePhotoItem(PhotoItem *item, uint32_t type)
 /**************************** Request / Response Filling of Data ************************/
 
 
-void PhotoDialog::requestAlbumList()
+void PhotoDialog::requestAlbumList(std::list<std::string>& ids)
 {
 
-	std::list<std::string> ids;
 	RsTokReqOptionsV2 opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
 	uint32_t token;
 	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
+}
+
+void PhotoDialog::requestPhotoList(GxsMsgReq& req)
+{
+    RsTokReqOptionsV2 opts;
+    uint32_t token;
+    mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, req, 0);
+    return;
 }
 
 
@@ -461,6 +477,7 @@ void PhotoDialog::requestAlbumData(std::list<std::string> &ids)
 {
 	RsTokReqOptionsV2 opts;
 	uint32_t token;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
         mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
 

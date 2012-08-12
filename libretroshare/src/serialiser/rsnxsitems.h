@@ -196,7 +196,7 @@ public:
     RsTlvBinaryData grp; /// actual group data
 
     /*!
-     * This should contains all the data
+     * This should contains all data
      * which is not specific to the Gxs service data
      */
     RsTlvBinaryData meta;

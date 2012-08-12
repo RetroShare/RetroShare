@@ -58,8 +58,9 @@ private slots:
 private:
 
 	/* Request Response Functions for loading data */
-	void requestAlbumList();
+        void requestAlbumList(std::list<std::string>& ids);
         void requestAlbumData(std::list<std::string> &ids);
+        void requestPhotoList(GxsMsgReq &albumIds);
 	void requestPhotoList(const std::string &albumId);
         void requestPhotoData(GxsMsgReq &photoIds);
 	
