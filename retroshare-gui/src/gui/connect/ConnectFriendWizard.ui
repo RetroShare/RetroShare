@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>370</height>
+    <width>572</width>
+    <height>517</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,7 +76,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Text</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QLabel" name="userCertLabel">
       <property name="text">
@@ -91,6 +91,7 @@
         <property name="font">
          <font>
           <family>Courier New</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="lineWrapMode">
@@ -99,10 +100,13 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+        <property name="tabStopWidth">
+         <number>80</number>
+        </property>
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QPushButton" name="userCertHelpButton">
           <property name="sizePolicy">
@@ -203,6 +207,42 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="userCertOldFormatButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>20</horstretch>
+            <verstretch>20</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Run Email program</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/ledon1.png</normaloff>:/images/ledon1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
      </layout>
@@ -221,6 +261,7 @@
         <property name="font">
          <font>
           <family>Courier New</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="lineWrapMode">
@@ -229,7 +270,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <widget class="QPushButton" name="friendCertCleanButton">
           <property name="sizePolicy">
@@ -249,6 +290,19 @@
            <bool>true</bool>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>

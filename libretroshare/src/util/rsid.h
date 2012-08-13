@@ -25,6 +25,8 @@
 // Warning: never store references to a t_RsGenericIdType accross threads, since the 
 // 			cached string convertion is not thread safe.
 //
+#pragma once
+
 #include <stdexcept>
 #include <string>
 #include <stdint.h>
@@ -45,7 +47,7 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 
 		// Converts to a std::string using cached value. 
 		//
-		std::string toStdString() const ;
+		std::string toStdString(bool upper_case = true) const ;
 		const unsigned char *toByteArray() const { return &bytes[0] ; }
 		static const uint32_t SIZE_IN_BYTES = ID_SIZE_IN_BYTES ;
 
@@ -65,17 +67,24 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 		unsigned char bytes[ID_SIZE_IN_BYTES] ;
 };
 
-template<uint32_t ID_SIZE_IN_BYTES> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES>::toStdString() const
+template<uint32_t ID_SIZE_IN_BYTES> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES>::toStdString(bool upper_case) const
 {
-	static const char out[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
+	static const char outh[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
+	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
 
 	std::string res(ID_SIZE_IN_BYTES*2,' ') ;
 
 	for(uint32_t j = 0; j < ID_SIZE_IN_BYTES; j++)
-	{
-		res[2*j  ] = out[ (bytes[j]>>4) ] ;
-		res[2*j+1] = out[ bytes[j] & 0xf ] ;
-	}
+		if(upper_case)
+		{
+			res[2*j  ] = outh[ (bytes[j]>>4) ] ;
+			res[2*j+1] = outh[ bytes[j] & 0xf ] ;
+		}
+		else
+		{
+			res[2*j  ] = outl[ (bytes[j]>>4) ] ;
+			res[2*j+1] = outl[ bytes[j] & 0xf ] ;
+		}
 
 	return res ;
 }

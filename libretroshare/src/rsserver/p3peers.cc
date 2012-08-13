@@ -33,8 +33,8 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
-#include "pqi/cleanupxpgp.h"
 
+#include "pgp/rscertificate.h"
 
 #include <iostream>
 #include <fstream>
@@ -404,193 +404,6 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 	return true;
 }
-
-
-#if 0
-bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
-{
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
-        #endif
-        //first, check if it's a gpg or a ssl id.
-        std::string sOwnId = AuthSSL::getAuthSSL()->OwnId();
-        peerState ps;
-        if (id != sOwnId && !mPeerMgr->getFriendNetStatus(id, ps)) {
-            //assume is not SSL, because every ssl_id has got a friend correspondance in mConnMgr
-            #ifdef P3PEERS_DEBUG
-            std::cerr << "p3Peers::getPeerDetails() got a gpg id and is returning GPG details only for id : " << id << std::endl;
-            #endif
-            d.isOnlyGPGdetail = true;
-            return this->getGPGDetails(id, d);
-        }
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
-        #endif
-
-        if (id == sOwnId) {
-                mPeerMgr->getOwnNetStatus(ps);
-                ps.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
-        }
-
-        /* get from gpg (first), to fill in the sign and trust details */
-        /* don't retrun now, we've got fill in the ssl and connection info */
-        this->getGPGDetails(ps.gpg_id, d);
-        d.isOnlyGPGdetail = false;
-
-        //get the ssl details
-        d.id 		= id;
-        d.location 	= ps.location;
-
-	/* generate */
-	d.authcode  	= "AUTHCODE";
-
-	/* fill from pcs */
-
-	d.localAddr	= rs_inet_ntoa(ps.localaddr.sin_addr);
-	d.localPort	= ntohs(ps.localaddr.sin_port);
-	d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
-	d.extPort	= ntohs(ps.serveraddr.sin_port);
-        d.dyndns        = ps.dyndns;
-	d.lastConnect	= ps.lastcontact;
-	d.connectPeriod = 0;
-
-
-	std::list<pqiIpAddress>::iterator it;
-	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-			it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
-	{
-		std::ostringstream toto; // please do not use std::ostringstream
-            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back("L:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
-	}
-	for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-			it != ps.ipAddrs.mExt.mAddrs.end(); it++)
-	{
-		std::ostringstream toto; // please do not use std::ostringstream
-            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back("E:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
-	}
-
-
-	switch(ps.netMode & RS_NET_MODE_ACTUAL)
-	{
-		case RS_NET_MODE_EXT:
-			d.netMode	= RS_NETMODE_EXT;
-			break;
-		case RS_NET_MODE_UPNP:
-			d.netMode	= RS_NETMODE_UPNP;
-			break;
-		case RS_NET_MODE_UDP:
-			d.netMode	= RS_NETMODE_UDP;
-			break;
-		case RS_NET_MODE_UNREACHABLE:
-		case RS_NET_MODE_UNKNOWN:
-		default:
-			d.netMode	= RS_NETMODE_UNREACHABLE;
-			break;
-	}
-	
-	
-	if (ps.netMode & RS_NET_MODE_TRY_EXT)
-	{
-		d.tryNetMode	= RS_NETMODE_EXT;
-	}
-	else if (ps.netMode & RS_NET_MODE_TRY_UPNP)
-	{
-		d.tryNetMode	= RS_NETMODE_UPNP;
-	}
-	else
-	{
-		d.tryNetMode 	= RS_NETMODE_UDP;
-	}
-	
-	d.visState	= 0;
-	if (!(ps.visState & RS_VIS_STATE_NODISC))
-	{
-		d.visState |= RS_VS_DISC_ON;
-	}
-	
-	if (!(ps.visState & RS_VIS_STATE_NODHT))
-	{
-		d.visState |= RS_VS_DHT_ON;
-	}
-	
-	
-	
-	
-	/* Translate */
-	peerConnectState pcs;
-	if (!mLinkMgr->getFriendNetStatus(id, pcs)) 
-	{
-		std::cerr << "p3Peers::getPeerDetails() ERROR No Link Information : " << id << std::endl;
-		return true;
-	}
-	
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
-#endif
-	
-	
-	d.state		= 0;
-	if (pcs.state & RS_PEER_S_FRIEND)
-		d.state |= RS_PEER_STATE_FRIEND;
-	if (pcs.state & RS_PEER_S_ONLINE)
-		d.state |= RS_PEER_STATE_ONLINE;
-	if (pcs.state & RS_PEER_S_CONNECTED)
-		d.state |= RS_PEER_STATE_CONNECTED;
-	if (pcs.state & RS_PEER_S_UNREACHABLE)
-		d.state |= RS_PEER_STATE_UNREACHABLE;
-
-
-
-	/* Finally determine AutoConnect Status */
-	d.foundDHT = pcs.dht.found;
-
-	d.connectState = 0;
-	d.connectStateString.clear();
-
-
-	if (pcs.inConnAttempt)
-	{
-		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
-			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TUNNEL;
-		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
-			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
-
-			std::ostringstream str; // please do not use std::ostringstream
-			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
-			d.connectStateString = str.str();
-		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
-			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
-
-			std::ostringstream str; // please do not use std::ostringstream
-			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
-			d.connectStateString = str.str();
-		}
-	}
-	else if (pcs.state & RS_PEER_S_CONNECTED)
-	{
-		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
-		}
-		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
-		}
-		else if (pcs.connecttype == RS_NET_CONN_TUNNEL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL;
-		}
-		else
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
-		}
-	}
-
-	return true;
-}
-#endif
 
 bool p3Peers::isKeySupported(const std::string& id)
 {
@@ -1001,47 +814,55 @@ p3Peers::setVisState(const std::string &id, uint32_t extVisState)
 //===========================================================================
 	/* Auth Stuff */
 std::string
-p3Peers::GetRetroshareInvite(bool include_signatures)
+p3Peers::GetRetroshareInvite(bool include_signatures,bool old_format)
 {
-	return GetRetroshareInvite(getOwnId(),include_signatures);
+	return GetRetroshareInvite(getOwnId(),include_signatures,old_format);
 }
 
-std::string
-p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format)
 {
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
-        #endif
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
+#endif
 
-        //add the sslid, location, ip local and external address after the signature
-        RsPeerDetails Detail;
-		  std::string invite ;
+	//add the sslid, location, ip local and external address after the signature
+	RsPeerDetails Detail;
+	std::string invite ;
 
-        if (getPeerDetails(ssl_id, Detail)) 
-		  {
-			  invite = AuthGPG::getAuthGPG()->SaveCertificateToString(Detail.gpg_id,include_signatures);
+	if (getPeerDetails(ssl_id, Detail)) 
+	{
+		unsigned char *mem_block = NULL;
+		size_t mem_block_size = 0;
 
-			  if(!Detail.isOnlyGPGdetail)
-			  {
-				  invite += CERT_SSL_ID + Detail.id + ";";
-				  invite += CERT_LOCATION + Detail.location + ";\n";
-				  invite += CERT_LOCAL_IP + Detail.localAddr + ":";
-				  rs_sprintf_append(invite, "%u;", Detail.localPort);
-				  invite += CERT_EXT_IP + Detail.extAddr + ":";
-				  rs_sprintf_append(invite, "%u;", Detail.extPort);
-				  if (!Detail.dyndns.empty()) {
-					  invite += "\n" + CERT_DYNDNS + Detail.dyndns + ";";
-				  }
-			  }
-		  }
+		if(!AuthGPG::getAuthGPG()->exportPublicKey(PGPIdType(Detail.gpg_id),mem_block,mem_block_size,false,include_signatures))
+		{
+			std::cerr << "Cannot output certificate for id \"" << Detail.gpg_id << "\". Sorry." << std::endl;
+			return "" ;
+		}
 
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;
-        #endif
-        return invite;
+		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+
+		if(old_format)
+			return cert.toStdString_oldFormat() ;
+		else
+			return cert.toStdString() ;
+
+	}
+
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;
+#endif
+	return invite;
 }
 
 //===========================================================================
+
+bool 	p3Peers::loadCertificateFromString(const std::string& cert, std::string& id, std::string& gpg_id)
+{
+	RsCertificate crt(cert) ;
+
+	return AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),id,gpg_id) ;
+}
 
 bool 	p3Peers::loadCertificateFromFile(const std::string &/*fname*/, std::string &/*id*/, std::string &/*gpg_id*/)
 {
@@ -1053,217 +874,49 @@ bool 	p3Peers::loadCertificateFromFile(const std::string &/*fname*/, std::string
         return false;
 }
 
-
-//bool splitCerts(std::string in, std::string &sslcert, std::string &pgpcert)
-//{
-//	std::cerr << "splitCerts():" << in;
-//	std::cerr << std::endl;
-//
-//	/* search for -----END CERTIFICATE----- */
-//	std::string sslend("-----END CERTIFICATE-----");
-//	std::string pgpend("-----END PGP PUBLIC KEY BLOCK-----");
-//	size_t pos = in.find(sslend);
-//	size_t pos2 = in.find(pgpend);
-//	size_t ssllen, pgplen;
-//
-//	if (pos != std::string::npos)
-//	{
-//		std::cerr << "splitCerts(): Found SSL Cert";
-//		std::cerr << std::endl;
-//
-//		ssllen = pos + sslend.length();
-//		sslcert = in.substr(0, ssllen);
-//
-//		if (pos2 != std::string::npos)
-//		{
-//			std::cerr << "splitCerts(): Found SSL + PGP Cert";
-//			std::cerr << std::endl;
-//
-//			pgplen = pos2 + pgpend.length() - ssllen;
-//			pgpcert = in.substr(ssllen, pgplen);
-//		}
-//		return true;
-//	}
-//	else if (pos2 != std::string::npos)
-//	{
-//		std::cerr << "splitCerts(): Found PGP Cert Only";
-//		std::cerr << std::endl;
-//
-//		pgplen = pos2 + pgpend.length();
-//		pgpcert = in.substr(0, pgplen);
-//		return true;
-//	}
-//	return false;
-//}
-
-static bool splitCert(const std::string &certstr, std::string &cert, std::string &peerInfo)
-{
-	cert.erase();
-	peerInfo.erase();
-
-	/* search for -----END CERTIFICATE----- */
-	std::string pgpend("-----END PGP PUBLIC KEY BLOCK-----");
-
-	size_t pos = certstr.find(pgpend);
-
-	if (pos != std::string::npos) {
-		pos += pgpend.length();
-		cert = certstr.substr(0, pos);
-		if (pos + 1 < certstr.length())
-			peerInfo = certstr.substr(pos + 1);
-	}
-
-	return !cert.empty();
-}
-
 bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,std::string& error_string)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::LoadCertificateFromString() ";
 	std::cerr << std::endl;
 #endif
+	//parse the text to get ip address
+	try 
+	{
+		RsCertificate cert(certstr) ;
 
-        //parse the text to get ip address
-        try {
+		if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock(cert.pgp_key(),cert.pgp_key_size(), pd.gpg_id,pd.name,pd.gpgSigners))
+			return false;
 
-            std::string cert;
-            std::string peerInfo;
+#ifdef P3PEERS_DEBUG
+		std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
+#endif
 
-            if (splitCert(certstr, cert, peerInfo)) {
-                    std::string gpg_id;
-                    AuthGPG::getAuthGPG()->LoadCertificateFromString(cert, gpg_id,error_string);
-                    AuthGPG::getAuthGPG()->getGPGDetails(gpg_id, pd);
-                    if (gpg_id.empty()) {
-                        return false;
-                    }
-            } else {
-                    return false;
-            }
+		pd.id = cert.sslid_string() ;
+		pd.localAddr = cert.loc_ip_string();
+		pd.localPort = cert.loc_port_us();
+		pd.extAddr = cert.ext_ip_string();
+		pd.extPort = cert.ext_port_us();
+		pd.dyndns = cert.dns_string() ;
+		pd.isOnlyGPGdetail = pd.id.empty();
+	} 
+	catch (...) 
+	{
+		std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
+		return false ;
+	}
 
-            #ifdef P3PEERS_DEBUG
-            std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
-            #endif
-
-            //let's parse the ssl id
-            pd.isOnlyGPGdetail = true;
-            size_t parsePosition = peerInfo.find(CERT_SSL_ID);
-            std::cerr << "sslid position : " << parsePosition << std::endl;
-            if (parsePosition != std::string::npos) {
-                parsePosition += CERT_SSL_ID.length();
-                std::string subCert = peerInfo.substr(parsePosition);
-                parsePosition = subCert.find(";");
-                if (parsePosition != std::string::npos) {
-                    std::string ssl_id = subCert.substr(0, parsePosition);
-                    std::cerr << "SSL id : " << ssl_id << std::endl;
-                    pd.id = ssl_id;
-                    pd.isOnlyGPGdetail = pd.id.empty();
-                }
-            }
-
-            //let's parse the location
-            parsePosition = peerInfo.find(CERT_LOCATION);
-            std::cerr << "location position : " << parsePosition << std::endl;
-            if (parsePosition != std::string::npos) {
-                parsePosition += CERT_LOCATION.length();
-                std::string subCert = peerInfo.substr(parsePosition);
-                parsePosition = subCert.find(";");
-                if (parsePosition != std::string::npos) {
-                    std::string location = subCert.substr(0, parsePosition);
-                    std::cerr << "location : " << location << std::endl;
-                    pd.location = location;
-                }
-            }
-
-            //let's parse ip local address
-            parsePosition = peerInfo.find(CERT_LOCAL_IP);
-            std::cerr << "local ip position : " << parsePosition << std::endl;
-            if (parsePosition != std::string::npos) {
-                parsePosition += CERT_LOCAL_IP.length();
-                std::string subCert = peerInfo.substr(parsePosition);
-                parsePosition = subCert.find(":");
-                if (parsePosition != std::string::npos) {
-                    std::string local_ip = subCert.substr(0, parsePosition);
-                    std::cerr << "Local Ip : " << local_ip << std::endl;
-                    pd.localAddr = local_ip;
-
-                    //let's parse local port
-                    subCert = subCert.substr(parsePosition + 1);
-                    parsePosition = subCert.find(";");
-                    if (parsePosition != std::string::npos) {
-                        std::string local_port = subCert.substr(0, parsePosition);
-                        std::cerr << "Local port : " << local_port << std::endl;
-                        sscanf(local_port.c_str(), "%hu", &pd.localPort);
-                    }
-                }
-            }
-
-            //let's parse ip ext address
-            parsePosition = peerInfo.find(CERT_EXT_IP);
-            std::cerr << "Ext ip position : " << parsePosition << std::endl;
-            if (parsePosition != std::string::npos) {
-                parsePosition = parsePosition + CERT_EXT_IP.length();
-                std::string subCert = peerInfo.substr(parsePosition);
-                parsePosition = subCert.find(":");
-                if (parsePosition != std::string::npos) {
-                    std::string ext_ip = subCert.substr(0, parsePosition);
-                    std::cerr << "Ext Ip : " << ext_ip << std::endl;
-                    pd.extAddr = ext_ip;
-
-                    //let's parse ext port
-                    subCert = subCert.substr(parsePosition + 1);
-                    parsePosition = subCert.find(";");
-                    if (parsePosition != std::string::npos) {
-                        std::string ext_port = subCert.substr(0, parsePosition);
-                        std::cerr << "Ext port : " << ext_port << std::endl;
-                        sscanf(ext_port.c_str(), "%hu", &pd.extPort);
-                    }
-                }
-            }
-
-            //let's parse DynDNS
-            parsePosition = peerInfo.find(CERT_DYNDNS);
-            std::cerr << "location DynDNS : " << parsePosition << std::endl;
-            if (parsePosition != std::string::npos) {
-                parsePosition += CERT_DYNDNS.length();
-                std::string subCert = peerInfo.substr(parsePosition);
-                parsePosition = subCert.find(";");
-                if (parsePosition != std::string::npos) {
-                    std::string DynDNS = subCert.substr(0, parsePosition);
-                    std::cerr << "DynDNS : " << DynDNS << std::endl;
-                    pd.dyndns = DynDNS;
-                }
-            }
-
-        } catch (...) {
-            std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
-        }
-
-        if (pd.gpg_id == "") {
-            return false;
-        } else {
-            return true;
-        }
+	if (pd.gpg_id == "") 
+		return false;
+	else 
+		return true;
 }
 
 bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code)
 {
-	std::string cert;
-	std::string peerInfo;
+	RsCertificate::Format format ;
 
-	if (splitCert(certstr, cert, peerInfo)) {
-		cleanCert = cleanUpCertificate(cert,error_code);
-		if (!cleanCert.empty()) {
-			if (!peerInfo.empty()) {
-				if (*cleanCert.rbegin() != '\n') {
-					cleanCert += "\n";
-				}
-				cleanCert += peerInfo;
-			}
-			return true;
-		}
-	}
-
-	return false;
+	return RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code) ;
 }
 
 bool 	p3Peers::saveCertificateToFile(const std::string &id, const std::string &/*fname*/)

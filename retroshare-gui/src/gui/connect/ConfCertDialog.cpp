@@ -75,6 +75,7 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
+    connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
     MainWindow *w = MainWindow::getInstance();
     if (w) {
@@ -343,8 +344,7 @@ void ConfCertDialog::loadInvitePage()
         return;
     }
 
-
-    std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+    std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()) ; // this needs to be a SSL id
 
     ui.userCertificateText->setReadOnly(true);
     ui.userCertificateText->setMinimumHeight(200);

@@ -442,13 +442,12 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	return true ;
 }
 
-std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
+std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key,bool include_signatures)
 {
-	ops_boolean_t armoured=ops_true;
    ops_create_info_t* cinfo;
-
 	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&cinfo, &buf, 0);
+	ops_boolean_t armoured = ops_true ;
 
 	if(key->type == OPS_PTAG_CT_PUBLIC_KEY)
 	{
@@ -468,11 +467,17 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key)
 
 	ops_writer_close(cinfo) ;
 
-	std::string akey((char *)ops_memory_get_data(buf),ops_memory_get_length(buf)) ;
-
+	std::string res((char *)ops_memory_get_data(buf),ops_memory_get_length(buf)) ;
    ops_teardown_memory_write(cinfo,buf);
 
-	return akey ;
+	if(!include_signatures)
+	{
+		std::string tmp ;
+		if(PGPKeyManagement::createMinimalKey(res,tmp) )
+			res = tmp ;
+	}
+
+	return res ;
 }
 
 const ops_keydata_t *PGPHandler::getSecretKey(const PGPIdType& id) const
@@ -494,7 +499,7 @@ const ops_keydata_t *PGPHandler::getPublicKey(const PGPIdType& id) const
 		return ops_keyring_get_key_by_index(_pubring,res->second._key_index) ;
 }
 
-std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool)
+std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include_signatures) const
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	const ops_keydata_t *key = getPublicKey(id) ;
@@ -505,7 +510,47 @@ std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool)
 		return "" ;
 	}
 
-	return makeRadixEncodedPGPKey(key) ;
+	return makeRadixEncodedPGPKey(key,include_signatures) ;
+}
+
+bool PGPHandler::exportPublicKey(const PGPIdType& id,unsigned char *& mem_block,size_t& mem_size,bool armoured,bool include_signatures) const
+{
+	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	const ops_keydata_t *key = getPublicKey(id) ;
+	mem_block = NULL ;
+
+	if(key == NULL)
+	{
+		std::cerr << "Cannot output key " << id.toStdString() << ": not found in keyring." << std::endl;
+		return false ;
+	}
+
+   ops_create_info_t* cinfo;
+	ops_memory_t *buf = NULL ;
+   ops_setup_memory_write(&cinfo, &buf, 0);
+
+	if(ops_write_transferable_public_key_from_packet_data(key,armoured,cinfo) != ops_true)
+	{
+		std::cerr << "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." << std::endl;
+		return false ;
+	}
+
+	ops_writer_close(cinfo) ;
+
+	mem_block = new unsigned char[ops_memory_get_length(buf)] ;
+	mem_size = ops_memory_get_length(buf) ;
+	memcpy(mem_block,ops_memory_get_data(buf),mem_size) ;
+
+   ops_teardown_memory_write(cinfo,buf);
+
+	if(!include_signatures)
+	{
+		size_t new_size ;
+		PGPKeyManagement::findLengthOfMinimalKey(mem_block,mem_size,new_size) ;
+		mem_size = new_size ;
+	}
+
+	return true ;
 }
 
 bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& exported_key_id) const
@@ -534,10 +579,65 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& e
 		return false ;
 	}
 
-	fprintf(f,"%s\n", makeRadixEncodedPGPKey(pubkey).c_str()) ; 
-	fprintf(f,"%s\n", makeRadixEncodedPGPKey(seckey).c_str()) ; 
+	fprintf(f,"%s\n", makeRadixEncodedPGPKey(pubkey,true).c_str()) ; 
+	fprintf(f,"%s\n", makeRadixEncodedPGPKey(seckey,true).c_str()) ; 
 
 	fclose(f) ;
+	return true ;
+}
+
+bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,size_t mem_size,std::string& key_id, std::string& name, std::list<std::string>& signers) const
+{
+	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
+	ops_memory_t *mem = ops_memory_new() ;
+	ops_memory_add(mem,mem_block,mem_size);
+
+	if(!ops_keyring_read_from_mem(tmp_keyring,ops_false,mem))
+	{
+		ops_keyring_free(tmp_keyring) ;
+		free(tmp_keyring) ;
+		ops_memory_release(mem) ;
+		free(mem) ;
+
+		std::cerr << "Could not read key. Format error?" << std::endl;
+		//error_string = std::string("Could not read key. Format error?") ;
+		return false ;
+	}
+	ops_memory_release(mem) ;
+	free(mem) ;
+	//error_string.clear() ;
+
+	key_id = PGPIdType(tmp_keyring->keys[0].key_id).toStdString() ;
+	name = std::string((char *)tmp_keyring->keys[0].uids[0].user_id) ;
+
+	// now parse signatures.
+	//
+	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
+	ops_boolean_t res ;
+
+	{
+		RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+		res = ops_validate_key_signatures(result,&tmp_keyring->keys[0],_pubring,cb_get_passphrase) ;
+	}
+
+	if(res == ops_false)
+		std::cerr << "(EE) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+
+	// Parse signers.
+	//
+
+	if(result != NULL)
+		for(size_t i=0;i<result->valid_count;++i)
+		{
+			std::string signer_str = PGPIdType(result->valid_sigs[i].signer_id).toStdString() ;
+			signers.push_back(signer_str) ;
+		}
+
+	ops_validate_result_free(result) ;
+
+	ops_keyring_free(tmp_keyring) ;
+	free(tmp_keyring) ;
+
 	return true ;
 }
 

@@ -377,7 +377,6 @@ HEADERS +=	pqi/authssl.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
 			pgp/rscertificate.h \
-			pqi/cleanupxpgp.h \
 			pqi/p3cfgmgr.h \
 			pqi/p3peermgr.h \
 			pqi/p3linkmgr.h \
@@ -517,7 +516,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pgp/pgphandler.cc \
 			pgp/pgpkeyutil.cc \
 			pgp/rscertificate.cc \
-			pqi/cleanupxpgp.cc \
 			pqi/p3cfgmgr.cc \
 			pqi/p3peermgr.cc \
 			pqi/p3linkmgr.cc \

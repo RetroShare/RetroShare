@@ -30,7 +30,6 @@
 
 #include "authssl.h"
 #include "sslfns.h"
-#include "cleanupxpgp.h"
 
 #include "pqinetwork.h"
 #include "authgpg.h"

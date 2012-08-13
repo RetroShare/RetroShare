@@ -41,7 +41,6 @@
 #include <sstream>
 #include <algorithm>
 #include "serialiser/rsconfigitems.h"
-#include "cleanupxpgp.h"
 
 #define LIMIT_CERTIFICATE_SIZE		1
 #define MAX_CERTIFICATE_SIZE		10000
@@ -492,13 +491,17 @@ bool	AuthGPG::getGPGSignedList(std::list<std::string> &ids)
 bool	AuthGPG::getCachedGPGCertificate(const std::string &id, std::string &certificate)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	certificate = PGPHandler::SaveCertificateToString(PGPIdType(id),false) ;
-
 #ifdef LIMIT_CERTIFICATE_SIZE
-	std::string cleaned_key ;
-	if(PGPKeyManagement::createMinimalKey(certificate,cleaned_key))
-		certificate = cleaned_key ;
+	certificate = PGPHandler::SaveCertificateToString(PGPIdType(id),false) ;
+#else
+	certificate = PGPHandler::SaveCertificateToString(PGPIdType(id),true) ;
 #endif
+
+// #ifdef LIMIT_CERTIFICATE_SIZE
+// 	std::string cleaned_key ;
+// 	if(PGPKeyManagement::createMinimalKey(certificate,cleaned_key))
+// 		certificate = cleaned_key ;
+// #endif
 
 	return certificate.length() > 0 ;
 }
@@ -525,14 +528,15 @@ std::string AuthGPG::SaveCertificateToString(const std::string &id,bool include_
 
 	std::string tmp = PGPHandler::SaveCertificateToString(PGPIdType(id),include_signatures) ;
 
-	// Try to remove signatures manually.
-	//
-	std::string cleaned_key ;
+//	// Try to remove signatures manually.
+//	//
+//	std::string cleaned_key ;
+//
+//	if( (!include_signatures) && PGPKeyManagement::createMinimalKey(tmp,cleaned_key))
+//		return cleaned_key ;
+//	else
 
-	if( (!include_signatures) && PGPKeyManagement::createMinimalKey(tmp,cleaned_key))
-		return cleaned_key ;
-	else
-		return tmp;
+	return tmp;
 }
 
 /* import to GnuPG and other Certificates */

@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include "argstream.h"
-#include <pqi/cleanupxpgp.h>
+//#include <pqi/cleanupxpgp.h>
 #include <pgp/rscertificate.h>
 
 int main(int argc,char *argv[])
@@ -41,12 +41,12 @@ int main(int argc,char *argv[])
 			std::string res2 ;
 			int err ;
 
-			res2 = cleanUpCertificate(res,err) ;
+			//res2 = cleanUpCertificate(res,err) ;
 
-			if(res2 == "")
-				std::cerr << "Error while cleaning: " << err << std::endl;
-			else
-				res = res2 ;
+			//if(res2 == "")
+			//	std::cerr << "Error while cleaning: " << err << std::endl;
+			//else
+			//	res = res2 ;
 
 			std::cerr << "Certificate after cleaning:" << std::endl;
 			std::cerr << "==========================================" << std::endl;

@@ -84,7 +84,9 @@ class PGPHandler
 		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType& pgpId, std::string& errString) ;
 
 		bool LoadCertificateFromString(const std::string& pem, PGPIdType& gpg_id, std::string& error_string);
-		std::string SaveCertificateToString(const PGPIdType& id,bool include_signatures) ;
+
+		std::string SaveCertificateToString(const PGPIdType& id,bool include_signatures) const ;
+		bool exportPublicKey(const PGPIdType& id,unsigned char *& mem,size_t& mem_size,bool armoured,bool include_signatures) const ;
 
 		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
@@ -114,6 +116,10 @@ class PGPHandler
 
 		static void setPassphraseCallback(PassphraseCallback cb) ;
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
+
+		// Gets info about the key. Who are the signers, what's the owner's name, etc.
+		//
+		bool getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,std::string& key_id, std::string& name, std::list<std::string>& signers) const ;
 
 		// Debug stuff.
 		virtual bool printKeys() const ;
@@ -170,7 +176,7 @@ class PGPHandler
 
 		// Helper functions.
 		//
-		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key) ;
+		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key,bool include_signatures) ;
 		static ops_keyring_t *allocateOPSKeyring() ;
 		static void addNewKeyToOPSKeyring(ops_keyring_t*, const ops_keydata_t&) ;
 		static PassphraseCallback _passphrase_callback ;

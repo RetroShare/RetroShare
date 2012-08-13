@@ -45,6 +45,7 @@ private slots:
 	/* TextPage */
 	void updateOwnCert();
 	void toggleSignatureState();
+	void toggleFormatState();
 	void runEmailClient();
 	void showHelpUserCert();
 	void copyCert();

@@ -73,12 +73,13 @@ const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL  = 6;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
 
 /* Error codes for certificate cleaning */
-const int RS_PEER_CERT_CLEANING_CODE_NO_ERROR      = 0x00 ;
-const int RS_PEER_CERT_CLEANING_CODE_UNKOWN_ERROR  = 0x01 ;
-const int RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG  = 0x02 ;
-const int RS_PEER_CERT_CLEANING_CODE_NO_END_TAG    = 0x03 ;
-const int RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM   = 0x04 ;
-const int RS_PEER_CERT_CLEANING_CODE_WRONG_NUMBER  = 0x05 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_ERROR         = 0x00 ;
+const int RS_PEER_CERT_CLEANING_CODE_UNKOWN_ERROR     = 0x01 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG     = 0x02 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_END_TAG       = 0x03 ;
+const int RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM      = 0x04 ;
+const int RS_PEER_CERT_CLEANING_CODE_WRONG_NUMBER     = 0x05 ;
+const int RS_PEER_CERT_CLEANING_CODE_WRONG_RADIX_CHAR = 0x06 ;
 
 /* LinkType Flags */
 
@@ -263,17 +264,21 @@ virtual bool getAllowServerIPDetermination() = 0 ;
 virtual bool getAllowTunnelConnection() = 0 ;
 
 	/* Auth Stuff */
-virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures) 			= 0;
-virtual	std::string GetRetroshareInvite(bool include_signatures) 			= 0;
+virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format = false) 			= 0;
+virtual	std::string GetRetroshareInvite(bool include_signatures,bool old_format = false) 			= 0;
 virtual  bool hasExportMinimal() = 0 ;
 
+// Add keys to the keyring
 virtual	bool loadCertificateFromFile(const std::string &fname, std::string &ssl_id, std::string &gpg_id)  = 0;
-virtual	bool loadDetailsFromStringCert(const std::string &certGPG, RsPeerDetails &pd,std::string& error_string) = 0;
+virtual	bool loadCertificateFromString(const std::string &cert, std::string &ssl_id, std::string &gpg_id)  = 0;
+
+// Gets the GPG details, but does not add the key to the keyring.
+virtual	bool loadDetailsFromStringCert(const std::string& certGPG, RsPeerDetails &pd,std::string& error_string) = 0;
+
 virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
 virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname)  = 0;
 virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
 
-//virtual	bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance) = 0;
 virtual	bool signGPGCertificate(const std::string &gpg_id)                   	= 0;
 virtual	bool trustGPGCertificate(const std::string &gpg_id, uint32_t trustlvl) 	= 0;
 

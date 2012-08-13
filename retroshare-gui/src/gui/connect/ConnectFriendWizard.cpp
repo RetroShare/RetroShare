@@ -105,7 +105,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate)
 
 	std::string error_string;
 
-	if (rsPeers->loadDetailsFromStringCert(certificate.toUtf8().constData(), peerDetails, error_string)) {
+	if (rsPeers->loadDetailsFromStringCert(certificate.toUtf8().constData(), peerDetails, error_string)) 
+	{
 #ifdef FRIEND_WIZARD_DEBUG
 		std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
@@ -131,6 +132,7 @@ void ConnectFriendWizard::initializePage(int id)
 	case Page_Text:
 		connect(ui->userCertHelpButton, SIGNAL( clicked()), this, SLOT(showHelpUserCert()));
 		connect(ui->userCertIncludeSignaturesButton, SIGNAL(clicked()), this, SLOT(toggleSignatureState()));
+		connect(ui->userCertOldFormatButton, SIGNAL(clicked()), this, SLOT(toggleFormatState()));
 		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
 		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
 		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
@@ -412,6 +414,19 @@ void ConnectFriendWizard::accept()
 		bool sign = ui->signGPGCheckBox->isChecked();
 		bool accept_connection = ui->acceptNoSignGPGCheckBox->isChecked();
 
+		if(accept_connection || sign)
+		{
+			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
+
+			std::string ssl_id, pgp_id ;
+
+			if(!rsPeers->loadCertificateFromString(certstr,ssl_id,pgp_id)) 
+			{
+				std::cerr << "ConnectFriendWizard::accept(): cannot load that certificate." << std::endl;
+				return ;
+			}
+		}
+
 		if (!peerDetails.gpg_id.empty()) {
 			if (sign) {
 				std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
@@ -457,13 +472,27 @@ void ConnectFriendWizard::accept()
 
 void ConnectFriendWizard::updateOwnCert()
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked());
+	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked(),ui->userCertOldFormatButton->isChecked());
 
 	std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 
 	ui->userCertEdit->setPlainText(QString::fromUtf8(invite.c_str()));
 }
+void ConnectFriendWizard::toggleFormatState()
+{
+	if (ui->userCertOldFormatButton->isChecked()) 
+	{
+		ui->userCertOldFormatButton->setToolTip(tr("Use new certificate format (safer, more robust)"));
+		ui->userCertOldFormatButton->setIcon(QIcon(":/images/ledoff1.png")) ;
+	}
+	else 
+	{
+		ui->userCertOldFormatButton->setToolTip(tr("Use old (backward compatible) certificate format"));
+		ui->userCertOldFormatButton->setIcon(QIcon(":/images/ledon1.png")) ;
+	}
 
+	updateOwnCert();
+}
 void ConnectFriendWizard::toggleSignatureState()
 {
 	if (ui->userCertIncludeSignaturesButton->isChecked()) {
@@ -508,6 +537,8 @@ void ConnectFriendWizard::cleanFriendCert()
 			}
 			QMessageBox::information(NULL, tr("Certificate cleaning error"), msg) ;
 		}
+
+
 	}
 }
 

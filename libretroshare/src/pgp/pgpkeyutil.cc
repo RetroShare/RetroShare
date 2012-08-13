@@ -35,47 +35,10 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 
 		Radix64::decode(radix_cert,keydata,len) ;
 
-		unsigned char *data = (unsigned char *)keydata ;
+		size_t new_len ;
+		findLengthOfMinimalKey((unsigned char *)keydata,len,new_len) ;
 
-#ifdef DEBUG_PGPUTIL
-		std::cerr << "Total size: " << len << std::endl;
-#endif
-
-		uint8_t packet_tag;
-		uint32_t packet_length ;
-
-		// 2 - parse key data, only keep public key data, user id and self-signature.
-
-		bool public_key=false ;
-		bool own_signature=false ;
-		bool user_id=false ;
-
-		while(true) 
-		{
-			PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
-#ifdef DEBUG_PGPUTIL
-			std::cerr << "Header:" << std::endl;
-			std::cerr << "  Packet tag: " << (int)packet_tag << std::endl;
-			std::cerr << "  Packet length: " << packet_length << std::endl;
-#endif
-
-			data += packet_length ;
-
-			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_PUBLIC_KEY)
-				public_key = true ;
-			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_USER_ID)
-				user_id = true ;
-			if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
-				own_signature = true ;
-
-			if(public_key && own_signature && user_id) 
-				break ;
-
-			if( (uint64_t)data - (uint64_t)keydata >= len )
-				break ;
-		}
-
-		cleaned_certificate = makeArmouredKey((unsigned char*)keydata,(uint64_t)data - (uint64_t)keydata,version_string) ;
+		cleaned_certificate = makeArmouredKey((unsigned char*)keydata,new_len,version_string) ;
 		return true ;
 	}
 	catch(std::exception& e)
@@ -86,6 +49,51 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 	}
 }
 
+void PGPKeyManagement::findLengthOfMinimalKey(const unsigned char *keydata,size_t len,size_t& new_len)
+{
+	unsigned char *data = (unsigned char *)keydata ;
+
+#ifdef DEBUG_PGPUTIL
+	std::cerr << "Total size: " << len << std::endl;
+#endif
+
+	uint8_t packet_tag;
+	uint32_t packet_length ;
+
+	// 2 - parse key data, only keep public key data, user id and self-signature.
+
+	bool public_key=false ;
+	bool own_signature=false ;
+	bool user_id=false ;
+
+	while(true) 
+	{
+		PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
+#ifdef DEBUG_PGPUTIL
+		std::cerr << "Header:" << std::endl;
+		std::cerr << "  Packet tag: " << (int)packet_tag << std::endl;
+		std::cerr << "  Packet length: " << packet_length << std::endl;
+#endif
+
+		data += packet_length ;
+
+		if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_PUBLIC_KEY)
+			public_key = true ;
+		if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_USER_ID)
+			user_id = true ;
+		if(packet_tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
+			own_signature = true ;
+
+		if(public_key && own_signature && user_id) 
+			break ;
+
+		if( (uint64_t)data - (uint64_t)keydata >= len )
+			break ;
+	}
+
+	new_len = (uint64_t)data - (uint64_t)keydata ;
+}
+	
 std::string PGPKeyParser::extractRadixPartFromArmouredKey(const std::string& pgp_certificate,std::string& version_string)
 {
 	int n = pgp_certificate.length() ;
