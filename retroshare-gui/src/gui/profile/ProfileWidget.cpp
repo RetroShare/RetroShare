@@ -25,7 +25,7 @@
 #include <retroshare/rsdisc.h>
 
 #include "StatusMessage.h"
-#include "gui/ProfileManager.h"
+#include "ProfileManager.h"
 
 #include <QApplication>
 #include <QClipboard>
