@@ -33,9 +33,11 @@
 #include "ui_FeedReaderDialog.h"
 #include "FeedReaderNotify.h"
 #include "AddFeedDialog.h"
+#include "FeedReaderStringDefs.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/HandleRichText.h"
 #include "gui/settings/rsharesettings.h"
+
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
 
@@ -513,7 +515,6 @@ void FeedReaderDialog::calculateFeedItems()
 
 void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, FeedInfo &info)
 {
-	QString workState;
 
 	QIcon icon;
 	if (info.flag.folder) {
@@ -532,26 +533,9 @@ void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, FeedInfo &info)
 
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ICON, icon);
 
-	switch (info.workstate) {
-	case FeedInfo::WAITING:
-		break;
-	case FeedInfo::WAITING_TO_DOWNLOAD:
-		workState = tr("waiting for download");
-		break;
-	case FeedInfo::DOWNLOADING:
-		workState = tr("downloading");
-		break;
-	case FeedInfo::WAITING_TO_PROCESS:
-		workState = tr("waiting for process");
-		break;
-	case FeedInfo::PROCESSING:
-		workState = tr("processing");
-		break;
-	}
-
 	QString name = QString::fromUtf8(info.name.c_str());
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_NAME, name.isEmpty() ? tr("No name") : name);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_WORKSTATE, workState);
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_WORKSTATE, FeedReaderStringDefs::workState(info.workstate));
 
 	uint32_t unreadCount;
 	mFeedReader->getMessageCount(info.feedId, NULL, NULL, &unreadCount);
@@ -562,8 +546,8 @@ void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, FeedInfo &info)
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ID, QString::fromStdString(info.feedId));
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_FOLDER, info.flag.folder);
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_DEACTIVATED, info.flag.deactivated);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ERROR, info.error);
-	item->setToolTip(COLUMN_FEED_NAME, info.error ? QString::fromUtf8(info.errorString.c_str()) : "");
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ERROR, (bool) (info.errorState != RS_FEED_ERRORSTATE_OK));
+	item->setToolTip(COLUMN_FEED_NAME, (info.errorState != RS_FEED_ERRORSTATE_OK) ? FeedReaderStringDefs::errorString(info) : "");
 }
 
 void FeedReaderDialog::updateMsgs(const std::string &feedId)
@@ -687,6 +671,10 @@ void FeedReaderDialog::feedChanged(const QString &feedId, int type)
 	FeedInfo feedInfo;
 	if (type != NOTIFY_TYPE_DEL) {
 		if (!mFeedReader->getFeedInfo(feedId.toStdString(), feedInfo)) {
+			return;
+		}
+
+		if (feedInfo.flag.preview) {
 			return;
 		}
 	}
@@ -950,13 +938,13 @@ void FeedReaderDialog::newFolder()
 	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
 		std::string feedId;
 		RsFeedAddResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
-		AddFeedDialog::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
+		FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 	}
 }
 
 void FeedReaderDialog::newFeed()
 {
-	AddFeedDialog dialog(mFeedReader, this);
+	AddFeedDialog dialog(mFeedReader, mNotify, this);
 	dialog.setParent(currentFeedId());
 	dialog.exec();
 }
@@ -1003,10 +991,10 @@ void FeedReaderDialog::editFeed()
 
 		if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
 			RsFeedAddResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
-			AddFeedDialog::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
+			FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 		}
 	} else {
-		AddFeedDialog dialog(mFeedReader, this);
+		AddFeedDialog dialog(mFeedReader, mNotify, this);
 		if (!dialog.fillFeed(feedId)) {
 			return;
 		}

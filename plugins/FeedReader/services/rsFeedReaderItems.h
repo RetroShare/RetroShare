@@ -32,20 +32,6 @@ const uint8_t RS_PKT_SUBTYPE_FEEDREADER_MSG   = 0x03;
 
 /**************************************************************************/
 
-#define RS_FEED_ERRORSTATE_OK                            0
-#define RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR       1
-#define RS_FEED_ERRORSTATE_DOWNLOAD_ERROR                2
-#define RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE 3
-#define RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND            4
-#define RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE 5
-
-#define RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR        50
-
-#define RS_FEED_ERRORSTATE_FORUM_CREATE                  100
-#define RS_FEED_ERRORSTATE_FORUM_NOT_FOUND               101
-#define RS_FEED_ERRORSTATE_FORUM_NO_ADMIN                102
-#define RS_FEED_ERRORSTATE_FORUM_NO_ANONYMOUS_FORUM      103
-
 #define RS_FEED_FLAG_FOLDER                        0x001
 #define RS_FEED_FLAG_INFO_FROM_FEED                0x002
 #define RS_FEED_FLAG_STANDARD_STORAGE_TIME         0x004
@@ -76,25 +62,26 @@ public:
 	virtual void clear();
 	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string feedId;
-	std::string parentId;
-	std::string name;
-	std::string url;
-	std::string user;
-	std::string password;
-	std::string proxyAddress;
-	uint16_t    proxyPort;
-	uint32_t    updateInterval;
-	time_t      lastUpdate;
-	uint32_t    flag; // RS_FEED_FLAG_...
-	std::string forumId;
-	uint32_t    storageTime;
-	std::string description;
-	std::string icon;
-	uint32_t    errorState;
-	std::string errorString;
+	std::string            feedId;
+	std::string            parentId;
+	std::string            name;
+	std::string            url;
+	std::string            user;
+	std::string            password;
+	std::string            proxyAddress;
+	uint16_t               proxyPort;
+	uint32_t               updateInterval;
+	time_t                 lastUpdate;
+	uint32_t               flag; // RS_FEED_FLAG_...
+	std::string            forumId;
+	uint32_t               storageTime;
+	std::string            description;
+	std::string            icon;
+	RsFeedReaderErrorState errorState;
+	std::string            errorString;
 
 	/* Not Serialised */
+	bool        preview;
 	WorkState   workstate;
 	std::string content;
 

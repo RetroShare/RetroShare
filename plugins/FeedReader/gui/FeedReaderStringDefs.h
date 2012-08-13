@@ -19,50 +19,21 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef ADDFEEDDIALOG_H
-#define ADDFEEDDIALOG_H
+#ifndef FEEDREADER_STRINGDEFS_H
+#define FEEDREADER_STRINGDEFS_H
 
-#include <QDialog>
+#include <QString>
+
 #include "interface/rsFeedReader.h"
 
-namespace Ui {
-class AddFeedDialog;
-}
+class QWidget;
 
-class RsFeedReader;
-class FeedReaderNotify;
-
-class AddFeedDialog : public QDialog
+class FeedReaderStringDefs
 {
-	Q_OBJECT
-    
 public:
-	AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent);
-	~AddFeedDialog();
-
-	void setParent(const std::string &parentId);
-	bool fillFeed(const std::string &feedId);
-
-private slots:
-	void authenticationToggled();
-	void useStandardStorageTimeToggled();
-	void useStandardUpdateIntervalToggled();
-	void useStandardProxyToggled();
-	void typeForumToggled();
-	void denyForumToggled();
-	void validate();
-	void createFeed();
-	void preview();
-
-private:
-	void getFeedInfo(FeedInfo &feedInfo);
-
-	RsFeedReader *mFeedReader;
-	FeedReaderNotify *mNotify;
-	std::string mFeedId;
-	std::string mParentId;
-
-	Ui::AddFeedDialog *ui;
+	static bool showError(QWidget *parent, RsFeedAddResult result, const QString &title, const QString &text);
+	static QString workState(FeedInfo::WorkState state);
+	static QString errorString(const FeedInfo &feedInfo);
 };
 
-#endif // ADDFEEDDIALOG_H
+#endif

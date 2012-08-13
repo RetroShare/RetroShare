@@ -49,33 +49,35 @@ public:
 	virtual bool     getStandardProxy(std::string &proxyAddress, uint16_t &proxyPort);
 	virtual void     setStandardProxy(bool useProxy, const std::string &proxyAddress, uint16_t proxyPort);
 
-	virtual RsFeedAddResult  addFolder(const std::string parentId, const std::string &name, std::string &feedId);
-	virtual RsFeedAddResult  setFolder(const std::string &feedId, const std::string &name);
-	virtual RsFeedAddResult  addFeed(const FeedInfo &feedInfo, std::string &feedId);
-	virtual RsFeedAddResult  setFeed(const std::string &feedId, const FeedInfo &feedInfo);
-	virtual bool             removeFeed(const std::string &feedId);
-	virtual void             getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos);
-	virtual bool             getFeedInfo(const std::string &feedId, FeedInfo &feedInfo);
-	virtual bool             getMsgInfo(const std::string &feedId, const std::string &msgId, FeedMsgInfo &msgInfo);
-	virtual bool             removeMsg(const std::string &feedId, const std::string &msgId);
-	virtual bool             removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds);
-	virtual bool             getMessageCount(const std::string &feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount);
-	virtual bool             getFeedMsgList(const std::string &feedId, std::list<FeedMsgInfo> &msgInfos);
-	virtual bool             processFeed(const std::string &feedId);
-	virtual bool             setMessageRead(const std::string &feedId, const std::string &msgId, bool read);
+	virtual RsFeedAddResult addFolder(const std::string parentId, const std::string &name, std::string &feedId);
+	virtual RsFeedAddResult setFolder(const std::string &feedId, const std::string &name);
+	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, std::string &feedId);
+	virtual RsFeedAddResult setFeed(const std::string &feedId, const FeedInfo &feedInfo);
+	virtual bool            removeFeed(const std::string &feedId);
+	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId);
+	virtual void            getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos);
+	virtual bool            getFeedInfo(const std::string &feedId, FeedInfo &feedInfo);
+	virtual bool            getMsgInfo(const std::string &feedId, const std::string &msgId, FeedMsgInfo &msgInfo);
+	virtual bool            removeMsg(const std::string &feedId, const std::string &msgId);
+	virtual bool            removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds);
+	virtual bool            getMessageCount(const std::string &feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount);
+	virtual bool            getFeedMsgList(const std::string &feedId, std::list<FeedMsgInfo> &msgInfos);
+	virtual bool            getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds);
+	virtual bool            processFeed(const std::string &feedId);
+	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read);
 
 	/****************** p3Service STUFF ******************/
 	virtual int tick();
 
 	/****************** internal STUFF *******************/
-	bool getFeedToDownload(RsFeedReaderFeed &feed);
+	bool getFeedToDownload(RsFeedReaderFeed &feed, const std::string &neededFeedId);
 	void onDownloadSuccess(const std::string &feedId, const std::string &content, std::string &icon);
-	void onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &error);
+	void onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &errorString);
 	bool onProcessSuccess_filterMsg(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs);
-	void onProcessSuccess_addMsgs(const std::string &feedId, bool result, std::list<RsFeedReaderMsg*> &msgs);
-	void onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result);
+	void onProcessSuccess_addMsgs(const std::string &feedId, bool result, std::list<RsFeedReaderMsg*> &msgs, bool single);
+	void onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result, const std::string &errorString);
 
-	bool getFeedToProcess(RsFeedReaderFeed &feed);
+	bool getFeedToProcess(RsFeedReaderFeed &feed, const std::string &neededFeedId);
 
 	void setFeedInfo(const std::string &feedId, const std::string &name, const std::string &description);
 
@@ -89,14 +91,17 @@ protected:
 private:
 	void cleanFeeds();
 	void deleteAllMsgs_locked(RsFeedReaderFeed *fi);
+	void stopPreviewThreads_locked();
 
-	std::list<p3FeedReaderThread*> mThreads;
-	uint32_t mNextFeedId;
-	uint32_t mNextMsgId;
 	time_t   mLastClean;
 	RsFeedReaderNotify *mNotify;
 
 	RsMutex mFeedReaderMtx;
+	std::list<p3FeedReaderThread*> mThreads;
+	uint32_t mNextFeedId;
+	uint32_t mNextMsgId;
+	int32_t mNextPreviewFeedId;
+	int32_t mNextPreviewMsgId;
 	uint32_t mStandardUpdateInterval;
 	uint32_t mStandardStorageTime;
 	bool mStandardUseProxy;
@@ -109,6 +114,10 @@ private:
 
 	RsMutex mProcessMutex;
 	std::list<std::string> mProcessFeeds;
+
+	RsMutex mPreviewMutex;
+	p3FeedReaderThread *mPreviewDownloadThread;
+	p3FeedReaderThread *mPreviewProcessThread;
 };
 
 #endif 

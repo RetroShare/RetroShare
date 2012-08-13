@@ -43,8 +43,7 @@ public:
 		DOWNLOAD_ERROR,
 		DOWNLOAD_UNKNOWN_CONTENT_TYPE,
 		DOWNLOAD_NOT_FOUND,
-		DOWNLOAD_UNKOWN_RESPONSE_CODE,
-		DOWNLOAD_INTERNAL_ERROR
+		DOWNLOAD_UNKOWN_RESPONSE_CODE
 	};
 	enum ProcessResult
 	{
@@ -54,8 +53,10 @@ public:
 	};
 
 public:
-	p3FeedReaderThread(p3FeedReader *feedReader, Type type);
+	p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId);
 	virtual ~p3FeedReaderThread();
+
+	std::string getFeedId() { return mFeedId; }
 
 private:
 	virtual void run();
@@ -68,7 +69,7 @@ private:
 
 	p3FeedReader *mFeedReader;
 	Type mType;
-	/*xmlCharEncodingHandlerPtr*/ void *mCharEncodingHandler;
+	std::string mFeedId;
 };
 
 #endif 

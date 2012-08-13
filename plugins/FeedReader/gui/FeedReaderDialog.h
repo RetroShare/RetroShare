@@ -47,9 +47,9 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:
-    void feedTreeCustomPopupMenu(QPoint point);
-    void msgTreeCustomPopupMenu(QPoint point);
-    void feedItemChanged(QTreeWidgetItem *item);
+	void feedTreeCustomPopupMenu(QPoint point);
+	void msgTreeCustomPopupMenu(QPoint point);
+	void feedItemChanged(QTreeWidgetItem *item);
 	void msgItemChanged();
 	void msgItemClicked(QTreeWidgetItem *item, int column);
 	void filterColumnChanged();

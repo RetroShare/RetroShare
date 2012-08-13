@@ -38,10 +38,12 @@ RsFeedReader *rsFeedReader = NULL;
 
 p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler)
 	: RsPQIService(RS_PKT_TYPE_FEEDREADER_CONFIG, CONFIG_TYPE_FEEDREADER, 5, pgHandler),
-	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess")
+	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
 {
 	mNextFeedId = 1;
 	mNextMsgId = 1;
+	mNextPreviewFeedId = -1; // use negative values
+	mNextPreviewMsgId = -1; // use negative values
 	mStandardUpdateInterval = 60 * 60; // 60 minutes
 	mStandardStorageTime = 30 * 60 * 60 * 24; // 30 days
 	mStandardUseProxy = false;
@@ -49,13 +51,16 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler)
 	mLastClean = 0;
 	mNotify = NULL;
 
+	mPreviewDownloadThread = NULL;
+	mPreviewProcessThread = NULL;
+
 	/* start download thread */
-	p3FeedReaderThread *frt = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD);
+	p3FeedReaderThread *frt = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD, "");
 	mThreads.push_back(frt);
 	frt->start();
 
 	/* start process thread */
-	frt = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS);
+	frt = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS, "");
 	mThreads.push_back(frt);
 	frt->start();
 }
@@ -80,7 +85,7 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.lastUpdate = feed->lastUpdate;
 	info.forumId = feed->forumId;
 	info.storageTime = feed->storageTime;
-	info.error = (feed->errorState != RS_FEED_ERRORSTATE_OK); // currently only as bool
+	info.errorState = feed->errorState;
 	info.errorString = feed->errorString;
 
 	info.flag.folder = (feed->flag & RS_FEED_FLAG_FOLDER);
@@ -94,6 +99,8 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.flag.updateForumInfo = (feed->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO);
 	info.flag.embedImages = (feed->flag & RS_FEED_FLAG_EMBED_IMAGES);
 	info.flag.saveCompletePage = (feed->flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE);
+
+	info.flag.preview = feed->preview;
 
 	switch (feed->workstate) {
 	case RsFeedReaderFeed::WAITING:
@@ -133,6 +140,8 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed, bool add)
 		/* set forum id only when adding a feed */
 		feed->forumId = info.forumId;
 	}
+
+//	feed->preview = info.flag.preview;
 
 	uint32_t oldFlag = feed->flag;
 	feed->flag = 0;
@@ -199,12 +208,14 @@ void p3FeedReader::setNotify(RsFeedReaderNotify *notify)
 uint32_t p3FeedReader::getStandardStorageTime()
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
 	return mStandardStorageTime;
 }
 
 void p3FeedReader::setStandardStorageTime(uint32_t storageTime)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
 	if (mStandardStorageTime != storageTime) {
 		mStandardStorageTime = storageTime;
 		IndicateConfigChanged();
@@ -214,12 +225,14 @@ void p3FeedReader::setStandardStorageTime(uint32_t storageTime)
 uint32_t p3FeedReader::getStandardUpdateInterval()
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
 	return mStandardUpdateInterval;
 }
 
 void p3FeedReader::setStandardUpdateInterval(uint32_t updateInterval)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
 	if (mStandardUpdateInterval != updateInterval) {
 		mStandardUpdateInterval = updateInterval;
 		IndicateConfigChanged();
@@ -229,14 +242,17 @@ void p3FeedReader::setStandardUpdateInterval(uint32_t updateInterval)
 bool p3FeedReader::getStandardProxy(std::string &proxyAddress, uint16_t &proxyPort)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
 	proxyAddress = mStandardProxyAddress;
 	proxyPort = mStandardProxyPort;
+
 	return mStandardUseProxy;
 }
 
 void p3FeedReader::setStandardProxy(bool useProxy, const std::string &proxyAddress, uint16_t proxyPort)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
 	if (useProxy != mStandardUseProxy || proxyAddress != mStandardProxyAddress || proxyPort != mStandardProxyPort) {
 		mStandardProxyAddress = proxyAddress;
 		mStandardProxyPort = proxyPort;
@@ -247,12 +263,37 @@ void p3FeedReader::setStandardProxy(bool useProxy, const std::string &proxyAddre
 
 void p3FeedReader::stop()
 {
-	/* stop threads */
-	std::list<p3FeedReaderThread*>::iterator it;
-	for (it = mThreads.begin(); it != mThreads.end(); ++it) {
-		(*it)->join();
+	{
+		RsStackMutex stack(mPreviewMutex); /******* LOCK STACK MUTEX *********/
+
+		stopPreviewThreads_locked();
 	}
-	mThreads.clear();
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+		/* stop threads */
+		std::list<p3FeedReaderThread*>::iterator it;
+		for (it = mThreads.begin(); it != mThreads.end(); ++it) {
+			(*it)->join();
+			delete(*it);
+		}
+		mThreads.clear();
+	}
+}
+
+void p3FeedReader::stopPreviewThreads_locked()
+{
+	if (mPreviewDownloadThread) {
+		mPreviewDownloadThread->join();
+		delete mPreviewDownloadThread;
+		mPreviewDownloadThread = NULL;
+	}
+	if (mPreviewProcessThread) {
+		mPreviewProcessThread->join();
+		delete mPreviewProcessThread;
+		mPreviewProcessThread = NULL;
+	}
 }
 
 RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::string &name, std::string &feedId)
@@ -481,6 +522,8 @@ void p3FeedReader::deleteAllMsgs_locked(RsFeedReaderFeed *fi)
 bool p3FeedReader::removeFeed(const std::string &feedId)
 {
 	std::list<std::string> removedFeedIds;
+	bool changed = false;
+	bool preview = false;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -497,6 +540,8 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 
 		RsFeedReaderFeed *fi = feedIt->second;
 		mFeeds.erase(feedIt);
+		changed = !fi->preview;
+		preview = fi->preview;
 
 		if (fi->flag & RS_FEED_FLAG_FOLDER) {
 			std::list<std::string> feedIds;
@@ -534,7 +579,18 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 		delete(fi);
 	}
 
-	IndicateConfigChanged();
+	if (changed) {
+		IndicateConfigChanged();
+	}
+
+	if (preview) {
+		RsStackMutex stack(mPreviewMutex); /******* LOCK STACK MUTEX *********/
+
+		/* only check download thread */
+		if (mPreviewDownloadThread && mPreviewDownloadThread->getFeedId() == feedId) {
+			stopPreviewThreads_locked();
+		}
+	}
 
 	if (mNotify) {
 		/* only notify remove of feed */
@@ -547,6 +603,63 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 	return true;
 }
 
+bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
+{
+	{
+		RsStackMutex stack(mPreviewMutex); /******* LOCK STACK MUTEX *********/
+
+		stopPreviewThreads_locked();
+	}
+
+	feedId.clear();
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReader::addPreviewFeed - add feed " << feedInfo.name << ", url " << feedInfo.url << std::endl;
+#endif
+
+		RsFeedReaderFeed *fi = new RsFeedReaderFeed;
+		infoToFeed(feedInfo, fi, true);
+		rs_sprintf(fi->feedId, "preview%d", mNextPreviewFeedId--);
+		fi->preview = true;
+
+		/* process feed */
+		fi->workstate = RsFeedReaderFeed::WAITING_TO_DOWNLOAD;
+		fi->content.clear();
+
+		/* clear not needed members */
+		fi->parentId.clear();
+		fi->updateInterval = 0;
+		fi->lastUpdate = 0;
+		fi->forumId.clear();
+		fi->storageTime = 0;
+
+		mFeeds[fi->feedId] = fi;
+
+		feedId = fi->feedId;
+	}
+
+	if (mNotify) {
+		mNotify->feedChanged(feedId, NOTIFY_TYPE_ADD);
+	}
+
+	{
+		RsStackMutex stack(mPreviewMutex); /******* LOCK STACK MUTEX *********/
+
+		/* start download thread for preview */
+		mPreviewDownloadThread = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD, feedId);
+		mPreviewDownloadThread->start();
+
+		/* start process thread for preview */
+		mPreviewProcessThread = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS, feedId);
+		mPreviewProcessThread->start();
+	}
+
+	return true;
+}
+
 void p3FeedReader::getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -554,6 +667,10 @@ void p3FeedReader::getFeedList(const std::string &parentId, std::list<FeedInfo> 
 	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
 	for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
 		RsFeedReaderFeed *fi = feedIt->second;
+
+		if (fi->preview) {
+			continue;
+		}
 
 		if (fi->parentId == parentId) {
 			FeedInfo feedInfo;
@@ -610,6 +727,8 @@ bool p3FeedReader::getMsgInfo(const std::string &feedId, const std::string &msgI
 
 bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId)
 {
+	bool changed = false;
+
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
@@ -622,6 +741,7 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 		}
 
 		RsFeedReaderFeed *fi = feedIt->second;
+		changed = !fi->preview;
 
 		std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
 		msgIt = fi->mMsgs.find(msgId);
@@ -635,7 +755,10 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 		msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED;
 	}
 
-	IndicateConfigChanged();
+	if (changed) {
+		IndicateConfigChanged();
+	}
+
 	if (mNotify) {
 		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
 		mNotify->msgChanged(feedId, msgId, NOTIFY_TYPE_DEL);
@@ -647,6 +770,7 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds)
 {
 	std::list<std::string> removedMsgs;
+	bool changed = false;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -660,6 +784,7 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 		}
 
 		RsFeedReaderFeed *fi = feedIt->second;
+		changed = !fi->preview;
 
 		std::list<std::string>::const_iterator idIt;
 		for (idIt = msgIds.begin(); idIt != msgIds.end(); ++idIt) {
@@ -676,6 +801,10 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 
 			removedMsgs.push_back(*idIt);
 		}
+	}
+
+	if (changed) {
+		IndicateConfigChanged();
 	}
 
 	if (mNotify && !removedMsgs.empty()) {
@@ -758,8 +887,41 @@ bool p3FeedReader::getFeedMsgList(const std::string &feedId, std::list<FeedMsgIn
 	return true;
 }
 
+bool p3FeedReader::getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds)
+{
+	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+	if (feedIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReader::getFeedMsgList - feed " << feedId << " not found" << std::endl;
+#endif
+		return false;
+	}
+
+	RsFeedReaderFeed *fi = feedIt->second;
+
+	std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+	for (msgIt = fi->mMsgs.begin(); msgIt != fi->mMsgs.end(); ++msgIt) {
+		RsFeedReaderMsg *mi = msgIt->second;
+
+		if (mi->flag & RS_FEEDMSG_FLAG_DELETED) {
+			continue;
+		}
+
+		msgIds.push_back(mi->msgId);
+	}
+
+	return true;
+}
+
 static bool canProcessFeed(RsFeedReaderFeed *fi)
 {
+	if (fi->preview) {
+		/* preview feed */
+		return false;
+	}
+
 	if (fi->flag & RS_FEED_FLAG_DEACTIVATED) {
 		/* deactivated */
 		return false;
@@ -939,6 +1101,7 @@ int p3FeedReader::tick()
 	/* clean feeds */
 	cleanFeeds();
 
+	/* check feeds for update interval */
 	time_t currentTime = time(NULL);
 	std::list<std::string> feedToDownload;
 	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
@@ -1105,6 +1268,9 @@ bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> & saveData)
 	std::map<std::string, RsFeedReaderFeed *>::iterator it1;
 	for (it1 = mFeeds.begin(); it1 != mFeeds.end(); ++it1) {
 		RsFeedReaderFeed *fi = it1->second;
+		if (fi->preview) {
+			continue;
+		}
 		saveData.push_back(fi);
 
 		std::map<std::string, RsFeedReaderMsg*>::iterator it2;
@@ -1227,11 +1393,11 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 /****************************** internal ***********************************/
 /***************************************************************************/
 
-bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed)
+bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, const std::string &neededFeedId)
 {
-	std::string feedId;
+	std::string feedId = neededFeedId;
 
-	{
+	if (feedId.empty()) {
 		RsStackMutex stack(mDownloadMutex); /******* LOCK STACK MUTEX *********/
 
 		if (mDownloadFeeds.empty()) {
@@ -1257,6 +1423,7 @@ bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed)
 			return false;
 		}
 
+		/* check state */
 		if (it->second->workstate != RsFeedReaderFeed::WAITING_TO_DOWNLOAD) {
 			std::cerr << "p3FeedReader::getFeedToDownload - feed in wrong work state for download " << it->second->workstate << std::endl;
 			return false;
@@ -1282,6 +1449,8 @@ bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed)
 
 void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::string &content, std::string &icon)
 {
+	bool preview;
+
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
@@ -1298,11 +1467,14 @@ void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::strin
 		RsFeedReaderFeed *fi = it->second;
 		fi->workstate = RsFeedReaderFeed::WAITING_TO_PROCESS;
 		fi->content = content;
+		preview = fi->preview;
 
 		if (fi->icon != icon) {
 			fi->icon = icon;
 
-			IndicateConfigChanged();
+			if (!preview) {
+				IndicateConfigChanged();
+			}
 		}
 
 #ifdef FEEDREADER_DEBUG
@@ -1310,7 +1482,7 @@ void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::strin
 #endif
 	}
 
-	{
+	if (!preview) {
 		RsStackMutex stack(mProcessMutex); /******* LOCK STACK MUTEX *********/
 
 		if (std::find(mProcessFeeds.begin(), mProcessFeeds.end(), feedId) == mProcessFeeds.end()) {
@@ -1324,7 +1496,7 @@ void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::strin
 	}
 }
 
-void p3FeedReader::onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &error)
+void p3FeedReader::onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &errorString)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -1344,7 +1516,6 @@ void p3FeedReader::onDownloadError(const std::string &feedId, p3FeedReaderThread
 		fi->lastUpdate = time(NULL);
 		fi->content.clear();
 
-		long todo; // sort error codes
 		switch (result) {
 		case p3FeedReaderThread::DOWNLOAD_SUCCESS:
 			/* this should not happen */
@@ -1353,9 +1524,6 @@ void p3FeedReader::onDownloadError(const std::string &feedId, p3FeedReaderThread
 			break;
 		case p3FeedReaderThread::DOWNLOAD_ERROR:
 			fi->errorState = RS_FEED_ERRORSTATE_DOWNLOAD_ERROR;
-			break;
-		case p3FeedReaderThread::DOWNLOAD_INTERNAL_ERROR:
-			fi->errorState = RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR;
 			break;
 		case p3FeedReaderThread::DOWNLOAD_UNKNOWN_CONTENT_TYPE:
 			fi->errorState = RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE;
@@ -1370,13 +1538,15 @@ void p3FeedReader::onDownloadError(const std::string &feedId, p3FeedReaderThread
 			fi->errorState = RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR;
 		}
 
-		fi->errorString = error;
+		fi->errorString = errorString;
 
 #ifdef FEEDREADER_DEBUG
-		std::cerr << "p3FeedReader::onDownloadError - feed " << fi->feedId << " (" << fi->name << ") error download, result = " << result << ", errorState = " << fi->errorState << ", error = " << error << std::endl;
+		std::cerr << "p3FeedReader::onDownloadError - feed " << fi->feedId << " (" << fi->name << ") error download, result = " << result << ", errorState = " << fi->errorState << ", error = " << errorString << std::endl;
 #endif
 
-		IndicateConfigChanged();
+		if (!fi->preview) {
+			IndicateConfigChanged();
+		}
 	}
 
 	if (mNotify) {
@@ -1384,11 +1554,11 @@ void p3FeedReader::onDownloadError(const std::string &feedId, p3FeedReaderThread
 	}
 }
 
-bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed)
+bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, const std::string &neededFeedId)
 {
-	std::string feedId;
+	std::string feedId = neededFeedId;
 
-	{
+	if (feedId.empty()) {
 		RsStackMutex stack(mProcessMutex); /******* LOCK STACK MUTEX *********/
 
 		if (mProcessFeeds.empty()) {
@@ -1414,12 +1584,12 @@ bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed)
 			return false;
 		}
 
-		if (it->second->workstate != RsFeedReaderFeed::WAITING_TO_PROCESS) {
-			std::cerr << "p3FeedReader::getFeedToProcess - feed in wrong state for process " << it->second->workstate << std::endl;
+		RsFeedReaderFeed *fi = it->second;
+
+		if (fi->workstate != RsFeedReaderFeed::WAITING_TO_PROCESS) {
+			std::cerr << "p3FeedReader::getFeedToProcess - feed in wrong state for process " << fi->workstate << std::endl;
 			return false;
 		}
-
-		RsFeedReaderFeed *fi = it->second;
 
 		/* set state to processing */
 		fi->workstate = RsFeedReaderFeed::PROCESSING;
@@ -1430,7 +1600,7 @@ bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed)
 		feed = *fi;
 
 #ifdef FEEDREADER_DEBUG
-		std::cerr << "p3FeedReader::getFeedToProcess - feed " << it->second->feedId << " (" << it->second->name << ") is starting to process" << std::endl;
+		std::cerr << "p3FeedReader::getFeedToProcess - feed " << fi->feedId << " (" << fi->name << ") is starting to process" << std::endl;
 #endif
 	}
 
@@ -1447,8 +1617,6 @@ bool p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::li
 	std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - feed " << feedId << " got " << msgs.size() << " messages" << std::endl;
 #endif
 
-	bool result = true;
-
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
@@ -1463,10 +1631,67 @@ bool p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::li
 		}
 
 		RsFeedReaderFeed *fi = it->second;
-		bool forum = (fi->flag & RS_FEED_FLAG_FORUM);
-		uint32_t errorState = RS_FEED_ERRORSTATE_OK;
 
-		if (forum) {
+		std::list<RsFeedReaderMsg*>::iterator newMsgIt;
+		for (newMsgIt = msgs.begin(); newMsgIt != msgs.end(); ) {
+			RsFeedReaderMsg *miNew = *newMsgIt;
+			/* search for existing msg */
+			std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+			for (msgIt = fi->mMsgs.begin(); msgIt != fi->mMsgs.end(); ++msgIt) {
+				RsFeedReaderMsg *mi = msgIt->second;
+				if (mi->title == miNew->title && mi->link == miNew->link && mi->author == miNew->author) {
+					/* msg exist */
+					break;
+				}
+			}
+			if (msgIt != fi->mMsgs.end()) {
+				/* msg exists */
+				delete(miNew);
+				newMsgIt = msgs.erase(newMsgIt);
+			} else {
+				++newMsgIt;
+			}
+		}
+
+		fi->content.clear();
+		fi->errorString.clear();
+
+		if (!fi->preview) {
+			IndicateConfigChanged();
+		}
+	}
+
+	return true;
+}
+
+void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, bool result, std::list<RsFeedReaderMsg*> &msgs, bool single)
+{
+#ifdef FEEDREADER_DEBUG
+	std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " got " << msgs.size() << " messages" << std::endl;
+#endif
+
+	std::list<std::string> addedMsgs;
+	std::string forumId;
+	std::list<RsFeedReaderMsg> forumMsgs;
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+		/* find feed */
+		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		if (it == mFeeds.end()) {
+			/* feed not found */
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " not found" << std::endl;
+#endif
+			return;
+		}
+
+		RsFeedReaderFeed *fi = it->second;
+		bool forum = (fi->flag & RS_FEED_FLAG_FORUM) && !fi->preview;
+		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
+
+		if (result && forum && !msgs.empty()) {
 			if (fi->forumId.empty()) {
 				/* create new forum */
 				std::wstring forumName;
@@ -1491,14 +1716,15 @@ bool p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::li
 				librs::util::ConvertUtf8ToUtf16(fi->description, forumDescription);
 				/* create anonymous public forum */
 				fi->forumId = rsForums->createForum(forumName, forumDescription, RS_DISTRIB_PUBLIC | RS_DISTRIB_AUTHEN_ANON);
+				forumId = fi->forumId;
 
 				if (fi->forumId.empty()) {
-					errorState = RS_FEED_ERRORSTATE_FORUM_CREATE;
+					errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE;
 
 #ifdef FEEDREADER_DEBUG
-					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't create forum for feed " << feedId << " (" << it->second->name << ") - ignore all messages" << std::endl;
+					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't create forum for feed " << feedId << " (" << fi->name << ") - ignore all messages" << std::endl;
 				} else {
-					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - forum " << forumId << " (" << fi->name << ") created" << std::endl;
+					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - forum " << fi->forumId << " (" << fi->name << ") created" << std::endl;
 #endif
 				}
 			} else {
@@ -1506,129 +1732,66 @@ bool p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::li
 				ForumInfo forumInfo;
 				if (rsForums->getForumInfo(fi->forumId, forumInfo)) {
 					if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) == 0) {
-						errorState = RS_FEED_ERRORSTATE_FORUM_NO_ADMIN;
+						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN;
 					} else if ((forumInfo.forumFlags & RS_DISTRIB_AUTHEN_REQ) || (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON) == 0) {
-						errorState = RS_FEED_ERRORSTATE_FORUM_NO_ANONYMOUS_FORUM;
+						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS;
+					} else {
+						forumId = fi->forumId;
 					}
 				} else {
-					errorState = RS_FEED_ERRORSTATE_FORUM_NOT_FOUND;
+					errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND;
 				}
 			}
 		}
 
 		/* process msgs */
 		if (errorState == RS_FEED_ERRORSTATE_OK) {
-			std::list<RsFeedReaderMsg*>::iterator newMsgIt;
-			for (newMsgIt = msgs.begin(); newMsgIt != msgs.end(); ) {
-				RsFeedReaderMsg *miNew = *newMsgIt;
-				/* search for existing msg */
-				std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
-				for (msgIt = fi->mMsgs.begin(); msgIt != fi->mMsgs.end(); ++msgIt) {
-					RsFeedReaderMsg *mi = msgIt->second;
-					if (mi->title == miNew->title && mi->link == mi->link && mi->author == mi->author) {
-						/* msg exist */
-						break;
+			/* process msgs */
+#ifdef FEEDREADER_DEBUG
+			uint32_t newMsgs = 0;
+#endif
+
+			if (result) {
+				std::list<RsFeedReaderMsg*>::iterator newMsgIt;
+				for (newMsgIt = msgs.begin(); newMsgIt != msgs.end(); ) {
+					RsFeedReaderMsg *miNew = *newMsgIt;
+					/* add new msg */
+					if (fi->preview) {
+						rs_sprintf(miNew->msgId, "preview%d", mNextPreviewMsgId--);
+					} else {
+						rs_sprintf(miNew->msgId, "%lu", mNextMsgId++);
 					}
-				}
-				if (msgIt != fi->mMsgs.end()) {
-					/* msg exists */
-					delete(*newMsgIt);
+					if (forum) {
+						miNew->flag = RS_FEEDMSG_FLAG_DELETED;
+						forumMsgs.push_back(*miNew);
+//						miNew->description.clear();
+					} else {
+						miNew->flag = RS_FEEDMSG_FLAG_NEW;
+						addedMsgs.push_back(miNew->msgId);
+					}
+					fi->mMsgs[miNew->msgId] = miNew;
 					newMsgIt = msgs.erase(newMsgIt);
-				} else {
-					++newMsgIt;
+
+#ifdef FEEDREADER_DEBUG
+					++newMsgs;
+#endif
 				}
-			}
-		} else {
-			result = false;
-		}
-
-		fi->content.clear();
-		fi->errorState = errorState;
-		fi->errorString.clear();
-
-		IndicateConfigChanged();
-	}
-
-	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
-	}
-
-	return result;
-}
-
-void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, bool result, std::list<RsFeedReaderMsg*> &msgs)
-{
 #ifdef FEEDREADER_DEBUG
-	std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " got " << msgs.size() << " messages" << std::endl;
-#endif
-
-	std::list<std::string> addedMsgs;
-	std::string forumId;
-	std::list<RsFeedReaderMsg> forumMsgs;
-
-	{
-		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
-
-		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
-		if (it == mFeeds.end()) {
-			/* feed not found */
-#ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " not found" << std::endl;
-#endif
-			return;
-		}
-
-		RsFeedReaderFeed *fi = it->second;
-		bool forum = (fi->flag & RS_FEED_FLAG_FORUM);
-
-		if (forum) {
-			forumId = fi->forumId;
-			if (forumId.empty()) {
-				/* don't process messages without forum id */
-				result = false;
-#ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << fi->feedId << " (" << fi->name << ") don't process messages without forum id" << std::endl;
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << fi->feedId << " (" << fi->name << ") added " << newMsgs << "/" << msgs.size() << " messages" << std::endl;
 #endif
 			}
 		}
 
-		/* process msgs */
-#ifdef FEEDREADER_DEBUG
-		uint32_t newMsgs = 0;
-#endif
-
-		if (result) {
-			std::list<RsFeedReaderMsg*>::iterator newMsgIt;
-			for (newMsgIt = msgs.begin(); newMsgIt != msgs.end(); ) {
-				RsFeedReaderMsg *miNew = *newMsgIt;
-				/* add new msg */
-				rs_sprintf(miNew->msgId, "%lu", mNextMsgId++);
-				if (forum) {
-					miNew->flag = RS_FEEDMSG_FLAG_DELETED;
-					forumMsgs.push_back(*miNew);
-//					miNew->description.clear();
-				} else {
-					miNew->flag = RS_FEEDMSG_FLAG_NEW;
-					addedMsgs.push_back(miNew->msgId);
-				}
-				fi->mMsgs[miNew->msgId] = miNew;
-				newMsgIt = msgs.erase(newMsgIt);
-
-#ifdef FEEDREADER_DEBUG
-				++newMsgs;
-#endif
-			}
-#ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << fi->feedId << " (" << fi->name << ") added " << newMsgs << "/" << msgs.size() << " messages" << std::endl;
-#endif
+		if (!single) {
+			fi->workstate = RsFeedReaderFeed::WAITING;
+			fi->content.clear();
+			fi->errorState = errorState;
+			fi->lastUpdate = time(NULL);
 		}
 
-		fi->workstate = RsFeedReaderFeed::WAITING;
-		fi->content.clear();
-		fi->lastUpdate = time(NULL);
-
-		IndicateConfigChanged();
+		if (!fi->preview) {
+			IndicateConfigChanged();
+		}
 	}
 
 	if (!forumId.empty() && !forumMsgs.empty()) {
@@ -1670,7 +1833,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, bool resu
 	}
 }
 
-void p3FeedReader::onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result)
+void p3FeedReader::onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result, const std::string &errorString)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -1700,17 +1863,22 @@ void p3FeedReader::onProcessError(const std::string &feedId, p3FeedReaderThread:
 		case p3FeedReaderThread::PROCESS_ERROR_INIT:
 			fi->errorState = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
 			break;
+		case p3FeedReaderThread::PROCESS_UNKNOWN_FORMAT:
+			fi->errorState = RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT;
+			break;
 		default:
 			fi->errorState = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
 		}
 
-//		fi->errorString = error;
+		fi->errorString = errorString;
 
 #ifdef FEEDREADER_DEBUG
 		std::cerr << "p3FeedReader::onProcessError - feed " << fi->feedId << " (" << fi->name << ") error process, result = " << result << ", errorState = " << fi->errorState << std::endl;
 #endif
 
-		IndicateConfigChanged();
+		if (!fi->preview) {
+			IndicateConfigChanged();
+		}
 	}
 
 	if (mNotify) {
@@ -1721,6 +1889,7 @@ void p3FeedReader::onProcessError(const std::string &feedId, p3FeedReaderThread:
 void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &name, const std::string &description)
 {
 	bool changed = false;
+	bool preview;
 	std::string forumId;
 	ForumInfo forumInfoNew;
 
@@ -1738,6 +1907,7 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 		}
 
 		RsFeedReaderFeed *fi = it->second;
+		preview = fi->preview;
 		if (fi->name != name) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFeedInfo - feed " << fi->feedId << " changed name from " << fi->name << " to " << name << std::endl;
@@ -1753,7 +1923,7 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 			changed = true;
 		}
 
-		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty()) {
+		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() && !preview) {
 			/* change forum too */
 			forumId = fi->forumId;
 			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfoNew.forumName);
@@ -1763,7 +1933,9 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		if (!preview) {
+			IndicateConfigChanged();
+		}
 
 		if (mNotify) {
 			mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);

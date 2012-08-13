@@ -23,10 +23,9 @@
 #include "rsFeedReaderItems.h"
 #include "util/rsstring.h"
 #include "util/CURLWrapper.h"
+#include "util/XMLWrapper.h"
+#include "util/HTMLWrapper.h"
 
-#include <libxml/parser.h>
-#include <libxml/HTMLparser.h>
-#include <libxml/HTMLtree.h>
 #include <openssl/evp.h>
 
 enum FeedFormat { FORMAT_RSS, FORMAT_RDF };
@@ -36,23 +35,13 @@ enum FeedFormat { FORMAT_RSS, FORMAT_RDF };
  *********/
 #define FEEDREADER_DEBUG
 
-p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type) : RsThread(), mFeedReader(feedReader), mType(type)
+p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId) :
+	RsThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
 {
-	if (type == PROCESS) {
-		mCharEncodingHandler = xmlFindCharEncodingHandler ("UTF8");
-
-		if (!mCharEncodingHandler) {
-			/* no encoding handler found */
-			std::cerr << "p3FeedReaderThread::p3FeedReaderThread - no encoding handler found" << std::endl;
-		}
-	} else {
-		mCharEncodingHandler = NULL;
-	}
 }
 
 p3FeedReaderThread::~p3FeedReaderThread()
 {
-	xmlCharEncCloseFunc((xmlCharEncodingHandlerPtr) mCharEncodingHandler);
 }
 
 /***************************************************************************/
@@ -73,16 +62,16 @@ void p3FeedReaderThread::run()
 		case DOWNLOAD:
 			{
 				RsFeedReaderFeed feed;
-				if (mFeedReader->getFeedToDownload(feed)) {
+				if (mFeedReader->getFeedToDownload(feed, mFeedId)) {
 					std::string content;
 					std::string icon;
-					std::string error;
+					std::string errorString;
 
-					DownloadResult result = download(feed, content, icon, error);
+					DownloadResult result = download(feed, content, icon, errorString);
 					if (result == DOWNLOAD_SUCCESS) {
 						mFeedReader->onDownloadSuccess(feed.feedId, content, icon);
 					} else {
-						mFeedReader->onDownloadError(feed.feedId, result, error);
+						mFeedReader->onDownloadError(feed.feedId, result, errorString);
 					}
 				}
 			}
@@ -90,31 +79,48 @@ void p3FeedReaderThread::run()
 		case PROCESS:
 			{
 				RsFeedReaderFeed feed;
-				if (mFeedReader->getFeedToProcess(feed)) {
+				if (mFeedReader->getFeedToProcess(feed, mFeedId)) {
 					std::list<RsFeedReaderMsg*> msgs;
-					std::string error;
+					std::string errorString;
 					std::list<RsFeedReaderMsg*>::iterator it;
 
-					ProcessResult result = process(feed, msgs, error);
+					ProcessResult result = process(feed, msgs, errorString);
 					if (result == PROCESS_SUCCESS) {
 						/* first, filter the messages */
 						bool result = mFeedReader->onProcessSuccess_filterMsg(feed.feedId, msgs);
 						if (isRunning()) {
 							if (result) {
-								long todo; // process new items
 								/* second, process the descriptions */
-								for (it = msgs.begin(); it != msgs.end(); ++it) {
+								for (it = msgs.begin(); it != msgs.end(); ) {
 									RsFeedReaderMsg *mi = *it;
 									processMsg(feed, mi);
+
+									if (feed.preview) {
+										/* add every message */
+										it = msgs.erase(it);
+
+										std::list<RsFeedReaderMsg*> msgSingle;
+										msgSingle.push_back(mi);
+										mFeedReader->onProcessSuccess_addMsgs(feed.feedId, result, msgSingle, true);
+
+										/* delete not accepted message */
+										std::list<RsFeedReaderMsg*>::iterator it1;
+										for (it1 = msgSingle.begin(); it1 != msgSingle.end(); ++it1) {
+											delete (*it1);
+										}
+									} else {
+										++it;
+									}
 								}
 							}
 							/* third, add messages */
-							mFeedReader->onProcessSuccess_addMsgs(feed.feedId, result, msgs);
+							mFeedReader->onProcessSuccess_addMsgs(feed.feedId, result, msgs, false);
 						}
 					} else {
-						mFeedReader->onProcessError(feed.feedId, result);
+						mFeedReader->onProcessError(feed.feedId, result, errorString);
 					}
 
+					/* delete not accepted messages */
 					for (it = msgs.begin(); it != msgs.end(); ++it) {
 						delete (*it);
 					}
@@ -299,70 +305,6 @@ p3FeedReaderThread::DownloadResult p3FeedReaderThread::download(const RsFeedRead
 /****************************** Process ************************************/
 /***************************************************************************/
 
-static bool convertToString(xmlCharEncodingHandlerPtr charEncodingHandler, const xmlChar *xmlText, std::string &text)
-{
-	bool result = false;
-
-	xmlBufferPtr in = xmlBufferCreateStatic((void*) xmlText, xmlStrlen(xmlText));
-	xmlBufferPtr out = xmlBufferCreate();
-	int ret = xmlCharEncOutFunc(charEncodingHandler, out, in);
-	if (ret >= 0) {
-		result = true;
-		text = (char*) xmlBufferContent(out);
-	}
-
-	xmlBufferFree(in);
-	xmlBufferFree(out);
-
-	return result;
-}
-
-static bool convertFromString(xmlCharEncodingHandlerPtr charEncodingHandler, const char *text, xmlChar *&xmlText)
-{
-	bool result = false;
-
-	xmlBufferPtr in = xmlBufferCreateStatic((void*) text, strlen(text));
-	xmlBufferPtr out = xmlBufferCreate();
-	int ret = xmlCharEncOutFunc(charEncodingHandler, out, in);
-	if (ret >= 0) {
-		result = true;
-		xmlText = xmlBufferDetach(out);
-	}
-
-	xmlBufferFree(in);
-	xmlBufferFree(out);
-
-	return result;
-}
-
-static xmlNodePtr findNode(xmlNodePtr node, const char *name, bool children = false)
-{
-	if (node->name) {
-		if (xmlStrcasecmp (node->name, (xmlChar*) name) == 0) {
-			return node;
-		}
-	}
-
-	xmlNodePtr nodeFound = NULL;
-	if (children) {
-		if (node->children) {
-			nodeFound = findNode(node->children, name, children);
-			if (nodeFound) {
-				return nodeFound;
-			}
-		}
-	}
-
-	if (node->next) {
-		nodeFound = findNode(node->next, name, children);
-		if (nodeFound) {
-			return nodeFound;
-		}
-	}
-
-	return NULL;
-}
-
 static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNodePtr item)
 {
 	if (!channel) {
@@ -384,76 +326,12 @@ static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNode
 		item = item->next;
 	}
 	for (; item; item = item->next) {
-		if (item->type == XML_ELEMENT_NODE && xmlStrcasecmp (item->name, (xmlChar*) "item") == 0) {
+		if (item->type == XML_ELEMENT_NODE && xmlStrcasecmp(item->name, (const xmlChar*) "item") == 0) {
 			break;
 		}
 	}
 
 	return item;
-}
-
-static bool getChildText(/*xmlCharEncodingHandlerPtr*/ void *charEncodingHandler, xmlNodePtr node, const char *childName, std::string &text)
-{
-	if (node == NULL || node->children == NULL) {
-		return false;
-	}
-
-	xmlNodePtr child = findNode(node->children, childName, true);
-	if (!child) {
-		return false;
-	}
-
-	if (child->type != XML_ELEMENT_NODE) {
-		return false;
-	}
-
-	if (!child->children) {
-		return false;
-	}
-
-	if (child->children->type != XML_TEXT_NODE) {
-		return false;
-	}
-
-	if (child->children->content) {
-		return convertToString((xmlCharEncodingHandlerPtr) charEncodingHandler, child->children->content, text);
-	}
-
-	return true;
-}
-
-static std::string xmlGetAttr(/*xmlCharEncodingHandlerPtr*/ void *charEncodingHandler, xmlNodePtr node, const char *name)
-{
-	if (!node || !name) {
-		return "";
-	}
-
-	std::string value;
-
-	xmlChar *xmlValue = xmlGetProp(node, (const xmlChar*) name);
-	if (xmlValue) {
-		convertToString((xmlCharEncodingHandlerPtr) charEncodingHandler, xmlValue, value);
-		xmlFree(xmlValue);
-	}
-
-	return value;
-}
-
-static bool xmlSetAttr(/*xmlCharEncodingHandlerPtr*/ void *charEncodingHandler, xmlNodePtr node, const char *name, const char *value)
-{
-	if (!node || !name) {
-		return false;
-	}
-
-	xmlChar *xmlValue = NULL;
-	if (!convertFromString((xmlCharEncodingHandlerPtr) charEncodingHandler, value, xmlValue)) {
-		return false;
-	}
-
-	xmlAttrPtr xmlAttr = xmlSetProp (node, (const xmlChar*) name, xmlValue);
-	xmlFree(xmlValue);
-
-	return xmlAttr != NULL;
 }
 
 static void splitString(std::string s, std::vector<std::string> &v, const char d)
@@ -919,14 +797,14 @@ p3FeedReaderThread::ProcessResult p3FeedReaderThread::process(const RsFeedReader
 
 	ProcessResult result = PROCESS_SUCCESS;
 
-	xmlDocPtr document = xmlReadDoc((const xmlChar*) feed.content.c_str(), "", NULL, XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_COMPACT | XML_PARSE_NOCDATA);
-	if (document) {
-		xmlNodePtr root = xmlDocGetRootElement(document);
+	XMLWrapper xml;
+	if (xml.readXML(feed.content.c_str())) {
+		xmlNodePtr root = xml.getRootElement();
 		if (root) {
 			FeedFormat feedFormat;
-			if (xmlStrcmp (root->name, (xmlChar*) "rss") == 0) {
+			if (xmlStrcasecmp(root->name, (const xmlChar*) "rss") == 0) {
 				feedFormat = FORMAT_RSS;
-			} else if (xmlStrcmp (root->name, (xmlChar*) "rdf") != 0) {
+			} else if (xmlStrcasecmp (root->name, (const xmlChar*) "rdf") != 0) {
 				feedFormat = FORMAT_RDF;
 			} else {
 				result = PROCESS_UNKNOWN_FORMAT;
@@ -934,18 +812,18 @@ p3FeedReaderThread::ProcessResult p3FeedReaderThread::process(const RsFeedReader
 			}
 
 			if (result == PROCESS_SUCCESS) {
-				xmlNodePtr channel = findNode(root->children, "channel");
+				xmlNodePtr channel = xml.findNode(root->children, "channel");
 				if (channel) {
 					/* import header info */
 					if (feed.flag & RS_FEED_FLAG_INFO_FROM_FEED) {
 						std::string title;
-						if (getChildText(mCharEncodingHandler, channel, "title", title) && !title.empty()) {
+						if (xml.getChildText(channel, "title", title) && !title.empty()) {
 							std::string::size_type p;
 							while ((p = title.find_first_of("\r\n")) != std::string::npos) {
 								title.erase(p, 1);
 							}
 							std::string description;
-							getChildText(mCharEncodingHandler, channel, "description", description);
+							xml.getChildText(channel, "description", description);
 							mFeedReader->setFeedInfo(feed.feedId, title, description);
 						}
 					}
@@ -958,7 +836,7 @@ p3FeedReaderThread::ProcessResult p3FeedReaderThread::process(const RsFeedReader
 						}
 
 						std::string title;
-						if (!getChildText(mCharEncodingHandler, node, "title", title) || title.empty()) {
+						if (!xml.getChildText(node, "title", title) || title.empty()) {
 							continue;
 						}
 
@@ -974,8 +852,8 @@ p3FeedReaderThread::ProcessResult p3FeedReaderThread::process(const RsFeedReader
 						item->title = title;
 
 						/* try feedburner:origLink */
-						if (!getChildText(mCharEncodingHandler, node, "origLink", item->link) || item->link.empty()) {
-							getChildText(mCharEncodingHandler, node, "link", item->link);
+						if (!xml.getChildText(node, "origLink", item->link) || item->link.empty()) {
+							xml.getChildText(node, "link", item->link);
 						}
 
 						long todo; // remove sid
@@ -1002,15 +880,15 @@ p3FeedReaderThread::ProcessResult p3FeedReaderThread::process(const RsFeedReader
 //							sLink.Delete (nSIDStart, nSIDEnd - nSIDStart);
 //						}
 
-						getChildText(mCharEncodingHandler, node, "author", item->author);
+						xml.getChildText(node, "author", item->author);
 
-						getChildText(mCharEncodingHandler, node, "description", item->description);
+						xml.getChildText(node, "description", item->description);
 
 						std::string pubDate;
-						if (getChildText(mCharEncodingHandler, node, "pubdate", pubDate)) {
+						if (xml.getChildText(node, "pubdate", pubDate)) {
 							item->pubDate = parseRFC822Date(pubDate);
 						}
-						if (getChildText(mCharEncodingHandler, node, "date", pubDate)) {
+						if (xml.getChildText(node, "date", pubDate)) {
 							item->pubDate = parseISO8601Date (pubDate);
 						}
 
@@ -1030,8 +908,6 @@ p3FeedReaderThread::ProcessResult p3FeedReaderThread::process(const RsFeedReader
 			result = PROCESS_UNKNOWN_FORMAT;
 			error = "Can't read document";
 		}
-
-		xmlFreeDoc(document);
 	} else {
 		result = PROCESS_ERROR_INIT;
 	}
@@ -1101,9 +977,9 @@ bool p3FeedReaderThread::processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMs
 
 	/* process description */
 	long todo; // encoding
-	htmlDocPtr document = htmlReadMemory(msg->description.c_str(), msg->description.length(), url.c_str(), "", HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING | HTML_PARSE_COMPACT);
-	if (document) {
-		xmlNodePtr root = xmlDocGetRootElement(document);
+	HTMLWrapper html;
+	if (html.readHTML(msg->description.c_str(), url.c_str())) {
+		xmlNodePtr root = html.getRootElement();
 		if (root) {
 			/* process all children */
 			std::list<xmlNodePtr> parents;
@@ -1118,12 +994,12 @@ bool p3FeedReaderThread::processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMs
 
 				if (node->type == XML_ELEMENT_NODE) {
 					/* check for image */
-					if (strcasecmp((char*) node->name, "img") == 0) {
+					if (xmlStrcasecmp(node->name, (const xmlChar*) "img") == 0) {
 						bool removeImage = true;
 
 						if (feed.flag & RS_FEED_FLAG_EMBED_IMAGES) {
 							/* embed image */
-							std::string src = xmlGetAttr(mCharEncodingHandler, node, "src");
+							std::string src = html.getAttr(node, "src");
 							if (!src.empty()) {
 								/* download image */
 #ifdef FEEDREADER_DEBUG
@@ -1139,7 +1015,7 @@ bool p3FeedReaderThread::processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMs
 										if (toBase64(data, base64)) {
 											std::string imageBase64;
 											rs_sprintf(imageBase64, "data:%s;base64,%s", contentType.c_str(), base64.c_str());
-											if (xmlSetAttr(mCharEncodingHandler, node, "src", imageBase64.c_str())) {
+											if (html.setAttr(node, "src", imageBase64.c_str())) {
 												removeImage = false;
 											}
 										}
@@ -1163,26 +1039,20 @@ bool p3FeedReaderThread::processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMs
 				}
 			}
 
-			xmlChar *html = NULL;
-			int htmlSize = 0;
-			htmlDocDumpMemoryFormat(document, &html, &htmlSize, 0);
-			if (html) {
-				convertToString((xmlCharEncodingHandlerPtr) mCharEncodingHandler, html, msg->description);
-				xmlFree(html);
+			if (isRunning()) {
+				if (!html.saveHTML(msg->description)) {
+#ifdef FEEDREADER_DEBUG
+					std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+#endif
+					result = false;
+				}
 			} else {
 #ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+				std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
 #endif
 				result = false;
 			}
-		} else {
-#ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
-#endif
-			result = false;
 		}
-
-		xmlFreeDoc(document);
 	}
 
 	return result;

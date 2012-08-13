@@ -26,6 +26,26 @@
 #include <string>
 #include <list>
 
+enum RsFeedReaderErrorState {
+	RS_FEED_ERRORSTATE_OK                            = 0,
+
+	/* download */
+	RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR       = 1,
+	RS_FEED_ERRORSTATE_DOWNLOAD_ERROR                = 2,
+	RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE = 3,
+	RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND            = 4,
+	RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE = 5,
+
+	/* process */
+	RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR        = 50,
+	RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT        = 51,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE          = 100,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND       = 101,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN        = 102,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS   = 103
+};
+
+
 class RsFeedReader;
 extern RsFeedReader *rsFeedReader;
 
@@ -58,7 +78,7 @@ public:
 		updateInterval = 0;
 		lastUpdate = 0;
 		storageTime = 0;
-		error = false;
+		errorState = RS_FEED_ERRORSTATE_OK;
 		flag.folder = false;
 		flag.infoFromFeed = false;
 		flag.standardStorageTime = false;
@@ -70,25 +90,26 @@ public:
 		flag.updateForumInfo = false;
 		flag.embedImages = false;
 		flag.saveCompletePage = false;
+		flag.preview = false;
 	}
 
-	std::string  feedId;
-	std::string  parentId;
-	std::string  url;
-	std::string  name;
-	std::string  description;
-	std::string  icon;
-	std::string  user;
-	std::string  password;
-	std::string  proxyAddress;
-	uint16_t     proxyPort;
-	uint32_t     updateInterval;
-	time_t       lastUpdate;
-	uint32_t     storageTime;
-	std::string  forumId;
-	WorkState    workstate;
-	bool         error;
-	std::string  errorString;
+	std::string            feedId;
+	std::string            parentId;
+	std::string            url;
+	std::string            name;
+	std::string            description;
+	std::string            icon;
+	std::string            user;
+	std::string            password;
+	std::string            proxyAddress;
+	uint16_t               proxyPort;
+	uint32_t               updateInterval;
+	time_t                 lastUpdate;
+	uint32_t               storageTime;
+	std::string            forumId;
+	WorkState              workstate;
+	RsFeedReaderErrorState errorState;
+	std::string            errorString;
 
 	struct {
 		bool folder : 1;
@@ -102,6 +123,7 @@ public:
 		bool updateForumInfo : 1;
 		bool embedImages : 1;
 		bool saveCompletePage : 1;
+		bool preview : 1;
 	} flag;
 };
 
@@ -159,6 +181,7 @@ public:
 	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, std::string &feedId) = 0;
 	virtual RsFeedAddResult setFeed(const std::string &feedId, const FeedInfo &feedInfo) = 0;
 	virtual bool            removeFeed(const std::string &feedId) = 0;
+	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId) = 0;
 	virtual void            getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos) = 0;
 	virtual bool            getFeedInfo(const std::string &feedId, FeedInfo &feedInfo) = 0;
 	virtual bool            getMsgInfo(const std::string &feedId, const std::string &msgId, FeedMsgInfo &msgInfo) = 0;
@@ -166,20 +189,9 @@ public:
 	virtual bool            removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds) = 0;
 	virtual bool            getMessageCount(const std::string &feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount) = 0;
 	virtual bool            getFeedMsgList(const std::string &feedId, std::list<FeedMsgInfo> &msgInfos) = 0;
+	virtual bool            getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds) = 0;
 	virtual bool            processFeed(const std::string &feedId) = 0;
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read) = 0;
-
-	/* get Ids */
-//	virtual uint32_t getRankingsCount()			= 0;
-//	virtual float   getMaxRank()				= 0;
-//	virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids) = 0;
-//	virtual bool    getRankDetails(std::string rid, RsRankDetails &details) = 0;
-
-	/* Add New Comment / Msg */
-//	virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score) = 0;
-//	virtual bool updateComment(std::string rid, std::wstring comment, int32_t score) = 0;
-
-//	virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title) = 0;
 };
 
 #endif

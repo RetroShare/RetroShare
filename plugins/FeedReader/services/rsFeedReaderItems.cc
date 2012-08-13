@@ -50,6 +50,7 @@ void RsFeedReaderFeed::clear()
 	errorState = RS_FEED_ERRORSTATE_OK;
 	errorString.clear();
 
+	preview = false;
 	workstate = WAITING;
 	content.clear();
 }
@@ -176,7 +177,9 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	ok &= getRawUInt32(data, rssize, &offset, &(item->storageTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
-	ok &= getRawUInt32(data, rssize, &offset, &(item->errorState));
+	uint32_t errorState = 0;
+	ok &= getRawUInt32(data, rssize, &offset, &errorState);
+	item->errorState = (RsFeedReaderErrorState) errorState;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
 
 	if (offset != rssize)

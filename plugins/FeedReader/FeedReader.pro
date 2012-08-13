@@ -6,25 +6,34 @@ SOURCES =	FeedReaderPlugin.cpp \
 			services/p3FeedReader.cc \
 			services/p3FeedReaderThread.cc \
 			services/rsFeedReaderItems.cc \
-			services/util/CURLWrapper.cc \
 			gui/FeedReaderDialog.cpp \
 			gui/AddFeedDialog.cpp \
+			gui/PreviewFeedDialog.cpp \
 			gui/FeedReaderNotify.cpp \
-			gui/FeedReaderConfig.cpp
+			gui/FeedReaderConfig.cpp \
+			gui/FeedReaderStringDefs.cpp \
+			util/CURLWrapper.cpp \
+			util/XMLWrapper.cpp \
+			util/HTMLWrapper.cpp
 
 HEADERS =	FeedReaderPlugin.h \
 			interface/rsFeedReader.h \
 			services/p3FeedReader.h \
 			services/p3FeedReaderThread.h \
 			services/rsFeedReaderItems.h \
-			services/util/CURLWrapper.h \
 			gui/FeedReaderDialog.h \
 			gui/AddFeedDialog.h \
+			gui/PreviewFeedDialog.h \
 			gui/FeedReaderNotify.h \
-			gui/FeedReaderConfig.h
+			gui/FeedReaderConfig.h \
+			gui/FeedReaderStringDefs.h \
+			util/CURLWrapper.h \
+			util/XMLWrapper.h \
+			util/HTMLWrapper.h
 
 FORMS =		gui/FeedReaderDialog.ui \
 			gui/AddFeedDialog.ui \
+			gui/PreviewFeedDialog.ui \
 			gui/FeedReaderConfig.ui
 
 TARGET = FeedReader
