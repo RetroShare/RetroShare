@@ -26,7 +26,6 @@
 
 #include "StatusMessage.h"
 #include "gui/ProfileManager.h"
-#include "ProfileEdit.h"
 
 #include <QApplication>
 #include <QClipboard>
