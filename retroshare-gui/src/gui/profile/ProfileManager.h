@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006 - 2009, RetroShare Team
+ *  Copyright (C) 2012, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -20,41 +20,47 @@
  ****************************************************************/
 
 
-#ifndef _PROFILEWIDGET_H
-#define _PROFILEWIDGET_H
+#ifndef _PROFILEMANAGER_H
+#define _PROFILEMANAGER_H
 
-#include <QWidget>
+#include <retroshare/rstypes.h>
 
-#include "ui_ProfileWidget.h"
+#include "ui_ProfileManager.h"
 
-class ProfileWidget : public QWidget
+
+
+class ProfileManager : public QDialog
 {
   Q_OBJECT
 
-	public:
-    /** Default constructor */
-    ProfileWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
-    /** Default destructor */
-    ~ProfileWidget();
+public:
+  /** Default constructor */
+  ProfileManager(QWidget *parent = 0, Qt::WFlags flags = 0);
+  /** Default destructor */
 
-
-protected:
-    void closeEvent (QCloseEvent * event);
-  
 private slots:
 
-    void showEvent ( QShowEvent * event );
-    void statusmessagedlg();
-    void copyCert();
-    void profilemanager();
+	void selectFriend();
+	void importIdentity();
+	void exportIdentity();
+	void checkChanged(int i);
+  void newIdentity();
 
- 
 private:
 
+		  void init() ;
 
-    /** Qt Designer generated object */
-    Ui::ProfileWidget ui;
+  /** Loads the saved connectidialog settings */
+  //  void loadSettings();
+  void loadCertificates();
 
+  
+  QMovie *movie;
+
+  /** Qt Designer generated object */
+  Ui::ProfileManager ui;
+
+  bool genNewGPGKey;
 };
 
 #endif

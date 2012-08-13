@@ -293,6 +293,7 @@ HEADERS +=  rshare.h \
             util/ObjectPainter.h \
             gui/bwgraph/bwgraph.h \
             gui/profile/ProfileWidget.h \
+            gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatWindow.h \
             gui/chat/PopupChatDialog.h \
@@ -448,6 +449,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/bwgraph/bwgraph.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
+            gui/profile/ProfileManager.ui \
             gui/channels/CreateChannel.ui \
             gui/channels/CreateChannelMsg.ui \
             gui/channels/ChannelDetails.ui \
@@ -588,6 +590,7 @@ SOURCES +=  main.cpp \
             gui/bwgraph/bwgraph.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
+            gui/profile/ProfileManager.cpp \
             gui/channels/CreateChannel.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \

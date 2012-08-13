@@ -25,6 +25,8 @@
 #include <retroshare/rsdisc.h>
 
 #include "StatusMessage.h"
+#include "gui/ProfileManager.h"
+#include "ProfileEdit.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -46,6 +48,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
   
     connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
+    connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
 
@@ -136,3 +139,8 @@ void ProfileWidget::copyCert()
 
 }
 
+void ProfileWidget::profilemanager()
+{
+    static ProfileManager *profilemanager = new ProfileManager();
+    profilemanager->show();
+}

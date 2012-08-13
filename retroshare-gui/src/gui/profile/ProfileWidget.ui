@@ -70,7 +70,7 @@ border: 1px solid #CCCCCC;
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="1" column="3">
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -96,6 +96,21 @@ border: 1px solid #CCCCCC;
         <property name="icon">
          <iconset resource="../images.qrc">
           <normaloff>:/images/view-certificate-copy-32.png</normaloff>:/images/view-certificate-copy-32.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="profile_Button">
+        <property name="styleSheet">
+         <string notr="true">QPushButton:hover { 
+border: 1px solid #CCCCCC;
+}</string>
+        </property>
+        <property name="text">
+         <string>Profile Manager</string>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -714,6 +729,9 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
