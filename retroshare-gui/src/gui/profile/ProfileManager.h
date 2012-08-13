@@ -39,23 +39,22 @@ public:
   /** Default destructor */
 
 private slots:
+	void identityTreeWidgetCostumPopupMenu( QPoint point );
 
 	void selectFriend();
 	void importIdentity();
 	void exportIdentity();
 	void checkChanged(int i);
-  void newIdentity();
+	void newIdentity();
 
 private:
+	QTreeWidgetItem *getCurrentIdentity();
 
-		  void init() ;
+	void init() ;
 
-  /** Loads the saved connectidialog settings */
-  //  void loadSettings();
-  void loadCertificates();
-
-  
-  QMovie *movie;
+	/** Loads the saved connectidialog settings */
+	//  void loadSettings();
+	void loadCertificates();
 
   /** Qt Designer generated object */
   Ui::ProfileManager ui;

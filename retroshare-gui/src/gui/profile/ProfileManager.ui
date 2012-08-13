@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>625</width>
-    <height>356</height>
+    <height>402</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -699,7 +699,26 @@ border: 1px solid #CCCCCC;}</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QListWidget" name="listWidget"/>
+             <widget class="QTreeWidget" name="identityTreeWidget">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <column>
+               <property name="text">
+                <string>Name</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Email</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>GID</string>
+               </property>
+              </column>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -805,6 +824,9 @@ p, li { white-space: pre-wrap; }
   <tabstop>genPGPuser</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

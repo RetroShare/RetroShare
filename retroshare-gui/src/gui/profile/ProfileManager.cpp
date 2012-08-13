@@ -25,17 +25,18 @@
 #include <retroshare/rspeers.h>
 #include "ProfileManager.h"
 #include "gui/GenCertDialog.h"
+#include "gui/common/RSTreeWidgetItem.h"
 
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QMovie>
 #include <QTreeWidget>
+#include <QMenu>
+
 #include <time.h>
 
+#define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
 
-/* Define the format used for displaying the date and time */
-#define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 
 /** Default constructor */
@@ -45,19 +46,42 @@ ProfileManager::ProfileManager(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
+  connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( identityTreeWidgetCostumPopupMenu( QPoint ) ) );
   connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
   connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
   connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
+  ui.identityTreeWidget -> setColumnCount(3);
 
   init() ;
+}
+
+void ProfileManager::identityTreeWidgetCostumPopupMenu( QPoint )
+{
+  QTreeWidgetItem *wi = getCurrentIdentity();
+  if (!wi)
+    return;
+
+	QMenu contextMnu( this );
+
+	//QAction* exportidentityAct = new QAction(QIcon(IMAGE_EXPORT), tr( "Export Identity" ), &contextMnu );
+	//connect( exportidentityAct , SIGNAL( triggered() ), this, SLOT( exportIdentity() ) );
+	//contextMnu.addAction( exportidentityAct);
+
+	contextMnu.exec(QCursor::pos());
 }
 
 void ProfileManager::init()
 {
     std::cerr << "Finding PGPUsers" << std::endl;
+    
+    QTreeWidget *identityTreeWidget = ui.identityTreeWidget;
 
-    QString titleString("<span style=\"font-size:17pt; font-weight:500;" "color:white;\">%1</span>");
+#define COLUMN_NAME			0
+#define COLUMN_EMAIL		1
+#define COLUMN_GID			2
+
+		QTreeWidgetItem *item;
  
     std::list<std::string> pgpIds;
     std::list<std::string>::iterator it;
@@ -72,15 +96,20 @@ void ProfileManager::init()
                     std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
                     QString gid = QString::fromStdString(*it).right(8) ;
                     ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
-                    ui.listWidget->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")");
+                    
+                    item = new RSTreeWidgetItem(NULL, 0);
+                    item -> setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
+                    item -> setText(COLUMN_EMAIL, QString::fromUtf8(email.c_str()));
+                    item -> setText(COLUMN_GID, gid);
+                    identityTreeWidget->addTopLevelItem(item);
 
                     foundGPGKeys = true;
             }
     }
+    
+    identityTreeWidget->update(); /* update display */
 
 }
-
-
 
 void ProfileManager::exportIdentity()
 {
@@ -98,6 +127,7 @@ void ProfileManager::exportIdentity()
 	else
 		QMessageBox::information(this,tr("Identity not saved"),tr("Your identity was not saved. An error occured.")) ;
 }
+
 void ProfileManager::importIdentity()
 {
 	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
@@ -199,3 +229,11 @@ void ProfileManager::newIdentity()
 				gd.exec ();
 }
 
+QTreeWidgetItem *ProfileManager::getCurrentIdentity()
+{ 
+        if (ui.identityTreeWidget->selectedItems().size() != 0)  {
+            return ui.identityTreeWidget -> currentItem();
+        } 
+
+        return NULL;
+} 
