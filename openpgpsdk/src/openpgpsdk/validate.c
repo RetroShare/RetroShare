@@ -335,7 +335,7 @@ ops_validate_key_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cb
 
 		default:
 			fprintf(stderr,"unexpected tag=0x%x\n",content_->tag);
-			assert(0);
+			//assert(0);
 			break;
 	}
 	return OPS_RELEASE_MEMORY;
