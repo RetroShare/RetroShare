@@ -112,6 +112,16 @@ border: 1px solid #CCCCCC;
         <property name="text">
          <string>Profile Manager</string>
         </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
         <property name="flat">
          <bool>true</bool>
         </property>
@@ -131,7 +141,7 @@ border: 1px solid #CCCCCC;
         <x>0</x>
         <y>0</y>
         <width>498</width>
-        <height>573</height>
+        <height>567</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
@@ -729,6 +739,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
