@@ -215,9 +215,6 @@
             <verstretch>20</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip">
-           <string>Run Email program</string>
-          </property>
           <property name="icon">
            <iconset resource="../images.qrc">
             <normaloff>:/images/ledon1.png</normaloff>:/images/ledon1.png</iconset>
@@ -272,21 +269,30 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QPushButton" name="friendCertCleanButton">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="friendCertCleanLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip">
-           <string>Clean certificate</string>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
           </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/accepted16.png</normaloff>:/images/accepted16.png</iconset>
-          </property>
-          <property name="flat">
+          <property name="scaledContents">
            <bool>true</bool>
           </property>
          </widget>

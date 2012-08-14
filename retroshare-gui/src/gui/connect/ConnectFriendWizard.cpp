@@ -136,11 +136,19 @@ void ConnectFriendWizard::initializePage(int id)
 		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
 		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
 		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
-		connect(ui->friendCertCleanButton, SIGNAL(clicked()), this, SLOT(cleanFriendCert()));
+		connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 
-		ui->TextPage->registerField("friendCert*", ui->friendCertEdit, "plainText", SIGNAL(textChanged()));
+		cleanfriendCertTimer = new QTimer(this);
+		cleanfriendCertTimer->setSingleShot(true);
+		cleanfriendCertTimer->setInterval(1000); // 1 second
+		connect(cleanfriendCertTimer, SIGNAL(timeout()), this, SLOT(cleanFriendCert()));
 
-		toggleSignatureState(); // updateOwnCert
+		toggleFormatState(false);
+		toggleSignatureState(false);
+		updateOwnCert();
+
+		cleanFriendCert();
+
 		break;
 	case Page_Cert:
 		connect(ui->userFileCreateButton, SIGNAL(clicked()), this, SLOT(generateCertificateCalled()));
@@ -287,8 +295,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_Text:
 		{
-			cleanFriendCert() ;
-
 			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
 			std::string error_string;
 
@@ -478,7 +484,8 @@ void ConnectFriendWizard::updateOwnCert()
 
 	ui->userCertEdit->setPlainText(QString::fromUtf8(invite.c_str()));
 }
-void ConnectFriendWizard::toggleFormatState()
+
+void ConnectFriendWizard::toggleFormatState(bool doUpdate)
 {
 	if (ui->userCertOldFormatButton->isChecked()) 
 	{
@@ -491,9 +498,12 @@ void ConnectFriendWizard::toggleFormatState()
 		ui->userCertOldFormatButton->setIcon(QIcon(":/images/ledon1.png")) ;
 	}
 
-	updateOwnCert();
+	if (doUpdate) {
+		updateOwnCert();
+	}
 }
-void ConnectFriendWizard::toggleSignatureState()
+
+void ConnectFriendWizard::toggleSignatureState(bool doUpdate)
 {
 	if (ui->userCertIncludeSignaturesButton->isChecked()) {
 		ui->userCertIncludeSignaturesButton->setToolTip(tr("Remove signatures"));
@@ -501,7 +511,9 @@ void ConnectFriendWizard::toggleSignatureState()
 		ui->userCertIncludeSignaturesButton->setToolTip(tr("Include signatures"));
 	}
 
-	updateOwnCert();
+	if (doUpdate) {
+		updateOwnCert();
+	}
 }
 
 void ConnectFriendWizard::runEmailClient()
@@ -509,37 +521,57 @@ void ConnectFriendWizard::runEmailClient()
 	sendMail("", tr("RetroShare Invite"), ui->userCertEdit->toPlainText());
 }
 
+void ConnectFriendWizard::friendCertChanged()
+{
+	ui->TextPage->setComplete(false);
+	cleanfriendCertTimer->start();
+}
+
 void ConnectFriendWizard::cleanFriendCert()
 {
+	bool certValid = false;
+	QString errorMsg;
 	std::string cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
-	cert += "\n";	// add an end of line to avoid a bug
-	std::string cleanCert;
-	int error_code;
 
-	if (rsPeers->cleanCertificate(cert, cleanCert, error_code)) {
-		ui->friendCertEdit->setPlainText(QString::fromStdString(cleanCert));
+	if (cert.empty()) {
+		ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
+		ui->friendCertCleanLabel->setToolTip("");
+	} else {
+		std::string cleanCert;
+		int error_code;
 
-		if (error_code > 0) {
-			QString msg;
-
-			switch (error_code) {
-			case RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG:
-				msg = tr("No or misspelled BEGIN tag found") ;
-				break ;
-			case RS_PEER_CERT_CLEANING_CODE_NO_END_TAG:
-				msg = tr("No or misspelled END tag found") ;
-				break ;
-			case RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM:
-				msg = tr("No checksum found (the last 5 chars should be separated by a '=' char), or no newline after tag line (e.g. line beginning with Version:)") ;
-				break ;
-			default:
-				msg = tr("Unknown error. Your cert is probably not even a certificate.") ;
+		if (rsPeers->cleanCertificate(cert, cleanCert, error_code)) {
+			certValid = true;
+			if (cert != cleanCert) {
+				disconnect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
+				QTextCursor textCursor = ui->friendCertEdit->textCursor();
+				ui->friendCertEdit->setPlainText(QString::fromUtf8(cleanCert.c_str()));
+				ui->friendCertEdit->setTextCursor(textCursor);
+				connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 			}
-			QMessageBox::information(NULL, tr("Certificate cleaning error"), msg) ;
+		} else {
+			if (error_code > 0) {
+				switch (error_code) {
+				case RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG:
+					errorMsg = tr("No or misspelled BEGIN tag found") ;
+					break ;
+				case RS_PEER_CERT_CLEANING_CODE_NO_END_TAG:
+					errorMsg = tr("No or misspelled END tag found") ;
+					break ;
+				case RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM:
+					errorMsg = tr("No checksum found (the last 5 chars should be separated by a '=' char), or no newline after tag line (e.g. line beginning with Version:)") ;
+					break ;
+				default:
+					errorMsg = tr("Unknown error. Your cert is probably not even a certificate.") ;
+				}
+			}
 		}
-
-
 	}
+
+	ui->friendCertCleanLabel->setPixmap(certValid ? QPixmap(":/images/accepted16.png") : QPixmap(":/images/delete.png"));
+	ui->friendCertCleanLabel->setToolTip(errorMsg);
+
+	ui->TextPage->setComplete(certValid);
 }
 
 void ConnectFriendWizard::showHelpUserCert()

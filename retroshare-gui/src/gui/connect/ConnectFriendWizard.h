@@ -44,12 +44,13 @@ protected:
 private slots:
 	/* TextPage */
 	void updateOwnCert();
-	void toggleSignatureState();
-	void toggleFormatState();
+	void toggleSignatureState(bool doUpdate = true);
+	void toggleFormatState(bool doUpdate = true);
 	void runEmailClient();
 	void showHelpUserCert();
 	void copyCert();
 	void saveCert();
+	void friendCertChanged();
 	void cleanFriendCert();
 
 	/* CertificatePage */
@@ -66,6 +67,9 @@ private slots:
 private:
 	bool error;
 	RsPeerDetails peerDetails;
+
+    /* TextPage */
+    QTimer *cleanfriendCertTimer;
 
     /* FofPage */
     std::map<QCheckBox*, std::string> _id_boxes;
