@@ -787,19 +787,19 @@ p, li { white-space: pre-wrap; }
     <name>ChanMsgItem</name>
     <message>
         <source>Download</source>
-        <translation type="unfinished">Download</translation>
+        <translation>Indir</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished">Başlat</translation>
+        <translation>Başlat</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Hide</translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -811,11 +811,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanaldan çık</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -831,7 +831,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosya</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
@@ -842,15 +842,15 @@ p, li { white-space: pre-wrap; }
     <name>ChanNewItem</name>
     <message>
         <source>New Channel</source>
-        <translation type="unfinished">Yeni Kanal</translation>
+        <translation>Yeni Kanal</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished">Kanala Abone Ol</translation>
+        <translation>Kanala Abone Ol</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -858,19 +858,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Decscription</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Açıklamasi</translation>
     </message>
     <message>
         <source>Unknown Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen Kanal</translation>
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Güncellenmiş</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
 </context>
 <context>
@@ -1140,11 +1140,12 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Hoş Geldiniz %1 lobbisine</translatorcomment>
+        <translation>Welcome to lobby </translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu: %1</translation>
     </message>
     <message>
         <source>Uncheck to mute participant</source>
@@ -1156,7 +1157,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Lobby chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Lobby Sohbet</translation>
     </message>
 </context>
 <context>
@@ -1422,7 +1423,7 @@ p, li { white-space: pre-wrap; }
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbeti göster</translation>
     </message>
 </context>
 <context>
@@ -3306,23 +3307,23 @@ p, li { white-space: pre-wrap; }
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation type="unfinished">Ayrıntılar</translation>
+        <translation>Ayrıntılar</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">Genel</translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished">Dosya Adı:</translation>
+        <translation>Dosya Adı:</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Boyut:</translation>
+        <translation>Boyut:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished">Durum:</translation>
+        <translation>Durum:</translation>
     </message>
     <message>
         <source>Priority</source>
@@ -3330,63 +3331,63 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tip:</translation>
+        <translation>Tip:</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">Aktarım</translation>
+        <translation>Aktarım</translation>
     </message>
     <message>
         <source>Sources:</source>
-        <translation type="unfinished">Kaynak:</translation>
+        <translation>Kaynak:</translation>
     </message>
     <message>
         <source>Datarate:</source>
-        <translation type="unfinished">Hız</translation>
+        <translation>Hız:</translation>
     </message>
     <message>
         <source>Completed:</source>
-        <translation type="unfinished">Tamanlandı:</translation>
+        <translation>Tamanlandı:</translation>
     </message>
     <message>
         <source>Chunk size:</source>
-        <translation type="unfinished">Chunk boyutu:</translation>
+        <translation>Chunk boyutu:</translation>
     </message>
     <message>
         <source>Remaining:</source>
-        <translation type="unfinished">Kalan:</translation>
+        <translation>Kalan:</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">Tarih</translation>
+        <translation>Tarih</translation>
     </message>
     <message>
         <source>Download time:</source>
-        <translation type="unfinished">Indirme zamani</translation>
+        <translation>Indirme zamani:</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished">Yorum </translation>
+        <translation>Yorumlar </translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished">Kopyala</translation>
+        <translation>Kopyala</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">Tamam</translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished">Oran</translation>
+        <translation>Oran</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished">Dosya Adı</translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <source>Hash:</source>
@@ -3394,7 +3395,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Priority:</source>
-        <translation type="unfinished"></translation>
+        <translation>Öncelik:</translation>
     </message>
     <message>
         <source>Number of Chunks</source>
@@ -3723,27 +3724,27 @@ you plug it in.</source>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished">Forum Detayları</translation>
+        <translation>Forum Detayları</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished">Forum Detayları düzenle</translation>
+        <translation>Forum Detayları düzenle</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished">Forum Bilgileri</translation>
+        <translation>Forum Bilgileri</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished">Forum İsmi</translation>
+        <translation>Forum İsmi</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished">Forum Açıklama</translation>
+        <translation>Forum Açıklama</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>OK</source>
@@ -4050,23 +4051,23 @@ p, li { white-space: pre-wrap; }
     <name>FilesDefs</name>
     <message>
         <source>Picture</source>
-        <translation type="unfinished">Resim</translation>
+        <translation>Resim</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished">Ses</translation>
+        <translation>Ses</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="unfinished">Arşiv </translation>
+        <translation>Arşiv </translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>CD/DVD-Image</source>
@@ -4074,7 +4075,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished">Belge</translation>
+        <translation>Belge</translation>
     </message>
     <message>
         <source>RetroShare collection file</source>
@@ -4082,7 +4083,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subtitles</source>
-        <translation type="unfinished"></translation>
+        <translation>Altyazılar</translation>
     </message>
     <message>
         <source>Nintendo DS Rom</source>
@@ -8657,11 +8658,11 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
-        <translation type="unfinished">Reply to Mesaj</translation>
+        <translation>Mesaji yanitla</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -8669,11 +8670,11 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaji yanitla</translation>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaji sil</translation>
     </message>
     <message>
         <source>Play Media</source>
@@ -9116,11 +9117,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Isim:</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"></translation>
+        <translation>renk seçin</translation>
     </message>
     <message>
         <source>OK</source>
@@ -9128,7 +9129,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
 </context>
 <context>
@@ -9875,19 +9876,19 @@ p, li { white-space: pre-wrap; }
     <name>PhotoAddDialog</name>
     <message>
         <source>Share Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Paylaş seçenekleri</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm Arkadaşlar</translation>
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation>Sınırlı</translation>
     </message>
     <message>
         <source>N/A</source>
@@ -9895,11 +9896,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>University Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Üniversite Arkadaşlari</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished">Aile</translation>
+        <translation>Aile</translation>
     </message>
     <message>
         <source>This List Contains</source>
@@ -9911,27 +9912,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeniden boyutlandır (&lt; 1Mb)</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 10Mb)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeniden boyutlandır (&lt; 10Mb)</translation>
     </message>
     <message>
         <source>Send Original Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Orijinal Görüntüleri gönder</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Yorum izni yok</translation>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Doğrulanmış Yorumlar</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Herkese Açık </translation>
     </message>
     <message>
         <source>Publish with XXX Key</source>
@@ -9939,59 +9940,59 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Album Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Thumbnail</translation>
     </message>
     <message>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Özet</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kategori:</translation>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"></translation>
+        <translation>Seyahat</translation>
     </message>
     <message>
         <source>Holiday</source>
-        <translation type="unfinished"></translation>
+        <translation>Tatil</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished">Iş</translation>
+        <translation>Iş</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Rasgele</translation>
+        <translation>Rasgele</translation>
     </message>
     <message>
         <source>Caption</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nerede:</translation>
     </message>
     <message>
         <source>Album Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Başlığı:</translation>
     </message>
     <message>
         <source>When</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne zaman</translation>
     </message>
     <message>
         <source>Delete Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albümü Sil</translation>
     </message>
     <message>
         <source>Edit Album Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Ayrıntıları Düzenle</translation>
     </message>
     <message>
         <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
@@ -9999,11 +10000,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Photo</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotoğraf sil</translation>
     </message>
     <message>
         <source>Edit Photo Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotoğraf Ayrıntıları Düzenle</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
@@ -10015,46 +10016,46 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albümü yayınla</translation>
     </message>
 </context>
 <context>
     <name>PhotoDetailsDialog</name>
     <message>
         <source>Album Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Açıklama</translation>
     </message>
     <message>
         <source>Album Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Adı:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kategori:</translation>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"></translation>
+        <translation>Seyahat</translation>
     </message>
     <message>
         <source>Holiday</source>
-        <translation type="unfinished"></translation>
+        <translation>Tatil</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished">Aile</translation>
+        <translation>Aile</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished">Iş</translation>
+        <translation>Iş</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Rasgele</translation>
+        <translation>Rasgele</translation>
     </message>
     <message>
         <source>Thumbnail
@@ -10069,23 +10070,23 @@ Text
     </message>
     <message>
         <source>Caption:</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık:</translation>
     </message>
     <message>
         <source>Photographer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotoğrafçı:</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Açıklamalar</translation>
+        <translation>Tanımlama</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nerede:</translation>
     </message>
     <message>
         <source>When</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne zaman</translation>
     </message>
     <message>
         <source>Other 1:</source>
@@ -10097,7 +10098,7 @@ Text
     </message>
     <message>
         <source>Update Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Detaylari güncelleyin</translation>
     </message>
 </context>
 <context>
@@ -10112,7 +10113,7 @@ Text
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished">Oran</translation>
+        <translation>Oran</translation>
     </message>
     <message>
         <source>Date</source>
@@ -10132,15 +10133,15 @@ Text
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynak</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Kategori</translation>
     </message>
     <message>
         <source>[ - ]</source>
@@ -10152,15 +10153,15 @@ Text
     </message>
     <message>
         <source>Slide Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Slayt gösterisi</translation>
     </message>
     <message>
         <source>Edit Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Albümünü Düzenle</translation>
     </message>
     <message>
         <source>New Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Albüm</translation>
     </message>
     <message>
         <source>PhotoShare</source>
@@ -10180,19 +10181,19 @@ requesting to edit it!</source>
     <name>PhotoItem</name>
     <message>
         <source>Album:</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm:</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarih</translation>
     </message>
 </context>
 <context>
@@ -10210,11 +10211,11 @@ requesting to edit it!</source>
     <name>PhotoSlideShow</name>
     <message>
         <source>Album Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Albüm Adı</translation>
     </message>
     <message>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Show/Hide Details</source>
@@ -10234,14 +10235,14 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>kapat</translation>
     </message>
 </context>
 <context>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Kaldır</translation>
     </message>
 </context>
 <context>
@@ -10260,7 +10261,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkin</translation>
     </message>
     <message>
         <source>Launch configuration panel, if provided by the plugin</source>
@@ -10268,19 +10269,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapılandır</translation>
     </message>
     <message>
         <source>File name: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Adı:</translation>
     </message>
     <message>
         <source>File hash:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya hash:</translation>
     </message>
     <message>
         <source>Status: </source>
-        <translation type="unfinished"></translation>
+        <translation>Durum:</translation>
     </message>
 </context>
 <context>
@@ -10718,11 +10719,11 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     <name>ProfileManager</name>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil Yöneticisi</translation>
     </message>
     <message>
         <source>Generate New Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Profil Oluştur</translation>
     </message>
     <message>
         <source>Import new identity</source>
@@ -10852,7 +10853,7 @@ and use the import button to load it</source>
     <name>ProfileWidget</name>
     <message>
         <source>Edit Personal message</source>
-        <translation type="unfinished">Değiştir Kişisel mesaj</translation>
+        <translation>Değiştir Kişisel mesaji</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10860,11 +10861,11 @@ and use the import button to load it</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Public Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Public Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Genel Bilgi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10872,7 +10873,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Location:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10884,7 +10885,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Other Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10984,7 +10985,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy Certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopyala Sertifika</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11000,7 +11001,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil Yöneticisi</translation>
     </message>
 </context>
 <context>
