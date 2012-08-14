@@ -607,6 +607,12 @@ bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,siz
 	free(mem) ;
 	//error_string.clear() ;
 
+	if(tmp_keyring->nkeys != 1)
+	{
+		std::cerr << "No or incomplete/invalid key in supplied pgp block." << std::endl;
+		return false ;
+	}
+
 	key_id = PGPIdType(tmp_keyring->keys[0].key_id).toStdString() ;
 	name = std::string((char *)tmp_keyring->keys[0].uids[0].user_id) ;
 
@@ -823,7 +829,10 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 		else
 			std::cerr << "Key already in public keyring." << std::endl;
 	
-	id = PGPIdType(tmp_keyring->keys[0].key_id) ;
+	if(tmp_keyring->nkeys > 0)
+		id = PGPIdType(tmp_keyring->keys[0].key_id) ;
+	else
+		return false ;
 
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
