@@ -283,7 +283,10 @@ bool RetroShareLink::createPerson(const std::string& id)
 
 bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ssl_or_gpg_id, false) ;
+	// This is baaaaaad code:
+	// 	- we should not need to parse and re-read a cert in old format.
+	//
+	std::string invite = rsPeers->GetRetroshareInvite(ssl_or_gpg_id, false,true) ;
 
 	if(invite == "")
 	{
