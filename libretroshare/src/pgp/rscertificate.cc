@@ -8,6 +8,8 @@
 #include <pgp/pgpkeyutil.h>
 #include "rscertificate.h"
 
+#define DEBUG_RSCERTIFICATE 
+
 static const std::string PGP_CERTIFICATE_START     ( "-----BEGIN PGP PUBLIC KEY BLOCK-----" );
 static const std::string PGP_CERTIFICATE_END       ( "-----END PGP PUBLIC KEY BLOCK-----" );
 static const std::string EXTERNAL_IP_BEGIN_SECTION ( "--EXT--" );
@@ -162,8 +164,9 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 		str += instr[i] ;
 	}
-
+#ifdef DEBUG_RSCERTIFICATE
 	std::cerr << "Decodign from:" << str << std::endl;
+#endif
 	// 1 - decode the string.
 	//
 	char *bf = NULL ;
@@ -189,7 +192,9 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 			return false ;
 		}
 
+#ifdef DEBUG_RSCERTIFICATE
 		std::cerr << "Packet parse: read ptag " << (int)ptag << ", size " << s << ", total_s = " << total_s << ", expected total = " << size << std::endl;
+#endif
 
 		switch(ptag)
 		{

@@ -42,7 +42,7 @@ class RsCertificate
 		unsigned short loc_port_us() const ;
 
 		const unsigned char *pgp_key() const { return binary_pgp_key ; }
-		const size_t pgp_key_size() const { return binary_pgp_key_size ; }
+		size_t pgp_key_size() const { return binary_pgp_key_size ; }
 
 		static bool cleanCertificate(const std::string& input,std::string& output,RsCertificate::Format& format,int& error_code) ;
 
