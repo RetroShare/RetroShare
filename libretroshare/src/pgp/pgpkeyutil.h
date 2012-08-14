@@ -61,7 +61,7 @@ class PGPKeyManagement
 
 		static void findLengthOfMinimalKey(const unsigned char *keydata,size_t key_len,size_t& minimal_key_len) ;
 		static std::string makeArmouredKey(const unsigned char *keydata,size_t key_size,const std::string& version_string) ;
-	private:
+
 		// Computes the 24 bits CRC checksum necessary to all PGP data.
 		// 
 		static uint32_t compute24bitsCRC(unsigned char *data,size_t len) ;

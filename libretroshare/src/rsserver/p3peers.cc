@@ -23,6 +23,9 @@
  *
  */
 
+#include "util/radix64.h"
+#include "pgp/pgpkeyutil.h"
+
 #include "rsserver/p3peers.h"
 #include "rsserver/p3face.h"
 
@@ -819,6 +822,31 @@ p3Peers::GetRetroshareInvite(bool include_signatures,bool old_format)
 	return GetRetroshareInvite(getOwnId(),include_signatures,old_format);
 }
 
+bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
+															std::string& gpg_base64_string,
+															std::string& gpg_base64_checksum) 
+{
+	gpg_base64_string = "" ;
+	gpg_base64_checksum = "" ;
+
+	unsigned char *mem_block ;
+	size_t mem_block_size ;
+
+	if(!AuthGPG::getAuthGPG()->exportPublicKey(PGPIdType(gpg_id),mem_block,mem_block_size,false,false))
+		return false ;
+
+	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
+
+	uint32_t crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)mem_block,mem_block_size) ;
+
+	unsigned char tmp[3] = { (crc >> 16) & 0xff, (crc >> 8) & 0xff, crc & 0xff } ;
+	Radix64::encode((const char *)tmp,3,gpg_base64_checksum) ;
+
+	delete[] mem_block ;
+
+	return true ;
+}
+
 std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format)
 {
 #ifdef P3PEERS_DEBUG
@@ -874,7 +902,7 @@ bool 	p3Peers::loadCertificateFromFile(const std::string &/*fname*/, std::string
         return false;
 }
 
-bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,std::string& error_string)
+bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,std::string& /*error_string*/)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::LoadCertificateFromString() ";

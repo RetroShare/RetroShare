@@ -286,42 +286,39 @@ bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 	// This is baaaaaad code:
 	// 	- we should not need to parse and re-read a cert in old format.
 	//
-	std::string invite = rsPeers->GetRetroshareInvite(ssl_or_gpg_id, false,true) ;
-
-	if(invite == "")
-	{
-		std::cerr << "RetroShareLink::createPerson() Couldn't get retroshare invite for ssl id: " << ssl_or_gpg_id << std::endl;
-		return false;
-	}
-
 	RsPeerDetails detail;
 	if (rsPeers->getPeerDetails(ssl_or_gpg_id, detail) == false) {
 		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_or_gpg_id << std::endl;
 		return false;
 	}
 
-	//_ssl_id = QString::fromStdString(id);
-	QString gpg_base_64 = QString::fromStdString(invite).section("\n\n",1).section("-----",0,0) ;
+	std::string gpg_base_64_str = "" ;
+	std::string gpg_base_64_checksum_str = "" ;
 
-	_GPGBase64CheckSum = gpg_base_64.section("=",-1,-1).section("\n",0,0) ;
-	gpg_base_64 = gpg_base_64.section("\n=",0,0) ;
+	if(!rsPeers->GetPGPBase64StringAndCheckSum(detail.gpg_id,gpg_base_64_str,gpg_base_64_checksum_str))
+		return false ;
+
+	_GPGBase64String = QString::fromStdString(gpg_base_64_str) ;
+	_GPGBase64CheckSum = QString::fromStdString(gpg_base_64_checksum_str) ;
 
 	_type = TYPE_CERTIFICATE;
 
 	_GPGid = QString::fromStdString(detail.gpg_id).right(8);
-	if (detail.isOnlyGPGdetail) {
+
+	if(detail.isOnlyGPGdetail) 
+	{
 		_SSLid.clear();
 		_location.clear();
 		_ext_ip_port.clear();
 		_loc_ip_port.clear();
-	} else {
+	} 
+	else 
+	{
 		_SSLid = QString::fromStdString(ssl_or_gpg_id) ;
 		_location = QString::fromUtf8(detail.location.c_str()) ;
-		_ext_ip_port = QString::fromStdString(invite).section("--EXT--",1,1) ;
-		QString lst = QString::fromStdString(invite).section("--EXT--",0,0) ;
-		_loc_ip_port = lst.section("--LOCAL--",1,1) ;
+		_ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
+		_loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
 	}
-	_GPGBase64String = gpg_base_64.replace("\n","") ;
 	_name = QString::fromUtf8(detail.name.c_str()) ;
 
 	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;

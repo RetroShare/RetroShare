@@ -265,6 +265,7 @@ virtual bool getAllowTunnelConnection() = 0 ;
 
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format = false) 			= 0;
+virtual bool GetPGPBase64StringAndCheckSum(const std::string& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0 ;
 virtual	std::string GetRetroshareInvite(bool include_signatures,bool old_format = false) 			= 0;
 virtual  bool hasExportMinimal() = 0 ;
 
