@@ -110,6 +110,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate)
 #ifdef FRIEND_WIZARD_DEBUG
 		std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
+		ui->friendCertEdit->setPlainText(certificate);
 		setStartId(Page_Conclusion);
 	} else {
 		// error message
