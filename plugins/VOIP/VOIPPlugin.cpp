@@ -3,6 +3,7 @@
 #include <QTranslator>
 #include <QApplication>
 #include <QString>
+#include <QIcon>
 
 #include "VOIPPlugin.h"
 #include "interface/rsvoip.h"
@@ -12,6 +13,8 @@
 #include "gui/AudioPopupChatDialog.h"
 #include "gui/PluginGUIHandler.h"
 #include "gui/PluginNotifier.h"
+
+#define IMAGE_VOIP ":/images/talking_on.svg"
 
 static void *inited = new VOIPPlugin() ;
 
@@ -43,6 +46,7 @@ VOIPPlugin::VOIPPlugin()
 	mPlugInHandler = NULL;
 	mPeers = NULL;
 	config_page = NULL ;
+	mIcon = NULL ;
 
 	mPluginGUIHandler = new PluginGUIHandler ;
 	mPluginNotifier = new PluginNotifier ;
@@ -93,6 +97,17 @@ RsPQIService *VOIPPlugin::rs_pqi_service() const
 void VOIPPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 {
     mPlugInHandler = pgHandler;
+}
+
+QIcon *VOIPPlugin::qt_icon() const
+{
+	if (mIcon == NULL) {
+		Q_INIT_RESOURCE(VOIP_images);
+
+		mIcon = new QIcon(IMAGE_VOIP);
+	}
+
+	return mIcon;
 }
 
 std::string VOIPPlugin::getShortPluginDescription() const

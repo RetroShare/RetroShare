@@ -18,7 +18,8 @@ class VOIPPlugin: public RsPlugin
 		virtual RsAutoUpdatePage *qt_transfers_tab()    const ;
 		virtual std::string qt_transfers_tab_name()    const ;
 		virtual PopupChatDialog *qt_allocate_new_popup_chat_dialog() const ;
-
+		
+		virtual QIcon *qt_icon() const;
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode) const;
 
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const ;
@@ -35,6 +36,7 @@ class VOIPPlugin: public RsPlugin
 		mutable RsPluginHandler *mPlugInHandler;
 		mutable RsPeers* mPeers;
 		mutable ConfigPage *config_page ;
+		mutable QIcon *mIcon;
 
 		PluginNotifier *mPluginNotifier ;
 		PluginGUIHandler *mPluginGUIHandler ;
