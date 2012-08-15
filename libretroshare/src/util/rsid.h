@@ -34,7 +34,7 @@
 template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 {
 	public:
-		t_RsGenericIdType() {}
+		t_RsGenericIdType() { memset(bytes,0,ID_SIZE_IN_BYTES) ;}
 		virtual ~t_RsGenericIdType() {}
 
 		// Explicit constructor from a hexadecimal string

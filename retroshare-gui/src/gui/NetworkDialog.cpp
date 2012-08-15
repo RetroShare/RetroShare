@@ -195,60 +195,60 @@ void NetworkDialog::updateNewDiscoveryInfo()
 
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
-    //std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
-    QTreeWidgetItem *wi = getCurrentNeighbour();
-    if (!wi)
-    	return;
+	//std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
+	QTreeWidgetItem *wi = getCurrentNeighbour();
+	if (!wi)
+		return;
 
-	QMenu contextMnu( this );
+	QMenu *contextMnu = new QMenu;
 
 	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
 
-    // That's what context menus are made for
-		RsPeerDetails detail;
-        if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
-			return ;
+	// That's what context menus are made for
+	RsPeerDetails detail;
+	if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
+		return ;
 
-		if(peer_id != rsPeers->getGPGOwnId())
+	if(peer_id != rsPeers->getGPGOwnId())
+	{
+		if(detail.accept_connection)
 		{
-			if(detail.accept_connection)
-			{
-				QAction* denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), &contextMnu );
+			QAction* denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), contextMnu );
 
-				connect( denyFriendAct , SIGNAL( triggered() ), this, SLOT( denyFriend() ) );
-				contextMnu.addAction( denyFriendAct);
-			}
-			else	// not a friend
-			{
-				QAction* makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), &contextMnu );
+			connect( denyFriendAct , SIGNAL( triggered() ), this, SLOT( denyFriend() ) );
+			contextMnu->addAction( denyFriendAct);
+		}
+		else	// not a friend
+		{
+			QAction* makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), contextMnu );
 
-				connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
-				contextMnu.addAction( makefriendAct);
+			connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
+			contextMnu->addAction( makefriendAct);
 #ifdef TODO
-				if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
-				{
-					QAction* deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), &contextMnu );
-					connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
-					contextMnu.addAction( deleteCertAct );
-				}
+			if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
+			{
+				QAction* deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), contextMnu );
+				connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
+				contextMnu->addAction( deleteCertAct );
+			}
 
 #endif
-			}
 		}
-		if(peer_id == rsPeers->getGPGOwnId())
-		{
-			QAction* exportcertAct = new QAction(QIcon(IMAGE_EXPORT), tr( "Export my Cert" ), &contextMnu );
-		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
-		    contextMnu.addAction( exportcertAct);
-		}
+	}
+	if(peer_id == rsPeers->getGPGOwnId())
+	{
+		QAction* exportcertAct = new QAction(QIcon(IMAGE_EXPORT), tr( "Export my Cert" ), contextMnu );
+		connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
+		contextMnu->addAction( exportcertAct);
+	}
 
-		QAction* peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), &contextMnu );
-		connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-		contextMnu.addAction( peerdetailsAct);
+	QAction* peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), contextMnu );
+	connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
+	contextMnu->addAction( peerdetailsAct);
 
-		contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 
-		contextMnu.exec(QCursor::pos());
+	contextMnu->exec(QCursor::pos());
 }
 
 void NetworkDialog::denyFriend()

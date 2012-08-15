@@ -71,11 +71,15 @@ std::string RsCertificate::toStdString() const
 	unsigned char *buf = new unsigned char[BS] ;
 
 	addPacket( CERTIFICATE_PTAG_PGP_SECTION         , binary_pgp_key                         , binary_pgp_key_size     , buf, p, BS ) ;
-	addPacket( CERTIFICATE_PTAG_EXTIPANDPORT_SECTION, ipv4_external_ip_and_port              ,                     6   , buf, p, BS ) ;
-	addPacket( CERTIFICATE_PTAG_LOCIPANDPORT_SECTION, ipv4_internal_ip_and_port              ,                     6   , buf, p, BS ) ;
-	addPacket( CERTIFICATE_PTAG_DNS_SECTION         , (unsigned char *)dns_name.c_str()      ,     dns_name.length()   , buf, p, BS ) ;
-	addPacket( CERTIFICATE_PTAG_NAME_SECTION        , (unsigned char *)location_name.c_str() ,location_name.length()   , buf, p, BS ) ;
-	addPacket( CERTIFICATE_PTAG_SSLID_SECTION       , location_id.toByteArray()              ,location_id.SIZE_IN_BYTES, buf, p, BS ) ;
+
+	if(!only_pgp)
+	{
+		addPacket( CERTIFICATE_PTAG_EXTIPANDPORT_SECTION, ipv4_external_ip_and_port              ,                     6   , buf, p, BS ) ;
+		addPacket( CERTIFICATE_PTAG_LOCIPANDPORT_SECTION, ipv4_internal_ip_and_port              ,                     6   , buf, p, BS ) ;
+		addPacket( CERTIFICATE_PTAG_DNS_SECTION         , (unsigned char *)dns_name.c_str()      ,     dns_name.length()   , buf, p, BS ) ;
+		addPacket( CERTIFICATE_PTAG_NAME_SECTION        , (unsigned char *)location_name.c_str() ,location_name.length()   , buf, p, BS ) ;
+		addPacket( CERTIFICATE_PTAG_SSLID_SECTION       , location_id.toByteArray()              ,location_id.SIZE_IN_BYTES, buf, p, BS ) ;
+	}
 
 	std::string out_string ;
 
@@ -116,20 +120,30 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 	if(binary_pgp_block_size == 0 || binary_pgp_block == NULL)
 		throw std::runtime_error("Cannot init a certificate with a void key block.") ;
 
-	if(Detail.isOnlyGPGdetail)
-		throw std::runtime_error("Cannot init a certificate with a RsPeerDetails with only GPG details.") ;
-
 	binary_pgp_key = new unsigned char[binary_pgp_block_size] ;
 	memcpy(binary_pgp_key,binary_pgp_block,binary_pgp_block_size) ;
 	binary_pgp_key_size = binary_pgp_block_size ;
 
-	location_id = SSLIdType( Detail.id ) ;
-	location_name = Detail.location ;
+	if(!Detail.isOnlyGPGdetail)
+	{
+		only_pgp = false ;
+		location_id = SSLIdType( Detail.id ) ;
+		location_name = Detail.location ;
 
-	scan_ip(Detail.localAddr,Detail.localPort,ipv4_internal_ip_and_port) ;
-	scan_ip(Detail.extAddr,Detail.extPort,ipv4_external_ip_and_port) ;
+		scan_ip(Detail.localAddr,Detail.localPort,ipv4_internal_ip_and_port) ;
+		scan_ip(Detail.extAddr,Detail.extPort,ipv4_external_ip_and_port) ;
 
-	dns_name = Detail.dyndns ;
+		dns_name = Detail.dyndns ;
+	}
+	else
+	{
+		only_pgp = true ;
+		location_id = SSLIdType() ;
+		location_name = "" ;
+		memset(ipv4_internal_ip_and_port,0,6) ;
+		memset(ipv4_external_ip_and_port,0,6) ;
+		dns_name = "" ;
+	}
 }
 
 void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,unsigned char *ip_and_port)
@@ -195,6 +209,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 #ifdef DEBUG_RSCERTIFICATE
 		std::cerr << "Packet parse: read ptag " << (int)ptag << ", size " << s << ", total_s = " << total_s << ", expected total = " << size << std::endl;
 #endif
+		only_pgp = true ;
 
 		switch(ptag)
 		{
@@ -206,6 +221,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 			case CERTIFICATE_PTAG_NAME_SECTION: location_name = std::string((char *)buf,s) ;
 															buf = &buf[s] ;
+															only_pgp = false ;
 															break ;
 
 			case CERTIFICATE_PTAG_SSLID_SECTION: 
@@ -217,10 +233,12 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 															location_id = SSLIdType(buf) ;
 															buf = &buf[s] ;
+															only_pgp = false ;
 															break ;
 
 			case CERTIFICATE_PTAG_DNS_SECTION: dns_name = std::string((char *)buf,s) ;
 															buf = &buf[s] ;
+															only_pgp = false ;
 														  break ;
 
 			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
@@ -230,6 +248,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 															  return false ;
 														  }
 
+															only_pgp = false ;
 														  memcpy(ipv4_internal_ip_and_port,buf,s) ;
 														  buf = &buf[s] ;
 														  break ;
@@ -240,6 +259,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 															  return false ;
 														  }
 
+															only_pgp = false ;
 														  memcpy(ipv4_external_ip_and_port,buf,s) ;
 														  buf = &buf[s] ;
 														  break ;
@@ -711,6 +731,9 @@ std::string RsCertificate::toStdString_oldFormat() const
 
 	res += PGPKeyManagement::makeArmouredKey(binary_pgp_key,binary_pgp_key_size,pgp_version) ;
 
+	if(only_pgp)
+		return res ;
+
 	res += SSLID_BEGIN_SECTION ;
 	res += location_id.toStdString() ;
 	res += ";" ;
@@ -775,6 +798,7 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 		Radix64::decode(radix_cert,key_bin,binary_pgp_key_size) ;
 
 		binary_pgp_key = (unsigned char *)key_bin ;
+		only_pgp = true ;
 
 #ifdef P3PEERS_DEBUG
 		std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
@@ -792,6 +816,7 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				std::cerr << "SSL id : " << ssl_id << std::endl;
 
 				location_id = SSLIdType(ssl_id) ;
+				only_pgp = false ;
 			}
 		}
 
@@ -807,6 +832,7 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				std::cerr << "location : " << location << std::endl;
 
 				location_name = location;
+				only_pgp = false ;
 			}
 		}
 
@@ -832,6 +858,7 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 					sscanf(local_port.c_str(), "%hu", &localPort);
 				}
 
+				only_pgp = false ;
 				scan_ip(local_ip,localPort,ipv4_internal_ip_and_port) ;
 			}
 		}
@@ -858,6 +885,7 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				}
 				
 				scan_ip(ext_ip,extPort,ipv4_external_ip_and_port) ;
+				only_pgp = false ;
 			}
 		}
 
@@ -873,6 +901,7 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				std::cerr << "DynDNS : " << DynDNS << std::endl;
 
 				dns_name = DynDNS;
+				only_pgp = false ;
 			}
 		}
 

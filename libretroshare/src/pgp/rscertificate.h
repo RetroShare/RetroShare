@@ -69,5 +69,7 @@ class RsCertificate
 		SSLIdType location_id ;
 		std::string pgp_version ;
 		std::string dns_name ;
+
+		bool only_pgp ; // does the cert contain only pgp info?
 };
 
