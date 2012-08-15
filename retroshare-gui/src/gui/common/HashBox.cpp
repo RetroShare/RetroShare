@@ -43,10 +43,10 @@ HashBox::HashBox(QWidget *parent) :
 	QScrollArea(parent),
 	ui(new Ui::HashBox)
 {
-	ui->setupUi(this);
-
-	mAutoHide = false;
 	dropWidget = NULL;
+	mAutoHide = false;
+
+	ui->setupUi(this);
 }
 
 HashBox::~HashBox()
