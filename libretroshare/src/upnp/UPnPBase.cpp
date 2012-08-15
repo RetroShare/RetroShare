@@ -1477,7 +1477,11 @@ upnpEventSubscriptionExpired:
 		int TimeOut = 1801;
 		int ret = UpnpSubscribe(
 			upnpCP->m_UPnPClientHandle,
+#if UPNP_VERSION >= 10617
+			UpnpString_get_String(es_event->PublisherUrl),
+#else
 			es_event->PublisherUrl,
+#endif
 			&TimeOut,
 			newSID);
 		if (ret != UPNP_E_SUCCESS) {
@@ -1486,17 +1490,23 @@ upnpEventSubscriptionExpired:
 				msg, es_event->ErrCode, NULL, NULL);
 		} else {
 			ServiceMap::iterator it =
+#if UPNP_VERSION >= 10617
+				upnpCP->m_ServiceMap.find(UpnpString_get_String(es_event->PublisherUrl));
+#else
 				upnpCP->m_ServiceMap.find(es_event->PublisherUrl);
+#endif
 			if (it != upnpCP->m_ServiceMap.end()) {
 				CUPnPService &service = *(it->second);
 				service.SetTimeout(TimeOut);
 				service.SetSID(newSID);
-#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPControlPoint::Callback() Re-subscribed to EventURL '" <<
+#if UPNP_VERSION >= 10617
+					UpnpString_get_String(es_event->PublisherUrl) <<
+#else
 					es_event->PublisherUrl <<
+#endif
 					"' with SID == '" <<
 					newSID << "'." << std::endl;
-#endif
 				// In principle, we should test to see if the
 				// service is the same. But here we only have one
 				// service, so...
