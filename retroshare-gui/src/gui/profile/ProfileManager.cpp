@@ -226,6 +226,7 @@ void ProfileManager::loadCertificates()
 void ProfileManager::newIdentity()
 {
 				GenCertDialog gd;
+				gd.hideButtons() ;
 				gd.exec ();
 }
 

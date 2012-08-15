@@ -38,6 +38,9 @@ public:
   GenCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
 
+  void hideButtons();
+
+
 private slots:
 	void genPerson();
 	//void loadPerson();
@@ -45,11 +48,11 @@ private slots:
 	void importIdentity();
 	void exportIdentity();
 	void checkChanged(int i);
-        void newGPGKeyGenUiSetup();
+  void newGPGKeyGenUiSetup();
 
 private:
 
-		  void init() ;
+  void init() ;
 
   /** Loads the saved connectidialog settings */
   //  void loadSettings();

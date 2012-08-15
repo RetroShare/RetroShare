@@ -70,8 +70,8 @@ border-radius: 0px}</string>
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
-              <height>24</height>
+              <width>48</width>
+              <height>48</height>
              </size>
             </property>
             <property name="flat">
@@ -143,6 +143,12 @@ p, li { white-space: pre-wrap; }
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
               </property>
              </spacer>
             </item>

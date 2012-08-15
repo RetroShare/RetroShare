@@ -143,8 +143,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->hide();
         ui.genPGPuserlabel->show();
         ui.genPGPuser->show();
-		  ui.exportIdentity_PB->show() ;
-		  ui.importIdentity_PB->show() ;
+        ui.exportIdentity_PB->show() ;
+        ui.importIdentity_PB->show() ;
         setWindowTitle(tr("Create new Location"));
         ui.genButton->setText(tr("Generate new Location"));
         ui.label_3->setText( titleStr.arg( tr("Create a new Location") ) ) ;
@@ -255,6 +255,7 @@ void GenCertDialog::genPerson()
             ui.genButton->hide();
             ui.label_location2->hide();
             ui.importIdentity_PB->hide();
+            
 //            QMessageBox::StandardButton info = QMessageBox::information(this,
 //                            "Generating GPG key",
 //                            "This process can take some time (approximately one minute), please be patient after pressing the OK button",
@@ -376,3 +377,10 @@ void GenCertDialog::loadCertificates()
 	}
 }
 
+void GenCertDialog::hideButtons()
+{
+    ui.exportIdentity_PB->hide() ;
+    ui.importIdentity_PB->hide() ;
+    ui.new_gpg_key_checkbox->setChecked(true);
+    newGPGKeyGenUiSetup();
+}
