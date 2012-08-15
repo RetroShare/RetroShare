@@ -72,17 +72,24 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 			 RsPlugin *plugin = rsPlugins->plugin(i) ;
 			 QString pluginTitle = tr("Title unavailable") ;
 			 QString pluginDescription = tr("Description unavailable") ;
+			 QString pluginVersion = tr("Unknown version");
 
 			 if(plugin!=NULL)
 			 {
-				 if(plugin->qt_icon() != NULL)
-					 plugin_icon = *plugin->qt_icon() ;
+				if(plugin->qt_icon() != NULL)
+				plugin_icon = *plugin->qt_icon() ;
 
-				 pluginTitle = QString::fromUtf8(plugin->getPluginName().c_str()) ;
-				 pluginDescription = QString::fromUtf8(plugin->getShortPluginDescription().c_str()) ;
-			 }
+				pluginTitle = QString::fromUtf8(plugin->getPluginName().c_str()) ;
+				pluginDescription = QString::fromUtf8(plugin->getShortPluginDescription().c_str()) ;
 
-			 PluginItem *item = new PluginItem(i,pluginTitle,pluginDescription,status_string,
+				int major = 0;
+				int minor = 0;
+				int svn_rev = 0;
+				plugin->getPluginVersion(major, minor, svn_rev);
+				pluginVersion = QString("%1.%2.%3").arg(major).arg(minor).arg(svn_rev);
+			}
+
+			 PluginItem *item = new PluginItem(pluginVersion, i,pluginTitle,pluginDescription,status_string,
 					 						QString::fromStdString(file_name),
 						 					QString::fromStdString(file_hash),QString::fromStdString(error_string),
 											plugin_icon) ;

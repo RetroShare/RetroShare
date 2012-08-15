@@ -86,7 +86,7 @@ border-radius: 0px}</string>
           <item>
            <widget class="QLabel" name="subjectLabel">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>

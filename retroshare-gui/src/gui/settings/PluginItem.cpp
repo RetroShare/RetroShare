@@ -21,7 +21,7 @@
 
 #include "PluginItem.h"
 
-PluginItem::PluginItem(int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& /*error_string*/, const QIcon& icon)
+PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& /*error_string*/, const QIcon& icon)
 	:QWidget(NULL)
 {
 	setupUi(this) ;
@@ -33,7 +33,7 @@ PluginItem::PluginItem(int id, const QString& pluginTitle,const QString& pluginD
 	_pluginIcon->setIcon(icon) ;
 	_pluginIcon->setText(QString()) ;
 	msgLabel->setText(pluginDescription) ;
-	subjectLabel->setText(pluginTitle) ;
+	subjectLabel->setText(pluginTitle + "  "+ pluginVersion) ;
 
 	QObject::connect(_enabled_CB,SIGNAL(toggled(bool)),this,SLOT(togglePlugin(bool))) ;
 	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
