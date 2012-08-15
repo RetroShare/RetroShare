@@ -106,7 +106,7 @@ RsCertificate::RsCertificate(const std::string& str)
 	: 
 	location_name(""), 
 	pgp_version("Version: OpenPGP:SDK v0.9"),
-		dns_name("")
+		dns_name(""),only_pgp(true)
 {
 	std::string err_string ;
 
@@ -189,6 +189,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 	unsigned char *buf = (unsigned char *)bf ;
 	size_t total_s = 0 ;
+	only_pgp = true ;
 
 	while(total_s < size)
 	{
@@ -209,8 +210,6 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 #ifdef DEBUG_RSCERTIFICATE
 		std::cerr << "Packet parse: read ptag " << (int)ptag << ", size " << s << ", total_s = " << total_s << ", expected total = " << size << std::endl;
 #endif
-		only_pgp = true ;
-
 		switch(ptag)
 		{
 			case CERTIFICATE_PTAG_PGP_SECTION: binary_pgp_key = new unsigned char[s] ;
@@ -221,7 +220,6 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 			case CERTIFICATE_PTAG_NAME_SECTION: location_name = std::string((char *)buf,s) ;
 															buf = &buf[s] ;
-															only_pgp = false ;
 															break ;
 
 			case CERTIFICATE_PTAG_SSLID_SECTION: 
@@ -238,7 +236,6 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 			case CERTIFICATE_PTAG_DNS_SECTION: dns_name = std::string((char *)buf,s) ;
 															buf = &buf[s] ;
-															only_pgp = false ;
 														  break ;
 
 			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
@@ -248,7 +245,6 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 															  return false ;
 														  }
 
-															only_pgp = false ;
 														  memcpy(ipv4_internal_ip_and_port,buf,s) ;
 														  buf = &buf[s] ;
 														  break ;
@@ -259,7 +255,6 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 															  return false ;
 														  }
 
-															only_pgp = false ;
 														  memcpy(ipv4_external_ip_and_port,buf,s) ;
 														  buf = &buf[s] ;
 														  break ;
@@ -832,7 +827,6 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				std::cerr << "location : " << location << std::endl;
 
 				location_name = location;
-				only_pgp = false ;
 			}
 		}
 
@@ -858,7 +852,6 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 					sscanf(local_port.c_str(), "%hu", &localPort);
 				}
 
-				only_pgp = false ;
 				scan_ip(local_ip,localPort,ipv4_internal_ip_and_port) ;
 			}
 		}
@@ -885,7 +878,6 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				}
 				
 				scan_ip(ext_ip,extPort,ipv4_external_ip_and_port) ;
-				only_pgp = false ;
 			}
 		}
 
@@ -901,7 +893,6 @@ bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::str
 				std::cerr << "DynDNS : " << DynDNS << std::endl;
 
 				dns_name = DynDNS;
-				only_pgp = false ;
 			}
 		}
 
