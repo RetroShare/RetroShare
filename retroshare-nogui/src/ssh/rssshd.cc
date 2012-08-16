@@ -32,7 +32,9 @@ RsSshd *rsSshd = NULL; // External Reference Variable.
 // NB: This must be called EARLY before all the threads are launched.
 RsSshd *RsSshd::InitRsSshd(std::string portStr, std::string rsakeyfile)
 {
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	ssh_threads_set_callbacks(ssh_threads_get_pthread());
+#endif
 	ssh_init();
 
 	rsSshd = new RsSshd(portStr);
@@ -321,10 +323,19 @@ int RsSshd::doEcho()
     char buf[2048];
 
     do{
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
         i=ssh_channel_read(mChannel,buf, 2048, 0);
+#else
+        i=channel_read(mChannel,buf, 2048, 0);
+#endif
         if(i>0) {
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
             ssh_channel_write(mChannel, buf, i);
             ssh_channel_write(mChannel, buf, i);
+#else
+            channel_write(mChannel, buf, i);
+            channel_write(mChannel, buf, i);
+#endif
             if (write(1,buf,i) < 0) {
                 printf("error writing to buffer\n");
                 return 0;
@@ -365,7 +376,11 @@ int RsSshd::doTermServer()
 	while(okay)
 	{
 		char buf;
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 		int size = ssh_channel_read_nonblocking(mChannel, &buf, 1, 0);
+#else
+		int size = channel_read_nonblocking(mChannel, &buf, 1, 0);
+#endif
 		bool haveInput = (size > 0);
 		std::string output;
 
@@ -373,7 +388,11 @@ int RsSshd::doTermServer()
 	
 		if (output.size() > 0)
 		{
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
             		ssh_channel_write(mChannel, output.c_str(), output.size());
+#else
+            		channel_write(mChannel, output.c_str(), output.size());
+#endif
 		}
 
 		if (!haveInput)
