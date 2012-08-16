@@ -449,6 +449,7 @@ void RetroShareLink::clear()
 {
     _valid = false;
     _type = TYPE_UNKNOWN;
+    _subType = 0;
     _hash = "" ;
     _size = 0 ;
     _name = "" ;
@@ -945,7 +946,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << RS_Certificate.toStdString() << std::endl;
 
 					ConnectFriendWizard connectFriendWizard;
-					connectFriendWizard.setCertificate(RS_Certificate);
+					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
 					connectFriendWizard.exec();
 					needNotifySuccess = false;
 				}

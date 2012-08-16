@@ -76,6 +76,8 @@ private slots:
 	void getcurrentrecommended();
 	void getallrecommended();
 
+	void anchorClicked(const QUrl &url);
+
 private:
 	void clearTagLabels();
 	void showTagLabels();
@@ -83,6 +85,7 @@ private:
 	bool isControlled;
 	bool isWindow;
 	std::string currMsgId;
+	unsigned int currMsgFlags;
 
 	QList<QLabel*> tagLabels;
 

@@ -45,6 +45,8 @@
 
 #define RSLINK_SCHEME 	"retroshare"
 
+#define RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST 1
+
 class RetroShareLink
 {
 	public:
@@ -79,6 +81,9 @@ class RetroShareLink
 		const QString& externalIPAndPort() const { return _ext_ip_port ; }
 		const QString& location() const { return _location ; }
 		QString title() const;
+
+		unsigned int subType() const { return _subType; }
+		void setSubType(unsigned int subType) { _subType = subType; }
 
 		// get nice name for anchor
 		QString niceName() const;
@@ -126,6 +131,7 @@ class RetroShareLink
 		QString  _location ;	// location 
 		QString  _ext_ip_port ;
 		QString  _loc_ip_port ;
+		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };
 
 /// This class handles the copy/paste of links. Every member is static to ensure unicity.

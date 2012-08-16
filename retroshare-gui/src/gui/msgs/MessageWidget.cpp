@@ -124,10 +124,12 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WFlags flags)
 
 	isControlled = controlled;
 	isWindow = false;
+	currMsgFlags = 0;
 
 	connect(ui.msgList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(msgfilelistWidgetCostumPopupMenu(QPoint)));
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
+	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
@@ -452,6 +454,8 @@ void MessageWidget::fill(const std::string &msgId)
 
 		clearTagLabels();
 
+		currMsgFlags = 0;
+
 		return;
 	}
 
@@ -562,6 +566,8 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
 
 	showTagLabels();
+
+	currMsgFlags = msgInfo.msgflags;
 }
 
 void MessageWidget::remove()
@@ -689,4 +695,21 @@ void MessageWidget::forward()
 	msgComposer->activateWindow();
 
 	/* window will destroy itself! */
+}
+
+void MessageWidget::anchorClicked(const QUrl &url)
+{
+	RetroShareLink link(url);
+
+	if (link.valid() == false) {
+		return;
+	}
+
+	if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
+		link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
+	}
+
+	QList<RetroShareLink> links;
+	links.append(link);
+	RetroShareLink::process(links);
 }

@@ -96,7 +96,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	ui->rsidRadioButton->hide();
 }
 
-void ConnectFriendWizard::setCertificate(const QString &certificate)
+void ConnectFriendWizard::setCertificate(const QString &certificate, bool friendRequest)
 {
 	if (certificate.isEmpty()) {
 		setStartId(Page_Intro);
@@ -105,13 +105,13 @@ void ConnectFriendWizard::setCertificate(const QString &certificate)
 
 	std::string error_string;
 
-	if (rsPeers->loadDetailsFromStringCert(certificate.toUtf8().constData(), peerDetails, error_string)) 
+	if (rsPeers->loadDetailsFromStringCert(certificate.toUtf8().constData(), peerDetails, error_string))
 	{
 #ifdef FRIEND_WIZARD_DEBUG
 		std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
-		ui->friendCertEdit->setPlainText(certificate);
-		setStartId(Page_Conclusion);
+		mCertificate = certificate.toUtf8().constData();
+		setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 	} else {
 		// error message
 		setField("errorMessage", tr("Certificate Load Failed") + ": " + QString::fromUtf8(error_string.c_str()));
@@ -122,6 +122,22 @@ void ConnectFriendWizard::setCertificate(const QString &certificate)
 ConnectFriendWizard::~ConnectFriendWizard()
 {
 	delete ui;
+}
+
+static void fillGroups(ConnectFriendWizard *wizard, QComboBox *comboBox, const QString &groupId)
+{
+	std::list<RsGroupInfo> groupInfoList;
+	rsPeers->getGroupInfoList(groupInfoList);
+	GroupDefs::sortByName(groupInfoList);
+	comboBox->addItem("", ""); // empty value
+	for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
+		comboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id));
+	}
+
+	if (groupId.isEmpty() == false) {
+		comboBox->setCurrentIndex(comboBox->findData(groupId));
+	}
+	QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)), wizard, SLOT(groupCurrentIndexChanged(int)));
 }
 
 void ConnectFriendWizard::initializePage(int id)
@@ -253,18 +269,44 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->locationEdit->setText(QString::fromUtf8(peerDetails.location.c_str()));
 			ui->signersEdit->setPlainText(ts);
 
-			std::list<RsGroupInfo> groupInfoList;
-			rsPeers->getGroupInfoList(groupInfoList);
-			GroupDefs::sortByName(groupInfoList);
-			ui->groupComboBox->addItem("", ""); // empty value
-			for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
-				ui->groupComboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id));
+			fillGroups(this, ui->groupComboBox, groupId);
+		}
+		break;
+	case Page_FriendRequest:
+		{
+			std::cerr << "Friend request page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
+
+			//set the radio button to sign the GPG key
+			if (peerDetails.accept_connection && !peerDetails.ownsign) {
+				//gpg key connection is already accepted, don't propose to accept it again
+				ui->fr_signGPGCheckBox->setChecked(false);
+				ui->fr_acceptNoSignGPGCheckBox->hide();
+				ui->fr_acceptNoSignGPGCheckBox->setChecked(false);
+			}
+			if (!peerDetails.accept_connection && peerDetails.ownsign) {
+				//gpg key is already signed, don't propose to sign it again
+				ui->fr_acceptNoSignGPGCheckBox->setChecked(true);
+				ui->fr_signGPGCheckBox->hide();
+				ui->fr_signGPGCheckBox->setChecked(false);
+			}
+			if (!peerDetails.accept_connection && !peerDetails.ownsign) {
+				ui->fr_acceptNoSignGPGCheckBox->setChecked(true);
+				ui->fr_signGPGCheckBox->show();
+				ui->fr_signGPGCheckBox->setChecked(false);
+				ui->fr_acceptNoSignGPGCheckBox->show();
+			}
+			if (peerDetails.accept_connection && peerDetails.ownsign) {
+				ui->fr_acceptNoSignGPGCheckBox->setChecked(false);
+				ui->fr_acceptNoSignGPGCheckBox->hide();
+				ui->fr_signGPGCheckBox->setChecked(false);
+				ui->fr_signGPGCheckBox->hide();
 			}
 
-			if (groupId.isEmpty() == false) {
-				ui->groupComboBox->setCurrentIndex(ui->groupComboBox->findData(groupId));
-			}
-			connect(ui->groupComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(groupCurrentIndexChanged(int)));
+			ui->fr_nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
+			ui->fr_emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
+			ui->fr_locationEdit->setText(QString::fromUtf8(peerDetails.location.c_str()));
+
+			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}
 		break;
 	}
@@ -300,6 +342,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 			std::string error_string;
 
 			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, error_string)) {
+				mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
 				std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
@@ -332,6 +375,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 
 				std::string error_string;
 				if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, error_string)) {
+					mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
 					std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
@@ -384,6 +428,8 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_Conclusion:
 		break;
+	case Page_FriendRequest:
+		break;
 	}
 
 	return true;
@@ -407,6 +453,7 @@ int ConnectFriendWizard::nextId() const
 	case Page_Email:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
+	case Page_FriendRequest:
 		return -1;
 	}
 
@@ -415,62 +462,71 @@ int ConnectFriendWizard::nextId() const
 
 void ConnectFriendWizard::accept()
 {
+	bool sign = false;
+	bool accept_connection = false;
+
 	if (hasVisitedPage(Page_Conclusion)) {
 		std::cerr << "ConnectFriendWizard::accept() called with page conclusion visited" << std::endl;
 
-		bool sign = ui->signGPGCheckBox->isChecked();
-		bool accept_connection = ui->acceptNoSignGPGCheckBox->isChecked();
+		sign = ui->signGPGCheckBox->isChecked();
+		accept_connection = ui->acceptNoSignGPGCheckBox->isChecked();
+	} else if (hasVisitedPage(Page_FriendRequest)) {
+		std::cerr << "ConnectFriendWizard::accept() called with page friend request visited" << std::endl;
 
-		if(accept_connection || sign)
-		{
-			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
-
-			std::string ssl_id, pgp_id ;
-
-			if(!rsPeers->loadCertificateFromString(certstr,ssl_id,pgp_id)) 
-			{
-				std::cerr << "ConnectFriendWizard::accept(): cannot load that certificate." << std::endl;
-				return ;
-			}
-		}
-
-		if (!peerDetails.gpg_id.empty()) {
-			if (sign) {
-				std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
-				rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
-			} else if (accept_connection) {
-				std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
-				rsPeers->addFriend("", peerDetails.gpg_id);
-			}
-
-			if (!groupId.isEmpty()) {
-				rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
-			}
-		}
-
-		if (peerDetails.id != "") {
-			rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id);
-			//let's check if there is ip adresses in the wizard.
-			if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
-				std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
-				rsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
-			}
-			if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
-				std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
-				rsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
-			}
-			if (!peerDetails.dyndns.empty()) {
-				std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
-				rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
-			}
-			if (!peerDetails.location.empty()) {
-				std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
-				rsPeers->setLocation(peerDetails.id, peerDetails.location);
-			}
-		}
-
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
+		sign = ui->fr_signGPGCheckBox->isChecked();
+		accept_connection = ui->fr_acceptNoSignGPGCheckBox->isChecked();
+	} else {
+		QDialog::accept();
+		return;
 	}
+
+	if (!mCertificate.empty() && (accept_connection || sign))
+	{
+		std::string ssl_id, pgp_id ;
+
+		if(!rsPeers->loadCertificateFromString(mCertificate,ssl_id,pgp_id))
+		{
+			std::cerr << "ConnectFriendWizard::accept(): cannot load that certificate." << std::endl;
+			return ;
+		}
+	}
+
+	if (!peerDetails.gpg_id.empty()) {
+		if (sign) {
+			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
+			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
+		} else if (accept_connection) {
+			std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
+			rsPeers->addFriend("", peerDetails.gpg_id);
+		}
+
+		if (!groupId.isEmpty()) {
+			rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
+		}
+	}
+
+	if (peerDetails.id != "") {
+		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id);
+		//let's check if there is ip adresses in the wizard.
+		if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
+			std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
+			rsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
+		}
+		if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
+			std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
+			rsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
+		}
+		if (!peerDetails.dyndns.empty()) {
+			std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
+			rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
+		}
+		if (!peerDetails.location.empty()) {
+			std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
+			rsPeers->setLocation(peerDetails.id, peerDetails.location);
+		}
+	}
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
 
 	QDialog::accept();
 }
@@ -795,5 +851,8 @@ void ConnectFriendWizard::setGroup(const std::string &id)
 
 void ConnectFriendWizard::groupCurrentIndexChanged(int index)
 {
-	groupId = ui->groupComboBox->itemData(index, Qt::UserRole).toString();
+	QComboBox *comboBox = dynamic_cast<QComboBox*>(sender());
+	if (comboBox) {
+		groupId = comboBox->itemData(index, Qt::UserRole).toString();
+	}
 }

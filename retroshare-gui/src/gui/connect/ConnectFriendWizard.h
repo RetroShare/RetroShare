@@ -25,12 +25,12 @@ class ConnectFriendWizard : public QWizard
 	Q_OBJECT
 
 public:
-	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_Email };
+	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_Email, Page_FriendRequest };
 
 	ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();
 
-	void setCertificate(const QString &certificate);
+	void setCertificate(const QString &certificate, bool friendRequest);
 
 	virtual bool validateCurrentPage();
 	virtual int nextId() const;
@@ -67,13 +67,14 @@ private slots:
 private:
 	bool error;
 	RsPeerDetails peerDetails;
+	std::string mCertificate;
 
-    /* TextPage */
-    QTimer *cleanfriendCertTimer;
+	/* TextPage */
+	QTimer *cleanfriendCertTimer;
 
-    /* FofPage */
-    std::map<QCheckBox*, std::string> _id_boxes;
-    std::map<QCheckBox*, std::string> _gpg_id_boxes;
+	/* FofPage */
+	std::map<QCheckBox*, std::string> _id_boxes;
+	std::map<QCheckBox*, std::string> _gpg_id_boxes;
 
 	/* ConclusionPage */
 	QString groupId;
