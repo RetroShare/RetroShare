@@ -115,6 +115,7 @@ HEADERS += \
 	util/bdnet.h	\
 	util/bdthreads.h	\
 	util/bdrandom.h		\
+	util/bdfile.h		\
 	util/bdstring.h		\
 	udp/udplayer.h   	\
 	udp/udpstack.h		\
@@ -141,6 +142,7 @@ SOURCES += \
 	util/bdnet.cc 	 	\
 	util/bdthreads.cc  	\
 	util/bdrandom.cc  	\
+	util/bdfile.cc		\
 	util/bdstring.cc	\
 	udp/udplayer.cc		\
 	udp/udpstack.cc		\

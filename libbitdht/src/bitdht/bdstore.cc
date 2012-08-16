@@ -26,6 +26,7 @@
 
 #include "bitdht/bdstore.h"
 #include "util/bdnet.h"
+#include "util/bdfile.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -213,8 +214,9 @@ void	bdStore::writeStore(std::string file)
 		return;
 	}
 
+	std::string filetmp = file + ".tmp" ;
 
-	FILE *fd = fopen(file.c_str(), "w");
+	FILE *fd = fopen(filetmp.c_str(), "w");
 
 	if (!fd)
 	{
@@ -234,6 +236,11 @@ void	bdStore::writeStore(std::string file)
 
 	}
 	fclose(fd);
+
+	if(!bdFile::renameFile(filetmp,file))
+		std::cerr << "Could not rename file !!" << std::endl;
+	else
+		std::cerr << "Successfully renamed file " << filetmp << " to " << file << std::endl;
 }
 
 void	bdStore::writeStore()
