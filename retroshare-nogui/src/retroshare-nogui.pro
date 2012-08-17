@@ -142,8 +142,9 @@ sshserver {
 	#
 
 	INCLUDEPATH += ../../../lib/libssh-0.5.2/include/
-	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
-	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
+#	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
+#	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
+LIBS *= -lssh
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc
 

@@ -146,7 +146,11 @@ int RsSshd::listenConnect()
 		return 0;
 	}
 
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	if (ssh_handle_key_exchange(mSession)) 
+#else
+	if (ssh_accept(mSession)) 
+#endif
 	{
 		printf("ssh_handle_key_exchange: %s\n", ssh_get_error(mSession));
 		return 0;
