@@ -1,3 +1,7 @@
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include <errno.h>
 #include "bdfile.h"
