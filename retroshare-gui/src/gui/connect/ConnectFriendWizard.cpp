@@ -275,6 +275,8 @@ void ConnectFriendWizard::initializePage(int id)
 	case Page_FriendRequest:
 		{
 			std::cerr << "Friend request page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
+			
+			setPixmap(QWizard::LogoPixmap, QPixmap(":/images/user/user_request48.png"));
 
 			//set the radio button to sign the GPG key
 			if (peerDetails.accept_connection && !peerDetails.ownsign) {
@@ -305,6 +307,8 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->fr_nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->fr_emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
 			ui->fr_locationEdit->setText(QString::fromUtf8(peerDetails.location.c_str()));
+			
+			ui->fr_label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 
 			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}

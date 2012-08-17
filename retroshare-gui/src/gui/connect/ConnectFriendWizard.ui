@@ -411,6 +411,9 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
       <column/>
       <column/>
       <column/>
@@ -526,141 +529,169 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_FriendRequest</string>
    </attribute>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="2">
-     <widget class="QLabel" name="fr_label">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <property name="leftMargin">
+     <number>6</number>
+    </property>
+    <property name="rightMargin">
+     <number>6</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QFrame" name="frame">
       <property name="styleSheet">
-       <string notr="true">
+       <string notr="true">QFrame#frame{
 border: 2px solid #CCCCCC;
 border-radius:6px;
 background: white;
+}</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="fr_label">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
 </string>
-      </property>
-      <property name="text">
-       <string>You have a friend request .</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="AvatarWidget" name="avatar">
-      <property name="minimumSize">
-       <size>
-        <width>96</width>
-        <height>96</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>96</width>
-        <height>96</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QGroupBox" name="fr_peerDetailsFrame">
-      <property name="title">
-       <string>Peer details</string>
-      </property>
-      <layout class="QFormLayout" name="formLayout_3">
-       <property name="fieldGrowthPolicy">
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="fr_nameLabel">
+         </property>
          <property name="text">
-          <string>Name:</string>
+          <string>You have a friend request .</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="fr_nameEdit">
-         <property name="text">
-          <string notr="true">Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="fr_emailLabel">
-         <property name="text">
-          <string>Email:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="fr_locationLabel">
-         <property name="text">
-          <string>Location:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="fr_locationEdit">
-         <property name="text">
-          <string notr="true">Location</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="fr_emailEdit">
-         <property name="text">
-          <string notr="true">Email</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QGroupBox" name="fr_optionsFrame">
-      <property name="title">
-       <string>Options</string>
-      </property>
-      <layout class="QFormLayout" name="formLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="fr_groupLabel">
-         <property name="text">
-          <string>Add friend to group:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="fr_groupComboBox"/>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="fr_signGPGCheckBox">
-         <property name="text">
-          <string>Authenticate friend (Sign GPG Key)</string>
+        <widget class="AvatarWidget" name="avatar">
+         <property name="minimumSize">
+          <size>
+           <width>96</width>
+           <height>96</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>96</width>
+           <height>96</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
+border: 2px solid #CCCCCC;
+border-radius:6px;
+background: white;</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="fr_acceptNoSignGPGCheckBox">
-         <property name="text">
-          <string>Add as friend to connect with</string>
+       <item row="1" column="1">
+        <widget class="QGroupBox" name="fr_peerDetailsFrame">
+         <property name="title">
+          <string>Peer details</string>
          </property>
+         <layout class="QFormLayout" name="formLayout_3">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="fr_nameLabel">
+            <property name="text">
+             <string>Name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="fr_nameEdit">
+            <property name="text">
+             <string notr="true">Name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="fr_emailLabel">
+            <property name="text">
+             <string>Email:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="fr_locationLabel">
+            <property name="text">
+             <string>Location:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="fr_locationEdit">
+            <property name="text">
+             <string notr="true">Location</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="fr_emailEdit">
+            <property name="text">
+             <string notr="true">Email</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="fr_optionsFrame">
+         <property name="title">
+          <string>Options</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="fr_groupLabel">
+            <property name="text">
+             <string>Add friend to group:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="fr_groupComboBox"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="fr_signGPGCheckBox">
+            <property name="text">
+             <string>Authenticate friend (Sign GPG Key)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="fr_acceptNoSignGPGCheckBox">
+            <property name="text">
+             <string>Add as friend to connect with</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <spacer name="fr_verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>488</width>
+           <height>118</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
-    </item>
-    <item row="3" column="0" colspan="2">
-     <spacer name="fr_verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>488</width>
-        <height>118</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>
@@ -843,6 +874,7 @@ background: white;
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
