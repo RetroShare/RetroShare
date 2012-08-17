@@ -1,8 +1,11 @@
 #include <fstream>
+#include <string.h>
 
 #include "argstream.h"
 //#include <pqi/cleanupxpgp.h>
+#include <retroshare/rspeers.h>
 #include <pgp/rscertificate.h>
+#include <pgp/pgphandler.h>
 
 int main(int argc,char *argv[])
 {
@@ -63,6 +66,21 @@ int main(int argc,char *argv[])
 
 		std::cerr << "Output from certificate (new format):" << std::endl;
 		std::cerr << cert.toStdString() << std::endl ;
+
+		std::string key_id ;
+		std::string name ;
+		std::list<std::string> signers ;
+
+		PGPHandler handler("toto1","toto2","toto3","toto4") ;
+handler.getGPGDetailsFromBinaryBlock(cert.pgp_key(),cert.pgp_key_size(),key_id,name,signers) ;
+
+		std::cerr << "Details loaded from certificate:" << std::endl;
+		std::cerr << "PGP id\t: " << key_id << std::endl;
+		std::cerr << "Key name\t: " << name << std::endl;
+		std::cerr << "Signers\t:" << std::endl;
+
+		for(std::list<std::string>::const_iterator it(signers.begin());it!=signers.end();++it)
+			std::cerr << "        " << *it << std::endl;
 
 		return 0;
 	}

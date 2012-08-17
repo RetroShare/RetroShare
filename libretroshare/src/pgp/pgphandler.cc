@@ -82,10 +82,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
 	if(_passphrase_callback == NULL)
-	{
 		std::cerr << "WARNING: before created a PGPHandler, you need to init the passphrase callback using PGPHandler::setPassphraseCallback()" << std::endl;
-		exit(-1) ;
-	}
 		
 	// Allocate public and secret keyrings.
 	// 
@@ -220,7 +217,7 @@ bool PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_
 	ops_boolean_t res = ops_validate_key_signatures(result,keydata,_pubring,cb_get_passphrase) ;
 
 	if(res == ops_false)
-		std::cerr << "(EE) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+		std::cerr << "(WW) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
 
 	bool ret = false ;
 
@@ -627,22 +624,38 @@ bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,siz
 	}
 
 	if(res == ops_false)
-		std::cerr << "(EE) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+		std::cerr << "(WW) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+
+	// also add self-signature if any (there should be!).
+	//
+	res = ops_validate_key_signatures(result,&tmp_keyring->keys[0],tmp_keyring,cb_get_passphrase) ;
+
+	if(res == ops_false)
+		std::cerr << "(WW) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
 
 	// Parse signers.
 	//
+
+	std::set<std::string> signers_set ;	// Use a set to remove duplicates.
 
 	if(result != NULL)
 		for(size_t i=0;i<result->valid_count;++i)
 		{
 			std::string signer_str = PGPIdType(result->valid_sigs[i].signer_id).toStdString() ;
-			signers.push_back(signer_str) ;
+			signers_set.insert(signer_str) ;
 		}
 
 	ops_validate_result_free(result) ;
 
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
+
+	// write to the output variable
+	
+	signers.clear() ;
+
+	for(std::set<std::string>::const_iterator it(signers_set.begin());it!=signers_set.end();++it)
+		signers.push_back(*it) ;
 
 	return true ;
 }

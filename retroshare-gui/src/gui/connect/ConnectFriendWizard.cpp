@@ -260,7 +260,18 @@ void ConnectFriendWizard::initializePage(int id)
 			QString ts;
 			std::list<std::string>::iterator it;
 			for (it = peerDetails.gpgSigners.begin(); it != peerDetails.gpgSigners.end(); ++it) {
-				ts += QString("%1<%2>\n").arg(QString::fromUtf8(rsPeers->getPeerName(*it).c_str()), QString::fromStdString(*it));
+				{
+					std::string peer_name = rsPeers->getPeerName(*it) ;
+
+					// This is baaaad code. We should handle this kind of errors with proper exceptions.
+					// This happens because signers from a unknown key cannt be found in the keyring, including
+					// self-signatures.
+					//
+					if(peer_name == "[Unknown PGP Cert name]" && *it == peerDetails.gpg_id)
+						peer_name = peerDetails.name ;
+
+				ts += QString("%1<%2>\n").arg(QString::fromUtf8(peer_name.c_str()), QString::fromStdString(*it));
+				}
 			}
 
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
