@@ -136,12 +136,12 @@ bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photos)
 }
 
 
-bool p3PhotoServiceV2::submitAlbumDetails(RsPhotoAlbum& album)
+bool p3PhotoServiceV2::submitAlbumDetails(uint32_t& token, RsPhotoAlbum& album)
 {
 	RsGxsPhotoAlbumItem* albumItem = new RsGxsPhotoAlbumItem();
 	albumItem->album = album;
 	albumItem->meta = album.mMeta;
-	return RsGenExchange::publishGroup(albumItem);
+	return RsGenExchange::publishGroup(token, albumItem);
 }
 
 
@@ -170,13 +170,27 @@ void p3PhotoServiceV2::notifyChanges(std::vector<RsGxsNotify*>& changes)
 	}
 }
 
-bool p3PhotoServiceV2::submitPhoto(RsPhotoPhoto& photo)
+bool p3PhotoServiceV2::submitPhoto(uint32_t& token, RsPhotoPhoto& photo)
 {
 	RsGxsPhotoPhotoItem* photoItem = new RsGxsPhotoPhotoItem();
 	photoItem->photo = photo;
 	photoItem->meta = photo.mMeta;
 
-	return RsGenExchange::publishMsg(photoItem);
+	return RsGenExchange::publishMsg(token, photoItem);
 }
+
+bool p3PhotoServiceV2::acknowledgeMsg(const uint32_t& token,
+		std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+{
+	return RsGenExchange::acknowledgeTokenMsg(token, msgId);
+}
+
+
+bool p3PhotoServiceV2::acknowledgeGrp(const uint32_t& token,
+		RsGxsGroupId& grpId)
+{
+	return RsGenExchange::acknowledgeTokenGrp(token, grpId);
+}
+
 
 

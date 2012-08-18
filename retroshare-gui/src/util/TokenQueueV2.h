@@ -40,6 +40,7 @@
 #define TOKENREQ_MSGINFO	2
 #define TOKENREQ_MSGRELATEDINFO	3
 
+
 class TokenQueueV2;
 
 class TokenRequestV2

@@ -71,7 +71,8 @@ private:
 	
         void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
 
-
+        void acknowledgeGroup(const uint32_t &token);
+        void acknowledgeMessage(const uint32_t &token);
 	/* TODO: These functions must be filled in for proper filtering to work 
 	 * and tied to the GUI input
 	 */

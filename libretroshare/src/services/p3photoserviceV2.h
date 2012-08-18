@@ -78,8 +78,26 @@ public:
 
     /** Modifications **/
 
-    bool submitAlbumDetails(RsPhotoAlbum &album);
-    bool submitPhoto(RsPhotoPhoto &photo);
+    bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album);
+    bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo);
+
+    /*!
+     * This allows the client service to acknowledge that their msgs has
+     * been created/modified and retrieve the create/modified msg ids
+     * @param token the token related to modification/create request
+     * @param msgIds map of grpid->msgIds of message created/modified
+     * @return true if token exists false otherwise
+     */
+    bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId);
+
+    /*!
+	 * This allows the client service to acknowledge that their grps has
+	 * been created/modified and retrieve the create/modified grp ids
+	 * @param token the token related to modification/create request
+	 * @param msgIds vector of ids of groups created/modified
+	 * @return true if token exists false otherwise
+	 */
+    bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId);
 
 private:
 

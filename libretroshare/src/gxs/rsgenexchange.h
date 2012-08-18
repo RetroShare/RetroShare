@@ -152,6 +152,26 @@ protected:
      */
     bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
 
+public:
+
+    /*!
+     * This allows the client service to acknowledge that their msgs has
+     * been created/modified and retrieve the create/modified msg ids
+     * @param token the token related to modification/create request
+     * @param msgIds map of grpid->msgIds of message created/modified
+     * @return true if token exists false otherwise
+     */
+    bool acknowledgeTokenMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId);
+
+    /*!
+	 * This allows the client service to acknowledge that their grps has
+	 * been created/modified and retrieve the create/modified grp ids
+	 * @param token the token related to modification/create request
+	 * @param msgIds vector of ids of groups created/modified
+	 * @return true if token exists false otherwise
+	 */
+    bool acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grpId);
+
 protected:
 
     /** Modifications **/
@@ -161,20 +181,20 @@ protected:
      * If the item exists already this is simply versioned
      * This will induce a related change message
      * Ownership of item passes to this rsgenexchange
+     * @param token
      * @param grpItem
-     * @param
      */
-    bool publishGroup(RsGxsGrpItem* grpItem);
+    bool publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
     /*!
      * Enables publication of a message item
      * If the item exists already this is simply versioned
      * This will induce a related a change message
      * Ownership of item passes to this rsgenexchange
+     * @param token
      * @param msgItem
-     * @return false if msg creation failed.
      */
-    bool publishMsg(RsGxsMsgItem* msgItem);
+    bool publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
 
 protected:
@@ -208,6 +228,7 @@ private:
     void publishMsgs();
 
     void createGroup(RsNxsGrp* grp);
+    bool createMessage(RsNxsMsg* msg);
 
 private:
 
@@ -220,8 +241,11 @@ private:
     std::vector<RsNxsMsg*> mReceivedMsgs;
     std::vector<RsNxsGrp*> mReceivedGrps;
 
-    std::vector<RsGxsGrpItem*> mGrpsToPublish;
-    std::vector<RsGxsMsgItem*> mMsgsToPublish;
+    std::map<uint32_t, RsGxsGrpItem*> mGrpsToPublish;
+    std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
+
+    std::map<uint32_t, std::pair<RsGxsGroupId, RsGxsMessageId> > mMsgPublished;
+    std::map<uint32_t, RsGxsGroupId> mGrpPublished;
 
     std::vector<RsGxsNotify*> mNotifications;
 

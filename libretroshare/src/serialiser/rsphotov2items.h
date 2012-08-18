@@ -44,8 +44,9 @@ public:
 
 	RsGxsPhotoAlbumItem():  RsGxsGrpItem(RS_SERVICE_TYPE_PHOTO,
 			RS_PKT_SUBTYPE_PHOTO_ITEM) { return;}
+        virtual ~RsGxsPhotoAlbumItem() { return;}
 
-	virtual void clear();
+        void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 
@@ -58,8 +59,8 @@ public:
 
 	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_TYPE_PHOTO,
 			RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {return; }
-
-	virtual void clear();
+        virtual ~RsGxsPhotoPhotoItem() { return;}
+        void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsPhotoPhoto photo;
 };

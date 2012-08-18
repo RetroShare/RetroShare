@@ -229,6 +229,14 @@ uint32_t RsGxsDataAccess::requestStatus(uint32_t token)
 	uint32_t reqtype;
 	uint32_t anstype;
 	time_t ts;
+
+	{
+		RsStackMutex stack(mDataMutex);
+
+		// first check public tokens
+		if(mPublicToken.find(token) != mPublicToken.end())
+			return mPublicToken[token];
+	}
 	checkRequestStatus(token, status, reqtype, anstype, ts);
 
 	return status;
@@ -911,7 +919,8 @@ bool RsGxsDataAccess::addMsgData(RsNxsMsg* msg) {
 
 
 
-void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens) {
+void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens)
+{
 
 	RsStackMutex stack(mDataMutex);
 
@@ -924,7 +933,8 @@ void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens) {
 }
 
 bool RsGxsDataAccess::locked_updateRequestStatus(const uint32_t& token,
-		const uint32_t& status) {
+		const uint32_t& status)
+{
 
 	GxsRequest* req = locked_retrieveRequest(token);
 
@@ -932,6 +942,59 @@ bool RsGxsDataAccess::locked_updateRequestStatus(const uint32_t& token,
 		req->status = status;
 	else
 		return false;
+
+	return true;
+}
+
+uint32_t RsGxsDataAccess::generatePublicToken()
+{
+
+	uint32_t token;
+	generateToken(token);
+
+        {
+            RsStackMutex stack(mDataMutex);
+            mPublicToken[token] = RsTokenServiceV2::GXS_REQUEST_STATUS_PENDING;
+        }
+
+	return token;
+}
+
+
+
+bool RsGxsDataAccess::updatePublicRequestStatus(const uint32_t& token,
+		const uint32_t& status)
+{
+	RsStackMutex stack(mDataMutex);
+	std::map<uint32_t, uint32_t>::iterator mit = mPublicToken.find(token);
+
+	if(mit != mPublicToken.end())
+	{
+		mit->second = status;
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool RsGxsDataAccess::disposeOfPublicToken(const uint32_t& token)
+{
+	RsStackMutex stack(mDataMutex);
+	std::map<uint32_t, uint32_t>::iterator mit = mPublicToken.find(token);
+
+	if(mit != mPublicToken.end())
+	{
+		mPublicToken.erase(mit);
+	}
+	else
+	{
+		return false;
+	}
 
 	return true;
 }

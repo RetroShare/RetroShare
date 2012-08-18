@@ -36,7 +36,7 @@ class PhotoAddDialog : public QWidget, public TokenResponseV2
   Q_OBJECT
 
 public:
-	PhotoAddDialog(QWidget *parent = 0);
+        PhotoAddDialog(TokenQueueV2 *parentQueue, QWidget *parent = 0);
 
 	void loadAlbum(const std::string &albumId);
 virtual	void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
@@ -66,7 +66,8 @@ private:
 	bool loadPhotoData(const uint32_t &token);
 	bool loadAlbumData(const uint32_t &token);
 	bool loadCreatedAlbum(const uint32_t &token);
-
+        void acknowledgeGroup(const uint32_t &token);
+        void acknowledgeMessage(const uint32_t &token);
         TokenQueueV2 *mPhotoQueue;
 protected:
 
@@ -75,7 +76,7 @@ protected:
 	RsPhotoAlbum mAlbumData; 
 	PhotoDetailsDialog *mPhotoDetails;
 	Ui::PhotoAddDialog ui;
-
+        TokenQueueV2* mParentQueue;
 };
 
 #endif

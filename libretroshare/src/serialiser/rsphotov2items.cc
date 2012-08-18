@@ -31,7 +31,6 @@
 
 uint32_t RsGxsPhotoSerialiser::size(RsItem* item)
 {
-
 	RsGxsPhotoPhotoItem* ppItem = NULL;
 	RsGxsPhotoAlbumItem* paItem = NULL;
 

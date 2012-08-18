@@ -261,7 +261,7 @@ public:
 	 * @param album The album to be submitted
 	 * @return false if submission failed
 	 */
-	virtual bool submitAlbumDetails(RsPhotoAlbum &album) = 0;
+	virtual bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album) = 0;
 
 	/*!
 	 * This RsGenExchange service will be alerted to this photo as \n
@@ -270,7 +270,27 @@ public:
 	 * @param photo photo to submit
 	 * @return
 	 */
-	virtual bool submitPhoto(RsPhotoPhoto &photo) = 0;
+	virtual bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo) = 0;
+
+
+	/*!
+	 * This allows the client service to acknowledge that their msgs has
+	 * been created/modified and retrieve the create/modified msg ids
+	 * @param token the token related to modification/create request
+	 * @param msgIds map of grpid->msgIds of message created/modified
+	 * @return true if token exists false otherwise
+	 */
+	virtual bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId) = 0;
+
+	/*!
+	 * This allows the client service to acknowledge that their grps has
+	 * been created/modified and retrieve the create/modified grp ids
+	 * @param token the token related to modification/create request
+	 * @param msgIds vector of ids of groups created/modified
+	 * @return true if token exists false otherwise
+	 */
+	virtual bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId) = 0;
+
 
 };
 

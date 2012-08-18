@@ -44,6 +44,7 @@
 #define KEY_TIME_STAMP std::string("timeStamp")
 #define KEY_NXS_FLAGS std::string("flags")
 #define KEY_NXS_META std::string("meta")
+#define KEY_NXS_SERV_STRING std::string("serv_str");
 
 
 // grp table columns

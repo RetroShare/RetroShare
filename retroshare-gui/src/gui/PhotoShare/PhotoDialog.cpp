@@ -209,7 +209,7 @@ void PhotoDialog::OpenOrShowPhotoAddDialog()
 	}
 	else
 	{
-		mAddDialog = new PhotoAddDialog(NULL);
+                mAddDialog = new PhotoAddDialog(mPhotoQueue, NULL);
 		mAddDialog->show();
 	}
 	mAddDialog->clearDialog();
@@ -437,7 +437,6 @@ void PhotoDialog::deletePhotoItem(PhotoItem *item, uint32_t type)
 
 void PhotoDialog::requestAlbumList(std::list<std::string>& ids)
 {
-
 	RsTokReqOptionsV2 opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
 	uint32_t token;
@@ -447,6 +446,7 @@ void PhotoDialog::requestAlbumList(std::list<std::string>& ids)
 void PhotoDialog::requestPhotoList(GxsMsgReq& req)
 {
     RsTokReqOptionsV2 opts;
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     uint32_t token;
     mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, req, 0);
     return;
@@ -520,13 +520,46 @@ void PhotoDialog::requestPhotoList(const std::string &albumId)
 }
 
 
+void PhotoDialog::acknowledgeGroup(const uint32_t &token)
+{
+    RsGxsGroupId grpId;
+    rsPhotoV2->acknowledgeGrp(token, grpId);
 
+    if(!grpId.empty())
+    {
+        std::list<RsGxsGroupId> grpIds;
+        grpIds.push_back(grpId);
+
+        RsTokReqOptionsV2 opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+        uint32_t reqToken;
+        mPhotoQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
+    }
+}
+
+void PhotoDialog::acknowledgeMessage(const uint32_t &token)
+{
+    std::pair<RsGxsGroupId, RsGxsMessageId> p;
+    rsPhotoV2->acknowledgeMsg(token, p);
+
+    if(!p.first.empty())
+    {
+        GxsMsgReq req;
+        std::vector<RsGxsMessageId> v;
+        v.push_back(p.second);
+        req[p.first] = v;
+        RsTokReqOptionsV2 opts;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        uint32_t reqToken;
+        mPhotoQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
+    }
+}
 
 void PhotoDialog::loadPhotoList(const uint32_t &token)
 {
 	std::cerr << "PhotoDialog::loadPhotoList()";
 	std::cerr << std::endl;
-
 
         GxsMsgIdResult res;
         GxsMsgReq req;
@@ -592,6 +625,9 @@ void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &r
 					case RS_TOKREQ_ANSTYPE_DATA:
 						loadAlbumData(req.mToken);
 						break;
+                                        case RS_TOKREQ_ANSTYPE_ACK:
+                                                acknowledgeGroup(req.mToken);
+                                                break;
 					default:
 						std::cerr << "PhotoDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
 						std::cerr << std::endl;
@@ -604,6 +640,9 @@ void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &r
 					case RS_TOKREQ_ANSTYPE_LIST:
 						loadPhotoList(req.mToken);
 						break;
+                                        case RS_TOKREQ_ANSTYPE_ACK:
+                                                acknowledgeMessage(req.mToken);
+                                                break;
 					//case RS_TOKREQ_ANSTYPE_DATA:
 					//	loadPhotoData(req.mToken);
 					//	break;

@@ -104,6 +104,7 @@ public:
     /** E: RsTokenService **/
 
 
+
 public:
 
     /*!
@@ -248,6 +249,30 @@ private:
      */
     void cleanseMetaFilter(MsgMetaFilter& filter);
 
+public:
+
+    /*!
+     * Assigns a token value to passed integer
+     * The status of the token can still be queried from request status feature
+     * @param token is assigned a unique token value
+     */
+    uint32_t generatePublicToken();
+
+    /*!
+     * Update
+     * @param token
+     * @param status
+     * @return false if token could not be found, true if token disposed of
+     */
+    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+
+    /*!
+     * This gets rid of a publicly issued token
+     * @param token
+     * @return false if token could not found, true if token disposed of
+     */
+    bool disposeOfPublicToken(const uint32_t &token);
+
 private:
 
     /* These perform the actual blocking retrieval of data */
@@ -318,6 +343,7 @@ private:
 
     RsGeneralDataService* mDataStore;
 	uint32_t mNextToken;
+	std::map<uint32_t, uint32_t> mPublicToken;
 	std::map<uint32_t, GxsRequest*> mRequests;
 
     RsMutex mDataMutex;

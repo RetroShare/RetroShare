@@ -28,8 +28,8 @@
 #include <iostream>
 
 /** Constructor */
-PhotoAddDialog::PhotoAddDialog(QWidget *parent)
-: QWidget(parent)
+PhotoAddDialog::PhotoAddDialog(TokenQueueV2 *parentQueue, QWidget *parent)
+: QWidget(parent), mParentQueue(parentQueue)
 {
 	ui.setupUi(this);
 
@@ -330,8 +330,9 @@ void PhotoAddDialog::publishAlbum()
 
         std::cerr << "PhotoAddDialog::publishAlbum() New Album Mode Submitting.....";
         std::cerr << std::endl;
-
-        rsPhotoV2->submitAlbumDetails(album);
+        uint32_t token;
+        rsPhotoV2->submitAlbumDetails(token, album);
+        mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
 
 }
 
@@ -402,23 +403,14 @@ void PhotoAddDialog::publishPhotos(std::string albumId)
 		/* save image to album path */
 		photo.path = "unknown";
 
-		std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ") ";
+                uint32_t token;
 
-		if (isNewPhoto)
-		{
-			std::cerr << "Is a New Photo";
-                        rsPhotoV2->submitPhoto(photo);
-		}
-		else if (isModifiedPhoto)
-		{
-			std::cerr << "Is Updated";
-                        rsPhotoV2->submitPhoto(photo);
-		}
-		else
-		{
-			std::cerr << "Is Unchanged";
-		}
-        	std::cerr << std::endl;
+		std::cerr << "PhotoAddDialog::publishAlbum() Photo(" << i << ") ";
+                std::cerr << "Is Updated";
+
+                rsPhotoV2->submitPhoto(token, photo);
+                mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+                std::cerr << std::endl;
 	}
 
 	clearDialog();
@@ -530,14 +522,14 @@ bool PhotoAddDialog::loadAlbumData(const uint32_t &token)
             RsPhotoAlbum& album = *vit;
 
             std::cerr << "PhotoAddDialog::loadAlbumData() AlbumId: " << album.mMeta.mGroupId << std::endl;
-            //updateAlbumDetails(album);
+            updateAlbumDetails(album);
 
             uint32_t token;
             std::list<std::string> albumIds;
             albumIds.push_back(album.mMeta.mGroupId);
             req[album.mMeta.mGroupId] = std::vector<RsGxsMessageId>();
-
         }
+
         RsTokReqOptionsV2 opts;
         opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
         uint32_t t;
@@ -573,6 +565,48 @@ bool PhotoAddDialog::loadCreatedAlbum(const uint32_t &token)
 	return true;
 }
 
+void PhotoAddDialog::acknowledgeGroup(const uint32_t &token)
+{
+    RsGxsGroupId grpId;
+    rsPhotoV2->acknowledgeGrp(token, grpId);
+
+    if(!grpId.empty())
+    {
+        std::list<RsGxsGroupId> grpIds;
+        grpIds.push_back(grpId);
+
+        RsTokReqOptionsV2 opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+        uint32_t reqToken;
+
+        // request for self
+        mPhotoQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
+
+        // also request for parent
+        mParentQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
+    }
+}
+
+void PhotoAddDialog::acknowledgeMessage(const uint32_t &token)
+{
+    std::pair<RsGxsGroupId, RsGxsMessageId> p;
+    rsPhotoV2->acknowledgeMsg(token, p);
+
+    if(!p.first.empty())
+    {
+        GxsMsgReq req;
+        std::vector<RsGxsMessageId> v;
+        v.push_back(p.second);
+        req[p.first] = v;
+        RsTokReqOptionsV2 opts;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        uint32_t reqToken;
+        mPhotoQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
+
+        mParentQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
+    }
+}
 
 void PhotoAddDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
 {
@@ -593,6 +627,9 @@ void PhotoAddDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2
 					case RS_TOKREQ_ANSTYPE_SUMMARY:
 						loadCreatedAlbum(req.mToken);
 						break;
+                                        case RS_TOKREQ_ANSTYPE_ACK:
+                                                acknowledgeGroup(req.mToken);
+                                                break;
 					default:
 						std::cerr << "PhotoAddDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
 						std::cerr << std::endl;

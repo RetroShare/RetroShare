@@ -123,7 +123,7 @@ void TokenQueueV2::pollRequests()
 bool TokenQueueV2::checkForRequest(uint32_t token)
 {
 	/* check token */
-	return (COMPLETED_REQUEST == mService->requestStatus(token));
+    return (RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE == mService->requestStatus(token));
 }
 
 

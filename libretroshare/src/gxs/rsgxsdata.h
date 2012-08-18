@@ -64,7 +64,7 @@ public:
     RsTlvSecurityKeySet keys;
     RsTlvKeySignature idSign;
 
-
+    std::string mServiceString;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -102,6 +102,8 @@ public:
 
     RsTlvKeySignature pubSign;
     RsTlvKeySignature idSign;
+
+    std::string mServiceString;
 
     std::string mMsgName;
     time_t      mPublishTs;
