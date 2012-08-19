@@ -25,6 +25,8 @@
 
 
 #include "rsphotov2items.h"
+#include "serialiser/rstlvbase.h"
+#include <iostream>
 
 #define GXS_PHOTO_SERIAL_DEBUG
 

@@ -571,6 +571,15 @@ bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
 {
 
 	std::map<RsGxsGroupId, RsNxsGrp*> grpData;
+
+        std::list<RsGxsGroupId>::iterator lit = req->mGroupIds.begin(),
+        lit_end = req->mGroupIds.end();
+
+        for(; lit != lit_end; lit++)
+        {
+            grpData[*lit] = NULL;
+        }
+
         bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
 
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grpData.begin();
@@ -625,7 +634,7 @@ bool RsGxsDataAccess::getGroupList(GroupIdReq* req)
 bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 {
 	GxsMsgResult result;
-	mDataStore->retrieveNxsMsgs(req->mMsgIds, result, true);
+        mDataStore->retrieveNxsMsgs(req->mMsgIds, result, true, true);
 
 	req->mMsgData = result;
 	return true;
@@ -634,14 +643,8 @@ bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 
 bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 {
-	GxsMsgMetaResult result;
-	std::vector<RsGxsGroupId> groupIds;
-	GxsMsgReq::iterator mit = req->mMsgIds.begin();
-	for(; mit != req->mMsgIds.end(); mit++)
-		groupIds.push_back(mit->first);
-
-	mDataStore->retrieveGxsMsgMetaData(groupIds, result);
-
+        GxsMsgMetaResult result;
+        mDataStore->retrieveGxsMsgMetaData(req->mMsgIds, result);
 	req->mMsgMetaData = result;
 
 	return true;
@@ -649,18 +652,13 @@ bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 
 bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 {
-	GxsMsgMetaResult result;
-	std::vector<RsGxsGroupId> groupIds;
-	GxsMsgReq::iterator mit = req->mMsgIds.begin();
+        GxsMsgMetaResult result;
 
 	const RsTokReqOptionsV2& opts = req->Options;
 
-	for(; mit != req->mMsgIds.end(); mit++)
-		groupIds.push_back(mit->first);
-
 	{
 		RsStackMutex stack(mDataMutex);
-		mDataStore->retrieveGxsMsgMetaData(groupIds, result);
+                mDataStore->retrieveGxsMsgMetaData(req->mMsgIds, result);
 	}
 
 

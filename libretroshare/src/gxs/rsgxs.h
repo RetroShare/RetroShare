@@ -25,7 +25,7 @@
  *
  */
 
-#include "serialiser/rsnxsitems.h"
+#include "gxs/rsgxsdata.h"
 
 #include <inttypes.h>
 #include <string>
@@ -38,8 +38,6 @@
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 class RsGxsService
 {

@@ -141,7 +141,7 @@ void PhotoItem::updateText()
 	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_AUTHOR)
 	{
 		// This needs to be fixed!! TODO
-		fromLabel->setText(QString::fromStdString(mAlbumDetails.mMeta.mGroupId));
+                fromLabel->setText(QString::fromStdString(mAlbumDetails.mPhotographer));
 	}
 
 	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)

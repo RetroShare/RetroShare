@@ -487,8 +487,6 @@ bool PhotoDialog::loadAlbumData(const uint32_t &token)
 	std::cerr << "PhotoDialog::loadAlbumData()";
 	std::cerr << std::endl;
 
-	clearAlbums();
-
         std::vector<RsPhotoAlbum> albums;
         rsPhotoV2->getAlbum(token, albums);
 
@@ -643,9 +641,9 @@ void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &r
                                         case RS_TOKREQ_ANSTYPE_ACK:
                                                 acknowledgeMessage(req.mToken);
                                                 break;
-					//case RS_TOKREQ_ANSTYPE_DATA:
-					//	loadPhotoData(req.mToken);
-					//	break;
+                                        case RS_TOKREQ_ANSTYPE_DATA:
+                                                loadPhotoData(req.mToken);
+                                                break;
 					default:
 						std::cerr << "PhotoDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
 						std::cerr << std::endl;

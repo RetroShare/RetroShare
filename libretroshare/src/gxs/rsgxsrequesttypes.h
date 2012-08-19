@@ -26,6 +26,8 @@
  *
  */
 
+#include "gxs/rsgds.h"
+
 class GxsRequest
 {
 
@@ -63,7 +65,7 @@ class GroupDataReq : public GxsRequest
 {
 
 public:
-	std::list<std::string> mGroupIds;
+        std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsNxsGrp*> mGroupData;
 };
 

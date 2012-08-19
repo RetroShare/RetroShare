@@ -36,6 +36,7 @@
 #include "serialiser/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
+#include "util/retrodb.h"
 
 
 class RsGxsSearchModule  {
@@ -53,6 +54,9 @@ public:
  */
 class MsgLocMetaData {
 
+public:
+    RsGxsGrpMsgIdPair msgId;
+    ContentValue val;
 };
 
 /*!
@@ -61,11 +65,14 @@ class MsgLocMetaData {
  */
 class GrpLocMetaData {
 
+public:
+    RsGxsGroupId grpId;
+    ContentValue val;
+
 };
 
-//typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq; // <grpId, msgIds>
-
-//typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -103,7 +110,7 @@ public:
      * @param cache whether to store results of this retrieval in memory for faster later retrieval
      * @return error code
      */
-    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache) = 0;
+    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta=false) = 0;
 
     /*!
      * Retrieves all groups stored
@@ -130,7 +137,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGxsMsgMetaData(const std::vector<RsGxsGroupId>& grpIds, GxsMsgMetaResult& msgMeta) = 0;
+    virtual int retrieveGxsMsgMetaData(GxsMsgReq& grpIds, GxsMsgMetaResult& msgMeta) = 0;
 
     /*!
      * remove msgs in data store listed in msgIds param
@@ -174,12 +181,12 @@ public:
     /*!
      * @param metaData
      */
-    virtual int updateMessageMetaData(MsgLocMetaData* metaData) = 0;
+    virtual int updateMessageMetaData(MsgLocMetaData& metaData) = 0;
 
     /*!
      * @param metaData
      */
-    virtual int updateGroupMetaData(GrpLocMetaData* meta) = 0;
+    virtual int updateGroupMetaData(GrpLocMetaData& meta) = 0;
 
 
     /*!

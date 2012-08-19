@@ -44,7 +44,7 @@
 #define KEY_TIME_STAMP std::string("timeStamp")
 #define KEY_NXS_FLAGS std::string("flags")
 #define KEY_NXS_META std::string("meta")
-#define KEY_NXS_SERV_STRING std::string("serv_str");
+#define KEY_NXS_SERV_STRING std::string("serv_str")
 
 
 // grp table columns
@@ -98,6 +98,7 @@
 #define COL_GRP_NAME 11
 #define COL_GRP_LAST_POST 12
 #define COL_ORIG_GRP_ID 13
+#define COL_GRP_SERV_STRING 14
 
 // msg col numbers
 #define COL_PUBLISH_SIGN 5
@@ -108,6 +109,7 @@
 #define COL_PARENT_ID 10
 #define COL_THREAD_ID 11
 #define COL_MSG_NAME 12
+#define COL_MSG_SERV_STRING 13
 
 // generic meta shared col numbers
 #define COL_GRP_ID 0
@@ -129,7 +131,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     msgMetaColumns.push_back(KEY_IDENTITY_SIGN); msgMetaColumns.push_back(KEY_NXS_IDENTITY); msgMetaColumns.push_back(KEY_PUBLISH_SIGN);
     msgMetaColumns.push_back(KEY_MSG_ID); msgMetaColumns.push_back(KEY_ORIG_MSG_ID); msgMetaColumns.push_back(KEY_MSG_STATUS);
     msgMetaColumns.push_back(KEY_CHILD_TS); msgMetaColumns.push_back(KEY_MSG_PARENT_ID); msgMetaColumns.push_back(KEY_MSG_THREAD_ID);
-    msgMetaColumns.push_back(KEY_MSG_NAME);
+    msgMetaColumns.push_back(KEY_MSG_NAME); msgMetaColumns.push_back(KEY_NXS_SERV_STRING);
 
     // for retrieving actual data
     msgColumns.push_back(KEY_GRP_ID);  msgColumns.push_back(KEY_NXS_FILE); msgColumns.push_back(KEY_NXS_FILE_OFFSET);
@@ -140,7 +142,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     grpMetaColumns.push_back(KEY_IDENTITY_SIGN); grpMetaColumns.push_back(KEY_NXS_IDENTITY); grpMetaColumns.push_back(KEY_ADMIN_SIGN);
     grpMetaColumns.push_back(KEY_KEY_SET); grpMetaColumns.push_back(KEY_GRP_SUBCR_FLAG); grpMetaColumns.push_back(KEY_GRP_POP);
     grpMetaColumns.push_back(KEY_MSG_COUNT); grpMetaColumns.push_back(KEY_GRP_STATUS); grpMetaColumns.push_back(KEY_GRP_NAME);
-    grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID);
+    grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
 
     // for retrieving actual grp data
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_FILE); grpColumns.push_back(KEY_NXS_FILE_OFFSET);
@@ -175,6 +177,7 @@ void RsDataService::initialise(){
                  KEY_MSG_THREAD_ID + " TEXT," +
                  KEY_MSG_PARENT_ID + " TEXT,"+
                  KEY_MSG_NAME + " TEXT," +
+                 KEY_NXS_SERV_STRING + " TEXT," +
                  KEY_NXS_FILE_LEN + " INT);");
 
     // create table for grp data
@@ -195,6 +198,7 @@ void RsDataService::initialise(){
                  KEY_GRP_STATUS + " INT," +
                  KEY_NXS_IDENTITY + " TEXT," +
                  KEY_ORIG_GRP_ID + " TEXT," +
+                 KEY_NXS_SERV_STRING + " TEXT," +
                  KEY_NXS_FLAGS + " INT," +
                  KEY_IDENTITY_SIGN + " BLOB);");
 
@@ -221,6 +225,7 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
     c.getString(COL_IDENTITY, grpMeta->mAuthorId);
     c.getString(COL_GRP_NAME, grpMeta->mGroupName);
     c.getString(COL_ORIG_GRP_ID, grpMeta->mOrigGrpId);
+    c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
     grpMeta->mGroupFlags = c.getInt32(COL_NXS_FLAGS);
@@ -335,6 +340,7 @@ RsGxsMsgMetaData* RsDataService::getMsgMeta(RetroCursor &c)
     c.getString(COL_ORIG_MSG_ID, msgMeta->mOrigMsgId);
     c.getString(COL_IDENTITY, msgMeta->mAuthorId);
     c.getString(COL_MSG_NAME, msgMeta->mMsgName);
+    c.getString(COL_MSG_SERV_STRING, msgMeta->mServiceString);
 
     if(!msgMeta->mAuthorId.empty()){
         offset = 0;
@@ -447,6 +453,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         cv.put(KEY_NXS_FILE_LEN, (int32_t)msgPtr->msg.TlvSize());
         cv.put(KEY_MSG_ID, msgMetaPtr->mMsgId);
         cv.put(KEY_GRP_ID, msgMetaPtr->mGroupId);
+        cv.put(KEY_NXS_SERV_STRING, msgMetaPtr->mServiceString);
         char pubSignData[msgMetaPtr->pubSign.TlvSize()];
         offset = 0;
         msgMetaPtr->pubSign.SetTlv(pubSignData, msgMetaPtr->pubSign.TlvSize(), &offset);
@@ -522,6 +529,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_ID, grpPtr->grpId);
         cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
         cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId);
+        cv.put(KEY_NXS_SERV_STRING, grpMetaPtr->mServiceString);
         cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
         cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
 
@@ -580,7 +588,7 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
 		{
 			std::vector<RsNxsGrp*> grps;
 
-			retrieveGroups(c, grps, withMeta);
+                        retrieveGroups(c, grps);
 			std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
 			for(; vit != grps.end(); vit++)
@@ -618,10 +626,27 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
 		}
 	}
 
+        if(withMeta)
+        {
+            std::map<RsGxsGroupId, RsGxsGrpMetaData*> metaMap;
+            std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
+            for(; mit != grp.end(); mit++)
+                metaMap.insert(std::make_pair(mit->first, (RsGxsGrpMetaData*)(NULL)));
+
+            retrieveGxsGrpMetaData(metaMap);
+
+            mit = grp.begin();
+            for(; mit != grp.end(); mit++)
+            {
+                RsNxsGrp* grpPtr = grp[mit->first];
+                grpPtr->metaData = metaMap[mit->first];
+            }
+        }
+
 	return 1;
 }
 
-void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, bool withMeta){
+void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){
 
     if(c){
         bool valid = c->moveToFirst();
@@ -632,12 +657,6 @@ void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps,
             // only add the latest grp info
             if(g)
             {
-            	RsGxsGrpMetaData* meta;
-
-            	if(withMeta)
-            		meta = getGrpMeta(*c);
-
-            	if(meta) g->metaData = meta;
                 grps.push_back(g);
             }
             valid = c->moveToNext();
@@ -645,10 +664,12 @@ void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps,
     }
 }
 
-int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool cache)
+int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool cache, bool withMeta)
 {
 
     GxsMsgReq::const_iterator mit = reqIds.begin();
+
+    GxsMsgReq metaReqIds;// collects metaReqIds if needed
 
     for(; mit != reqIds.end(); mit++)
     {
@@ -685,7 +706,75 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
         msg[grpId] = msgSet;
         msgSet.clear();
+
+        if(withMeta)
+        {
+            std::vector<RsGxsMessageId> msgIds;
+
+            std::vector<RsNxsMsg*>::iterator lit = msgSet.begin(),
+            lit_end = msgSet.end();
+
+            for(; lit != lit_end; lit++)
+                msgIds.push_back( (*lit)->msgId );
+
+            metaReqIds[grpId] = msgIds;
+        }
     }
+
+    // tres expensive !?
+    if(withMeta)
+    {
+
+
+        GxsMsgMetaResult metaResult;
+
+        // request with meta ids so there is no chance of
+        // a mem leak being left over
+        retrieveGxsMsgMetaData(metaReqIds, metaResult);
+
+        GxsMsgResult::iterator mit2 = msg.begin(), mit2_end = msg.end();
+
+        for(; mit2 != mit2_end; mit2++)
+        {
+            const RsGxsGroupId& grpId = mit2->first;
+            std::vector<RsNxsMsg*>& msgV = msg[grpId];
+            std::vector<RsNxsMsg*>::iterator lit = msgV.begin(),
+            lit_end = msgV.end();
+
+            // as retrieval only attempts to retrieve what was found this elimiates chance
+            // of a memory fault as all are assigned
+            for(; lit != lit_end; lit++)
+            {
+                std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[grpId];
+                std::vector<RsGxsMsgMetaData*>::iterator meta_lit = msgMetaV.begin();
+                RsNxsMsg* msgPtr = *lit;
+                for(; meta_lit != msgMetaV.end(); )
+                {
+                    RsGxsMsgMetaData* meta = *meta_lit;
+                    if(meta->mMsgId == msgPtr->msgId)
+                    {
+                        msgPtr->metaData = meta;
+                        meta_lit = msgMetaV.erase(meta_lit);
+                    }else{
+                        meta_lit++;
+                    }
+                }
+            }
+
+            std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[grpId];
+            std::vector<RsGxsMsgMetaData*>::iterator meta_lit;
+
+            // clean up just in case, should not go in here
+            for(meta_lit = msgMetaV.begin(); meta_lit !=
+                           msgMetaV.end(); )
+            {
+                RsGxsMsgMetaData* meta = *meta_lit;
+                delete meta;
+            }
+        }
+    }
+
+    return 1;
 }
 
 void RsDataService::retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &msgs)
@@ -696,8 +785,6 @@ void RsDataService::retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &ms
 
         if(m){
             msgs.push_back(m);;
-        }else{
-            delete m;
         }
 
         valid = c->moveToNext();
@@ -705,38 +792,60 @@ void RsDataService::retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &ms
     return;
 }
 
-int RsDataService::retrieveGxsMsgMetaData(const std::vector<std::string> &grpIds, GxsMsgMetaResult &msgMeta)
+int RsDataService::retrieveGxsMsgMetaData(GxsMsgReq& reqIds, GxsMsgMetaResult &msgMeta)
 {
-    std::vector<std::string>::const_iterator vit = grpIds.begin();
+    GxsMsgReq::iterator mit = reqIds.begin();
 
-    for(; vit != grpIds.end(); vit++)
+    for(; mit != reqIds.end(); mit++)
     {
-        const std::string& grpId = *vit;
 
-        std::vector<RsGxsMsgMetaData*> meta;
+        const std::string& grpId = mit->first;
 
-        RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, "", KEY_GRP_ID+ "='" + grpId + "'");
+        // if vector empty then request all messages
+        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        std::vector<RsGxsMsgMetaData*> metaSet;
 
-        if(c)
-        {
-            bool valid = c->moveToFirst();
-            while(valid){
-                RsGxsMsgMetaData* m = getMsgMeta(*c);
+        if(msgIdV.empty()){
+            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
 
-                if(m){
-                    meta.push_back(m);
-                }else{
-                    delete m;
-                }
-                valid = c->moveToNext();
+            retrieveMsgMeta(c, metaSet);
+
+        }else{
+
+            // request each grp
+            std::vector<std::string>::const_iterator sit = msgIdV.begin();
+
+            for(; sit!=msgIdV.end();sit++){
+                const std::string& msgId = *sit;
+                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId
+                                               + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");
+
+                retrieveMsgMeta(c, metaSet);
             }
+        }
 
-            msgMeta[grpId] = meta;
+        msgMeta[grpId] = metaSet;
+    }
+
+    return 1;
+}
+
+void RsDataService::retrieveMsgMeta(RetroCursor *c, std::vector<RsGxsMsgMetaData *> &msgMeta)
+{
+
+    if(c)
+    {
+        bool valid = c->moveToFirst();
+        while(valid){
+            RsGxsMsgMetaData* m = getMsgMeta(*c);
+
+            if(m != NULL)
+                msgMeta.push_back(m);
+
+            valid = c->moveToNext();
         }
         delete c;
-
     }
-    return 1;
 }
 
 int RsDataService::retrieveGxsGrpMetaData(std::map<std::string, RsGxsGrpMetaData *>& grp)
@@ -799,12 +908,12 @@ int RsDataService::removeGroups(const std::vector<std::string> &grpIds)
     return 0;
 }
 
-int RsDataService::updateGroupMetaData(GrpLocMetaData *meta)
+int RsDataService::updateGroupMetaData(GrpLocMetaData &meta)
 {
     return 0;
 }
 
-int RsDataService::updateMessageMetaData(MsgLocMetaData *metaData)
+int RsDataService::updateMessageMetaData(MsgLocMetaData &metaData)
 {
     return 0;
 }

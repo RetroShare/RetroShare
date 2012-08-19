@@ -26,6 +26,7 @@
 
 #include "rsgxsdata.h"
 #include "serialiser/rsbaseserial.h"
+#include "serialiser/rstlvbase.h"
 
 RsGxsGrpMetaData::RsGxsGrpMetaData()
 {

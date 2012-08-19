@@ -29,7 +29,6 @@
 #include <string>
 
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsgxsitems.h"

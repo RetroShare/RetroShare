@@ -29,7 +29,6 @@
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
 
-
 class RsDataService : public RsGeneralDataService
 {
 public:
@@ -44,7 +43,7 @@ public:
      * @param cache whether to store results of this retrieval in memory for faster later retrieval
      * @return error code
      */
-    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache);
+    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta = false);
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
@@ -70,7 +69,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsMsgMetaData(const std::vector<RsGxsGroupId>& grpIds, GxsMsgMetaResult& msgMeta);
+    int retrieveGxsMsgMetaData(GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta);
 
     /*!
      * remove msgs in data store
@@ -115,13 +114,13 @@ public:
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateMessageMetaData(MsgLocMetaData* metaData);
+    int updateMessageMetaData(MsgLocMetaData& metaData);
 
     /*!
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateGroupMetaData(GrpLocMetaData* meta);
+    int updateGroupMetaData(GrpLocMetaData& meta);
 
 
     /*!
@@ -142,11 +141,18 @@ private:
     void retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs);
 
     /*!
-     * Retrieves all the msg results from a cursor
+     * Retrieves all the grp results from a cursor
      * @param c cursor to result set
-     * @param msgs messages retrieved from cursor are stored here
+     * @param grps groups retrieved from cursor are stored here
      */
-    void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, bool withMeta = false);
+    void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps);
+
+    /*!
+     * Retrieves all the msg meta results from a cursor
+     * @param c cursor to result set
+     * @param metaSet message metadata retrieved from cursor are stored here
+     */
+    void retrieveMsgMeta(RetroCursor* c, std::vector<RsGxsMsgMetaData*>& msgMeta);
 
     /*!
      * extracts a msg meta item from a cursor at its

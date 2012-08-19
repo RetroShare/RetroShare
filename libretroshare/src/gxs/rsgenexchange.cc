@@ -27,7 +27,7 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
-#include <openssl/rand.h>
+#include <openssl/rsa.h>
 
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
@@ -177,6 +177,7 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 	metaMap.insert(std::make_pair(id, (RsGxsGrpMetaData*)(NULL)));
 	mDataStore->retrieveGxsGrpMetaData(metaMap);
 	bool ok = true;
+        RSA* rsa_pub = NULL;
 
 	if(!metaMap[id])
 	{
@@ -198,8 +199,7 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 		for(; mit != mit_end; mit++)
 		{
 
-			pub_key_found = mit->second.keyFlags & (RSTLV_KEY_TYPE_FULL | RSTLV_KEY_DISTRIB_PUBLIC);
-
+                        pub_key_found = mit->second.keyFlags & (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
 			if(pub_key_found)
 				break;
 		}
@@ -207,7 +207,7 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 		if(pub_key_found)
 		{
 			pubKey = &(mit->second);
-			RSA* rsa_pub = GxsSecurity::extractPrivateKey(*pubKey);
+                        rsa_pub = GxsSecurity::extractPrivateKey(*pubKey);
 			EVP_PKEY *key_pub = EVP_PKEY_new();
 			EVP_PKEY_assign_RSA(key_pub, rsa_pub);
 
@@ -229,8 +229,9 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 
 			// clean up
 			EVP_MD_CTX_destroy(mdctx);
+                        //RSA_free(rsa_pub);
 			EVP_PKEY_free(key_pub);
-			RSA_free(rsa_pub);
+                        // no need to free rsa key as evp key is considered parent key by SSL
 		}
 		else
 		{
@@ -314,14 +315,15 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 
 	std::list<RsNxsGrp*>::iterator lit = nxsGrps.begin();
 
-	if(ok)
+        if(ok)
 	{
 		for(; lit != nxsGrps.end(); lit++)
 		{
 			RsTlvBinaryData& data = (*lit)->grp;
 			RsItem* item = mSerialiser->deserialise(data.bin_data, &data.bin_len);
 
-			if(item != NULL){
+                        if(item != NULL)
+                        {
 				RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
 				gItem->meta = *((*lit)->metaData);
 				grpItem.push_back(gItem);
@@ -422,11 +424,14 @@ void RsGenExchange::publishMsgs()
 
 	std::map<uint32_t, RsGxsMsgItem*>::iterator mit = mMsgsToPublish.begin();
 
-	for(; mit != mMsgsToPublish.end(); )
+        for(; mit != mMsgsToPublish.end(); mit++)
 	{
 
 		RsNxsMsg* msg = new RsNxsMsg(mServType);
 		RsGxsMsgItem* msgItem = mit->second;
+
+                msg->grpId = msgItem->meta.mGroupId;
+
 		uint32_t size = mSerialiser->size(msgItem);
 		char mData[size];
 		bool ok = mSerialiser->serialise(msgItem, mData, &size);
@@ -434,13 +439,22 @@ void RsGenExchange::publishMsgs()
 		if(ok)
 		{
 			msg->metaData = new RsGxsMsgMetaData();
+                        msg->msg.setBinData(mData, size);
 			*(msg->metaData) = msgItem->meta;
+                        size = msg->metaData->serial_size();
+                        char metaDataBuff[size];
+
+                        msg->metaData->serialise(metaDataBuff, &size);
+                        msg->meta.setBinData(metaDataBuff, size);
+
 			ok = createMessage(msg);
 
 			if(ok)
-				ok = mDataAccess->addMsgData(msg);
+                            ok = mDataAccess->addMsgData(msg);
 
-			mMsgPublished.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));
+                        // add to published to allow acknowledgement
+                        mMsgPublished.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));
+                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
 		}
 
 		// if addition failed then delete nxs message
@@ -488,7 +502,7 @@ void RsGenExchange::publishGrps()
             createGroup(grp);
             size = grp->metaData->serial_size();
             char mData[size];
-
+            grp->metaData->mGroupId = grp->grpId;
             ok = grp->metaData->serialise(mData, size);
             grp->meta.setBinData(mData, size);
 
@@ -520,6 +534,8 @@ void RsGenExchange::publishGrps()
 	// are invalid
 	mGrpsToPublish.clear();
 }
+
+
 void RsGenExchange::processRecvdData()
 {
 }

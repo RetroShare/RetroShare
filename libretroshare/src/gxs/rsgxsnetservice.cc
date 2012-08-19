@@ -727,10 +727,10 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	// get grp id for this transaction
 	RsNxsSyncMsgItem* item = msgItemL.front();
 	const std::string& grpId = item->grpId;
-	std::vector<std::string> grpIdV;
-	grpIdV.push_back(grpId);
+        GxsMsgReq reqIds;
+        reqIds[grpId] = std::vector<RsGxsMessageId>();
 	GxsMsgMetaResult result;
-	mDataStore->retrieveGxsMsgMetaData(grpIdV, result);
+        mDataStore->retrieveGxsMsgMetaData(reqIds, result);
 	std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
 
 	std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();

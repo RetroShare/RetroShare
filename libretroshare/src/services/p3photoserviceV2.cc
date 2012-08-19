@@ -89,6 +89,7 @@ bool p3PhotoServiceV2::getAlbum(const uint32_t& token, std::vector<RsPhotoAlbum>
 		{
 			RsGxsPhotoAlbumItem* item = dynamic_cast<RsGxsPhotoAlbumItem*>(*vit);
 			RsPhotoAlbum album = item->album;
+                        item->album.mMeta = item->meta;
 			album.mMeta = item->album.mMeta;
 			delete item;
 			albums.push_back(album);

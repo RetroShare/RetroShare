@@ -304,11 +304,11 @@ void PhotoAddDialog::publishAlbum()
 	album.mShareOptions.mCommentMode = 0;
 	album.mShareOptions.mResizeMode = 0;
 
-	//album.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
-	//album.mCategory = "Unknown";
-	//album.mCaption = ui.lineEdit_Caption->text().toStdString();
-	//album.mWhere = ui.lineEdit_Where->text().toStdString();
-	//album.mWhen = ui.lineEdit_When->text().toStdString();
+        album.mMeta.mGroupName = ui.lineEdit_Title->text().toStdString();
+        album.mCategory = "Unknown";
+        album.mCaption = ui.lineEdit_Caption->text().toStdString();
+        album.mWhere = ui.lineEdit_Where->text().toStdString();
+        album.mWhen = ui.lineEdit_When->text().toStdString();
 
 	/* grab the image from the AlbumDrop */
 	if (ui.AlbumDrop->getPhotoCount() > 0)
@@ -325,6 +325,7 @@ void PhotoAddDialog::publishAlbum()
 
 		/* call publishPhotos directly */
 		publishPhotos(album.mMeta.mGroupId);
+                return;
 	}
 
 
@@ -469,9 +470,8 @@ void PhotoAddDialog::loadAlbum(const std::string &albumId)
 	albumIds.push_back(albumId);
 
 	// We need both Album and Photo Data.
-
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
-
 }
 
 
@@ -636,8 +636,20 @@ void PhotoAddDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2
 				}
 				break;
 			case TOKENREQ_MSGINFO:
-				loadPhotoData(req.mToken);
-				break;
+                                switch(req.mAnsType)
+                                {
+                                case RS_TOKREQ_ANSTYPE_DATA:
+                                        loadPhotoData(req.mToken);
+                                        break;
+                                case RS_TOKREQ_ANSTYPE_ACK:
+                                        acknowledgeMessage(req.mToken);
+                                        break;
+                                default:
+                                        std::cerr << "PhotoAddDialog::loadRequest() ERROR: MESSAGE: INVALID ANS TYPE";
+                                        std::cerr << std::endl;
+
+                                }
+                                break;
 			default:
 				std::cerr << "PhotoAddDialog::loadRequest() ERROR: INVALID TYPE";
 				std::cerr << std::endl;
