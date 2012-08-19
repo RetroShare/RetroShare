@@ -1477,7 +1477,7 @@ upnpEventSubscriptionExpired:
 		int TimeOut = 1801;
 		int ret = UpnpSubscribe(
 			upnpCP->m_UPnPClientHandle,
-#if UPNP_VERSION >= 10800
+#if DEBIAN && UPNP_VERSION >= 10617 || UPNP_VERSION >= 10800
 			UpnpString_get_String(es_event->PublisherUrl),
 #else
 			es_event->PublisherUrl,
@@ -1490,7 +1490,7 @@ upnpEventSubscriptionExpired:
 				msg, es_event->ErrCode, NULL, NULL);
 		} else {
 			ServiceMap::iterator it =
-#if UPNP_VERSION >= 10800
+#if DEBIAN && UPNP_VERSION >= 10617 || UPNP_VERSION >= 10800
 				upnpCP->m_ServiceMap.find(UpnpString_get_String(es_event->PublisherUrl));
 #else
 				upnpCP->m_ServiceMap.find(es_event->PublisherUrl);
@@ -1500,7 +1500,7 @@ upnpEventSubscriptionExpired:
 				service.SetTimeout(TimeOut);
 				service.SetSID(newSID);
 				std::cerr << "CUPnPControlPoint::Callback() Re-subscribed to EventURL '" <<
-#if UPNP_VERSION >= 10800
+#if DEBIAN && UPNP_VERSION >= 10617 || UPNP_VERSION >= 10800
 					UpnpString_get_String(es_event->PublisherUrl) <<
 #else
 					es_event->PublisherUrl <<
