@@ -1,0 +1,61 @@
+package rsctrl.base:
+
+///////////////////////////////////////////////////////////////
+// These are basic Messages, which are used as building blocks
+// throughout the rest of the interface.
+// They should not be sent RAW, but should be wrapped in another msg.
+///////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+// Basic Status Response, should be in all responses
+
+message Status {
+  enum StatusCode {
+    FAILED        = 0;
+    INVALID_QUERY = 1;
+    SUCCESS       = 2;
+    READMSG       = 3;
+  }
+  required StatusCode code = 1;
+  optional string msg = 2;
+}
+
+///////////////////////////////////////////////////////////////
+// Peer structures, mainly rsctrl.peers related.
+
+message Location {
+  required string ssl_id = 1;
+  required string location = 2;
+
+  required string localaddr = 3;
+  required string extaddr   = 4;
+}
+
+message Person {
+  required string gpg_id = 1;
+  required string name = 2;
+
+  repeated Location locations = 3;
+}
+
+///////////////////////////////////////////////////////////////
+// File structures, mainly rsctrl.files related.
+
+message File {
+  required string name = 1;
+  required string hash = 2;
+  required int64  size = 3;
+
+  optional string path = 4;
+  optional string avail = 5;
+
+}
+
+message Dir {
+  required string name = 1;
+  required string path = 2;
+
+  repeated Dir subdirs = 3;
+  repeated File files = 4;
+}
+
