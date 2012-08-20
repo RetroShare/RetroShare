@@ -34,7 +34,7 @@ clients must be made or how a client should react.
 #include <string>
 #include <map>
 
-#include "rstermserver.h"
+#include "rpcsystem.h"
 
 #ifndef KEYS_FOLDER
 #ifdef _WIN32
@@ -66,24 +66,36 @@ int CheckPasswordHash(std::string pwdHashRadix64, std::string password);
 int GeneratePasswordHash(std::string saltBin, std::string password, std::string &pwdHashRadix64);
 int GenerateSalt(std::string &saltBin);
 
-class RsSshd: public RsThread
+class RsSshd: public RsThread, public RpcComms
 {
 public:
-
-int adduserpwdhash(std::string username, std::string hash);
-#ifdef ALLOW_CLEARPWDS
-int adduser(std::string username, std::string password);
-#endif // ALLOW_CLEARPWDS
-
-
-
-virtual void run(); /* overloaded from RsThread => called once the thread is started */
 
 // NB: This must be called EARLY before all the threads are launched.
 static  RsSshd *InitRsSshd(std::string portstr, std::string rsakeyfile);
 
-	// Terminal Handling!
-int 	setTermServer(RsTermServer *s);
+
+	// Interface.
+int 	setRpcSystem(RpcSystem *s);
+int 	adduserpwdhash(std::string username, std::string hash);
+
+	// RsThreads Interface.
+	virtual void run(); /* called once the thread is started */
+
+	// RsComms Interface.
+        virtual int isOkay();
+        virtual int error(std::string msg);
+
+        virtual int recv_ready();
+
+        virtual int recv(uint8_t *buffer, int bytes);
+        virtual int recv(std::string &buffer, int bytes);
+        virtual int recv_blocking(uint8_t *buffer, int bytes);
+        virtual int recv_blocking(std::string &buffer, int bytes);
+
+        virtual int send(uint8_t *buffer, int bytes);
+        virtual int send(const std::string &buffer);
+
+	virtual int setSleepPeriods(float busy, float idle);
 
 private:
 	RsSshd(std::string portStr); /* private constructor => so can only create with */
@@ -102,7 +114,8 @@ int	setupShell();
 int	doEcho();
 
 	// Terminal Handling!
-int 	doTermServer();
+//int 	doTermServer();
+int 	doRpcSystem();
 
 int 	cleanupSession();
 int 	cleanupAll();
@@ -117,6 +130,9 @@ int 	auth_password_basic(char *name, char *pwd);
 	// DATA.
 
 	RsMutex mSshMtx;
+
+       	uint32_t mBusyUSleep;
+        uint32_t mIdleUSleep;
 	
 	uint32_t mState;
 	uint32_t mBindState;
@@ -126,7 +142,8 @@ int 	auth_password_basic(char *name, char *pwd);
 	ssh_bind mBind;
 	ssh_channel mChannel;
 
-	RsTermServer *mTermServer;
+	RpcSystem *mRpcSystem;
+
 #ifdef ALLOW_CLEARPWDS
 	std::map<std::string, std::string> mPasswords;
 #endif // ALLOW_CLEARPWDS

@@ -26,6 +26,8 @@ clients must be made or how a client should react.
 
 #define RSSSHD_STATE_NULL	0
 #define RSSSHD_STATE_INIT_OK	1
+#define RSSSHD_STATE_CONNECTED  2
+#define RSSSHD_STATE_ERROR	3
 
 RsSshd *rsSshd = NULL; // External Reference Variable.
 
@@ -54,8 +56,9 @@ RsSshd::RsSshd(std::string portStr)
 
 	mState = RSSSHD_STATE_NULL;
     	mBindState = 0;
-        mTermServer = NULL;
+        mRpcSystem = NULL;
 
+	setSleepPeriods(0.01, 0.1);
 	return;
 }
 
@@ -104,6 +107,7 @@ void RsSshd::run()
 				std::cerr << "RsSshd::run() setup mSession => interactive";
 				std::cerr << std::endl;
 		
+    				mState = RSSSHD_STATE_CONNECTED;
 				interactive();
 			}
 			else
@@ -195,7 +199,7 @@ int RsSshd::interactive()
 	std::cerr << "RsSshd::interactive()";
 	std::cerr << std::endl;
 
-	doTermServer();
+	doRpcSystem();
 	//doEcho();
 	return 1;
 }
@@ -318,7 +322,36 @@ int RsSshd::setupShell()
     return 1;
 }
 
+// CLEANUP
+int RsSshd::cleanupSession()
+{
+	std::cerr << "RsSshd::cleanupSession()";
+	std::cerr << std::endl;
 
+    ssh_disconnect(mSession);
+    ssh_free(mSession);
+    return 1;
+}
+
+
+int RsSshd::cleanupAll()
+{
+	std::cerr << "RsSshd::cleanupAll()";
+	std::cerr << std::endl;
+
+    cleanupSession();
+    if (mBindState)
+    {
+    	ssh_bind_free(mBind);
+    	mBindState = 0;
+    }
+    ssh_finalize();
+    return 1;
+}
+
+
+
+// Various Operating Modes.
 int RsSshd::doEcho()
 {
 	std::cerr << "RsSshd::doEcho()";
@@ -354,13 +387,14 @@ int RsSshd::doEcho()
 }
 
 
-int RsSshd::setTermServer(RsTermServer *s)
+int RsSshd::setRpcSystem(RpcSystem *s)
 {
-	mTermServer = s;
+	mRpcSystem = s;
 	return 1;
 }
 
 
+#if 0
 
 int RsSshd::doTermServer()
 {
@@ -422,32 +456,160 @@ int RsSshd::doTermServer()
 	return 1;
 }
 
+#endif
 
-int RsSshd::cleanupSession()
+
+int RsSshd::doRpcSystem()
 {
-	std::cerr << "RsSshd::cleanupSession()";
+	std::cerr << "RsSshd::doRpcSystem()";
 	std::cerr << std::endl;
 
-    ssh_disconnect(mSession);
-    ssh_free(mSession);
-    return 1;
+	if (!mRpcSystem)
+	{
+		std::cerr << "RsSshd::doRpcSystem() ERROR Not Set";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	mRpcSystem->reset(); // clear everything for new user.
+
+	bool okay = true;
+	while(okay)
+	{
+		int rt = mRpcSystem->tick();
+		if (rt)
+		{
+			// Working - so small sleep,
+			usleep(mBusyUSleep); 
+		}
+		else
+		{
+			// No work cycle, longer break.
+			usleep(mIdleUSleep); 
+		}
+
+		if (rt < 0)
+		{
+			okay = false; // exit.
+		}	
+
+		if (!isOkay())
+		{
+			okay = false;
+		}
+	}
+
+	std::cerr << "RsSshd::doRpcSystem() Finished";
+	std::cerr << std::endl;
+
+	return 1;
+}
+
+// RpcComms Interface....
+int RsSshd::isOkay()
+{
+    	return (mState == RSSSHD_STATE_CONNECTED);
 }
 
 
-int RsSshd::cleanupAll()
+int RsSshd::error(std::string msg)
 {
-	std::cerr << "RsSshd::cleanupAll()";
+	std::cerr << "RsSshd::error(" << msg << ")";
 	std::cerr << std::endl;
 
-    cleanupSession();
-    if (mBindState)
-    {
-    	ssh_bind_free(mBind);
-    	mBindState = 0;
-    }
-    ssh_finalize();
-    return 1;
+    	mState = RSSSHD_STATE_ERROR;
+	return 1;	
 }
+
+
+int RsSshd::recv_ready()
+{
+	int bytes = ssh_channel_poll(mChannel, 0);
+	return bytes;		
+}
+
+
+int RsSshd::recv(uint8_t *buffer, int bytes)
+{
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
+	int size = ssh_channel_read_nonblocking(mChannel, buffer, bytes, 0);
+#else
+	int size = channel_read_nonblocking(mChannel, buffer, bytes, 0);
+#endif
+	return size;
+}
+
+
+int RsSshd::recv(std::string &buffer, int bytes)
+{
+	char input[bytes];
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
+	int size = ssh_channel_read_nonblocking(mChannel, input, bytes, 0);
+#else
+	int size = channel_read_nonblocking(mChannel, input, bytes, 0);
+#endif
+	for(int i = 0; i < size; i++)
+	{
+		buffer += input[i];
+	}
+	return size;
+}
+
+
+int RsSshd::recv_blocking(uint8_t *buffer, int bytes)
+{
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
+	int size = ssh_channel_read(mChannel, buffer, bytes, 0);
+#else
+	int size = channel_read(mChannel, buffer, bytes, 0);
+#endif
+	return size;
+}
+
+
+int RsSshd::recv_blocking(std::string &buffer, int bytes)
+{
+	char input[bytes];
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
+	int size = ssh_channel_read(mChannel, input, bytes, 0);
+#else
+	int size = channel_read(mChannel, input, bytes, 0);
+#endif
+	for(int i = 0; i < size; i++)
+	{
+		buffer += input[i];
+	}
+	return size;
+}
+
+int RsSshd::send(uint8_t *buffer, int bytes)
+{
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
+	ssh_channel_write(mChannel, buffer, bytes);
+#else
+	channel_write(mChannel, buffer, bytes);
+#endif
+	return 1;
+}
+
+int RsSshd::send(const std::string &buffer)
+{
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
+	ssh_channel_write(mChannel, buffer.c_str(), buffer.size());
+#else
+	channel_write(mChannel, buffer.c_str(), buffer.size());
+#endif
+	return 1;
+}
+
+int RsSshd::setSleepPeriods(float busy, float idle)
+{
+	mBusyUSleep = busy * 1000000;
+	mIdleUSleep = idle * 1000000;
+	return 1;
+}
+
+
 
 /***********************************************************************************/
     /* PASSWORDS */
@@ -682,7 +844,7 @@ int CheckPasswordHash(std::string pwdHashRadix64, std::string password)
 	char *buf = NULL;
 	size_t len = 1024;
 	Radix64::decode(pwdHashRadix64, buf, len);
-	for(int i = 0; (i < len) && (i < 1024); i++)
+	for(unsigned int i = 0; (i < len) && (i < 1024); i++)
 	{
 		output[i] = buf[i];
 	}

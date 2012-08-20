@@ -142,18 +142,38 @@ sshserver {
 	#
 
 	INCLUDEPATH += ../../../lib/libssh-0.5.2/include/
-#	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
-#	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
-LIBS *= -lssh
+	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
+	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
+	#LIBS += -lssh
+	#LIBS += -lssh_threads
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc
 
+	# For the Menu System
 	HEADERS += menu/menu.h \
 		menu/menus.h \
-		rstermserver.h \
+		menu/stdiocomms.h \
 
 	SOURCES += menu/menu.cc \
 		menu/menus.cc \
+		menu/stdiocomms.cc \
+
+	# For the RPC System
+	HEADERS += rpc/rpc.h \
+		rpc/rpcserver.h \
+		rpc/rpcsetup.h \
+		rpc/rpcecho.h \
+		rpcsystem.h \
+
+	SOURCES += rpc/rpc.cc \
+		rpc/rpcserver.cc \
+		rpc/rpcsetup.cc \
+		rpc/rpcecho.cc \
+
+	# Actual protocol files to go here...
+	#HEADERS += rpc/proto/rpcecho.h \
+
+	#SOURCES += rpc/proto/rpcecho.cc \
 
 	DEFINES *= RS_SSH_SERVER
 }

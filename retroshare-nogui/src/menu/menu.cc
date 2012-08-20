@@ -1,3 +1,25 @@
+/*
+ * RetroShare External Interface.
+ *
+ * Copyright 2012-2012 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2.1 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
 
 #include "menu/menu.h"
 #include <retroshare/rsconfig.h>
@@ -7,6 +29,8 @@
 #include <iostream>
 
 #include "util/rsstring.h"
+
+#define MENU_DEBUG	1	
 
 /**********************************************************
  * Menu Base Interface.
@@ -18,29 +42,89 @@ void MenuInterface::reset()
 	mBase->reset();
 	mCurrentMenu = mBase;
 	mInputRequired = false;
+	mUpdateTime = 0;
 }
 
-int MenuInterface::tick(bool haveInput, char keypress, std::string &output)
+
+
+int MenuInterface::tick()
 {
-	if (!haveInput)
+#ifdef MENU_DEBUG
+	std::cerr << "MenuInterface::tick()";
+	std::cerr << std::endl;
+#endif // MENU_DEBUG
+
+	/* try to read a char */
+	bool haveInput = false;
+	uint8_t keypress;
+	std::string output;
+
+	int read = mComms->recv(&keypress, 1);
+#ifdef MENU_DEBUG
+	std::cerr << "MenuInterface::tick() read " << read << " bytes";
+	std::cerr << std::endl;
+#endif // MENU_DEBUG
+
+	if (read == 0)
 	{
+		haveInput = false;
 		/* make a harmless key */
 		keypress = ' ';
 	}
-
-	if ((mInputRequired) && (!haveInput))
+	else if (read == 1)
 	{
-		return 1;
+		haveInput = true;
+	}
+	else
+	{
+		/* error, NON BLOCKING is handled by recv returning 0 */
+		mComms->error("Bad Input");
+		return -1;
+	}
+
+
+	/**** Main logic bit ****/
+	/**** slow down the updates / refresh ****/
+	
+	time_t now = time(NULL);
+#define UPDATE_TIME	5
+	if (!haveInput)
+	{
+		// If Input is Required, 
+		if (mInputRequired)
+		{
+			std::cerr << "MenuInterface::tick() No Input & Required-No Output";
+			std::cerr << std::endl;
+			return 0;
+		}
+
+		// Output will just almost the same, so occasionally.
+		if (now < mUpdateTime + UPDATE_TIME)
+		{
+			std::cerr << "MenuInterface::tick() No Input-Slow Update";
+			std::cerr << std::endl;
+			return 0;
+		}
+
+		std::cerr << "MenuInterface::tick() No Input - but doing update.";
+		std::cerr << std::endl;
 	}
 
 	uint32_t rt = process(keypress, mDrawFlags, output);
 	mInputRequired = (rt == MENU_PROCESS_NEEDDATA);
+	mUpdateTime = now;
 
 	if (rt == MENU_PROCESS_QUIT)
 	{
 		return -1;
 	}
-	return 1;
+
+	if (output.size() > 0)
+	{
+		mComms->send(output);
+	}
+
+	return (haveInput);
 }
 
 
@@ -167,6 +251,9 @@ uint32_t MenuInterface::process(char key, uint32_t drawFlags, std::string &buffe
 
 	return MENU_PROCESS_NONE;
 }
+
+
+
 
 uint32_t MenuInterface::drawHeader(uint32_t drawFlags, std::string &buffer)
 {

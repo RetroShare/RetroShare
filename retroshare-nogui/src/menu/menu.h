@@ -1,3 +1,28 @@
+/*
+ * RetroShare External Interface.
+ *
+ * Copyright 2012-2012 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2.1 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+
+
 #ifndef RSNOGUI_MENU_H
 #define RSNOGUI_MENU_H
 
@@ -7,7 +32,7 @@
 #include <map>
 #include <list>
 
-#include "rstermserver.h" // generic processing command.
+#include "rpcsystem.h" // generic processing command.
 
 #define MENU_PROCESS_MASK	0x0fff 
 
@@ -172,7 +197,7 @@ protected:
 };
 
 
-
+#if 0
 class MenuInterface: public RsTermServer
 {
 public:
@@ -191,6 +216,33 @@ private:
 	Menu *mBase;
 	uint32_t mDrawFlags;
 	bool mInputRequired;
+};
+
+#endif
+
+
+class MenuInterface: public RpcSystem
+{
+public:
+
+	MenuInterface(RpcComms *c, Menu *b, uint32_t drawFlags)
+	:mComms(c), mCurrentMenu(b), mBase(b), mDrawFlags(drawFlags), mInputRequired(false)  { return; }
+
+	uint32_t process(char key, uint32_t drawFlags, std::string &buffer); 
+	uint32_t drawHeader(uint32_t drawFlags, std::string &buffer); 
+
+	// RsSystem Interface.
+        virtual void reset();
+        virtual int tick();
+
+
+private:
+	RpcComms *mComms;
+	Menu *mCurrentMenu;
+	Menu *mBase;
+	uint32_t mDrawFlags;
+	bool mInputRequired;
+	time_t mUpdateTime;
 };
 
 

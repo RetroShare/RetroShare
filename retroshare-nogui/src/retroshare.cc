@@ -44,7 +44,9 @@
 #include "ssh/rssshd.h"
 
 #include "menu/menus.h"
-#include "menu/menutest.h"
+#include "menu/stdiocomms.h"
+
+#include "rpc/rpcsetup.h"
 
 #endif
 
@@ -94,6 +96,7 @@ int main(int argc, char **argv)
 	// set user/password for SSH. -L "user:pwdhash"
 	// accept RSA Key Auth. -K "RsaPubKeyFile"
 	// Terminal mode. -T 
+	bool enableRpc = false;
 	bool enableSsh = false;
 	bool enableSshHtml = false;
 	bool enableSshPwd = false;
@@ -105,10 +108,14 @@ int main(int argc, char **argv)
 	std::string sshRsaFile = "";
 	std::string sshPortStr = "7022";
 
-	while((c = getopt(argc, argv,"hTL:P:K:GS::")) != -1)
+	while((c = getopt(argc, argv,"ChTL:P:K:GS::")) != -1)
 	{
 		switch(c)
 		{
+			case 'C':
+				enableRpc = true;
+				strictCheck = false;
+				break;
 			case 'S':
 				enableSsh = true;
 				if (optarg)
@@ -153,6 +160,7 @@ int main(int argc, char **argv)
 				std::cerr << "\t-S [port]           Enable SSH Server, optionally specify port" << std::endl;
 				std::cerr << "\t-L <user>           Specify SSH login user (default:user)" << std::endl;
 				std::cerr << "\t-P <pwdhash>        Enable SSH login via Password" << std::endl;
+				std::cerr << "\t-C                  Enable RPC Protocol (requires -S too)" << std::endl;
 				//std::cerr << "\t-K [rsapubkeyfile]  Enable SSH login via RSA key" << std::endl;
 				//std::cerr << "\t                    NB: Two Factor Auth, specify both -P & -K" << std::endl;
 				std::cerr << std::endl;
@@ -243,6 +251,13 @@ int main(int argc, char **argv)
 	if (enableSsh && (!enableSshRsa) && (!enableSshPwd))
 	{
 		std::cerr << "ERROR: One of (or both) SSH Pwd (-P) and SSH RSA (-K) must be specified with SSH Server (-S)";
+		std::cerr << std::endl;
+		exit(1);
+	}
+
+	if (enableRpc && (!enableSsh))
+	{
+		std::cerr << "ERROR: RPC Mode (-C) requires SSH Server (-S) enabled";
 		std::cerr << std::endl;
 		exit(1);
 	}
@@ -364,26 +379,39 @@ int main(int argc, char **argv)
 #ifdef RS_SSH_SERVER
 	uint32_t baseDrawFlags = 0;
 	if (enableSshHtml)
+	{
 		baseDrawFlags = MENU_DRAW_FLAGS_HTML;
+	}
 
 	if (enableSsh)
 	{
-		/* create menu system for SSH */
-		Menu *baseMenu = CreateMenuStructure(notify);
-		MenuInterface *menuInterface = new MenuInterface(baseMenu, baseDrawFlags | MENU_DRAW_FLAGS_ECHO);
-		ssh->setTermServer(menuInterface);
+		if (enableRpc)
+		{
+			/* Build RPC Server */
+			RpcMediator *med = CreateRpcSystem(ssh);
+			ssh->setRpcSystem(med);
+			ssh->setSleepPeriods(0.01, 0.1);
+		}
+		else
+		{
+			/* create menu system for SSH */
+			Menu *baseMenu = CreateMenuStructure(notify);
+			MenuInterface *menuInterface = new MenuInterface(ssh, baseMenu, baseDrawFlags | MENU_DRAW_FLAGS_ECHO);
+			ssh->setRpcSystem(menuInterface);
+			ssh->setSleepPeriods(0.2, 1);
+		}
 	
 		ssh->start();
 	}
 
-	//MenuTest *menuTerminal = NULL;
-	RsConsole *menuTerminal = NULL;
+	MenuInterface *terminalMenu = NULL;
 	if (enableTerminal)
 	{
 		/* Terminal Version */
+		RpcComms *stdioComms = new StdioComms(fileno(stdin), fileno(stdout)); 
 		Menu *baseMenu = CreateMenuStructure(notify);
-		MenuInterface *menuInterface = new MenuInterface(baseMenu, baseDrawFlags | MENU_DRAW_FLAGS_NOQUIT);
-		menuTerminal = new RsConsole(menuInterface, fileno(stdin), fileno(stdout));
+		terminalMenu = new MenuInterface(stdioComms, baseMenu, baseDrawFlags | MENU_DRAW_FLAGS_NOQUIT);
+		//menuTerminal = new RsConsole(menuInterface, fileno(stdin), fileno(stdout));
 	}
 
 
@@ -400,9 +428,9 @@ int main(int argc, char **argv)
 
 		int rt = 0;
 #ifdef RS_SSH_SERVER
-		if (menuTerminal)
+		if (terminalMenu)
 		{
-			rt = menuTerminal->tick();
+			rt = terminalMenu->tick();
 		}
 #endif
 
@@ -416,6 +444,8 @@ int main(int argc, char **argv)
 			Sleep(1000);
 #endif
 		}
+
+		usleep(1000);
 
 	}
 	return 1;
