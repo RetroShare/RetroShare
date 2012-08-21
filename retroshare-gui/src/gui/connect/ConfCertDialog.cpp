@@ -198,6 +198,7 @@ void ConfCertDialog::load()
         ui.label_version->show();
 
         ui.groupBox->show();
+        ui.groupBox_4->show();
         ui.rsid->hide();
         ui.label_rsid->hide();
     } else {
@@ -207,12 +208,13 @@ void ConfCertDialog::load()
         ui.label_rsid->show();
         ui.loc->hide();
         ui.label_loc->hide();
-		ui.statusline->hide();
+        ui.statusline->hide();
         ui.label_status->hide();
         ui.lastcontact->hide();
         ui.label_last_contact->hide();
         ui.version->hide();
         ui.label_version->hide();
+        ui.groupBox_4->hide();
 
         ui.groupBox->hide();
     }

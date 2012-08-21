@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>602</height>
+    <width>635</width>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,6 +88,46 @@ p, li { white-space: pre-wrap; }
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="_12">
+        <item row="0" column="0">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>311</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="applyButton">
+          <property name="toolTip">
+           <string>Apply and Close</string>
+          </property>
+          <property name="text">
+           <string>OK</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="default">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="cancelButton">
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item row="0" column="0">
        <widget class="QTabWidget" name="stabWidget">
         <property name="currentIndex">
@@ -101,13 +141,60 @@ p, li { white-space: pre-wrap; }
          <attribute name="title">
           <string>Details</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="1" rowspan="3">
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QFrame" name="avatarFrame">
+            <property name="maximumSize">
+             <size>
+              <width>98</width>
+              <height>98</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QFrame#avatarFrame{
+border: 2px solid #CCCCCC;
+border-radius:6px;
+background: white;
+}</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="AvatarWidget" name="avatar">
+               <property name="minimumSize">
+                <size>
+                 <width>96</width>
+                 <height>96</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>96</width>
+                 <height>96</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="1">
            <widget class="QGroupBox" name="groupBox_2">
             <property name="title">
              <string>Peer Info</string>
             </property>
-            <layout class="QGridLayout" name="_2">
+            <layout class="QGridLayout" name="gridLayout_7">
              <item row="0" column="0">
               <widget class="QLabel" name="label_name">
                <property name="text">
@@ -122,70 +209,28 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="1" column="0">
               <widget class="QLabel" name="label_id">
                <property name="text">
                 <string>Peer ID</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="1" column="1">
               <widget class="QLineEdit" name="peerid">
                <property name="readOnly">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_last_contact">
-               <property name="text">
-                <string>Last Contact</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QLineEdit" name="lastcontact">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="1">
-              <widget class="QLineEdit" name="version">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="0">
-              <widget class="QLabel" name="label_version">
-               <property name="text">
-                <string>Version</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_loc">
-               <property name="text">
-                <string>Loc</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="loc">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
+             <item row="2" column="0">
               <widget class="QLabel" name="label_rsid">
                <property name="text">
                 <string>RetroShare ID</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="2" column="1">
               <widget class="LinkTextBrowser" name="rsid">
                <property name="enabled">
                 <bool>true</bool>
@@ -213,50 +258,75 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>Other infos</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_loc">
+               <property name="text">
+                <string>Loc</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="loc">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
               <widget class="QLabel" name="label_status">
                <property name="text">
                 <string>Status</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
+             <item row="1" column="1">
               <widget class="QLineEdit" name="statusline">
                <property name="readOnly">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="8" column="0">
-              <spacer name="verticalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_last_contact">
+               <property name="text">
+                <string>Last Contact</string>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="lastcontact">
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
-              </spacer>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_version">
+               <property name="text">
+                <string>Version</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="version">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
           </item>
-          <item row="2" column="0">
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>68</width>
-              <height>126</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="3" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
              <string>Peer Address</string>
@@ -404,7 +474,7 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="3" column="0" colspan="2">
               <spacer>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -420,7 +490,7 @@ p, li { white-space: pre-wrap; }
             </layout>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="3" column="0">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -432,40 +502,6 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="1" column="0">
-           <widget class="QFrame" name="avatarFrame">
-            <property name="frameShape">
-             <enum>QFrame::Panel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <property name="margin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="AvatarWidget" name="avatar">
-               <property name="minimumSize">
-                <size>
-                 <width>96</width>
-                 <height>96</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>96</width>
-                 <height>96</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -805,46 +841,6 @@ p, li { white-space: pre-wrap; }
          </layout>
         </widget>
        </widget>
-      </item>
-      <item row="1" column="0">
-       <layout class="QGridLayout" name="_12">
-        <item row="0" column="0">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>311</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="applyButton">
-          <property name="toolTip">
-           <string>Apply and Close</string>
-          </property>
-          <property name="text">
-           <string>OK</string>
-          </property>
-          <property name="autoDefault">
-           <bool>false</bool>
-          </property>
-          <property name="default">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="cancelButton">
-          <property name="text">
-           <string>Cancel</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </widget>
