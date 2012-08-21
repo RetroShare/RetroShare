@@ -45,7 +45,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
   
-    connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
+    connect(ui.editstatustoolButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 

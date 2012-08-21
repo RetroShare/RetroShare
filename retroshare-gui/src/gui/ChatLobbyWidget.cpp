@@ -43,7 +43,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	QObject::connect(lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCostumPopupMenu()));
 	QObject::connect(lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 
-	QObject::connect(newlobbypushButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
+	QObject::connect(newlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);
