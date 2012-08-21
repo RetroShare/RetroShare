@@ -1,211 +1,176 @@
 TEMPLATE = lib
-
-# CONFIG += staticlib release
-# CONFIG += staticlib testnetwork
-CONFIG += staticlib \
-    bitdht
+#CONFIG += staticlib release
+#CONFIG += staticlib testnetwork
+CONFIG += staticlib bitdht newcache newservices
 CONFIG -= qt
 TARGET = retroshare
+#DEFINES += RSSERIAL_DEBUG
 CONFIG += test_voip
 
-# GXS Stuff.
-CONFIG += newcache
-CONFIG += newservices
-
 # Beware: All data of the stripped services are lost
+#CONFIG += minimal
 DEFINES *= PQI_DISABLE_TUNNEL
+#ENABLE_CACHE_OPT
 
-# ENABLE_CACHE_OPT
-profiling { 
-    QMAKE_CXXFLAGS -= -fomit-frame-pointer
-    QMAKE_CXXFLAGS *= -pg \
-        -g \
-        -fno-omit-frame-pointer
-}
-release:
+minimal {
+        CONFIG -= use_blogs
 
-# UDP and TUNNEL dont work anymore.
-# DEFINES *= PQI_DISABLE_UDP
-# treat warnings as error for better removing
-# QMAKE_CFLAGS += -Werror
-# QMAKE_CXXFLAGS += -Werror
-testnetwork { 
-    # used in rsserver/rsinit.cc Enabled Port Restrictions, and makes Proxy Port next to Dht Port.
-    DEFINES *= LOCALNET_TESTING
-    
-    # used in tcponudp/udprelay.cc Debugging Info for Relays.
-    DEFINES *= DEBUG_UDP_RELAY
-    
-    # used in tcponudp/udpstunner.[h | cc] enables local stun (careful - modifies class variables).
-    DEFINES *= UDPSTUN_ALLOW_LOCALNET
-    
-    # used in pqi/p3linkmgr.cc prints out extra debug.
-    DEFINES *= LINKMGR_DEBUG_LINKTYPE
-    
-    # used in dht/connectstatebox to reduce connection times and display debug.
-    # DEFINES *= TESTING_PERIODS
-    # DEFINES *= DEBUG_CONNECTBOX
-    QMAKE_CXXFLAGS -= -fomit-frame-pointer
-    QMAKE_CXXFLAGS -= -O2
-    QMAKE_CXXFLAGS *= -g \
-        -fno-omit-frame-pointer
+        DEFINES += MINIMAL_LIBRS
 }
+
+profiling {
+        QMAKE_CXXFLAGS -= -fomit-frame-pointer
+        QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
+}
+
+release {
+        # UDP and TUNNEL dont work anymore.
+        #DEFINES *= PQI_DISABLE_UDP
+}
+
+
+
+testnetwork {
+        #DEFINES *= PQI_DISABLE_UDP
+        DEFINES *= PQI_DISABLE_TUNNEL
+
+        # DEFINES *= AUTHSSL_DEBUG GPG_DEBUG
+        # DEFINES *= CONN_DEBUG
+        # DEFINES *= P3DISC_DEBUG
+
+        # DEFINES *= PGRP_DEBUG
+        # DEFINES *= PERSON_DEBUG
+
+        #DEFINES *= DEBUG_UDP_SORTER DEBUG_UDP_LAYER EXTADDRSEARCH_DEBUG
+
+        QMAKE_CXXFLAGS -= -fomit-frame-pointer
+        QMAKE_CXXFLAGS -= -O2
+        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
+}
+
+
 CONFIG += debug
-debug { 
-    # DEFINES *= DEBUG
-    # DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
-    # DEFINES *= CONTROL_DEBUG FT_DEBUG DEBUG_FTCHUNK P3TURTLE_DEBUG
-    # DEFINES *= P3TURTLE_DEBUG
-    # DEFINES *= NET_DEBUG
-    # DEFINES *= DISTRIB_DEBUG
-    # DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
-    # DEFINES *= STATUS_DEBUG SERV_DEBUG RSSERIAL_DEBUG #CONN_DEBUG
-    QMAKE_CXXFLAGS -= -O2 \
-        -fomit-frame-pointer
-    QMAKE_CXXFLAGS *= -g \
-        -fno-omit-frame-pointer
-}
-bitdht { 
-    HEADERS += dht/p3bitdht.h \
-        dht/connectstatebox.h \
-        dht/stunaddrassist.h
-    SOURCES += dht/p3bitdht.cc \
-        dht/p3bitdht_interface.cc \
-        dht/p3bitdht_peers.cc \
-        dht/p3bitdht_peernet.cc \
-        dht/p3bitdht_relay.cc \
-        dht/connectstatebox.cc
-    HEADERS += tcponudp/udppeer.h \
-        tcponudp/bio_tou.h \
-        tcponudp/tcppacket.h \
-        tcponudp/tcpstream.h \
-        tcponudp/tou.h \
-        tcponudp/udpstunner.h \
-        tcponudp/udprelay.h
-    SOURCES += tcponudp/udppeer.cc \
-        tcponudp/tcppacket.cc \
-        tcponudp/tcpstream.cc \
-        tcponudp/tou.cc \
-        tcponudp/bss_tou.c \
-        tcponudp/udpstunner.cc \
-        tcponudp/udprelay.cc
-    
-    # These two aren't actually used (and don't compile) ....
-    # but could be useful later
-    # tcponudp/udpstunner.h \
-    # tcponudp/udpstunner.cc \
-    BITDHT_DIR = ../../libbitdht/src
-    INCLUDEPATH += . \
-        $${BITDHT_DIR}
-    
-    # The next line if for compliance with debian packages. Keep it!
-    INCLUDEPATH += ../libbitdht
-    DEFINES *= RS_USE_BITDHT
-}
-test_bitdht { 
-    # DISABLE TCP CONNECTIONS...
-    DEFINES *= P3CONNMGR_NO_TCP_CONNECTIONS
-    
-    # NO AUTO CONNECTIONS??? FOR TESTING DHT STATUS.
-    DEFINES *= P3CONNMGR_NO_AUTO_CONNECTION
+debug {
+#	DEFINES *= DEBUG
+#	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
+#	DEFINES *= CONTROL_DEBUG FT_DEBUG DEBUG_FTCHUNK P3TURTLE_DEBUG
+#	DEFINES *= P3TURTLE_DEBUG
+#	DEFINES *= NET_DEBUG
+#	DEFINES *= DISTRIB_DEBUG
+#	DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
+#	DEFINES *= STATUS_DEBUG SERV_DEBUG RSSERIAL_DEBUG #CONN_DEBUG
+
+        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
+        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
-# ENABLED UDP NOW.
-use_blogs { 
-    HEADERS += services/p3blogs.h
-    SOURCES += services/p3blogs.cc
-    DEFINES *= RS_USE_BLOGS
+bitdht {
+
+HEADERS +=	dht/p3bitdht.h \
+                dht/connectstatebox.h \
+                dht/stunaddrassist.h
+
+SOURCES +=	dht/p3bitdht.cc  \
+                dht/p3bitdht_interface.cc \
+                dht/p3bitdht_peers.cc \
+                dht/p3bitdht_peernet.cc \
+                dht/p3bitdht_relay.cc \
+                dht/connectstatebox.cc
+
+HEADERS +=	tcponudp/udppeer.h \
+                tcponudp/bio_tou.h \
+                tcponudp/tcppacket.h \
+                tcponudp/tcpstream.h \
+                tcponudp/tou.h \
+                tcponudp/udpstunner.h \
+                tcponudp/udprelay.h \
+
+SOURCES +=	tcponudp/udppeer.cc \
+                tcponudp/tcppacket.cc \
+                tcponudp/tcpstream.cc \
+                tcponudp/tou.cc \
+                tcponudp/bss_tou.c \
+                tcponudp/udpstunner.cc \
+                tcponudp/udprelay.cc \
+
+# These two aren't actually used (and don't compile) ....
+# but could be useful later
+#
+#		tcponudp/udpstunner.h \
+#		tcponudp/udpstunner.cc \
+#
+
+
+        BITDHT_DIR = ../../libbitdht/src
+        INCLUDEPATH += . $${BITDHT_DIR}
+        # The next line if for compliance with debian packages. Keep it!
+        INCLUDEPATH += ../libbitdht
+        DEFINES *= RS_USE_BITDHT
 }
-PUBLIC_HEADERS = retroshare/rsblogs.h \
-    retroshare/rschannels.h \
-    retroshare/rsdisc.h \
-    retroshare/rsdistrib.h \
-    retroshare/rsexpr.h \
-    retroshare/rsfiles.h \
-    retroshare/rsforums.h \
-    retroshare/rshistory.h \
-    retroshare/rsiface.h \
-    retroshare/rsinit.h \
-    retroshare/rsplugin.h \
-    retroshare/rsloginhandler.h \
-    retroshare/rsmsgs.h \
-    retroshare/rsnotify.h \
-    retroshare/rspeers.h \
-    retroshare/rsrank.h \
-    retroshare/rsstatus.h \
-    retroshare/rsturtle.h \
-    retroshare/rstypes.h \
-    retroshare/rsdht.h \
-    retroshare/rsdsdv.h \
-    retroshare/rsconfig.h
+
+
+
+test_bitdht {
+        # DISABLE TCP CONNECTIONS...
+        DEFINES *= P3CONNMGR_NO_TCP_CONNECTIONS
+
+        # NO AUTO CONNECTIONS??? FOR TESTING DHT STATUS.
+        DEFINES *= P3CONNMGR_NO_AUTO_CONNECTION
+
+        # ENABLED UDP NOW.
+}
+
+
+
+
+use_blogs {
+
+        HEADERS +=	services/p3blogs.h
+        SOURCES +=	services/p3blogs.cc
+
+        DEFINES *= RS_USE_BLOGS
+}
+
+
+
+PUBLIC_HEADERS =	retroshare/rsblogs.h \
+                                        retroshare/rschannels.h \
+                                        retroshare/rsdisc.h \
+                                        retroshare/rsdistrib.h \
+                                        retroshare/rsexpr.h \
+                                        retroshare/rsfiles.h \
+                                        retroshare/rsforums.h \
+                                        retroshare/rshistory.h \
+                                        retroshare/rsiface.h \
+                                        retroshare/rsinit.h \
+                                        retroshare/rsplugin.h \
+                                        retroshare/rsloginhandler.h \
+                                        retroshare/rsmsgs.h \
+                                        retroshare/rsnotify.h \
+                                        retroshare/rspeers.h \
+                                        retroshare/rsrank.h \
+                                        retroshare/rsstatus.h \
+                                        retroshare/rsturtle.h \
+                                        retroshare/rstypes.h \
+                                        retroshare/rsdht.h \
+                                        retroshare/rsdsdv.h \
+                                        retroshare/rsconfig.h
+
 HEADERS += plugins/pluginmanager.h \
-    plugins/dlfcn_win32.h \
-    serialiser/rspluginitems.h
+        plugins/dlfcn_win32.h \
+        serialiser/rspluginitems.h
+
+
+
 HEADERS += $$PUBLIC_HEADERS
 
 # public headers to be...
-HEADERS += retroshare/rsgame.h \
-    retroshare/rsphoto.h
+HEADERS +=		retroshare/rsgame.h \
+                                        retroshare/rsphoto.h
+
 
 # ################################ Linux ##########################################
-linux-*:isEmpty(PREFIX) { 
-    PREFIX = /usr \
-        }
-    isEmpty(INC_DIR) { 
-        INC_DIR = $${PREFIX}/include/retroshare/ \
-            }
-        isEmpty(LIB_DIR) { 
-            LIB_DIR = $${PREFIX}/lib/ \
-                }
-            
-            # These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
-            INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
-            INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
-            OPENPGPSDK_DIR = ../../openpgpsdk/src
-            INCLUDEPATH *= $${OPENPGPSDK_DIR} \
-                ../openpgpsdk
-            DESTDIR = lib
-            QMAKE_CXXFLAGS *= -Wall \
-                -D_FILE_OFFSET_BITS=64
-            QMAKE_CC = g++
-            SSL_DIR = /usr/include/openssl
-            UPNP_DIR = /usr/include/upnp
-            INCLUDEPATH += . \
-                $${SSL_DIR} \
-                $${UPNP_DIR}
-            
-            # gpg files
-            system(which gpg-error-config >/dev/null 2>&1):INCLUDEPATH += $$system(gpg-error-config --cflags | sed -e "s/-I//g")
-            else:message(Could not find gpg-error-config on your system, assuming gpg-error.h is in /usr/include)
-            system(which gpgme-config >/dev/null 2>&1):INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
-            else:message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
-            
-            # libupnp implementation files
-            HEADERS += upnp/UPnPBase.h
-            SOURCES += upnp/UPnPBase.cpp
-            
-            # where to put the shared library itself
-            target.path = $$LIB_DIR
-            INSTALLS *= target
-            
-            # where to put the library's interface
-            include_rsiface.path = $${INC_DIR}
-            include_rsiface.files = $$PUBLIC_HEADERS
-            INSTALLS += include_rsiface
-            
-            # CONFIG += version_detail_bash_script
-            DEFINES *= UBUNTU
-            INCLUDEPATH += /usr/include/glib-2.0/ \
-                /usr/lib/glib-2.0/include
-            LIBS *= -lgnome-keyring
 
-        linux-g++:OBJECTS_DIR = temp/linux-g++/obj
-        linux-g++-64:OBJECTS_DIR = temp/linux-g++-64/obj
-        version_detail_bash_script { 
-            QMAKE_EXTRA_TARGETS += write_version_detail
-            PRE_TARGETDEPS = write_version_detail
-            write_version_detail.commands = ./version_detail.sh
-        }
         
         # ################### Cross compilation for windows under Linux ####################
         win32-x-g++ { 
@@ -262,11 +227,14 @@ linux-*:isEmpty(PREFIX) {
             # miniupnp implementation files
             HEADERS += upnp/upnputil.h
             SOURCES += upnp/upnputil.c
-            UPNPC_DIR = ../../../miniupnpc-1.3
-            PTHREADS_DIR = ../../../pthreads-w32-2-8-0-release
-            ZLIB_DIR = ../../../zlib-1.2.3
-            SSL_DIR = ../../../openssl-1.0.1c
-            OPENPGPSDK_DIR = ../../openpgpsdk/src
+        UPNPC_DIR = ../../../lib/miniupnpc-1.3
+        GPG_ERROR_DIR = ../../../lib/libgpg-error-1.7
+        GPGME_DIR  = ../../../lib/gpgme-1.1.8
+
+        PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
+        ZLIB_DIR = ../../../lib/zlib-1.2.7
+        SSL_DIR = ../../../OpenSSL
+        OPENPGPSDK_DIR = ../../openpgpsdk/src
             INCLUDEPATH += . \
                 $${SSL_DIR}/include \
                 $${UPNPC_DIR} \
@@ -274,7 +242,7 @@ linux-*:isEmpty(PREFIX) {
                 $${ZLIB_DIR} \
                 $${OPENPGPSDK_DIR}
             newcache { 
-                SQLITE_DIR = ../../../sqlite-autoconf-3071300
+                SQLITE_DIR = ../../../../Libraries/sqlite/sqlite-autoconf-3070900
                 INCLUDEPATH += . \
                     $${SQLITE_DIR}
             }
@@ -625,6 +593,7 @@ linux-*:isEmpty(PREFIX) {
                 serialiser/rsgxsitems.h \
                 serialiser/rsphotov2items.h \
                 util/retrodb.h \
+                util/contentvalue.h \
                 gxs/gxscoreserver.h \
                 gxs/gxssecurity.h
             SOURCES += serialiser/rsnxsitems.cc \
@@ -637,6 +606,7 @@ linux-*:isEmpty(PREFIX) {
                 gxs/rsgxsdataaccess.cc \
                 serialiser/rsphotov2items.cc \
                 util/retrodb.cc \
+                util/contentvalue.cc \
                 gxs/gxscoreserver.cc \
                 gxs/gxssecurity.cc
         }
