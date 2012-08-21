@@ -55,6 +55,8 @@ public:
 class MsgLocMetaData {
 
 public:
+    MsgLocMetaData(const MsgLocMetaData& meta){ msgId = meta.msgId; val = meta.val;}
+    MsgLocMetaData() {}
     RsGxsGrpMsgIdPair msgId;
     ContentValue val;
 };
@@ -66,6 +68,8 @@ public:
 class GrpLocMetaData {
 
 public:
+    GrpLocMetaData(const GrpLocMetaData& meta){ grpId = meta.grpId; val = meta.val;}
+    GrpLocMetaData(){}
     RsGxsGroupId grpId;
     ContentValue val;
 
@@ -97,6 +101,16 @@ typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId,
  */
 class RsGeneralDataService
 {
+
+public:
+
+
+    static const std::string MSG_META_SERV_STRING;
+    static const std::string MSG_META_STATUS;
+
+    static const std::string GRP_META_SUBSCRIBE_FLAG;
+    static const std::string GRP_META_STATUS;
+    static const std::string GRP_META_SERV_STRING;
 
 public:
 

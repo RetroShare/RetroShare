@@ -64,36 +64,14 @@ public:
     bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq&);
 
     /*!
-     * This sets the status of the message
-     * @param msgId the message id to set status for
-     * @param status status
-     * @param statusMask the mask for the settings targetted
-     * @return true if request made successfully, false otherwise
+     * For requesting msgs related to a given msg id within a group
+     * @param token The token returned for the request
+     * @param ansType The type of result wanted
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
+     * @return true if request successful false otherwise
      */
-    bool requestSetMessageStatus(uint32_t &token, const RsGxsGrpMsgIdPair &msgId,
-    		const uint32_t status, const uint32_t statusMask);
-
-    /*!
-     *
-     * @param token
-     * @param grpId
-     * @param status
-     * @param statusMask
-     * @return true if request made successfully, false otherwise
-     */
-    bool requestSetGroupStatus(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t status,
-    		const uint32_t statusMask);
-
-    /*!
-     * Use request status to find out if successfully set
-     * @param groupId
-     * @param subscribeFlags
-     * @param subscribeMask
-     * @return true if request made successfully, false otherwise
-     */
-    bool requestSetGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId &groupId, uint32_t subscribeFlags,
-    		uint32_t subscribeMask);
-
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq&);
 
     /* Poll */
     uint32_t requestStatus(const uint32_t token);
@@ -102,8 +80,6 @@ public:
     bool cancelRequest(const uint32_t &token);
 
     /** E: RsTokenService **/
-
-
 
 public:
 
@@ -176,6 +152,14 @@ public:
      * @return false if data cannot be found for token
      */
     bool getMsgData(const uint32_t &token, NxsMsgDataResult& msgData);
+
+    /*!
+     *
+     * @param token request token to be redeemed
+     * @param msgIds
+     * @return false if data cannot be found for token
+     */
+    bool getMsgRelatedInfo(const uint32_t &token, GxsMsgIdResult &msgIds);
 
 private:
 
@@ -320,6 +304,15 @@ private:
      * @return false if unsuccessful, true otherwise
      */
     bool getMsgData(MsgDataReq* req);
+
+
+    /*!
+     * Attempts to retrieve messages related to msgIds of associated equest
+     * @param token request token to be redeemed
+     * @param msgIds
+     * @return false if data cannot be found for token
+     */
+    bool getMsgRelatedInfo(MsgRelatedInfoReq* req);
 
     /*!
      * This filter msgs based of options supplied (at the moment just status masks)

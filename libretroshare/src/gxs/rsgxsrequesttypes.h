@@ -95,6 +95,14 @@ public:
 	NxsMsgDataResult mMsgData;
 };
 
+class MsgRelatedInfoReq : public GxsRequest
+{
+
+public:
+        GxsMsgReq mMsgIds;
+        GxsMsgIdResult mMsgIdResult;
+};
+
 class GroupSetFlagReq : public GxsRequest
 {
 public:

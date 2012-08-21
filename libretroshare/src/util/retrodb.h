@@ -31,8 +31,8 @@
 #include <list>
 #include <map>
 
+#include "contentvalue.h"
 
-class ContentValue;
 class RetroCursor;
 
 /*!
@@ -288,157 +288,7 @@ private:
 };
 
 
-/*!
- * @brief Convenience container for making additions to databases
- * This class provides a means of holding column values to insert into a database
- */
-class ContentValue {
 
-public:
-
-    static const uint8_t INT32_TYPE;
-    static const uint8_t INT64_TYPE;
-    static const uint8_t DOUBLE_TYPE;
-    static const uint8_t STRING_TYPE;
-    static const uint8_t DATA_TYPE;
-    static const uint8_t BOOL_TYPE;
-
-    ContentValue();
-
-    /*!
-     * copy constructor that copys the key value set from another \n
-     * ContentValue object to this one
-     * makes a deep copy of raw data
-     * @param from ContentValue instance to copy key value set from
-     */
-    ContentValue(ContentValue& from);
-
-    /*!
-     *
-     *
-     *
-     */
-    ~ContentValue();
-
-    /*!
-     * Adds a value to the set
-     * @param key  the name of the value to put
-     * @param value  the data for the value to put
-     * @warning cast string literals explicitly as string, observed string literal \n
-     *          being casted to bool instead e.g. string("hello") rather than "hello"
-     */
-    void put(const std::string& key, const std::string& value);
-
-    /*!
-     * Adds a value to the set
-     * @param key  the name of the value to put
-     * @param value  the data for the value to put
-     */
-    void put(const std::string& key, bool value);
-
-    /*!
-     * Adds a value to the set
-     * @param key  the name of the value to put
-     * @param value  the data for the value to put
-     */
-    void put(const std::string& key, int64_t value);
-
-    /*!
-     * Adds a value to the set
-     * @param key  the name of the value to put
-     * @param value  the data for the value to put
-     */
-    void put(const std::string& key, int32_t value);
-
-    /*!
-     * Adds a value to the set
-     * @param key  the name of the value to put
-     * @param value  the data for the value to put
-     */
-    void put(const std::string& key, double value);
-
-    /*!
-     * Adds a value to the set
-     * @param key  the name of the value to put
-     * @param value  the data for the value to put
-     */
-    void put(const std::string& key, uint32_t len, const char* value);
-
-
-    /*!
-     * get value as 32 bit signed integer
-     * @param key the value to get
-     */
-    bool getAsInt32(const std::string& key, int32_t& value) const;
-
-    /*!
-     * get value as 64 bit signed integer
-     * @param key the value to get
-     */
-    bool getAsInt64(const std::string& key, int64_t& value) const;
-
-    /*!
-     * get value as bool
-     * @param key the value to get
-     */
-    bool getAsBool(const std::string& key, bool& value) const;
-
-    /*!
-     * get as value double
-     * @param key the value to get
-     */
-    bool getAsDouble(const std::string& key, double& value) const;
-
-    /*!
-     * get as value as string
-     * @param key the value to get
-     * @param value the data retrieved
-     */
-    bool getAsString(const std::string& key, std::string& value) const;
-
-    /*!
-     * get as value as raw data
-     * @warning Deep copy of data reference should be made, if this instance ContentValue \n
-     *          is destroyed pointer returned (value) is pointing to invalid memory
-     * @param key the value to get
-     */
-    bool getAsData(const std::string&, uint32_t& len, char*& value) const;
-
-    /*!
-     * @param keySet the is set with key to type pairs contained in the ContentValue instance
-     */
-    void getKeyTypeMap(std::map<std::string, uint8_t>& keySet) const;
-
-    /*!
-     * @param key the key of the key value pair to remove
-     * @return true if key was found and removed, false otherwise
-     */
-    bool removeKeyValue(const std::string& key);
-
-    /*!
-     * clears this data structure of all its key value pairs held
-     */
-    void clear();
-
-private:
-
-    /*!
-     * release memory resource associated with mKvData
-     */
-    void clearData();
-
-private:
-
-    std::map<std::string, int32_t> mKvInt32;
-    std::map<std::string, int64_t> mKvInt64;
-    std::map<std::string, double> mKvDouble;
-    std::map<std::string, std::string> mKvString;
-    std::map<std::string, std::pair<uint32_t, char*> > mKvData;
-    std::map<std::string, bool> mKvBool;
-
-    std::map<std::string, uint8_t> mKvSet;
-
-};
 
 
 #endif // RSSQLITE_H

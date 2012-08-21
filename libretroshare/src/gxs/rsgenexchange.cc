@@ -31,6 +31,7 @@
 
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
+#include "util/contentvalue.h"
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
                              RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType)
@@ -63,26 +64,33 @@ void RsGenExchange::tick()
 
 	publishMsgs();
 
+        processGrpMetaChanges();
+
+        processMsgMetaChanges();
+
 	notifyChanges(mNotifications);
 	mNotifications.clear();
 
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
-		std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+                RsGxsGrpMsgIdPair& msgId)
 {
 	RsStackMutex stack(mGenMtx);
 
-	std::map<uint32_t, std::pair<RsGxsGroupId, RsGxsMessageId> >::iterator mit =
-			mMsgPublished.find(token);
+        std::map<uint32_t, RsGxsGrpMsgIdPair >::iterator mit =
+                        mMsgNotify.find(token);
 
-	if(mit == mMsgPublished.end())
-		return false;
+        if(mit == mMsgNotify.end())
+        {
+            return false;
+        }
 
-	msgId = mit->second;
 
-	// no dump token as client has ackowledged its completion
-	mDataAccess->disposeOfPublicToken(token);
+        msgId = mit->second;
+
+        // no dump token as client has ackowledged its completion
+        mDataAccess->disposeOfPublicToken(token);
 
 	return true;
 }
@@ -95,9 +103,9 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token,
 	RsStackMutex stack(mGenMtx);
 
 	std::map<uint32_t, RsGxsGroupId >::iterator mit =
-			mGrpPublished.find(token);
+                        mGrpNotify.find(token);
 
-	if(mit == mGrpPublished.end())
+        if(mit == mGrpNotify.end())
 		return false;
 
 	grpId = mit->second;
@@ -395,28 +403,131 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 }
 
 
-bool RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
+void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 {
 
     RsStackMutex stack(mGenMtx);
 
     token = mDataAccess->generatePublicToken();
     mGrpsToPublish.insert(std::make_pair(token, grpItem));
-
-    return true;
 }
 
-bool RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
+void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
+{
+    RsStackMutex stack(mGenMtx);
+
+    token = mDataAccess->generatePublicToken();
+    mMsgsToPublish.insert(std::make_pair(token, msgItem));
+}
+
+void RsGenExchange::setGroupSubscribeFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag)
+{
+    RsStackMutex stack(mGenMtx);
+    token = mDataAccess->generatePublicToken();
+
+    GrpLocMetaData g;
+    g.grpId = grpId;
+    g.val.put(RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG, (int32_t)flag);
+    mGrpLocMetaMap.insert(std::make_pair(token, g));
+}
+
+void RsGenExchange::setGroupStatusFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status)
+{
+    RsStackMutex stack(mGenMtx);
+    token = mDataAccess->generatePublicToken();
+
+    GrpLocMetaData g;
+    g.grpId = grpId;
+    g.val.put(RsGeneralDataService::GRP_META_STATUS, (int32_t)status);
+    mGrpLocMetaMap.insert(std::make_pair(token, g));
+}
+
+
+void RsGenExchange::setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString)
+{
+    RsStackMutex stack(mGenMtx);
+    token = mDataAccess->generatePublicToken();
+
+    GrpLocMetaData g;
+    g.grpId = grpId;
+    g.val.put(RsGeneralDataService::GRP_META_SERV_STRING, servString);
+    mGrpLocMetaMap.insert(std::make_pair(token, g));
+}
+
+void RsGenExchange::setMsgStatusFlag(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status)
+{
+    RsStackMutex stack(mGenMtx);
+    token = mDataAccess->generatePublicToken();
+
+    MsgLocMetaData m;
+    m.val.put(RsGeneralDataService::MSG_META_STATUS, (int32_t)status);
+    m.msgId = msgId;
+    mMsgLocMetaMap.insert(std::make_pair(token, m));
+}
+
+void RsGenExchange::setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString )
+{
+    RsStackMutex stack(mGenMtx);
+    token = mDataAccess->generatePublicToken();
+
+    MsgLocMetaData m;
+    m.val.put(RsGeneralDataService::MSG_META_SERV_STRING, servString);
+    m.msgId = msgId;
+    mMsgLocMetaMap.insert(std::make_pair(token, m));
+}
+
+void RsGenExchange::processMsgMetaChanges()
 {
 
-	RsStackMutex stack(mGenMtx);
+    RsStackMutex stack(mGenMtx);
 
-	token = mDataAccess->generatePublicToken();
-	mMsgsToPublish.insert(std::make_pair(token, msgItem));
+    std::map<uint32_t, MsgLocMetaData>::iterator mit = mMsgLocMetaMap.begin(),
+    mit_end = mMsgLocMetaMap.end();
 
-    return true;
+    for(; mit != mit_end; mit++)
+    {
+        MsgLocMetaData& m = mit->second;
+        bool ok = mDataStore->updateMessageMetaData(m) == 1;
+        uint32_t token = mit->first;
+
+        if(ok)
+        {
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+        }else
+        {
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED);
+        }
+        mMsgNotify.insert(std::make_pair(token, m.msgId));
+    }
+
+    mMsgLocMetaMap.clear();
 }
 
+void RsGenExchange::processGrpMetaChanges()
+{
+    RsStackMutex stack(mGenMtx);
+
+    std::map<uint32_t, GrpLocMetaData>::iterator mit = mGrpLocMetaMap.begin(),
+    mit_end = mGrpLocMetaMap.end();
+
+    for(; mit != mit_end; mit++)
+    {
+        GrpLocMetaData& g = mit->second;
+        uint32_t token = mit->first;
+        bool ok = mDataStore->updateGroupMetaData(g) == 1;
+
+        if(ok)
+        {
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+        }else
+        {
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED);
+        }
+        mGrpNotify.insert(std::make_pair(token, g.grpId));
+    }
+
+    mGrpLocMetaMap.clear();
+}
 
 void RsGenExchange::publishMsgs()
 {
@@ -453,7 +564,7 @@ void RsGenExchange::publishMsgs()
                             ok = mDataAccess->addMsgData(msg);
 
                         // add to published to allow acknowledgement
-                        mMsgPublished.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));
+                        mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));
                         mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
 		}
 
@@ -463,7 +574,7 @@ void RsGenExchange::publishMsgs()
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 #endif
-			mMsgPublished.insert(std::make_pair(mit->first, std::make_pair(RsGxsGroupId(""), RsGxsMessageId(""))));
+                        mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(RsGxsGroupId(""), RsGxsMessageId(""))));
 			delete msg;
 			continue;
 
@@ -509,7 +620,7 @@ void RsGenExchange::publishGrps()
 			ok = mDataAccess->addGroupData(grp);
 
 			// add to published to allow acknowledgement
-			mGrpPublished.insert(std::make_pair(mit->first, grp->grpId));
+                        mGrpNotify.insert(std::make_pair(mit->first, grp->grpId));
 			mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
 		}
 
@@ -522,7 +633,7 @@ void RsGenExchange::publishGrps()
 			delete grp;
 
 			// add to published to allow acknowledgement, grpid is empty as grp creation failed
-			mGrpPublished.insert(std::make_pair(mit->first, RsGxsGroupId("")));
+                        mGrpNotify.insert(std::make_pair(mit->first, RsGxsGroupId("")));
 			mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED);
 			continue;
 		}

@@ -120,6 +120,14 @@
 
 #define RS_DATA_SERVICE_DEBUG
 
+const std::string RsGeneralDataService::GRP_META_SERV_STRING = KEY_NXS_SERV_STRING;
+const std::string RsGeneralDataService::GRP_META_STATUS = KEY_GRP_STATUS;
+const std::string RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG = KEY_GRP_SUBCR_FLAG;
+
+const std::string RsGeneralDataService::MSG_META_SERV_STRING = KEY_NXS_SERV_STRING;
+const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
+
+
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
                              RsGxsSearchModule *mod)
     : RsGeneralDataService(), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType){
@@ -910,12 +918,16 @@ int RsDataService::removeGroups(const std::vector<std::string> &grpIds)
 
 int RsDataService::updateGroupMetaData(GrpLocMetaData &meta)
 {
-    return 0;
+    RsGxsGroupId& grpId = meta.grpId;
+    return mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId + "'", meta.val) ? 1 : 0;
 }
 
 int RsDataService::updateMessageMetaData(MsgLocMetaData &metaData)
 {
-    return 0;
+    RsGxsGroupId& grpId = metaData.msgId.first;
+    RsGxsMessageId& msgId = metaData.msgId.second;
+    return mDb->sqlUpdate(MSG_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId
+                          + "' AND " + KEY_MSG_ID + "='" + msgId + "'", metaData.val) ? 1 : 0;
 }
 
 

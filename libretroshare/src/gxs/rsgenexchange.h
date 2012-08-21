@@ -161,7 +161,7 @@ public:
      * @param msgIds map of grpid->msgIds of message created/modified
      * @return true if token exists false otherwise
      */
-    bool acknowledgeTokenMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId);
+    bool acknowledgeTokenMsg(const uint32_t& token, RsGxsGrpMsgIdPair& msgId);
 
     /*!
 	 * This allows the client service to acknowledge that their grps has
@@ -184,7 +184,7 @@ protected:
      * @param token
      * @param grpItem
      */
-    bool publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
+    void publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
     /*!
      * Enables publication of a message item
@@ -194,7 +194,23 @@ protected:
      * @param token
      * @param msgItem
      */
-    bool publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
+    void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
+
+    /*!
+     * sets the group subscribe flag
+     * @param token this is set to token value associated to this request
+     * @param
+     */
+    void setGroupSubscribeFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+
+    void setGroupStatusFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+
+    void setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
+
+    void setMsgStatusFlag(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status);
+
+    void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
+
 
 
 protected:
@@ -227,6 +243,16 @@ private:
 
     void publishMsgs();
 
+    /*!
+     * processes msg local meta changes
+     */
+    void processMsgMetaChanges();
+
+    /*!
+     * Processes group local meta changes
+     */
+    void processGrpMetaChanges();
+
     void createGroup(RsNxsGrp* grp);
     bool createMessage(RsNxsMsg* msg);
 
@@ -244,8 +270,12 @@ private:
     std::map<uint32_t, RsGxsGrpItem*> mGrpsToPublish;
     std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
 
-    std::map<uint32_t, std::pair<RsGxsGroupId, RsGxsMessageId> > mMsgPublished;
-    std::map<uint32_t, RsGxsGroupId> mGrpPublished;
+    std::map<uint32_t, RsGxsGrpMsgIdPair > mMsgNotify;
+    std::map<uint32_t, RsGxsGroupId> mGrpNotify;
+
+    // for loc meta changes
+    std::map<uint32_t, GrpLocMetaData > mGrpLocMetaMap;
+    std::map<uint32_t,  MsgLocMetaData> mMsgLocMetaMap;
 
     std::vector<RsGxsNotify*> mNotifications;
 

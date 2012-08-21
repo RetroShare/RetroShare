@@ -142,7 +142,8 @@ bool p3PhotoServiceV2::submitAlbumDetails(uint32_t& token, RsPhotoAlbum& album)
 	RsGxsPhotoAlbumItem* albumItem = new RsGxsPhotoAlbumItem();
 	albumItem->album = album;
 	albumItem->meta = album.mMeta;
-	return RsGenExchange::publishGroup(token, albumItem);
+        RsGenExchange::publishGroup(token, albumItem);
+        return true;
 }
 
 
@@ -177,7 +178,8 @@ bool p3PhotoServiceV2::submitPhoto(uint32_t& token, RsPhotoPhoto& photo)
 	photoItem->photo = photo;
 	photoItem->meta = photo.mMeta;
 
-	return RsGenExchange::publishMsg(token, photoItem);
+        RsGenExchange::publishMsg(token, photoItem);
+        return true;
 }
 
 bool p3PhotoServiceV2::acknowledgeMsg(const uint32_t& token,
