@@ -496,8 +496,17 @@ border-radius: 10px;}</string>
              <stylestrategy>PreferAntialias</stylestrategy>
             </font>
            </property>
+           <property name="text">
+            <string/>
+           </property>
            <property name="wordWrap">
             <bool>true</bool>
+           </property>
+           <property name="margin">
+            <number>6</number>
+           </property>
+           <property name="indent">
+            <number>-1</number>
            </property>
            <property name="openExternalLinks">
             <bool>true</bool>
