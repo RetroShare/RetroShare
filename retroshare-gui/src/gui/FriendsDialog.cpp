@@ -180,7 +180,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     menu->addAction(ui.actionSet_your_Avatar);
     menu->addAction(ui.actionSet_your_Personal_Message);
 
-    ui.menupushButton->setMenu(menu);
+    ui.menutoolButton->setMenu(menu);
 
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
@@ -210,8 +210,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     // add self nick and Avatar to Friends.
     RsPeerDetails pd ;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        QString titleStr("<span style=\"font-size:16pt; font-weight:500;color:#32cd32;\">%1</span>");
-        ui.nicklabel->setText(titleStr.arg(PeerDefs::nameWithLocation(pd)));
+        ui.nicklabel->setText(PeerDefs::nameWithLocation(pd));
     }
 
     /* Hide platform specific features */

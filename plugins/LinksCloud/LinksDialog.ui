@@ -66,7 +66,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset resource="../../retroshare-gui/src/gui/images.qrc">
            <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
          </property>
         </widget>
@@ -109,7 +109,7 @@
            <string>Time</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/kalarm.png</normaloff>:/images/kalarm.png</iconset>
           </property>
          </item>
@@ -118,7 +118,7 @@
            <string>Ranking</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/records.png</normaloff>:/images/records.png</iconset>
           </property>
          </item>
@@ -157,7 +157,7 @@
            <string>Month</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/view_calendar_month.png</normaloff>:/images/view_calendar_month.png</iconset>
           </property>
          </item>
@@ -166,7 +166,7 @@
            <string>Week</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/view_calendar_week.png</normaloff>:/images/view_calendar_week.png</iconset>
           </property>
          </item>
@@ -175,7 +175,7 @@
            <string>Day</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/view_calendar_day.png</normaloff>:/images/view_calendar_day.png</iconset>
           </property>
          </item>
@@ -214,7 +214,7 @@
            <string>All Peers</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/user/friends24.png</normaloff>:/images/user/friends24.png</iconset>
           </property>
          </item>
@@ -223,7 +223,7 @@
            <string>Own Links</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/user/identity16.png</normaloff>:/images/user/identity16.png</iconset>
           </property>
          </item>
@@ -262,7 +262,7 @@
            <string>Top 100</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/records.png</normaloff>:/images/records.png</iconset>
           </property>
          </item>
@@ -400,7 +400,7 @@ background: white;}</string>
              <string>+2 Great!</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../../retroshare-gui/src/gui/images.qrc">
               <normaloff>:/images/filerating5.png</normaloff>:/images/filerating5.png</iconset>
             </property>
            </item>
@@ -409,7 +409,7 @@ background: white;}</string>
              <string>+1 Good</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../../retroshare-gui/src/gui/images.qrc">
               <normaloff>:/images/filerating4.png</normaloff>:/images/filerating4.png</iconset>
             </property>
            </item>
@@ -418,7 +418,7 @@ background: white;}</string>
              <string>0 Okay</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../../retroshare-gui/src/gui/images.qrc">
               <normaloff>:/images/filerating3.png</normaloff>:/images/filerating3.png</iconset>
             </property>
            </item>
@@ -427,7 +427,7 @@ background: white;}</string>
              <string>-1 Sux</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../../retroshare-gui/src/gui/images.qrc">
               <normaloff>:/images/filerating2.png</normaloff>:/images/filerating2.png</iconset>
             </property>
            </item>
@@ -436,7 +436,7 @@ background: white;}</string>
              <string>-2 Bad Link</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../../retroshare-gui/src/gui/images.qrc">
               <normaloff>:/images/filerating1.png</normaloff>:/images/filerating1.png</iconset>
             </property>
            </item>
@@ -526,7 +526,7 @@ border: 1px solid #CCCCCC;}</string>
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/irkick.png</pixmap>
+         <pixmap resource="linksCloud_images.qrc">:/images/irkick.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -535,11 +535,16 @@ border: 1px solid #CCCCCC;}</string>
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Links Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Links Cloud</string>
         </property>
        </widget>
       </item>
@@ -567,7 +572,7 @@ border: 1px solid #CCCCCC;
          <string>Add new link</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../../retroshare-gui/src/gui/images.qrc">
           <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
         </property>
         <property name="flat">
@@ -581,7 +586,8 @@ border: 1px solid #CCCCCC;
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="linksCloud_images.qrc"/>
+  <include location="../../retroshare-gui/src/gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>

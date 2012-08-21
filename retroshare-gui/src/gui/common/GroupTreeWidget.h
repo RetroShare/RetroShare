@@ -27,7 +27,7 @@
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
-class QPushButton;
+class QToolButton;
 class RshareSettings;
 class RSTreeWidgetItemCompareRole;
 
@@ -65,7 +65,7 @@ public:
 	// Load and save settings (group must be startet from the caller)
 	void processSettings(RshareSettings *settings, bool load);
 	// Initialize the display menu for sorting
-	void initDisplayMenu(QPushButton *pushButton);
+	void initDisplayMenu(QToolButton *toolButton);
 
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);

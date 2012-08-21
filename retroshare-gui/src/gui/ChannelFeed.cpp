@@ -93,7 +93,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     //added from ahead
     updateChannelList();
     
-    nameLabel->setFont(QFont("MS SANS SERIF", 22));
     nameLabel->setMinimumWidth(20);
 
     /* load settings */
@@ -503,12 +502,8 @@ void ChannelFeed::updateChannelMsgs()
     }
     iconLabel->setEnabled(true);
 
-    /* set textcolor for Channel name  */
-    QString channelStr("<span style=\"font-size:22pt; font-weight:500;color:#4F4F4F;\">%1</span>");
-
     /* set Channel name */
-    QString cname = QString::fromStdWString(ci.channelName);
-    nameLabel->setText(channelStr.arg(cname));
+    nameLabel->setText(QString::fromStdWString(ci.channelName));
 
     if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
         postButton->setEnabled(true);

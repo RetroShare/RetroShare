@@ -20,7 +20,7 @@
  ****************************************************************/
 
 #include <QMenu>
-#include <QPushButton>
+#include <QToolButton>
 
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
@@ -150,7 +150,7 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 	}
 }
 
-void GroupTreeWidget::initDisplayMenu(QPushButton *pushButton)
+void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 {
 	displayMenu = new QMenu();
 //	QActionGroup *actionGroup = new QActionGroup(displayMenu);
@@ -180,7 +180,7 @@ void GroupTreeWidget::initDisplayMenu(QPushButton *pushButton)
 	actionSortByLastPost->setCheckable(true);
 	actionSortByLastPost->setActionGroup(actionGroup);
 
-	pushButton->setMenu(displayMenu);
+	toolButton->setMenu(displayMenu);
 }
 
 void GroupTreeWidget::customContextMenuRequested(const QPoint &pos)
