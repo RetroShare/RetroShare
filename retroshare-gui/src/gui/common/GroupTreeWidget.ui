@@ -10,39 +10,6 @@
     <height>257</height>
    </rect>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QComboBox QAbstractItemView { 
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QComboBox::disabled {
-color:gray;
-}</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
     <number>2</number>
@@ -68,14 +35,6 @@ color:gray;
          <width>16777215</width>
          <height>16777215</height>
         </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QFrame#searchlineframe{
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}
-</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>

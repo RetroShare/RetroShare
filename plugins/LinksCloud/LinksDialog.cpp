@@ -66,7 +66,7 @@ LinksDialog::LinksDialog(RsPeers *peers, RsFiles *files, QWidget *parent)
   connect( ui.addButton, SIGNAL( clicked( void ) ), this, SLOT( addLinkComment( void ) ) );
   connect( ui.expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggleWindows( void ) ) );
   
-  connect( ui.pushButton, SIGNAL( clicked( ) ), this, SLOT( addNewLink( ) ) );
+  connect( ui.addToolButton, SIGNAL( clicked( ) ), this, SLOT( addNewLink( ) ) );
 
   connect( ui.linkTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
   		this, SLOT( changedItem ( QTreeWidgetItem *, QTreeWidgetItem * ) ) );

@@ -160,7 +160,7 @@ border: 1px solid #CCCCCC;}
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>
@@ -177,28 +177,13 @@ border: 1px solid #CCCCCC;}
             <property name="toolTip">
              <string>Display</string>
             </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton::menu-indicator {
-     subcontrol-origin: padding;
-     subcontrol-position: bottom right;
- }
-
- QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
-     position: relative;
-     top: 2px; left: 2px; /* shift the arrow by 2 px */
- }
-
- QPushButton:hover {
-	border: 1px solid #CCCCCC;
- }</string>
-            </property>
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>
@@ -358,32 +343,15 @@ border-radius: 10px;
               <property name="toolTip">
                <string>Post to Channel</string>
               </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
               <property name="icon">
                <iconset resource="images.qrc">
                 <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>16</height>
+               </size>
               </property>
               <property name="autoRaise">
                <bool>true</bool>
@@ -405,7 +373,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>350</width>
+            <width>370</width>
             <height>16</height>
            </rect>
           </property>

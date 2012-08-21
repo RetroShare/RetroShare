@@ -562,12 +562,7 @@ border: 1px solid #CCCCCC;}</string>
        </spacer>
       </item>
       <item row="0" column="3">
-       <widget class="QPushButton" name="pushButton">
-        <property name="styleSheet">
-         <string notr="true">QPushButton:hover { 
-border: 1px solid #CCCCCC;
-}</string>
-        </property>
+       <widget class="QToolButton" name="addToolButton">
         <property name="text">
          <string>Add new link</string>
         </property>
@@ -575,7 +570,13 @@ border: 1px solid #CCCCCC;
          <iconset resource="../../retroshare-gui/src/gui/images.qrc">
           <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
         </property>
-        <property name="flat">
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>

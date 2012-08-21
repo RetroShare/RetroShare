@@ -623,7 +623,7 @@ border: 1px solid #CCCCCC;}
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>
@@ -646,7 +646,7 @@ border: 1px solid #CCCCCC;}
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>
@@ -1091,12 +1091,6 @@ border: 1px solid #CCCCCC;}</string>
            </item>
            <item row="0" column="1">
             <widget class="QToolButton" name="newmessageButton">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
@@ -1106,6 +1100,12 @@ border: 1px solid #CCCCCC;}</string>
              <property name="icon">
               <iconset resource="images.qrc">
                <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>16</height>
+              </size>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -1130,12 +1130,6 @@ border: 1px solid #CCCCCC;}</string>
            </item>
            <item row="0" column="0">
             <widget class="QToolButton" name="newthreadButton">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
@@ -1145,6 +1139,12 @@ border: 1px solid #CCCCCC;}</string>
              <property name="icon">
               <iconset resource="images.qrc">
                <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>16</height>
+              </size>
              </property>
              <property name="autoRaise">
               <bool>true</bool>

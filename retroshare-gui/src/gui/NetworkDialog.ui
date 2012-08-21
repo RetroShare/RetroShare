@@ -133,12 +133,6 @@
            <height>32</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="styleSheet">
           <string notr="true">QFrame#frame{ 
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
@@ -257,7 +251,7 @@ border: 1px solid #CCCCCC;}</string>
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>

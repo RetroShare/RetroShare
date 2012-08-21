@@ -579,7 +579,7 @@ border: 1px solid #CCCCCC;}
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>
@@ -611,7 +611,7 @@ border: 1px solid #CCCCCC;}
             </property>
             <property name="iconSize">
              <size>
-              <width>24</width>
+              <width>32</width>
               <height>16</height>
              </size>
             </property>
