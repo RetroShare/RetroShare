@@ -1202,6 +1202,9 @@ border: 1px solid #CCCCCC;}</string>
                 <height>60</height>
                </size>
               </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
               <property name="styleSheet">
                <string notr="true">QTextEdit#msgText{border: 1px solid #CCCCCC;
 background: white;}</string>

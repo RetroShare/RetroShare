@@ -99,6 +99,7 @@ private slots:
 	void pasteLink();
 	void pasteOwnCertificateLink();
 	void contextMenu(QPoint);
+	void contextMenuTextBrowser(QPoint);
 	void chatCharFormatChanged();
 
 	void fileHashingFinished(QList<HashedFile> hashedFiles);

@@ -120,6 +120,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
     connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
 
+    connect(ui.msgText,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenuMsgText(QPoint)));
+
     connect(ui.lineEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
     // reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
     connect(ui.lineEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
@@ -273,6 +275,17 @@ void FriendsDialog::showEvent(QShowEvent *event)
 void FriendsDialog::pasteLink()
 {
     ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
+}
+
+void FriendsDialog::contextMenuMsgText(QPoint)
+{
+    QMenu *contextMnu = ui.msgText->createStandardContextMenu();
+
+    contextMnu->addSeparator();
+    contextMnu->addAction(ui.actionClear_Chat_History);
+
+    contextMnu->exec(QCursor::pos());
+    delete(contextMnu);
 }
 
 void FriendsDialog::contextMenu(QPoint /*point*/)

@@ -89,6 +89,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
 	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
+	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
+
 	connect(ui->chattextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
 	connect(ui->chattextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
@@ -385,6 +387,17 @@ void ChatWidget::contextMenu(QPoint /*point*/)
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	action->setDisabled(RSLinkClipboard::empty());
 	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste own certificate link"), this, SLOT(pasteOwnCertificateLink()));
+
+	contextMnu->exec(QCursor::pos());
+	delete(contextMnu);
+}
+
+void ChatWidget::contextMenuTextBrowser(QPoint)
+{
+	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu();
+
+	contextMnu->addSeparator();
+	contextMnu->addAction(ui->actionClearChatHistory);
 
 	contextMnu->exec(QCursor::pos());
 	delete(contextMnu);

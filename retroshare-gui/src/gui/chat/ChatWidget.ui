@@ -180,6 +180,9 @@ border-image: url(:/images/closepressed.png)
            <height>30</height>
           </size>
          </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">QTextBrowser{border: 1px solid #B8B6B1;
 border-radius: 6px;
@@ -657,15 +660,15 @@ background: white;}</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LinkTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/LinkTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>HashBox</class>
    <extends>QScrollArea</extends>
    <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LinkTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

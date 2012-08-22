@@ -75,6 +75,7 @@ protected:
 private slots:
     void pasteLink() ;
     void contextMenu(QPoint) ;
+    void contextMenuMsgText(QPoint);
     void chatCharFormatChanged();
 
     void on_actionClear_Chat_History_triggered();
