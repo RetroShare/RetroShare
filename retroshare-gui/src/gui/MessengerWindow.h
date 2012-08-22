@@ -26,8 +26,6 @@
 
 #include <gui/common/rwindow.h>
 
-class LogoBar;
-
 class MessengerWindow : public RWindow
 {
     Q_OBJECT
@@ -39,8 +37,6 @@ public:
 
 public slots:
     void loadmystatusmessage();
-
-    LogoBar & getLogoBar() const;
 
 protected:
     /** Default Constructor */
@@ -65,8 +61,6 @@ private:
     static MessengerWindow *_instance;
 
     void processSettings(bool bLoad);
-
-    LogoBar * _rsLogoBarmessenger;
 
     QString m_nickName;
 

@@ -118,7 +118,7 @@ border-radius: 0px}</string>
               </property>
               <property name="text">
                <string notr="true">Long 
- message here</string>
+message here</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>

@@ -129,13 +129,9 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
         expandedGroups = NULL;
     }
 
-    //LogoBar
-    _rsLogoBarmessenger = new LogoBar(ui.logoframe);
-    Widget::createLayout(ui.logoframe)->addWidget(_rsLogoBarmessenger);
-
     ui.messagelineEdit->setMinimumWidth(20);
 
-    ui.displaypushButton->setMenu(ui.friendList->createDisplayMenu());
+    ui.displaytoolButton->setMenu(ui.friendList->createDisplayMenu());
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
@@ -224,10 +220,6 @@ void MessengerWindow::closeEvent (QCloseEvent * /*event*/)
     }
 
     ui.friendList->getExpandedGroups(*expandedGroups);
-}
-
-LogoBar & MessengerWindow::getLogoBar() const {
-        return *_rsLogoBarmessenger;
 }
 
 /** Shows Share Manager */

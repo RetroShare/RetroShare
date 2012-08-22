@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>ShareDialog</class>
  <widget class="QDialog" name="ShareDialog">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,9 +16,6 @@
   <property name="windowIcon">
    <iconset resource="images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
-  </property>
-  <property name="modal">
-   <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="margin">

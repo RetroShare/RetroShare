@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>PopupChatDialog</class>
  <widget class="QWidget" name="PopupChatDialog">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -196,15 +193,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ChatWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">gui/chat/ChatWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ChatWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">gui/chat/ChatWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

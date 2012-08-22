@@ -10,9 +10,6 @@
     <height>229</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
-  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QFormLayout" name="formLayout">
@@ -166,8 +163,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../LinksCloud/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

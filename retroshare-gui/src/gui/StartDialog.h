@@ -19,71 +19,42 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _STARTDIALOG_H
 #define _STARTDIALOG_H
 
-#include <retroshare/rsiface.h>
-/********
-#if (QT_VERSION >= 040300)
-#include "qskinobject/qskinobject.h"
-#endif
-*******/
-
 #include "ui_StartDialog.h"
-
-class LogoBar;
 
 class StartDialog : public QMainWindow
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default constructor */
-  StartDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+	/** Default constructor */
+	StartDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
 
-  bool  requestedNewCert();
-
-public slots:
-  /** Overloaded QWidget.show */
-  void show();
-  
-  LogoBar & getLogoBar() const;
+	bool requestedNewCert();
 
 protected:
-  void closeEvent (QCloseEvent * event);
-  
-private slots:
+	void closeEvent (QCloseEvent * event);
 
-	void closeinfodlg();
+private slots:
 	void loadPerson();
 
 	/**
 	 * Warns the user that autologin is not secure
 	 */
 	void notSecureWarning();
-	
-  void on_labelProfile_linkActivated(QString link);
-  
+
+	void on_labelProfile_linkActivated(QString link);
+
 private:
+	/** Loads the saved connectidialog settings */
+	void loadCertificates();
 
-  /** Loads the saved connectidialog settings */
-//  void loadSettings();
-  void loadCertificates();
-  
-  LogoBar * _rsLogoBar;
-  
-  /** Qt Designer generated object */
-  Ui::StartDialog ui;
- 
-/************** 
-#if (QT_VERSION >= 040300)
-  QSkinObject *skinobject;
-#endif
-**************/
+	/** Qt Designer generated object */
+	Ui::StartDialog ui;
 
-  bool reqNewCert;
+	bool reqNewCert;
 };
 
 #endif
-

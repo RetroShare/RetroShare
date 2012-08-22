@@ -10,9 +10,6 @@
     <height>583</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
-  </property>
   <layout class="QGridLayout">
    <property name="horizontalSpacing">
     <number>6</number>

@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>AboutDialog</class>
  <widget class="QDialog" name="AboutDialog">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,12 +18,6 @@
   </property>
   <property name="windowTitle">
    <string>About RetroShare</string>
-  </property>
-  <property name="locale">
-   <locale language="English" country="UnitedStates"/>
-  </property>
-  <property name="sizeGripEnabled">
-   <bool>false</bool>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -85,9 +76,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>close_button</sender>

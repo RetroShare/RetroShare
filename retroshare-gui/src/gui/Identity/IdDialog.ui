@@ -10,9 +10,6 @@
     <height>647</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
-  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0" rowspan="3">
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -358,8 +355,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../LinksCloud/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

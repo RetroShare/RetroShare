@@ -47,7 +47,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="AvatarWidget" name="avatar" native="true">
+        <widget class="AvatarWidget" name="avatar">
          <property name="minimumSize">
           <size>
            <width>70</width>
@@ -72,42 +72,23 @@
           </widget>
          </item>
          <item row="0" column="0" colspan="2">
-          <widget class="QPushButton" name="statusButton">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>16</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-         text-align: left;
-}
-QPushButton:hover {
-            border: 2px solid #8f8f91;
-            border-radius: 6px;
-            background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                              stop: 0 #f6f7fa, stop: 1 #dadbde);
-            min-width: 80px;
-
-}
-QPushButton:pressed {
-            background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                              stop: 0 #dadbde, stop: 1 #f6f7fa);
-}
-
-QPushButton:flat {
-            border: none; /* no border for a flat push button */
-}
-
-QPushButton:default {
-            border-color: navy; /* make the default button prominent */
-}</string>
+          <widget class="QToolButton" name="statusButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="text">
             <string/>
            </property>
-           <property name="flat">
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+           <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
@@ -231,34 +212,6 @@ border-bottom: 1px solid #CCCCCC;
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="displaypushButton">
-         <property name="styleSheet">
-          <string notr="true">QPushButton::menu-indicator { 
-subcontrol-origin: padding;
-subcontrol-position: bottom right;
-}
-
-</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
@@ -283,11 +236,37 @@ subcontrol-position: bottom right;
          </item>
         </layout>
        </item>
+       <item row="0" column="3">
+        <widget class="QToolButton" name="displaytoolButton">
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QFrame" name="logoframe">
+     <widget class="LogoBar" name="logoframe">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>65</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">QFrame#logoframe{ 
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
@@ -340,11 +319,6 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
@@ -354,6 +328,17 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
    <class>FriendList</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendList.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LogoBar</class>
+   <extends>QFrame</extends>
+   <header>gui/LogoBar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

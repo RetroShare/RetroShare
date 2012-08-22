@@ -411,9 +411,6 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
       <column/>
       <column/>
       <column/>
@@ -558,10 +555,6 @@ background: white;
           <font>
            <pointsize>12</pointsize>
           </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">
-</string>
          </property>
          <property name="text">
           <string>You have a friend request .</string>
@@ -856,6 +849,12 @@ background: white;</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>DropLineEdit</class>
    <extends>QLineEdit</extends>
    <header>gui/common/DropLineEdit.h</header>
@@ -866,15 +865,8 @@ background: white;</string>
    <header>gui/connect/ConnectFriendWizard.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

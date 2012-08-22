@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>CreateForumV2Msg</class>
  <widget class="QMainWindow" name="CreateForumV2Msg">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
