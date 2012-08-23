@@ -1,9 +1,14 @@
-package rsctrl.peers;
+package rsctrl.files;
 
 import "base.proto";
 
 ///////////////////////////////////////////////////////////////
-// Access, and Control your Friends / Peers and related Settings.
+// Mirror most of rsFiles functionality.
+//
+// Share Directories.
+// Searches
+// List Transfers.
+// Control Transfers.
 ///////////////////////////////////////////////////////////////
 
 enum RequestMsgIds {

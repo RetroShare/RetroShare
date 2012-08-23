@@ -1,10 +1,26 @@
-package rsctrl.base:
+package rsctrl.base;
 
 ///////////////////////////////////////////////////////////////
 // These are basic Messages, which are used as building blocks
 // throughout the rest of the interface.
 // They should not be sent RAW, but should be wrapped in another msg.
 ///////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+// Expected PackageIds.
+
+enum ExtensionId { BASE = 0; }
+
+enum PackageId { 
+  PEERS = 1; 
+  SYSTEM = 2;
+  FILES = 3;
+  MSGS = 4;
+
+  // THEORETICAL ONES.
+  GXS = 1000; 
+}
+
 
 ///////////////////////////////////////////////////////////////
 // Basic Status Response, should be in all responses
@@ -58,4 +74,46 @@ message Dir {
   repeated Dir subdirs = 3;
   repeated File files = 4;
 }
+
+
+///////////////////////////////////////////////////////////////
+// System Status
+
+message SystemStatus {
+  enum NetCode {
+    BAD_UNKNOWN  	= 0;
+    BAD_OFFLINE  	= 1;
+    BAD_NATSYM 		= 2;
+    BAD_NODHT_NAT  	= 3;
+    WARNING_RESTART  	= 4;
+    WARNING_NATTED  	= 5;
+    WARNING_NODHT  	= 6;
+    GOOD  	 	= 7;
+    ADV_FORWARD  	= 8;
+  }
+
+  required NetCode net_status = 1;
+  optional string msg = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+// Bandwidth Measurements.
+
+message Bandwidth {
+  required float up = 1;   // kB/s
+  required float down = 2; // kB/s
+  optional string name = 3; // e.g. DHT, UDP, TCP, Stun, or Total.
+}
+
+message BandwidthSet {
+  repeated Bandwidth bandwidths = 1;
+}
+
+
+
+///////////////////////////////////////////////////////////////
+
+
+
 
