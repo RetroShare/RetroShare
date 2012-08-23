@@ -156,6 +156,43 @@
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
+#ifdef WINDOWS_SYS
+#if QT_VERSION >= 0x040700
+
+#define INSTALL_SYSTRAYICON_EVENT
+
+QCoreApplication::EventFilter g_eventFilter = NULL;
+
+// Fix problem with single click on a systemtray icon in Qt 4.7 or above running on Windows XP or lower
+// - before Qt 4.7.0 the message MYWM_NOTIFYICON/WM_LBUTTONUP was handled to emit activted(QSystemTrayIcon::Trigger)
+// - after Qt 4.7.0 the message MYWM_NOTIFYICON/NIN_SELECT is handled. This message is not sent in Windows XP
+
+// Solution: set an event filter and modify the message from WM_LBUTTONUP to NIN_SELECT
+
+// taken from qsystemtrayicon_win.cpp
+#define MYWM_NOTIFYICON (WM_APP+101)
+#ifndef NIN_SELECT
+#define NIN_SELECT (WM_USER + 0)
+#endif
+
+bool sysTrayIconEventFilter(void *message, long *result)
+{
+    MSG *msg = (MSG*) message;
+    if (msg->message == MYWM_NOTIFYICON) {
+        if (msg->lParam == WM_LBUTTONUP) {
+            msg->lParam = NIN_SELECT;
+            return false;
+        }
+    }
+
+    if (g_eventFilter)
+        return g_eventFilter(message, result);
+
+    return false;
+}
+#endif // QT_VERSION >= 0x040700
+#endif // WINDOWS_SYS
+
 /** create main window */
 /*static*/ MainWindow *MainWindow::Create ()
 {
@@ -178,6 +215,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 {
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
+
+#ifdef INSTALL_SYSTRAYICON_EVENT
+    if (QSysInfo::windowsVersion() < QSysInfo::WV_VISTA) {
+        std::cerr << "Running Windows XP or older, install systemtray icon event filter" << std::endl;
+        g_eventFilter = qApp->setEventFilter(sysTrayIconEventFilter);
+    }
+#endif
 
     _instance = this;
 
