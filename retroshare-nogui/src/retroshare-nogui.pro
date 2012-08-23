@@ -179,7 +179,7 @@ sshserver {
 	DEFINES *= RS_SSH_SERVER
 
 	# Include Protobuf classes.
-	#CONFIG += protorpc
+	CONFIG += protorpc
 }
 
 protorpc {

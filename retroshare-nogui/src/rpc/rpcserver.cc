@@ -225,3 +225,42 @@ int RpcQueueService::queueResponse(uint32_t msg_id, uint32_t req_id, const std::
 }
 
 
+// Lower 8 bits.
+uint8_t  getRpcMsgIdSubMsg(uint32_t msg_id)
+{
+        return msg_id & 0xFF;
+}
+
+// Middle 16 bits.
+uint16_t  getRpcMsgIdService(uint32_t msg_id)
+{
+        return (msg_id >> 8) & 0xFFFF;
+}
+
+// Top 8 bits.
+uint8_t  getRpcMsgIdExtension(uint32_t msg_id)
+{
+        return (msg_id >> 24) & 0xFE; // Bottom Bit is for Request / Response
+}
+
+bool    isRpcMsgIdResponse(uint32_t msg_id)
+{
+        return (msg_id >> 24) & 0x01;
+}
+
+
+uint32_t constructMsgId(uint8_t ext, uint16_t service, uint8_t submsg, bool is_response)
+{
+	if (is_response)
+		ext |= 0x01; // Set Bottom Bit.
+	else
+		ext &= 0xFE; // Clear Bottom Bit.
+
+	uint32_t msg_id = (ext << 24) + (service << 8) + (submsg);
+	return msg_id;
+}
+
+
+
+
+

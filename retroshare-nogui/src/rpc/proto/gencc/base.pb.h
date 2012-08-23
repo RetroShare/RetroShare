@@ -38,6 +38,9 @@ class Location;
 class Person;
 class File;
 class Dir;
+class SystemStatus;
+class Bandwidth;
+class BandwidthSet;
 
 enum Status_StatusCode {
   Status_StatusCode_FAILED = 0,
@@ -59,6 +62,72 @@ inline bool Status_StatusCode_Parse(
     const ::std::string& name, Status_StatusCode* value) {
   return ::google::protobuf::internal::ParseNamedEnum<Status_StatusCode>(
     Status_StatusCode_descriptor(), name, value);
+}
+enum SystemStatus_NetCode {
+  SystemStatus_NetCode_BAD_UNKNOWN = 0,
+  SystemStatus_NetCode_BAD_OFFLINE = 1,
+  SystemStatus_NetCode_BAD_NATSYM = 2,
+  SystemStatus_NetCode_BAD_NODHT_NAT = 3,
+  SystemStatus_NetCode_WARNING_RESTART = 4,
+  SystemStatus_NetCode_WARNING_NATTED = 5,
+  SystemStatus_NetCode_WARNING_NODHT = 6,
+  SystemStatus_NetCode_GOOD = 7,
+  SystemStatus_NetCode_ADV_FORWARD = 8
+};
+bool SystemStatus_NetCode_IsValid(int value);
+const SystemStatus_NetCode SystemStatus_NetCode_NetCode_MIN = SystemStatus_NetCode_BAD_UNKNOWN;
+const SystemStatus_NetCode SystemStatus_NetCode_NetCode_MAX = SystemStatus_NetCode_ADV_FORWARD;
+const int SystemStatus_NetCode_NetCode_ARRAYSIZE = SystemStatus_NetCode_NetCode_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* SystemStatus_NetCode_descriptor();
+inline const ::std::string& SystemStatus_NetCode_Name(SystemStatus_NetCode value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    SystemStatus_NetCode_descriptor(), value);
+}
+inline bool SystemStatus_NetCode_Parse(
+    const ::std::string& name, SystemStatus_NetCode* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<SystemStatus_NetCode>(
+    SystemStatus_NetCode_descriptor(), name, value);
+}
+enum ExtensionId {
+  BASE = 0
+};
+bool ExtensionId_IsValid(int value);
+const ExtensionId ExtensionId_MIN = BASE;
+const ExtensionId ExtensionId_MAX = BASE;
+const int ExtensionId_ARRAYSIZE = ExtensionId_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ExtensionId_descriptor();
+inline const ::std::string& ExtensionId_Name(ExtensionId value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ExtensionId_descriptor(), value);
+}
+inline bool ExtensionId_Parse(
+    const ::std::string& name, ExtensionId* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ExtensionId>(
+    ExtensionId_descriptor(), name, value);
+}
+enum PackageId {
+  PEERS = 1,
+  SYSTEM = 2,
+  FILES = 3,
+  MSGS = 4,
+  GXS = 1000
+};
+bool PackageId_IsValid(int value);
+const PackageId PackageId_MIN = PEERS;
+const PackageId PackageId_MAX = GXS;
+const int PackageId_ARRAYSIZE = PackageId_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* PackageId_descriptor();
+inline const ::std::string& PackageId_Name(PackageId value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    PackageId_descriptor(), value);
+}
+inline bool PackageId_Parse(
+    const ::std::string& name, PackageId* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<PackageId>(
+    PackageId_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -686,6 +755,324 @@ class Dir : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static Dir* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class SystemStatus : public ::google::protobuf::Message {
+ public:
+  SystemStatus();
+  virtual ~SystemStatus();
+  
+  SystemStatus(const SystemStatus& from);
+  
+  inline SystemStatus& operator=(const SystemStatus& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SystemStatus& default_instance();
+  
+  void Swap(SystemStatus* other);
+  
+  // implements Message ----------------------------------------------
+  
+  SystemStatus* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SystemStatus& from);
+  void MergeFrom(const SystemStatus& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef SystemStatus_NetCode NetCode;
+  static const NetCode BAD_UNKNOWN = SystemStatus_NetCode_BAD_UNKNOWN;
+  static const NetCode BAD_OFFLINE = SystemStatus_NetCode_BAD_OFFLINE;
+  static const NetCode BAD_NATSYM = SystemStatus_NetCode_BAD_NATSYM;
+  static const NetCode BAD_NODHT_NAT = SystemStatus_NetCode_BAD_NODHT_NAT;
+  static const NetCode WARNING_RESTART = SystemStatus_NetCode_WARNING_RESTART;
+  static const NetCode WARNING_NATTED = SystemStatus_NetCode_WARNING_NATTED;
+  static const NetCode WARNING_NODHT = SystemStatus_NetCode_WARNING_NODHT;
+  static const NetCode GOOD = SystemStatus_NetCode_GOOD;
+  static const NetCode ADV_FORWARD = SystemStatus_NetCode_ADV_FORWARD;
+  static inline bool NetCode_IsValid(int value) {
+    return SystemStatus_NetCode_IsValid(value);
+  }
+  static const NetCode NetCode_MIN =
+    SystemStatus_NetCode_NetCode_MIN;
+  static const NetCode NetCode_MAX =
+    SystemStatus_NetCode_NetCode_MAX;
+  static const int NetCode_ARRAYSIZE =
+    SystemStatus_NetCode_NetCode_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  NetCode_descriptor() {
+    return SystemStatus_NetCode_descriptor();
+  }
+  static inline const ::std::string& NetCode_Name(NetCode value) {
+    return SystemStatus_NetCode_Name(value);
+  }
+  static inline bool NetCode_Parse(const ::std::string& name,
+      NetCode* value) {
+    return SystemStatus_NetCode_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.base.SystemStatus.NetCode net_status = 1;
+  inline bool has_net_status() const;
+  inline void clear_net_status();
+  static const int kNetStatusFieldNumber = 1;
+  inline ::rsctrl::base::SystemStatus_NetCode net_status() const;
+  inline void set_net_status(::rsctrl::base::SystemStatus_NetCode value);
+  
+  // optional string msg = 2;
+  inline bool has_msg() const;
+  inline void clear_msg();
+  static const int kMsgFieldNumber = 2;
+  inline const ::std::string& msg() const;
+  inline void set_msg(const ::std::string& value);
+  inline void set_msg(const char* value);
+  inline void set_msg(const char* value, size_t size);
+  inline ::std::string* mutable_msg();
+  inline ::std::string* release_msg();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.base.SystemStatus)
+ private:
+  inline void set_has_net_status();
+  inline void clear_has_net_status();
+  inline void set_has_msg();
+  inline void clear_has_msg();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* msg_;
+  int net_status_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_base_2eproto();
+  friend void protobuf_AssignDesc_base_2eproto();
+  friend void protobuf_ShutdownFile_base_2eproto();
+  
+  void InitAsDefaultInstance();
+  static SystemStatus* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Bandwidth : public ::google::protobuf::Message {
+ public:
+  Bandwidth();
+  virtual ~Bandwidth();
+  
+  Bandwidth(const Bandwidth& from);
+  
+  inline Bandwidth& operator=(const Bandwidth& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Bandwidth& default_instance();
+  
+  void Swap(Bandwidth* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Bandwidth* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Bandwidth& from);
+  void MergeFrom(const Bandwidth& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float up = 1;
+  inline bool has_up() const;
+  inline void clear_up();
+  static const int kUpFieldNumber = 1;
+  inline float up() const;
+  inline void set_up(float value);
+  
+  // required float down = 2;
+  inline bool has_down() const;
+  inline void clear_down();
+  static const int kDownFieldNumber = 2;
+  inline float down() const;
+  inline void set_down(float value);
+  
+  // optional string name = 3;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 3;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.base.Bandwidth)
+ private:
+  inline void set_has_up();
+  inline void clear_has_up();
+  inline void set_has_down();
+  inline void clear_has_down();
+  inline void set_has_name();
+  inline void clear_has_name();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  float up_;
+  float down_;
+  ::std::string* name_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_base_2eproto();
+  friend void protobuf_AssignDesc_base_2eproto();
+  friend void protobuf_ShutdownFile_base_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Bandwidth* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class BandwidthSet : public ::google::protobuf::Message {
+ public:
+  BandwidthSet();
+  virtual ~BandwidthSet();
+  
+  BandwidthSet(const BandwidthSet& from);
+  
+  inline BandwidthSet& operator=(const BandwidthSet& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BandwidthSet& default_instance();
+  
+  void Swap(BandwidthSet* other);
+  
+  // implements Message ----------------------------------------------
+  
+  BandwidthSet* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const BandwidthSet& from);
+  void MergeFrom(const BandwidthSet& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .rsctrl.base.Bandwidth bandwidths = 1;
+  inline int bandwidths_size() const;
+  inline void clear_bandwidths();
+  static const int kBandwidthsFieldNumber = 1;
+  inline const ::rsctrl::base::Bandwidth& bandwidths(int index) const;
+  inline ::rsctrl::base::Bandwidth* mutable_bandwidths(int index);
+  inline ::rsctrl::base::Bandwidth* add_bandwidths();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Bandwidth >&
+      bandwidths() const;
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Bandwidth >*
+      mutable_bandwidths();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.base.BandwidthSet)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Bandwidth > bandwidths_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_base_2eproto();
+  friend void protobuf_AssignDesc_base_2eproto();
+  friend void protobuf_ShutdownFile_base_2eproto();
+  
+  void InitAsDefaultInstance();
+  static BandwidthSet* default_instance_;
 };
 // ===================================================================
 
@@ -1584,6 +1971,226 @@ Dir::mutable_files() {
   return &files_;
 }
 
+// -------------------------------------------------------------------
+
+// SystemStatus
+
+// required .rsctrl.base.SystemStatus.NetCode net_status = 1;
+inline bool SystemStatus::has_net_status() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void SystemStatus::set_has_net_status() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void SystemStatus::clear_has_net_status() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void SystemStatus::clear_net_status() {
+  net_status_ = 0;
+  clear_has_net_status();
+}
+inline ::rsctrl::base::SystemStatus_NetCode SystemStatus::net_status() const {
+  return static_cast< ::rsctrl::base::SystemStatus_NetCode >(net_status_);
+}
+inline void SystemStatus::set_net_status(::rsctrl::base::SystemStatus_NetCode value) {
+  GOOGLE_DCHECK(::rsctrl::base::SystemStatus_NetCode_IsValid(value));
+  set_has_net_status();
+  net_status_ = value;
+}
+
+// optional string msg = 2;
+inline bool SystemStatus::has_msg() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void SystemStatus::set_has_msg() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void SystemStatus::clear_has_msg() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void SystemStatus::clear_msg() {
+  if (msg_ != &::google::protobuf::internal::kEmptyString) {
+    msg_->clear();
+  }
+  clear_has_msg();
+}
+inline const ::std::string& SystemStatus::msg() const {
+  return *msg_;
+}
+inline void SystemStatus::set_msg(const ::std::string& value) {
+  set_has_msg();
+  if (msg_ == &::google::protobuf::internal::kEmptyString) {
+    msg_ = new ::std::string;
+  }
+  msg_->assign(value);
+}
+inline void SystemStatus::set_msg(const char* value) {
+  set_has_msg();
+  if (msg_ == &::google::protobuf::internal::kEmptyString) {
+    msg_ = new ::std::string;
+  }
+  msg_->assign(value);
+}
+inline void SystemStatus::set_msg(const char* value, size_t size) {
+  set_has_msg();
+  if (msg_ == &::google::protobuf::internal::kEmptyString) {
+    msg_ = new ::std::string;
+  }
+  msg_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SystemStatus::mutable_msg() {
+  set_has_msg();
+  if (msg_ == &::google::protobuf::internal::kEmptyString) {
+    msg_ = new ::std::string;
+  }
+  return msg_;
+}
+inline ::std::string* SystemStatus::release_msg() {
+  clear_has_msg();
+  if (msg_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = msg_;
+    msg_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// Bandwidth
+
+// required float up = 1;
+inline bool Bandwidth::has_up() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Bandwidth::set_has_up() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Bandwidth::clear_has_up() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Bandwidth::clear_up() {
+  up_ = 0;
+  clear_has_up();
+}
+inline float Bandwidth::up() const {
+  return up_;
+}
+inline void Bandwidth::set_up(float value) {
+  set_has_up();
+  up_ = value;
+}
+
+// required float down = 2;
+inline bool Bandwidth::has_down() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Bandwidth::set_has_down() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Bandwidth::clear_has_down() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Bandwidth::clear_down() {
+  down_ = 0;
+  clear_has_down();
+}
+inline float Bandwidth::down() const {
+  return down_;
+}
+inline void Bandwidth::set_down(float value) {
+  set_has_down();
+  down_ = value;
+}
+
+// optional string name = 3;
+inline bool Bandwidth::has_name() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Bandwidth::set_has_name() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Bandwidth::clear_has_name() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Bandwidth::clear_name() {
+  if (name_ != &::google::protobuf::internal::kEmptyString) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& Bandwidth::name() const {
+  return *name_;
+}
+inline void Bandwidth::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Bandwidth::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Bandwidth::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Bandwidth::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+inline ::std::string* Bandwidth::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// BandwidthSet
+
+// repeated .rsctrl.base.Bandwidth bandwidths = 1;
+inline int BandwidthSet::bandwidths_size() const {
+  return bandwidths_.size();
+}
+inline void BandwidthSet::clear_bandwidths() {
+  bandwidths_.Clear();
+}
+inline const ::rsctrl::base::Bandwidth& BandwidthSet::bandwidths(int index) const {
+  return bandwidths_.Get(index);
+}
+inline ::rsctrl::base::Bandwidth* BandwidthSet::mutable_bandwidths(int index) {
+  return bandwidths_.Mutable(index);
+}
+inline ::rsctrl::base::Bandwidth* BandwidthSet::add_bandwidths() {
+  return bandwidths_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Bandwidth >&
+BandwidthSet::bandwidths() const {
+  return bandwidths_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Bandwidth >*
+BandwidthSet::mutable_bandwidths() {
+  return &bandwidths_;
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -1597,6 +2204,18 @@ namespace protobuf {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::base::Status_StatusCode>() {
   return ::rsctrl::base::Status_StatusCode_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::base::SystemStatus_NetCode>() {
+  return ::rsctrl::base::SystemStatus_NetCode_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< rsctrl::base::ExtensionId>() {
+  return rsctrl::base::ExtensionId_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< rsctrl::base::PackageId>() {
+  return rsctrl::base::PackageId_descriptor();
 }
 
 }  // namespace google

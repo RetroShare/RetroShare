@@ -32,6 +32,15 @@
 
 #include "util/rsthreads.h"
 
+// Dividing up MsgIds into components:
+
+uint8_t  getRpcMsgIdSubMsg(uint32_t msg_id);
+uint16_t getRpcMsgIdService(uint32_t msg_id); // Middle 16 bits.
+uint8_t  getRpcMsgIdExtension(uint32_t msg_id); // Top 7 of 8 bits. Bottom Bit is for Request / Response
+bool     isRpcMsgIdResponse(uint32_t msg_id);
+
+uint32_t constructMsgId(uint8_t ext, uint16_t service, uint8_t submsg, bool is_response);
+
 /*** This can be overloaded for plugins
  * Also allows a natural seperation of the full interface into sections.
  */

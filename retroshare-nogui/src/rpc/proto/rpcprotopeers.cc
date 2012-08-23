@@ -39,15 +39,32 @@ RpcProtoPeers::RpcProtoPeers(uint32_t serviceId)
 int RpcProtoPeers::processMsg(uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	/* check the msgId */
-	uint8_t topbyte = 0;
-	uint8_t service = 0;
-	uint8_t submsg  = 0;
+	uint8_t topbyte = getRpcMsgIdExtension(msg_id); 
+	uint16_t service = getRpcMsgIdService(msg_id); 
+	uint8_t submsg  = getRpcMsgIdSubMsg(msg_id);
+	bool isResponse = isRpcMsgIdResponse(msg_id);
+
 
 	std::cerr << "RpcProtoPeers::processMsg() topbyte: " << topbyte;
 	std::cerr << " service: " << service << " submsg: " << submsg;
 	std::cerr << std::endl;
 
-	if (service != (uint8_t) rsctrl::peers::BASE)
+	if (isResponse)
+	{
+		std::cerr << "RpcProtoPeers::processMsg() isResponse() - not processing";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+
+	if (topbyte != (uint8_t) rsctrl::base::BASE)
+	{
+		std::cerr << "RpcProtoPeers::processMsg() Extension Mismatch - not processing";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	if (service != (uint16_t) rsctrl::base::PEERS)
 	{
 		std::cerr << "RpcProtoPeers::processMsg() Service Mismatch - not processing";
 		std::cerr << std::endl;
@@ -231,7 +248,6 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 		}
 	}
 
-
 	std::string outmsg;
 	if (!respp.SerializeToString(&outmsg))
 	{
@@ -241,15 +257,13 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 	}
 	
 	// Correctly Name Message.
-	uint32_t out_msg_id = create_msg_id(
-			rsctrl::peers::BASE, 
-			rsctrl::peers::MsgId_ResponsePeerList);
+	uint32_t out_msg_id = constructMsgId(rsctrl::base::BASE, rsctrl::base::PEERS, 
+				rsctrl::peers::MsgId_ResponsePeerList, true);
 
 	// queue it.
 	queueResponse(out_msg_id, req_id, outmsg);
+
+	return 1;
 }
-
-
-
 
 

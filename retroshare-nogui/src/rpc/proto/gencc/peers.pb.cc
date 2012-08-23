@@ -40,8 +40,6 @@ const ::google::protobuf::EnumDescriptor* RequestModifyPeer_ModCmd_descriptor_ =
 const ::google::protobuf::Descriptor* ResponseModifyPeer_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ResponseModifyPeer_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* ExtensionId_descriptor_ = NULL;
-const ::google::protobuf::EnumDescriptor* PackageId_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 
@@ -156,10 +154,8 @@ void protobuf_AssignDesc_peers_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResponseModifyPeer));
-  ExtensionId_descriptor_ = file->enum_type(0);
-  PackageId_descriptor_ = file->enum_type(1);
-  RequestMsgIds_descriptor_ = file->enum_type(2);
-  ResponseMsgIds_descriptor_ = file->enum_type(3);
+  RequestMsgIds_descriptor_ = file->enum_type(0);
+  ResponseMsgIds_descriptor_ = file->enum_type(1);
 }
 
 namespace {
@@ -212,35 +208,34 @@ void protobuf_AddDesc_peers_2eproto() {
   ::rsctrl::base::protobuf_AddDesc_base_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\013peers.proto\022\014rsctrl.peers\032\nbase.proto\""
-    "\217\002\n\014RequestPeers\0221\n\003set\030\001 \002(\0162$.rsctrl.p"
+    "\246\002\n\014RequestPeers\0221\n\003set\030\001 \002(\0162$.rsctrl.p"
     "eers.RequestPeers.SetOption\0223\n\004info\030\002 \002("
     "\0162%.rsctrl.peers.RequestPeers.InfoOption"
-    "\022\017\n\007gpg_ids\030\003 \003(\t\"D\n\tSetOption\022\n\n\006LISTED"
-    "\020\001\022\n\n\006ONLINE\020\002\022\013\n\007FRIENDS\020\003\022\t\n\005VALID\020\004\022\007"
-    "\n\003ALL\020\005\"@\n\nInfoOption\022\014\n\010NAMEONLY\020\001\022\t\n\005B"
-    "ASIC\020\002\022\014\n\010LOCATION\020\003\022\013\n\007ALLINFO\020\004\"[\n\020Res"
-    "ponsePeerList\022#\n\006status\030\001 \002(\0132\023.rsctrl.b"
+    "\022\017\n\007gpg_ids\030\003 \003(\t\"[\n\tSetOption\022\t\n\005OWNID\020"
+    "\001\022\n\n\006LISTED\020\002\022\n\n\006ONLINE\020\003\022\013\n\007FRIENDS\020\004\022\t"
+    "\n\005VALID\020\005\022\n\n\006SIGNED\020\006\022\007\n\003ALL\020\007\"@\n\nInfoOp"
+    "tion\022\014\n\010NAMEONLY\020\001\022\t\n\005BASIC\020\002\022\014\n\010LOCATIO"
+    "N\020\003\022\013\n\007ALLINFO\020\004\"[\n\020ResponsePeerList\022#\n\006"
+    "status\030\001 \002(\0132\023.rsctrl.base.Status\022\"\n\005pee"
+    "rs\030\002 \003(\0132\023.rsctrl.base.Person\"\242\001\n\016Reques"
+    "tAddPeer\022\016\n\006gpg_id\030\001 \002(\t\0220\n\003cmd\030\002 \002(\0162#."
+    "rsctrl.peers.RequestAddPeer.AddCmd\022\014\n\004ce"
+    "rt\030\003 \001(\t\"@\n\006AddCmd\022\010\n\004NOOP\020\000\022\007\n\003ADD\020\001\022\n\n"
+    "\006REMOVE\020\002\022\n\n\006IMPORT\020\003\022\013\n\007EXAMINE\020\004\"Z\n\017Re"
+    "sponseAddPeer\022#\n\006status\030\001 \002(\0132\023.rsctrl.b"
     "ase.Status\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.base."
-    "Person\"\242\001\n\016RequestAddPeer\022\016\n\006gpg_id\030\001 \002("
-    "\t\0220\n\003cmd\030\002 \002(\0162#.rsctrl.peers.RequestAdd"
-    "Peer.AddCmd\022\014\n\004cert\030\003 \001(\t\"@\n\006AddCmd\022\010\n\004N"
-    "OOP\020\000\022\007\n\003ADD\020\001\022\n\n\006REMOVE\020\002\022\n\n\006IMPORT\020\003\022\013"
-    "\n\007EXAMINE\020\004\"Z\n\017ResponseAddPeer\022#\n\006status"
-    "\030\001 \002(\0132\023.rsctrl.base.Status\022\"\n\005peers\030\002 \003"
-    "(\0132\023.rsctrl.base.Person\"\231\001\n\021RequestModif"
-    "yPeer\0223\n\003cmd\030\001 \002(\0162&.rsctrl.peers.Reques"
-    "tModifyPeer.ModCmd\022\"\n\005peers\030\002 \003(\0132\023.rsct"
-    "rl.base.Person\"+\n\006ModCmd\022\010\n\004NOOP\020\000\022\013\n\007AD"
-    "DRESS\020\001\022\n\n\006DYNDNS\020\002\"]\n\022ResponseModifyPee"
-    "r\022#\n\006status\030\001 \002(\0132\023.rsctrl.base.Status\022\""
-    "\n\005peers\030\002 \003(\0132\023.rsctrl.base.Person*\027\n\013Ex"
-    "tensionId\022\010\n\004BASE\020\000*\026\n\tPackageId\022\t\n\005PEER"
-    "S\020\001*^\n\rRequestMsgIds\022\026\n\022MsgId_RequestPee"
-    "rs\020\001\022\030\n\024MsgId_RequestAddPeer\020\002\022\033\n\027MsgId_"
-    "RequestModifyPeer\020\003*e\n\016ResponseMsgIds\022\032\n"
-    "\026MsgId_ResponsePeerList\020\001\022\031\n\025MsgId_Respo"
-    "nseAddPeer\020\002\022\034\n\030MsgId_ResponseModifyPeer"
-    "\020\003", 1162);
+    "Person\"\231\001\n\021RequestModifyPeer\0223\n\003cmd\030\001 \002("
+    "\0162&.rsctrl.peers.RequestModifyPeer.ModCm"
+    "d\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.base.Person\"+\n"
+    "\006ModCmd\022\010\n\004NOOP\020\000\022\013\n\007ADDRESS\020\001\022\n\n\006DYNDNS"
+    "\020\002\"]\n\022ResponseModifyPeer\022#\n\006status\030\001 \002(\013"
+    "2\023.rsctrl.base.Status\022\"\n\005peers\030\002 \003(\0132\023.r"
+    "sctrl.base.Person*^\n\rRequestMsgIds\022\026\n\022Ms"
+    "gId_RequestPeers\020\001\022\030\n\024MsgId_RequestAddPe"
+    "er\020\002\022\033\n\027MsgId_RequestModifyPeer\020\003*e\n\016Res"
+    "ponseMsgIds\022\032\n\026MsgId_ResponsePeerList\020\001\022"
+    "\031\n\025MsgId_ResponseAddPeer\020\002\022\034\n\030MsgId_Resp"
+    "onseModifyPeer\020\003", 1136);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "peers.proto", &protobuf_RegisterTypes);
   RequestPeers::default_instance_ = new RequestPeers();
@@ -264,32 +259,6 @@ struct StaticDescriptorInitializer_peers_2eproto {
     protobuf_AddDesc_peers_2eproto();
   }
 } static_descriptor_initializer_peers_2eproto_;
-
-const ::google::protobuf::EnumDescriptor* ExtensionId_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return ExtensionId_descriptor_;
-}
-bool ExtensionId_IsValid(int value) {
-  switch(value) {
-    case 0:
-      return true;
-    default:
-      return false;
-  }
-}
-
-const ::google::protobuf::EnumDescriptor* PackageId_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return PackageId_descriptor_;
-}
-bool PackageId_IsValid(int value) {
-  switch(value) {
-    case 1:
-      return true;
-    default:
-      return false;
-  }
-}
 
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor() {
   protobuf_AssignDescriptorsOnce();
@@ -335,6 +304,8 @@ bool RequestPeers_SetOption_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
+    case 7:
       return true;
     default:
       return false;
@@ -342,10 +313,12 @@ bool RequestPeers_SetOption_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
+const RequestPeers_SetOption RequestPeers::OWNID;
 const RequestPeers_SetOption RequestPeers::LISTED;
 const RequestPeers_SetOption RequestPeers::ONLINE;
 const RequestPeers_SetOption RequestPeers::FRIENDS;
 const RequestPeers_SetOption RequestPeers::VALID;
+const RequestPeers_SetOption RequestPeers::SIGNED;
 const RequestPeers_SetOption RequestPeers::ALL;
 const RequestPeers_SetOption RequestPeers::SetOption_MIN;
 const RequestPeers_SetOption RequestPeers::SetOption_MAX;

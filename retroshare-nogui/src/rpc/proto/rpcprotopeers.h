@@ -27,7 +27,7 @@
 
 #include "rpc/rpcserver.h"
 
-class RpcProtoPeers: RpcQueueService
+class RpcProtoPeers: public RpcQueueService
 {
 public:
 	RpcProtoPeers(uint32_t serviceId);

@@ -42,14 +42,16 @@ class RequestModifyPeer;
 class ResponseModifyPeer;
 
 enum RequestPeers_SetOption {
-  RequestPeers_SetOption_LISTED = 1,
-  RequestPeers_SetOption_ONLINE = 2,
-  RequestPeers_SetOption_FRIENDS = 3,
-  RequestPeers_SetOption_VALID = 4,
-  RequestPeers_SetOption_ALL = 5
+  RequestPeers_SetOption_OWNID = 1,
+  RequestPeers_SetOption_LISTED = 2,
+  RequestPeers_SetOption_ONLINE = 3,
+  RequestPeers_SetOption_FRIENDS = 4,
+  RequestPeers_SetOption_VALID = 5,
+  RequestPeers_SetOption_SIGNED = 6,
+  RequestPeers_SetOption_ALL = 7
 };
 bool RequestPeers_SetOption_IsValid(int value);
-const RequestPeers_SetOption RequestPeers_SetOption_SetOption_MIN = RequestPeers_SetOption_LISTED;
+const RequestPeers_SetOption RequestPeers_SetOption_SetOption_MIN = RequestPeers_SetOption_OWNID;
 const RequestPeers_SetOption RequestPeers_SetOption_SetOption_MAX = RequestPeers_SetOption_ALL;
 const int RequestPeers_SetOption_SetOption_ARRAYSIZE = RequestPeers_SetOption_SetOption_MAX + 1;
 
@@ -125,42 +127,6 @@ inline bool RequestModifyPeer_ModCmd_Parse(
     const ::std::string& name, RequestModifyPeer_ModCmd* value) {
   return ::google::protobuf::internal::ParseNamedEnum<RequestModifyPeer_ModCmd>(
     RequestModifyPeer_ModCmd_descriptor(), name, value);
-}
-enum ExtensionId {
-  BASE = 0
-};
-bool ExtensionId_IsValid(int value);
-const ExtensionId ExtensionId_MIN = BASE;
-const ExtensionId ExtensionId_MAX = BASE;
-const int ExtensionId_ARRAYSIZE = ExtensionId_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* ExtensionId_descriptor();
-inline const ::std::string& ExtensionId_Name(ExtensionId value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    ExtensionId_descriptor(), value);
-}
-inline bool ExtensionId_Parse(
-    const ::std::string& name, ExtensionId* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ExtensionId>(
-    ExtensionId_descriptor(), name, value);
-}
-enum PackageId {
-  PEERS = 1
-};
-bool PackageId_IsValid(int value);
-const PackageId PackageId_MIN = PEERS;
-const PackageId PackageId_MAX = PEERS;
-const int PackageId_ARRAYSIZE = PackageId_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* PackageId_descriptor();
-inline const ::std::string& PackageId_Name(PackageId value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    PackageId_descriptor(), value);
-}
-inline bool PackageId_Parse(
-    const ::std::string& name, PackageId* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<PackageId>(
-    PackageId_descriptor(), name, value);
 }
 enum RequestMsgIds {
   MsgId_RequestPeers = 1,
@@ -257,10 +223,12 @@ class RequestPeers : public ::google::protobuf::Message {
   // nested types ----------------------------------------------------
   
   typedef RequestPeers_SetOption SetOption;
+  static const SetOption OWNID = RequestPeers_SetOption_OWNID;
   static const SetOption LISTED = RequestPeers_SetOption_LISTED;
   static const SetOption ONLINE = RequestPeers_SetOption_ONLINE;
   static const SetOption FRIENDS = RequestPeers_SetOption_FRIENDS;
   static const SetOption VALID = RequestPeers_SetOption_VALID;
+  static const SetOption SIGNED = RequestPeers_SetOption_SIGNED;
   static const SetOption ALL = RequestPeers_SetOption_ALL;
   static inline bool SetOption_IsValid(int value) {
     return RequestPeers_SetOption_IsValid(value);
@@ -1400,14 +1368,6 @@ inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::peers::RequestAddPeer_
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::peers::RequestModifyPeer_ModCmd>() {
   return ::rsctrl::peers::RequestModifyPeer_ModCmd_descriptor();
-}
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< rsctrl::peers::ExtensionId>() {
-  return rsctrl::peers::ExtensionId_descriptor();
-}
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< rsctrl::peers::PackageId>() {
-  return rsctrl::peers::PackageId_descriptor();
 }
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< rsctrl::peers::RequestMsgIds>() {

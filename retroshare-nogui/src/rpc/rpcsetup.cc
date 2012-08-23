@@ -24,8 +24,9 @@
 #include "rpc/rpcsetup.h"
 #include "rpc/rpcserver.h"
 
-#include "rpc/rpcecho.h"
+#include "rpc/proto/rpcprotopeers.h"
 
+#include "rpc/rpcecho.h"
 
 RpcMediator *CreateRpcSystem(RpcComms *comms)
 {
@@ -33,6 +34,10 @@ RpcMediator *CreateRpcSystem(RpcComms *comms)
 	RpcServer *server = new RpcServer(med);
 
 	/* add services */
+	RpcProtoPeers *peers = new RpcProtoPeers(1);
+	server->addService(peers);
+
+	/* Finally an Echo Service - which will echo back any unprocesses commands. */
 	RpcEcho *echo = new RpcEcho(1);
 	server->addService(echo);
 
