@@ -124,6 +124,7 @@ introserver {
 	DEFINES *= RS_INTRO_SERVER
 }
 
+
 sshserver {
 	# This Requires libssh-0.5.* to compile.
 	# Modify path below to point at it.
@@ -176,8 +177,28 @@ sshserver {
 	#SOURCES += rpc/proto/rpcecho.cc \
 
 	DEFINES *= RS_SSH_SERVER
+
+	# Include Protobuf classes.
+	#CONFIG += protorpc
 }
 
+protorpc {
+	# Proto Services
+	HEADERS += rpc/proto/rpcprotopeers.h \
+
+	SOURCES += rpc/proto/rpcprotopeers.cc \
+
+	# Generated ProtoBuf Code the RPC System
+	HEADERS += rpc/proto/gencc/base.pb.h \
+		rpc/proto/gencc/peers.pb.h \
+
+	SOURCES += rpc/proto/gencc/base.pb.cc \
+		rpc/proto/gencc/peers.pb.cc \
+
+        QMAKE_CFLAGS += -pthread
+        QMAKE_CXXFLAGS += -pthread
+	LIBS += -lprotobuf
+}
 
 
 

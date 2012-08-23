@@ -398,7 +398,7 @@ int main(int argc, char **argv)
 			Menu *baseMenu = CreateMenuStructure(notify);
 			MenuInterface *menuInterface = new MenuInterface(ssh, baseMenu, baseDrawFlags | MENU_DRAW_FLAGS_ECHO);
 			ssh->setRpcSystem(menuInterface);
-			ssh->setSleepPeriods(0.2, 1);
+			ssh->setSleepPeriods(0.05, 0.5);
 		}
 	
 		ssh->start();
