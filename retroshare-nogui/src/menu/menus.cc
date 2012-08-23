@@ -25,6 +25,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
 #include "util/rsstring.h"
+#include "util/rsdir.h"
 
 #include "menu/menus.h"
 
@@ -45,17 +46,24 @@
 #define 	MENU_SEARCH_KEY_VIEW  			'v'
 #define 	MENU_SEARCH_KEY_DOWNLOAD  		'g'
 
-#define 	MENU_FRIENDS_KEY_ADD  			'a'
-#define 	MENU_FRIENDS_KEY_VIEW  			'v'
-#define 	MENU_FRIENDS_KEY_REMOVE  		'd'
-#define 	MENU_FRIENDS_KEY_CHAT  			'c'
+#define 	MENU_FORUMS_KEY_ADD  			'a'
+#define 	MENU_FORUMS_KEY_VIEW  			'v'
+#define 	MENU_FORUMS_KEY_REMOVE  		'd'
+#define 	MENU_FORUMS_KEY_CHAT  			'c'
 
+#define 	MENU_SHARED_KEY_EXPAND 			'e'
+#define 	MENU_SHARED_KEY_UNSHARE			's'
+#define 	MENU_SHARED_KEY_ADD			'a'
+#define 	MENU_SHARED_KEY_PUBLIC			'c'
+#define 	MENU_SHARED_KEY_BROWSABLE		'b'
 
 #define 	MENU_TOPLEVEL_KEY_FRIENDS  		'f'
 #define 	MENU_TOPLEVEL_KEY_NETWORK  		'w'
 #define 	MENU_TOPLEVEL_KEY_TRANSFER  		'd'
 #define 	MENU_TOPLEVEL_KEY_SEARCH  		's'
 #define 	MENU_TOPLEVEL_KEY_FORUMS  		'o'
+#define 	MENU_TOPLEVEL_KEY_SHARED  		'k'  //If you know of a key which fits better, just change it ;-)
+#define 	MENU_TOPLEVEL_KEY_UPLOADS 		'e'
 
 
 Menu *CreateMenuStructure(NotifyTxt *notify)
@@ -88,6 +96,12 @@ Menu *CreateMenuStructure(NotifyTxt *notify)
 	//forums->addMenuItem(MENU_FRIENDS_KEY_REMOVE, new MenuOpFriendsRemove());
 	//forums->addMenuItem(MENU_FRIENDS_KEY_CHAT, new MenuOpFriendsChat());
 
+	// Shared folders Menu
+	MenuList *shared = new MenuListShared();
+	shared->addMenuItem(MENU_SHARED_KEY_ADD	, new MenuListSharedAddShare());
+	shared->addMenuItem(MENU_SHARED_KEY_UNSHARE	, new MenuListSharedUnshare());
+	shared->addMenuItem(MENU_SHARED_KEY_PUBLIC	, new MenuListSharedTogglePublic());
+	shared->addMenuItem(MENU_SHARED_KEY_BROWSABLE , new MenuListSharedToggleBrowsable());
 
 	/* Top Level Menu */
 	Menu *tlm = new Menu("Top Level Menu");
@@ -97,6 +111,7 @@ Menu *CreateMenuStructure(NotifyTxt *notify)
 	tlm->addMenuItem(MENU_TOPLEVEL_KEY_TRANSFER, transfers);
 	tlm->addMenuItem(MENU_TOPLEVEL_KEY_SEARCH, search);
 	//tlm->addMenuItem(MENU_TOPLEVEL_KEY_FORUMS, forums);
+	tlm->addMenuItem(MENU_TOPLEVEL_KEY_SHARED, shared);
 
 	return tlm;
 }
@@ -603,5 +618,198 @@ uint32_t MenuOpForumMsgWrite::op_twokeys(std::string parentkey, std::string key)
 	return MENU_OP_INSTANT;
 }
 
+/************
+ * Shared folders Menu
+ */
 
 
+uint32_t MenuListShared::op()
+{
+	MenuList::op();
+
+	mList.clear();
+	std::list<SharedDirInfo> dirs;
+    rsFiles->getSharedDirectories(dirs);
+	std::list<SharedDirInfo>::iterator it;
+	for(it = dirs.begin(); it != dirs.end(); it++)
+	{
+		mList.push_back ((*it).virtualname) ;
+	}
+
+	return MENU_OP_SUBMENU;
+}
+
+int MenuListShared::getEntryDesc(int idx, std::string &desc)
+{
+	std::list<SharedDirInfo> dirs;
+	rsFiles->getSharedDirectories(dirs);
+	std::list<SharedDirInfo>::iterator it;
+	std::string shareflag;
+	unsigned int i=0;
+	for (it = dirs.begin(); (i < idx) && (it != dirs.end()); it++, i++);
+    if (it != dirs.end())
+    {
+    	if (it->shareflags == (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE))
+    		shareflag = "networkwide - browsable";
+    	else if ((it->shareflags & RS_FILE_HINTS_BROWSABLE) == RS_FILE_HINTS_BROWSABLE)
+    		shareflag = "private - browsable";
+    	else if ((it->shareflags & RS_FILE_HINTS_NETWORK_WIDE) == RS_FILE_HINTS_NETWORK_WIDE)
+    		shareflag = "networkwide - anonymous";
+    	else
+    		shareflag = "not shared";
+
+    	rs_sprintf(desc, "Path: %s Share Type:%s", it->filename.c_str(), shareflag.c_str());
+        return MENU_ENTRY_OKAY;
+    }
+    return MENU_ENTRY_NONE;
+}
+
+int MenuListShared::unshareSelected()
+{
+	if (mSelectIdx < 0)
+	{
+		std::cout << "MenuListSearchList::unshareSelected() Invalid Selection";
+		std::cout << std::endl;
+        	return MENU_ENTRY_NONE;
+	}
+	std::list<SharedDirInfo> dirs;
+	rsFiles->getSharedDirectories(dirs);
+	std::list<SharedDirInfo>::iterator it;
+	unsigned int i=0;
+	for (it = dirs.begin(); (i < mSelectIdx) && (it != dirs.end()); it++, i++);
+    if (it != dirs.end())
+    {
+    	rsFiles->removeSharedDirectory(it->filename);
+        return MENU_ENTRY_OKAY;
+    }
+    return MENU_ENTRY_NONE;
+}
+
+int MenuListShared::toggleFlagSelected(uint32_t shareflags)
+{
+	if (mSelectIdx < 0)
+	{
+		std::cout << "MenuListSearchList::unshareSelected() Invalid Selection";
+		std::cout << std::endl;
+        	return MENU_ENTRY_NONE;
+	}
+	std::list<SharedDirInfo> dirs;
+	rsFiles->getSharedDirectories(dirs);
+	std::list<SharedDirInfo>::iterator it;
+	unsigned int i=0;
+	for (it = dirs.begin(); (i < mSelectIdx) && (it != dirs.end()); it++, i++);
+    if (it != dirs.end())
+    {
+    	if((it->shareflags & shareflags) == shareflags)
+    	{
+        	it->shareflags = it->shareflags & ~shareflags; //disable shareflags
+            rsFiles->updateShareFlags(*it);
+        } else
+        {
+        	it->shareflags = it->shareflags | shareflags;  //anable shareflags
+            rsFiles->updateShareFlags(*it);
+        }
+        return MENU_ENTRY_OKAY;
+    }
+    return MENU_ENTRY_NONE;
+}
+
+uint32_t MenuListSharedUnshare::op_basic(std::string key)
+{
+	Menu* p = parent();
+	MenuListShared *mls = dynamic_cast<MenuListShared *>(p);
+	if (!mls)
+	{
+		std::cout << "MenuListShared::op_basic() ERROR";
+		std::cout << std::endl;
+		return MENU_OP_ERROR;
+	}
+
+	mls->unshareSelected();
+
+	return MENU_OP_INSTANT;
+}
+
+uint32_t MenuListSharedTogglePublic::op_basic(std::string key)
+{
+	Menu* p = parent();
+	MenuListShared *mls = dynamic_cast<MenuListShared *>(p);
+	if (!mls)
+	{
+		std::cout << "MenuListShared::op_basic() ERROR";
+		std::cout << std::endl;
+		return MENU_OP_ERROR;
+	}
+
+	mls->toggleFlagSelected(RS_FILE_HINTS_NETWORK_WIDE);
+
+	return MENU_OP_INSTANT;
+}
+
+uint32_t MenuListSharedToggleBrowsable::op_basic(std::string key)
+{
+	Menu* p = parent();
+	MenuListShared *mls = dynamic_cast<MenuListShared *>(p);
+	if (!mls)
+	{
+		std::cout << "MenuListShared::op_basic() ERROR";
+		std::cout << std::endl;
+		return MENU_OP_ERROR;
+	}
+
+	mls->toggleFlagSelected(RS_FILE_HINTS_BROWSABLE);
+
+	return MENU_OP_INSTANT;
+}
+
+uint32_t MenuListSharedAddShare::drawPage(uint32_t drawFlags, std::string &buffer)
+{
+        buffer += "Enter New path 'path' 'virtualfolder' > ";
+	return 1;
+}
+
+
+
+uint32_t MenuListSharedAddShare::process_lines(std::string input)
+{
+	/* launch search */
+	if (input.size() < 4)
+	{
+		std::cout << "MenuOpSearchNew::process_lines() ERROR Input too small";
+		std::cout << std::endl;
+		return MENU_PROCESS_ERROR;
+	}
+
+	std::string dir = input.substr(0, input.size() - 1); // remove \n.
+
+	// check that the directory exists!
+	if (!RsDirUtil::checkDirectory(dir))
+	{
+		std::cout << "MenuOpSearchNew::process_lines() ERROR Directory doesn't exist";
+		std::cout << std::endl;
+		return MENU_PROCESS_ERROR;
+	}
+
+	// extract top level as the virtual name.
+	std::string topdir = RsDirUtil::getTopDir(input);
+	if (topdir.size() < 1)
+	{
+		std::cout << "MenuOpSearchNew::process_lines() ERROR TopDir is invalid";
+		std::cout << std::endl;
+		return MENU_PROCESS_ERROR;
+	}
+
+	SharedDirInfo shareddir;
+	shareddir.filename = dir;
+	shareddir.virtualname = topdir;
+	shareddir.shareflags = 0x0;
+
+	if (!rsFiles->addSharedDirectory(shareddir))
+	{
+		std::cout << "MenuOpSearchNew::process_lines() ERROR Adding SharedDir";
+		std::cout << std::endl;
+		return MENU_PROCESS_ERROR;
+	}
+
+	return MENU_PROCESS_DONE;
+}

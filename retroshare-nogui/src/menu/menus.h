@@ -291,4 +291,54 @@ class MenuOpForumMsgWrite: public MenuOpTwoKeys
 	virtual uint32_t op_twokeys(std::string parentkey, std::string key);
 };
 
+/************
+ * Shared folders Menu
+ */
+
+
+class MenuListShared: public MenuList
+{
+	public:
+
+	MenuListShared() :MenuList("My Shared Directories") { return; }
+	virtual uint32_t op();
+	int getEntryDesc(int idx, std::string &desc);
+	int unshareSelected();
+	int toggleFlagSelected(uint32_t shareflags);
+};
+
+
+
+class MenuListSharedUnshare: public MenuOpBasicKey
+{
+	public:
+
+	MenuListSharedUnshare() :MenuOpBasicKey("Stop Sharing Selected") { return; }
+	virtual uint32_t op_basic(std::string key);
+};
+
+class MenuListSharedTogglePublic: public MenuOpBasicKey
+{
+	public:
+
+	MenuListSharedTogglePublic() :MenuOpBasicKey("Enable/Disable Networkwide Sharing") { return; }
+	virtual uint32_t op_basic(std::string key);
+};
+
+class MenuListSharedToggleBrowsable: public MenuOpBasicKey
+{
+	public:
+
+	MenuListSharedToggleBrowsable() :MenuOpBasicKey("Enable/Disable Browsing Of Selected") { return; }
+	virtual uint32_t op_basic(std::string key);
+};
+
+class MenuListSharedAddShare: public MenuOpLineInput
+{
+	public:
+
+	MenuListSharedAddShare() :MenuOpLineInput("Add new Share") { return; }
+	virtual uint32_t process_lines(std::string input);
+	virtual uint32_t drawPage(uint32_t drawFlags, std::string &buffer);
+};
 
