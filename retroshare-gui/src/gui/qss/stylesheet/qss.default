@@ -1,0 +1,10 @@
+/* Default stylesheet
+   This file is used as default for all stylesheets and can be overloaded */
+
+AvatarWidget{border-width: 10px;}
+AvatarWidget[frameState="NORMAL"]{border-image:url(:/images/avatarstatus-bg-116.png);}
+AvatarWidget[frameState="OFFLINE"]{border-image:url(:/images/avatarstatus-bg-offline-116.png);}
+AvatarWidget[frameState="INACTIVE"]{border-image:url(:/images/avatarstatus-bg-idle-116.png);}
+AvatarWidget[frameState="ONLINE"]{border-image:url(:/images/avatarstatus-bg-online-116.png);}
+AvatarWidget[frameState="AWAY"]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
+AvatarWidget[frameState="BUSY"]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}

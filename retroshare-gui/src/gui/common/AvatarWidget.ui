@@ -10,15 +10,6 @@
     <height>116</height>
    </rect>
   </property>
-  <property name="styleSheet">
-   <string notr="true">AvatarWidget{border-width: 10px;}
-AvatarWidget[frameState=&quot;NORMAL&quot;]{border-image:url(:/images/avatarstatus-bg-116.png);}
-AvatarWidget[frameState=&quot;OFFLINE&quot;]{border-image:url(:/images/avatarstatus-bg-offline-116.png);}
-AvatarWidget[frameState=&quot;INACTIVE&quot;]{border-image:url(:/images/avatarstatus-bg-idle-116.png);}
-AvatarWidget[frameState=&quot;ONLINE&quot;]{border-image:url(:/images/avatarstatus-bg-online-116.png);}
-AvatarWidget[frameState=&quot;AWAY&quot;]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
-AvatarWidget[frameState=&quot;BUSY&quot;]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}</string>
-  </property>
   <property name="scaledContents">
    <bool>true</bool>
   </property>

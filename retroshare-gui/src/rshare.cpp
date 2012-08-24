@@ -364,15 +364,52 @@ void Rshare::loadStyleSheet(const QString &sheetName)
 {
     QString styleSheet;
 
+    /* load the default stylesheet */
+    QFile file(":/qss/stylesheet/qss.default");
+    if (file.open(QFile::ReadOnly)) {
+        styleSheet = QLatin1String(file.readAll()) + "\n";
+        file.close();
+    }
+
     if (!sheetName.isEmpty()) {
-        /** extern Stylesheets **/
-        QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
+        QString fileName;
+
+        if (sheetName.left(1) == ":") {
+            /* internal stylesheet */
+            fileName = ":/qss/stylesheet/" + sheetName.mid(1) + ".qss";
+        } else {
+            /* external stylesheet */
+            fileName = QApplication::applicationDirPath() + "/qss/" + sheetName + ".qss";
+        }
+
+        file.setFileName(fileName);
         if (file.open(QFile::ReadOnly)) {
-            styleSheet = QLatin1String(file.readAll());
+            styleSheet += QLatin1String(file.readAll());
             file.close();
         }
     }
     qApp->setStyleSheet(styleSheet);
+}
+
+/** get list of available stylesheets **/
+void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
+{
+	QFileInfoList fileInfoList = QDir(":/qss/stylesheet/").entryInfoList(QStringList("*.qss"));
+	QFileInfo fileInfo;
+	foreach (fileInfo, fileInfoList) {
+		if (fileInfo.isFile()) {
+			QString name = fileInfo.baseName();
+			styleSheets.insert(QString("%1 (%2)").arg(name, tr("built-in")), ":" + name);
+		}
+	}
+
+	fileInfoList = QDir(applicationDirPath() + "/qss/").entryInfoList(QStringList("*.qss"));
+	foreach (fileInfo, fileInfoList) {
+		if (fileInfo.isFile()) {
+			QString name = fileInfo.baseName();
+			styleSheets.insert(name, name);
+		}
+	}
 }
 
 void Rshare::refreshStyleSheet(QWidget *widget, bool processChildren)

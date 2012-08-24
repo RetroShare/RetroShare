@@ -27,35 +27,28 @@
 
 class AppearancePage : public ConfigPage
 {
-  Q_OBJECT
+	Q_OBJECT
 
-  public:
-      /** Default Constructor */
-      AppearancePage(QWidget * parent = 0, Qt::WFlags flags = 0);
-      /** Default Destructor */
-      ~AppearancePage();
+public:
+	/** Default Constructor */
+	AppearancePage(QWidget * parent = 0, Qt::WFlags flags = 0);
+	/** Default Destructor */
+	~AppearancePage();
 
-      /** Saves the changes on this page */
-      virtual bool save(QString &errmsg);
-      /** Loads the settings for this page */
-      virtual void load();
+	/** Saves the changes on this page */
+	virtual bool save(QString &errmsg);
+	/** Loads the settings for this page */
+	virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/looknfeel.png") ; }
-		virtual QString pageName() const { return tr("Appearance") ; }
+	virtual QPixmap iconPixmap() const { return QPixmap(":/images/looknfeel.png") ; }
+	virtual QString pageName() const { return tr("Appearance") ; }
 
+private slots:
+	void loadStyleSheet(int index);
 
-  private slots:
-
-      void on_styleSheetCombo_activated(const QString &styleSheetName);
-
-
-  private:
-      void loadStyleSheet(const QString &sheetName);
-      void loadqss();
-
-      /** Qt Designer generated object */
-      Ui::AppearancePage ui;
+private:
+	/** Qt Designer generated object */
+	Ui::AppearancePage ui;
 };
 
 #endif
-

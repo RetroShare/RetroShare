@@ -79,6 +79,8 @@ public:
   static bool setSheet(QString sheet = QString());
   /** Loads stylesheet from external file **/
   static void loadStyleSheet(const QString &sheetName);
+  /** get list of available stylesheets **/
+  static void getAvailableStyleSheets(QMap<QString, QString> &styleSheets);
   /** Recalculates matching stylesheet for widget **/
   static void refreshStyleSheet(QWidget *widget, bool processChildren);
 

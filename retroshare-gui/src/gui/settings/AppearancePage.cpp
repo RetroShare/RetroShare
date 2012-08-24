@@ -28,91 +28,79 @@
 #include "AppearancePage.h"
 #include "rsharesettings.h"
 
-
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
-    : ConfigPage(parent, flags)
+	: ConfigPage(parent, flags)
 {
-    /* Invoke the Qt Designer generated object setup routine */
-    ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-    connect(ui.styleSheetCombo, SIGNAL(clicked()), this, SLOT(loadStyleSheet()));
+	connect(ui.styleSheetCombo, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
 
-    /* Populate combo boxes */
-    foreach (QString code, LanguageSupport::languageCodes()) {
-        ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
-    }
-    foreach (QString style, QStyleFactory::keys()) {
-        ui.cmboStyle->addItem(style, style.toLower());
-    }
+	/* Populate combo boxes */
+	foreach (QString code, LanguageSupport::languageCodes()) {
+		ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
+	}
+	foreach (QString style, QStyleFactory::keys()) {
+		ui.cmboStyle->addItem(style, style.toLower());
+	}
 
-    //loadStyleSheet("Default");
-    loadqss();
+	// add empty entry representing "no style sheet"
+	ui.styleSheetCombo->addItem("", "");
 
-    /* Hide platform specific features */
+	QMap<QString, QString> styleSheets;
+	Rshare::getAvailableStyleSheets(styleSheets);
+
+	foreach (QString name, styleSheets.keys()) {
+		ui.styleSheetCombo->addItem(name, styleSheets[name]);
+	}
+
+	/* Hide platform specific features */
 #ifdef Q_WS_WIN
-
 #endif
 }
 
 AppearancePage::~AppearancePage()
 {
+	/* reaload style sheet */
+	Rshare::loadStyleSheet(Settings->getSheetName());
 }
 
 /** Saves the changes on this page */
-bool
-AppearancePage::save(QString &errmsg)
+bool AppearancePage::save(QString &errmsg)
 {
-    Q_UNUSED(errmsg);
-    QString languageCode = LanguageSupport::languageCode(ui.cmboLanguage->currentText());
+	Q_UNUSED(errmsg);
 
-    Settings->setLanguageCode(languageCode);
-    Settings->setInterfaceStyle(ui.cmboStyle->currentText());
-    Settings->setSheetName(ui.styleSheetCombo->currentText());
+	QString languageCode = LanguageSupport::languageCode(ui.cmboLanguage->currentText());
 
-    /* Set to new style */
-    Rshare::setStyle(ui.cmboStyle->currentText());
-    return true;
+	Settings->setLanguageCode(languageCode);
+	Settings->setInterfaceStyle(ui.cmboStyle->currentText());
+	Settings->setSheetName(ui.styleSheetCombo->itemData(ui.styleSheetCombo->currentIndex()).toString());
+
+	/* Set to new style */
+	Rshare::setStyle(ui.cmboStyle->currentText());
+
+	return true;
 }
 
 /** Loads the settings for this page */
-void
-AppearancePage::load()
+void AppearancePage::load()
 {
-    int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
-    ui.cmboLanguage->setCurrentIndex(index);
+	int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
+	ui.cmboLanguage->setCurrentIndex(index);
 
-    index = ui.cmboStyle->findData(Rshare::style().toLower());
-    ui.cmboStyle->setCurrentIndex(index);
+	index = ui.cmboStyle->findData(Rshare::style().toLower());
+	ui.cmboStyle->setCurrentIndex(index);
 
-    index = ui.styleSheetCombo->findText(Settings->getSheetName());
-    if (index == -1) {
-        index = ui.styleSheetCombo->findText("noskin");
-    }
-    ui.styleSheetCombo->setCurrentIndex(index);
-
-    /** load saved extern Stylesheets **/
-    loadStyleSheet (Settings->getSheetName());
+	index = ui.styleSheetCombo->findData(Settings->getSheetName());
+	if (index == -1) {
+		/* set standard "no style sheet" */
+		index = ui.styleSheetCombo->findData("");
+	}
+	ui.styleSheetCombo->setCurrentIndex(index);
 }
 
-void AppearancePage::on_styleSheetCombo_activated(const QString &sheetName)
+void AppearancePage::loadStyleSheet(int index)
 {
-    loadStyleSheet(sheetName);
-}
-
-void AppearancePage::loadStyleSheet(const QString &sheetName)
-{
-    Rshare::loadStyleSheet(sheetName);
-}
-
-void AppearancePage::loadqss()
-{
-    QFileInfoList slist = QDir(QApplication::applicationDirPath() + "/qss/").entryInfoList();
-    // add empty entry representing "no style sheet"
-    ui.styleSheetCombo->addItem("");
-    foreach(QFileInfo st, slist)
-    {
-        if(st.fileName() != "." && st.fileName() != ".." && st.isFile())
-        ui.styleSheetCombo->addItem(st.fileName().remove(".qss"));
-    }
+	Rshare::loadStyleSheet(ui.styleSheetCombo->itemData(index).toString());
 }

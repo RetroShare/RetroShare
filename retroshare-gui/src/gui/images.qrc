@@ -551,6 +551,8 @@
         <file>qss/chat/compact/history/system.htm</file>
         <file>qss/chat/compact/history/main.css</file>
         <file>qss/chat/compact/history/variants/Standard.css</file>
+		<file>qss/stylesheet/qss.default</file>
+		<file>qss/stylesheet/Standard.qss</file>
         <file>smileys/amorous.png</file>
         <file>smileys/angry.png</file>
         <file>smileys/bad.png</file>
