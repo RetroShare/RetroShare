@@ -30,7 +30,7 @@
 
 #include "retrodb.h"
 
-//#define RETRODB_DEBUG
+#define RETRODB_DEBUG
 
 
 
@@ -237,7 +237,6 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 cv.getAsBool(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
         else if( ContentValue::DOUBLE_TYPE == type)
             {
@@ -245,7 +244,6 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 cv.getAsDouble(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
         else if( ContentValue::DATA_TYPE == type)
             {
@@ -258,14 +256,12 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 b.index = ++index;
                 blobL.push_back(b);
                 qValues += "?"; // parameter
-                break;
             }
         else if ( ContentValue::STRING_TYPE == type)
             {
                 std::string value;
                 cv.getAsString(key, value);
                 qValues += "'" + value +"'";
-                break;
             }
         else if ( ContentValue::INT32_TYPE == type)
             {
@@ -273,7 +269,6 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 cv.getAsInt32(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
         else if( ContentValue::INT64_TYPE == type)
             {
@@ -281,7 +276,6 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 cv.getAsInt64(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
 
 
@@ -420,7 +414,6 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
                 cv.getAsBool(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str();
-                break;
             }
         else if( ContentValue::DOUBLE_TYPE == type)
             {
@@ -428,7 +421,6 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
                 cv.getAsDouble(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str();
-                break;
             }
         else if( ContentValue::DATA_TYPE == type)
             {
@@ -437,14 +429,12 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
                 cv.getAsData(key, len, value);
                 oStrStream.write(value, len);
                 qValues += key + "='" + oStrStream.str() + "' ";
-                break;
             }
         else if( ContentValue::STRING_TYPE == type)
             {
                 std::string value;
                 cv.getAsString(key, value);
                 qValues += key + "='" + value + "' ";
-                break;
             }
         else if( ContentValue::INT32_TYPE == type)
             {
@@ -452,7 +442,6 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
                 cv.getAsInt32(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str() + "' ";
-                break;
             }
         else if( ContentValue::INT64_TYPE == type)
             {
@@ -460,9 +449,7 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
                 cv.getAsInt64(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str() + "' ";
-                break;
             }
-
 
         mit++;
         if(mit != keyTypeMap.end()){ // add comma if more columns left
