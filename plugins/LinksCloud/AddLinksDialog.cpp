@@ -40,6 +40,9 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
+  ui.headerFrame->setHeaderImage(QPixmap(":/images/irkick.png"));
+  ui.headerFrame->setHeaderText(tr("Add Link to Cloud"));
+
   setAttribute ( Qt::WA_DeleteOnClose, true );
 
   /* add button */

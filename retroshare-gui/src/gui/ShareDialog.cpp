@@ -34,6 +34,9 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare48.png"));
+    ui.headerFrame->setHeaderText(tr("Share Folder"));
+
     connect(ui.browseButton, SIGNAL(clicked( bool ) ), this , SLOT( browseDirectory() ) );
     connect(ui.okButton, SIGNAL(clicked( bool ) ), this , SLOT( addDirectory() ) );
     connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));

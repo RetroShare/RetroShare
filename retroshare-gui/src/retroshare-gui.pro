@@ -378,6 +378,7 @@ HEADERS +=  rshare.h \
             gui/common/DropLineEdit.h \
             gui/common/LinkTextBrowser.h \
             gui/common/UserNotify.h \
+            gui/common/HeaderFrame.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -515,6 +516,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/FriendSelectionWidget.ui \
             gui/common/HashBox.ui \
             gui/common/RsCollectionDialog.ui \
+            gui/common/HeaderFrame.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
@@ -643,6 +645,7 @@ SOURCES +=  main.cpp \
             gui/common/DropLineEdit.cpp \
             gui/common/LinkTextBrowser.cpp \
             gui/common/UserNotify.cpp \
+            gui/common/HeaderFrame.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \

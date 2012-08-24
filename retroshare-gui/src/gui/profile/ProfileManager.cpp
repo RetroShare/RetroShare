@@ -46,6 +46,9 @@ ProfileManager::ProfileManager(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
+  ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
+  ui.headerFrame->setHeaderText(tr("Profile Manager"));
+
   connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( identityTreeWidgetCostumPopupMenu( QPoint ) ) );
   connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
   connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));

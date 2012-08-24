@@ -33,6 +33,9 @@ StyleDialog::StyleDialog(RSStyle &style, QWidget *parent, Qt::WFlags flags) : QD
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/library.png"));
+	ui.headerFrame->setHeaderText(tr("Define Style"));
+
 	/* Load window postion */
 	QByteArray geometry = Settings->valueFromGroup("StyleDialog", "Geometry", QByteArray()).toByteArray();
 	if (geometry.isEmpty() == false) {

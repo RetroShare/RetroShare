@@ -1917,7 +1917,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="+125"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="+83"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -1993,12 +1993,13 @@ p, li { white-space: pre-wrap; }
         <translation>Letzter Kontakt</translation>
     </message>
     <message>
-        <location line="-287"/>
+        <location line="-245"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+70"/>
         <source>Friend Details</source>
         <translation>Freund-Details</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+259"/>
         <source>Version</source>
         <translation></translation>
     </message>
@@ -2008,18 +2009,9 @@ p, li { white-space: pre-wrap; }
         <translation>Ort</translation>
     </message>
     <message>
-        <location line="-202"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:24pt; color:#ffffff;&quot;&gt;Friend Details&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+196"/>
+        <location line="-6"/>
         <source>Other infos</source>
-        <translation type="unfinished"></translation>
+        <translation>Andere Informationen</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2088,7 +2080,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Use old key format</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutze altes Schlüsselformat</translation>
     </message>
     <message>
         <location line="-713"/>
@@ -2096,7 +2088,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+132"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+65"/>
         <location line="+211"/>
         <location line="+27"/>
         <source>RetroShare</source>
@@ -2532,7 +2524,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Zeige mir: </translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+27"/>
         <source>Make friend with these peers</source>
         <translation>Füge diese Peers zu deinen Freunden hinzu</translation>
     </message>
@@ -2597,7 +2589,7 @@ Die folgenden Wege sind möglich:</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+36"/>
         <source>You have a friend request .</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3128,7 +3120,7 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation type="obsolete">&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Neuer Kanal&lt;/span&gt;</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+30"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -3143,21 +3135,12 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation>Schlüssel verteilen an</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="+57"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="+60"/>
         <source>Contacts:</source>
         <translation>Kontakte:</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.ui" line="-73"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+126"/>
+        <location filename="../gui/channels/CreateChannel.ui" line="+53"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
@@ -3227,7 +3210,12 @@ p, li { white-space: pre-wrap; }
         <translation>Erstellen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="+40"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="-18"/>
+        <source>New Channel</source>
+        <translation>Neuer Kanal</translation>
+    </message>
+    <message>
+        <location line="+58"/>
         <source>Please add a Name</source>
         <translation>Bitte einen Name hinzufügen</translation>
     </message>
@@ -3241,24 +3229,24 @@ p, li { white-space: pre-wrap; }
     <name>CreateChannelMsg</name>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="+17"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+48"/>
         <source>New Channel Post</source>
         <translation>Neuer Kanalbeitrag</translation>
     </message>
     <message>
-        <location line="+60"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;New Channel Post&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;Neuer Kanalbeitrag&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+41"/>
         <source>Channel Post</source>
         <translation>Kanalbeitrag</translation>
     </message>
@@ -3328,7 +3316,7 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+88"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+43"/>
         <source>Paste RetroShare Links</source>
         <translation>RetroShare Links einfügen</translation>
     </message>
@@ -3398,20 +3386,19 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle neues Forum</translation>
     </message>
     <message>
-        <location line="+65"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Neues Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+37"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -3426,7 +3413,12 @@ p, li { white-space: pre-wrap; }
         <translation>Schlüssel verteilen an</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForum.cpp" line="+51"/>
+        <location filename="../gui/forums/CreateForum.cpp" line="+41"/>
+        <source>New Forum</source>
+        <translation>Neues Forum</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Contacts:</source>
         <translation>Kontakte:</translation>
     </message>
@@ -3610,20 +3602,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Erstelle neues Forum</translation>
     </message>
     <message>
-        <location line="+65"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Neues Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+37"/>
         <source>Name</source>
         <translation type="unfinished">Name</translation>
     </message>
@@ -3638,7 +3629,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Schlüssel verteilen an</translation>
     </message>
     <message>
-        <location filename="../gui/forumsv2/CreateForumV2.cpp" line="+58"/>
+        <location filename="../gui/forumsv2/CreateForumV2.cpp" line="+46"/>
+        <source>New Forum</source>
+        <translation type="unfinished">Neues Forum</translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Contacts:</source>
         <translation type="unfinished">Kontakte:</translation>
     </message>
@@ -3806,25 +3802,25 @@ p, li { white-space: pre-wrap; }
     <name>CreateGroup</name>
     <message>
         <location filename="../gui/groups/CreateGroup.ui" line="+14"/>
+        <location filename="../gui/groups/CreateGroup.cpp" line="+55"/>
         <source>Create a Group</source>
         <translation>Gruppe erstellen</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Create a Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>ruppe erstellen</translatorcomment>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Gruppe erstellen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+35"/>
         <source>Group Name</source>
         <translation>Name</translation>
     </message>
@@ -3834,38 +3830,38 @@ p, li { white-space: pre-wrap; }
         <translation>Gib einen Namen für Deine Gruppe ein</translation>
     </message>
     <message>
-        <location filename="../gui/groups/CreateGroup.cpp" line="+46"/>
+        <location filename="../gui/groups/CreateGroup.cpp" line="-7"/>
+        <location line="+1"/>
         <source>Edit Group</source>
         <translation>Gruppe ändern</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Edit Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Gruppe ändern&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Gruppe ändern&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
     <message>
         <location filename="../gui/chat/CreateLobbyDialog.ui" line="+14"/>
+        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+40"/>
         <source>Create Chat Lobby</source>
         <translation>Erstelle Chat Lobby</translation>
     </message>
     <message>
-        <location line="+84"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Create Chat Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Neue Chat Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+48"/>
         <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
         <translation>Eine Chat Lobby ist ein dezentralisierter und anonymer Chat. Alle Teilnehmer erhalten alle Nachrichten. Wenn du eine Lobby erstellst, kannst du andere Freunde in der Freundesliste einladen.</translation>
     </message>
@@ -3918,7 +3914,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde einladen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+55"/>
+        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+18"/>
         <source>Contacts:</source>
         <translation>Kontakte:</translation>
     </message>
@@ -6507,24 +6503,24 @@ p, li { white-space: pre-wrap; }
     <name>FriendRequest</name>
     <message>
         <location filename="../gui/connect/FriendRequest.ui" line="+14"/>
+        <location filename="../gui/connect/FriendRequest.cpp" line="+56"/>
         <source>Friend Request</source>
         <translation>Freundschaftsanfrage</translation>
     </message>
     <message>
-        <location line="+69"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Freundschaftsanfrage&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+227"/>
         <source>Confirm</source>
         <translation>Bestätigen</translation>
     </message>
@@ -6612,7 +6608,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bestätigen und Schliesen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/connect/FriendRequest.cpp" line="+74"/>
+        <location filename="../gui/connect/FriendRequest.cpp" line="+21"/>
         <location line="+21"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
@@ -8214,7 +8210,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupTreeWidget</name>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.ui" line="+64"/>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="+28"/>
         <source>Enter a Keyword here</source>
         <translation>Gib einen Suchbegriff ein</translation>
     </message>
@@ -8918,17 +8914,17 @@ p, li { white-space: pre-wrap; }
     <name>ImHistoryBrowser</name>
     <message>
         <location filename="../gui/im_history/ImHistoryBrowser.ui" line="+14"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+101"/>
         <source>Message History</source>
         <translation>Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="+74"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Message History&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -8939,8 +8935,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+61"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+365"/>
+        <location line="+79"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+267"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -9061,7 +9057,7 @@ Die folgenden Wege sind möglich:</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+244"/>
+        <location filename="../gui/MainWindow.cpp" line="+288"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
@@ -9368,7 +9364,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
 <context>
     <name>MessageComposer</name>
     <message>
-        <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="+14"/>
         <location filename="../gui/msgs/MessageComposer.cpp" line="+752"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
@@ -10729,7 +10725,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Klick zum Ändern deines Avatars</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.ui" line="+179"/>
+        <location filename="../gui/MessengerWindow.ui" line="+160"/>
         <source>Add a Friend</source>
         <translation>Einen Freund hinzufügen</translation>
     </message>
@@ -10739,7 +10735,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner für deine Freunde freigeben</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+41"/>
         <source>Search Friends</source>
         <translation>Suche Freunde</translation>
     </message>
@@ -10776,7 +10772,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location line="-266"/>
+        <location line="-219"/>
         <source>RetroShare Messenger</source>
         <translation></translation>
     </message>
@@ -13003,12 +12999,13 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileManager</name>
     <message>
-        <location filename="../gui/profile/ProfileManager.ui" line="+509"/>
+        <location filename="../gui/profile/ProfileManager.ui" line="+23"/>
+        <location filename="../gui/profile/ProfileManager.cpp" line="+50"/>
         <source>Profile Manager</source>
         <translation type="unfinished">Profil Manager</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+113"/>
         <source>Generate New Identity</source>
         <translation type="unfinished">Neue Identität erstellen</translation>
     </message>
@@ -13066,16 +13063,7 @@ Do you want to send them a Message instead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:24pt; color:#ffffff;&quot;&gt;Profile Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/profile/ProfileManager.cpp" line="+116"/>
+        <location filename="../gui/profile/ProfileManager.cpp" line="+69"/>
         <location line="+17"/>
         <source>Export Identity</source>
         <translation type="unfinished">Exportiere Identität</translation>
@@ -14022,35 +14010,34 @@ Fehlermeldung: %2</translation>
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location line="+115"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+172"/>
         <location line="+262"/>
-        <location line="+242"/>
+        <location line="+233"/>
         <source>Next &gt;</source>
         <translation>Weiter &gt;</translation>
     </message>
     <message>
-        <location line="-494"/>
+        <location line="-485"/>
         <location line="+262"/>
-        <location line="+242"/>
+        <location line="+233"/>
         <location line="+205"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-649"/>
+        <location line="-640"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
         <translation>Für die beste Leistung muß RetroShare ein wenig über Deine Internetverbindung wissen.</translation>
     </message>
@@ -14097,13 +14084,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+84"/>
-        <location line="+242"/>
+        <location line="+233"/>
         <location line="+205"/>
         <source>&lt; Back</source>
         <translation>&lt; Zurück</translation>
     </message>
     <message>
-        <location line="-365"/>
+        <location line="-356"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -14123,7 +14110,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Netzwerkweit&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien können von jedem über anoynme Tunnel heruntergeladen werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+50"/>
         <source>Directory</source>
         <translation>Ordner</translation>
     </message>
@@ -14214,7 +14201,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fertigstellen</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="+202"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="+205"/>
         <source>Select A Folder To Share</source>
         <translation>Wählen Sie ein Ordner zum Freigeben</translation>
     </message>
@@ -14234,7 +14221,7 @@ p, li { white-space: pre-wrap; }
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="-775"/>
+        <location filename="../gui/QuickStartWizard.ui" line="-766"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -15382,20 +15369,20 @@ The default value is 20.</source>
         <translation>RetroShare Ordner freigeben</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Folder&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Ordner freigeben&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+41"/>
+        <location filename="../gui/ShareDialog.cpp" line="+38"/>
         <source>Share Folder</source>
         <translation>Ordner</translation>
     </message>
@@ -15450,7 +15437,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareDialog.cpp" line="+72"/>
+        <location filename="../gui/ShareDialog.cpp" line="+37"/>
         <source>Select A Folder To Share</source>
         <translation>Wähle einen Ordner zum Freigeben aus</translation>
     </message>
@@ -15458,30 +15445,30 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ShareKey</name>
     <message>
-        <location filename="../gui/channels/ShareKey.ui" line="+121"/>
+        <location filename="../gui/channels/ShareKey.ui" line="+62"/>
         <source>check peers you would like to share private publish key with</source>
         <translation>Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
     </message>
     <message>
-        <location line="-107"/>
+        <location line="-48"/>
+        <location filename="../gui/channels/ShareKey.cpp" line="+40"/>
         <source>Share Channel</source>
         <translation>Verteile Kanal</translation>
     </message>
     <message>
-        <location line="+39"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Verteile Kanal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+57"/>
         <source>Share for Friend</source>
         <translation>Verteile für Freund</translation>
     </message>
@@ -15491,7 +15478,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wähle die Freunde aus, mit denen Du den Kanal teilen möchtest.</translation>
     </message>
     <message>
-        <location filename="../gui/channels/ShareKey.cpp" line="+43"/>
+        <location filename="../gui/channels/ShareKey.cpp" line="+6"/>
         <source>Contacts:</source>
         <translation>Kontakte:</translation>
     </message>
@@ -15526,7 +15513,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.ui" line="+202"/>
+        <location filename="../gui/ShareManager.ui" line="+145"/>
         <source>Add a Share Directory</source>
         <translation>Freigabe hinzufügen</translation>
     </message>
@@ -15536,7 +15523,12 @@ p, li { white-space: pre-wrap; }
         <translation>Freigabe entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+127"/>
+        <location filename="../gui/ShareManager.cpp" line="+55"/>
+        <source>Share Manager</source>
+        <translation>Freigabe Manager</translation>
+    </message>
+    <message>
+        <location line="+75"/>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation>Wenn aktiviert, dann ist dieser Ordner anonym feigegeben.</translation>
     </message>
@@ -15578,25 +15570,24 @@ p, li { white-space: pre-wrap; }
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.ui" line="-216"/>
+        <location filename="../gui/ShareManager.ui" line="-162"/>
         <source>RetroShare Share Manager</source>
         <translation>RetroShare Freigabe Manager</translation>
     </message>
     <message>
-        <location line="+66"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Freigabe Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+50"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -15997,7 +15988,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+192"/>
+        <location line="+186"/>
         <source>Log In</source>
         <translation>Anmelden</translation>
     </message>
@@ -16056,7 +16047,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Anmeldung&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="+174"/>
+        <location filename="../gui/StartDialog.cpp" line="+133"/>
         <source>Login Failure</source>
         <translation>Anmeldefehler</translation>
     </message>
@@ -16080,7 +16071,17 @@ Lockdatei:
 </translation>
     </message>
     <message>
-        <location line="-6"/>
+        <location line="-34"/>
+        <source>Load Person Failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Missing PGP Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
 lock file:
 </source>
@@ -16098,7 +16099,7 @@ Lockdatei:
 </translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+31"/>
         <location line="+3"/>
         <location line="+2"/>
         <source>Warning</source>
@@ -16462,24 +16463,24 @@ p, li { white-space: pre-wrap; }
     <name>StyleDialog</name>
     <message>
         <location filename="../gui/style/StyleDialog.ui" line="+17"/>
+        <location filename="../gui/style/StyleDialog.cpp" line="+37"/>
         <source>Define Style</source>
         <translation>Definiere Farben</translation>
     </message>
     <message>
-        <location line="+82"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Define Style&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Definiere Farben&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+42"/>
         <location line="+16"/>
         <source>Choose color</source>
         <translation>Farbe wählen</translation>
@@ -16500,7 +16501,7 @@ p, li { white-space: pre-wrap; }
         <translation>Stil</translation>
     </message>
     <message>
-        <location filename="../gui/style/StyleDialog.cpp" line="+51"/>
+        <location filename="../gui/style/StyleDialog.cpp" line="+17"/>
         <source>None</source>
         <translation>Kein</translation>
     </message>

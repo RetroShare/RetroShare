@@ -5,25 +5,24 @@
     <name>AddLinksDialog</name>
     <message>
         <location filename="../AddLinksDialog.ui" line="+14"/>
-        <location line="+81"/>
+        <location line="+42"/>
         <source>Add Link</source>
         <translation>Link hinzufügen</translation>
     </message>
     <message>
-        <location line="-30"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Add Link to Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Link zur Wolke hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-7"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -73,7 +72,12 @@ p, li { white-space: pre-wrap; }
         <translation>-2 Schlechter Link</translation>
     </message>
     <message>
-        <location filename="../AddLinksDialog.cpp" line="+58"/>
+        <location filename="../AddLinksDialog.cpp" line="+44"/>
+        <source>Add Link to Cloud</source>
+        <translation>Link zur Wolke hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>New Link</source>
         <translation>Neuer Link</translation>
     </message>
@@ -104,7 +108,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LinksDialog</name>
     <message>
-        <location filename="../LinksDialog.ui" line="+48"/>
+        <location filename="../LinksDialog.ui" line="+45"/>
         <source>Title / Comment</source>
         <translation>Titel / Kommentar</translation>
     </message>
@@ -280,7 +284,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verknüpfungswolke&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+20"/>
         <source>Add new link</source>
         <translation>Neuen Link hinzufügen</translation>
     </message>

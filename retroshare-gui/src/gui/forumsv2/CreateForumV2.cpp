@@ -42,6 +42,9 @@ CreateForumV2::CreateForumV2(QWidget *parent)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
+	ui.headerFrame->setHeaderText(tr("New Forum"));
+
 	mForumQueue = new TokenQueue(rsForumsV2, this);
 
 	// connect up the buttons.

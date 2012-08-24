@@ -44,6 +44,9 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
 
+	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
+	headerFrame->setHeaderText(tr("New Channel Post"));
+
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(sendMsg()));

@@ -36,6 +36,9 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
 
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
+	ui->headerFrame->setHeaderText(tr("Create Chat Lobby"));
+
 	std::string default_nick ;
 	rsMsgs->getDefaultNickNameForChatLobby(default_nick) ;
 

@@ -38,6 +38,9 @@ CreateChannel::CreateChannel(QWidget *parent)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/add_channel64.png"));
+	ui.headerFrame->setHeaderText(tr("New Channel"));
+
 	picture = NULL;
 
 	// connect up the buttons.

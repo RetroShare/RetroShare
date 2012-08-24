@@ -97,6 +97,9 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, Q
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
+    ui.headerFrame->setHeaderText(tr("Message History"));
+
     m_peerId = peerId;
     m_isPrivateChat = !m_peerId.empty();
     textEdit = edit;

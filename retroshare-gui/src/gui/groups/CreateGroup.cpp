@@ -35,6 +35,8 @@ CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags 
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/add_group256.png"));
+
     m_groupId = groupId;
 
     if (m_groupId.empty() == false) {
@@ -44,15 +46,13 @@ CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags 
             ui.groupname->setText(misc::removeNewLine(groupInfo.name));
 
             setWindowTitle(tr("Edit Group"));
-            ui.headerLabel->setText(tr("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
-                                       "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">"
-                                       "p, li { white-space: pre-wrap; }"
-                                       "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:18pt; font-weight:600; font-style:normal;\">"
-                                       "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:400; color:#ffffff;\">Edit Group</span></p></body></html>"));
+            ui.headerFrame->setHeaderText(tr("Edit Group"));
         } else {
             /* Group not found, create new */
             m_groupId.clear();
         }
+    } else {
+        ui.headerFrame->setHeaderText(tr("Create a Group"));
     }
 
     std::list<RsGroupInfo> groupInfoList;

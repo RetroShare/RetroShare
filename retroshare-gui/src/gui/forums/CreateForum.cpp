@@ -37,6 +37,9 @@ CreateForum::CreateForum(QWidget *parent)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
+	ui.headerFrame->setHeaderText(tr("New Forum"));
+
 	// connect up the buttons.
 	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelForum( ) ) );
 	connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );

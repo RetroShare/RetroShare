@@ -52,7 +52,10 @@ FriendRequest::FriendRequest(const std::string& id, QWidget *parent, Qt::WFlags 
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    setAttribute(Qt::WA_DeleteOnClose, true);
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/user_request48.png"));
+	ui.headerFrame->setHeaderText(tr("Friend Request"));
+
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
     connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
