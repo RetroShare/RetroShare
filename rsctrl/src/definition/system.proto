@@ -1,6 +1,6 @@
 package rsctrl.peers;
 
-import "base.proto";
+import "core.proto";
 
 ///////////////////////////////////////////////////////////////
 // Configuration and Stats.
@@ -39,7 +39,7 @@ message ResponseSystemStatus {
   }
 
   // Status of response.
-  required rsctrl.base.Status status = 1;
+  required rsctrl.core.Status status = 1;
 
   // Peers.
   required uint32 peer_count = 2;
@@ -47,7 +47,8 @@ message ResponseSystemStatus {
 
   // Basic Network Information.
   required NetCode net_status = 4;
-  required rsctrl.base.Bandwidth bw_total = 5;
+
+  required rsctrl.core.Bandwidth bw_total = 5;
 }
 
 ///////////////////////////////////////////////////////////////

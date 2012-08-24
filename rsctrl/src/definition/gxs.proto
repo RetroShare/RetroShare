@@ -1,6 +1,6 @@
 package rsctrl.gxs;
 
-import "base.proto";
+import "core.proto";
 
 ///////////////////////////////////////////////////////////////
 // Base Messages for GXS Interface.
@@ -179,7 +179,7 @@ message RequestGroupInfo {
 // RESPONSE: ResponseGroupList
 message ResponseGroupList {
 
-  required rsctrl.base.Status status 	= 1;
+  required rsctrl.core.Status status 	= 1;
 
   required Service service 		= 2;
   repeated string group_ids		= 3;
@@ -189,7 +189,7 @@ message ResponseGroupList {
 // RESPONSE: ResponseGroupMeta
 message ResponseGroupMeta {
 
-  required rsctrl.base.Status status 	= 1;
+  required rsctrl.core.Status status 	= 1;
 
   required Service service 		= 2;
   repeated GroupMeta meta		= 3;
@@ -199,7 +199,7 @@ message ResponseGroupMeta {
 // RESPONSE: ResponseGroupData
 message ResponseGroupData {
 
-  required rsctrl.base.Status status 	= 1;
+  required rsctrl.core.Status status 	= 1;
 
   required Service service 		= 2;
   repeated GroupGenericData data	= 3;
@@ -231,7 +231,7 @@ message RequestMsgRelatedInfo {
 // RESPONSE: ResponseMsgList
 message ResponseMsgList {
 
-  required rsctrl.base.Status status 	= 1;
+  required rsctrl.core.Status status 	= 1;
 
   required Service service 		= 2;
   repeated GroupMsgSet msgs		= 3;
@@ -240,7 +240,7 @@ message ResponseMsgList {
 // RESPONSE: ResponseMsgMeta
 message ResponseMsgMeta {
 
-  required rsctrl.base.Status status 	= 1;
+  required rsctrl.core.Status status 	= 1;
 
   required Service service 		= 2;
   repeated MsgMeta meta			= 3;
@@ -249,7 +249,7 @@ message ResponseMsgMeta {
 // RESPONSE: ResponseMsgData
 message ResponseMsgData {
 
-  required rsctrl.base.Status status 	= 1;
+  required rsctrl.core.Status status 	= 1;
 
   required Service service 		= 2;
   repeated MsgGenericData data		= 3;
@@ -258,4 +258,30 @@ message ResponseMsgData {
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
+
+
+// REQUEST: RequestCreateGroup
+message RequestCreateGroup {
+
+  required Service service 		= 1;
+  repeated GroupGenericData data	= 2;
+}
+
+
+// RESPONSE: ResponseMsgMeta
+// As defined above.
+
+
+// REQUEST: RequestCreateMsg
+message RequestCreateMsg {
+
+  required Service service 		= 1;
+  repeated MsgGenericData data		= 2;
+}
+
+// RESPONSE: ResponseMsgMeta
+// As defined above.
+
+
+
 

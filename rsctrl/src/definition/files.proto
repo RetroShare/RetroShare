@@ -1,6 +1,6 @@
 package rsctrl.files;
 
-import "base.proto";
+import "core.proto";
 
 ///////////////////////////////////////////////////////////////
 // Mirror most of rsFiles functionality.
@@ -24,42 +24,130 @@ enum ResponseMsgIds {
 }
 
 ///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// SEARCH (start).
 
-// REQUEST: RequestPeers
-message RequestPeers {
+// REQUEST: RequestBasicSearch
+message RequestBasicSearch {
 
-  // About Who?
-  enum SetOption {
-    OWNID   = 1;
-    LISTED  = 2; 
-    ONLINE  = 3; 
-    FRIENDS = 4;
-    VALID   = 5; 	
-    SIGNED  = 6; 	
-    ALL     = 7; 	
-  }
+  repeated string terms = 1;
+}
 
-  // What do you want?
-  enum InfoOption {
-    NAMEONLY = 1;
-    BASIC    = 2;
-    LOCATION = 3;
-    ALLINFO  = 4;
-  }
+// REQUEST: RequestAdvSearch
+message RequestAdvSearch {
 
-  required SetOption set = 1;
-  required InfoOption info = 2;
-  repeated string gpg_ids = 3;
+  repeated string terms = 1;
 }
 
 
-// RESPONSE: ResponsePeerList
-message ResponsePeerList {
-  required rsctrl.base.Status status = 1;
-  repeated rsctrl.base.Person peers = 2;
+// RESPONSE: ResponseSearchId
+message ResponseSearchId {
+
+  required rsctrl.core.Status status = 1;
+  required string search_id = 2;
 }
 
 ///////////////////////////////////////////////////////////////
+// SEARCH (list)
+
+
+// REQUEST: RequestSearchResults
+message RequestSearchResults {
+
+  enum SetCmd {
+    ALLIDS = 1; 	// All 
+    LISTED = 2; 	// Only Search Ids in the Vector.
+  }
+
+  required SetCmd set = 1;
+  repeated string search_ids = 2;
+}
+
+// Building Block
+message SearchHit {
+
+  enum LocFlag {
+    LOCAL 	= 1; 	// We Have it.
+    FRIEND 	= 2; 	// Browsable
+    NETWORK 	= 4; 	// Network.
+  }
+
+  required rsctrl.core.File file 	= 1;
+  required int no_hits 			= 2
+  required LocFlag loc 			= 3;
+
+}
+
+message SearchSet {
+
+  required string search_id			= 1;
+
+  enum SearchType {
+    BASIC 	= 1; 	// Stuff.
+    ADVANCED 	= 2; 	// Stuff.
+  }
+
+  // One of these will be filled in depending on flag.
+
+  required SearchType         search_type	= 2;
+  optional RequestBasicSearch basic_req		= 3;
+  optional RequestAdvSearch   adv_req		= 4;
+
+  repeated SearchHit				= 5;
+
+}
+
+// RESPONSE: ResponseSearchResults
+message ResponseSearchResults {
+
+  required rsctrl.core.Status status = 1;
+  repeated SearchSet searches = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+// SEARCH (cancel)
+
+// REQUEST: RequestCloseSearch
+message RequestCloseSearch {
+
+  required string search_id = 2;
+}
+
+
+// RESPONSE: ResponseSearchId
+// As before.
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// SHARED FILES
+
+
+
+// REQUEST: RequestListShares
+message RequestListShares {
+
+  required int depth = 1;		// HOW Many Directories to drill down.
+  repeated string ShareLocation = 2;
+}
+
+message ShareLocation {
+  required string ssl_id = 1;
+  required string path = 2;
+}
+
+message 
+
+
+
+// REQUEST: RequestChangeShares
+
+// REQUEST: RequestLiCloseSearch
+// REQUEST: RequestCloseSearch
+
+
+
 
 // REQUEST: RequestAddPeer
 message RequestAddPeer {
@@ -79,8 +167,8 @@ message RequestAddPeer {
 
 // RESPONSE: ResponseAddPeer
 message ResponseAddPeer {
-  required rsctrl.base.Status status = 1;
-  repeated rsctrl.base.Person peers = 2;
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -100,13 +188,13 @@ message RequestModifyPeer {
 
   required ModCmd cmd = 1; 
   //required int64 cmd = 1; // Could we OR the Cmds together?
-  repeated rsctrl.base.Person peers = 2;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 // RESPONSE: ResponseModifyPeer
 message ResponseModifyPeer {
-  required rsctrl.base.Status status = 1;
-  repeated rsctrl.base.Person peers = 2;
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 ///////////////////////////////////////////////////////////////

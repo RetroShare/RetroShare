@@ -1,6 +1,6 @@
 package rsctrl.peers;
 
-import "base.proto";
+import "core.proto";
 
 ///////////////////////////////////////////////////////////////
 // Access, and Control your Friends / Peers and related Settings.
@@ -50,8 +50,8 @@ message RequestPeers {
 
 // RESPONSE: ResponsePeerList
 message ResponsePeerList {
-  required rsctrl.base.Status status = 1;
-  repeated rsctrl.base.Person peers = 2;
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ message RequestAddPeer {
 
 // RESPONSE: ResponseAddPeer
 message ResponseAddPeer {
-  required rsctrl.base.Status status = 1;
-  repeated rsctrl.base.Person peers = 2;
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -95,13 +95,13 @@ message RequestModifyPeer {
 
   required ModCmd cmd = 1; 
   //required int64 cmd = 1; // Could we OR the Cmds together?
-  repeated rsctrl.base.Person peers = 2;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 // RESPONSE: ResponseModifyPeer
 message ResponseModifyPeer {
-  required rsctrl.base.Status status = 1;
-  repeated rsctrl.base.Person peers = 2;
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
 }
 
 ///////////////////////////////////////////////////////////////

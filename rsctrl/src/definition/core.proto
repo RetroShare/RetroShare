@@ -1,4 +1,4 @@
-package rsctrl.base;
+package rsctrl.core;
 
 ///////////////////////////////////////////////////////////////
 // These are basic Messages, which are used as building blocks
@@ -9,7 +9,7 @@ package rsctrl.base;
 ///////////////////////////////////////////////////////////////
 // Expected PackageIds.
 
-enum ExtensionId { BASE = 0; }
+enum ExtensionId { CORE = 0; }
 
 enum PackageId { 
   PEERS = 1; 
